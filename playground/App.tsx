@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { UIElement } from "@designer";
-import { TestElement } from "@designer/test/index";
-
+import { Checkbox } from "@designer/ui/checkbox";
+import { ThemeProvider } from "@fluentui/react";
+import {
+  AzureThemeLight,
+} from "@fluentui/azure-themes";
+const theme = AzureThemeLight;
 function App() {
   return (
-    <div>
-      <h1>Hello</h1>
-      <UIElement></UIElement>
-      <TestElement></TestElement>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Checkbox text="Hello" initChecked></Checkbox>
+    </ThemeProvider>
   );
 }
 

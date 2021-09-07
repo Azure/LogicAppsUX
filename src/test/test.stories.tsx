@@ -13,3 +13,6 @@ export default {
 
 export const Primary: React.VFC<{}> = () => <TestElement text="Hello World"></TestElement>;
 export const Secondary: React.VFC<{}> = () => <TestElement text="Goodbye World"></TestElement>;
+export const InaccessibleButton = () => (
+  <button style={{ backgroundColor: 'red', color: 'darkRed' }}>Inaccessible button</button>
+);
