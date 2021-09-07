@@ -7,7 +7,8 @@ module.exports = {
   transform: {
     "^.+\\.jsx?$": "babel-jest",
     "^.+\\.(ts|tsx)$": "ts-jest",
-    "^.+\\.(css|less)$": "./__mocks__/styleMock.js"
+    "^.+\\.(css|less)$": "./__mocks__/styleMock.js",
   },
   transformIgnorePatterns: ["<roodDir>/node_modules/(?!@fluentui)"],
+  testResultsProcessor: "jest-junit",
 };
