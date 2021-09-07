@@ -1,13 +1,13 @@
+import { css } from "@fluentui/react";
 import { Callout, DirectionalHint } from "@fluentui/react/lib/Callout";
 import {
   Checkbox as FabricCheckbox,
   ICheckbox,
 } from "@fluentui/react/lib/Checkbox";
 import { Icon } from "@fluentui/react/lib/Icon";
-import { css } from "@fluentui/react/lib/Utilities";
 import * as React from "react";
 import { calloutContentStyles, checkboxStyles } from "../fabric";
-
+import "./checkbox.less";
 export interface CheckboxProps {
   ariaLabel?: string;
   className?: string;
@@ -48,21 +48,21 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
     const { checked } = this.state;
 
     return (
-      //   <div className={css(className, "msla-checkbox")}>
-      <FabricCheckbox
-        ariaLabel={ariaLabel}
-        componentRef={(e) => (this._checkboxRef = e as any)}
-        checked={checked}
-        className="msla-checkbox-label"
-        id={id}
-        label={text}
-        styles={checkboxStyles}
-        disabled={disabled}
-        onChange={this._handleChange as any}
-      />
-      //     {this._renderCheckboxDescriptionButton()}
-      //     {this._renderCheckboxDescription()}
-      //   </div>
+      <div className={css(className, "msla-checkbox")}>
+        <FabricCheckbox
+          ariaLabel={ariaLabel}
+          componentRef={(e) => (this._checkboxRef = e as any)}
+          checked={checked}
+          className="msla-checkbox-label"
+          id={id}
+          label={text}
+          styles={checkboxStyles}
+          disabled={disabled}
+          onChange={this._handleChange as any}
+        />
+        {this._renderCheckboxDescriptionButton()}
+        {this._renderCheckboxDescription()}
+      </div>
     );
   }
 

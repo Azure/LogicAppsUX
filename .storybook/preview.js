@@ -1,12 +1,13 @@
 import React from "react";
-import { ThemeProvider } from "@fluentui/react";
+import { initializeIcons, ThemeProvider } from "@fluentui/react";
 import {
   AzureThemeLight,
   AzureThemeDark,
   AzureThemeHighContrastLight,
   AzureThemeHighContrastDark,
-} from '@fluentui/azure-themes';
+} from '../azure-themes';
 const theme = AzureThemeLight;
+
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -17,7 +18,7 @@ export const parameters = {
     },
   },
 };
-
+initializeIcons()
 export const decorators = [
   (Story) => (
     <ThemeProvider theme={theme}>

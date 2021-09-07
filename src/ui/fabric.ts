@@ -9,7 +9,7 @@ import { IDropdownStyles } from "@fluentui/react/lib/Dropdown";
 import { ISpinnerStyles } from "@fluentui/react/lib/Spinner";
 import { FontSizes, mergeStyleSets } from "@fluentui/react/lib/Styling";
 import { ITextFieldStyles } from "@fluentui/react/lib/TextField";
-
+import './fabric.less';
 export const buttonStyles: IButtonStyles = {
   label: {
     fontSize: FontSizes.small,
