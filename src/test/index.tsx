@@ -1,5 +1,5 @@
 import React from 'react';
 
-export const TestElement = () => {
-  return <h2>Test Element</h2>;
+export const TestElement = ({text} : {text: string}) => {
+  return <h2>{text}</h2>;
 };
