@@ -85,7 +85,8 @@
     "storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook",
     "test": "jest",
-    "extract": "formatjs extract \"src/**/*.ts*\" --out-file lang/en.resjson --format ./format.js",
+    "extract": "formatjs extract \"src/**/*.ts*\" --out-file lang/en.json --format ./format.js",
+    "compile:loc": "formatjs compile-folder --ast --format ./format.js \"lang\" \"compiled-lang/\" ",
     "prepare": "husky install",
     "pretty": "pretty-quick --staged --pattern \"**/*.*(ts|tsx)\""
   },

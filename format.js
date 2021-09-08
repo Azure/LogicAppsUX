@@ -9,5 +9,15 @@ module.exports = {
       return all;
     }, {});
   },
-  compile: (msgs) => msgs,
+  compile: (msgs) => {
+    return Object.keys(msgs).reduce((all, k) => {
+      console.log(k);
+      if (k.startsWith('_') && k.endsWith('.comment')) {
+        return all;
+      }
+      all[k] = msgs[k];
+
+      return all;
+    }, {});
+  },
 };
