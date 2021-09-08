@@ -1,0 +1,58 @@
+.msla-action-button-v2 {
+    background-color: #fff;
+    border: 1px solid #cac6c4;
+    border-radius: 50%;
+    box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+    height: 24px;
+    padding: 4px 0;
+    width: 24px;
+
+    &::after {
+        outline: transparent !important;
+    }
+
+    &:active, &:focus {
+        border-color: #0078d4;
+    }
+
+    &:hover {
+        box-shadow: 0 0.6px 1.8px rgba(0, 0, 0, 0.1), 0 3.2px 7.2px rgba(0, 0, 0, 0.13);
+        cursor: pointer;
+    }
+
+    &:active {
+        box-shadow: 0 0 3.6px #0078d4, 0 0 14.4px #0078d4;
+    }
+
+    &:focus {
+        box-shadow: 0 0.6px 1.8px rgba(0, 0, 0, 0.1), 0 3.2px 7.2px rgba(0, 0, 0, 0.13);
+    }
+}
+
+body.dark {
+    .msla-action-button-v2 {
+        background-color: #333;
+        border: 1px solid #797775;
+        box-shadow: 0 0.3px 0.9px rgba(255, 255, 255, 0.1), 0 1.6px 3.6px rgba(255, 255, 255, 0.13);
+
+        &:active, &:focus {
+            border-color: #3AA0F3;
+        }
+
+        &:hover {
+            box-shadow: 0 0.6px 1.8px rgba(255, 255, 255, 0.1), 0 3.2px 7.2px rgba(255, 255, 255, 0.13);
+
+            path {
+                fill: #82c7ff;
+            }
+        }
+
+        &:active {
+            box-shadow: 0 0 3.6px #3AA0F3, 0 0 14.4px #3AA0F3;
+        }
+
+        &:focus {
+            box-shadow: 0 0.6px 1.8px rgba(255, 255, 255, 0.1), 0 3.2px 7.2px rgba(255, 255, 255, 0.13);
+        }
+    }
+}

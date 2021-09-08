@@ -1,0 +1,225 @@
+@import (reference) '../themes.less';
+@import (reference) '../variables.less';
+
+@hoverBackgroundColor: rgba(0, 0, 0, 0.1);
+@actionButtonWidthForActionPalette: 120px;
+@actionButtonWidthForScopePalette: 140px;
+@actionButtonHeightForActionPalette: 35px;
+@actionButtonMargin: 10px;
+
+.msla-actionpalette {
+  margin: 10px 0px;
+
+  .msla-action-button {
+    font-size: @card-header-font-size;
+
+    &[disabled] {
+      pointer-events: none;
+      opacity: .6;
+    }
+  }
+
+  .buttons-row {
+      margin: 0 auto;
+      height: @actionButtonHeightForActionPalette;
+      width: 100%;
+
+      .msla-action-buttons {
+          background: transparent;
+          border: 1px solid #d2d2d2;
+          display: inline-block;
+          margin: 0 @actionButtonMargin;
+          font-size: @card-header-font-size;
+          width: @actionButtonWidthForActionPalette;
+          height: @actionButtonHeightForActionPalette;
+          &:hover, &:focus {
+              background-color: @hoverColor;
+          }
+          &[disabled] {
+              pointer-events: none;
+              opacity: .6;
+          }
+      }
+  }
+
+   .msla-newstep-button {
+      background: transparent;
+      border: 1px solid #d2d2d2;
+      display: block;
+      font-size: @card-header-font-size;
+      height: @actionButtonHeightForActionPalette;
+      margin: 0 auto;
+      min-width: @actionButtonWidthForActionPalette;
+      white-space: nowrap;
+
+      &:hover {
+          background-color: @hoverColor;
+      }
+
+      &:active {
+          color: #FFFFFF;
+          background-color: @brandColor;
+      }
+
+      &[disabled] {
+          pointer-events: none;
+          opacity: .6;
+      }
+  }
+
+  .action-button-icon {
+      width: 10px;
+      height: 10px;
+      margin-right: 10px;
+      &[disabled] {
+          pointer-events: none;
+          opacity: .6;
+      }
+  }
+
+  .msla-actionpalette-menu-triangle {
+    width: 0;
+    height: 0;
+    border-right: 7px solid transparent;
+    border-left: 7px solid transparent;
+    border-bottom: 7px solid @brandColor;
+    margin: 0 auto;
+  }
+
+  .msla-actionpalette-menu {
+    min-width: 240px;
+    max-width: 320px;
+    margin: 0 auto;
+    background-color: @brandColor;
+    position: relative;
+
+    >.msla-action-button {
+      width: @actionButtonWidthForActionPalette;
+      line-height: normal;
+
+      .msla-action-button-text {
+        padding-top: 5px;
+        color: #FFFFFF;
+      }
+
+      &:nth-child(3) {
+        width: 80px;
+      }
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+  }
+}
+
+.msla-action-button {
+  cursor: pointer;
+  padding: 15px 0;
+  outline: none; /* NOTE(ramacfar): The focus indicator is the change in background color below. */
+
+  img.icon {
+    width: 20px;
+    height: 20px;
+    margin: 3px 7px 0 0;
+  }
+
+  &.selected,
+  &:hover,
+  &:focus {
+    background-color: @hoverBackgroundColor;
+  }
+}
+
+.msla-embed-palette {
+
+  .msla-action-palette-list {
+    margin: 0 auto;
+    position: relative;
+    white-space: nowrap;
+
+    >.msla-action-button {
+      padding: 0;
+      min-width: @actionButtonWidthForScopePalette;
+
+      @media only screen and (max-width: @designer-desktop-max-width) {
+          /* For mobile, we cannot have minimum width. instead we use padding right/left and display as floating block */
+          min-width: 0px;
+          padding: 5px 8px;
+          display: block;
+          float: left;
+      }
+
+      img.icon {
+        width: 20px;
+        height: 20px;
+        margin: 3px 7px 0 0;
+      }
+
+      .msla-action-button-text {
+        color: @brandColor;
+        display: inline-block;
+        vertical-align: top;
+      }
+    }
+  }
+}
+
+body.dark {
+    .msla-actionpalette {
+        .buttons-row {
+            .msla-action-buttons {
+                border-color: @ms-color-neutralTertiary;
+
+                &:hover, &:focus {
+                    background-color: @ms-color-neutralLighter;
+                }
+            }
+        }
+    }
+
+    .msla-newstep-button {
+        border-color: @ms-color-neutralTertiary;
+
+        &:hover {
+            background-color: @ms-color-neutralLight;
+        }
+
+        &:active {
+            background-color: @ms-color-themePrimary;
+            color: @ms-color-white;
+        }
+    }
+
+    .msla-actionpalette-menu-triangle {
+        border-bottom-color: @ms-color-themePrimary;
+    }
+
+    .msla-actionpalette-menu {
+        background-color: @ms-color-themePrimary;
+
+        > .msla-action-button {
+            .msla-action-button-text {
+                color: @ms-color-white;
+            }
+        }
+    }
+
+    .msla-action-button {
+        &.selected,
+        &:hover,
+        &:focus {
+            background-color: @ms-color-neutralTertiaryAlt;
+        }
+    }
+
+    .msla-embed-palette {
+        .msla-action-palette-list {
+            > .msla-action-button {
+                .msla-action-button-text {
+                    color: @ms-color-themePrimary;
+                }
+            }
+        }
+    }
+}

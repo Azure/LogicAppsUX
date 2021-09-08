@@ -8,6 +8,7 @@ module.exports = {
     "^.+\\.jsx?$": "babel-jest",
     "^.+\\.(ts|tsx)$": "ts-jest",
     "^.+\\.(css|less)$": "./__mocks__/styleMock.js",
+    "^.+\\.svg$": "./__mocks__/svgTransform.js"
   },
   transformIgnorePatterns: ["<roodDir>/node_modules/(?!@fluentui)"],
   testResultsProcessor: "jest-junit",
