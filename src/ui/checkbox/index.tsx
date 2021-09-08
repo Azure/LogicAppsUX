@@ -6,6 +6,7 @@ import {
 } from "@fluentui/react/lib/Checkbox";
 import { Icon } from "@fluentui/react/lib/Icon";
 import * as React from "react";
+import { FormattedMessage } from "react-intl";
 import { calloutContentStyles, checkboxStyles } from "../fabric";
 import "./checkbox.less";
 export interface CheckboxProps {
@@ -28,6 +29,13 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
   private _checkboxDescriptionButtonRef = React.createRef<HTMLButtonElement>();
   private _checkboxRef: ICheckbox | undefined;
 
+  private moreInfoMessage = (
+    <FormattedMessage
+      id="checkbox_more_info_message"
+      description="More Info Tooltip title for a checkbox"
+      defaultMessage="More Info"
+    />
+  );
   constructor(props: CheckboxProps) {
     super(props);
 
