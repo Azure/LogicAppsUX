@@ -1,9 +1,4 @@
-import {
-  IDialogContentStyleProps,
-  IDialogContentStyles,
-  IDialogFooterStyleProps,
-  IDialogFooterStyles,
-} from '@fluentui/react/lib/Dialog';
+import { IDialogContentStyleProps, IDialogContentStyles, IDialogFooterStyleProps, IDialogFooterStyles } from '@fluentui/react/lib/Dialog';
 import { IExtendedSemanticColors } from '../IExtendedSemanticColors';
 import { FontSizes } from '../AzureType';
 import { BaseColors } from '../AzureColors';

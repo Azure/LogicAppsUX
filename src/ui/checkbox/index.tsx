@@ -1,14 +1,11 @@
-import { css } from "@fluentui/react";
-import { Callout, DirectionalHint } from "@fluentui/react/lib/Callout";
-import {
-  Checkbox as FabricCheckbox,
-  ICheckbox,
-} from "@fluentui/react/lib/Checkbox";
-import { Icon } from "@fluentui/react/lib/Icon";
-import * as React from "react";
-import { FormattedMessage } from "react-intl";
-import { calloutContentStyles, checkboxStyles } from "../fabric";
-import "./checkbox.less";
+import { css } from '@fluentui/react';
+import { Callout, DirectionalHint } from '@fluentui/react/lib/Callout';
+import { Checkbox as FabricCheckbox, ICheckbox } from '@fluentui/react/lib/Checkbox';
+import { Icon } from '@fluentui/react/lib/Icon';
+import * as React from 'react';
+import { FormattedMessage } from 'react-intl';
+import { calloutContentStyles, checkboxStyles } from '../fabric';
+import './checkbox.less';
 export interface CheckboxProps {
   ariaLabel?: string;
   className?: string;
@@ -30,11 +27,7 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
   private _checkboxRef: ICheckbox | undefined;
 
   private moreInfoMessage = (
-    <FormattedMessage
-      id="checkbox_more_info_message"
-      description="More Info Tooltip title for a checkbox"
-      defaultMessage="More Info"
-    />
+    <FormattedMessage id="checkbox_more_info_message" description="More Info Tooltip title for a checkbox" defaultMessage="More Info" />
   );
   constructor(props: CheckboxProps) {
     super(props);
@@ -56,7 +49,7 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
     const { checked } = this.state;
 
     return (
-      <div className={css(className, "msla-checkbox")}>
+      <div className={css(className, 'msla-checkbox')}>
         <FabricCheckbox
           ariaLabel={ariaLabel}
           componentRef={(e) => (this._checkboxRef = e as any)}
@@ -89,8 +82,7 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
         setInitialFocus={true}
         styles={calloutContentStyles}
         target={this._checkboxDescriptionButtonRef.current}
-        onDismiss={this._handleCheckboxDescriptionDismiss}
-      >
+        onDismiss={this._handleCheckboxDescriptionDismiss}>
         <div data-is-focusable={true} role="dialog" tabIndex={0}>
           {descriptionText}
         </div>
@@ -106,11 +98,10 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
     return (
       <button
         ref={this._checkboxDescriptionButtonRef}
-        aria-label={"More Info"}
+        aria-label={'More Info'}
         className="msla-button msla-checkbox-description-icon-button"
-        title={"More Info"}
-        onClick={this._handleCheckboxDescriptionButtonClick}
-      >
+        title={'More Info'}
+        onClick={this._handleCheckboxDescriptionButtonClick}>
         <Icon className="msla-checkbox-description-icon" iconName="Info" />
       </button>
     );
@@ -129,9 +120,7 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
     }
   };
 
-  private _handleCheckboxDescriptionButtonClick: React.MouseEventHandler<HTMLButtonElement> = (
-    e
-  ) => {
+  private _handleCheckboxDescriptionButtonClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
 
     this.setState({

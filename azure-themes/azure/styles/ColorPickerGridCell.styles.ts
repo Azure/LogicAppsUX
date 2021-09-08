@@ -1,9 +1,7 @@
 import { IColorPickerGridCellStyleProps, IColorPickerGridCellStyles } from '@fluentui/react/lib/SwatchColorPicker';
 import { IExtendedSemanticColors } from '../IExtendedSemanticColors';
 
-export const ColorPickerGridCellStyles = (
-  props: IColorPickerGridCellStyleProps,
-): Partial<IColorPickerGridCellStyles> => {
+export const ColorPickerGridCellStyles = (props: IColorPickerGridCellStyleProps): Partial<IColorPickerGridCellStyles> => {
   const { theme, selected, circle } = props;
   const semanticColors = theme.semanticColors as IExtendedSemanticColors;
 

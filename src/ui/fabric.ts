@@ -1,14 +1,11 @@
-import { IButtonStyles } from "@fluentui/react/lib/Button";
-import { ICalloutContentStyles } from "@fluentui/react/lib/Callout";
-import { ICheckboxStyles } from "@fluentui/react/lib/Checkbox";
-import {
-  IComboBoxOptionStyles,
-  IComboBoxStyles,
-} from "@fluentui/react/lib/ComboBox";
-import { IDropdownStyles } from "@fluentui/react/lib/Dropdown";
-import { ISpinnerStyles } from "@fluentui/react/lib/Spinner";
-import { FontSizes, mergeStyleSets } from "@fluentui/react/lib/Styling";
-import { ITextFieldStyles } from "@fluentui/react/lib/TextField";
+import { IButtonStyles } from '@fluentui/react/lib/Button';
+import { ICalloutContentStyles } from '@fluentui/react/lib/Callout';
+import { ICheckboxStyles } from '@fluentui/react/lib/Checkbox';
+import { IComboBoxOptionStyles, IComboBoxStyles } from '@fluentui/react/lib/ComboBox';
+import { IDropdownStyles } from '@fluentui/react/lib/Dropdown';
+import { ISpinnerStyles } from '@fluentui/react/lib/Spinner';
+import { FontSizes, mergeStyleSets } from '@fluentui/react/lib/Styling';
+import { ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import './fabric.less';
 export const buttonStyles: IButtonStyles = {
   label: {
@@ -24,10 +21,10 @@ export const calloutContentStyles: Partial<ICalloutContentStyles> = {
 
 export const checkboxStyles: ICheckboxStyles = {
   checkbox: {
-    display: "inline-flex",
+    display: 'inline-flex',
   },
   label: {
-    width: "100%",
+    width: '100%',
   },
   text: {
     fontSize: FontSizes.small,
@@ -38,13 +35,13 @@ export const placeholderTextFieldStyles: Partial<ITextFieldStyles> = {
   field: {
     fontSize: FontSizes.small,
     selectors: {
-      "::placeholder": {
+      '::placeholder': {
         fontSize: FontSizes.small,
       },
-      ":-ms-input-placeholder": {
+      ':-ms-input-placeholder': {
         fontSize: FontSizes.small,
       },
-      "::-ms-input-placeholder": {
+      '::-ms-input-placeholder': {
         fontSize: FontSizes.small,
       },
     },
@@ -52,61 +49,52 @@ export const placeholderTextFieldStyles: Partial<ITextFieldStyles> = {
 };
 
 // NOTE(joechung): Fabric puts a red asterisk after required, label-less text fields which we do not want.
-export const commonTextFieldStyles: Partial<ITextFieldStyles> = mergeStyleSets(
-  placeholderTextFieldStyles,
-  {
-    field: {
-      height: 26, // @parameter-inputbox-height
-    },
-    root: {
-      border: 0,
-      height: 28, // @parameter-inputbox-height + 2px (border padding)
-    },
-    wrapper: {
-      height: 28, // @parameter-inputbox-height + 2px (border padding)
-    },
-    subComponentStyles: {},
-  }
-);
+export const commonTextFieldStyles: Partial<ITextFieldStyles> = mergeStyleSets(placeholderTextFieldStyles, {
+  field: {
+    height: 26, // @parameter-inputbox-height
+  },
+  root: {
+    border: 0,
+    height: 28, // @parameter-inputbox-height + 2px (border padding)
+  },
+  wrapper: {
+    height: 28, // @parameter-inputbox-height + 2px (border padding)
+  },
+  subComponentStyles: {},
+});
 
-export const multiLineTextFieldStyles: Partial<ITextFieldStyles> = mergeStyleSets(
-  commonTextFieldStyles,
-  {
-    field: {
-      overflowY: "hidden",
-    },
-    fieldGroup: {
-      minHeight: 26, // @parameter-inputbox-height
-      selectors: {
-        ":before": {
-          content: "",
-        },
-        ":after": {
-          content: "",
-        },
+export const multiLineTextFieldStyles: Partial<ITextFieldStyles> = mergeStyleSets(commonTextFieldStyles, {
+  field: {
+    overflowY: 'hidden',
+  },
+  fieldGroup: {
+    minHeight: 26, // @parameter-inputbox-height
+    selectors: {
+      ':before': {
+        content: '',
+      },
+      ':after': {
+        content: '',
       },
     },
-    subComponentStyles: {},
-  }
-);
+  },
+  subComponentStyles: {},
+});
 
-export const singleLineTextFieldStyles: Partial<ITextFieldStyles> = mergeStyleSets(
-  commonTextFieldStyles,
-  {
-    fieldGroup: {
-      height: 26, // @parameter-inputbox-height
-      selectors: {
-        ":before": {
-          content: "",
-        },
-        ":after": {
-          content: "",
-        },
+export const singleLineTextFieldStyles: Partial<ITextFieldStyles> = mergeStyleSets(commonTextFieldStyles, {
+  fieldGroup: {
+    height: 26, // @parameter-inputbox-height
+    selectors: {
+      ':before': {
+        content: '',
+      },
+      ':after': {
+        content: '',
       },
     },
-    subComponentStyles: {},
-  }
-);
+  },
+  subComponentStyles: {},
+});
 
 export const caretDownButtonStyles: IButtonStyles = {
   icon: {
@@ -126,7 +114,7 @@ export const comboboxStyles: Partial<IComboBoxStyles> = {
     bottom: 2,
     fontSize: FontSizes.small,
     height: 20,
-    position: "relative",
+    position: 'relative',
   },
   root: {
     height: 26, // @parameter-inputbox-height
@@ -146,8 +134,8 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
     marginBottom: 0,
     selectors: {
       // NOTE(joechung): Remove duplicate asterisk from required dropdowns.
-      ":before": {
-        display: "none",
+      ':before': {
+        display: 'none',
       },
     },
   },
@@ -167,9 +155,9 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
 
 export const spinnerStyles: ISpinnerStyles = {
   root: {
-    alignSelf: "center",
-    margin: "10% 0",
-    backgroundColor: "transparent",
+    alignSelf: 'center',
+    margin: '10% 0',
+    backgroundColor: 'transparent',
   },
   circle: {
     width: 70,
@@ -180,7 +168,7 @@ export const spinnerStyles: ISpinnerStyles = {
 
 export const featureFeedbackSpinnerStyles: ISpinnerStyles = {
   root: {
-    alignItems: "baseline",
+    alignItems: 'baseline',
     marginTop: 2,
   },
 };

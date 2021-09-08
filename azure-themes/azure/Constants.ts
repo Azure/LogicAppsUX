@@ -1,9 +1,4 @@
-import {
-  ScreenWidthMaxMedium,
-  ScreenWidthMaxSmall,
-  ScreenWidthMinMedium,
-  getScreenSelector,
-} from '@fluentui/react/lib/Styling';
+import { ScreenWidthMaxMedium, ScreenWidthMaxSmall, ScreenWidthMinMedium, getScreenSelector } from '@fluentui/react/lib/Styling';
 
 export const inputHeight = '18px';
 export const borderWidth = '1px';

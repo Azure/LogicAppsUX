@@ -12,104 +12,103 @@ import { Plus } from './images/plus';
 import './actionbuttonv2.less';
 
 export interface ActionButtonV2Props extends BaseComponentProps {
-    buttonRef?: React.RefObject<HTMLButtonElement>;
-    className?: string;
-    disabled?: boolean;
-    title: string;
-    onClick?(e: React.MouseEvent<HTMLElement>): void;
+  buttonRef?: React.RefObject<HTMLButtonElement>;
+  className?: string;
+  disabled?: boolean;
+  title: string;
+  onClick?(e: React.MouseEvent<HTMLElement>): void;
 }
 
 // NOTE(joechung): Set tooltip host's CSS display to inline-block to work around an IE positioning bug.
 const tooltipHostStyles: ITooltipHostStyles = {
-    root: {
-        display: 'inline-block'
-    }
+  root: {
+    display: 'inline-block',
+  },
 };
 
 export function ActionButtonV2({ buttonRef, className, disabled = false, title, trackEvent, onClick }: ActionButtonV2Props): JSX.Element {
-    function dismissTooltip(): void {
-        setTarget(null);
-        if (tooltipRef.current) {
-            tooltipRef.current.dismiss();
-        }
+  function dismissTooltip(): void {
+    setTarget(null);
+    if (tooltipRef.current) {
+      tooltipRef.current.dismiss();
     }
+  }
 
-    function handleBlur(e: React.FocusEvent<HTMLButtonElement>): void {
-        e.preventDefault();
-        dismissTooltip();
+  function handleBlur(e: React.FocusEvent<HTMLButtonElement>): void {
+    e.preventDefault();
+    dismissTooltip();
+  }
+
+  function handleClick(e: React.MouseEvent<HTMLButtonElement>): void {
+    trackEvent({
+      action: UserAction.click,
+      controlId: Constants.TELEMETRY_IDENTIFIERS.ACTIONBUTTONV2,
+    });
+
+    if (onClick) {
+      onClick(e);
     }
+  }
 
-    function handleClick(e: React.MouseEvent<HTMLButtonElement>): void {
-        trackEvent({
-            action: UserAction.click,
-            controlId: Constants.TELEMETRY_IDENTIFIERS.ACTIONBUTTONV2
-        });
+  function handleFocus(e: React.FocusEvent<HTMLButtonElement>): void {
+    e.preventDefault();
 
-        if (onClick) {
-            onClick(e);
-        }
-    }
+    // NOTE(sopai): Use focus events instead of element target to work around a possible multi-instance Fabric Callout bug.
+    const focusTarget = e.target;
+    const element = findDOMNode(buttonRef?.current as unknown as React.ReactInstance) as Element;
+    const tooltipTarget = !focusTarget ? element : focusTarget;
+    setTarget(tooltipTarget);
+  }
 
-    function handleFocus(e: React.FocusEvent<HTMLButtonElement>): void {
-        e.preventDefault();
+  function handleMouseEnter(e: React.MouseEvent<HTMLButtonElement>): void {
+    e.preventDefault();
 
-        // NOTE(sopai): Use focus events instead of element target to work around a possible multi-instance Fabric Callout bug.
-        const focusTarget = e.target;
-        const element = findDOMNode(buttonRef?.current as unknown as React.ReactInstance) as Element;
-        const tooltipTarget = !focusTarget ? element : focusTarget;
-        setTarget(tooltipTarget);
-    }
+    // NOTE(sopai): Use mouse events instead of element target to work around a possible multi-instance Fabric Callout bug.
+    const mouseEvent = e.nativeEvent;
+    const element = findDOMNode(buttonRef?.current as unknown as React.ReactInstance) as Element;
+    const tooltipTarget = !mouseEvent ? element : mouseEvent;
+    setTarget(tooltipTarget);
+  }
 
-    function handleMouseEnter(e: React.MouseEvent<HTMLButtonElement>): void {
-        e.preventDefault();
+  function handleMouseLeave(e: React.MouseEvent<HTMLButtonElement>): void {
+    e.preventDefault();
+    dismissTooltip();
+  }
 
-        // NOTE(sopai): Use mouse events instead of element target to work around a possible multi-instance Fabric Callout bug.
-        const mouseEvent = e.nativeEvent;
-        const element = findDOMNode(buttonRef?.current as unknown as React.ReactInstance) as Element;
-        const tooltipTarget = !mouseEvent ? element : mouseEvent;
-        setTarget(tooltipTarget);
-    }
+  function handleThemeChange(theme: ITheme): void {
+    setIsInverted(theme.isInverted);
+  }
 
-    function handleMouseLeave(e: React.MouseEvent<HTMLButtonElement>): void {
-        e.preventDefault();
-        dismissTooltip();
-    }
+  const [isInverted, setIsInverted] = React.useState(() => getTheme().isInverted);
+  const tooltipRef = React.useRef<ITooltipHost>(null);
+  const [target, setTarget] = React.useState<MouseEvent | Element | null>(null);
 
-    function handleThemeChange(theme: ITheme): void {
-        setIsInverted(theme.isInverted);
-    }
-
-    const [isInverted, setIsInverted] = React.useState(() => getTheme().isInverted);
-    const tooltipRef = React.useRef<ITooltipHost>(null);
-    const [target, setTarget] = React.useState<MouseEvent | Element | null>(null);
-
-    React.useEffect(() => {
-        registerOnThemeChangeCallback(handleThemeChange);
-        return () => {
-            removeOnThemeChangeCallback(handleThemeChange);
-        };
-    }, []);
-
-    const calloutProps: ICalloutProps = {
-        target,
-        directionalHint: DirectionalHint.topCenter
+  React.useEffect(() => {
+    registerOnThemeChangeCallback(handleThemeChange);
+    return () => {
+      removeOnThemeChangeCallback(handleThemeChange);
     };
+  }, []);
 
-    return (
-        <TooltipHost calloutProps={calloutProps} componentRef={tooltipRef} content={title} styles={tooltipHostStyles}>
-            <button
-                aria-label={title}
-                className={css('msla-action-button-v2', className)}
-                disabled={disabled}
-                ref={buttonRef}
-                onBlur={handleBlur}
-                onClick={handleClick}
-                onFocus={handleFocus}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-            >
-                <Plus fill={isInverted ? '#3AA0F3' : '#0078D4'} />
-            </button>
-        </TooltipHost>
-    );
+  const calloutProps: ICalloutProps = {
+    target,
+    directionalHint: DirectionalHint.topCenter,
+  };
+
+  return (
+    <TooltipHost calloutProps={calloutProps} componentRef={tooltipRef} content={title} styles={tooltipHostStyles}>
+      <button
+        aria-label={title}
+        className={css('msla-action-button-v2', className)}
+        disabled={disabled}
+        ref={buttonRef}
+        onBlur={handleBlur}
+        onClick={handleClick}
+        onFocus={handleFocus}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}>
+        <Plus fill={isInverted ? '#3AA0F3' : '#0078D4'} />
+      </button>
+    </TooltipHost>
+  );
 }

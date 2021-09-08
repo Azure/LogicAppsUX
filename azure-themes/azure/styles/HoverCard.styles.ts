@@ -1,9 +1,4 @@
-import {
-  IExpandingCardStyleProps,
-  IExpandingCardStyles,
-  IPlainCardStyleProps,
-  IPlainCardStyles,
-} from '@fluentui/react/lib/HoverCard';
+import { IExpandingCardStyleProps, IExpandingCardStyles, IPlainCardStyleProps, IPlainCardStyles } from '@fluentui/react/lib/HoverCard';
 import * as StyleConstants from '../Constants';
 
 export const ExpandingCardStyles = (props: IExpandingCardStyleProps): Partial<IExpandingCardStyles> => {

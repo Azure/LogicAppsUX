@@ -1,10 +1,5 @@
 import { ICheckStyleProps, ICheckStyles } from '@fluentui/react/lib/Check';
-import {
-  IDetailsRowStyleProps,
-  IDetailsRowStyles,
-  IDetailsListStyleProps,
-  IDetailsListStyles,
-} from '@fluentui/react/lib/DetailsList';
+import { IDetailsRowStyleProps, IDetailsRowStyles, IDetailsListStyleProps, IDetailsListStyles } from '@fluentui/react/lib/DetailsList';
 import { IExtendedSemanticColors } from '../IExtendedSemanticColors';
 import { FontSizes } from '../AzureType';
 import * as StyleConstants from '../Constants';
