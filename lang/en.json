@@ -1,4 +1,6 @@
 {
   "_checkbox_more_info_message.comment": "More Info Tooltip title for a checkbox",
-  "checkbox_more_info_message": "More Info"
+  "checkbox_more_info_message": "More Info",
+  "ui_announced_matches_loading": "Loading...",
+  "ui_announced_matches_text": "{count, plural, one {# item} =0 {no items} other {# items}} matched."
 }

@@ -4,5 +4,55 @@
       "type": 0,
       "value": "More Info"
     }
+  ],
+  "ui_announced_matches_loading": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
+  "ui_announced_matches_text": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " item"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " matched."
+    }
   ]
 }
