@@ -20,11 +20,9 @@
     "@fluentui/azure-themes": "^8.1.63",
     "@fluentui/react": "^8.30.4",
     "@fluentui/theme": "^2.3.2",
-    "@rollup/plugin-babel": "^5.3.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-intl": "^5.20.10",
-    "rollup-plugin-less": "^1.1.3"
+    "react-intl": "^5.20.10"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",
@@ -35,6 +33,7 @@
     "@formatjs/cli": "^4.2.33",
     "@formatjs/ts-transformer": "^3.4.10",
     "@open-wc/building-rollup": "^1.10.0",
+    "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-node-resolve": "^13.0.4",
     "@rollup/plugin-typescript": "^8.2.5",
@@ -56,15 +55,19 @@
     "babel-register": "^6.26.0",
     "css-loader": "^5.2.6",
     "deepmerge": "^4.2.2",
+    "husky": "^7.0.0",
     "jest": "^27.1.0",
     "jest-junit": "^12.2.0",
     "jest-svg-transformer": "^1.0.0",
     "less": "^4.1.1",
     "less-loader": "^7.3.0",
     "postcss": "^8.3.6",
+    "prettier": "^2.3.2",
+    "pretty-quick": "^3.1.1",
     "react-test-renderer": "^17.0.2",
     "rimraf": "^3.0.2",
     "rollup": "^2.56.3",
+    "rollup-plugin-less": "^1.1.3",
     "rollup-plugin-postcss": "^4.0.1",
     "rollup-plugin-typescript2": "^0.30.0",
     "sass": "^1.39.0",
@@ -72,8 +75,7 @@
     "style-loader": "^2.0.0",
     "ts-jest": "^27.0.5",
     "typescript": "^4.4.2",
-    "vite": "^2.5.4",
-    "husky": "^7.0.0"
+    "vite": "^2.5.4"
   },
   "scripts": {
     "build": "rollup -c rollup.config.js",
@@ -84,7 +86,15 @@
     "build:storybook": "build-storybook",
     "test": "jest",
     "extract": "formatjs extract \"src/**/*.ts*\" --out-file lang/en.resjson --format ./format.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "pretty": "pretty-quick --staged --pattern \"**/*.*(ts|tsx)\""
+  },
+  "prettier": {
+    "jsxBracketSameLine": true,
+    "printWidth": 140,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5"
   },
   "files": [
     "dist"
