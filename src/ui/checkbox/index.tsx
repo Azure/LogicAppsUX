@@ -33,7 +33,7 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
     <FormattedMessage
       id="checkbox_more_info_message"
       description="More Info Tooltip title for a checkbox"
-      defaultMessage="More Info Too"
+      defaultMessage="More Info"
     />
   );
   constructor(props: CheckboxProps) {
