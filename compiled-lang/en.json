@@ -1,10 +1,4 @@
 {
-  "checkbox_more_info_message": [
-    {
-      "type": 0,
-      "value": "More Info"
-    }
-  ],
   "ui_announced_matches_loading": [
     {
       "type": 0,
@@ -53,6 +47,12 @@
     {
       "type": 0,
       "value": " matched."
+    }
+  ],
+  "ui_checkbox_moreinfo": [
+    {
+      "type": 0,
+      "value": "More Info"
     }
   ],
   "ui_toggle_hide_advanced_fields": [
