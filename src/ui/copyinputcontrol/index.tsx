@@ -22,12 +22,12 @@ export class InnerClassCopyInput extends React.Component<CopyInputControlProps &
   private _copyInputContainer = React.createRef<HTMLDivElement>();
 
   render(): JSX.Element {
-    const { ariaLabelledBy, placeholderText, text } = this.props;
+    const { ariaLabelledBy, placeholderText, text, intl } = this.props;
     const disabled = this._isDisabled();
 
-    const DISPLAY_TEXT_COPY_URL = this.props.intl.formatMessage({
-     // id: 'UI_COPYINPUTCONTROL_DISPLAY_TEXT_COPY_URL',
+    const DISPLAY_TEXT_COPY_URL = intl.formatMessage({
       defaultMessage: 'Copy URL',
+      id: 'P8QaSQ',
     });
 
     return (

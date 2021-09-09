@@ -80,11 +80,10 @@ export class InnerControlTitle extends BaseComponent<TitleProps & WrappedCompone
   }
 
   render(): JSX.Element {
-    const { className, isEditingTitle } = this.props;
+    const { className, isEditingTitle, intl } = this.props;
 
-    const editingCardTitle = this.props.intl.formatMessage({
-     // id: 'ui_title_editingCardTitle',
-      defaultMessage: 'Editing card title',
+    const editingCardTitle = intl.formatMessage({
+      defaultMessage: 'Editing card title', id: '20FJMM',
     });
     if (isEditingTitle) {
       return (
