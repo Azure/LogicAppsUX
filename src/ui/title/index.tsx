@@ -9,22 +9,22 @@ import { getDragStartHandlerWhenDisabled } from '../helper';
 import { isNullOrUndefined } from '../../common/utilities/Utils';
 import { injectIntl, WrappedComponentProps } from 'react-intl';
 
-export interface TitleProps extends BaseComponentProps  {
+export interface TitleProps extends BaseComponentProps {
   className?: string;
   expanded?: boolean;
   isEditingTitle?: boolean;
   tag?: string;
   text?: string;
-  onClick?: EventHandler<Event<TitleInner>>;
+  onClick?: EventHandler<Event<InnerControlTitle>>;
   onCommit?: EventHandler<TitleChangeEvent>;
-  onDiscard?: EventHandler<Event<TitleInner>>;
+  onDiscard?: EventHandler<Event<InnerControlTitle>>;
 }
 
 export interface TitleState {
   text: string;
 }
 
-export interface TitleChangeEvent extends Event<TitleInner> {
+export interface TitleChangeEvent extends Event<InnerControlTitle> {
   text: string;
 }
 
@@ -43,7 +43,7 @@ const transparentTextFieldStyles: Partial<ITextFieldStyles> = {
   },
 };
 
-export class TitleInner extends BaseComponent<TitleProps & WrappedComponentProps<"intl">, TitleState> {
+export class InnerControlTitle extends BaseComponent<TitleProps & WrappedComponentProps<'intl'>, TitleState> {
   static defaultProps: Partial<TitleProps> = {
     expanded: false,
     isEditingTitle: false,
@@ -52,7 +52,7 @@ export class TitleInner extends BaseComponent<TitleProps & WrappedComponentProps
   private _editingTitleInputRef: ITextField | undefined | null;
   private _titleLinkRef = React.createRef<HTMLAnchorElement>();
 
-  constructor(props: TitleProps & WrappedComponentProps<"intl">) {
+  constructor(props: TitleProps & WrappedComponentProps<'intl'>) {
     super(props);
 
     this.state = {
@@ -61,7 +61,7 @@ export class TitleInner extends BaseComponent<TitleProps & WrappedComponentProps
   }
 
   // TODO(joechung): Replace with componentDidUpdate and-or getDerivedStateFromProps.
-  componentWillReceiveProps(nextProps: TitleProps): void {
+  UNSAFE_componentWillReceiveProps(nextProps: TitleProps): void {
     if (this.state.text !== nextProps.text) {
       this.setState({ text: nextProps.text ?? '' });
     }
@@ -82,12 +82,16 @@ export class TitleInner extends BaseComponent<TitleProps & WrappedComponentProps
   render(): JSX.Element {
     const { className, isEditingTitle } = this.props;
 
+    const editingCardTitle = this.props.intl.formatMessage({
+      id: 'ui_title_editingCardTitle',
+      defaultMessage: 'Editing card title',
+    });
     if (isEditingTitle) {
       return (
         <TextField
           componentRef={(textField) => (this._editingTitleInputRef = textField)}
           className={`${className}-edit`}
-          ariaLabel={'CHANGEME'}
+          ariaLabel={editingCardTitle}
           draggable={false}
           styles={transparentTextFieldStyles}
           type="text"
@@ -108,7 +112,6 @@ export class TitleInner extends BaseComponent<TitleProps & WrappedComponentProps
           aria-expanded={this.props.expanded}
           className={`${className}-view`}
           tabIndex={-1}
-          href="javascript:void(0)"
           draggable={false}
           role="button"
           onClick={this._onClick}
@@ -219,4 +222,4 @@ export class TitleInner extends BaseComponent<TitleProps & WrappedComponentProps
   }
 }
 
-export const Title = injectIntl<'intl', TitleProps & WrappedComponentProps<"intl">>(TitleInner);
+export const Title = injectIntl<'intl', TitleProps & WrappedComponentProps<'intl'>>(InnerControlTitle);

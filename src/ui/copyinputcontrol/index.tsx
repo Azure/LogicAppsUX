@@ -17,7 +17,7 @@ const iconProps: IIconProps = {
   iconName: 'Copy',
 };
 
-class CopyInputControlInner extends React.Component<CopyInputControlProps & WrappedComponentProps<'intl'>> {
+export class InnerClassCopyInput extends React.Component<CopyInputControlProps & WrappedComponentProps<'intl'>> {
   private _buttonRef = React.createRef<IButton>();
   private _textFieldRef = React.createRef<ITextField>();
   private _copyInputContainer = React.createRef<HTMLDivElement>();
@@ -26,7 +26,11 @@ class CopyInputControlInner extends React.Component<CopyInputControlProps & Wrap
     const { ariaLabelledBy, placeholderText, text } = this.props;
     const disabled = this._isDisabled();
 
-    
+    const DISPLAY_TEXT_COPY_URL = this.props.intl.formatMessage({
+      id: 'UI_COPYINPUTCONTROL_DISPLAY_TEXT_COPY_URL',
+      defaultMessage: 'Copy URL',
+    });
+
     return (
       <div className="msla-copy-input-control" ref={this._copyInputContainer}>
         <TextField
@@ -37,11 +41,9 @@ class CopyInputControlInner extends React.Component<CopyInputControlProps & Wrap
           readOnly
           value={text}
         />
-        <TooltipHost
-          calloutProps={{ target: findDOMNode(this._buttonRef.current as unknown as React.ReactInstance) as Element }}
-          content={'CHANGE ME'}>
+        <TooltipHost content={DISPLAY_TEXT_COPY_URL}>
           <IconButton
-            ariaLabel={'CHANGE ME'}
+            ariaLabel={DISPLAY_TEXT_COPY_URL}
             componentRef={this._buttonRef}
             disabled={disabled}
             iconProps={iconProps}
@@ -87,4 +89,4 @@ class CopyInputControlInner extends React.Component<CopyInputControlProps & Wrap
   };
 }
 
-export const CopyInputControl = injectIntl<'intl', CopyInputControlProps & WrappedComponentProps<'intl'>>(CopyInputControlInner);
+export const CopyInputControl = injectIntl<'intl', CopyInputControlProps & WrappedComponentProps<'intl'>>(InnerClassCopyInput);

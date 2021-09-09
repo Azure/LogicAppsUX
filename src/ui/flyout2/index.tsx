@@ -10,7 +10,7 @@ import { getDragStartHandlerWhenDisabled } from '../helper';
 import { DocLinkClickedEventHandler, DocumentationLinkItem } from '../recommendation';
 import '../flyout/flyout.less';
 
-export interface FlyoutProps extends BaseComponentProps {
+export interface Flyout2Props extends BaseComponentProps {
   ariaLabel?: string;
   docLink?: Swagger.ExternalDocumentation;
   flyoutExpanded: boolean;
@@ -39,7 +39,7 @@ interface FlyoutBalloonProps extends BaseComponentProps {
 
 const onDragStartWhenDisabled = getDragStartHandlerWhenDisabled();
 
-export class Flyout extends BaseComponent<FlyoutProps, {}> {
+export class Flyout2 extends BaseComponent<Flyout2Props, {}> {
   private _icon: HTMLElement | undefined | null;
 
   render() {

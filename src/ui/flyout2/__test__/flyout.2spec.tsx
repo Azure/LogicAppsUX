@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
-import { Flyout, FlyoutProps } from '..';
+import { Flyout2, Flyout2Props } from '..';
 
 describe('ui/flyout2', () => {
-  const minimal: FlyoutProps = {
+  const minimal: Flyout2Props = {
     flyoutExpanded: false,
     flyoutKey: 'flyout-key',
     text: 'text',
@@ -22,7 +22,7 @@ describe('ui/flyout2', () => {
   });
 
   it('should render', () => {
-    renderer.render(<Flyout {...minimal} />);
+    renderer.render(<Flyout2 {...minimal} />);
 
     const flyout = renderer.getRenderOutput();
     expect(flyout).toBeDefined();
@@ -30,8 +30,8 @@ describe('ui/flyout2', () => {
 
   it("should fire an onClick event when the flyout's info button is clicked", () => {
     const onClick = jest.fn();
-    const props: FlyoutProps = { ...minimal, onClick };
-    renderer.render(<Flyout {...props} />);
+    const props: Flyout2Props = { ...minimal, onClick };
+    renderer.render(<Flyout2 {...props} />);
 
     const flyout = renderer.getRenderOutput();
     const preventDefault = jest.fn();
