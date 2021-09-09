@@ -54,5 +54,17 @@
       "type": 0,
       "value": " matched."
     }
+  ],
+  "ui_toggle_hide_advanced_fields": [
+    {
+      "type": 0,
+      "value": "Hide advanced options"
+    }
+  ],
+  "ui_toggle_show_advanced_fields": [
+    {
+      "type": 0,
+      "value": "Show advanced options"
+    }
   ]
 }

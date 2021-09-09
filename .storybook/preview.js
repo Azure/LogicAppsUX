@@ -1,6 +1,7 @@
 import React from 'react';
 import { initializeIcons, ThemeProvider } from '@fluentui/react';
 import { AzureThemeLight } from '../azure-themes';
+import { IntlProvider } from 'react-intl';
 const theme = AzureThemeLight;
 
 export const parameters = {
@@ -16,7 +17,9 @@ initializeIcons();
 export const decorators = [
   (Story) => (
     <ThemeProvider theme={theme}>
-      <Story />
+      <IntlProvider locale="en">
+        <Story />
+      </IntlProvider>
     </ThemeProvider>
   ),
 ];

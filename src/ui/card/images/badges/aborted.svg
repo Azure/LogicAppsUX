@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="16px" height="16px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#0071CC;}
+	.st1{fill:#0A4473;}
+	.st2{fill:#BE000F;}
+	.st3{fill:#66000C;}
+	.st4{fill:#FFFFFF;stroke:#CECECE;stroke-miterlimit:10;}
+	.st5{fill:#FFFFFF;}
+	.st6{fill:#036CC8;}
+	.st7{fill:#EE3601;}
+	.st8{fill:#BA131A;}
+	.st9{fill:#8F9090;}
+	.st10{fill:#FF8B00;}
+	.st11{fill:#009F02;}
+	.st12{fill-rule:evenodd;clip-rule:evenodd;}
+	.st13{fill:#8B8D90;}
+	.st14{fill:#3B3B3B;}
+	.st15{fill:#A31F00;}
+	.st16{fill:#00A605;}
+	.st17{fill:#0D5A0F;}
+	.st18{fill:#AA5B04;}
+	.st19{fill:none;stroke:#FFFFFF;stroke-width:1.5;stroke-miterlimit:10;}
+</style>
+<circle class="st7" cx="8" cy="8" r="7.5"/>
+<path class="st15" d="M8,0c4.411,0,8,3.589,8,8s-3.589,8-8,8s-8-3.589-8-8S3.589,0,8,0z M8,15c3.86,0,7-3.141,7-7s-3.14-7-7-7
+	S1,4.141,1,8S4.14,15,8,15z"/>
+<rect x="5" y="5" transform="matrix(5.214477e-11 1 -1 5.214477e-11 15.9999 4.249478e-06)" class="st5" width="6" height="6"/>
+</svg>
