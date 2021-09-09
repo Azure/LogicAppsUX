@@ -1,9 +1,9 @@
 {
-  "UI_COPYINPUTCONTROL_DISPLAY_TEXT_COPY_URL": "Copy URL",
-  "ui_announced_matches_loading": "Loading...",
-  "ui_announced_matches_text": "{count, plural, one {# item} =0 {no items} other {# items}} matched.",
-  "ui_checkbox_moreinfo": "More Info",
-  "ui_title_editingCardTitle": "Editing card title",
-  "ui_toggle_hide_advanced_fields": "Hide advanced options",
-  "ui_toggle_show_advanced_fields": "Show advanced options"
+  "20FJMM": "Editing card title",
+  "Asi2Jg": "Hide advanced options",
+  "P8QaSQ": "Copy URL",
+  "gjBiyj": "Loading...",
+  "kLM88C": "{count, plural, one {# item} =0 {no items} other {# items}} matched.",
+  "lIEejV": "Show advanced options",
+  "vWe94i": "More Info"
 }

@@ -39,7 +39,7 @@ interface FlyoutBalloonProps extends BaseComponentProps {
 
 const onDragStartWhenDisabled = getDragStartHandlerWhenDisabled();
 
-export class Flyout2 extends BaseComponent<Flyout2Props, {}> {
+export class Flyout2 extends BaseComponent<Flyout2Props> {
   private _icon: HTMLElement | undefined | null;
 
   render() {
@@ -64,6 +64,7 @@ export class Flyout2 extends BaseComponent<Flyout2Props, {}> {
         />
         <FlyoutBalloon
           flyoutExpanded={flyoutExpanded}
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           target={this._icon!}
           text={text}
           trackEvent={trackEvent}
@@ -101,7 +102,7 @@ export class Flyout2 extends BaseComponent<Flyout2Props, {}> {
   private _handleClickOrEnterKeyPress(e: React.KeyboardEvent<HTMLButtonElement> | React.MouseEvent<HTMLButtonElement>): void {
     e.preventDefault();
     e.stopPropagation();
-    this.handleClickEvent(e);
+    this.handleClickEvent();
     const { onClick } = this.props;
     if (onClick) {
       const { flyoutExpanded, flyoutKey } = this.props;

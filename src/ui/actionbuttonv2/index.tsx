@@ -55,6 +55,7 @@ export function ActionButtonV2({ buttonRef, className, disabled = false, title, 
 
     // NOTE(sopai): Use focus events instead of element target to work around a possible multi-instance Fabric Callout bug.
     const focusTarget = e.target;
+    // eslint-disable-next-line react/no-find-dom-node
     const element = findDOMNode(buttonRef?.current as unknown as React.ReactInstance) as Element;
     const tooltipTarget = !focusTarget ? element : focusTarget;
     setTarget(tooltipTarget);
@@ -65,6 +66,7 @@ export function ActionButtonV2({ buttonRef, className, disabled = false, title, 
 
     // NOTE(sopai): Use mouse events instead of element target to work around a possible multi-instance Fabric Callout bug.
     const mouseEvent = e.nativeEvent;
+    // eslint-disable-next-line react/no-find-dom-node
     const element = findDOMNode(buttonRef?.current as unknown as React.ReactInstance) as Element;
     const tooltipTarget = !mouseEvent ? element : mouseEvent;
     setTarget(tooltipTarget);

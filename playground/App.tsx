@@ -9,7 +9,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <IntlProvider locale="en">
-        <AnnouncedMatches isLoading={true} count={0} visible={true} />
+        <Checkbox descriptionText="Hello World" text="Hello World" />
       </IntlProvider>
     </ThemeProvider>
   );

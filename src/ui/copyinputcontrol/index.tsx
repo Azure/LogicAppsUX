@@ -2,7 +2,6 @@ import { IButton, IconButton } from '@fluentui/react/lib/Button';
 import { ITextField, TextField } from '@fluentui/react/lib/TextField';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import * as React from 'react';
-import { findDOMNode } from 'react-dom';
 import { injectIntl, WrappedComponentProps } from 'react-intl';
 type IIconProps = import('@fluentui/react/lib/Icon').IIconProps;
 
@@ -27,7 +26,7 @@ export class InnerClassCopyInput extends React.Component<CopyInputControlProps &
     const disabled = this._isDisabled();
 
     const DISPLAY_TEXT_COPY_URL = this.props.intl.formatMessage({
-      id: 'UI_COPYINPUTCONTROL_DISPLAY_TEXT_COPY_URL',
+     // id: 'UI_COPYINPUTCONTROL_DISPLAY_TEXT_COPY_URL',
       defaultMessage: 'Copy URL',
     });
 

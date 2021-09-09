@@ -1,5 +1,5 @@
 type Primitive = number | boolean | string;
-type NonPrimitive = object;
+type NonPrimitive = Record<string, unknown>;
 
 /**
  * Aggregates an array of arrays of type T into a single array of type T.
@@ -156,7 +156,7 @@ export function first<T>(conditionFunction: (x: T) => boolean, array: T[]): T | 
 export function removeKeys<T>(object: Record<string, T>, keys: string[]): boolean {
   return (
     (keys ? keys : [])
-      .filter((key) => object.hasOwnProperty(key))
+      .filter((key) => Object.prototype.hasOwnProperty.call(object, key))
       .map((key) => delete object[key])
       .filter((isSuccessful) => isSuccessful).length > 0
   );
@@ -197,7 +197,7 @@ export function exclude(array: string[], itemsToExclude: string[]): void {
  * @arg [boolean] caseInsensitive - Whether to use a case insensitive comparison on property names.
  * @return {any} - The value of the property, if found. Otherwise, undefined.
  */
-export function getPropertyValue(object: Object | null | undefined, propertyName: string, caseInsensitive = true): any {
+export function getPropertyValue(object: Record<string, unknown> | null | undefined, propertyName: string, caseInsensitive = true): any {
   // tslint:disable-line: no-any
   object = object || {};
 
@@ -232,7 +232,7 @@ export function getPropertyValue(object: Object | null | undefined, propertyName
  * @arg [boolean] caseInsensitive - Whether to use a case insensitive comparison on property names.
  * @return {any} - The value of the property, if found. Otherwise, undefined.
  */
-export function getObjectPropertyValue(object: Object, properties: string[], caseInsensitive = true): any {
+export function getObjectPropertyValue(object: Record<string, unknown>, properties: string[], caseInsensitive = true): any {
   // tslint:disable-line: no-any
   let value = object || {};
 
@@ -259,7 +259,7 @@ export function getObjectPropertyValue(object: Object, properties: string[], cas
  * @arg {any} value
  * @return {void}
  */
-export function setObjectPropertyValue(object: Object, properties: string[], value: any): void {
+export function setObjectPropertyValue(object: Record<string, unknown>, properties: string[], value: any): void {
   // tslint:disable-line: no-any
   if (!properties.length || !object) {
     return;
@@ -338,7 +338,7 @@ export function safeSetObjectPropertyValue(
  * @arg {string[]} properties - The ordered array of property according to its path in object.
  * @return {void}
  */
-export function deleteObjectProperty(object: Object, properties: string[]): void {
+export function deleteObjectProperty(object: Record<string, unknown>, properties: string[]): void {
   if (!properties.length || !object) {
     return;
   }
@@ -383,7 +383,7 @@ export function deleteObjectProperty(object: Object, properties: string[]): void
  * @arg {string[][]}  properties- The list of the ordered array of property according to its path in object.
  * @return {void}
  */
-export function deleteObjectProperties(object: Object, properties: string[][]): void {
+export function deleteObjectProperties(object: Record<string, unknown>, properties: string[][]): void {
   if (!properties.length || !object) {
     return;
   }
@@ -399,7 +399,7 @@ export function deleteObjectProperties(object: Object, properties: string[][]): 
  * @arg {string} property - The property to search for.
  * @return {boolean} - True if the object has the property.
  */
-export function hasProperty(object: Object, property: string): boolean {
+export function hasProperty(object: Record<string, unknown>, property: string): boolean {
   return typeof object === 'object' && Object.keys(object).some((key) => equals(key, property));
 }
 
@@ -492,7 +492,10 @@ export function isValidIcon(icon: string): boolean {
  * @arg {string | null | undefined} keyName - The name of the property with the key identifying the item.
  * @return {Record<string, T>} - An object mapping string keys to elements of type T.
  */
-export function map<T extends object>(array: T[] | null | undefined, keyName: string | null | undefined): Record<string, T> {
+export function map<T extends Record<string, unknown>>(
+  array: T[] | null | undefined,
+  keyName: string | null | undefined
+): Record<string, T> {
   if (!keyName) {
     throw new Error('key required');
   }
@@ -500,7 +503,7 @@ export function map<T extends object>(array: T[] | null | undefined, keyName: st
   array = array || [];
 
   const object: Record<string, T> = {};
-  for (const value of array.filter((element) => element.hasOwnProperty(keyName))) {
+  for (const value of array.filter((element) => Object.prototype.hasOwnProperty.call(element, keyName))) {
     const key = (<any>value)[keyName]; // tslint:disable-line: no-any
     object[key] = value;
   }
@@ -586,7 +589,7 @@ export function uniqueArray(array: any[]): any[] {
   const result: any[] = [], // tslint:disable-line: no-any
     temp: any = {}; // tslint:disable-line: no-any
   for (let i = 0, l = array.length; i < l; ++i) {
-    if (!temp.hasOwnProperty(array[i])) {
+    if (!Object.prototype.hasOwnProperty.call(temp, array[i])) {
       result.push(array[i]);
       temp[array[i]] = 1;
     }
@@ -629,7 +632,7 @@ export function format(input: string, ...args: any[]): string {
     const namedArgs: any = args[0]; // tslint:disable-line: no-any
     retVal = input.replace(namedFormatSpecifierRegex, (match) => {
       const name = match.substring(1, match.length - 1);
-      if (namedArgs.hasOwnProperty(name)) {
+      if (Object.prototype.hasOwnProperty.call(namedArgs, name)) {
         matched = true;
         return namedArgs[name];
       } else {
@@ -662,13 +665,10 @@ export function generateUniqueName(prefix: string, list: string[], start = 2, al
   }
 
   let i = start;
-  while (true) {
-    if (!getPropertyValue(hashMap, uniqueName)) {
-      return uniqueName;
-    }
-
+  while (getPropertyValue(hashMap, uniqueName)) {
     uniqueName = `${prefix}_${i++}`;
   }
+  return uniqueName;
 }
 
 /**

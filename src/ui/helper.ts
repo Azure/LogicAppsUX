@@ -1,5 +1,3 @@
-import * as Immutable from 'immutable';
-
 /**
  * Returns an "onDragStart" event handler to use on Firefox when draggable is set to false.
  * @return {React.DragEventHandler<HTMLElement> | undefined}

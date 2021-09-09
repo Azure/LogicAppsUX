@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import reactRefresh from '@vitejs/plugin-react-refresh';
 import { resolve } from 'path';
+import eslintPlugin from 'vite-plugin-eslint';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,5 +10,10 @@ export default defineConfig({
       '@designer': resolve(__dirname, 'src'),
     },
   },
-  plugins: [reactRefresh()],
+  plugins: [
+    eslintPlugin({
+      fix: true,
+    }),
+    reactRefresh(),
+  ],
 });

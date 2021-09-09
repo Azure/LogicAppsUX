@@ -54,7 +54,7 @@ export class ActionButton extends BaseComponent<ActionButtonProps> {
   }
 
   private _handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-    this.handleClickEvent(e);
+    this.handleClickEvent();
     e.preventDefault();
 
     const { onClick } = this.props;

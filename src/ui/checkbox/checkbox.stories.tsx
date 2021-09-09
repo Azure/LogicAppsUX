@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { ComponentMeta, ComponentStory, Meta } from '@storybook/react';
+import { ComponentMeta, ComponentStory}from '@storybook/react';
 
 import { Checkbox, CheckboxProps } from './index';
 
@@ -19,5 +19,5 @@ Standard.args = {
   initChecked: false,
   descriptionText: 'Description Text',
   disabled: false,
-  id: 'test-id-checkbox',
+  //id: 'test-id-checkbox',
 };

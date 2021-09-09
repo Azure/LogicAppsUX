@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { ComponentMeta, ComponentStory, Meta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 
 import { Toggle, ToggleProps } from './index';
 

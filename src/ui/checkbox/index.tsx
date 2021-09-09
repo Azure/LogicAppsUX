@@ -4,7 +4,7 @@ import { Checkbox as FabricCheckbox, ICheckbox } from '@fluentui/react/lib/Check
 import { Icon } from '@fluentui/react/lib/Icon';
 import * as React from 'react';
 import { useState, useRef } from 'react';
-import { injectIntl, useIntl, WrappedComponentProps } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { calloutContentStyles, checkboxStyles } from '../fabric';
 import './checkbox.less';
 export interface CheckboxProps {
@@ -34,12 +34,6 @@ export const Checkbox = (props: CheckboxProps) => {
     setCheckboxDescriptionExpanded(false);
   };
 
-  const focus = () => {
-    if (checkboxRef.current) {
-      checkboxRef.current.focus();
-    }
-  };
-
   const handleChange: React.MouseEventHandler<HTMLInputElement> = () => {
     setChecked(!checked);
 
@@ -57,8 +51,8 @@ export const Checkbox = (props: CheckboxProps) => {
   const { ariaLabel, className, id, text, disabled } = props;
 
   const moreInfoMessage = intl.formatMessage({
-    id: 'ui_checkbox_moreinfo',
     defaultMessage: 'More Info',
+    id: 'vWe94i',
   });
   return (
     <div className={css(className, 'msla-checkbox')}>

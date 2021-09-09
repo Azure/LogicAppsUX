@@ -83,7 +83,7 @@ export class InnerControlTitle extends BaseComponent<TitleProps & WrappedCompone
     const { className, isEditingTitle } = this.props;
 
     const editingCardTitle = this.props.intl.formatMessage({
-      id: 'ui_title_editingCardTitle',
+     // id: 'ui_title_editingCardTitle',
       defaultMessage: 'Editing card title',
     });
     if (isEditingTitle) {
@@ -161,7 +161,7 @@ export class InnerControlTitle extends BaseComponent<TitleProps & WrappedCompone
   };
 
   private _onClick = (e: React.FormEvent<HTMLAnchorElement>): void => {
-    this.handleClickEvent(e);
+    this.handleClickEvent();
 
     const { onClick } = this.props;
     if (onClick) {
@@ -212,7 +212,8 @@ export class InnerControlTitle extends BaseComponent<TitleProps & WrappedCompone
   };
 
   private _ensureFocus(): void {
-    const textField = findDOMNode(this._editingTitleInputRef as any) as Element; // tslint:disable-line: no-any
+    // eslint-disable-next-line react/no-find-dom-node
+    const textField = findDOMNode(this._editingTitleInputRef as any) as Element;
     const textFieldElement = textField.querySelector('input, textarea');
     if (document.activeElement !== textFieldElement) {
       this._editingTitleInputRef?.setSelectionRange(0, this._editingTitleInputRef?.value?.length ?? 0);

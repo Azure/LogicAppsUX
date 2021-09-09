@@ -15,11 +15,14 @@ export const AnnouncedMatches = ({ count, isLoading = false, visible }: Announce
     return null;
   }
 
-  const loadingText = intl.formatMessage({ defaultMessage: 'Loading...', id: 'ui_announced_matches_loading' });
+  const loadingText = intl.formatMessage({
+    defaultMessage: 'Loading...',
+    id: 'gjBiyj',
+  });
   const matchesText = intl.formatMessage(
     {
       defaultMessage: '{count, plural, one {# item} =0 {no items} other {# items}} matched.',
-      id: 'ui_announced_matches_text',
+      id: 'kLM88C',
     },
     {
       count,

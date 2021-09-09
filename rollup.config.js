@@ -3,6 +3,8 @@ import pkg from './package.json';
 import { terser } from 'rollup-plugin-terser';
 import postcss from 'rollup-plugin-postcss';
 import svg from 'rollup-plugin-svg';
+import {transform} from '@formatjs/ts-transformer'
+
 export default {
   input: 'src/index.tsx', // our source file
   output: [
@@ -17,10 +19,18 @@ export default {
   ],
   external: [...Object.keys(pkg.dependencies || {})],
   plugins: [
-   
     typescript({
+      // eslint-disable-next-line no-undef
       typescript: require('typescript'),
       tsconfig: './tsconfig.lib.json',
+      transformers: () => ({
+        before: [
+          transform({
+            overrideIdFn: '[sha512:contenthash:base64:6]',
+            ast: true,
+          }),
+        ],
+      }),
     }),
     svg(),
     postcss({

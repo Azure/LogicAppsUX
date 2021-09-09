@@ -9,9 +9,7 @@ export interface SimpleCalloutProps {
   target: HTMLElement;
   text: string;
   title: string;
-  /* tslint:disable: no-any */
   onDismiss?(e: any): void;
-  /* tslint:enable: no-any */
 }
 
 export function SimpleCallout(props: SimpleCalloutProps) {

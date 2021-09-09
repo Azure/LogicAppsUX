@@ -33,11 +33,11 @@ export class Toggle extends BaseComponent<ToggleProps> {
     collapseIcon: {
       iconName: 'ChevronUp',
     },
-    collapseText: <FormattedMessage id="ui_toggle_hide_advanced_fields" defaultMessage="Hide advanced options" />,
+    collapseText: <FormattedMessage id="Asi2Jg" defaultMessage="Hide advanced options" />,
     expandIcon: {
       iconName: 'ChevronDown',
     },
-    expandText: <FormattedMessage id="ui_toggle_show_advanced_fields" defaultMessage="Show advanced options" />,
+    expandText: <FormattedMessage id="lIEejV" defaultMessage="Show advanced options" />,
     iconProps: {
       styles: {
         root: {
@@ -83,8 +83,8 @@ export class Toggle extends BaseComponent<ToggleProps> {
     };
   }
 
-  private _handleClick = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLDivElement>): void => {
-    this.handleClickEvent(e);
+  private _handleClick = (): void => {
+    this.handleClickEvent();
     const { onClick } = this.props;
     if (onClick) {
       onClick();

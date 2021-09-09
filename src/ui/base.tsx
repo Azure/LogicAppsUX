@@ -12,7 +12,7 @@ export interface BaseComponentProps {
   trackEvent(data: PageActionTelemetryData): void;
 }
 
-export abstract class BaseComponent<P extends BaseComponentProps, S = {}> extends React.Component<P, S> {
+export abstract class BaseComponent<P extends BaseComponentProps, S = Record<string, unknown>> extends React.Component<P, S> {
   /**
    * @prop {string} telemetryIdentifier - A string with the identifier to include in the telemetry event.
    */
@@ -34,19 +34,19 @@ export abstract class BaseComponent<P extends BaseComponentProps, S = {}> extend
     return [UserAction.click];
   }
 
-  protected handleClickEvent(_event?: React.SyntheticEvent<HTMLElement>): void {
+  protected handleClickEvent(): void {
     this.trackAction(UserAction.click, this.telemetryIdentifier);
   }
 
-  protected handleDragEvent(_event?: React.DragEvent<HTMLElement>): void {
+  protected handleDragEvent(): void {
     this.trackAction(UserAction.drag, this.telemetryIdentifier);
   }
 
-  protected handleDropEvent(_event?: React.DragEvent<HTMLElement>): void {
+  protected handleDropEvent(): void {
     this.trackAction(UserAction.drop, this.telemetryIdentifier);
   }
 
-  protected handleFocusEvent(_event?: React.FocusEvent<HTMLElement>): void {
+  protected handleFocusEvent(): void {
     this.trackAction(UserAction.focus, this.telemetryIdentifier);
   }
 
