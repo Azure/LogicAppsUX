@@ -13,11 +13,31 @@ export const parameters = {
     },
   },
 };
+const messages = {
+  en: require('../compiled-lang/en.json'),
+  'en-xa': require('../compiled-lang/en-xa.json'),
+};
+
+export const globalTypes = {
+  locale: {
+    name: 'Locale',
+    description: 'Internationalization locale',
+    defaultValue: 'en',
+    toolbar: {
+      icon: 'globe',
+      items: [
+        { value: 'en', right: 'EN-US', title: 'English' },
+        { value: 'en-xa', right: 'EN-XA', title: 'Pseudo English' },
+      ],
+    },
+  },
+};
+
 initializeIcons();
 export const decorators = [
-  (Story) => (
+  (Story, context) => (
     <ThemeProvider theme={theme}>
-      <IntlProvider locale="en">
+      <IntlProvider locale={context.globals.locale} messages={messages[context.globals.locale]}>
         <Story />
       </IntlProvider>
     </ThemeProvider>
