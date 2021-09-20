@@ -13,6 +13,11 @@ steps:
      inputs:
        locProj: 'Localize/LocProject.json'
        outDir: '$(Build.ArtifactStagingDirectory)'
+       repoType: gitHub
+       isEnablePseudoLanguagesSelected: true
+       isCreatePrSelected: true
+       gitHubPatVariable: $(GithubPAT)
+       gitHubPrMergeMethod: squash
        packageSourceAuth: 'patAuth'
        patVariable: $(OneLocBuildPAT)
 
