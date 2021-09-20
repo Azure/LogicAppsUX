@@ -1,0 +1,22 @@
+
+# Run localisation
+
+trigger: none
+
+pr: none
+
+pool:
+  vmImage: "windows-latest"
+
+steps:
+   - task: OneLocBuild@2
+     inputs:
+       locProj: 'server/LocProject.json'
+       outDir: '$(Build.ArtifactStagingDirectory)'
+       packageSourceAuth: 'patAuth'
+       patVariable: $(OneLocBuildPAT)
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: loc'
+      inputs:
+        ArtifactName: loc

@@ -100,8 +100,8 @@
     "compile:loc:psuedo": "formatjs compile \"lang/en.json\" --ast --format ./format.js --out-file \"compiled-lang/en-xa.json\" --pseudo-locale en-XA",
     "prepare": "husky install",
     "pretty": "pretty-quick --staged --pattern \"**/*.(ts|tsx)\"",
-    "lint":"eslint src/**",
-    "lint:fix":"eslint src/** --fix"
+    "lint": "eslint src/**",
+    "lint:fix": "eslint src/** --fix"
   },
   "prettier": {
     "jsxBracketSameLine": true,
