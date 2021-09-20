@@ -11,7 +11,7 @@ pool:
 steps:
    - task: OneLocBuild@2
      inputs:
-       locProj: 'server/LocProject.json'
+       locProj: 'Localize/LocProject.json'
        outDir: '$(Build.ArtifactStagingDirectory)'
        packageSourceAuth: 'patAuth'
        patVariable: $(OneLocBuildPAT)
