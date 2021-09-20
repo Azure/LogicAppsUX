@@ -16,7 +16,7 @@ steps:
        packageSourceAuth: 'patAuth'
        patVariable: $(OneLocBuildPAT)
 
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact: loc'
-      inputs:
-        ArtifactName: loc
+   - task: PublishBuildArtifacts@1
+     displayName: 'Publish Artifact: loc'
+     inputs:
+       ArtifactName: loc
