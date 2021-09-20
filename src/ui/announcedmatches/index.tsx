@@ -21,8 +21,8 @@ export const AnnouncedMatches = ({ count, isLoading = false, visible }: Announce
   });
   const matchesText = intl.formatMessage(
     {
-      defaultMessage: '{count, plural, one {# item} =0 {no items} other {# items}} matched.',
-      id: 'kLM88C',
+      defaultMessage: '{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}',
+      id: 'Gx6rDL',
     },
     {
       count,
