@@ -1,9 +1,8 @@
 
 # Run localisation
 
-trigger: none
-
-pr: none
+trigger:
+- main
 
 pool:
   vmImage: 'vs2017-win2016'
@@ -20,20 +19,6 @@ steps:
        gitHubPrMergeMethod: squash
        packageSourceAuth: 'patAuth'
        patVariable: $(OneLocBuildPAT)
-
-       steps:
-- task: cesve.one-loc-build.one-loc-build.OneLocBuild@2
-  displayName: 'Localization Build: Localize/LocProject.json'
-  inputs:
-    isEnablePseudoLanguagesSelected: false
-    isCreatePrSelected: true
-    repoType: gitHub
-    gitHubPatVariable: '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 '
-    gitHubPrMergeMethod: squash
-    packageSourceAuth: patAuth
-    patVariable: 7w3jp6u64yzr3mwgrzpzehk3zqum2coc6n3u54ekfpugiuxcnegq
-
-
 
    - task: PublishBuildArtifacts@1
      displayName: 'Publish Artifact: loc'
