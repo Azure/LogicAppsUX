@@ -6,10 +6,12 @@ trigger: none
 pr: none
 
 pool:
-  vmImage: "windows-latest"
+  vmImage: 'vs2017-win2016'
 
 steps:
    - task: OneLocBuild@2
+     env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
      inputs:
        locProj: 'Localize/LocProject.json'
        outDir: '$(Build.ArtifactStagingDirectory)'
