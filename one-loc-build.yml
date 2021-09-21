@@ -1,26 +1,30 @@
-
 # Run localisation
 
-# trigger:
-# - main
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - lang/en.json
 
 pool:
   vmImage: 'vs2017-win2016'
 
 steps:
-   - task: OneLocBuild@2
-     inputs:
-       locProj: 'Localize/LocProject.json'
-       outDir: '$(Build.ArtifactStagingDirectory)'
-       repoType: gitHub
-       isEnablePseudoLanguagesSelected: false
-       isCreatePrSelected: true
-       gitHubPatVariable: $(GithubPAT)
-       gitHubPrMergeMethod: squash
-       packageSourceAuth: 'patAuth'
-       patVariable: $(OneLocBuildPAT)
+  - task: OneLocBuild@2
+    inputs:
+      locProj: 'Localize/LocProject.json'
+      outDir: '$(Build.ArtifactStagingDirectory)'
+      repoType: gitHub
+      isEnablePseudoLanguagesSelected: false
+      isCreatePrSelected: true
+      gitHubPatVariable: $(GithubPAT)
+      gitHubPrMergeMethod: squash
+      packageSourceAuth: 'patAuth'
+      patVariable: $(OneLocBuildPAT)
 
-   - task: PublishBuildArtifacts@1
-     displayName: 'Publish Artifact: loc'
-     inputs:
-       ArtifactName: loc
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: loc'
+    inputs:
+      ArtifactName: loc
