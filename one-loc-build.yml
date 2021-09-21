@@ -6,7 +6,7 @@ trigger:
       - main
   paths:
     include:
-      - lang/en.json
+      - lang/strings.json
       - Localize/LocProject.json
 
 pool:
