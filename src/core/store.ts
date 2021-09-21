@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './state/counterSlice';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { AnyObject } from 'immer/dist/internal';
+import workflowReducer from './state/workflowSlice';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    workflow: workflowReducer,
   },
 });
 

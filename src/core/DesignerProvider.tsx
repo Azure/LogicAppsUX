@@ -5,12 +5,14 @@ import { AzureThemeLight } from '../../azure-themes';
 import { store } from './store';
 import { Provider } from 'react-redux';
 import defaultMessages from '../../compiled-lang/strings.json';
+import { ProviderWrappedContext } from './ProviderWrappedContext';
+
 export interface DesignerProviderProps {
   theme?: Theme;
   locale?: string;
   children: React.ReactNode;
 }
- 
+
 const loadLocaleData = async (locale: string) => {
   switch (locale.split('-')[0].toLowerCase()) {
     case 'fr':
@@ -61,12 +63,14 @@ export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', child
     });
   }, [locale]);
   return (
-    <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <IntlProvider locale={locale} defaultLocale="en" messages={messages ?? defaultMessages}>
-          {children}
-        </IntlProvider>
-      </Provider>
-    </ThemeProvider>
+    <ProviderWrappedContext.Provider value={true}>
+      <ThemeProvider theme={theme}>
+        <Provider store={store}>
+          <IntlProvider locale={locale} defaultLocale="en" messages={messages ?? defaultMessages}>
+            {children}
+          </IntlProvider>
+        </Provider>
+      </ThemeProvider>
+    </ProviderWrappedContext.Provider>
   );
 };

@@ -1,11 +1,13 @@
 import React from 'react';
-import { Checkbox } from '@designer/ui/checkbox';
 import { DesignerProvider } from '@designer/core/DesignerProvider';
+import { BJSWorkflowProvider } from '@designer/core';
 
 function App() {
   return (
     <DesignerProvider locale="en">
-      <Checkbox descriptionText="Hello World" text="Hello World!" />
+      <BJSWorkflowProvider workflow={{} as any}>
+        <div>Hello World</div>
+      </BJSWorkflowProvider>
     </DesignerProvider>
   );
 }
