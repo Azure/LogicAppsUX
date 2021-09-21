@@ -4,7 +4,7 @@
       "LanguageSet": "Azure_Languages",
       "LocItems": [
         {
-          "SourceFile": "lang\\en.json",
+          "SourceFile": "lang\\strings.json",
           "CopyOption": "LangIDOnName",
           "OutputPath": "lang\\"
         }
