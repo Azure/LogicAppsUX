@@ -52,8 +52,8 @@ const getLayoutedElements = (elements: any, nodes: Node<any>[], direction = 'TB'
       // to notify react flow about the change. Moreover we are shifting the dagre node position
       // (anchor=center center) to the top left so it matches the react flow node anchor point (top left).
       el.position = {
-        x: nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
-        y: nodeWithPosition.y - nodeHeight / 2,
+        x: nodeWithPosition.x,
+        y: nodeWithPosition.y,
       };
     }
 
@@ -95,23 +95,7 @@ const Flow = () => {
         maxZoom={5000}
         nodesDraggable={false}
         onElementsRemove={onElementsRemove}
-        connectionLineType={ConnectionLineType.Bezier}>
-        {/* <MiniMap
-          nodeColor={(node: any) => {
-            switch (node.type) {
-              case 'input':
-                return 'red';
-              case 'default':
-                return '#00ff00';
-              case 'output':
-                return 'rgb(0,0,255)';
-              default:
-                return '#eee';
-            }
-          }}
-          nodeStrokeWidth={3}
-        /> */}
-      </ReactFlow>
+        connectionLineType={ConnectionLineType.Bezier}></ReactFlow>
       <div className="controls">
         <button onClick={() => setDirection('TB')}>vertical layout</button>
         <button onClick={() => setDirection('LR')}>horizontal layout</button>
