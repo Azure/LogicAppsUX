@@ -1,12 +1,12 @@
 {
   "Projects": [
     {
+      "LanguageSet": "Azure_Languages",
       "LocItems": [
         {
           "SourceFile": "lang\\en.json",
           "CopyOption": "LangIDOnName",
-          "OutputPath": "lang\\",
-          "Languages": "cs-CZ;de-DE;es-ES;fr-FR;hu-HU;id-ID;it-IT;ja-JP;ko-KR;nl-NL;pl-PL;pt-BR;pt-PT;ru-RU;sv-SE;tr-TR;zh-CN;zh-TW"
+          "OutputPath": "lang\\"
         }
       ],
       "LssFiles": [
