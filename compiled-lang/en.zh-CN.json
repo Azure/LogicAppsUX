@@ -23,17 +23,6 @@
             }
           ]
         },
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " item matched."
-            }
-          ]
-        },
         "other": {
           "value": [
             {
