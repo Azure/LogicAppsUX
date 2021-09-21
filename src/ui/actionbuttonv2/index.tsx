@@ -10,6 +10,7 @@ import Constants from '../constants';
 import { UserAction } from '../telemetry/models';
 import { Plus } from './images/plus';
 import './actionbuttonv2.less';
+import { useEffect } from 'react';
 
 export interface ActionButtonV2Props extends BaseComponentProps {
   buttonRef?: React.RefObject<HTMLButtonElement>;
@@ -85,7 +86,7 @@ export function ActionButtonV2({ buttonRef, className, disabled = false, title, 
   const tooltipRef = React.useRef<ITooltipHost>(null);
   const [target, setTarget] = React.useState<MouseEvent | Element | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     registerOnThemeChangeCallback(handleThemeChange);
     return () => {
       removeOnThemeChangeCallback(handleThemeChange);

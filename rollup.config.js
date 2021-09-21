@@ -4,16 +4,17 @@ import { terser } from 'rollup-plugin-terser';
 import postcss from 'rollup-plugin-postcss';
 import svg from 'rollup-plugin-svg';
 import {transform} from '@formatjs/ts-transformer'
+import json from '@rollup/plugin-json';
 
 export default {
   input: 'src/index.tsx', // our source file
   output: [
     {
-      file: pkg.main,
+      dir: 'dist/cjs',
       format: 'cjs',
     },
     {
-      file: pkg.module,
+      dir: 'dist',
       format: 'es', // the preferred format
     },
   ],
@@ -33,9 +34,9 @@ export default {
       }),
     }),
     svg(),
+    json(),
     postcss({
       plugins: [],
     }),
-    terser(), // minifies generated bundles
   ],
 };
