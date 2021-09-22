@@ -1,4 +1,4 @@
-name: Lint source code
+name: Compile Localization Files
 on:
   push:
     branches:
