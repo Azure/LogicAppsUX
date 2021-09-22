@@ -1,3 +1,5 @@
+import toTitleCase from 'to-title-case';
+
 type Primitive = number | boolean | string;
 type NonPrimitive = Record<string, unknown>;
 
@@ -46,6 +48,10 @@ export function nonPrimitivesArrayEquals<T extends NonPrimitive>(
 
   return a.length === b.length && a.every((element, index) => compareFunction(element, b[index]));
 }
+
+export const convertActionIDToTitleCase = (s: string) => {
+  return toTitleCase(s.replace(/_/g, ' '));
+};
 
 /**
  * Returns if two arrays of primitive values are equal.
