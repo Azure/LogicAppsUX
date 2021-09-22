@@ -22,7 +22,7 @@
       <Item ItemId=";Asi2Jg" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Hide advanced options]]></Val>
-          <Tgt Cat="Text" Orig="New">
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[This is some test loc data]]></Val>
           </Tgt>
         </Str>
