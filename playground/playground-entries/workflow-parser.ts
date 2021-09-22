@@ -9,7 +9,7 @@ const objEmpty = (obj: Object) => obj && Object.keys(obj).length === 0 && obj.co
 
 export const fetchworkflow = async () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const workflow: { definition: LogicAppsV2.WorkflowDefinition } = await import('../../__mocks__/simpleworkflow.json');
+  const workflow: { definition: LogicAppsV2.WorkflowDefinition } = await import('../../__mocks__/workflows/Conditionals.json');
   const ret: any[] = [];
   const triggers = workflow.definition.triggers;
   for (const [key, value] of Object.entries(triggers ?? {})) {
