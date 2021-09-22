@@ -6,7 +6,6 @@
         {
           "SourceFile": "lang\\strings.json",
           "CopyOption": "LangIDOnName",
-          "LclFile": "Localize\\loc\\{Lang}\\strings.json.lcl",
           "OutputPath": "lang\\"
         }
       ],
