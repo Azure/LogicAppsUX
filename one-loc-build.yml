@@ -8,8 +8,7 @@ trigger:
     include:
       - lang/strings.json
       - Localize/LocProject.json
-  pr: none
-  
+
 pool:
   vmImage: 'vs2017-win2016'
 
