@@ -1,13 +1,12 @@
-# Run localisation
+name: 1loc_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
-trigger:
-  branches:
-    include:
-      - main
-  paths:
-    include:
-      - lang/strings.json
-      - Localize/LocProject.json
+schedules:
+  - cron: '0 0 * * *'
+    displayName: Daily midnight build
+    branches:
+      include:
+        - main
+    always: true
 
 pool:
   vmImage: 'vs2017-win2016'
