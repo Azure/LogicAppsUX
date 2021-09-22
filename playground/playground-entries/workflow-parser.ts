@@ -38,7 +38,7 @@ export const fetchworkflow = async () => {
           target: akey,
           type: edgeType,
           animated: false,
-          label: 'test'
+          arrowHeadType: 'arrow',
         });
       }
     } else if (avalue.runAfter && objEmpty(avalue.runAfter)) {
@@ -49,7 +49,7 @@ export const fetchworkflow = async () => {
           target: akey,
           type: edgeType,
           animated: false,
-          label: 'test'
+          arrowHeadType: 'arrow',
         });
       }
     }
