@@ -4,7 +4,6 @@ import { IntlProvider } from 'react-intl';
 import { AzureThemeLight } from '../../azure-themes';
 import { store } from './store';
 import { Provider } from 'react-redux';
-import defaultMessages from '../../compiled-lang/strings.json';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 
 export interface DesignerProviderProps {
@@ -51,12 +50,13 @@ const loadLocaleData = async (locale: string) => {
       if (locale === 'zh-Hans') return import('../../compiled-lang/strings.zh-Hans.json');
       else return import('../../compiled-lang/strings.zh-Hant.json');
     default:
-      return { default: defaultMessages };
+      return import('../../compiled-lang/strings.json');
   }
 };
 
 export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', children }: DesignerProviderProps) => {
   const [messages, setMessages] = useState<any>(undefined);
+
   useEffect(() => {
     loadLocaleData(locale).then((msg) => {
       setMessages(msg.default);
@@ -66,7 +66,16 @@ export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', child
     <ProviderWrappedContext.Provider value={true}>
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <IntlProvider locale={locale} defaultLocale="en" messages={messages ?? defaultMessages}>
+          <IntlProvider
+            locale={locale}
+            defaultLocale="en"
+            messages={messages}
+            onError={(err) => {
+              if (err.code === 'MISSING_TRANSLATION') {
+                return;
+              }
+              throw err;
+            }}>
             {children}
           </IntlProvider>
         </Provider>

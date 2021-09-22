@@ -5,7 +5,7 @@ import { ReactFlowFromWorkflow } from './playground-entries/react-flow-from-work
 
 function App() {
   return (
-    <DesignerProvider locale="en">
+    <DesignerProvider locale="en-XA">
       <BJSWorkflowProvider workflow={{} as any}>
         <ReactFlowFromWorkflow />
       </BJSWorkflowProvider>

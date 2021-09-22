@@ -1,5 +1,5 @@
 // /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -8,7 +8,6 @@ import ReactFlow, {
   ConnectionLineType,
   useStoreState,
   Node,
-  MiniMap,
   useZoomPanHelper,
 } from 'react-flow-renderer';
 import dagre from 'dagre';
@@ -22,14 +21,10 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 // In a real world app you would use the correct width and height values of
 // const nodes = useStoreState(state => state.nodes) and then node.__rf.width, node.__rf.height
 
-const nodeWidth = 172;
-const nodeHeight = 36;
-
 const getLayoutedElements = (elements: any, nodes: Node<any>[], direction = 'TB') => {
   const isHorizontal = direction === 'LR';
   dagreGraph.setGraph({ rankdir: direction });
 
-  console.log(nodes);
   elements.forEach((el: any) => {
     if (isNode(el)) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -79,14 +74,14 @@ const Flow = () => {
   useEffect(() => {
     fetchworkflow().then((x) => setElements(getLayoutedElements(x, nodes, direction)));
   }, [nodes, direction]);
-
+  const { fitView } = useZoomPanHelper();
   if (!elements) {
     return <></>;
   }
   const onConnect = (params: any) =>
     setElements((els: any) => addEdge({ ...params, type: ConnectionLineType.Bezier, animated: true }, els));
   const onElementsRemove = (elementsToRemove: any) => setElements((els: any) => removeElements(elementsToRemove, els));
-  const { fitView } = useZoomPanHelper();
+
   return (
     <>
       <ReactFlow
