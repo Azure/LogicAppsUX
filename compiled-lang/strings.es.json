@@ -8,7 +8,7 @@
   "Asi2Jg": [
     {
       "type": 0,
-      "value": "This is some test loc data"
+      "value": "Hide advanced options"
     }
   ],
   "Gx6rDL": [
@@ -41,7 +41,7 @@
             },
             {
               "type": 0,
-              "value": " matched items."
+              "value": " items matched."
             }
           ]
         }
