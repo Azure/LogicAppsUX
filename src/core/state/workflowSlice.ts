@@ -1,10 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { WorkflowNode } from '../parsers/models/workflowNode';
 
-export interface WorkflowNode {
-  id: string;
-  data: { label: string };
-  position: { x: number; y: number };
-}
 export interface WorkflowState {
   nodes: WorkflowNode[];
 }
@@ -22,6 +18,7 @@ export const workflowSlice = createSlice({
       // doesn't actually mutate the state because it uses the Immer library,
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
+
       console.log(action.payload);
       state.nodes = [];
     },

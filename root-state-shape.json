@@ -1,0 +1,21 @@
+{
+  "rootGraph": "",
+  "connections": [],
+  "graphs": {
+    "id": {
+      "entryNode": "",
+      "nodes": []
+    }
+  },
+  "nodeDetails": {
+    "node_id": {
+      "id": "",
+      "type": "",
+      "data": {
+        "label": ""
+      },
+      "parents": [],
+      "children": []
+    }
+  }
+}
