@@ -1,13 +1,12 @@
 import React from 'react';
 import { DesignerProvider } from '@designer/core/DesignerProvider';
 import { BJSWorkflowProvider } from '@designer/core';
-import { ReactFlowFromWorkflow } from './playground-entries/react-flow-from-workflow';
-
+import TestWorkflow from '../__mocks__/workflows/simpleBigworkflow.json';
 function App() {
   return (
-    <DesignerProvider locale="en-XA">
-      <BJSWorkflowProvider workflow={{} as any}>
-        <ReactFlowFromWorkflow />
+    <DesignerProvider locale="en-US">
+      <BJSWorkflowProvider workflow={TestWorkflow.definition}>
+        <div></div>
       </BJSWorkflowProvider>
     </DesignerProvider>
   );

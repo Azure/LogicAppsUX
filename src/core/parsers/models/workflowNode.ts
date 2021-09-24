@@ -3,6 +3,8 @@ export interface WorkflowNode {
   type: string;
   data: { label: string };
   position: { x: number; y: number };
+  parentNodes: string[];
+  childrenNodes: string[];
 }
 
 export interface ScopedNode extends WorkflowNode {

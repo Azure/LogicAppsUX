@@ -1,31 +1,52 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { WorkflowNode } from '../parsers/models/workflowNode';
+import { ScopedNode, WorkflowNode } from '../parsers/models/workflowNode';
+import { initializeGraphState } from '../parsers/ParseReduxAction';
 
+type SpecTypes = 'BJS' | 'CNCF';
 export interface WorkflowState {
+  rootGraph?: string;
+  workflowSpec?: SpecTypes;
+  graphs: {
+    [key: string]: {
+      root: string;
+      nodes: string[];
+    };
+  };
   nodes: WorkflowNode[];
 }
 
 const initialState: WorkflowState = {
   nodes: [],
+  graphs: {},
 };
 
 export const workflowSlice = createSlice({
   name: 'workflow',
   initialState,
   reducers: {
-    initialize: (state, action: PayloadAction<LogicAppsV2.WorkflowDefinition>) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-
-      console.log(action.payload);
-      state.nodes = [];
+    initWorkflowSpec: (state, action: PayloadAction<SpecTypes>) => {
+      state.workflowSpec = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    // Add reducers for additional action types here, and handle loading state as needed
+    builder.addCase(initializeGraphState.fulfilled, (state, action) => {
+      console.log('action happened');
+      console.log(action.payload);
+      state.nodes.push({
+        id: 'test',
+        type: 'Scoped',
+        data: { label: 'test' },
+        position: { x: 0, y: 0 },
+        parentNodes: [],
+        childrenNodes: [],
+        subgraph_id: '',
+      } as ScopedNode);
+    });
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initialize } = workflowSlice.actions;
+export const { initWorkflowSpec } = workflowSlice.actions;
 
 export default workflowSlice.reducer;
