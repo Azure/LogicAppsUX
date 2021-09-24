@@ -39,7 +39,7 @@ const loadLocaleData = async (locale: string) => {
       return import('../../Localize/compiled-lang/strings.pl.json');
     case 'pt':
       if (locale === 'pt-BR') return import('../../Localize/compiled-lang/strings.pt-BR.json');
-      else return import('../../compiled-lang/strings.pt-PT.json');
+      else return import('../../Localize/compiled-lang/strings.pt-PT.json');
     case 'ru':
       return import('../../Localize/compiled-lang/strings.ru.json');
     case 'sv':
