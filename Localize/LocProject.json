@@ -4,10 +4,10 @@
       "LanguageSet": "Azure_LanguagesExt",
       "LocItems": [
         {
-          "SourceFile": "lang\\strings.json",
+          "SourceFile": "Localize\\lang\\strings.json",
           "CopyOption": "LangIDOnName",
           "LclFile": "Localize\\loc\\{Lang}\\strings.json.lcl",
-          "OutputPath": "lang\\"
+          "OutputPath": "Localize\\lang\\"
         }
       ],
       "LssFiles": [

@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace FontSizes {
   export const size10 = '10px';
   export const size12 = '12px';

@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { IAzureSemanticColors } from './IAzureSemanticColors';
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace BaseColors {
   export const BLUE_F0F6FF = '#F0F6FF';
   export const BLUE_CCE1FF = '#cce1ff';

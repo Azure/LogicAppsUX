@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { IDialogContentStyleProps, IDialogContentStyles, IDialogFooterStyleProps, IDialogFooterStyles } from '@fluentui/react/lib/Dialog';
 import { IExtendedSemanticColors } from '../IExtendedSemanticColors';
 import { FontSizes } from '../AzureType';

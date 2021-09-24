@@ -8,7 +8,6 @@ export const borderSolid = 'solid';
 export const borderNone = 'none';
 export const dropDownItemHeight = '32px';
 export const fontFamily =
-  // eslint-disable-next-line @fluentui/max-len
   'Segoe UI, "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue",sans-serif';
 export const fontWeightRegular = '400';
 export const fontWeightBold = '700';

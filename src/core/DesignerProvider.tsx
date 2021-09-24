@@ -1,7 +1,7 @@
 import { ThemeProvider, Theme } from '@fluentui/react';
 import React, { useState, useEffect } from 'react';
 import { IntlProvider } from 'react-intl';
-import { AzureThemeLight } from '../../azure-themes';
+import { AzureThemeLight } from '../azure-themes';
 import { store } from './store';
 import { Provider } from 'react-redux';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
@@ -15,42 +15,42 @@ export interface DesignerProviderProps {
 const loadLocaleData = async (locale: string) => {
   switch (locale.split('-')[0].toLowerCase()) {
     case 'fr':
-      return import('../../compiled-lang/strings.fr.json');
+      return import('../../Localize/compiled-lang/strings.fr.json');
     case 'en':
-      if (locale === 'en-XA') return import('../../compiled-lang/strings.en-XA.json');
-      else return import('../../compiled-lang/strings.json');
+      if (locale === 'en-XA') return import('../../Localize/compiled-lang/strings.en-XA.json');
+      else return import('../../Localize/compiled-lang/strings.json');
     case 'cs':
-      return import('../../compiled-lang/strings.cs.json');
+      return import('../../Localize/compiled-lang/strings.cs.json');
     case 'de':
-      return import('../../compiled-lang/strings.de.json');
+      return import('../../Localize/compiled-lang/strings.de.json');
     case 'es':
-      return import('../../compiled-lang/strings.es.json');
+      return import('../../Localize/compiled-lang/strings.es.json');
     case 'hu':
-      return import('../../compiled-lang/strings.hu.json');
+      return import('../../Localize/compiled-lang/strings.hu.json');
     case 'it':
-      return import('../../compiled-lang/strings.it.json');
+      return import('../../Localize/compiled-lang/strings.it.json');
     case 'ja':
-      return import('../../compiled-lang/strings.ja.json');
+      return import('../../Localize/compiled-lang/strings.ja.json');
     case 'ko':
-      return import('../../compiled-lang/strings.ko.json');
+      return import('../../Localize/compiled-lang/strings.ko.json');
     case 'nl':
-      return import('../../compiled-lang/strings.nl.json');
+      return import('../../Localize/compiled-lang/strings.nl.json');
     case 'pl':
-      return import('../../compiled-lang/strings.pl.json');
+      return import('../../Localize/compiled-lang/strings.pl.json');
     case 'pt':
-      if (locale === 'pt-BR') return import('../../compiled-lang/strings.pt-BR.json');
+      if (locale === 'pt-BR') return import('../../Localize/compiled-lang/strings.pt-BR.json');
       else return import('../../compiled-lang/strings.pt-PT.json');
     case 'ru':
-      return import('../../compiled-lang/strings.ru.json');
+      return import('../../Localize/compiled-lang/strings.ru.json');
     case 'sv':
-      return import('../../compiled-lang/strings.sv.json');
+      return import('../../Localize/compiled-lang/strings.sv.json');
     case 'tr':
-      return import('../../compiled-lang/strings.tr.json');
+      return import('../../Localize/compiled-lang/strings.tr.json');
     case 'zh':
-      if (locale === 'zh-Hans') return import('../../compiled-lang/strings.zh-Hans.json');
-      else return import('../../compiled-lang/strings.zh-Hant.json');
+      if (locale === 'zh-Hans') return import('../../Localize/compiled-lang/strings.zh-Hans.json');
+      else return import('../../Localize/compiled-lang/strings.zh-Hant.json');
     default:
-      return import('../../compiled-lang/strings.json');
+      return import('../../Localize/compiled-lang/strings.json');
   }
 };
 

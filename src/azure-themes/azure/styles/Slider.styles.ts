@@ -2,9 +2,9 @@ import { ISliderStyleProps, ISliderStyles } from '@fluentui/react/lib/Slider';
 import * as StyleConstants from '../Constants';
 import { IExtendedSemanticColors } from '../IExtendedSemanticColors';
 
-const SLIDER_BOX_DIMENSION: number = 8;
-const SLIDER_DIAMETER: number = 16;
-const SLIDER_BORDER_RADIUS: number = 10;
+const SLIDER_BOX_DIMENSION = 8;
+const SLIDER_DIAMETER = 16;
+const SLIDER_BORDER_RADIUS = 10;
 
 export const SliderStyles = (props: ISliderStyleProps): Partial<ISliderStyles> => {
   const { disabled, theme, vertical } = props;
