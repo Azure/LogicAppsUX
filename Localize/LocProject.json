@@ -1,7 +1,7 @@
 {
   "Projects": [
     {
-      "LanguageSet": "Azure_Languages",
+      "LanguageSet": "Azure_LanguagesExt",
       "LocItems": [
         {
           "SourceFile": "lang\\strings.json",
