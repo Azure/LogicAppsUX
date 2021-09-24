@@ -2,13 +2,13 @@
   "20FJMM": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "正在編輯卡片標題"
     }
   ],
   "Asi2Jg": [
     {
       "type": 0,
-      "value": "Hide advanced options"
+      "value": "隱藏進階選項"
     }
   ],
   "Gx6rDL": [
@@ -19,7 +19,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "沒有任何相符項目。"
             }
           ]
         },
@@ -30,7 +30,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " 個相符項目。"
             }
           ]
         }
@@ -43,25 +43,25 @@
   "P8QaSQ": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "複製 URL"
     }
   ],
   "gjBiyj": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "正在載入..."
     }
   ],
   "lIEejV": [
     {
       "type": 0,
-      "value": "Show advanced options"
+      "value": "顯示進階選項"
     }
   ],
   "vWe94i": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "詳細資訊"
     }
   ]
 }

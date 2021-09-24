@@ -2,13 +2,13 @@
   "20FJMM": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "Redigerar kortrubrik"
     }
   ],
   "Asi2Jg": [
     {
       "type": 0,
-      "value": "Hide advanced options"
+      "value": "Dölj avancerade alternativ"
     }
   ],
   "Gx6rDL": [
@@ -19,7 +19,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "inga matchade objekt."
             }
           ]
         },
@@ -30,7 +30,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " objekt matchade."
             }
           ]
         },
@@ -41,7 +41,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " matchade objekt."
             }
           ]
         }
@@ -54,25 +54,25 @@
   "P8QaSQ": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "Kopiera URL"
     }
   ],
   "gjBiyj": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Läser in…"
     }
   ],
   "lIEejV": [
     {
       "type": 0,
-      "value": "Show advanced options"
+      "value": "Visa avancerade alternativ"
     }
   ],
   "vWe94i": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "Mer information"
     }
   ]
 }

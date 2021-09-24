@@ -2,13 +2,13 @@
   "20FJMM": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "Kártyacím szerkesztése folyamatban"
     }
   ],
   "Asi2Jg": [
     {
       "type": 0,
-      "value": "Hide advanced options"
+      "value": "Speciális beállítások elrejtése"
     }
   ],
   "Gx6rDL": [
@@ -54,25 +54,25 @@
   "P8QaSQ": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "URL másolása"
     }
   ],
   "gjBiyj": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Betöltés..."
     }
   ],
   "lIEejV": [
     {
       "type": 0,
-      "value": "Show advanced options"
+      "value": "Speciális beállítások megjelenítése"
     }
   ],
   "vWe94i": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "További információ"
     }
   ]
 }

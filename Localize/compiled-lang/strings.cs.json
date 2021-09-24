@@ -2,13 +2,13 @@
   "20FJMM": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "Úprava názvu karty"
     }
   ],
   "Asi2Jg": [
     {
       "type": 0,
-      "value": "Hide advanced options"
+      "value": "Skrýt pokročilé možnosti"
     }
   ],
   "Gx6rDL": [
@@ -19,29 +19,29 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "Žádné odpovídající položky"
             }
           ]
         },
         "few": {
           "value": [
             {
-              "type": 7
+              "type": 0,
+              "value": "Počet odpovídajících položek: "
             },
             {
-              "type": 0,
-              "value": " items matched."
+              "type": 7
             }
           ]
         },
         "many": {
           "value": [
             {
-              "type": 7
+              "type": 0,
+              "value": "Počet odpovídajících položek: "
             },
             {
-              "type": 0,
-              "value": " items matched."
+              "type": 7
             }
           ]
         },
@@ -52,18 +52,18 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " odpovídající položka"
             }
           ]
         },
         "other": {
           "value": [
             {
-              "type": 7
+              "type": 0,
+              "value": "Počet odpovídajících položek: "
             },
             {
-              "type": 0,
-              "value": " items matched."
+              "type": 7
             }
           ]
         }
@@ -76,25 +76,25 @@
   "P8QaSQ": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "Kopírovat adresu URL"
     }
   ],
   "gjBiyj": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Načítání…"
     }
   ],
   "lIEejV": [
     {
       "type": 0,
-      "value": "Show advanced options"
+      "value": "Zobrazit pokročilé možnosti"
     }
   ],
   "vWe94i": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "Další informace"
     }
   ]
 }

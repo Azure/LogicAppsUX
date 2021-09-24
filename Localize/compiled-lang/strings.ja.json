@@ -2,13 +2,13 @@
   "20FJMM": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "カード タイトルの編集"
     }
   ],
   "Asi2Jg": [
     {
       "type": 0,
-      "value": "Hide advanced options"
+      "value": "詳細オプションを非表示"
     }
   ],
   "Gx6rDL": [
@@ -19,7 +19,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "一致する項目はありません。"
             }
           ]
         },
@@ -30,7 +30,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " 個の項目が一致しました。"
             }
           ]
         }
@@ -43,25 +43,25 @@
   "P8QaSQ": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "URL のコピー"
     }
   ],
   "gjBiyj": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "読み込んでいます..."
     }
   ],
   "lIEejV": [
     {
       "type": 0,
-      "value": "Show advanced options"
+      "value": "詳細オプションを表示"
     }
   ],
   "vWe94i": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "詳細情報"
     }
   ]
 }

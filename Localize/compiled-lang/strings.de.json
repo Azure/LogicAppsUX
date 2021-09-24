@@ -2,13 +2,13 @@
   "20FJMM": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "Der Kartentitel wird bearbeitet."
     }
   ],
   "Asi2Jg": [
     {
       "type": 0,
-      "value": "Hide advanced options"
+      "value": "Erweiterte Optionen ausblenden"
     }
   ],
   "Gx6rDL": [
@@ -19,7 +19,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "keine Elemente stimmen überein."
             }
           ]
         },
@@ -30,7 +30,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " Element stimmt überein."
             }
           ]
         },
@@ -41,7 +41,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " Elemente stimmen überein."
             }
           ]
         }
@@ -54,25 +54,25 @@
   "P8QaSQ": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "URL kopieren"
     }
   ],
   "gjBiyj": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Wird geladen..."
     }
   ],
   "lIEejV": [
     {
       "type": 0,
-      "value": "Show advanced options"
+      "value": "Erweiterte Optionen anzeigen"
     }
   ],
   "vWe94i": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "Weitere Informationen"
     }
   ]
 }
