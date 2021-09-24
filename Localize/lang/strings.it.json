@@ -1,9 +1,9 @@
 {
-  "20FJMM": "Editing card title",
-  "Asi2Jg": "Hide advanced options",
-  "Gx6rDL": "{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}",
-  "P8QaSQ": "Copy URL",
-  "gjBiyj": "Loading...",
-  "lIEejV": "Show advanced options",
-  "vWe94i": "More Info"
+  "20FJMM": "Modifica del titolo della scheda",
+  "Asi2Jg": "Nascondi opzioni avanzate",
+  "Gx6rDL": "{count, plural, one {# elemento corrispondente.} =0 {nessun elemento corrispondente.} other {# elementi corrispondenti.}}",
+  "P8QaSQ": "Copia URL",
+  "gjBiyj": "Caricamento...",
+  "lIEejV": "Mostra opzioni avanzate",
+  "vWe94i": "Altre informazioni"
 }

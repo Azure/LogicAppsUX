@@ -1,9 +1,9 @@
 {
-  "20FJMM": "Editing card title",
-  "Asi2Jg": "Hide advanced options",
-  "Gx6rDL": "{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}",
-  "P8QaSQ": "Copy URL",
-  "gjBiyj": "Loading...",
-  "lIEejV": "Show advanced options",
-  "vWe94i": "More Info"
+  "20FJMM": "Redigerar kortrubrik",
+  "Asi2Jg": "Dölj avancerade alternativ",
+  "Gx6rDL": "{count, plural, one {# objekt matchade.} =0 {inga matchade objekt.} other {# matchade objekt.}}",
+  "P8QaSQ": "Kopiera URL",
+  "gjBiyj": "Läser in…",
+  "lIEejV": "Visa avancerade alternativ",
+  "vWe94i": "Mer information"
 }
