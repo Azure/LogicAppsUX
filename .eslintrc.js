@@ -37,5 +37,5 @@ module.exports = {
       },
     ],
   },
-  ignorePatterns: ['*/__test__/**/*.*', '**/*.spec.tsx', '**/*.spec.ts', '**/*.mdx', '**/*.svg', '**/*.less'],
+  ignorePatterns: ['**/*.mdx', '**/*.svg', '**/*.less', 'playground/**/*'],
 };

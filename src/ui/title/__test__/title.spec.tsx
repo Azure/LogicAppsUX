@@ -191,10 +191,13 @@ describe('ui/title', () => {
 });
 
 function getAnchorElementForTitle(component: Title): HTMLAnchorElement {
+  // eslint-disable-next-line react/no-find-dom-node
   return findDOMNode(component) as HTMLAnchorElement;
 }
 
 function getInputElementForTitle(component: Title): HTMLInputElement {
+  // eslint-disable-next-line react/no-find-dom-node
   const title = findDOMNode(component) as Element;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return title.querySelector('input')!;
 }
