@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<LCX SchemaVersion="6.0" Name="D:\a\1\s\lang\strings.json" PsrId="306" SrcCul="en-US" xmlns="http://schemas.microsoft.com/locstudio/2006/6/lcx" TgtCul="nl-NL">
+<LCX SchemaVersion="6.0" Name="D:\a\1\s\lang\strings.json" PsrId="306" FileType="1" SrcCul="en-US" TgtCul="nl-NL" xmlns="http://schemas.microsoft.com/locstudio/2006/6/lcx">
   <OwnedComments>
     <Cmt Name="Dev" />
     <Cmt Name="LcxAdmin" />
@@ -12,12 +12,18 @@
       <Item ItemId=";20FJMM" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Editing card title]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kaarttitel bewerken]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
       <Item ItemId=";Asi2Jg" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Hide advanced options]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geavanceerde opties verbergen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -26,36 +32,24 @@
           <Val><![CDATA[# items matched.]]></Val>
         </Str>
         <Disp Icon="Str" />
-        <Cmts>
-          <Cmt Name="Dev"><![CDATA[ (ICU){PlaceHolder="#"} [Add language specific translation for the plural selector 'few'.]5D; (ICU){Locked=!ar,!ar-SA,!be-BY,!bs-Cyrl-BA,!bs-Latn-BA,!cs,!cs-CZ,!cy,!cy-GB,!ga-IE,!gd-GB,!hr,!hr-HR,!lt,!lt-LT,!mt-MT,!pl,!pl-PL,!ro,!ro-RO,!ru,!ru-RU,!sk,!sk-SK,!sl,!sl-SI,!sr,!sr-Cyrl,!sr-Cyrl-BA,!sr-Cyrl-RS,!sr-Latn-RS,!tt,!tt-RU,!uk,!uk-UA}]]></Cmt>
-        </Cmts>
       </Item>
       <Item ItemId=";Gx6rDL#ExpandedPlural.0.many" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[# items matched.]]></Val>
         </Str>
         <Disp Icon="Str" />
-        <Cmts>
-          <Cmt Name="Dev"><![CDATA[ (ICU){PlaceHolder="#"} [Add language specific translation for the plural selector 'many'.]5D; (ICU){Locked=!ar,!ar-SA,!be-BY,!cs,!cs-CZ,!cy,!cy-GB,!ga-IE,!he,!he-IL,!lt,!lt-LT,!mt-MT,!pl,!pl-PL,!ru,!ru-RU,!sk,!sk-SK,!tt,!tt-RU,!uk,!uk-UA}]]></Cmt>
-        </Cmts>
       </Item>
       <Item ItemId=";Gx6rDL#ExpandedPlural.0.two" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[# items matched.]]></Val>
         </Str>
         <Disp Icon="Str" />
-        <Cmts>
-          <Cmt Name="Dev"><![CDATA[ (ICU){PlaceHolder="#"} [Add language specific translation for the plural selector 'two'.]5D; (ICU){Locked=!ar,!ar-SA,!cy,!cy-GB,!ga-IE,!gd-GB,!he,!he-IL,!iu-Latn-CA,!sl,!sl-SI}]]></Cmt>
-        </Cmts>
       </Item>
       <Item ItemId=";Gx6rDL#ExpandedPlural.0.zero" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[# items matched.]]></Val>
         </Str>
         <Disp Icon="Str" />
-        <Cmts>
-          <Cmt Name="Dev"><![CDATA[ (ICU){PlaceHolder="#"} [Add language specific translation for the plural selector 'zero'.]5D; (ICU){Locked=!ar,!ar-SA,!cy,!cy-GB,!lv,!lv-LV}]]></Cmt>
-        </Cmts>
       </Item>
       <Item ItemId=";Gx6rDL#Plural.=0" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
@@ -68,49 +62,52 @@
           <Val><![CDATA[# item matched.]]></Val>
         </Str>
         <Disp Icon="Str" />
-        <Cmts>
-          <Cmt Name="Dev"><![CDATA[ (ICU){PlaceHolder="#"}]]></Cmt>
-        </Cmts>
       </Item>
       <Item ItemId=";Gx6rDL#Plural.other" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[# items matched.]]></Val>
         </Str>
         <Disp Icon="Str" />
-        <Cmts>
-          <Cmt Name="Dev"><![CDATA[ (ICU){PlaceHolder="#"}]]></Cmt>
-        </Cmts>
       </Item>
       <Item ItemId=";Gx6rDL.icu.content" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}]]></Val>
         </Str>
         <Disp Icon="Str" />
-        <Cmts>
-          <Cmt Name="Dev"><![CDATA[{Locked} Parent string for ICU MessageFormat.]]></Cmt>
-        </Cmts>
       </Item>
       <Item ItemId=";P8QaSQ" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Copy URL]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[URL kopiëren]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
       <Item ItemId=";gjBiyj" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading...]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Laden...]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
       <Item ItemId=";lIEejV" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Show advanced options]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geavanceerde opties weergeven]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
       <Item ItemId=";vWe94i" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[More Info]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Meer informatie]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
