@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ScopedNode, WorkflowNode } from '../parsers/models/workflowNode';
+import { WorkflowNode } from '../parsers/models/workflowNode';
 import { initializeGraphState } from '../parsers/ParseReduxAction';
 
 type SpecTypes = 'BJS' | 'CNCF';
@@ -31,17 +31,8 @@ export const workflowSlice = createSlice({
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
-      console.log('action happened');
-      console.log(action.payload);
-      state.nodes.push({
-        id: 'test',
-        type: 'Scoped',
-        data: { label: 'test' },
-        position: { x: 0, y: 0 },
-        parentNodes: [],
-        childrenNodes: [],
-        subgraph_id: '',
-      } as ScopedNode);
+      console.log(state);
+      console.log(action);
     });
   },
 });

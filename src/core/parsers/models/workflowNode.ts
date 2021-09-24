@@ -3,6 +3,7 @@ export interface WorkflowNode {
   type: string;
   data: { label: string };
   position: { x: number; y: number };
+  size: { height: number; width: number };
   parentNodes: string[];
   childrenNodes: string[];
 }
