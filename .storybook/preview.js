@@ -2,6 +2,7 @@ import React from 'react';
 import { initializeIcons, ThemeProvider } from '@fluentui/react';
 import { AzureThemeLight } from '../src/azure-themes';
 import { IntlProvider } from 'react-intl';
+import { DesignerProvider } from '../src/core/DesignerProvider';
 const theme = AzureThemeLight;
 
 export const parameters = {
@@ -14,26 +15,26 @@ export const parameters = {
   },
 };
 const messages = {
-  en: { right: 'EN-US', title: 'English', data: require('../Localize/compiled-lang/strings.json') },
-  'en-xa': { right: 'EN-XA', title: 'PseudoLoc', data: require('../Localize/compiled-lang/strings.xa.json') },
-  'cs-CZ': { right: 'CS-CZ', title: 'Czech', data: require('../Localize/compiled-lang/strings.cs.json') },
-  'de-DE': { right: 'DE-DE', title: 'German', data: require('../Localize/compiled-lang/strings.de.json') },
-  'es-ES': { right: 'ES-ES', title: 'Spanish', data: require('../Localize/compiled-lang/strings.es.json') },
-  'fr-FR': { right: 'FR-FR', title: 'French', data: require('../Localize/compiled-lang/strings.fr.json') },
-  'hu-HU': { right: 'HU-HU', title: 'Hungarian', data: require('../Localize/compiled-lang/strings.hu.json') },
-  'id-ID': { right: 'ID-ID', title: 'Indonesion', data: require('../Localize/compiled-lang/strings.id.json') },
-  'it-IT': { right: 'IT-IT', title: 'Italian', data: require('../Localize/compiled-lang/strings.it.json') },
-  'ja-JP': { right: 'JP-JP', title: 'Japanese', data: require('../Localize/compiled-lang/strings.ja.json') },
-  'ko-KR': { right: 'KO-KR', title: 'Korean', data: require('../Localize/compiled-lang/strings.ko.json') },
-  'nl-NL': { right: 'NL-NL', title: 'Dutch', data: require('../Localize/compiled-lang/strings.nl.json') },
-  'pl-PL': { right: 'PL-PL', title: 'Polish', data: require('../Localize/compiled-lang/strings.pl.json') },
-  'pt-BR': { right: 'PT-NR', title: 'Portuguese - Brazil', data: require('../Localize/compiled-lang/strings.pt-BR.json') },
-  'pt-PT': { right: 'PT-PT', title: 'Portuguese - Portugal', data: require('../Localize/compiled-lang/strings.pt-PT.json') },
-  'ru-RU': { right: 'RU-RU', title: 'Russian', data: require('../Localize/compiled-lang/strings.ru.json') },
-  'sv-SE': { right: 'SV-SE', title: 'Swedish', data: require('../Localize/compiled-lang/strings.sv.json') },
-  'tr-TR': { right: 'TR-TR', title: 'Turkish', data: require('../Localize/compiled-lang/strings.tr.json') },
-  'zh-Hans': { right: 'ZH-HANS', title: 'Chinese - Simplified', data: require('../Localize/compiled-lang/strings.zh-Hans.json') },
-  'zh-Hant': { right: 'ZH-HANT', title: 'Chinese - Traditional', data: require('../Localize/compiled-lang/strings.zh-Hant.json') },
+  en: { right: 'EN-US', title: 'English' },
+  'en-XA': { right: 'EN-XA', title: 'PseudoLoc' },
+  'cs-CZ': { right: 'CS-CZ', title: 'Czech' },
+  'de-DE': { right: 'DE-DE', title: 'German' },
+  'es-ES': { right: 'ES-ES', title: 'Spanish' },
+  'fr-FR': { right: 'FR-FR', title: 'French' },
+  'hu-HU': { right: 'HU-HU', title: 'Hungarian' },
+  'id-ID': { right: 'ID-ID', title: 'Indonesion' },
+  'it-IT': { right: 'IT-IT', title: 'Italian' },
+  'ja-JP': { right: 'JP-JP', title: 'Japanese' },
+  'ko-KR': { right: 'KO-KR', title: 'Korean' },
+  'nl-NL': { right: 'NL-NL', title: 'Dutch' },
+  'pl-PL': { right: 'PL-PL', title: 'Polish' },
+  'pt-BR': { right: 'PT-NR', title: 'Portuguese - Brazil' },
+  'pt-PT': { right: 'PT-PT', title: 'Portuguese - Portugal' },
+  'ru-RU': { right: 'RU-RU', title: 'Russian' },
+  'sv-SE': { right: 'SV-SE', title: 'Swedish' },
+  'tr-TR': { right: 'TR-TR', title: 'Turkish' },
+  'zh-Hans': { right: 'ZH-HANS', title: 'Chinese - Simplified' },
+  'zh-Hant': { right: 'ZH-HANT', title: 'Chinese - Traditional' },
 };
 
 export const globalTypes = {
@@ -45,7 +46,7 @@ export const globalTypes = {
       icon: 'globe',
       items: [
         ...Object.entries(messages).map(([key, value]) => ({
-          value: { loc: key, data: value.data },
+          value: key,
           right: value.right,
           title: value.title,
         })),
@@ -57,10 +58,8 @@ export const globalTypes = {
 initializeIcons();
 export const decorators = [
   (Story, context) => (
-    <ThemeProvider theme={theme}>
-      <IntlProvider locale={context.globals.locale.loc} messages={context.globals.locale.data}>
-        <Story />
-      </IntlProvider>
-    </ThemeProvider>
+    <DesignerProvider locale={context.globals.locale}>
+      <Story />
+    </DesignerProvider>
   ),
 ];
