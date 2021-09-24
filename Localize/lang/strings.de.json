@@ -1,9 +1,9 @@
 {
-  "20FJMM": "Editing card title",
-  "Asi2Jg": "Hide advanced options",
-  "Gx6rDL": "{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}",
-  "P8QaSQ": "Copy URL",
-  "gjBiyj": "Loading...",
-  "lIEejV": "Show advanced options",
-  "vWe94i": "More Info"
+  "20FJMM": "Der Kartentitel wird bearbeitet.",
+  "Asi2Jg": "Erweiterte Optionen ausblenden",
+  "Gx6rDL": "{count, plural, one {# Element stimmt überein.} =0 {keine Elemente stimmen überein.} other {# Elemente stimmen überein.}}",
+  "P8QaSQ": "URL kopieren",
+  "gjBiyj": "Wird geladen...",
+  "lIEejV": "Erweiterte Optionen anzeigen",
+  "vWe94i": "Weitere Informationen"
 }

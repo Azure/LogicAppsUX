@@ -1,9 +1,9 @@
 {
-  "20FJMM": "Editing card title",
-  "Asi2Jg": "Hide advanced options",
-  "Gx6rDL": "{count, plural, one {# item matched.} =0 {no items matched.} few {# items matched.} many {# items matched.} other {# items matched.}}",
-  "P8QaSQ": "Copy URL",
-  "gjBiyj": "Loading...",
-  "lIEejV": "Show advanced options",
-  "vWe94i": "More Info"
+  "20FJMM": "Úprava názvu karty",
+  "Asi2Jg": "Skrýt pokročilé možnosti",
+  "Gx6rDL": "{count, plural, one {# odpovídající položka} =0 {Žádné odpovídající položky} few {Počet odpovídajících položek: #} many {Počet odpovídajících položek: #} other {Počet odpovídajících položek: #}}",
+  "P8QaSQ": "Kopírovat adresu URL",
+  "gjBiyj": "Načítání…",
+  "lIEejV": "Zobrazit pokročilé možnosti",
+  "vWe94i": "Další informace"
 }

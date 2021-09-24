@@ -1,9 +1,9 @@
 {
-  "20FJMM": "Editing card title",
-  "Asi2Jg": "Hide advanced options",
-  "Gx6rDL": "{count, plural,  =0 {no items matched.} other {# items matched.}}",
-  "P8QaSQ": "Copy URL",
-  "gjBiyj": "Loading...",
-  "lIEejV": "Show advanced options",
-  "vWe94i": "More Info"
+  "20FJMM": "카드 제목 편집",
+  "Asi2Jg": "고급 옵션 숨기기",
+  "Gx6rDL": "{count, plural,  =0 {일치하는 항목이 없습니다.} other {#개의 항목이 일치합니다.}}",
+  "P8QaSQ": "URL 복사",
+  "gjBiyj": "로드 중...",
+  "lIEejV": "고급 옵션 표시",
+  "vWe94i": "추가 정보"
 }
