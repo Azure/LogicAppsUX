@@ -3,15 +3,17 @@ import { WorkflowNode } from '../parsers/models/workflowNode';
 import { initializeGraphState } from '../parsers/ParseReduxAction';
 
 type SpecTypes = 'BJS' | 'CNCF';
+export type Graph = {
+  root: string;
+  nodes: string[];
+};
+export type Graphs = {
+  [key: string]: Graph;
+};
 export interface WorkflowState {
   rootGraph?: string;
   workflowSpec?: SpecTypes;
-  graphs: {
-    [key: string]: {
-      root: string;
-      nodes: string[];
-    };
-  };
+  graphs: Graphs;
   nodes: WorkflowNode[];
 }
 
