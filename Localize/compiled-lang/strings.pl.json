@@ -31,51 +31,67 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "nie dopasowano żadnych elementów"
             }
           ]
         },
         "few": {
           "value": [
             {
+              "type": 0,
+              "value": "Dopasowano "
+            },
+            {
               "type": 7
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " elementy."
             }
           ]
         },
         "many": {
           "value": [
             {
+              "type": 0,
+              "value": "Dopasowano "
+            },
+            {
               "type": 7
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " elementów."
             }
           ]
         },
         "one": {
           "value": [
             {
+              "type": 0,
+              "value": "Dopasowano "
+            },
+            {
               "type": 7
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " element."
             }
           ]
         },
         "other": {
           "value": [
             {
+              "type": 0,
+              "value": "Dopasowano "
+            },
+            {
               "type": 7
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " elementu."
             }
           ]
         }
