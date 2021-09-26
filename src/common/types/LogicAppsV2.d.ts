@@ -4,7 +4,6 @@
  */
 declare namespace LogicAppsV2 {
   /* Action types */
-
   interface Action extends Operation {
     runAfter?: RunAfter;
     trackedProperties?: any;
@@ -52,8 +51,7 @@ declare namespace LogicAppsV2 {
   /* API Connection actions and triggers */
 
   interface ApiConnectionAction extends TimeoutableAction {
-    kind: 'ApiConnection';
-    inputs: ApiConnectionInputs;
+    inputs: ApiConnectionInputs; 
   }
 
   interface ApiConnectionTrigger extends RecurrenceTrigger {
@@ -682,7 +680,7 @@ declare namespace LogicAppsV2 {
   }
 
   interface Operation {
-    type: string;
+    type: OpterationTypes;
     kind?: string;
     description?: string;
     metadata?: any;

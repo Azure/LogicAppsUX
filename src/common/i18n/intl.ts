@@ -1,4 +1,4 @@
-import { store } from '@designer/core/store';
+import { store } from '../../core/store';
 import { createIntl, createIntlCache } from 'react-intl';
 
 //NOTE: This is for localizing messages outside of react components. DO NOT call thsi from in a react component.

@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
+import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 
 export const initializeGraphState = createAsyncThunk('users/fetchByIdStatus', async (graph: LogicAppsV2.WorkflowDefinition, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
@@ -8,12 +9,10 @@ export const initializeGraphState = createAsyncThunk('users/fetchByIdStatus', as
   if (spec === undefined) {
     throw new Error('Trying to import workflow without specifying the workflow type');
   }
-  console.log(spec);
   if (spec === 'BJS') {
-    console.log(graph);
-    return null;
+    return BJSDeserialize(graph);
   } else if (spec === 'CNCF') {
-    console.log('NYI');
+    throw new Error('Spec not implemented.');
   }
-  return null;
+  throw new Error('Invalid Workflow Spec');
 });

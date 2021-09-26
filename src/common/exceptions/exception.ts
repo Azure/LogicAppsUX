@@ -1,4 +1,4 @@
-import { getIntl } from '@designer/common/i18n/intl';
+import { getIntl } from '../../common/i18n/intl';
 export interface Exception {
   name: string;
   code?: string;

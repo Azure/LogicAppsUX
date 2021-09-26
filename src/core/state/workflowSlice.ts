@@ -33,8 +33,10 @@ export const workflowSlice = createSlice({
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
-      console.log(state);
-      console.log(action);
+      const { rootGraph, graphs, nodes } = action.payload;
+      state.rootGraph = rootGraph;
+      state.graphs = graphs;
+      state.nodes = nodes;
     });
   },
 });
