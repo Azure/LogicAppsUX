@@ -13,7 +13,7 @@ export interface DesignerProviderProps {
   children: React.ReactNode;
 }
 
-export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', children }: DesignerProviderProps) => {
+const DesignerProviderInner = ({ theme = AzureThemeLight, locale = 'en', children }: DesignerProviderProps) => {
   const i18n = useSelector((state: RootState) => state.localization);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -38,5 +38,13 @@ export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', child
         </Provider>
       </ThemeProvider>
     </ProviderWrappedContext.Provider>
+  );
+};
+
+export const DesignerProvider = (props: DesignerProviderProps) => {
+  return (
+    <Provider store={store}>
+      <DesignerProviderInner {...props}></DesignerProviderInner>
+    </Provider>
   );
 };
