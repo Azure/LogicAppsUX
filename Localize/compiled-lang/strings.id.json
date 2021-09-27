@@ -2,7 +2,7 @@
   "1rlBUx": [
     {
       "type": 0,
-      "value": "Unexpected error"
+      "value": "Kesalahan tidak terduga"
     }
   ],
   "20FJMM": [
@@ -14,7 +14,7 @@
   "8L+oIz": [
     {
       "type": 0,
-      "value": "Cannot render designer due to multiple triggers in definition."
+      "value": "Tidak dapat merender perancang karena terdapat beberapa pemicu dalam definisi."
     }
   ],
   "Asi2Jg": [
@@ -31,7 +31,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "tidak ada item cocok."
             }
           ]
         },
@@ -42,7 +42,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " item cocok."
             }
           ]
         }
