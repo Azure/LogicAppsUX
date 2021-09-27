@@ -1,5 +1,7 @@
+/* eslint-disable no-undef */
 module.exports = {
   roots: ['<rootDir>/src'],
+  setupFilesAfterEnv: ['./jest.setup.js'],
   testMatch: ['**/__tests__/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
   transform: {
     '^.+\\.jsx?$': 'babel-jest',

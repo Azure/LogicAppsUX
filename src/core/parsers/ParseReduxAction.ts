@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 
-export const initializeGraphState = createAsyncThunk('users/fetchByIdStatus', async (graph: LogicAppsV2.WorkflowDefinition, thunkAPI) => {
+export const initializeGraphState = createAsyncThunk('parser/deserialize', async (graph: LogicAppsV2.WorkflowDefinition, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   const spec = currentState.workflow.workflowSpec;
 

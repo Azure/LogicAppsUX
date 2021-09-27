@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { initializeGraphState } from './parsers/ParseReduxAction';
+import { processGraphLayout } from './parsers/ProcessLayoutReduxAction';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { initWorkflowSpec } from './state/workflowSlice';
 export interface BJSWorkflowProviderProps {
@@ -12,7 +13,9 @@ const DataProviderInner = ({ workflow, children }: BJSWorkflowProviderProps) => 
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
-    dispatch(initializeGraphState(workflow));
+    (dispatch(initializeGraphState(workflow)) as any).then(() => {
+      dispatch(processGraphLayout(null));
+    });
   }, [dispatch, workflow]);
   return <div>{children}</div>;
 };

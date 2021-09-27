@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { WorkflowNode } from '../parsers/models/workflowNode';
 import { initializeGraphState } from '../parsers/ParseReduxAction';
-
+import { processGraphLayout } from '../parsers/ProcessLayoutReduxAction';
 type SpecTypes = 'BJS' | 'CNCF';
 export type Graph = {
   root: string;
@@ -37,6 +37,9 @@ export const workflowSlice = createSlice({
       state.rootGraph = rootGraph;
       state.graphs = graphs;
       state.nodes = nodes;
+    });
+    builder.addCase(processGraphLayout.fulfilled, (state, action) => {
+      state.nodes = action.payload;
     });
   },
 });

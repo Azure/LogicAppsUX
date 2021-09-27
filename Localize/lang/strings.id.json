@@ -1,11 +1,11 @@
 {
-  "1rlBUx": "Unexpected error",
-  "20FJMM": "Editing card title",
-  "8L+oIz": "Cannot render designer due to multiple triggers in definition.",
-  "Asi2Jg": "Hide advanced options",
-  "Gx6rDL": "{count, plural,  =0 {no items matched.} other {# items matched.}}",
-  "P8QaSQ": "Copy URL",
-  "gjBiyj": "Loading...",
-  "lIEejV": "Show advanced options",
-  "vWe94i": "More Info"
+  "1rlBUx": "Kesalahan tidak terduga",
+  "20FJMM": "Mengedit judul kartu",
+  "8L+oIz": "Tidak dapat merender perancang karena terdapat beberapa pemicu dalam definisi.",
+  "Asi2Jg": "Sembunyikan opsi lanjutan",
+  "Gx6rDL": "{count, plural,  =0 {tidak ada item cocok.} other {# item cocok.}}",
+  "P8QaSQ": "Salin URL",
+  "gjBiyj": "Memuat...",
+  "lIEejV": "Tampilkan opsi lanjutan",
+  "vWe94i": "Info Selengkapnya"
 }
