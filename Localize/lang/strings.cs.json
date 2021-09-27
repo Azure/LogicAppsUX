@@ -1,7 +1,7 @@
 {
-  "1rlBUx": "Unexpected error",
+  "1rlBUx": "Neočekávaná chyba",
   "20FJMM": "Úprava názvu karty",
-  "8L+oIz": "Cannot render designer due to multiple triggers in definition.",
+  "8L+oIz": "Návrhář se nedá vykreslit, protože v definici je více než jeden trigger.",
   "Asi2Jg": "Skrýt pokročilé možnosti",
   "Gx6rDL": "{count, plural, one {# odpovídající položka} =0 {Žádné odpovídající položky} few {Počet odpovídajících položek: #} many {Počet odpovídajících položek: #} other {Počet odpovídajících položek: #}}",
   "P8QaSQ": "Kopírovat adresu URL",

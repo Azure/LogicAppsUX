@@ -1,7 +1,7 @@
 {
-  "1rlBUx": "Unexpected error",
+  "1rlBUx": "Неожиданная ошибка",
   "20FJMM": "Изменяется заголовок карты",
-  "8L+oIz": "Cannot render designer due to multiple triggers in definition.",
+  "8L+oIz": "Не удается отобразить конструктор из-за наличия нескольких триггеров в определении.",
   "Asi2Jg": "Скрыть расширенные параметры",
   "Gx6rDL": "{count, plural, one {# item matched.} =0 {no items matched.} few {# items matched.} many {# items matched.} other {# items matched.}}",
   "P8QaSQ": "Копировать URL-адрес",
