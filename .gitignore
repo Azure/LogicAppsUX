@@ -8,6 +8,7 @@ lerna-debug.log*
 
 storybook-static
 junit.xml
+.DS_STUDIO
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 

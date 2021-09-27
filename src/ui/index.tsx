@@ -12,3 +12,4 @@ export * from './recommendation';
 //export * from './selector//';
 export * from './title';
 export * from './toggle';
+export * from './Designer';

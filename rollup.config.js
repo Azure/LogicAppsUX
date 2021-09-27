@@ -1,9 +1,8 @@
 import typescript from 'rollup-plugin-typescript2';
 import pkg from './package.json';
-import { terser } from 'rollup-plugin-terser';
 import postcss from 'rollup-plugin-postcss';
 import svg from 'rollup-plugin-svg';
-import {transform} from '@formatjs/ts-transformer'
+import { transform } from '@formatjs/ts-transformer';
 import json from '@rollup/plugin-json';
 
 export default {
