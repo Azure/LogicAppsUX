@@ -1,7 +1,7 @@
 {
-  "1rlBUx": "Unexpected error",
+  "1rlBUx": "Váratlan hiba",
   "20FJMM": "Kártyacím szerkesztése folyamatban",
-  "8L+oIz": "Cannot render designer due to multiple triggers in definition.",
+  "8L+oIz": "Nem sikerült megjeleníteni a tervezőt, mert a definícióban több trigger található.",
   "Asi2Jg": "Speciális beállítások elrejtése",
   "Gx6rDL": "{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}",
   "P8QaSQ": "URL másolása",
