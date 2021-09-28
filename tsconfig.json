@@ -14,10 +14,6 @@
     "reactNamespace": "React",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "paths": {
-      "@designer/*": ["./src/*"],
-      "@designer": ["./src/index"]
-    }
   },
   "exclude": ["dist", "node_modules"]
 }

@@ -23,14 +23,16 @@
     "@reduxjs/toolkit": "^1.6.1",
     "@types/dagre": "^0.7.46",
     "dagre": "^0.8.5",
-    "elkjs": "^0.7.1",
+    "elkjs": "^0.7.3-dev",
     "immer": "^9.0.6",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-flow-renderer": "^9.6.7",
     "react-intl": "^5.20.10",
     "react-redux": "^7.2.5",
-    "to-title-case": "^1.0.0"
+    "to-title-case": "^1.0.0",
+    "web-worker": "^1.1.0",
+    "worker-loader": "^3.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",

@@ -1,4 +1,4 @@
-import { convertActionIDToTitleCase } from '@designer/common/utilities/Utils';
+import { convertActionIDToTitleCase } from '../../src/common/utilities/Utils';
 import { ConnectionLineType } from 'react-flow-renderer';
 
 const position = { x: 0, y: 0 };

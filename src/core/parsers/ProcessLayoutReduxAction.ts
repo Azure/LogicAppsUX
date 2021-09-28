@@ -2,17 +2,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
-import ELK, { ElkEdge, ElkNode } from 'elkjs/lib/elk-api';
-import { Worker } from 'elkjs/lib/elk-worker';
-
+import ELK, { ElkNode } from 'elkjs';
 import { WorkflowNode } from './models/workflowNode';
 
-const elk = new ELK({
-  workerFactory: function (url) {
-    // the value of 'url' is irrelevant here
-    return new Worker(url);
-  },
-});
+const elk = new ELK();
 
 export const processGraphLayout = createAsyncThunk('parser/processlayout', async (_: any, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
@@ -38,18 +31,18 @@ export const processGraphLayout = createAsyncThunk('parser/processlayout', async
         id: `${node.id}-${child}`,
         sources: [node.id],
         targets: [child],
-      } as ElkEdge);
+      });
     }
   }
   const layout = await elk.layout(elkD, {
     layoutOptions: {
       algorithm: 'layered',
-      'elk.direction': 'RIGHT',
+      'elk.direction': 'DOWN',
       'nodePlacement.bk.fixedAlignment': 'BALANCED',
       considerModelOrder: 'NODES_AND_EDGES',
       edgeRouting: 'SPLINES',
-      nodeSpacing: '30',
-      'spacing.baseValue': '30',
+      nodeSpacing: '60',
+      'spacing.baseValue': '60',
     },
   });
 
