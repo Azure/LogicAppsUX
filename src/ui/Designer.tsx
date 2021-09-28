@@ -2,8 +2,18 @@
 import { convertActionIDToTitleCase } from '../common/utilities/Utils';
 import { RootState } from '../core/store';
 import React, { useEffect } from 'react';
-import ReactFlow, { ArrowHeadType, ConnectionLineType, Elements, ReactFlowProvider, useStore, useZoomPanHelper } from 'react-flow-renderer';
+import ReactFlow, { ArrowHeadType, Elements, ReactFlowProvider, useStore, useZoomPanHelper } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
+import CustomTestNode from './CustomNodes/CustomTestNode';
+import ButtonEdge from './CustomNodes/ButtonEdge';
+
+const nodeTypes = {
+  testNode: CustomTestNode,
+};
+
+const edgeTypes = {
+  buttonedge: ButtonEdge,
+};
 
 const ZoomNode = () => {
   const store = useStore();
@@ -30,6 +40,7 @@ export const Designer = () => {
     state.workflow.nodes.forEach((node) => {
       retNodes.push({
         id: node.id,
+        type: 'testNode',
         data: { label: convertActionIDToTitleCase(node.id) },
         position: node.position,
       });
@@ -38,7 +49,9 @@ export const Designer = () => {
           id: `entry-${node.id}-${child}`,
           source: node.id,
           target: child,
-          type: ConnectionLineType.SmoothStep,
+
+          data: { parent: node.id, child: child },
+          type: 'buttonedge',
           animated: false,
           arrowHeadType: ArrowHeadType.Arrow,
         });
@@ -51,7 +64,14 @@ export const Designer = () => {
     <div style={{ width: '100vw', height: '100vh' }}>
       <ReactFlowProvider>
         <ZoomNode></ZoomNode>
-        <ReactFlow elements={nodes} onConnect={() => {}} minZoom={0} nodesDraggable={false} onElementsRemove={() => {}}></ReactFlow>
+        <ReactFlow
+          nodeTypes={nodeTypes}
+          elements={nodes}
+          onConnect={() => {}}
+          minZoom={0}
+          nodesDraggable={false}
+          edgeTypes={edgeTypes}
+          onElementsRemove={() => {}}></ReactFlow>
       </ReactFlowProvider>
     </div>
   );

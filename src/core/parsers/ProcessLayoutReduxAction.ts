@@ -2,7 +2,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
-import ELK, { ElkNode } from 'elkjs';
+import ELK, { ElkEdge, ElkNode } from 'elkjs';
 import { WorkflowNode } from './models/workflowNode';
 
 const elk = new ELK();
@@ -31,18 +31,18 @@ export const processGraphLayout = createAsyncThunk('parser/processlayout', async
         id: `${node.id}-${child}`,
         sources: [node.id],
         targets: [child],
-      });
+      } as ElkEdge);
     }
   }
   const layout = await elk.layout(elkD, {
     layoutOptions: {
       algorithm: 'layered',
       'elk.direction': 'DOWN',
-      'nodePlacement.bk.fixedAlignment': 'BALANCED',
-      considerModelOrder: 'NODES_AND_EDGES',
-      edgeRouting: 'SPLINES',
-      nodeSpacing: '60',
-      'spacing.baseValue': '60',
+      'nodePlacement.bk.fixedAlignment': 'NONE',
+      considerModelOrder: 'NONE',
+      edgeRouting: 'UNDEFINED',
+      'spacing.baseValue': '100',
+      'spacing.edgeEdgeBetweenLayers': '0',
     },
   });
 
