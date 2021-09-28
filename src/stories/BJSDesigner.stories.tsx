@@ -7,10 +7,10 @@ import TestWorkflow from '../../__mocks__/workflows/simpleBigworkflow.json';
 export default {
   component: DesignerProvider,
   subcomponents: { BJSWorkflowProvider, Designer }, //👈 Adds the ListItem component as a subcomponent
-  title: 'Designer Composition',
+  title: 'Designer/Designer Composition',
 };
 
-export const DesignerComp = () => (
+export const SimpleButBigDefinition = () => (
   <DesignerProvider locale="en-US">
     <BJSWorkflowProvider workflow={TestWorkflow.definition}>
       <Designer></Designer>

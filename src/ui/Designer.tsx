@@ -18,7 +18,7 @@ const ZoomNode = () => {
       const y = node.__rf.position.y + node.__rf.height / 2;
       const zoom = 1.3;
 
-      setCenter(x, y+300, zoom);
+      setCenter(x, y, zoom);
     }
   }, [nodes, setCenter]);
   return <></>;
