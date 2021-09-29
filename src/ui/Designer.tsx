@@ -27,7 +27,7 @@ const ZoomNode = () => {
     if (nodes.length && shouldLayout) {
       console.log(nodes);
       dispatch(updateNodeSizes(nodes));
-      dispatch(processGraphLayout(null));
+      dispatch(processGraphLayout());
     }
   }, [dispatch, nodes, shouldLayout]);
   useEffect(() => {

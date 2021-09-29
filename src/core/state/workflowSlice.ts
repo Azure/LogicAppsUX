@@ -38,12 +38,12 @@ export const workflowSlice = createSlice({
     initWorkflowSpec: (state, action: PayloadAction<SpecTypes>) => {
       state.workflowSpec = action.payload;
     },
-    triggerLayout: (state, action: PayloadAction<void>) => {
+    triggerLayout: (state) => {
       state.shouldLayout = true;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
       const childNode = state.nodes.find((x) => x.id === action.payload.childId);
-      state.nodes = [
+      const nodes = [
         ...state.nodes.map((x) => {
           if (x.id === action.payload.parentId) {
             return {
@@ -59,16 +59,19 @@ export const workflowSlice = createSlice({
           }
           return x;
         }),
-        {
-          id: action.payload.id,
-          type: '',
-          operation: null as any,
-          position: { x: childNode?.position.x ?? 0, y: childNode?.position.y ?? 0 },
-          size: { height: 172, width: 38 },
-          parentNodes: [action.payload.parentId],
-          childrenNodes: action.payload.childId ? [action.payload.childId] : [],
-        },
       ];
+      const iof = nodes.findIndex((x) => x.id === action.payload.childId);
+
+      nodes.splice(iof, 0, {
+        id: action.payload.id,
+        type: '',
+        operation: null as any,
+        position: { x: childNode?.position.x ?? 0, y: childNode?.position.y ?? 0 },
+        size: { height: 172, width: 38 },
+        parentNodes: [action.payload.parentId],
+        childrenNodes: action.payload.childId ? [action.payload.childId] : [],
+      });
+      state.nodes = [...nodes];
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<Elements>) => {
       const elements = action.payload;
