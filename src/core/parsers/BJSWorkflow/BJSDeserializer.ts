@@ -10,7 +10,7 @@ const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolea
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
 };
 
-export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): WorkflowState => {
+export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Omit<WorkflowState, 'shouldLayout'> => {
   const intl = getIntl();
   throwIfMultipleTriggers(definition, intl);
 
