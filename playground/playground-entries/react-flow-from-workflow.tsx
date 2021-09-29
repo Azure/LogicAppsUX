@@ -64,7 +64,6 @@ const Flow = () => {
   const [direction, setDirection] = useState<'TB' | 'LR'>('TB');
 
   useEffect(() => {
-    console.log('effect triggered');
     fetchworkflow().then((x) => setElements(getLayoutedElements(x, direction)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [direction]);

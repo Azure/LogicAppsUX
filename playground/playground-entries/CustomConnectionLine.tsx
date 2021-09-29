@@ -45,17 +45,15 @@ export function getSmoothStepPath({
   const cX = typeof centerX !== 'undefined' ? centerX : _centerX;
   const cY = (typeof centerY !== 'undefined' ? centerY : _centerY) - 50;
 
-  console.log(targetY-sourceY);
-
   let firstCornerPath = null;
   let secondCornerPath = null;
 
   if (sourceX <= targetX) {
-    firstCornerPath = sourceY <= targetY ? bottomLeftCorner(sourceX, cY+30, cornerSize) : topLeftCorner(sourceX, cY-30, cornerSize);
-    secondCornerPath = sourceY <= targetY ? rightTopCorner(targetX, cY+60, cornerSize) : rightBottomCorner(targetX, cY+30, cornerSize);
+    firstCornerPath = sourceY <= targetY ? bottomLeftCorner(sourceX, cY + 30, cornerSize) : topLeftCorner(sourceX, cY - 30, cornerSize);
+    secondCornerPath = sourceY <= targetY ? rightTopCorner(targetX, cY + 60, cornerSize) : rightBottomCorner(targetX, cY + 30, cornerSize);
   } else {
-    firstCornerPath = sourceY < targetY ? bottomRightCorner(sourceX, cY+30, cornerSize) : topRightCorner(sourceX, cY-30, cornerSize);
-    secondCornerPath = sourceY < targetY ? leftTopCorner(targetX, cY+60, cornerSize) : leftBottomCorner(targetX, cY+30, cornerSize);
+    firstCornerPath = sourceY < targetY ? bottomRightCorner(sourceX, cY + 30, cornerSize) : topRightCorner(sourceX, cY - 30, cornerSize);
+    secondCornerPath = sourceY < targetY ? leftTopCorner(targetX, cY + 60, cornerSize) : leftBottomCorner(targetX, cY + 30, cornerSize);
   }
 
   if (leftAndRight.includes(sourcePosition) && leftAndRight.includes(targetPosition)) {
@@ -106,8 +104,6 @@ export const CustomConnectionLine = memo(
     borderRadius = 0,
   }: EdgeSmoothStepProps) => {
     const [centerX, centerY] = getEdgeCenter({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition });
-
-    console.log(label);
     const path = getSmoothStepPath({
       sourceX,
       sourceY,

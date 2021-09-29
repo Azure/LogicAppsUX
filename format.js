@@ -11,7 +11,6 @@ module.exports = {
   },
   compile: (msgs) => {
     return Object.keys(msgs).reduce((all, k) => {
-      console.log(k);
       if (k.startsWith('_') && k.endsWith('.comment')) {
         return all;
       }
