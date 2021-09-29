@@ -31,7 +31,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "nincs egyező elem."
             }
           ]
         },
@@ -42,7 +42,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " egyező elem."
             }
           ]
         },
@@ -53,7 +53,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " egyező elem."
             }
           ]
         }

@@ -31,7 +31,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "Er komen geen items overeen."
             }
           ]
         },
@@ -42,7 +42,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " item komt overeen."
             }
           ]
         },
@@ -53,7 +53,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " items komen overeen."
             }
           ]
         }
