@@ -8,7 +8,8 @@ export const processGraphLayout = createAsyncThunk('parser/processlayout', async
   dagreGraph.setDefaultEdgeLabel(() => ({}));
   const currentState: RootState = thunkAPI.getState() as RootState;
 
-  dagreGraph.setGraph({ rankdir: 'TB', ranksep: 100 });
+  const tallestNode = Math.max(...currentState.workflow.nodes.map((x) => x.size.height));
+  dagreGraph.setGraph({ rankdir: 'TB', ranksep: tallestNode });
 
   currentState.workflow.nodes.forEach((node) => {
     dagreGraph.setNode(node.id, { width: node.size.width, height: node.size.height });

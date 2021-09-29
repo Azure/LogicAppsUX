@@ -25,7 +25,6 @@ const ZoomNode = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (nodes.length && shouldLayout) {
-      console.log(nodes);
       dispatch(updateNodeSizes(nodes));
       dispatch(processGraphLayout());
     }
@@ -38,13 +37,11 @@ const ZoomNode = () => {
 export const Designer = () => {
   const nodes = useSelector((state: RootState) => {
     const retNodes: Elements = [];
-    console.log('DESIGNER');
-    console.log(state.workflow.nodes);
     state.workflow.nodes.forEach((node) => {
       retNodes.push({
         id: node.id,
         type: 'testNode',
-        data: { label: convertActionIDToTitleCase(node.id) },
+        data: { label: convertActionIDToTitleCase(node.id), children: node.childrenNodes },
         position: node.position,
       });
       for (const child of node.childrenNodes) {
@@ -52,7 +49,6 @@ export const Designer = () => {
           id: `entry-${node.id}-${child}`,
           source: node.id,
           target: child,
-
           data: { parent: node.id, child: child },
           type: 'buttonedge',
           animated: false,

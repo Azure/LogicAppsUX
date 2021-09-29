@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Elements, FlowElement, Node } from 'react-flow-renderer';
+import { Elements, Node } from 'react-flow-renderer';
 import { WorkflowNode } from '../parsers/models/workflowNode';
 import { initializeGraphState } from '../parsers/ParseReduxAction';
 import { processGraphLayout } from '../parsers/ProcessLayoutReduxAction';
@@ -60,7 +60,7 @@ export const workflowSlice = createSlice({
           return x;
         }),
       ];
-      const iof = nodes.findIndex((x) => x.id === action.payload.childId);
+      const iof = nodes.findIndex((x) => x.id === action.payload.parentId);
 
       nodes.splice(iof, 0, {
         id: action.payload.id,
@@ -103,7 +103,7 @@ export const workflowSlice = createSlice({
       state.nodes = action.payload;
       state.shouldLayout = false;
     });
-    builder.addCase(processGraphLayout.rejected, (state, action) => {
+    builder.addCase(processGraphLayout.rejected, () => {
       console.log('rejected');
     });
   },

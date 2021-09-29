@@ -71,9 +71,9 @@ export default function CustomEdge({
           y={sourceY + 20 - foreignObjectSize / 2}
           className="edgebutton-foreignobject"
           requiredExtensions="http://www.w3.org/1999/xhtml">
-          <body>
+          <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%'  }}>
             <ActionButtonV2 title={'Text'} onClick={(e) => onParentBClick(e, data.parent)} trackEvent={() => {}} />
-          </body>
+          </div>
         </foreignObject>
       )}
       <foreignObject
@@ -83,9 +83,9 @@ export default function CustomEdge({
         y={parentNode?.childrenNodes.length === 1 ? edgeCenterY - foreignObjectSize / 2 : targetY - 20 - foreignObjectSize / 2}
         className="edgebutton-foreignobject"
         requiredExtensions="http://www.w3.org/1999/xhtml">
-        <body>
+        <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
           <ActionButtonV2 title={'Text'} onClick={(e) => onEdgeEndClick(e, data.parent, data.child)} trackEvent={() => {}} />
-        </body>
+        </div>
       </foreignObject>
     </>
   );

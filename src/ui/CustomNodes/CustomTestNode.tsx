@@ -1,12 +1,18 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React, { memo, useState } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
+import { useDispatch } from 'react-redux';
+import guid from '../../common/utilities/guid';
+import { addNode, triggerLayout } from '../../core/state/workflowSlice';
+import { ActionButtonV2 } from '..';
 function randomIntFromInterval(min: number, max: number) {
   // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
-const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom }: NodeProps) => {
+const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const [height] = useState(randomIntFromInterval(20, 100));
   const [width] = useState(randomIntFromInterval(100, 200));
+  const dispatch = useDispatch();
   return (
     <>
       <div
@@ -43,6 +49,19 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           style={{ visibility: 'hidden', height: '1px', width: '1px', border: 'none' }}
         />
       </div>
+
+      {data?.children?.length === 0 && (
+        <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%', marginTop: '5px' }}>
+          <ActionButtonV2
+            title={'Text'}
+            onClick={() => {
+              dispatch(addNode({ parentId: id, id: guid() }));
+              dispatch(triggerLayout());
+            }}
+            trackEvent={() => {}}
+          />
+        </div>
+      )}
     </>
   );
 };
