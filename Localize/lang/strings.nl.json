@@ -3,7 +3,7 @@
   "20FJMM": "Kaarttitel bewerken",
   "8L+oIz": "Kan de designer niet weergeven vanwege meerdere triggers in de definitie.",
   "Asi2Jg": "Geavanceerde opties verbergen",
-  "Gx6rDL": "{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}",
+  "Gx6rDL": "{count, plural, one {# item komt overeen.} =0 {Er komen geen items overeen.} other {# items komen overeen.}}",
   "P8QaSQ": "URL kopiëren",
   "gjBiyj": "Laden...",
   "lIEejV": "Geavanceerde opties weergeven",

@@ -3,7 +3,7 @@
   "20FJMM": "Kártyacím szerkesztése folyamatban",
   "8L+oIz": "Nem sikerült megjeleníteni a tervezőt, mert a definícióban több trigger található.",
   "Asi2Jg": "Speciális beállítások elrejtése",
-  "Gx6rDL": "{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}",
+  "Gx6rDL": "{count, plural, one {# egyező elem.} =0 {nincs egyező elem.} other {# egyező elem.}}",
   "P8QaSQ": "URL másolása",
   "gjBiyj": "Betöltés...",
   "lIEejV": "Speciális beállítások megjelenítése",
