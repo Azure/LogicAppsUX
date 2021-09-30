@@ -8,6 +8,8 @@ import CustomTestNode from './CustomNodes/CustomTestNode';
 import ButtonEdge from './CustomNodes/ButtonEdge';
 import { setShouldZoomToNode, triggerLayout, updateNodeSizes } from '../core/state/workflowSlice';
 import { processGraphLayout } from '../core/parsers/ProcessLayoutReduxAction';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const nodeTypes = {
   testNode: CustomTestNode,
@@ -76,18 +78,20 @@ export const Designer = () => {
   });
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <ReactFlowProvider>
-        <ReactFlow
-          nodeTypes={nodeTypes}
-          elements={nodes}
-          onConnect={() => {}}
-          minZoom={0}
-          nodesDraggable={false}
-          edgeTypes={edgeTypes}
-          onElementsRemove={() => {}}></ReactFlow>
-        <ZoomNode></ZoomNode>
-      </ReactFlowProvider>
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <div style={{ width: '100vw', height: '100vh' }}>
+        <ReactFlowProvider>
+          <ReactFlow
+            nodeTypes={nodeTypes}
+            elements={nodes}
+            onConnect={() => {}}
+            minZoom={0}
+            nodesDraggable={false}
+            edgeTypes={edgeTypes}
+            onElementsRemove={() => {}}></ReactFlow>
+          <ZoomNode></ZoomNode>
+        </ReactFlowProvider>
+      </div>
+    </DndProvider>
   );
 };

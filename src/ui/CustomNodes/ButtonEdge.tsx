@@ -6,6 +6,7 @@ import { addNode, setShouldZoomToNode, triggerLayout } from '../../core/state/wo
 import { RootState } from '../../core/store';
 import { ActionButtonV2 } from '..';
 import guid from '../../common/utilities/guid';
+import { useDrop } from 'react-dnd';
 
 const foreignObjectSize = 40;
 
@@ -70,6 +71,20 @@ export default function CustomEdge({
   };
   const firstChild = parentNode?.childrenNodes.at(-1) === data.child;
 
+  const [{ isOver, canDrop }, drop] = useDrop(() => ({
+    // The type (or types) to accept - strings or symbols
+    accept: 'BOX',
+    drop: () => ({ child: data.child, parent: data.parent }),
+    canDrop: (item) => {
+      return (item as any).id !== data.child;
+    },
+    // Props to collect
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  }));
+
   return (
     <>
       <path id={id} style={style} className="react-flow__edge-path" d={edgePath} markerEnd={markerEnd} />
@@ -93,7 +108,9 @@ export default function CustomEdge({
         y={parentNode?.childrenNodes.length === 1 ? edgeCenterY - foreignObjectSize / 2 : targetY - 20 - foreignObjectSize / 2}
         className="edgebutton-foreignobject"
         requiredExtensions="http://www.w3.org/1999/xhtml">
-        <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
+        <div
+          ref={drop}
+          style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%', opacity: isOver && canDrop ? 0.4 : 1 }}>
           <ActionButtonV2 title={'Text'} onClick={(e) => onEdgeEndClick(e, data.parent, data.child)} trackEvent={() => {}} />
         </div>
       </foreignObject>
