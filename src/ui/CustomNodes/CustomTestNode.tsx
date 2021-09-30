@@ -10,8 +10,8 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
-  const [height] = useState(randomIntFromInterval(20, 100));
-  const [width] = useState(randomIntFromInterval(100, 200));
+  const [height] = useState(randomIntFromInterval(80, 100));
+  const [width] = useState(randomIntFromInterval(150, 250));
   const dispatch = useDispatch();
   return (
     <>

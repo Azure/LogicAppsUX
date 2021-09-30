@@ -2,7 +2,7 @@
 import { convertActionIDToTitleCase } from '../common/utilities/Utils';
 import { RootState } from '../core/store';
 import React, { useEffect } from 'react';
-import ReactFlow, { ArrowHeadType, Elements, ReactFlowProvider, useStore, useZoomPanHelper } from 'react-flow-renderer';
+import ReactFlow, { ArrowHeadType, Elements, ReactFlowProvider, useStore, useStoreState, useZoomPanHelper } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import ButtonEdge from './CustomNodes/ButtonEdge';
@@ -18,9 +18,8 @@ const edgeTypes = {
 };
 
 const ZoomNode = () => {
-  const store = useStore();
-  const { nodes } = store.getState();
-
+  const nodes = useStoreState((store) => store.nodes);
+  const transform = useStoreState((store) => store.transform);
   const shouldLayout = useSelector((state: RootState) => state.workflow.shouldLayout);
   const shouldFocusNode = useSelector((state: RootState) => state.workflow.shouldZoomToNode);
   const dispatch = useDispatch();
@@ -37,15 +36,14 @@ const ZoomNode = () => {
             if (node) {
               const x = node.__rf.position.x + node.__rf.width / 2;
               const y = node.__rf.position.y + node.__rf.height / 2;
-              const zoom = .9;
 
-              setCenter(x, y, zoom);
+              setCenter(x, y, transform[2]);
             }
           }
         }
       });
     }
-  }, [dispatch, nodes, setCenter, shouldFocusNode, shouldLayout]);
+  }, [dispatch, nodes, setCenter, shouldFocusNode, shouldLayout, transform]);
   useEffect(() => {
     dispatch(triggerLayout());
   }, [dispatch, nodes.length]);
