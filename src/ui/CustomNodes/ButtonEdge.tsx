@@ -2,17 +2,12 @@
 import React from 'react';
 import { getSmoothStepPath, getEdgeCenter, getMarkerEnd } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNode, triggerLayout } from '../../core/state/workflowSlice';
+import { addNode, setShouldZoomToNode, triggerLayout } from '../../core/state/workflowSlice';
 import { RootState } from '../../core/store';
 import { ActionButtonV2 } from '..';
 import guid from '../../common/utilities/guid';
 
 const foreignObjectSize = 40;
-
-const onParentBClick = (evt: any, parent: string) => {
-  evt.stopPropagation();
-  alert(`parent: ${parent}`);
-};
 
 export default function CustomEdge({
   id,
@@ -49,14 +44,29 @@ export default function CustomEdge({
   const dispatch = useDispatch();
   const onEdgeEndClick = (evt: any, parent: string, child: string) => {
     evt.stopPropagation();
+    const newId = guid();
     dispatch(
       addNode({
-        id: guid(),
+        id: newId,
         parentId: parent,
         childId: child,
       })
     );
     dispatch(triggerLayout());
+    dispatch(setShouldZoomToNode(newId));
+  };
+
+  const onParentBClick = (evt: any, parent: string) => {
+    const newId = guid();
+    evt.stopPropagation();
+    dispatch(
+      addNode({
+        id: newId,
+        parentId: parent,
+      })
+    );
+    dispatch(triggerLayout());
+    dispatch(setShouldZoomToNode(newId));
   };
   const firstChild = parentNode?.childrenNodes.at(-1) === data.child;
 
@@ -71,7 +81,7 @@ export default function CustomEdge({
           y={sourceY + 20 - foreignObjectSize / 2}
           className="edgebutton-foreignobject"
           requiredExtensions="http://www.w3.org/1999/xhtml">
-          <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%'  }}>
+          <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
             <ActionButtonV2 title={'Text'} onClick={(e) => onParentBClick(e, data.parent)} trackEvent={() => {}} />
           </div>
         </foreignObject>

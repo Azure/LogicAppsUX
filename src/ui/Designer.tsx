@@ -2,11 +2,11 @@
 import { convertActionIDToTitleCase } from '../common/utilities/Utils';
 import { RootState } from '../core/store';
 import React, { useEffect } from 'react';
-import ReactFlow, { ArrowHeadType, Elements, ReactFlowProvider, useStore } from 'react-flow-renderer';
+import ReactFlow, { ArrowHeadType, Elements, ReactFlowProvider, useStore, useZoomPanHelper } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import ButtonEdge from './CustomNodes/ButtonEdge';
-import { triggerLayout, updateNodeSizes } from '../core/state/workflowSlice';
+import { setShouldZoomToNode, triggerLayout, updateNodeSizes } from '../core/state/workflowSlice';
 import { processGraphLayout } from '../core/parsers/ProcessLayoutReduxAction';
 
 const nodeTypes = {
@@ -22,16 +22,34 @@ const ZoomNode = () => {
   const { nodes } = store.getState();
 
   const shouldLayout = useSelector((state: RootState) => state.workflow.shouldLayout);
+  const shouldFocusNode = useSelector((state: RootState) => state.workflow.shouldZoomToNode);
   const dispatch = useDispatch();
+  const { setCenter } = useZoomPanHelper();
   useEffect(() => {
     if (nodes.length && shouldLayout) {
       dispatch(updateNodeSizes(nodes));
-      dispatch(processGraphLayout());
+      (dispatch(processGraphLayout()) as any).then(() => {
+        if (shouldFocusNode) {
+          if (shouldFocusNode) {
+            const node = nodes.find((x) => x.id === shouldFocusNode);
+
+            dispatch(setShouldZoomToNode(null));
+            if (node) {
+              const x = node.__rf.position.x + node.__rf.width / 2;
+              const y = node.__rf.position.y + node.__rf.height / 2;
+              const zoom = .9;
+
+              setCenter(x, y, zoom);
+            }
+          }
+        }
+      });
     }
-  }, [dispatch, nodes, shouldLayout]);
+  }, [dispatch, nodes, setCenter, shouldFocusNode, shouldLayout]);
   useEffect(() => {
     dispatch(triggerLayout());
   }, [dispatch, nodes.length]);
+
   return <></>;
 };
 export const Designer = () => {

@@ -17,12 +17,14 @@ export interface WorkflowState {
   graphs: Graphs;
   nodes: WorkflowNode[];
   shouldLayout: boolean;
+  shouldZoomToNode?: string | null;
 }
 
 const initialState: WorkflowState = {
   nodes: [],
   graphs: {},
   shouldLayout: false,
+  shouldZoomToNode: null,
 };
 
 interface AddNodePayload {
@@ -41,14 +43,20 @@ export const workflowSlice = createSlice({
     triggerLayout: (state) => {
       state.shouldLayout = true;
     },
+    setShouldZoomToNode: (state, action: PayloadAction<string | null>) => {
+      state.shouldZoomToNode = action.payload;
+    },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
       const childNode = state.nodes.find((x) => x.id === action.payload.childId);
+      const parentNode = state.nodes.find((x) => x.id === action.payload.parentId);
       const nodes = [
         ...state.nodes.map((x) => {
           if (x.id === action.payload.parentId) {
             return {
               ...x,
-              childrenNodes: [...x.childrenNodes.filter((y) => y !== action.payload.childId), action.payload.id],
+              childrenNodes: action.payload.childId
+                ? [...x.childrenNodes.filter((y) => y !== action.payload.childId), action.payload.id]
+                : [action.payload.id],
             };
           }
           if (x.id === action.payload.childId) {
@@ -69,7 +77,7 @@ export const workflowSlice = createSlice({
         position: { x: childNode?.position.x ?? 0, y: childNode?.position.y ?? 0 },
         size: { height: 172, width: 38 },
         parentNodes: [action.payload.parentId],
-        childrenNodes: action.payload.childId ? [action.payload.childId] : [],
+        childrenNodes: action.payload.childId ? [action.payload.childId] : [...(parentNode?.childrenNodes ?? [])],
       });
       state.nodes = [...nodes];
     },
@@ -110,6 +118,6 @@ export const workflowSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initWorkflowSpec, addNode, updateNodeSizes, triggerLayout } = workflowSlice.actions;
+export const { initWorkflowSpec, addNode, updateNodeSizes, triggerLayout, setShouldZoomToNode } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

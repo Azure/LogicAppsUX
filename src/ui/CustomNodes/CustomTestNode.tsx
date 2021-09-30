@@ -3,7 +3,7 @@ import React, { memo, useState } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 import guid from '../../common/utilities/guid';
-import { addNode, triggerLayout } from '../../core/state/workflowSlice';
+import { addNode, setShouldZoomToNode, triggerLayout } from '../../core/state/workflowSlice';
 import { ActionButtonV2 } from '..';
 function randomIntFromInterval(min: number, max: number) {
   // min and max included
@@ -55,8 +55,10 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           <ActionButtonV2
             title={'Text'}
             onClick={() => {
-              dispatch(addNode({ parentId: id, id: guid() }));
+              const newId = guid();
+              dispatch(addNode({ parentId: id, id: newId }));
               dispatch(triggerLayout());
+              dispatch(setShouldZoomToNode(newId))
             }}
             trackEvent={() => {}}
           />
