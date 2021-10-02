@@ -1,8 +1,8 @@
 import React from 'react';
-import { initializeIcons, ThemeProvider } from '@fluentui/react';
+import { initializeIcons } from '@fluentui/react';
 import { AzureThemeLight } from '../src/azure-themes';
-import { IntlProvider } from 'react-intl';
 import { DesignerProvider } from '../src/core/DesignerProvider';
+import '../src/ui/logicapps.less';
 const theme = AzureThemeLight;
 
 export const parameters = {

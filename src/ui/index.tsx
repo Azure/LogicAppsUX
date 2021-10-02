@@ -1,4 +1,3 @@
-import './styles.less';
 export * from './checkbox/index';
 //export * from './card';
 export * from './callouts';
