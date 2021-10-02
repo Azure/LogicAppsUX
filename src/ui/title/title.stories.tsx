@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 
-import { Title, TitleProps } from './index';
+import { Title } from './index';
 import { DefaultButton } from '@fluentui/react';
 import { useRef } from '@storybook/addons';
 export default {
