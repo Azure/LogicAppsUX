@@ -1,0 +1,57 @@
+.msla-pill {
+  background-color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 0.6px 1.8px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  font: 13px/1 'Segoe UI Semibold', sans-serif;
+
+  .msla-pill--inner {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    height: 28px;
+    margin: 0 2px;
+
+    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
+      height: auto;
+    }
+
+    > span {
+      margin-right: 4px;
+      margin-left: 8px;
+      text-align: right;
+    }
+
+    > img {
+      height: 24px;
+      margin-right: 2px;
+      width: 24px;
+
+      @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        position: relative;
+        top: 2px;
+      }
+    }
+  }
+
+  &.status-only {
+    .msla-pill--inner {
+      > img {
+        margin-left: 2px;
+        position: relative;
+        top: 1px;
+
+        @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
+          top: 2.5px;
+        }
+      }
+    }
+  }
+}
+
+body.dark {
+  .msla-pill {
+    background-color: @ms-color-white;
+    box-shadow: 0 0.6px 1.8px rgba(255, 255, 255, 0.25);
+  }
+}

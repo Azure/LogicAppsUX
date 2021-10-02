@@ -7,7 +7,6 @@ import * as React from 'react';
 import InformationImage from '../card/images/information_tiny.svg';
 import { Event, EventHandler } from '../eventhandler';
 import { getDragStartHandlerWhenDisabled } from '../helper';
-import './flyout.less';
 
 export interface FlyoutProps {
   ariaLabel?: string;

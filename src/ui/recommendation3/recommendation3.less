@@ -1,0 +1,924 @@
+@import (reference) '../variables.less';
+
+@recommendation-background-color: #fff;
+@recommendation-expand-bg-color: #f4f4f4;
+@recommendation-border-color: #a6a6a6;
+@recommendation-border: 1px solid @recommendation-border-color;
+
+@suggestionTextColor: #646464;
+
+.msla-recommendation-v3 {
+  box-sizing: border-box;
+  font-size: @card-body-font-size;
+  margin: 0 auto;
+  min-width: @card-min-fixed-width;
+  text-align: left;
+  width: @card-max-width;
+  z-index: 98;
+
+  @media only screen and (max-width: @designer-desktop-max-width) {
+    min-width: @card-min-fixed-width;
+    max-width: @card-max-width;
+    width: 100%;
+  }
+
+  .msla-categories {
+    padding: 4px;
+  }
+
+  .msla-recommendation-error {
+    margin-bottom: 1em;
+  }
+
+  .msla-search-box {
+    position: relative;
+
+    .msla-search-box-button,
+    .msla-search-box-icon {
+      position: absolute;
+      z-index: 1;
+    }
+
+    .msla-search-box-icon {
+      font-size: 15px;
+      display: flex;
+      height: 32px;
+      width: 32px;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .msla-search-box-button {
+      @media only screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        top: -1px;
+      }
+
+      &[disabled] {
+        background-color: initial;
+      }
+
+      &:hover {
+        background-color: inherit;
+
+        @media only screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+          background-color: transparent;
+        }
+      }
+    }
+
+    .msla-search-box-input {
+      input {
+        box-sizing: border-box;
+        font-size: @card-body-font-size;
+        padding-left: 30px;
+        -webkit-appearance: textfield;
+      }
+    }
+  }
+
+  .msla-connectors {
+    background-color: @recommendation-background-color;
+    border: @recommendation-border;
+    box-sizing: border-box;
+    height: 119px;
+    overflow: hidden;
+    padding: 12px 9px 3px;
+    -ms-user-select: none;
+    user-select: none;
+
+    &.msla-for-you {
+      border-bottom-color: @recommendation-border-color;
+      height: 155px;
+      padding: 6px 0;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    .msla-recently-used-connectors-title {
+      display: inline-block;
+      font-size: @card-body-font-size;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 10px 10px 10px 20px;
+      margin-bottom: 1px;
+    }
+
+    .msla-recently-used-clear {
+      position: absolute;
+      right: 10px;
+      top: 12px;
+      padding: 10px;
+
+      .msla-recently-used-clear-button {
+        background-color: @recommendation-background-color;
+        border: none;
+        color: @brandColor;
+        cursor: pointer;
+        font-size: @card-body-font-size;
+        margin: 0 1px;
+      }
+    }
+
+    &.msla-connectors-only {
+      border-bottom-color: @recommendation-border-color;
+      height: 508px;
+      overflow: auto;
+    }
+
+    div[role='listitem'] {
+      display: inline-flex;
+      vertical-align: top;
+    }
+
+    .msla-connector {
+      background-color: transparent;
+      box-sizing: border-box;
+      border: none;
+      cursor: pointer;
+      width: 76px;
+      overflow: hidden;
+      padding: 5px;
+
+      &:focus,
+      &:hover,
+      &:active {
+        background-color: @hoverColor;
+        -webkit-transition: background-color 0.5s ease;
+        -moz-transition: background-color 0.5s ease;
+        -ms-transition: background-color 0.5s ease;
+        transition: background-color 0.5s ease;
+      }
+
+      .msla-connector-icon {
+        display: block;
+        margin: 0 auto;
+        height: 40px;
+        width: 40px;
+        border-radius: 3px;
+      }
+
+      .msla-connector-title {
+        .msla-connector-title-label {
+          margin-top: 4px;
+          font-size: calc(0.9167 * @card-body-font-size);
+          max-height: 32px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: normal;
+          word-wrap: break-word;
+          display: block;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+        }
+      }
+    }
+
+    .msla-no-connectors {
+      word-wrap: break-word;
+      padding-left: 5px;
+
+      header {
+        margin-bottom: 12px;
+      }
+
+      .msla-no-connectors-icon {
+        font-size: 150%;
+        margin-right: 6px;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  .msla-expand-button {
+    background-color: @recommendation-expand-bg-color;
+    border: @recommendation-border;
+    border-bottom: none;
+    border-top: none;
+    cursor: pointer;
+    display: block;
+    height: 16px;
+    font-size: 8px;
+    width: 100%;
+
+    &:focus,
+    &:hover {
+      background-color: #dadada;
+    }
+  }
+
+  .msla-operations {
+    background-color: @recommendation-background-color;
+    border: @recommendation-border;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: 393px;
+    overflow: hidden;
+    padding: 5px 0;
+    position: relative;
+    -ms-user-select: none;
+    user-select: none;
+
+    &:first-child {
+      padding: 0 12px;
+    }
+
+    &.msla-operations-only {
+      height: 554px;
+    }
+
+    [class^='ms-Pivot'][role='tablist'] {
+      margin-left: -8px;
+    }
+
+    .msla-see-more {
+      background-color: @recommendation-background-color;
+      border: none;
+      cursor: pointer;
+      font-size: @card-body-font-size;
+      height: 40px;
+      margin: 5px 12px 0 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+
+      &:hover {
+        color: rgb(77, 144, 254);
+      }
+    }
+
+    .msla-operations-pivot {
+      padding: 0px 12px;
+    }
+
+    .msla-no-operations {
+      flex-grow: 1;
+      margin: 12px;
+    }
+
+    .msla-operations-list {
+      box-sizing: border-box;
+      margin-top: 12px;
+      overflow-y: auto;
+
+      [class^='ms-List-page'] {
+        overflow-x: hidden;
+      }
+
+      .msla-operation-flexbox {
+        display: flex;
+
+        .msla-operation {
+          box-sizing: border-box;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          flex-direction: row;
+          font-size: @card-body-font-size;
+          padding: 6px 12px;
+          margin-bottom: 6px;
+          width: 95%;
+          background-color: initial; /* Browsers which support CSS "initial" value */
+          background-color: #fff; /* Internet Explorer */
+
+          &[data-disabled='true'] {
+            color: rgb(128, 128, 128);
+          }
+
+          &:focus,
+          &:hover,
+          &:active {
+            background-color: @hoverColor;
+            -webkit-transition: background-color 0.5s ease;
+            -moz-transition: background-color 0.5s ease;
+            -ms-transition: background-color 0.5s ease;
+            transition: background-color 0.5s ease;
+          }
+
+          .msla-operation-icon {
+            height: 36px;
+            width: 36px;
+            border-radius: 3px;
+          }
+
+          .msla-operation-text {
+            flex-grow: 1;
+            margin-left: 5px;
+            overflow: hidden;
+            text-align: left;
+
+            .msla-operation-title {
+              font-weight: 600;
+
+              .msla-premium {
+                border: 1px solid #338800;
+                display: inline-block;
+                color: #107c10;
+                font-size: @card-label-font-size;
+                margin-left: 5px;
+                padding: 1px 5px;
+                text-transform: uppercase;
+              }
+
+              .msla-ise {
+                border: 1px solid #666;
+                color: #666;
+                display: inline-block;
+                font-size: 11px;
+                height: 14px;
+                line-height: 13px;
+                margin-left: 5px;
+                text-align: center;
+                text-transform: uppercase;
+                width: 30px;
+              }
+            }
+          }
+        }
+
+        .msla-operation-description {
+          align-self: center;
+
+          .msla-operation-description-button {
+            box-sizing: border-box;
+            color: #000;
+            padding: 5px 5px 0 5px;
+
+            &[data-disabled='true'] {
+              opacity: 0.5;
+            }
+
+            [class^='ms-Icon'] {
+              font-size: @card-header-font-size;
+            }
+
+            &:focus,
+            &:hover {
+              color: initial;
+
+              [class^='ms-Icon'] {
+                font-weight: 600;
+              }
+            }
+          }
+        }
+      }
+
+      .msla-uservoice {
+        margin: 12px;
+      }
+    }
+  }
+
+  .msla-modules {
+    background-color: @recommendation-background-color;
+    border: @recommendation-border;
+    height: 510px;
+    overflow-y: auto;
+    padding-left: 4px;
+
+    div[role='listitem'] {
+      display: inline-block;
+      padding: 8px 4px;
+    }
+
+    [class^='ms-DocumentCard'],
+    [class^='ms-DocumentCardLocation'] {
+      box-sizing: border-box;
+      min-width: 175px;
+      max-width: 175px;
+    }
+
+    [class^='ms-DocumentCardLocation'] {
+      font-weight: 600;
+    }
+  }
+
+  .msla-suggestions {
+    -ms-user-select: none;
+    user-select: none;
+    padding: 0 7px 3px 7px;
+
+    .msla-suggestions-header {
+      color: @suggestionTextColor;
+      font-size: 12px;
+      padding: 16px 0 16px 20px;
+      vertical-align: middle;
+    }
+
+    .msla-suggestion-list {
+      padding: 0 7px 3px 13px;
+
+      .msla-suggestion-cell {
+        border-bottom: @border;
+        min-height: 100px;
+
+        &.last-item {
+          border-bottom: none;
+        }
+
+        .msla-suggestion-right {
+          display: inline-block;
+          width: 120px;
+          min-height: 110px;
+          text-align: left;
+          padding-top: 3px;
+
+          .msla-connector-tier {
+            padding: 0 6px;
+          }
+
+          .msla-suggestion-connector {
+            background-color: transparent;
+            box-sizing: border-box;
+            border: none;
+            cursor: pointer;
+
+            flex-direction: column;
+            overflow: hidden;
+
+            &:focus,
+            &:hover,
+            &:active {
+              background-color: @hoverColor;
+              -webkit-transition: background-color 0.5s ease;
+              -moz-transition: background-color 0.5s ease;
+              -ms-transition: background-color 0.5s ease;
+              transition: background-color 0.5s ease;
+            }
+
+            .msla-connector-icon {
+              display: block;
+              margin: 6px 0 5px 0;
+              height: 48px;
+              width: 48px;
+              border-radius: 3px;
+            }
+            .msla-connector-title {
+              font-size: 13px;
+              text-align: left;
+            }
+          }
+        }
+
+        .msla-suggestion-operations {
+          display: inline-block;
+          padding: 3px 0 3px 20px;
+          width: calc(100% - 140px); // 120px + 20px
+          vertical-align: top;
+
+          .msla-operation {
+            box-sizing: border-box;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            padding: 3px 12px;
+            margin-bottom: 3px;
+            text-align: left;
+            width: 100%;
+            background-color: initial; /* Browsers which support CSS "initial" value */
+            background-color: #fff; /* Internet Explorer */
+
+            &[data-disabled='true'] {
+              color: @disabled-background-color;
+            }
+
+            &:focus,
+            &:hover,
+            &:active {
+              background-color: @hoverColor;
+              -webkit-transition: background-color 0.5s ease;
+              -moz-transition: background-color 0.5s ease;
+              -ms-transition: background-color 0.5s ease;
+              transition: background-color 0.5s ease;
+            }
+
+            .msla-operation-title {
+              font-size: 13px;
+              color: @card-text-color;
+            }
+
+            .msla-operation-subtitle {
+              font-size: 11px;
+              color: @suggestionTextColor;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: normal;
+              word-wrap: break-word;
+              display: block;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+              height: 32px;
+            }
+          }
+        }
+      }
+    }
+
+    .msla-no-suggestions {
+      text-align: left;
+      padding: 0 7px 3px 20px;
+
+      .msla-no-suggestions-icon {
+        padding-right: 5px;
+      }
+    }
+  }
+
+  .msla-foryou-container {
+    border: @recommendation-border;
+
+    .msla-no-connectors {
+      padding-left: 20px;
+    }
+
+    .msla-connectors {
+      border: none;
+    }
+  }
+
+  .msla-ise {
+    border: 1px solid #666;
+    color: #666;
+    display: inline-block;
+    font-size: 11px;
+    height: 14px;
+    margin-left: 2px;
+    line-height: 13px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 30px;
+  }
+
+  .msla-uservoice {
+    header {
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .msla-uservoice-link {
+      a {
+        color: @brandColor;
+
+        &:hover,
+        &:active {
+          text-decoration: underline;
+        }
+
+        &[disabled] {
+          cursor: default;
+          pointer-events: none;
+        }
+      }
+
+      .msla-uservoice-icon {
+        float: left;
+        font-size: 150%;
+        margin-right: 6px;
+      }
+    }
+  }
+}
+
+.msla-module-description-callout {
+  background-color: transparent;
+  border: none;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font-size: @card-body-font-size;
+  height: 157px;
+  padding: 10px;
+  text-align: left;
+  width: 175px;
+
+  header {
+    font-size: @card-header-font-size;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  div {
+    height: 105px;
+    white-space: pre-wrap;
+  }
+}
+
+.msla-operation-description-callout {
+  box-sizing: border-box;
+  font-size: @card-body-font-size;
+  padding: 10px;
+  width: 240px;
+
+  header {
+    font-size: @card-header-font-size;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .msla-connector-kind {
+    background-color: #faf8f7;
+    border: 1px solid #cac8c7;
+    display: inline-block;
+    font-size: @card-body-font-size;
+    font-weight: normal;
+    margin-left: 5px;
+    padding: 0 2.5px;
+  }
+
+  div {
+    white-space: pre-wrap;
+  }
+}
+
+.msla-card.msla-recommendation {
+  @media only screen and (max-width: @designer-desktop-max-width) {
+    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
+      min-width: calc(@card-max-width - 18px); /* 9px padding on both sides */
+    }
+  }
+
+  .msla-card-header-icon,
+  .msla-card-header-title-view {
+    cursor: default;
+  }
+
+  .msla-card-title-button-group {
+    flex: 0 0 auto;
+  }
+
+  .msla-card-body > .msla-recommendation-v3 {
+    padding: 10px;
+  }
+
+  .msla-recommendation-v3 {
+    width: auto;
+  }
+}
+
+.msla-recommendation-v3.msla-triggers {
+  @media only screen and (max-width: @designer-desktop-max-width) {
+    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
+      min-width: @card-max-width;
+    }
+  }
+
+  .msla-connectors {
+    height: 192px;
+    padding: 12px 7px 3px 7px;
+
+    &.msla-connectors-only {
+      height: 598px;
+    }
+  }
+
+  .msla-operations.msla-operations-only {
+    height: 640px;
+  }
+
+  .msla-modules {
+    height: 594px;
+  }
+}
+
+body.dark {
+  .msla-recommendation-v3 {
+    .msla-connectors {
+      background-color: @ms-color-white;
+      border-color: inherit;
+
+      &.msla-for-you {
+        border-bottom-color: inherit;
+      }
+
+      .msla-recently-used-clear {
+        .msla-recently-used-clear-button {
+          background-color: @ms-color-white;
+          color: @ms-color-black;
+
+          &:focus,
+          &:hover,
+          &:active {
+            outline: 1px dotted @ms-color-black;
+          }
+        }
+      }
+
+      &.msla-connectors-only {
+        border-bottom-color: inherit;
+      }
+
+      .msla-connector {
+        &:focus,
+        &:hover,
+        &:active {
+          background-color: @ms-color-themeLighter;
+        }
+
+        .msla-connector-title {
+          .msla-connector-title-label {
+            color: @ms-color-black;
+          }
+        }
+      }
+    }
+
+    .msla-expand-button {
+      background-color: @ms-color-white;
+      color: @ms-color-black;
+
+      &:focus,
+      &:hover {
+        background-color: @ms-color-themeLighter;
+      }
+    }
+
+    .msla-operations {
+      background-color: @ms-color-white;
+
+      .msla-see-more {
+        background-color: @ms-color-white;
+        color: @ms-color-black;
+
+        &:hover {
+          color: @ms-color-themePrimary;
+        }
+      }
+
+      .msla-operations-list {
+        .msla-operation-flexbox {
+          .msla-operation {
+            background-color: initial; /* Browsers which support CSS "initial" value */
+            background-color: @ms-color-white; /* Internet Explorer */
+
+            &[data-disabled='true'] {
+              color: rgb(128, 128, 128);
+            }
+
+            &:focus,
+            &:hover,
+            &:active {
+              background-color: @ms-color-themeLighter;
+            }
+
+            .msla-operation-text {
+              .msla-operation-title {
+                color: @ms-color-black;
+
+                .msla-ise {
+                  border-color: @ms-color-neutralTertiary;
+                  color: @ms-color-neutralTertiary;
+                }
+              }
+
+              .msla-operation-subtitle {
+                color: @ms-color-black;
+              }
+            }
+          }
+
+          .msla-operation-description {
+            .msla-operation-description-button {
+              color: @ms-color-black;
+
+              &:focus,
+              &:hover {
+                color: @ms-color-themePrimary;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .msla-modules {
+      background-color: @ms-color-white;
+    }
+
+    .msla-suggestions {
+      .msla-suggestions-header {
+        color: @ms-color-black;
+      }
+
+      .msla-suggestion-list {
+        .msla-suggestion-cell {
+          .msla-suggestion-right {
+            .msla-suggestion-connector {
+              &:focus,
+              &:hover,
+              &:active {
+                background-color: @ms-color-themeLighter;
+              }
+
+              .msla-connector-title {
+                color: @ms-color-black;
+              }
+            }
+          }
+
+          .msla-suggestion-operations {
+            .msla-operation {
+              background-color: initial; /* Browsers which support CSS "initial" value */
+              background-color: @ms-color-white; /* Internet Explorer */
+
+              &[data-disabled='true'] {
+                color: rgb(128, 128, 128);
+              }
+
+              &:focus,
+              &:hover,
+              &:active {
+                background-color: @ms-color-themeLighter;
+              }
+
+              .msla-operation-text {
+                .msla-operation-title {
+                  color: @ms-color-black;
+                }
+
+                .msla-operation-subtitle {
+                  color: @ms-color-black;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .msla-uservoice {
+      .msla-uservoice-link {
+        a {
+          color: @ms-color-themePrimary;
+        }
+      }
+    }
+  }
+
+  .msla-panel-root {
+    .msla-recommendation-v3 {
+      .msla-connectors {
+        background-color: inherit;
+
+        .msla-recently-used-clear {
+          .msla-recently-used-clear-button {
+            background-color: inherit;
+          }
+        }
+      }
+
+      .msla-expand-button {
+        background-color: inherit;
+      }
+
+      .msla-operations {
+        background-color: inherit;
+
+        .msla-see-more {
+          background-color: inherit;
+        }
+
+        .msla-operations-list {
+          .msla-operation-flexbox {
+            .msla-operation {
+              background-color: inherit;
+            }
+          }
+        }
+      }
+
+      .msla-modules {
+        background-color: inherit;
+      }
+
+      .msla-suggestions {
+        .msla-suggestion-list {
+          .msla-suggestion-cell {
+            .msla-suggestion-operations {
+              .msla-operation {
+                background-color: inherit;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .msla-operation-description-callout {
+    .msla-connector-kind {
+      background-color: @ms-color-white;
+      border: 1px solid @ms-color-neutralSecondary;
+    }
+  }
+
+  .msla-ise {
+    border-color: @ms-color-neutralTertiary;
+    color: @ms-color-neutralTertiary;
+  }
+}

@@ -1,0 +1,71 @@
+@import (reference) '../../variables.less';
+
+.msla-if {
+  > .msla-if-v2 {
+    margin: 0 auto;
+
+    &.expanded {
+      padding-bottom: 20px;
+    }
+  }
+
+  .msla-condition-expanded {
+    & > div > div > .msla-card {
+      &.msla-monitoring-card {
+        &.msla-card-selected {
+          & > .msla-card-header {
+            box-shadow: none;
+            /* NOTE(deli): Because we show border/shadow around header/body instead of the whole card,
+                        ** set box-shadow to none for both header and body so that shadow do not appear between the two.
+                        */
+          }
+
+          & > .msla-card-body > .msla-card-condition-body > .msla-card-condition-parameters {
+            box-shadow: none;
+          }
+        }
+
+        &
+          > .msla-card-body
+          > .msla-card-condition-body
+          > .msla-card-condition-parameters.msla-content-secured
+          > .msla-trace-inputs-outputs {
+          width: 92%;
+          display: inline-block;
+          text-align: left;
+        }
+      }
+    }
+  }
+}
+
+.msla-if {
+  > .msla-if-v2 {
+    > div > div > .msla-scope-v2--header {
+      margin-top: -20px;
+    }
+
+    .msla-card-condition-branches {
+      display: flex;
+      justify-content: center;
+      margin-top: 45px;
+    }
+
+    .msla-card-condition-branch {
+      > .msla-scope-v2 {
+        > .msla-scope-v2--body > .msla-card-container {
+          margin-top: 20px;
+        }
+      }
+    }
+  }
+
+  .msla-card-condition-parameters-body > .msla-trace-inputs-outputs {
+    margin: 10px 25px;
+  }
+
+  .msla-card-condition-branches {
+    display: flex;
+    justify-content: center;
+  }
+}

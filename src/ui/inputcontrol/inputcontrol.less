@@ -1,0 +1,188 @@
+@import (reference) '../variables.less';
+
+.msla-input-control,
+.msla-editor-input-control {
+  background-color: @card-background-color;
+  color: @card-text-color;
+  font-size: @parameter-value-font-size;
+  cursor: text;
+  min-height: @parameter-inputbox-height;
+  padding: 0 @parameter-inputbox-start-padding;
+  position: relative;
+  word-wrap: break-word;
+  line-height: @token-height;
+
+  @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    line-height: normal;
+  }
+
+  /* Draft 0.10.5 is adding style white-space: pre-wrap which affects CSS of long placeholder texts. */
+  .DraftEditor-root {
+    .public-DraftEditorPlaceholder-root {
+      .public-DraftEditorPlaceholder-inner {
+        white-space: nowrap !important;
+      }
+    }
+  }
+}
+
+.msla-input-control-value {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-width: 100%;
+  min-height: @parameter-inputbox-height;
+
+  .msla-input-control-token-item {
+    max-width: 100%;
+    padding: 0 0 0 2px;
+    position: relative;
+    vertical-align: middle;
+    display: inline-block;
+
+    &:last-child {
+      .msla-input-control-token-literal {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.msla-input-control-token-expression {
+  display: flex;
+  padding-right: 5px;
+
+  &.msla-token > .msla-token-icon {
+    height: @token-height;
+    padding: 0;
+    width: @token-height;
+  }
+}
+
+.msla-input-control-token-expression-delete {
+  align-self: center;
+  font-size: 16px;
+  vertical-align: top;
+  padding-left: 5px;
+  padding-right: 0;
+  color: #000;
+  line-height: @token-height;
+
+  &:focus {
+    color: rgba(51, 51, 51, 0.5);
+  }
+}
+
+.msla-input-control-token-literal {
+  display: inline-block;
+  font-family: @font-family;
+  position: relative;
+  min-width: 5px;
+  max-width: 100%;
+  word-break: break-all;
+  white-space: pre-wrap;
+  margin-top: 5px;
+}
+
+.msla-input-control-token-literal:focus {
+  outline: none;
+}
+
+.msla-input-control-token-disabled,
+.msla-input-control-view-only {
+  box-sizing: border-box;
+  width: 100%;
+  padding-left: @parameter-inputbox-start-padding;
+}
+
+.msla-input-control-view-only {
+  &.msla-disabled {
+    background-color: @disabled-background-color;
+
+    .msla-input-parameter-placeholder {
+      color: @disabled-foreground-color;
+      width: fit-content;
+      margin-top: 5px;
+    }
+  }
+}
+
+.msla-input-control-token-disabled-text {
+  display: inline-block;
+  padding: 5px;
+  word-break: break-all;
+}
+
+.msla-editor-input-control {
+  font-family: @font-family;
+
+  .public-DraftStyleDefault-block {
+    margin: 0;
+  }
+
+  .msla-editor-input-token-wrapper {
+    margin-left: 2px;
+  }
+
+  .msla-editor-input-token {
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: @token-height;
+    padding-left: (@token-height + @parameter-inputbox-start-padding);
+    padding-right: @parameter-inputbox-start-padding;
+    margin: 0 2px 0 0; // leave space to insert between tokens
+    vertical-align: sub;
+    position: relative;
+
+    > span {
+      display: inline-block;
+      height: @token-height;
+
+      > span {
+        max-width: @token-title-max-length;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+      }
+    }
+
+    .msla-editor-input-secure-token {
+      position: absolute;
+      left: 17px;
+      top: 6px;
+    }
+  }
+}
+
+body.dark {
+  .msla-editor-input-control,
+  .msla-input-control {
+    background-color: @ms-color-white;
+    color: @ms-color-black;
+  }
+
+  .msla-editor-input-control {
+    .msla-editor-input-token {
+      outline: 1px solid @ms-color-black;
+    }
+  }
+
+  .msla-input-control-token-expression {
+    outline: 1px solid @ms-color-black;
+  }
+
+  .msla-input-control-token-expression-delete {
+    color: @ms-color-black;
+  }
+
+  .msla-input-control-view-only {
+    &.msla-disabled {
+      background-color: @ms-color-white;
+
+      .msla-input-parameter-placeholder {
+        color: @ms-color-neutralTertiary;
+      }
+    }
+  }
+}

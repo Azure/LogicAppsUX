@@ -1,0 +1,14 @@
+.msla-card-config-item {
+  .msla-gateway-picker {
+    display: inline-block;
+    position: relative;
+    top: -5px;
+    @width-offset: (@parameter-label-width + @parameter-label-inputbox-margin);
+    width: calc(100% - @width-offset);
+
+    @media only screen and (max-width: @designer-desktop-max-width) {
+      width: 100%;
+      flex: 1;
+    }
+  }
+}

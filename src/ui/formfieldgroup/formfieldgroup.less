@@ -1,0 +1,30 @@
+@import (reference) '../variables.less';
+
+.msla-form-field-group-root {
+  padding: 5px 1px;
+  margin-top: 5px;
+
+  &.error {
+    padding: 4px 0;
+    border: 1px dotted @schema-editor-form-field-error-border-color;
+  }
+
+  .msla-form-field-group-children-container {
+    margin-left: 5px;
+  }
+
+  .msla-form-field-group-error {
+    color: @schema-editor-form-field-error-color;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .msla-form-field-group-header-container {
+    display: flex;
+
+    .msla-form-field-group-header-element {
+      display: flex;
+      align-items: center;
+    }
+  }
+}

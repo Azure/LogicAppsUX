@@ -1,0 +1,25 @@
+@import (reference) '../variables.less';
+
+.msla-colorizer-json-body {
+  margin: 0.5em 1.25em;
+  max-height: 12em;
+  border: 1px solid lightgray;
+
+  .msla-monaco {
+    .monaco-editor {
+      .decorationsOverviewRuler {
+        display: none;
+      }
+
+      .overflowingContentWidgets {
+        display: none;
+      }
+    }
+
+    .monaco-editor-scrollable {
+      .decorationsOverviewRuler {
+        display: none;
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import './common.less';
+import './styles.less';
 export * from './checkbox/index';
 //export * from './card';
 export * from './callouts';
@@ -13,3 +13,4 @@ export * from './recommendation';
 export * from './title';
 export * from './toggle';
 export * from './Designer';
+export * from './tip';

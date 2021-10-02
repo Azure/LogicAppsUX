@@ -9,7 +9,6 @@ import { BaseComponentProps } from '../base';
 import Constants from '../constants';
 import { UserAction } from '../telemetry/models';
 import { Plus } from './images/plus';
-import './actionbuttonv2.less';
 import { useEffect } from 'react';
 
 export interface ActionButtonV2Props extends BaseComponentProps {

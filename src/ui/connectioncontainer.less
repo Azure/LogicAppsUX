@@ -1,0 +1,201 @@
+@import (reference) 'variables.less';
+
+@connection-selector-font-size-small: 10px;
+@selector-list-text-font-size: 12px;
+@connection-selector-font-size-medium: 14px;
+@connection-switch-link-font-size: 16px;
+
+.msla-designer-canvas .msla-connection-container {
+  max-width: @card-max-width; // NOTE: in logic apps give max width, in flow let parent decide max-width
+}
+
+.msla-connectionwizard-canvas .msla-card-caption {
+  padding: 0; // NOTE: remove padding only in connection wizard
+}
+
+.msla-connection-container--original {
+  .msla-connection-container-list {
+    border: solid 1px #d2d2d2;
+  }
+}
+
+.msla-connection-container--fabric {
+  .msla-connection-container-body {
+    .ms-DetailsRow-cell {
+      padding-left: 0;
+    }
+  }
+}
+
+.msla-connection-controls {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.msla-connection-container {
+  margin: 0 auto;
+  text-align: left;
+}
+
+.msla-connection-container-header {
+  padding-bottom: 8px;
+  text-align: left;
+}
+
+.msla-connection-container-footer {
+  text-align: center;
+
+  .msla-connection-continue-button {
+    margin-top: 16px;
+  }
+}
+
+.msla-connection-container-body {
+  .ms-DetailsRow-cell {
+    display: flex;
+    align-items: center;
+  }
+
+  .ms-DetailsRow:hover {
+    background-color: unset;
+  }
+}
+
+.msla-connection-container .msla-connection-selector-icon {
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+
+  @fabric-icon-size: 32px;
+
+  width: @fabric-icon-size;
+  height: @fabric-icon-size;
+  min-width: @fabric-icon-size; // required for IE
+}
+
+.msla-connection-selector-connector-container {
+  margin-left: 16px;
+  min-width: 0;
+  overflow: hidden; // required for IE
+}
+
+.msla-connector-display-name {
+  font-size: @connection-selector-font-size-medium;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.msla-connection-display-name-invalid-connection-link {
+  margin-left: auto; // right aligns the fix connection link
+}
+
+.msla-connection-display-name {
+  font-size: @connection-selector-font-size-medium;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  min-width: 0;
+  margin-left: auto; // right aligns the connection display name
+
+  @media only screen and (max-width: 475px) {
+    display: none;
+  }
+}
+
+.msla-connection-create-button {
+  padding: 0;
+  width: 70%;
+  max-width: 100px;
+}
+
+.msla-connection-status-icon-container {
+  cursor: default;
+}
+
+.msla-connection-status-icon-container:last-child {
+  padding-right: 8px;
+}
+
+.msla-connection-status-icon {
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+.msla-connection-status-icon--success {
+  color: #107c10;
+}
+
+.msla-connection-status-icon--error {
+  color: #d13438;
+}
+
+.msla-connection-switch-link {
+  font-size: @connection-switch-link-font-size;
+  color: @defaultBrandColor;
+  margin-left: 4px;
+
+  i {
+    vertical-align: middle;
+  }
+}
+
+.msla-selector {
+  .msla-card-menu-title .msla-card-menu-subtitle .msla-card-menu-text {
+    padding: 0;
+    font-size: @selector-list-text-font-size;
+  }
+}
+
+.msla-connection-switch-link + .msla-selector {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+}
+
+.msla-connection-switch-link-disabled {
+  border: none;
+  color: #adadad;
+  cursor: default;
+  font-size: @connection-switch-link-font-size;
+  margin-left: 4px;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  i {
+    vertical-align: middle;
+  }
+}
+
+.msla-connection-view-permissions-link {
+  font-size: @connection-selector-font-size-small;
+  color: @brandColor;
+  display: block;
+  border: none;
+  background: transparent;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+body.dark {
+  .msla-connection-container-body {
+    [class^='ms-List-cell'] {
+      background-color: @ms-color-white;
+    }
+  }
+
+  .msla-connection-status-icon--success {
+    color: #19c019;
+  }
+
+  .msla-connection-status-icon--error {
+    color: #e4878a;
+  }
+}

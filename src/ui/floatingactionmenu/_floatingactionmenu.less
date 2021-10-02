@@ -1,0 +1,98 @@
+@menu-add-button-color: #07f;
+@menu-secondary-text-color: #6a6a6a;
+@floating-action-menu-items-close-hover-color: #333333;
+
+.msla-floating-action-menu-container {
+  margin: 0pt 10pt;
+
+  .msla-floating-action-menu {
+    height: 40pt;
+    display: flex;
+    align-items: center;
+    margin-left: 5pt;
+
+    .msla-floating-action-menu-plus-icon {
+      font-size: 21pt;
+      color: @menu-add-button-color;
+      margin-bottom: 6px;
+    }
+
+    .msla-floating-action-menu-title {
+      font-size: 12pt;
+      margin-left: 5pt;
+    }
+  }
+
+  .msla-floating-action-menu-items-container {
+    padding-bottom: 8px;
+
+    .msla-floating-action-menu-items-title {
+      display: inline-block;
+      margin: 5px 0 15px 0;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .msla-floating-action-menu-items-close {
+      float: right;
+      width: 10%;
+      text-align: center;
+      font-size: 16pt;
+      color: @menu-secondary-text-color;
+      &:hover {
+        cursor: pointer;
+        color: @floating-action-menu-items-close-hover-color;
+      }
+    }
+
+    .msla-floating-action-menu-items {
+      display: flex;
+
+      .msla-floating-action-menu-item-vertical-details {
+        display: inline-block;
+      }
+
+      .msla-floating-action-menu-item-horizontal-container {
+        display: flex;
+        width: 60pt;
+        flex-direction: column;
+        align-items: center;
+
+        .msla-horizontal-menu-item-label {
+          display: inline-block;
+          width: 100%;
+          text-align: center;
+          margin-top: 4pt;
+          font-size: 12pt;
+          color: @menu-secondary-text-color;
+        }
+      }
+
+      .msla-floating-action-menu-item-vertical-container {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        height: 63px;
+
+        .msla-vertical-menu-item-label {
+          flex-grow: 1;
+          margin: 0px 10pt;
+        }
+
+        .msla-vertical-menu-item-add {
+          margin-right: 10pt;
+          font-size: 20pt;
+          width: 20pt;
+          height: 20pt;
+        }
+      }
+
+      .msla-menu-item-logo {
+        width: 35pt;
+        height: 35pt;
+        border-radius: 50%;
+      }
+    }
+  }
+}

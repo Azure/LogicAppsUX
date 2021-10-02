@@ -1,0 +1,39 @@
+@import (reference) '../variables.less';
+
+.msla-textbox {
+  box-sizing: border-box;
+  font-size: @parameter-value-font-size;
+  font-family: @font-family;
+  line-height: @parameter-inputbox-height;
+  min-height: @parameter-inputbox-height;
+  width: 100%;
+  vertical-align: middle;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::-webkit-input-placeholder {
+    font-family: @font-family;
+  }
+
+  &:-moz-placeholder {
+    font-family: @font-family;
+  }
+
+  &::-moz-placeholder {
+    font-family: @font-family;
+  }
+
+  &:-ms-input-placeholder {
+    font-family: @font-family;
+  }
+
+  &::placeholder {
+    font-family: @font-family;
+  }
+
+  &:placeholder-shown {
+    font-family: @font-family;
+  }
+}

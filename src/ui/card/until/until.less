@@ -1,0 +1,37 @@
+@import (reference) '../../variables.less';
+
+.msla-card-until-body {
+  width: 100%;
+
+  .msla-card-until-body-limit {
+    margin: 6px @parameter-label-inputbox-margin;
+
+    .msla-input-parameter {
+      padding-bottom: @parameter-interval-margin;
+    }
+  }
+
+  .msla-card-until-body-toggle-limit-button {
+    margin-top: 0.5em;
+
+    .msla-card-until-toggle-limit-button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+      font-family: @font-family;
+
+      span {
+        vertical-align: 0.3em;
+      }
+    }
+  }
+
+  .msla-error {
+    max-width: @card-max-width;
+
+    .msla-error-text {
+      font-family: @font-family;
+    }
+  }
+}

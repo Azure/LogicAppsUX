@@ -1,0 +1,131 @@
+@import (reference) '../variables.less';
+
+.msla-table {
+  border-spacing: 0px;
+  font-size: @card-body-font-size;
+  font-family: @font-family;
+  width: 100%;
+
+  th,
+  td {
+    padding: 8px;
+    line-height: 1em;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  td {
+    border-top: 1px solid #ddd;
+  }
+
+  .msla-button img {
+    display: block;
+    width: 14px;
+    height: 14px;
+    margin-top: 8px;
+  }
+
+  tbody {
+    tr.msla-table-row {
+      cursor: pointer;
+      outline: none;
+      -ms-high-contrast-adjust: none;
+
+      &:hover,
+      &:focus,
+      &:active {
+        background-color: @hoverColor;
+        -webkit-transition: background-color 0.5s ease;
+        -moz-transition: background-color 0.5s ease;
+        -ms-transition: background-color 0.5s ease;
+        transition: background-color 0.5s ease;
+
+        @media screen and (-ms-high-contrast: active) {
+          background-color: highlight;
+          color: highlightText;
+        }
+      }
+
+      &.msla-table-row-selected {
+        background-color: @selected-item-background-color;
+
+        &:hover,
+        &:focus,
+        &:active {
+          background-color: @selected-item-background-color;
+        }
+      }
+
+      .msla-table-row-delete-button {
+        height: 25px;
+        width: 25px;
+      }
+    }
+  }
+}
+
+.msla-dynamic-table {
+  .msla-table-row:hover {
+    background-color: inherit;
+    cursor: auto;
+  }
+
+  th,
+  td {
+    padding: 0;
+    border: none;
+    width: 50%;
+    max-width: calc(
+      (@card-max-width - 10px - 16px - 36px) / 2
+    ); // 10px (card-body-padding), 16px (input-parameters-padding), 36px (delete button width + padding)
+
+    .msla-input-parameter {
+      padding: 0;
+
+      .msla-input-parameter-box {
+        border-style: dotted;
+        border-width: 1px 1px 0;
+        width: 100%;
+      }
+    }
+  }
+
+  tr:last-child .msla-input-parameter-box {
+    border-bottom: 1px dotted;
+  }
+
+  tr > td:last-child {
+    width: 16px;
+    padding-right: 10px;
+  }
+}
+
+body.dark {
+  .msla-table {
+    td {
+      border-top: 1px solid #555;
+    }
+
+    tbody {
+      tr.msla-table-row {
+        &:hover,
+        &:focus,
+        &:active {
+          background-color: @ms-color-neutralLighter;
+        }
+
+        &.msla-table-row-selected {
+          background-color: @ms-color-themePrimary;
+          color: @ms-color-bodyBackground;
+
+          &:focus,
+          &:hover,
+          &:active {
+            background-color: @ms-color-themeDark;
+            color: @ms-color-bodyBackground;
+          }
+        }
+      }
+    }
+  }
+}

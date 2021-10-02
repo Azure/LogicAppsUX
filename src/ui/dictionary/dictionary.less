@@ -1,0 +1,201 @@
+@import (reference) '../variables';
+@import (reference) '../card/parameters/parameters.less';
+
+.msla-dictionary-parameter {
+  display: flex;
+  flex-direction: row-reverse;
+
+  > .msla-input-parameter {
+    .msla-input-parameter-box {
+      width: 100%;
+    }
+  }
+
+  .msla-input-parameter-error {
+    &.msla-label {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+
+  .msla-dictionary-container {
+    flex: 1 1 auto;
+
+    .msla-input-parameter-box {
+      padding-left: 0;
+    }
+
+    > .msla-input-parameter {
+      width: 100%;
+
+      .msla-input-parameter-box {
+        width: 100%;
+      }
+    }
+
+    .msla-input-parameter-error {
+      &.msla-label {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+
+    .msla-input-parameter-box {
+      padding: 0px;
+    }
+  }
+}
+
+.msla-input-parameter-box {
+  &.msla-input-parameter-box-no-label {
+    width: calc(100% ~'-' 32px);
+    /* toggle button 32px */
+  }
+
+  &.msla-dictionary {
+    border: none;
+    margin: 0;
+    display: table;
+  }
+}
+
+.msla-dictionary {
+  width: 100%;
+
+  .msla-dictionary-item {
+    width: 100%;
+    display: table-row;
+
+    .msla-dictionary-item-cell {
+      border: 1px solid #989898;
+      border-bottom: none;
+      display: table-cell;
+      vertical-align: top;
+      width: 47%;
+
+      &:not(:nth-child(n-1)) {
+        border-right: none;
+      }
+
+      .msla-input-parameter-dictionary {
+        .msla-input-parameter-content-wrapper {
+          min-width: 0;
+          width: inherit;
+        }
+      }
+
+      .msla-dictionary-item-textfield {
+        margin-bottom: 0;
+
+        [class^='ms-TextField-fieldGroup'] {
+          height: @parameter-inputbox-height;
+          border: none;
+        }
+      }
+
+      &:last-of-type {
+        border-right: 1px solid #989898;
+      }
+    }
+
+    &:last-of-type {
+      .msla-dictionary-item-cell {
+        border-bottom: 1px solid #989898;
+      }
+    }
+  }
+
+  .msla-dictionary-add-more {
+    padding: 5px 2px 2px 2px;
+    margin: 0 0 0 13px;
+    border: none;
+    background: none;
+
+    .msla-dictionary-add-icon {
+      height: 20px;
+      width: 20px;
+    }
+  }
+
+  .msla-dictionary-item-delete {
+    width: 25px;
+    height: 25px;
+    display: table-cell;
+  }
+}
+
+/* Workaround for Firefox hiding delete row buttons if cell content is too wide */
+@-moz-document url-prefix() {
+  .msla-dictionary {
+    .msla-dictionary-item {
+      .msla-dictionary-item-cell {
+        max-width: 198px;
+        /* 200px - 1px border on each side */
+      }
+    }
+  }
+}
+
+.msla-dictionary-control-label {
+  max-width: calc(100% - 20px);
+  display: inline-block;
+}
+
+.msla-simple-dictionary > .msla-input-parameter-label {
+  display: none;
+}
+
+.msla-dictionary-expression-mode-toggle {
+  display: inline-block;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .msla-dictionary-expression-mode-toggle-icon {
+    height: 14px;
+    width: 14px;
+  }
+}
+
+.msla-input-parameter-dictionary-key,
+.msla-input-parameter-dictionary-value {
+  box-sizing: border-box;
+  word-break: break-all;
+
+  .msla-input-control {
+    .msla-input-control-value {
+      .msla-input-control-token-item {
+        .msla-token-title {
+          max-width: 71px;
+        }
+      }
+    }
+  }
+}
+
+.msla-input-parameter-item-deletable {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+
+  .msla-input-parameter {
+    flex: 1 1 100%;
+  }
+
+  .msla-dictionary-container {
+    .msla-input-parameter-dictionary-key,
+    .msla-input-parameter-dictionary-value {
+      min-width: 160px;
+    }
+  }
+}
+
+.msla-simple-dictionary {
+  &.msla-dictionary-parameter {
+    .msla-input-parameter-label {
+      margin-right: 0;
+    }
+  }
+}

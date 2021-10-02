@@ -5,7 +5,7 @@ import React from 'react';
 import { ComponentMeta, ComponentStory}from '@storybook/react';
 
 import { ActionButtonV2, ActionButtonV2Props } from './index';
-import './actionbuttonv2.less';
+
 
 export default {
   component: ActionButtonV2,

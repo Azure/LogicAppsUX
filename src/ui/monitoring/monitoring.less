@@ -1,0 +1,222 @@
+@import (reference) '../variables.less';
+
+.msla-trace-error {
+  overflow-x: hidden;
+
+  [class^='ms-MessageBar-content'] {
+    max-width: (@card-max-width - 30px);
+  }
+}
+
+.msla-trace-inputs-outputs {
+  background-color: #fff;
+  border: @defaultBorder;
+  margin: 20px 20px 0;
+
+  &:last-child {
+    margin-bottom: 0.75em;
+  }
+
+  .msla-trace-inputs-outputs-header {
+    display: flex;
+
+    header {
+      border-left-style: solid;
+      border-left-width: 4px;
+      flex-grow: 1;
+      font-size: 100%;
+      font-weight: 600;
+      margin: 0;
+      padding: 0.75em 0.5em 0.75em 1em;
+      text-transform: uppercase;
+      line-height: inherit;
+    }
+
+    .msla-show-raw-button {
+      margin: 0.75em 0.5em;
+    }
+  }
+
+  .msla-trace-values {
+    padding: 1em 0;
+    border-top: @defaultBorder;
+
+    .msla-trace-download-link {
+      padding: 0.75em 1.25em 0;
+
+      a {
+        &:link {
+          text-decoration: none;
+        }
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .msla-trace-value-label {
+      display: block;
+
+      .msla-trace-value-display-name {
+        font-weight: 600;
+        padding: 0.75em 1.25em 0;
+      }
+
+      .msla-trace-value-text {
+        background-color: rgba(191, 68, 68, 0.05);
+        margin: 0.5em 1.25em;
+        max-height: 12em;
+        overflow: auto;
+        padding: 0.75em 1.25em;
+        white-space: pre-wrap;
+
+        &.msla-trace-value-html-table {
+          table {
+            border-collapse: collapse;
+
+            td,
+            th {
+              padding: 0.25em 0.5em;
+            }
+
+            th {
+              text-align: left;
+            }
+          }
+        }
+
+        &.msla-trace-value-key-value-pairs {
+          border: 1px solid rgba(191, 68, 68, 0.05);
+          padding: 0;
+
+          /* Workaround for Fabric CSS bug */
+          [class^='ms-DetailsList'][data-automationid='DetailsList'] {
+            overflow-x: visible;
+          }
+        }
+
+        .monaco-editor.vs {
+          background-color: inherit;
+          font-family: @font-family;
+        }
+      }
+    }
+
+    .msla-button.msla-input-parameters-show-more {
+      margin-left: 10px;
+    }
+
+    .msla-trace-inputs-outputs-secured {
+      padding: 5px;
+      margin: 5px 5px 0 5px;
+      color: #ab0101;
+      font-size: 14px;
+      font-weight: 500;
+
+      .msla-trace-secured-text {
+        padding: 5px;
+        background-color: rgba(204, 204, 204, 0.23);
+      }
+    }
+  }
+}
+
+.msla-resizable-panel-container {
+  .msla-trace-inputs-outputs {
+    margin: 10px;
+  }
+}
+
+.msla-trace-link-panel {
+  background-color: #fff;
+  margin: 0.75em 0.75em 0;
+  height: 2em;
+}
+
+.msla-card-body.msla-has-errors {
+  > .msla-monitoring-parameters-card-body {
+    margin: 0;
+  }
+}
+
+.msla-panel-callout {
+  .msla-pager {
+    .msla-pager-button-bar {
+      input {
+        font-size: @card-header-font-size;
+        font-family: @font-family;
+        line-height: 1.35;
+        margin: 0;
+        width: 18px;
+        border: none;
+        font-weight: bold;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.msla-retrypanel-pager-title-div {
+  font-weight: bold;
+  font-family: @font-family;
+  margin: 0 10px;
+  display: inline-block;
+  vertical-align: 2px;
+}
+
+.msla-show-evaluation {
+  clear: none;
+  float: right;
+}
+
+.msla-panel-callout {
+  width: 400px;
+
+  .msla-panel-callout-content {
+    font-family: @font-family;
+    font-size: 12px;
+    max-height: 480px;
+    overflow: auto;
+    padding: 0 1em;
+
+    .msla-trace-inputs-outputs {
+      margin: 0 0 20px;
+    }
+  }
+}
+
+.msla-request-history-panel-error {
+  margin-bottom: 1em;
+}
+
+.msla-inline {
+  display: inline;
+}
+
+body.dark {
+  .msla-trace-inputs-outputs {
+    background-color: @ms-color-white;
+
+    .msla-trace-values {
+      .msla-trace-inputs-outputs-obfuscated {
+        color: #fe4747;
+      }
+
+      .msla-trace-value-label {
+        .msla-trace-value-text {
+          background-color: @ms-color-bodyBackground;
+
+          &.msla-trace-value-key-value-pairs {
+            border: 1px solid @ms-color-bodyBackground;
+          }
+        }
+      }
+    }
+  }
+
+  .msla-trace-link-panel {
+    background-color: @ms-color-white;
+    color: @ms-color-black;
+  }
+}

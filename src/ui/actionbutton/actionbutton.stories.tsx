@@ -2,10 +2,10 @@
 
 import React from 'react';
 
-import { ComponentMeta, ComponentStory}from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 
 import { ActionButton, ActionButtonProps } from './index';
-import './actionbutton.less';
+
 import image from '../../common/images/actionpalette/addaction_blue.svg';
 
 export default {

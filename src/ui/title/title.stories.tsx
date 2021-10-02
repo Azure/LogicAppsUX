@@ -5,7 +5,6 @@ import React from 'react';
 import { ComponentMeta, ComponentStory}from '@storybook/react';
 
 import { Title, TitleProps } from './index';
-import '../card/card.less';
 export default {
   component: Title,
   title: 'Components/Title',

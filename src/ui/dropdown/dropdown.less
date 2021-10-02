@@ -1,0 +1,29 @@
+.msla-dropdown-container {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+}
+
+.msla-multiselectdropdown-title {
+  &.msla-multiselectdropdown-title-placeholder {
+    color: @parameter-placeholder-color;
+  }
+
+  &.msla-multiselectdropdown-title-value {
+    color: @parameter-value-color;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+body.dark {
+  .msla-multiselectdropdown-title {
+    &.msla-multiselectdropdown-title-placeholder {
+      color: @ms-color-neutralSecondary;
+    }
+
+    &.msla-multiselectdropdown-title-value {
+      color: @ms-color-black;
+    }
+  }
+}

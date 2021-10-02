@@ -1,0 +1,94 @@
+.msla-html-wysiwyg-editor {
+  display: inline-block;
+
+  .rdw-editor-main {
+    margin: 0 10px;
+  }
+
+  .rdw-option-wrapper {
+    padding: 0;
+    margin: 0;
+  }
+
+  .rdw-editor-toolbar {
+    padding: 0;
+    margin: 0;
+  }
+
+  .rdw-inline-wrapper,
+  .rdw-fontsize-wrapper,
+  .rdw-fontfamily-wrapper,
+  .rdw-list-wrapper,
+  .rdw-colorpicker-wrapper,
+  .rdw-link-wrapper,
+  .rdw-image-wrapper {
+    margin-bottom: 2px;
+  }
+
+  .rdw-dropdown-wrapper {
+    height: 21px;
+    margin: 0;
+  }
+
+  .rdw-dropdownoption-default {
+    padding: 0 5px;
+    text-align: left;
+  }
+
+  .rdw-fontfamily-optionwrapper {
+    width: 98%;
+  }
+
+  .rdw-fontfamily-dropdown {
+    width: 112px;
+  }
+
+  .rdw-fontsize-dropdown {
+    width: 42px;
+  }
+
+  .msla-editor-input-token-wrapper {
+    margin-left: 2px;
+  }
+
+  .msla-token {
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: 24px 24px;
+    padding-left: 34px;
+    padding-right: @parameter-inputbox-start-padding;
+    margin: 0 2px 0 0;
+    vertical-align: sub;
+    white-space: nowrap;
+  }
+
+  .public-DraftStyleDefault-orderedListItem {
+    .public-DraftStyleDefault-block {
+      margin-left: 5px;
+    }
+
+    &.public-DraftStyleDefault-listLTR {
+      &:before {
+        left: -25px;
+      }
+    }
+  }
+
+  ol {
+    margin-left: -5px;
+  }
+
+  ul > li {
+    list-style: disc outside none; /* Browsers which do not support 'initial', e.g., IE */
+    list-style: initial; /* Browsers which support 'initial', e.g., Chrome, Edge, Firefox, Safari */
+  }
+}
+
+/* NOTE(joechung): The HTML editor does not support theming. */
+body.dark {
+  .msla-html-wysiwyg-editor {
+    .rdw-editor-toolbar {
+      color: #000;
+    }
+  }
+}

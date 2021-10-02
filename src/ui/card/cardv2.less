@@ -1,0 +1,60 @@
+@import (reference) '../variables.less';
+
+.msla-card-v2 {
+  background-color: #fff;
+  border: 1px solid #c8c6c4;
+  border-radius: 2px;
+  box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+  color: #323130;
+  cursor: pointer;
+  display: flex;
+  margin: 0 auto;
+  min-height: @card-v2-height;
+  padding: 0;
+  width: @card-v2-width;
+
+  &:focus {
+    outline: 0;
+  }
+
+  &:focus,
+  &:hover {
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
+  }
+
+  &.msla-selected {
+    box-shadow: 0 0 3.6px #0078d4, 0 0 14.4px #0078d4;
+  }
+
+  > img {
+    align-self: flex-start;
+    height: 24px;
+    padding: 8px;
+    width: 24px;
+  }
+
+  > span {
+    align-self: center;
+    flex: 1;
+    font: 14px/20px @semibold-font-family;
+    padding: 8px 0;
+    text-align: left;
+  }
+}
+
+body.dark {
+  .msla-card-v2 {
+    background-color: @ms-color-white;
+    box-shadow: 0 0.3px 0.9px rgba(255, 255, 255, 0.1), 0 1.6px 3.6px rgba(255, 255, 255, 0.13);
+    color: @ms-color-black;
+
+    &:focus,
+    &:hover {
+      box-shadow: 0 1.2px 3.6px rgba(255, 255, 255, 0.1), 0 6.4px 14.4px rgba(255, 255, 255, 0.13);
+    }
+
+    &.msla-selected {
+      box-shadow: 0 0 3.6px #85caff, 0 0 14.4px #85caff;
+    }
+  }
+}

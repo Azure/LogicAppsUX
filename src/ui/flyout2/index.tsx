@@ -8,8 +8,6 @@ import Constants from '../constants';
 import { calloutContentStyles } from '../fabric';
 import { getDragStartHandlerWhenDisabled } from '../helper';
 import { DocLinkClickedEventHandler, DocumentationLinkItem } from '../recommendation';
-import '../flyout/flyout.less';
-
 export interface Flyout2Props extends BaseComponentProps {
   ariaLabel?: string;
   docLink?: Swagger.ExternalDocumentation;

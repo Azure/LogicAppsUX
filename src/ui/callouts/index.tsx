@@ -1,7 +1,6 @@
 import { Callout } from '@fluentui/react/lib/Callout';
 import { DirectionalHint } from '@fluentui/react/lib/common/DirectionalHint';
 import * as React from 'react';
-import './simple.less';
 
 export interface SimpleCalloutProps {
   directionalHint: DirectionalHint;

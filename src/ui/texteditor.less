@@ -1,0 +1,49 @@
+.msla-text-editor {
+  background-color: #fff;
+  color: #000000;
+  font-size: 12px;
+  cursor: text;
+  min-height: 26px;
+  padding: 0 10px;
+  position: relative;
+  line-height: 24px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+
+  .msla-token {
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: 24px 24px;
+    padding-left: 34px;
+    margin: 0 2px 0 0;
+    vertical-align: sub;
+  }
+
+  .public-DraftStyleDefault-block {
+    margin: 0; /* override styles globaly set by react-draft-wysiwyg */
+  }
+
+  .msla-editor-input-token.msla-token {
+    display: inline-flex;
+    padding-right: 4px;
+    position: relative;
+  }
+
+  .msla-editor-input-secure-token {
+    position: absolute;
+    left: 17px;
+    top: 6px;
+  }
+}
+
+body.dark {
+  .msla-text-editor {
+    background-color: inherit;
+    color: inherit;
+
+    .msla-editor-input-token.msla-token {
+      border: 1px solid #fff;
+    }
+  }
+}
