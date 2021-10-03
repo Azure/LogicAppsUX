@@ -1,4 +1,16 @@
 {
+  "/NDLmg": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
+  "0ZlNtf": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
+    }
+  ],
   "1rlBUx": [
     {
       "type": 0,
@@ -9,6 +21,18 @@
     {
       "type": 0,
       "value": "Изменяется заголовок карты"
+    }
+  ],
+  "3kI7xF": [
+    {
+      "type": 0,
+      "value": "Faulted"
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "Previous"
     }
   ],
   "7GSk99": [
@@ -27,6 +51,88 @@
     {
       "type": 0,
       "value": "Скрыть расширенные параметры"
+    }
+  ],
+  "GLahvg": [
+    {
+      "type": 0,
+      "value": "Dismiss"
+    }
+  ],
+  "GkLuvC": [
+    {
+      "options": {
+        "other": {
+          "value": [
+            {
+              "offset": 0,
+              "options": {
+                "few": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " seconds"
+                    }
+                  ]
+                },
+                "many": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " seconds"
+                    }
+                  ]
+                },
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " second"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " seconds"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "seconds"
+            }
+          ]
+        },
+        "true": {
+          "value": [
+            {
+              "type": 1,
+              "value": "seconds"
+            },
+            {
+              "type": 0,
+              "value": "s"
+            }
+          ]
+        }
+      },
+      "type": 5,
+      "value": "abbreviated"
     }
   ],
   "Gx6rDL": [
@@ -91,10 +197,274 @@
       "value": "count"
     }
   ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "Next failed"
+    }
+  ],
+  "N3U8r2": [
+    {
+      "options": {
+        "other": {
+          "value": [
+            {
+              "offset": 0,
+              "options": {
+                "few": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " hours"
+                    }
+                  ]
+                },
+                "many": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " hours"
+                    }
+                  ]
+                },
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " hour"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " hours"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "hours"
+            }
+          ]
+        },
+        "true": {
+          "value": [
+            {
+              "type": 1,
+              "value": "hours"
+            },
+            {
+              "type": 0,
+              "value": "s"
+            }
+          ]
+        }
+      },
+      "type": 5,
+      "value": "abbreviated"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
+    }
+  ],
   "P8QaSQ": [
     {
       "type": 0,
       "value": "Копировать URL-адрес"
+    }
+  ],
+  "PF87Ew": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
+  "PaPPLr": [
+    {
+      "type": 0,
+      "value": "Aborted"
+    }
+  ],
+  "T8Xqt9": [
+    {
+      "type": 0,
+      "value": "Failed"
+    }
+  ],
+  "UWI7IQ": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hour "
+            },
+            {
+              "offset": 0,
+              "options": {
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " minute"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " minutes"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "minutes"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours "
+            },
+            {
+              "offset": 0,
+              "options": {
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " minute"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " minutes"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "minutes"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "of "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "b5su3H": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "cj+kyo": [
+    {
+      "type": 0,
+      "value": "Cancelled"
+    }
+  ],
+  "e4Onhn": [
+    {
+      "type": 0,
+      "value": "Not specified"
+    }
+  ],
+  "ftwXvc": [
+    {
+      "type": 0,
+      "value": "Ignored"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "Previous failed"
     }
   ],
   "gjBiyj": [
@@ -103,10 +473,40 @@
       "value": "Загрузка…"
     }
   ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "Next"
+    }
+  ],
   "iUs7pv": [
     {
       "type": 0,
       "value": "Cancel"
+    }
+  ],
+  "k41+13": [
+    {
+      "type": 0,
+      "value": "Skipped"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
     }
   ],
   "kjJiqd": [
@@ -121,6 +521,372 @@
       "value": "Показать расширенные параметры"
     }
   ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "Required"
+    }
+  ],
+  "qTTNl2": [
+    {
+      "options": {
+        "other": {
+          "value": [
+            {
+              "offset": 0,
+              "options": {
+                "few": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " days"
+                    }
+                  ]
+                },
+                "many": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " days"
+                    }
+                  ]
+                },
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " day"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " days"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "days"
+            }
+          ]
+        },
+        "true": {
+          "value": [
+            {
+              "type": 1,
+              "value": "days"
+            },
+            {
+              "type": 0,
+              "value": "s"
+            }
+          ]
+        }
+      },
+      "type": 5,
+      "value": "abbreviated"
+    }
+  ],
+  "rlwTNl": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " day "
+            },
+            {
+              "offset": 0,
+              "options": {
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " hour"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " hours"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "hours"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " days "
+            },
+            {
+              "offset": 0,
+              "options": {
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " hour"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " hours"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "hours"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "ryHyLO": [
+    {
+      "options": {
+        "other": {
+          "value": [
+            {
+              "offset": 0,
+              "options": {
+                "few": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " minutes"
+                    }
+                  ]
+                },
+                "many": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " minutes"
+                    }
+                  ]
+                },
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " minute"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " minutes"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "minutes"
+            }
+          ]
+        },
+        "true": {
+          "value": [
+            {
+              "type": 1,
+              "value": "minutes"
+            },
+            {
+              "type": 0,
+              "value": "s"
+            }
+          ]
+        }
+      },
+      "type": 5,
+      "value": "abbreviated"
+    }
+  ],
+  "s9Rf50": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minute "
+            },
+            {
+              "offset": 0,
+              "options": {
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " second"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " seconds"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "seconds"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutes "
+            },
+            {
+              "offset": 0,
+              "options": {
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " second"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " seconds"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "seconds"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "d "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -131,6 +897,12 @@
     {
       "type": 0,
       "value": "Дополнительные сведения"
+    }
+  ],
+  "wHYQyg": [
+    {
+      "type": 0,
+      "value": "Timed Out"
     }
   ]
 }
