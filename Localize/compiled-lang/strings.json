@@ -11,6 +11,12 @@
       "value": "Editing card title"
     }
   ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "Previous"
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
@@ -75,6 +81,12 @@
       "value": "count"
     }
   ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "Next failed"
+    }
+  ],
   "OnrO5/": [
     {
       "type": 0,
@@ -87,10 +99,46 @@
       "value": "Copy URL"
     }
   ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "of "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "b5su3H": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "Previous failed"
+    }
+  ],
   "gjBiyj": [
     {
       "type": 0,
       "value": "Loading..."
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "Next"
     }
   ],
   "iUs7pv": [
