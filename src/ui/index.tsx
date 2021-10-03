@@ -13,3 +13,5 @@ export * from './title';
 export * from './toggle';
 export * from './Designer';
 export * from './tip';
+export * from './infocontrol';
+export * from './label';
