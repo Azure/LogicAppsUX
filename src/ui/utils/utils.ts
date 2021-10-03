@@ -33,8 +33,8 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
   if (minutes < 60) {
     return intl.formatMessage(
       {
-        defaultMessage: '{abbreviated, select, true {{minutes}s} other {{minutes, plural, one {# minute} other {# minutes}}}}',
-        id: 'ryHyLO',
+        defaultMessage: '{abbreviated, select, true {{minutes}m} other {{minutes, plural, one {# minute} other {# minutes}}}}',
+        id: 'UgmyFJ',
         description:
           'This is duration of time string where there is less than 60 minutes, based on the {abbreviated} property the minutes will either be spelled out fully or abbreviated to "m" in english',
       },
@@ -49,8 +49,8 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
   if (hours < 24) {
     return intl.formatMessage(
       {
-        defaultMessage: '{abbreviated, select, true {{hours}s} other {{hours, plural, one {# hour} other {# hours}}}}',
-        id: 'N3U8r2',
+        defaultMessage: '{abbreviated, select, true {{hours}h} other {{hours, plural, one {# hour} other {# hours}}}}',
+        id: 'wZ4FGO',
         description:
           'This is duration of time string where there is less than 24 hours, based on the {abbreviated} property the hours will either be spelled out fully or abbreviated to "h" in english',
       },
@@ -64,8 +64,8 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
   const days = Math.round(Math.abs(milliseconds / 24 / 60 / 60 / 1000));
   return intl.formatMessage(
     {
-      defaultMessage: '{abbreviated, select, true {{days}s} other {{days, plural, one {# day} other {# days}}}}',
-      id: 'qTTNl2',
+      defaultMessage: '{abbreviated, select, true {{days}d} other {{days, plural, one {# day} other {# days}}}}',
+      id: 'XAKV2o',
       description:
         'This is duration of time string where there is greater than 1 day, based on the {abbreviated} property the days will either be spelled out fully or abbreviated to "d" in english',
     },

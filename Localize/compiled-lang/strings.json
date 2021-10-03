@@ -159,60 +159,6 @@
       "value": "Next failed"
     }
   ],
-  "N3U8r2": [
-    {
-      "options": {
-        "other": {
-          "value": [
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hour"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hours"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "hours"
-            }
-          ]
-        },
-        "true": {
-          "value": [
-            {
-              "type": 1,
-              "value": "hours"
-            },
-            {
-              "type": 0,
-              "value": "s"
-            }
-          ]
-        }
-      },
-      "type": 5,
-      "value": "abbreviated"
-    }
-  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -353,6 +299,60 @@
       "value": "hours"
     }
   ],
+  "UgmyFJ": [
+    {
+      "options": {
+        "other": {
+          "value": [
+            {
+              "offset": 0,
+              "options": {
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " minute"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " minutes"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "minutes"
+            }
+          ]
+        },
+        "true": {
+          "value": [
+            {
+              "type": 1,
+              "value": "minutes"
+            },
+            {
+              "type": 0,
+              "value": "m"
+            }
+          ]
+        }
+      },
+      "type": 5,
+      "value": "abbreviated"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -361,6 +361,60 @@
     {
       "type": 1,
       "value": "max"
+    }
+  ],
+  "XAKV2o": [
+    {
+      "options": {
+        "other": {
+          "value": [
+            {
+              "offset": 0,
+              "options": {
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " day"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " days"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "days"
+            }
+          ]
+        },
+        "true": {
+          "value": [
+            {
+              "type": 1,
+              "value": "days"
+            },
+            {
+              "type": 0,
+              "value": "d"
+            }
+          ]
+        }
+      },
+      "type": 5,
+      "value": "abbreviated"
     }
   ],
   "b5su3H": [
@@ -467,60 +521,6 @@
       "value": "Required"
     }
   ],
-  "qTTNl2": [
-    {
-      "options": {
-        "other": {
-          "value": [
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " day"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " days"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "days"
-            }
-          ]
-        },
-        "true": {
-          "value": [
-            {
-              "type": 1,
-              "value": "days"
-            },
-            {
-              "type": 0,
-              "value": "s"
-            }
-          ]
-        }
-      },
-      "type": 5,
-      "value": "abbreviated"
-    }
-  ],
   "rlwTNl": [
     {
       "offset": 0,
@@ -611,60 +611,6 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "days"
-    }
-  ],
-  "ryHyLO": [
-    {
-      "options": {
-        "other": {
-          "value": [
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minute"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minutes"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "minutes"
-            }
-          ]
-        },
-        "true": {
-          "value": [
-            {
-              "type": 1,
-              "value": "minutes"
-            },
-            {
-              "type": 0,
-              "value": "s"
-            }
-          ]
-        }
-      },
-      "type": 5,
-      "value": "abbreviated"
     }
   ],
   "s9Rf50": [
@@ -793,6 +739,60 @@
     {
       "type": 0,
       "value": "Timed Out"
+    }
+  ],
+  "wZ4FGO": [
+    {
+      "options": {
+        "other": {
+          "value": [
+            {
+              "offset": 0,
+              "options": {
+                "one": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " hour"
+                    }
+                  ]
+                },
+                "other": {
+                  "value": [
+                    {
+                      "type": 7
+                    },
+                    {
+                      "type": 0,
+                      "value": " hours"
+                    }
+                  ]
+                }
+              },
+              "pluralType": "cardinal",
+              "type": 6,
+              "value": "hours"
+            }
+          ]
+        },
+        "true": {
+          "value": [
+            {
+              "type": 1,
+              "value": "hours"
+            },
+            {
+              "type": 0,
+              "value": "h"
+            }
+          ]
+        }
+      },
+      "type": 5,
+      "value": "abbreviated"
     }
   ]
 }
