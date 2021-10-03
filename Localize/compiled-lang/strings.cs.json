@@ -11,6 +11,12 @@
       "value": "Úprava názvu karty"
     }
   ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -97,10 +103,28 @@
       "value": "Načítání…"
     }
   ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "kjJiqd": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
       "value": "Zobrazit pokročilé možnosti"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "vWe94i": [

@@ -11,6 +11,12 @@
       "value": "正在编辑卡标题"
     }
   ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -64,10 +70,28 @@
       "value": "正在加载..."
     }
   ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "kjJiqd": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
       "value": "显示高级选项"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "vWe94i": [

@@ -11,6 +11,12 @@
       "value": "Edytowanie tytułu karty"
     }
   ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -113,10 +119,28 @@
       "value": "Trwa ładowanie..."
     }
   ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "kjJiqd": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
       "value": "Pokaż opcje zaawansowane"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "vWe94i": [
