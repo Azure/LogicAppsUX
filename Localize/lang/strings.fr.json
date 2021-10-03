@@ -12,7 +12,6 @@
   "GkLuvC": "{abbreviated, select, true {{seconds}s} other {{seconds, plural, one {# second} other {# seconds}}}}",
   "Gx6rDL": "{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}",
   "Mb/Vp8": "Next failed",
-  "N3U8r2": "{abbreviated, select, true {{hours}s} other {{hours, plural, one {# hour} other {# hours}}}}",
   "Oib1mL": "{hours}h {minutes}m",
   "OnrO5/": "Select a managed identity",
   "P8QaSQ": "Copier l'URL",
@@ -20,7 +19,9 @@
   "PaPPLr": "Aborted",
   "T8Xqt9": "Failed",
   "UWI7IQ": "{hours, plural, one {# hour {minutes, plural, one {# minute} other {# minutes}}} other {# hours {minutes, plural, one {# minute} other {# minutes}}}}",
+  "UgmyFJ": "{abbreviated, select, true {{minutes}m} other {{minutes, plural, one {# minute} other {# minutes}}}}",
   "W070M2": "of {max}",
+  "XAKV2o": "{abbreviated, select, true {{days}d} other {{days, plural, one {# day} other {# days}}}}",
   "b5su3H": "{current} of {max}",
   "cj+kyo": "Cancelled",
   "e4Onhn": "Not specified",
@@ -35,12 +36,11 @@
   "lIEejV": "Afficher les options avancées",
   "qGfwxW": "Managed identity",
   "qSt0Sb": "Required",
-  "qTTNl2": "{abbreviated, select, true {{days}s} other {{days, plural, one {# day} other {# days}}}}",
   "rlwTNl": "{days, plural, one {# day {hours, plural, one {# hour} other {# hours}}} other {# days {hours, plural, one {# hour} other {# hours}}}}",
-  "ryHyLO": "{abbreviated, select, true {{minutes}s} other {{minutes, plural, one {# minute} other {# minutes}}}}",
   "s9Rf50": "{minutes, plural, one {# minute {seconds, plural, one {# second} other {# seconds}}} other {# minutes {seconds, plural, one {# second} other {# seconds}}}}",
   "tImHz/": "{days}d {hours}h",
   "uN4zFU": "OK",
   "vWe94i": "Plus d'informations",
-  "wHYQyg": "Timed Out"
+  "wHYQyg": "Timed Out",
+  "wZ4FGO": "{abbreviated, select, true {{hours}h} other {{hours, plural, one {# hour} other {# hours}}}}"
 }
