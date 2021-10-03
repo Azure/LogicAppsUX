@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/dialogs/_alert should render 1`] = `
+<Dialog
+  dialogContentProps={
+    Object {
+      "title": "Title",
+    }
+  }
+  hidden={false}
+  modalProps={
+    Object {
+      "firstFocusableSelector": "dialog-ok-button",
+      "isBlocking": true,
+    }
+  }
+  onDismiss={[MockFunction]}
+>
+  Message
+  <StyledDialogFooterBase>
+    <CustomizedPrimaryButton
+      className="dialog-ok-button"
+      onClick={[MockFunction]}
+    >
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage="OK"
+        description="OK message appearing on a alert message modal."
+        id="uN4zFU"
+      />
+    </CustomizedPrimaryButton>
+  </StyledDialogFooterBase>
+</Dialog>
+`;

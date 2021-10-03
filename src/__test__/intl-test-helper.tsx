@@ -26,6 +26,6 @@ export const mockUseIntl = () => {
   jest.spyOn(Intl, 'useIntl').mockImplementation(() => intl);
 };
 
-export const getIntl = () => {
+export const getTestIntl = () => {
   return intl;
 };
