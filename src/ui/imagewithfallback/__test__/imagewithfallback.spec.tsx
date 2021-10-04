@@ -36,7 +36,7 @@ describe('ui/imagewithfallback', () => {
     };
     image.props.onError(e as any); // tslint:disable-line: no-any
 
-    expect(e.currentTarget.setAttribute).toHaveBeenCalledWith('src', {});
+    expect(e.currentTarget.setAttribute).toHaveBeenCalledWith('src', 'defaulticon.svg');
   });
 
   it('should render the specified fallback image', () => {
