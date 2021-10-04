@@ -51,6 +51,12 @@
       "value": "Cancel"
     }
   ],
+  "5CTOi9": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -203,6 +209,12 @@
     {
       "type": 0,
       "value": "We couldn't find any results"
+    }
+  ],
+  "LgbKvU": [
+    {
+      "type": 0,
+      "value": "Comment"
     }
   ],
   "Mb/Vp8": [
@@ -531,6 +543,12 @@
       "value": "Recent"
     }
   ],
+  "Z79N+I": [
+    {
+      "type": 0,
+      "value": "Connection required"
+    }
+  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -671,6 +689,12 @@
     {
       "type": 1,
       "value": "filterText"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "Testing"
     }
   ],
   "mE/bhX": [
@@ -1011,6 +1035,12 @@
       },
       "type": 5,
       "value": "abbreviated"
+    }
+  ],
+  "yD9JIy": [
+    {
+      "type": 0,
+      "value": "Connection name"
     }
   ],
   "yKB5nP": [
