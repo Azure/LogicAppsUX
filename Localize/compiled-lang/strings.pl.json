@@ -11,6 +11,12 @@
       "value": "Succeeded with retries"
     }
   ],
+  "1KSzxz": [
+    {
+      "type": 0,
+      "value": "Add a short comment"
+    }
+  ],
   "1rlBUx": [
     {
       "type": 0,
@@ -51,6 +57,12 @@
     {
       "type": 0,
       "value": "Ukryj opcje zaawansowane"
+    }
+  ],
+  "EGXrx5": [
+    {
+      "type": 0,
+      "value": "Don't see what you need?"
     }
   ],
   "GLahvg": [
@@ -521,6 +533,18 @@
       "value": "abbreviated"
     }
   ],
+  "ZazdvR": [
+    {
+      "type": 0,
+      "value": "Hide this comment"
+    }
+  ],
+  "b0Ar6Y": [
+    {
+      "type": 0,
+      "value": "Expand list of connectors"
+    }
+  ],
   "b5su3H": [
     {
       "type": 1,
@@ -563,6 +587,12 @@
     {
       "type": 0,
       "value": "Trwa ładowanie..."
+    }
+  ],
+  "hPIR4j": [
+    {
+      "type": 0,
+      "value": "Comment"
     }
   ],
   "iJOIca": [
