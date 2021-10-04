@@ -47,7 +47,7 @@ export * from './pager';
 // export * from './modaldialog';
 // export * from './picker';
 // export * from './recommendation2';
-// export * from './recommendation3';
+export * from './recommendation3';
 // export * from './rulescontrol';
 // export * from './schemaeditor';
 // export * from './schemaeditor2';
