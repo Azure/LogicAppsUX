@@ -3,7 +3,7 @@ import { Icon, IIconProps } from '@fluentui/react/lib/Icon';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { css } from '@fluentui/react/lib/Utilities';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 
 import { equals, hexToRgbA } from '../../../common/utilities/Utils';
@@ -25,7 +25,7 @@ export interface CardV2Props extends CardProps {
    * @member {boolean} [active=true] - True if the card should render activated in the monitoring view, i.e., it is an action which can execute.
    */
   active?: boolean;
-
+  id: string;
   cloned?: boolean;
   describedBy?: string;
   rootRef?: React.RefObject<HTMLDivElement>;
@@ -66,6 +66,25 @@ export const CARD_LOADING_SPINNER_STYLE: ISpinnerStyles = {
 };
 
 export function CardV2(props: CardV2Props): JSX.Element {
+  const [, drag, dragPreview] = useDrag(() => ({
+    // "type" is required. It is used by the "accept" specification of drop targets.
+    type: 'BOX',
+    // The collect function utilizes a "monitor" instance (see the Overview for what this is)
+    // to pull important pieces of state from the DnD system.
+    end: (item, monitor) => {
+      const dropResult = monitor.getDropResult<{ parent: string; child: string }>();
+      if (item && dropResult) {
+        alert(`You dropped ${props.id} between ${dropResult.parent} and  ${dropResult.child}!`);
+      }
+    },
+    item: {
+      id: props.id,
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }));
+
   function _handleTitleClick(e: React.MouseEvent<HTMLElement>) {
     trackEvent({
       action: UserAction.click,
@@ -151,7 +170,6 @@ export function CardV2(props: CardV2Props): JSX.Element {
     errorMessage,
     icon,
     onCollapse,
-    rootRef,
     selected,
     supportCollapsing,
     title,
@@ -178,7 +196,7 @@ export function CardV2(props: CardV2Props): JSX.Element {
   return (
     <>
       <div
-        ref={rootRef}
+        ref={dragPreview}
         aria-describedby={describedBy}
         aria-label={title}
         className={rootClassNames}
@@ -192,7 +210,9 @@ export function CardV2(props: CardV2Props): JSX.Element {
         <div className="panel-card-main">
           <div className="panel-card-header">
             <div className="panel-card-content-container">
-              <div className="panel-card-content-gripper-section">{draggable ? Gripper({ fill: gripperLightModeFill }) : null}</div>
+              <div className="panel-card-content-gripper-section" ref={drag}>
+                {draggable ? Gripper({ fill: gripperLightModeFill }) : null}
+              </div>
               {icon ? (
                 <div className="panel-card-content-icon-section">
                   <img className="panel-card-icon" src={icon} />
