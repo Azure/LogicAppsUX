@@ -14,7 +14,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           type="target"
           position={targetPosition}
           isConnectable={false}
-          style={{ visibility: 'hidden', height: '1px', width: '1px', border: 'none' }}
+          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
         />
 
         <CardV2
@@ -37,7 +37,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           type="source"
           position={sourcePosition}
           isConnectable={false}
-          style={{ visibility: 'hidden', height: '1px', width: '1px', border: 'none' }}
+          style={{ visibility: 'hidden', transform: 'translate(0, -50%)'}}
         />
       </div>
 
