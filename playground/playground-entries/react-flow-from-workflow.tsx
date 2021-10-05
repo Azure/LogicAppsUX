@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import ReactFlow, { ReactFlowProvider, addEdge, removeElements, isNode, useZoomPanHelper } from 'react-flow-renderer';
 import dagre from 'dagre';
 import { fetchworkflow } from './workflow-parser';
-import './layout.less';
+
 
 import { CustomConnectionLine } from './CustomConnectionLine';
 const edgeTypes = {

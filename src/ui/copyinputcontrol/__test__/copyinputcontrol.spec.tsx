@@ -1,4 +1,4 @@
-import { getIntl } from '../../../__test__/intl-test-helper';
+import { getTestIntl } from '../../../__test__/intl-test-helper';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
@@ -21,14 +21,14 @@ describe('ui/copyinputcontrol', () => {
   });
 
   it('should construct the copyinputcontrol correctly', () => {
-    renderer.render(<CopyInputControl {...minimal} intl={getIntl()} />);
+    renderer.render(<CopyInputControl {...minimal} intl={getTestIntl()} />);
 
     const copyInputControl = renderer.getRenderOutput();
     expect(copyInputControl).toBeDefined();
   });
 
   it('should render button image correctly', () => {
-    renderer.render(<CopyInputControl {...minimal} intl={getIntl()} />);
+    renderer.render(<CopyInputControl {...minimal} intl={getTestIntl()} />);
 
     const copyInputControl = renderer.getRenderOutput();
     const [, tooltipHost]: any = React.Children.toArray(copyInputControl.props.children);
@@ -37,7 +37,7 @@ describe('ui/copyinputcontrol', () => {
   });
 
   it('should display text correctly', () => {
-    renderer.render(<CopyInputControl {...minimal} intl={getIntl()} />);
+    renderer.render(<CopyInputControl {...minimal} intl={getTestIntl()} />);
 
     const copyInputControl = renderer.getRenderOutput();
     const [input]: any = React.Children.toArray(copyInputControl.props.children);
@@ -45,7 +45,7 @@ describe('ui/copyinputcontrol', () => {
   });
 
   it('should display placeholder text correctly when text value is not present', () => {
-    renderer.render(<CopyInputControl {...minimal} intl={getIntl()} />);
+    renderer.render(<CopyInputControl {...minimal} intl={getTestIntl()} />);
 
     const copyInputControl = renderer.getRenderOutput();
     const [input]: any = React.Children.toArray(copyInputControl.props.children);
@@ -53,7 +53,7 @@ describe('ui/copyinputcontrol', () => {
   });
 
   it('textbox should be readOnly', () => {
-    renderer.render(<CopyInputControl {...minimal} intl={getIntl()} />);
+    renderer.render(<CopyInputControl {...minimal} intl={getTestIntl()} />);
 
     const copyInputControl = renderer.getRenderOutput();
     const [input]: any = React.Children.toArray(copyInputControl.props.children);
@@ -64,7 +64,7 @@ describe('ui/copyinputcontrol', () => {
     it('should call onClick handler when Copy command is supported by browser', () => {
       document.queryCommandSupported = jest.fn().mockReturnValue(true);
       const onCopy = jest.fn();
-      renderer.render(<CopyInputControl {...minimal} onCopy={onCopy} intl={getIntl()} />);
+      renderer.render(<CopyInputControl {...minimal} onCopy={onCopy} intl={getTestIntl()} />);
 
       const copyInputControl = renderer.getRenderOutput();
       const [, tooltipHost]: any = React.Children.toArray(copyInputControl.props.children);
@@ -79,7 +79,7 @@ describe('ui/copyinputcontrol', () => {
       document.queryCommandSupported = jest.fn().mockReturnValue(false);
 
       const onCopy = jest.fn();
-      renderer.render(<CopyInputControl {...minimal} onCopy={onCopy} intl={getIntl()} />);
+      renderer.render(<CopyInputControl {...minimal} onCopy={onCopy} intl={getTestIntl()} />);
 
       const copyInputControl = renderer.getRenderOutput();
       const [, tooltipHost]: any = React.Children.toArray(copyInputControl.props.children);
@@ -88,20 +88,20 @@ describe('ui/copyinputcontrol', () => {
     });
 
     it('should not call onClick handler when queryCommandSupported Fails or a browser', () => {
-        const onCopy = jest.fn();
-        renderer.render(<CopyInputControl {...minimal} onCopy={onCopy} intl={getIntl()} />);
-  
-        const copyInputControl = renderer.getRenderOutput();
-        const [, tooltipHost]: any = React.Children.toArray(copyInputControl.props.children);
-        const button = React.Children.only(tooltipHost.props.children);
-        expect(button.props.disabled).toBeTruthy();
-      });
+      const onCopy = jest.fn();
+      renderer.render(<CopyInputControl {...minimal} onCopy={onCopy} intl={getTestIntl()} />);
+
+      const copyInputControl = renderer.getRenderOutput();
+      const [, tooltipHost]: any = React.Children.toArray(copyInputControl.props.children);
+      const button = React.Children.only(tooltipHost.props.children);
+      expect(button.props.disabled).toBeTruthy();
+    });
   });
 
   describe('ARIA', () => {
     it('should set the aria-labelledby attribute', () => {
       const props: CopyInputControlProps = { ...minimal, ariaLabelledBy: 'aria-labelledby' };
-      renderer.render(<CopyInputControl {...props} intl={getIntl()} />);
+      renderer.render(<CopyInputControl {...props} intl={getTestIntl()} />);
 
       const copyInputControl = renderer.getRenderOutput();
       const [input]: any = React.Children.toArray(copyInputControl.props.children);

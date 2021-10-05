@@ -1,0 +1,106 @@
+@import (reference) '../variables.less';
+
+@command-icon-width: 16px;
+@padding: 5px;
+
+.msla-array-editor-container {
+  border: 1px dashed @defaultBorderColor;
+  display: flex;
+
+  .msla-array-commands {
+    margin-top: @padding;
+    vertical-align: top;
+    display: inline-block;
+    align-self: flex-start;
+
+    .msla-array-toggle-button {
+      vertical-align: top;
+      display: inline-block;
+      padding: 0;
+
+      img {
+        width: @command-icon-width;
+        height: @command-icon-width;
+        vertical-align: middle;
+      }
+
+      &[disabled] {
+        cursor: default;
+        img {
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+
+  .msla-array-container {
+    flex: 1 1 100%;
+
+    .msla-array-content {
+      display: inline-block;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    &.msla-array-editor-collapsed {
+      padding: @padding 0 @padding @padding;
+      display: flex;
+
+      .msla-input-parameter-label {
+        align-self: center;
+      }
+
+      .msla-array-content {
+        width: calc(100% - @command-icon-width - @parameter-label-width - @parameter-label-inputbox-margin - 2px);
+
+        .msla-input-parameter-box {
+          width: calc(100% - @parameter-label-inputbox-margin);
+        }
+
+        .msla-input-parameter-error {
+          margin-left: 0;
+        }
+      }
+
+      .msla-array-commands {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .msla-array-item-container {
+    margin: @padding 0;
+    padding: 0 @padding;
+
+    .msla-array-item-parameters {
+      display: inline-block;
+      width: calc(100% - 30px);
+
+      .msla-input-parameter-array {
+        margin-bottom: @parameter-interval-margin;
+      }
+    }
+
+    .msla-array-item-commands {
+      display: inline-block;
+      width: 30px;
+      vertical-align: top;
+
+      .msla-array-item-contextbutton {
+        i[data-icon-name='ChevronDown'] {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .msla-array-toolbar {
+    display: flex;
+    margin: @padding;
+
+    .msla-array-add-item-button {
+      height: @parameter-inputbox-height;
+      font-size: @card-label-font-size;
+    }
+  }
+}

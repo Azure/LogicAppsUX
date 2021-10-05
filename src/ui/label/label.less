@@ -1,0 +1,22 @@
+@import (reference) '../variables.less';
+
+.msla-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: @card-label-font-size;
+  line-height: 1.25em;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.msla-label-required-parameter {
+  color: #e81123;
+  padding-right: 2px;
+}
+
+body.dark {
+  .msla-label-required-parameter {
+    color: #f4717c;
+  }
+}

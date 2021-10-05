@@ -10,7 +10,6 @@ describe('ui/toggle', () => {
   beforeEach(() => {
     minimal = {
       expanded: false,
-      trackEvent: jest.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

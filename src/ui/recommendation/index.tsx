@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { BaseComponent, BaseComponentProps } from '../base';
 
 export type DocLinkClickedEventHandler = () => void;
 
-export interface DocumentationLinkItemProps extends Swagger.ExternalDocumentation, BaseComponentProps {
+export interface DocumentationLinkItemProps extends Swagger.ExternalDocumentation {
   onClick?: DocLinkClickedEventHandler;
 }
 
-export class DocumentationLinkItem extends BaseComponent<DocumentationLinkItemProps, Record<string, unknown>> {
+export class DocumentationLinkItem extends React.Component<DocumentationLinkItemProps, Record<string, unknown>> {
   render(): JSX.Element {
     const { description, url } = this.props;
     return (

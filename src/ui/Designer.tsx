@@ -2,21 +2,22 @@
 import { convertActionIDToTitleCase } from '../common/utilities/Utils';
 import { RootState } from '../core/store';
 import React, { useEffect } from 'react';
-import ReactFlow, { ArrowHeadType, Elements, ReactFlowProvider, useStore, useStoreState, useZoomPanHelper } from 'react-flow-renderer';
+import ReactFlow, { ArrowHeadType, Elements, ReactFlowProvider, useStoreState, useZoomPanHelper } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTestNode from './CustomNodes/CustomTestNode';
-import ButtonEdge from './CustomNodes/ButtonEdge';
 import { setShouldZoomToNode, triggerLayout, updateNodeSizes } from '../core/state/workflowSlice';
 import { processGraphLayout } from '../core/parsers/ProcessLayoutReduxAction';
-import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { CustomEdge } from './connections/edge';
+import { DndProvider, createTransition } from 'react-dnd-multi-backend';
+import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 
 const nodeTypes = {
   testNode: CustomTestNode,
 };
 
 const edgeTypes = {
-  buttonedge: ButtonEdge,
+  buttonedge: CustomEdge,
 };
 
 const ZoomNode = () => {
@@ -52,6 +53,35 @@ const ZoomNode = () => {
 
   return <></>;
 };
+
+const KeyboardTransition = createTransition('keydown', (event) => {
+  if (!isKeyboardDragTrigger(event as KeyboardEvent)) return false;
+  event.preventDefault();
+  return true;
+});
+
+const MouseTransition = createTransition('mousedown', (event) => {
+  if (event.type.indexOf('touch') !== -1 || event.type.indexOf('mouse') === -1) return false;
+  return true;
+});
+
+const DND_OPTIONS = {
+  backends: [
+    {
+      id: 'html5',
+      backend: HTML5Backend,
+      transition: MouseTransition,
+    },
+    {
+      id: 'keyboard',
+      backend: KeyboardBackend,
+      context: { window, document },
+      preview: true,
+      transition: KeyboardTransition,
+    },
+  ],
+};
+
 export const Designer = () => {
   const nodes = useSelector((state: RootState) => {
     const retNodes: Elements = [];
@@ -78,8 +108,8 @@ export const Designer = () => {
   });
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div style={{ width: '100vw', height: '100vh' }}>
+    <DndProvider options={DND_OPTIONS as any}>
+      <div style={{ width: '100vw', height: '100vh' }} className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}

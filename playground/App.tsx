@@ -3,6 +3,7 @@ import { DesignerProvider } from '../src/core/DesignerProvider';
 import { BJSWorkflowProvider } from '../src/core';
 import TestWorkflow from '../__mocks__/workflows/simpleBigworkflow.json';
 import { Designer } from '../src/ui';
+import '../src/ui/styles.less';
 function App() {
   return (
     <DesignerProvider locale="en-US">

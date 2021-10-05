@@ -10,14 +10,12 @@ describe('ui/actionbutton', () => {
     infoBalloon: 'info-balloon',
   };
 
-  let minimalProps: ActionButtonProps, renderer: ReactShallowRenderer.ShallowRenderer, trackEvent: any;
+  let minimalProps: ActionButtonProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
-    trackEvent = jest.fn();
     minimalProps = {
       icon: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
       text: 'Add step',
-      trackEvent,
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

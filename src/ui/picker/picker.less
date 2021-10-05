@@ -1,0 +1,393 @@
+@import (reference) '../variables.less';
+
+@titleBorder: 1px solid rgb(211, 211, 211);
+@titleBackground: rgb(210, 210, 210);
+@itemTextPadding: 12px 0 10px 10px;
+@itemTextMaxWidth: calc(100% ~'-' 53px);
+@itemHeight: 50px;
+@iconWidth: 28px;
+@iconHeight: 28px;
+@iconMargin: 10px 0 0 15px;
+@maxPickerHeight: 400px;
+@navigationTitle: @brandColor;
+@titleColor: #737373;
+
+a.msla-picker {
+  font-family: @font-family;
+  width: 100%;
+  overflow: hidden;
+}
+
+.msla-picker-header {
+  width: 100%;
+  background-color: @titleBackground;
+  height: 30px;
+
+  .msla-picker-title {
+    border-bottom: 0;
+    height: 30px;
+    display: inline-block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    .msla-title-segment {
+      display: inline-block;
+      height: 100%;
+
+      .msla-segment {
+        height: 100%;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        direction: ltr;
+
+        .msla-separator {
+          display: inline-block;
+        }
+
+        .msla-text {
+          color: @titleColor;
+          padding: 4px 5px;
+          cursor: text;
+          text-decoration: none;
+          font-size: 16px;
+          height: calc(100% - 8px);
+          display: inline-block;
+        }
+
+        .msla-text-navigation {
+          padding: 4px 5px;
+          color: @navigationTitle;
+          font-size: 16px;
+          height: calc(100% - 8px);
+          display: inline-block;
+
+          &:hover {
+            text-decoration: underline;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+
+  .msla-clipped {
+    position: absolute;
+    width: 300%;
+    right: 30px;
+    direction: rtl;
+    overflow: hidden;
+  }
+
+  .msla-title-ellipsis {
+    position: absolute;
+    z-index: 100;
+    background-color: @titleBackground;
+    padding: 5px 7px 0 7px;
+    cursor: default;
+  }
+
+  .msla-picker-close {
+    cursor: pointer;
+    display: inline-block;
+    width: 34px;
+    height: 100%;
+    padding: 1px 15px 0 5px;
+    float: right;
+    position: relative;
+
+    img {
+      width: 12px;
+      height: 100%;
+      position: absolute;
+      right: 12px;
+      top: 0;
+    }
+  }
+}
+
+.msla-picker-message {
+  color: black;
+  padding: 10px;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  background-color: #fff;
+}
+
+.msla-picker-items {
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  max-height: @maxPickerHeight;
+  background-color: #fff;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  .msla-item {
+    width: 100%;
+  }
+
+  li {
+    &.msla-item {
+      border: 1px solid rgba(128, 128, 128, 0.5);
+      border-bottom: 0;
+    }
+    &:last-child {
+      border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+    }
+  }
+
+  .msla-item-selected {
+    background-color: @hoverColor;
+  }
+
+  .msla-folder {
+    color: black;
+    width: 100%;
+    height: @itemHeight;
+    overflow-y: hidden;
+
+    .msla-selection-section {
+      display: inline-block;
+      width: calc(100% ~'-' 52px);
+      height: 100%;
+      text-align: left;
+      padding: 0;
+      outline: none;
+
+      .msla-icon {
+        width: @iconWidth;
+        margin: @iconMargin;
+        display: inline-block;
+      }
+
+      .msla-text {
+        vertical-align: top;
+        display: inline-block;
+        padding: @itemTextPadding;
+        max-width: @itemTextMaxWidth;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #000;
+      }
+
+      &:hover,
+      &:focus,
+      &:active {
+        background-color: @hoverColor;
+        -webkit-transition: background-color 0.5s ease;
+        -moz-transition: background-color 0.5s ease;
+        -ms-transition: background-color 0.5s ease;
+        transition: background-color 0.5s ease;
+      }
+
+      &:after {
+        border-right: 1px solid #d2d2d2;
+        content: '';
+        display: inline-block;
+        float: right;
+        height: 70%;
+        margin-top: 7px;
+      }
+    }
+
+    .msla-navigate-button {
+      display: inline-block;
+      width: 52px;
+      float: right;
+      border: none;
+      background-color: transparent;
+      height: 100%;
+      outline: none;
+
+      .msla-icon {
+        width: 40px;
+        height: 40px;
+        padding-top: 5px;
+      }
+
+      &:hover,
+      &:focus,
+      &:active {
+        background-color: @hoverColor;
+        -webkit-transition: background-color 0.5s ease;
+        -moz-transition: background-color 0.5s ease;
+        -ms-transition: background-color 0.5s ease;
+        transition: background-color 0.5s ease;
+      }
+    }
+  }
+
+  .msla-file {
+    display: inline-block;
+    color: black;
+    width: 100%;
+    height: @itemHeight;
+    text-align: left;
+    padding: 0;
+    outline: none;
+
+    .msla-icon {
+      width: @iconWidth;
+      height: @iconHeight;
+      margin: @iconMargin;
+      display: inline-block;
+    }
+
+    .msla-text {
+      vertical-align: top;
+      display: inline-block;
+      padding: @itemTextPadding;
+      max-width: @itemTextMaxWidth;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &:hover,
+    &:focus,
+    &:active {
+      background-color: @hoverColor;
+      -webkit-transition: background-color 0.5s ease;
+      -moz-transition: background-color 0.5s ease;
+      -ms-transition: background-color 0.5s ease;
+      transition: background-color 0.5s ease;
+    }
+  }
+}
+
+.msla-picker-command-bar {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  border: @titleBorder;
+  border-bottom: 0;
+  background-color: @titleBackground;
+  height: 40px;
+  margin-top: -5px;
+
+  .msla-confirm {
+    display: inline-block;
+    float: right;
+    margin: 5px;
+    padding: 5px;
+    width: 90px;
+    height: 30px;
+    color: @defaultButtonTextColor;
+    cursor: pointer;
+    background-color: @defaultButtonColor;
+
+    &:hover {
+      background-color: @defaultButtonHoverColor;
+    }
+
+    &:disabled {
+      background-color: rgba(155, 155, 155, 0.5);
+    }
+  }
+
+  .msla-cancel {
+    cursor: pointer;
+    display: inline-block;
+    float: right;
+    margin: 5px;
+    padding: 5px;
+    width: 90px;
+    height: 30px;
+    background-color: rgb(155, 155, 155);
+    color: @defaultButtonTextColor;
+  }
+}
+
+.msla-picker-pin {
+  position: relative;
+  top: 2px;
+
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    top: -16px;
+  }
+}
+
+body.dark {
+  .msla-picker-header {
+    background-color: @ms-color-white;
+
+    .msla-picker-title {
+      .msla-title-segment {
+        .msla-segment {
+          .msla-text {
+            color: @ms-color-black;
+          }
+
+          .msla-separator {
+            color: @ms-color-black;
+          }
+
+          .msla-text-navigation {
+            color: rgb(179, 214, 252);
+          }
+        }
+      }
+    }
+
+    .msla-title-ellipsis {
+      background-color: @ms-color-white;
+    }
+
+    .msla-picker-close {
+      color: @ms-color-black;
+    }
+  }
+
+  .msla-picker-message {
+    background-color: @ms-color-white;
+    color: @ms-color-black;
+  }
+
+  .msla-picker-items {
+    background-color: @ms-color-white;
+
+    .msla-item-selected {
+      background-color: @ms-color-themeLighter;
+    }
+
+    .msla-folder {
+      color: @ms-color-black;
+
+      .msla-selection-section {
+        .msla-text {
+          color: @ms-color-black;
+        }
+
+        &:hover,
+        &:focus,
+        &:active {
+          background-color: @ms-color-themeLighter;
+        }
+      }
+
+      .msla-navigate-button {
+        background-color: transparent;
+
+        &:hover,
+        &:focus,
+        &:active {
+          background-color: @ms-color-themeLighter;
+        }
+      }
+    }
+
+    .msla-file {
+      color: @ms-color-black;
+
+      &:hover,
+      &:focus,
+      &:active {
+        background-color: @ms-color-themeLighter;
+      }
+    }
+  }
+}

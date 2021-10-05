@@ -111,8 +111,8 @@ export const workflowSlice = createSlice({
       state.nodes = action.payload;
       state.shouldLayout = false;
     });
-    builder.addCase(processGraphLayout.rejected, () => {
-      console.log('rejected');
+    builder.addCase(processGraphLayout.rejected, (state, action) => {
+      console.log(action.error);
     });
   },
 });

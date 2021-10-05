@@ -1,10 +1,9 @@
 import * as React from 'react';
 
 import InformationIcon from './images/information.svg';
-import { BaseComponent, BaseComponentProps } from '../base';
 import Constants from '../constants';
 
-export interface ActionButtonProps extends BaseComponentProps {
+export interface ActionButtonProps {
   ariaLabel?: string;
   disabled?: boolean;
   icon?: string;
@@ -14,7 +13,7 @@ export interface ActionButtonProps extends BaseComponentProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export class ActionButton extends BaseComponent<ActionButtonProps> {
+export class ActionButton extends React.PureComponent<ActionButtonProps> {
   render(): JSX.Element {
     const { ariaLabel, disabled, icon, infoBalloon, selected, text } = this.props;
 
@@ -46,15 +45,7 @@ export class ActionButton extends BaseComponent<ActionButtonProps> {
     return Constants.TELEMETRY_IDENTIFIERS.ACTIONBUTTON;
   }
 
-  protected getTelemetryContext() {
-    return {
-      ...super.getTelemetryContext(),
-      title: this.props.text,
-    };
-  }
-
   private _handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-    this.handleClickEvent();
     e.preventDefault();
 
     const { onClick } = this.props;

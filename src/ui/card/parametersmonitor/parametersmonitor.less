@@ -1,0 +1,28 @@
+@import (reference) '../../variables.less';
+
+.msla-monitoring-parameters-card-body {
+  background-color: @card-background-color;
+  box-sizing: border-box;
+  font-family: @font-family;
+  font-size: @card-body-font-size;
+
+  .msla-show-raw-button {
+    float: right;
+    font-size: @card-body-font-size;
+    height: 1rem;
+  }
+
+  .msla-monitoring-no-inputs-outputs {
+    padding: 1em;
+  }
+
+  .msla-monitoring-parameters-empty {
+    padding: 0 1em;
+  }
+}
+
+body.dark {
+  .msla-monitoring-parameters-card-body {
+    background-color: @ms-color-white;
+  }
+}

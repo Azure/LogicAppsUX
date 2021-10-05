@@ -9,6 +9,10 @@ export default {
   input: 'src/index.tsx', // our source file
   output: [
     {
+      dir: 'dist/amd',
+      format: 'amd',
+    },
+    {
       dir: 'dist/cjs',
       format: 'cjs',
     },

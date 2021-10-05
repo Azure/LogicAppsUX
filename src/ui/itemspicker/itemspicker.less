@@ -1,0 +1,53 @@
+.msla-input-parameters-itempicker {
+  .msla-itemspicker-title {
+    font-size: @card-label-font-size;
+  }
+}
+
+.msla-itemspicker-list {
+  padding: 10px 0;
+
+  .ms-Dropdown-item {
+    padding: 0 16px;
+    margin: 0px;
+    display: block;
+    cursor: pointer;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 32px;
+    line-height: 20px;
+    height: auto;
+    overflow-wrap: break-word;
+    text-align: left;
+    outline: none;
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
+    border-image: initial;
+    background: none transparent;
+
+    .msla-itemspicker-item-label {
+      display: block;
+      width: 100%;
+      font-size: @card-label-font-size;
+
+      span {
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
+      }
+
+      .msla-itemspicker-item-label-title {
+        width: 50%;
+        padding: 4px 5px 0 0;
+      }
+
+      .msla-itemspicker-item-label-desc {
+        width: 50%;
+        max-width: 260px;
+      }
+    }
+  }
+}

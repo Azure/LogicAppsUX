@@ -5,7 +5,7 @@ import React from 'react';
 import { ComponentMeta, ComponentStory}from '@storybook/react';
 
 import { CopyInputControl, CopyInputControlProps } from './index';
-import '../card/card.less';
+
 export default {
   component: CopyInputControl,
   title: 'Components/CopyInputControl',

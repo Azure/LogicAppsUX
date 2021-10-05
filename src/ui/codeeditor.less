@@ -1,0 +1,19 @@
+@import (reference) './variables.less';
+
+.msla-code-editor-body {
+  .msla-monaco {
+    border: 1px solid @defaultBorderColor;
+    min-height: 170px;
+    width: 100%;
+  }
+
+  .monaco-editor .suggest-widget {
+    z-index: 120; // Keeps the completion provider higher than the token picker
+  }
+}
+
+.msla-code-editor-errors {
+  .msla-input-parameter-error.msla-label {
+    margin-left: 0px;
+  }
+}

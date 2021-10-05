@@ -6,7 +6,7 @@ import * as React from 'react';
 import { useState, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { calloutContentStyles, checkboxStyles } from '../fabric';
-import './checkbox.less';
+
 export interface CheckboxProps {
   ariaLabel?: string;
   className?: string;

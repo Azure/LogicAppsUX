@@ -4,10 +4,9 @@ import { FontSizes } from '@fluentui/react/lib/Styling';
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { BaseComponent, BaseComponentProps } from '../base';
 import Constants from '../constants';
 
-export interface ToggleProps extends BaseComponentProps {
+export interface ToggleProps {
   buttonClassName?: string;
   collapseIcon?: Readonly<IIconProps>;
   collapseText?: string;
@@ -27,7 +26,7 @@ const styles: IButtonStyles = {
   },
 };
 
-export class Toggle extends BaseComponent<ToggleProps> {
+export class Toggle extends React.PureComponent<ToggleProps> {
   static defaultProps = {
     buttonClassName: 'msla-button msla-input-parameters-show-more',
     collapseIcon: {
@@ -75,16 +74,7 @@ export class Toggle extends BaseComponent<ToggleProps> {
     return Constants.TELEMETRY_IDENTIFIERS.TOGGLE;
   }
 
-  protected getTelemetryContext() {
-    return {
-      ...super.getTelemetryContext(),
-      expanded: this.props.expanded,
-      className: this.props.buttonClassName,
-    };
-  }
-
   private _handleClick = (): void => {
-    this.handleClickEvent();
     const { onClick } = this.props;
     if (onClick) {
       onClick();
