@@ -12,16 +12,16 @@ import { equals, hexToRgbA } from '../../../common/utilities/Utils';
 import Constants from '../../constants';
 import { isDeleteKey, isEnterKey, isSpaceKey } from '../../utils/keyboardUtils';
 
-import { CardProps } from '../card';
 import { CardContextMenu } from '../cardcontextmenu';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import { MenuItemOption } from '../menu';
 
 import { ErrorBannerV2 } from './errorbannerv2';
 import { MessageBarType } from '@fluentui/react';
+import { CommentBoxProps } from '../commentbox';
 
 type ISpinnerStyles = import('@fluentui/react/lib/Spinner').ISpinnerStyles;
-//extends CardProps
+
 export interface CardV2Props {
   /**
    * @member {boolean} [active=true] - True if the card should render activated in the monitoring view, i.e., it is an action which can execute.
@@ -40,6 +40,11 @@ export interface CardV2Props {
   errorMessage?: string;
   icon?: string;
   selected?: boolean;
+
+  commentBox?: CommentBoxProps;
+  connectionDisplayName?: string;
+  connectionRequired?: boolean;
+  staticResultsEnabled?: boolean;
 }
 
 interface CardBadgeBarProps {
@@ -176,25 +181,23 @@ export function CardV2(props: CardV2Props): JSX.Element {
   };
 
   return (
-    <>
+    <div ref={dragPreview}>
       <div
-        ref={dragPreview}
+        ref={drag}
         aria-describedby={describedBy}
         aria-label={title}
         className={rootClassNames}
         role="button"
         style={getCardStyle(brandColor)}
-        tabIndex={0}
         onClick={handleCardClick}
         onContextMenu={handleContextMenu}
         onKeyDown={handleKeyDown}
+        tabIndex={0}
         onKeyUp={handleKeyUp}>
         <div className="panel-card-main">
           <div className="panel-card-header">
             <div className="panel-card-content-container">
-              <div className="panel-card-content-gripper-section" ref={drag}>
-                {draggable ? Gripper({ fill: gripperLightModeFill }) : null}
-              </div>
+              <div className="panel-card-content-gripper-section">{draggable ? Gripper({ fill: gripperLightModeFill }) : null}</div>
               {icon ? (
                 <div className="panel-card-content-icon-section">
                   <img className="panel-card-icon" src={icon} />
@@ -210,7 +213,7 @@ export function CardV2(props: CardV2Props): JSX.Element {
         </div>
         {contextMenuOptions ? CardContextMenu(contextMenuProps) : null}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -274,7 +277,12 @@ export function CardBadgeBar({ badges, brandColor }: CardBadgeBarProps): JSX.Ele
   );
 }
 
-export function CardFooter({ commentBox, connectionDisplayName, connectionRequired, staticResultsEnabled }: CardProps): JSX.Element | null {
+export function CardFooter({
+  commentBox,
+  connectionDisplayName,
+  connectionRequired,
+  staticResultsEnabled,
+}: CardV2Props): JSX.Element | null {
   const intl = useIntl();
   const CONNECTION_NAME_DISPLAY = intl.formatMessage({
     defaultMessage: 'Connection name',
