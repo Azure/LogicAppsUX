@@ -218,7 +218,7 @@
   "Oib1mL": [
     {
       "type": 1,
-      "value": "jam"
+      "value": "hours"
     },
     {
       "type": 0,
@@ -226,7 +226,7 @@
     },
     {
       "type": 1,
-      "value": "menit"
+      "value": "minutes"
     },
     {
       "type": 0,
@@ -528,7 +528,7 @@
   "kHcCxH": [
     {
       "type": 1,
-      "value": "minutes"
+      "value": "mintues"
     },
     {
       "type": 0,
