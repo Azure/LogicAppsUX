@@ -15,65 +15,109 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
 
   const seconds = Math.round(Math.abs(milliseconds / 1000));
   if (seconds < 60) {
-    return intl.formatMessage(
-      {
-        defaultMessage: '{abbreviated, select, true {{seconds}s} other {{seconds, plural, one {# second} other {# seconds}}}}',
-        id: 'GkLuvC',
-        description:
-          'This is duration of time string where there is less than 60 seconds, based on the {abbreviated} property the seconds will either be spelled out fully or abbreviated to "s" in english',
-      },
-      {
-        seconds,
-        abbreviated,
-      }
-    );
+    if (abbreviated) {
+      return intl.formatMessage(
+        {
+          defaultMessage: '{seconds}s',
+          id: 'iql+jn',
+          description: 'This is a period in time in seconds. {seconds} is replaced by the number and s is an abbreviation of seconds',
+        },
+        {
+          seconds,
+        }
+      );
+    } else {
+      return intl.formatMessage(
+        {
+          defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
+          id: 'hN7iBP',
+          description: 'A duration of time shown in seconds',
+        },
+        {
+          seconds,
+        }
+      );
+    }
   }
 
   const minutes = Math.round(Math.abs(milliseconds / 60 / 1000));
   if (minutes < 60) {
-    return intl.formatMessage(
-      {
-        defaultMessage: '{abbreviated, select, true {{minutes}m} other {{minutes, plural, one {# minute} other {# minutes}}}}',
-        id: 'UgmyFJ',
-        description:
-          'This is duration of time string where there is less than 60 minutes, based on the {abbreviated} property the minutes will either be spelled out fully or abbreviated to "m" in english',
-      },
-      {
-        minutes,
-        abbreviated,
-      }
-    );
+    if (abbreviated) {
+      return intl.formatMessage(
+        {
+          defaultMessage: '{minutes}m',
+          id: 'SXb47U',
+          description: 'This is a period in time in seconds. {minutes} is replaced by the number and m is an abbreviation of minutes',
+        },
+        {
+          minutes,
+        }
+      );
+    } else {
+      return intl.formatMessage(
+        {
+          defaultMessage: '{minutes, plural, one {# minute} other {# minutes}}',
+          id: 'RhH4pF',
+          description: 'A duration of time shown in minutes',
+        },
+        {
+          minutes,
+        }
+      );
+    }
   }
 
   const hours = Math.round(Math.abs(milliseconds / 60 / 60 / 1000));
   if (hours < 24) {
-    return intl.formatMessage(
-      {
-        defaultMessage: '{abbreviated, select, true {{hours}h} other {{hours, plural, one {# hour} other {# hours}}}}',
-        id: 'wZ4FGO',
-        description:
-          'This is duration of time string where there is less than 24 hours, based on the {abbreviated} property the hours will either be spelled out fully or abbreviated to "h" in english',
-      },
-      {
-        hours,
-        abbreviated,
-      }
-    );
+    if (abbreviated) {
+      return intl.formatMessage(
+        {
+          defaultMessage: '{hours}h',
+          id: 'Qu1HkA',
+          description: 'This is a period in time in hours. {hours} is replaced by the number and h is an abbreviation of hours',
+        },
+        {
+          hours,
+        }
+      );
+    } else {
+      return intl.formatMessage(
+        {
+          defaultMessage: '{hours, plural, one {# hour} other {# hours}}',
+          id: 'FXLR5M',
+          description: 'A duration of time shown in hours',
+        },
+        {
+          hours,
+        }
+      );
+    }
   }
 
   const days = Math.round(Math.abs(milliseconds / 24 / 60 / 60 / 1000));
-  return intl.formatMessage(
-    {
-      defaultMessage: '{abbreviated, select, true {{days}d} other {{days, plural, one {# day} other {# days}}}}',
-      id: 'XAKV2o',
-      description:
-        'This is duration of time string where there is greater than 1 day, based on the {abbreviated} property the days will either be spelled out fully or abbreviated to "d" in english',
-    },
-    {
-      days,
-      abbreviated,
-    }
-  );
+  if (abbreviated) {
+    return intl.formatMessage(
+      {
+        defaultMessage: '{days}d',
+        id: 'YIBDSH',
+        description: 'This is a period in time in days. {days} is replaced by the number and d is an abbreviation of days',
+      },
+      {
+        days,
+      }
+    );
+  } else {
+    return intl.formatMessage(
+      {
+        defaultMessage: '{days, plural, one {# day} other {# days}}',
+        id: 'qUWBUX',
+        description: 'A duration of time shown in days',
+      },
+      {
+        days,
+      }
+    );
+  }
 }
 
 /**
@@ -90,34 +134,56 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
 
   if (milliseconds < 1000) {
     const millisecondsRounded = Math.round(Math.abs(milliseconds / 1000) * 10) / 10;
-    return intl.formatMessage(
-      {
-        defaultMessage: '{abbreviated, select, true {{seconds}s} other {{seconds, plural, one {# second} other {# seconds}}}}',
-        id: 'GkLuvC',
-        description:
-          'This is duration of time string where there is less than 60 seconds, based on the {abbreviated} property the seconds will either be spelled out fully or abbreviated to "s" in english',
-      },
-      {
-        seconds: millisecondsRounded,
-        abbreviated,
-      }
-    );
+    if (abbreviated) {
+      return intl.formatMessage(
+        {
+          defaultMessage: '{seconds}s',
+          id: 'iql+jn',
+          description: 'This is a period in time in seconds. {seconds} is replaced by the number and s is an abbreviation of seconds',
+        },
+        {
+          seconds: millisecondsRounded,
+        }
+      );
+    } else {
+      return intl.formatMessage(
+        {
+          defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
+          id: 'hN7iBP',
+          description: 'A duration of time shown in seconds',
+        },
+        {
+          seconds: millisecondsRounded,
+        }
+      );
+    }
   }
 
   const seconds = Math.round(Math.abs(milliseconds / 1000));
   if (seconds < 60) {
-    return intl.formatMessage(
-      {
-        defaultMessage: '{abbreviated, select, true {{seconds}s} other {{seconds, plural, one {# second} other {# seconds}}}}',
-        id: 'GkLuvC',
-        description:
-          'This is duration of time string where there is less than 60 seconds, based on the {abbreviated} property the seconds will either be spelled out fully or abbreviated to "s" in english',
-      },
-      {
-        seconds: seconds,
-        abbreviated,
-      }
-    );
+    if (abbreviated) {
+      return intl.formatMessage(
+        {
+          defaultMessage: '{seconds}s',
+          id: 'iql+jn',
+          description: 'This is a period in time in seconds. {seconds} is replaced by the number and s is an abbreviation of seconds',
+        },
+        {
+          seconds,
+        }
+      );
+    } else {
+      return intl.formatMessage(
+        {
+          defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
+          id: 'hN7iBP',
+          description: 'A duration of time shown in seconds',
+        },
+        {
+          seconds,
+        }
+      );
+    }
   }
 
   const minutes = Math.floor(Math.abs(milliseconds / 60 / 1000));
@@ -139,9 +205,8 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
     } else {
       return intl.formatMessage(
         {
-          defaultMessage:
-            '{minutes, plural, one {# minute {seconds, plural, one {# second} other {# seconds}}} other {# minutes {seconds, plural, one {# second} other {# seconds}}}}',
-          id: 's9Rf50',
+          defaultMessage: '{minutes}minutes {seconds}seconds',
+          id: 'ozs7Yp',
           description: 'This is a time duration in full non abbreviated format',
         },
         {
@@ -171,9 +236,8 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
     } else {
       return intl.formatMessage(
         {
-          defaultMessage:
-            '{hours, plural, one {# hour {minutes, plural, one {# minute} other {# minutes}}} other {# hours {minutes, plural, one {# minute} other {# minutes}}}}',
-          id: 'UWI7IQ',
+          defaultMessage: '{hours}hours {minutes}minutes',
+          id: '5ilpFw',
           description: 'This is a time duration in full non abbreviated format',
         },
         {
@@ -201,9 +265,8 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
   } else {
     return intl.formatMessage(
       {
-        defaultMessage:
-          '{days, plural, one {# day {hours, plural, one {# hour} other {# hours}}} other {# days {hours, plural, one {# hour} other {# hours}}}}',
-        id: 'rlwTNl',
+        defaultMessage: '{days}days {hours}hours',
+        id: '3V6GkP',
         description: 'This is a time duration in full non abbreviated format',
       },
       {

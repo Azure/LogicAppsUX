@@ -183,7 +183,6 @@ export function CardV2(props: CardV2Props): JSX.Element {
   return (
     <div ref={dragPreview}>
       <div
-        ref={drag}
         aria-describedby={describedBy}
         aria-label={title}
         className={rootClassNames}
@@ -197,7 +196,9 @@ export function CardV2(props: CardV2Props): JSX.Element {
         <div className="panel-card-main">
           <div className="panel-card-header">
             <div className="panel-card-content-container">
-              <div className="panel-card-content-gripper-section">{draggable ? Gripper({ fill: gripperLightModeFill }) : null}</div>
+              <div className="panel-card-content-gripper-section" ref={drag}>
+                {draggable ? Gripper({ fill: gripperLightModeFill }) : null}
+              </div>
               {icon ? (
                 <div className="panel-card-content-icon-section">
                   <img className="panel-card-icon" src={icon} />

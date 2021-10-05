@@ -289,7 +289,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{hours, plural, one {# hour {minutes, plural, one {# minute} other {# minutes}}} other {# hours {minutes, plural, one {# minute} other {# minutes}}}}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{小时，复数，一 {# 小时 {分钟，复数，一 {# 分中} 另外 {# 分钟}}} 另外 {# 小时 {分钟，复数，一 {# 分钟} 另外 {# 分钟}}}}]]></Val>
+            <Val><![CDATA[{hours, plural, one {# hour {minutes, plural, one {# minute} other {# minutes}}} other {# hours {minutes, plural, one {# minute} other {# minutes}}}}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -574,7 +574,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{days, plural, one {# day {hours, plural, one {# hour} other {# hours}}} other {# days {hours, plural, one {# hour} other {# hours}}}}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{天，复数，一 {# 天 {小时，复数，一 {# 小时} 另外 {# 小时}}} 另外 {# 天 {小时，复数，一 {# 小时} 另外 {# 小时}}}}]]></Val>
+            <Val><![CDATA[{days, plural, one {# day {hours, plural, one {# hour} other {# hours}}} other {# days {hours, plural, one {# hour} other {# hours}}}}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -583,7 +583,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{minutes, plural, one {# minute {seconds, plural, one {# second} other {# seconds}}} other {# minutes {seconds, plural, one {# second} other {# seconds}}}}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{分钟，复数，一 {# 分钟 {秒，复数，一 {# 秒} 另外 {# 秒}}} 另外 {# 分钟 {秒，复数，一 {# 秒} 另外 {# 秒}}}}]]></Val>
+            <Val><![CDATA[{minutes, plural, one {# minute {seconds, plural, one {# second} other {# seconds}}} other {# minutes {seconds, plural, one {# second} other {# seconds}}}}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
