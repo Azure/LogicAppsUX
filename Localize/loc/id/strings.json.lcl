@@ -244,7 +244,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{hours}h {minutes}m]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{jam}j {menit}m]]></Val>
+            <Val><![CDATA[{hours}j {minutes}m]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -448,7 +448,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{current} of {max}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{saat ini} dari {max}]]></Val>
+            <Val><![CDATA[{current} dari {max}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -538,7 +538,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{minutes}m {seconds}s]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{menit}m {detik}d]]></Val>
+            <Val><![CDATA[{mintues}m {seconds}d]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -601,7 +601,7 @@
         <Str Cat="Text">
           <Val><![CDATA[{days}d {hours}h]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{hari}h {jam}j]]></Val>
+            <Val><![CDATA[{days}h {hours}j]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

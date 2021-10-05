@@ -2,19 +2,29 @@
   "/NDLmg": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Esperando"
+    }
+  ],
+  "/QnQhm": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": ": More info"
     }
   ],
   "0ZlNtf": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Correcto con reintentos"
     }
   ],
   "1KSzxz": [
     {
       "type": 0,
-      "value": "Add a short comment"
+      "value": "Agregar un comentario breve"
     }
   ],
   "1rlBUx": [
@@ -29,22 +39,70 @@
       "value": "Edición del título de la tarjeta"
     }
   ],
+  "3V6GkP": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "hours"
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "Con errores"
+    }
+  ],
+  "47FYwb": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "5CTOi9": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
+  "5ilpFw": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "minutes"
     }
   ],
   "6oqk+A": [
     {
       "type": 0,
-      "value": "Previous"
+      "value": "Anterior"
     }
   ],
   "7GSk99": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "Aceptar"
     }
   ],
   "8L+oIz": [
@@ -53,76 +111,66 @@
       "value": "No se puede representar el diseñador porque existen varios desencadenadores en la definición."
     }
   ],
+  "8yF3hc": [
+    {
+      "type": 0,
+      "value": "See more"
+    }
+  ],
   "Asi2Jg": [
     {
       "type": 0,
       "value": "Ocultar opciones avanzadas"
     }
   ],
+  "C5xzTC": [
+    {
+      "type": 0,
+      "value": "Premium"
+    }
+  ],
   "EGXrx5": [
     {
       "type": 0,
-      "value": "Don't see what you need?"
+      "value": "¿No ve lo que necesita?"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hour"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
     }
   ],
   "GLahvg": [
     {
       "type": 0,
-      "value": "Dismiss"
-    }
-  ],
-  "GkLuvC": [
-    {
-      "options": {
-        "other": {
-          "value": [
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " second"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " seconds"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "seconds"
-            }
-          ]
-        },
-        "true": {
-          "value": [
-            {
-              "type": 1,
-              "value": "seconds"
-            },
-            {
-              "type": 0,
-              "value": "s"
-            }
-          ]
-        }
-      },
-      "type": 5,
-      "value": "abbreviated"
+      "value": "Descartar"
     }
   ],
   "Gx6rDL": [
@@ -165,10 +213,28 @@
       "value": "count"
     }
   ],
+  "HOsSgX": [
+    {
+      "type": 0,
+      "value": "More info"
+    }
+  ],
+  "JXhiR+": [
+    {
+      "type": 0,
+      "value": "We couldn't find any results"
+    }
+  ],
+  "LgbKvU": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
   "Mb/Vp8": [
     {
       "type": 0,
-      "value": "Next failed"
+      "value": "Siguiente con error"
     }
   ],
   "Oib1mL": [
@@ -192,7 +258,7 @@
   "OnrO5/": [
     {
       "type": 0,
-      "value": "Select a managed identity"
+      "value": "Seleccionar una identidad administrada"
     }
   ],
   "P8QaSQ": [
@@ -204,22 +270,46 @@
   "PF87Ew": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Correcto"
     }
   ],
   "PaPPLr": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Anulado"
     }
   ],
-  "T8Xqt9": [
+  "QQYzHC": [
     {
       "type": 0,
-      "value": "Failed"
+      "value": "Context menu for "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " card"
     }
   ],
-  "UWI7IQ": [
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h"
+    }
+  ],
+  "RYIxqe": [
+    {
+      "type": 0,
+      "value": "Currently there are no suggestions available with your selection."
+    }
+  ],
+  "RhH4pF": [
     {
       "offset": 0,
       "options": {
@@ -230,37 +320,7 @@
             },
             {
               "type": 0,
-              "value": " hour "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minute"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minutes"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "minutes"
+              "value": " minute"
             }
           ]
         },
@@ -271,174 +331,110 @@
             },
             {
               "type": 0,
-              "value": " hours "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minute"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minutes"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "minutes"
+              "value": " minutes"
             }
           ]
         }
       },
       "pluralType": "cardinal",
       "type": 6,
-      "value": "hours"
+      "value": "minutes"
     }
   ],
-  "UgmyFJ": [
+  "SXb47U": [
     {
-      "options": {
-        "other": {
-          "value": [
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minute"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minutes"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "minutes"
-            }
-          ]
-        },
-        "true": {
-          "value": [
-            {
-              "type": 1,
-              "value": "minutes"
-            },
-            {
-              "type": 0,
-              "value": "m"
-            }
-          ]
-        }
-      },
-      "type": 5,
-      "value": "abbreviated"
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m"
+    }
+  ],
+  "T8Xqt9": [
+    {
+      "type": 0,
+      "value": "Con errores"
+    }
+  ],
+  "TY45/m": [
+    {
+      "type": 0,
+      "value": "There are no recent connectors to show"
+    }
+  ],
+  "TdTXXf": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
+  "UIdPNN": [
+    {
+      "type": 0,
+      "value": "Operations"
+    }
+  ],
+  "UcKJO+": [
+    {
+      "type": 0,
+      "value": "We couldn't find any "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperationKindText"
+    },
+    {
+      "type": 0,
+      "value": " for "
+    },
+    {
+      "type": 1,
+      "value": "filterText"
     }
   ],
   "W070M2": [
     {
       "type": 0,
-      "value": "of "
+      "value": "de "
     },
     {
       "type": 1,
       "value": "max"
     }
   ],
-  "XAKV2o": [
+  "XEdXNu": [
     {
-      "options": {
-        "other": {
-          "value": [
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " day"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " days"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "days"
-            }
-          ]
-        },
-        "true": {
-          "value": [
-            {
-              "type": 1,
-              "value": "days"
-            },
-            {
-              "type": 0,
-              "value": "d"
-            }
-          ]
-        }
-      },
-      "type": 5,
-      "value": "abbreviated"
+      "type": 0,
+      "value": "Recent"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "d"
+    }
+  ],
+  "Z79N+I": [
+    {
+      "type": 0,
+      "value": "Connection required"
     }
   ],
   "ZazdvR": [
     {
       "type": 0,
-      "value": "Hide this comment"
+      "value": "Ocultar este comentario"
     }
   ],
   "b0Ar6Y": [
     {
       "type": 0,
-      "value": "Expand list of connectors"
+      "value": "Expandir la lista de conectores"
     }
   ],
   "b5su3H": [
@@ -448,35 +444,51 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " de "
     },
     {
       "type": 1,
       "value": "max"
     }
   ],
+  "bQLLgV": [
+    {
+      "type": 0,
+      "value": "We couldn't find any "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperationKindText"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
-      "value": "Cancelled"
+      "value": "Cancelado"
     }
   ],
   "e4Onhn": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Sin especificar"
+    }
+  ],
+  "fRxVuK": [
+    {
+      "type": 0,
+      "value": "Learn more about creating connectors."
     }
   ],
   "ftwXvc": [
     {
       "type": 0,
-      "value": "Ignored"
+      "value": "Omitido"
     }
   ],
   "gKq3Jv": [
     {
       "type": 0,
-      "value": "Previous failed"
+      "value": "Anterior con error"
     }
   ],
   "gjBiyj": [
@@ -485,28 +497,76 @@
       "value": "Cargando..."
     }
   ],
+  "h9XgiJ": [
+    {
+      "type": 0,
+      "value": "No"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " second"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " seconds"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
   "hPIR4j": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Comentario"
     }
   ],
   "iJOIca": [
     {
       "type": 0,
-      "value": "Next"
+      "value": "Siguiente"
     }
   ],
   "iUs7pv": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Cancelar"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
     }
   ],
   "k41+13": [
     {
       "type": 0,
-      "value": "Skipped"
+      "value": "Omitido"
     }
   ],
   "kHcCxH": [
@@ -530,7 +590,7 @@
   "kjJiqd": [
     {
       "type": 0,
-      "value": "Error loading component."
+      "value": "Error al cargar el componente."
     }
   ],
   "lIEejV": [
@@ -539,19 +599,77 @@
       "value": "Mostrar opciones avanzadas"
     }
   ],
+  "lUTDU8": [
+    {
+      "type": 0,
+      "value": "We couldn't find any results for "
+    },
+    {
+      "type": 1,
+      "value": "filterText"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "Testing"
+    }
+  ],
+  "mE/bhX": [
+    {
+      "type": 0,
+      "value": "Yes"
+    }
+  ],
+  "orvpWh": [
+    {
+      "type": 0,
+      "value": "Go back"
+    }
+  ],
+  "ozs7Yp": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "seconds"
+    }
+  ],
+  "q3+FXI": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Identidad administrada"
+    }
+  ],
+  "qNMcGy": [
+    {
+      "type": 0,
+      "value": "Clear?"
     }
   ],
   "qSt0Sb": [
     {
       "type": 0,
-      "value": "Required"
+      "value": "Obligatorio"
     }
   ],
-  "rlwTNl": [
+  "qUWBUX": [
     {
       "offset": 0,
       "options": {
@@ -562,37 +680,7 @@
             },
             {
               "type": 0,
-              "value": " day "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hour"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hours"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "hours"
+              "value": " day"
             }
           ]
         },
@@ -603,37 +691,7 @@
             },
             {
               "type": 0,
-              "value": " days "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hour"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hours"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "hours"
+              "value": " days"
             }
           ]
         }
@@ -643,96 +701,16 @@
       "value": "days"
     }
   ],
-  "s9Rf50": [
+  "sxcPBW": [
     {
-      "offset": 0,
-      "options": {
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " minute "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " second"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " seconds"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "seconds"
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " minutes "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " second"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " seconds"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "seconds"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "minutes"
+      "type": 0,
+      "value": "Recommended based on your activity"
+    }
+  ],
+  "t74v7p": [
+    {
+      "type": 0,
+      "value": "(preview)"
     }
   ],
   "tImHz/": [
@@ -756,7 +734,25 @@
   "uN4zFU": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "Aceptar"
+    }
+  ],
+  "ug/8l6": [
+    {
+      "type": 0,
+      "value": "(preview)"
+    }
+  ],
+  "unHYHq": [
+    {
+      "type": 0,
+      "value": "Premium"
+    }
+  ],
+  "vRZZPL": [
+    {
+      "type": 0,
+      "value": "Choose an operation"
     }
   ],
   "vWe94i": [
@@ -768,61 +764,19 @@
   "wHYQyg": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Tiempo de espera agotado"
     }
   ],
-  "wZ4FGO": [
+  "yD9JIy": [
     {
-      "options": {
-        "other": {
-          "value": [
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hour"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hours"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "hours"
-            }
-          ]
-        },
-        "true": {
-          "value": [
-            {
-              "type": 1,
-              "value": "hours"
-            },
-            {
-              "type": 0,
-              "value": "h"
-            }
-          ]
-        }
-      },
-      "type": 5,
-      "value": "abbreviated"
+      "type": 0,
+      "value": "Connection name"
+    }
+  ],
+  "yKB5nP": [
+    {
+      "type": 0,
+      "value": "Want to create your own connectors?"
     }
   ]
 }

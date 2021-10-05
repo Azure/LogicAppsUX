@@ -2,19 +2,29 @@
   "/NDLmg": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Várakozás"
+    }
+  ],
+  "/QnQhm": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": ": More info"
     }
   ],
   "0ZlNtf": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Újrapróbálkozásokkal sikeres"
     }
   ],
   "1KSzxz": [
     {
       "type": 0,
-      "value": "Add a short comment"
+      "value": "Rövid megjegyzés hozzáadása"
     }
   ],
   "1rlBUx": [
@@ -29,16 +39,64 @@
       "value": "Kártyacím szerkesztése folyamatban"
     }
   ],
+  "3V6GkP": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "hours"
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
-      "value": "Faulted"
+      "value": "Hibás"
+    }
+  ],
+  "47FYwb": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "5CTOi9": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
+  "5ilpFw": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "minutes"
     }
   ],
   "6oqk+A": [
     {
       "type": 0,
-      "value": "Previous"
+      "value": "Előző"
     }
   ],
   "7GSk99": [
@@ -53,76 +111,66 @@
       "value": "Nem sikerült megjeleníteni a tervezőt, mert a definícióban több trigger található."
     }
   ],
+  "8yF3hc": [
+    {
+      "type": 0,
+      "value": "See more"
+    }
+  ],
   "Asi2Jg": [
     {
       "type": 0,
       "value": "Speciális beállítások elrejtése"
     }
   ],
+  "C5xzTC": [
+    {
+      "type": 0,
+      "value": "Premium"
+    }
+  ],
   "EGXrx5": [
     {
       "type": 0,
-      "value": "Don't see what you need?"
+      "value": "Nem találja, amire szüksége van?"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hour"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
     }
   ],
   "GLahvg": [
     {
       "type": 0,
-      "value": "Dismiss"
-    }
-  ],
-  "GkLuvC": [
-    {
-      "options": {
-        "other": {
-          "value": [
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " second"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " seconds"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "seconds"
-            }
-          ]
-        },
-        "true": {
-          "value": [
-            {
-              "type": 1,
-              "value": "seconds"
-            },
-            {
-              "type": 0,
-              "value": "s"
-            }
-          ]
-        }
-      },
-      "type": 5,
-      "value": "abbreviated"
+      "value": "Elvetés"
     }
   ],
   "Gx6rDL": [
@@ -165,10 +213,28 @@
       "value": "count"
     }
   ],
+  "HOsSgX": [
+    {
+      "type": 0,
+      "value": "More info"
+    }
+  ],
+  "JXhiR+": [
+    {
+      "type": 0,
+      "value": "We couldn't find any results"
+    }
+  ],
+  "LgbKvU": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
   "Mb/Vp8": [
     {
       "type": 0,
-      "value": "Next failed"
+      "value": "Következő sikertelen"
     }
   ],
   "Oib1mL": [
@@ -178,7 +244,7 @@
     },
     {
       "type": 0,
-      "value": "h "
+      "value": " óra "
     },
     {
       "type": 1,
@@ -186,13 +252,13 @@
     },
     {
       "type": 0,
-      "value": "m"
+      "value": " perc"
     }
   ],
   "OnrO5/": [
     {
       "type": 0,
-      "value": "Select a managed identity"
+      "value": "Felügyelt identitás kiválasztása"
     }
   ],
   "P8QaSQ": [
@@ -204,546 +270,30 @@
   "PF87Ew": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Sikeres"
     }
   ],
   "PaPPLr": [
     {
       "type": 0,
-      "value": "Aborted"
+      "value": "Megszakítva"
     }
   ],
-  "T8Xqt9": [
+  "QQYzHC": [
     {
       "type": 0,
-      "value": "Failed"
-    }
-  ],
-  "UWI7IQ": [
-    {
-      "offset": 0,
-      "options": {
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " hour "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minute"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minutes"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "minutes"
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " hours "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minute"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minutes"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "minutes"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "hours"
-    }
-  ],
-  "UgmyFJ": [
-    {
-      "options": {
-        "other": {
-          "value": [
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minute"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " minutes"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "minutes"
-            }
-          ]
-        },
-        "true": {
-          "value": [
-            {
-              "type": 1,
-              "value": "minutes"
-            },
-            {
-              "type": 0,
-              "value": "m"
-            }
-          ]
-        }
-      },
-      "type": 5,
-      "value": "abbreviated"
-    }
-  ],
-  "W070M2": [
-    {
-      "type": 0,
-      "value": "of "
+      "value": "Context menu for "
     },
     {
       "type": 1,
-      "value": "max"
-    }
-  ],
-  "XAKV2o": [
-    {
-      "options": {
-        "other": {
-          "value": [
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " day"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " days"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "days"
-            }
-          ]
-        },
-        "true": {
-          "value": [
-            {
-              "type": 1,
-              "value": "days"
-            },
-            {
-              "type": 0,
-              "value": "d"
-            }
-          ]
-        }
-      },
-      "type": 5,
-      "value": "abbreviated"
-    }
-  ],
-  "ZazdvR": [
-    {
-      "type": 0,
-      "value": "Hide this comment"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "Expand list of connectors"
-    }
-  ],
-  "b5su3H": [
-    {
-      "type": 1,
-      "value": "current"
+      "value": "title"
     },
     {
       "type": 0,
-      "value": " of "
-    },
-    {
-      "type": 1,
-      "value": "max"
+      "value": " card"
     }
   ],
-  "cj+kyo": [
-    {
-      "type": 0,
-      "value": "Cancelled"
-    }
-  ],
-  "e4Onhn": [
-    {
-      "type": 0,
-      "value": "Not specified"
-    }
-  ],
-  "ftwXvc": [
-    {
-      "type": 0,
-      "value": "Ignored"
-    }
-  ],
-  "gKq3Jv": [
-    {
-      "type": 0,
-      "value": "Previous failed"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "Betöltés..."
-    }
-  ],
-  "hPIR4j": [
-    {
-      "type": 0,
-      "value": "Comment"
-    }
-  ],
-  "iJOIca": [
-    {
-      "type": 0,
-      "value": "Next"
-    }
-  ],
-  "iUs7pv": [
-    {
-      "type": 0,
-      "value": "Cancel"
-    }
-  ],
-  "k41+13": [
-    {
-      "type": 0,
-      "value": "Skipped"
-    }
-  ],
-  "kHcCxH": [
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "m "
-    },
-    {
-      "type": 1,
-      "value": "seconds"
-    },
-    {
-      "type": 0,
-      "value": "s"
-    }
-  ],
-  "kjJiqd": [
-    {
-      "type": 0,
-      "value": "Error loading component."
-    }
-  ],
-  "lIEejV": [
-    {
-      "type": 0,
-      "value": "Speciális beállítások megjelenítése"
-    }
-  ],
-  "qGfwxW": [
-    {
-      "type": 0,
-      "value": "Managed identity"
-    }
-  ],
-  "qSt0Sb": [
-    {
-      "type": 0,
-      "value": "Required"
-    }
-  ],
-  "rlwTNl": [
-    {
-      "offset": 0,
-      "options": {
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " day "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hour"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hours"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "hours"
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " days "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hour"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hours"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "hours"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "days"
-    }
-  ],
-  "s9Rf50": [
-    {
-      "offset": 0,
-      "options": {
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " minute "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " second"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " seconds"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "seconds"
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " minutes "
-            },
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " second"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " seconds"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "seconds"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "minutes"
-    }
-  ],
-  "tImHz/": [
-    {
-      "type": 1,
-      "value": "days"
-    },
-    {
-      "type": 0,
-      "value": "d "
-    },
+  "Qu1HkA": [
     {
       "type": 1,
       "value": "hours"
@@ -753,10 +303,456 @@
       "value": "h"
     }
   ],
+  "RYIxqe": [
+    {
+      "type": 0,
+      "value": "Currently there are no suggestions available with your selection."
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minute"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutes"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m"
+    }
+  ],
+  "T8Xqt9": [
+    {
+      "type": 0,
+      "value": "Sikertelen"
+    }
+  ],
+  "TY45/m": [
+    {
+      "type": 0,
+      "value": "There are no recent connectors to show"
+    }
+  ],
+  "TdTXXf": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
+  "UIdPNN": [
+    {
+      "type": 0,
+      "value": "Operations"
+    }
+  ],
+  "UcKJO+": [
+    {
+      "type": 0,
+      "value": "We couldn't find any "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperationKindText"
+    },
+    {
+      "type": 0,
+      "value": " for "
+    },
+    {
+      "type": 1,
+      "value": "filterText"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "/ "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "XEdXNu": [
+    {
+      "type": 0,
+      "value": "Recent"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "d"
+    }
+  ],
+  "Z79N+I": [
+    {
+      "type": 0,
+      "value": "Connection required"
+    }
+  ],
+  "ZazdvR": [
+    {
+      "type": 0,
+      "value": "Megjegyzés elrejtése"
+    }
+  ],
+  "b0Ar6Y": [
+    {
+      "type": 0,
+      "value": "Összekötők listájának kibontása"
+    }
+  ],
+  "b5su3H": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "bQLLgV": [
+    {
+      "type": 0,
+      "value": "We couldn't find any "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperationKindText"
+    }
+  ],
+  "cj+kyo": [
+    {
+      "type": 0,
+      "value": "Megszakítva"
+    }
+  ],
+  "e4Onhn": [
+    {
+      "type": 0,
+      "value": "Nincs megadva"
+    }
+  ],
+  "fRxVuK": [
+    {
+      "type": 0,
+      "value": "Learn more about creating connectors."
+    }
+  ],
+  "ftwXvc": [
+    {
+      "type": 0,
+      "value": "Mellőzve"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "Előző sikertelen"
+    }
+  ],
+  "gjBiyj": [
+    {
+      "type": 0,
+      "value": "Betöltés..."
+    }
+  ],
+  "h9XgiJ": [
+    {
+      "type": 0,
+      "value": "No"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " second"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " seconds"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hPIR4j": [
+    {
+      "type": 0,
+      "value": "Megjegyzés"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "Tovább"
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Mégse"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "k41+13": [
+    {
+      "type": 0,
+      "value": "Kihagyva"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " perc "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " másodperc"
+    }
+  ],
+  "kjJiqd": [
+    {
+      "type": 0,
+      "value": "Hiba az összetevő betöltése közben."
+    }
+  ],
+  "lIEejV": [
+    {
+      "type": 0,
+      "value": "Speciális beállítások megjelenítése"
+    }
+  ],
+  "lUTDU8": [
+    {
+      "type": 0,
+      "value": "We couldn't find any results for "
+    },
+    {
+      "type": 1,
+      "value": "filterText"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "Testing"
+    }
+  ],
+  "mE/bhX": [
+    {
+      "type": 0,
+      "value": "Yes"
+    }
+  ],
+  "orvpWh": [
+    {
+      "type": 0,
+      "value": "Go back"
+    }
+  ],
+  "ozs7Yp": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "seconds"
+    }
+  ],
+  "q3+FXI": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "Felügyelt identitás"
+    }
+  ],
+  "qNMcGy": [
+    {
+      "type": 0,
+      "value": "Clear?"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "Kötelező"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " day"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " days"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "sxcPBW": [
+    {
+      "type": 0,
+      "value": "Recommended based on your activity"
+    }
+  ],
+  "t74v7p": [
+    {
+      "type": 0,
+      "value": "(preview)"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " nap "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " óra"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "ug/8l6": [
+    {
+      "type": 0,
+      "value": "(preview)"
+    }
+  ],
+  "unHYHq": [
+    {
+      "type": 0,
+      "value": "Premium"
+    }
+  ],
+  "vRZZPL": [
+    {
+      "type": 0,
+      "value": "Choose an operation"
     }
   ],
   "vWe94i": [
@@ -768,61 +764,19 @@
   "wHYQyg": [
     {
       "type": 0,
-      "value": "Timed Out"
+      "value": "Túllépte az időkorlátot"
     }
   ],
-  "wZ4FGO": [
+  "yD9JIy": [
     {
-      "options": {
-        "other": {
-          "value": [
-            {
-              "offset": 0,
-              "options": {
-                "one": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hour"
-                    }
-                  ]
-                },
-                "other": {
-                  "value": [
-                    {
-                      "type": 7
-                    },
-                    {
-                      "type": 0,
-                      "value": " hours"
-                    }
-                  ]
-                }
-              },
-              "pluralType": "cardinal",
-              "type": 6,
-              "value": "hours"
-            }
-          ]
-        },
-        "true": {
-          "value": [
-            {
-              "type": 1,
-              "value": "hours"
-            },
-            {
-              "type": 0,
-              "value": "h"
-            }
-          ]
-        }
-      },
-      "type": 5,
-      "value": "abbreviated"
+      "type": 0,
+      "value": "Connection name"
+    }
+  ],
+  "yKB5nP": [
+    {
+      "type": 0,
+      "value": "Want to create your own connectors?"
     }
   ]
 }
