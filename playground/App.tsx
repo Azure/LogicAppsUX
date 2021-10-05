@@ -1,7 +1,7 @@
 import React from 'react';
 import { DesignerProvider } from '../src/core/DesignerProvider';
 import { BJSWorkflowProvider } from '../src/core';
-import TestWorkflow from '../__mocks__/workflows/simpleBigworkflow.json';
+import TestWorkflow from '../__mocks__/workflows/StressTest1000.json';
 import { Designer } from '../src/ui';
 import '../src/ui/styles.less';
 function App() {
