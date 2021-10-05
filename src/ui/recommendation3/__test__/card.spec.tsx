@@ -19,7 +19,6 @@ describe('ui/recommendation3/_card', () => {
       icon: 'icon',
       selected: false,
       title: 'title',
-      trackEvent: jest.fn(),
     };
 
     renderer = ReactShallowRenderer.createRenderer();
@@ -50,7 +49,6 @@ describe('ui/recommendation3/_card', () => {
       expect(logo.props.icon).toBe(minimal.icon);
       expect(title.props.className).toBe(classNames.cardHeaderTitle);
       expect(title.props.text).toBe(minimal.title);
-      expect(title.props.trackEvent).toEqual(minimal.trackEvent);
       expect(buttonGroup.props.className).toBe(classNames.cardTitleButtonGroup);
 
       const [tooltipHost, helpIcon] = React.Children.toArray(buttonGroup.props.children) as React.ReactElement[];
@@ -67,7 +65,6 @@ describe('ui/recommendation3/_card', () => {
         icon: 'icon',
         selected: false,
         title: 'title',
-        trackEvent: jest.fn(),
         renderCardViewHeader: getCardViewHeader(),
       };
       renderer.render(<CardV1 {...minimal} />);
@@ -89,7 +86,6 @@ describe('ui/recommendation3/_card', () => {
       expect(logo.props.icon).toBe(minimal.icon);
       expect(title.props.className).toBe(classNames.cardHeaderTitle);
       expect(title.props.text).toBe(minimal.title);
-      expect(title.props.trackEvent).toEqual(minimal.trackEvent);
       expect(buttonGroup.props.className).toBe(classNames.cardTitleButtonGroup);
       expect(buttonGroup.props.children.length).toBe(2);
       const [cardViewheader, tooltipHost] = React.Children.toArray(buttonGroup.props.children) as React.ReactElement[];

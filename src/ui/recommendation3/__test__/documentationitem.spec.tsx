@@ -4,14 +4,11 @@ import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { DocumentationItem, DocumentationItemProps } from '../documentationitem';
 
 describe('ui/recommendation3/_documentationitem', () => {
-  let minimal: DocumentationItemProps, renderer: ReactShallowRenderer.ShallowRenderer, trackEvent: any;
+  let minimal: DocumentationItemProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
-    trackEvent = jest.fn();
-
     minimal = {
       description: 'description',
-      trackEvent,
     };
 
     renderer = ReactShallowRenderer.createRenderer();

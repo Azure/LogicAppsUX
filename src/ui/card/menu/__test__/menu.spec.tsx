@@ -5,13 +5,11 @@ import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { Menu, MenuItemOption, MenuProps, MenuItemType } from '../../menu';
 
 describe('ui/card/menu', () => {
-  let minimal: MenuProps, renderer: ReactShallowRenderer.ShallowRenderer, trackEvent: any;
+  let minimal: MenuProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
-    trackEvent = jest.fn();
     minimal = {
       menuItems: [],
-      trackEvent,
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

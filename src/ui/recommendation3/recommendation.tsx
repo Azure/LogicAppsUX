@@ -17,7 +17,6 @@ import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import * as React from 'react';
 import { findDOMNode } from 'react-dom';
 import { MenuItemOption } from '../../ui/card/menu';
-import { BaseComponent, BaseComponentProps } from '../base';
 import Constants from '../constants';
 import { ImageWithFallback } from '../imagewithfallback';
 import DefaultIcon from '../recommendation/images/defaulticon.svg';
@@ -116,7 +115,7 @@ export interface Operation {
   title: string;
 }
 
-export interface RecommendationProps extends BaseComponentProps {
+export interface RecommendationProps {
   brandColor?: string;
   categories?: Category[];
   canShowMoreOperations?: boolean;
@@ -187,7 +186,7 @@ const ModuleDimensions = {
 };
 
 const intl = getIntl();
-export class Recommendation extends BaseComponent<RecommendationProps, Partial<RecommendationState>> {
+export class Recommendation extends React.Component<RecommendationProps, Partial<RecommendationState>> {
   private readonly _cardRef = React.createRef<any>(); // tslint:disable-line: no-any
   private readonly _recommendationPickerRef = React.createRef<RecommendationPicker>();
 
@@ -252,7 +251,6 @@ export class Recommendation extends BaseComponent<RecommendationProps, Partial<R
       neverCollapsed,
       selected,
       title,
-      trackEvent,
       onCancelClick,
       renderCardViewHeader,
     } = this.props;
@@ -269,7 +267,6 @@ export class Recommendation extends BaseComponent<RecommendationProps, Partial<R
           rootRef={this._cardRef}
           selected={selected}
           title={title ?? ''}
-          trackEvent={trackEvent}
           onCancelClick={onCancelClick}
           onClick={this._handleClick}
           renderCardViewHeader={renderCardViewHeader}>
@@ -289,7 +286,7 @@ export class Recommendation extends BaseComponent<RecommendationProps, Partial<R
   };
 }
 
-class RecommendationPicker extends BaseComponent<RecommendationProps, Partial<RecommendationState>> {
+class RecommendationPicker extends React.Component<RecommendationProps, Partial<RecommendationState>> {
   private readonly _searchBox = React.createRef<ITextField>();
   private readonly _searchBoxId = guid();
   state: Readonly<Partial<RecommendationState>> = {};
@@ -695,11 +692,10 @@ class RecommendationPicker extends BaseComponent<RecommendationProps, Partial<Re
           link={{ url: documentation.url, urlDescription: DOCUMENTATION_URLDESCRIPTION }}
           openWindow={openWindow}
           onClick={createDocLinkClickHandler && createDocLinkClickHandler(item.connector as any, item.id)}
-          trackEvent={() => null}
         />
       );
     } else {
-      return <DocumentationItem description={item.description} trackEvent={() => null} />;
+      return <DocumentationItem description={item.description} />;
     }
   }
 

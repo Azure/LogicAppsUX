@@ -2,14 +2,13 @@ import { findDOMNode } from 'react-dom';
 import * as React from 'react';
 import { ITextField, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
 
-import { BaseComponent, BaseComponentProps } from '../base';
 import Constants from '../constants';
 import { Event, EventHandler } from '../eventhandler';
 import { getDragStartHandlerWhenDisabled } from '../helper';
 import { isNullOrUndefined } from '../../common/utilities/Utils';
 import { injectIntl, WrappedComponentProps } from 'react-intl';
 
-export interface TitleProps extends BaseComponentProps {
+export interface TitleProps {
   className?: string;
   expanded?: boolean;
   isEditingTitle?: boolean;
@@ -43,7 +42,7 @@ const transparentTextFieldStyles: Partial<ITextFieldStyles> = {
   },
 };
 
-export class InnerControlTitle extends BaseComponent<TitleProps & WrappedComponentProps<'intl'>, TitleState> {
+export class InnerControlTitle extends React.Component<TitleProps & WrappedComponentProps<'intl'>, TitleState> {
   static defaultProps: Partial<TitleProps> = {
     expanded: false,
     isEditingTitle: false,
@@ -83,7 +82,8 @@ export class InnerControlTitle extends BaseComponent<TitleProps & WrappedCompone
     const { className, isEditingTitle, intl } = this.props;
 
     const editingCardTitle = intl.formatMessage({
-      defaultMessage: 'Editing card title', id: '20FJMM',
+      defaultMessage: 'Editing card title',
+      id: '20FJMM',
     });
     if (isEditingTitle) {
       return (
@@ -123,7 +123,6 @@ export class InnerControlTitle extends BaseComponent<TitleProps & WrappedCompone
   }
 
   focus(): void {
-    this.handleFocusEvent();
     if (this._titleLinkRef) {
       this._titleLinkRef?.current?.focus();
     }
@@ -160,8 +159,6 @@ export class InnerControlTitle extends BaseComponent<TitleProps & WrappedCompone
   };
 
   private _onClick = (e: React.FormEvent<HTMLAnchorElement>): void => {
-    this.handleClickEvent();
-
     const { onClick } = this.props;
     if (onClick) {
       e.preventDefault();

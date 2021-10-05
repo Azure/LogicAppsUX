@@ -8,7 +8,6 @@ describe('ui/flyout2', () => {
     flyoutExpanded: false,
     flyoutKey: 'flyout-key',
     text: 'text',
-    trackEvent: jest.fn(),
   };
 
   let renderer: ReactShallowRenderer.ShallowRenderer;

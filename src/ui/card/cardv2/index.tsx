@@ -5,31 +5,41 @@ import { css } from '@fluentui/react/lib/Utilities';
 import * as React from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
+import { EventHandler, Event } from '../../../ui/eventhandler';
 
 import { equals, hexToRgbA } from '../../../common/utilities/Utils';
 
 import Constants from '../../constants';
-import { UserAction } from '../../telemetry/models';
 import { isDeleteKey, isEnterKey, isSpaceKey } from '../../utils/keyboardUtils';
 
 import { CardProps } from '../card';
 import { CardContextMenu } from '../cardcontextmenu';
 import { Gripper } from '../images/dynamicsvgs/gripper';
+import { MenuItemOption } from '../menu';
 
 import { ErrorBannerV2 } from './errorbannerv2';
+import { MessageBarType } from '@fluentui/react';
 
 type ISpinnerStyles = import('@fluentui/react/lib/Spinner').ISpinnerStyles;
-
-export interface CardV2Props extends CardProps {
+//extends CardProps
+export interface CardV2Props {
   /**
    * @member {boolean} [active=true] - True if the card should render activated in the monitoring view, i.e., it is an action which can execute.
    */
   active?: boolean;
+  contextMenuOptions?: MenuItemOption[];
   id: string;
   cloned?: boolean;
   describedBy?: string;
   rootRef?: React.RefObject<HTMLDivElement>;
-  supportCollapsing?: boolean;
+  onClick?: EventHandler<Event<any>>;
+  brandColor: string;
+  draggable: boolean;
+  title: string;
+  errorLevel?: MessageBarType;
+  errorMessage?: string;
+  icon?: string;
+  selected?: boolean;
 }
 
 interface CardBadgeBarProps {
@@ -85,25 +95,6 @@ export function CardV2(props: CardV2Props): JSX.Element {
     }),
   }));
 
-  function _handleTitleClick(e: React.MouseEvent<HTMLElement>) {
-    trackEvent({
-      action: UserAction.click,
-      actionContext: {
-        supportCollapsing,
-        collapsed,
-      },
-      controlId: Constants.TELEMETRY_IDENTIFIERS.CARDV2,
-    });
-
-    if (supportCollapsing && onCollapse) {
-      onCollapse({
-        currentTarget: undefined,
-      });
-    }
-
-    handleCardClick(e);
-  }
-
   function handleContextMenu(e: React.MouseEvent): void {
     e.preventDefault();
     e.stopPropagation();
@@ -146,11 +137,6 @@ export function CardV2(props: CardV2Props): JSX.Element {
   }
 
   function cardClick() {
-    trackEvent({
-      action: UserAction.click,
-      controlId: Constants.TELEMETRY_IDENTIFIERS.CARDV2,
-    });
-
     if (props.onClick) {
       props.onClick({
         currentTarget: undefined,
@@ -162,18 +148,14 @@ export function CardV2(props: CardV2Props): JSX.Element {
     active = true,
     brandColor,
     cloned,
-    collapsed,
     contextMenuOptions,
     describedBy,
     draggable,
     errorLevel,
     errorMessage,
     icon,
-    onCollapse,
     selected,
-    supportCollapsing,
     title,
-    trackEvent,
   } = props;
 
   const [showContextMenu, setShowContextMenu] = React.useState(false);
@@ -219,9 +201,7 @@ export function CardV2(props: CardV2Props): JSX.Element {
                 </div>
               ) : null}
               <div className="panel-card-top-content">
-                <div className="panel-msla-title" onClick={_handleTitleClick}>
-                  {title}
-                </div>
+                <div className="panel-msla-title">{title}</div>
               </div>
             </div>
             <ErrorBannerV2 errorLevel={errorLevel} errorMessage={errorMessage} />

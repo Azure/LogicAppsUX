@@ -97,7 +97,7 @@ export default function CustomEdge({
           className="edgebutton-foreignobject"
           requiredExtensions="http://www.w3.org/1999/xhtml">
           <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
-            <ActionButtonV2 title={'Text'} onClick={(e) => onParentBClick(e, data.parent)} trackEvent={() => {}} />
+            <ActionButtonV2 title={'Text'} onClick={(e) => onParentBClick(e, data.parent)} />
           </div>
         </foreignObject>
       )}
@@ -111,7 +111,7 @@ export default function CustomEdge({
         <div
           ref={drop}
           style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%', opacity: isOver && canDrop ? 0.4 : 1 }}>
-          <ActionButtonV2 title={'Text'} onClick={(e) => onEdgeEndClick(e, data.parent, data.child)} trackEvent={() => {}} />
+          <ActionButtonV2 title={'Text'} onClick={(e) => onEdgeEndClick(e, data.parent, data.child)} />
         </div>
       </foreignObject>
     </>

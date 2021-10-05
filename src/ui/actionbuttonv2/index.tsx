@@ -5,13 +5,10 @@ import { css } from '@fluentui/react/lib/Utilities';
 import * as React from 'react';
 import { findDOMNode } from 'react-dom';
 
-import { BaseComponentProps } from '../base';
-import Constants from '../constants';
-import { UserAction } from '../telemetry/models';
 import { Plus } from './images/plus';
 import { useEffect } from 'react';
 
-export interface ActionButtonV2Props extends BaseComponentProps {
+export interface ActionButtonV2Props {
   buttonRef?: React.RefObject<HTMLButtonElement>;
   className?: string;
   disabled?: boolean;
@@ -26,7 +23,7 @@ const tooltipHostStyles: ITooltipHostStyles = {
   },
 };
 
-export function ActionButtonV2({ buttonRef, className, disabled = false, title, trackEvent, onClick }: ActionButtonV2Props): JSX.Element {
+export function ActionButtonV2({ buttonRef, className, disabled = false, title, onClick }: ActionButtonV2Props): JSX.Element {
   function dismissTooltip(): void {
     setTarget(null);
     if (tooltipRef.current) {
@@ -40,11 +37,6 @@ export function ActionButtonV2({ buttonRef, className, disabled = false, title, 
   }
 
   function handleClick(e: React.MouseEvent<HTMLButtonElement>): void {
-    trackEvent({
-      action: UserAction.click,
-      controlId: Constants.TELEMETRY_IDENTIFIERS.ACTIONBUTTONV2,
-    });
-
     if (onClick) {
       onClick(e);
     }

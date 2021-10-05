@@ -6,7 +6,6 @@ import { useIntl } from 'react-intl';
 
 import { equals, hexToRgbA } from '../../common/utilities/Utils';
 
-import { BaseComponentProps } from '../base';
 import { CardContextMenu, CardContextMenuProps } from '../card/cardcontextmenu';
 import { CardHeaderLogo } from '../card/cardmonitor';
 import { MenuItemOption } from '../card/menu';
@@ -16,7 +15,7 @@ import { isDeleteKey } from '../utils/keyboardUtils';
 
 type IIconProps = import('@fluentui/react/lib/Icon').IIconProps;
 
-export interface CardProps extends BaseComponentProps {
+export interface CardProps {
   brandColor?: string;
   children?: React.ReactNode;
   contextMenuOptions?: MenuItemOption[];
@@ -75,7 +74,7 @@ export function getCardV1ButtonGroup(props: CardProps, cancelString: string): JS
 }
 
 export const CardV1: React.FC<CardProps> = (props) => {
-  const { brandColor, children, hideHeaderLogo, icon, selected, title, trackEvent } = props;
+  const { brandColor, children, hideHeaderLogo, icon, selected, title } = props;
   const className = css('msla-card', 'msla-card-fixed-width', 'msla-recommendation', selected && 'msla-card-selected');
   const intl = useIntl();
   const CANCEL = intl.formatMessage({
@@ -88,7 +87,7 @@ export const CardV1: React.FC<CardProps> = (props) => {
       <div className="msla-card-header" style={getHeaderStyle(brandColor)}>
         <div className="msla-card-title-group">
           <CardHeaderLogo brandColor={brandColor} hideHeaderLogo={hideHeaderLogo} icon={icon} />
-          <Title className="msla-card-header-title" text={title} trackEvent={trackEvent} />
+          <Title className="msla-card-header-title" text={title} />
         </div>
         {buttonGroup}
       </div>

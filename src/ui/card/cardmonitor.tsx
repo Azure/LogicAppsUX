@@ -4,7 +4,6 @@ import * as React from 'react';
 import guid from '../../common/utilities/guid';
 import { hexToRgbA } from '../../common/utilities/Utils';
 
-import { BaseComponent, BaseComponentProps } from '../base';
 // import { CardWidth } from '../card';
 import Constants from '../constants';
 // import { StatusPill } from '../monitoring/statuspill';
@@ -22,7 +21,7 @@ import SucceededBadge from './images/badges/succeeded.svg';
 import SucceededWithRetriesBadge from './images/badges/succeededwithretries.svg';
 import { BadgeHeaderIcons, BadgeProps, ImageHeaderIcon, ImageHeaderIcons } from './card';
 
-export interface CardProps extends BaseComponentProps {
+export interface CardProps {
   active?: boolean;
   brandColor?: string;
   children?: React.ReactNode;
@@ -54,7 +53,7 @@ export interface CardProps extends BaseComponentProps {
   onCollapse?(): void;
 }
 
-export interface CardBodyProps extends BaseComponentProps {
+export interface CardBodyProps {
   children?: React.ReactNode;
   collapsed?: boolean;
   errorMessage?: string;
@@ -70,12 +69,12 @@ export interface CardDurationProps {
   status?: string;
 }
 
-export interface CardErrorProps extends BaseComponentProps {
+export interface CardErrorProps {
   errorMessage?: string;
   failed?: boolean;
 }
 
-export interface CardHeaderProps extends BaseComponentProps {
+export interface CardHeaderProps {
   active?: boolean;
   additionalIcons?: ImageHeaderIcon[];
   headerBadges?: BadgeProps[];
@@ -298,7 +297,7 @@ export function CardError(props: CardErrorProps) {
   );
 }
 
-export class CardHeader extends BaseComponent<CardHeaderProps> {
+export class CardHeader extends React.PureComponent<CardHeaderProps> {
   static defaultProps: Pick<CardHeaderProps, 'additionalIcons' | 'headerBadges'> = {
     additionalIcons: [],
     headerBadges: [],
@@ -317,7 +316,6 @@ export class CardHeader extends BaseComponent<CardHeaderProps> {
       icon,
       status,
       title,
-      trackEvent,
     } = this.props;
 
     let brandColorRgbA: string;
@@ -342,7 +340,7 @@ export class CardHeader extends BaseComponent<CardHeaderProps> {
           onKeyPress={this._handleKeyPress}
           onKeyUp={this._handleKeyUp}>
           <CardHeaderLogo brandColor={brandColor} hideHeaderLogo={hideHeaderLogo} icon={icon} />
-          <Title className="msla-card-header-title" text={title} trackEvent={trackEvent} expanded={!collapsed} />
+          <Title className="msla-card-header-title" text={title} expanded={!collapsed} />
           <BadgeHeaderIcons headerIcons={headerBadges ?? []} />
         </div>
         <div className="msla-card-title-button-group" tabIndex={0}>

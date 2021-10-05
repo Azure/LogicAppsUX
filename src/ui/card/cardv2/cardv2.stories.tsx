@@ -16,7 +16,6 @@ export default {
 export const Standard: ComponentStory<typeof CardV2> = (args: CardV2Props) => <CardV2 {...args} />;
 
 Standard.args = {
-  trackEvent: () => null,
   icon,
   brandColor: '#770BD6',
   draggable: true,

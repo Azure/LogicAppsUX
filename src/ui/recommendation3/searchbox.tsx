@@ -1,6 +1,5 @@
 import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 import { ITextField, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
-import { useRef } from 'react';
 import * as React from 'react';
 
 import { placeholderTextFieldStyles } from '../fabric';

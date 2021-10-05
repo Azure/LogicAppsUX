@@ -13,10 +13,8 @@ import { classNamesFunction } from '@fluentui/react/lib/Utilities';
 import * as React from 'react';
 import { getIntl } from '../../../common/i18n/intl';
 
-import { BaseComponent, BaseComponentProps } from '../../base';
 import Constants from '../../constants';
 import { Flyout } from '../../flyout';
-import { UserAction } from '../../telemetry/models';
 import { getMenuItemStyles } from './menu.styles';
 
 export enum MenuItemType {
@@ -46,7 +44,7 @@ export interface SubtitleOption {
   title: string;
 }
 
-export interface MenuProps extends BaseComponentProps {
+export interface MenuProps {
   directionalHint?: DirectionalHint;
   gapSpace?: number;
   ignoreDismissTarget?: Element;
@@ -68,7 +66,7 @@ export interface IMenuItemStyles {
   textContainer: IStyle;
 }
 
-export class Menu extends BaseComponent<MenuProps> {
+export class Menu extends React.PureComponent<MenuProps> {
   private readonly getClassNames = classNamesFunction<Record<string, unknown>, IMenuItemStyles>();
 
   render(): JSX.Element {
@@ -265,14 +263,6 @@ export class Menu extends BaseComponent<MenuProps> {
   }
 
   private _handleClick(menu: MenuItemOption, e: React.SyntheticEvent<HTMLElement>): void {
-    const telemetryContext = {
-      disabled: menu.disabled,
-      title: menu.title,
-      type: menu.type,
-    };
-
-    this.trackAction(UserAction.click, Constants.TELEMETRY_IDENTIFIERS.MENU_ITEM, telemetryContext);
-
     if (menu.disabled) {
       e.preventDefault();
       e.stopPropagation();

@@ -12,7 +12,6 @@ describe('ui/recommendation3/_recommendation', () => {
     minimal = {
       selected: false,
       selectedConnector: undefined,
-      trackEvent: jest.fn(),
     };
 
     renderer = ReactShallowRenderer.createRenderer();
@@ -32,7 +31,6 @@ describe('ui/recommendation3/_recommendation', () => {
       expect(recommendation.props.brandColor).toBe(Constants.DEFAULT_BRAND_COLOR);
       expect(recommendation.props.icon).toBe('choose-an-action.svg');
       expect(recommendation.props.title).toBe('Choose an operation');
-      expect(recommendation.props.trackEvent).toEqual(props.trackEvent);
       expect(recommendation.props.onCancelClick).toEqual(props.onCancelClick);
       expect(recommendation.type).toEqual(Card);
     });

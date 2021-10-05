@@ -2,13 +2,12 @@ import { Callout } from '@fluentui/react/lib/Callout';
 import { DirectionalHint } from '@fluentui/react/lib/common/DirectionalHint';
 import * as React from 'react';
 
-import { BaseComponent, BaseComponentProps } from '../base';
 import InformationImage from '../card/images/information_tiny.svg';
 import Constants from '../constants';
 import { calloutContentStyles } from '../fabric';
 import { getDragStartHandlerWhenDisabled } from '../helper';
 import { DocLinkClickedEventHandler, DocumentationLinkItem } from '../recommendation';
-export interface Flyout2Props extends BaseComponentProps {
+export interface Flyout2Props {
   ariaLabel?: string;
   docLink?: Swagger.ExternalDocumentation;
   flyoutExpanded: boolean;
@@ -26,7 +25,7 @@ export interface FlyoutSelectedEventArgs {
 
 export type FlyoutSelectedEventHandler = (e: FlyoutSelectedEventArgs) => void;
 
-interface FlyoutBalloonProps extends BaseComponentProps {
+interface FlyoutBalloonProps {
   docLink?: Swagger.ExternalDocumentation;
   flyoutExpanded: boolean;
   target: HTMLElement;
@@ -37,11 +36,11 @@ interface FlyoutBalloonProps extends BaseComponentProps {
 
 const onDragStartWhenDisabled = getDragStartHandlerWhenDisabled();
 
-export class Flyout2 extends BaseComponent<Flyout2Props> {
+export class Flyout2 extends React.PureComponent<Flyout2Props> {
   private _icon: HTMLElement | undefined | null;
 
   render() {
-    const { ariaLabel, docLink, title, flyoutExpanded, text, trackEvent, onClick, onDocLinkClick } = this.props;
+    const { ariaLabel, docLink, title, flyoutExpanded, text, onClick, onDocLinkClick } = this.props;
     const tabIndex = this.props.tabIndex === undefined ? 0 : this.props.tabIndex;
     return (
       <button
@@ -65,7 +64,6 @@ export class Flyout2 extends BaseComponent<Flyout2Props> {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           target={this._icon!}
           text={text}
-          trackEvent={trackEvent}
           docLink={docLink}
           onClick={onClick}
           onDocLinkClick={onDocLinkClick}
@@ -76,15 +74,6 @@ export class Flyout2 extends BaseComponent<Flyout2Props> {
 
   protected get telemetryIdentifier(): string {
     return Constants.TELEMETRY_IDENTIFIERS.FLYOUT;
-  }
-
-  protected getTelemetryContext() {
-    const { title, text } = this.props;
-    return {
-      ...super.getTelemetryContext(),
-      title,
-      text,
-    };
   }
 
   private _handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -100,7 +89,6 @@ export class Flyout2 extends BaseComponent<Flyout2Props> {
   private _handleClickOrEnterKeyPress(e: React.KeyboardEvent<HTMLButtonElement> | React.MouseEvent<HTMLButtonElement>): void {
     e.preventDefault();
     e.stopPropagation();
-    this.handleClickEvent();
     const { onClick } = this.props;
     if (onClick) {
       const { flyoutExpanded, flyoutKey } = this.props;
@@ -119,9 +107,9 @@ function FlyoutBalloon(props: FlyoutBalloonProps) {
   }
 
   function renderDocLink() {
-    const { docLink, trackEvent, onDocLinkClick } = props;
+    const { docLink, onDocLinkClick } = props;
     if (docLink) {
-      return <DocumentationLinkItem description={docLink.description} trackEvent={trackEvent} url={docLink.url} onClick={onDocLinkClick} />;
+      return <DocumentationLinkItem description={docLink.description} url={docLink.url} onClick={onDocLinkClick} />;
     }
   }
 

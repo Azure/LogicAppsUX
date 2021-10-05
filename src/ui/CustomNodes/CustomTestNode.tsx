@@ -22,7 +22,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           style={{ visibility: 'hidden', height: '1px', width: '1px', border: 'none' }}
         />
 
-        <CardV2 trackEvent={() => null} title={data.label} icon={icon} draggable={true} brandColor={'#770BD6'} id={id} />
+        <CardV2 title={data.label} icon={icon} draggable={true} brandColor={'#770BD6'} id={id} />
 
         <Handle
           type="source"
@@ -42,7 +42,6 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
               dispatch(triggerLayout());
               dispatch(setShouldZoomToNode(newId));
             }}
-            trackEvent={() => {}}
           />
         </div>
       )}

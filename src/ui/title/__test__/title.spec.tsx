@@ -8,14 +8,12 @@ import { InnerControlTitle as Title, TitleProps } from '..';
 import { getTestIntl } from '../../../__test__/intl-test-helper';
 
 describe('ui/title', () => {
-  let minimal: TitleProps, renderer: ReactShallowRenderer.ShallowRenderer, trackEvent: any;
+  let minimal: TitleProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   const intl = getTestIntl();
   beforeEach(() => {
-    trackEvent = jest.fn();
     minimal = {
       className: 'card-title',
-      trackEvent,
     };
     renderer = ReactShallowRenderer.createRenderer();
   });
@@ -178,14 +176,6 @@ describe('ui/title', () => {
       TestUtils.Simulate.click($title);
 
       expect(onClick).toHaveBeenCalled();
-    });
-
-    it('should call trackEvent when click title.', () => {
-      const title = TestUtils.renderIntoDocument<TitleProps, Title>(<Title intl={intl} {...minimal} />);
-      const $title = getAnchorElementForTitle(title);
-      TestUtils.Simulate.click($title);
-
-      expect(trackEvent).toHaveBeenCalled();
     });
   });
 });

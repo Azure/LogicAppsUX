@@ -1,10 +1,8 @@
 import * as React from 'react';
 
-import { BaseComponentProps } from '../base';
-
 type DocLinkClickedEventHandler = () => void;
 
-export interface DocumentationItemProps extends BaseComponentProps {
+export interface DocumentationItemProps {
   description: string;
   link?: {
     url: string;

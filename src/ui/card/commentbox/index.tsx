@@ -7,11 +7,10 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
-import { BaseComponentProps } from '../../base';
 import { singleLineTextFieldStyles } from '../../fabric';
 import { Label } from '../../label';
 
-export interface CommentBoxProps extends BaseComponentProps {
+export interface CommentBoxProps {
   brandColor: string;
   comment: string;
   isDismissed: boolean;

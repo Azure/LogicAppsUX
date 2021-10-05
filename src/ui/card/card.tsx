@@ -7,7 +7,7 @@ import { css, IconButton, MessageBarType, TooltipHost } from '@fluentui/react';
 import { Event, EventHandler } from '../eventhandler';
 import * as React from 'react';
 import { DocLinkClickedEventHandler, InfoControlProps, TipProps, TitleChangeEvent } from '..';
-import { BaseComponentProps } from '../base';
+
 import { CommentBoxProps } from './commentbox';
 import { MenuItemOption } from './menu';
 import { Title } from '../title';
@@ -49,7 +49,7 @@ import { Title } from '../title';
 //   title: string;
 // }
 
-export interface CardProps extends BaseComponentProps {
+export interface CardProps {
   brandColor?: string;
   collapsed?: boolean;
   commentBox?: CommentBoxProps;
