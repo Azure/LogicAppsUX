@@ -4,10 +4,10 @@
       "LanguageSet": "Azure_LanguagesExt",
       "LocItems": [
         {
-          "SourceFile": "libs\\designer\\lib\\Localize\\lang\\strings.json",
+          "SourceFile": "libs\\designer\\src\\lib\\Localize\\lang\\strings.json",
           "CopyOption": "LangIDOnName",
-          "LclFile": "libs\\designer\\lib\\Localize\\loc\\{Lang}\\strings.json.lcl",
-          "OutputPath": "libs\\designer\\lib\\Localize\\lang\\"
+          "LclFile": "libs\\designer\\src\\lib\\Localize\\loc\\{Lang}\\strings.json.lcl",
+          "OutputPath": "libs\\designer\\src\\lib\\Localize\\lang\\"
         }
       ],
       "LssFiles": ["Localize\\Settings\\ICUFormatMessage.lss"]
