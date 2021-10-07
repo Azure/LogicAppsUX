@@ -5,6 +5,6 @@ npm run lint:fix
 npm run extract
 npm run compile:loc
 npm run compile:loc:psuedo
-npm run pretty
+# npm run pretty
 git add .
 
