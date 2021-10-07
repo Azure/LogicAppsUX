@@ -184,7 +184,6 @@ const ModuleDimensions = {
   HEIGHT: 125,
   WIDTH: 175,
 };
-
 const intl = getIntl();
 export class Recommendation extends React.Component<RecommendationProps, Partial<RecommendationState>> {
   private readonly _cardRef = React.createRef<any>(); // tslint:disable-line: no-any

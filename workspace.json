@@ -117,6 +117,7 @@
             "assets": ["apps/designer-standalone/src/favicon.ico", "apps/designer-standalone/src/assets"],
             "styles": ["apps/designer-standalone/src/styles.less"],
             "scripts": [],
+            "statsJson": true,
             "webpackConfig": "@nrwl/react/plugins/webpack"
           },
           "configurations": {
@@ -133,14 +134,7 @@
               "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                }
-              ]
+              "vendorChunk": false
             }
           }
         },

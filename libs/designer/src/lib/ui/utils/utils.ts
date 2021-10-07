@@ -8,7 +8,6 @@ import { getIntl } from '../../common/i18n/intl';
  */
 export function getDurationString(milliseconds: number, abbreviated = true): string {
   const intl = getIntl();
-
   if (isNaN(milliseconds)) {
     return '--';
   }
@@ -131,7 +130,6 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
     return '--';
   }
   const intl = getIntl();
-
   if (milliseconds < 1000) {
     const millisecondsRounded = Math.round(Math.abs(milliseconds / 1000) * 10) / 10;
     if (abbreviated) {
