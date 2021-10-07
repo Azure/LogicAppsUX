@@ -66,7 +66,6 @@ export const OperationResults: React.FC<OperationResultsProps> = ({
   const ariaLabelText = intl.formatMessage({
     description: 'This is an accessability label on a list of Operations',
     defaultMessage: 'Operations',
-    id: 'UIdPNN',
   });
   // NOTE(khlaksan): The no operations message's visible property checks for items.length < 2 because the User Voice link counts as an item.
   return (
@@ -104,7 +103,7 @@ const NoOperationsMessage: React.FC<NoOperationsMessageProps> = ({ filterText, o
   const RECOMMENDATION_NO_MATCHES_EMPTY_FILTER_WITH_KIND_TEXT = intl.formatMessage(
     {
       defaultMessage: "We couldn't find any {selectedOperationKindText}",
-      id: 'bQLLgV',
+
       description: 'This is a message to the user that the kind of operation they are searching for in a list could not be found',
     },
     { selectedOperationKindText }
@@ -113,7 +112,7 @@ const NoOperationsMessage: React.FC<NoOperationsMessageProps> = ({ filterText, o
   const RECOMMENDATION_NO_MATCHES_WITH_KIND_TEXT = intl.formatMessage(
     {
       defaultMessage: "We couldn't find any {selectedOperationKindText} for {filterText}",
-      id: 'UcKJO+',
+
       description:
         'This is a message to the user that the kind of operation {selectedOperationKindText} they are searching for in a list could not be found with the search query {filterText} they gave',
     },
@@ -133,11 +132,7 @@ const SeeMoreOperations: React.FC<SeeMoreOperationsProps> = ({ visible, onSeeMor
 
   return (
     <button className="msla-see-more" disabled={disabled} onClick={onSeeMoreOperationsClick}>
-      <FormattedMessage
-        defaultMessage="See more"
-        id="8yF3hc"
-        description="This is text on a button to see more operations as a paging action"
-      />
+      <FormattedMessage defaultMessage="See more" description="This is text on a button to see more operations as a paging action" />
     </button>
   );
 };

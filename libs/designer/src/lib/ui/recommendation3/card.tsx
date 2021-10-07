@@ -80,7 +80,6 @@ export const CardV1: React.FC<CardProps> = (props) => {
   const intl = useIntl();
   const CANCEL = intl.formatMessage({
     defaultMessage: 'Cancel',
-    id: '47FYwb',
   });
   const buttonGroup = getCardV1ButtonGroup(props, CANCEL);
   return (

@@ -32,11 +32,11 @@ export class Toggle extends React.PureComponent<ToggleProps> {
     collapseIcon: {
       iconName: 'ChevronUp',
     },
-    collapseText: <FormattedMessage id="Asi2Jg" defaultMessage="Hide advanced options" />,
+    collapseText: <FormattedMessage defaultMessage="Hide advanced options" />,
     expandIcon: {
       iconName: 'ChevronDown',
     },
-    expandText: <FormattedMessage id="lIEejV" defaultMessage="Show advanced options" />,
+    expandText: <FormattedMessage defaultMessage="Show advanced options" />,
     iconProps: {
       styles: {
         root: {

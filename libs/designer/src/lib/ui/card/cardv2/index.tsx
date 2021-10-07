@@ -290,24 +290,19 @@ export function CardFooter({
   const intl = useIntl();
   const CONNECTION_NAME_DISPLAY = intl.formatMessage({
     defaultMessage: 'Connection name',
-    id: 'yD9JIy',
   });
   const CONNECTION_CONTAINER_CONNECTION_REQUIRED = intl.formatMessage({
     defaultMessage: 'Connection required',
-    id: 'Z79N+I',
   });
   const PANEL_STATIC_RESULT_TITLE = intl.formatMessage({
     defaultMessage: 'Testing',
-    id: 'm7Y6Qf',
     description: 'Title for a tab panel',
   });
   const MENU_STATIC_RESULT_ICON_TOOLTIP = intl.formatMessage({
     defaultMessage: 'This Action has testing configured.',
-    id: '5CTOi9',
   });
   const COMMENT = intl.formatMessage({
     defaultMessage: 'Comment',
-    id: 'LgbKvU',
   });
   const connectionTitle = connectionDisplayName ? CONNECTION_NAME_DISPLAY : CONNECTION_CONTAINER_CONNECTION_REQUIRED;
 

@@ -27,7 +27,6 @@ export class InnerClassCopyInput extends React.Component<CopyInputControlProps &
 
     const DISPLAY_TEXT_COPY_URL = intl.formatMessage({
       defaultMessage: 'Copy URL',
-      id: 'P8QaSQ',
     });
 
     return (

@@ -20,7 +20,7 @@ export const InfoControl: React.FC<InfoControlProps> = (props) => {
   const intl = useIntl();
   const dismissTextAriaLabelDefault = intl.formatMessage({
     defaultMessage: 'Dismiss',
-    id: 'GLahvg',
+
     description: 'Accessability label on a button to dismiss an info banner',
   });
   const { dismissButtonAriaLabel, dismissible, infoText: children, messageBarType, onDismissClicked: onDismiss } = props;

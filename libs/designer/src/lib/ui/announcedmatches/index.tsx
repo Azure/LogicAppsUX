@@ -17,12 +17,10 @@ export const AnnouncedMatches = ({ count, isLoading = false, visible }: Announce
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading...',
-    id: 'gjBiyj',
   });
   const matchesText = intl.formatMessage(
     {
       defaultMessage: '{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}',
-      id: 'Gx6rDL',
     },
     {
       count,

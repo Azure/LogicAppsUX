@@ -76,6 +76,7 @@
     "@typescript-eslint/parser": "~4.33.0",
     "babel-jest": "27.0.6",
     "babel-loader": "8.1.0",
+    "babel-plugin-formatjs": "^10.3.9",
     "css-loader": "^6.3.0",
     "cypress": "^8.3.0",
     "eslint": "7.22.0",

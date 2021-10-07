@@ -59,7 +59,6 @@ export function CardContextMenu({
   const CARD_CONTEXT_MENU_ARIA_LABEL = intl.formatMessage(
     {
       defaultMessage: 'Context menu for {title} card',
-      id: 'QQYzHC',
       description: 'Accessability label',
     },
     {

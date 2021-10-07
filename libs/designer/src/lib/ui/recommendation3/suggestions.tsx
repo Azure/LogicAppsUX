@@ -46,7 +46,7 @@ export class Suggestions extends React.Component<SuggestionsProps> {
       <div className="msla-suggestions">
         <div className="msla-suggestions-header">
           <Icon iconName="Robot" styles={iconStyle} />
-          <FormattedMessage defaultMessage="Recommended based on your activity" id="sxcPBW" description="Header of a list" />
+          <FormattedMessage defaultMessage="Recommended based on your activity" description="Header of a list" />
         </div>
         <NoSuggestions count={suggestedItems.length} />
         {suggestionList}
@@ -114,7 +114,7 @@ export class Suggestions extends React.Component<SuggestionsProps> {
             <Badge
               text={intl.formatMessage({
                 defaultMessage: '(preview)',
-                id: 't74v7p',
+
                 description: 'This is a badge beside a list item saying that the feature shown in the item is preview',
               })}
               visible={!!preview}
@@ -123,7 +123,7 @@ export class Suggestions extends React.Component<SuggestionsProps> {
               className="msla-premium"
               text={intl.formatMessage({
                 defaultMessage: 'Premium',
-                id: 'unHYHq',
+
                 description: 'This is a badge beside a list item saying that the feature shown in the item is a Premium feature',
               })}
               visible={!!premium}
@@ -165,7 +165,7 @@ const NoSuggestions: React.FC<NoSuggestionsProps> = ({ count }) => {
   return (
     <div className="msla-no-suggestions">
       <Icon iconName="InfoSolid" className="msla-no-suggestions-icon" />
-      <FormattedMessage defaultMessage="Currently there are no suggestions available with your selection." id="RYIxqe" />
+      <FormattedMessage defaultMessage="Currently there are no suggestions available with your selection." />
     </div>
   );
 };

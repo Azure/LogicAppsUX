@@ -140,7 +140,7 @@ export const Pager: React.FC<PagerProps> = ({
 
   const pagerPreviousString = intl.formatMessage({
     defaultMessage: 'Previous',
-    id: '6oqk+A',
+
     description: 'Text of a button to go to previous page',
   });
 
@@ -152,14 +152,14 @@ export const Pager: React.FC<PagerProps> = ({
 
   const previousPagerFailedStrign = intl.formatMessage({
     defaultMessage: 'Previous failed',
-    id: 'gKq3Jv',
+
     description: 'Label of a button to go to the previous failed page option',
   });
 
   const pagerOfString = intl.formatMessage(
     {
       defaultMessage: 'of {max}',
-      id: 'W070M2',
+
       description: 'Text on a pager where people can select a page number out of {max}',
     },
     {
@@ -170,7 +170,7 @@ export const Pager: React.FC<PagerProps> = ({
   const pagerOfStringAria = intl.formatMessage(
     {
       defaultMessage: '{current} of {max}',
-      id: 'b5su3H',
+
       description: 'Accessability label telling that the user is on page {current} of {max} pages',
     },
     {
@@ -181,13 +181,13 @@ export const Pager: React.FC<PagerProps> = ({
 
   const pagerNextFailedString = intl.formatMessage({
     defaultMessage: 'Next failed',
-    id: 'Mb/Vp8',
+
     description: 'Button indicating to go to the next page with failed options',
   });
 
   const pagerNextString = intl.formatMessage({
     defaultMessage: 'Next',
-    id: 'iJOIca',
+
     description: 'Button indicating to go to the next page',
   });
 
@@ -237,7 +237,7 @@ const PagerButton = ({ disabled, failed, iconProps, text, onClick }: PagerButton
   const intl = useIntl();
   const previousPagerFailedString = intl.formatMessage({
     defaultMessage: 'Previous failed',
-    id: 'gKq3Jv',
+
     description: 'Label of a button to go to the previous failed page option',
   });
 

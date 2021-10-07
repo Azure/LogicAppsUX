@@ -31,10 +31,10 @@ export const Confirm = ({ hidden, message, title, onConfirm, onDismiss }: Confir
       {message}
       <DialogFooter>
         <PrimaryButton className="dialog-ok-button" onClick={onConfirm}>
-          <FormattedMessage defaultMessage="OK" id="7GSk99" description="OK message appearing on a confirmation dialog." />
+          <FormattedMessage defaultMessage="OK" description="OK message appearing on a confirmation dialog." />
         </PrimaryButton>
         <DefaultButton onClick={onDismiss}>
-          <FormattedMessage defaultMessage="Cancel" id="iUs7pv" description="Cancel message appearing on a confirmation dialog." />
+          <FormattedMessage defaultMessage="Cancel" description="Cancel message appearing on a confirmation dialog." />
         </DefaultButton>
       </DialogFooter>
     </Dialog>

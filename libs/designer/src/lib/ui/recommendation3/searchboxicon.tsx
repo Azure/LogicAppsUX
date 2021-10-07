@@ -20,7 +20,6 @@ export const SearchBoxIcon: React.FC<SearchBoxIconProps> = (props) => {
   const intl = useIntl();
   const RECOMMENDATION_SEARCH_BUTTON_GO_BACK = intl.formatMessage({
     defaultMessage: 'Go back',
-    id: 'orvpWh',
   });
 
   const BackIconProps: IIconProps = {

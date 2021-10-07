@@ -74,17 +74,13 @@ export const Connectors: React.FC<ConnectorsProps> = (props) => {
     return (
       <div className="msla-connectors msla-for-you">
         <div className="msla-recently-used-connectors-title">
-          <FormattedMessage
-            defaultMessage="Recent"
-            id="XEdXNu"
-            description="This is a header for a section that shows recently used connecters"
-          />
+          <FormattedMessage defaultMessage="Recent" description="This is a header for a section that shows recently used connecters" />
         </div>
         <ClearRecentlyUsedList disabled={disabled} onClearListClick={onClearListClick} />
         {connectors.length === 0 ? (
           <div className="msla-no-connectors">
             <header>
-              <FormattedMessage defaultMessage="There are no recent connectors to show" id="TY45/m" />
+              <FormattedMessage defaultMessage="There are no recent connectors to show" />
             </header>
           </div>
         ) : null}
@@ -139,12 +135,12 @@ const ClearRecentlyUsedList: React.FC<ClearRecentlyUsedListProps> = (props) => {
   if (showConfirmation) {
     return (
       <div className="msla-recently-used-clear">
-        <FormattedMessage defaultMessage="Clear?" id="qNMcGy" description="A confirmation label with buttons following saying yes or no" />
+        <FormattedMessage defaultMessage="Clear?" description="A confirmation label with buttons following saying yes or no" />
         <button className="msla-recently-used-clear-button" onClick={handleYesClicked}>
-          <FormattedMessage defaultMessage="Yes" id="mE/bhX" description="Answer to a confirmation message asking to clear or not" />
+          <FormattedMessage defaultMessage="Yes" description="Answer to a confirmation message asking to clear or not" />
         </button>
         <button className="msla-recently-used-clear-button" onClick={handleNoClicked}>
-          <FormattedMessage defaultMessage="No" id="h9XgiJ" description="Answer to a confirmation message asking to clear or not" />
+          <FormattedMessage defaultMessage="No" description="Answer to a confirmation message asking to clear or not" />
         </button>
       </div>
     );
@@ -157,7 +153,7 @@ const ClearRecentlyUsedList: React.FC<ClearRecentlyUsedListProps> = (props) => {
           onClick={handleClearClicked}
           ref={(e) => (clearButtonRef.current = e)}
         >
-          <FormattedMessage defaultMessage="Clear" id="q3+FXI" description="A label on a button" />
+          <FormattedMessage defaultMessage="Clear" description="A label on a button" />
         </button>
       </div>
     );
@@ -175,14 +171,12 @@ const NoConnectors: React.FC<NoConnectorsProps> = (props) => {
 
   const RECOMMENDATION_NO_MATCHES_EMPTY_FILTER_TEXT = intl.formatMessage({
     defaultMessage: "We couldn't find any results",
-    id: 'JXhiR+',
   });
 
   const RECOMMENDATION_NO_MATCHES_TEXT = intl.formatMessage(
     {
       defaultMessage: "We couldn't find any results for {filterText}",
       description: 'This is the message for a section when a user searches for term {filterMessage} but there are no results for it',
-      id: 'lUTDU8',
     },
     {
       filterText,

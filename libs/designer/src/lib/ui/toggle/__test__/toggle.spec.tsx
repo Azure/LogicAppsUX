@@ -1,5 +1,6 @@
 import { IIconProps } from '@fluentui/react/lib/Icon';
 import * as React from 'react';
+import { FormattedMessage } from 'react-intl';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 import { Toggle, ToggleProps } from '..';
@@ -60,7 +61,7 @@ describe('ui/toggle', () => {
       expect(toggle.props.iconProps.iconName).toBe('ChevronDown');
 
       const [text]: any[] = React.Children.toArray(toggle.props.children); // tslint:disable-line: no-any
-      expect(text.props.defaultMessage).toBe('Show advanced options');
+      expect(text).toMatchSnapshot();
     });
 
     it('should render custom expand icon', () => {
@@ -92,7 +93,7 @@ describe('ui/toggle', () => {
       expect(toggle.props.iconProps.iconName).toBe('ChevronUp');
 
       const [text]: any[] = React.Children.toArray(toggle.props.children); // tslint:disable-line: no-any
-      expect(text.props.defaultMessage).toBe('Hide advanced options');
+      expect(text).toMatchSnapshot();
     });
 
     it('should render custom collapse icon', () => {

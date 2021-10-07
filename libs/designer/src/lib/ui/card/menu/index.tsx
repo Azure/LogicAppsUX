@@ -181,7 +181,6 @@ export class Menu extends React.PureComponent<MenuProps> {
     const intl = getIntl();
     return intl.formatMessage({
       defaultMessage: 'More info',
-      id: 'HOsSgX',
     });
   };
   private _renderDisabledReason(menuItem: MenuItemOption): JSX.Element | null {
