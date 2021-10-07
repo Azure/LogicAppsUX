@@ -39,24 +39,6 @@
       "value": "Ḕḋíṭíńĝ ćâŕḋ ṭíṭĺè"
     }
   ],
-  "3V6GkP": [
-    {
-      "type": 1,
-      "value": "days"
-    },
-    {
-      "type": 0,
-      "value": "ḋâẏś "
-    },
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "ḫŏůŕś"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -73,24 +55,6 @@
     {
       "type": 0,
       "value": "Ṯḫíś Ḁćṭíŏń ḫâś ṭèśṭíńĝ ćŏńḟíĝůŕèḋ."
-    }
-  ],
-  "5ilpFw": [
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "ḫŏůŕś "
-    },
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "ṁíńůṭèś"
     }
   ],
   "6oqk+A": [
@@ -397,10 +361,46 @@
       "value": "max"
     }
   ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " ḋâẏś "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ḫŏůŕś"
+    }
+  ],
   "XEdXNu": [
     {
       "type": 0,
       "value": "Ŕèćèńṭ"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " ṁíńůṭèś "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " śèćŏńḋś"
     }
   ],
   "YIBDSH": [
@@ -587,6 +587,24 @@
       "value": "Ḕŕŕŏŕ ĺŏâḋíńĝ ćŏṁṗŏńèńṭ."
     }
   ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ḫŏůŕś "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " ṁíńůṭèś"
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
@@ -619,24 +637,6 @@
     {
       "type": 0,
       "value": "Ḡŏ ḃâćǩ"
-    }
-  ],
-  "ozs7Yp": [
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "ṁíńůṭèś "
-    },
-    {
-      "type": 1,
-      "value": "seconds"
-    },
-    {
-      "type": 0,
-      "value": "śèćŏńḋś"
     }
   ],
   "q3+FXI": [

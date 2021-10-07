@@ -77,38 +77,14 @@ describe('ui/utils/utils', () => {
       expect(getDurationStringPanelMode(15.5 * 60 * 1000, /* abbreviated */ false)).toBe('15 minutes 30 seconds');
     });
 
-    it('exactly 1 minute and 1 second should return a singular minute and second', () => {
-      expect(getDurationStringPanelMode(1000 * 60 + 1000, /* abbreviated */ false)).toBe('1 minute 1 second');
-    });
-
-    it('exactly 2 minutes and 1 second should return a singular minute and second', () => {
-      expect(getDurationStringPanelMode(2 * 1000 * 60 + 1000, /* abbreviated */ false)).toBe('2 minutes 1 second');
-    });
-
     it('returns a duration in hours and minutes if the duration is less than 24 hours', () => {
       expect(getDurationStringPanelMode(15.5 * 60 * 60 * 1000)).toBe('15h 30m');
       expect(getDurationStringPanelMode(15.5 * 60 * 60 * 1000, /* abbreviated */ false)).toBe('15 hours 30 minutes');
     });
 
-    it('exactly 1 hour and 1 minute should return a singular hour and minute', () => {
-      expect(getDurationStringPanelMode(1000 * 60 + 1000 * 60 * 60, /* abbreviated */ false)).toBe('1 hour 1 minute');
-    });
-
-    it('exactly 2 hours and 1 minute should return a plural hours and singular minute', () => {
-      expect(getDurationStringPanelMode(1000 * 60 + 1000 * 60 * 60 * 2, /* abbreviated */ false)).toBe('2 hours 1 minute');
-    });
-
     it('returns a duration in days and hours if the duration is greater than or equal to 24 hours', () => {
       expect(getDurationStringPanelMode(15.5 * 24 * 60 * 60 * 1000)).toBe('15d 12h');
       expect(getDurationStringPanelMode(15.5 * 24 * 60 * 60 * 1000, /* abbreviated */ false)).toBe('15 days 12 hours');
-    });
-
-    it('exactly 1 day and 1 hour  should return a singular day and hour', () => {
-      expect(getDurationStringPanelMode(1000 * 60 * 60 * 24 + 1000 * 60 * 60, /* abbreviated */ false)).toBe('1 day 1 hour');
-    });
-
-    it('exactly 2 days and 1 hour should return a plural days and singular hour', () => {
-      expect(getDurationStringPanelMode(1000 * 60 * 60 * 24 * 2 + 1000 * 60 * 60, /* abbreviated */ false)).toBe('2 days 1 hour');
     });
   });
 

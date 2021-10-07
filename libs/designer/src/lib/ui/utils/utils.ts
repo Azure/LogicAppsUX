@@ -205,8 +205,8 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
     } else {
       return intl.formatMessage(
         {
-          defaultMessage: '{minutes}minutes {seconds}seconds',
-          id: 'ozs7Yp',
+          defaultMessage: '{minutes} minutes {seconds} seconds',
+          id: 'XTuxmH',
           description: 'This is a time duration in full non abbreviated format',
         },
         {
@@ -236,8 +236,8 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
     } else {
       return intl.formatMessage(
         {
-          defaultMessage: '{hours}hours {minutes}minutes',
-          id: '5ilpFw',
+          defaultMessage: '{hours} hours {minutes} minutes',
+          id: 'l36V56',
           description: 'This is a time duration in full non abbreviated format',
         },
         {
@@ -265,8 +265,8 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
   } else {
     return intl.formatMessage(
       {
-        defaultMessage: '{days}days {hours}hours',
-        id: '3V6GkP',
+        defaultMessage: '{days} days {hours} hours',
+        id: 'X8JjjT',
         description: 'This is a time duration in full non abbreviated format',
       },
       {
