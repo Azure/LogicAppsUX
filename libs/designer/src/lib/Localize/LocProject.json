@@ -10,7 +10,7 @@
           "OutputPath": "libs\\designer\\src\\lib\\Localize\\lang\\"
         }
       ],
-      "LssFiles": ["Localize\\Settings\\ICUFormatMessage.lss"]
+      "LssFiles": ["libs\\designer\\src\\lib\\Localize\\Settings\\ICUFormatMessage.lss"]
     }
   ]
 }
