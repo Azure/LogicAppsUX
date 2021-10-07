@@ -1,0 +1,131 @@
+{
+  "version": 2,
+  "projects": {
+    "designer-standalone": {
+      "root": "apps/designer-standalone",
+      "sourceRoot": "apps/designer-standalone/src",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/designer-standalone",
+            "index": "apps/designer-standalone/src/index.html",
+            "main": "apps/designer-standalone/src/main.tsx",
+            "polyfills": "apps/designer-standalone/src/polyfills.ts",
+            "tsConfig": "apps/designer-standalone/tsconfig.app.json",
+            "assets": [
+              "apps/designer-standalone/src/favicon.ico",
+              "apps/designer-standalone/src/assets"
+            ],
+            "styles": ["apps/designer-standalone/src/styles.less"],
+            "scripts": [],
+            "webpackConfig": "@nrwl/react/plugins/webpack"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/designer-standalone/src/environments/environment.ts",
+                  "with": "apps/designer-standalone/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "designer-standalone:build",
+            "hmr": true
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "designer-standalone:build:production",
+              "hmr": false
+            }
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": [
+              "apps/designer-standalone/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/designer-standalone"],
+          "options": {
+            "jestConfig": "apps/designer-standalone/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "designer-standalone-e2e": {
+      "root": "apps/designer-standalone-e2e",
+      "sourceRoot": "apps/designer-standalone-e2e/src",
+      "projectType": "application",
+      "targets": {
+        "e2e": {
+          "executor": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/designer-standalone-e2e/cypress.json",
+            "devServerTarget": "designer-standalone:serve",
+            "tsConfig": "apps/designer-standalone-e2e/tsconfig.json"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "designer-standalone:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/designer-standalone-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/react"
+  },
+  "generators": {
+    "@nrwl/react": {
+      "application": {
+        "style": "less",
+        "linter": "eslint",
+        "babel": true
+      },
+      "component": {
+        "style": "less"
+      },
+      "library": {
+        "style": "less",
+        "linter": "eslint"
+      }
+    }
+  },
+  "defaultProject": "designer-standalone"
+}
