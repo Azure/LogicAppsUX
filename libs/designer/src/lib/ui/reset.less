@@ -1,61 +1,60 @@
 @import (reference) 'variables.less';
 
 .msla-container {
-    font-family: sans-serif;
-    margin: 0;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background: @designerBackgroundColor;
+  color: black;
+
+  a {
+    background: transparent;
+    text-decoration: none;
+
+    &:active,
+    &:hover {
+      outline: none;
+    }
+  }
+
+  b,
+  strong {
+    font-weight: bold;
+  }
+
+  img {
+    border: 0;
+  }
+
+  ul,
+  ol {
     padding: 0;
-    background: @designerBackgroundColor;
-    color: black;
+    margin: 0;
+  }
 
-    a {
-        background: transparent;
-        text-decoration: none;
+  li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
 
-        &:active,
-        &:hover {
-            outline: none;
-        }
-    }
-
-    b,
-    strong {
-        font-weight: bold;
-    }
-
-    img {
-        border: 0;
-    }
-
-    ul,
-    ol{
-        padding: 0;
-        margin: 0;
-    }
-
-    li {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    ::-ms-clear {
-        display: none;
-    }
-
+  ::-ms-clear {
+    display: none;
+  }
 }
 
 .msla-clearfix:after {
-    visibility: hidden;
-    display: block;
-    content: ' ';
-    clear: both;
-    height: 0;
-    font-size: 0;
+  visibility: hidden;
+  display: block;
+  content: ' ';
+  clear: both;
+  height: 0;
+  font-size: 0;
 }
 
 body.dark {
-    .msla-container {
-        background-color: @ms-color-bodyBackground;
-        color: @ms-color-bodyText;
-    }
+  .msla-container {
+    background-color: @ms-color-bodyBackground;
+    color: @ms-color-bodyText;
+  }
 }

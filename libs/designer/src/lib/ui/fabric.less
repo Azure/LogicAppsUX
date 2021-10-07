@@ -1,29 +1,29 @@
 @import (reference) './variables.less';
 
 .msla-modal-dialog {
-    div[class^=ms-Dialog-main] {
-        width: 800px;
+  div[class^='ms-Dialog-main'] {
+    width: 800px;
 
-        @media (min-width: 480px) {
-            max-width: none;
-        }
-
-        @media only screen and (max-width: 800px) {
-            width: 100%;
-        }
+    @media (min-width: 480px) {
+      max-width: none;
     }
+
+    @media only screen and (max-width: 800px) {
+      width: 100%;
+    }
+  }
 }
 
 /* Checkbox (ui/checkbox) */
 .msla-checkbox {
-    align-items: baseline;
-    display: flex;
+  align-items: baseline;
+  display: flex;
 }
 
-[class^=ms-ContextualMenu-item] {
-    [class^=ms-ContextualMenu-linkContent] {
-        [class^=ms-Image] {
-            color: @menu-items-icon-color;
-        }
+[class^='ms-ContextualMenu-item'] {
+  [class^='ms-ContextualMenu-linkContent'] {
+    [class^='ms-Image'] {
+      color: @menu-items-icon-color;
     }
+  }
 }

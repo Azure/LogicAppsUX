@@ -38,9 +38,7 @@ describe('ui/recommendation3/_searchbox', () => {
     const searchBox = renderer.getRenderOutput();
     expect(searchBox.props.className).toBe(classNames.searchBox);
 
-    const [icon, input]: any[] = React.Children.toArray(
-      searchBox.props.children
-    ); // tslint:disable-line: no-any
+    const [icon, input]: any[] = React.Children.toArray(searchBox.props.children); // tslint:disable-line: no-any
 
     expect(icon.props.showMode).toBe(minimal.showMode);
     expect(input.props.className).toBe(classNames.searchBoxInput);
@@ -58,9 +56,7 @@ describe('ui/recommendation3/_searchbox', () => {
       renderer.render(<SearchBox {...props} />);
 
       const searchBox = renderer.getRenderOutput();
-      const [iconButton]: any[] = React.Children.toArray(
-        searchBox.props.children
-      ); // tslint:disable-line: no-any
+      const [iconButton]: any[] = React.Children.toArray(searchBox.props.children); // tslint:disable-line: no-any
       expect(iconButton.props.showMode).toBe(props.showMode);
       expect(iconButton.props.onBackClick).toEqual(props.onBackClick);
     });

@@ -100,7 +100,8 @@ export function ActionButtonV2({ buttonRef, className, disabled = false, title, 
         onClick={handleClick}
         onFocus={handleFocus}
         onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}>
+        onMouseLeave={handleMouseLeave}
+      >
         <Plus fill={isInverted ? '#3AA0F3' : '#0078D4'} />
       </button>
     </TooltipHost>

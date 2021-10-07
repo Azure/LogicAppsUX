@@ -32,7 +32,8 @@ const DesignerProviderInner = ({ theme = AzureThemeLight, locale = 'en', childre
                 return;
               }
               throw err;
-            }}>
+            }}
+          >
             {children}
           </IntlProvider>
         </Provider>

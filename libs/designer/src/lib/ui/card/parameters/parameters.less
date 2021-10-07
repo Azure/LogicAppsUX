@@ -1,669 +1,664 @@
 @import (reference) '../../variables.less';
 @import '../../copyinputcontrol/copyinputcontrol.less';
 
-@parameter-label-color : #595959;
-@parameter-box-color : #989898;
+@parameter-label-color: #595959;
+@parameter-box-color: #989898;
 @parameter-box-color-focus: #4692d0;
 
-@dynamic-param-label-text-size : 13px;
+@dynamic-param-label-text-size: 13px;
 @dynamic-param-label-text-color: rgb(51, 51, 51);
-@dynamic-param-error-color : #B40E1B;
+@dynamic-param-error-color: #b40e1b;
 
-@toggleMargin : 5px;
+@toggleMargin: 5px;
 @dynamic-added-param-icon-width: 40px;
-@input-selection-delete-width : 26px;
+@input-selection-delete-width: 26px;
 
 .msla-input-parameters-body {
-    margin: 0 @parameter-label-inputbox-margin;
+  margin: 0 @parameter-label-inputbox-margin;
 
-    .msla-token-recommendation-v2 {
-        width: 100%;
-    }
+  .msla-token-recommendation-v2 {
+    width: 100%;
+  }
 }
 
 .msla-no-inputs-text {
-    color: #5e5e5e;
-    font-family: @font-family;
-    font-size: @card-header-font-size;
-    padding: 1em 0;
+  color: #5e5e5e;
+  font-family: @font-family;
+  font-size: @card-header-font-size;
+  padding: 1em 0;
 }
 
 .msla-input-parameters-list {
-    width: 100%;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+
+  div + div {
+    .msla-dynamic-added-param-header {
+      margin-top: 16px;
+    }
+  }
+
+  .msla-input-parameter-inline-item {
     display: flex;
     flex-direction: column;
+    vertical-align: top;
 
-    div+div {
-        .msla-dynamic-added-param-header {
-            margin-top: 16px;
+    .msla-input-parameter {
+      padding: 0;
+
+      .msla-input-parameter-label {
+        display: block;
+      }
+
+      .msla-input-parameter-content-wrapper {
+        flex-basis: 0%;
+
+        .msla-input-parameter-box {
+          display: block;
+          width: 100%;
         }
+      }
+    }
+  }
+
+  .msla-input-parameter-item,
+  .msla-input-parameter-inline-item {
+    .msla-input-parameter {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+
+      .msla-input-parameter-content-wrapper {
+        width: calc(100% - @parameter-label-width - 2px);
+      }
+
+      @media only screen and (max-width: @designer-desktop-max-width) {
+        .msla-input-parameter-content-wrapper {
+          width: 100%;
+          flex-basis: 100%;
+        }
+      }
     }
 
-    .msla-input-parameter-inline-item {
-        display: flex;
-        flex-direction: column;
-        vertical-align: top;
+    &.msla-input-parameter-item-deletable {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
 
-        .msla-input-parameter {
-            padding: 0;
-
-            .msla-input-parameter-label {
-                display: block;
-            }
-
-            .msla-input-parameter-content-wrapper {
-                flex-basis: 0%;
-
-                .msla-input-parameter-box {
-                    display: block;
-                    width: 100%;
-                }
-            }
-
-        }
-    }
-
-    .msla-input-parameter-item,
-    .msla-input-parameter-inline-item {
-
-        .msla-input-parameter {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-
-            .msla-input-parameter-content-wrapper {
-                width: calc(100% - @parameter-label-width - 2px);
-            }
-
-            @media only screen and (max-width: @designer-desktop-max-width) {
-                .msla-input-parameter-content-wrapper {
-                    width: 100%;
-                    flex-basis: 100%;
-                }
-            }
-        }
-
-        &.msla-input-parameter-item-deletable {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-
-            .msla-input-parameter {
-                flex-direction: row;
-                flex: 1 1 100%;
-                width: calc(100% - @parameter-delete-button-width);
-
-                .msla-input-parameter-content-wrapper {
-                    flex-basis: 410px;
-                }
-
-                @media only screen and (max-width: @designer-desktop-max-width) {
-                    .msla-input-parameter-content-wrapper {
-                        flex-basis: 100%;
-                    }
-                }
-            }
-
-            >.msla-input-parameter-array {
-                width: calc(100% - 36px);
-                display: inline-block;
-            }
-        }
-    }
-
-    .msla-input-parameter-item {
-        margin: 0 0 @parameter-interval-margin 0;
-
+      .msla-input-parameter {
+        flex-direction: row;
+        flex: 1 1 100%;
+        width: calc(100% - @parameter-delete-button-width);
 
         .msla-input-parameter-content-wrapper {
-            display: flex;
-            flex-direction: column;
-            flex: 1 1 436px;
-            padding: 1px;
+          flex-basis: 410px;
         }
-    }
 
-    .msla-input-parameter-inline-item {
-        margin: 0 0 @parameter-interval-margin;
-    }
-
-    .msla-input-parameter-inline-item:first-child {
-        .msla-input-parameter {
-            padding-right: @parameter-label-inputbox-margin;
-            width: calc(100% - @parameter-label-inputbox-margin);
+        @media only screen and (max-width: @designer-desktop-max-width) {
+          .msla-input-parameter-content-wrapper {
+            flex-basis: 100%;
+          }
         }
+      }
+
+      > .msla-input-parameter-array {
+        width: calc(100% - 36px);
+        display: inline-block;
+      }
     }
+  }
 
-    .msla-input-parameters-group {
-        padding-top: @parameter-interval-margin;
-        border: 1px dashed gray;
-        margin: 0 -6px @parameter-interval-margin -6px;
+  .msla-input-parameter-item {
+    margin: 0 0 @parameter-interval-margin 0;
 
-        .msla-input-parameters-group-list {
-            display: inline-block;
-            width: calc(100% - 30px);
-
-            >.msla-input-parameters-group {
-                margin-left: 6px;
-            }
-        }
+    .msla-input-parameter-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 436px;
+      padding: 1px;
     }
+  }
+
+  .msla-input-parameter-inline-item {
+    margin: 0 0 @parameter-interval-margin;
+  }
+
+  .msla-input-parameter-inline-item:first-child {
+    .msla-input-parameter {
+      padding-right: @parameter-label-inputbox-margin;
+      width: calc(100% - @parameter-label-inputbox-margin);
+    }
+  }
+
+  .msla-input-parameters-group {
+    padding-top: @parameter-interval-margin;
+    border: 1px dashed gray;
+    margin: 0 -6px @parameter-interval-margin -6px;
+
+    .msla-input-parameters-group-list {
+      display: inline-block;
+      width: calc(100% - 30px);
+
+      > .msla-input-parameters-group {
+        margin-left: 6px;
+      }
+    }
+  }
 }
 
 .msla-input-parameters-itempicker {
-    margin: 0 8px;
+  margin: 0 8px;
 }
 
 .msla-input-parameter-expand,
 .msla-input-parameters-group-toggle {
+  img {
+    height: 14px;
+    width: 14px;
+    vertical-align: middle;
+  }
+
+  &[disabled] {
+    cursor: default;
+
     img {
-        height: 14px;
-        width: 14px;
-        vertical-align: middle;
+      opacity: 0.6;
     }
-
-    &[disabled] {
-        cursor: default;
-
-        img {
-            opacity: .6;
-        }
-    }
+  }
 }
 
 .msla-input-parameters-group-toggle {
-    vertical-align: top;
-    display: inline-block;
+  vertical-align: top;
+  display: inline-block;
 }
 
 .msla-input-parameter-item {
-    .msla-input-expand-parameter {
-        >.msla-input-parameter {
-            display: flex;
-        }
+  .msla-input-expand-parameter {
+    > .msla-input-parameter {
+      display: flex;
     }
+  }
 
-    .msla-input-parameter-item-delete-button {
-        display: inline-block;
-        height: 24px;
-        align-self: flex-end;
-        margin-bottom: 1%;
-    }
+  .msla-input-parameter-item-delete-button {
+    display: inline-block;
+    height: 24px;
+    align-self: flex-end;
+    margin-bottom: 1%;
+  }
 }
 
 .msla-input-parameter {
-    .msla-dynamic-added-param-container & {
-        padding-bottom: 0;
+  .msla-dynamic-added-param-container & {
+    padding-bottom: 0;
+  }
+
+  &.dynamic {
+    width: 100%;
+    min-width: 120px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 7px;
+
+    .msla-input-parameter,
+    .msla-input-parameter-box {
+      display: flex;
+      flex: 1 1 auto;
     }
-
-    &.dynamic {
-        width: 100%;
-        min-width: 120px;
-        display: inline-block;
-        vertical-align: top;
-        margin-right: 7px;
-
-        .msla-input-parameter,
-        .msla-input-parameter-box {
-            display: flex;
-            flex: 1 1 auto;
-        }
-    }
-
+  }
 }
 
 .msla-input-parameter-error {
-    color: @dynamic-param-error-color;
+  color: @dynamic-param-error-color;
 
-    @msla-label-margin-left: (@parameter-label-width + @parameter-label-inputbox-margin);
+  @msla-label-margin-left: (@parameter-label-width + @parameter-label-inputbox-margin);
 
-    &.msla-schema-label {
-        flex: 1 1 100%;
-        margin-left: 0;
-    }
+  &.msla-schema-label {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
 }
 
 .msla-input-parameter-inline-item {
-    .msla-input-parameter-error {
-        &.msla-label {
-            margin-left: 0;
-            width: 100%;
-        }
+  .msla-input-parameter-error {
+    &.msla-label {
+      margin-left: 0;
+      width: 100%;
     }
+  }
 }
 
 .msla-input-parameter-label {
-    color: @parameter-label-color;
-    margin: 0;
-    display: inline-block;
-    flex: 0 0 @parameter-label-width;
-    vertical-align: top;
-    padding-top: 5.5px;
-    max-height: (@parameter-inputbox-height + 2px);
+  color: @parameter-label-color;
+  margin: 0;
+  display: inline-block;
+  flex: 0 0 @parameter-label-width;
+  vertical-align: top;
+  padding-top: 5.5px;
+  max-height: (@parameter-inputbox-height + 2px);
 
-    &.msla-schema-label {
-        flex: 1 1 100%;
-        padding-bottom: 6px;
-    }
+  &.msla-schema-label {
+    flex: 1 1 100%;
+    padding-bottom: 6px;
+  }
 
-    .msla-label {
-        max-height: 3em;
-    }
+  .msla-label {
+    max-height: 3em;
+  }
 }
 
 .msla-input-parameter-content,
 .msla-input-parameter-box {
-    vertical-align: middle;
-    box-sizing: border-box;
-    display: inline-block;
+  vertical-align: middle;
+  box-sizing: border-box;
+  display: inline-block;
 
-    &.msla-rich-parameter-box {
-        height: 100px;
-        width: 100%;
+  &.msla-rich-parameter-box {
+    height: 100px;
+    width: 100%;
+  }
+
+  &.msla-component-error {
+    background-color: rgba(255, 0, 0, 0.06);
+
+    & > span {
+      color: rgb(224, 2, 2);
+      vertical-align: top;
     }
-
-    &.msla-component-error {
-        background-color: rgba(255, 0, 0, 0.06);
-
-        &>span {
-            color: rgb(224, 2, 2);
-            vertical-align: top;
-        }
-    }
+  }
 }
 
 .msla-input-parameter-box {
-    border: 1px solid @parameter-box-color;
+  border: 1px solid @parameter-box-color;
+  width: 100%;
+  padding-top: 1px;
+
+  &.invalid {
+    border: 1px solid @dynamic-param-error-color;
+  }
+
+  &.dynamic {
+    vertical-align: top;
+    width: 120px;
+    margin-left: 5px;
+    margin-right: 5px;
+    display: inline-block;
+  }
+
+  &.msla-copyable-input {
+    border: none;
+  }
+
+  &.msla-schema-input {
+    border: none;
+    padding: 1px;
     width: 100%;
-    padding-top: 1px;
-
-    &.invalid {
-        border: 1px solid @dynamic-param-error-color;
-    }
-
-    &.dynamic {
-        vertical-align: top;
-        width: 120px;
-        margin-left: 5px;
-        margin-right: 5px;
-        display: inline-block;
-    }
-
-    &.msla-copyable-input {
-        border: none;
-    }
-
-    &.msla-schema-input {
-        border: none;
-        padding: 1px;
-        width: 100%;
-    }
+  }
 }
 
 .msla-input-parameter-box:focus {
-    outline: thick;
+  outline: thick;
 }
 
 .msla-parameter-input-picker {
-    display: flex;
+  display: flex;
 }
 
 .msla-parameter-picker-input-box {
-    overflow: auto;
-    width: 100%;
+  overflow: auto;
+  width: 100%;
 
-    &[data-disabled="true"] {
-        width: calc(100% ~'-'24px);
-    }
+  &[data-disabled='true'] {
+    width: calc(100% ~'-' 24px);
+  }
 }
 
 .msla-parameter-picker-area {
-    display: table-cell;
-    position: relative;
-    vertical-align: top;
+  display: table-cell;
+  position: relative;
+  vertical-align: top;
 }
 
 .msla-parameter-picker {
-    width: 300px;
-    z-index: 100;
-    overflow: hidden;
-    position: absolute;
-    right: (@parameter-inputbox-height + @parameter-label-inputbox-margin - 300px);
-    /* picker width */
+  width: 300px;
+  z-index: 100;
+  overflow: hidden;
+  position: absolute;
+  right: (@parameter-inputbox-height + @parameter-label-inputbox-margin - 300px);
+  /* picker width */
 
-    @media only screen and (max-width: @designer-desktop-max-width) {
-        right: 0;
-    }
+  @media only screen and (max-width: @designer-desktop-max-width) {
+    right: 0;
+  }
 }
 
 .msla-input-parameters-show-more {
-    color: @brandColor;
-    margin-left: -5px;
-    padding: 0 5px;
+  color: @brandColor;
+  margin-left: -5px;
+  padding: 0 5px;
 }
 
 .msla-designer-canvas {
-    .msla-input-parameters-show-more-img {
-        height: 10px;
-        width: 10px;
-        margin-left: 2px;
-    }
+  .msla-input-parameters-show-more-img {
+    height: 10px;
+    width: 10px;
+    margin-left: 2px;
+  }
 }
 
 .msla-expand-parameters-link {
-    width: 100%;
-    padding: 7px;
-    text-align: left;
+  width: 100%;
+  padding: 7px;
+  text-align: left;
 }
 
 .msla-change-profile-link {
-    margin: 5px @parameter-label-inputbox-margin;
-    text-align: left;
-    word-wrap: break-word;
+  margin: 5px @parameter-label-inputbox-margin;
+  text-align: left;
+  word-wrap: break-word;
 
-    button {
-        color: @brandColor;
-    }
+  button {
+    color: @brandColor;
+  }
 }
 
 .msla-identity-dropdown-container {
-    display: flex;
-    margin: 5px @parameter-label-inputbox-margin;
+  display: flex;
+  margin: 5px @parameter-label-inputbox-margin;
+  text-align: left;
+  word-wrap: break-word;
+
+  .msla-identity-dropdown-label {
+    padding: 0;
+    margin-right: 6px;
+    font-weight: 400;
+    font-family: @font-family;
+    font-size: @card-label-font-size;
+    line-height: @parameter-inputbox-height;
     text-align: left;
     word-wrap: break-word;
-
-    .msla-identity-dropdown-label {
-        padding: 0;
-        margin-right: 6px;
-        font-weight: 400;
-        font-family: @font-family;
-        font-size: @card-label-font-size;
-        line-height: @parameter-inputbox-height;
-        text-align: left;
-        word-wrap: break-word;
-    }
+  }
 }
 
 .msla-identity-dropdown-label,
 .msla-parameters-default-values-text,
 .msla-profile-text {
-    color: @profile-text-color;
+  color: @profile-text-color;
 }
 
 .msla-edit-parameters-values-text,
 .msla-change-profile-link-text {
-    color: @brandColor;
-    cursor: pointer;
+  color: @brandColor;
+  cursor: pointer;
 }
 
 .msla-parameter-group-description {
-    margin: 0 @parameter-label-inputbox-margin;
-    line-height: @parameter-inputbox-height;
+  margin: 0 @parameter-label-inputbox-margin;
+  line-height: @parameter-inputbox-height;
 }
 
 .msla-parameter-group.msla-parameter-group-with-description {
-    .msla-input-parameters-body {
-        display: flex;
-        flex-direction: row;
+  .msla-input-parameters-body {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .msla-input-parameters-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .msla-input-parameter-item {
+      .msla-input-parameter-label {
+        display: none;
+        flex-basis: 0%;
+      }
+
+      .msla-input-parameter-content-wrapper {
+        padding: 1px;
+        flex-basis: 0%;
+      }
     }
 
-    .msla-input-parameters-list {
-        flex-direction: row;
-        flex-wrap: wrap;
-
-        .msla-input-parameter-item {
-            .msla-input-parameter-label {
-                display: none;
-                flex-basis: 0%;
-            }
-
-            .msla-input-parameter-content-wrapper {
-                padding: 1px;
-                flex-basis: 0%;
-            }
-        }
-
-        .msla-input-parameter-item-deletable {
-            .msla-input-parameter-label {
-                flex-basis: 100%;
-            }
-        }
+    .msla-input-parameter-item-deletable {
+      .msla-input-parameter-label {
+        flex-basis: 100%;
+      }
     }
+  }
 }
 
 .msla-recurrence-parameters-container {
-    .msla-input-parameters-list {
-        flex-direction: row;
-        flex-wrap: wrap;
+  .msla-input-parameters-list {
+    flex-direction: row;
+    flex-wrap: wrap;
 
-        .msla-input-parameter-item {
-            .msla-input-parameter-content-wrapper {
-                flex-basis: 60%;
-            }
-        }
+    .msla-input-parameter-item {
+      .msla-input-parameter-content-wrapper {
+        flex-basis: 60%;
+      }
     }
+  }
 }
 
 .msla-parameter-group {
-    padding-top: .25em;
+  padding-top: 0.25em;
 
-    &:first {
-        border-top: none;
-    }
+  &:first {
+    border-top: none;
+  }
 }
 
 .msla-dynamic-added-param-header {
+  display: flex;
+
+  .msla-dynamic-added-param-icon {
     display: flex;
+    flex-grow: 0;
+    width: @dynamic-added-param-icon-width;
+    height: 29px;
+    margin-top: 3px;
+    margin-right: 5px;
+  }
 
-    .msla-dynamic-added-param-icon {
-        display: flex;
-        flex-grow: 0;
-        width: @dynamic-added-param-icon-width;
-        height: 29px;
-        margin-top: 3px;
-        margin-right: 5px;
-    }
+  .msla-dynamic-added-param-inputs-container {
+    display: flex;
+    flex-grow: 1;
 
-    .msla-dynamic-added-param-inputs-container {
-        display: flex;
-        flex-grow: 1;
+    .msla-input-parameter {
+      margin-left: 2px;
+      margin-right: 10px;
+      display: flex;
+
+      &.dynamic {
+        width: 100%;
 
         .msla-input-parameter {
-            margin-left: 2px;
-            margin-right: 10px;
-            display: flex;
-
-            &.dynamic {
-                width: 100%;
-
-                .msla-input-parameter {
-                    width: 100%;
-                }
-            }
-
-            &.msla-dynamic-added-param-title {
-                width: 90px;
-            }
+          width: 100%;
         }
+      }
+
+      &.msla-dynamic-added-param-title {
+        width: 90px;
+      }
     }
+  }
 
-    .msla-dynamic-add-param-menu-container {
-        display: flex;
-        flex-grow: 0;
-        flex-direction: column-reverse;
+  .msla-dynamic-add-param-menu-container {
+    display: flex;
+    flex-grow: 0;
+    flex-direction: column-reverse;
 
-        .msla-card-header-menu-button {
-            line-height: 5px;
-        }
+    .msla-card-header-menu-button {
+      line-height: 5px;
     }
+  }
 
-    .msla-dynamic-added-param-delete {
-        display: flex;
-        flex-grow: 0;
-        width: 36px;
-        height: 20px;
-        color: #6A6A6A;
-        vertical-align: top;
-        margin-top: 4px;
+  .msla-dynamic-added-param-delete {
+    display: flex;
+    flex-grow: 0;
+    width: 36px;
+    height: 20px;
+    color: #6a6a6a;
+    vertical-align: top;
+    margin-top: 4px;
+  }
+
+  .msla-dynamic-added-param-label {
+    display: inline-block;
+    color: @dynamic-param-label-text-color;
+    font-size: @dynamic-param-label-text-size;
+    vertical-align: 4px;
+    width: calc(100% - 69px);
+
+    &.param-in-use {
+      width: calc(100% - 110px);
     }
+  }
 
-    .msla-dynamic-added-param-label {
-        display: inline-block;
-        color: @dynamic-param-label-text-color;
-        font-size: @dynamic-param-label-text-size;
-        vertical-align: 4px;
-        width: calc(100% - 69px);
+  .msla-flyout {
+    display: inline-block;
+    width: 41px;
 
-        &.param-in-use {
-            width: calc(100% - 110px);
-        }
+    .msla-flyout-icon {
+      width: 19px;
+      height: 19px;
+      margin: 0px;
     }
-
-    .msla-flyout {
-        display: inline-block;
-        width: 41px;
-
-        .msla-flyout-icon {
-            width: 19px;
-            height: 19px;
-            margin: 0px;
-        }
-    }
+  }
 }
 
 .msla-dynamic-added-param-bottom-divider {
-    border-bottom: solid 1px #D8D8D8;
-    margin-top: 20px;
+  border-bottom: solid 1px #d8d8d8;
+  margin-top: 20px;
 }
 
 .msla-dynamic-added-param-token-label {
-    display: inline-block;
-    margin: 4px 12px 8px 12px;
-    font-size: @dynamic-param-label-text-size;
-    color: @dynamic-param-label-text-color;
+  display: inline-block;
+  margin: 4px 12px 8px 12px;
+  font-size: @dynamic-param-label-text-size;
+  color: @dynamic-param-label-text-color;
 }
 
 .msla-dynamic-added-param-info {
-    display: block;
-    font-size: @dynamic-param-label-text-size;
-    color: @dynamic-param-label-text-color;
+  display: block;
+  font-size: @dynamic-param-label-text-size;
+  color: @dynamic-param-label-text-color;
 
-    &.error-msg {
-        margin-left: 45px;
-        margin-top: 6px;
-        color: @dynamic-param-error-color;
-    }
+  &.error-msg {
+    margin-left: 45px;
+    margin-top: 6px;
+    color: @dynamic-param-error-color;
+  }
 }
 
 .msla-input-parameter-fullscreen {
-    position: fixed;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 100%;
-    background-color: white;
-    z-index: 100000;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  z-index: 100000;
 }
 
 .msla-input-selection-container {
-    margin-left: 48px;
-    margin-right: 10px;
+  margin-left: 48px;
+  margin-right: 10px;
 
-    .msla-input-selection-title {
-        font-size: 14px;
-        margin-top: 14px;
-        margin-bottom: 7px;
-    }
+  .msla-input-selection-title {
+    font-size: 14px;
+    margin-top: 14px;
+    margin-bottom: 7px;
+  }
 
-    .msla-input-selection {
+  .msla-input-selection {
+    display: flex;
+
+    .msla-input-control-container {
+      flex-grow: 1;
+      display: flex;
+
+      .msla-input-parameter-box {
         display: flex;
+        flex-grow: 1;
+        margin-top: -1px;
+        margin-right: 10px;
 
-        .msla-input-control-container {
-            flex-grow: 1;
-            display: flex;
-
-            .msla-input-parameter-box {
-                display: flex;
-                flex-grow: 1;
-                margin-top: -1px;
-                margin-right: 10px;
-
-                .msla-editor-input-control {
-                    flex: 1 1 auto;
-                    background-color: transparent;
-                }
-
-                &.msla-input-selection-empty {
-                    margin-right: 36px;
-                }
-            }
-
+        .msla-editor-input-control {
+          flex: 1 1 auto;
+          background-color: transparent;
         }
 
-        .msla-input-selection-delete {
-            background-position: 10px 3px;
-            background-repeat: no-repeat;
-            flex-grow: 0;
-            width: @input-selection-delete-width;
-            height: 30px;
+        &.msla-input-selection-empty {
+          margin-right: 36px;
         }
+      }
     }
+
+    .msla-input-selection-delete {
+      background-position: 10px 3px;
+      background-repeat: no-repeat;
+      flex-grow: 0;
+      width: @input-selection-delete-width;
+      height: 30px;
+    }
+  }
 }
 
 body.dark {
-    .msla-change-profile-link-text {
-        color: #3AA0F3;
-    }
+  .msla-change-profile-link-text {
+    color: #3aa0f3;
+  }
 
-    .msla-no-inputs-text {
-        color: @ms-color-black;
-    }
+  .msla-no-inputs-text {
+    color: @ms-color-black;
+  }
 
-    .msla-input-parameter-box {
-        &.invalid {
-            border-color: #f36873;
-        }
+  .msla-input-parameter-box {
+    &.invalid {
+      border-color: #f36873;
     }
+  }
 
-    .msla-input-parameter-label {
-        color: @ms-color-neutralTertiary;
-    }
+  .msla-input-parameter-label {
+    color: @ms-color-neutralTertiary;
+  }
 
-    .msla-input-parameter-error {
-        color: #f36873;
-    }
+  .msla-input-parameter-error {
+    color: #f36873;
+  }
 
-    .msla-identity-dropdown-label,
-    .msla-parameters-default-values-text,
-    .msla-profile-text {
-        color: @ms-color-neutralTertiary;
-    }
+  .msla-identity-dropdown-label,
+  .msla-parameters-default-values-text,
+  .msla-profile-text {
+    color: @ms-color-neutralTertiary;
+  }
 
-    .msla-parameter-picker {
-        border: 1px solid @ms-color-black;
-    }
+  .msla-parameter-picker {
+    border: 1px solid @ms-color-black;
+  }
 }
 
 // NOTE(nidurak): diet view related overrides must come last to take precendence
 .msla-diet-view {
-    .msla-input-parameter-label {
-        flex: 1 1 100%;
-        max-height: 100%;
-    }
+  .msla-input-parameter-label {
+    flex: 1 1 100%;
+    max-height: 100%;
+  }
 
-    .msla-parameter-group {
-        padding: 0;
-    }
+  .msla-parameter-group {
+    padding: 0;
+  }
 
-    .msla-input-parameters-body {
-        margin: 0;
-    }
+  .msla-input-parameters-body {
+    margin: 0;
+  }
 
-    .msla-input-parameter-item {
-        margin-bottom: @diet-view-parameter-interval-margin;
-        text-align: left;
-    }
+  .msla-input-parameter-item {
+    margin-bottom: @diet-view-parameter-interval-margin;
+    text-align: left;
+  }
 }

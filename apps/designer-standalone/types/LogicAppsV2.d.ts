@@ -51,7 +51,7 @@ declare namespace LogicAppsV2 {
   /* API Connection actions and triggers */
 
   interface ApiConnectionAction extends TimeoutableAction {
-    inputs: ApiConnectionInputs; 
+    inputs: ApiConnectionInputs;
   }
 
   interface ApiConnectionTrigger extends RecurrenceTrigger {

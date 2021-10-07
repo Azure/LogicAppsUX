@@ -1,7 +1,4 @@
-import {
-  simpleWorkflowDefinitionInput,
-  expectedSimpleWorkflowDefinitionOutput,
-} from './simpleWorkflowDefinition';
+import { simpleWorkflowDefinitionInput, expectedSimpleWorkflowDefinitionOutput } from './simpleWorkflowDefinition';
 import { Deserialize } from '../BJSDeserializer';
 
 describe('core/parsers/BJSWorkflow/BJSDeserializer', () => {

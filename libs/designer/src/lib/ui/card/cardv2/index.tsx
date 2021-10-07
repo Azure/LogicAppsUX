@@ -87,12 +87,9 @@ export function CardV2(props: CardV2Props): JSX.Element {
     // The collect function utilizes a "monitor" instance (see the Overview for what this is)
     // to pull important pieces of state from the DnD system.
     end: (item, monitor) => {
-      const dropResult =
-        monitor.getDropResult<{ parent: string; child: string }>();
+      const dropResult = monitor.getDropResult<{ parent: string; child: string }>();
       if (item && dropResult) {
-        alert(
-          `You dropped ${props.id} between ${dropResult.parent} and  ${dropResult.child}!`
-        );
+        alert(`You dropped ${props.id} between ${dropResult.parent} and  ${dropResult.child}!`);
       }
     },
     item: {
@@ -204,9 +201,7 @@ export function CardV2(props: CardV2Props): JSX.Element {
         <div className="panel-card-main">
           <div className="panel-card-header">
             <div className="panel-card-content-container">
-              <div className="panel-card-content-gripper-section">
-                {draggable ? Gripper({ fill: gripperLightModeFill }) : null}
-              </div>
+              <div className="panel-card-content-gripper-section">{draggable ? Gripper({ fill: gripperLightModeFill }) : null}</div>
               {icon ? (
                 <div className="panel-card-content-icon-section">
                   <img className="panel-card-icon" src={icon} alt="" />
@@ -216,10 +211,7 @@ export function CardV2(props: CardV2Props): JSX.Element {
                 <div className="panel-msla-title">{title}</div>
               </div>
             </div>
-            <ErrorBannerV2
-              errorLevel={errorLevel}
-              errorMessage={errorMessage}
-            />
+            <ErrorBannerV2 errorLevel={errorLevel} errorMessage={errorMessage} />
           </div>
           <CardFooter {...props} />
         </div>
@@ -258,13 +250,7 @@ export function getCardButtonsStyle(themeColor: string): IButtonStyles {
   };
 }
 
-export function CardBadge({
-  title,
-  content,
-  darkBackground,
-  iconProps,
-  active,
-}: CardBadgeProps): JSX.Element | null {
+export function CardBadge({ title, content, darkBackground, iconProps, active }: CardBadgeProps): JSX.Element | null {
   if (!content) {
     return null;
   }
@@ -273,11 +259,7 @@ export function CardBadge({
     return (
       <TooltipHost content={content}>
         <Icon
-          className={css(
-            'panel-card-v2-badge',
-            'active',
-            darkBackground && 'darkBackground'
-          )}
+          className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
           {...iconProps}
           ariaLabel={`${title}: ${content}`}
           tabIndex={0}
@@ -285,32 +267,15 @@ export function CardBadge({
       </TooltipHost>
     );
   } else {
-    return (
-      <Icon
-        className="panel-card-v2-badge inactive"
-        {...iconProps}
-        ariaLabel={title}
-        tabIndex={0}
-      />
-    );
+    return <Icon className="panel-card-v2-badge inactive" {...iconProps} ariaLabel={title} tabIndex={0} />;
   }
 }
 
-export function CardBadgeBar({
-  badges,
-  brandColor,
-}: CardBadgeBarProps): JSX.Element | null {
+export function CardBadgeBar({ badges, brandColor }: CardBadgeBarProps): JSX.Element | null {
   return (
     <div className="msla-badges" style={getHeaderStyle(brandColor)}>
       {badges.map(({ title, content, darkBackground, iconProps, active }) => (
-        <CardBadge
-          key={title}
-          title={title}
-          content={content}
-          darkBackground={darkBackground}
-          iconProps={iconProps}
-          active={active}
-        />
+        <CardBadge key={title} title={title} content={content} darkBackground={darkBackground} iconProps={iconProps} active={active} />
       ))}
     </div>
   );
@@ -344,9 +309,7 @@ export function CardFooter({
     defaultMessage: 'Comment',
     id: 'LgbKvU',
   });
-  const connectionTitle = connectionDisplayName
-    ? CONNECTION_NAME_DISPLAY
-    : CONNECTION_CONTAINER_CONNECTION_REQUIRED;
+  const connectionTitle = connectionDisplayName ? CONNECTION_NAME_DISPLAY : CONNECTION_CONTAINER_CONNECTION_REQUIRED;
 
   const staticResultsBadge = {
     title: PANEL_STATIC_RESULT_TITLE,
@@ -386,10 +349,7 @@ export function CardFooter({
   );
 }
 
-function getBrandColorRgbA(
-  brandColor?: string,
-  opacity = Constants.HEADER_AND_TOKEN_OPACITY
-): string {
+function getBrandColorRgbA(brandColor?: string, opacity = Constants.HEADER_AND_TOKEN_OPACITY): string {
   try {
     return hexToRgbA(brandColor ?? Constants.DEFAULT_BRAND_COLOR, opacity);
   } catch {
@@ -398,7 +358,5 @@ function getBrandColorRgbA(
 }
 
 function getHeaderStyle(brandColor?: string): React.CSSProperties | undefined {
-  return brandColor
-    ? { backgroundColor: getBrandColorRgbA(brandColor, /* opacity */ 1) }
-    : undefined;
+  return brandColor ? { backgroundColor: getBrandColorRgbA(brandColor, /* opacity */ 1) } : undefined;
 }

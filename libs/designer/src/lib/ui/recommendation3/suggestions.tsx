@@ -81,7 +81,8 @@ export class Suggestions extends React.Component<SuggestionsProps> {
             className="msla-suggestion-connector"
             onClick={this._handleConnectorClick.bind(this, id)}
             disabled={disabled}
-            title={title}>
+            title={title}
+          >
             <ImageWithFallback alt="" className="msla-connector-icon" role="presentation" src={icon || DefaultIcon} style={style} />
             <div id={id} className="msla-connector-title">
               {title}

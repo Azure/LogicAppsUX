@@ -1,25 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { isNullOrEmpty } from '../../../common/utilities/Utils';
-import {
-  UnsupportedException,
-  UnsupportedExceptionCode,
-} from '../../../common/exceptions/unsupported';
+import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 
 import type { Graphs, WorkflowState } from '../../../core/state/workflowSlice';
 import { WorkflowNode } from '../models/workflowNode';
 import { IntlShape } from 'react-intl';
 
-const hasMultipleTriggers = (
-  definition: LogicAppsV2.WorkflowDefinition
-): boolean => {
-  return definition && definition.triggers
-    ? Object.keys(definition.triggers).length > 1
-    : false;
+const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
+  return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
 };
 
-export const Deserialize = (
-  definition: LogicAppsV2.WorkflowDefinition
-): Omit<any, 'shouldLayout'> => {
+export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Omit<any, 'shouldLayout'> => {
   throwIfMultipleTriggers(definition);
 
   //process Trigger
@@ -42,18 +33,14 @@ export const Deserialize = (
     graphs: {
       root: {
         root: triggerNode?.id ?? '',
-        nodes: [...actionsProcessed.nodesInGraph, triggerNode?.id ?? ''].filter(
-          (x) => x
-        ),
+        nodes: [...actionsProcessed.nodesInGraph, triggerNode?.id ?? ''].filter((x) => x),
       },
     },
     nodes: markChildrenNodes(
       actionsProcessed.nodesInGraph,
       giveNodesTriggerAsParent(
         actionsProcessed.nodesInGraph,
-        [...actionsProcessed.allNodes, triggerNode].filter(
-          (x) => x !== undefined && x !== null
-        ) as WorkflowNode[],
+        [...actionsProcessed.allNodes, triggerNode].filter((x) => x !== undefined && x !== null) as WorkflowNode[],
         triggerNode?.id ?? ''
       )
     ),
@@ -82,11 +69,7 @@ const markChildrenNodes = (nodesInGraph: string[], nodes: WorkflowNode[]) => {
   return ret;
 };
 
-const giveNodesTriggerAsParent = (
-  nodesInGraph: string[],
-  nodes: WorkflowNode[],
-  tiggerId: string
-) => {
+const giveNodesTriggerAsParent = (nodesInGraph: string[], nodes: WorkflowNode[], tiggerId: string) => {
   const nodesInGraphSet = new Set(nodesInGraph);
   return nodes.map((x) => {
     if (!nodesInGraphSet.has(x.id)) return x;
@@ -134,14 +117,10 @@ const ConvertActionsToGraph = (
   };
 };
 
-const throwIfMultipleTriggers = (
-  definition: LogicAppsV2.WorkflowDefinition
-) => {
+const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => {
   if (hasMultipleTriggers(definition)) {
     const triggerNames = Object.keys(definition.triggers ?? []);
-    throw new Error(
-      'Cannot render designer due to multiple triggers in definition.'
-    );
+    throw new Error('Cannot render designer due to multiple triggers in definition.');
     // throw new UnsupportedException(
     //   intl.formatMessage({
     //     defaultMessage:

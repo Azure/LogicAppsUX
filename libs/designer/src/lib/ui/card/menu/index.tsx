@@ -67,24 +67,17 @@ export interface IMenuItemStyles {
 }
 
 export class Menu extends React.PureComponent<MenuProps> {
-  private readonly getClassNames = classNamesFunction<
-    Record<string, unknown>,
-    IMenuItemStyles
-  >();
+  private readonly getClassNames = classNamesFunction<Record<string, unknown>, IMenuItemStyles>();
 
   render(): JSX.Element {
     return (
       <FabricContextualMenu
         directionalHint={this.props.directionalHint}
         gapSpace={this.props.gapSpace}
-        items={this.props.menuItems.map((menuItem) =>
-          this._getMenuItem(menuItem)
-        )}
+        items={this.props.menuItems.map((menuItem) => this._getMenuItem(menuItem))}
         shouldFocusOnMount={true}
         target={this.props.target}
-        contextualMenuItemAs={(props: IContextualMenuItemProps) =>
-          this._renderMenuItem(props)
-        }
+        contextualMenuItemAs={(props: IContextualMenuItemProps) => this._renderMenuItem(props)}
         onDismiss={this._handleDismiss}
       />
     );
@@ -94,14 +87,10 @@ export class Menu extends React.PureComponent<MenuProps> {
     return Constants.TELEMETRY_IDENTIFIERS.MENU;
   }
 
-  private _renderMenuItem = (
-    contextualMenuItem: IContextualMenuItemProps
-  ): JSX.Element | null => {
-    const menuItems: MenuItemOption[] = this.props.menuItems.filter(
-      (menuItemOption: MenuItemOption) => {
-        return menuItemOption.key === contextualMenuItem.item.key;
-      }
-    );
+  private _renderMenuItem = (contextualMenuItem: IContextualMenuItemProps): JSX.Element | null => {
+    const menuItems: MenuItemOption[] = this.props.menuItems.filter((menuItemOption: MenuItemOption) => {
+      return menuItemOption.key === contextualMenuItem.item.key;
+    });
 
     const menuItem = menuItems[0];
     if (!menuItem) {
@@ -112,17 +101,11 @@ export class Menu extends React.PureComponent<MenuProps> {
       return <ContextualMenuItem {...contextualMenuItem} />;
     }
 
-    const menuItemClassNames = this.getClassNames(
-      getMenuItemStyles(menuItem, this.props)
-    );
+    const menuItemClassNames = this.getClassNames(getMenuItemStyles(menuItem, this.props));
 
     return (
       <div className={menuItemClassNames.root}>
-        <div
-          className={menuItemClassNames.mainContentContainer}
-          key={menuItem.key}
-          data-disabled={menuItem.disabled}
-        >
+        <div className={menuItemClassNames.mainContentContainer} key={menuItem.key} data-disabled={menuItem.disabled}>
           {this._renderMenuIcon(menuItem)}
           {this._renderTitle(menuItem)}
         </div>
@@ -163,17 +146,11 @@ export class Menu extends React.PureComponent<MenuProps> {
           name: menuItem.title,
           disabled: menuItem.disabled,
           iconProps,
-          onClick:
-            !!menuItem.subMenuItems && menuItem.subMenuItems.length > 0
-              ? undefined
-              : (e) => this._handleClick(menuItem, e as any),
+          onClick: !!menuItem.subMenuItems && menuItem.subMenuItems.length > 0 ? undefined : (e) => this._handleClick(menuItem, e as any),
           subMenuProps:
             !!menuItem.subMenuItems && menuItem.subMenuItems.length > 0
               ? {
-                  items:
-                    menuItem.subMenuItems.map((subMenuItem) =>
-                      this._getMenuItem(subMenuItem)
-                    ) ?? [],
+                  items: menuItem.subMenuItems.map((subMenuItem) => this._getMenuItem(subMenuItem)) ?? [],
                 }
               : undefined,
         };
@@ -234,15 +211,11 @@ export class Menu extends React.PureComponent<MenuProps> {
   }
 
   private _getMenuItemMoreInfoAriaLabel(menuItemTitle: string): string {
-    return menuItemTitle
-      ? `${menuItemTitle} ${this._flyoutGetMoreIntoText()}`
-      : this._flyoutGetMoreIntoText();
+    return menuItemTitle ? `${menuItemTitle} ${this._flyoutGetMoreIntoText()}` : this._flyoutGetMoreIntoText();
   }
 
   private _renderTitle(menuItem: MenuItemOption): JSX.Element {
-    const menuItemClassNames = this.getClassNames(
-      getMenuItemStyles(menuItem, this.props)
-    );
+    const menuItemClassNames = this.getClassNames(getMenuItemStyles(menuItem, this.props));
 
     if (menuItem.subtitle) {
       return (
@@ -251,17 +224,11 @@ export class Menu extends React.PureComponent<MenuProps> {
             <span>{menuItem.title}</span>
             {this._renderSubtitleIcon(menuItem)}
           </div>
-          <div className={menuItemClassNames.secondaryText}>
-            {menuItem.subtitle.title}
-          </div>
+          <div className={menuItemClassNames.secondaryText}>{menuItem.subtitle.title}</div>
         </span>
       );
     } else {
-      return (
-        <span className={menuItemClassNames.textContainer}>
-          {menuItem.title}
-        </span>
-      );
+      return <span className={menuItemClassNames.textContainer}>{menuItem.title}</span>;
     }
   }
 
@@ -269,17 +236,10 @@ export class Menu extends React.PureComponent<MenuProps> {
     const { subtitle } = menuItem;
 
     if (subtitle?.iconUri) {
-      const menuItemClassNames = this.getClassNames(
-        getMenuItemStyles(menuItem, this.props)
-      );
+      const menuItemClassNames = this.getClassNames(getMenuItemStyles(menuItem, this.props));
 
       return (
-        <img
-          alt={subtitle.title || ''}
-          title={subtitle.title || ''}
-          className={menuItemClassNames.textAreaIcon}
-          src={subtitle.iconUri}
-        />
+        <img alt={subtitle.title || ''} title={subtitle.title || ''} className={menuItemClassNames.textAreaIcon} src={subtitle.iconUri} />
       );
     } else {
       return null;
@@ -290,36 +250,21 @@ export class Menu extends React.PureComponent<MenuProps> {
     const iconUri = menuItem.iconUri;
     const iconName = menuItem.iconName;
 
-    const menuItemClassNames = this.getClassNames(
-      getMenuItemStyles(menuItem, this.props)
-    );
+    const menuItemClassNames = this.getClassNames(getMenuItemStyles(menuItem, this.props));
 
     if (iconName) {
       const theme = getTheme();
-      const colorThemeStyles = menuItem.checked
-        ? { root: { color: theme.palette.themePrimary } }
-        : undefined;
+      const colorThemeStyles = menuItem.checked ? { root: { color: theme.palette.themePrimary } } : undefined;
 
-      return (
-        <Icon
-          iconName={iconName}
-          styles={colorThemeStyles}
-          className={menuItemClassNames.mainIconRoot}
-        />
-      );
+      return <Icon iconName={iconName} styles={colorThemeStyles} className={menuItemClassNames.mainIconRoot} />;
     } else if (iconUri) {
-      return (
-        <img className={menuItemClassNames.mainIconRoot} src={iconUri} alt="" />
-      );
+      return <img className={menuItemClassNames.mainIconRoot} src={iconUri} alt="" />;
     } else {
       return <div className={menuItemClassNames.mainIconRoot}></div>;
     }
   }
 
-  private _handleClick(
-    menu: MenuItemOption,
-    e: React.SyntheticEvent<HTMLElement>
-  ): void {
+  private _handleClick(menu: MenuItemOption, e: React.SyntheticEvent<HTMLElement>): void {
     if (menu.disabled) {
       e.preventDefault();
       e.stopPropagation();
@@ -339,10 +284,7 @@ export class Menu extends React.PureComponent<MenuProps> {
   // tslint:disable-next-line: no-any
   private _handleDismiss = (e: any): void => {
     const { ignoreDismissTarget, onDismiss } = this.props;
-    if (
-      onDismiss &&
-      (!ignoreDismissTarget || ignoreDismissTarget !== e.target)
-    ) {
+    if (onDismiss && (!ignoreDismissTarget || ignoreDismissTarget !== e.target)) {
       onDismiss();
     }
   };

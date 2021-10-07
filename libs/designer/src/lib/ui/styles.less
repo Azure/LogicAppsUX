@@ -169,19 +169,23 @@
   margin-top: 5px;
 }
 
-::-webkit-input-placeholder { /* Chrome */
+::-webkit-input-placeholder {
+  /* Chrome */
   color: @parameter-placeholder-color;
 }
 
-:-ms-input-placeholder { /* IE 10+ */
+:-ms-input-placeholder {
+  /* IE 10+ */
   color: @parameter-placeholder-color;
 }
 
-::-ms-input-placeholder { /* Edge */
+::-ms-input-placeholder {
+  /* Edge */
   color: @parameter-placeholder-color;
 }
 
-::-moz-placeholder { /* Firefox 19+ */
+::-moz-placeholder {
+  /* Firefox 19+ */
   color: @parameter-placeholder-color;
   opacity: 1;
 }
@@ -258,7 +262,8 @@
     }
   }
 
-  .msla-drop-zone-viewmanager2, .msla-drop-zone {
+  .msla-drop-zone-viewmanager2,
+  .msla-drop-zone {
     display: flex;
     justify-content: center;
     align-content: center;
@@ -275,7 +280,8 @@
         pointer-events: auto;
       }
 
-      .msla-drop-zone-allow-target, .msla-drop-zone-block-target {
+      .msla-drop-zone-allow-target,
+      .msla-drop-zone-block-target {
         width: 100%;
         height: 100%;
         display: flex;
@@ -294,27 +300,27 @@
     }
 
     &.canDrop {
-      background: #E7F4FF;
-      outline: 2px dashed #0078D4;
+      background: #e7f4ff;
+      outline: 2px dashed #0078d4;
       border-radius: 2px;
       .msla-drop-zone-allow-target {
         visibility: visible;
-      };
+      }
       .msla-drop-zone-children {
         visibility: hidden;
-      };
+      }
     }
 
     &.cannotDrop {
-      background: #EDEBE9;
+      background: #edebe9;
       outline: 2px dashed #797775;
       border-radius: 2px;
       .msla-drop-zone-block-target {
         visibility: visible;
-      };
+      }
       .msla-drop-zone-children {
         visibility: hidden;
-      };
+      }
     }
   }
 }
@@ -323,7 +329,7 @@ body.dark {
   background-color: @ms-color-bodyBackground;
   color: @ms-color-bodyText;
 
-  [class^=ms-Fabric] {
+  [class^='ms-Fabric'] {
     color: @ms-color-black;
   }
 
@@ -332,29 +338,35 @@ body.dark {
     color: @ms-color-neutralSecondary;
   }
 
-  ::-webkit-input-placeholder { /* Chrome */
+  ::-webkit-input-placeholder {
+    /* Chrome */
     color: @ms-color-neutralSecondary;
   }
 
-  :-ms-input-placeholder { /* IE 10+ */
+  :-ms-input-placeholder {
+    /* IE 10+ */
     color: @ms-color-neutralSecondary;
   }
 
-  ::-ms-input-placeholder { /* Edge */
+  ::-ms-input-placeholder {
+    /* Edge */
     color: @ms-color-neutralSecondary;
   }
 
-  ::-moz-placeholder { /* Firefox 19+ */
+  ::-moz-placeholder {
+    /* Firefox 19+ */
     color: @ms-color-neutralSecondary;
   }
 
-  .jtk-connector > path { /* #456 in light mode */
-    stroke: #C2CBD6;
+  .jtk-connector > path {
+    /* #456 in light mode */
+    stroke: #c2cbd6;
   }
 
-  .msla-drop-zone-viewmanager2, .msla-drop-zone {
+  .msla-drop-zone-viewmanager2,
+  .msla-drop-zone {
     &.canDrop {
-      background: #00245B;
+      background: #00245b;
       outline: 2px dashed #2899f5;
       border-radius: 2px;
 

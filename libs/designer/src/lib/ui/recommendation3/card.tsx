@@ -36,12 +36,7 @@ const CancelButtonProps: IIconProps = {
 };
 
 export const Card: React.FC<CardProps> = (props) => {
-  const {
-    brandColor = Constants.DEFAULT_BRAND_COLOR,
-    hideHeaderLogo = false,
-    isPanelModeEnabled = false,
-    neverCollapsed = false,
-  } = props;
+  const { brandColor = Constants.DEFAULT_BRAND_COLOR, hideHeaderLogo = false, isPanelModeEnabled = false, neverCollapsed = false } = props;
   if (isPanelModeEnabled || neverCollapsed) {
     return (
       <CardV2
@@ -65,22 +60,14 @@ export const Card: React.FC<CardProps> = (props) => {
   );
 };
 
-export function getCardV1ButtonGroup(
-  props: CardProps,
-  cancelString: string
-): JSX.Element {
+export function getCardV1ButtonGroup(props: CardProps, cancelString: string): JSX.Element {
   const { renderCardViewHeader, onCancelClick } = props;
 
   return (
     <div className="msla-card-title-button-group">
       {renderCardViewHeader}
       <TooltipHost content={cancelString}>
-        <IconButton
-          ariaLabel={cancelString}
-          className="msla-card-close"
-          iconProps={CancelButtonProps}
-          onClick={onCancelClick}
-        />
+        <IconButton ariaLabel={cancelString} className="msla-card-close" iconProps={CancelButtonProps} onClick={onCancelClick} />
       </TooltipHost>
     </div>
   );
@@ -88,12 +75,7 @@ export function getCardV1ButtonGroup(
 
 export const CardV1: React.FC<CardProps> = (props) => {
   const { brandColor, children, hideHeaderLogo, icon, selected, title } = props;
-  const className = css(
-    'msla-card',
-    'msla-card-fixed-width',
-    'msla-recommendation',
-    selected && 'msla-card-selected'
-  );
+  const className = css('msla-card', 'msla-card-fixed-width', 'msla-recommendation', selected && 'msla-card-selected');
   const intl = useIntl();
   const CANCEL = intl.formatMessage({
     defaultMessage: 'Cancel',
@@ -104,11 +86,7 @@ export const CardV1: React.FC<CardProps> = (props) => {
     <div className={className}>
       <div className="msla-card-header" style={getHeaderStyle(brandColor)}>
         <div className="msla-card-title-group">
-          <CardHeaderLogo
-            brandColor={brandColor}
-            hideHeaderLogo={hideHeaderLogo}
-            icon={icon}
-          />
+          <CardHeaderLogo brandColor={brandColor} hideHeaderLogo={hideHeaderLogo} icon={icon} />
           <Title className="msla-card-header-title" text={title} />
         </div>
         {buttonGroup}
@@ -163,15 +141,7 @@ export const CardV2: React.FC<CardProps> = (props: CardProps) => {
     return children;
   }
 
-  const {
-    brandColor,
-    contextMenuOptions,
-    icon,
-    rootRef,
-    selected,
-    title,
-    onClick,
-  } = props;
+  const { brandColor, contextMenuOptions, icon, rootRef, selected, title, onClick } = props;
   const className = css('msla-card-v2', selected && 'msla-selected');
   const contextMenuProps: CardContextMenuProps = {
     ...props,
@@ -182,12 +152,7 @@ export const CardV2: React.FC<CardProps> = (props: CardProps) => {
 
   return (
     <div onContextMenu={handleContextMenu} onKeyUp={handleKeyUp}>
-      <button
-        className={className}
-        style={getCardStyle(brandColor)}
-        onClick={handleClick}
-        ref={rootRef}
-      >
+      <button className={className} style={getCardStyle(brandColor)} onClick={handleClick} ref={rootRef}>
         <img src={icon} alt="" role="presentation" />
         <span>{title}</span>
       </button>
@@ -196,10 +161,7 @@ export const CardV2: React.FC<CardProps> = (props: CardProps) => {
   );
 };
 
-const getBrandColorRgbA = (
-  brandColor?: string,
-  opacity = Constants.HEADER_AND_TOKEN_OPACITY
-): string => {
+const getBrandColorRgbA = (brandColor?: string, opacity = Constants.HEADER_AND_TOKEN_OPACITY): string => {
   try {
     return hexToRgbA(brandColor ?? Constants.DEFAULT_BRAND_COLOR, opacity);
   } catch {

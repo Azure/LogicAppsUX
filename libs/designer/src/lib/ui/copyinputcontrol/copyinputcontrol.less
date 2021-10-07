@@ -3,93 +3,93 @@
 @placeholderTextColor: #000;
 
 .msla-copy-input-control {
-    display: flex;
-    white-space: nowrap;
+  display: flex;
+  white-space: nowrap;
 }
 
 .msla-copy-input-control-textbox {
-    display: inline-block;
-    overflow: hidden;
-    width: calc(100% - 27px);   /* button width + margin between inputbox and button */
+  display: inline-block;
+  overflow: hidden;
+  width: calc(100% - 27px); /* button width + margin between inputbox and button */
 
-    input {
-        background-color: #C1C1C1;
-        font-size: @parameter-value-font-size;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+  input {
+    background-color: #c1c1c1;
+    font-size: @parameter-value-font-size;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
-        // WebKit, Blink (Safari, Google Chrome, Opera 15+) and Microsoft Edge
-        &::-webkit-input-placeholder {
-            color: @placeholderTextColor;
-            font-family: @font-family;
-        }
-
-        // Mozilla Firefox 4 to 18
-        &:-moz-placeholder {
-            color: @placeholderTextColor;
-            font-family: @font-family;
-        }
-
-        // Mozilla Firefox 19+
-        &::-moz-placeholder {
-            color: @placeholderTextColor;
-            font-family: @font-family;
-        }
-
-        // Internet Explorer 10 and 11
-        &:-ms-input-placeholder {
-            color: @placeholderTextColor;
-            font-family: @font-family;
-        }
-
-        // W3C CSS Pseudo-Elements Level 4 specification
-        &::placeholder {
-            color: @placeholderTextColor;
-            font-family: @font-family;
-        }
-
-        // W3C CSS Selectors Level 4 specification
-        &:placeholder-shown {
-            color: @placeholderTextColor;
-            font-family: @font-family;
-        }
+    // WebKit, Blink (Safari, Google Chrome, Opera 15+) and Microsoft Edge
+    &::-webkit-input-placeholder {
+      color: @placeholderTextColor;
+      font-family: @font-family;
     }
+
+    // Mozilla Firefox 4 to 18
+    &:-moz-placeholder {
+      color: @placeholderTextColor;
+      font-family: @font-family;
+    }
+
+    // Mozilla Firefox 19+
+    &::-moz-placeholder {
+      color: @placeholderTextColor;
+      font-family: @font-family;
+    }
+
+    // Internet Explorer 10 and 11
+    &:-ms-input-placeholder {
+      color: @placeholderTextColor;
+      font-family: @font-family;
+    }
+
+    // W3C CSS Pseudo-Elements Level 4 specification
+    &::placeholder {
+      color: @placeholderTextColor;
+      font-family: @font-family;
+    }
+
+    // W3C CSS Selectors Level 4 specification
+    &:placeholder-shown {
+      color: @placeholderTextColor;
+      font-family: @font-family;
+    }
+  }
 }
 
 body.dark {
-    .msla-copy-input-control-textbox {
-        input {
-            background-color: #4f4f4f;
+  .msla-copy-input-control-textbox {
+    input {
+      background-color: #4f4f4f;
 
-            // WebKit, Blink (Safari, Google Chrome, Opera 15+) and Microsoft Edge
-            &::-webkit-input-placeholder {
-                color: @ms-color-black;
-            }
+      // WebKit, Blink (Safari, Google Chrome, Opera 15+) and Microsoft Edge
+      &::-webkit-input-placeholder {
+        color: @ms-color-black;
+      }
 
-            // Mozilla Firefox 4 to 18
-            &:-moz-placeholder {
-                color: @ms-color-black;
-            }
-    
-            // Mozilla Firefox 19+
-            &::-moz-placeholder {
-                color: @ms-color-black;
-            }
+      // Mozilla Firefox 4 to 18
+      &:-moz-placeholder {
+        color: @ms-color-black;
+      }
 
-            // Internet Explorer 10 and 11
-            &:-ms-input-placeholder {
-                color: @ms-color-black;
-            }
+      // Mozilla Firefox 19+
+      &::-moz-placeholder {
+        color: @ms-color-black;
+      }
 
-            // W3C CSS Pseudo-Elements Level 4 specification
-            &::placeholder {
-                color: @ms-color-black;
-            }
+      // Internet Explorer 10 and 11
+      &:-ms-input-placeholder {
+        color: @ms-color-black;
+      }
 
-            // W3C CSS Selectors Level 4 specification
-            &:placeholder-shown {
-                color: @ms-color-black;
-            }
-        }
+      // W3C CSS Pseudo-Elements Level 4 specification
+      &::placeholder {
+        color: @ms-color-black;
+      }
+
+      // W3C CSS Selectors Level 4 specification
+      &:placeholder-shown {
+        color: @ms-color-black;
+      }
     }
+  }
 }

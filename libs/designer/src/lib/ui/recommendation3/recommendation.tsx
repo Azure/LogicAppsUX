@@ -269,7 +269,8 @@ export class Recommendation extends React.Component<RecommendationProps, Partial
           title={title ?? ''}
           onCancelClick={onCancelClick}
           onClick={this._handleClick}
-          renderCardViewHeader={renderCardViewHeader}>
+          renderCardViewHeader={renderCardViewHeader}
+        >
           {recommendationPicker}
         </Card>
       );
@@ -715,7 +716,8 @@ class RecommendationPicker extends React.Component<RecommendationProps, Partial<
         disabled={disabled}
         onClick={this._handleConnectorClick.bind(this, id, telemetryIdentifier)}
         title={title}
-        data-automation-id={`connector-item-${id}`}>
+        data-automation-id={`connector-item-${id}`}
+      >
         <ImageWithFallback alt="" className="msla-connector-icon" role="presentation" src={icon || DefaultIcon} style={style} />
         <div id={id} className="msla-connector-title">
           <div className="msla-connector-title-label">{title}</div>
@@ -827,7 +829,8 @@ function ConnectionOperation(props: ConnectionOperationProps): JSX.Element {
         disabled={disabled}
         id={id}
         onClick={handleOperationClick}
-        data-automation-id={`connector-operation-${id}`}>
+        data-automation-id={`connector-operation-${id}`}
+      >
         <ImageWithFallback alt="" className="msla-operation-icon" role="presentation" src={icon} style={style} />
         <div className="msla-operation-text">
           <div className="msla-operation-title">
@@ -847,7 +850,8 @@ function ConnectionOperation(props: ConnectionOperationProps): JSX.Element {
             role="button"
             ref={target as any}
             tabIndex={0}
-            {...anchorProps}>
+            {...anchorProps}
+          >
             <Icon aria-label="" iconName="Info" />
           </a>
         </TooltipHost>

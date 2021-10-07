@@ -6,10 +6,7 @@ import InformationImage from '../card/images/information_tiny.svg';
 import Constants from '../constants';
 import { calloutContentStyles } from '../fabric';
 import { getDragStartHandlerWhenDisabled } from '../helper';
-import {
-  DocLinkClickedEventHandler,
-  DocumentationLinkItem,
-} from '../recommendation';
+import { DocLinkClickedEventHandler, DocumentationLinkItem } from '../recommendation';
 export interface Flyout2Props {
   ariaLabel?: string;
   docLink?: Swagger.ExternalDocumentation;
@@ -43,17 +40,8 @@ export class Flyout2 extends React.PureComponent<Flyout2Props> {
   private _icon: HTMLElement | undefined | null;
 
   render() {
-    const {
-      ariaLabel,
-      docLink,
-      title,
-      flyoutExpanded,
-      text,
-      onClick,
-      onDocLinkClick,
-    } = this.props;
-    const tabIndex =
-      this.props.tabIndex === undefined ? 0 : this.props.tabIndex;
+    const { ariaLabel, docLink, title, flyoutExpanded, text, onClick, onDocLinkClick } = this.props;
+    const tabIndex = this.props.tabIndex === undefined ? 0 : this.props.tabIndex;
     return (
       <button
         aria-label={ariaLabel}
@@ -93,19 +81,13 @@ export class Flyout2 extends React.PureComponent<Flyout2Props> {
     this._handleClickOrEnterKeyPress(e);
   };
 
-  private _handleEnterKeyPress = (
-    e: React.KeyboardEvent<HTMLButtonElement>
-  ): void => {
+  private _handleEnterKeyPress = (e: React.KeyboardEvent<HTMLButtonElement>): void => {
     if (e.which === Constants.KEYS.ENTER) {
       this._handleClickOrEnterKeyPress(e);
     }
   };
 
-  private _handleClickOrEnterKeyPress(
-    e:
-      | React.KeyboardEvent<HTMLButtonElement>
-      | React.MouseEvent<HTMLButtonElement>
-  ): void {
+  private _handleClickOrEnterKeyPress(e: React.KeyboardEvent<HTMLButtonElement> | React.MouseEvent<HTMLButtonElement>): void {
     e.preventDefault();
     e.stopPropagation();
     const { onClick } = this.props;
@@ -128,13 +110,7 @@ function FlyoutBalloon(props: FlyoutBalloonProps) {
   function renderDocLink() {
     const { docLink, onDocLinkClick } = props;
     if (docLink) {
-      return (
-        <DocumentationLinkItem
-          description={docLink.description}
-          url={docLink.url}
-          onClick={onDocLinkClick}
-        />
-      );
+      return <DocumentationLinkItem description={docLink.description} url={docLink.url} onClick={onDocLinkClick} />;
     }
     return undefined;
   }
@@ -156,12 +132,7 @@ function FlyoutBalloon(props: FlyoutBalloonProps) {
       target={target}
       onDismiss={handleDismiss}
     >
-      <div
-        aria-label={text}
-        data-is-focusable={true}
-        role="dialog"
-        tabIndex={0}
-      >
+      <div aria-label={text} data-is-focusable={true} role="dialog" tabIndex={0}>
         {text}
         {renderDocLink()}
       </div>

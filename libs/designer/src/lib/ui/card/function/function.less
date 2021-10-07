@@ -2,60 +2,60 @@
 @import (reference) '../../variables.less';
 
 .msla-card-editor {
-    text-align: left;
+  text-align: left;
 
-    .editor-header {
-        .msla-input-parameter-box {
-            border: none;
-        }
+  .editor-header {
+    .msla-input-parameter-box {
+      border: none;
+    }
+  }
+
+  .editor-body {
+    .msla-monaco {
+      border: 1px solid @defaultBorderColor;
+      box-sizing: border-box;
+      min-height: 160px;
+      width: 100%;
     }
 
-    .editor-body {
-        .msla-monaco {
-            border: 1px solid @defaultBorderColor;
-            box-sizing: border-box;
-            min-height: 160px;
-            width: 100%;
-        }
-
-        .msla-textarea {
-            box-sizing: border-box;
-            min-height: 160px;
-            padding: 10px 12px;
-            resize: none;
-            width: 100%;
-        }
+    .msla-textarea {
+      box-sizing: border-box;
+      min-height: 160px;
+      padding: 10px 12px;
+      resize: none;
+      width: 100%;
     }
+  }
 
-    .editor-footer {
-        padding: 5px;
-        text-align: center;
+  .editor-footer {
+    padding: 5px;
+    text-align: center;
 
-        .msla-button {
-            border: 0;
-            cursor: pointer;
-            line-height: 30px;
-            padding: 0 40px;
-        }
+    .msla-button {
+      border: 0;
+      cursor: pointer;
+      line-height: 30px;
+      padding: 0 40px;
     }
+  }
 }
 
 body.dark {
-    .msla-card-editor {
-        .editor-body {
-            .msla-monaco {
-                border: 1px solid @ms-color-neutralTertiary;
-            }
+  .msla-card-editor {
+    .editor-body {
+      .msla-monaco {
+        border: 1px solid @ms-color-neutralTertiary;
+      }
 
-            .msla-textarea {
-                background-color: @ms-color-white;
-                color: @ms-color-neutralPrimary;
+      .msla-textarea {
+        background-color: @ms-color-white;
+        color: @ms-color-neutralPrimary;
 
-                &:disabled {
-                    background-color: @ms-color-neutralLighter;
-                    color: @ms-color-neutralTertiary;
-                }
-            }
+        &:disabled {
+          background-color: @ms-color-neutralLighter;
+          color: @ms-color-neutralTertiary;
         }
+      }
     }
+  }
 }

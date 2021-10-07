@@ -155,7 +155,8 @@ const ClearRecentlyUsedList: React.FC<ClearRecentlyUsedListProps> = (props) => {
           className="msla-recently-used-clear-button"
           disabled={disabled}
           onClick={handleClearClicked}
-          ref={(e) => (clearButtonRef.current = e)}>
+          ref={(e) => (clearButtonRef.current = e)}
+        >
           <FormattedMessage defaultMessage="Clear" id="q3+FXI" description="A label on a button" />
         </button>
       </div>

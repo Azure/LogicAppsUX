@@ -19,7 +19,8 @@ export function SimpleCallout(props: SimpleCalloutProps) {
       target={props.target}
       directionalHint={props.directionalHint}
       doNotLayer={false}
-      onDismiss={props.onDismiss}>
+      onDismiss={props.onDismiss}
+    >
       <div className="msla-simple-callout-container">
         <div className="msla-simple-callout-title">{props.title}</div>
         <div className="msla-simple-callout-text">{props.text}</div>

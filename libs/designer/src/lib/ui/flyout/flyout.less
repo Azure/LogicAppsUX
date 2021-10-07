@@ -2,54 +2,54 @@
 @import (reference) '../themes.less';
 
 .msla-flyout {
-    display: inline-block;
-    @arrow-size: 5px;
-    @right-offset: 17px;
+  display: inline-block;
+  @arrow-size: 5px;
+  @right-offset: 17px;
 
-    .msla-flyout-icon {
-        width: 28px;
-        height: 28px;
-        margin: 8px;
-    }
+  .msla-flyout-icon {
+    width: 28px;
+    height: 28px;
+    margin: 8px;
+  }
 }
 
 .msla-combobox {
-    .msla-input-control-token-expression {
-        .msla-flyout {
-            .msla-flyout-icon {
-                display: inline-block;
-                height: 15px;
-                width: 15px;
-            }
-        }
+  .msla-input-control-token-expression {
+    .msla-flyout {
+      .msla-flyout-icon {
+        display: inline-block;
+        height: 15px;
+        width: 15px;
+      }
     }
+  }
 }
 
 .msla-flyout-callout {
-    div[role="dialog"] {
-        padding: 8px;
-    }
+  div[role='dialog'] {
+    padding: 8px;
+  }
 
-    a {
-        &:active,
-        &:link,
-        &:hover,
-        &:visited {
-            text-decoration: underline;
-            color: @brandColor;
-        }
+  a {
+    &:active,
+    &:link,
+    &:hover,
+    &:visited {
+      text-decoration: underline;
+      color: @brandColor;
     }
+  }
 }
 
 body.dark {
-    .msla-flyout-callout {
-        a {
-            &:active,
-            &:link,
-            &:hover,
-            &:visited {
-                color: @ms-color-themePrimary;
-            }
-        }
+  .msla-flyout-callout {
+    a {
+      &:active,
+      &:link,
+      &:hover,
+      &:visited {
+        color: @ms-color-themePrimary;
+      }
     }
+  }
 }

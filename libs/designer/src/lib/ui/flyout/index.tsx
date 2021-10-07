@@ -65,7 +65,8 @@ export class Flyout extends React.Component<FlyoutProps, FlyoutState> {
           className="msla-button msla-flyout"
           style={style}
           tabIndex={tabIndex}
-          onClick={this._handleFlyoutClick}>
+          onClick={this._handleFlyoutClick}
+        >
           <img
             alt=""
             className="msla-flyout-icon"
@@ -139,7 +140,8 @@ class FlyoutCallout extends React.Component<FlyoutCalloutProps> {
         setInitialFocus={true}
         styles={calloutContentStyles}
         target={target}
-        onDismiss={onDismiss}>
+        onDismiss={onDismiss}
+      >
         <div role="dialog" style={{ color: palette.neutralPrimary }} data-is-focusable={true} tabIndex={0}>
           {text}
         </div>

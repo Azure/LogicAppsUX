@@ -276,7 +276,8 @@ export function CardDuration(props: CardDurationProps): JSX.Element | null {
         className="msla-monitoring-card-duration"
         role="region"
         style={durationStyles}
-        title={durationAnnounced}>
+        title={durationAnnounced}
+      >
         {duration}
       </div>
     </>
@@ -338,7 +339,8 @@ export class CardHeader extends React.PureComponent<CardHeaderProps> {
           tabIndex={0}
           onClick={this._toggleCollapse}
           onKeyPress={this._handleKeyPress}
-          onKeyUp={this._handleKeyUp}>
+          onKeyUp={this._handleKeyUp}
+        >
           <CardHeaderLogo brandColor={brandColor} hideHeaderLogo={hideHeaderLogo} icon={icon} />
           <Title className="msla-card-header-title" text={title} expanded={!collapsed} />
           <BadgeHeaderIcons headerIcons={headerBadges ?? []} />

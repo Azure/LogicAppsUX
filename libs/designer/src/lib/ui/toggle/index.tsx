@@ -64,7 +64,8 @@ export class Toggle extends React.PureComponent<ToggleProps> {
         className={buttonClassName}
         iconProps={iconProps}
         styles={styles}
-        onClick={this._handleClick}>
+        onClick={this._handleClick}
+      >
         {text}
       </ActionButton>
     );

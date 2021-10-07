@@ -73,7 +73,8 @@ export const Checkbox = (props: CheckboxProps) => {
           aria-label={moreInfoMessage}
           className="msla-button msla-checkbox-description-icon-button"
           title={moreInfoMessage}
-          onClick={handleCheckboxDescriptionButtonClick}>
+          onClick={handleCheckboxDescriptionButtonClick}
+        >
           <Icon className="msla-checkbox-description-icon" iconName="Info" />
         </button>
       ) : null}
@@ -86,7 +87,8 @@ export const Checkbox = (props: CheckboxProps) => {
           setInitialFocus={true}
           styles={calloutContentStyles}
           target={checkboxDescriptionButtonRef.current}
-          onDismiss={handleCheckboxDescriptionDismiss}>
+          onDismiss={handleCheckboxDescriptionDismiss}
+        >
           <div data-is-focusable={true} role="dialog" tabIndex={0}>
             {props.descriptionText}
           </div>

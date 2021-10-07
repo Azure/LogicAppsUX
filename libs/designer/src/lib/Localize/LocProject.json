@@ -10,9 +10,7 @@
           "OutputPath": "Localize\\lang\\"
         }
       ],
-      "LssFiles": [
-        "Localize\\Settings\\ICUFormatMessage.lss"
-      ]
+      "LssFiles": ["Localize\\Settings\\ICUFormatMessage.lss"]
     }
   ]
 }

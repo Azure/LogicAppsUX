@@ -47,34 +47,22 @@ export const workflowSlice = createSlice({
       state.shouldZoomToNode = action.payload;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
-      const childNode = state.nodes.find(
-        (x) => x.id === action.payload.childId
-      );
-      const parentNode = state.nodes.find(
-        (x) => x.id === action.payload.parentId
-      );
+      const childNode = state.nodes.find((x) => x.id === action.payload.childId);
+      const parentNode = state.nodes.find((x) => x.id === action.payload.parentId);
       const nodes = [
         ...state.nodes.map((x) => {
           if (x.id === action.payload.parentId) {
             return {
               ...x,
               childrenNodes: action.payload.childId
-                ? [
-                    ...x.childrenNodes.filter(
-                      (y) => y !== action.payload.childId
-                    ),
-                    action.payload.id,
-                  ]
+                ? [...x.childrenNodes.filter((y) => y !== action.payload.childId), action.payload.id]
                 : [action.payload.id],
             };
           }
           if (x.id === action.payload.childId) {
             return {
               ...x,
-              parentNodes: [
-                ...x.childrenNodes.filter((y) => y !== action.payload.parentId),
-                action.payload.id,
-              ],
+              parentNodes: [...x.childrenNodes.filter((y) => y !== action.payload.parentId), action.payload.id],
             };
           }
           return x;
@@ -92,16 +80,11 @@ export const workflowSlice = createSlice({
         },
         size: { height: 172, width: 38 },
         parentNodes: [action.payload.parentId],
-        childrenNodes: action.payload.childId
-          ? [action.payload.childId]
-          : [...(parentNode?.childrenNodes ?? [])],
+        childrenNodes: action.payload.childId ? [action.payload.childId] : [...(parentNode?.childrenNodes ?? [])],
       });
       state.nodes = [...nodes];
     },
-    updateNodeSizes: (
-      state: WorkflowState,
-      action: PayloadAction<Elements>
-    ) => {
+    updateNodeSizes: (state: WorkflowState, action: PayloadAction<Elements>) => {
       const elements = action.payload;
       const elementMap = elements.reduce((acc, val) => {
         acc.set(val.id, val as Node);
@@ -138,12 +121,6 @@ export const workflowSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {
-  initWorkflowSpec,
-  addNode,
-  updateNodeSizes,
-  triggerLayout,
-  setShouldZoomToNode,
-} = workflowSlice.actions;
+export const { initWorkflowSpec, addNode, updateNodeSizes, triggerLayout, setShouldZoomToNode } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

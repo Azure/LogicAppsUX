@@ -45,7 +45,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ parent, child }) => {
     <div
       ref={drop}
       className={css('msla-drop-zone-viewmanager2', isOver && canDrop && 'canDrop', isOver && !canDrop && 'cannotDrop')}
-      style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
+      style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}
+    >
       {isOver && canDrop && (
         <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>
           <AllowDropTarget fill="#0078D4" />

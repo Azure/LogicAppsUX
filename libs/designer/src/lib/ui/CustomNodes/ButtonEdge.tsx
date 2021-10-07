@@ -1,16 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
-import {
-  getSmoothStepPath,
-  getEdgeCenter,
-  getMarkerEnd,
-} from 'react-flow-renderer';
+import { getSmoothStepPath, getEdgeCenter, getMarkerEnd } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  addNode,
-  setShouldZoomToNode,
-  triggerLayout,
-} from '../../core/state/workflowSlice';
+import { addNode, setShouldZoomToNode, triggerLayout } from '../../core/state/workflowSlice';
 import { RootState } from '../../core/store';
 import { ActionButtonV2 } from '..';
 import guid from '../../common/utilities/guid';
@@ -77,9 +69,7 @@ export default function CustomEdge({
     dispatch(triggerLayout());
     dispatch(setShouldZoomToNode(newId));
   };
-  const firstChild =
-    parentNode?.childrenNodes[parentNode.childrenNodes.length - 1] ===
-    data.child;
+  const firstChild = parentNode?.childrenNodes[parentNode.childrenNodes.length - 1] === data.child;
 
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
     // The type (or types) to accept - strings or symbols
@@ -97,13 +87,7 @@ export default function CustomEdge({
 
   return (
     <>
-      <path
-        id={id}
-        style={style}
-        className="react-flow__edge-path"
-        d={edgePath}
-        markerEnd={markerEnd}
-      />
+      <path id={id} style={style} className="react-flow__edge-path" d={edgePath} markerEnd={markerEnd} />
       {firstChild && (parentNode?.childrenNodes.length ?? 0) > 1 && (
         <foreignObject
           width={foreignObjectSize}
@@ -121,26 +105,15 @@ export default function CustomEdge({
               height: '100%',
             }}
           >
-            <ActionButtonV2
-              title={'Text'}
-              onClick={(e) => onParentBClick(e, data.parent)}
-            />
+            <ActionButtonV2 title={'Text'} onClick={(e) => onParentBClick(e, data.parent)} />
           </div>
         </foreignObject>
       )}
       <foreignObject
         width={foreignObjectSize}
         height={foreignObjectSize}
-        x={
-          parentNode?.childrenNodes.length === 1
-            ? edgeCenterX - foreignObjectSize / 2
-            : targetX - foreignObjectSize / 2
-        }
-        y={
-          parentNode?.childrenNodes.length === 1
-            ? edgeCenterY - foreignObjectSize / 2
-            : targetY - 20 - foreignObjectSize / 2
-        }
+        x={parentNode?.childrenNodes.length === 1 ? edgeCenterX - foreignObjectSize / 2 : targetX - foreignObjectSize / 2}
+        y={parentNode?.childrenNodes.length === 1 ? edgeCenterY - foreignObjectSize / 2 : targetY - 20 - foreignObjectSize / 2}
         className="edgebutton-foreignobject"
         requiredExtensions="http://www.w3.org/1999/xhtml"
       >
@@ -154,10 +127,7 @@ export default function CustomEdge({
             opacity: isOver && canDrop ? 0.4 : 1,
           }}
         >
-          <ActionButtonV2
-            title={'Text'}
-            onClick={(e) => onEdgeEndClick(e, data.parent, data.child)}
-          />
+          <ActionButtonV2 title={'Text'} onClick={(e) => onEdgeEndClick(e, data.parent, data.child)} />
         </div>
       </foreignObject>
     </>

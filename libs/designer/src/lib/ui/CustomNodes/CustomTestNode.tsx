@@ -37,7 +37,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           type="source"
           position={sourcePosition}
           isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)'}}
+          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
         />
       </div>
 

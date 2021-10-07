@@ -26,7 +26,8 @@ export const Tip = (props: TipProps) => {
       directionalHint={directionalHint}
       gapSpace={gapSpace}
       target={`#${target}`}
-      onDismiss={onDismiss}>
+      onDismiss={onDismiss}
+    >
       <div className="msla-tip-inner" data-is-focusable={true} role="dialog" tabIndex={0}>
         <div className="msla-tip-message">{message}</div>
         <div className="msla-tip-actions">

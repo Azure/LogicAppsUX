@@ -54,16 +54,13 @@ const loadLocaleData = async (locale: string) => {
   }
 };
 
-export const loadLocaleMessages = createAsyncThunk(
-  'localizations/loadLocaleMessages',
-  async (locale: string) => {
-    const messages = await loadLocaleData(locale);
-    return {
-      messages: messages,
-      locale,
-    };
-  }
-);
+export const loadLocaleMessages = createAsyncThunk('localizations/loadLocaleMessages', async (locale: string) => {
+  const messages = await loadLocaleData(locale);
+  return {
+    messages: messages,
+    locale,
+  };
+});
 
 const initialState: LocalizationState = {
   locale: 'en',

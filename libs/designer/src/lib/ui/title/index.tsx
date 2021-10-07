@@ -1,10 +1,6 @@
 import { findDOMNode } from 'react-dom';
 import * as React from 'react';
-import {
-  ITextField,
-  ITextFieldStyles,
-  TextField,
-} from '@fluentui/react/lib/TextField';
+import { ITextField, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
 
 import Constants from '../constants';
 import { Event, EventHandler } from '../eventhandler';
@@ -46,10 +42,7 @@ const transparentTextFieldStyles: Partial<ITextFieldStyles> = {
   },
 };
 
-export class InnerControlTitle extends React.Component<
-  TitleProps & WrappedComponentProps<'intl'>,
-  TitleState
-> {
+export class InnerControlTitle extends React.Component<TitleProps & WrappedComponentProps<'intl'>, TitleState> {
   static defaultProps: Partial<TitleProps> = {
     expanded: false,
     isEditingTitle: false,
@@ -148,24 +141,17 @@ export class InnerControlTitle extends React.Component<
     return Constants.TELEMETRY_IDENTIFIERS.TITLE;
   }
 
-  private _onEditClick = (
-    e: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement>
-  ): void => {
+  private _onEditClick = (e: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     e.stopPropagation();
   };
 
   private _renderTag(): JSX.Element | null {
     const { className, tag } = this.props;
     const text = !isNullOrUndefined(tag) ? ` (${tag})` : null;
-    return text !== null ? (
-      <span className={`${className}-tag`}>{text}</span>
-    ) : null;
+    return text !== null ? <span className={`${className}-tag`}>{text}</span> : null;
   }
 
-  private _onEditChange = (
-    e: React.FormEvent<HTMLInputElement>,
-    text: string
-  ): void => {
+  private _onEditChange = (e: React.FormEvent<HTMLInputElement>, text: string): void => {
     e.preventDefault();
 
     if (this.props.isEditingTitle) {
@@ -229,17 +215,11 @@ export class InnerControlTitle extends React.Component<
     const textField = findDOMNode(this._editingTitleInputRef as any) as Element;
     const textFieldElement = textField.querySelector('input, textarea');
     if (document.activeElement !== textFieldElement) {
-      this._editingTitleInputRef?.setSelectionRange(
-        0,
-        this._editingTitleInputRef?.value?.length ?? 0
-      );
+      this._editingTitleInputRef?.setSelectionRange(0, this._editingTitleInputRef?.value?.length ?? 0);
     }
 
     this._editingTitleInputRef?.focus();
   }
 }
 
-export const Title = injectIntl<
-  'intl',
-  TitleProps & WrappedComponentProps<'intl'>
->(InnerControlTitle);
+export const Title = injectIntl<'intl', TitleProps & WrappedComponentProps<'intl'>>(InnerControlTitle);

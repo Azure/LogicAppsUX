@@ -2,27 +2,15 @@
 import { convertActionIDToTitleCase } from '../common/utilities/Utils';
 import { RootState } from '../core/store';
 import React, { useEffect } from 'react';
-import ReactFlow, {
-  ArrowHeadType,
-  Elements,
-  ReactFlowProvider,
-  useStoreState,
-  useZoomPanHelper,
-} from 'react-flow-renderer';
+import ReactFlow, { ArrowHeadType, Elements, ReactFlowProvider, useStoreState, useZoomPanHelper } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTestNode from './CustomNodes/CustomTestNode';
-import {
-  setShouldZoomToNode,
-  triggerLayout,
-  updateNodeSizes,
-} from '../core/state/workflowSlice';
+import { setShouldZoomToNode, triggerLayout, updateNodeSizes } from '../core/state/workflowSlice';
 import { processGraphLayout } from '../core/parsers/ProcessLayoutReduxAction';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { CustomEdge } from './connections/edge';
 import { DndProvider, createTransition } from 'react-dnd-multi-backend';
-import KeyboardBackend, {
-  isKeyboardDragTrigger,
-} from 'react-dnd-accessible-backend';
+import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 
 const nodeTypes = {
   testNode: CustomTestNode,
@@ -35,12 +23,8 @@ const edgeTypes = {
 const ZoomNode = () => {
   const nodes = useStoreState((store) => store.nodes);
   const transform = useStoreState((store) => store.transform);
-  const shouldLayout = useSelector(
-    (state: RootState) => state.workflow.shouldLayout
-  );
-  const shouldFocusNode = useSelector(
-    (state: RootState) => state.workflow.shouldZoomToNode
-  );
+  const shouldLayout = useSelector((state: RootState) => state.workflow.shouldLayout);
+  const shouldFocusNode = useSelector((state: RootState) => state.workflow.shouldZoomToNode);
   const dispatch = useDispatch();
   const { setCenter } = useZoomPanHelper();
   useEffect(() => {
@@ -77,8 +61,7 @@ const KeyboardTransition = createTransition('keydown', (event) => {
 });
 
 const MouseTransition = createTransition('mousedown', (event) => {
-  if (event.type.indexOf('touch') !== -1 || event.type.indexOf('mouse') === -1)
-    return false;
+  if (event.type.indexOf('touch') !== -1 || event.type.indexOf('mouse') === -1) return false;
   return true;
 });
 
@@ -129,10 +112,7 @@ export const Designer = () => {
 
   return (
     <DndProvider options={DND_OPTIONS as any}>
-      <div
-        style={{ width: '100vw', height: '100vh' }}
-        className="msla-designer-canvas msla-panel-mode"
-      >
+      <div style={{ width: '100vw', height: '100vh' }} className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}

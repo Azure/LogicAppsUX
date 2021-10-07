@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
-import {
-  getSmoothStepPath,
-  getEdgeCenter,
-  getMarkerEnd,
-  EdgeProps,
-} from 'react-flow-renderer';
+import { getSmoothStepPath, getEdgeCenter, getMarkerEnd, EdgeProps } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../core/store';
 import { DropZone } from './dropzone';
@@ -50,19 +45,11 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     return state.workflow.nodes.find((x) => x.id === data?.parent);
   });
 
-  const firstChild =
-    parentNode?.childrenNodes[parentNode.childrenNodes.length - 1] ===
-    data?.child;
+  const firstChild = parentNode?.childrenNodes[parentNode.childrenNodes.length - 1] === data?.child;
 
   return (
     <>
-      <path
-        id={id}
-        style={style}
-        className="react-flow__edge-path"
-        d={edgePath}
-        markerEnd={markerEnd}
-      />
+      <path id={id} style={style} className="react-flow__edge-path" d={edgePath} markerEnd={markerEnd} />
       {firstChild && (parentNode?.childrenNodes.length ?? 0) > 1 && (
         <foreignObject
           width={foreignObjectWidth}
@@ -80,16 +67,8 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
       <foreignObject
         width={foreignObjectWidth}
         height={foreignObjectHeight}
-        x={
-          parentNode?.childrenNodes.length === 1
-            ? edgeCenterX - foreignObjectWidth / 2
-            : targetX - foreignObjectWidth / 2
-        }
-        y={
-          parentNode?.childrenNodes.length === 1
-            ? edgeCenterY - foreignObjectHeight / 2
-            : targetY - 20 - foreignObjectHeight / 2
-        }
+        x={parentNode?.childrenNodes.length === 1 ? edgeCenterX - foreignObjectWidth / 2 : targetX - foreignObjectWidth / 2}
+        y={parentNode?.childrenNodes.length === 1 ? edgeCenterY - foreignObjectHeight / 2 : targetY - 20 - foreignObjectHeight / 2}
         className="edgebutton-foreignobject"
         requiredExtensions="http://www.w3.org/1999/xhtml"
       >
