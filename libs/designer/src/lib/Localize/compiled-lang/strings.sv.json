@@ -39,24 +39,6 @@
       "value": "Redigerar kortrubrik"
     }
   ],
-  "3V6GkP": [
-    {
-      "type": 1,
-      "value": "days"
-    },
-    {
-      "type": 0,
-      "value": "days "
-    },
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -66,31 +48,13 @@
   "47FYwb": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Avbryt"
     }
   ],
   "5CTOi9": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
-    }
-  ],
-  "5ilpFw": [
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours "
-    },
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes"
+      "value": "Den här åtgärden har konfigurerats för testning."
     }
   ],
   "6oqk+A": [
@@ -105,16 +69,10 @@
       "value": "OK"
     }
   ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "Det går inte att återge designern pga flera utlösare i definitionen."
-    }
-  ],
   "8yF3hc": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Visa mer"
     }
   ],
   "Asi2Jg": [
@@ -146,7 +104,7 @@
             },
             {
               "type": 0,
-              "value": " hour"
+              "value": " timme"
             }
           ]
         },
@@ -157,7 +115,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " timmar"
             }
           ]
         }
@@ -216,19 +174,19 @@
   "HOsSgX": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Mer information"
     }
   ],
   "JXhiR+": [
     {
       "type": 0,
-      "value": "We couldn't find any results"
+      "value": "Vi hittade inga resultat"
     }
   ],
   "LgbKvU": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Kommentar"
     }
   ],
   "Mb/Vp8": [
@@ -282,7 +240,7 @@
   "QQYzHC": [
     {
       "type": 0,
-      "value": "Context menu for "
+      "value": "Snabbmeny för "
     },
     {
       "type": 1,
@@ -290,7 +248,7 @@
     },
     {
       "type": 0,
-      "value": " card"
+      "value": " kort"
     }
   ],
   "Qu1HkA": [
@@ -300,13 +258,13 @@
     },
     {
       "type": 0,
-      "value": "h"
+      "value": " tim"
     }
   ],
   "RYIxqe": [
     {
       "type": 0,
-      "value": "Currently there are no suggestions available with your selection."
+      "value": "Det finns för närvarande inga tillgängliga förslag för ditt val."
     }
   ],
   "RhH4pF": [
@@ -320,7 +278,7 @@
             },
             {
               "type": 0,
-              "value": " minute"
+              "value": " minut"
             }
           ]
         },
@@ -331,7 +289,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " minuter"
             }
           ]
         }
@@ -348,7 +306,7 @@
     },
     {
       "type": 0,
-      "value": "m"
+      "value": " min"
     }
   ],
   "T8Xqt9": [
@@ -360,19 +318,19 @@
   "TY45/m": [
     {
       "type": 0,
-      "value": "There are no recent connectors to show"
+      "value": "Det finns inga senaste kopplingar att visa"
     }
   ],
   "TdTXXf": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Läs mer"
     }
   ],
   "UIdPNN": [
     {
       "type": 0,
-      "value": "Operations"
+      "value": "Åtgärder"
     }
   ],
   "UcKJO+": [
@@ -403,10 +361,46 @@
       "value": "max"
     }
   ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours"
+    }
+  ],
   "XEdXNu": [
     {
       "type": 0,
-      "value": "Recent"
+      "value": "Senaste"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconds"
     }
   ],
   "YIBDSH": [
@@ -416,13 +410,13 @@
     },
     {
       "type": 0,
-      "value": "d"
+      "value": " d"
     }
   ],
   "Z79N+I": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Anslutning krävs"
     }
   ],
   "ZazdvR": [
@@ -476,7 +470,7 @@
   "fRxVuK": [
     {
       "type": 0,
-      "value": "Learn more about creating connectors."
+      "value": "Läs mer om att skapa kopplingar."
     }
   ],
   "ftwXvc": [
@@ -500,7 +494,7 @@
   "h9XgiJ": [
     {
       "type": 0,
-      "value": "No"
+      "value": "Nej"
     }
   ],
   "hN7iBP": [
@@ -514,7 +508,7 @@
             },
             {
               "type": 0,
-              "value": " second"
+              "value": " sekund"
             }
           ]
         },
@@ -525,7 +519,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " sekunder"
             }
           ]
         }
@@ -560,7 +554,7 @@
     },
     {
       "type": 0,
-      "value": "s"
+      "value": " s"
     }
   ],
   "k41+13": [
@@ -593,6 +587,24 @@
       "value": "Fel vid inläsning av komponenten."
     }
   ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes"
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
@@ -602,7 +614,7 @@
   "lUTDU8": [
     {
       "type": 0,
-      "value": "We couldn't find any results for "
+      "value": "Vi hittade inga resultat för "
     },
     {
       "type": 1,
@@ -612,43 +624,25 @@
   "m7Y6Qf": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "Testning"
     }
   ],
   "mE/bhX": [
     {
       "type": 0,
-      "value": "Yes"
+      "value": "Ja"
     }
   ],
   "orvpWh": [
     {
       "type": 0,
-      "value": "Go back"
-    }
-  ],
-  "ozs7Yp": [
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes "
-    },
-    {
-      "type": 1,
-      "value": "seconds"
-    },
-    {
-      "type": 0,
-      "value": "seconds"
+      "value": "Gå tillbaka"
     }
   ],
   "q3+FXI": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Rensa"
     }
   ],
   "qGfwxW": [
@@ -660,7 +654,7 @@
   "qNMcGy": [
     {
       "type": 0,
-      "value": "Clear?"
+      "value": "Rensa?"
     }
   ],
   "qSt0Sb": [
@@ -680,7 +674,7 @@
             },
             {
               "type": 0,
-              "value": " day"
+              "value": " dag"
             }
           ]
         },
@@ -691,7 +685,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " dagar"
             }
           ]
         }
@@ -704,13 +698,13 @@
   "sxcPBW": [
     {
       "type": 0,
-      "value": "Recommended based on your activity"
+      "value": "Rekommenderat utifrån dina aktiviteter"
     }
   ],
   "t74v7p": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(förhandsversion)"
     }
   ],
   "tImHz/": [
@@ -740,7 +734,7 @@
   "ug/8l6": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(förhandsversion)"
     }
   ],
   "unHYHq": [
@@ -752,7 +746,7 @@
   "vRZZPL": [
     {
       "type": 0,
-      "value": "Choose an operation"
+      "value": "Välj en åtgärd"
     }
   ],
   "vWe94i": [
@@ -770,13 +764,13 @@
   "yD9JIy": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Namn på anslutning"
     }
   ],
   "yKB5nP": [
     {
       "type": 0,
-      "value": "Want to create your own connectors?"
+      "value": "Vill du skapa dina egna anslutningsappar?"
     }
   ]
 }

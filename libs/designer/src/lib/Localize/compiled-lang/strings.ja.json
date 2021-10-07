@@ -12,7 +12,7 @@
     },
     {
       "type": 0,
-      "value": ": More info"
+      "value": ": 詳細情報"
     }
   ],
   "0ZlNtf": [
@@ -39,24 +39,6 @@
       "value": "カード タイトルの編集"
     }
   ],
-  "3V6GkP": [
-    {
-      "type": 1,
-      "value": "days"
-    },
-    {
-      "type": 0,
-      "value": "days "
-    },
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -66,31 +48,13 @@
   "47FYwb": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "キャンセル"
     }
   ],
   "5CTOi9": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
-    }
-  ],
-  "5ilpFw": [
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours "
-    },
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes"
+      "value": "このアクションにはテストが構成されています。"
     }
   ],
   "6oqk+A": [
@@ -105,16 +69,10 @@
       "value": "OK"
     }
   ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "定義に複数のトリガーが含まれているため、デザイナーをレンダリングできません。"
-    }
-  ],
   "8yF3hc": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "さらに表示"
     }
   ],
   "Asi2Jg": [
@@ -146,7 +104,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " 時間"
             }
           ]
         }
@@ -194,19 +152,19 @@
   "HOsSgX": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "詳細情報"
     }
   ],
   "JXhiR+": [
     {
       "type": 0,
-      "value": "We couldn't find any results"
+      "value": "結果が見つかりませんでした"
     }
   ],
   "LgbKvU": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "コメント"
     }
   ],
   "Mb/Vp8": [
@@ -259,16 +217,12 @@
   ],
   "QQYzHC": [
     {
-      "type": 0,
-      "value": "Context menu for "
-    },
-    {
       "type": 1,
       "value": "title"
     },
     {
       "type": 0,
-      "value": " card"
+      "value": " カードのコンテキスト メニュー"
     }
   ],
   "Qu1HkA": [
@@ -278,13 +232,13 @@
     },
     {
       "type": 0,
-      "value": "h"
+      "value": " 時間"
     }
   ],
   "RYIxqe": [
     {
       "type": 0,
-      "value": "Currently there are no suggestions available with your selection."
+      "value": "現在、選択可能な候補はありません。"
     }
   ],
   "RhH4pF": [
@@ -298,7 +252,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " 分"
             }
           ]
         }
@@ -315,7 +269,7 @@
     },
     {
       "type": 0,
-      "value": "m"
+      "value": " 分"
     }
   ],
   "T8Xqt9": [
@@ -327,25 +281,29 @@
   "TY45/m": [
     {
       "type": 0,
-      "value": "There are no recent connectors to show"
+      "value": "最新のコネクタが表示されていません"
     }
   ],
   "TdTXXf": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "詳細情報"
     }
   ],
   "UIdPNN": [
     {
       "type": 0,
-      "value": "Operations"
+      "value": "操作"
     }
   ],
   "UcKJO+": [
     {
+      "type": 1,
+      "value": "filterText"
+    },
+    {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": " の "
     },
     {
       "type": 1,
@@ -353,11 +311,7 @@
     },
     {
       "type": 0,
-      "value": " for "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
+      "value": " が見つかりませんでした"
     }
   ],
   "W070M2": [
@@ -370,10 +324,46 @@
       "value": "max"
     }
   ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours"
+    }
+  ],
   "XEdXNu": [
     {
       "type": 0,
-      "value": "Recent"
+      "value": "最近使った項目"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconds"
     }
   ],
   "YIBDSH": [
@@ -383,13 +373,13 @@
     },
     {
       "type": 0,
-      "value": "d"
+      "value": " 日"
     }
   ],
   "Z79N+I": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "接続が必要"
     }
   ],
   "ZazdvR": [
@@ -420,12 +410,12 @@
   ],
   "bQLLgV": [
     {
-      "type": 0,
-      "value": "We couldn't find any "
-    },
-    {
       "type": 1,
       "value": "selectedOperationKindText"
+    },
+    {
+      "type": 0,
+      "value": " が見つかりませんでした"
     }
   ],
   "cj+kyo": [
@@ -443,7 +433,7 @@
   "fRxVuK": [
     {
       "type": 0,
-      "value": "Learn more about creating connectors."
+      "value": "コネクタの作成に関する詳細情報を表示します。"
     }
   ],
   "ftwXvc": [
@@ -467,7 +457,7 @@
   "h9XgiJ": [
     {
       "type": 0,
-      "value": "No"
+      "value": "いいえ"
     }
   ],
   "hN7iBP": [
@@ -481,7 +471,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " 秒"
             }
           ]
         }
@@ -516,7 +506,7 @@
     },
     {
       "type": 0,
-      "value": "s"
+      "value": " 秒"
     }
   ],
   "k41+13": [
@@ -549,6 +539,24 @@
       "value": "コンポーネントの読み込みでエラーが発生しました。"
     }
   ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes"
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
@@ -557,54 +565,36 @@
   ],
   "lUTDU8": [
     {
-      "type": 0,
-      "value": "We couldn't find any results for "
-    },
-    {
       "type": 1,
       "value": "filterText"
+    },
+    {
+      "type": 0,
+      "value": " の結果が見つかりませんでした"
     }
   ],
   "m7Y6Qf": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "テスト"
     }
   ],
   "mE/bhX": [
     {
       "type": 0,
-      "value": "Yes"
+      "value": "はい"
     }
   ],
   "orvpWh": [
     {
       "type": 0,
-      "value": "Go back"
-    }
-  ],
-  "ozs7Yp": [
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes "
-    },
-    {
-      "type": 1,
-      "value": "seconds"
-    },
-    {
-      "type": 0,
-      "value": "seconds"
+      "value": "戻る"
     }
   ],
   "q3+FXI": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "クリア"
     }
   ],
   "qGfwxW": [
@@ -616,7 +606,7 @@
   "qNMcGy": [
     {
       "type": 0,
-      "value": "Clear?"
+      "value": "クリアしますか?"
     }
   ],
   "qSt0Sb": [
@@ -636,7 +626,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " 日"
             }
           ]
         }
@@ -649,13 +639,13 @@
   "sxcPBW": [
     {
       "type": 0,
-      "value": "Recommended based on your activity"
+      "value": "アクティビティに基づく推奨"
     }
   ],
   "t74v7p": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(プレビュー)"
     }
   ],
   "tImHz/": [
@@ -685,7 +675,7 @@
   "ug/8l6": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(プレビュー)"
     }
   ],
   "unHYHq": [
@@ -697,7 +687,7 @@
   "vRZZPL": [
     {
       "type": 0,
-      "value": "Choose an operation"
+      "value": "操作を選択してください"
     }
   ],
   "vWe94i": [
@@ -715,13 +705,13 @@
   "yD9JIy": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "接続名"
     }
   ],
   "yKB5nP": [
     {
       "type": 0,
-      "value": "Want to create your own connectors?"
+      "value": "独自のコネクタを作成しますか?"
     }
   ]
 }

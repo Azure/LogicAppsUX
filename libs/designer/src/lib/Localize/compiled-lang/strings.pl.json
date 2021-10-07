@@ -39,24 +39,6 @@
       "value": "Edytowanie tytułu karty"
     }
   ],
-  "3V6GkP": [
-    {
-      "type": 1,
-      "value": "days"
-    },
-    {
-      "type": 0,
-      "value": "days "
-    },
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -66,31 +48,13 @@
   "47FYwb": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Anuluj"
     }
   ],
   "5CTOi9": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
-    }
-  ],
-  "5ilpFw": [
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours "
-    },
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes"
+      "value": "Ta akcja ma skonfigurowane testowanie."
     }
   ],
   "6oqk+A": [
@@ -105,16 +69,10 @@
       "value": "OK"
     }
   ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "Nie można renderować projektanta z powodu wielu wyzwalaczy w definicji."
-    }
-  ],
   "8yF3hc": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Zobacz więcej"
     }
   ],
   "Asi2Jg": [
@@ -146,7 +104,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " godz."
             }
           ]
         },
@@ -157,7 +115,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " godz."
             }
           ]
         },
@@ -168,7 +126,7 @@
             },
             {
               "type": 0,
-              "value": " hour"
+              "value": " godz."
             }
           ]
         },
@@ -179,7 +137,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " godz."
             }
           ]
         }
@@ -276,19 +234,19 @@
   "HOsSgX": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Więcej informacji"
     }
   ],
   "JXhiR+": [
     {
       "type": 0,
-      "value": "We couldn't find any results"
+      "value": "Nie mogliśmy znaleźć żadnych wyników"
     }
   ],
   "LgbKvU": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Komentarz"
     }
   ],
   "Mb/Vp8": [
@@ -342,15 +300,11 @@
   "QQYzHC": [
     {
       "type": 0,
-      "value": "Context menu for "
+      "value": "Menu kontekstowe dla karty "
     },
     {
       "type": 1,
       "value": "title"
-    },
-    {
-      "type": 0,
-      "value": " card"
     }
   ],
   "Qu1HkA": [
@@ -360,13 +314,13 @@
     },
     {
       "type": 0,
-      "value": "h"
+      "value": " godz."
     }
   ],
   "RYIxqe": [
     {
       "type": 0,
-      "value": "Currently there are no suggestions available with your selection."
+      "value": "Obecnie brak dostępnych sugestii dla wybranych elementów."
     }
   ],
   "RhH4pF": [
@@ -380,7 +334,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " min"
             }
           ]
         },
@@ -391,7 +345,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " min"
             }
           ]
         },
@@ -402,7 +356,7 @@
             },
             {
               "type": 0,
-              "value": " minute"
+              "value": " min"
             }
           ]
         },
@@ -413,7 +367,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " min"
             }
           ]
         }
@@ -430,7 +384,7 @@
     },
     {
       "type": 0,
-      "value": "m"
+      "value": " min"
     }
   ],
   "T8Xqt9": [
@@ -442,19 +396,19 @@
   "TY45/m": [
     {
       "type": 0,
-      "value": "There are no recent connectors to show"
+      "value": "Brak ostatnio używanych łączników do wyświetlenia"
     }
   ],
   "TdTXXf": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Dowiedz się więcej"
     }
   ],
   "UIdPNN": [
     {
       "type": 0,
-      "value": "Operations"
+      "value": "Operacje"
     }
   ],
   "UcKJO+": [
@@ -485,10 +439,46 @@
       "value": "max"
     }
   ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours"
+    }
+  ],
   "XEdXNu": [
     {
       "type": 0,
-      "value": "Recent"
+      "value": "Ostatnie"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconds"
     }
   ],
   "YIBDSH": [
@@ -498,13 +488,13 @@
     },
     {
       "type": 0,
-      "value": "d"
+      "value": " dni"
     }
   ],
   "Z79N+I": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Wymagane połączenie"
     }
   ],
   "ZazdvR": [
@@ -558,7 +548,7 @@
   "fRxVuK": [
     {
       "type": 0,
-      "value": "Learn more about creating connectors."
+      "value": "Dowiedz się więcej o tworzeniu łączników."
     }
   ],
   "ftwXvc": [
@@ -582,7 +572,7 @@
   "h9XgiJ": [
     {
       "type": 0,
-      "value": "No"
+      "value": "Nie"
     }
   ],
   "hN7iBP": [
@@ -596,7 +586,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " s"
             }
           ]
         },
@@ -607,7 +597,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " s"
             }
           ]
         },
@@ -618,7 +608,7 @@
             },
             {
               "type": 0,
-              "value": " second"
+              "value": " s"
             }
           ]
         },
@@ -629,7 +619,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " s"
             }
           ]
         }
@@ -697,6 +687,24 @@
       "value": "Błąd podczas ładowania składnika."
     }
   ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes"
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
@@ -706,7 +714,7 @@
   "lUTDU8": [
     {
       "type": 0,
-      "value": "We couldn't find any results for "
+      "value": "Nie mogliśmy znaleźć żadnych wyników dla elementu "
     },
     {
       "type": 1,
@@ -716,43 +724,25 @@
   "m7Y6Qf": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "Testowanie"
     }
   ],
   "mE/bhX": [
     {
       "type": 0,
-      "value": "Yes"
+      "value": "Tak"
     }
   ],
   "orvpWh": [
     {
       "type": 0,
-      "value": "Go back"
-    }
-  ],
-  "ozs7Yp": [
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes "
-    },
-    {
-      "type": 1,
-      "value": "seconds"
-    },
-    {
-      "type": 0,
-      "value": "seconds"
+      "value": "Przejdź wstecz"
     }
   ],
   "q3+FXI": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Wyczyść"
     }
   ],
   "qGfwxW": [
@@ -764,7 +754,7 @@
   "qNMcGy": [
     {
       "type": 0,
-      "value": "Clear?"
+      "value": "Czy wyczyścić?"
     }
   ],
   "qSt0Sb": [
@@ -784,7 +774,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " dni"
             }
           ]
         },
@@ -795,7 +785,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " dni"
             }
           ]
         },
@@ -806,7 +796,7 @@
             },
             {
               "type": 0,
-              "value": " day"
+              "value": " dzień/dni"
             }
           ]
         },
@@ -817,7 +807,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " dni"
             }
           ]
         }
@@ -830,13 +820,13 @@
   "sxcPBW": [
     {
       "type": 0,
-      "value": "Recommended based on your activity"
+      "value": "Zalecane na podstawie Twoich działań"
     }
   ],
   "t74v7p": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(wersja zapoznawcza)"
     }
   ],
   "tImHz/": [
@@ -866,7 +856,7 @@
   "ug/8l6": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(wersja zapoznawcza)"
     }
   ],
   "unHYHq": [
@@ -878,7 +868,7 @@
   "vRZZPL": [
     {
       "type": 0,
-      "value": "Choose an operation"
+      "value": "Wybierz operację"
     }
   ],
   "vWe94i": [
@@ -896,13 +886,13 @@
   "yD9JIy": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Nazwa połączenia"
     }
   ],
   "yKB5nP": [
     {
       "type": 0,
-      "value": "Want to create your own connectors?"
+      "value": "Czy chcesz tworzyć własne łączniki?"
     }
   ]
 }

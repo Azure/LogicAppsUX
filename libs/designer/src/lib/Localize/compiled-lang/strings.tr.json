@@ -39,24 +39,6 @@
       "value": "Kart başlığı düzenleme"
     }
   ],
-  "3V6GkP": [
-    {
-      "type": 1,
-      "value": "days"
-    },
-    {
-      "type": 0,
-      "value": "days "
-    },
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -66,31 +48,13 @@
   "47FYwb": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "İptal"
     }
   ],
   "5CTOi9": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
-    }
-  ],
-  "5ilpFw": [
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours "
-    },
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes"
+      "value": "Bu Eylemde test yapılandırıldı."
     }
   ],
   "6oqk+A": [
@@ -105,16 +69,10 @@
       "value": "Tamam"
     }
   ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "Tanımda birden çok tetikleyici olması nedeniyle tasarımcı işlenemiyor."
-    }
-  ],
   "8yF3hc": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Daha fazlasını göster"
     }
   ],
   "Asi2Jg": [
@@ -146,7 +104,7 @@
             },
             {
               "type": 0,
-              "value": " hour"
+              "value": " saat"
             }
           ]
         },
@@ -157,7 +115,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " saat"
             }
           ]
         }
@@ -216,19 +174,19 @@
   "HOsSgX": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Daha fazla bilgi"
     }
   ],
   "JXhiR+": [
     {
       "type": 0,
-      "value": "We couldn't find any results"
+      "value": "Hiçbir sonuç bulunamadı"
     }
   ],
   "LgbKvU": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Yorum"
     }
   ],
   "Mb/Vp8": [
@@ -281,16 +239,12 @@
   ],
   "QQYzHC": [
     {
-      "type": 0,
-      "value": "Context menu for "
-    },
-    {
       "type": 1,
       "value": "title"
     },
     {
       "type": 0,
-      "value": " card"
+      "value": " kartı için bağlam menüsü"
     }
   ],
   "Qu1HkA": [
@@ -300,13 +254,13 @@
     },
     {
       "type": 0,
-      "value": "h"
+      "value": " sa"
     }
   ],
   "RYIxqe": [
     {
       "type": 0,
-      "value": "Currently there are no suggestions available with your selection."
+      "value": "Şu anda seçiminiz için mevcut öneri yok."
     }
   ],
   "RhH4pF": [
@@ -320,7 +274,7 @@
             },
             {
               "type": 0,
-              "value": " minute"
+              "value": " dakika"
             }
           ]
         },
@@ -331,7 +285,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " dakika"
             }
           ]
         }
@@ -348,7 +302,7 @@
     },
     {
       "type": 0,
-      "value": "m"
+      "value": " dk"
     }
   ],
   "T8Xqt9": [
@@ -360,19 +314,19 @@
   "TY45/m": [
     {
       "type": 0,
-      "value": "There are no recent connectors to show"
+      "value": "Gösterilecek yeni bir bağlayıcı yok"
     }
   ],
   "TdTXXf": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Daha fazla bilgi edinin"
     }
   ],
   "UIdPNN": [
     {
       "type": 0,
-      "value": "Operations"
+      "value": "İşlemler"
     }
   ],
   "UcKJO+": [
@@ -403,10 +357,46 @@
       "value": "max"
     }
   ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours"
+    }
+  ],
   "XEdXNu": [
     {
       "type": 0,
-      "value": "Recent"
+      "value": "Son Kullanılan"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconds"
     }
   ],
   "YIBDSH": [
@@ -416,13 +406,13 @@
     },
     {
       "type": 0,
-      "value": "d"
+      "value": " gü"
     }
   ],
   "Z79N+I": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Bağlantı gerekli"
     }
   ],
   "ZazdvR": [
@@ -476,7 +466,7 @@
   "fRxVuK": [
     {
       "type": 0,
-      "value": "Learn more about creating connectors."
+      "value": "Bağlayıcı oluşturma hakkında daha fazla bilgi edinin."
     }
   ],
   "ftwXvc": [
@@ -500,7 +490,7 @@
   "h9XgiJ": [
     {
       "type": 0,
-      "value": "No"
+      "value": "Hayır"
     }
   ],
   "hN7iBP": [
@@ -514,7 +504,7 @@
             },
             {
               "type": 0,
-              "value": " second"
+              "value": " saniye"
             }
           ]
         },
@@ -525,7 +515,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " saniye"
             }
           ]
         }
@@ -560,7 +550,7 @@
     },
     {
       "type": 0,
-      "value": "s"
+      "value": " sn"
     }
   ],
   "k41+13": [
@@ -593,6 +583,24 @@
       "value": "Bileşen yüklenirken hata oluştu."
     }
   ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes"
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
@@ -601,54 +609,36 @@
   ],
   "lUTDU8": [
     {
-      "type": 0,
-      "value": "We couldn't find any results for "
-    },
-    {
       "type": 1,
       "value": "filterText"
+    },
+    {
+      "type": 0,
+      "value": " için hiçbir sonuç bulunamadı"
     }
   ],
   "m7Y6Qf": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "Test"
     }
   ],
   "mE/bhX": [
     {
       "type": 0,
-      "value": "Yes"
+      "value": "Evet"
     }
   ],
   "orvpWh": [
     {
       "type": 0,
-      "value": "Go back"
-    }
-  ],
-  "ozs7Yp": [
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes "
-    },
-    {
-      "type": 1,
-      "value": "seconds"
-    },
-    {
-      "type": 0,
-      "value": "seconds"
+      "value": "Geri dön"
     }
   ],
   "q3+FXI": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Temizle"
     }
   ],
   "qGfwxW": [
@@ -660,7 +650,7 @@
   "qNMcGy": [
     {
       "type": 0,
-      "value": "Clear?"
+      "value": "Temizlensin mi?"
     }
   ],
   "qSt0Sb": [
@@ -680,7 +670,7 @@
             },
             {
               "type": 0,
-              "value": " day"
+              "value": " gün"
             }
           ]
         },
@@ -691,7 +681,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " gün"
             }
           ]
         }
@@ -704,13 +694,13 @@
   "sxcPBW": [
     {
       "type": 0,
-      "value": "Recommended based on your activity"
+      "value": "Etkinliğinize bağlı olarak önerilir"
     }
   ],
   "t74v7p": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(önizleme)"
     }
   ],
   "tImHz/": [
@@ -740,7 +730,7 @@
   "ug/8l6": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(önizleme)"
     }
   ],
   "unHYHq": [
@@ -752,7 +742,7 @@
   "vRZZPL": [
     {
       "type": 0,
-      "value": "Choose an operation"
+      "value": "İşlem seçin"
     }
   ],
   "vWe94i": [
@@ -770,13 +760,13 @@
   "yD9JIy": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Bağlantı adı"
     }
   ],
   "yKB5nP": [
     {
       "type": 0,
-      "value": "Want to create your own connectors?"
+      "value": "Kendi bağlayıcılarınızı oluşturmak ister misiniz?"
     }
   ]
 }

@@ -12,7 +12,7 @@
     },
     {
       "type": 0,
-      "value": ": More info"
+      "value": ": 추가 정보"
     }
   ],
   "0ZlNtf": [
@@ -39,24 +39,6 @@
       "value": "카드 제목 편집"
     }
   ],
-  "3V6GkP": [
-    {
-      "type": 1,
-      "value": "days"
-    },
-    {
-      "type": 0,
-      "value": "days "
-    },
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -66,31 +48,13 @@
   "47FYwb": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "취소"
     }
   ],
   "5CTOi9": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
-    }
-  ],
-  "5ilpFw": [
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours "
-    },
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes"
+      "value": "이 작업에는 테스트가 구성되어 있습니다."
     }
   ],
   "6oqk+A": [
@@ -105,16 +69,10 @@
       "value": "확인"
     }
   ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "정의에 있는 여러 트리거로 인해 디자이너를 렌더링할 수 없습니다."
-    }
-  ],
   "8yF3hc": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "자세히 보기"
     }
   ],
   "Asi2Jg": [
@@ -126,7 +84,7 @@
   "C5xzTC": [
     {
       "type": 0,
-      "value": "Premium"
+      "value": "프리미엄"
     }
   ],
   "EGXrx5": [
@@ -146,7 +104,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": "시간"
             }
           ]
         }
@@ -194,19 +152,19 @@
   "HOsSgX": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "추가 정보"
     }
   ],
   "JXhiR+": [
     {
       "type": 0,
-      "value": "We couldn't find any results"
+      "value": "결과를 찾을 수 없습니다."
     }
   ],
   "LgbKvU": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "메모"
     }
   ],
   "Mb/Vp8": [
@@ -259,16 +217,12 @@
   ],
   "QQYzHC": [
     {
-      "type": 0,
-      "value": "Context menu for "
-    },
-    {
       "type": 1,
       "value": "title"
     },
     {
       "type": 0,
-      "value": " card"
+      "value": " 카드에 대한 상황에 맞는 메뉴"
     }
   ],
   "Qu1HkA": [
@@ -278,13 +232,13 @@
     },
     {
       "type": 0,
-      "value": "h"
+      "value": "시간"
     }
   ],
   "RYIxqe": [
     {
       "type": 0,
-      "value": "Currently there are no suggestions available with your selection."
+      "value": "현재 선택 항목에 사용 가능한 제안이 없습니다."
     }
   ],
   "RhH4pF": [
@@ -298,7 +252,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": "분"
             }
           ]
         }
@@ -315,7 +269,7 @@
     },
     {
       "type": 0,
-      "value": "m"
+      "value": "분"
     }
   ],
   "T8Xqt9": [
@@ -327,25 +281,29 @@
   "TY45/m": [
     {
       "type": 0,
-      "value": "There are no recent connectors to show"
+      "value": "표시할 최근 커넥터가 없음"
     }
   ],
   "TdTXXf": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "자세한 정보"
     }
   ],
   "UIdPNN": [
     {
       "type": 0,
-      "value": "Operations"
+      "value": "작업"
     }
   ],
   "UcKJO+": [
     {
+      "type": 1,
+      "value": "filterText"
+    },
+    {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": "에 대한 "
     },
     {
       "type": 1,
@@ -353,11 +311,7 @@
     },
     {
       "type": 0,
-      "value": " for "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
+      "value": "을(를) 찾을 수 없습니다."
     }
   ],
   "W070M2": [
@@ -370,10 +324,46 @@
       "value": " 중"
     }
   ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours"
+    }
+  ],
   "XEdXNu": [
     {
       "type": 0,
-      "value": "Recent"
+      "value": "최근"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconds"
     }
   ],
   "YIBDSH": [
@@ -383,13 +373,13 @@
     },
     {
       "type": 0,
-      "value": "d"
+      "value": "일"
     }
   ],
   "Z79N+I": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "연결 필요"
     }
   ],
   "ZazdvR": [
@@ -420,12 +410,12 @@
   ],
   "bQLLgV": [
     {
-      "type": 0,
-      "value": "We couldn't find any "
-    },
-    {
       "type": 1,
       "value": "selectedOperationKindText"
+    },
+    {
+      "type": 0,
+      "value": "을(를) 찾을 수 없습니다."
     }
   ],
   "cj+kyo": [
@@ -443,7 +433,7 @@
   "fRxVuK": [
     {
       "type": 0,
-      "value": "Learn more about creating connectors."
+      "value": "커넥터 만들기에 대해 자세히 알아보세요."
     }
   ],
   "ftwXvc": [
@@ -467,7 +457,7 @@
   "h9XgiJ": [
     {
       "type": 0,
-      "value": "No"
+      "value": "아니요"
     }
   ],
   "hN7iBP": [
@@ -481,7 +471,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": "초"
             }
           ]
         }
@@ -516,7 +506,7 @@
     },
     {
       "type": 0,
-      "value": "s"
+      "value": "초"
     }
   ],
   "k41+13": [
@@ -549,6 +539,24 @@
       "value": "구성 요소를 로드하는 동안 오류가 발생했습니다."
     }
   ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes"
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
@@ -557,54 +565,36 @@
   ],
   "lUTDU8": [
     {
-      "type": 0,
-      "value": "We couldn't find any results for "
-    },
-    {
       "type": 1,
       "value": "filterText"
+    },
+    {
+      "type": 0,
+      "value": "의 결과를 찾을 수 없습니다."
     }
   ],
   "m7Y6Qf": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "테스트"
     }
   ],
   "mE/bhX": [
     {
       "type": 0,
-      "value": "Yes"
+      "value": "예"
     }
   ],
   "orvpWh": [
     {
       "type": 0,
-      "value": "Go back"
-    }
-  ],
-  "ozs7Yp": [
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes "
-    },
-    {
-      "type": 1,
-      "value": "seconds"
-    },
-    {
-      "type": 0,
-      "value": "seconds"
+      "value": "뒤로 이동"
     }
   ],
   "q3+FXI": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "지우기"
     }
   ],
   "qGfwxW": [
@@ -616,7 +606,7 @@
   "qNMcGy": [
     {
       "type": 0,
-      "value": "Clear?"
+      "value": "지우시겠습니까?"
     }
   ],
   "qSt0Sb": [
@@ -636,7 +626,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": "일"
             }
           ]
         }
@@ -649,13 +639,13 @@
   "sxcPBW": [
     {
       "type": 0,
-      "value": "Recommended based on your activity"
+      "value": "활동을 기반으로 한 권장 사항"
     }
   ],
   "t74v7p": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(미리 보기)"
     }
   ],
   "tImHz/": [
@@ -685,19 +675,19 @@
   "ug/8l6": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(미리 보기)"
     }
   ],
   "unHYHq": [
     {
       "type": 0,
-      "value": "Premium"
+      "value": "프리미엄"
     }
   ],
   "vRZZPL": [
     {
       "type": 0,
-      "value": "Choose an operation"
+      "value": "작업 선택"
     }
   ],
   "vWe94i": [
@@ -715,13 +705,13 @@
   "yD9JIy": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "연결 이름"
     }
   ],
   "yKB5nP": [
     {
       "type": 0,
-      "value": "Want to create your own connectors?"
+      "value": "커넥터를 직접 만드시겠습니까?"
     }
   ]
 }
