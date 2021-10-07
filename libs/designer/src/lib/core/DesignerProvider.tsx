@@ -6,6 +6,7 @@ import { RootState, store } from './store';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { loadLocaleMessages } from './state/localizationSlice';
+import IntlGlobalProvider from '../common/i18n/intl';
 
 export interface DesignerProviderProps {
   theme?: Theme;
@@ -34,7 +35,7 @@ const DesignerProviderInner = ({ theme = AzureThemeLight, locale = 'en', childre
               throw err;
             }}
           >
-            {children}
+            <IntlGlobalProvider>{children}</IntlGlobalProvider>
           </IntlProvider>
         </Provider>
       </ThemeProvider>

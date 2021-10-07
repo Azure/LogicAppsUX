@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import { IconButton } from '@fluentui/react/lib/Button';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { css } from '@fluentui/react/lib/Utilities';
@@ -96,7 +97,7 @@ export const CardV1: React.FC<CardProps> = (props) => {
   );
 };
 
-export const CardV2: React.FC<CardProps> = (props: CardProps) => {
+export const CardV2 = (props: CardProps): React.ReactElement => {
   function handleKeyUp(e: React.KeyboardEvent<HTMLElement>) {
     if (isDeleteKey(e)) {
       e.preventDefault();
@@ -138,7 +139,7 @@ export const CardV2: React.FC<CardProps> = (props: CardProps) => {
 
   const { children, neverCollapsed } = props;
   if (neverCollapsed) {
-    return children;
+    return <>{children}</>;
   }
 
   const { brandColor, contextMenuOptions, icon, rootRef, selected, title, onClick } = props;

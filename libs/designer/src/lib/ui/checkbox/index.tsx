@@ -6,6 +6,7 @@ import * as React from 'react';
 import { useState, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { calloutContentStyles, checkboxStyles } from '../fabric';
+import { getDurationString } from '../utils/utils';
 
 export interface CheckboxProps {
   ariaLabel?: string;
@@ -62,7 +63,7 @@ export const Checkbox = (props: CheckboxProps) => {
         checked={checked}
         className="msla-checkbox-label"
         id={id}
-        label={text}
+        label={text + ' ' + getDurationString(1500, false)}
         styles={checkboxStyles}
         disabled={disabled}
         onChange={handleChange as any}
