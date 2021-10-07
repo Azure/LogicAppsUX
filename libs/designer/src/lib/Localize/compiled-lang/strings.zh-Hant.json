@@ -12,7 +12,7 @@
     },
     {
       "type": 0,
-      "value": ": More info"
+      "value": ": 更多資訊"
     }
   ],
   "0ZlNtf": [
@@ -39,24 +39,6 @@
       "value": "正在編輯卡片標題"
     }
   ],
-  "3V6GkP": [
-    {
-      "type": 1,
-      "value": "days"
-    },
-    {
-      "type": 0,
-      "value": "days "
-    },
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -66,31 +48,13 @@
   "47FYwb": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "5CTOi9": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
-    }
-  ],
-  "5ilpFw": [
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours "
-    },
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes"
+      "value": "此動作已設定測試。"
     }
   ],
   "6oqk+A": [
@@ -105,16 +69,10 @@
       "value": "確定"
     }
   ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "因為定義中有多個觸發程序，所以無法轉譯設計工具。"
-    }
-  ],
   "8yF3hc": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "查看更多"
     }
   ],
   "Asi2Jg": [
@@ -126,7 +84,7 @@
   "C5xzTC": [
     {
       "type": 0,
-      "value": "Premium"
+      "value": "進階"
     }
   ],
   "EGXrx5": [
@@ -146,7 +104,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " 小時"
             }
           ]
         }
@@ -194,19 +152,19 @@
   "HOsSgX": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "其他資訊"
     }
   ],
   "JXhiR+": [
     {
       "type": 0,
-      "value": "We couldn't find any results"
+      "value": "找不到任何結果"
     }
   ],
   "LgbKvU": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "註解"
     }
   ],
   "Mb/Vp8": [
@@ -259,16 +217,12 @@
   ],
   "QQYzHC": [
     {
-      "type": 0,
-      "value": "Context menu for "
-    },
-    {
       "type": 1,
       "value": "title"
     },
     {
       "type": 0,
-      "value": " card"
+      "value": " 卡片的操作功能表"
     }
   ],
   "Qu1HkA": [
@@ -278,13 +232,13 @@
     },
     {
       "type": 0,
-      "value": "h"
+      "value": " 小時"
     }
   ],
   "RYIxqe": [
     {
       "type": 0,
-      "value": "Currently there are no suggestions available with your selection."
+      "value": "您的選取項目目前沒有任何適用的建議。"
     }
   ],
   "RhH4pF": [
@@ -298,7 +252,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " 分鐘"
             }
           ]
         }
@@ -315,7 +269,7 @@
     },
     {
       "type": 0,
-      "value": "m"
+      "value": " 分鐘"
     }
   ],
   "T8Xqt9": [
@@ -327,37 +281,37 @@
   "TY45/m": [
     {
       "type": 0,
-      "value": "There are no recent connectors to show"
+      "value": "目前沒有可顯示的連接器"
     }
   ],
   "TdTXXf": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "深入了解"
     }
   ],
   "UIdPNN": [
     {
       "type": 0,
-      "value": "Operations"
+      "value": "作業"
     }
   ],
   "UcKJO+": [
     {
       "type": 0,
-      "value": "We couldn't find any "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " for "
+      "value": "找不到任何 "
     },
     {
       "type": 1,
       "value": "filterText"
+    },
+    {
+      "type": 0,
+      "value": " 的 "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperationKindText"
     }
   ],
   "W070M2": [
@@ -370,10 +324,46 @@
       "value": "max"
     }
   ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours"
+    }
+  ],
   "XEdXNu": [
     {
       "type": 0,
-      "value": "Recent"
+      "value": "最近使用"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconds"
     }
   ],
   "YIBDSH": [
@@ -383,13 +373,13 @@
     },
     {
       "type": 0,
-      "value": "d"
+      "value": " 天"
     }
   ],
   "Z79N+I": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "需要連線"
     }
   ],
   "ZazdvR": [
@@ -421,7 +411,7 @@
   "bQLLgV": [
     {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": "找不到任何 "
     },
     {
       "type": 1,
@@ -443,7 +433,7 @@
   "fRxVuK": [
     {
       "type": 0,
-      "value": "Learn more about creating connectors."
+      "value": "深入了解如何建立連接器。"
     }
   ],
   "ftwXvc": [
@@ -467,7 +457,7 @@
   "h9XgiJ": [
     {
       "type": 0,
-      "value": "No"
+      "value": "否"
     }
   ],
   "hN7iBP": [
@@ -481,7 +471,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " 秒"
             }
           ]
         }
@@ -516,7 +506,7 @@
     },
     {
       "type": 0,
-      "value": "s"
+      "value": " 秒鐘"
     }
   ],
   "k41+13": [
@@ -549,6 +539,24 @@
       "value": "載入元件時發生錯誤。"
     }
   ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes"
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
@@ -558,53 +566,39 @@
   "lUTDU8": [
     {
       "type": 0,
-      "value": "We couldn't find any results for "
+      "value": "找不到任何 "
     },
     {
       "type": 1,
       "value": "filterText"
+    },
+    {
+      "type": 0,
+      "value": " 的結果"
     }
   ],
   "m7Y6Qf": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "測試"
     }
   ],
   "mE/bhX": [
     {
       "type": 0,
-      "value": "Yes"
+      "value": "是"
     }
   ],
   "orvpWh": [
     {
       "type": 0,
-      "value": "Go back"
-    }
-  ],
-  "ozs7Yp": [
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes "
-    },
-    {
-      "type": 1,
-      "value": "seconds"
-    },
-    {
-      "type": 0,
-      "value": "seconds"
+      "value": "返回"
     }
   ],
   "q3+FXI": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "清除"
     }
   ],
   "qGfwxW": [
@@ -616,7 +610,7 @@
   "qNMcGy": [
     {
       "type": 0,
-      "value": "Clear?"
+      "value": "要清除嗎?"
     }
   ],
   "qSt0Sb": [
@@ -636,7 +630,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " 天"
             }
           ]
         }
@@ -649,13 +643,13 @@
   "sxcPBW": [
     {
       "type": 0,
-      "value": "Recommended based on your activity"
+      "value": "根據您的活動而建議"
     }
   ],
   "t74v7p": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(預覽)"
     }
   ],
   "tImHz/": [
@@ -685,19 +679,19 @@
   "ug/8l6": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(預覽)"
     }
   ],
   "unHYHq": [
     {
       "type": 0,
-      "value": "Premium"
+      "value": "進階"
     }
   ],
   "vRZZPL": [
     {
       "type": 0,
-      "value": "Choose an operation"
+      "value": "選擇作業"
     }
   ],
   "vWe94i": [
@@ -715,13 +709,13 @@
   "yD9JIy": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "連線名稱"
     }
   ],
   "yKB5nP": [
     {
       "type": 0,
-      "value": "Want to create your own connectors?"
+      "value": "要建立您自己的連接器嗎?"
     }
   ]
 }

@@ -39,24 +39,6 @@
       "value": "Úprava názvu karty"
     }
   ],
-  "3V6GkP": [
-    {
-      "type": 1,
-      "value": "days"
-    },
-    {
-      "type": 0,
-      "value": "days "
-    },
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -66,31 +48,13 @@
   "47FYwb": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Zrušit"
     }
   ],
   "5CTOi9": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
-    }
-  ],
-  "5ilpFw": [
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours "
-    },
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes"
+      "value": "Tato akce má nakonfigurované testování."
     }
   ],
   "6oqk+A": [
@@ -105,16 +69,10 @@
       "value": "OK"
     }
   ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "Návrhář se nedá vykreslit, protože v definici je více než jeden trigger."
-    }
-  ],
   "8yF3hc": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Zobrazit více"
     }
   ],
   "Asi2Jg": [
@@ -146,7 +104,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " hodin"
             }
           ]
         },
@@ -157,7 +115,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " hodin"
             }
           ]
         },
@@ -168,7 +126,7 @@
             },
             {
               "type": 0,
-              "value": " hour"
+              "value": " hodina"
             }
           ]
         },
@@ -179,7 +137,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " hodin"
             }
           ]
         }
@@ -260,19 +218,19 @@
   "HOsSgX": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Další informace"
     }
   ],
   "JXhiR+": [
     {
       "type": 0,
-      "value": "We couldn't find any results"
+      "value": "Nepovedlo se nám najít žádné výsledky."
     }
   ],
   "LgbKvU": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Komentář"
     }
   ],
   "Mb/Vp8": [
@@ -326,15 +284,11 @@
   "QQYzHC": [
     {
       "type": 0,
-      "value": "Context menu for "
+      "value": "Místní nabídka pro kartu "
     },
     {
       "type": 1,
       "value": "title"
-    },
-    {
-      "type": 0,
-      "value": " card"
     }
   ],
   "Qu1HkA": [
@@ -344,13 +298,13 @@
     },
     {
       "type": 0,
-      "value": "h"
+      "value": " h"
     }
   ],
   "RYIxqe": [
     {
       "type": 0,
-      "value": "Currently there are no suggestions available with your selection."
+      "value": "Pro váš výběr v tuto chvíli nejsou k dispozici žádné návrhy."
     }
   ],
   "RhH4pF": [
@@ -364,7 +318,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " minut"
             }
           ]
         },
@@ -375,7 +329,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " minut"
             }
           ]
         },
@@ -386,7 +340,7 @@
             },
             {
               "type": 0,
-              "value": " minute"
+              "value": " minuta"
             }
           ]
         },
@@ -397,7 +351,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " minut"
             }
           ]
         }
@@ -414,7 +368,7 @@
     },
     {
       "type": 0,
-      "value": "m"
+      "value": " m"
     }
   ],
   "T8Xqt9": [
@@ -426,19 +380,19 @@
   "TY45/m": [
     {
       "type": 0,
-      "value": "There are no recent connectors to show"
+      "value": "Nejsou k dispozici žádné poslední konektory, které by se daly zobrazit."
     }
   ],
   "TdTXXf": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Další informace"
     }
   ],
   "UIdPNN": [
     {
       "type": 0,
-      "value": "Operations"
+      "value": "Operace"
     }
   ],
   "UcKJO+": [
@@ -469,10 +423,46 @@
       "value": "max"
     }
   ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours"
+    }
+  ],
   "XEdXNu": [
     {
       "type": 0,
-      "value": "Recent"
+      "value": "Nedávné"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconds"
     }
   ],
   "YIBDSH": [
@@ -482,13 +472,13 @@
     },
     {
       "type": 0,
-      "value": "d"
+      "value": " d"
     }
   ],
   "Z79N+I": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Připojení je povinné."
     }
   ],
   "ZazdvR": [
@@ -542,7 +532,7 @@
   "fRxVuK": [
     {
       "type": 0,
-      "value": "Learn more about creating connectors."
+      "value": "Další informace o vytváření konektorů"
     }
   ],
   "ftwXvc": [
@@ -566,7 +556,7 @@
   "h9XgiJ": [
     {
       "type": 0,
-      "value": "No"
+      "value": "Ne"
     }
   ],
   "hN7iBP": [
@@ -580,7 +570,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " sekund"
             }
           ]
         },
@@ -591,7 +581,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " sekund"
             }
           ]
         },
@@ -602,7 +592,7 @@
             },
             {
               "type": 0,
-              "value": " second"
+              "value": " sekunda"
             }
           ]
         },
@@ -613,7 +603,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " sekund"
             }
           ]
         }
@@ -648,7 +638,7 @@
     },
     {
       "type": 0,
-      "value": "s"
+      "value": " s"
     }
   ],
   "k41+13": [
@@ -681,6 +671,24 @@
       "value": "Při načítání komponenty došlo k chybě."
     }
   ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes"
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
@@ -690,53 +698,39 @@
   "lUTDU8": [
     {
       "type": 0,
-      "value": "We couldn't find any results for "
+      "value": "Pro "
     },
     {
       "type": 1,
       "value": "filterText"
+    },
+    {
+      "type": 0,
+      "value": " se nám nepovedlo najít žádné výsledky."
     }
   ],
   "m7Y6Qf": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "Testování"
     }
   ],
   "mE/bhX": [
     {
       "type": 0,
-      "value": "Yes"
+      "value": "Ano"
     }
   ],
   "orvpWh": [
     {
       "type": 0,
-      "value": "Go back"
-    }
-  ],
-  "ozs7Yp": [
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes "
-    },
-    {
-      "type": 1,
-      "value": "seconds"
-    },
-    {
-      "type": 0,
-      "value": "seconds"
+      "value": "Zpět"
     }
   ],
   "q3+FXI": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Vymazat"
     }
   ],
   "qGfwxW": [
@@ -748,7 +742,7 @@
   "qNMcGy": [
     {
       "type": 0,
-      "value": "Clear?"
+      "value": "Vymazat?"
     }
   ],
   "qSt0Sb": [
@@ -768,7 +762,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " dny"
             }
           ]
         },
@@ -779,7 +773,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " dny"
             }
           ]
         },
@@ -790,7 +784,7 @@
             },
             {
               "type": 0,
-              "value": " day"
+              "value": " den"
             }
           ]
         },
@@ -801,7 +795,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " dny"
             }
           ]
         }
@@ -814,13 +808,13 @@
   "sxcPBW": [
     {
       "type": 0,
-      "value": "Recommended based on your activity"
+      "value": "Doporučeno na základě vaší aktivity"
     }
   ],
   "t74v7p": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(Preview)"
     }
   ],
   "tImHz/": [
@@ -850,7 +844,7 @@
   "ug/8l6": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(Preview)"
     }
   ],
   "unHYHq": [
@@ -862,7 +856,7 @@
   "vRZZPL": [
     {
       "type": 0,
-      "value": "Choose an operation"
+      "value": "Zvolte operaci."
     }
   ],
   "vWe94i": [
@@ -880,13 +874,13 @@
   "yD9JIy": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Název připojení"
     }
   ],
   "yKB5nP": [
     {
       "type": 0,
-      "value": "Want to create your own connectors?"
+      "value": "Chcete vytvořit své vlastní konektory?"
     }
   ]
 }

@@ -12,7 +12,7 @@
     },
     {
       "type": 0,
-      "value": ": More info"
+      "value": ": Más información"
     }
   ],
   "0ZlNtf": [
@@ -39,24 +39,6 @@
       "value": "Edición del título de la tarjeta"
     }
   ],
-  "3V6GkP": [
-    {
-      "type": 1,
-      "value": "days"
-    },
-    {
-      "type": 0,
-      "value": "days "
-    },
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -66,31 +48,13 @@
   "47FYwb": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Cancelar"
     }
   ],
   "5CTOi9": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
-    }
-  ],
-  "5ilpFw": [
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours "
-    },
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes"
+      "value": "Las pruebas están configuradas para esta acción."
     }
   ],
   "6oqk+A": [
@@ -105,16 +69,10 @@
       "value": "Aceptar"
     }
   ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "No se puede representar el diseñador porque existen varios desencadenadores en la definición."
-    }
-  ],
   "8yF3hc": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Ver más"
     }
   ],
   "Asi2Jg": [
@@ -146,7 +104,7 @@
             },
             {
               "type": 0,
-              "value": " hour"
+              "value": " hora"
             }
           ]
         },
@@ -157,7 +115,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " horas"
             }
           ]
         }
@@ -216,19 +174,19 @@
   "HOsSgX": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Más información"
     }
   ],
   "JXhiR+": [
     {
       "type": 0,
-      "value": "We couldn't find any results"
+      "value": "No se encontró ningún resultado."
     }
   ],
   "LgbKvU": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Comentario"
     }
   ],
   "Mb/Vp8": [
@@ -282,15 +240,11 @@
   "QQYzHC": [
     {
       "type": 0,
-      "value": "Context menu for "
+      "value": "Menú contextual para la tarjeta de "
     },
     {
       "type": 1,
       "value": "title"
-    },
-    {
-      "type": 0,
-      "value": " card"
     }
   ],
   "Qu1HkA": [
@@ -306,7 +260,7 @@
   "RYIxqe": [
     {
       "type": 0,
-      "value": "Currently there are no suggestions available with your selection."
+      "value": "Actualmente, no hay ninguna sugerencia disponible con la selección."
     }
   ],
   "RhH4pF": [
@@ -320,7 +274,7 @@
             },
             {
               "type": 0,
-              "value": " minute"
+              "value": " minuto"
             }
           ]
         },
@@ -331,7 +285,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " minutos"
             }
           ]
         }
@@ -360,25 +314,25 @@
   "TY45/m": [
     {
       "type": 0,
-      "value": "There are no recent connectors to show"
+      "value": "No hay ningún conector reciente para mostrar."
     }
   ],
   "TdTXXf": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Más información"
     }
   ],
   "UIdPNN": [
     {
       "type": 0,
-      "value": "Operations"
+      "value": "Operaciones"
     }
   ],
   "UcKJO+": [
     {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": "No pudimos encontrar ningún "
     },
     {
       "type": 1,
@@ -386,7 +340,7 @@
     },
     {
       "type": 0,
-      "value": " for "
+      "value": " para "
     },
     {
       "type": 1,
@@ -403,10 +357,46 @@
       "value": "max"
     }
   ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours"
+    }
+  ],
   "XEdXNu": [
     {
       "type": 0,
-      "value": "Recent"
+      "value": "Recientes"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconds"
     }
   ],
   "YIBDSH": [
@@ -422,7 +412,7 @@
   "Z79N+I": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Conexión obligatoria"
     }
   ],
   "ZazdvR": [
@@ -454,7 +444,7 @@
   "bQLLgV": [
     {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": "No pudimos encontrar ningún "
     },
     {
       "type": 1,
@@ -476,7 +466,7 @@
   "fRxVuK": [
     {
       "type": 0,
-      "value": "Learn more about creating connectors."
+      "value": "Obtenga más información sobre cómo crear conectores."
     }
   ],
   "ftwXvc": [
@@ -514,7 +504,7 @@
             },
             {
               "type": 0,
-              "value": " second"
+              "value": " segundo"
             }
           ]
         },
@@ -525,7 +515,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " segundos"
             }
           ]
         }
@@ -593,6 +583,24 @@
       "value": "Error al cargar el componente."
     }
   ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes"
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
@@ -602,53 +610,39 @@
   "lUTDU8": [
     {
       "type": 0,
-      "value": "We couldn't find any results for "
+      "value": "No se encontró ningún resultado para: "
     },
     {
       "type": 1,
       "value": "filterText"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "m7Y6Qf": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "Pruebas"
     }
   ],
   "mE/bhX": [
     {
       "type": 0,
-      "value": "Yes"
+      "value": "Sí"
     }
   ],
   "orvpWh": [
     {
       "type": 0,
-      "value": "Go back"
-    }
-  ],
-  "ozs7Yp": [
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes "
-    },
-    {
-      "type": 1,
-      "value": "seconds"
-    },
-    {
-      "type": 0,
-      "value": "seconds"
+      "value": "Volver"
     }
   ],
   "q3+FXI": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Borrar"
     }
   ],
   "qGfwxW": [
@@ -660,7 +654,7 @@
   "qNMcGy": [
     {
       "type": 0,
-      "value": "Clear?"
+      "value": "¿Quiere borrarlo?"
     }
   ],
   "qSt0Sb": [
@@ -680,7 +674,7 @@
             },
             {
               "type": 0,
-              "value": " day"
+              "value": " día"
             }
           ]
         },
@@ -691,7 +685,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " días"
             }
           ]
         }
@@ -704,13 +698,13 @@
   "sxcPBW": [
     {
       "type": 0,
-      "value": "Recommended based on your activity"
+      "value": "Recomendaciones basadas en la actividad"
     }
   ],
   "t74v7p": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(versión preliminar)"
     }
   ],
   "tImHz/": [
@@ -740,7 +734,7 @@
   "ug/8l6": [
     {
       "type": 0,
-      "value": "(preview)"
+      "value": "(versión preliminar)"
     }
   ],
   "unHYHq": [
@@ -752,7 +746,7 @@
   "vRZZPL": [
     {
       "type": 0,
-      "value": "Choose an operation"
+      "value": "Elija una operación"
     }
   ],
   "vWe94i": [
@@ -770,13 +764,13 @@
   "yD9JIy": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Nombre de conexión"
     }
   ],
   "yKB5nP": [
     {
       "type": 0,
-      "value": "Want to create your own connectors?"
+      "value": "¿Quiere crear sus propios conectores?"
     }
   ]
 }

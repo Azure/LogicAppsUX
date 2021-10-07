@@ -39,24 +39,6 @@
       "value": "Kaarttitel bewerken"
     }
   ],
-  "3V6GkP": [
-    {
-      "type": 1,
-      "value": "days"
-    },
-    {
-      "type": 0,
-      "value": "days "
-    },
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -66,31 +48,13 @@
   "47FYwb": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Annuleren"
     }
   ],
   "5CTOi9": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
-    }
-  ],
-  "5ilpFw": [
-    {
-      "type": 1,
-      "value": "hours"
-    },
-    {
-      "type": 0,
-      "value": "hours "
-    },
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes"
+      "value": "Voor deze actie zijn tests geconfigureerd."
     }
   ],
   "6oqk+A": [
@@ -105,16 +69,10 @@
       "value": "OK"
     }
   ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "Kan de designer niet weergeven vanwege meerdere triggers in de definitie."
-    }
-  ],
   "8yF3hc": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Meer weergeven"
     }
   ],
   "Asi2Jg": [
@@ -146,7 +104,7 @@
             },
             {
               "type": 0,
-              "value": " hour"
+              "value": " uur"
             }
           ]
         },
@@ -157,7 +115,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " uur"
             }
           ]
         }
@@ -216,19 +174,19 @@
   "HOsSgX": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Meer informatie"
     }
   ],
   "JXhiR+": [
     {
       "type": 0,
-      "value": "We couldn't find any results"
+      "value": "Er zijn geen apparaten gevonden"
     }
   ],
   "LgbKvU": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Opmerking"
     }
   ],
   "Mb/Vp8": [
@@ -282,7 +240,7 @@
   "QQYzHC": [
     {
       "type": 0,
-      "value": "Context menu for "
+      "value": "Contextmenu voor "
     },
     {
       "type": 1,
@@ -290,7 +248,7 @@
     },
     {
       "type": 0,
-      "value": " card"
+      "value": "-kaart"
     }
   ],
   "Qu1HkA": [
@@ -306,7 +264,7 @@
   "RYIxqe": [
     {
       "type": 0,
-      "value": "Currently there are no suggestions available with your selection."
+      "value": "Er zijn momenteel geen suggesties beschikbaar met uw selectie."
     }
   ],
   "RhH4pF": [
@@ -320,7 +278,7 @@
             },
             {
               "type": 0,
-              "value": " minute"
+              "value": " minuut"
             }
           ]
         },
@@ -331,7 +289,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " minuten"
             }
           ]
         }
@@ -360,19 +318,19 @@
   "TY45/m": [
     {
       "type": 0,
-      "value": "There are no recent connectors to show"
+      "value": "Er zijn geen recente connectors die kunnen worden weergegeven"
     }
   ],
   "TdTXXf": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Meer informatie"
     }
   ],
   "UIdPNN": [
     {
       "type": 0,
-      "value": "Operations"
+      "value": "Bewerkingen"
     }
   ],
   "UcKJO+": [
@@ -403,10 +361,46 @@
       "value": "max"
     }
   ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours"
+    }
+  ],
   "XEdXNu": [
     {
       "type": 0,
       "value": "Recent"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconds"
     }
   ],
   "YIBDSH": [
@@ -422,7 +416,7 @@
   "Z79N+I": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Een verbinding is vereist"
     }
   ],
   "ZazdvR": [
@@ -476,7 +470,7 @@
   "fRxVuK": [
     {
       "type": 0,
-      "value": "Learn more about creating connectors."
+      "value": "Meer informatie over het maken van connectoren."
     }
   ],
   "ftwXvc": [
@@ -500,7 +494,7 @@
   "h9XgiJ": [
     {
       "type": 0,
-      "value": "No"
+      "value": "Nee"
     }
   ],
   "hN7iBP": [
@@ -514,7 +508,7 @@
             },
             {
               "type": 0,
-              "value": " second"
+              "value": " seconden"
             }
           ]
         },
@@ -525,7 +519,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " seconden"
             }
           ]
         }
@@ -593,6 +587,24 @@
       "value": "Er is een fout opgetreden bij het laden van het onderdeel."
     }
   ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutes"
+    }
+  ],
   "lIEejV": [
     {
       "type": 0,
@@ -602,53 +614,39 @@
   "lUTDU8": [
     {
       "type": 0,
-      "value": "We couldn't find any results for "
+      "value": "Er zijn geen resultaten voor "
     },
     {
       "type": 1,
       "value": "filterText"
+    },
+    {
+      "type": 0,
+      "value": " gevonden"
     }
   ],
   "m7Y6Qf": [
     {
       "type": 0,
-      "value": "Testing"
+      "value": "Testen"
     }
   ],
   "mE/bhX": [
     {
       "type": 0,
-      "value": "Yes"
+      "value": "Ja"
     }
   ],
   "orvpWh": [
     {
       "type": 0,
-      "value": "Go back"
-    }
-  ],
-  "ozs7Yp": [
-    {
-      "type": 1,
-      "value": "minutes"
-    },
-    {
-      "type": 0,
-      "value": "minutes "
-    },
-    {
-      "type": 1,
-      "value": "seconds"
-    },
-    {
-      "type": 0,
-      "value": "seconds"
+      "value": "Terug"
     }
   ],
   "q3+FXI": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Wissen"
     }
   ],
   "qGfwxW": [
@@ -660,7 +658,7 @@
   "qNMcGy": [
     {
       "type": 0,
-      "value": "Clear?"
+      "value": "Wissen?"
     }
   ],
   "qSt0Sb": [
@@ -680,7 +678,7 @@
             },
             {
               "type": 0,
-              "value": " day"
+              "value": " dag"
             }
           ]
         },
@@ -691,7 +689,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " dagen"
             }
           ]
         }
@@ -704,7 +702,7 @@
   "sxcPBW": [
     {
       "type": 0,
-      "value": "Recommended based on your activity"
+      "value": "Aanbevolen op basis van uw gebruik"
     }
   ],
   "t74v7p": [
@@ -752,7 +750,7 @@
   "vRZZPL": [
     {
       "type": 0,
-      "value": "Choose an operation"
+      "value": "Kies een bewerking"
     }
   ],
   "vWe94i": [
@@ -770,13 +768,13 @@
   "yD9JIy": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Verbindingsnaam"
     }
   ],
   "yKB5nP": [
     {
       "type": 0,
-      "value": "Want to create your own connectors?"
+      "value": "Wilt u uw eigen connectors maken?"
     }
   ]
 }
