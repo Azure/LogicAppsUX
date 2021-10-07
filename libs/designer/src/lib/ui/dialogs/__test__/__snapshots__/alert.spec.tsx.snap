@@ -23,8 +23,14 @@ exports[`ui/dialogs/_alert should render 1`] = `
       onClick={[MockFunction]}
     >
       <Memo(MemoizedFormattedMessage)
-        defaultMessage="OK"
-        description="OK message appearing on a alert message modal."
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "OK",
+            },
+          ]
+        }
         id="uN4zFU"
       />
     </CustomizedPrimaryButton>

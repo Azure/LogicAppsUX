@@ -31,7 +31,7 @@ export function Alert(props: AlertProps): JSX.Element | null {
       {message}
       <DialogFooter>
         <PrimaryButton className="dialog-ok-button" onClick={onDismiss}>
-          <FormattedMessage defaultMessage="OK" id="uN4zFU" description="OK message appearing on a alert message modal." />
+          <FormattedMessage defaultMessage="OK" description="OK message appearing on a alert message modal." />
         </PrimaryButton>
       </DialogFooter>
     </Dialog>

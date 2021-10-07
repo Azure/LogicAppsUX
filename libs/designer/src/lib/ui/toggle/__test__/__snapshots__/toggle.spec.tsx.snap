@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/toggle Collapsed should render as collapsed 1`] = `
+<Memo(MemoizedFormattedMessage)
+  defaultMessage={
+    Array [
+      Object {
+        "type": 0,
+        "value": "Show advanced options",
+      },
+    ]
+  }
+  id="lIEejV"
+/>
+`;
+
+exports[`ui/toggle Expanded should render as expanded 1`] = `
+<Memo(MemoizedFormattedMessage)
+  defaultMessage={
+    Array [
+      Object {
+        "type": 0,
+        "value": "Hide advanced options",
+      },
+    ]
+  }
+  id="Asi2Jg"
+/>
+`;

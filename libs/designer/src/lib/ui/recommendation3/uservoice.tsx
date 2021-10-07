@@ -35,7 +35,6 @@ export const UserVoice: React.FC<UserVoiceProps> = (props) => {
   const defaultHeaderText = intl.formatMessage({
     description: 'A label on a link to take users to a place where they can suggest features.',
     defaultMessage: "Don't see what you need?",
-    id: 'EGXrx5',
   });
   const {
     disabled = false,

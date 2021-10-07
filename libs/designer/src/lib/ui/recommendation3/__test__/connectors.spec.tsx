@@ -74,11 +74,7 @@ describe('ui/recommendation3/_connectors', () => {
 
       const [title, clearButton]: any[] = React.Children.toArray(connectors.props.children); // tslint:disable-line: no-any
       expect(title.props.children).toEqual(
-        <FormattedMessage
-          defaultMessage="Recent"
-          description="This is a header for a section that shows recently used connecters"
-          id="XEdXNu"
-        />
+        <FormattedMessage defaultMessage="Recent" description="This is a header for a section that shows recently used connecters" />
       );
       expect(title.props.className).toBe(classNames.recentlyUsedConnectorsTitle);
       expect(clearButton.type.name).toBe('ClearRecentlyUsedList');

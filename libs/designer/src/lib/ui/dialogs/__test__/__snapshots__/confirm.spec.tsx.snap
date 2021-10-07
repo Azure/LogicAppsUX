@@ -23,8 +23,14 @@ exports[`ui/dialogs/_confirm should render 1`] = `
       onClick={[MockFunction]}
     >
       <Memo(MemoizedFormattedMessage)
-        defaultMessage="OK"
-        description="OK message appearing on a confirmation dialog."
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "OK",
+            },
+          ]
+        }
         id="7GSk99"
       />
     </CustomizedPrimaryButton>
@@ -32,8 +38,14 @@ exports[`ui/dialogs/_confirm should render 1`] = `
       onClick={[MockFunction]}
     >
       <Memo(MemoizedFormattedMessage)
-        defaultMessage="Cancel"
-        description="Cancel message appearing on a confirmation dialog."
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Cancel",
+            },
+          ]
+        }
         id="iUs7pv"
       />
     </CustomizedDefaultButton>

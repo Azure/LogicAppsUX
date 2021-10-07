@@ -212,12 +212,11 @@ export class Recommendation extends React.Component<RecommendationProps, Partial
         {
           text: intl.formatMessage({
             defaultMessage: 'Want to create your own connectors?',
-            id: 'yKB5nP',
           }),
         },
         {
           href: Constants.RECOMMENDATION_CREATE_OPERATION_HELP_URL,
-          text: intl.formatMessage({ defaultMessage: 'Learn more about creating connectors.', id: 'fRxVuK' }),
+          text: intl.formatMessage({ defaultMessage: 'Learn more about creating connectors.' }),
         },
       ],
     },
@@ -228,7 +227,6 @@ export class Recommendation extends React.Component<RecommendationProps, Partial
     showSuggestedItems: true,
     title: intl.formatMessage({
       defaultMessage: 'Choose an operation',
-      id: 'vRZZPL',
     }),
   };
 
@@ -683,7 +681,6 @@ class RecommendationPicker extends React.Component<RecommendationProps, Partial<
 
     const DOCUMENTATION_URLDESCRIPTION = intl.formatMessage({
       defaultMessage: 'Learn more',
-      id: 'TdTXXf',
     });
     if (documentation) {
       return (
@@ -819,7 +816,7 @@ function ConnectionOperation(props: ConnectionOperationProps): JSX.Element {
   const showEnvironmentBadge = showBadge && !!environmentBadge;
   const badgeName = showEnvironmentBadge ? environmentBadge.name : undefined;
   const badgeDescription = showEnvironmentBadge ? environmentBadge.description : undefined;
-  const ariaLabel = intl.formatMessage({ defaultMessage: '{title}: More info', id: '/QnQhm' }, { title });
+  const ariaLabel = intl.formatMessage({ defaultMessage: '{title}: More info' }, { title });
 
   return (
     <div className="msla-operation-flexbox" role="presentation">
@@ -834,8 +831,8 @@ function ConnectionOperation(props: ConnectionOperationProps): JSX.Element {
         <div className="msla-operation-text">
           <div className="msla-operation-title">
             {title}
-            <Badge text={intl.formatMessage({ defaultMessage: '(preview)', id: 'ug/8l6' })} visible={!!preview} />
-            <Badge className="msla-premium" text={intl.formatMessage({ defaultMessage: 'Premium', id: 'C5xzTC' })} visible={!!premium} />
+            <Badge text={intl.formatMessage({ defaultMessage: '(preview)' })} visible={!!preview} />
+            <Badge className="msla-premium" text={intl.formatMessage({ defaultMessage: 'Premium' })} visible={!!premium} />
             <Badge className="msla-ise" tag="div" text={badgeName as any} title={badgeDescription} visible={showEnvironmentBadge} />
           </div>
           <div className="msla-operation-subtitle">{subtitle}</div>

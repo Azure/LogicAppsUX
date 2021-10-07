@@ -53,7 +53,6 @@ export const Checkbox = (props: CheckboxProps) => {
 
   const moreInfoMessage = intl.formatMessage({
     defaultMessage: 'More Info',
-    id: 'vWe94i',
   });
   return (
     <div className={css(className, 'msla-checkbox')}>

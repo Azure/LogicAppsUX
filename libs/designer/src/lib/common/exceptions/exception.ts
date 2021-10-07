@@ -19,7 +19,6 @@ export function includeInnerExceptionMessage(error: Error | Exception): string {
   const intl = getIntl();
   const defaultErrorMessage = intl.formatMessage({
     defaultMessage: 'Unexpected error',
-    id: '1rlBUx',
   });
   const messages = [
     ...(error?.message ? [error.message] : []),

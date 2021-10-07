@@ -56,7 +56,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         <div className={errorClassName}>
           <Icon className="msla-card-title-button-icon" iconName="Error" styles={errorStyle} />
           <span style={errorTextStyle}>
-            <FormattedMessage defaultMessage="Error loading component." id="kjJiqd"></FormattedMessage>
+            <FormattedMessage defaultMessage="Error loading component."></FormattedMessage>
           </span>
         </div>
       );

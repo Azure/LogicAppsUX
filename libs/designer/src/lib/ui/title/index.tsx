@@ -83,7 +83,6 @@ export class InnerControlTitle extends React.Component<TitleProps & WrappedCompo
 
     const editingCardTitle = intl.formatMessage({
       defaultMessage: 'Editing card title',
-      id: '20FJMM',
     });
     if (isEditingTitle) {
       return (

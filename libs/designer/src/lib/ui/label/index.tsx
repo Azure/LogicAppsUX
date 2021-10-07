@@ -18,7 +18,7 @@ const RequiredParameterMarker = (props: RequiredParameterMarkerProps) => {
   const intl = useIntl();
   const ariaLabel = intl.formatMessage({
     defaultMessage: 'Required',
-    id: 'qSt0Sb',
+
     description: 'Accessibility prefix for the input label',
   });
   if (props.isRequiredField) {

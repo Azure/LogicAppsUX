@@ -55,13 +55,13 @@ const ReadOnlyComment = ({
   const { iconName, styles } = commentIconInfo;
   const commentLabelText = intl.formatMessage({
     defaultMessage: 'Comment',
-    id: 'hPIR4j',
+
     description: 'Label for a text field',
   });
 
   const commentHideText = intl.formatMessage({
     defaultMessage: 'Hide this comment',
-    id: 'ZazdvR',
+
     description: 'Comment on a button in a tooltip to hide comment control',
   });
   const onClick = useCallback(
@@ -121,12 +121,12 @@ const EditableComment = ({
   const textboxRef = React.useRef<ITextField | null>(null);
   const commentText = intl.formatMessage({
     defaultMessage: 'Comment',
-    id: 'hPIR4j',
+
     description: 'Label for a text field',
   });
   const commentPlaceholderText = intl.formatMessage({
     defaultMessage: 'Add a short comment',
-    id: '1KSzxz',
+
     description: 'Placeholder for a textbox asking for comments',
   });
 

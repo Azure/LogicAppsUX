@@ -35,10 +35,12 @@
         ],
         "formatjs/enforce-default-message": ["error", "literal"],
         "formatjs/no-multiple-whitespaces": [1],
-        "formatjs/enforce-id": [
+        "formatjs/no-multiple-plurals": ["error"],
+        "formatjs/no-id": ["error"],
+        "formatjs/no-complex-selectors": [
           "error",
           {
-            "idInterpolationPattern": "[sha512:contenthash:base64:6]"
+            "limit": 4
           }
         ]
       }

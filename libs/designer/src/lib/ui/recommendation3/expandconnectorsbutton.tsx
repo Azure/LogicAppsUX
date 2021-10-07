@@ -19,7 +19,7 @@ export const ExpandConnectorsButton: React.FC<ExpandConnectorsButtonProps> = (pr
 
   const ariaLabelDefaultText = intl.formatMessage({
     defaultMessage: 'Expand list of connectors',
-    id: 'b0Ar6Y',
+
     description: 'Accessability label on  a button to expand a list of connectors.',
   });
   const { ariaLabel = ariaLabelDefaultText, disabled = false, onExpandConnectorsClick } = props;
