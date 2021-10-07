@@ -1,0 +1,187 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Condition_2": {
+        "actions": {},
+        "else": {
+          "actions": {
+            "Terminate": {
+              "inputs": {
+                "runError": {
+                  "code": "DidNotFindExpectedGoals"
+                },
+                "runStatus": "Failed"
+              },
+              "runAfter": {},
+              "type": "Terminate"
+            }
+          }
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": ["@variables('foundGoalIds')", "@variables('expectedGoalIds')"]
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_expected_goal_ids": ["Succeeded"]
+        },
+        "type": "If"
+      },
+      "Create_a_goal": {
+        "inputs": {
+          "body": {
+            "name": "get_multiple_goals_succeeds_1_(@{variables('now')})",
+            "note": "",
+            "status": "Not started"
+          },
+          "host": {
+            "connection": {
+              "referenceName": "powerbi-andrewga"
+            }
+          },
+          "method": "post",
+          "path": "/v1.0/myOrg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals",
+          "queries": {
+            "pbi_source": "powerAutomate"
+          }
+        },
+        "runAfter": {
+          "Initialize_variable": ["Succeeded"]
+        },
+        "type": "ApiConnection"
+      },
+      "Create_a_goal_2": {
+        "inputs": {
+          "body": {
+            "name": "get_multiple_goals_succeeds_2_(@{variables('now')})",
+            "note": "",
+            "status": "Not started"
+          },
+          "host": {
+            "connection": {
+              "referenceName": "powerbi-andrewga"
+            }
+          },
+          "method": "post",
+          "path": "/v1.0/myOrg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals",
+          "queries": {
+            "pbi_source": "powerAutomate"
+          }
+        },
+        "runAfter": {
+          "Create_a_goal": ["Succeeded"]
+        },
+        "type": "ApiConnection"
+      },
+      "For_each": {
+        "actions": {
+          "Condition": {
+            "actions": {
+              "Append_to_string_variable": {
+                "inputs": {
+                  "name": "foundGoalIds",
+                  "value": "@{items('For_each')?['id']},"
+                },
+                "runAfter": {},
+                "type": "AppendToStringVariable"
+              }
+            },
+            "expression": {
+              "or": [
+                {
+                  "equals": ["@items('For_each')?['id']", "@body('Create_a_goal')['id']"]
+                },
+                {
+                  "equals": ["@items('For_each')?['id']", "@body('Create_a_goal_2')['id']"]
+                }
+              ]
+            },
+            "runAfter": {},
+            "type": "If"
+          }
+        },
+        "foreach": "@body('Get_multiple_goals')?['value']",
+        "runAfter": {
+          "Initialize_foundGoalsIds": ["Succeeded"]
+        },
+        "type": "Foreach"
+      },
+      "Get_multiple_goals": {
+        "inputs": {
+          "host": {
+            "connection": {
+              "referenceName": "powerbi-andrewga"
+            }
+          },
+          "method": "get",
+          "path": "/v1.0/myOrg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals",
+          "queries": {
+            "$expand": "aggregations",
+            "pbi_source": "powerAutomate"
+          }
+        },
+        "runAfter": {
+          "Create_a_goal_2": ["Succeeded"]
+        },
+        "type": "ApiConnection"
+      },
+      "Initialize_expected_goal_ids": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "expectedGoalIds",
+              "type": "string",
+              "value": "@{body('Create_a_goal')['id']},@{body('Create_a_goal_2')['id']},"
+            }
+          ]
+        },
+        "runAfter": {
+          "For_each": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Initialize_foundGoalsIds": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "foundGoalIds",
+              "type": "string"
+            }
+          ]
+        },
+        "runAfter": {
+          "Get_multiple_goals": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Initialize_variable": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "now",
+              "type": "string",
+              "value": "@utcNow()"
+            }
+          ]
+        },
+        "runAfter": {},
+        "type": "InitializeVariable"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1
+        },
+        "type": "Recurrence"
+      }
+    }
+  },
+  "kind": "Stateful"
+}

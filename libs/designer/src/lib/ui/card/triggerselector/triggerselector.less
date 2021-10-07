@@ -1,0 +1,82 @@
+.msla-trigger-selector {
+  .msla-trigger-selector-buttons {
+    margin: 0.5em;
+    padding-bottom: 0.5em;
+
+    button {
+      display: block; /* overrides .msla-card-button-primary */
+      margin: 0 auto;
+    }
+  }
+
+  .msla-trigger-selector-label {
+    font-family: 'Segoe WP', 'Segoe UI', sans-serif;
+    margin: 0.5em;
+    text-transform: uppercase;
+  }
+
+  .msla-trigger-selector-list {
+    max-height: 24em;
+    overflow-y: auto;
+
+    ul {
+      list-style-type: none;
+      margin: 0.5em;
+      padding: 0;
+
+      li {
+        font-family: 'Segoe WP', 'Segoe UI', sans-serif;
+        padding: 0;
+
+        &.msla-trigger-selector-list-item-selected {
+          a {
+            background: #bbb;
+          }
+        }
+
+        a {
+          color: #000;
+          display: block;
+          margin: 0 -0.5em;
+          padding: 0.5em 1em;
+          position: relative;
+
+          .msla-trigger-selector-list-item-checked,
+          .msla-trigger-selector-list-item-description,
+          .msla-trigger-selector-list-item-name {
+            display: block;
+          }
+
+          .msla-trigger-selector-list-item-checked {
+            position: absolute;
+            top: 0.5em;
+            left: 0.5em;
+          }
+
+          .msla-trigger-selector-list-item-description {
+            font-size: 75%;
+            padding-left: 1rem;
+          }
+
+          .msla-trigger-selector-list-item-name {
+            font-size: 100%;
+            padding-left: 1em;
+          }
+
+          &:link,
+          &:hover {
+            text-decoration: none;
+          }
+
+          &:hover {
+            background-color: #d3d3d3;
+          }
+        }
+      }
+    }
+
+    .ms-Nav {
+      padding: 0 8px;
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx"],
+  "plugins": ["@nrwl/nx", "formatjs"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -24,7 +24,24 @@
     {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nrwl/nx/typescript"],
-      "rules": {}
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "formatjs/enforce-placeholders": [
+          "error",
+          {
+            "ignoreList": ["foo"]
+          }
+        ],
+        "formatjs/enforce-default-message": ["error", "literal"],
+        "formatjs/no-multiple-whitespaces": [1],
+        "formatjs/enforce-id": [
+          "error",
+          {
+            "idInterpolationPattern": "[sha512:contenthash:base64:6]"
+          }
+        ]
+      }
     },
     {
       "files": ["*.js", "*.jsx"],

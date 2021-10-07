@@ -1,0 +1,50 @@
+@import (reference) '../../variables.less';
+
+.msla-operation-setting-section {
+    text-align: left;
+
+    .msla-operation-setting {
+        display: flex;
+
+        .msla-setting-label {
+            margin-top: 5px;
+            width: @parameter-label-width;
+            flex-shrink: 0;
+
+            label {
+                display: inline-block;
+            }
+
+            .msla-flyout-icon {
+                width: 14px;
+                height: 14px;
+                margin: 0;
+            }
+        }
+
+        .msla-setting-input {
+            min-width: @card-min-width;
+            width: @card-max-width;
+
+            .msla-dropdown-container {
+                margin-bottom: @parameter-interval-margin;
+
+                [class^=ms-Dropdown] {
+                    height: 32px;
+                    line-height: 32px;
+                }
+            }
+        }
+    }
+
+    .ms-Toggle-label {
+        display: inline-block;
+        width: @parameter-label-width;
+        font-size: @card-label-font-size;
+        vertical-align: middle;
+    }
+
+    [class^=ms-Toggle-slider] {
+        display: inline-block;
+    }
+}

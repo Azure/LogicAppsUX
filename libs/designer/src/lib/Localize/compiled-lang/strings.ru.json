@@ -1,0 +1,892 @@
+{
+  "/NDLmg": [
+    {
+      "type": 0,
+      "value": "Ожидание"
+    }
+  ],
+  "/QnQhm": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": ": More info"
+    }
+  ],
+  "0ZlNtf": [
+    {
+      "type": 0,
+      "value": "Выполнено с повторными попытками"
+    }
+  ],
+  "1KSzxz": [
+    {
+      "type": 0,
+      "value": "Добавьте краткий комментарий"
+    }
+  ],
+  "1rlBUx": [
+    {
+      "type": 0,
+      "value": "Неожиданная ошибка"
+    }
+  ],
+  "20FJMM": [
+    {
+      "type": 0,
+      "value": "Изменяется заголовок карты"
+    }
+  ],
+  "3V6GkP": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "days "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "hours"
+    }
+  ],
+  "3kI7xF": [
+    {
+      "type": 0,
+      "value": "Со сбоем"
+    }
+  ],
+  "47FYwb": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "5CTOi9": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
+  "5ilpFw": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "hours "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "minutes"
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "Назад"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "ОК"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Не удается отобразить конструктор из-за наличия нескольких триггеров в определении."
+    }
+  ],
+  "8yF3hc": [
+    {
+      "type": 0,
+      "value": "See more"
+    }
+  ],
+  "Asi2Jg": [
+    {
+      "type": 0,
+      "value": "Скрыть расширенные параметры"
+    }
+  ],
+  "C5xzTC": [
+    {
+      "type": 0,
+      "value": "Premium"
+    }
+  ],
+  "EGXrx5": [
+    {
+      "type": 0,
+      "value": "Не видите то, что вам нужно?"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hour"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "GLahvg": [
+    {
+      "type": 0,
+      "value": "Закрыть"
+    }
+  ],
+  "Gx6rDL": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " item matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "HOsSgX": [
+    {
+      "type": 0,
+      "value": "More info"
+    }
+  ],
+  "JXhiR+": [
+    {
+      "type": 0,
+      "value": "We couldn't find any results"
+    }
+  ],
+  "LgbKvU": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "Следующее со сбоем"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ч "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " мин"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "Выберите управляемое удостоверение"
+    }
+  ],
+  "P8QaSQ": [
+    {
+      "type": 0,
+      "value": "Копировать URL-адрес"
+    }
+  ],
+  "PF87Ew": [
+    {
+      "type": 0,
+      "value": "Выполнено"
+    }
+  ],
+  "PaPPLr": [
+    {
+      "type": 0,
+      "value": "Прервано"
+    }
+  ],
+  "QQYzHC": [
+    {
+      "type": 0,
+      "value": "Context menu for "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " card"
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h"
+    }
+  ],
+  "RYIxqe": [
+    {
+      "type": 0,
+      "value": "Currently there are no suggestions available with your selection."
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutes"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutes"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minute"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutes"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m"
+    }
+  ],
+  "T8Xqt9": [
+    {
+      "type": 0,
+      "value": "Сбой"
+    }
+  ],
+  "TY45/m": [
+    {
+      "type": 0,
+      "value": "There are no recent connectors to show"
+    }
+  ],
+  "TdTXXf": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
+  "UIdPNN": [
+    {
+      "type": 0,
+      "value": "Operations"
+    }
+  ],
+  "UcKJO+": [
+    {
+      "type": 0,
+      "value": "We couldn't find any "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperationKindText"
+    },
+    {
+      "type": 0,
+      "value": " for "
+    },
+    {
+      "type": 1,
+      "value": "filterText"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "из "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "XEdXNu": [
+    {
+      "type": 0,
+      "value": "Recent"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "d"
+    }
+  ],
+  "Z79N+I": [
+    {
+      "type": 0,
+      "value": "Connection required"
+    }
+  ],
+  "ZazdvR": [
+    {
+      "type": 0,
+      "value": "Скрыть этот комментарий"
+    }
+  ],
+  "b0Ar6Y": [
+    {
+      "type": 0,
+      "value": "Развернуть список соединителей"
+    }
+  ],
+  "b5su3H": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " из "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "bQLLgV": [
+    {
+      "type": 0,
+      "value": "We couldn't find any "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperationKindText"
+    }
+  ],
+  "cj+kyo": [
+    {
+      "type": 0,
+      "value": "Отменено"
+    }
+  ],
+  "e4Onhn": [
+    {
+      "type": 0,
+      "value": "Не указано"
+    }
+  ],
+  "fRxVuK": [
+    {
+      "type": 0,
+      "value": "Learn more about creating connectors."
+    }
+  ],
+  "ftwXvc": [
+    {
+      "type": 0,
+      "value": "Пропущено"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "Предыдущее со сбоем"
+    }
+  ],
+  "gjBiyj": [
+    {
+      "type": 0,
+      "value": "Загрузка…"
+    }
+  ],
+  "h9XgiJ": [
+    {
+      "type": 0,
+      "value": "No"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " seconds"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " seconds"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " second"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " seconds"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hPIR4j": [
+    {
+      "type": 0,
+      "value": "Комментарий"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "Далее"
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "k41+13": [
+    {
+      "type": 0,
+      "value": "Пропущено"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " мин "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " с"
+    }
+  ],
+  "kjJiqd": [
+    {
+      "type": 0,
+      "value": "Ошибка при загрузке компонента."
+    }
+  ],
+  "lIEejV": [
+    {
+      "type": 0,
+      "value": "Показать расширенные параметры"
+    }
+  ],
+  "lUTDU8": [
+    {
+      "type": 0,
+      "value": "We couldn't find any results for "
+    },
+    {
+      "type": 1,
+      "value": "filterText"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "Testing"
+    }
+  ],
+  "mE/bhX": [
+    {
+      "type": 0,
+      "value": "Yes"
+    }
+  ],
+  "orvpWh": [
+    {
+      "type": 0,
+      "value": "Go back"
+    }
+  ],
+  "ozs7Yp": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "minutes "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "seconds"
+    }
+  ],
+  "q3+FXI": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "Управляемое удостоверение"
+    }
+  ],
+  "qNMcGy": [
+    {
+      "type": 0,
+      "value": "Clear?"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "Требуется"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " days"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " days"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " day"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " days"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "sxcPBW": [
+    {
+      "type": 0,
+      "value": "Recommended based on your activity"
+    }
+  ],
+  "t74v7p": [
+    {
+      "type": 0,
+      "value": "(preview)"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " дн. "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ч"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "ОК"
+    }
+  ],
+  "ug/8l6": [
+    {
+      "type": 0,
+      "value": "(preview)"
+    }
+  ],
+  "unHYHq": [
+    {
+      "type": 0,
+      "value": "Premium"
+    }
+  ],
+  "vRZZPL": [
+    {
+      "type": 0,
+      "value": "Choose an operation"
+    }
+  ],
+  "vWe94i": [
+    {
+      "type": 0,
+      "value": "Дополнительные сведения"
+    }
+  ],
+  "wHYQyg": [
+    {
+      "type": 0,
+      "value": "Время ожидания истекло"
+    }
+  ],
+  "yD9JIy": [
+    {
+      "type": 0,
+      "value": "Connection name"
+    }
+  ],
+  "yKB5nP": [
+    {
+      "type": 0,
+      "value": "Want to create your own connectors?"
+    }
+  ]
+}

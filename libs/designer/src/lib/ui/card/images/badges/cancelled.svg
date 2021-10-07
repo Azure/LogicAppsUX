@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="18px" height="18px" viewBox="0 0 18 18" style="enable-background:new 0 0 18 18;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#A0A1A2;}
+	.st1{fill:#FFFFFF;}
+</style>
+<g>
+	<circle class="st0" cx="9" cy="9" r="8.53"/>
+	<path class="st1" d="M9,18c-4.96,0-9-4.04-9-9s4.04-9,9-9s9,4.04,9,9S13.96,18,9,18z M9,0.95C4.56,0.95,0.95,4.56,0.95,9
+		S4.56,17.05,9,17.05s8.05-3.61,8.05-8.05S13.44,0.95,9,0.95z"/>
+</g>
+<polygon class="st1" points="12.38,6.62 11.38,5.62 9,8 6.62,5.62 5.62,6.62 8,9 5.62,11.38 6.62,12.38 9,10 11.38,12.38 
+	12.38,11.38 10,9 "/>
+</svg>

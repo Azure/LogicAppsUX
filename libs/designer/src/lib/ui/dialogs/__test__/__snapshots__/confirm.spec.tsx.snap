@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/dialogs/_confirm should render 1`] = `
+<Dialog
+  dialogContentProps={
+    Object {
+      "title": "Title",
+    }
+  }
+  hidden={false}
+  modalProps={
+    Object {
+      "firstFocusableSelector": "dialog-ok-button",
+      "isBlocking": true,
+    }
+  }
+  onDismiss={[MockFunction]}
+>
+  Message
+  <StyledDialogFooterBase>
+    <CustomizedPrimaryButton
+      className="dialog-ok-button"
+      onClick={[MockFunction]}
+    >
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage="OK"
+        description="OK message appearing on a confirmation dialog."
+        id="7GSk99"
+      />
+    </CustomizedPrimaryButton>
+    <CustomizedDefaultButton
+      onClick={[MockFunction]}
+    >
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage="Cancel"
+        description="Cancel message appearing on a confirmation dialog."
+        id="iUs7pv"
+      />
+    </CustomizedDefaultButton>
+  </StyledDialogFooterBase>
+</Dialog>
+`;

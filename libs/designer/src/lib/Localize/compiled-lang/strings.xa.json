@@ -1,0 +1,78 @@
+{
+  "20FJMM": [
+    {
+      "type": 0,
+      "value": "Ḕḋíṭíńĝ ćâŕḋ ṭíṭĺè"
+    }
+  ],
+  "Asi2Jg": [
+    {
+      "type": 0,
+      "value": "Ḣíḋè âḋṿâńćèḋ ŏṗṭíŏńś"
+    }
+  ],
+  "Gx6rDL": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "ńŏ íṭèṁś ṁâṭćḫèḋ."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " íṭèṁ ṁâṭćḫèḋ."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " íṭèṁś ṁâṭćḫèḋ."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "P8QaSQ": [
+    {
+      "type": 0,
+      "value": "Ḉŏṗẏ ŨŔĻ"
+    }
+  ],
+  "gjBiyj": [
+    {
+      "type": 0,
+      "value": "Ļŏâḋíńĝ..."
+    }
+  ],
+  "lIEejV": [
+    {
+      "type": 0,
+      "value": "Ṡḫŏẘ âḋṿâńćèḋ ŏṗṭíŏńś"
+    }
+  ],
+  "vWe94i": [
+    {
+      "type": 0,
+      "value": "Ḿŏŕè Ḭńḟŏ"
+    }
+  ]
+}

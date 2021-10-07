@@ -1,0 +1,28 @@
+@import (reference) '../../variables.less';
+
+.msla-comment-box {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  padding: @parameter-interval-margin @parameter-label-inputbox-margin;
+
+  > span {
+    align-self: center;
+    flex: 1;
+    font-size: @card-body-font-size;
+    margin-left: 10px;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+  }
+
+  > .msla-label {
+    flex: 1 0 100%;
+    margin-bottom: 6px;
+  }
+
+  > div[class^='ms-TextField'] {
+    flex: 1 0 100%;
+  }
+}

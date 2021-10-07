@@ -1,0 +1,133 @@
+.msla-rules-builder {
+  margin-left: 25px;
+
+  .eb-TreeLineGutter {
+    border-color: @brandColor !important;
+  }
+
+  .eb-TreeLineGutter-HookContainer {
+    width: 12px !important;
+    margin-top: 1px !important;
+  }
+
+  .eb-TreeLineGutter-Hook {
+    width: 100% !important;
+    border-color: @brandColor !important;
+  }
+
+  .eb-TreeLineBracket-HookContainer {
+    width: 20px !important;
+  }
+
+  .eb-TreeLineBracket-Hook {
+    width: 100% !important;
+    border-color: @brandColor !important;
+  }
+
+  .eb-Dragpoint {
+    margin-top: 2px !important;
+  }
+
+  .eb-GroupExpressionView {
+    padding: 8px 10px 8px 0 !important;
+
+    .eb-GroupExpressionView-Collapsed {
+      padding-left: 10px !important;
+    }
+  }
+
+  .eb-GroupExpressionView-SelectorCheckbox {
+    margin-top: -3px !important;
+  }
+
+  .eb-GroupExpressionView-TemplateSelector {
+    margin-top: -1px !important;
+  }
+
+  .eb-RowExpressionView-Container {
+    padding: 4px 0 0 0 !important;
+    margin: 4px 0 0 0 !important;
+  }
+
+  .eb-RowExpressionView-SelectorCheckbox {
+    margin-top: 3px !important;
+  }
+}
+
+.msla-rule-parameter {
+  width: 144px;
+  padding: 0 1px;
+  text-align: justify;
+
+  .msla-input-parameter-box,
+  .msla-input-parameter-content {
+    width: 100%;
+  }
+
+  .msla-input-parameter-box {
+    padding-top: 0;
+
+    .msla-input-control {
+      .msla-input-control-value {
+        .msla-input-control-token-item {
+          margin-top: 1px;
+
+          .msla-token-title {
+            max-width: 63px;
+          }
+        }
+      }
+    }
+  }
+
+  .msla-input-control-value {
+    outline: none;
+  }
+
+  .msla-editor-input-control {
+    .msla-editor-input-token {
+      > span {
+        > span {
+          max-width: 57px;
+        }
+      }
+    }
+  }
+
+  .msla-token-recommendation-v2-mobile {
+    .msla-token-recommendation-section {
+      .msla-token-recommendation-token {
+        button {
+          span {
+            max-width: 75px;
+          }
+        }
+      }
+    }
+  }
+}
+
+body.dark {
+  .msla-rules-builder {
+    .eb-TreeLineGutter {
+      border-color: @ms-color-themePrimary !important; /* @brandColor */
+    }
+
+    .eb-TreeLineGutter-Hook {
+      border-color: @ms-color-themePrimary !important; /* @brandColor */
+    }
+
+    .eb-TreeLineBracket-Hook {
+      border-color: @ms-color-themePrimary !important; /* @brandColor */
+    }
+
+    .eb-AddMenu,
+    .eb-RowExpressionView-Container {
+      background-color: @ms-color-white !important;
+    }
+
+    .eb-GroupExpressionView:not(.eb-GroupExpressionView-RootExpression) {
+      border: 1px solid @ms-color-black;
+    }
+  }
+}

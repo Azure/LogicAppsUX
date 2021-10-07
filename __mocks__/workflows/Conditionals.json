@@ -1,0 +1,171 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Condition": {
+        "actions": {
+          "Terminate": {
+            "inputs": {
+              "runStatus": "Succeeded"
+            },
+            "runAfter": {},
+            "type": "Terminate"
+          }
+        },
+        "else": {
+          "actions": {
+            "Terminate_2": {
+              "inputs": {
+                "runError": {
+                  "code": "CreateAndGetGoalFailed",
+                  "message": "Created goal does not match expected goal"
+                },
+                "runStatus": "Failed"
+              },
+              "runAfter": {},
+              "type": "Terminate"
+            }
+          }
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": ["@body('Get_a_goal')['name']", "@variables('goalName')"]
+            },
+            {
+              "equals": ["@body('Get_a_goal')?['owner']", "@variables('goalOwner')"]
+            },
+            {
+              "equals": ["@body('Get_a_goal')?['currentValue']", "@variables('goalValue')"]
+            },
+            {
+              "equals": ["@body('Get_a_goal')?['targetValue']", "@variables('goalTarget')"]
+            },
+            {
+              "equals": ["@body('Get_a_goal')?['status']", "On track"]
+            }
+          ]
+        },
+        "runAfter": {
+          "Get_a_goal": ["Succeeded"]
+        },
+        "type": "If"
+      },
+      "Create_a_goal": {
+        "inputs": {
+          "body": {
+            "name": "@variables('goalName')",
+            "note": "",
+            "owner": "@variables('goalOwner')",
+            "status": "On track",
+            "target": "@{variables('goalTarget')}",
+            "value": "@{variables('goalValue')}"
+          },
+          "host": {
+            "connection": {
+              "referenceName": "powerbi-andrewga"
+            }
+          },
+          "method": "post",
+          "path": "/v1.0/myOrg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals",
+          "queries": {
+            "pbi_source": "powerAutomate"
+          }
+        },
+        "runAfter": {
+          "Initialize_owner": ["Succeeded"]
+        },
+        "type": "ApiConnection"
+      },
+      "Get_a_goal": {
+        "inputs": {
+          "host": {
+            "connection": {
+              "referenceName": "powerbi-andrewga"
+            }
+          },
+          "method": "get",
+          "path": "/v1.0/myOrg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals(@{encodeURIComponent(body('Create_a_goal')['id'])})",
+          "queries": {
+            "$expand": "aggregations",
+            "pbi_source": "powerAutomate"
+          }
+        },
+        "runAfter": {
+          "Create_a_goal": ["Succeeded"]
+        },
+        "type": "ApiConnection"
+      },
+      "Initialize_goal_name": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "goalName",
+              "type": "string",
+              "value": "create_and_get_a_single_goal_succeeds(@{utcNow()})"
+            }
+          ]
+        },
+        "runAfter": {},
+        "type": "InitializeVariable"
+      },
+      "Initialize_goal_target": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "goalTarget",
+              "type": "integer",
+              "value": "@rand(0, 100)"
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_goal_value": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Initialize_goal_value": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "goalValue",
+              "type": "integer",
+              "value": "@rand(0, 100)"
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_goal_name": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Initialize_owner": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "goalOwner",
+              "type": "string",
+              "value": "abc@microsoft.com"
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_goal_target": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1
+        },
+        "type": "Recurrence"
+      }
+    }
+  },
+  "kind": "Stateful"
+}

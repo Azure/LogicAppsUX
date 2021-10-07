@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16.62 12.5">
+    <defs>
+        <style>
+        .a {
+            fill: #0058ad;
+        }
+        </style>
+    </defs>
+    <title>CheckMarkBlue</title>
+    <polygon class="a" points="4.92 10.9 0.8 6.78 0 7.58 4.92 12.5 16.61 0.8 15.82 0 4.92 10.9" />
+</svg>

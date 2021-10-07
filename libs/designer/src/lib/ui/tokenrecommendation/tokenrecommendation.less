@@ -1,0 +1,92 @@
+@import (reference) '../variables.less';
+
+.msla-tokenrecommendation {
+  margin: 12px 12px 0;
+  color: #5e5e5e;
+  font-size: @token-font-size;
+  font-family: @font-family;
+  padding-bottom: 7px;
+}
+
+.msla-token-flyout {
+  display: inline;
+  .msla-flyout-icon {
+    width: 15px;
+    height: 15px;
+    margin: 0 0 3px 6px;
+  }
+}
+
+.msla-token-list {
+  padding: 3px 0;
+
+  .msla-token-list-title {
+    overflow: hidden;
+    padding: 2px 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      vertical-align: top;
+
+      &.msla-token-list-item {
+        display: inline-block;
+        margin: 3px 5px;
+
+        .msla-token {
+          margin-right: 8px;
+
+          .msla-token-icon {
+            margin-left: -6px;
+            margin-top: -1px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.msla-token {
+  border-width: 0;
+  cursor: pointer;
+  font-size: @token-font-size;
+  height: @token-height;
+  line-height: @token-height;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .msla-token-icon {
+    box-sizing: content-box;
+    display: inline-block;
+    height: (@token-height - 4px); /* remove the top bottom padding */
+    padding: 2px;
+    width: (@token-height - 4px); /* remove the left right padding */
+  }
+
+  .msla-token-title {
+    color: @card-text-color;
+    display: inline-block;
+    margin-left: 8px;
+    max-width: @token-title-max-length;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: @token-height;
+  }
+}
+
+body.dark {
+  .msla-token {
+    .msla-token-title {
+      color: #fff;
+    }
+  }
+}

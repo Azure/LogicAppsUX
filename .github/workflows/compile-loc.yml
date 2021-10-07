@@ -1,0 +1,33 @@
+name: Compile Localization Files
+on:
+  push:
+    branches:
+      - main
+jobs:
+  run:
+    name: Compile Localization Files
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, 'Localized file check-in by OneLocBuild Task')"
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Update source code
+        run: npm run compile:loc
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v7
+        with:
+          author_name: Loc Bot
+          author_email: travisharris@microsoft.com
+          message: 'Compiling Loc Files'
+          add: '*.json'

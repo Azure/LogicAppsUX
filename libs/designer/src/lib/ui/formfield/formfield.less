@@ -1,0 +1,21 @@
+@import (reference) '../variables.less';
+
+.msla-form-field-root {
+  .msla-form-field-field-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+
+    .msla-form-field-children-container {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .msla-form-field-error-label {
+    color: @schema-editor-form-field-error-color;
+    font-size: 12px;
+    font-weight: 400;
+    padding-top: 5px;
+  }
+}

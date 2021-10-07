@@ -1,0 +1,134 @@
+@import (reference) '../variables.less';
+
+/* colors */
+
+.msla-condition-control-fields {
+  .msla-condition-field {
+    select,
+    textarea {
+      border-color: #989898;
+    }
+  }
+}
+
+/* layout */
+
+.msla-condition-control-body {
+  border-collapse: collapse;
+  box-sizing: border-box;
+  display: table;
+  margin: 0 auto;
+
+  &.msla-condition-control-advanced-only {
+    display: block;
+  }
+
+  /* WORKAROUND Disable table display to stack the condition fields when on mobile */
+  @media only screen and (max-width: @designer-desktop-max-width) {
+    display: block;
+    width: 100%;
+  }
+
+  .msla-condition-control-fields {
+    display: table-row;
+
+    /* WORKAROUND Disable table display to stack the condition fields when on mobile */
+    @media only screen and (max-width: @designer-desktop-max-width) {
+      display: block;
+    }
+
+    .msla-condition-control-field {
+      display: table-cell;
+      margin: 5px 0;
+      vertical-align: top;
+      max-width: (@card-min-width - 10px);
+      min-width: (@card-min-width - 10px);
+
+      &.msla-advanced {
+        max-width: none;
+      }
+
+      /* WORKAROUND Disable table display to stack the condition fields when on mobile */
+      @media only screen and (max-width: @designer-desktop-max-width) {
+        display: block;
+        max-width: @card-max-width;
+        width: auto;
+      }
+
+      /* WORKAROUND: adjust the input field's width so it shows the border on the dropdown */
+      textarea {
+        @media only screen and (max-width: @designer-desktop-max-width) {
+          width: 100%;
+        }
+
+        &[disabled] {
+          background-color: @msla-field-disable-color;
+        }
+      }
+
+      /* WORKAROUND: adjust the parameter field's horizontal margin */
+      .msla-input-parameter {
+        /* NOTE(joechung): Make margin between condition control fields narrower so that tokens can fit in these fields. */
+        @adjusted-margin: (@parameter-label-inputbox-margin - 2px);
+        margin: 0 @adjusted-margin;
+
+        .msla-input-parameter-label {
+          display: none;
+        }
+
+        .msla-input-parameter-box {
+          padding-top: 0;
+        }
+
+        .msla-token-recommendation-v2 {
+          padding: 0;
+        }
+      }
+
+      /* text */
+      .msla-input-parameter .msla-condition-control-toggle,
+      .msla-label,
+      .msla-input-control-token-literal,
+      select {
+        font-family: @font-family;
+
+        &[disabled] {
+          background-color: @msla-field-disable-color;
+        }
+      }
+
+      /* WORKAROUND: hide the border on the parameter box to use the border on the dropdown */
+      .msla-input-parameter-box.msla-condition-control-advanced,
+      .msla-input-parameter-box.msla-condition-control-relationship {
+        border: none;
+      }
+
+      /* WORKAROUND: Set height explicitly to work around a Firefox contenteditable cursor position bug. */
+      @-moz-document url-prefix() {
+        .msla-input-control-token-literal {
+          height: (@token-height - 4px * 2);
+        }
+      }
+    }
+  }
+}
+
+.msla-condition-control-buttons {
+  height: 2.5em;
+  position: relative;
+
+  .msla-condition-control-button {
+    display: inline-block;
+
+    &.msla-pull-right {
+      position: absolute;
+      right: 0;
+    }
+
+    .msla-condition-control-toggle {
+      margin-left: inherit;
+      margin-right: inherit;
+      padding: 0;
+    }
+  }
+}

@@ -1,0 +1,35 @@
+@import (reference) '../../variables.less';
+
+.msla-card-scope-body {
+    width: 100%;
+    background-color: @scope-background-color;
+
+    .msla-card-scope-body-canvas {
+        box-sizing: content-box;
+        margin: @parameter-label-inputbox-margin;
+
+        &.no-margin, &:empty {
+            margin: 0;
+        }
+    }
+
+    .msla-scope-action-palette {
+        vertical-align: bottom;
+        display: table;
+        margin: 0 auto;
+        padding-bottom: 5px;
+    }
+}
+
+body.dark {
+    .msla-card-scope-body {
+        background-color: @ms-color-white;
+    }
+
+    .msla-main-page,
+    .msla-panel-root {
+        .msla-card-scope-body {
+            background-color: #252423;
+        }
+    }
+}

@@ -1,6 +1,104 @@
 {
   "version": 2,
   "projects": {
+    "designer": {
+      "root": "libs/designer",
+      "sourceRoot": "libs/designer/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/designer",
+            "tsConfig": "libs/designer/tsconfig.lib.json",
+            "project": "libs/designer/package.json",
+            "entryFile": "libs/designer/src/index.ts",
+            "external": ["react/jsx-runtime"],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "libs/designer/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/designer/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/designer"],
+          "options": {
+            "jestConfig": "libs/designer/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "storybook": {
+          "executor": "@nrwl/storybook:storybook",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "port": 4400,
+            "config": {
+              "configFolder": "libs/designer/.storybook"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        },
+        "build-storybook": {
+          "executor": "@nrwl/storybook:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "uiFramework": "@storybook/react",
+            "outputPath": "dist/storybook/designer",
+            "config": {
+              "configFolder": "libs/designer/.storybook"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        }
+      }
+    },
+    "designer-e2e": {
+      "root": "apps/designer-e2e",
+      "sourceRoot": "apps/designer-e2e/src",
+      "projectType": "application",
+      "targets": {
+        "e2e": {
+          "executor": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/designer-e2e/cypress.json",
+            "devServerTarget": "designer:storybook"
+          },
+          "configurations": {
+            "ci": {
+              "devServerTarget": "designer:storybook:ci"
+            }
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/designer-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    },
     "designer-standalone": {
       "root": "apps/designer-standalone",
       "sourceRoot": "apps/designer-standalone/src",
@@ -15,10 +113,7 @@
             "main": "apps/designer-standalone/src/main.tsx",
             "polyfills": "apps/designer-standalone/src/polyfills.ts",
             "tsConfig": "apps/designer-standalone/tsconfig.app.json",
-            "assets": [
-              "apps/designer-standalone/src/favicon.ico",
-              "apps/designer-standalone/src/assets"
-            ],
+            "assets": ["apps/designer-standalone/src/favicon.ico", "apps/designer-standalone/src/assets"],
             "styles": ["apps/designer-standalone/src/styles.less"],
             "scripts": [],
             "webpackConfig": "@nrwl/react/plugins/webpack"
@@ -65,9 +160,7 @@
           "executor": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": [
-              "apps/designer-standalone/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/designer-standalone/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {

@@ -1,0 +1,44 @@
+@import (reference) './variables.less';
+
+.msla-schema-data-root {
+  .msla-schema-data-command-bar {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: row;
+
+    > *:first-child {
+      flex: 1;
+    }
+  }
+
+  .msla-schema-data-container {
+    .msla-schema-data-json-mode-root {
+      padding-left: 5px;
+
+      .msla-schema-data-json-editor-container {
+        height: 200px;
+        border: 1px solid @schema-editor-json-editor-container-border-color;
+      }
+    }
+
+    .msla-schema-data-free-flow-editor-container {
+      height: 100px;
+      border: 1px solid @schema-editor-json-editor-container-border-color;
+    }
+
+    .msla-schema-data-invalid-property-editor-container {
+      border: 1px dashed @schema-editor-invalid-property-editor-container-border-color;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .msla-schema-data-free-flow-editor-container {
+      width: 100%;
+    }
+
+    .msla-schema-data-toggle-mode {
+      line-height: normal;
+    }
+  }
+}

@@ -1,0 +1,190 @@
+@import (reference) '../variables.less';
+
+.msla-pager {
+  background-color: inherit;
+  box-sizing: border-box;
+  font: 14px @font-family;
+  min-width: 320px;
+  padding: 0.5625em 0.5625em 0;
+  text-align: center;
+
+  .msla-pager-button-bar {
+    display: inline-block;
+    padding-bottom: 0.75em;
+    position: relative;
+
+    input {
+      -moz-appearance: textfield;
+      font-family: @font-family;
+      line-height: 1.35em;
+      margin: 0;
+      padding: 0.25em;
+      width: 5em;
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+  }
+
+  .msla-pager-buttons {
+    a {
+      color: #000;
+      display: inline-block;
+      min-width: 5em;
+      padding: 0.25em;
+      text-align: center;
+      text-decoration: none;
+
+      &:active {
+        color: rgba(0, 0, 0, 0.75);
+      }
+
+      &[aria-disabled='true'] {
+        color: rgba(0, 0, 0, 0.5);
+      }
+
+      .msla-pager-arrow {
+        display: inline-block;
+        margin: 0 0.25em;
+      }
+
+      span {
+        vertical-align: 2px;
+      }
+    }
+
+    .msla-pager-title input,
+    .msla-retrypanel-pager-title-div input {
+      background-color: #fff;
+      color: #000;
+    }
+  }
+
+  &.msla-alternate-layout {
+    text-align: left;
+
+    .msla-pager-button-bar {
+      position: static;
+      width: 100%;
+    }
+
+    .msla-pager-buttons {
+      align-content: flex-start;
+      display: flex;
+      min-width: auto;
+      text-align: initial;
+
+      a {
+        white-space: nowrap;
+      }
+
+      a:first-child {
+        align-self: flex-start;
+      }
+
+      .msla-retrypanel-pager-title-div {
+        display: block;
+        flex: 1;
+        margin-top: 1px;
+        text-align: center;
+
+        @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
+          flex-basis: 288px;
+          margin-top: -1px;
+        }
+      }
+
+      a:last-child {
+        align-self: flex-end;
+      }
+    }
+  }
+}
+
+.msla-pager-title {
+  display: inline-block;
+  padding: 0 10px;
+  vertical-align: 2px;
+}
+
+.msla-pager-v2 {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 5; /* NOTE(joechung): Force pager to render over lines. */
+
+  &.alternate {
+    justify-content: space-around;
+  }
+
+  > * {
+    align-self: flex-start;
+  }
+
+  > *:not(:last-child) {
+    margin-right: 4px;
+  }
+
+  > .msla-pager-v2--inner {
+    height: 32px;
+    display: flex;
+
+    > * {
+      align-self: center;
+    }
+  }
+
+  .msla-pager-failed-container {
+    position: relative;
+
+    > .msla-pager-failed-icon {
+      cursor: pointer;
+      pointer-events: none;
+      position: absolute;
+      color: #a80000;
+      background-color: transparent;
+      top: 25%;
+      height: 24px;
+    }
+  }
+}
+
+.msla-card-foreach-body,
+.msla-card-until-body-canvas {
+  .msla-pager-v2 {
+    margin-bottom: 30px;
+  }
+}
+
+body.dark {
+  .msla-pager {
+    .msla-pager-buttons {
+      a {
+        color: @ms-color-black;
+
+        &:active {
+          color: rgba(255, 255, 255, 0.75);
+        }
+
+        &[aria-disabled='true'] {
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+
+      .msla-pager-title input,
+      .msla-retrypanel-pager-title-div input {
+        background-color: @ms-color-white;
+        border: 1px solid @ms-color-neutralTertiary;
+        color: @ms-color-black;
+      }
+    }
+  }
+
+  .msla-pager-v2 .msla-pager-failed-container > .msla-pager-failed-icon {
+    color: #f1707b;
+  }
+}

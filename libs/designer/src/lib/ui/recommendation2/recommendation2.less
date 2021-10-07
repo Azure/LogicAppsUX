@@ -1,0 +1,494 @@
+@import (reference) '../variables.less';
+
+@recommendation-list-height: 471.5px;
+@recommendation-service-icon-width-action: 68px;
+@recommendation-service-icon-width-trigger: 72px;
+
+.msla-recommendation-v2 {
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  color: @card-text-color;
+  font-family: @font-family;
+  font-size: @card-header-font-size;
+  margin: 0 auto;
+  min-width: @card-min-fixed-width;
+  text-align: left;
+  width: @card-max-width;
+  z-index: 98; /* less than menu's z-index */
+
+  .msla-error {
+    .msla-error-text {
+      font-size: @card-header-font-size;
+    }
+  }
+
+  .msla-recommendation-search {
+    margin-bottom: 0.25em;
+    position: relative;
+
+    button,
+    .ms-Spinner {
+      position: absolute;
+      top: 6px;
+    }
+
+    button {
+      background-color: #fff;
+      border: none;
+      left: 2px;
+
+      &:not([disabled]) {
+        cursor: pointer;
+      }
+
+      img {
+        height: 16px;
+        width: 16px;
+      }
+    }
+
+    .ms-Spinner {
+      left: 6px;
+    }
+
+    input {
+      border: @defaultBorder;
+      box-sizing: border-box;
+      font-family: @font-family;
+      line-height: 16px;
+      padding: 0.5em 0.5em 0.5em 2.75em;
+      width: 100%;
+      -webkit-appearance: textfield;
+
+      &:focus {
+        border-color: @brandColor;
+      }
+    }
+  }
+
+  .msla-recommendation-operations,
+  .msla-recommendation-services {
+    background-color: @card-background-color;
+    border: @defaultBorder;
+
+    .msla-recommendation-operations-header,
+    .msla-recommendation-services-header {
+      color: #7a7574;
+      font-size: @card-body-font-size;
+      margin: 10px 0;
+      position: relative;
+
+      div {
+        padding: 0.5em 20px 0;
+      }
+
+      button.msla-recommendation-operations-which,
+      button.msla-recommendation-services-see-all,
+      button.msla-recommendation-operations-see-all {
+        background: @card-background-color;
+        border: none;
+        color: @brandColor;
+        font-size: @card-body-font-size;
+        cursor: pointer;
+        font-family: @font-family;
+        padding: 0.5em;
+
+        &.msla-show-which,
+        &:focus:not([disabled]),
+        &:hover:not([disabled]),
+        &:active:not([disabled]) {
+          background-color: @hoverColor;
+          -webkit-transition: background-color 0.5s ease;
+          -moz-transition: background-color 0.5s ease;
+          -ms-transition: background-color 0.5s ease;
+          transition: background-color 0.5s ease;
+        }
+
+        &[disabled] {
+          color: rgba(122, 117, 116, 0.5);
+          cursor: default;
+        }
+
+        &.msla-show-which {
+          color: @brandColor;
+        }
+      }
+
+      button.msla-recommendation-operations-which {
+        margin-right: 1em;
+        position: relative;
+        top: -0.5em;
+      }
+
+      button.msla-recommendation-services-see-all,
+      button.msla-recommendation-operations-see-all {
+        position: absolute;
+        right: 2em;
+        top: 0;
+      }
+    }
+
+    .msla-recommendation-operations-header {
+      margin-bottom: 0;
+
+      div {
+        padding-left: 15px;
+      }
+    }
+
+    .msla-recommendation-operations-list,
+    .msla-recommendation-services-list {
+      overflow-y: auto;
+      padding: 0 0.5em 0.5em;
+
+      button.msla-recommendation-service {
+        background-color: @card-background-color;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        display: inline-block;
+        font-family: @font-family;
+        padding: 0.25em;
+        outline: none;
+        text-align: center;
+        vertical-align: top;
+
+        img {
+          border: 0 none;
+          box-sizing: content-box;
+          display: inline-block;
+          margin: 0;
+          height: 44px;
+          width: 44px;
+        }
+
+        &:focus,
+        &:hover,
+        &:active {
+          background-color: @hoverColor;
+          -webkit-transition: background-color 0.5s ease;
+          -moz-transition: background-color 0.5s ease;
+          -ms-transition: background-color 0.5s ease;
+          transition: background-color 0.5s ease;
+        }
+
+        &[disabled] {
+          cursor: default;
+        }
+
+        .msla-recommendation-service-title {
+          font-size: @card-body-font-size;
+          height: 2.667em;
+          margin-top: 0.25em;
+          overflow: hidden;
+          text-align: center;
+          text-overflow: ellipsis;
+          white-space: normal;
+          width: @recommendation-service-icon-width-action;
+        }
+      }
+
+      div.msla-recommendation-operation {
+        background-color: @card-background-color;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        display: flex;
+        font-family: @font-family;
+        font-size: @card-header-font-size;
+        outline: none;
+        padding: 2px 0 2px 1em;
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+
+        &[data-disabled='true'] {
+          cursor: default;
+          pointer-events: none;
+        }
+
+        &:focus,
+        &:hover,
+        &:active {
+          background-color: @hoverColor;
+          -webkit-transition: background-color 0.5s ease;
+          -moz-transition: background-color 0.5s ease;
+          -ms-transition: background-color 0.5s ease;
+          transition: background-color 0.5s ease;
+        }
+
+        .msla-recommendation-operation-inner {
+          display: flex;
+          width: 100%;
+
+          img {
+            box-sizing: content-box;
+            display: inline-block;
+            height: 32px;
+            margin: 4px 10px 4px 2px;
+            vertical-align: top;
+            width: 32px;
+
+            &.msla-flyout-icon {
+              height: 16px;
+              padding: 0;
+              width: 16px;
+            }
+          }
+
+          .msla-recommendation-operation-title {
+            align-content: center;
+            display: inline-flex;
+            flex: 1;
+            flex-direction: column;
+            margin-right: 8px;
+            min-height: 40px;
+            justify-content: center;
+            white-space: normal;
+          }
+
+          @media only screen and (max-width: 1024px) {
+            .msla-recommendation-operation-title-inner {
+              overflow-y: visible;
+              font-size: @card-body-font-size;
+              color: @parameter-placeholder-color;
+
+              & > span {
+                display: block;
+
+                &:first-child {
+                  font-size: 13px;
+                  color: #000000;
+                }
+              }
+
+              .msla-recommendation-operation-title-separator {
+                display: none;
+              }
+            }
+          }
+
+          .msla-recommendation-operation-annotation {
+            align-self: right;
+            background-color: #fff;
+            border: 1px solid #107c10;
+            color: #107c10;
+            display: table;
+            font-size: @card-body-font-size;
+            margin: 0.5em;
+            padding: 6px 10px;
+            max-height: 30px;
+
+            @media only screen and (max-width: 1024px) {
+              & {
+                display: table;
+              }
+            }
+          }
+
+          .msla-recommendation-operation-flyout {
+            align-self: right;
+            height: 100%;
+
+            .msla-button {
+              &.msla-flyout {
+                cursor: pointer;
+                height: 100%;
+
+                .msla-flyout-icon {
+                  padding: 0;
+                  margin-right: 2px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .msla-recommendation-operations-list {
+      max-height: 471.5px;
+
+      &.msla-showing-triggers {
+        max-height: 564px;
+      }
+
+      &.msla-showing-services {
+        max-height: 332px;
+      }
+    }
+
+    .msla-recommendation-services-list {
+      max-height: 471.5px;
+      padding-left: 0.75em;
+
+      &.msla-showing-triggers {
+        max-height: 564px;
+      }
+    }
+
+    .msla-recommendation-no-operations,
+    .msla-recommendation-no-services,
+    .msla-recommendation-uservoice {
+      padding: 1em 1.5em;
+      text-align: left;
+
+      div {
+        margin-bottom: 1em;
+
+        &:first-child {
+          text-transform: uppercase;
+        }
+      }
+
+      .msla-recommendation-create-trigger-message,
+      .msla-recommendation-uservoice-link {
+        vertical-align: top;
+
+        a {
+          color: @brandColor;
+          &:hover,
+          &:active {
+            text-decoration: underline;
+          }
+
+          &[disabled] {
+            cursor: default;
+            pointer-events: none;
+          }
+        }
+
+        img {
+          float: left;
+          margin-right: 0.5em;
+        }
+
+        & > span {
+          line-height: 1.4em;
+          vertical-align: top;
+        }
+      }
+
+      .msla-recommendation-create-trigger-message {
+        & > span {
+          word-break: break-all;
+        }
+      }
+    }
+
+    .msla-recommendation-no-services {
+      word-wrap: break-word;
+    }
+
+    .msla-recommendation-uservoice {
+      padding-bottom: 0;
+    }
+  }
+
+  .msla-recommendation-services {
+    border-bottom: none;
+  }
+
+  .msla-recommendation-footer {
+    border: @defaultBorder;
+    border-top: none;
+    box-sizing: border-box;
+    line-height: normal;
+    height: 44px;
+    padding: 0.5em;
+    position: relative;
+    text-align: left;
+    width: 100%;
+
+    button {
+      background-color: @card-background-color;
+      border: none;
+      cursor: pointer;
+      font-family: @font-family;
+      font-size: @token-font-size;
+      padding: 0.5em;
+      position: absolute;
+      top: 0.5em;
+
+      &:focus,
+      &:hover,
+      &:active {
+        background-color: @hoverColor;
+        -webkit-transition: background-color 0.5s ease;
+        -moz-transition: background-color 0.5s ease;
+        -ms-transition: background-color 0.5s ease;
+        transition: background-color 0.5s ease;
+      }
+    }
+
+    /* Workaround for IE-only CSS bug */
+    @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+      button {
+        box-sizing: content-box;
+        height: 30px;
+        top: 0;
+      }
+    }
+
+    .msla-recommendation-cancel {
+      right: 1em;
+    }
+
+    .msla-recommendation-load-more {
+      left: 1em;
+    }
+  }
+
+  &.msla-readonly {
+    opacity: 0.5;
+
+    .msla-recommendation-search {
+      button {
+        display: none;
+      }
+
+      input {
+        background-color: #fff;
+        padding-left: 0.5em;
+      }
+    }
+  }
+
+  @media only screen and (max-width: @designer-desktop-max-width) {
+    min-width: @card-min-width;
+    max-width: @card-max-width;
+    width: 100%;
+  }
+
+  .msla-recommendation-services {
+    .msla-recommendation-services-list.msla-showing-triggers {
+      button.msla-recommendation-service {
+        .msla-recommendation-service-title {
+          width: @recommendation-service-icon-width-trigger;
+        }
+      }
+    }
+  }
+
+  &.msla-card-short-body-inner {
+    width: 100%;
+  }
+}
+
+.msla-card-short-body {
+  background-color: white;
+  box-sizing: border-box;
+  padding: 1em;
+}
+
+.msla-recommendation-full-screen {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  min-width: @card-min-width;
+  max-width: @card-max-width;
+  background-color: white;
+  z-index: 100000;
+}

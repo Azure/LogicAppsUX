@@ -1,0 +1,862 @@
+@import (reference) 'variables.less';
+
+@background-color: #f0f0f0;
+@subtitle-color: #32383f;
+
+// Config for single-column tiles
+@small-list-item-margin: 10px;
+@small-tile-list-size: 146px;
+@small-tile-list-half-size: (@small-tile-list-size / 2);
+@small-tile-list-image-size: (@small-tile-list-half-size - 20);
+@small-tile-content-padding-vertical: 12px;
+@small-tile-content-padding-horizontal: 16px;
+
+// Config for .tile() mixin sizes
+@medium-tile-size: 216px;
+@medium-tile-list-width: 75px;
+@medium-tile-content-padding-vertical: 12px;
+@medium-tile-content-padding-horizontal: 16px;
+
+@large-tile-size: 264px;
+@large-tile-list-width: 95px;
+@large-tile-content-padding-vertical: 12px;
+@large-tile-content-padding-horizontal: 16px;
+
+// Config for .tile-list() mixin size
+@medium-list-item-margin: 24px;
+@large-list-item-margin: 24px;
+
+// Breakpoints for custom tile grid
+@tile-grid-bp-1: 540px;
+@tile-grid-bp-2: 768px;
+@tile-grid-bp-3: 960px;
+@tile-grid-bp-4: 1200px;
+
+// Mixin for grid tile layouts, accepts 'small' and 'large' sizes
+.tile(@size) {
+  @tile-size: '@{size}-tile-size';
+  @tile-list-width: '@{size}-tile-list-width';
+  @tile-list-bg-size-2: (@@tile-size / 2);
+  @tile-list-image-size-2: (@@tile-list-width - 20);
+  @tile-list-bg-size-3: (@@tile-size / 3);
+  @tile-list-image-size-3: (@tile-list-bg-size-3 - 20);
+  @tile-list-bg-size-4: (@@tile-size / 4);
+  @tile-list-image-size-4: (@tile-list-bg-size-4 - 20);
+  @tile-content-padding-vertical: 12px;
+  @tile-content-padding-horizontal: 16px;
+
+  .msla-template-tile {
+    height: (@@tile-size + 2);
+    width: (@@tile-size + 2);
+    border: 1px solid @oneui-color-brand-neutral-20;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
+
+  .msla-template-tile-api-icon-list {
+    width: @@tile-list-width;
+
+    &.msla-template-tile-two-icon-set,
+    &.msla-template-tile-three-icon-set,
+    &.msla-template-tile-four-icon-set {
+      .msla-template-tile-api-icon {
+        width: @@tile-list-width;
+      }
+    }
+
+    &.msla-template-tile-two-icon-set {
+      .msla-template-tile-api-icon {
+        height: @tile-list-bg-size-2;
+
+        img {
+          margin-top: ((@tile-list-bg-size-2 - @tile-list-image-size-2) / 2);
+          height: @tile-list-image-size-2;
+          width: @tile-list-image-size-2;
+        }
+      }
+    }
+
+    &.msla-template-tile-three-icon-set {
+      .msla-template-tile-api-icon {
+        height: @tile-list-bg-size-3;
+
+        &:first-child {
+          width: @@tile-list-width;
+        }
+
+        img {
+          margin-top: ((@tile-list-bg-size-3 - @tile-list-image-size-3) / 2);
+          height: @tile-list-image-size-3;
+          width: @tile-list-image-size-3;
+        }
+      }
+    }
+
+    &.msla-template-tile-four-icon-set {
+      .msla-template-tile-api-icon {
+        height: @tile-list-bg-size-4;
+
+        img {
+          margin-top: ((@tile-list-bg-size-4 - @tile-list-image-size-4) / 2);
+          height: @tile-list-image-size-4;
+          width: @tile-list-image-size-4;
+        }
+
+        &.additional-api-placeholder p {
+          line-height: @tile-list-bg-size-4;
+        }
+      }
+    }
+  }
+
+  .msla-template-tile-content {
+    height: @@tile-size;
+    padding: @tile-content-padding-vertical @tile-content-padding-horizontal;
+    padding-left: (@@tile-list-width + @tile-content-padding-horizontal);
+  }
+
+  .msla-template-tile-display-name {
+    max-height: (@@tile-size - (16 * 2) - (@tile-content-padding-vertical * 2));
+    .tile-header-small();
+  }
+
+  .metadata {
+    bottom: @tile-content-padding-vertical;
+  }
+}
+
+// Mixin for laying out the grid list of tiles
+// Accepts 'small' and 'large' sizes, and a number of tiles per row
+.tile-list(@size; @tiles-per-row) {
+  @tile-size: '@{size}-tile-size';
+  @list-item-margin: '@{size}-list-item-margin';
+  @list-item-size: (@@tile-size + 4);
+
+  width: ((@list-item-size * @tiles-per-row) + (@@list-item-margin * (@tiles-per-row - 1)));
+
+  .msla-template-header {
+    width: ((@list-item-size * @tiles-per-row) + (@@list-item-margin * (@tiles-per-row - 1)));
+  }
+
+  li {
+    float: left;
+    width: @list-item-size;
+    height: @list-item-size;
+    border: 1px solid transparent;
+
+    &:hover {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      border-color: @brandColor;
+
+      .msla-template-tile {
+        box-shadow: none;
+        border-color: @brandColor;
+      }
+    }
+
+    // Override lower breakpoints with matching specificity
+    &:nth-of-type(1n) {
+      margin: 0 @@list-item-margin @@list-item-margin 0;
+    }
+
+    &:nth-of-type(@{tiles-per-row}n) {
+      margin-right: 0;
+    }
+  }
+}
+
+// Mixins for tile head type-ramps
+.tile-header-small() {
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.tile-header-large() {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.msla-template-header {
+  font-family: @font-family;
+  padding: 25px 0;
+  margin: 0 auto;
+  line-height: 24px;
+  width: 1144px;
+}
+
+.msla-template-trigger-selector {
+  font-family: @font-family;
+
+  .msla-template-trigger-selector-header,
+  .msla-template-trigger-selector-list {
+    margin: 0 auto;
+    padding: 1em 0;
+
+    @media only screen and (min-width: @tile-grid-bp-1) {
+      width: 100%;
+    }
+    @media only screen and (min-width: @tile-grid-bp-2) {
+      width: @tile-grid-bp-2;
+    }
+    @media only screen and (min-width: @tile-grid-bp-3) {
+      width: @tile-grid-bp-3;
+    }
+    @media only screen and (min-width: @tile-grid-bp-4) {
+      width: 1144px;
+    }
+  }
+
+  .msla-template-trigger-selector-header {
+    line-height: 24px;
+
+    .msla-template-trigger-selector-header-title {
+      color: #000;
+      font-size: 18px;
+      font-weight: lighter;
+      margin: 0;
+    }
+
+    .msla-template-trigger-selector-header-subtitle {
+      color: @subtitle-color;
+      font-size: 12px;
+      font-weight: normal;
+      line-height: 16px;
+    }
+  }
+
+  .msla-template-trigger-selector-list {
+    @media only screen and (min-width: @tile-grid-bp-1) {
+      width: 100%;
+    }
+
+    @media only screen and (min-width: @tile-grid-bp-2) {
+      width: 708px;
+    }
+
+    @media only screen and (min-width: @tile-grid-bp-3) {
+      width: 852px;
+    }
+
+    @media only screen and (min-width: @tile-grid-bp-4) {
+      width: 1144px;
+    }
+
+    ul {
+      display: flex;
+      flex-flow: row wrap;
+
+      .msla-template-trigger-tile {
+        box-sizing: border-box;
+        width: 100%;
+
+        .msla-template-trigger-tile-inner {
+          background-color: #fff;
+          border: 1px solid #c8c8c8;
+          box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+          color: #000;
+          display: flex;
+          flex-flow: row nowrap;
+          margin: 0 0 10px 0;
+
+          &:nth-child(4n) {
+            margin-right: 0;
+          }
+
+          &:focus,
+          &:hover,
+          &:active {
+            color: @brandColor;
+          }
+
+          .msla-template-trigger-tile-icon {
+            height: 64px;
+            padding: 8px;
+            width: 64px;
+          }
+
+          .msla-template-trigger-tile-text {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 600;
+            margin: 0 1em;
+            padding: 0.5em 0.25em;
+          }
+        }
+
+        @media only screen and (min-width: @tile-grid-bp-1) {
+          &:nth-of-type(1n) {
+            margin-right: 0;
+            width: 100%;
+          }
+        }
+
+        @media only screen and (min-width: @tile-grid-bp-2) {
+          &:nth-of-type(1n) {
+            margin-right: 26px;
+            width: 338px;
+          }
+
+          &:nth-of-type(2n) {
+            margin-right: 0;
+          }
+        }
+
+        @media only screen and (min-width: @tile-grid-bp-3) {
+          &:nth-of-type(1n) {
+            margin-right: 26px;
+            width: 264px;
+          }
+
+          &:nth-of-type(3n) {
+            margin-right: 0;
+          }
+        }
+
+        @media only screen and (min-width: @tile-grid-bp-4) {
+          &:nth-of-type(1n) {
+            margin-right: 26px;
+            width: 264px;
+          }
+
+          &:nth-of-type(4n) {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+.msla-new-template-picker {
+  .msla-template-header {
+    font-family: @font-family;
+    padding: 25px 0;
+    margin: 0 auto;
+    line-height: 24px;
+
+    @media only screen and (min-width: @tile-grid-bp-1) {
+      width: @tile-grid-bp-1;
+    }
+    @media only screen and (min-width: @tile-grid-bp-2) {
+      width: @tile-grid-bp-2;
+    }
+    @media only screen and (min-width: @tile-grid-bp-3) {
+      width: @tile-grid-bp-3;
+    }
+    @media only screen and (min-width: @tile-grid-bp-4) {
+      width: 1144px;
+    }
+
+    .msla-template-header-inner {
+      display: flex;
+      flex-flow: row wrap;
+
+      .msla-template-header-text {
+        .msla-template-title {
+          width: auto;
+          margin: 0;
+        }
+      }
+
+      .msla-template-header-form {
+        display: flex;
+        flex: 1;
+        justify-content: flex-end;
+        line-height: 2em;
+
+        @media only screen and (min-width: @tile-grid-bp-1) {
+          flex-basis: 100%;
+          text-align: left;
+        }
+        @media only screen and (min-width: @tile-grid-bp-4) {
+          flex-basis: auto;
+          text-align: right;
+        }
+
+        .msla-template-filter,
+        .msla-template-sort {
+          color: @subtitle-color;
+        }
+
+        .msla-template-filter {
+          margin-right: 32px;
+        }
+
+        .msla-template-sort {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+
+  .msla-template-list {
+    clear: both;
+    content: '';
+    display: table;
+
+    .msla-template-tile-inner {
+      .msla-template-blank-item {
+        background-color: #fff;
+        color: #000;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        &:focus,
+        &:hover,
+        &:active {
+          color: @brandColor;
+        }
+
+        .msla-template-blank-item-text {
+          font-size: 15px;
+          font-weight: 600;
+          padding-top: 1em;
+        }
+
+        .msla-template-blank-item-plus {
+          flex: 1;
+          font-size: 400%;
+          font-weight: lighter;
+
+          @media only screen and (min-width: @tile-grid-bp-2) {
+            font-size: 600%;
+          }
+          @media only screen and (min-width: @tile-grid-bp-3) {
+            font-size: 800%;
+          }
+        }
+      }
+    }
+
+    .msla-template-tile-inside {
+      color: #000;
+
+      &:focus,
+      &:hover,
+      &:active {
+        color: @brandColor;
+      }
+    }
+
+    .msla-api-cards-footer {
+      a {
+        color: @brandColor;
+      }
+    }
+  }
+}
+
+.msla-template-title {
+  display: inline-block;
+  font-family: @font-family;
+  font-size: 18px;
+  font-weight: lighter;
+  width: 900px;
+}
+
+.msla-template-subtitle {
+  color: @subtitle-color;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+// Styles for single-column tiles and base tile styles
+.msla-template-list {
+  box-sizing: border-box;
+  font-family: @font-family;
+
+  *,
+  *:before,
+  *:after {
+    box-sizing: inherit;
+  }
+
+  li {
+    margin-bottom: @small-list-item-margin;
+    display: block;
+    width: 100%;
+    border-width: 1px 0;
+    border-style: solid;
+    border-color: transparent;
+
+    &:hover {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      border-color: @brandColor;
+
+      .msla-template-tile {
+        box-shadow: none;
+        border-color: @brandColor;
+      }
+    }
+  }
+
+  .msla-template-tile {
+    display: block;
+    position: relative;
+    height: (@small-tile-list-size + 2);
+    border-width: 1px 0;
+    border-style: solid;
+    border-color: @oneui-color-brand-neutral-20;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+  }
+
+  .msla-template-tile-api-icon-list {
+    float: left;
+    width: @small-tile-list-size;
+    height: @small-tile-list-size;
+
+    .msla-template-tile-api-icon {
+      float: left;
+      text-align: center;
+      height: @small-tile-list-half-size;
+      box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.3);
+
+      img {
+        margin-top: ((@small-tile-list-half-size - @small-tile-list-image-size) / 2);
+        height: @small-tile-list-image-size;
+        width: @small-tile-list-image-size;
+      }
+    }
+
+    &.msla-template-tile-two-icon-set {
+      .msla-template-tile-api-icon {
+        width: @small-tile-list-size;
+      }
+    }
+
+    &.msla-template-tile-three-icon-set {
+      .msla-template-tile-api-icon {
+        width: @small-tile-list-half-size;
+
+        &:first-child {
+          width: @small-tile-list-size;
+        }
+      }
+    }
+
+    &.msla-template-tile-four-icon-set {
+      .msla-template-tile-api-icon {
+        width: @small-tile-list-half-size;
+
+        &.additional-api-placeholder {
+          background-color: @oneui-color-brand-neutral-10;
+          text-align: center;
+
+          p {
+            padding: 0;
+            font-size: 24px;
+            line-height: @small-tile-list-half-size;
+          }
+        }
+      }
+    }
+  }
+
+  .msla-template-tile-content {
+    width: 100%;
+    height: @small-tile-list-size;
+    background-color: white;
+    padding: @small-tile-content-padding-vertical @small-tile-content-padding-horizontal;
+    padding-left: (@small-tile-list-size + @small-tile-content-padding-horizontal);
+  }
+
+  .msla-template-tile-display-name {
+    display: inline-block;
+    .tile-header-small();
+    font-weight: 600;
+    padding: 0;
+    overflow: hidden;
+    max-height: (@small-tile-list-size - (16 * 2) - (@small-tile-content-padding-vertical * 2));
+    word-wrap: break-word;
+  }
+
+  .metadata {
+    position: absolute;
+    bottom: @small-tile-content-padding-vertical;
+
+    p {
+      font-size: 13px;
+      line-height: 16px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      padding: 0;
+      color: @oneui-color-brand-neutral-55;
+    }
+  }
+
+  .msla-template-fallback-icon {
+    background-color: @fallback-icon-color;
+  }
+
+  // Responsive behavior for tile list, using mixins defined above
+  @media only screen and (min-width: @tile-grid-bp-1) {
+    .msla-template-tile-display-name {
+      .tile-header-large();
+    }
+  }
+
+  @media only screen and (min-width: @tile-grid-bp-2) {
+    margin: 0 auto;
+
+    .tile('medium');
+    .tile-list('medium', 3);
+  }
+
+  @media only screen and (min-width: @tile-grid-bp-3) {
+    .tile('large');
+    .tile-list('large', 3);
+  }
+
+  @media only screen and (min-width: @tile-grid-bp-4) {
+    .tile-list('large', 4);
+  }
+}
+
+.msla-template-tile-inner {
+  justify-content: center;
+  display: flex;
+  height: 100%;
+  width: 100%;
+
+  .msla-template-blank-item {
+    align-self: center;
+    flex: 1;
+    text-align: center;
+  }
+}
+
+.msla-template-picker-v2 {
+  background-color: @background-color;
+}
+
+.msla-hero {
+  background-color: #464f56;
+  font-family: @font-family;
+  width: 100%;
+
+  .msla-hero-inner {
+    align-content: stretch;
+    display: flex;
+    flex-flow: row wrap;
+    margin: 0 auto;
+    max-width: 1144px;
+
+    .msla-hero-video,
+    .msla-hero-text {
+      flex: 1 1 560px;
+      padding: 15px 25px;
+
+      @media only screen and (min-width: @tile-grid-bp-4) {
+        padding-left: 0;
+      }
+    }
+
+    .msla-hero-video {
+      align-self: center;
+      flex-grow: 0;
+
+      video {
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        max-height: 315px;
+        max-width: 560px;
+        width: 100%;
+      }
+    }
+
+    .msla-hero-text {
+      flex-basis: 240px;
+      padding-left: 0;
+
+      @media only screen and (max-width: 932px) {
+        margin-top: -30px;
+        padding-left: 25px;
+      }
+
+      header {
+        color: #fff;
+        font-size: 18px;
+        font-weight: lighter;
+      }
+
+      div,
+      ul {
+        color: #eee;
+        font-size: 15px;
+        font-weight: normal;
+      }
+
+      ul {
+        list-style: none outside disc;
+        margin: 1em 0;
+        padding-left: 2em;
+
+        li {
+          display: list-item;
+          list-style-type: disc;
+          line-height: 1.6em;
+        }
+      }
+    }
+  }
+}
+
+/* Workaround for Fabric CSS which centers Fabric Buttons even if they are used in Dropdown */
+[class^='ms-Layer'] {
+  [class^='ms-Dropdown-callout'] {
+    [class^='ms-Dropdown-items'] {
+      [class^='ms-Dropdown-item'] {
+        &[class^='ms-Button'] {
+          text-align: left;
+        }
+      }
+    }
+  }
+}
+
+body.dark {
+  .msla-template-trigger-selector {
+    .msla-template-trigger-selector-header {
+      .msla-template-trigger-selector-header-title {
+        color: inherit;
+      }
+
+      .msla-template-trigger-selector-header-subtitle {
+        color: inherit;
+      }
+    }
+
+    .msla-template-trigger-selector-list {
+      ul {
+        .msla-template-trigger-tile {
+          .msla-template-trigger-tile-inner {
+            background-color: @ms-color-white;
+            border: 1px solid inherit;
+            box-shadow: 0 0 2px inherit;
+            color: @ms-color-black;
+
+            &:hover,
+            &:active {
+              color: @ms-color-themePrimary;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .msla-new-template-picker {
+    .msla-template-header {
+      .msla-template-header-inner {
+        .msla-template-header-form {
+          select {
+            color: inherit;
+          }
+
+          .msla-template-filter,
+          .msla-template-sort {
+            color: inherit;
+
+            & > div {
+              color: inherit;
+
+              [class^='ms-Dropdown-title'] {
+                background-color: inherit;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .msla-template-list {
+      .msla-template-tile-inner {
+        .msla-template-blank-item {
+          background-color: inherit;
+          color: @ms-color-black;
+
+          &:hover,
+          &:active {
+            color: @ms-color-themePrimary;
+          }
+        }
+      }
+
+      .msla-template-tile-inside {
+        color: @ms-color-black;
+
+        &:hover,
+        &:active {
+          color: @ms-color-themePrimary;
+        }
+      }
+
+      .msla-api-cards-footer {
+        a {
+          color: inherit;
+        }
+      }
+    }
+  }
+
+  .msla-template-subtitle {
+    color: inherit;
+  }
+
+  .msla-template-list {
+    li {
+      border-color: inherit;
+
+      &:hover {
+        box-shadow: 0 0 10px inherit;
+        border-color: inherit;
+
+        .msla-template-tile {
+          box-shadow: none;
+          border-color: inherit;
+        }
+      }
+    }
+
+    .msla-template-tile {
+      box-shadow: 0 0 2px inherit;
+    }
+
+    .msla-template-tile-api-icon-list {
+      .msla-template-tile-api-icon {
+        box-shadow: inset 0 0 1px inherit;
+      }
+    }
+
+    .msla-template-tile-content {
+      background-color: inherit;
+    }
+  }
+
+  .msla-template-picker-v2 {
+    background-color: @ms-color-white;
+    color: @ms-color-black;
+  }
+
+  .msla-hero {
+    .msla-hero-inner {
+      .msla-hero-video {
+        video {
+          box-shadow: 2px 2px 10px inherit;
+        }
+      }
+
+      .msla-hero-text {
+        header {
+          color: inherit;
+        }
+
+        div,
+        ul {
+          color: inherit;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+name: 1loc_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+pool:
+  vmImage: 'vs2017-win2016'
+
+steps:
+  - task: OneLocBuild@2
+    inputs:
+      locProj: 'libs/designer/src/lib/Localize/LocProject.json'
+      outDir: '$(Build.ArtifactStagingDirectory)'
+      repoType: gitHub
+      isEnablePseudoLanguagesSelected: false
+      isCreatePrSelected: true
+      gitHubPatVariable: $(GithubPAT)
+      gitHubPrMergeMethod: squash
+      packageSourceAuth: 'patAuth'
+      patVariable: $(OneLocBuildPAT)
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: loc'
+    inputs:
+      ArtifactName: loc

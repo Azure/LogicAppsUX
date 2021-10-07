@@ -1,0 +1,167 @@
+@import (reference) '../../variables.less';
+
+.msla-card-config-body {
+    padding: 5px 5px 10px 5px;
+
+    .msla-config-options {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .errorMessage-managed-identity {
+        color: #A4262C;
+        text-align: left;
+        margin-bottom: 10px;
+        margin-left: 27%;
+        @width-offset: (@parameter-label-width + @parameter-label-inputbox-margin);
+        max-width: calc(100% ~"-" @width-offset);
+    }
+}
+
+.msla-card-config-button-container {
+    text-align: center;
+}
+
+.msla-card-config-item {
+    margin: 6px @parameter-label-inputbox-margin;
+    display: flex;
+
+    .msla-card-config-item-label {
+        flex-basis: 25%;
+        margin-right: 8px;
+
+        .msla-label {
+            display: inline-block;
+        }
+
+        .msla-flyout {
+            display: inline-flex;
+            width: auto;
+            height: auto;
+            padding: 8px;
+
+            .msla-flyout-icon {
+                width: 12px;
+                height: 12px;
+                margin: 0;
+            }
+        }
+    }
+
+    > label {
+        color: #333;
+        width: @parameter-label-width;
+        display: inline-block;
+        vertical-align: top;
+        margin-right: 5px;
+        line-height: 1.5em;
+        text-overflow: ellipsis;
+        max-height: @parameter-inputbox-height;
+        white-space: nowrap;
+    }
+
+    .msla-checkbox,
+    .msla-combobox-container,
+    .msla-dropdown-container,
+    .msla-textbox {
+        @width-offset: (@parameter-label-width + @parameter-label-inputbox-margin);
+        width: calc(100% ~"-" @width-offset);
+    }
+
+    .msla-checkbox {
+        display: inline-flex;
+    }
+
+    .msla-combobox-container,
+    .msla-dropdown-container,
+    .msla-textbox {
+        display: inline-block;
+    }
+}
+
+.msla-dropdown-icon {
+    display: inline-block;
+    position: relative;
+    margin-right: 8px;
+}
+
+.msla-dropdown-option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.msla-card-config-table-item {
+    display: block;
+
+    label {
+        display: inline;
+    }
+}
+
+.msla-card-config-button-container {
+    margin-top: 10px;
+    margin-right: 10px;
+
+    .msla-card-button-primary,
+    .msla-card-button-secondary {
+        margin-top: 10px;
+        margin-right: 10px;
+        min-width: 150px;
+    }
+}
+
+.config-item-narrow-width-mixin() {
+    .msla-card-config-item {
+        > label {
+            color: #333;
+            display: block;
+        }
+
+        .msla-checkbox,
+        .msla-combobox-container,
+        .msla-dropdown-container,
+
+        .msla-checkbox {
+            display: flex;
+        }
+
+        .msla-combobox-container,
+        .msla-dropdown-container,
+        .msla-textbox {
+            display: block;
+        }
+    }
+}
+
+@media only screen and (max-width: @designer-desktop-max-width) {
+    .config-item-narrow-width-mixin();
+}
+
+.msla-connectionwizard-canvas--narrow {
+    .config-item-narrow-width-mixin();
+}
+
+body.dark {
+    .msla-card-config-item {
+        > label {
+            color: @ms-color-neutralPrimary;
+        }
+    }
+
+    .config-item-narrow-width-mixin() {
+        .msla-card-config-item {
+            > label {
+                color: @ms-color-neutralPrimary;
+            }
+        }
+    }
+
+    .errorMessage-managed-identity {
+        color: #F1707B;
+        .managed-identity-link {
+            color: #69afe5;
+        }
+    }
+}

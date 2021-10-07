@@ -13,8 +13,13 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "resolveJsonModule": true,
+    "downlevelIteration": true,
+    "noImplicitReturns": false,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@microsoft/logic-apps-designer": ["libs/designer/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

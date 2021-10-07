@@ -1,0 +1,24 @@
+@import (reference) '../../variables.less';
+
+.msla-query-body-canvas {
+  margin: 0 @parameter-label-inputbox-margin;
+
+  .msla-query-parameter {
+    margin-bottom: @parameter-interval-margin;
+  }
+}
+
+.msla-tab-component-container .msla-query-body-canvas .msla-condition-control-body {
+  margin: 0 -6px;
+  width: calc(100% + 12px);
+
+  &.msla-condition-control-advanced-only {
+    .msla-input-parameter-box.msla-condition-control-advanced {
+      margin-right: 18px;
+    }
+
+    .msla-condition-control-toggle-button {
+      margin-left: 6px;
+    }
+  }
+}

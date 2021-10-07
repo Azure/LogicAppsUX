@@ -1,0 +1,251 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Create_a_goal": {
+        "inputs": {
+          "body": {
+            "name": "create_a_checkin_succeeds(@{utcNow()})",
+            "note": "",
+            "status": "Not started"
+          },
+          "host": {
+            "connection": {
+              "referenceName": "powerbi-andrewga"
+            }
+          },
+          "method": "post",
+          "path": "/v1.0/myOrg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals",
+          "queries": {
+            "pbi_source": "powerAutomate"
+          }
+        },
+        "runAfter": {
+          "Initialize_note": ["Succeeded"]
+        },
+        "type": "ApiConnection"
+      },
+      "Create_a_goal_check-in": {
+        "inputs": {
+          "body": {
+            "note": "@variables('checkinNote')",
+            "status": "At risk",
+            "timestamp": "@variables('checkinDate')",
+            "value": "@variables('checkinValue')"
+          },
+          "host": {
+            "connection": {
+              "referenceName": "powerbi-andrewga"
+            }
+          },
+          "method": "post",
+          "path": "/v1.0/myorg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals(@{encodeURIComponent(body('Create_a_goal')['id'])})/goalValues",
+          "queries": {
+            "pbi_source": "powerAutomate"
+          }
+        },
+        "runAfter": {
+          "Create_a_goal": ["Succeeded"]
+        },
+        "type": "ApiConnection"
+      },
+      "For_each_note": {
+        "actions": {
+          "Append_to_string_variable": {
+            "inputs": {
+              "name": "actualNote",
+              "value": "@items('For_each_note')?['body']"
+            },
+            "runAfter": {},
+            "type": "AppendToStringVariable"
+          }
+        },
+        "foreach": "@body('Get_a_goal_check-in')?['notes']",
+        "runAfter": {
+          "Initialize_actual_note": ["Succeeded"]
+        },
+        "type": "Foreach"
+      },
+      "Get_a_goal_check-in": {
+        "inputs": {
+          "host": {
+            "connection": {
+              "referenceName": "powerbi-andrewga"
+            }
+          },
+          "method": "get",
+          "path": "/v1.0/myorg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals(@{encodeURIComponent(body('Create_a_goal')['id'])})/goalValues(@{encodeURIComponent(variables('checkinDate'))})",
+          "queries": {
+            "$expand": "notes",
+            "pbi_source": "powerAutomate"
+          }
+        },
+        "runAfter": {
+          "Create_a_goal_check-in": ["Succeeded"]
+        },
+        "type": "ApiConnection"
+      },
+      "Initialize_actual_note": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "actualNote",
+              "type": "string"
+            }
+          ]
+        },
+        "runAfter": {
+          "Verify_Check-in_Properties": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Initialize_check-in_date": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "checkinDate",
+              "type": "string",
+              "value": "2021-0@{variables('checkinMonth')}-@{variables('checkinDay')}"
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_check-in_day": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Initialize_check-in_day": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "checkinDay",
+              "type": "string",
+              "value": "@{rand(10, 20)}"
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_check-in_month": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Initialize_check-in_month": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "checkinMonth",
+              "type": "string",
+              "value": "@{rand(1,9)}"
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_check-in_value": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Initialize_check-in_value": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "checkinValue",
+              "type": "integer",
+              "value": "@rand(0, 100)"
+            }
+          ]
+        },
+        "runAfter": {},
+        "type": "InitializeVariable"
+      },
+      "Initialize_note": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "checkinNote",
+              "type": "string",
+              "value": "This is a note. @{utcNow()}"
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_check-in_date": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Verify_Check-in_Properties": {
+        "actions": {},
+        "else": {
+          "actions": {
+            "Terminate": {
+              "inputs": {
+                "runError": {
+                  "code": "CheckinDoesNotMatchExpectedState"
+                },
+                "runStatus": "Failed"
+              },
+              "runAfter": {},
+              "type": "Terminate"
+            }
+          }
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": ["@body('Get_a_goal_check-in')?['value']", "@variables('checkinValue')"]
+            },
+            {
+              "equals": ["@body('Get_a_goal_check-in')?['status']", "At risk"]
+            },
+            {
+              "equals": ["@length(body('Get_a_goal_check-in')?['notes'])", 1]
+            }
+          ]
+        },
+        "runAfter": {
+          "Get_a_goal_check-in": ["Succeeded"]
+        },
+        "type": "If"
+      },
+      "Verify_note": {
+        "actions": {},
+        "else": {
+          "actions": {
+            "Terminate_2": {
+              "inputs": {
+                "runError": {
+                  "code": "NoteDoesNotMatch"
+                },
+                "runStatus": "Failed"
+              },
+              "runAfter": {},
+              "type": "Terminate"
+            }
+          }
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": ["@variables('actualNote')", "@variables('checkinNote')"]
+            }
+          ]
+        },
+        "runAfter": {
+          "For_each_note": ["Succeeded"]
+        },
+        "type": "If"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1
+        },
+        "type": "Recurrence"
+      }
+    }
+  },
+  "kind": "Stateful"
+}

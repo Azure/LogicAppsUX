@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<LS_SETTINGS_FILE>
+ <LS_SETTINGS_DESCRIPTION>
+  <![CDATA[]]>
+ </LS_SETTINGS_DESCRIPTION>
+ <optionSet id="LSOptions">
+  <optionSet id="Defaults" displayName="Options Defaults">
+   <optionSet id="Espresso" displayName="Espresso"/>
+   <optionSet id="Parsers" displayName="Parsers"/>
+  </optionSet>
+  <optionSet id="User" displayName="User Overrides">
+   <optionSet id="Espresso" displayName="Espresso"/>
+   <optionSet id="Parsers" displayName="Parsers"/>
+  </optionSet>
+  <optionSet id="Project" displayName="Project Overrides">
+   <optionSet id="Espresso" displayName="Espresso"/>
+   <optionSet id="Parsers" displayName="Parsers">
+     <optionSet id='Parser 306' displayName='JSON Resource Parser' helpText='JSON Resource Formats (*.json *.resjson *.ts *.properties)' >
+      <option id="USE_ICU_MESSAGEFORMAT" displayName="Process the content as ICU message format strings." helpText="If this option is on, the resources will be processed as ICU message format strings.">
+        <boolean defaultValue="0" currentValue="1"/>
+      </option>
+    </optionSet>
+   </optionSet>
+  </optionSet>
+ </optionSet>
+</LS_SETTINGS_FILE>

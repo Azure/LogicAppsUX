@@ -1,0 +1,36 @@
+// Button.stories.ts | Button.stories.tsx
+
+import React from 'react';
+
+import { ComponentMeta, ComponentStory } from '@storybook/react';
+
+import { Pager, PagerProps } from './index';
+
+export default {
+  component: Pager,
+  title: 'Components/Pager',
+} as ComponentMeta<typeof Pager>;
+
+const Template: ComponentStory<typeof Pager> = (args: PagerProps) => <Pager {...args} />;
+
+export const Standard = Template.bind({});
+Standard.args = {
+  current: 1,
+  max: 10,
+  maxLength: 3,
+  min: 1,
+  readonlyPagerInput: false,
+};
+
+export const WithFailedIterationProps = Template.bind({});
+WithFailedIterationProps.args = {
+  current: 1,
+  max: 10,
+  maxLength: 3,
+  min: 1,
+  readonlyPagerInput: false,
+  failedIterationProps: {
+    max: 6,
+    min: 3,
+  },
+};

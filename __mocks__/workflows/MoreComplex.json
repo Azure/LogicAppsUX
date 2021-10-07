@@ -1,0 +1,199 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Create_a_goal": {
+        "inputs": {
+          "body": {
+            "name": "goal_updated_trigger_fires_successfully(@{utcNow()})",
+            "note": "",
+            "status": "On track",
+            "value": "500"
+          },
+          "host": {
+            "connection": {
+              "referenceName": "powerbi-andrewga"
+            }
+          },
+          "method": "post",
+          "path": "/v1.0/myOrg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals",
+          "queries": {
+            "pbi_source": "powerAutomate"
+          }
+        },
+        "runAfter": {},
+        "type": "ApiConnection"
+      },
+      "Delay": {
+        "inputs": {
+          "interval": {
+            "count": 30,
+            "unit": "Second"
+          }
+        },
+        "runAfter": {
+          "Initialize_variable": ["Succeeded"]
+        },
+        "type": "Wait"
+      },
+      "Delay_2": {
+        "inputs": {
+          "interval": {
+            "count": 60,
+            "unit": "Second"
+          }
+        },
+        "runAfter": {
+          "Update_a_goal": ["Succeeded"]
+        },
+        "type": "Wait"
+      },
+      "Initialize_variable": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "triggerFired",
+              "type": "boolean",
+              "value": false
+            }
+          ]
+        },
+        "runAfter": {
+          "Create_a_goal": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Set_variable": {
+        "inputs": {
+          "name": "triggerFired",
+          "value": true
+        },
+        "runAfter": {
+          "Verify_property_changes": ["Succeeded"]
+        },
+        "type": "SetVariable"
+      },
+      "Update_a_goal": {
+        "inputs": {
+          "body": {
+            "status": "At risk",
+            "value": 100
+          },
+          "host": {
+            "connection": {
+              "referenceName": "powerbi-andrewga"
+            }
+          },
+          "method": "patch",
+          "path": "/v1.0/myOrg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals(@{encodeURIComponent(body('Create_a_goal')['id'])})",
+          "queries": {
+            "pbi_source": "powerAutomate"
+          }
+        },
+        "runAfter": {
+          "Delay": ["Succeeded"]
+        },
+        "type": "ApiConnection"
+      },
+      "Verify_property_changes": {
+        "actions": {},
+        "else": {
+          "actions": {
+            "Terminate": {
+              "inputs": {
+                "runError": {
+                  "code": "UnexpectedGoalChange"
+                },
+                "runStatus": "Failed"
+              },
+              "runAfter": {},
+              "type": "Terminate"
+            }
+          }
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": ["@body('When_a_property_of_some_goal_changes')?['changeList']", "currentValue,status"]
+            },
+            {
+              "equals": ["@body('When_a_property_of_some_goal_changes')?['newStatus']", "At risk"]
+            },
+            {
+              "equals": ["@body('When_a_property_of_some_goal_changes')?['oldStatus']", "On track"]
+            },
+            {
+              "equals": ["@body('When_a_property_of_some_goal_changes')?['newCurrentValue']", 100]
+            },
+            {
+              "equals": ["@body('When_a_property_of_some_goal_changes')?['oldCurrentValue']", 500]
+            }
+          ]
+        },
+        "runAfter": {
+          "When_a_property_of_some_goal_changes": ["Succeeded"]
+        },
+        "type": "If"
+      },
+      "Verify_trigger_fired": {
+        "actions": {},
+        "else": {
+          "actions": {
+            "Terminate_2": {
+              "inputs": {
+                "runError": {
+                  "code": "TriggerDidNotFire"
+                },
+                "runStatus": "Failed"
+              },
+              "runAfter": {},
+              "type": "Terminate"
+            }
+          }
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": ["@variables('triggerFired')", true]
+            }
+          ]
+        },
+        "runAfter": {
+          "Delay_2": ["Succeeded"]
+        },
+        "type": "If"
+      },
+      "When_a_property_of_some_goal_changes": {
+        "inputs": {
+          "host": {
+            "connection": {
+              "referenceName": "powerbi-andrewga"
+            }
+          },
+          "method": "get",
+          "path": "/internalFlowTriggerGoalChange/v1.0/myOrg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals(@{encodeURIComponent(body('Create_a_goal')['id'])})",
+          "queries": {
+            "pbi_source": "powerAutomate",
+            "pollingInterval": 30
+          }
+        },
+        "runAfter": {
+          "Initialize_variable": ["Succeeded"]
+        },
+        "type": "ApiConnection"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1
+        },
+        "type": "Recurrence"
+      }
+    }
+  },
+  "kind": "Stateful"
+}

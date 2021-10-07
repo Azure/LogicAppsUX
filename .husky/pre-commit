@@ -1,0 +1,9 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npm run lint:fix
+npm run extract
+npm run compile:loc
+npm run compile:loc:psuedo
+git add .
+npm run pretty

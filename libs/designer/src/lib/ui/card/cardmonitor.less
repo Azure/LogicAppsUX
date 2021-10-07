@@ -1,0 +1,68 @@
+@import (reference) '../variables.less';
+
+.msla-monitoring-card {
+  &.msla-monitoring-inactive {
+    opacity: 0.3;
+    .msla-monitoring-card-header,
+    .msla-card-header-title-view,
+    .msla-card-header-title-ise-view {
+      cursor: default;
+    }
+  }
+
+  .msla-card-body {
+    text-align: left;
+  }
+
+  .msla-monitoring-card-header {
+    box-sizing: border-box;
+    cursor: pointer;
+    position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    .msla-card-title-group {
+      .msla-card-header-title-view {
+        display: flex;
+      }
+    }
+
+    .msla-card-title-button-group {
+      display: flex;
+
+      .msla-monitoring-card-duration {
+        box-sizing: border-box;
+        font-family: @header-font-family;
+        font-size: @card-header-font-size;
+        line-height: @card-header-height;
+        height: 100%;
+        padding: 0 0.5em;
+        text-align: center;
+        width: 3em;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+    }
+
+    .msla-monitoring-card-badge {
+      position: absolute;
+      right: -0.5625em; /* 9px */
+      top: -0.5625em; /* 9px */
+    }
+  }
+}
+
+.msla-monitoring-card-container {
+  display: inline-block;
+  position: relative;
+
+  .msla-pill {
+    position: absolute;
+    right: 4px;
+    top: -20px;
+  }
+}
