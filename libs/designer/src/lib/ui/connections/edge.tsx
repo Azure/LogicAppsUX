@@ -42,7 +42,7 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   });
 
   const parentNode = useSelector((state: RootState) => {
-    return state.workflow.nodes.find((x) => x.id === data?.parent);
+    return state.workflow.nodes[data?.parent ?? ''];
   });
 
   const firstChild = parentNode?.childrenNodes[parentNode.childrenNodes.length - 1] === data?.child;

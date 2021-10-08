@@ -15,13 +15,13 @@ export interface WorkflowState {
   rootGraph?: string;
   workflowSpec?: SpecTypes;
   graphs: Graphs;
-  nodes: WorkflowNode[];
+  nodes: Record<string, WorkflowNode>;
   shouldLayout: boolean;
   shouldZoomToNode?: string | null;
 }
 
 const initialState: WorkflowState = {
-  nodes: [],
+  nodes: {},
   graphs: {},
   shouldLayout: false,
   shouldZoomToNode: null,
@@ -47,58 +47,41 @@ export const workflowSlice = createSlice({
       state.shouldZoomToNode = action.payload;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
-      const childNode = state.nodes.find((x) => x.id === action.payload.childId);
-      const parentNode = state.nodes.find((x) => x.id === action.payload.parentId);
-      const nodes = [
-        ...state.nodes.map((x) => {
-          if (x.id === action.payload.parentId) {
-            return {
-              ...x,
-              childrenNodes: action.payload.childId
-                ? [...x.childrenNodes.filter((y) => y !== action.payload.childId), action.payload.id]
-                : [action.payload.id],
-            };
-          }
-          if (x.id === action.payload.childId) {
-            return {
-              ...x,
-              parentNodes: [...x.childrenNodes.filter((y) => y !== action.payload.parentId), action.payload.id],
-            };
-          }
-          return x;
-        }),
-      ];
-      const iof = nodes.findIndex((x) => x.id === action.payload.parentId);
+      const { childId, parentId, id } = action.payload;
+      const parentNode = state.nodes[action.payload.parentId];
+      if (childId) {
+        state.nodes[childId] = {
+          ...state.nodes[childId],
+          parentNodes: [...state.nodes[childId].childrenNodes.filter((y) => y !== parentId), id],
+        };
+      }
 
-      nodes.splice(iof, 0, {
+      state.nodes[parentId] = {
+        ...state.nodes[parentId],
+        childrenNodes: childId ? [...state.nodes[parentId].childrenNodes.filter((y) => y !== childId), id] : [id],
+      };
+
+      state.nodes[id] = {
         id: action.payload.id,
         type: '',
         operation: null as any,
         position: {
-          x: childNode?.position.x ?? 0,
-          y: childNode?.position.y ?? 0,
+          x: state.nodes[parentId]?.position.x ?? 0,
+          y: state.nodes[parentId]?.position.y ?? 0,
         },
         size: { height: 172, width: 38 },
         parentNodes: [action.payload.parentId],
         childrenNodes: action.payload.childId ? [action.payload.childId] : [...(parentNode?.childrenNodes ?? [])],
-      });
-      state.nodes = [...nodes];
+      };
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<Elements>) => {
       const elements = action.payload;
-      const elementMap = elements.reduce((acc, val) => {
-        acc.set(val.id, val as Node);
-        return acc;
-      }, new Map<string, Node<any>>());
-      state.nodes = state.nodes.map((node) => {
-        const element = elementMap.get(node.id);
-        if (!element) {
-          return node;
+
+      elements.forEach((el) => {
+        if (state.nodes[el.id]) {
+          const nodeEl = el as Node<unknown>;
+          state.nodes[el.id].size = { height: nodeEl.__rf?.height, width: nodeEl.__rf?.width };
         }
-        return {
-          ...node,
-          size: { height: element.__rf?.height, width: element.__rf?.width },
-        };
       });
     },
   },

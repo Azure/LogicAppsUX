@@ -63,7 +63,7 @@ const markChildrenNodes = (nodesInGraph: string[], nodes: WorkflowNode[]) => {
       }
     }
   });
-  const ret = Array.from(nodeMap.values());
+  const ret = Object.fromEntries(nodeMap);
   return ret;
 };
 

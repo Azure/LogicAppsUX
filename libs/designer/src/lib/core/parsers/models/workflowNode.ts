@@ -6,4 +6,5 @@ export interface WorkflowNode {
   size: { height: number; width: number };
   parentNodes: string[];
   childrenNodes: string[];
+  subgraph?: string;
 }

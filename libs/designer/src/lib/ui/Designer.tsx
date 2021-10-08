@@ -85,7 +85,8 @@ const DND_OPTIONS = {
 export const Designer = () => {
   const nodes = useSelector((state: RootState) => {
     const retNodes: Elements = [];
-    state.workflow.nodes.forEach((node) => {
+    //TODO: Key off current graph rather than going through all nodes
+    Array.from(Object.values(state.workflow.nodes)).forEach((node) => {
       retNodes.push({
         id: node.id,
         type: 'testNode',

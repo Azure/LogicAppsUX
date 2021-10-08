@@ -1,7 +1,3 @@
-// Button.stories.ts | Button.stories.tsx
-
-import React from 'react';
-
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 
 import { CardV2, CardV2Props } from './index';
