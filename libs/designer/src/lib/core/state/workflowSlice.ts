@@ -31,6 +31,7 @@ interface AddNodePayload {
   id: string;
   parentId: string;
   childId?: string;
+  graph?: string;
 }
 
 export const workflowSlice = createSlice({
@@ -47,7 +48,7 @@ export const workflowSlice = createSlice({
       state.shouldZoomToNode = action.payload;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
-      const { childId, parentId, id } = action.payload;
+      const { childId, parentId, id, graph = 'root' } = action.payload;
       const parentNode = state.nodes[action.payload.parentId];
       if (childId) {
         state.nodes[childId] = {
@@ -73,6 +74,8 @@ export const workflowSlice = createSlice({
         parentNodes: [action.payload.parentId],
         childrenNodes: action.payload.childId ? [action.payload.childId] : [...(parentNode?.childrenNodes ?? [])],
       };
+
+      state.graphs[graph].nodes.push(id);
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<Elements>) => {
       const elements = action.payload;

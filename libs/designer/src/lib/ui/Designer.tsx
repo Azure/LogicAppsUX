@@ -12,6 +12,10 @@ import { CustomEdge } from './connections/edge';
 import { DndProvider, createTransition } from 'react-dnd-multi-backend';
 import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 
+export interface DesignerProps {
+  graphId?: string;
+}
+
 const nodeTypes = {
   testNode: CustomTestNode,
 };
@@ -82,11 +86,12 @@ const DND_OPTIONS = {
   ],
 };
 
-export const Designer = () => {
+export const Designer = ({ graphId = 'root' }: DesignerProps) => {
   const nodes = useSelector((state: RootState) => {
     const retNodes: Elements = [];
     //TODO: Key off current graph rather than going through all nodes
-    Array.from(Object.values(state.workflow.nodes)).forEach((node) => {
+    state.workflow.graphs[graphId]?.nodes.forEach((id) => {
+      const node = state.workflow.nodes[id];
       retNodes.push({
         id: node.id,
         type: 'testNode',
