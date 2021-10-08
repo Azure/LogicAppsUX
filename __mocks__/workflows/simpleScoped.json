@@ -1,0 +1,66 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Initialize_variable": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "var1",
+              "type": "integer"
+            }
+          ]
+        },
+        "runAfter": {},
+        "type": "InitializeVariable"
+      },
+      "Response": {
+        "inputs": {
+          "body": "@variables('var1')",
+          "statusCode": 200
+        },
+        "kind": "http",
+        "runAfter": {
+          "Scope": ["Succeeded"]
+        },
+        "type": "Response"
+      },
+      "Scope": {
+        "actions": {
+          "Increment_variable_2": {
+            "inputs": {
+              "name": "var1",
+              "value": 1
+            },
+            "runAfter": {},
+            "type": "IncrementVariable"
+          },
+          "Increment_variable_3": {
+            "inputs": {
+              "name": "var1",
+              "value": 1
+            },
+            "runAfter": {
+              "Increment_variable_2": ["Succeeded"]
+            },
+            "type": "IncrementVariable"
+          }
+        },
+        "runAfter": {
+          "Initialize_variable": ["Succeeded"]
+        },
+        "type": "Scope"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "manual": {
+        "inputs": {},
+        "kind": "Http",
+        "type": "Request"
+      }
+    }
+  },
+  "kind": "Stateless"
+}

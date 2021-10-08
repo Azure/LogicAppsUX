@@ -54,8 +54,8 @@ export const expectedSimpleWorkflowDefinitionOutput = {
       nodes: ['Increment_variable', 'Initialize_variable', 'Response', 'manual'],
     },
   },
-  nodes: [
-    {
+  nodes: {
+    Increment_variable: {
       id: 'Increment_variable',
       type: 'IncrementVariable',
       operation: {
@@ -79,7 +79,7 @@ export const expectedSimpleWorkflowDefinitionOutput = {
       parentNodes: ['Initialize_variable'],
       childrenNodes: ['Response'],
     },
-    {
+    Initialize_variable: {
       id: 'Initialize_variable',
       type: 'InitializeVariable',
       operation: {
@@ -105,7 +105,7 @@ export const expectedSimpleWorkflowDefinitionOutput = {
       parentNodes: ['manual'],
       childrenNodes: ['Increment_variable'],
     },
-    {
+    Response: {
       id: 'Response',
       type: 'Response',
       operation: {
@@ -130,7 +130,7 @@ export const expectedSimpleWorkflowDefinitionOutput = {
       parentNodes: ['Increment_variable'],
       childrenNodes: [],
     },
-    {
+    manual: {
       id: 'manual',
       type: 'Request',
       operation: {
@@ -149,5 +149,5 @@ export const expectedSimpleWorkflowDefinitionOutput = {
       parentNodes: [],
       childrenNodes: ['Initialize_variable'],
     },
-  ],
+  },
 };
