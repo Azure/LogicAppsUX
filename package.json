@@ -6,6 +6,7 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
+    "build-storybook": "nx run designer:build-storybook",
     "lint:fix": "nx lint designer --fix",
     "prepare": "husky install",
     "pretty": "nx format:write",
