@@ -3,7 +3,7 @@ import TestWorkflow from './simpleBigworkflow.json';
 
 export default {
   component: DesignerProvider,
-  subcomponents: { BJSWorkflowProvider, Designer }, //👈 Adds the ListItem component as a subcomponent
+  subcomponents: { BJSWorkflowProvider, Designer }, 
   title: 'Designer/Designer Composition',
 };
 

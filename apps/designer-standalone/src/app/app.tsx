@@ -1,4 +1,4 @@
-import TestWorkflow from '../../../../libs/designer/src/lib/stories/simpleBigworkflow.json';
+import TestWorkflow from '../../../../__mocks__/workflows/StressTest100.json';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 export function App() {
   return (
