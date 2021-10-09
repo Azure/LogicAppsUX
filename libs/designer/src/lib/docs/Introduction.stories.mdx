@@ -1,0 +1,59 @@
+import { Meta } from '@storybook/addon-docs';
+
+<Meta title="Docs/Getting Started" />
+
+# Getting Started
+
+## Requirements
+
+- Node v14+
+
+- Recommended - Nx CLI
+
+```bash
+npm install -g nx
+```
+
+## Running Code
+
+Make sure to run npm install at the root level
+
+```bash
+npm install
+```
+
+All commands should be run from the root repo directory
+
+### Standalone Designer for testing
+
+**Code Location:** ```/apps/designer-standalone```
+
+```bash
+nx serve
+```
+
+
+### Build Designer Library For Publishing To NPM
+
+**Code Location:** ```/libs/deisgner```
+
+```bash
+nx run designer:build
+```
+
+### Running Unit Tests
+
+**Code Location:** ```/libs/designer/**/__test__/*.spec.ts(x)```
+
+```bash
+nx test designer
+```
+
+### Running E2E Tests
+
+**Code Location:** ```/apps/designer-e2e``` & ```/apps/designer-standalone-e2e```
+
+```bash
+nx run designer-standalone-e2e:e2e
+nx run designer-e2e:e2e
+```
