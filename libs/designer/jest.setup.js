@@ -1,6 +1,6 @@
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';
-import messages from './src/lib/Localize/compiled-lang/strings.json';
+import messages from '../Localize/compiled-lang/strings.json';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 class Worker {

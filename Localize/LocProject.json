@@ -1,0 +1,16 @@
+{
+  "Projects": [
+    {
+      "LanguageSet": "Azure_LanguagesExt",
+      "LocItems": [
+        {
+          "SourceFile": "Localize\\lang\\strings.json",
+          "CopyOption": "LangIDOnName",
+          "LclFile": "Localize\\loc\\{Lang}\\strings.json.lcl",
+          "OutputPath": "Localize\\lang\\"
+        }
+      ],
+      "LssFiles": ["Localize\\Settings\\ICUFormatMessage.lss"]
+    }
+  ]
+}
