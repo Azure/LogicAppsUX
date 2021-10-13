@@ -13,7 +13,7 @@
     "lib": ["esnext", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "resolveJsonModule": true,
+    "resolveJsonModule": false,
     "downlevelIteration": true,
     "noImplicitReturns": false,
     "baseUrl": ".",
