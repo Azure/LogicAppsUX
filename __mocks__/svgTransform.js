@@ -4,7 +4,7 @@
 const path = require('path');
 module.exports = {
   process(src, filename) {
-    return src;
+    return 'module.exports = ' + JSON.stringify(path.basename(filename)) + ';';
   },
   // getCacheKey() {
   //     // The output is always the same.
