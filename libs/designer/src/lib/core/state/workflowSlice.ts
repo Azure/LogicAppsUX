@@ -101,7 +101,7 @@ export const workflowSlice = createSlice({
       state.shouldLayout = false;
     });
     builder.addCase(processGraphLayout.rejected, (state, action) => {
-      console.log(action.error);
+      //console.log(action.error);
     });
   },
 });

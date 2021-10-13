@@ -10,9 +10,9 @@
     "lint:fix": "nx lint designer --fix",
     "prepare": "husky install",
     "pretty": "nx format:write",
-    "extract": "formatjs extract \"libs/**/*.ts*\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --out-file libs/designer/src/lib/Localize/lang/strings.json --format ./format.js",
-    "compile:loc": "formatjs compile-folder --ast --format ./format.js \"libs/designer/src/lib/Localize/lang\" \"libs/designer/src/lib/Localize/compiled-lang/\" ",
-    "compile:loc:psuedo": "formatjs compile \"libs/designer/src/lib/Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/designer/src/lib/Localize/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA"
+    "extract": "formatjs extract \"libs/**/*.ts*\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
+    "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"Localize/compiled-lang/\" ",
+    "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"Localize/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA"
   },
   "private": true,
   "dependencies": {

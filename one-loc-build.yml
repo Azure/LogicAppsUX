@@ -6,7 +6,7 @@ pool:
 steps:
   - task: OneLocBuild@2
     inputs:
-      locProj: 'libs/designer/src/lib/Localize/LocProject.json'
+      locProj: 'Localize/LocProject.json'
       outDir: '$(Build.ArtifactStagingDirectory)'
       repoType: gitHub
       isEnablePseudoLanguagesSelected: false

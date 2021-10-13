@@ -7,7 +7,7 @@
 
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';
-import messages from '../Localize/compiled-lang/strings.json';
+import messages from '../../../../../Localize/compiled-lang/strings.json';
 // You can pass your messages to the IntlProvider. Optional: remove if unneeded.
 // en.json
 const defaultLocale = 'en';
