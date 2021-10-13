@@ -1,4 +1,4 @@
-name: Test Runner
+name: Publish To NPM
 
 on:
   push:
