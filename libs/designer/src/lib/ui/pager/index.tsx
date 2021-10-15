@@ -169,13 +169,13 @@ export const Pager: React.FC<PagerProps> = ({
 
   const pagerOfStringAria = intl.formatMessage(
     {
-      defaultMessage: '{current} of {max}',
+      defaultMessage: '{current_page} of {max_page}',
 
       description: 'Accessability label telling that the user is on page {current} of {max} pages',
     },
     {
-      current,
-      max,
+      current_page: current,
+      max_page: max,
     }
   );
 

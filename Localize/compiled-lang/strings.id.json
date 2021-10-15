@@ -12,7 +12,7 @@
     },
     {
       "type": 0,
-      "value": ": More info"
+      "value": ": Info selengkapnya"
     }
   ],
   "0ZlNtf": [
@@ -48,7 +48,7 @@
   "47FYwb": [
     {
       "type": 0,
-      "value": "Batalkan"
+      "value": "Batal"
     }
   ],
   "5CTOi9": [
@@ -305,7 +305,7 @@
   "UcKJO+": [
     {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": "Kami tidak dapat menemukan "
     },
     {
       "type": 1,
@@ -313,7 +313,7 @@
     },
     {
       "type": 0,
-      "value": " for "
+      "value": " untuk "
     },
     {
       "type": 1,

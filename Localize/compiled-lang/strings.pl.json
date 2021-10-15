@@ -12,7 +12,7 @@
     },
     {
       "type": 0,
-      "value": ": More info"
+      "value": ": Więcej informacji"
     }
   ],
   "0ZlNtf": [
@@ -110,7 +110,7 @@
             },
             {
               "type": 0,
-              "value": " godz."
+              "value": " godziny"
             }
           ]
         },
@@ -121,7 +121,7 @@
             },
             {
               "type": 0,
-              "value": " godz."
+              "value": " godzin"
             }
           ]
         },
@@ -132,7 +132,7 @@
             },
             {
               "type": 0,
-              "value": " godz."
+              "value": " godzina"
             }
           ]
         },
@@ -143,7 +143,7 @@
             },
             {
               "type": 0,
-              "value": " godz."
+              "value": " godziny"
             }
           ]
         }
@@ -320,7 +320,7 @@
     },
     {
       "type": 0,
-      "value": " godz."
+      "value": " godz."
     }
   ],
   "RYIxqe": [
@@ -340,7 +340,7 @@
             },
             {
               "type": 0,
-              "value": " min"
+              "value": " minuty"
             }
           ]
         },
@@ -351,7 +351,7 @@
             },
             {
               "type": 0,
-              "value": " min"
+              "value": " minut"
             }
           ]
         },
@@ -362,7 +362,7 @@
             },
             {
               "type": 0,
-              "value": " min"
+              "value": " minuta"
             }
           ]
         },
@@ -373,7 +373,7 @@
             },
             {
               "type": 0,
-              "value": " min"
+              "value": " minuty"
             }
           ]
         }
@@ -390,7 +390,7 @@
     },
     {
       "type": 0,
-      "value": " min"
+      "value": " min"
     }
   ],
   "T8Xqt9": [
@@ -420,7 +420,7 @@
   "UcKJO+": [
     {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": "Nie mogliśmy znaleźć żadnej operacji "
     },
     {
       "type": 1,
@@ -428,7 +428,7 @@
     },
     {
       "type": 0,
-      "value": " for "
+      "value": " dla tekstu "
     },
     {
       "type": 1,
@@ -494,7 +494,7 @@
     },
     {
       "type": 0,
-      "value": " dni"
+      "value": " dni"
     }
   ],
   "Z79N+I": [
@@ -532,7 +532,7 @@
   "bQLLgV": [
     {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": "Nie mogliśmy znaleźć żadnej operacji "
     },
     {
       "type": 1,
@@ -592,7 +592,7 @@
             },
             {
               "type": 0,
-              "value": " s"
+              "value": " sekundy"
             }
           ]
         },
@@ -603,7 +603,7 @@
             },
             {
               "type": 0,
-              "value": " s"
+              "value": " sekundy"
             }
           ]
         },
@@ -614,7 +614,7 @@
             },
             {
               "type": 0,
-              "value": " s"
+              "value": " sekunda"
             }
           ]
         },
@@ -625,7 +625,7 @@
             },
             {
               "type": 0,
-              "value": " s"
+              "value": " sekundy"
             }
           ]
         }
@@ -660,7 +660,7 @@
     },
     {
       "type": 0,
-      "value": "s"
+      "value": " s"
     }
   ],
   "k41+13": [
@@ -780,7 +780,7 @@
             },
             {
               "type": 0,
-              "value": " dni"
+              "value": " dni"
             }
           ]
         },
@@ -791,7 +791,7 @@
             },
             {
               "type": 0,
-              "value": " dni"
+              "value": " dni"
             }
           ]
         },
@@ -802,7 +802,7 @@
             },
             {
               "type": 0,
-              "value": " dzień/dni"
+              "value": " dzień"
             }
           ]
         },
@@ -813,7 +813,7 @@
             },
             {
               "type": 0,
-              "value": " dni"
+              "value": " dnia"
             }
           ]
         }

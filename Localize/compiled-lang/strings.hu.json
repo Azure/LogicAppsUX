@@ -12,7 +12,7 @@
     },
     {
       "type": 0,
-      "value": ": More info"
+      "value": ": További információ"
     }
   ],
   "0ZlNtf": [
@@ -90,7 +90,7 @@
   "C5xzTC": [
     {
       "type": 0,
-      "value": "Prémiumszintű"
+      "value": "Prémium"
     }
   ],
   "EGXrx5": [
@@ -264,7 +264,7 @@
     },
     {
       "type": 0,
-      "value": " óra"
+      "value": " ó"
     }
   ],
   "RYIxqe": [
@@ -312,7 +312,7 @@
     },
     {
       "type": 0,
-      "value": " perc"
+      "value": " p"
     }
   ],
   "T8Xqt9": [
@@ -342,7 +342,7 @@
   "UcKJO+": [
     {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": "Nem találtunk "
     },
     {
       "type": 1,
@@ -350,7 +350,7 @@
     },
     {
       "type": 0,
-      "value": " for "
+      "value": " elemet a következő alapján: "
     },
     {
       "type": 1,
@@ -454,11 +454,15 @@
   "bQLLgV": [
     {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": "Nem találtunk "
     },
     {
       "type": 1,
       "value": "selectedOperationKindText"
+    },
+    {
+      "type": 0,
+      "value": " elemet"
     }
   ],
   "cj+kyo": [
@@ -560,7 +564,7 @@
     },
     {
       "type": 0,
-      "value": " másodperc"
+      "value": " mp"
     }
   ],
   "k41+13": [
@@ -750,7 +754,7 @@
   "unHYHq": [
     {
       "type": 0,
-      "value": "Prémiumszintű"
+      "value": "Prémium"
     }
   ],
   "vRZZPL": [
