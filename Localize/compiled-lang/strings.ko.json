@@ -400,20 +400,6 @@
       "value": "커넥터 목록 확장"
     }
   ],
-  "b5su3H": [
-    {
-      "type": 1,
-      "value": "max"
-    },
-    {
-      "type": 0,
-      "value": "의 "
-    },
-    {
-      "type": 1,
-      "value": "current"
-    }
-  ],
   "bQLLgV": [
     {
       "type": 1,
@@ -440,6 +426,20 @@
     {
       "type": 0,
       "value": "커넥터 만들기에 대해 자세히 알아보세요."
+    }
+  ],
+  "fejjJ6": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
     }
   ],
   "ftwXvc": [

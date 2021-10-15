@@ -437,20 +437,6 @@
       "value": "Összekötők listájának kibontása"
     }
   ],
-  "b5su3H": [
-    {
-      "type": 1,
-      "value": "current"
-    },
-    {
-      "type": 0,
-      "value": " / "
-    },
-    {
-      "type": 1,
-      "value": "max"
-    }
-  ],
   "bQLLgV": [
     {
       "type": 0,
@@ -481,6 +467,20 @@
     {
       "type": 0,
       "value": "További információ az összekötők létrehozásáról."
+    }
+  ],
+  "fejjJ6": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
     }
   ],
   "ftwXvc": [

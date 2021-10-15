@@ -404,28 +404,6 @@
       "value": "展开连接器列表"
     }
   ],
-  "b5su3H": [
-    {
-      "type": 0,
-      "value": "第 "
-    },
-    {
-      "type": 1,
-      "value": "current"
-    },
-    {
-      "type": 0,
-      "value": " 页(共 "
-    },
-    {
-      "type": 1,
-      "value": "max"
-    },
-    {
-      "type": 0,
-      "value": " 页)"
-    }
-  ],
   "bQLLgV": [
     {
       "type": 0,
@@ -452,6 +430,20 @@
     {
       "type": 0,
       "value": "详细了解如何创建连接器。"
+    }
+  ],
+  "fejjJ6": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
     }
   ],
   "ftwXvc": [

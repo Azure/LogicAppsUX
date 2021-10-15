@@ -499,20 +499,6 @@
       "value": "Развернуть список соединителей"
     }
   ],
-  "b5su3H": [
-    {
-      "type": 1,
-      "value": "current"
-    },
-    {
-      "type": 0,
-      "value": " из "
-    },
-    {
-      "type": 1,
-      "value": "max"
-    }
-  ],
   "bQLLgV": [
     {
       "type": 0,
@@ -539,6 +525,20 @@
     {
       "type": 0,
       "value": "Дополнительные сведения о создании соединителей."
+    }
+  ],
+  "fejjJ6": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
     }
   ],
   "ftwXvc": [
