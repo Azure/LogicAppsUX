@@ -12,7 +12,7 @@
     },
     {
       "type": 0,
-      "value": ": More info"
+      "value": ": Daha fazla bilgi"
     }
   ],
   "0ZlNtf": [
@@ -326,7 +326,7 @@
   "TdTXXf": [
     {
       "type": 0,
-      "value": "Daha fazla bilgi edinin"
+      "value": "Daha fazla bilgi"
     }
   ],
   "UIdPNN": [
@@ -337,8 +337,12 @@
   ],
   "UcKJO+": [
     {
+      "type": 1,
+      "value": "filterText"
+    },
+    {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": " için "
     },
     {
       "type": 1,
@@ -346,11 +350,7 @@
     },
     {
       "type": 0,
-      "value": " for "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
+      "value": " bulunamadı"
     }
   ],
   "W070M2": [
@@ -449,12 +449,12 @@
   ],
   "bQLLgV": [
     {
-      "type": 0,
-      "value": "We couldn't find any "
-    },
-    {
       "type": 1,
       "value": "selectedOperationKindText"
+    },
+    {
+      "type": 0,
+      "value": " bulunamadı"
     }
   ],
   "cj+kyo": [

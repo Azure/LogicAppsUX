@@ -12,7 +12,7 @@
     },
     {
       "type": 0,
-      "value": ": More info"
+      "value": ": Další informace"
     }
   ],
   "0ZlNtf": [
@@ -110,7 +110,7 @@
             },
             {
               "type": 0,
-              "value": " hodin"
+              "value": " hodiny"
             }
           ]
         },
@@ -324,7 +324,7 @@
             },
             {
               "type": 0,
-              "value": " minut"
+              "value": " minuty"
             }
           ]
         },
@@ -404,7 +404,7 @@
   "UcKJO+": [
     {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": "Nepovedlo se nám najít nic jako "
     },
     {
       "type": 1,
@@ -412,11 +412,15 @@
     },
     {
       "type": 0,
-      "value": " for "
+      "value": " pro filtr "
     },
     {
       "type": 1,
       "value": "filterText"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "W070M2": [
@@ -516,11 +520,15 @@
   "bQLLgV": [
     {
       "type": 0,
-      "value": "We couldn't find any "
+      "value": "Nepovedlo se nám najít žádný "
     },
     {
       "type": 1,
       "value": "selectedOperationKindText"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "cj+kyo": [
@@ -576,7 +584,7 @@
             },
             {
               "type": 0,
-              "value": " sekund"
+              "value": " sekundy"
             }
           ]
         },
@@ -779,7 +787,7 @@
             },
             {
               "type": 0,
-              "value": " dny"
+              "value": " dnů"
             }
           ]
         },
@@ -801,7 +809,7 @@
             },
             {
               "type": 0,
-              "value": " dny"
+              "value": " dnů"
             }
           ]
         }
