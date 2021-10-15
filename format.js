@@ -1,9 +1,9 @@
 module.exports = {
   format: (msgs) => {
     return Object.keys(msgs).reduce((all, k) => {
-      all[`_${k}.comment`] = `${
-        msgs[k].description ? `${msgs[k].description}.` : ''
-      } values inside of {} represent variables that will be inserted at runtime. PLEASE DO NOT TRANSLATE THOSE.`;
+      if (msgs[k].description) {
+        all[`_${k}.comment`] = msgs[k].description;
+      }
 
       all[k] = msgs[k].defaultMessage;
 
