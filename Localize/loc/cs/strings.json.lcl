@@ -21,6 +21,9 @@
       <Item ItemId=";/QnQhm" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{title}: More info]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{title}: Další informace]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -63,6 +66,9 @@
       <Item ItemId=";3V6GkP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{days}days {hours}hours]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{days} d {hours} h]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -96,6 +102,9 @@
       <Item ItemId=";5ilpFw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{hours}hours {minutes}minutes]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{hours} h {minutes} m]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -166,7 +175,7 @@
         <Str Cat="Text">
           <Val><![CDATA[# hours]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[# hodin]]></Val>
+            <Val><![CDATA[# hodiny]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -400,7 +409,7 @@
         <Str Cat="Text">
           <Val><![CDATA[# minutes]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[# minut]]></Val>
+            <Val><![CDATA[# minuty]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -498,6 +507,9 @@
       <Item ItemId=";UcKJO+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[We couldn't find any {selectedOperationKindText} for {filterText}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nepovedlo se nám najít nic jako {selectedOperationKindText} pro filtr {filterText}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -567,6 +579,9 @@
       <Item ItemId=";bQLLgV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[We couldn't find any {selectedOperationKindText}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nepovedlo se nám najít žádný {selectedOperationKindText}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -637,7 +652,7 @@
         <Str Cat="Text">
           <Val><![CDATA[# seconds]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[# sekund]]></Val>
+            <Val><![CDATA[# sekundy]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -798,6 +813,9 @@
       <Item ItemId=";ozs7Yp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{minutes}minutes {seconds}seconds]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{minutes} m {seconds} s]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -850,7 +868,7 @@
         <Str Cat="Text">
           <Val><![CDATA[# days]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[# dny]]></Val>
+            <Val><![CDATA[# dnů]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -880,7 +898,7 @@
         <Str Cat="Text">
           <Val><![CDATA[# days]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[# dny]]></Val>
+            <Val><![CDATA[# dnů]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
