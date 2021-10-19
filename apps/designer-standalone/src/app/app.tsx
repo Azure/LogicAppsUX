@@ -1,7 +1,6 @@
-import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { useLocalStorage } from 'react-use';
 import { useEffect, useState } from 'react';
-import { Login } from './Login/login';
+import { DesignerWrapper } from './Designer/designer';
 export function App() {
   const [token, setToken] = useLocalStorage<string | null>('token', null);
   const [resourcePath, setResourcePath] = useLocalStorage<string | null>('resource', null);
@@ -26,15 +25,15 @@ export function App() {
       })
       .catch(() => setWorkflow(null));
   }, [resourcePath, token]);
-  if (!workflow) {
-    return <Login setResourceId={setResourcePath} setToken={setToken} />;
-  }
+
   return (
-    <DesignerProvider locale="en-US">
-      <BJSWorkflowProvider workflow={workflow}>
-        <Designer></Designer>
-      </BJSWorkflowProvider>
-    </DesignerProvider>
+    <DesignerWrapper
+      workflow={workflow}
+      setResourceId={setResourcePath}
+      setToken={setToken}
+      resourceId={resourcePath}
+      token={token}
+    ></DesignerWrapper>
   );
 }
 
