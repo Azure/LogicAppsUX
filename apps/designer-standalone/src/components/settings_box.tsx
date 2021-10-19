@@ -11,6 +11,7 @@ export const SettingsBox = (props: {
   resourceId?: string | null;
 }) => {
   const [active, toggleActive] = useBoolean(false);
+  const [showLoadSettings, toggleLoadSettings] = useBoolean(true);
   const cs = css(styles.toybox, active && styles.active);
   return (
     <div className={cs}>
@@ -20,9 +21,13 @@ export const SettingsBox = (props: {
         </span>
       </div>
       <div className={styles.contentWrapper}>
-        <h4>Workflow Load Settings</h4>
+        <h4 onClick={toggleLoadSettings.toggle}>
+          <span className={css(showLoadSettings && styles.openIcon)}>▼</span> Workflow Load Settings
+        </h4>
         <div className={styles.content}>
-          <Login setResourceId={props.setResourceId} setToken={props.setToken} resourceId={props.resourceId} token={props.token}></Login>
+          {showLoadSettings && (
+            <Login setResourceId={props.setResourceId} setToken={props.setToken} resourceId={props.resourceId} token={props.token}></Login>
+          )}
         </div>
       </div>
     </div>

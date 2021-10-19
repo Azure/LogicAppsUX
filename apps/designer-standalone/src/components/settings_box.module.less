@@ -46,7 +46,7 @@
     overflow-y: auto;
     border-radius: 5px 0 0 5px;
     padding: 0;
-    padding-top:10px;
+    padding-top: 10px;
     min-width: 70vw;
     .content {
       padding: 25px;
@@ -64,6 +64,15 @@
       margin: 0;
       background: var(--toy-header-bg);
       color: var(--toy-header-color, --toy-color);
+      span {
+        display: inline-block;
+        font-size: 10px;
+        transform: rotate(-90deg);
+        transition: 0.2s transform var(--ease-in-out-quint);
+      }
+      .openIcon {
+        transform: rotate(0turn);
+      }
     }
   }
 }
