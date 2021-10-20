@@ -18,7 +18,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";/QnQhm" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";/QnQhm" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{title}: More info]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -45,7 +45,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";1rlBUx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";1rlBUx" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unexpected error]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -54,20 +54,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";20FJMM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";20FJMM" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Editing card title]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Изменяется заголовок карты]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";3V6GkP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[{days}days {hours}hours]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{days} дн. {hours} ч]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -81,7 +72,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";47FYwb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";47FYwb" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Cancel]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -90,20 +81,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";5CTOi9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";5CTOi9" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[This Action has testing configured.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Для этого действия настроено тестирование.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";5ilpFw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[{hours}hours {minutes}minutes]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{hours} ч {minutes} мин]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -144,7 +126,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";Asi2Jg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";Asi2Jg" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Hide advanced options]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -153,7 +135,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";C5xzTC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";C5xzTC" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Premium]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -258,7 +240,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";Gx6rDL#Plural.=0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";Gx6rDL#Plural.=0" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[no items matched.]]></Val>
         </Str>
@@ -282,7 +264,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";HOsSgX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";HOsSgX" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[More info]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -291,7 +273,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";JXhiR+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";JXhiR+" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[We couldn't find any results]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -300,7 +282,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";LgbKvU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";LgbKvU" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Comment]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -336,7 +318,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";P8QaSQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";P8QaSQ" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Copy URL]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -381,7 +363,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";RYIxqe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";RYIxqe" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Currently there are no suggestions available with your selection.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -462,7 +444,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";TY45/m" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";TY45/m" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[There are no recent connectors to show]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -471,7 +453,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";TdTXXf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";TdTXXf" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Learn more]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -507,11 +489,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";X8JjjT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[{days} days {hours} hours]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{days} дн. {hours} ч]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";XEdXNu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Recent]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Недавние]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";XTuxmH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[{minutes} minutes {seconds} seconds]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{minutes} мин {seconds} с]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -525,7 +525,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";Z79N+I" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";Z79N+I" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Connection required]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -548,15 +548,6 @@
           <Val><![CDATA[Expand list of connectors]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Развернуть список соединителей]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";b5su3H" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[{current} of {max}]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{current} из {max}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -588,11 +579,20 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";fRxVuK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";fRxVuK" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Learn more about creating connectors.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Дополнительные сведения о создании соединителей.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";fejjJ6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[{current_page} of {max_page}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{current_page} из {max_page}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -615,7 +615,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";gjBiyj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";gjBiyj" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Loading...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -741,7 +741,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";kjJiqd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";kjJiqd" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error loading component.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -750,7 +750,16 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";lIEejV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";l36V56" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[{hours} hours {minutes} minutes]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{hours} ч {minutes} мин]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";lIEejV" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Show advanced options]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -786,20 +795,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";orvpWh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";orvpWh" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Go back]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Назад]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";ozs7Yp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[{minutes}minutes {seconds}seconds]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{minutes} мин {seconds} с]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -930,7 +930,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";ug/8l6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";ug/8l6" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(preview)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -948,7 +948,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";vRZZPL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";vRZZPL" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Choose an operation]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -957,7 +957,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";vWe94i" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";vWe94i" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[More Info]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -975,7 +975,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";yD9JIy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";yD9JIy" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Connection name]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -984,7 +984,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";yKB5nP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";yKB5nP" ItemType="0" PsrId="306" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Want to create your own connectors?]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
