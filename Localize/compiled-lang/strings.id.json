@@ -337,7 +337,7 @@
     },
     {
       "type": 0,
-      "value": " days "
+      "value": " hari "
     },
     {
       "type": 1,
@@ -345,7 +345,7 @@
     },
     {
       "type": 0,
-      "value": " hours"
+      "value": " jam"
     }
   ],
   "XEdXNu": [
@@ -361,7 +361,7 @@
     },
     {
       "type": 0,
-      "value": " minutes "
+      "value": " menit "
     },
     {
       "type": 1,
@@ -369,7 +369,7 @@
     },
     {
       "type": 0,
-      "value": " seconds"
+      "value": " detik"
     }
   ],
   "YIBDSH": [
@@ -439,7 +439,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " dari "
     },
     {
       "type": 1,
@@ -556,7 +556,7 @@
     },
     {
       "type": 0,
-      "value": " hours "
+      "value": " jam "
     },
     {
       "type": 1,
@@ -564,7 +564,7 @@
     },
     {
       "type": 0,
-      "value": " minutes"
+      "value": " menit"
     }
   ],
   "lIEejV": [

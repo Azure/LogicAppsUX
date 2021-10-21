@@ -337,7 +337,7 @@
     },
     {
       "type": 0,
-      "value": " days "
+      "value": "일 "
     },
     {
       "type": 1,
@@ -345,7 +345,7 @@
     },
     {
       "type": 0,
-      "value": " hours"
+      "value": "시간"
     }
   ],
   "XEdXNu": [
@@ -435,7 +435,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " / "
     },
     {
       "type": 1,
@@ -552,7 +552,7 @@
     },
     {
       "type": 0,
-      "value": " hours "
+      "value": "시간 "
     },
     {
       "type": 1,
@@ -560,7 +560,7 @@
     },
     {
       "type": 0,
-      "value": " minutes"
+      "value": "분"
     }
   ],
   "lIEejV": [
