@@ -374,7 +374,7 @@
     },
     {
       "type": 0,
-      "value": " days "
+      "value": " nap "
     },
     {
       "type": 1,
@@ -382,7 +382,7 @@
     },
     {
       "type": 0,
-      "value": " hours"
+      "value": " óra"
     }
   ],
   "XEdXNu": [
@@ -398,7 +398,7 @@
     },
     {
       "type": 0,
-      "value": " minutes "
+      "value": " perc "
     },
     {
       "type": 1,
@@ -406,7 +406,7 @@
     },
     {
       "type": 0,
-      "value": " seconds"
+      "value": " másodperc"
     }
   ],
   "YIBDSH": [
@@ -476,7 +476,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": "/"
     },
     {
       "type": 1,
@@ -604,7 +604,7 @@
     },
     {
       "type": 0,
-      "value": " hours "
+      "value": " óra "
     },
     {
       "type": 1,
@@ -612,7 +612,7 @@
     },
     {
       "type": 0,
-      "value": " minutes"
+      "value": " perc"
     }
   ],
   "lIEejV": [

@@ -337,7 +337,7 @@
     },
     {
       "type": 0,
-      "value": " days "
+      "value": " 日 "
     },
     {
       "type": 1,
@@ -345,7 +345,7 @@
     },
     {
       "type": 0,
-      "value": " hours"
+      "value": " 時間"
     }
   ],
   "XEdXNu": [
@@ -361,7 +361,7 @@
     },
     {
       "type": 0,
-      "value": " minutes "
+      "value": " 分 "
     },
     {
       "type": 1,
@@ -369,7 +369,7 @@
     },
     {
       "type": 0,
-      "value": " seconds"
+      "value": " 秒"
     }
   ],
   "YIBDSH": [
@@ -431,15 +431,15 @@
   "fejjJ6": [
     {
       "type": 1,
-      "value": "current_page"
+      "value": "max_page"
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " 中の "
     },
     {
       "type": 1,
-      "value": "max_page"
+      "value": "current_page"
     }
   ],
   "ftwXvc": [
@@ -552,7 +552,7 @@
     },
     {
       "type": 0,
-      "value": " hours "
+      "value": " 時間 "
     },
     {
       "type": 1,
@@ -560,7 +560,7 @@
     },
     {
       "type": 0,
-      "value": " minutes"
+      "value": " 分"
     }
   ],
   "lIEejV": [
