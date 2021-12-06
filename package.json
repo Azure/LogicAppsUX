@@ -17,7 +17,7 @@
   "private": true,
   "dependencies": {
     "@fluentui/azure-themes": "^8.1.63",
-    "@fluentui/react": "^8.30.4",
+    "@fluentui/react": "^8.45.0",
     "@fluentui/react-hooks": "^8.3.3",
     "@fluentui/theme": "^2.3.2",
     "@reduxjs/toolkit": "^1.6.1",
