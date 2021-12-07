@@ -6,7 +6,7 @@
 import { css, IconButton, MessageBarType, TooltipHost } from '@fluentui/react';
 import { Event, EventHandler } from '../eventhandler';
 import * as React from 'react';
-import { DocLinkClickedEventHandler, InfoControlProps, TipProps, TitleChangeEvent } from '..';
+import { DocLinkClickedEventHandler, TipProps, TitleChangeEvent } from '..';
 
 import { CommentBoxProps } from './commentbox';
 import { MenuItemOption } from './menu';
@@ -70,7 +70,6 @@ export interface CardProps {
   hideHeaderLogo?: boolean;
   hideShowContents?: boolean;
   icon?: string;
-  infoMessageOption?: InfoControlProps;
   invalid?: boolean;
   isEditingTitle?: boolean;
   isLoadingContent?: boolean;
