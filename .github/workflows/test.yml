@@ -26,6 +26,7 @@ jobs:
 
       - run: npm ci
       - run: npm run build designer
+      - run: npm run build-storybook # Remove this once we can deploy to SWA instead of Netlify
       - run: npm test designer
 
       - name: Publish Unit Test Results
