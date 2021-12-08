@@ -81,12 +81,6 @@
       "value": "さらに表示"
     }
   ],
-  "Asi2Jg": [
-    {
-      "type": 0,
-      "value": "詳細オプションを非表示"
-    }
-  ],
   "C5xzTC": [
     {
       "type": 0,
@@ -118,12 +112,6 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "hours"
-    }
-  ],
-  "GLahvg": [
-    {
-      "type": 0,
-      "value": "無視"
     }
   ],
   "Gx6rDL": [
@@ -561,12 +549,6 @@
     {
       "type": 0,
       "value": " 分"
-    }
-  ],
-  "lIEejV": [
-    {
-      "type": 0,
-      "value": "詳細オプションを表示"
     }
   ],
   "lUTDU8": [

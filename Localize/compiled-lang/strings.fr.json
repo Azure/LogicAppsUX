@@ -81,12 +81,6 @@
       "value": "Voir plus"
     }
   ],
-  "Asi2Jg": [
-    {
-      "type": 0,
-      "value": "Masquer les options avancées"
-    }
-  ],
   "C5xzTC": [
     {
       "type": 0,
@@ -129,12 +123,6 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "hours"
-    }
-  ],
-  "GLahvg": [
-    {
-      "type": 0,
-      "value": "Ignorer"
     }
   ],
   "Gx6rDL": [
@@ -605,12 +593,6 @@
     {
       "type": 0,
       "value": " minutes"
-    }
-  ],
-  "lIEejV": [
-    {
-      "type": 0,
-      "value": "Afficher les options avancées"
     }
   ],
   "lUTDU8": [
