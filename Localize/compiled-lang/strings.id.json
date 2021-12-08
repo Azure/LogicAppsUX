@@ -81,12 +81,6 @@
       "value": "Lihat lainnya"
     }
   ],
-  "Asi2Jg": [
-    {
-      "type": 0,
-      "value": "Sembunyikan opsi lanjutan"
-    }
-  ],
   "C5xzTC": [
     {
       "type": 0,
@@ -118,12 +112,6 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "hours"
-    }
-  ],
-  "GLahvg": [
-    {
-      "type": 0,
-      "value": "Tutup"
     }
   ],
   "Gx6rDL": [
@@ -565,12 +553,6 @@
     {
       "type": 0,
       "value": " menit"
-    }
-  ],
-  "lIEejV": [
-    {
-      "type": 0,
-      "value": "Tampilkan opsi lanjutan"
     }
   ],
   "lUTDU8": [
