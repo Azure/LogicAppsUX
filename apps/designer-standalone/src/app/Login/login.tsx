@@ -18,7 +18,7 @@ export const Login: React.FC<LoginProps> = (props) => {
         />
       </div>
       <div>
-        <TextField label="ARM Token" onChange={(e, newValue) => props.setToken(newValue ?? '')} value={props.token ?? ''}/>
+        <TextField label="ARM Token" onChange={(e, newValue) => props.setToken(newValue ?? '')} value={props.token ?? ''} />
       </div>
     </div>
   );

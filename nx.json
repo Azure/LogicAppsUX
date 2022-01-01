@@ -14,7 +14,8 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e", "build-storybook"]
+        "cacheableOperations": ["build", "lint", "test", "e2e", "build-storybook"],
+        "parallel": 1
       }
     }
   },
@@ -26,20 +27,24 @@
       }
     ]
   },
-  "projects": {
-    "designer": {
-      "tags": []
-    },
-    "designer-e2e": {
-      "tags": [],
-      "implicitDependencies": ["designer"]
-    },
-    "designer-standalone": {
-      "tags": []
-    },
-    "designer-standalone-e2e": {
-      "tags": [],
-      "implicitDependencies": ["designer-standalone"]
+  "cli": {
+    "defaultCollection": "@nrwl/react"
+  },
+  "generators": {
+    "@nrwl/react": {
+      "application": {
+        "style": "less",
+        "linter": "eslint",
+        "babel": true
+      },
+      "component": {
+        "style": "less"
+      },
+      "library": {
+        "style": "less",
+        "linter": "eslint"
+      }
     }
-  }
+  },
+  "defaultProject": "designer-standalone"
 }
