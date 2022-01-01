@@ -7,7 +7,7 @@
       "projectType": "library",
       "targets": {
         "build": {
-          "executor": "@nrwl/web:package",
+          "executor": "@nrwl/web:rollup",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/libs/designer",
@@ -106,7 +106,7 @@
       "projectType": "application",
       "targets": {
         "build": {
-          "executor": "@nrwl/web:build",
+          "executor": "@nrwl/web:webpack",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/designer-standalone",
@@ -195,25 +195,5 @@
         }
       }
     }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/react"
-  },
-  "generators": {
-    "@nrwl/react": {
-      "application": {
-        "style": "less",
-        "linter": "eslint",
-        "babel": true
-      },
-      "component": {
-        "style": "less"
-      },
-      "library": {
-        "style": "less",
-        "linter": "eslint"
-      }
-    }
-  },
-  "defaultProject": "designer-standalone"
+  }
 }
