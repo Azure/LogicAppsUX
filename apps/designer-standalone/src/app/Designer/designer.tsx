@@ -1,7 +1,9 @@
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { SettingsBox } from '../../components/settings_box';
 import { ParameterButton } from '../../components/workflowparameters/parameter_button';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createRef } from 'react';
+import { WorkflowParameter, WorkflowParameterDefinition } from '../../components/workflowparameters/_workflowparameter';
+import { WorkflowParametersPanel } from '../../components/workflowparameters/_workflowparameterspanel';
 
 export interface DesignerWrapperProps {
   workflow: LogicAppsV2.WorkflowDefinition;
@@ -11,15 +13,13 @@ export interface DesignerWrapperProps {
   resourceId?: string | null;
 }
 export const DesignerWrapper = ({ workflow, setResourceId, setToken, resourceId, token }: DesignerWrapperProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const _panelRef = createRef<WorkflowParametersPanel>();
 
-  useEffect (() => {
-    console.log(isOpen);
-  }, [isOpen])
   return (
     <>
       <SettingsBox setResourceId={setResourceId} setToken={setToken} resourceId={resourceId} token={token} />
-      <ParameterButton toggleOpen={setIsOpen} isOpen={isOpen}/>
+      <ParameterButton toggleOpen={() => _panelRef.current?.showPanel()}/>
+      <WorkflowParametersPanel ref={_panelRef} onDismiss={() => console.log('hi')} parameters={createWorkflowDefintions()} />
       <DesignerProvider locale="en-US">
         <BJSWorkflowProvider workflow={workflow}>
           <Designer></Designer>
@@ -28,3 +28,7 @@ export const DesignerWrapper = ({ workflow, setResourceId, setToken, resourceId,
     </>
   );
 };
+function createWorkflowDefintions(): WorkflowParameterDefinition[] {
+  return [];
+}
+
