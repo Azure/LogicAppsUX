@@ -19,7 +19,7 @@ export const DesignerWrapper = ({ workflow, setResourceId, setToken, resourceId,
     <>
       <SettingsBox setResourceId={setResourceId} setToken={setToken} resourceId={resourceId} token={token} />
       <ParameterButton toggleOpen={() => _panelRef.current?.showPanel()}/>
-      <WorkflowParametersPanel ref={_panelRef} onDismiss={() => console.log('hi')} parameters={createWorkflowDefintions()} />
+      <WorkflowParametersPanel ref={_panelRef} onDismiss={() => console.log('dismissed panel')} parameters={createWorkflowDefintions()} />
       <DesignerProvider locale="en-US">
         <BJSWorkflowProvider workflow={workflow}>
           <Designer></Designer>
