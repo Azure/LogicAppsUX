@@ -10,10 +10,10 @@ import * as React from 'react';
 // import * as monaco from 'monaco-editor';
 import { findDOMNode } from 'react-dom';
 // import Resources from 'resources';
-import { equals, format } from '../../libs/shared/Utils';
-import Constants from '../../constants';
+import { equals, format } from './../shared/Utils';
+import Constants from './../constants';
 import type { EventHandler } from '../eventhandler';
-import { isHighContrastBlackOrInverted } from '../../utils/theme';
+import { isHighContrastBlackOrInverted } from './../utils/theme';
 
 const fieldStyles: IStyle = {
   display: 'inline-block',
@@ -71,23 +71,23 @@ const textFieldWithWarningStyles: Partial<ITextFieldStyles> = {
 };
 
 const typeOptions: IDropdownOption[] = [
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_ARRAY' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_BOOL' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_FLOAT' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_INT' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_OBJECT' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_SECURE_OBJECT' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_SECURE_STRING' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_STRING' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, text: 'Array' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL, text: 'Bool' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT, text: 'Float' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: 'Int' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT, text: 'Obj' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT, text: 'Secure_Obj' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING, text: 'Secure_String' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING, text: 'String' },
 ];
 
 const typeOptionsForStandard: IDropdownOption[] = [
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_ARRAY' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_BOOL' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_FLOAT' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_INT' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_OBJECT' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING, text: 'Resources.WORKFLOW_PARAMETERS_TYPE_STRING' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, text: 'Array' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL, text: 'Bool' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT, text: 'Float' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: 'Int' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT, text: 'Obj' },
+  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING, text: 'String' },
 ];
 
 const NAME_KEY = 'name';
@@ -188,7 +188,7 @@ export class WorkflowParameter extends React.Component<WorkflowParameterProps, W
                 iconProps={iconProps}
                 onClick={this._handleToggleExpand}
                 styles={commandBarStyles}
-                text={name ? name : 'Resources.WORKFLOW_PARAMETER_HEADING_TEXT'}
+                text={name ? name : 'Heading Text'}
               />
             </div>
             {expanded ? this._renderParameterFields(parameterDetails, errors) : null}
@@ -220,13 +220,13 @@ export class WorkflowParameter extends React.Component<WorkflowParameterProps, W
         <>
           <div className="msla-workflow-parameter-field">
             <Label styles={labelStyles} required={true} htmlFor={parameterDetails.name}>
-              {'Resources.WORKFLOW_PARAMETER_NAME_TITLE'}
+              {'Name Title'}
             </Label>
             <TextField
               styles={textFieldStyles}
               id={parameterDetails.name}
-              ariaLabel={'Resources.WORKFLOW_PARAMETER_NAME_TITLE'}
-              placeholder={'Resources.WORKFLOW_PARAMETER_NAME_DESCRIPTION'}
+              ariaLabel={'Name Title'}
+              placeholder={'Name Description'}
               value={name}
               errorMessage={errors[NAME_KEY]}
               onChange={this._onNameChange}
@@ -235,11 +235,11 @@ export class WorkflowParameter extends React.Component<WorkflowParameterProps, W
           </div>
           <div className="msla-workflow-parameter-field">
             <Label styles={labelStyles} required={true} htmlFor={parameterDetails.type}>
-              {'Resources.WORKFLOW_PARAMETER_TYPE_TITLE'}
+              {'Type Title'}
             </Label>
             <Dropdown
               id={parameterDetails.type}
-              ariaLabel={'Resources.WORKFLOW_PARAMETER_TYPE_TITLE'}
+              ariaLabel={'Type Title'}
               options={standardMode ? typeOptionsForStandard : typeOptions}
               selectedKey={type}
               styles={dropdownStyles}
@@ -259,97 +259,42 @@ export class WorkflowParameter extends React.Component<WorkflowParameterProps, W
     const {
       definition: { value },
       isReadOnly,
-      standardMode,
-      onRegisterLanguageProvider,
     } = this.props;
     const { defaultValue, type, valueWarningMessage } = this.state;
-
-    // if (standardMode) {
-    //   const error = errors[DEFAULT_VALUE_KEY];
-    //   const isMultiline = type === 'Object' || type === 'Array';
-    //   const layout = { height: isMultiline ? 80 : 30, width: 425 };
-    //   const options: monaco.editor.IEditorConstructionOptions = {
-    //     ...Editor.defaultProps.options,
-    //     fontSize: 14,
-    //     lineNumbers: 'off',
-    //     language: type === 'String' ? 'plaintext' : 'json',
-    //     readOnly: false,
-    //     scrollBeyondLastLine: false,
-    //     wordWrap: isMultiline ? 'on' : 'off',
-    //     scrollbar: {
-    //       vertical: isMultiline ? 'visible' : 'hidden',
-    //       horizontal: isMultiline ? 'visible' : 'hidden',
-    //     },
-    //     minimap: {
-    //       enabled: isMultiline,
-    //     },
-    //     folding: isMultiline,
-    //     contextmenu: isMultiline,
-    //     overviewRulerLanes: isMultiline ? 2 : 0,
-    //     overviewRulerBorder: isMultiline,
-    //   };
-    //   let className = '';
-
-    //   if (isMultiline) {
-    //     className = error ? 'msla-workflow-parameter-multiline-editor-error' : 'msla-workflow-parameter-multiline-editor';
-    //   } else {
-    //     className = error ? 'msla-workflow-parameter-editor-error' : 'msla-workflow-parameter-editor';
-    //   }
-    //   return (
-    //     <div className="msla-workflow-parameter-value-field">
-    //       <Label styles={labelStyles} required={true} htmlFor={parameterDetails.value}>
-    //         {'Resources.WORKFLOW_PARAMETER_VALUE_TITLE'}
-    //       </Label>
-    //       <div>
-    //         <div className={className}>
-    //           <Editor
-    //             defaultValue={defaultValue}
-    //             layout={layout}
-    //             options={options}
-    //             onContentChanged={this._onContentChange}
-    //             onEditorLoaded={onRegisterLanguageProvider}
-    //           />
-    //         </div>
-    //         {errors[DEFAULT_VALUE_KEY] ? this._onRenderError(errors[DEFAULT_VALUE_KEY]) : null}
-    //       </div>
-    //     </div>
-    //   );
-    // } else {
-      return (
-        <>
-          <div className="msla-workflow-parameter-field">
-            <Label styles={labelStyles} htmlFor={parameterDetails.defaultValue}>
-              {'Resources.WORKFLOW_PARAMETER_DEFAULT_VALUE_TITLE'}
-            </Label>
-            <TextField
-              id={parameterDetails.defaultValue}
-              ariaLabel={'Resources.WORKFLOW_PARAMETER_DEFAULT_VALUE_TITLE'}
-              placeholder={'Resources.WORKFLOW_PARAMETER_DEFAULT_VALUE_DESCRIPTION'}
-              description={valueWarningMessage}
-              value={defaultValue}
-              errorMessage={errors[DEFAULT_VALUE_KEY]}
-              styles={valueWarningMessage ? textFieldWithWarningStyles : textFieldStyles}
-              onChange={this._onValueChange}
-              onRenderDescription={valueWarningMessage ? this._onRenderDescription : undefined}
-              disabled={isReadOnly}
-            />
-          </div>
-          <div className="msla-workflow-parameter-field">
-            <Label styles={labelStyles} htmlFor={parameterDetails.value}>
-              {'Resources.WORKFLOW_PARAMETER_ACTUAL_VALUE_TITLE'}
-            </Label>
-            <TextField
-              styles={disabledTextFieldStyles}
-              id={parameterDetails.value}
-              ariaLabel={'Resources.WORKFLOW_PARAMETER_ACTUAL_VALUE_TITLE'}
-              type={isSecureParameter(type) ? 'password' : undefined}
-              defaultValue={value}
-              disabled
-            />
-          </div>
-        </>
-      );
-    // }
+    return (
+      <>
+        <div className="msla-workflow-parameter-field">
+          <Label styles={labelStyles} htmlFor={parameterDetails.defaultValue}>
+            {'Default Value Title'}
+          </Label>
+          <TextField
+            id={parameterDetails.defaultValue}
+            ariaLabel={'Default Value Title'}
+            placeholder={'Default Value Description'}
+            description={valueWarningMessage}
+            value={defaultValue}
+            errorMessage={errors[DEFAULT_VALUE_KEY]}
+            styles={valueWarningMessage ? textFieldWithWarningStyles : textFieldStyles}
+            onChange={this._onValueChange}
+            onRenderDescription={valueWarningMessage ? this._onRenderDescription : undefined}
+            disabled={isReadOnly}
+          />
+        </div>
+        <div className="msla-workflow-parameter-field">
+          <Label styles={labelStyles} htmlFor={parameterDetails.value}>
+            {'Actual Value Title'}
+          </Label>
+          <TextField
+            styles={disabledTextFieldStyles}
+            id={parameterDetails.value}
+            ariaLabel={'Actual Value Title'}
+            type={isSecureParameter(type) ? 'password' : undefined}
+            defaultValue={value}
+            disabled
+          />
+        </div>
+      </>
+    );
   };
 
   private _renderReadOnlyParameters = (parameterDetails: ParameterFieldDetails): JSX.Element => {
@@ -359,19 +304,19 @@ export class WorkflowParameter extends React.Component<WorkflowParameterProps, W
       <>
         <div className="msla-workflow-parameter-field">
           <Label styles={labelStyles} htmlFor={parameterDetails.name}>
-            {"Resources.WORKFLOW_PARAMETER_NAME_TITLE"}
+            {'Name Title'}
           </Label>
           <Text className="msla-workflow-parameter-read-only">{name}</Text>
         </div>
         <div className="msla-workflow-parameter-field">
           <Label styles={labelStyles} htmlFor={parameterDetails.type}>
-            {"Resources.WORKFLOW_PARAMETER_TYPE_TITLE"}
+            {'Type Title'}
           </Label>
           <Text className="msla-workflow-parameter-read-only">{type}</Text>
         </div>
         <div className="msla-workflow-parameter-value-field">
           <Label styles={labelStyles} htmlFor={parameterDetails.value}>
-            {"Resources.WORKFLOW_PARAMETER_VALUE_TITLE"}
+            {'Value Title'}
           </Label>
           <Text block className="msla-workflow-parameter-read-only">
             {defaultValue}
@@ -441,9 +386,9 @@ export class WorkflowParameter extends React.Component<WorkflowParameterProps, W
     this._handleContentChange(newValue);
   };
 
-//   private _onContentChange = (e: EditorContentChangedEventArgs): void => {
-//     this._handleContentChange(e.value);
-//   };
+  //   private _onContentChange = (e: EditorContentChangedEventArgs): void => {
+  //     this._handleContentChange(e.value);
+  //   };
 
   private _handleContentChange(value?: string) {
     const { definition, onChange } = this.props;
@@ -506,7 +451,7 @@ function isSecureParameter(type?: string): boolean {
 }
 
 function getValueWarningMessage(value?: string, type?: string): string | undefined {
-  return isSecureParameter(type) && !!value ? format('Resources.WORKFLOW_PARAMETER_SECURE_PARAMETER_WARNING_MESSAGE', type) : undefined;
+  return isSecureParameter(type) && !!value ? format('Warning Message', type) : undefined;
 }
 
 interface DeleteButtonProps {
@@ -547,9 +492,9 @@ function DeleteButton({ onClick }: DeleteButtonProps): JSX.Element {
   }, []);
 
   return (
-    <TooltipHost calloutProps={{ target }} content={'Resources.WORKFLOW_PARAMETER_DELETE_TITLE'}>
+    <TooltipHost calloutProps={{ target }} content={'Delete Title'}>
       <IconButton
-        ariaLabel={'Resources.WORKFLOW_PARAMETER_DELETE_TITLE'}
+        ariaLabel={'Delete Title'}
         componentRef={componentRef}
         iconProps={deleteIcon}
         styles={deleteButtonStyles}
@@ -568,9 +513,9 @@ function EditButton({ onClick }: DeleteButtonProps): JSX.Element {
   }, []);
 
   return (
-    <TooltipHost calloutProps={{ target }} content={'Resources.WORKFLOW_PARAMETER_EDIT_TITLE'}>
+    <TooltipHost calloutProps={{ target }} content={'Edit Title'}>
       <IconButton
-        ariaLabel={'Resources.WORKFLOW_PARAMETER_EDIT_TITLE'}
+        ariaLabel={'Edit Title'}
         componentRef={componentRef}
         iconProps={editIcon}
         styles={deleteButtonStyles}

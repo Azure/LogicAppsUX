@@ -7,7 +7,7 @@ import { getTheme, registerOnThemeChangeCallback, removeOnThemeChangeCallback } 
 import * as React from 'react';
 // import Resources from 'resources';
 // import ParametersIcon from '../card/images/parameters.generated';
-import { isHighContrastBlackOrInverted } from '../../utils/theme';
+import { isHighContrastBlackOrInverted } from './../utils/theme';
 import {
   WorkflowParameter,
   WorkflowParameterDefinition,
@@ -53,7 +53,7 @@ const InfoBar = ({ isInverted }: { isInverted: boolean }) => {
   return (
     <div className="msla-workflow-parameters-message-bar">
       <MessageBar isMultiline={true} styles={isInverted ? darkMessageBarStyles : lightMessageBarStyles}>
-        {'Resources.WORKFLOW_PARAMETER_MESSAGE_BAR_TEXT'}
+        {'Message Bar Text'}
       </MessageBar>
     </div>
   );
@@ -108,13 +108,13 @@ export default class WorkflowParameters extends React.Component<WorkflowParamete
     if (standardMode) {
       return (
         <div className="msla-workflow-parameters">
-          <h3 className="msla-workflow-parameters-create">{'Resources.WORKFLOW_PARAMETERS_CREATE_TITLE'}</h3>
+          <h3 className="msla-workflow-parameters-create">{'Create Title'}</h3>
           {parameters.length ? <InfoBar isInverted={isInverted} /> : null}
           <div className="msla-workflow-parameters-add-standard">
             <CommandBarButton
               className="msla-workflow-parameters-create-button"
               disabled={isReadOnly}
-              text={'Resources.WORKFLOW_PARAMETERS_CREATE'}
+              text={'CREATE'}
               iconProps={addIcon}
               onClick={this._handleAddParameter}
             />
@@ -131,7 +131,7 @@ export default class WorkflowParameters extends React.Component<WorkflowParamete
           {parameters.length ? <List items={parameters} onRenderCell={this._renderParameter} /> : null}
           <div className="msla-workflow-parameters-add">
             <PrimaryButton
-              text={"Resources.WORKFLOW_PARAMETERS_ADD"}
+              text={'ADD'}
               styles={buttonStyles}
               onClick={this._handleAddParameter}
               disabled={isReadOnly}
@@ -156,19 +156,19 @@ export default class WorkflowParameters extends React.Component<WorkflowParamete
         <div className="msla-workflow-parameters-empty">
           {/* <img src={ParametersIcon} alt="" role="presentation" /> */}
           <div className="msla-workflow-parameters-text-standard">
-            <p>{"Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART1_STANDARD"}</p>
-            <p>{"Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART2_STANDARD"}</p>
+            <p>{'Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART1_STANDARD'}</p>
+            <p>{'Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART2_STANDARD'}</p>
           </div>
         </div>
       );
     } else {
       return (
         <div className="msla-workflow-parameters-empty">
-          <Icon iconName="Parameter" styles={iconStyles} ariaLabel={"Resources.WORKFLOW_PARAMETERS_PARAMETER_ICON_LABEL"} />
-          <h1 className="msla-workflow-parameters-title">{"Resources.WORKFLOW_PARAMETERS_TITLE"}</h1>
+          <Icon iconName="Parameter" styles={iconStyles} ariaLabel={'Resources.WORKFLOW_PARAMETERS_PARAMETER_ICON_LABEL'} />
+          <h1 className="msla-workflow-parameters-title">{'Resources.WORKFLOW_PARAMETERS_TITLE'}</h1>
           <div className="msla-workflow-parameters-text">
-            <p>{"Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART1"}</p>
-            <p>{"Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART2"}</p>
+            <p>{'Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART1'}</p>
+            <p>{'Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART2'}</p>
           </div>
         </div>
       );
@@ -202,7 +202,7 @@ export default class WorkflowParameters extends React.Component<WorkflowParamete
     return (
       <footer className="msla-workflow-parameters-link">
         <Link className="msla-workflow-parameters-link-text" onClick={onManageParameters}>
-          {"Resources.WORKFLOW_PARAMETERS_LINK_TEXT"}
+          {'Link Text'}
         </Link>
         <Icon iconName="NavigateExternalInline" styles={navigateIconStyle} className="msla-workflow-parameters-link-icon" />
       </footer>
