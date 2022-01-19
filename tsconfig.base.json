@@ -18,6 +18,7 @@
     "noImplicitReturns": false,
     "baseUrl": ".",
     "paths": {
+      "@microsoft-logic-apps/services/resolution-service": ["libs/services/resolution-service/src/index.ts"],
       "@microsoft-logic-apps/utils": ["libs/utils/src/index.ts"],
       "@microsoft/logic-apps-designer": ["libs/designer/src/index.ts"]
     }
