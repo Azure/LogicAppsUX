@@ -2,13 +2,12 @@ export interface Exception {
   name: string;
   code?: string;
   message: string;
-  data?: Record<string, any> /* tslint:disable-line: no-any */;
+  data?: Record<string, any>;
   // NOTE(prshrest): any is used as a fallback in case it is not an Exception.
-  innerException?: Exception | any /* tslint:disable-line: no-any */;
+  innerException?: Exception | any;
   stack?: string;
 }
 
-// tslint:disable-next-line: no-any
 export function isException(value: any): value is Exception {
   return (
     typeof value === 'object' &&
