@@ -2,9 +2,7 @@
 
 import React, { createRef } from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-
-import { WorkflowParameter, WorkflowParameterDefinition } from './_workflowparameter';
-import { WorkflowParametersPanel, WorkflowParametersPanelProps } from './_workflowparameterspanel';
+import { WorkflowParametersPanel, WorkflowParametersPanelProps } from '.';
 import { ActionButtonV2 } from './../actionbuttonv2/index';
 
 export default {

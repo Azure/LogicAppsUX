@@ -1,12 +1,9 @@
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { SettingsBox } from '../../components/settings_box';
 import { ParameterButton } from '../../components/workflowparameters/parameter_button';
-import { useState, useEffect, createRef } from 'react';
-import {
-  WorkflowParameter,
-  WorkflowParameterDefinition,
-} from '../../../../../libs/designer/src/lib/ui/workflowparameters/_workflowparameter';
-import { WorkflowParametersPanel } from '../../../../../libs/designer/src/lib/ui/workflowparameters/_workflowparameterspanel';
+import { createRef } from 'react';
+import { WorkflowParameterDefinition } from '../../../../../libs/designer/src/lib/ui/workflowparameters/_workflowparameter';
+import { WorkflowParametersPanel } from '../../../../../libs/designer/src/lib/ui/workflowparameters';
 
 export interface DesignerWrapperProps {
   workflow: LogicAppsV2.WorkflowDefinition;
