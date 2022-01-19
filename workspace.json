@@ -195,6 +195,7 @@
         }
       }
     },
+    "services-resolution-service": "libs/services/resolution-service",
     "utils": "libs/utils"
   }
 }
