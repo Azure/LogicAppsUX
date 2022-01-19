@@ -4,9 +4,10 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
+    "start:storybook": "nx run designer:storybook",
     "build": "nx build",
     "test": "nx test",
-    "build-storybook": "nx run designer:build-storybook",
+    "build-storybook": "NODE_ENV=production nx run designer:build-storybook",
     "lint:fix": "nx lint designer --fix",
     "prepare": "husky install",
     "pretty": "nx format:write",
