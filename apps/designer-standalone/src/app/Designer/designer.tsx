@@ -32,5 +32,8 @@ export const DesignerWrapper = ({ workflow, setResourceId, setToken, resourceId,
   );
 };
 function createWorkflowDefintions(): WorkflowParameterDefinition[] {
-  return [{ defaultValue: 'bob', id: 'test', name: 'bob' }];
+  return [
+    { defaultValue: '{}', id: 'test', name: 'test', type: 'SecureObject' },
+    { defaultValue: 'test2', id: 'test2', name: 'Hello', type: 'Bool' },
+  ];
 }

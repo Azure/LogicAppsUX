@@ -22,5 +22,8 @@ export const Standard: ComponentStory<typeof WorkflowParametersPanel> = (args: W
 );
 
 Standard.args = {
-  parameters: [{ defaultValue: 'bob', id: 'test', name: 'bob' }],
+  parameters: [
+    { defaultValue: '{}', id: 'test', name: 'test', type: 'SecureObject' },
+    { defaultValue: 'test2', id: 'test2', name: 'Hello', type: 'Bool' },
+  ],
 };
