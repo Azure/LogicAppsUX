@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { WorkflowParametersPanel } from './_workflowparametersPanel';
+import WorkflowParametersPanel from './_workflowparametersPanel';
 import { ActionButtonV2 } from './../actionbuttonv2';
 import { WorkflowParameterDefinition } from './_workflowparameter';
 

@@ -13,5 +13,5 @@ export const Standard: ComponentStory<typeof WorkflowParameterView> = (args: Wor
 );
 
 Standard.args = {
-//   parameters: [{ defaultValue: 'bob', id: 'test', name: 'bob', type: 'SecureObject' }],
+  parameters: [{ defaultValue: 'bob', id: 'test', name: 'bob', type: 'SecureObject' }],
 };
