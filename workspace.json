@@ -8,13 +8,17 @@
       "targets": {
         "build": {
           "executor": "@nrwl/web:rollup",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/libs/designer",
             "tsConfig": "libs/designer/tsconfig.lib.json",
             "project": "libs/designer/package.json",
             "entryFile": "libs/designer/src/index.ts",
-            "external": ["react/jsx-runtime"],
+            "external": [
+              "react/jsx-runtime"
+            ],
             "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
             "extractCss": true,
             "assets": [
@@ -28,14 +32,20 @@
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["libs/designer/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "libs/designer/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/designer"],
+          "outputs": [
+            "coverage/libs/designer"
+          ],
           "options": {
             "jestConfig": "libs/designer/jest.config.js",
             "passWithNoTests": true
@@ -58,7 +68,9 @@
         },
         "build-storybook": {
           "executor": "@nrwl/storybook:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "uiFramework": "@storybook/react",
             "outputPath": "dist/storybook/designer",
@@ -93,9 +105,13 @@
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["apps/designer-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "apps/designer-e2e/**/*.{js,ts}"
+            ]
           }
         }
       }
@@ -107,15 +123,22 @@
       "targets": {
         "build": {
           "executor": "@nrwl/web:webpack",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/designer-standalone",
             "index": "apps/designer-standalone/src/index.html",
             "main": "apps/designer-standalone/src/main.tsx",
             "polyfills": "apps/designer-standalone/src/polyfills.ts",
             "tsConfig": "apps/designer-standalone/tsconfig.app.json",
-            "assets": ["apps/designer-standalone/src/favicon.ico", "apps/designer-standalone/src/assets"],
-            "styles": ["apps/designer-standalone/src/styles.less"],
+            "assets": [
+              "apps/designer-standalone/src/favicon.ico",
+              "apps/designer-standalone/src/assets"
+            ],
+            "styles": [
+              "apps/designer-standalone/src/styles.less"
+            ],
             "scripts": [],
             "statsJson": true,
             "webpackConfig": "@nrwl/react/plugins/webpack"
@@ -153,14 +176,20 @@
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["apps/designer-standalone/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "apps/designer-standalone/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/designer-standalone"],
+          "outputs": [
+            "coverage/apps/designer-standalone"
+          ],
           "options": {
             "jestConfig": "apps/designer-standalone/jest.config.js",
             "passWithNoTests": true
@@ -188,14 +217,100 @@
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["apps/designer-standalone-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "apps/designer-standalone-e2e/**/*.{js,ts}"
+            ]
           }
         }
       }
     },
-    "services-resolution-service": "libs/services/resolution-service",
-    "utils": "libs/utils"
+    "services-resolution-service": {
+      "root": "libs/services/resolution-service",
+      "sourceRoot": "libs/services/resolution-service/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/js:tsc",
+          "outputs": [
+            "{options.outputPath}"
+          ],
+          "options": {
+            "outputPath": "dist/libs/services/resolution-service",
+            "main": "libs/services/resolution-service/src/index.ts",
+            "tsConfig": "libs/services/resolution-service/tsconfig.lib.json",
+            "assets": [
+              "libs/services/resolution-service/*.md"
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": [
+            "{options.outputFile}"
+          ],
+          "options": {
+            "lintFilePatterns": [
+              "libs/services/resolution-service/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/services/resolution-service"
+          ],
+          "options": {
+            "jestConfig": "libs/services/resolution-service/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "utils": {
+      "root": "libs/utils",
+      "sourceRoot": "libs/utils/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/js:tsc",
+          "outputs": [
+            "{options.outputPath}"
+          ],
+          "options": {
+            "outputPath": "dist/libs/utils",
+            "main": "libs/services/utils/index.ts",
+            "tsConfig": "libs/utils/tsconfig.lib.json",
+            "assets": [
+              "libs/utils/*.md"
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": [
+            "{options.outputFile}"
+          ],
+          "options": {
+            "lintFilePatterns": [
+              "libs/utils/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/utils"
+          ],
+          "options": {
+            "jestConfig": "libs/utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
   }
 }
