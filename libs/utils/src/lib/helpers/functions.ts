@@ -422,8 +422,8 @@ export function isBoolean(value: any): value is boolean {
  * @arg {any} value - The value to check if empty string.
  * @return {boolean} - True if the value is an empty string ("").
  */
-export function isEmptyString(value: any): value is '' {
-  return isString(value) && value === '';
+export function isEmptyString(value: string): value is '' {
+  return value === '';
 }
 
 /**
