@@ -29,12 +29,12 @@ export interface ExpressionEvaluationContext {
     /**
      * @member {Record<string, any>} parameters - The parameters.
      */
-    parameters: Record<string, any>; // tslint:disable-line: no-any
+    parameters: Record<string, any>;
 
     /**
      * @member {Record<string, any>} appsettings - The appsettings.
      */
-    appsettings: Record<string, any>; // tslint:disable-line: no-any
+    appsettings: Record<string, any>;
 }
 
 interface ExpressionBase {
