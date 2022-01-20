@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { List } from '@fluentui/react/lib/List';
 import { DisableableOperation, Operation, ShowMode, OperationKind } from './models';
 
-import { isNullOrEmpty } from '../../common/utilities/Utils';
+import { isNullOrEmpty } from '@microsoft-logic-apps/utils';
 import { UserVoiceProps } from './uservoice';
 import { FormattedMessage, useIntl } from 'react-intl';
 

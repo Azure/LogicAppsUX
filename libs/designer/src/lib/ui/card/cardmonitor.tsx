@@ -2,7 +2,7 @@ import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import * as React from 'react';
 
 import guid from '../../common/utilities/guid';
-import { hexToRgbA } from '../../common/utilities/Utils';
+import { hexToRgbA } from '@microsoft-logic-apps/utils';
 
 // import { CardWidth } from '../card';
 import Constants from '../constants';

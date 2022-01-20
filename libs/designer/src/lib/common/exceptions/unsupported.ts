@@ -1,4 +1,4 @@
-import { BaseException } from './baseexception';
+import { BaseException } from '@microsoft-logic-apps/utils';
 
 export const UnsupportedExceptionName = 'Common.UnsupportedException';
 
