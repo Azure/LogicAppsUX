@@ -1,27 +1,17 @@
-// Button.stories.ts | Button.stories.tsx
+// workflowparameter.stories.ts | workflowparameter.stories.tsx
 
-import React, { createRef } from 'react';
+import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { WorkflowParametersPanel, WorkflowParametersPanelProps } from '.';
-import { ActionButtonV2 } from './../actionbuttonv2/index';
+import { WorkflowParameterView, WorkflowParameterViewProps } from './';
 
 export default {
-  component: WorkflowParametersPanel,
-  title: 'Components/WorkflowParametersPanel',
-} as ComponentMeta<typeof WorkflowParametersPanel>;
-const _panelRef = createRef<WorkflowParametersPanel>();
-export const Standard: ComponentStory<typeof WorkflowParametersPanel> = (args: WorkflowParametersPanelProps) => (
-  <>
-    <div>
-      <ActionButtonV2 title="open parameters" onClick={() => _panelRef.current?.showPanel()} />
-    </div>
-    <WorkflowParametersPanel {...args} ref={_panelRef} />
-  </>
+  component: WorkflowParameterView,
+  title: 'Components/WorkflowParametersPanelView',
+} as ComponentMeta<typeof WorkflowParameterView>;
+export const Standard: ComponentStory<typeof WorkflowParameterView> = (args: WorkflowParameterViewProps) => (
+  <WorkflowParameterView {...args} />
 );
 
 Standard.args = {
-  parameters: [
-    { defaultValue: '{}', id: 'test', name: 'test', type: 'SecureObject' },
-    { defaultValue: 'test2', id: 'test2', name: 'Hello', type: 'Bool' },
-  ],
+//   parameters: [{ defaultValue: 'bob', id: 'test', name: 'bob', type: 'SecureObject' }],
 };

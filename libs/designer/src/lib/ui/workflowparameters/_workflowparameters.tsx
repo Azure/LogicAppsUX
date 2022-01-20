@@ -5,8 +5,6 @@ import { List } from '@fluentui/react/lib/List';
 import { IMessageBarStyles, MessageBar } from '@fluentui/react/lib/MessageBar';
 import { getTheme, registerOnThemeChangeCallback, removeOnThemeChangeCallback } from '@fluentui/react/lib/Styling';
 import * as React from 'react';
-// import Resources from 'resources';
-// import ParametersIcon from '../card/images/parameters.generated';
 import { isHighContrastBlackOrInverted } from './../utils/theme';
 import {
   WorkflowParameter,

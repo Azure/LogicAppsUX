@@ -7,9 +7,7 @@ import { ITextStyles, Text } from '@fluentui/react/lib/Text';
 import { ITextFieldProps, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import * as React from 'react';
-// import * as monaco from 'monaco-editor';
 import { findDOMNode } from 'react-dom';
-// import Resources from 'resources';
 import { equals, format } from './../shared/Utils';
 import Constants from './../constants';
 import type { EventHandler } from '../eventhandler';
@@ -385,10 +383,6 @@ export class WorkflowParameter extends React.Component<WorkflowParameterProps, W
   private _onValueChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     this._handleContentChange(newValue);
   };
-
-  //   private _onContentChange = (e: EditorContentChangedEventArgs): void => {
-  //     this._handleContentChange(e.value);
-  //   };
 
   private _handleContentChange(value?: string) {
     const { definition, onChange } = this.props;
