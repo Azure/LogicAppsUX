@@ -198,18 +198,17 @@ export function exclude(array: string[], itemsToExclude: string[]): void {
  * @return {any} - The value of the property, if found. Otherwise, undefined.
  */
 export function getPropertyValue(object: Record<string, unknown> | null | undefined, propertyName: string, caseInsensitive = true): any {
-  // tslint:disable-line: no-any
   object = object || {};
 
   // NOTE(tonytang): This is an optimization for when property name matches case sensitively.
-  const value = (object as any)[propertyName]; // tslint:disable-line: no-any
+  const value = (object as any)[propertyName];
   if (value !== undefined) {
     return value;
   }
 
   for (const key of Object.keys(object)) {
     if (equals(key, propertyName, caseInsensitive)) {
-      return (object as any)[key]; // tslint:disable-line: no-any
+      return (object as any)[key];
     }
   }
 
@@ -233,7 +232,6 @@ export function getPropertyValue(object: Record<string, unknown> | null | undefi
  * @return {any} - The value of the property, if found. Otherwise, undefined.
  */
 export function getObjectPropertyValue(object: Record<string, unknown>, properties: string[], caseInsensitive = true): any {
-  // tslint:disable-line: no-any
   let value = object || {};
 
   for (const property of properties) {
@@ -260,7 +258,6 @@ export function getObjectPropertyValue(object: Record<string, unknown>, properti
  * @return {void}
  */
 export function setObjectPropertyValue(object: Record<string, unknown>, properties: string[], value: any): void {
-  // tslint:disable-line: no-any
   if (!properties.length || !object) {
     return;
   }
@@ -271,7 +268,7 @@ export function setObjectPropertyValue(object: Record<string, unknown>, properti
 
   const lastProperty = properties[properties.length - 1];
   if (lastProperty) {
-    (object as any)[lastProperty] = value; // tslint:disable-line: no-any
+    (object as any)[lastProperty] = value;
   }
 }
 
@@ -282,7 +279,6 @@ export function setObjectPropertyValue(object: Record<string, unknown>, properti
  * @arg {any} value - The value
  * @return {Record<string, any>} - The updated object.
  */
-// tslint:disable-next-line: no-any
 export function safeSetObjectPropertyValue(
   target: Record<string, any> | null | undefined,
   properties: string[],
@@ -352,7 +348,7 @@ export function deleteObjectProperty(object: Record<string, unknown>, properties
 
   const lastProperty = properties[properties.length - 1];
   if (lastProperty) {
-    delete (object as any)[lastProperty]; // tslint:disable-line: no-any
+    delete (object as any)[lastProperty];
   }
 }
 
@@ -409,7 +405,6 @@ export function hasProperty(object: Record<string, unknown>, property: string): 
  * @return {boolean} - True if the value is a string.
  */
 export function isString(value: any): value is string {
-  // tslint:disable-line: no-any
   return typeof value === 'string';
 }
 
@@ -419,7 +414,6 @@ export function isString(value: any): value is string {
  * @return {boolean} - True if the value is boolean.
  */
 export function isBoolean(value: any): value is boolean {
-  // tslint:disable-line: no-any
   return typeof value === 'boolean';
 }
 
@@ -429,7 +423,6 @@ export function isBoolean(value: any): value is boolean {
  * @return {boolean} - True if the value is an empty string ("").
  */
 export function isEmptyString(value: any): value is '' {
-  // tslint:disable-line: no-any
   return isString(value) && value === '';
 }
 
@@ -439,7 +432,6 @@ export function isEmptyString(value: any): value is '' {
  * @return {boolean} - True if the value is null or undefined.
  */
 export function isNullOrUndefined(value: any): value is null | undefined {
-  // tslint:disable-line: no-any
   return value === null || value === undefined;
 }
 
@@ -449,7 +441,6 @@ export function isNullOrUndefined(value: any): value is null | undefined {
  * @return {boolean} - True if the value is null or empty object.
  */
 export function isNullOrEmpty(value: any): boolean {
-  // tslint:disable-line: no-any
   if (typeof value === 'object') {
     return !value || !Object.keys(value).length;
   } else {
@@ -463,7 +454,6 @@ export function isNullOrEmpty(value: any): boolean {
  * @return {boolean} - True if the value is undefined or empty string.
  */
 export function isUndefinedOrEmptyString(value: any): value is undefined | '' {
-  // tslint:disable-line: no-any
   return value === undefined || value === '';
 }
 
@@ -473,7 +463,6 @@ export function isUndefinedOrEmptyString(value: any): value is undefined | '' {
  * @return {boolean} - True if the value is an object.
  */
 export function isObject(value: any): boolean {
-  // tslint:disable-line: no-any
   return Object.prototype.toString.call(value) === '[object Object]';
 }
 
@@ -504,7 +493,7 @@ export function map<T extends Record<string, unknown>>(
 
   const object: Record<string, T> = {};
   for (const value of array.filter((element) => Object.prototype.hasOwnProperty.call(element, keyName))) {
-    const key = (value as any)[keyName]; // tslint:disable-line: no-any
+    const key = (value as any)[keyName];
     object[key] = value;
   }
 
@@ -523,7 +512,7 @@ export function unmap<T>(object: Record<string, T> | null | undefined, keyName?:
     const element = obj[key];
 
     if (keyName) {
-      (element as any)[keyName] = key; // tslint:disable-line: no-any
+      (element as any)[keyName] = key;
     }
 
     return element;
@@ -551,7 +540,6 @@ export interface CopyOptions {
  * @return object - the result target object.
  */
 export function copy(options: CopyOptions, target: any, ...sources: any[]): any {
-  // tslint:disable-line: no-any
   if (!sources) {
     return target;
   }
@@ -575,7 +563,6 @@ export function copy(options: CopyOptions, target: any, ...sources: any[]): any 
  * @return object - the result target object
  */
 export function extend(target: any, ...sources: any[]): any {
-  // tslint:disable-line: no-any
   return copy({ copyNonEnumerableProps: false }, target, ...sources);
 }
 
@@ -585,9 +572,8 @@ export function extend(target: any, ...sources: any[]): any {
  * @return {any[]} - The unique list of elements from the given array.
  */
 export function uniqueArray(array: any[]): any[] {
-  // tslint:disable-line: no-any
-  const result: any[] = [], // tslint:disable-line: no-any
-    temp: any = {}; // tslint:disable-line: no-any
+  const result: any[] = [],
+    temp: any = {};
   for (let i = 0, l = array.length; i < l; ++i) {
     if (!Object.prototype.hasOwnProperty.call(temp, array[i])) {
       result.push(array[i]);
@@ -605,13 +591,11 @@ export function uniqueArray(array: any[]): any[] {
  * @return {any[] | null} - The result of the copied array or null if no array was provided.
  */
 export function copyArray(array: any[] | null | undefined, options?: CopyOptions): any[] | null {
-  // tslint:disable-line: no-any
   if (!array) {
     return null;
   }
 
   return array.map((value: any) => {
-    // tslint:disable-line: no-any
     return createCopy(value, options);
   });
 }
@@ -622,14 +606,13 @@ export function copyArray(array: any[] | null | undefined, options?: CopyOptions
  * @return {string}
  */
 export function format(input: string, ...args: any[]): string {
-  // tslint:disable-line: no-any
   const namedFormatSpecifierRegex = /\{[a-zA-Z$_\d]*\}/g;
   const numberedFormatSpecifierRegex = /\{(\d+)\}/g;
   let matched = false,
     retVal = input;
 
   if (args && args.length === 1 && args[0] && typeof args[0] === 'object') {
-    const namedArgs: any = args[0]; // tslint:disable-line: no-any
+    const namedArgs: any = args[0];
     retVal = input.replace(namedFormatSpecifierRegex, (match) => {
       const name = match.substring(1, match.length - 1);
       if (Object.prototype.hasOwnProperty.call(namedArgs, name)) {
@@ -657,7 +640,7 @@ export function format(input: string, ...args: any[]): string {
  * @return {string}
  */
 export function generateUniqueName(prefix: string, list: string[], start = 2, alwaysIncludeIndex = false): string {
-  const hashMap: Record<string, any> = {}; // tslint:disable-line: no-any
+  const hashMap: Record<string, any> = {};
   let uniqueName = alwaysIncludeIndex ? `${prefix}_${start}` : prefix;
 
   for (const item of list) {
@@ -734,7 +717,6 @@ export function addPrefix(value: string | null | undefined, prefix: string | nul
  * @return {any}
  */
 export function getJSONValue(value: string): any {
-  // tslint:disable-line: no-any
   try {
     return JSON.parse(value);
   } catch {
@@ -748,7 +730,6 @@ export function getJSONValue(value: string): any {
  * @return {any}
  */
 export function createCopy(value: any, options?: CopyOptions): any {
-  // tslint:disable-line: no-any
   if (Array.isArray(value)) {
     return copyArray(value, options);
   } else if (value instanceof Date) {
@@ -766,7 +747,6 @@ export function createCopy(value: any, options?: CopyOptions): any {
  * @return {Record<string, any>}
  */
 export function combineObjects(originalObjects: Record<string, any>, newObjects: Record<string, any>): Record<string, any> {
-  // tslint:disable-line: no-any
   return Object.keys(newObjects).reduce(
     (previous, current) => extend({}, previous, { [current]: newObjects[current] }),
     clone(originalObjects)
@@ -843,7 +823,6 @@ function extractQueryKeyFromSearch(search: string): Record<string, string> {
   const re = /(?:^|&)([^&=]*)=?([^&]*)/g;
   let matches: RegExpExecArray | null;
   while ((matches = re.exec(search)) !== null) {
-    // tslint:disable-line: no-conditional-assignment
     const [, key, value] = matches;
     queryKey[decodeURIComponent(key)] = decodeURIComponent(value);
   }
