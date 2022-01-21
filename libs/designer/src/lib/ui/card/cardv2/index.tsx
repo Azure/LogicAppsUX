@@ -7,7 +7,7 @@ import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { EventHandler, Event } from '../../../ui/eventhandler';
 
-import { equals, hexToRgbA } from '../../../common/utilities/Utils';
+import { equals, hexToRgbA } from '@microsoft-logic-apps/utils';
 
 import Constants from '../../constants';
 import { isDeleteKey, isEnterKey, isSpaceKey } from '../../utils/keyboardUtils';
