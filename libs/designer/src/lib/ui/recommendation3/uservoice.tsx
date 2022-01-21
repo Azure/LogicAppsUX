@@ -3,7 +3,7 @@ import { ILinkStyles, Link } from '@fluentui/react/lib/Link';
 import { FontSizes } from '@fluentui/react/lib/Styling';
 import * as React from 'react';
 import { useIntl } from 'react-intl';
-import { isObject } from '../../common/utilities/Utils';
+import { isObject } from '@microsoft-logic-apps/utils';
 
 export interface UserVoiceProps {
   disabled?: boolean;

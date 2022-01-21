@@ -5,7 +5,7 @@ import { css } from '@fluentui/react/lib/Utilities';
 import * as React from 'react';
 import { useIntl } from 'react-intl';
 
-import { equals, hexToRgbA } from '../../common/utilities/Utils';
+import { equals, hexToRgbA } from '@microsoft-logic-apps/utils';
 
 import { CardContextMenu, CardContextMenuProps } from '../card/cardcontextmenu';
 import { CardHeaderLogo } from '../card/cardmonitor';

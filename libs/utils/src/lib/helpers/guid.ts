@@ -6,7 +6,7 @@ const separator = '-';
  *
  * @return New GUID.
  */
-export default function guid(): string {
+export function guid(): string {
   // c.f. rfc4122 (UUID version 4 = xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx)
   let oct = '',
     tmp: number;
