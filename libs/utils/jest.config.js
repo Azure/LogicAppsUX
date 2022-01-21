@@ -8,6 +8,8 @@ module.exports = {
   },
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
+    '^.+\\.[tj]sx?$': 'babel-jest',
+    '^.+\\.svg$': '../../__mocks__/svgTransform.js',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/libs/utils',
