@@ -38,7 +38,7 @@ import { isUserVoiceProps, UserVoice, UserVoiceProps } from './uservoice';
 import { DocLinkClickedEventHandler } from '../recommendation';
 import { getIntl } from '../../common/i18n/intl';
 import { ITextField } from '@fluentui/react';
-import guid from '../../common/utilities/guid';
+import { guid } from '@microsoft-logic-apps/utils';
 
 export enum Categories {
   FORYOU = 'FOR_YOU',
