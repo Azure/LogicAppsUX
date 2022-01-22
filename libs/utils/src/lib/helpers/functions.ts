@@ -1,5 +1,3 @@
-import { BaseException } from '../exception/baseexception';
-
 type Primitive = number | boolean | string;
 type NonPrimitive = Record<string, unknown>;
 
