@@ -1,3 +1,5 @@
+import { BaseException } from '../exception/baseexception';
+
 type Primitive = number | boolean | string;
 type NonPrimitive = Record<string, unknown>;
 
@@ -200,6 +202,7 @@ export function exclude(array: string[], itemsToExclude: string[]): void {
 export function getPropertyValue(object: Record<string, unknown> | null | undefined, propertyName: string, caseInsensitive = true): any {
   object = object || {};
 
+  if (propertyName === '__proto__' || propertyName === 'constructor') throw new Error('attempting to access protected properties');
   // NOTE(tonytang): This is an optimization for when property name matches case sensitively.
   const value = (object as any)[propertyName];
   if (value !== undefined) {
@@ -335,6 +338,7 @@ export function safeSetObjectPropertyValue(
  * @return {void}
  */
 export function deleteObjectProperty(object: Record<string, unknown>, properties: string[]): void {
+  if (properties.includes('__proto__') || properties.includes('constructor')) throw new Error('attempting to access protected properties');
   if (!properties.length || !object) {
     return;
   }
