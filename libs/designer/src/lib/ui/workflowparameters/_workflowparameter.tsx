@@ -8,7 +8,7 @@ import { ITextFieldProps, ITextFieldStyles, TextField } from '@fluentui/react/li
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import React, { useState, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
-import { equals, format } from './../shared/Utils';
+import { equals, format } from '@microsoft-logic-apps/utils';
 import Constants from './../constants';
 import type { EventHandler } from '../eventhandler';
 import { isHighContrastBlackOrInverted } from './../utils/theme';

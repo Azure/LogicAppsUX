@@ -2,17 +2,23 @@
 
 import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-// import { WorkflowParameterView, WorkflowParameterViewProps } from './';
-import { WorkflowParameter, WorkflowParameterProps } from './_workflowparameter';
+import WorkflowParameters, { WorkflowParametersProps } from './_workflowparameters';
 
 export default {
-  component: WorkflowParameter,
+  component: WorkflowParameters,
   title: 'Components/WorkflowParameter',
-} as ComponentMeta<typeof WorkflowParameter>;
-export const Standard: ComponentStory<typeof WorkflowParameter> = (args: WorkflowParameterProps) => (
-  <WorkflowParameter {...args} />
+} as ComponentMeta<typeof WorkflowParameters>;
+export const Standard: ComponentStory<typeof WorkflowParameters> = (args: WorkflowParametersProps) => (
+  <WorkflowParameters {...args} />
 );
 
 Standard.args = {
-  definition: { defaultValue: 'bob', id: 'test', name: 'bob', type: 'SecureObject' },
+  parameters: [
+    {
+      id: 'test1', defaultValue: 'val1', type: 'Bool', name: 'test'
+    },
+    {
+      id: 'test2', defaultValue: '{}', type: 'Object', name: 'test2', isEditable: false
+    }
+  ]
 };

@@ -49,5 +49,3 @@ export * from './tip';
 export * from './title';
 // export * from './tokenpicker';
 // export * from './utils';
-export * from './workflowparameters/_workflowparametersPanel';
-export * from './workflowparameters';

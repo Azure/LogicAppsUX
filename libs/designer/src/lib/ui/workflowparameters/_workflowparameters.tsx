@@ -142,7 +142,10 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
     if (standardMode) {
       return (
         <div className="msla-workflow-parameters-empty">
-          {/* <img src={ParametersIcon} alt="" role="presentation" /> */}
+
+          {/* TODO Parameters ICON
+          <img src={ParametersIcon} alt="" role="presentation" /> 
+          */}
           <div className="msla-workflow-parameters-text-standard">
             <p>{descriptionStandard1}</p>
             <p>{descriptionStandard2}</p>
@@ -175,7 +178,7 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
   }
 
   const _renderParameter = (item?: WorkflowParameterDefinition): JSX.Element => {
-    // temp to prevent ts error
+    // TODO render if no item exists
     if (!item) {
       return <div> </div>;
     }
