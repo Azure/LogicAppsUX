@@ -1,8 +1,20 @@
 {
+  "+E6SZ8": [
+    {
+      "type": 0,
+      "value": "Float"
+    }
+  ],
   "+U6ozc": [
     {
       "type": 0,
       "value": "Type"
+    }
+  ],
+  "/+/dCa": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "/NDLmg": [
@@ -75,6 +87,12 @@
       "value": "Edit Parameter"
     }
   ],
+  "6Sewe8": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -109,6 +127,12 @@
     {
       "type": 0,
       "value": "Delete Parameter"
+    }
+  ],
+  "BkOSF2": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "C5xzTC": [
@@ -213,6 +237,18 @@
       "value": "More info"
     }
   ],
+  "I3MA83": [
+    {
+      "type": 0,
+      "value": "String"
+    }
+  ],
+  "I7ayev": [
+    {
+      "type": 0,
+      "value": "Secure Objcet"
+    }
+  ],
   "JXhiR+": [
     {
       "type": 0,
@@ -229,6 +265,12 @@
     {
       "type": 0,
       "value": "Next failed"
+    }
+  ],
+  "Ne0a7N": [
+    {
+      "type": 0,
+      "value": "Array"
     }
   ],
   "Oib1mL": [
@@ -253,6 +295,12 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "P43Ixg": [
+    {
+      "type": 0,
+      "value": "Add Parameter"
     }
   ],
   "P8QaSQ": [
@@ -387,6 +435,12 @@
       "value": "filterText"
     }
   ],
+  "VU4BBu": [
+    {
+      "type": 0,
+      "value": "Parameter"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -425,6 +479,12 @@
     {
       "type": 0,
       "value": "Recent"
+    }
+  ],
+  "XMUL1w": [
+    {
+      "type": 0,
+      "value": "Object"
     }
   ],
   "XTuxmH": [
@@ -489,6 +549,12 @@
       "value": "Cancelled"
     }
   ],
+  "dDJePH": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
@@ -525,6 +591,12 @@
     {
       "type": 0,
       "value": "Ignored"
+    }
+  ],
+  "g/JAxd": [
+    {
+      "type": 0,
+      "value": "Int"
     }
   ],
   "gKq3Jv": [
@@ -595,6 +667,12 @@
       "value": "Cancel"
     }
   ],
+  "ibk3Ld": [
+    {
+      "type": 0,
+      "value": "Bool"
+    }
+  ],
   "iql+jn": [
     {
       "type": 1,
@@ -603,6 +681,18 @@
     {
       "type": 0,
       "value": "s"
+    }
+  ],
+  "jEHBA3": [
+    {
+      "type": 0,
+      "value": "Create parameter"
+    }
+  ],
+  "jtqt2v": [
+    {
+      "type": 0,
+      "value": "Secure String"
     }
   ],
   "k41+13": [
@@ -813,6 +903,12 @@
     {
       "type": 0,
       "value": "Timed Out"
+    }
+  ],
+  "xnY18L": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
     }
   ],
   "yD9JIy": [

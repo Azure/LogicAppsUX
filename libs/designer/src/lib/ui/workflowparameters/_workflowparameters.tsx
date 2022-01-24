@@ -84,8 +84,8 @@ export interface WorkflowParametersState {
 export default function WorkflowParameters({ parameters = [], isReadOnly, standardMode, onManageParameters, onAddParameter, onDeleteParameter, onUpdateParameter, validationErrors, onRegisterLanguageProvider }: WorkflowParametersProps): JSX.Element {
   const [isInverted, setIsInverted] = useState(isHighContrastBlackOrInverted);
 
-  const intl = useIntl(); 
-  
+  const intl = useIntl();
+
   const addIcon: IIconProps = { iconName: 'Add' };
   const buttonStyles: IButtonStyles = {
     root: {
@@ -119,24 +119,44 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
       },
     };
 
+    const descriptionStandard1 = intl.formatMessage({
+      defaultMessage: 'Parameters are shared across workflows in a Logic App.',
+    });
+    const descriptionStandard2 = intl.formatMessage({
+      defaultMessage: 'To reference a parameter, use the dynamic content list.',
+    });
+    const iconLabel = intl.formatMessage({
+      defaultMessage: 'Parameter',
+    });
+    const title = intl.formatMessage({
+      defaultMessage: 'Parameters',
+    });
+    const description1 = intl.formatMessage({
+      defaultMessage: 'Create, manage Logic Apps parameters, give it a default value.',
+    });
+    const description2 = intl.formatMessage({
+      defaultMessage: 'Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation.',
+    });
+
+
     if (standardMode) {
       return (
         <div className="msla-workflow-parameters-empty">
           {/* <img src={ParametersIcon} alt="" role="presentation" /> */}
           <div className="msla-workflow-parameters-text-standard">
-            <p>{'Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART1_STANDARD'}</p>
-            <p>{'Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART2_STANDARD'}</p>
+            <p>{descriptionStandard1}</p>
+            <p>{descriptionStandard2}</p>
           </div>
         </div>
       );
     } else {
       return (
         <div className="msla-workflow-parameters-empty">
-          <Icon iconName="Parameter" styles={iconStyles} ariaLabel={'Resources.WORKFLOW_PARAMETERS_PARAMETER_ICON_LABEL'} />
-          <h1 className="msla-workflow-parameters-title">{'Resources.WORKFLOW_PARAMETERS_TITLE'}</h1>
+          <Icon iconName="Parameter" styles={iconStyles} ariaLabel={iconLabel} />
+          <h1 className="msla-workflow-parameters-title">{title}</h1>
           <div className="msla-workflow-parameters-text">
-            <p>{'Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART1'}</p>
-            <p>{'Resources.WORKFLOW_PARAMETERS_DESCRIPTION_PART2'}</p>
+            <p>{description1}</p>
+            <p>{description2}</p>
           </div>
         </div>
       );
@@ -175,6 +195,9 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
   };
 
   if (standardMode) {
+    const createText = intl.formatMessage({
+      defaultMessage: 'Create parameter',
+    });
     return (
       <div className="msla-workflow-parameters">
         <h3 className="msla-workflow-parameters-create">{'Create Title'}</h3>
@@ -183,7 +206,7 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
           <CommandBarButton
             className="msla-workflow-parameters-create-button"
             disabled={isReadOnly}
-            text={'CREATE'}
+            text={createText}
             iconProps={addIcon}
             onClick={_handleAddParameter}
           />
@@ -194,12 +217,15 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
       </div>
     );
   } else {
+    const addText = intl.formatMessage({
+      defaultMessage: 'Add Parameter',
+    });
     return (
       <div className="msla-workflow-parameters">
         {parameters.length ? null : _renderTitleAndDescription()}
         {parameters.length ? <List items={parameters} onRenderCell={_renderParameter} /> : null}
         <div className="msla-workflow-parameters-add">
-          <PrimaryButton text={'ADD'} styles={buttonStyles} onClick={_handleAddParameter} disabled={isReadOnly} />
+          <PrimaryButton text={addText} styles={buttonStyles} onClick={_handleAddParameter} disabled={isReadOnly} />
         </div>
       </div>
     );

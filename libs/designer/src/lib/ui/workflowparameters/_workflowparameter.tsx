@@ -70,25 +70,6 @@ const textFieldWithWarningStyles: Partial<ITextFieldStyles> = {
   },
 };
 
-const typeOptions: IDropdownOption[] = [
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, text: 'Array' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL, text: 'Bool' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT, text: 'Float' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: 'Int' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT, text: 'Obj' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT, text: 'Secure_Obj' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING, text: 'Secure_String' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING, text: 'String' },
-];
-
-const typeOptionsForStandard: IDropdownOption[] = [
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, text: 'Array' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL, text: 'Bool' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT, text: 'Float' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: 'Int' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT, text: 'Obj' },
-  { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING, text: 'String' },
-];
 
 const NAME_KEY = 'name';
 const DEFAULT_VALUE_KEY = 'defaultValue';
@@ -151,6 +132,26 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
   const [type, setType] = useState(definition.type);
   const [valueWarningMessage, setValueWarningMessage] = useState(getValueWarningMessage(definition.defaultValue, definition.type));
   const intl = useIntl();
+
+  const typeOptions: IDropdownOption[] = [
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, text: intl.formatMessage({ defaultMessage: 'Array' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL, text: intl.formatMessage({ defaultMessage: 'Bool' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT, text: intl.formatMessage({ defaultMessage: 'Float' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: intl.formatMessage({ defaultMessage: 'Int' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT, text: intl.formatMessage({ defaultMessage: 'Object' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT, text: intl.formatMessage({ defaultMessage: 'Secure Objcet' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING, text: intl.formatMessage({ defaultMessage: 'Secure String' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING, text: intl.formatMessage({ defaultMessage: 'String' }) }
+  ];
+
+  const typeOptionsForStandard: IDropdownOption[] = [
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, text: intl.formatMessage({ defaultMessage: 'Array' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL, text: intl.formatMessage({ defaultMessage: 'Bool' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT, text: intl.formatMessage({ defaultMessage: 'Float' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: intl.formatMessage({ defaultMessage: 'Int' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT, text: intl.formatMessage({ defaultMessage: 'Object' }) },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING, text: intl.formatMessage({ defaultMessage: 'String' }) }
+  ];
 
   const parameterDetails: ParameterFieldDetails = {
     name: `${definition.id}-${NAME_KEY}`,
