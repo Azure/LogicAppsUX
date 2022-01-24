@@ -5,7 +5,7 @@ import { ITextField, ITextFieldStyles, TextField } from '@fluentui/react/lib/Tex
 import Constants from '../constants';
 import { Event, EventHandler } from '../eventhandler';
 import { getDragStartHandlerWhenDisabled } from '../helper';
-import { isNullOrUndefined } from '../../common/utilities/Utils';
+import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import { injectIntl, WrappedComponentProps } from 'react-intl';
 
 export interface TitleProps {

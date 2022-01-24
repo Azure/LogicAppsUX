@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useState, useCallback, useRef } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import { format, isNullOrEmpty } from '../../common/utilities/Utils';
+import { format, isNullOrEmpty } from '@microsoft-logic-apps/utils';
 
 import { AnnouncedMatches } from '../announcedmatches';
 import { Categories, Connector, DisableableConnector, ShowMode } from './models';
