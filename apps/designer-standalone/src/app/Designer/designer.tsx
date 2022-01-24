@@ -1,4 +1,4 @@
-import { DesignerProvider, BJSWorkflowProvider, Designer, WorkflowParameterView } from '@microsoft/logic-apps-designer';
+import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { SettingsBox } from '../../components/settings_box';
 
 export interface DesignerWrapperProps {
@@ -12,7 +12,6 @@ export const DesignerWrapper = ({ workflow, setResourceId, setToken, resourceId,
   return (
     <>
       <SettingsBox setResourceId={setResourceId} setToken={setToken} resourceId={resourceId} token={token} />
-      <WorkflowParameterView parameters={[{ id: 'joe' }]} />
       <DesignerProvider locale="en-US">
         <BJSWorkflowProvider workflow={workflow}>
           <Designer></Designer>

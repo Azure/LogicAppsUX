@@ -1,4 +1,10 @@
 {
+  "+U6ozc": [
+    {
+      "type": 0,
+      "value": "Type"
+    }
+  ],
   "/NDLmg": [
     {
       "type": 0,
@@ -39,6 +45,12 @@
       "value": "Editing card title"
     }
   ],
+  "3Svesr": [
+    {
+      "type": 0,
+      "value": "The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -57,10 +69,22 @@
       "value": "This Action has testing configured."
     }
   ],
+  "5HlSYA": [
+    {
+      "type": 0,
+      "value": "Edit Parameter"
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
       "value": "Previous"
+    }
+  ],
+  "6zxdCg": [
+    {
+      "type": 0,
+      "value": "Enter parameter name."
     }
   ],
   "7GSk99": [
@@ -79,6 +103,12 @@
     {
       "type": 0,
       "value": "See more"
+    }
+  ],
+  "AU5HwW": [
+    {
+      "type": 0,
+      "value": "Delete Parameter"
     }
   ],
   "C5xzTC": [
@@ -125,6 +155,12 @@
       "value": "hours"
     }
   ],
+  "GufXy5": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
   "Gx6rDL": [
     {
       "offset": 0,
@@ -163,6 +199,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "HAlOn1": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "HOsSgX": [
@@ -355,6 +397,12 @@
       "value": "max"
     }
   ],
+  "WTzo2s": [
+    {
+      "type": 0,
+      "value": "Actual Value"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -451,6 +499,12 @@
     {
       "type": 0,
       "value": "Learn more about creating connectors."
+    }
+  ],
+  "fbZXr2": [
+    {
+      "type": 0,
+      "value": "New parameter"
     }
   ],
   "fejjJ6": [
@@ -621,6 +675,12 @@
       "value": "Yes"
     }
   ],
+  "nzMkOf": [
+    {
+      "type": 0,
+      "value": "Enter default value for parameter."
+    }
+  ],
   "orvpWh": [
     {
       "type": 0,
@@ -711,6 +771,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "tN8bmP": [
+    {
+      "type": 0,
+      "value": "Default Value"
     }
   ],
   "uN4zFU": [

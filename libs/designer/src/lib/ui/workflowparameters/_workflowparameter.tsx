@@ -6,12 +6,14 @@ import { FontWeights, getTheme, IStyle } from '@fluentui/react/lib/Styling';
 import { ITextStyles, Text } from '@fluentui/react/lib/Text';
 import { ITextFieldProps, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
-import * as React from 'react';
+import React, { useState, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
 import { equals, format } from './../shared/Utils';
 import Constants from './../constants';
 import type { EventHandler } from '../eventhandler';
 import { isHighContrastBlackOrInverted } from './../utils/theme';
+import { useIntl } from 'react-intl';
+
 
 const fieldStyles: IStyle = {
   display: 'inline-block',
@@ -140,238 +142,89 @@ interface ParameterFieldDetails {
   value: string;
 }
 
-export class WorkflowParameter extends React.Component<WorkflowParameterProps, WorkflowParameterState> {
-  state: WorkflowParameterState = {
-    defaultValue: this.props.definition.defaultValue,
-    expanded: !!this.props.definition.isEditable,
-    isEditable: this.props.definition.isEditable,
-    isInverted: isHighContrastBlackOrInverted(),
-    name: this.props.definition.name,
-    type: getParameterTypeKey(this.props.definition.type),
-    valueWarningMessage: getValueWarningMessage(this.props.definition.defaultValue, this.props.definition.type),
-  };
+export function WorkflowParameter({ definition, validationErrors, standardMode, isReadOnly, onChange, onDelete, ...props }: WorkflowParameterProps): JSX.Element {
+  const [defaultValue, setDefaultValue] = useState(definition.defaultValue);
+  const [expanded, setExpanded] = useState(!!definition.isEditable);
+  const [isEditable, setIsEditable] = useState(definition.isEditable);
+  const [isInverted, setIsInverted] = useState(isHighContrastBlackOrInverted());
+  const [name, setName] = useState(definition.name);
+  const [type, setType] = useState(definition.type);
+  const [valueWarningMessage, setValueWarningMessage] = useState(getValueWarningMessage(definition.defaultValue, definition.type));
+  const intl = useIntl();
 
-  render() {
-    const {
-      definition: { id },
-      isReadOnly,
-      validationErrors,
-      standardMode,
-    } = this.props;
-    const { expanded, isEditable, name } = this.state;
-    const parameterDetails: ParameterFieldDetails = {
-      name: `${id}-${NAME_KEY}`,
-      defaultValue: `${id}-${DEFAULT_VALUE_KEY}`,
-      type: `${id}-type`,
-      value: `${id}-value`,
-    };
-    const errors = validationErrors ? validationErrors : {};
-    const iconProps: IIconProps = {
-      iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed',
-      styles: {
-        root: {
-          fontSize: 14,
-          color: this.state.isInverted ? 'white' : '#514f4e',
-        },
+  const parameterDetails: ParameterFieldDetails = {
+    name: `${definition.id}-${NAME_KEY}`,
+    defaultValue: `${definition.id}-${DEFAULT_VALUE_KEY}`,
+    type: `${definition.id}-type`,
+    value: `${definition.id}-value`,
+  };
+  const errors = validationErrors ? validationErrors : {};
+  const iconProps: IIconProps = {
+    iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed',
+    styles: {
+      root: {
+        fontSize: 14,
+        color: isInverted ? 'white' : '#514f4e',
       },
-    };
-
-    if (standardMode) {
-      return (
-        <div className="msla-workflow-parameter">
-          <div className="msla-workflow-parameter-group-standard">
-            <div>
-              <CommandBarButton
-                className="msla-workflow-parameter-heading-button"
-                iconProps={iconProps}
-                onClick={this._handleToggleExpand}
-                styles={commandBarStyles}
-                text={name ? name : 'Heading Text'}
-              />
-            </div>
-            {expanded ? this._renderParameterFields(parameterDetails, errors) : null}
-          </div>
-          {!isReadOnly ? (
-            <div className="msla-workflow-parameter-edit-or-delete-button">{this._renderEditOrDeleteButton(isEditable)}</div>
-          ) : null}
-        </div>
-      );
-    } else {
-      return (
-        <div className="msla-workflow-parameter">
-          <div className="msla-workflow-parameter-group">{this._renderParameterFields(parameterDetails, errors)}</div>
-          {!isReadOnly ? this._renderEditOrDeleteButton(/* showDelete */ true) : null}
-        </div>
-      );
-    }
-  }
-
-  private _renderEditOrDeleteButton = (showDelete?: boolean): JSX.Element => {
-    return showDelete ? <DeleteButton onClick={this._onDelete} /> : <EditButton onClick={this._onEdit} />;
+    },
   };
 
-  private _renderParameterFields = (parameterDetails: ParameterFieldDetails, errors: Record<string, string>): JSX.Element => {
-    const { isReadOnly, standardMode } = this.props;
-    const { name, type, isEditable } = this.state;
+  const handleToggleExpand = (): void => {
+    setExpanded(!expanded);
+  };
+
+  const renderParameterFields = (parameterDetails: ParameterFieldDetails, errors: Record<string, string>): JSX.Element => {
+    const nameTitle = intl.formatMessage({
+      defaultMessage: 'Name',
+    });
+    const nameDescription = intl.formatMessage({
+      defaultMessage: 'Enter parameter name.',
+    });
+    const typeTitle = intl.formatMessage({
+      defaultMessage: 'Type',
+    });
     if (isEditable || !standardMode) {
       return (
         <>
           <div className="msla-workflow-parameter-field">
             <Label styles={labelStyles} required={true} htmlFor={parameterDetails.name}>
-              {'Name Title'}
+              {nameTitle}
             </Label>
             <TextField
               styles={textFieldStyles}
               id={parameterDetails.name}
-              ariaLabel={'Name Title'}
-              placeholder={'Name Description'}
+              ariaLabel={nameTitle}
+              placeholder={nameDescription}
               value={name}
               errorMessage={errors[NAME_KEY]}
-              onChange={this._onNameChange}
+              onChange={onNameChange}
               disabled={isReadOnly}
             />
           </div>
           <div className="msla-workflow-parameter-field">
             <Label styles={labelStyles} required={true} htmlFor={parameterDetails.type}>
-              {'Type Title'}
+              {typeTitle}
             </Label>
             <Dropdown
               id={parameterDetails.type}
-              ariaLabel={'Type Title'}
+              ariaLabel={typeTitle}
               options={standardMode ? typeOptionsForStandard : typeOptions}
               selectedKey={type}
               styles={dropdownStyles}
-              onChange={this._onTypeChange}
+              onChange={onTypeChange}
               disabled={isReadOnly}
             />
           </div>
-          {this._renderParameterValueField(parameterDetails, errors)}
+          {renderParameterValueField(parameterDetails, errors)}
         </>
       );
     } else {
-      return this._renderReadOnlyParameters(parameterDetails);
+      return renderReadOnlyParameters(parameterDetails);
     }
   };
 
-  private _renderParameterValueField = (parameterDetails: ParameterFieldDetails, errors: Record<string, string>): JSX.Element => {
-    const {
-      definition: { value },
-      isReadOnly,
-    } = this.props;
-    const { defaultValue, type, valueWarningMessage } = this.state;
-    return (
-      <>
-        <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} htmlFor={parameterDetails.defaultValue}>
-            {'Default Value Title'}
-          </Label>
-          <TextField
-            id={parameterDetails.defaultValue}
-            ariaLabel={'Default Value Title'}
-            placeholder={'Default Value Description'}
-            description={valueWarningMessage}
-            value={defaultValue}
-            errorMessage={errors[DEFAULT_VALUE_KEY]}
-            styles={valueWarningMessage ? textFieldWithWarningStyles : textFieldStyles}
-            onChange={this._onValueChange}
-            onRenderDescription={valueWarningMessage ? this._onRenderDescription : undefined}
-            disabled={isReadOnly}
-          />
-        </div>
-        <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} htmlFor={parameterDetails.value}>
-            {'Actual Value Title'}
-          </Label>
-          <TextField
-            styles={disabledTextFieldStyles}
-            id={parameterDetails.value}
-            ariaLabel={'Actual Value Title'}
-            type={isSecureParameter(type) ? 'password' : undefined}
-            defaultValue={value}
-            disabled
-          />
-        </div>
-      </>
-    );
-  };
-
-  private _renderReadOnlyParameters = (parameterDetails: ParameterFieldDetails): JSX.Element => {
-    const { defaultValue, name, type } = this.state;
-
-    return (
-      <>
-        <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} htmlFor={parameterDetails.name}>
-            {'Name Title'}
-          </Label>
-          <Text className="msla-workflow-parameter-read-only">{name}</Text>
-        </div>
-        <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} htmlFor={parameterDetails.type}>
-            {'Type Title'}
-          </Label>
-          <Text className="msla-workflow-parameter-read-only">{type}</Text>
-        </div>
-        <div className="msla-workflow-parameter-value-field">
-          <Label styles={labelStyles} htmlFor={parameterDetails.value}>
-            {'Value Title'}
-          </Label>
-          <Text block className="msla-workflow-parameter-read-only">
-            {defaultValue}
-          </Text>
-        </div>
-      </>
-    );
-  };
-
-  private _handleToggleExpand = (): void => {
-    this.setState({ expanded: !this.state.expanded });
-  };
-
-  private _onRenderDescription = (props?: ITextFieldProps): JSX.Element => {
-    return (
-      <Text variant="small" styles={textStyles}>
-        {props?.description}
-      </Text>
-    );
-  };
-
-  private _onRenderError = (error: string): JSX.Element => {
-    const { isInverted } = this.state;
-    const errorText: ITextStyles = {
-      root: {
-        color: isInverted ? 'red' : 'darkRed',
-      },
-    };
-    return (
-      <Text variant="small" styles={errorText}>
-        {error}
-      </Text>
-    );
-  };
-
-  private _onTypeChange = (_event?: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
-    const { definition, onChange } = this.props;
-    const { defaultValue } = this.state;
-    const type = item?.key.toString();
-
-    if (onChange) {
-      onChange({
-        id: definition.id,
-        newDefinition: { ...definition, type },
-      });
-    }
-
-    this.setState({
-      type,
-      valueWarningMessage: getValueWarningMessage(defaultValue, type),
-    });
-  };
-
-  private _onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    this.setState({ name: newValue });
-
-    const { definition, onChange } = this.props;
+  const onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
+    setName(newValue);
     if (onChange) {
       onChange({
         id: definition.id,
@@ -380,18 +233,74 @@ export class WorkflowParameter extends React.Component<WorkflowParameterProps, W
     }
   };
 
-  private _onValueChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    this._handleContentChange(newValue);
+  const onTypeChange = (_event?: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
+    const newType = item?.key.toString();
+
+    if (onChange) {
+      onChange({
+        id: definition.id,
+        newDefinition: { ...definition, type },
+      });
+    }
+    setType(newType);
+    setValueWarningMessage(getValueWarningMessage(defaultValue, newType));
   };
 
-  private _handleContentChange(value?: string) {
-    const { definition, onChange } = this.props;
-    const { type } = this.state;
+  const renderParameterValueField = (parameterDetails: ParameterFieldDetails, errors: Record<string, string>): JSX.Element => {
 
-    this.setState({
-      [DEFAULT_VALUE_KEY]: value,
-      valueWarningMessage: getValueWarningMessage(value, type),
+    const defaultValueTitle = intl.formatMessage({
+      defaultMessage: 'Default Value',
     });
+    const defaultValueDescription = intl.formatMessage({
+      defaultMessage: 'Enter default value for parameter.',
+    });
+    const actualValueTitle = intl.formatMessage({
+      defaultMessage: 'Actual Value',
+    });
+    return (
+      <>
+        <div className="msla-workflow-parameter-field">
+          <Label styles={labelStyles} htmlFor={parameterDetails.defaultValue}>
+            {defaultValueTitle}
+          </Label>
+          <TextField
+            id={parameterDetails.defaultValue}
+            ariaLabel={defaultValueTitle}
+            placeholder={defaultValueDescription}
+            description={valueWarningMessage}
+            value={defaultValue}
+            errorMessage={errors[DEFAULT_VALUE_KEY]}
+            styles={valueWarningMessage ? textFieldWithWarningStyles : textFieldStyles}
+            onChange={onValueChange}
+            onRenderDescription={valueWarningMessage ? onRenderDescription : undefined}
+            disabled={isReadOnly}
+          />
+        </div>
+        <div className="msla-workflow-parameter-field">
+          <Label styles={labelStyles} htmlFor={parameterDetails.value}>
+            {actualValueTitle}
+          </Label>
+          <TextField
+            styles={disabledTextFieldStyles}
+            id={parameterDetails.value}
+            ariaLabel={actualValueTitle}
+            type={isSecureParameter(type) ? 'password' : undefined}
+            defaultValue={definition.value}
+            disabled
+          />
+        </div>
+      </>
+    );
+  };
+
+  const onValueChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
+    handleContentChange(newValue);
+  };
+
+  const handleContentChange = (value?: string) => {
+    // FIX [DEFAULT_VALUE_KEY]: value
+    setDefaultValue(value);
+    setValueWarningMessage(getValueWarningMessage(value, type));
 
     if (onChange) {
       onChange({
@@ -401,21 +310,102 @@ export class WorkflowParameter extends React.Component<WorkflowParameterProps, W
     }
   }
 
-  private _onDelete = (e: React.MouseEvent<HTMLButtonElement>): void => {
-    const {
-      definition: { id },
-      onDelete,
-    } = this.props;
+  const onRenderDescription = (props?: ITextFieldProps): JSX.Element => {
+    return (
+      <Text variant="small" styles={textStyles}>
+        {props?.description}
+      </Text>
+    );
+  };
+
+  const renderReadOnlyParameters = (parameterDetails: ParameterFieldDetails): JSX.Element => {
+
+    const nameTitle = intl.formatMessage({
+      defaultMessage: 'Name',
+    });
+    const typeTitle = intl.formatMessage({
+      defaultMessage: 'Type',
+    });
+    const valueTitle = intl.formatMessage({
+      defaultMessage: 'Value',
+    });
+
+    return (
+      <>
+        <div className="msla-workflow-parameter-field">
+          <Label styles={labelStyles} htmlFor={parameterDetails.name}>
+            {nameTitle}
+          </Label>
+          <Text className="msla-workflow-parameter-read-only">{name}</Text>
+        </div>
+        <div className="msla-workflow-parameter-field">
+          <Label styles={labelStyles} htmlFor={parameterDetails.type}>
+            {typeTitle}
+          </Label>
+          <Text className="msla-workflow-parameter-read-only">{type}</Text>
+        </div>
+        <div className="msla-workflow-parameter-value-field">
+          <Label styles={labelStyles} htmlFor={parameterDetails.value}>
+            {valueTitle}
+          </Label>
+          <Text block className="msla-workflow-parameter-read-only">
+            {defaultValue}
+          </Text>
+        </div>
+      </>
+    );
+  };
+
+  const renderEditOrDeleteButton = (showDelete?: boolean): JSX.Element => {
+    return showDelete ? <DeleteButton onClick={handleDelete} /> : <EditButton onClick={handleEdit} />;
+  };
+
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>): void => {
     if (onDelete) {
       e.stopPropagation();
-      onDelete({ id });
+      onDelete({ id: definition.id });
     }
   };
 
-  private _onEdit = (): void => {
-    this.setState({ isEditable: true, expanded: true });
+  const handleEdit = (): void => {
+    setIsEditable(true);
+    setExpanded(true);
   };
+
+  if (standardMode) {
+    const headingTitle = intl.formatMessage({
+      defaultMessage: 'New parameter',
+    });
+
+    return (
+      <div className="msla-workflow-parameter">
+        <div className="msla-workflow-parameter-group-standard">
+          <div>
+            <CommandBarButton
+              className="msla-workflow-parameter-heading-button"
+              iconProps={iconProps}
+              onClick={handleToggleExpand}
+              styles={commandBarStyles}
+              text={name ? name : headingTitle}
+            />
+          </div>
+          {expanded ? renderParameterFields(parameterDetails, errors) : null}
+        </div>
+        {!isReadOnly ? (
+          <div className="msla-workflow-parameter-edit-or-delete-button">{renderEditOrDeleteButton(isEditable)}</div>
+        ) : null}
+      </div>
+    );
+  } else {
+    return (
+      <div className="msla-workflow-parameter">
+        <div className="msla-workflow-parameter-group">{renderParameterFields(parameterDetails, errors)}</div>
+        {!isReadOnly ? renderEditOrDeleteButton(/* showDelete */ true) : null}
+      </div>
+    );
+  }
 }
+
 
 function getParameterTypeKey(type?: string): string | undefined {
   switch (type?.toLowerCase()) {
@@ -478,17 +468,22 @@ const editIcon: IIconProps = {
 };
 
 function DeleteButton({ onClick }: DeleteButtonProps): JSX.Element {
-  const componentRef = React.useRef<IButton>(null);
-  const [target, setTarget] = React.useState<Element>();
+  const componentRef = useRef<IButton>(null);
+  const [target, setTarget] = useState<Element>();
+  const intl = useIntl();
 
   React.useEffect(() => {
     setTarget(findDOMNode(componentRef.current as unknown as React.ReactInstance) as Element);
   }, []);
 
+  const deleteTitle = intl.formatMessage({
+    defaultMessage: 'Delete Parameter',
+  });
+
   return (
-    <TooltipHost calloutProps={{ target }} content={'Delete Title'}>
+    <TooltipHost calloutProps={{ target }} content={deleteTitle}>
       <IconButton
-        ariaLabel={'Delete Title'}
+        ariaLabel={deleteTitle}
         componentRef={componentRef}
         iconProps={deleteIcon}
         styles={deleteButtonStyles}
@@ -499,17 +494,22 @@ function DeleteButton({ onClick }: DeleteButtonProps): JSX.Element {
 }
 
 function EditButton({ onClick }: DeleteButtonProps): JSX.Element {
-  const componentRef = React.useRef<IButton>(null);
-  const [target, setTarget] = React.useState<Element>();
+  const componentRef = useRef<IButton>(null);
+  const [target, setTarget] = useState<Element>();
+  const intl = useIntl();
 
   React.useEffect(() => {
     setTarget(findDOMNode(componentRef.current as unknown as React.ReactInstance) as Element);
   }, []);
 
+  const editTitle = intl.formatMessage({
+    defaultMessage: 'Edit Parameter',
+  });
+
   return (
-    <TooltipHost calloutProps={{ target }} content={'Edit Title'}>
+    <TooltipHost calloutProps={{ target }} content={editTitle}>
       <IconButton
-        ariaLabel={'Edit Title'}
+        ariaLabel={editTitle}
         componentRef={componentRef}
         iconProps={editIcon}
         styles={deleteButtonStyles}
