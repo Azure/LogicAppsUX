@@ -285,6 +285,7 @@ export function safeSetObjectPropertyValue(
   properties: string[],
   value: any
 ): Record<string, any> | null | undefined {
+  if (properties.includes('__proto__') || properties.includes('constructor')) throw new Error('attempting to access protected properties');
   if (!properties.length) {
     return value;
   }
