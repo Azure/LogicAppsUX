@@ -10,8 +10,7 @@ export function isHighContrastBlackOrInverted(): boolean {
 }
 
 function isHighContrastBlack(): boolean {
-  // TODO(joechung): Update this when Chromium-based Edge supports high contrast mode.
-  const supportsHighContrastMode = /Edge\/\d./i.test(navigator.userAgent);
+  const supportsHighContrastMode = /Edg\/\d./i.test(navigator.userAgent);
   if (!supportsHighContrastMode) {
     return false;
   }

@@ -12,7 +12,7 @@ import {
   WorkflowParameterDeleteHandler,
   WorkflowParameterUpdateHandler,
 } from './_workflowparameter';
-import { useIntl } from 'react-intl';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 const brandColor = '#0058AD';
 const backgroundColorLight = '#F3F2F1';
@@ -49,14 +49,13 @@ const darkMessageBarStyles: IMessageBarStyles = {
 };
 
 const InfoBar = ({ isInverted }: { isInverted: boolean }) => {
-  const intl = useIntl();
-  const barText = intl.formatMessage({
-    defaultMessage: 'The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save.',
-  });
   return (
     <div className="msla-workflow-parameters-message-bar">
       <MessageBar isMultiline={true} styles={isInverted ? darkMessageBarStyles : lightMessageBarStyles}>
-        {barText}
+        <FormattedMessage
+          description='Text for Info Bar'
+          defaultMessage='The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save.'
+        />
       </MessageBar>
     </div>
   );
@@ -167,10 +166,13 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
   }
 
   const _renderManageParametersLink = (): JSX.Element => {
+    const linkText = intl.formatMessage({
+      defaultMessage: 'Edit in JSON',
+    });
     return (
       <footer className="msla-workflow-parameters-link">
         <Link className="msla-workflow-parameters-link-text" onClick={onManageParameters}>
-          {'Link Text'}
+          {linkText}
         </Link>
         <Icon iconName="NavigateExternalInline" styles={navigateIconStyle} className="msla-workflow-parameters-link-icon" />
       </footer>
@@ -198,12 +200,15 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
   };
 
   if (standardMode) {
+    const createTitle = intl.formatMessage({
+      defaultMessage: 'Parameters',
+    });
     const createText = intl.formatMessage({
       defaultMessage: 'Create parameter',
     });
     return (
       <div className="msla-workflow-parameters">
-        <h3 className="msla-workflow-parameters-create">{'Create Title'}</h3>
+        <h3 className="msla-workflow-parameters-create">{createTitle}</h3>
         {parameters.length ? <InfoBar isInverted={isInverted} /> : null}
         <div className="msla-workflow-parameters-add-standard">
           <CommandBarButton

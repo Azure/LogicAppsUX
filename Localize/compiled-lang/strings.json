@@ -57,12 +57,6 @@
       "value": "Editing card title"
     }
   ],
-  "3Svesr": [
-    {
-      "type": 0,
-      "value": "The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save."
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -249,6 +243,12 @@
       "value": "Secure Objcet"
     }
   ],
+  "JMPRx+": [
+    {
+      "type": 0,
+      "value": "Edit in JSON"
+    }
+  ],
   "JXhiR+": [
     {
       "type": 0,
@@ -259,6 +259,12 @@
     {
       "type": 0,
       "value": "Comment"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save."
     }
   ],
   "Mb/Vp8": [
