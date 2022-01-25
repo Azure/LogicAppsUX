@@ -181,6 +181,7 @@ export class Menu extends React.PureComponent<MenuProps> {
     const intl = getIntl();
     return intl.formatMessage({
       defaultMessage: 'More info',
+      description: 'This is shown as an aria label on button as well as the tooltip that is shown after clicking the button',
     });
   };
   private _renderDisabledReason(menuItem: MenuItemOption): JSX.Element | null {

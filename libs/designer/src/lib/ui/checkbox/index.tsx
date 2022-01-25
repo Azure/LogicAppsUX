@@ -53,6 +53,7 @@ export const Checkbox = (props: CheckboxProps) => {
 
   const moreInfoMessage = intl.formatMessage({
     defaultMessage: 'More Info',
+    description: 'This is shown as an aria label on button as well as the tooltip that is shown after clicking the button',
   });
   return (
     <div className={css(className, 'msla-checkbox')}>
