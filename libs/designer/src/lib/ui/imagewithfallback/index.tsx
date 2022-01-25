@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import DefaultIcon from '../recommendation/images/defaulticon.svg';
+import DefaultIcon from '../documentationlinkitem/images/defaulticon.svg';
 
 export interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallback?: string;
