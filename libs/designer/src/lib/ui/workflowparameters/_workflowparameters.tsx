@@ -13,32 +13,29 @@ import {
   WorkflowParameterUpdateHandler,
 } from './_workflowparameter';
 import { useIntl, FormattedMessage } from 'react-intl';
-
-const brandColor = '#0058AD';
-const backgroundColorLight = '#F3F2F1';
-const backgroundColorDark = '#514f4e';
+import Constants from './../constants';
 
 const navigateIconStyle: IIconStyles = {
   root: {
-    color: brandColor,
+    color: Constants.BRAND_COLOR,
   },
 };
 
 const lightMessageBarStyles: IMessageBarStyles = {
   root: {
-    backgroundColor: backgroundColorLight,
+    backgroundColor: Constants.BACKGROUND_COLOR_LIGHT,
   },
   icon: {
     color: 'gray',
   },
   text: {
-    color: '#514f4e',
+    color: Constants.BACKGROUND_COLOR_DARK,
   },
 };
 
 const darkMessageBarStyles: IMessageBarStyles = {
   root: {
-    backgroundColor: backgroundColorDark,
+    backgroundColor: Constants.BACKGROUND_COLOR_DARK,
   },
   icon: {
     color: 'white',
@@ -88,7 +85,7 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
   const addIcon: IIconProps = { iconName: 'Add' };
   const buttonStyles: IButtonStyles = {
     root: {
-      backgroundColor: isInverted ? getTheme().palette.themePrimary : brandColor,
+      backgroundColor: isInverted ? getTheme().palette.themePrimary : Constants.BRAND_COLOR,
     },
   };
 
@@ -113,7 +110,7 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
   const _renderTitleAndDescription = (): JSX.Element => {
     const iconStyles: IIconStyles = {
       root: {
-        color: isInverted ? getTheme().palette.themePrimary : brandColor,
+        color: isInverted ? getTheme().palette.themePrimary : Constants.BRAND_COLOR,
         fontSize: 50,
       },
     };

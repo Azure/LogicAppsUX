@@ -25,7 +25,7 @@ const fieldStyles: IStyle = {
 const disabledTextFieldStyles: Partial<ITextFieldStyles> = {
   root: fieldStyles,
   fieldGroup: {
-    borderColor: 'rgb(194, 194, 194)',
+    borderColor: Constants.FIELD_GROUP_BORDER_COLOR,
   },
 };
 
@@ -61,10 +61,10 @@ const textFieldStyles: Partial<ITextFieldStyles> = {
 const textFieldWithWarningStyles: Partial<ITextFieldStyles> = {
   root: fieldStyles,
   fieldGroup: {
-    borderColor: 'rgb(255, 185, 0)',
+    borderColor: Constants.FIELD_GROUP_BORDER_COLOR_WARNING,
     selectors: {
       '&:hover': {
-        borderColor: 'rgb(255, 185, 0)',
+        borderColor: Constants.FIELD_GROUP_BORDER_COLOR_WARNING,
       },
     },
   },
