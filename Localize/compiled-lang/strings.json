@@ -5,16 +5,6 @@
       "value": "Waiting"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": More info"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -45,12 +35,6 @@
       "value": "Faulted"
     }
   ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "Cancel"
-    }
-  ],
   "5CTOi9": [
     {
       "type": 0,
@@ -73,24 +57,6 @@
     {
       "type": 0,
       "value": "Cannot render designer due to multiple triggers in definition."
-    }
-  ],
-  "8yF3hc": [
-    {
-      "type": 0,
-      "value": "See more"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "Don't see what you need?"
     }
   ],
   "FXLR5M": [
@@ -171,12 +137,6 @@
       "value": "More info"
     }
   ],
-  "JXhiR+": [
-    {
-      "type": 0,
-      "value": "We couldn't find any results"
-    }
-  ],
   "LgbKvU": [
     {
       "type": 0,
@@ -255,12 +215,6 @@
       "value": "h"
     }
   ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "Currently there are no suggestions available with your selection."
-    }
-  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -309,42 +263,6 @@
       "value": "Failed"
     }
   ],
-  "TY45/m": [
-    {
-      "type": 0,
-      "value": "There are no recent connectors to show"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "Operations"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 0,
-      "value": "We couldn't find any "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " for "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    }
-  ],
   "W070M2": [
     {
       "type": 0,
@@ -371,12 +289,6 @@
     {
       "type": 0,
       "value": " hours"
-    }
-  ],
-  "XEdXNu": [
-    {
-      "type": 0,
-      "value": "Recent"
     }
   ],
   "XTuxmH": [
@@ -419,22 +331,6 @@
       "value": "Hide this comment"
     }
   ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "Expand list of connectors"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 0,
-      "value": "We couldn't find any "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    }
-  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -445,12 +341,6 @@
     {
       "type": 0,
       "value": "Not specified"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "Learn more about creating connectors."
     }
   ],
   "fejjJ6": [
@@ -483,12 +373,6 @@
     {
       "type": 0,
       "value": "Loading..."
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "No"
     }
   ],
   "hN7iBP": [
@@ -599,50 +483,16 @@
       "value": " minutes"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 0,
-      "value": "We couldn't find any results for "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "Testing"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "Yes"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "Go back"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "Clear"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Managed identity"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "Clear?"
     }
   ],
   "qSt0Sb": [
@@ -683,18 +533,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "Recommended based on your activity"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(preview)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -719,24 +557,6 @@
       "value": "OK"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(preview)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "Choose an operation"
-    }
-  ],
   "vWe94i": [
     {
       "type": 0,
@@ -753,12 +573,6 @@
     {
       "type": 0,
       "value": "Connection name"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "Want to create your own connectors?"
     }
   ]
 }

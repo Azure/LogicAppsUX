@@ -6,7 +6,7 @@ import InformationImage from '../card/images/information_tiny.svg';
 import Constants from '../constants';
 import { calloutContentStyles } from '../fabric';
 import { getDragStartHandlerWhenDisabled } from '../helper';
-import { DocLinkClickedEventHandler, DocumentationLinkItem } from '../recommendation';
+import { DocLinkClickedEventHandler, DocumentationLinkItem } from '../documentationlinkitem';
 export interface Flyout2Props {
   ariaLabel?: string;
   docLink?: Swagger.ExternalDocumentation;
