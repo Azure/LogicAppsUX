@@ -34,6 +34,7 @@
           }
         ],
         "formatjs/enforce-default-message": ["error", "literal"],
+        "formatjs/enforce-description": ["error", "literal"],
         "formatjs/no-multiple-whitespaces": [1],
         "formatjs/no-multiple-plurals": ["error"],
         "formatjs/no-id": ["error"],

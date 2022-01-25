@@ -34,8 +34,6 @@ export * from './label';
 export * from './monitoring';
 export * from './pager';
 // export * from './picker';
-export * from './recommendation';
-export * from './recommendation3';
 // export * from './rulescontrol';
 // export * from './schemaeditor2';
 // export * from './selector';
