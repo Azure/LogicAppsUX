@@ -1,7 +1,8 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm run lint:fix
+npm run lint
+npm run pretty
 npm run extract
 npm run compile:loc
 npm run compile:loc:psuedo

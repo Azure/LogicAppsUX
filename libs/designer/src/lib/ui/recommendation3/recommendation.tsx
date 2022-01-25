@@ -1,3 +1,4 @@
+/* eslint-disable formatjs/enforce-description */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // TODO: HEAVY REFACTOR
 import { DirectionalHint, ICalloutProps } from '@fluentui/react/lib/Callout';

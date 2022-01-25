@@ -21,22 +21,56 @@
       "value": "Succeeded with retries"
     }
   ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
+    }
+  ],
   "1KSzxz": [
     {
       "type": 0,
       "value": "Add a short comment"
     }
   ],
-  "1rlBUx": [
+  "1R6Vaa": [
     {
-      "type": 0,
-      "value": "Unexpected error"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "Editing card title"
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " item matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
     }
   ],
   "3kI7xF": [
@@ -49,12 +83,6 @@
     {
       "type": 0,
       "value": "Cancel"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "This Action has testing configured."
     }
   ],
   "6oqk+A": [
@@ -85,6 +113,12 @@
     {
       "type": 0,
       "value": "Premium"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Connection required"
     }
   ],
   "EGXrx5": [
@@ -125,50 +159,10 @@
       "value": "hours"
     }
   ],
-  "Gx6rDL": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "no items matched."
-            }
-          ]
-        },
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " item matched."
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " items matched."
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
-  "HOsSgX": [
+  "Ie4usD": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Editing card title"
     }
   ],
   "JXhiR+": [
@@ -177,16 +171,16 @@
       "value": "We couldn't find any results"
     }
   ],
-  "LgbKvU": [
-    {
-      "type": 0,
-      "value": "Comment"
-    }
-  ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "Next failed"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -213,12 +207,6 @@
       "value": "Select a managed identity"
     }
   ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "Copy URL"
-    }
-  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -243,6 +231,12 @@
     {
       "type": 0,
       "value": " card"
+    }
+  ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "Qu1HkA": [
@@ -345,6 +339,12 @@
       "value": "filterText"
     }
   ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -379,6 +379,12 @@
       "value": "Recent"
     }
   ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "Connection name"
+    }
+  ],
   "XTuxmH": [
     {
       "type": 1,
@@ -397,6 +403,12 @@
       "value": " seconds"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -405,12 +417,6 @@
     {
       "type": 0,
       "value": "d"
-    }
-  ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "Connection required"
     }
   ],
   "ZazdvR": [
@@ -439,6 +445,12 @@
     {
       "type": 0,
       "value": "Cancelled"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
     }
   ],
   "e4Onhn": [
@@ -477,12 +489,6 @@
     {
       "type": 0,
       "value": "Previous failed"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "Loading..."
     }
   ],
   "h9XgiJ": [
@@ -535,6 +541,12 @@
       "value": "Next"
     }
   ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
   "iUs7pv": [
     {
       "type": 0,
@@ -575,10 +587,10 @@
       "value": "s"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "Error loading component."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -737,22 +749,10 @@
       "value": "Choose an operation"
     }
   ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "More Info"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Timed Out"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "Connection name"
     }
   ],
   "yKB5nP": [

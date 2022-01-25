@@ -1,3 +1,4 @@
+/* eslint-disable formatjs/enforce-description */
 import { Icon, IIconStyles } from '@fluentui/react/lib/Icon';
 import { List } from '@fluentui/react/lib/List';
 import * as React from 'react';

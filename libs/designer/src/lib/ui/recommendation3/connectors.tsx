@@ -1,3 +1,4 @@
+/* eslint-disable formatjs/enforce-description */
 import { List } from '@fluentui/react/lib/List';
 import * as React from 'react';
 import { useState, useCallback, useRef } from 'react';

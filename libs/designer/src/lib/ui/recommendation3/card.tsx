@@ -1,3 +1,4 @@
+/* eslint-disable formatjs/enforce-description */
 /* eslint-disable react/jsx-no-useless-fragment */
 import { IconButton } from '@fluentui/react/lib/Button';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';

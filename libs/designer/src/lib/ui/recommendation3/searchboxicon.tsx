@@ -1,3 +1,4 @@
+/* eslint-disable formatjs/enforce-description */
 import { IconButton } from '@fluentui/react/lib/Button';
 import { Icon, IIconProps } from '@fluentui/react/lib/Icon';
 import { Spinner } from '@fluentui/react/lib/Spinner';
