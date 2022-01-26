@@ -1,24 +1,8 @@
 {
-  "+E6SZ8": [
-    {
-      "type": 0,
-      "value": "Float"
-    }
-  ],
   "/NDLmg": [
     {
       "type": 0,
       "value": "Waiting"
-    }
-  ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": More info"
     }
   ],
   "0ZlNtf": [
@@ -27,22 +11,56 @@
       "value": "Succeeded with retries"
     }
   ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
+    }
+  ],
   "1KSzxz": [
     {
       "type": 0,
       "value": "Add a short comment"
     }
   ],
-  "1rlBUx": [
+  "1R6Vaa": [
     {
-      "type": 0,
-      "value": "Unexpected error"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "Editing card title"
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " item matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
     }
   ],
   "2BKr91": [
@@ -63,22 +81,10 @@
       "value": "Faulted"
     }
   ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "Cancel"
-    }
-  ],
   "4RTRDT": [
     {
       "type": 0,
       "value": "Add Parameter"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "This Action has testing configured."
     }
   ],
   "6oqk+A": [
@@ -111,22 +117,16 @@
       "value": "Default Value"
     }
   ],
-  "8yF3hc": [
+  "AJEpHz": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Secure Objcet"
     }
   ],
-  "C5xzTC": [
+  "CG772M": [
     {
       "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "Don't see what you need?"
+      "value": "Connection required"
     }
   ],
   "F5iJDI": [
@@ -167,86 +167,22 @@
       "value": "hours"
     }
   ],
-  "Gx6rDL": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "no items matched."
-            }
-          ]
-        },
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " item matched."
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " items matched."
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
-  "HOsSgX": [
-    {
-      "type": 0,
-      "value": "More info"
-    }
-  ],
   "Hkw2PV": [
     {
       "type": 0,
       "value": "Edit Parameter"
     }
   ],
-  "I3MA83": [
+  "Ie4usD": [
     {
       "type": 0,
-      "value": "String"
-    }
-  ],
-  "I7ayev": [
-    {
-      "type": 0,
-      "value": "Secure Objcet"
-    }
-  ],
-  "JXhiR+": [
-    {
-      "type": 0,
-      "value": "We couldn't find any results"
+      "value": "Editing card title"
     }
   ],
   "L4hZzK": [
     {
       "type": 0,
       "value": "Parameters"
-    }
-  ],
-  "LgbKvU": [
-    {
-      "type": 0,
-      "value": "Comment"
     }
   ],
   "M6U2LE": [
@@ -261,10 +197,10 @@
       "value": "Next failed"
     }
   ],
-  "Ne0a7N": [
+  "MmBfD1": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -291,16 +227,16 @@
       "value": "Select a managed identity"
     }
   ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "Copy URL"
-    }
-  ],
   "PF87Ew": [
     {
       "type": 0,
       "value": "Succeeded"
+    }
+  ],
+  "PQrkfO": [
+    {
+      "type": 0,
+      "value": "Array"
     }
   ],
   "PY5/AN": [
@@ -329,6 +265,12 @@
       "value": " card"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -337,12 +279,6 @@
     {
       "type": 0,
       "value": "h"
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "Currently there are no suggestions available with your selection."
     }
   ],
   "RhH4pF": [
@@ -399,46 +335,16 @@
       "value": "Failed"
     }
   ],
-  "TY45/m": [
-    {
-      "type": 0,
-      "value": "There are no recent connectors to show"
-    }
-  ],
   "TZv5JE": [
     {
       "type": 0,
       "value": "Name"
     }
   ],
-  "TdTXXf": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "Learn more"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "Operations"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 0,
-      "value": "We couldn't find any "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " for "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -475,16 +381,10 @@
       "value": " hours"
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "Recent"
-    }
-  ],
-  "XMUL1w": [
-    {
-      "type": 0,
-      "value": "Object"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -505,6 +405,12 @@
       "value": " seconds"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -515,32 +421,16 @@
       "value": "d"
     }
   ],
-  "Z79N+I": [
+  "YkM7HJ": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Secure String"
     }
   ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "Hide this comment"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "Expand list of connectors"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 0,
-      "value": "We couldn't find any "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
     }
   ],
   "ci6ex1": [
@@ -555,6 +445,12 @@
       "value": "Cancelled"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "duuXp2": [
     {
       "type": 0,
@@ -565,12 +461,6 @@
     {
       "type": 0,
       "value": "Not specified"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "Learn more about creating connectors."
     }
   ],
   "fejjJ6": [
@@ -593,28 +483,10 @@
       "value": "Ignored"
     }
   ],
-  "g/JAxd": [
-    {
-      "type": 0,
-      "value": "Int"
-    }
-  ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "Previous failed"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "Loading..."
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "No"
     }
   ],
   "hN7iBP": [
@@ -655,22 +527,28 @@
       "value": "Comment"
     }
   ],
+  "hSpEDQ": [
+    {
+      "type": 0,
+      "value": "Object"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
       "value": "Next"
     }
   ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
   "iUs7pv": [
     {
       "type": 0,
       "value": "Cancel"
-    }
-  ],
-  "ibk3Ld": [
-    {
-      "type": 0,
-      "value": "Bool"
     }
   ],
   "iql+jn": [
@@ -683,16 +561,22 @@
       "value": "s"
     }
   ],
+  "iwC02o": [
+    {
+      "type": 0,
+      "value": "Int"
+    }
+  ],
+  "jHULM/": [
+    {
+      "type": 0,
+      "value": "Bool"
+    }
+  ],
   "jfInxm": [
     {
       "type": 0,
       "value": "Edit in JSON"
-    }
-  ],
-  "jtqt2v": [
-    {
-      "type": 0,
-      "value": "Secure String"
     }
   ],
   "k41+13": [
@@ -719,10 +603,10 @@
       "value": "s"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "Error loading component."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -749,16 +633,6 @@
       "value": "Delete Parameter"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 0,
-      "value": "We couldn't find any results for "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    }
-  ],
   "lV77P8": [
     {
       "type": 0,
@@ -771,28 +645,10 @@
       "value": "Testing"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "Yes"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "Go back"
-    }
-  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Parameters"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "Clear"
     }
   ],
   "qGNaL0": [
@@ -805,12 +661,6 @@
     {
       "type": 0,
       "value": "Managed identity"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "Clear?"
     }
   ],
   "qSt0Sb": [
@@ -851,18 +701,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "Recommended based on your activity"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(preview)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -893,30 +731,6 @@
       "value": "OK"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(preview)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "Choose an operation"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "More Info"
-    }
-  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -929,16 +743,16 @@
       "value": "Timed Out"
     }
   ],
-  "yD9JIy": [
+  "yJIdjt": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "String"
     }
   ],
-  "yKB5nP": [
+  "yx5Oni": [
     {
       "type": 0,
-      "value": "Want to create your own connectors?"
+      "value": "Float"
     }
   ]
 }

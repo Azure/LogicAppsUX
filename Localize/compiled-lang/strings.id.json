@@ -5,20 +5,16 @@
       "value": "Menunggu"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": Info selengkapnya"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Berhasil dengan percobaan ulang"
+    }
+  ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "1KSzxz": [
@@ -27,34 +23,39 @@
       "value": "Tambah komentar pendek"
     }
   ],
-  "1rlBUx": [
+  "1R6Vaa": [
     {
-      "type": 0,
-      "value": "Kesalahan tidak terduga"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "Mengedit judul kartu"
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
     }
   ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Bermasalah"
-    }
-  ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "Batal"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "Tindakan ini memiliki pengujian yang dikonfigurasi."
     }
   ],
   "6oqk+A": [
@@ -75,22 +76,10 @@
       "value": "Tidak dapat merender perancang karena terdapat beberapa pemicu dalam definisi."
     }
   ],
-  "8yF3hc": [
+  "CG772M": [
     {
       "type": 0,
-      "value": "Lihat lainnya"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "Tidak mendapatkan apa yang Anda butuhkan?"
+      "value": "Connection required"
     }
   ],
   "FXLR5M": [
@@ -114,57 +103,22 @@
       "value": "hours"
     }
   ],
-  "Gx6rDL": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "tidak ada item cocok."
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " item cocok."
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
-  "HOsSgX": [
+  "Ie4usD": [
     {
       "type": 0,
-      "value": "Info selengkapnya"
-    }
-  ],
-  "JXhiR+": [
-    {
-      "type": 0,
-      "value": "Kami tidak menemukan hasil apa pun"
-    }
-  ],
-  "LgbKvU": [
-    {
-      "type": 0,
-      "value": "Komentar"
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "Selanjutnya gagal"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -191,12 +145,6 @@
       "value": "Tetapkan identitas terkelola"
     }
   ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "Salin URL"
-    }
-  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -219,6 +167,12 @@
       "value": "title"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -227,12 +181,6 @@
     {
       "type": 0,
       "value": "j"
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "Saat ini tidak ada saran yang tersedia untuk pilihan Anda."
     }
   ],
   "RhH4pF": [
@@ -272,40 +220,10 @@
       "value": "Gagal"
     }
   ],
-  "TY45/m": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "Tidak ada konektor terkini untuk ditampilkan"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "Pelajari selengkapnya"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "Operasi"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 0,
-      "value": "Kami tidak dapat menemukan "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " untuk "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -336,10 +254,10 @@
       "value": " jam"
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "Terbaru"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -360,6 +278,12 @@
       "value": " detik"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -370,36 +294,10 @@
       "value": "h"
     }
   ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "Perlu koneksi"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "Sembunyikan komentar ini"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "Perluas daftar konektor"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 0,
-      "value": "Kami tidak dapat menemukan "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " apa pun"
     }
   ],
   "cj+kyo": [
@@ -408,16 +306,16 @@
       "value": "Dibatalkan"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Tidak ditentukan"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "Pelajari selengkapnya tentang membuat konektor."
     }
   ],
   "fejjJ6": [
@@ -444,18 +342,6 @@
     {
       "type": 0,
       "value": "Sebelumnya gagal"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "Memuat..."
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "Tidak"
     }
   ],
   "hN7iBP": [
@@ -489,6 +375,12 @@
     {
       "type": 0,
       "value": "Berikutnya"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
     }
   ],
   "iUs7pv": [
@@ -531,10 +423,10 @@
       "value": "d"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "Kesalahan memuat komponen."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -555,50 +447,16 @@
       "value": " menit"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 0,
-      "value": "Kami tidak dapat menemukan hasil apa pun untuk "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "Menguji"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "Ya"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "Kembali"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "Bersihkan"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Identitas terkelola"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "Hapus?"
     }
   ],
   "qSt0Sb": [
@@ -628,18 +486,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "Disarankan berdasarkan aktivitas Anda"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(pratinjau)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -664,46 +510,10 @@
       "value": "OK"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(pratinjau)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "Pilih operasi"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "Info Selengkapnya"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Waktu Habis"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "Nama koneksi"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "Ingin membuat konektor Anda sendiri?"
     }
   ]
 }

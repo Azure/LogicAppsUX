@@ -27,6 +27,7 @@ export class InnerClassCopyInput extends React.Component<CopyInputControlProps &
 
     const DISPLAY_TEXT_COPY_URL = intl.formatMessage({
       defaultMessage: 'Copy URL',
+      description: 'This is shown as an aria label on button as well as the tooltip that is shown after clicking the button',
     });
 
     return (

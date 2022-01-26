@@ -13,7 +13,6 @@ import { isHighContrastBlackOrInverted } from '../utils/theme';
 import { useIntl, FormattedMessage } from 'react-intl';
 import { EditOrDeleteButton } from './workflowParameterButtons';
 
-
 const fieldStyles: IStyle = {
   display: 'inline-block',
   flexGrow: 1,
@@ -69,7 +68,6 @@ const textFieldWithWarningStyles: Partial<ITextFieldStyles> = {
   },
 };
 
-
 const NAME_KEY = 'name';
 const DEFAULT_VALUE_KEY = 'defaultValue';
 
@@ -122,7 +120,14 @@ interface ParameterFieldDetails {
   value: string;
 }
 
-export function WorkflowParameter({ definition, validationErrors, standardMode, isReadOnly, onChange, ...props }: WorkflowParameterProps): JSX.Element {
+export function WorkflowParameter({
+  definition,
+  validationErrors,
+  standardMode,
+  isReadOnly,
+  onChange,
+  ...props
+}: WorkflowParameterProps): JSX.Element {
   const [defaultValue, setDefaultValue] = useState(definition.defaultValue);
   const [expanded, setExpanded] = useState(!!definition.isEditable);
   const [isEditable, setIsEditable] = useState(definition.isEditable);
@@ -133,23 +138,59 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
   const intl = useIntl();
 
   const typeOptions: IDropdownOption[] = [
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, text: intl.formatMessage({ defaultMessage: 'Array' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL, text: intl.formatMessage({ defaultMessage: 'Bool' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT, text: intl.formatMessage({ defaultMessage: 'Float' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: intl.formatMessage({ defaultMessage: 'Int' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT, text: intl.formatMessage({ defaultMessage: 'Object' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT, text: intl.formatMessage({ defaultMessage: 'Secure Objcet' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING, text: intl.formatMessage({ defaultMessage: 'Secure String' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING, text: intl.formatMessage({ defaultMessage: 'String' }) }
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
+      text: intl.formatMessage({ defaultMessage: 'Array', description: 'Array' }),
+    },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL,
+      text: intl.formatMessage({ defaultMessage: 'Bool', description: 'Boolean' }),
+    },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT,
+      text: intl.formatMessage({ defaultMessage: 'Float', description: 'Float' }),
+    },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: intl.formatMessage({ defaultMessage: 'Int', description: 'Integer' }) },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT,
+      text: intl.formatMessage({ defaultMessage: 'Object', description: 'Object' }),
+    },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT,
+      text: intl.formatMessage({ defaultMessage: 'Secure Objcet', description: 'Secure Object' }),
+    },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING,
+      text: intl.formatMessage({ defaultMessage: 'Secure String', description: 'Secure String' }),
+    },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING,
+      text: intl.formatMessage({ defaultMessage: 'String', description: 'String' }),
+    },
   ];
 
   const typeOptionsForStandard: IDropdownOption[] = [
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, text: intl.formatMessage({ defaultMessage: 'Array' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL, text: intl.formatMessage({ defaultMessage: 'Bool' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT, text: intl.formatMessage({ defaultMessage: 'Float' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: intl.formatMessage({ defaultMessage: 'Int' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT, text: intl.formatMessage({ defaultMessage: 'Object' }) },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING, text: intl.formatMessage({ defaultMessage: 'String' }) }
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
+      text: intl.formatMessage({ defaultMessage: 'Array', description: 'Array' }),
+    },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL,
+      text: intl.formatMessage({ defaultMessage: 'Bool', description: 'Boolean' }),
+    },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT,
+      text: intl.formatMessage({ defaultMessage: 'Float', description: 'Float' }),
+    },
+    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: intl.formatMessage({ defaultMessage: 'Int', description: 'Integer' }) },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT,
+      text: intl.formatMessage({ defaultMessage: 'Object', description: 'Object' }),
+    },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING,
+      text: intl.formatMessage({ defaultMessage: 'String', description: 'String' }),
+    },
   ];
 
   const parameterDetails: ParameterFieldDetails = {
@@ -176,15 +217,15 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
   const renderParameterFields = (parameterDetails: ParameterFieldDetails, errors: Record<string, string>): JSX.Element => {
     const nameTitle = intl.formatMessage({
       defaultMessage: 'Name',
-      description: 'Name Title'
+      description: 'Name Title',
     });
     const nameDescription = intl.formatMessage({
       defaultMessage: 'Enter parameter name.',
-      description: 'Name Description'
+      description: 'Name Description',
     });
     const typeTitle = intl.formatMessage({
       defaultMessage: 'Type',
-      description: 'Type Title'
+      description: 'Type Title',
     });
     if (isEditable || !standardMode) {
       return (
@@ -250,18 +291,17 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
   };
 
   const renderParameterValueField = (parameterDetails: ParameterFieldDetails, errors: Record<string, string>): JSX.Element => {
-
     const defaultValueTitle = intl.formatMessage({
       defaultMessage: 'Default Value',
-      description: 'Default Value Title'
+      description: 'Default Value Title',
     });
     const defaultValueDescription = intl.formatMessage({
       defaultMessage: 'Enter default value for parameter.',
-      description: 'Default Value Placeholder Text'
+      description: 'Default Value Placeholder Text',
     });
     const actualValueTitle = intl.formatMessage({
       defaultMessage: 'Actual Value',
-      description: 'Actual Value Title'
+      description: 'Actual Value Title',
     });
     return (
       <>
@@ -313,7 +353,7 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
         newDefinition: { ...definition, defaultValue: value },
       });
     }
-  }
+  };
 
   const onRenderDescription = (props?: ITextFieldProps): JSX.Element => {
     return (
@@ -328,28 +368,19 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
       <>
         <div className="msla-workflow-parameter-field">
           <Label styles={labelStyles} htmlFor={parameterDetails.name}>
-            <FormattedMessage
-              defaultMessage='Name'
-              description='Name Title'
-            />
+            <FormattedMessage defaultMessage="Name" description="Name Title" />
           </Label>
           <Text className="msla-workflow-parameter-read-only">{name}</Text>
         </div>
         <div className="msla-workflow-parameter-field">
           <Label styles={labelStyles} htmlFor={parameterDetails.type}>
-            <FormattedMessage
-              defaultMessage='Title'
-              description='Type Title'
-            />
+            <FormattedMessage defaultMessage="Title" description="Type Title" />
           </Label>
           <Text className="msla-workflow-parameter-read-only">{type}</Text>
         </div>
         <div className="msla-workflow-parameter-value-field">
           <Label styles={labelStyles} htmlFor={parameterDetails.value}>
-            <FormattedMessage
-              defaultMessage='Value'
-              description='Value Title'
-            />
+            <FormattedMessage defaultMessage="Value" description="Value Title" />
           </Label>
           <Text block className="msla-workflow-parameter-read-only">
             {defaultValue}
@@ -361,7 +392,7 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
   if (standardMode) {
     const headingTitle = intl.formatMessage({
       defaultMessage: 'New parameter',
-      description: 'Heading Title'
+      description: 'Heading Title',
     });
 
     return (
@@ -394,17 +425,16 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
   } else {
     return (
       <div className="msla-workflow-parameter">
-        <div className="msla-workflow-parameter-group">{
-          renderParameterFields(parameterDetails, errors)}
-        </div>
-        {!isReadOnly ?
+        <div className="msla-workflow-parameter-group">{renderParameterFields(parameterDetails, errors)}</div>
+        {!isReadOnly ? (
           <EditOrDeleteButton
             showDelete
             onDelete={props.onDelete}
             definition={definition}
             setIsEditable={setIsEditable}
             setExpanded={setExpanded}
-          /> : null}
+          />
+        ) : null}
       </div>
     );
   }

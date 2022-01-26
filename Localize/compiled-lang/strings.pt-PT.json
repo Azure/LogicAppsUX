@@ -5,20 +5,16 @@
       "value": "A aguardar"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": Mais informações"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Novas tentativas realizadas com êxito"
+    }
+  ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "1KSzxz": [
@@ -27,105 +23,7 @@
       "value": "Adicionar um comentário curto"
     }
   ],
-  "1rlBUx": [
-    {
-      "type": 0,
-      "value": "Erro inesperado"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "Editar título do cartão"
-    }
-  ],
-  "3kI7xF": [
-    {
-      "type": 0,
-      "value": "Com falhas"
-    }
-  ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "Cancelar"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "Esta Ação tem os testes ativados."
-    }
-  ],
-  "6oqk+A": [
-    {
-      "type": 0,
-      "value": "Anterior"
-    }
-  ],
-  "7GSk99": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "Não é possível compor o estruturador devido a vários acionadores na definição."
-    }
-  ],
-  "8yF3hc": [
-    {
-      "type": 0,
-      "value": "Ver mais"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "Não encontra o que necessita?"
-    }
-  ],
-  "FXLR5M": [
-    {
-      "offset": 0,
-      "options": {
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " hora"
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " horas"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "hours"
-    }
-  ],
-  "Gx6rDL": [
+  "1R6Vaa": [
     {
       "offset": 0,
       "options": {
@@ -165,28 +63,84 @@
       "value": "count"
     }
   ],
-  "HOsSgX": [
+  "3kI7xF": [
     {
       "type": 0,
-      "value": "Mais informações"
+      "value": "Com falhas"
     }
   ],
-  "JXhiR+": [
+  "6oqk+A": [
     {
       "type": 0,
-      "value": "Não foi possível localizar quaisquer resultados"
+      "value": "Anterior"
     }
   ],
-  "LgbKvU": [
+  "7GSk99": [
     {
       "type": 0,
-      "value": "Comentário"
+      "value": "OK"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Não é possível compor o estruturador devido a vários acionadores na definição."
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Connection required"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hora"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " horas"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "Ie4usD": [
+    {
+      "type": 0,
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "O seguinte falhou"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -213,12 +167,6 @@
       "value": "Selecionar uma identidade gerida"
     }
   ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "Copiar URL"
-    }
-  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -241,6 +189,12 @@
       "value": "title"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -249,12 +203,6 @@
     {
       "type": 0,
       "value": "h"
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "Atualmente, não existem sugestões disponíveis com a sua seleção."
     }
   ],
   "RhH4pF": [
@@ -305,40 +253,10 @@
       "value": "Falhou"
     }
   ],
-  "TY45/m": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "Não há conectores recentes para apresentar"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "Saber mais"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "Operações"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 0,
-      "value": "Não foi possível encontrar nenhum "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " para "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -369,10 +287,10 @@
       "value": " horas"
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "Recente"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -393,6 +311,12 @@
       "value": " segundos"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -403,32 +327,10 @@
       "value": "d"
     }
   ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "Ligação necessária"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "Ocultar este comentário"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "Expandir lista de conectores"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 0,
-      "value": "Não foi possível encontrar nenhum "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
     }
   ],
   "cj+kyo": [
@@ -437,16 +339,16 @@
       "value": "Cancelado"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Não especificado"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "Saiba mais sobre a criação de conectores."
     }
   ],
   "fejjJ6": [
@@ -473,18 +375,6 @@
     {
       "type": 0,
       "value": "O anterior falhou"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "A carregar..."
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "Não"
     }
   ],
   "hN7iBP": [
@@ -531,6 +421,12 @@
       "value": "Seguinte"
     }
   ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
   "iUs7pv": [
     {
       "type": 0,
@@ -571,10 +467,10 @@
       "value": "s"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "Erro ao carregar componente."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -595,50 +491,16 @@
       "value": " minutos"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 0,
-      "value": "Não foi possível localizar quaisquer resultados de "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "Testes"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "Sim"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "Voltar"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "Limpar"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Identidade gerida"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "Desmarcar?"
     }
   ],
   "qSt0Sb": [
@@ -679,18 +541,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "Recomendado com base na sua atividade"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(pré-visualização)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -715,46 +565,10 @@
       "value": "OK"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(pré-visualização)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "Escolher uma operação"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "Mais Informações"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Tempo Limite Excedido"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "Nome da ligação"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "Quer criar os seus próprios conectores?"
     }
   ]
 }

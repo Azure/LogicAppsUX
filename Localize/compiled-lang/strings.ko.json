@@ -5,20 +5,16 @@
       "value": "대기 중"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": 추가 정보"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "성공했지만 다시 시도해야 함"
+    }
+  ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "1KSzxz": [
@@ -27,34 +23,39 @@
       "value": "짧은 주석 추가"
     }
   ],
-  "1rlBUx": [
+  "1R6Vaa": [
     {
-      "type": 0,
-      "value": "예기치 않은 오류"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "카드 제목 편집"
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
     }
   ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "오류"
-    }
-  ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "취소"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "이 작업에는 테스트가 구성되어 있습니다."
     }
   ],
   "6oqk+A": [
@@ -75,22 +76,10 @@
       "value": "정의에 있는 여러 트리거로 인해 디자이너를 렌더링할 수 없습니다."
     }
   ],
-  "8yF3hc": [
+  "CG772M": [
     {
       "type": 0,
-      "value": "자세히 보기"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "프리미엄"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "필요한 항목이 보이지 않습니까?"
+      "value": "Connection required"
     }
   ],
   "FXLR5M": [
@@ -114,57 +103,22 @@
       "value": "hours"
     }
   ],
-  "Gx6rDL": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "일치하는 항목이 없습니다."
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": "개의 항목이 일치합니다."
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
-  "HOsSgX": [
+  "Ie4usD": [
     {
       "type": 0,
-      "value": "추가 정보"
-    }
-  ],
-  "JXhiR+": [
-    {
-      "type": 0,
-      "value": "결과를 찾을 수 없습니다."
-    }
-  ],
-  "LgbKvU": [
-    {
-      "type": 0,
-      "value": "메모"
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "다음 항목 실패"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -191,12 +145,6 @@
       "value": "관리 ID 선택"
     }
   ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "URL 복사"
-    }
-  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -219,6 +167,12 @@
       "value": " 카드에 대한 상황에 맞는 메뉴"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -227,12 +181,6 @@
     {
       "type": 0,
       "value": "시간"
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "현재 선택 항목에 사용 가능한 제안이 없습니다."
     }
   ],
   "RhH4pF": [
@@ -272,40 +220,10 @@
       "value": "실패함"
     }
   ],
-  "TY45/m": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "표시할 최근 커넥터가 없음"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "자세한 정보"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "작업"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 1,
-      "value": "filterText"
-    },
-    {
-      "type": 0,
-      "value": "에 대한 "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": "을(를) 찾을 수 없습니다."
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -336,10 +254,10 @@
       "value": "시간"
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "최근"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -360,6 +278,12 @@
       "value": " seconds"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -370,32 +294,10 @@
       "value": "일"
     }
   ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "연결 필요"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "이 메모 숨기기"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "커넥터 목록 확장"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": "을(를) 찾을 수 없습니다."
     }
   ],
   "cj+kyo": [
@@ -404,16 +306,16 @@
       "value": "취소됨"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "지정되지 않음"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "커넥터 만들기에 대해 자세히 알아보세요."
     }
   ],
   "fejjJ6": [
@@ -440,18 +342,6 @@
     {
       "type": 0,
       "value": "이전 항목 실패"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "로드 중..."
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "아니요"
     }
   ],
   "hN7iBP": [
@@ -485,6 +375,12 @@
     {
       "type": 0,
       "value": "다음"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
     }
   ],
   "iUs7pv": [
@@ -527,10 +423,10 @@
       "value": "초"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "구성 요소를 로드하는 동안 오류가 발생했습니다."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -551,50 +447,16 @@
       "value": "분"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 1,
-      "value": "filterText"
-    },
-    {
-      "type": 0,
-      "value": "의 결과를 찾을 수 없습니다."
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "테스트"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "예"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "뒤로 이동"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "지우기"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "관리 ID"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "지우시겠습니까?"
     }
   ],
   "qSt0Sb": [
@@ -624,18 +486,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "활동을 기반으로 한 권장 사항"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(미리 보기)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -660,46 +510,10 @@
       "value": "확인"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(미리 보기)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "프리미엄"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "작업 선택"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "추가 정보"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "시간 초과"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "연결 이름"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "커넥터를 직접 만드시겠습니까?"
     }
   ]
 }
