@@ -5,13 +5,14 @@ import { ILabelStyles, Label } from '@fluentui/react/lib/Label';
 import { FontWeights, getTheme, IStyle } from '@fluentui/react/lib/Styling';
 import { ITextStyles, Text } from '@fluentui/react/lib/Text';
 import { ITextFieldProps, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { equals, format } from '@microsoft-logic-apps/utils';
 import Constants from '../constants';
 import type { EventHandler } from '../eventhandler';
 import { isHighContrastBlackOrInverted } from '../utils/theme';
-import { useIntl, FormattedMessage } from 'react-intl';
-import { EditOrDeleteButton } from './workflowParameterButtons';
+import { useIntl } from 'react-intl';
+import { EditOrDeleteButton } from './workflowparametersButtons';
+import { ReadOnlyParameters } from './workflowparametersReadOnly';
 
 const fieldStyles: IStyle = {
   display: 'inline-block',
@@ -37,7 +38,7 @@ const commandBarStyles: Partial<IButtonStyles> = {
   },
 };
 
-const labelStyles: Partial<ILabelStyles> = {
+export const labelStyles: Partial<ILabelStyles> = {
   root: {
     display: 'inline-block',
     minWidth: 100,
@@ -113,7 +114,7 @@ export interface WorkflowParameterState {
   valueWarningMessage?: string | undefined;
 }
 
-interface ParameterFieldDetails {
+export interface ParameterFieldDetails {
   name: string;
   defaultValue: string;
   type: string;
@@ -263,7 +264,15 @@ export function WorkflowParameter({
         </>
       );
     } else {
-      return renderReadOnlyParameters(parameterDetails);
+      return (
+        <ReadOnlyParameters
+          name={name}
+          defaultValue={defaultValue}
+          type={type}
+          definition={definition}
+          parameterDetails={parameterDetails}
+        />
+      );
     }
   };
 
@@ -363,32 +372,6 @@ export function WorkflowParameter({
     );
   };
 
-  const renderReadOnlyParameters = (parameterDetails: ParameterFieldDetails): JSX.Element => {
-    return (
-      <>
-        <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} htmlFor={parameterDetails.name}>
-            <FormattedMessage defaultMessage="Name" description="Name Title" />
-          </Label>
-          <Text className="msla-workflow-parameter-read-only">{name}</Text>
-        </div>
-        <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} htmlFor={parameterDetails.type}>
-            <FormattedMessage defaultMessage="Title" description="Type Title" />
-          </Label>
-          <Text className="msla-workflow-parameter-read-only">{type}</Text>
-        </div>
-        <div className="msla-workflow-parameter-value-field">
-          <Label styles={labelStyles} htmlFor={parameterDetails.value}>
-            <FormattedMessage defaultMessage="Value" description="Value Title" />
-          </Label>
-          <Text block className="msla-workflow-parameter-read-only">
-            {defaultValue}
-          </Text>
-        </div>
-      </>
-    );
-  };
   if (standardMode) {
     const headingTitle = intl.formatMessage({
       defaultMessage: 'New parameter',
