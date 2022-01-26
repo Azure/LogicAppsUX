@@ -5,20 +5,16 @@
       "value": "Wachten"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": meer informatie"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Voltooid met nieuwe pogingen"
+    }
+  ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "1KSzxz": [
@@ -27,34 +23,50 @@
       "value": "Een korte opmerking toevoegen"
     }
   ],
-  "1rlBUx": [
+  "1R6Vaa": [
     {
-      "type": 0,
-      "value": "Onverwachte fout"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "Kaarttitel bewerken"
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " item matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
     }
   ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Mislukt"
-    }
-  ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "Annuleren"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "Voor deze actie zijn tests geconfigureerd."
     }
   ],
   "6oqk+A": [
@@ -75,22 +87,10 @@
       "value": "Kan de designer niet weergeven vanwege meerdere triggers in de definitie."
     }
   ],
-  "8yF3hc": [
+  "CG772M": [
     {
       "type": 0,
-      "value": "Meer weergeven"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "Ziet u niet wat u zoekt?"
+      "value": "Connection required"
     }
   ],
   "FXLR5M": [
@@ -125,68 +125,22 @@
       "value": "hours"
     }
   ],
-  "Gx6rDL": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "Er komen geen items overeen."
-            }
-          ]
-        },
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " item komt overeen."
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " items komen overeen."
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
-  "HOsSgX": [
+  "Ie4usD": [
     {
       "type": 0,
-      "value": "Meer informatie"
-    }
-  ],
-  "JXhiR+": [
-    {
-      "type": 0,
-      "value": "Er zijn geen apparaten gevonden"
-    }
-  ],
-  "LgbKvU": [
-    {
-      "type": 0,
-      "value": "Opmerking"
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "Volgende mislukt"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -211,12 +165,6 @@
     {
       "type": 0,
       "value": "Een beheerde identiteit selecteren"
-    }
-  ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "URL kopiëren"
     }
   ],
   "PF87Ew": [
@@ -245,6 +193,12 @@
       "value": "-kaart"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -253,12 +207,6 @@
     {
       "type": 0,
       "value": "h"
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "Er zijn momenteel geen suggesties beschikbaar met uw selectie."
     }
   ],
   "RhH4pF": [
@@ -309,40 +257,10 @@
       "value": "Mislukt"
     }
   ],
-  "TY45/m": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "Er zijn geen recente connectors die kunnen worden weergegeven"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "Meer informatie"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "Bewerkingen"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 0,
-      "value": "Er zijn geen "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " gevonden voor "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -373,10 +291,10 @@
       "value": " uren"
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "Recent"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -397,6 +315,12 @@
       "value": " seconden"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -407,36 +331,10 @@
       "value": "d"
     }
   ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "Een verbinding is vereist"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "Deze opmerking verbergen"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "Lijst van connectors uitvouwen"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 0,
-      "value": "Er zijn geen "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " gevonden"
     }
   ],
   "cj+kyo": [
@@ -445,16 +343,16 @@
       "value": "Geannuleerd"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Niet opgegeven"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "Meer informatie over het maken van connectoren."
     }
   ],
   "fejjJ6": [
@@ -481,18 +379,6 @@
     {
       "type": 0,
       "value": "Vorige mislukt"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "Laden..."
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "Nee"
     }
   ],
   "hN7iBP": [
@@ -539,6 +425,12 @@
       "value": "Volgende"
     }
   ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
   "iUs7pv": [
     {
       "type": 0,
@@ -579,10 +471,10 @@
       "value": "s"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "Er is een fout opgetreden bij het laden van het onderdeel."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -603,54 +495,16 @@
       "value": " minuten"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 0,
-      "value": "Er zijn geen resultaten voor "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    },
-    {
-      "type": 0,
-      "value": " gevonden"
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "Testen"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "Ja"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "Terug"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "Wissen"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Beheerde identiteit"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "Wissen?"
     }
   ],
   "qSt0Sb": [
@@ -691,18 +545,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "Aanbevolen op basis van uw gebruik"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(preview)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -727,46 +569,10 @@
       "value": "OK"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(preview)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "Kies een bewerking"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "Meer informatie"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Time-out opgetreden"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "Verbindingsnaam"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "Wilt u uw eigen connectors maken?"
     }
   ]
 }

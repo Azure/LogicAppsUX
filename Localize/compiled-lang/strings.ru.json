@@ -5,20 +5,16 @@
       "value": "Ожидание"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": дополнительные сведения"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Выполнено с повторными попытками"
+    }
+  ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "1KSzxz": [
@@ -27,127 +23,7 @@
       "value": "Добавьте краткий комментарий"
     }
   ],
-  "1rlBUx": [
-    {
-      "type": 0,
-      "value": "Неожиданная ошибка"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "Изменяется заголовок карты"
-    }
-  ],
-  "3kI7xF": [
-    {
-      "type": 0,
-      "value": "Со сбоем"
-    }
-  ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "Отмена"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "Для этого действия настроено тестирование."
-    }
-  ],
-  "6oqk+A": [
-    {
-      "type": 0,
-      "value": "Назад"
-    }
-  ],
-  "7GSk99": [
-    {
-      "type": 0,
-      "value": "ОК"
-    }
-  ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "Не удается отобразить конструктор из-за наличия нескольких триггеров в определении."
-    }
-  ],
-  "8yF3hc": [
-    {
-      "type": 0,
-      "value": "Показать больше"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "Премиум"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "Не видите то, что вам нужно?"
-    }
-  ],
-  "FXLR5M": [
-    {
-      "offset": 0,
-      "options": {
-        "few": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " ч"
-            }
-          ]
-        },
-        "many": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " ч"
-            }
-          ]
-        },
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " час"
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " ч"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "hours"
-    }
-  ],
-  "Gx6rDL": [
+  "1R6Vaa": [
     {
       "offset": 0,
       "options": {
@@ -209,28 +85,106 @@
       "value": "count"
     }
   ],
-  "HOsSgX": [
+  "3kI7xF": [
     {
       "type": 0,
-      "value": "Дополнительные сведения"
+      "value": "Со сбоем"
     }
   ],
-  "JXhiR+": [
+  "6oqk+A": [
     {
       "type": 0,
-      "value": "Результатов не найдено."
+      "value": "Назад"
     }
   ],
-  "LgbKvU": [
+  "7GSk99": [
     {
       "type": 0,
-      "value": "Комментарий"
+      "value": "ОК"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Не удается отобразить конструктор из-за наличия нескольких триггеров в определении."
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Connection required"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ч"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ч"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " час"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ч"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "Ie4usD": [
+    {
+      "type": 0,
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "Следующее со сбоем"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -257,12 +211,6 @@
       "value": "Выберите управляемое удостоверение"
     }
   ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "Копировать URL-адрес"
-    }
-  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -285,6 +233,12 @@
       "value": "title"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -293,12 +247,6 @@
     {
       "type": 0,
       "value": " ч"
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "Сейчас нет доступных для вашего выбора предложений."
     }
   ],
   "RhH4pF": [
@@ -371,40 +319,10 @@
       "value": "Сбой"
     }
   ],
-  "TY45/m": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "Нет недавних соединителей для отображения"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "Подробнее"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "Операции"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 0,
-      "value": "Не удалось найти "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " для "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -435,10 +353,10 @@
       "value": " ч"
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "Недавние"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -459,6 +377,12 @@
       "value": " с"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -469,32 +393,10 @@
       "value": " дн."
     }
   ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "Требуется подключение"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "Скрыть этот комментарий"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "Развернуть список соединителей"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 0,
-      "value": "Не удалось найти "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
     }
   ],
   "cj+kyo": [
@@ -503,16 +405,16 @@
       "value": "Отменено"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Не указано"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "Дополнительные сведения о создании соединителей."
     }
   ],
   "fejjJ6": [
@@ -539,18 +441,6 @@
     {
       "type": 0,
       "value": "Предыдущее со сбоем"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "Загрузка…"
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "Нет"
     }
   ],
   "hN7iBP": [
@@ -619,6 +509,12 @@
       "value": "Далее"
     }
   ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
   "iUs7pv": [
     {
       "type": 0,
@@ -659,10 +555,10 @@
       "value": " с"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "Ошибка при загрузке компонента."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -683,54 +579,16 @@
       "value": " мин"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 0,
-      "value": "Результатов для \""
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    },
-    {
-      "type": 0,
-      "value": "\" не найдено."
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "Тестирование"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "Да"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "Назад"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "Очистить"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Управляемое удостоверение"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "Очистить?"
     }
   ],
   "qSt0Sb": [
@@ -793,18 +651,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "Рекомендуется на основе ваших действий"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(предварительная версия)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -829,46 +675,10 @@
       "value": "ОК"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(предварительная версия)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "Премиум"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "Выберите операцию"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "Дополнительные сведения"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Время ожидания истекло"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "Имя соединения"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "Хотите создать собственные соединители?"
     }
   ]
 }

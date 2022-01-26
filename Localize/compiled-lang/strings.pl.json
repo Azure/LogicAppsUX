@@ -5,20 +5,16 @@
       "value": "Oczekiwanie"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": Więcej informacji"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Powodzenie dzięki ponownym próbom"
+    }
+  ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "1KSzxz": [
@@ -27,34 +23,72 @@
       "value": "Dodaj krótki komentarz"
     }
   ],
-  "1rlBUx": [
+  "1R6Vaa": [
     {
-      "type": 0,
-      "value": "Nieoczekiwany błąd"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "Edytowanie tytułu karty"
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " item matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
     }
   ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Błędne"
-    }
-  ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "Anuluj"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "Ta akcja ma skonfigurowane testowanie."
     }
   ],
   "6oqk+A": [
@@ -75,22 +109,10 @@
       "value": "Nie można renderować projektanta z powodu wielu wyzwalaczy w definicji."
     }
   ],
-  "8yF3hc": [
+  "CG772M": [
     {
       "type": 0,
-      "value": "Zobacz więcej"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "Nie widzisz tego, czego potrzebujesz?"
+      "value": "Connection required"
     }
   ],
   "FXLR5M": [
@@ -147,106 +169,22 @@
       "value": "hours"
     }
   ],
-  "Gx6rDL": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "nie dopasowano żadnych elementów"
-            }
-          ]
-        },
-        "few": {
-          "value": [
-            {
-              "type": 0,
-              "value": "Dopasowano "
-            },
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " elementy."
-            }
-          ]
-        },
-        "many": {
-          "value": [
-            {
-              "type": 0,
-              "value": "Dopasowano "
-            },
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " elementów."
-            }
-          ]
-        },
-        "one": {
-          "value": [
-            {
-              "type": 0,
-              "value": "Dopasowano "
-            },
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " element."
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 0,
-              "value": "Dopasowano "
-            },
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " elementu."
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
-  "HOsSgX": [
+  "Ie4usD": [
     {
       "type": 0,
-      "value": "Więcej informacji"
-    }
-  ],
-  "JXhiR+": [
-    {
-      "type": 0,
-      "value": "Nie mogliśmy znaleźć żadnych wyników"
-    }
-  ],
-  "LgbKvU": [
-    {
-      "type": 0,
-      "value": "Komentarz"
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "Następna z niepowodzeniem"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -273,12 +211,6 @@
       "value": "Wybierz tożsamość zarządzaną"
     }
   ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "Kopiuj adres URL"
-    }
-  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -301,6 +233,12 @@
       "value": "title"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -309,12 +247,6 @@
     {
       "type": 0,
       "value": " godz."
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "Obecnie brak dostępnych sugestii dla wybranych elementów."
     }
   ],
   "RhH4pF": [
@@ -387,40 +319,10 @@
       "value": "Niepowodzenie"
     }
   ],
-  "TY45/m": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "Brak ostatnio używanych łączników do wyświetlenia"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "Dowiedz się więcej"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "Operacje"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 0,
-      "value": "Nie mogliśmy znaleźć żadnej operacji "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " dla tekstu "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -451,10 +353,10 @@
       "value": " godz."
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "Ostatnie"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -475,6 +377,12 @@
       "value": " s"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -485,32 +393,10 @@
       "value": " dni"
     }
   ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "Wymagane połączenie"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "Ukryj ten komentarz"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "Rozwiń listę łączników"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 0,
-      "value": "Nie mogliśmy znaleźć żadnej operacji "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
     }
   ],
   "cj+kyo": [
@@ -519,16 +405,16 @@
       "value": "Anulowane"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Nie określono"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "Dowiedz się więcej o tworzeniu łączników."
     }
   ],
   "fejjJ6": [
@@ -555,18 +441,6 @@
     {
       "type": 0,
       "value": "Poprzednie z niepowodzeniem"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "Trwa ładowanie..."
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "Nie"
     }
   ],
   "hN7iBP": [
@@ -635,6 +509,12 @@
       "value": "Następna"
     }
   ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
   "iUs7pv": [
     {
       "type": 0,
@@ -675,10 +555,10 @@
       "value": " s"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "Błąd podczas ładowania składnika."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -699,50 +579,16 @@
       "value": " min"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 0,
-      "value": "Nie mogliśmy znaleźć żadnych wyników dla elementu "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "Testowanie"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "Tak"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "Przejdź wstecz"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "Wyczyść"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Tożsamość zarządzana"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "Czy wyczyścić?"
     }
   ],
   "qSt0Sb": [
@@ -805,18 +651,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "Zalecane na podstawie Twoich działań"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(wersja zapoznawcza)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -841,46 +675,10 @@
       "value": "OK"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(wersja zapoznawcza)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "Wybierz operację"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "Więcej informacji"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Przekroczono limit czasu"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "Nazwa połączenia"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "Czy chcesz tworzyć własne łączniki?"
     }
   ]
 }

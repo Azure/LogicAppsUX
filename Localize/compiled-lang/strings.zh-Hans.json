@@ -5,20 +5,16 @@
       "value": "正在等待"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": 详细信息"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "重试成功"
+    }
+  ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "1KSzxz": [
@@ -27,94 +23,7 @@
       "value": "添加简短注释"
     }
   ],
-  "1rlBUx": [
-    {
-      "type": 0,
-      "value": "意外错误"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "正在编辑卡标题"
-    }
-  ],
-  "3kI7xF": [
-    {
-      "type": 0,
-      "value": "已出错"
-    }
-  ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "取消"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "此操作已配置测试。"
-    }
-  ],
-  "6oqk+A": [
-    {
-      "type": 0,
-      "value": "上一页"
-    }
-  ],
-  "7GSk99": [
-    {
-      "type": 0,
-      "value": "确定"
-    }
-  ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "由于定义中存在多个触发器，因此无法呈现设计器。"
-    }
-  ],
-  "8yF3hc": [
-    {
-      "type": 0,
-      "value": "查看更多"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "高级"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "看不到所需内容?"
-    }
-  ],
-  "FXLR5M": [
-    {
-      "offset": 0,
-      "options": {
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " 小时"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "hours"
-    }
-  ],
-  "Gx6rDL": [
+  "1R6Vaa": [
     {
       "offset": 0,
       "options": {
@@ -143,28 +52,73 @@
       "value": "count"
     }
   ],
-  "HOsSgX": [
+  "3kI7xF": [
     {
       "type": 0,
-      "value": "详细信息"
+      "value": "已出错"
     }
   ],
-  "JXhiR+": [
+  "6oqk+A": [
     {
       "type": 0,
-      "value": "找不到任何结果"
+      "value": "上一页"
     }
   ],
-  "LgbKvU": [
+  "7GSk99": [
     {
       "type": 0,
-      "value": "评论"
+      "value": "确定"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "由于定义中存在多个触发器，因此无法呈现设计器。"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Connection required"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 小时"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "Ie4usD": [
+    {
+      "type": 0,
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "下一次失败"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -191,12 +145,6 @@
       "value": "选择托管标识"
     }
   ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "复制 URL"
-    }
-  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -219,6 +167,12 @@
       "value": " 卡的关联菜单"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -227,12 +181,6 @@
     {
       "type": 0,
       "value": " 小时"
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "当前所选项没有可用建议。"
     }
   ],
   "RhH4pF": [
@@ -272,40 +220,10 @@
       "value": "失败"
     }
   ],
-  "TY45/m": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "没有最近使用的连接器可显示"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "了解详细信息"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "操作"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 0,
-      "value": "找不到 "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    },
-    {
-      "type": 0,
-      "value": " 的任何 "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -340,10 +258,10 @@
       "value": " 小时"
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "最近"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -364,6 +282,12 @@
       "value": " 秒"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -374,32 +298,10 @@
       "value": " 天"
     }
   ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "需要连接"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "隐藏此评论"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "展开连接器列表"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 0,
-      "value": "找不到任何 "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
     }
   ],
   "cj+kyo": [
@@ -408,16 +310,16 @@
       "value": "已取消"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "未指定"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "详细了解如何创建连接器。"
     }
   ],
   "fejjJ6": [
@@ -444,18 +346,6 @@
     {
       "type": 0,
       "value": "上一次失败"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "正在加载..."
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "否"
     }
   ],
   "hN7iBP": [
@@ -489,6 +379,12 @@
     {
       "type": 0,
       "value": "下一页"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
     }
   ],
   "iUs7pv": [
@@ -531,10 +427,10 @@
       "value": " 秒"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "加载组件时出错。"
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -555,54 +451,16 @@
       "value": " 分钟"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 0,
-      "value": "找不到任何 "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    },
-    {
-      "type": 0,
-      "value": " 的结果"
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "测试"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "是"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "返回"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "清除"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "托管标识"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "清除?"
     }
   ],
   "qSt0Sb": [
@@ -632,18 +490,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "根据你的活动推荐"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(预览)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -668,46 +514,10 @@
       "value": "确定"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(预览)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "高级"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "选择操作"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "详细信息"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "已超时"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "连接名称"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "要创建你自己的连接器？"
     }
   ]
 }

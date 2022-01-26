@@ -5,20 +5,16 @@
       "value": "待機中"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": 詳細情報"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "再試行により成功"
+    }
+  ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "1KSzxz": [
@@ -27,34 +23,39 @@
       "value": "簡単なコメントの追加"
     }
   ],
-  "1rlBUx": [
+  "1R6Vaa": [
     {
-      "type": 0,
-      "value": "予期しないエラー"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "カード タイトルの編集"
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
     }
   ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "エラー"
-    }
-  ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "キャンセル"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "このアクションにはテストが構成されています。"
     }
   ],
   "6oqk+A": [
@@ -75,22 +76,10 @@
       "value": "定義に複数のトリガーが含まれているため、デザイナーをレンダリングできません。"
     }
   ],
-  "8yF3hc": [
+  "CG772M": [
     {
       "type": 0,
-      "value": "さらに表示"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "必要な情報が表示されませんか?"
+      "value": "Connection required"
     }
   ],
   "FXLR5M": [
@@ -114,57 +103,22 @@
       "value": "hours"
     }
   ],
-  "Gx6rDL": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "一致する項目はありません。"
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " 個の項目が一致しました。"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
-  "HOsSgX": [
+  "Ie4usD": [
     {
       "type": 0,
-      "value": "詳細情報"
-    }
-  ],
-  "JXhiR+": [
-    {
-      "type": 0,
-      "value": "結果が見つかりませんでした"
-    }
-  ],
-  "LgbKvU": [
-    {
-      "type": 0,
-      "value": "コメント"
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "次の失敗"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -191,12 +145,6 @@
       "value": "マネージド ID を選択してください"
     }
   ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "URL のコピー"
-    }
-  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -219,6 +167,12 @@
       "value": " カードのコンテキスト メニュー"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -227,12 +181,6 @@
     {
       "type": 0,
       "value": " 時間"
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "現在、選択可能な候補はありません。"
     }
   ],
   "RhH4pF": [
@@ -272,40 +220,10 @@
       "value": "失敗"
     }
   ],
-  "TY45/m": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "最新のコネクタが表示されていません"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "詳細情報"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "操作"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 1,
-      "value": "filterText"
-    },
-    {
-      "type": 0,
-      "value": " の "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " が見つかりませんでした"
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -336,10 +254,10 @@
       "value": " 時間"
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "最近使った項目"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -360,6 +278,12 @@
       "value": " 秒"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -370,32 +294,10 @@
       "value": " 日"
     }
   ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "接続が必要"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "このコメントの非表示"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "コネクタの一覧を拡張します"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " が見つかりませんでした"
     }
   ],
   "cj+kyo": [
@@ -404,16 +306,16 @@
       "value": "取り消し済み"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "指定なし"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "コネクタの作成に関する詳細情報を表示します。"
     }
   ],
   "fejjJ6": [
@@ -440,18 +342,6 @@
     {
       "type": 0,
       "value": "前の失敗"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "読み込んでいます..."
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "いいえ"
     }
   ],
   "hN7iBP": [
@@ -485,6 +375,12 @@
     {
       "type": 0,
       "value": "次へ"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
     }
   ],
   "iUs7pv": [
@@ -527,10 +423,10 @@
       "value": " 秒"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "コンポーネントの読み込みでエラーが発生しました。"
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -551,50 +447,16 @@
       "value": " 分"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 1,
-      "value": "filterText"
-    },
-    {
-      "type": 0,
-      "value": " の結果が見つかりませんでした"
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "テスト"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "はい"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "戻る"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "クリア"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "マネージド ID"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "クリアしますか?"
     }
   ],
   "qSt0Sb": [
@@ -624,18 +486,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "アクティビティに基づく推奨"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(プレビュー)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -660,46 +510,10 @@
       "value": "OK"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(プレビュー)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "操作を選択してください"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "詳細情報"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "タイムアウト"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "接続名"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "独自のコネクタを作成しますか?"
     }
   ]
 }

@@ -5,20 +5,16 @@
       "value": "Várakozás"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": További információ"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Újrapróbálkozásokkal sikeres"
+    }
+  ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "1KSzxz": [
@@ -27,34 +23,50 @@
       "value": "Rövid megjegyzés hozzáadása"
     }
   ],
-  "1rlBUx": [
+  "1R6Vaa": [
     {
-      "type": 0,
-      "value": "Váratlan hiba"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "Kártyacím szerkesztése folyamatban"
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " item matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
     }
   ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Hibás"
-    }
-  ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "Mégse"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "A Művelet tesztelése konfigurálva van."
     }
   ],
   "6oqk+A": [
@@ -75,22 +87,10 @@
       "value": "Nem sikerült megjeleníteni a tervezőt, mert a definícióban több trigger található."
     }
   ],
-  "8yF3hc": [
+  "CG772M": [
     {
       "type": 0,
-      "value": "Több megjelenítése"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "Prémium"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "Nem találja, amire szüksége van?"
+      "value": "Connection required"
     }
   ],
   "FXLR5M": [
@@ -125,68 +125,22 @@
       "value": "hours"
     }
   ],
-  "Gx6rDL": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "nincs egyező elem."
-            }
-          ]
-        },
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " egyező elem."
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " egyező elem."
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
-  "HOsSgX": [
+  "Ie4usD": [
     {
       "type": 0,
-      "value": "További információk"
-    }
-  ],
-  "JXhiR+": [
-    {
-      "type": 0,
-      "value": "Nem találhatók eredmények"
-    }
-  ],
-  "LgbKvU": [
-    {
-      "type": 0,
-      "value": "Megjegyzés"
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "Következő sikertelen"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -211,12 +165,6 @@
     {
       "type": 0,
       "value": "Felügyelt identitás kiválasztása"
-    }
-  ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "URL másolása"
     }
   ],
   "PF87Ew": [
@@ -245,6 +193,12 @@
       "value": " kártya helyi menüje"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -253,12 +207,6 @@
     {
       "type": 0,
       "value": " ó"
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "Jelenleg nincsenek elérhető javaslatok a kiválasztott elemhez."
     }
   ],
   "RhH4pF": [
@@ -309,40 +257,10 @@
       "value": "Sikertelen"
     }
   ],
-  "TY45/m": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "Nincsenek megjeleníthető összetevők az elmúlt időszakból"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "További információ"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "Műveletek"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 0,
-      "value": "Nem találtunk "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " elemet a következő alapján: "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -373,10 +291,10 @@
       "value": " óra"
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "Legutóbbi"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -397,6 +315,12 @@
       "value": " másodperc"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -407,36 +331,10 @@
       "value": " nap"
     }
   ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "Kapcsolat szükséges"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "Megjegyzés elrejtése"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "Összekötők listájának kibontása"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 0,
-      "value": "Nem találtunk "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " elemet"
     }
   ],
   "cj+kyo": [
@@ -445,16 +343,16 @@
       "value": "Megszakítva"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Nincs megadva"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "További információ az összekötők létrehozásáról."
     }
   ],
   "fejjJ6": [
@@ -481,18 +379,6 @@
     {
       "type": 0,
       "value": "Előző sikertelen"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "Betöltés..."
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "Nem"
     }
   ],
   "hN7iBP": [
@@ -539,6 +425,12 @@
       "value": "Tovább"
     }
   ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
   "iUs7pv": [
     {
       "type": 0,
@@ -579,10 +471,10 @@
       "value": " másodperc"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "Hiba az összetevő betöltése közben."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -603,54 +495,16 @@
       "value": " perc"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 0,
-      "value": "Nem találhatók eredmények a(z) "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    },
-    {
-      "type": 0,
-      "value": " esetében"
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "Tesztelés folyamatban"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "Igen"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "Vissza"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "Törlés"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Felügyelt identitás"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "Törlés?"
     }
   ],
   "qSt0Sb": [
@@ -691,18 +545,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "Tevékenység alapján javasolt"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(előzetes verzió)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -727,46 +569,10 @@
       "value": "OK"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(előzetes verzió)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "Prémium"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "Válasszon műveletet"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "További információ"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Túllépte az időkorlátot"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "Kapcsolat neve"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "Saját összekötőket szeretne létrehozni?"
     }
   ]
 }
