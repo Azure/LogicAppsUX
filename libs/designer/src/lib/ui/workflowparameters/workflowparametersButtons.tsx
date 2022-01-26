@@ -20,8 +20,8 @@ export interface EditOrDeleteButtonProps {
   showDelete?: boolean;
   onDelete?: WorkflowParameterDeleteHandler;
   definition: WorkflowParameterDefinition;
-  setIsEditable: (value: boolean | ((prevVar: boolean) => boolean)) => void;
-  setExpanded: (value: boolean | ((prevVar: boolean) => boolean)) => void;
+  setIsEditable: (value: boolean | ((prevVar: boolean | undefined) => boolean)) => void;
+  setExpanded: (value: boolean | ((prevVar: boolean | undefined) => boolean)) => void;
 }
 
 export const EditOrDeleteButton = ({
@@ -76,33 +76,31 @@ const editIcon: IIconProps = {
 };
 
 function DeleteButton({ onClick }: ButtonProps): JSX.Element {
-  const componentRef = useRef<IButton>(null);
   const intl = useIntl();
 
   const deleteTitle = intl.formatMessage({
     defaultMessage: 'Delete Parameter',
-    description: 'Delete Title',
+    description: 'Delete Button Tooltip Text',
   });
 
   return (
     <TooltipHost styles={tooltipStyles} content={deleteTitle}>
-      <IconButton ariaLabel={deleteTitle} componentRef={componentRef} iconProps={deleteIcon} styles={buttonStyles} onClick={onClick} />
+      <IconButton ariaLabel={deleteTitle} iconProps={deleteIcon} styles={buttonStyles} onClick={onClick} />
     </TooltipHost>
   );
 }
 
 function EditButton({ onClick }: ButtonProps): JSX.Element {
-  const componentRef = useRef<IButton>(null);
   const intl = useIntl();
 
   const editTitle = intl.formatMessage({
     defaultMessage: 'Edit Parameter',
-    description: 'Edit Title',
+    description: 'Edit Button Tooltip Text',
   });
 
   return (
     <TooltipHost content={editTitle}>
-      <IconButton ariaLabel={editTitle} componentRef={componentRef} iconProps={editIcon} styles={buttonStyles} onClick={onClick} />
+      <IconButton ariaLabel={editTitle} iconProps={editIcon} styles={buttonStyles} onClick={onClick} />
     </TooltipHost>
   );
 }

@@ -88,7 +88,7 @@ export type RegisterLanguageHandler = () => void;
 export interface WorkflowParameterDefinition {
   defaultValue?: string;
   id: string;
-  isEditable: boolean;
+  isEditable?: boolean;
   name?: string;
   type?: string;
   value?: string;
@@ -141,56 +141,104 @@ export function WorkflowParameter({
   const typeOptions: IDropdownOption[] = [
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
-      text: intl.formatMessage({ defaultMessage: 'Array', description: 'Array' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Array',
+        description: 'This is an option in a dropdown where users can select type Array for their parameter.',
+      }),
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL,
-      text: intl.formatMessage({ defaultMessage: 'Bool', description: 'Boolean' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Bool',
+        description: 'This is an option in a dropdown where users can select type Boolean for their parameter.',
+      }),
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT,
-      text: intl.formatMessage({ defaultMessage: 'Float', description: 'Float' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Float',
+        description: 'This is an option in a dropdown where users can select type Float for their parameter.',
+      }),
     },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: intl.formatMessage({ defaultMessage: 'Int', description: 'Integer' }) },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT,
+      text: intl.formatMessage({
+        defaultMessage: 'Int',
+        description: 'This is an option in a dropdown where users can select type Integer for their parameter.',
+      }),
+    },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT,
-      text: intl.formatMessage({ defaultMessage: 'Object', description: 'Object' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Object',
+        description: 'This is an option in a dropdown where users can select type Object for their parameter.',
+      }),
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT,
-      text: intl.formatMessage({ defaultMessage: 'Secure Objcet', description: 'Secure Object' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Secure Objcet',
+        description: 'This is an option in a dropdown where users can select type Secure Object for their parameter.',
+      }),
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING,
-      text: intl.formatMessage({ defaultMessage: 'Secure String', description: 'Secure String' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Secure String',
+        description: 'This is an option in a dropdown where users can select type Secure String for their parameter.',
+      }),
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING,
-      text: intl.formatMessage({ defaultMessage: 'String', description: 'String' }),
+      text: intl.formatMessage({
+        defaultMessage: 'String',
+        description: 'This is an option in a dropdown where users can select type String for their parameter.',
+      }),
     },
   ];
 
   const typeOptionsForStandard: IDropdownOption[] = [
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
-      text: intl.formatMessage({ defaultMessage: 'Array', description: 'Array' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Array',
+        description: 'This is an option in a dropdown where users can select type Array for their parameter.',
+      }),
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL,
-      text: intl.formatMessage({ defaultMessage: 'Bool', description: 'Boolean' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Bool',
+        description: 'This is an option in a dropdown where users can select type Boolean for their parameter.',
+      }),
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT,
-      text: intl.formatMessage({ defaultMessage: 'Float', description: 'Float' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Float',
+        description: 'This is an option in a dropdown where users can select type Float for their parameter.',
+      }),
     },
-    { key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT, text: intl.formatMessage({ defaultMessage: 'Int', description: 'Integer' }) },
+    {
+      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT,
+      text: intl.formatMessage({
+        defaultMessage: 'Int',
+        description: 'This is an option in a dropdown where users can select type Integer for their parameter.',
+      }),
+    },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT,
-      text: intl.formatMessage({ defaultMessage: 'Object', description: 'Object' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Object',
+        description: 'This is an option in a dropdown where users can select type Object for their parameter.',
+      }),
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING,
-      text: intl.formatMessage({ defaultMessage: 'String', description: 'String' }),
+      text: intl.formatMessage({
+        defaultMessage: 'String',
+        description: 'This is an option in a dropdown where users can select type String for their parameter.',
+      }),
     },
   ];
 
@@ -218,15 +266,15 @@ export function WorkflowParameter({
   const renderParameterFields = (parameterDetails: ParameterFieldDetails, errors: Record<string, string>): JSX.Element => {
     const nameTitle = intl.formatMessage({
       defaultMessage: 'Name',
-      description: 'Name Title',
+      description: 'Parameter Field Name Title',
     });
     const nameDescription = intl.formatMessage({
       defaultMessage: 'Enter parameter name.',
-      description: 'Name Description',
+      description: 'Parameter Field Name Description',
     });
     const typeTitle = intl.formatMessage({
       defaultMessage: 'Type',
-      description: 'Type Title',
+      description: 'Parameter Field Type Title',
     });
     if (isEditable || !standardMode) {
       return (
@@ -302,15 +350,15 @@ export function WorkflowParameter({
   const renderParameterValueField = (parameterDetails: ParameterFieldDetails, errors: Record<string, string>): JSX.Element => {
     const defaultValueTitle = intl.formatMessage({
       defaultMessage: 'Default Value',
-      description: 'Default Value Title',
+      description: 'Parameter Field Default Value Title',
     });
     const defaultValueDescription = intl.formatMessage({
       defaultMessage: 'Enter default value for parameter.',
-      description: 'Default Value Placeholder Text',
+      description: 'Parameter Field Default Value Placeholder Text',
     });
     const actualValueTitle = intl.formatMessage({
       defaultMessage: 'Actual Value',
-      description: 'Actual Value Title',
+      description: 'Parameter Field Actual Value Title',
     });
     return (
       <>
@@ -375,7 +423,7 @@ export function WorkflowParameter({
   if (standardMode) {
     const headingTitle = intl.formatMessage({
       defaultMessage: 'New parameter',
-      description: 'Heading Title',
+      description: 'Heading Title for a Parameter Without Name',
     });
 
     return (
