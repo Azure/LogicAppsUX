@@ -189,11 +189,12 @@ export default function WorkflowParameters({
   };
 
   const renderParameter = (item?: WorkflowParameterDefinition): JSX.Element => {
+    // TODO: 12798972 Workflow Parameter
     const parameterErrors = validationErrors && item ? validationErrors[item.id] : undefined;
     return (
       <WorkflowParameter
         key={item?.id}
-        definition={item ? item : { id: 'defaultValue' }}
+        definition={item ? item : { id: 'id' }}
         isReadOnly={isReadOnly}
         onChange={onUpdateParameter}
         onDelete={onDeleteParameter}

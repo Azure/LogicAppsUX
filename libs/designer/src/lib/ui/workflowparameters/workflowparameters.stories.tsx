@@ -1,5 +1,3 @@
-// workflowparameter.stories.ts | workflowparameter.stories.tsx
-
 import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import WorkflowParameters, { WorkflowParametersProps } from './workflowparameters';
