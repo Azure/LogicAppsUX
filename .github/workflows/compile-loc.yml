@@ -19,15 +19,16 @@ jobs:
           node-version: 14.x
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Update source code
         run: npm run compile:loc
 
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v7
+      - name: push
+        uses: actions-x/commit@v2
         with:
-          author_name: Loc Bot
-          author_email: travisharris@microsoft.com
-          message: 'Compiling Loc Files'
-          add: '*.json'
+          email: travisharris@microsoft.com
+          name: GitHub Actions Autocommitter
+          branch: main
+          files: .
+          force: true
