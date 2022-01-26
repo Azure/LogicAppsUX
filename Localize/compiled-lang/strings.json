@@ -11,87 +11,19 @@
       "value": "Succeeded with retries"
     }
   ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
+    }
+  ],
   "1KSzxz": [
     {
       "type": 0,
       "value": "Add a short comment"
     }
   ],
-  "1rlBUx": [
-    {
-      "type": 0,
-      "value": "Unexpected error"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "Editing card title"
-    }
-  ],
-  "3kI7xF": [
-    {
-      "type": 0,
-      "value": "Faulted"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "This Action has testing configured."
-    }
-  ],
-  "6oqk+A": [
-    {
-      "type": 0,
-      "value": "Previous"
-    }
-  ],
-  "7GSk99": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "Cannot render designer due to multiple triggers in definition."
-    }
-  ],
-  "FXLR5M": [
-    {
-      "offset": 0,
-      "options": {
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " hour"
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " hours"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "hours"
-    }
-  ],
-  "Gx6rDL": [
+  "1R6Vaa": [
     {
       "offset": 0,
       "options": {
@@ -131,22 +63,84 @@
       "value": "count"
     }
   ],
-  "HOsSgX": [
+  "3kI7xF": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Faulted"
     }
   ],
-  "LgbKvU": [
+  "6oqk+A": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Previous"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Cannot render designer due to multiple triggers in definition."
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Connection required"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hour"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "Ie4usD": [
+    {
+      "type": 0,
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "Next failed"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -173,12 +167,6 @@
       "value": "Select a managed identity"
     }
   ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "Copy URL"
-    }
-  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -203,6 +191,12 @@
     {
       "type": 0,
       "value": " card"
+    }
+  ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "Qu1HkA": [
@@ -263,6 +257,12 @@
       "value": "Failed"
     }
   ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -291,6 +291,12 @@
       "value": " hours"
     }
   ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "Connection name"
+    }
+  ],
   "XTuxmH": [
     {
       "type": 1,
@@ -309,6 +315,12 @@
       "value": " seconds"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -317,12 +329,6 @@
     {
       "type": 0,
       "value": "d"
-    }
-  ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "Connection required"
     }
   ],
   "ZazdvR": [
@@ -335,6 +341,12 @@
     {
       "type": 0,
       "value": "Cancelled"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
     }
   ],
   "e4Onhn": [
@@ -367,12 +379,6 @@
     {
       "type": 0,
       "value": "Previous failed"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "Loading..."
     }
   ],
   "hN7iBP": [
@@ -419,6 +425,12 @@
       "value": "Next"
     }
   ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
   "iUs7pv": [
     {
       "type": 0,
@@ -459,10 +471,10 @@
       "value": "s"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "Error loading component."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -557,22 +569,10 @@
       "value": "OK"
     }
   ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "More Info"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Timed Out"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "Connection name"
     }
   ]
 }

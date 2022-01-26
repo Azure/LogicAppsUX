@@ -290,9 +290,11 @@ export function CardFooter({
   const intl = useIntl();
   const CONNECTION_NAME_DISPLAY = intl.formatMessage({
     defaultMessage: 'Connection name',
+    description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
   });
   const CONNECTION_CONTAINER_CONNECTION_REQUIRED = intl.formatMessage({
     defaultMessage: 'Connection required',
+    description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
   });
   const PANEL_STATIC_RESULT_TITLE = intl.formatMessage({
     defaultMessage: 'Testing',
@@ -300,9 +302,11 @@ export function CardFooter({
   });
   const MENU_STATIC_RESULT_ICON_TOOLTIP = intl.formatMessage({
     defaultMessage: 'This Action has testing configured.',
+    description: "This is a tooltip for the Status results badge shown on a card. It's shown when the baged is hovered over.",
   });
   const COMMENT = intl.formatMessage({
     defaultMessage: 'Comment',
+    description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
   });
   const connectionTitle = connectionDisplayName ? CONNECTION_NAME_DISPLAY : CONNECTION_CONTAINER_CONNECTION_REQUIRED;
 

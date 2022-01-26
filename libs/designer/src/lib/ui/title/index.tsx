@@ -83,6 +83,7 @@ export class InnerControlTitle extends React.Component<TitleProps & WrappedCompo
 
     const editingCardTitle = intl.formatMessage({
       defaultMessage: 'Editing card title',
+      description: 'This is shown as an aria label that can be read by screen readers only when the text is editable',
     });
     if (isEditingTitle) {
       return (
