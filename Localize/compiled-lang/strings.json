@@ -5,18 +5,6 @@
       "value": "Float"
     }
   ],
-  "+U6ozc": [
-    {
-      "type": 0,
-      "value": "Type"
-    }
-  ],
-  "/+/dCa": [
-    {
-      "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
-    }
-  ],
   "/NDLmg": [
     {
       "type": 0,
@@ -57,6 +45,18 @@
       "value": "Editing card title"
     }
   ],
+  "2BKr91": [
+    {
+      "type": 0,
+      "value": "Enter parameter name."
+    }
+  ],
+  "2kCC7s": [
+    {
+      "type": 0,
+      "value": "Parameter"
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -69,22 +69,16 @@
       "value": "Cancel"
     }
   ],
+  "4RTRDT": [
+    {
+      "type": 0,
+      "value": "Add Parameter"
+    }
+  ],
   "5CTOi9": [
     {
       "type": 0,
       "value": "This Action has testing configured."
-    }
-  ],
-  "5HlSYA": [
-    {
-      "type": 0,
-      "value": "Edit Parameter"
-    }
-  ],
-  "6Sewe8": [
-    {
-      "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "6oqk+A": [
@@ -93,16 +87,16 @@
       "value": "Previous"
     }
   ],
-  "6zxdCg": [
-    {
-      "type": 0,
-      "value": "Enter parameter name."
-    }
-  ],
   "7GSk99": [
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "7zoM32": [
+    {
+      "type": 0,
+      "value": "Type"
     }
   ],
   "8L+oIz": [
@@ -111,22 +105,16 @@
       "value": "Cannot render designer due to multiple triggers in definition."
     }
   ],
+  "8SYhiu": [
+    {
+      "type": 0,
+      "value": "Default Value"
+    }
+  ],
   "8yF3hc": [
     {
       "type": 0,
       "value": "See more"
-    }
-  ],
-  "AU5HwW": [
-    {
-      "type": 0,
-      "value": "Delete Parameter"
-    }
-  ],
-  "BkOSF2": [
-    {
-      "type": 0,
-      "value": "Parameters"
     }
   ],
   "C5xzTC": [
@@ -139,6 +127,12 @@
     {
       "type": 0,
       "value": "Don't see what you need?"
+    }
+  ],
+  "F5iJDI": [
+    {
+      "type": 0,
+      "value": "New parameter"
     }
   ],
   "FXLR5M": [
@@ -171,12 +165,6 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "hours"
-    }
-  ],
-  "GufXy5": [
-    {
-      "type": 0,
-      "value": "Value"
     }
   ],
   "Gx6rDL": [
@@ -219,16 +207,16 @@
       "value": "count"
     }
   ],
-  "HAlOn1": [
-    {
-      "type": 0,
-      "value": "Name"
-    }
-  ],
   "HOsSgX": [
     {
       "type": 0,
       "value": "More info"
+    }
+  ],
+  "Hkw2PV": [
+    {
+      "type": 0,
+      "value": "Edit Parameter"
     }
   ],
   "I3MA83": [
@@ -243,16 +231,16 @@
       "value": "Secure Objcet"
     }
   ],
-  "JMPRx+": [
-    {
-      "type": 0,
-      "value": "Edit in JSON"
-    }
-  ],
   "JXhiR+": [
     {
       "type": 0,
       "value": "We couldn't find any results"
+    }
+  ],
+  "L4hZzK": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "LgbKvU": [
@@ -303,12 +291,6 @@
       "value": "Select a managed identity"
     }
   ],
-  "P43Ixg": [
-    {
-      "type": 0,
-      "value": "Add Parameter"
-    }
-  ],
   "P8QaSQ": [
     {
       "type": 0,
@@ -319,6 +301,12 @@
     {
       "type": 0,
       "value": "Succeeded"
+    }
+  ],
+  "PY5/AN": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
     }
   ],
   "PaPPLr": [
@@ -399,6 +387,12 @@
       "value": "m"
     }
   ],
+  "T7iaH/": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -409,6 +403,12 @@
     {
       "type": 0,
       "value": "There are no recent connectors to show"
+    }
+  ],
+  "TZv5JE": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "TdTXXf": [
@@ -441,12 +441,6 @@
       "value": "filterText"
     }
   ],
-  "VU4BBu": [
-    {
-      "type": 0,
-      "value": "Parameter"
-    }
-  ],
   "W070M2": [
     {
       "type": 0,
@@ -457,7 +451,7 @@
       "value": "max"
     }
   ],
-  "WTzo2s": [
+  "WEoitV": [
     {
       "type": 0,
       "value": "Actual Value"
@@ -549,16 +543,22 @@
       "value": "selectedOperationKindText"
     }
   ],
+  "ci6ex1": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
       "value": "Cancelled"
     }
   ],
-  "dDJePH": [
+  "duuXp2": [
     {
       "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "e4Onhn": [
@@ -571,12 +571,6 @@
     {
       "type": 0,
       "value": "Learn more about creating connectors."
-    }
-  ],
-  "fbZXr2": [
-    {
-      "type": 0,
-      "value": "New parameter"
     }
   ],
   "fejjJ6": [
@@ -689,10 +683,10 @@
       "value": "s"
     }
   ],
-  "jEHBA3": [
+  "jfInxm": [
     {
       "type": 0,
-      "value": "Create parameter"
+      "value": "Edit in JSON"
     }
   ],
   "jtqt2v": [
@@ -749,6 +743,12 @@
       "value": " minutes"
     }
   ],
+  "lArYzu": [
+    {
+      "type": 0,
+      "value": "Delete Parameter"
+    }
+  ],
   "lUTDU8": [
     {
       "type": 0,
@@ -757,6 +757,12 @@
     {
       "type": 1,
       "value": "filterText"
+    }
+  ],
+  "lV77P8": [
+    {
+      "type": 0,
+      "value": "Title"
     }
   ],
   "m7Y6Qf": [
@@ -771,22 +777,28 @@
       "value": "Yes"
     }
   ],
-  "nzMkOf": [
-    {
-      "type": 0,
-      "value": "Enter default value for parameter."
-    }
-  ],
   "orvpWh": [
     {
       "type": 0,
       "value": "Go back"
     }
   ],
+  "pRUJff": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "q3+FXI": [
     {
       "type": 0,
       "value": "Clear"
+    }
+  ],
+  "qGNaL0": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "qGfwxW": [
@@ -869,10 +881,10 @@
       "value": "h"
     }
   ],
-  "tN8bmP": [
+  "tfaGTw": [
     {
       "type": 0,
-      "value": "Default Value"
+      "value": "Enter default value for parameter."
     }
   ],
   "uN4zFU": [
@@ -905,16 +917,16 @@
       "value": "More Info"
     }
   ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "Create parameter"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Timed Out"
-    }
-  ],
-  "xnY18L": [
-    {
-      "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
     }
   ],
   "yD9JIy": [

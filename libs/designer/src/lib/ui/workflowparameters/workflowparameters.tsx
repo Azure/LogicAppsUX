@@ -5,15 +5,15 @@ import { List } from '@fluentui/react/lib/List';
 import { IMessageBarStyles, MessageBar } from '@fluentui/react/lib/MessageBar';
 import { getTheme, registerOnThemeChangeCallback, removeOnThemeChangeCallback } from '@fluentui/react/lib/Styling';
 import React, { useState, useEffect } from 'react';
-import { isHighContrastBlackOrInverted } from './../utils/theme';
+import { isHighContrastBlackOrInverted } from '../utils/theme';
 import {
   WorkflowParameter,
   WorkflowParameterDefinition,
   WorkflowParameterDeleteHandler,
   WorkflowParameterUpdateHandler,
-} from './_workflowparameter';
+} from './workflowparameter';
 import { useIntl, FormattedMessage } from 'react-intl';
-import Constants from './../constants';
+import Constants from '../constants';
 
 const navigateIconStyle: IIconStyles = {
   root: {
@@ -50,8 +50,8 @@ const InfoBar = ({ isInverted }: { isInverted: boolean }) => {
     <div className="msla-workflow-parameters-message-bar">
       <MessageBar isMultiline={true} styles={isInverted ? darkMessageBarStyles : lightMessageBarStyles}>
         <FormattedMessage
-          description='Text for Info Bar'
           defaultMessage='The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save.'
+          description='Text for Info Bar'
         />
       </MessageBar>
     </div>
@@ -117,29 +117,34 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
 
     const descriptionStandard1 = intl.formatMessage({
       defaultMessage: 'Parameters are shared across workflows in a Logic App.',
+      description: 'Description for Standard Mode Part 1'
     });
     const descriptionStandard2 = intl.formatMessage({
       defaultMessage: 'To reference a parameter, use the dynamic content list.',
+      description: 'Description for Standard Mode Part 2'
     });
     const iconLabel = intl.formatMessage({
       defaultMessage: 'Parameter',
+      description: 'Parameter Icon Label'
     });
     const title = intl.formatMessage({
       defaultMessage: 'Parameters',
+      description: 'Parameter Title'
     });
     const description1 = intl.formatMessage({
       defaultMessage: 'Create, manage Logic Apps parameters, give it a default value.',
+      description: 'Description for nonStandard Mode Part 1'
     });
     const description2 = intl.formatMessage({
       defaultMessage: 'Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation.',
+      description: 'Description for nonStandard Mode Part 2'
     });
 
 
     if (standardMode) {
       return (
         <div className="msla-workflow-parameters-empty">
-
-          {/* TODO Parameters ICON
+          {/* TODO: 13091658 Parameters ICON
           <img src={ParametersIcon} alt="" role="presentation" /> 
           */}
           <div className="msla-workflow-parameters-text-standard">
@@ -163,13 +168,13 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
   }
 
   const _renderManageParametersLink = (): JSX.Element => {
-    const linkText = intl.formatMessage({
-      defaultMessage: 'Edit in JSON',
-    });
     return (
       <footer className="msla-workflow-parameters-link">
         <Link className="msla-workflow-parameters-link-text" onClick={onManageParameters}>
-          {linkText}
+          <FormattedMessage
+            defaultMessage='Edit in JSON'
+            description='Parameter Link Text'
+          />
         </Link>
         <Icon iconName="NavigateExternalInline" styles={navigateIconStyle} className="msla-workflow-parameters-link-icon" />
       </footer>
@@ -197,15 +202,18 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
   };
 
   if (standardMode) {
-    const createTitle = intl.formatMessage({
-      defaultMessage: 'Parameters',
-    });
     const createText = intl.formatMessage({
       defaultMessage: 'Create parameter',
+      description: 'Create Parameter Text'
     });
     return (
       <div className="msla-workflow-parameters">
-        <h3 className="msla-workflow-parameters-create">{createTitle}</h3>
+        <h3 className="msla-workflow-parameters-create">
+          <FormattedMessage
+            defaultMessage='Parameters'
+            description='Create Title'
+          />
+        </h3>
         {parameters.length ? <InfoBar isInverted={isInverted} /> : null}
         <div className="msla-workflow-parameters-add-standard">
           <CommandBarButton
@@ -224,6 +232,7 @@ export default function WorkflowParameters({ parameters = [], isReadOnly, standa
   } else {
     const addText = intl.formatMessage({
       defaultMessage: 'Add Parameter',
+      description: 'Add Parameter Text'
     });
     return (
       <div className="msla-workflow-parameters">

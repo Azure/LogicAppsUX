@@ -1,18 +1,17 @@
-import { CommandBarButton, IButton, IButtonStyles, IconButton } from '@fluentui/react/lib/Button';
+import { CommandBarButton, IButtonStyles } from '@fluentui/react/lib/Button';
 import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { ILabelStyles, Label } from '@fluentui/react/lib/Label';
 import { FontWeights, getTheme, IStyle } from '@fluentui/react/lib/Styling';
 import { ITextStyles, Text } from '@fluentui/react/lib/Text';
 import { ITextFieldProps, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
-import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import React, { useState, useRef } from 'react';
-import { findDOMNode } from 'react-dom';
 import { equals, format } from '@microsoft-logic-apps/utils';
-import Constants from './../constants';
+import Constants from '../constants';
 import type { EventHandler } from '../eventhandler';
-import { isHighContrastBlackOrInverted } from './../utils/theme';
-import { useIntl } from 'react-intl';
+import { isHighContrastBlackOrInverted } from '../utils/theme';
+import { useIntl, FormattedMessage } from 'react-intl';
+import { EditOrDeleteButton } from './workflowParameterButtons';
 
 
 const fieldStyles: IStyle = {
@@ -90,7 +89,7 @@ export type RegisterLanguageHandler = () => void;
 export interface WorkflowParameterDefinition {
   defaultValue?: string;
   id: string;
-  isEditable?: boolean;
+  isEditable: boolean;
   name?: string;
   type?: string;
   value?: string;
@@ -123,7 +122,7 @@ interface ParameterFieldDetails {
   value: string;
 }
 
-export function WorkflowParameter({ definition, validationErrors, standardMode, isReadOnly, onChange, onDelete, ...props }: WorkflowParameterProps): JSX.Element {
+export function WorkflowParameter({ definition, validationErrors, standardMode, isReadOnly, onChange, ...props }: WorkflowParameterProps): JSX.Element {
   const [defaultValue, setDefaultValue] = useState(definition.defaultValue);
   const [expanded, setExpanded] = useState(!!definition.isEditable);
   const [isEditable, setIsEditable] = useState(definition.isEditable);
@@ -177,12 +176,15 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
   const renderParameterFields = (parameterDetails: ParameterFieldDetails, errors: Record<string, string>): JSX.Element => {
     const nameTitle = intl.formatMessage({
       defaultMessage: 'Name',
+      description: 'Name Title'
     });
     const nameDescription = intl.formatMessage({
       defaultMessage: 'Enter parameter name.',
+      description: 'Name Description'
     });
     const typeTitle = intl.formatMessage({
       defaultMessage: 'Type',
+      description: 'Type Title'
     });
     if (isEditable || !standardMode) {
       return (
@@ -251,12 +253,15 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
 
     const defaultValueTitle = intl.formatMessage({
       defaultMessage: 'Default Value',
+      description: 'Default Value Title'
     });
     const defaultValueDescription = intl.formatMessage({
       defaultMessage: 'Enter default value for parameter.',
+      description: 'Default Value Placeholder Text'
     });
     const actualValueTitle = intl.formatMessage({
       defaultMessage: 'Actual Value',
+      description: 'Actual Value Title'
     });
     return (
       <>
@@ -299,7 +304,6 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
   };
 
   const handleContentChange = (value?: string) => {
-    // FIX [DEFAULT_VALUE_KEY]: value
     setDefaultValue(value);
     setValueWarningMessage(getValueWarningMessage(value, type));
 
@@ -320,34 +324,32 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
   };
 
   const renderReadOnlyParameters = (parameterDetails: ParameterFieldDetails): JSX.Element => {
-
-    const nameTitle = intl.formatMessage({
-      defaultMessage: 'Name',
-    });
-    const typeTitle = intl.formatMessage({
-      defaultMessage: 'Type',
-    });
-    const valueTitle = intl.formatMessage({
-      defaultMessage: 'Value',
-    });
-
     return (
       <>
         <div className="msla-workflow-parameter-field">
           <Label styles={labelStyles} htmlFor={parameterDetails.name}>
-            {nameTitle}
+            <FormattedMessage
+              defaultMessage='Name'
+              description='Name Title'
+            />
           </Label>
           <Text className="msla-workflow-parameter-read-only">{name}</Text>
         </div>
         <div className="msla-workflow-parameter-field">
           <Label styles={labelStyles} htmlFor={parameterDetails.type}>
-            {typeTitle}
+            <FormattedMessage
+              defaultMessage='Title'
+              description='Type Title'
+            />
           </Label>
           <Text className="msla-workflow-parameter-read-only">{type}</Text>
         </div>
         <div className="msla-workflow-parameter-value-field">
           <Label styles={labelStyles} htmlFor={parameterDetails.value}>
-            {valueTitle}
+            <FormattedMessage
+              defaultMessage='Value'
+              description='Value Title'
+            />
           </Label>
           <Text block className="msla-workflow-parameter-read-only">
             {defaultValue}
@@ -356,26 +358,10 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
       </>
     );
   };
-
-  const renderEditOrDeleteButton = (showDelete?: boolean): JSX.Element => {
-    return showDelete ? <DeleteButton onClick={handleDelete} /> : <EditButton onClick={handleEdit} />;
-  };
-
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>): void => {
-    if (onDelete) {
-      e.stopPropagation();
-      onDelete({ id: definition.id });
-    }
-  };
-
-  const handleEdit = (): void => {
-    setIsEditable(true);
-    setExpanded(true);
-  };
-
   if (standardMode) {
     const headingTitle = intl.formatMessage({
       defaultMessage: 'New parameter',
+      description: 'Heading Title'
     });
 
     return (
@@ -393,41 +379,34 @@ export function WorkflowParameter({ definition, validationErrors, standardMode, 
           {expanded ? renderParameterFields(parameterDetails, errors) : null}
         </div>
         {!isReadOnly ? (
-          <div className="msla-workflow-parameter-edit-or-delete-button">{renderEditOrDeleteButton(isEditable)}</div>
+          <div className="msla-workflow-parameter-edit-or-delete-button">
+            <EditOrDeleteButton
+              onDelete={props.onDelete}
+              showDelete={isEditable}
+              definition={definition}
+              setIsEditable={setIsEditable}
+              setExpanded={setExpanded}
+            />
+          </div>
         ) : null}
       </div>
     );
   } else {
     return (
       <div className="msla-workflow-parameter">
-        <div className="msla-workflow-parameter-group">{renderParameterFields(parameterDetails, errors)}</div>
-        {!isReadOnly ? renderEditOrDeleteButton(/* showDelete */ true) : null}
+        <div className="msla-workflow-parameter-group">{
+          renderParameterFields(parameterDetails, errors)}
+        </div>
+        {!isReadOnly ?
+          <EditOrDeleteButton
+            showDelete
+            onDelete={props.onDelete}
+            definition={definition}
+            setIsEditable={setIsEditable}
+            setExpanded={setExpanded}
+          /> : null}
       </div>
     );
-  }
-}
-
-
-function getParameterTypeKey(type?: string): string | undefined {
-  switch (type?.toLowerCase()) {
-    case Constants.WORKFLOW_PARAMETER_TYPE.FLOAT:
-      return Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT;
-    case Constants.WORKFLOW_PARAMETER_TYPE.INT:
-      return Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT;
-    case Constants.WORKFLOW_PARAMETER_TYPE.BOOL:
-      return Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL;
-    case Constants.WORKFLOW_PARAMETER_TYPE.SECURE_STRING:
-      return Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING;
-    case Constants.WORKFLOW_PARAMETER_TYPE.STRING:
-      return Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING;
-    case Constants.WORKFLOW_PARAMETER_TYPE.ARRAY:
-      return Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY;
-    case Constants.WORKFLOW_PARAMETER_TYPE.OBJECT:
-      return Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT;
-    case Constants.WORKFLOW_PARAMETER_TYPE.SECURE_OBJECT:
-      return Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT;
-    default:
-      return undefined;
   }
 }
 
@@ -437,85 +416,4 @@ function isSecureParameter(type?: string): boolean {
 
 function getValueWarningMessage(value?: string, type?: string): string | undefined {
   return isSecureParameter(type) && !!value ? format('Warning Message', type) : undefined;
-}
-
-interface DeleteButtonProps {
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
-}
-
-const deleteButtonStyles: IButtonStyles = {
-  root: {
-    alignSelf: 'flex-end',
-    margin: 0,
-  },
-};
-
-const deleteIcon: IIconProps = {
-  iconName: 'Delete',
-  styles: {
-    root: {
-      color: '#3AA0F3',
-    },
-  },
-};
-
-const editIcon: IIconProps = {
-  iconName: 'Edit',
-  styles: {
-    root: {
-      color: '#3AA0F3',
-    },
-  },
-};
-
-function DeleteButton({ onClick }: DeleteButtonProps): JSX.Element {
-  const componentRef = useRef<IButton>(null);
-  const [target, setTarget] = useState<Element>();
-  const intl = useIntl();
-
-  React.useEffect(() => {
-    setTarget(findDOMNode(componentRef.current as unknown as React.ReactInstance) as Element);
-  }, []);
-
-  const deleteTitle = intl.formatMessage({
-    defaultMessage: 'Delete Parameter',
-  });
-
-  return (
-    <TooltipHost calloutProps={{ target }} content={deleteTitle}>
-      <IconButton
-        ariaLabel={deleteTitle}
-        componentRef={componentRef}
-        iconProps={deleteIcon}
-        styles={deleteButtonStyles}
-        onClick={onClick}
-      />
-    </TooltipHost>
-  );
-}
-
-function EditButton({ onClick }: DeleteButtonProps): JSX.Element {
-  const componentRef = useRef<IButton>(null);
-  const [target, setTarget] = useState<Element>();
-  const intl = useIntl();
-
-  React.useEffect(() => {
-    setTarget(findDOMNode(componentRef.current as unknown as React.ReactInstance) as Element);
-  }, []);
-
-  const editTitle = intl.formatMessage({
-    defaultMessage: 'Edit Parameter',
-  });
-
-  return (
-    <TooltipHost calloutProps={{ target }} content={editTitle}>
-      <IconButton
-        ariaLabel={editTitle}
-        componentRef={componentRef}
-        iconProps={editIcon}
-        styles={deleteButtonStyles}
-        onClick={onClick}
-      />
-    </TooltipHost>
-  );
 }

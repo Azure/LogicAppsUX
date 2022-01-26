@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-import WorkflowParameters, { WorkflowParametersProps } from './_workflowparameters';
+import WorkflowParameters, { WorkflowParametersProps } from './workflowparameters';
 
 export default {
   component: WorkflowParameters,
@@ -15,10 +15,11 @@ export const Standard: ComponentStory<typeof WorkflowParameters> = (args: Workfl
 Standard.args = {
   parameters: [
     {
-      id: 'test1', defaultValue: 'true', type: 'Bool', name: 'test'
+      id: 'test1', defaultValue: 'true', type: 'Bool', name: 'test', isEditable: true
     },
     {
       id: 'test2', defaultValue: '{}', type: 'Object', name: 'test2', isEditable: false
     }
-  ]
+  ],
+  standardMode: true
 };
