@@ -5,20 +5,16 @@
       "value": "Väntar"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": Mer information"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Lyckades med återförsök"
+    }
+  ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "1KSzxz": [
@@ -27,34 +23,50 @@
       "value": "Lägg till en kort kommentar"
     }
   ],
-  "1rlBUx": [
+  "1R6Vaa": [
     {
-      "type": 0,
-      "value": "Oväntat fel"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "Redigerar kortrubrik"
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "no items matched."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " item matched."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
     }
   ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Fel"
-    }
-  ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "Avbryt"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "Den här åtgärden har konfigurerats för testning."
     }
   ],
   "6oqk+A": [
@@ -75,22 +87,10 @@
       "value": "Det går inte att återge designern pga flera utlösare i definitionen."
     }
   ],
-  "8yF3hc": [
+  "CG772M": [
     {
       "type": 0,
-      "value": "Visa mer"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "Vet du inte vad du behöver?"
+      "value": "Connection required"
     }
   ],
   "FXLR5M": [
@@ -125,68 +125,22 @@
       "value": "hours"
     }
   ],
-  "Gx6rDL": [
-    {
-      "offset": 0,
-      "options": {
-        "=0": {
-          "value": [
-            {
-              "type": 0,
-              "value": "inga matchade objekt."
-            }
-          ]
-        },
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " objekt matchade."
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " matchade objekt."
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "count"
-    }
-  ],
-  "HOsSgX": [
+  "Ie4usD": [
     {
       "type": 0,
-      "value": "Mer information"
-    }
-  ],
-  "JXhiR+": [
-    {
-      "type": 0,
-      "value": "Vi hittade inga resultat"
-    }
-  ],
-  "LgbKvU": [
-    {
-      "type": 0,
-      "value": "Kommentar"
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "Nästa misslyckad"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -211,12 +165,6 @@
     {
       "type": 0,
       "value": "Välj en hanterad identitet"
-    }
-  ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "Kopiera URL"
     }
   ],
   "PF87Ew": [
@@ -245,6 +193,12 @@
       "value": " kort"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -253,12 +207,6 @@
     {
       "type": 0,
       "value": "tim"
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "Det finns för närvarande inga tillgängliga förslag för ditt val."
     }
   ],
   "RhH4pF": [
@@ -309,40 +257,10 @@
       "value": "Misslyckades"
     }
   ],
-  "TY45/m": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "Det finns inga senaste kopplingar att visa"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "Läs mer"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "Åtgärder"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 0,
-      "value": "Det gick inte att hitta några "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " för "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -373,10 +291,10 @@
       "value": " timmar"
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "Senaste"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -397,6 +315,12 @@
       "value": " sekunder"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -407,32 +331,10 @@
       "value": "d"
     }
   ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "Anslutning krävs"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "Dölj den här kommentaren"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "Utvidga listan över anslutningsappar"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 0,
-      "value": "Det gick inte att hitta några "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
     }
   ],
   "cj+kyo": [
@@ -441,16 +343,16 @@
       "value": "Avbrutet"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Inte angivet"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "Läs mer om att skapa kopplingar."
     }
   ],
   "fejjJ6": [
@@ -477,18 +379,6 @@
     {
       "type": 0,
       "value": "Föregående misslyckad"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "Läser in…"
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "Nej"
     }
   ],
   "hN7iBP": [
@@ -535,6 +425,12 @@
       "value": "Nästa"
     }
   ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
   "iUs7pv": [
     {
       "type": 0,
@@ -575,10 +471,10 @@
       "value": " s"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "Fel vid inläsning av komponenten."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -599,50 +495,16 @@
       "value": " minuter"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 0,
-      "value": "Vi hittade inga resultat för "
-    },
-    {
-      "type": 1,
-      "value": "filterText"
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "Testning"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "Ja"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "Gå tillbaka"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "Rensa"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Hanterad identitet"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "Rensa?"
     }
   ],
   "qSt0Sb": [
@@ -683,18 +545,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "Rekommenderat utifrån dina aktiviteter"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(förhandsgranskning)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -719,46 +569,10 @@
       "value": "OK"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(förhandsgranskning)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "Välj en åtgärd"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "Mer information"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Tidsgränsen överskreds"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "Anslutningens namn"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "Vill du skapa dina egna anslutningsappar?"
     }
   ]
 }

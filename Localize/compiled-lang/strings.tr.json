@@ -5,20 +5,16 @@
       "value": "Bekliyor"
     }
   ],
-  "/QnQhm": [
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": ": Daha fazla bilgi"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Yeniden denemeler ile başarılı oldu"
+    }
+  ],
+  "0raQQP": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "1KSzxz": [
@@ -27,105 +23,7 @@
       "value": "Kısa bir açıklama ekleyin"
     }
   ],
-  "1rlBUx": [
-    {
-      "type": 0,
-      "value": "Beklenmeyen hata"
-    }
-  ],
-  "20FJMM": [
-    {
-      "type": 0,
-      "value": "Kart başlığı düzenleme"
-    }
-  ],
-  "3kI7xF": [
-    {
-      "type": 0,
-      "value": "Hatalı"
-    }
-  ],
-  "47FYwb": [
-    {
-      "type": 0,
-      "value": "İptal"
-    }
-  ],
-  "5CTOi9": [
-    {
-      "type": 0,
-      "value": "Bu Eylemde test yapılandırıldı."
-    }
-  ],
-  "6oqk+A": [
-    {
-      "type": 0,
-      "value": "Önceki"
-    }
-  ],
-  "7GSk99": [
-    {
-      "type": 0,
-      "value": "Tamam"
-    }
-  ],
-  "8L+oIz": [
-    {
-      "type": 0,
-      "value": "Tanımda birden çok tetikleyici olması nedeniyle tasarımcı işlenemiyor."
-    }
-  ],
-  "8yF3hc": [
-    {
-      "type": 0,
-      "value": "Daha fazlasını göster"
-    }
-  ],
-  "C5xzTC": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "EGXrx5": [
-    {
-      "type": 0,
-      "value": "Aradığınızı göremiyor musunuz?"
-    }
-  ],
-  "FXLR5M": [
-    {
-      "offset": 0,
-      "options": {
-        "one": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " saat"
-            }
-          ]
-        },
-        "other": {
-          "value": [
-            {
-              "type": 7
-            },
-            {
-              "type": 0,
-              "value": " saat"
-            }
-          ]
-        }
-      },
-      "pluralType": "cardinal",
-      "type": 6,
-      "value": "hours"
-    }
-  ],
-  "Gx6rDL": [
+  "1R6Vaa": [
     {
       "offset": 0,
       "options": {
@@ -165,28 +63,84 @@
       "value": "count"
     }
   ],
-  "HOsSgX": [
+  "3kI7xF": [
     {
       "type": 0,
-      "value": "Daha fazla bilgi"
+      "value": "Hatalı"
     }
   ],
-  "JXhiR+": [
+  "6oqk+A": [
     {
       "type": 0,
-      "value": "Hiçbir sonuç bulunamadı"
+      "value": "Önceki"
     }
   ],
-  "LgbKvU": [
+  "7GSk99": [
     {
       "type": 0,
-      "value": "Yorum"
+      "value": "Tamam"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Tanımda birden çok tetikleyici olması nedeniyle tasarımcı işlenemiyor."
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Connection required"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " saat"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " saat"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "Ie4usD": [
+    {
+      "type": 0,
+      "value": "Editing card title"
     }
   ],
   "Mb/Vp8": [
     {
       "type": 0,
       "value": "Sonraki seçeneği başarısız oldu"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unexpected error"
     }
   ],
   "Oib1mL": [
@@ -213,12 +167,6 @@
       "value": "Yönetilen kimlik seçin"
     }
   ],
-  "P8QaSQ": [
-    {
-      "type": 0,
-      "value": "URL'yi Kopyala"
-    }
-  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -241,6 +189,12 @@
       "value": " kartı için bağlam menüsü"
     }
   ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "Qu1HkA": [
     {
       "type": 1,
@@ -249,12 +203,6 @@
     {
       "type": 0,
       "value": " sa"
-    }
-  ],
-  "RYIxqe": [
-    {
-      "type": 0,
-      "value": "Şu anda seçiminiz için mevcut öneri yok."
     }
   ],
   "RhH4pF": [
@@ -305,40 +253,10 @@
       "value": "Başarısız"
     }
   ],
-  "TY45/m": [
+  "VXBWrq": [
     {
       "type": 0,
-      "value": "Gösterilecek yeni bir bağlayıcı yok"
-    }
-  ],
-  "TdTXXf": [
-    {
-      "type": 0,
-      "value": "Daha fazla bilgi"
-    }
-  ],
-  "UIdPNN": [
-    {
-      "type": 0,
-      "value": "İşlemler"
-    }
-  ],
-  "UcKJO+": [
-    {
-      "type": 1,
-      "value": "filterText"
-    },
-    {
-      "type": 0,
-      "value": " için "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " bulunamadı"
+      "value": "Comment"
     }
   ],
   "W070M2": [
@@ -369,10 +287,10 @@
       "value": " saat"
     }
   ],
-  "XEdXNu": [
+  "XOzn/3": [
     {
       "type": 0,
-      "value": "Son Kullanılan"
+      "value": "Connection name"
     }
   ],
   "XTuxmH": [
@@ -393,6 +311,12 @@
       "value": " saniye"
     }
   ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "More Info"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -403,32 +327,10 @@
       "value": " gü"
     }
   ],
-  "Z79N+I": [
-    {
-      "type": 0,
-      "value": "Bağlantı gerekli"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "Bu açıklamayı gizle"
-    }
-  ],
-  "b0Ar6Y": [
-    {
-      "type": 0,
-      "value": "Bağlayıcı listesini genişlet"
-    }
-  ],
-  "bQLLgV": [
-    {
-      "type": 1,
-      "value": "selectedOperationKindText"
-    },
-    {
-      "type": 0,
-      "value": " bulunamadı"
     }
   ],
   "cj+kyo": [
@@ -437,16 +339,16 @@
       "value": "İptal Edildi"
     }
   ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Error loading component."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Belirtilmedi"
-    }
-  ],
-  "fRxVuK": [
-    {
-      "type": 0,
-      "value": "Bağlayıcı oluşturma hakkında daha fazla bilgi edinin."
     }
   ],
   "fejjJ6": [
@@ -473,18 +375,6 @@
     {
       "type": 0,
       "value": "Önceki seçeneği başarısız oldu"
-    }
-  ],
-  "gjBiyj": [
-    {
-      "type": 0,
-      "value": "Yükleniyor..."
-    }
-  ],
-  "h9XgiJ": [
-    {
-      "type": 0,
-      "value": "Hayır"
     }
   ],
   "hN7iBP": [
@@ -531,6 +421,12 @@
       "value": "İleri"
     }
   ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "This Action has testing configured."
+    }
+  ],
   "iUs7pv": [
     {
       "type": 0,
@@ -571,10 +467,10 @@
       "value": " sn"
     }
   ],
-  "kjJiqd": [
+  "kvUaFw": [
     {
       "type": 0,
-      "value": "Bileşen yüklenirken hata oluştu."
+      "value": "More info"
     }
   ],
   "l36V56": [
@@ -595,50 +491,16 @@
       "value": " dakika"
     }
   ],
-  "lUTDU8": [
-    {
-      "type": 1,
-      "value": "filterText"
-    },
-    {
-      "type": 0,
-      "value": " için hiçbir sonuç bulunamadı"
-    }
-  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "Test"
     }
   ],
-  "mE/bhX": [
-    {
-      "type": 0,
-      "value": "Evet"
-    }
-  ],
-  "orvpWh": [
-    {
-      "type": 0,
-      "value": "Geri dön"
-    }
-  ],
-  "q3+FXI": [
-    {
-      "type": 0,
-      "value": "Temizle"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Yönetilen kimlik"
-    }
-  ],
-  "qNMcGy": [
-    {
-      "type": 0,
-      "value": "Temizlensin mi?"
     }
   ],
   "qSt0Sb": [
@@ -679,18 +541,6 @@
       "value": "days"
     }
   ],
-  "sxcPBW": [
-    {
-      "type": 0,
-      "value": "Etkinliğinize bağlı olarak önerilir"
-    }
-  ],
-  "t74v7p": [
-    {
-      "type": 0,
-      "value": "(önizleme)"
-    }
-  ],
   "tImHz/": [
     {
       "type": 1,
@@ -715,46 +565,10 @@
       "value": "Tamam"
     }
   ],
-  "ug/8l6": [
-    {
-      "type": 0,
-      "value": "(önizleme)"
-    }
-  ],
-  "unHYHq": [
-    {
-      "type": 0,
-      "value": "Premium"
-    }
-  ],
-  "vRZZPL": [
-    {
-      "type": 0,
-      "value": "İşlem seçin"
-    }
-  ],
-  "vWe94i": [
-    {
-      "type": 0,
-      "value": "Daha Fazla Bilgi"
-    }
-  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Zaman Aşımı Oluştu"
-    }
-  ],
-  "yD9JIy": [
-    {
-      "type": 0,
-      "value": "Bağlantı adı"
-    }
-  ],
-  "yKB5nP": [
-    {
-      "type": 0,
-      "value": "Kendi bağlayıcılarınızı oluşturmak ister misiniz?"
     }
   ]
 }
