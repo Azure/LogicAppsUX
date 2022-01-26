@@ -1,5 +1,1 @@
-export default class ResolutionService {
-    public constructor() {
-
-    }
-}
+export default class ResolutionService {}
