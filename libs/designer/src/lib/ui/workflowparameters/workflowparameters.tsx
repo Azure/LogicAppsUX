@@ -194,7 +194,7 @@ export default function WorkflowParameters({
     return (
       <WorkflowParameter
         key={item?.id}
-        definition={item ? item : { id: 'id' }}
+        definition={item ?? { id: 'id' }}
         isReadOnly={isReadOnly}
         onChange={onUpdateParameter}
         onDelete={onDeleteParameter}
