@@ -17,6 +17,7 @@ jobs:
     steps:
       # checkout the repo
       - name: 'Checkout Github Action'
+        uses: actions/checkout@master
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
