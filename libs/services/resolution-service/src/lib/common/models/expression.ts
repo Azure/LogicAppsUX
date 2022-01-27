@@ -1,4 +1,5 @@
 import { ExpressionType } from '../helpers/expression';
+import { ExpressionTokenType } from '../helpers/scanner';
 
 export interface Dereference {
   isSafe: boolean;
@@ -35,6 +36,13 @@ export interface ExpressionEvaluationContext {
    * @member {Record<string, any>} appsettings - The appsettings.
    */
   appsettings: Record<string, any>;
+}
+
+export interface ExpressionToken {
+  type: ExpressionTokenType;
+  value: string;
+  startPosition: number;
+  endPosition: number;
 }
 
 interface ExpressionBase {
