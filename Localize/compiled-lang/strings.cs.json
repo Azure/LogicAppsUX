@@ -14,7 +14,7 @@
   "0raQQP": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "Kopírovat adresu URL"
     }
   ],
   "1KSzxz": [
@@ -31,29 +31,29 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "Žádné odpovídající položky"
             }
           ]
         },
         "few": {
           "value": [
             {
-              "type": 7
+              "type": 0,
+              "value": "Počet odpovídajících položek: "
             },
             {
-              "type": 0,
-              "value": " items matched."
+              "type": 7
             }
           ]
         },
         "many": {
           "value": [
             {
-              "type": 7
+              "type": 0,
+              "value": "Počet odpovídajících položek: "
             },
             {
-              "type": 0,
-              "value": " items matched."
+              "type": 7
             }
           ]
         },
@@ -64,18 +64,18 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " odpovídající položka"
             }
           ]
         },
         "other": {
           "value": [
             {
-              "type": 7
+              "type": 0,
+              "value": "Počet odpovídajících položek: "
             },
             {
-              "type": 0,
-              "value": " items matched."
+              "type": 7
             }
           ]
         }
@@ -112,7 +112,7 @@
   "CG772M": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Připojení je povinné."
     }
   ],
   "FXLR5M": [
@@ -172,7 +172,7 @@
   "Ie4usD": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "Úprava názvu karty"
     }
   ],
   "Mb/Vp8": [
@@ -184,7 +184,7 @@
   "MmBfD1": [
     {
       "type": 0,
-      "value": "Unexpected error"
+      "value": "Neočekávaná chyba"
     }
   ],
   "Oib1mL": [
@@ -236,7 +236,7 @@
   "QknZQ1": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Načítání…"
     }
   ],
   "Qu1HkA": [
@@ -322,7 +322,7 @@
   "VXBWrq": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Komentář"
     }
   ],
   "W070M2": [
@@ -356,7 +356,7 @@
   "XOzn/3": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Název připojení"
     }
   ],
   "XTuxmH": [
@@ -380,7 +380,7 @@
   "Y0H9aX": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "Další informace"
     }
   ],
   "YIBDSH": [
@@ -408,7 +408,7 @@
   "cmTCsW": [
     {
       "type": 0,
-      "value": "Error loading component."
+      "value": "Při načítání komponenty došlo k chybě."
     }
   ],
   "e4Onhn": [
@@ -512,7 +512,7 @@
   "iRjBf4": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
+      "value": "Tato akce má nakonfigurované testování."
     }
   ],
   "iUs7pv": [
@@ -558,7 +558,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Další informace"
     }
   ],
   "l36V56": [

@@ -14,7 +14,7 @@
   "0raQQP": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "Copia URL"
     }
   ],
   "1KSzxz": [
@@ -31,7 +31,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "nessun elemento corrispondente."
             }
           ]
         },
@@ -42,7 +42,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " elemento corrispondente."
             }
           ]
         },
@@ -53,7 +53,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " elementi corrispondenti."
             }
           ]
         }
@@ -90,7 +90,7 @@
   "CG772M": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Connessione richiesta"
     }
   ],
   "FXLR5M": [
@@ -128,7 +128,7 @@
   "Ie4usD": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "Modifica del titolo della scheda"
     }
   ],
   "Mb/Vp8": [
@@ -140,7 +140,7 @@
   "MmBfD1": [
     {
       "type": 0,
-      "value": "Unexpected error"
+      "value": "Errore imprevisto"
     }
   ],
   "Oib1mL": [
@@ -200,7 +200,7 @@
   "QknZQ1": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Caricamento..."
     }
   ],
   "Qu1HkA": [
@@ -264,7 +264,7 @@
   "VXBWrq": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Commento"
     }
   ],
   "W070M2": [
@@ -298,7 +298,7 @@
   "XOzn/3": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Nome della connessione"
     }
   ],
   "XTuxmH": [
@@ -322,7 +322,7 @@
   "Y0H9aX": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "Altre informazioni"
     }
   ],
   "YIBDSH": [
@@ -350,7 +350,7 @@
   "cmTCsW": [
     {
       "type": 0,
-      "value": "Error loading component."
+      "value": "Si è verificato un errore durante il caricamento del componente."
     }
   ],
   "e4Onhn": [
@@ -432,7 +432,7 @@
   "iRjBf4": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
+      "value": "Questa azione ha il testing configurato."
     }
   ],
   "iUs7pv": [
@@ -478,7 +478,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Altre informazioni"
     }
   ],
   "l36V56": [

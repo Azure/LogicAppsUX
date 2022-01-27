@@ -14,7 +14,7 @@
   "0raQQP": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "Copiar URL"
     }
   ],
   "1KSzxz": [
@@ -31,7 +31,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "no hay elementos coincidentes."
             }
           ]
         },
@@ -42,7 +42,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " elemento coincidente."
             }
           ]
         },
@@ -53,7 +53,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " elementos coincidentes."
             }
           ]
         }
@@ -90,7 +90,7 @@
   "CG772M": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Conexión obligatoria"
     }
   ],
   "FXLR5M": [
@@ -128,7 +128,7 @@
   "Ie4usD": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "Edición del título de la tarjeta"
     }
   ],
   "Mb/Vp8": [
@@ -140,7 +140,7 @@
   "MmBfD1": [
     {
       "type": 0,
-      "value": "Unexpected error"
+      "value": "Error inesperado"
     }
   ],
   "Oib1mL": [
@@ -192,7 +192,7 @@
   "QknZQ1": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Cargando..."
     }
   ],
   "Qu1HkA": [
@@ -256,7 +256,7 @@
   "VXBWrq": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Comentario"
     }
   ],
   "W070M2": [
@@ -290,7 +290,7 @@
   "XOzn/3": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Nombre de conexión"
     }
   ],
   "XTuxmH": [
@@ -314,7 +314,7 @@
   "Y0H9aX": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "Más información"
     }
   ],
   "YIBDSH": [
@@ -342,7 +342,7 @@
   "cmTCsW": [
     {
       "type": 0,
-      "value": "Error loading component."
+      "value": "Error al cargar el componente."
     }
   ],
   "e4Onhn": [
@@ -424,7 +424,7 @@
   "iRjBf4": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
+      "value": "Las pruebas están configuradas para esta acción."
     }
   ],
   "iUs7pv": [
@@ -470,7 +470,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Más información"
     }
   ],
   "l36V56": [

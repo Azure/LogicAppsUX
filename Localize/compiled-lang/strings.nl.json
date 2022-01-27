@@ -14,7 +14,7 @@
   "0raQQP": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "URL kopiëren"
     }
   ],
   "1KSzxz": [
@@ -31,7 +31,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "Er komen geen items overeen."
             }
           ]
         },
@@ -42,7 +42,7 @@
             },
             {
               "type": 0,
-              "value": " item matched."
+              "value": " item komt overeen."
             }
           ]
         },
@@ -53,7 +53,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " items komen overeen."
             }
           ]
         }
@@ -90,7 +90,7 @@
   "CG772M": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Een verbinding is vereist"
     }
   ],
   "FXLR5M": [
@@ -128,7 +128,7 @@
   "Ie4usD": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "Kaarttitel bewerken"
     }
   ],
   "Mb/Vp8": [
@@ -140,7 +140,7 @@
   "MmBfD1": [
     {
       "type": 0,
-      "value": "Unexpected error"
+      "value": "Onverwachte fout"
     }
   ],
   "Oib1mL": [
@@ -196,7 +196,7 @@
   "QknZQ1": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Laden..."
     }
   ],
   "Qu1HkA": [
@@ -260,7 +260,7 @@
   "VXBWrq": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Opmerking"
     }
   ],
   "W070M2": [
@@ -294,7 +294,7 @@
   "XOzn/3": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Verbindingsnaam"
     }
   ],
   "XTuxmH": [
@@ -318,7 +318,7 @@
   "Y0H9aX": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "Meer informatie"
     }
   ],
   "YIBDSH": [
@@ -346,7 +346,7 @@
   "cmTCsW": [
     {
       "type": 0,
-      "value": "Error loading component."
+      "value": "Er is een fout opgetreden bij het laden van het onderdeel."
     }
   ],
   "e4Onhn": [
@@ -428,7 +428,7 @@
   "iRjBf4": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
+      "value": "Voor deze actie zijn tests geconfigureerd."
     }
   ],
   "iUs7pv": [
@@ -474,7 +474,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Meer informatie"
     }
   ],
   "l36V56": [

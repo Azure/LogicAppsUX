@@ -14,7 +14,7 @@
   "0raQQP": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "URL 복사"
     }
   ],
   "1KSzxz": [
@@ -31,7 +31,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "일치하는 항목이 없습니다."
             }
           ]
         },
@@ -42,7 +42,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": "개의 항목이 일치합니다."
             }
           ]
         }
@@ -79,7 +79,7 @@
   "CG772M": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "연결 필요"
     }
   ],
   "FXLR5M": [
@@ -106,7 +106,7 @@
   "Ie4usD": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "카드 제목 편집"
     }
   ],
   "Mb/Vp8": [
@@ -118,7 +118,7 @@
   "MmBfD1": [
     {
       "type": 0,
-      "value": "Unexpected error"
+      "value": "예기치 않은 오류"
     }
   ],
   "Oib1mL": [
@@ -170,7 +170,7 @@
   "QknZQ1": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "로드 중..."
     }
   ],
   "Qu1HkA": [
@@ -223,7 +223,7 @@
   "VXBWrq": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "메모"
     }
   ],
   "W070M2": [
@@ -257,7 +257,7 @@
   "XOzn/3": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "연결 이름"
     }
   ],
   "XTuxmH": [
@@ -281,7 +281,7 @@
   "Y0H9aX": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "추가 정보"
     }
   ],
   "YIBDSH": [
@@ -309,7 +309,7 @@
   "cmTCsW": [
     {
       "type": 0,
-      "value": "Error loading component."
+      "value": "구성 요소를 로드하는 동안 오류가 발생했습니다."
     }
   ],
   "e4Onhn": [
@@ -380,7 +380,7 @@
   "iRjBf4": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
+      "value": "이 작업에는 테스트가 구성되어 있습니다."
     }
   ],
   "iUs7pv": [
@@ -426,7 +426,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "추가 정보"
     }
   ],
   "l36V56": [
