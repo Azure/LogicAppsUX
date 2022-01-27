@@ -14,7 +14,7 @@
   "0raQQP": [
     {
       "type": 0,
-      "value": "Copy URL"
+      "value": "Salin URL"
     }
   ],
   "1KSzxz": [
@@ -31,7 +31,7 @@
           "value": [
             {
               "type": 0,
-              "value": "no items matched."
+              "value": "tidak ada item cocok."
             }
           ]
         },
@@ -42,7 +42,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " item cocok."
             }
           ]
         }
@@ -79,7 +79,7 @@
   "CG772M": [
     {
       "type": 0,
-      "value": "Connection required"
+      "value": "Koneksi diperlukan"
     }
   ],
   "FXLR5M": [
@@ -106,7 +106,7 @@
   "Ie4usD": [
     {
       "type": 0,
-      "value": "Editing card title"
+      "value": "Mengedit judul kartu"
     }
   ],
   "Mb/Vp8": [
@@ -118,7 +118,7 @@
   "MmBfD1": [
     {
       "type": 0,
-      "value": "Unexpected error"
+      "value": "Kesalahan tidak terduga"
     }
   ],
   "Oib1mL": [
@@ -170,7 +170,7 @@
   "QknZQ1": [
     {
       "type": 0,
-      "value": "Loading..."
+      "value": "Memuat..."
     }
   ],
   "Qu1HkA": [
@@ -223,7 +223,7 @@
   "VXBWrq": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Komentar"
     }
   ],
   "W070M2": [
@@ -257,7 +257,7 @@
   "XOzn/3": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Nama koneksi"
     }
   ],
   "XTuxmH": [
@@ -281,7 +281,7 @@
   "Y0H9aX": [
     {
       "type": 0,
-      "value": "More Info"
+      "value": "Info Selengkapnya"
     }
   ],
   "YIBDSH": [
@@ -309,7 +309,7 @@
   "cmTCsW": [
     {
       "type": 0,
-      "value": "Error loading component."
+      "value": "Kesalahan memuat komponen."
     }
   ],
   "e4Onhn": [
@@ -380,7 +380,7 @@
   "iRjBf4": [
     {
       "type": 0,
-      "value": "This Action has testing configured."
+      "value": "Tindakan ini memiliki pengujian yang dikonfigurasi."
     }
   ],
   "iUs7pv": [
@@ -426,7 +426,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Info selengkapnya"
     }
   ],
   "l36V56": [
