@@ -7,6 +7,7 @@
     "start:storybook": "nx run designer:storybook",
     "build": "nx run designer:build",
     "test": "nx affected --target=test",
+    "test:all": "nx run-many --all --target=test",
     "build-storybook": "NODE_ENV=production nx run designer:build-storybook",
     "lint": "nx affected --target=lint",
     "prepare": "husky install",
