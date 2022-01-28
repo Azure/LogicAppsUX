@@ -217,7 +217,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Unexpected error]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Unerwarteter Fehler.]]></Val>
+            <Val><![CDATA[Unerwarteter Fehler]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

@@ -5,7 +5,7 @@ import * as TestUtils from 'react-dom/test-utils';
 import { TextField } from '@fluentui/react/lib/TextField';
 
 import { InnerControlTitle as Title, TitleProps } from '..';
-import { getTestIntl } from '../../../__test__/intl-test-helper';
+import { getTestIntl } from '../../__test__/intl-test-helper';
 
 describe('ui/title', () => {
   let minimal: TitleProps, renderer: ReactShallowRenderer.ShallowRenderer;

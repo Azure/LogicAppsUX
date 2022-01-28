@@ -4,6 +4,9 @@ import '../src/lib/ui/logicapps.less';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
+  storySort: {
+    order: ['Docs', 'Designer', 'Components'],
+  },
   controls: {
     matchers: {
       color: /(background|color)$/i,

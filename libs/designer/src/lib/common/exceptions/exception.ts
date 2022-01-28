@@ -1,5 +1,5 @@
 import { Exception, isException } from '@microsoft-logic-apps/utils';
-import { getIntl } from '../i18n/intl';
+import { getIntl } from '@microsoft-logic-apps/utils';
 
 export function includeInnerExceptionMessage(error: Error | Exception): string {
   const intl = getIntl();

@@ -1,4 +1,4 @@
-import { getTestIntl } from '../../../__test__/intl-test-helper';
+import { getTestIntl } from '../../__test__/intl-test-helper';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
