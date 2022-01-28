@@ -12,11 +12,13 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
 
       - name: Install dependencies
         run: npm ci
@@ -24,11 +26,10 @@ jobs:
       - name: Update source code
         run: npm run compile:loc
 
-      - name: push
-        uses: actions-x/commit@v2
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v7
         with:
-          email: travisharris@microsoft.com
-          name: GitHub Actions Autocommitter
-          branch: main
-          files: .
-          force: true
+          author_name: Loc Bot
+          author_email: travisharris@microsoft.com
+          message: 'Compiling Loc Files'
+          add: '*.json'
