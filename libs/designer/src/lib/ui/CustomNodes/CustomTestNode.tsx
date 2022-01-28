@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { memo } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
-import { CardV2 } from '../card/cardv2';
+import { CardV2 } from '@microsoft/designer-ui';
 import { DropZone } from '../connections/dropzone';
 
 const icon =

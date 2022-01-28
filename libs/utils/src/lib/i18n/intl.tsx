@@ -26,4 +26,4 @@ export const getIntl = () => {
   );
 };
 
-export default IntlGlobalProvider;
+export { IntlGlobalProvider };

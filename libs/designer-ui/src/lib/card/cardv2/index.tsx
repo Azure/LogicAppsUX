@@ -5,7 +5,7 @@ import { css } from '@fluentui/react/lib/Utilities';
 import * as React from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
-import { EventHandler, Event } from '../../../ui/eventhandler';
+import { EventHandler, Event } from '../../eventhandler';
 
 import { equals, hexToRgbA } from '@microsoft-logic-apps/utils';
 

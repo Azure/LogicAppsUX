@@ -195,6 +195,7 @@
         }
       }
     },
+    "designer-ui": "libs/designer-ui",
     "services-resolution-service": {
       "root": "libs/services/resolution-service",
       "sourceRoot": "libs/services/resolution-service/src",
