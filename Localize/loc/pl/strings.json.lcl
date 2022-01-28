@@ -49,7 +49,7 @@
         <Str Cat="Text">
           <Val><![CDATA[# items matched.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dopasowano # elementy.]]></Val>
+            <Val><![CDATA[Dopasowano # elementy(-ów).]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -58,7 +58,7 @@
         <Str Cat="Text">
           <Val><![CDATA[# items matched.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dopasowano # elementy.]]></Val>
+            <Val><![CDATA[Dopasowano # elementy(-ów).]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -79,7 +79,7 @@
         <Str Cat="Text">
           <Val><![CDATA[no items matched.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[nie dopasowano żadnych elementów]]></Val>
+            <Val><![CDATA[brak pasujących elementów.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -97,7 +97,7 @@
         <Str Cat="Text">
           <Val><![CDATA[# items matched.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dopasowano # elementy.]]></Val>
+            <Val><![CDATA[Dopasowano # elementy(-ów).]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

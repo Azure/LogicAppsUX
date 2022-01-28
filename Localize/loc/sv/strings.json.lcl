@@ -31,7 +31,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copy URL]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kopiera URL]]></Val>
+            <Val><![CDATA[Kopiera webbadress]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -82,7 +82,7 @@
         <Str Cat="Text">
           <Val><![CDATA[# item matched.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[# objekt matchade.]]></Val>
+            <Val><![CDATA[# matchade objekt.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
