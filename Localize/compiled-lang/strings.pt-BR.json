@@ -17,6 +17,12 @@
       "value": "Copiar URL"
     }
   ],
+  "0zuBIl": [
+    {
+      "type": 0,
+      "value": "Secure Objcet"
+    }
+  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -63,10 +69,28 @@
       "value": "count"
     }
   ],
+  "2kCC7s": [
+    {
+      "type": 0,
+      "value": "Parameter"
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Com falha"
+    }
+  ],
+  "4RTRDT": [
+    {
+      "type": 0,
+      "value": "Add Parameter"
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "Delete Parameter"
     }
   ],
   "6oqk+A": [
@@ -125,10 +149,40 @@
       "value": "hours"
     }
   ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "Enter parameter name."
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
   "Ie4usD": [
     {
       "type": 0,
       "value": "Título do cartão de edição"
+    }
+  ],
+  "L4hZzK": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save."
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "Bool"
     }
   ],
   "Mb/Vp8": [
@@ -141,6 +195,12 @@
     {
       "type": 0,
       "value": "Erro inesperado"
+    }
+  ],
+  "O36+wl": [
+    {
+      "type": 0,
+      "value": "Edit Parameter"
     }
   ],
   "Oib1mL": [
@@ -173,10 +233,22 @@
       "value": "Bem-sucedido"
     }
   ],
+  "PY5/AN": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
       "value": "Anulado"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "Object"
     }
   ],
   "QQYzHC": [
@@ -247,10 +319,22 @@
       "value": "m"
     }
   ],
+  "T7iaH/": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
       "value": "Falhou"
+    }
+  ],
+  "TZv5JE": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "VXBWrq": [
@@ -327,10 +411,28 @@
       "value": "d"
     }
   ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "String"
+    }
+  ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Secure String"
+    }
+  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "Ocultar este comentário"
+    }
+  ],
+  "ci6ex1": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "cj+kyo": [
@@ -343,6 +445,12 @@
     {
       "type": 0,
       "value": "Erro ao carregar o componente."
+    }
+  ],
+  "duuXp2": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "e4Onhn": [
@@ -443,6 +551,12 @@
       "value": "s"
     }
   ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "Edit in JSON"
+    }
+  ],
   "k41+13": [
     {
       "type": 0,
@@ -491,10 +605,40 @@
       "value": " minutos"
     }
   ],
+  "lV77P8": [
+    {
+      "type": 0,
+      "value": "Title"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Actual Value"
+    }
+  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "Testes"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
+  "pRUJff": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
+  "qGNaL0": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "qGfwxW": [
@@ -541,6 +685,18 @@
       "value": "days"
     }
   ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "Int"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "New parameter"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -559,16 +715,46 @@
       "value": "h"
     }
   ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "Type"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
       "value": "OK"
     }
   ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Default Value"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "Create parameter"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Tempo Limite Expirado"
+    }
+  ],
+  "z4YYlQ": [
+    {
+      "type": 0,
+      "value": "Enter default value for parameter."
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "Float"
     }
   ]
 }
