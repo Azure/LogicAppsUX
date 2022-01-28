@@ -39,15 +39,12 @@ export default class ExpressionScanner {
     }
   }
 
-  public getTokenForType(type: ExpressionTokenType): ExpressionToken | undefined {
-    if (this._currentToken.type === type) {
-      return this._getToken();
-    }
-    return undefined;
+  public get expression(): string {
+    return this._expression;
   }
 
-  public getTokenForTypeAndValue(type: ExpressionTokenType, value: string): ExpressionToken | undefined {
-    if (this._currentToken.type === type && equals(value, this._currentToken.value)) {
+  public getTokenForTypeAndValue(type: ExpressionTokenType, value?: string): ExpressionToken | undefined {
+    if (this._currentToken.type === type && (!value || equals(value, this._currentToken.value))) {
       return this._getToken();
     }
     return undefined;
