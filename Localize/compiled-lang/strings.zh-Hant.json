@@ -17,6 +17,12 @@
       "value": "複製 URL"
     }
   ],
+  "0zuBIl": [
+    {
+      "type": 0,
+      "value": "Secure Objcet"
+    }
+  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -52,10 +58,28 @@
       "value": "count"
     }
   ],
+  "2kCC7s": [
+    {
+      "type": 0,
+      "value": "Parameter"
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "已故障"
+    }
+  ],
+  "4RTRDT": [
+    {
+      "type": 0,
+      "value": "Add Parameter"
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "Delete Parameter"
     }
   ],
   "6oqk+A": [
@@ -103,10 +127,40 @@
       "value": "hours"
     }
   ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "Enter parameter name."
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
   "Ie4usD": [
     {
       "type": 0,
       "value": "正在編輯卡片標題"
+    }
+  ],
+  "L4hZzK": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save."
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "Bool"
     }
   ],
   "Mb/Vp8": [
@@ -119,6 +173,12 @@
     {
       "type": 0,
       "value": "未預期的錯誤"
+    }
+  ],
+  "O36+wl": [
+    {
+      "type": 0,
+      "value": "Edit Parameter"
     }
   ],
   "Oib1mL": [
@@ -151,10 +211,22 @@
       "value": "已成功"
     }
   ],
+  "PY5/AN": [
+    {
+      "type": 0,
+      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
       "value": "已中止"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "Object"
     }
   ],
   "QQYzHC": [
@@ -214,10 +286,22 @@
       "value": " 分鐘"
     }
   ],
+  "T7iaH/": [
+    {
+      "type": 0,
+      "value": "Create, manage Logic Apps parameters, give it a default value."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
       "value": "失敗"
+    }
+  ],
+  "TZv5JE": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "VXBWrq": [
@@ -294,10 +378,28 @@
       "value": " 天"
     }
   ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "String"
+    }
+  ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Secure String"
+    }
+  ],
   "ZazdvR": [
     {
       "type": 0,
       "value": "隱藏此註解"
+    }
+  ],
+  "ci6ex1": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "cj+kyo": [
@@ -310,6 +412,12 @@
     {
       "type": 0,
       "value": "載入元件時發生錯誤。"
+    }
+  ],
+  "duuXp2": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "e4Onhn": [
@@ -399,6 +507,12 @@
       "value": " 秒鐘"
     }
   ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "Edit in JSON"
+    }
+  ],
   "k41+13": [
     {
       "type": 0,
@@ -447,10 +561,40 @@
       "value": " 分鐘"
     }
   ],
+  "lV77P8": [
+    {
+      "type": 0,
+      "value": "Title"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Actual Value"
+    }
+  ],
   "m7Y6Qf": [
     {
       "type": 0,
       "value": "測試"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
+  "pRUJff": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
+  "qGNaL0": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "qGfwxW": [
@@ -486,6 +630,18 @@
       "value": "days"
     }
   ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "Int"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "New parameter"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -504,16 +660,46 @@
       "value": " 小時"
     }
   ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "Type"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
       "value": "確定"
     }
   ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Default Value"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "Create parameter"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "逾時"
+    }
+  ],
+  "z4YYlQ": [
+    {
+      "type": 0,
+      "value": "Enter default value for parameter."
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "Float"
     }
   ]
 }
