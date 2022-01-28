@@ -199,7 +199,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Editing card title]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Modifier le titre de la carte]]></Val>
+            <Val><![CDATA[Modification du titre de la carte]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -592,7 +592,7 @@
         <Str Cat="Text">
           <Val><![CDATA[More info]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Informations supplémentaires]]></Val>
+            <Val><![CDATA[Plus d’informations]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
