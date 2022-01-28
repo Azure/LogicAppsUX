@@ -18,6 +18,12 @@ jobs:
       # checkout the repo
       - name: 'Checkout Github Action'
         uses: actions/checkout@master
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - run: |
+          git fetch --no-tags --prune --depth=5 origin main
 
       - name: Set up Node.js version ${{ matrix.node-version }}
         uses: actions/setup-node@v1
@@ -25,9 +31,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - run: npm ci
-      - run: npm run build designer
-      - run: npm run build-storybook # Remove this once we can deploy to SWA instead of Netlify
-      - run: npm test designer
+      - run: npm run build
+      - run: npm run test:all
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
