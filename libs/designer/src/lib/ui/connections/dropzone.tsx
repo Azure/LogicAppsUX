@@ -2,11 +2,11 @@ import { css } from '@fluentui/utilities';
 import * as React from 'react';
 import { useDrop } from 'react-dnd';
 import { useDispatch } from 'react-redux';
-import { ActionButtonV2 } from '../actionbuttonv2';
+import { ActionButtonV2 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft-logic-apps/utils';
 import { addNode, setShouldZoomToNode, triggerLayout } from '../../core/state/workflowSlice';
-import { AllowDropTarget } from '../card/images/dynamicsvgs/allowdroptarget';
-import { BlockDropTarget } from '../card/images/dynamicsvgs/blockdroptarget';
+import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
+import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 
 export interface DropZoneProps {
   parent: string;
