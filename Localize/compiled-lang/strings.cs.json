@@ -37,7 +37,7 @@
           "value": [
             {
               "type": 0,
-              "value": "Žádné odpovídající položky"
+              "value": "žádné odpovídající položky."
             }
           ]
         },
@@ -49,6 +49,10 @@
             },
             {
               "type": 7
+            },
+            {
+              "type": 0,
+              "value": "."
             }
           ]
         },
@@ -60,6 +64,10 @@
             },
             {
               "type": 7
+            },
+            {
+              "type": 0,
+              "value": "."
             }
           ]
         },
@@ -70,7 +78,7 @@
             },
             {
               "type": 0,
-              "value": " odpovídající položka"
+              "value": " odpovídající položka."
             }
           ]
         },
@@ -82,6 +90,10 @@
             },
             {
               "type": 7
+            },
+            {
+              "type": 0,
+              "value": "."
             }
           ]
         }
@@ -136,7 +148,7 @@
   "CG772M": [
     {
       "type": 0,
-      "value": "Připojení je povinné."
+      "value": "Připojení je povinné"
     }
   ],
   "FXLR5M": [

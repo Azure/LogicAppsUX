@@ -37,7 +37,7 @@
           "value": [
             {
               "type": 0,
-              "value": "nie dopasowano żadnych elementów"
+              "value": "brak pasujących elementów."
             }
           ]
         },
@@ -52,7 +52,7 @@
             },
             {
               "type": 0,
-              "value": " elementy."
+              "value": " elementy(-ów)."
             }
           ]
         },
@@ -67,7 +67,7 @@
             },
             {
               "type": 0,
-              "value": " elementy."
+              "value": " elementy(-ów)."
             }
           ]
         },
@@ -97,7 +97,7 @@
             },
             {
               "type": 0,
-              "value": " elementy."
+              "value": " elementy(-ów)."
             }
           ]
         }

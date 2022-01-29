@@ -14,7 +14,7 @@
   "0raQQP": [
     {
       "type": 0,
-      "value": "Kopiera URL"
+      "value": "Kopiera webbadress"
     }
   ],
   "0zuBIl": [
@@ -48,7 +48,7 @@
             },
             {
               "type": 0,
-              "value": " objekt matchade."
+              "value": " matchade objekt."
             }
           ]
         },
