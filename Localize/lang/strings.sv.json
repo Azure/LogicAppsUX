@@ -1,10 +1,10 @@
 {
   "/NDLmg": "Väntar",
   "0ZlNtf": "Lyckades med återförsök",
-  "0raQQP": "Kopiera URL",
+  "0raQQP": "Kopiera webbadress",
   "0zuBIl": "Secure Objcet",
   "1KSzxz": "Lägg till en kort kommentar",
-  "1R6Vaa": "{count, plural, one {# objekt matchade.} =0 {inga matchade objekt.} other {# matchade objekt.}}",
+  "1R6Vaa": "{count, plural, one {# matchade objekt.} =0 {inga matchade objekt.} other {# matchade objekt.}}",
   "2kCC7s": "Parameter",
   "3kI7xF": "Fel",
   "4RTRDT": "Add Parameter",
