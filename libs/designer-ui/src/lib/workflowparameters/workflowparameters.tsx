@@ -4,7 +4,10 @@ import { Link } from '@fluentui/react/lib/Link';
 import { List } from '@fluentui/react/lib/List';
 import { IMessageBarStyles, MessageBar } from '@fluentui/react/lib/MessageBar';
 import { getTheme, registerOnThemeChangeCallback, removeOnThemeChangeCallback } from '@fluentui/react/lib/Styling';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import ParametersIcon from '../card/images/parameters.svg';
+import Constants from '../constants';
 import { isHighContrastBlackOrInverted } from '../utils/theme';
 import {
   WorkflowParameter,
@@ -12,8 +15,6 @@ import {
   WorkflowParameterDeleteHandler,
   WorkflowParameterUpdateHandler,
 } from './workflowparameter';
-import { useIntl, FormattedMessage } from 'react-intl';
-import Constants from '../constants';
 
 const navigateIconStyle: IIconStyles = {
   root: {
@@ -154,9 +155,7 @@ export default function WorkflowParameters({
     if (standardMode) {
       return (
         <div className="msla-workflow-parameters-empty">
-          {/* TODO: 13091658 Parameters ICON
-          <img src={ParametersIcon} alt="" role="presentation" /> 
-          */}
+          <ParametersIcon />
           <div className="msla-workflow-parameters-text-standard">
             <p>{descriptionStandard1}</p>
             <p>{descriptionStandard2}</p>
