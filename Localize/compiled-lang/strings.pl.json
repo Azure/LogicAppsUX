@@ -110,7 +110,7 @@
   "2kCC7s": [
     {
       "type": 0,
-      "value": "Parameter"
+      "value": "Parametr"
     }
   ],
   "3kI7xF": [
@@ -122,13 +122,13 @@
   "4RTRDT": [
     {
       "type": 0,
-      "value": "Add Parameter"
+      "value": "Dodaj parametr"
     }
   ],
   "5rkegy": [
     {
       "type": 0,
-      "value": "Delete Parameter"
+      "value": "Usuń parametr"
     }
   ],
   "6oqk+A": [
@@ -212,13 +212,13 @@
   "GreYWQ": [
     {
       "type": 0,
-      "value": "Enter parameter name."
+      "value": "Wprowadź nazwę parametru."
     }
   ],
   "GzQQqH": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Tablica"
     }
   ],
   "Ie4usD": [
@@ -230,19 +230,19 @@
   "L4hZzK": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametry"
     }
   ],
   "M6U2LE": [
     {
       "type": 0,
-      "value": "The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save."
+      "value": "Parametry zostaną zapisane, gdy przepływ pracy zostanie zapisany. Możesz edytować go tutaj przed zapisaniem lub edytować na stronie parametrów po zapisaniu."
     }
   ],
   "Mb+Eaq": [
     {
       "type": 0,
-      "value": "Bool"
+      "value": "Wartość logiczna"
     }
   ],
   "Mb/Vp8": [
@@ -260,7 +260,7 @@
   "O36+wl": [
     {
       "type": 0,
-      "value": "Edit Parameter"
+      "value": "Edytuj parametr"
     }
   ],
   "Oib1mL": [
@@ -296,7 +296,7 @@
   "PY5/AN": [
     {
       "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+      "value": "Parametry używane w aplikacji logiki zostaną przekształcone na szablon usługi Azure Resource Manager podczas generowania szablonu wdrożenia."
     }
   ],
   "PaPPLr": [
@@ -308,7 +308,7 @@
   "Q/7unA": [
     {
       "type": 0,
-      "value": "Object"
+      "value": "Obiekt"
     }
   ],
   "QQYzHC": [
@@ -404,7 +404,7 @@
   "T7iaH/": [
     {
       "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
+      "value": "Aby tworzyć parametry usługi Logic Apps i zarządzać nimi, nadaj wartość domyślną."
     }
   ],
   "T8Xqt9": [
@@ -416,7 +416,7 @@
   "TZv5JE": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nazwa"
     }
   ],
   "VXBWrq": [
@@ -496,13 +496,13 @@
   "YJJ+gQ": [
     {
       "type": 0,
-      "value": "String"
+      "value": "Ciąg"
     }
   ],
   "ZKnJnh": [
     {
       "type": 0,
-      "value": "Secure String"
+      "value": "Bezpieczny ciąg"
     }
   ],
   "ZazdvR": [
@@ -514,7 +514,7 @@
   "ci6ex1": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Wartość"
     }
   ],
   "cj+kyo": [
@@ -532,7 +532,7 @@
   "duuXp2": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "Aby odwołać się do parametru, użyj listy zawartości dynamicznej."
     }
   ],
   "e4Onhn": [
@@ -658,7 +658,7 @@
   "jfInxm": [
     {
       "type": 0,
-      "value": "Edit in JSON"
+      "value": "Edytuj w pliku JSON"
     }
   ],
   "k41+13": [
@@ -712,13 +712,13 @@
   "lV77P8": [
     {
       "type": 0,
-      "value": "Title"
+      "value": "Tytuł"
     }
   ],
   "lztiwS": [
     {
       "type": 0,
-      "value": "Actual Value"
+      "value": "Wartość rzeczywista"
     }
   ],
   "m7Y6Qf": [
@@ -730,19 +730,19 @@
   "m8Q61y": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nazwa"
     }
   ],
   "pRUJff": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametry"
     }
   ],
   "qGNaL0": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "Parametry są współużytkowane w ramach przepływów pracy w aplikacji logiki."
     }
   ],
   "qGfwxW": [
@@ -820,7 +820,7 @@
   "ss5JPH": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Nowy parametr"
     }
   ],
   "tImHz/": [
@@ -844,7 +844,7 @@
   "tNoZx2": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Typ"
     }
   ],
   "uN4zFU": [
@@ -856,13 +856,13 @@
   "ut5Med": [
     {
       "type": 0,
-      "value": "Default Value"
+      "value": "Wartość domyślna"
     }
   ],
   "vwH/XV": [
     {
       "type": 0,
-      "value": "Create parameter"
+      "value": "Utwórz parametr"
     }
   ],
   "wHYQyg": [
@@ -874,13 +874,13 @@
   "z4YYlQ": [
     {
       "type": 0,
-      "value": "Enter default value for parameter."
+      "value": "Wprowadź wartość domyślną dla parametru."
     }
   ],
   "zjDJwP": [
     {
       "type": 0,
-      "value": "Float"
+      "value": "Liczba zmiennoprzecinkowa"
     }
   ]
 }

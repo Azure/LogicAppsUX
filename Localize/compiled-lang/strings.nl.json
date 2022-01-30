@@ -84,13 +84,13 @@
   "4RTRDT": [
     {
       "type": 0,
-      "value": "Add Parameter"
+      "value": "Parameter toevoegen"
     }
   ],
   "5rkegy": [
     {
       "type": 0,
-      "value": "Delete Parameter"
+      "value": "Parameter verwijderen"
     }
   ],
   "6oqk+A": [
@@ -152,13 +152,13 @@
   "GreYWQ": [
     {
       "type": 0,
-      "value": "Enter parameter name."
+      "value": "Voer een parameternaam in."
     }
   ],
   "GzQQqH": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Matrix"
     }
   ],
   "Ie4usD": [
@@ -176,13 +176,13 @@
   "M6U2LE": [
     {
       "type": 0,
-      "value": "The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save."
+      "value": "De parameters worden opgeslagen wanneer de werkstroom wordt opgeslagen. U kunt deze hier bewerken voordat u deze opslaat of u kunt deze bewerken in de parameterpagina na het opslaan."
     }
   ],
   "Mb+Eaq": [
     {
       "type": 0,
-      "value": "Bool"
+      "value": "Booleaans"
     }
   ],
   "Mb/Vp8": [
@@ -200,7 +200,7 @@
   "O36+wl": [
     {
       "type": 0,
-      "value": "Edit Parameter"
+      "value": "Parameter bewerken"
     }
   ],
   "Oib1mL": [
@@ -236,7 +236,7 @@
   "PY5/AN": [
     {
       "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+      "value": "De parameters die in de logische app worden gebruikt, worden tijdens het genereren van de implementatiesjabloon omgezet naar een Azure Resource Manager-sjabloon."
     }
   ],
   "PaPPLr": [
@@ -326,7 +326,7 @@
   "T7iaH/": [
     {
       "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
+      "value": "Logic Apps-parameters maken en beheren en geef een standaardwaarde opgeven."
     }
   ],
   "T8Xqt9": [
@@ -338,7 +338,7 @@
   "TZv5JE": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Naam"
     }
   ],
   "VXBWrq": [
@@ -418,13 +418,13 @@
   "YJJ+gQ": [
     {
       "type": 0,
-      "value": "String"
+      "value": "Tekenreeks"
     }
   ],
   "ZKnJnh": [
     {
       "type": 0,
-      "value": "Secure String"
+      "value": "Veilige tekenreeks"
     }
   ],
   "ZazdvR": [
@@ -436,7 +436,7 @@
   "ci6ex1": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Waarde"
     }
   ],
   "cj+kyo": [
@@ -454,7 +454,7 @@
   "duuXp2": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "Gebruik de lijst met dynamische inhoud om te verwijzen naar een parameter."
     }
   ],
   "e4Onhn": [
@@ -558,7 +558,7 @@
   "jfInxm": [
     {
       "type": 0,
-      "value": "Edit in JSON"
+      "value": "In JSON bewerken"
     }
   ],
   "k41+13": [
@@ -612,13 +612,13 @@
   "lV77P8": [
     {
       "type": 0,
-      "value": "Title"
+      "value": "Titel"
     }
   ],
   "lztiwS": [
     {
       "type": 0,
-      "value": "Actual Value"
+      "value": "Werkelijke waarde"
     }
   ],
   "m7Y6Qf": [
@@ -630,7 +630,7 @@
   "m8Q61y": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Naam"
     }
   ],
   "pRUJff": [
@@ -642,7 +642,7 @@
   "qGNaL0": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "Parameters worden gedeeld in workflows in een logische app."
     }
   ],
   "qGfwxW": [
@@ -698,7 +698,7 @@
   "ss5JPH": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Nieuwe parameter"
     }
   ],
   "tImHz/": [
@@ -734,13 +734,13 @@
   "ut5Med": [
     {
       "type": 0,
-      "value": "Default Value"
+      "value": "Standaardwaarde"
     }
   ],
   "vwH/XV": [
     {
       "type": 0,
-      "value": "Create parameter"
+      "value": "Parameter maken"
     }
   ],
   "wHYQyg": [
@@ -752,13 +752,13 @@
   "z4YYlQ": [
     {
       "type": 0,
-      "value": "Enter default value for parameter."
+      "value": "Voer de standaardwaarde voor de parameter in."
     }
   ],
   "zjDJwP": [
     {
       "type": 0,
-      "value": "Float"
+      "value": "Zwevende komma"
     }
   ]
 }

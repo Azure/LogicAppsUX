@@ -72,7 +72,7 @@
   "2kCC7s": [
     {
       "type": 0,
-      "value": "Parameter"
+      "value": "Parametre"
     }
   ],
   "3kI7xF": [
@@ -84,13 +84,13 @@
   "4RTRDT": [
     {
       "type": 0,
-      "value": "Add Parameter"
+      "value": "Parametre Ekle"
     }
   ],
   "5rkegy": [
     {
       "type": 0,
-      "value": "Delete Parameter"
+      "value": "Parametreyi Sil"
     }
   ],
   "6oqk+A": [
@@ -152,13 +152,13 @@
   "GreYWQ": [
     {
       "type": 0,
-      "value": "Enter parameter name."
+      "value": "Parametre adı girin."
     }
   ],
   "GzQQqH": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Dizi"
     }
   ],
   "Ie4usD": [
@@ -170,13 +170,13 @@
   "L4hZzK": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametreler"
     }
   ],
   "M6U2LE": [
     {
       "type": 0,
-      "value": "The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save."
+      "value": "Parametreler, iş akışı kaydedildiğinde kaydedilir. Parametreyi kaydetmeden önce burada düzenleyebilir veya kaydettikten sonra parametre sayfasında düzenleyebilirsiniz."
     }
   ],
   "Mb+Eaq": [
@@ -200,7 +200,7 @@
   "O36+wl": [
     {
       "type": 0,
-      "value": "Edit Parameter"
+      "value": "Parametreyi Düzenle"
     }
   ],
   "Oib1mL": [
@@ -236,7 +236,7 @@
   "PY5/AN": [
     {
       "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+      "value": "Mantıksal Uygulama'da kullanılan parametreler, dağıtım şablonu oluşturma sırasında Azure Resource Manager şablonuna dönüştürülür."
     }
   ],
   "PaPPLr": [
@@ -248,7 +248,7 @@
   "Q/7unA": [
     {
       "type": 0,
-      "value": "Object"
+      "value": "Nesne"
     }
   ],
   "QQYzHC": [
@@ -322,7 +322,7 @@
   "T7iaH/": [
     {
       "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
+      "value": "Logic Apps parametreleri oluşturup yönetin ve bunlara bir varsayılan değer verin."
     }
   ],
   "T8Xqt9": [
@@ -334,7 +334,7 @@
   "TZv5JE": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Ad"
     }
   ],
   "VXBWrq": [
@@ -414,13 +414,13 @@
   "YJJ+gQ": [
     {
       "type": 0,
-      "value": "String"
+      "value": "Dize"
     }
   ],
   "ZKnJnh": [
     {
       "type": 0,
-      "value": "Secure String"
+      "value": "Güvenli Dize"
     }
   ],
   "ZazdvR": [
@@ -432,7 +432,7 @@
   "ci6ex1": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Değer"
     }
   ],
   "cj+kyo": [
@@ -450,7 +450,7 @@
   "duuXp2": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "Bir parametreye başvurmak için dinamik içerik listesini kullanın."
     }
   ],
   "e4Onhn": [
@@ -554,7 +554,7 @@
   "jfInxm": [
     {
       "type": 0,
-      "value": "Edit in JSON"
+      "value": "JSON dosyasında düzenle"
     }
   ],
   "k41+13": [
@@ -608,13 +608,13 @@
   "lV77P8": [
     {
       "type": 0,
-      "value": "Title"
+      "value": "Başlık"
     }
   ],
   "lztiwS": [
     {
       "type": 0,
-      "value": "Actual Value"
+      "value": "Gerçek Değer"
     }
   ],
   "m7Y6Qf": [
@@ -626,19 +626,19 @@
   "m8Q61y": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Ad"
     }
   ],
   "pRUJff": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametreler"
     }
   ],
   "qGNaL0": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "Parametreler bir Logic App’in iş akışları arasında paylaşılır."
     }
   ],
   "qGfwxW": [
@@ -694,7 +694,7 @@
   "ss5JPH": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Yeni parametre"
     }
   ],
   "tImHz/": [
@@ -718,7 +718,7 @@
   "tNoZx2": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Tür"
     }
   ],
   "uN4zFU": [
@@ -730,13 +730,13 @@
   "ut5Med": [
     {
       "type": 0,
-      "value": "Default Value"
+      "value": "Varsayılan Değer"
     }
   ],
   "vwH/XV": [
     {
       "type": 0,
-      "value": "Create parameter"
+      "value": "Parametre oluştur"
     }
   ],
   "wHYQyg": [
@@ -748,13 +748,13 @@
   "z4YYlQ": [
     {
       "type": 0,
-      "value": "Enter default value for parameter."
+      "value": "Parametre için varsayılan değer girin."
     }
   ],
   "zjDJwP": [
     {
       "type": 0,
-      "value": "Float"
+      "value": "Kayan"
     }
   ]
 }

@@ -106,7 +106,7 @@
   "2kCC7s": [
     {
       "type": 0,
-      "value": "Parameter"
+      "value": "Parametr"
     }
   ],
   "3kI7xF": [
@@ -118,13 +118,13 @@
   "4RTRDT": [
     {
       "type": 0,
-      "value": "Add Parameter"
+      "value": "Přidat parametr"
     }
   ],
   "5rkegy": [
     {
       "type": 0,
-      "value": "Delete Parameter"
+      "value": "Odstranit parametr"
     }
   ],
   "6oqk+A": [
@@ -208,13 +208,13 @@
   "GreYWQ": [
     {
       "type": 0,
-      "value": "Enter parameter name."
+      "value": "Zadejte název parametru."
     }
   ],
   "GzQQqH": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Pole"
     }
   ],
   "Ie4usD": [
@@ -226,19 +226,19 @@
   "L4hZzK": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametry"
     }
   ],
   "M6U2LE": [
     {
       "type": 0,
-      "value": "The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save."
+      "value": "Parametry budou uloženy při uložení pracovního postupu. Tady je můžete před uložením upravit, případně je můžete po uložení upravit na stránce parametrů."
     }
   ],
   "Mb+Eaq": [
     {
       "type": 0,
-      "value": "Bool"
+      "value": "Logická hodnota (Bool)"
     }
   ],
   "Mb/Vp8": [
@@ -256,7 +256,7 @@
   "O36+wl": [
     {
       "type": 0,
-      "value": "Edit Parameter"
+      "value": "Upravit parametr"
     }
   ],
   "Oib1mL": [
@@ -292,7 +292,7 @@
   "PY5/AN": [
     {
       "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+      "value": "Při generování šablony nasazení se parametry, které se používají v aplikaci Logic Apps, převedou na šablonu Azure Resource Manageru."
     }
   ],
   "PaPPLr": [
@@ -304,7 +304,7 @@
   "Q/7unA": [
     {
       "type": 0,
-      "value": "Object"
+      "value": "Objekt"
     }
   ],
   "QQYzHC": [
@@ -400,7 +400,7 @@
   "T7iaH/": [
     {
       "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
+      "value": "Vytvořte a spravujte parametry Logic Apps, nastavte jejich výchozí hodnoty."
     }
   ],
   "T8Xqt9": [
@@ -412,7 +412,7 @@
   "TZv5JE": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Název"
     }
   ],
   "VXBWrq": [
@@ -492,13 +492,13 @@
   "YJJ+gQ": [
     {
       "type": 0,
-      "value": "String"
+      "value": "Řetězec"
     }
   ],
   "ZKnJnh": [
     {
       "type": 0,
-      "value": "Secure String"
+      "value": "Zabezpečený řetězec"
     }
   ],
   "ZazdvR": [
@@ -510,7 +510,7 @@
   "ci6ex1": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Hodnota"
     }
   ],
   "cj+kyo": [
@@ -528,7 +528,7 @@
   "duuXp2": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "Pokud chcete odkazovat na parametr, použijte seznam dynamického obsahu."
     }
   ],
   "e4Onhn": [
@@ -654,7 +654,7 @@
   "jfInxm": [
     {
       "type": 0,
-      "value": "Edit in JSON"
+      "value": "Upravit ve formátu JSON"
     }
   ],
   "k41+13": [
@@ -708,13 +708,13 @@
   "lV77P8": [
     {
       "type": 0,
-      "value": "Title"
+      "value": "Název"
     }
   ],
   "lztiwS": [
     {
       "type": 0,
-      "value": "Actual Value"
+      "value": "Skutečná hodnota"
     }
   ],
   "m7Y6Qf": [
@@ -726,19 +726,19 @@
   "m8Q61y": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Název"
     }
   ],
   "pRUJff": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametry"
     }
   ],
   "qGNaL0": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "Parametry se sdílejí mezi pracovními postupy v aplikaci logiky."
     }
   ],
   "qGfwxW": [
@@ -816,7 +816,7 @@
   "ss5JPH": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Nový parametr"
     }
   ],
   "tImHz/": [
@@ -840,7 +840,7 @@
   "tNoZx2": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Typ"
     }
   ],
   "uN4zFU": [
@@ -852,13 +852,13 @@
   "ut5Med": [
     {
       "type": 0,
-      "value": "Default Value"
+      "value": "Výchozí hodnota"
     }
   ],
   "vwH/XV": [
     {
       "type": 0,
-      "value": "Create parameter"
+      "value": "Vytvořit parametr"
     }
   ],
   "wHYQyg": [
@@ -870,13 +870,13 @@
   "z4YYlQ": [
     {
       "type": 0,
-      "value": "Enter default value for parameter."
+      "value": "Zadejte výchozí hodnotu parametru."
     }
   ],
   "zjDJwP": [
     {
       "type": 0,
-      "value": "Float"
+      "value": "S plovoucí desetinnou čárkou"
     }
   ]
 }

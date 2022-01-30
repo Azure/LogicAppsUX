@@ -20,7 +20,7 @@
   "0zuBIl": [
     {
       "type": 0,
-      "value": "Secure Objcet"
+      "value": "Sicheres Objekt"
     }
   ],
   "1KSzxz": [
@@ -84,13 +84,13 @@
   "4RTRDT": [
     {
       "type": 0,
-      "value": "Add Parameter"
+      "value": "Parameter hinzufügen"
     }
   ],
   "5rkegy": [
     {
       "type": 0,
-      "value": "Delete Parameter"
+      "value": "Parameter löschen"
     }
   ],
   "6oqk+A": [
@@ -152,7 +152,7 @@
   "GreYWQ": [
     {
       "type": 0,
-      "value": "Enter parameter name."
+      "value": "Geben Sie den Parameternamen ein."
     }
   ],
   "GzQQqH": [
@@ -170,19 +170,19 @@
   "L4hZzK": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parameter"
     }
   ],
   "M6U2LE": [
     {
       "type": 0,
-      "value": "The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save."
+      "value": "Die Parameter werden gespeichert, wenn der Workflow gespeichert wird. Sie können sie hier bearbeiten, bevor Sie sie speichern oder nach dem Speichern auf der Parameterseite bearbeiten."
     }
   ],
   "Mb+Eaq": [
     {
       "type": 0,
-      "value": "Bool"
+      "value": "Boolesch"
     }
   ],
   "Mb/Vp8": [
@@ -200,7 +200,7 @@
   "O36+wl": [
     {
       "type": 0,
-      "value": "Edit Parameter"
+      "value": "Parameter bearbeiten"
     }
   ],
   "Oib1mL": [
@@ -236,7 +236,7 @@
   "PY5/AN": [
     {
       "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
+      "value": "In der Logik-App verwendete Parameter werden während der Generierung von Bereitstellungsvorlagen in eine Azure Resource Manager-Vorlage konvertiert."
     }
   ],
   "PaPPLr": [
@@ -248,7 +248,7 @@
   "Q/7unA": [
     {
       "type": 0,
-      "value": "Object"
+      "value": "Objekt"
     }
   ],
   "QQYzHC": [
@@ -326,7 +326,7 @@
   "T7iaH/": [
     {
       "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
+      "value": "Hiermit werden Logic Apps-Parameter erstellt, verwaltet und mit einem Standardwert versehen."
     }
   ],
   "T8Xqt9": [
@@ -418,13 +418,13 @@
   "YJJ+gQ": [
     {
       "type": 0,
-      "value": "String"
+      "value": "Zeichenfolge"
     }
   ],
   "ZKnJnh": [
     {
       "type": 0,
-      "value": "Secure String"
+      "value": "Sichere Zeichenfolge"
     }
   ],
   "ZazdvR": [
@@ -436,7 +436,7 @@
   "ci6ex1": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Wert"
     }
   ],
   "cj+kyo": [
@@ -454,7 +454,7 @@
   "duuXp2": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "Verwenden Sie die Liste dynamischer Inhalte, um auf einen Parameter zu verweisen."
     }
   ],
   "e4Onhn": [
@@ -558,7 +558,7 @@
   "jfInxm": [
     {
       "type": 0,
-      "value": "Edit in JSON"
+      "value": "In JSON bearbeiten"
     }
   ],
   "k41+13": [
@@ -612,13 +612,13 @@
   "lV77P8": [
     {
       "type": 0,
-      "value": "Title"
+      "value": "Titel"
     }
   ],
   "lztiwS": [
     {
       "type": 0,
-      "value": "Actual Value"
+      "value": "Istwert"
     }
   ],
   "m7Y6Qf": [
@@ -636,13 +636,13 @@
   "pRUJff": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parameter"
     }
   ],
   "qGNaL0": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "Parameter werden workflowübergreifend in einer Logik-App freigegeben."
     }
   ],
   "qGfwxW": [
@@ -692,13 +692,13 @@
   "r9SVE4": [
     {
       "type": 0,
-      "value": "Int"
+      "value": "Int."
     }
   ],
   "ss5JPH": [
     {
       "type": 0,
-      "value": "New parameter"
+      "value": "Neuer Parameter"
     }
   ],
   "tImHz/": [
@@ -722,7 +722,7 @@
   "tNoZx2": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Typ"
     }
   ],
   "uN4zFU": [
@@ -734,13 +734,13 @@
   "ut5Med": [
     {
       "type": 0,
-      "value": "Default Value"
+      "value": "Standardwert"
     }
   ],
   "vwH/XV": [
     {
       "type": 0,
-      "value": "Create parameter"
+      "value": "Parameter erstellen"
     }
   ],
   "wHYQyg": [
@@ -752,13 +752,13 @@
   "z4YYlQ": [
     {
       "type": 0,
-      "value": "Enter default value for parameter."
+      "value": "Geben Sie einen Standardwert für den Parameter ein."
     }
   ],
   "zjDJwP": [
     {
       "type": 0,
-      "value": "Float"
+      "value": "Gleitkomma"
     }
   ]
 }
