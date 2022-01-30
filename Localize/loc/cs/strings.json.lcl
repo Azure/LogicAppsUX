@@ -39,6 +39,9 @@
       <Item ItemId=";0zuBIl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Secure Objcet]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zabezpečený objekt]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1009,7 +1012,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Float]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[S plovoucí desetinnou čárkou]]></Val>
+            <Val><![CDATA[Plovoucí desetinná čárka]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
