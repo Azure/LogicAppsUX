@@ -39,6 +39,9 @@
       <Item ItemId=";0zuBIl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Secure Objcet]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Objcet Seguro]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -232,7 +235,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter parameter name.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Introduza um nome de parâmetro.]]></Val>
+            <Val><![CDATA[Introduza o nome do parâmetro.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -898,7 +901,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Int]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Int]]></Val>
+            <Val><![CDATA[Número Inteiro]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -979,7 +982,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Float]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vírgula Flutuante]]></Val>
+            <Val><![CDATA[Flutuante]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

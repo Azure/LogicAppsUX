@@ -39,6 +39,9 @@
       <Item ItemId=";0zuBIl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Secure Objcet]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[安全物件]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -241,7 +244,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Array]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Array]]></Val>
+            <Val><![CDATA[陣列]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -277,7 +280,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Bool]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Bool]]></Val>
+            <Val><![CDATA[布林值]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -898,7 +901,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Int]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Int]]></Val>
+            <Val><![CDATA[整數]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
