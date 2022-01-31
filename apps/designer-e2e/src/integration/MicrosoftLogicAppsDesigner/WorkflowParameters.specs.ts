@@ -25,7 +25,7 @@ describe('designer: WorkflowParameters component', () => {
     // Testing Edit/Delete Button
     cy.get('.msla-workflow-parameter-heading-button').last().click();
     cy.get('.msla-workflow-parameter-read-only').should('exist');
-    cy.get('.edit-parameter-button').last().click();
+    cy.get('.msla-edit-parameter-button').last().click();
     cy.get('.msla-workflow-parameter-read-only').should('not.exist');
   });
 });
