@@ -2,7 +2,7 @@
   "/NDLmg": "Čekající",
   "0ZlNtf": "Proběhlo úspěšně s opakováním pokusů",
   "0raQQP": "Kopírovat adresu URL",
-  "0zuBIl": "Secure Objcet",
+  "0zuBIl": "Zabezpečený objekt",
   "1KSzxz": "Přidat krátký komentář",
   "1R6Vaa": "{count, plural, one {# odpovídající položka.} =0 {žádné odpovídající položky.} few {Počet odpovídajících položek: #.} many {Počet odpovídajících položek: #.} other {Počet odpovídajících položek: #.}}",
   "2kCC7s": "Parametr",
@@ -84,5 +84,5 @@
   "vwH/XV": "Vytvořit parametr",
   "wHYQyg": "Vypršel časový limit.",
   "z4YYlQ": "Zadejte výchozí hodnotu parametru.",
-  "zjDJwP": "S plovoucí desetinnou čárkou"
+  "zjDJwP": "Plovoucí desetinná čárka"
 }

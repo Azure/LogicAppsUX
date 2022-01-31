@@ -2,7 +2,7 @@
   "/NDLmg": "A aguardar",
   "0ZlNtf": "Novas tentativas realizadas com êxito",
   "0raQQP": "Copiar URL",
-  "0zuBIl": "Secure Objcet",
+  "0zuBIl": "Objcet Seguro",
   "1KSzxz": "Adicionar um comentário curto",
   "1R6Vaa": "{count, plural, one {# item com correspondência.} =0 {não há itens com correspondência.} other {# itens com correspondência.}}",
   "2kCC7s": "Parâmetro",
@@ -14,7 +14,7 @@
   "8L+oIz": "Não é possível compor o estruturador devido a vários acionadores na definição.",
   "CG772M": "Ligação necessária",
   "FXLR5M": "{hours, plural, one {# hora} other {# horas}}",
-  "GreYWQ": "Introduza um nome de parâmetro.",
+  "GreYWQ": "Introduza o nome do parâmetro.",
   "GzQQqH": "Matriz",
   "Ie4usD": "Edição do título do cartão",
   "L4hZzK": "Parâmetros",
@@ -75,7 +75,7 @@
   "qGfwxW": "Identidade gerida",
   "qSt0Sb": "Obrigatório",
   "qUWBUX": "{days, plural, one {# dia} other {# dias}}",
-  "r9SVE4": "Int",
+  "r9SVE4": "Número Inteiro",
   "ss5JPH": "Novo parâmetro",
   "tImHz/": "{days}d {hours}h",
   "tNoZx2": "Tipo",
@@ -84,5 +84,5 @@
   "vwH/XV": "Criar parâmetro",
   "wHYQyg": "Tempo Limite Excedido",
   "z4YYlQ": "Introduza o valor predefinido para o parâmetro.",
-  "zjDJwP": "Vírgula Flutuante"
+  "zjDJwP": "Flutuante"
 }
