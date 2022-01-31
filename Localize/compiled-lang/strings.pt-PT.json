@@ -20,7 +20,7 @@
   "0zuBIl": [
     {
       "type": 0,
-      "value": "Secure Objcet"
+      "value": "Objcet Seguro"
     }
   ],
   "1KSzxz": [
@@ -152,7 +152,7 @@
   "GreYWQ": [
     {
       "type": 0,
-      "value": "Introduza um nome de parâmetro."
+      "value": "Introduza o nome do parâmetro."
     }
   ],
   "GzQQqH": [
@@ -688,7 +688,7 @@
   "r9SVE4": [
     {
       "type": 0,
-      "value": "Int"
+      "value": "Número Inteiro"
     }
   ],
   "ss5JPH": [
@@ -754,7 +754,7 @@
   "zjDJwP": [
     {
       "type": 0,
-      "value": "Vírgula Flutuante"
+      "value": "Flutuante"
     }
   ]
 }
