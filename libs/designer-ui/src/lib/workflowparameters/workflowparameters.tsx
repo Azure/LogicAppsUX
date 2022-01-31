@@ -155,7 +155,7 @@ export default function WorkflowParameters({
     if (standardMode) {
       return (
         <div className="msla-workflow-parameters-empty">
-          <ParametersIcon />
+          <img src={ParametersIcon} alt="" role="presentation" />
           <div className="msla-workflow-parameters-text-standard">
             <p>{descriptionStandard1}</p>
             <p>{descriptionStandard2}</p>
