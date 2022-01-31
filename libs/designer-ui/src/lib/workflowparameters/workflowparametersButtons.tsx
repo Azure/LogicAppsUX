@@ -85,7 +85,13 @@ function DeleteButton({ onClick }: ButtonProps): JSX.Element {
 
   return (
     <TooltipHost styles={tooltipStyles} content={deleteTitle}>
-      <IconButton ariaLabel={deleteTitle} iconProps={deleteIcon} styles={buttonStyles} onClick={onClick} />
+      <IconButton
+        className="msla-delete-parameter-button"
+        ariaLabel={deleteTitle}
+        iconProps={deleteIcon}
+        styles={buttonStyles}
+        onClick={onClick}
+      />
     </TooltipHost>
   );
 }
@@ -100,7 +106,13 @@ function EditButton({ onClick }: ButtonProps): JSX.Element {
 
   return (
     <TooltipHost content={editTitle}>
-      <IconButton ariaLabel={editTitle} iconProps={editIcon} styles={buttonStyles} onClick={onClick} />
+      <IconButton
+        className="msla-edit-parameter-button"
+        ariaLabel={editTitle}
+        iconProps={editIcon}
+        styles={buttonStyles}
+        onClick={onClick}
+      />
     </TooltipHost>
   );
 }
