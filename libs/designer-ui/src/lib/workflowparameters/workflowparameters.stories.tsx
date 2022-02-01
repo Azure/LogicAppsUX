@@ -25,5 +25,4 @@ Standard.args = {
       isEditable: false,
     },
   ],
-  standardMode: true,
 };

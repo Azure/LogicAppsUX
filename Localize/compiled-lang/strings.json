@@ -17,12 +17,6 @@
       "value": "Copy URL"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "Secure Objcet"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -69,22 +63,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "Parameter"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Faulted"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "Add Parameter"
     }
   ],
   "5rkegy": [
@@ -167,12 +149,6 @@
       "value": "Editing card title"
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -231,12 +207,6 @@
     {
       "type": 0,
       "value": "Succeeded"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation."
     }
   ],
   "PaPPLr": [
@@ -323,12 +293,6 @@
       "value": "m"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "Create, manage Logic Apps parameters, give it a default value."
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -339,6 +303,12 @@
     {
       "type": 0,
       "value": "Name"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -421,12 +391,6 @@
       "value": "String"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "Secure String"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -449,12 +413,6 @@
     {
       "type": 0,
       "value": "Error loading component."
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "e4Onhn": [
@@ -639,12 +597,6 @@
       "value": "Parameters"
     }
   ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -747,6 +699,12 @@
     {
       "type": 0,
       "value": "Timed Out"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "z4YYlQ": [
