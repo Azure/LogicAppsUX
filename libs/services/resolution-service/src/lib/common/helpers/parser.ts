@@ -1,7 +1,7 @@
 import { equals } from '@microsoft-logic-apps/utils';
 import { ExpressionExceptionCode } from '../exceptions/expression';
 import { ParserException } from '../exceptions/parser';
-import { Dereference, Expression, ExpressionToken } from '../models/expression';
+import { Dereference, Expression, ExpressionFunction, ExpressionStringInterpolation, ExpressionToken } from '../models/expression';
 import { ExpressionType, isTemplateExpression } from './expression';
 import ExpressionScanner, { ExpressionTokenType } from './scanner';
 
@@ -91,7 +91,7 @@ export default class ExpressionParser {
     throw new ParserException(ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION, ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION);
   }
 
-  private static _parseFunctionExpression(scanner: ExpressionScanner): Expression {
+  private static _parseFunctionExpression(scanner: ExpressionScanner): ExpressionFunction {
     let token: ExpressionToken | undefined = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.Identifier);
 
     const startPosition = token.startPosition;
@@ -157,7 +157,7 @@ export default class ExpressionParser {
     };
   }
 
-  private static _parseStringInterpolationExpression(expression: string) {
+  private static _parseStringInterpolationExpression(expression: string): ExpressionStringInterpolation {
     let previousPosition = 0;
     let currentPosition = 0;
     const segments: Expression[] = [];
