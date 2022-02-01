@@ -65,7 +65,6 @@ export interface WorkflowParametersProps {
   isEditable?: boolean;
   isReadOnly?: boolean;
   parameters: WorkflowParameterDefinition[];
-  standardMode?: boolean;
   validationErrors?: Record<string, Record<string, string>>;
   onAddParameter?: OnClickHandler;
   onDeleteParameter?: WorkflowParameterDeleteHandler;
@@ -81,7 +80,6 @@ export interface WorkflowParametersState {
 export default function WorkflowParameters({
   parameters = [],
   isReadOnly,
-  standardMode,
   onManageParameters,
   onAddParameter,
   onDeleteParameter,
@@ -94,11 +92,6 @@ export default function WorkflowParameters({
   const intl = useIntl();
 
   const addIcon: IIconProps = { iconName: 'Add' };
-  const buttonStyles: IButtonStyles = {
-    root: {
-      backgroundColor: isInverted ? getTheme().palette.themePrimary : Constants.BRAND_COLOR,
-    },
-  };
 
   useEffect(() => {
     registerOnThemeChangeCallback(handleThemeChange);
@@ -119,61 +112,24 @@ export default function WorkflowParameters({
   };
 
   const renderTitleAndDescription = (): JSX.Element => {
-    const iconStyles: IIconStyles = {
-      root: {
-        color: isInverted ? getTheme().palette.themePrimary : Constants.BRAND_COLOR,
-        fontSize: 50,
-      },
-    };
-
-    const descriptionStandard1 = intl.formatMessage({
-      defaultMessage: 'Parameters are shared across workflows in a Logic App.',
-      description: 'Description for Standard Mode Part 1',
-    });
-    const descriptionStandard2 = intl.formatMessage({
-      defaultMessage: 'To reference a parameter, use the dynamic content list.',
-      description: 'Description for Standard Mode Part 2',
-    });
-    const iconLabel = intl.formatMessage({
-      defaultMessage: 'Parameter',
-      description: 'Parameter Icon Label',
-    });
-    const title = intl.formatMessage({
-      defaultMessage: 'Parameters',
-      description: 'Parameter Title',
-    });
     const description1 = intl.formatMessage({
-      defaultMessage: 'Create, manage Logic Apps parameters, give it a default value.',
-      description: 'Description for nonStandard Mode Part 1',
+      defaultMessage: 'Parameters are shared across workflows in a Logic App.',
+      description: 'Description for Workflow Parameters Part 1',
     });
     const description2 = intl.formatMessage({
-      defaultMessage:
-        'Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation.',
-      description: 'Description for nonStandard Mode Part 2',
+      defaultMessage: 'To reference a parameter, use the dynamic content list.',
+      description: 'Description for Workflow Parameters Part 2',
     });
 
-    if (standardMode) {
-      return (
-        <div className="msla-workflow-parameters-empty">
-          <img src={ParametersIcon} alt="" role="presentation" />
-          <div className="msla-workflow-parameters-text-standard">
-            <p>{descriptionStandard1}</p>
-            <p>{descriptionStandard2}</p>
-          </div>
+    return (
+      <div className="msla-workflow-parameters-empty">
+        <img src={ParametersIcon} alt="" role="presentation" />
+        <div className="msla-workflow-parameters-text">
+          <p>{description1}</p>
+          <p>{description2}</p>
         </div>
-      );
-    } else {
-      return (
-        <div className="msla-workflow-parameters-empty">
-          <Icon iconName="Parameter" styles={iconStyles} ariaLabel={iconLabel} />
-          <h1 className="msla-workflow-parameters-title">{title}</h1>
-          <div className="msla-workflow-parameters-text">
-            <p>{description1}</p>
-            <p>{description2}</p>
-          </div>
-        </div>
-      );
-    }
+      </div>
+    );
   };
 
   const renderManageParametersLink = (): JSX.Element => {
@@ -199,49 +155,32 @@ export default function WorkflowParameters({
         onDelete={onDeleteParameter}
         onRegisterLanguageProvider={onRegisterLanguageProvider}
         validationErrors={parameterErrors}
-        standardMode={standardMode}
       />
     );
   };
 
-  if (standardMode) {
-    const createText = intl.formatMessage({
-      defaultMessage: 'Create parameter',
-      description: 'Create Parameter Text',
-    });
-    return (
-      <div className="msla-workflow-parameters">
-        <h3 className="msla-workflow-parameters-create">
-          <FormattedMessage defaultMessage="Parameters" description="Create Title" />
-        </h3>
-        {parameters.length ? <InfoBar isInverted={isInverted} /> : null}
-        <div className="msla-workflow-parameters-add-standard">
-          <CommandBarButton
-            className="msla-workflow-parameters-create-button"
-            disabled={isReadOnly}
-            text={createText}
-            iconProps={addIcon}
-            onClick={handleAddParameter}
-          />
-        </div>
-        {parameters.length ? null : renderTitleAndDescription()}
-        {parameters.length ? <List items={parameters} onRenderCell={renderParameter} /> : null}
-        {onManageParameters ? renderManageParametersLink() : null}
+  const createText = intl.formatMessage({
+    defaultMessage: 'Create parameter',
+    description: 'Create Parameter Text',
+  });
+  return (
+    <div className="msla-workflow-parameters">
+      <h3 className="msla-workflow-parameters-create">
+        <FormattedMessage defaultMessage="Parameters" description="Create Title" />
+      </h3>
+      {parameters.length ? <InfoBar isInverted={isInverted} /> : null}
+      <div className="msla-workflow-parameters-add">
+        <CommandBarButton
+          className="msla-workflow-parameters-create-button"
+          disabled={isReadOnly}
+          text={createText}
+          iconProps={addIcon}
+          onClick={handleAddParameter}
+        />
       </div>
-    );
-  } else {
-    const addText = intl.formatMessage({
-      defaultMessage: 'Add Parameter',
-      description: 'Add Parameter Text',
-    });
-    return (
-      <div className="msla-workflow-parameters">
-        {parameters.length ? null : renderTitleAndDescription()}
-        {parameters.length ? <List items={parameters} onRenderCell={renderParameter} /> : null}
-        <div className="msla-workflow-parameters-add">
-          <PrimaryButton text={addText} styles={buttonStyles} onClick={handleAddParameter} disabled={isReadOnly} />
-        </div>
-      </div>
-    );
-  }
+      {parameters.length ? null : renderTitleAndDescription()}
+      {parameters.length ? <List items={parameters} onRenderCell={renderParameter} /> : null}
+      {onManageParameters ? renderManageParametersLink() : null}
+    </div>
+  );
 }

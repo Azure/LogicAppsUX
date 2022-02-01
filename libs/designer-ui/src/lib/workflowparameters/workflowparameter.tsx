@@ -97,7 +97,6 @@ export interface WorkflowParameterDefinition {
 export interface WorkflowParameterProps {
   definition: WorkflowParameterDefinition;
   isReadOnly?: boolean;
-  standardMode?: boolean;
   validationErrors?: Record<string, string>;
   onChange?: WorkflowParameterUpdateHandler;
   onDelete?: WorkflowParameterDeleteHandler;
@@ -121,14 +120,7 @@ export interface ParameterFieldDetails {
   value: string;
 }
 
-export function WorkflowParameter({
-  definition,
-  validationErrors,
-  standardMode,
-  isReadOnly,
-  onChange,
-  ...props
-}: WorkflowParameterProps): JSX.Element {
+export function WorkflowParameter({ definition, validationErrors, isReadOnly, onChange, ...props }: WorkflowParameterProps): JSX.Element {
   const [defaultValue, setDefaultValue] = useState(definition.defaultValue);
   const [expanded, setExpanded] = useState(!!definition.isEditable);
   const [isEditable, setIsEditable] = useState(definition.isEditable);
@@ -139,65 +131,6 @@ export function WorkflowParameter({
   const intl = useIntl();
 
   const typeOptions: IDropdownOption[] = [
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
-      text: intl.formatMessage({
-        defaultMessage: 'Array',
-        description: 'This is an option in a dropdown where users can select type Array for their parameter.',
-      }),
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL,
-      text: intl.formatMessage({
-        defaultMessage: 'Bool',
-        description: 'This is an option in a dropdown where users can select type Boolean for their parameter.',
-      }),
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT,
-      text: intl.formatMessage({
-        defaultMessage: 'Float',
-        description: 'This is an option in a dropdown where users can select type Float for their parameter.',
-      }),
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT,
-      text: intl.formatMessage({
-        defaultMessage: 'Int',
-        description: 'This is an option in a dropdown where users can select type Integer for their parameter.',
-      }),
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT,
-      text: intl.formatMessage({
-        defaultMessage: 'Object',
-        description: 'This is an option in a dropdown where users can select type Object for their parameter.',
-      }),
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT,
-      text: intl.formatMessage({
-        defaultMessage: 'Secure Objcet',
-        description: 'This is an option in a dropdown where users can select type Secure Object for their parameter.',
-      }),
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING,
-      text: intl.formatMessage({
-        defaultMessage: 'Secure String',
-        description: 'This is an option in a dropdown where users can select type Secure String for their parameter.',
-      }),
-    },
-    {
-      key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING,
-      text: intl.formatMessage({
-        defaultMessage: 'String',
-        description: 'This is an option in a dropdown where users can select type String for their parameter.',
-      }),
-    },
-  ];
-
-  const typeOptionsForStandard: IDropdownOption[] = [
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
       text: intl.formatMessage({
@@ -276,7 +209,7 @@ export function WorkflowParameter({
       defaultMessage: 'Type',
       description: 'Parameter Field Type Title',
     });
-    if (isEditable || !standardMode) {
+    if (isEditable) {
       return (
         <>
           <div className="msla-workflow-parameter-field">
@@ -301,7 +234,7 @@ export function WorkflowParameter({
             <Dropdown
               id={parameterDetails.type}
               ariaLabel={typeTitle}
-              options={standardMode ? typeOptionsForStandard : typeOptions}
+              options={typeOptions}
               selectedKey={type}
               styles={dropdownStyles}
               onChange={onTypeChange}
@@ -420,55 +353,38 @@ export function WorkflowParameter({
     );
   };
 
-  if (standardMode) {
-    const headingTitle = intl.formatMessage({
-      defaultMessage: 'New parameter',
-      description: 'Heading Title for a Parameter Without Name',
-    });
+  const headingTitle = intl.formatMessage({
+    defaultMessage: 'New parameter',
+    description: 'Heading Title for a Parameter Without Name',
+  });
 
-    return (
-      <div className="msla-workflow-parameter">
-        <div className="msla-workflow-parameter-group-standard">
-          <div>
-            <CommandBarButton
-              className="msla-workflow-parameter-heading-button"
-              iconProps={iconProps}
-              onClick={handleToggleExpand}
-              styles={commandBarStyles}
-              text={name ? name : headingTitle}
-            />
-          </div>
-          {expanded ? renderParameterFields(parameterDetails, errors) : null}
+  return (
+    <div className="msla-workflow-parameter">
+      <div className="msla-workflow-parameter-group">
+        <div>
+          <CommandBarButton
+            className="msla-workflow-parameter-heading-button"
+            iconProps={iconProps}
+            onClick={handleToggleExpand}
+            styles={commandBarStyles}
+            text={name ? name : headingTitle}
+          />
         </div>
-        {!isReadOnly ? (
-          <div className="msla-workflow-parameter-edit-or-delete-button">
-            <EditOrDeleteButton
-              onDelete={props.onDelete}
-              showDelete={isEditable}
-              definition={definition}
-              setIsEditable={setIsEditable}
-              setExpanded={setExpanded}
-            />
-          </div>
-        ) : null}
+        {expanded ? renderParameterFields(parameterDetails, errors) : null}
       </div>
-    );
-  } else {
-    return (
-      <div className="msla-workflow-parameter">
-        <div className="msla-workflow-parameter-group">{renderParameterFields(parameterDetails, errors)}</div>
-        {!isReadOnly ? (
+      {!isReadOnly ? (
+        <div className="msla-workflow-parameter-edit-or-delete-button">
           <EditOrDeleteButton
-            showDelete
             onDelete={props.onDelete}
+            showDelete={isEditable}
             definition={definition}
             setIsEditable={setIsEditable}
             setExpanded={setExpanded}
           />
-        ) : null}
-      </div>
-    );
-  }
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 function isSecureParameter(type?: string): boolean {
