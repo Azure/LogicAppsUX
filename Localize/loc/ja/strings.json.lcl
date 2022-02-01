@@ -39,6 +39,9 @@
       <Item ItemId=";0zuBIl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Secure Objcet]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[安全なオブジェクト]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -550,7 +553,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Secure String]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[セキュリティで保護された文字列]]></Val>
+            <Val><![CDATA[安全な文字列]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -787,7 +790,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Actual Value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[実際の値]]></Val>
+            <Val><![CDATA[実績値]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -898,7 +901,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Int]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Int]]></Val>
+            <Val><![CDATA[INT]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -925,7 +928,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Type]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[種類]]></Val>
+            <Val><![CDATA[タイプ]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -979,7 +982,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Float]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[浮動小数点数]]></Val>
+            <Val><![CDATA[浮動]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

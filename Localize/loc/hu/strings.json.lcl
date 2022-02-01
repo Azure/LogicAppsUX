@@ -39,6 +39,9 @@
       <Item ItemId=";0zuBIl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Secure Objcet]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Biztonságos objektum]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
