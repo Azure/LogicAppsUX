@@ -1,0 +1,42 @@
+{
+  "root": "libs/services/resolution-service",
+  "sourceRoot": "libs/services/resolution-service/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/services/resolution-service",
+        "main": "libs/services/resolution-service/src/index.ts",
+        "tsConfig": "libs/services/resolution-service/tsconfig.lib.json",
+        "project": "libs/services/resolution-service/package.json",
+        "entryFile": "libs/services/resolution-service/src/index.ts",
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "assets": [
+          {
+            "glob": "libs/services/resolution-service/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/services/resolution-service/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/services/resolution-service"],
+      "options": {
+        "jestConfig": "libs/services/resolution-service/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

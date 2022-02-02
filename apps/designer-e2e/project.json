@@ -1,0 +1,26 @@
+{
+  "root": "apps/designer-e2e",
+  "sourceRoot": "apps/designer-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/designer-e2e/cypress.json",
+        "devServerTarget": "designer:storybook"
+      },
+      "configurations": {
+        "ci": {
+          "devServerTarget": "designer:storybook:ci"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/designer-e2e/**/*.{js,ts}"]
+      }
+    }
+  }
+}
