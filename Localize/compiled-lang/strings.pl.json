@@ -17,12 +17,6 @@
       "value": "Kopiuj adres URL"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "Zabezpieczanie obiektu Objcet"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -107,22 +101,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "Parametr"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Błędne"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "Dodaj parametr"
     }
   ],
   "5rkegy": [
@@ -227,12 +209,6 @@
       "value": "Edytowanie tytułu karty"
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "Parametry"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -291,12 +267,6 @@
     {
       "type": 0,
       "value": "Zakończono pomyślnie"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "Parametry używane w aplikacji logiki zostaną przekształcone na szablon usługi Azure Resource Manager podczas generowania szablonu wdrożenia."
     }
   ],
   "PaPPLr": [
@@ -401,12 +371,6 @@
       "value": " min"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "Aby tworzyć parametry usługi Logic Apps i zarządzać nimi, nadaj wartość domyślną."
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -417,6 +381,12 @@
     {
       "type": 0,
       "value": "Nazwa"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -499,12 +469,6 @@
       "value": "Ciąg"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "Bezpieczny ciąg"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -527,12 +491,6 @@
     {
       "type": 0,
       "value": "Błąd podczas ładowania składnika."
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "Aby odwołać się do parametru, użyj listy zawartości dynamicznej."
     }
   ],
   "e4Onhn": [
@@ -739,12 +697,6 @@
       "value": "Parametry"
     }
   ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "Parametry są współużytkowane w ramach przepływów pracy w aplikacji logiki."
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -869,6 +821,12 @@
     {
       "type": 0,
       "value": "Przekroczono limit czasu"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "z4YYlQ": [

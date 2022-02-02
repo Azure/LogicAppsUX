@@ -17,12 +17,6 @@
       "value": "Copia URL"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "Oggetto sicuro"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -69,22 +63,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "Parametro"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Con errori"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "Aggiungere parametro"
     }
   ],
   "5rkegy": [
@@ -167,12 +149,6 @@
       "value": "Modifica del titolo della scheda"
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "Parametri"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -239,12 +215,6 @@
     {
       "type": 0,
       "value": "Operazione riuscita"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "I parametri usati nell'app per la logica verranno convertiti in un modello di Azure Resource Manager durante la generazione del modello di distribuzione."
     }
   ],
   "PaPPLr": [
@@ -327,12 +297,6 @@
       "value": " m"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "Consente di creare e gestire i parametri delle app per la logica e assegnare loro un valore predefinito."
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -343,6 +307,12 @@
     {
       "type": 0,
       "value": "Nome"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -425,12 +395,6 @@
       "value": "Stringa"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "Stringa sicura"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -453,12 +417,6 @@
     {
       "type": 0,
       "value": "Si è verificato un errore durante il caricamento del componente."
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "Per fare riferimento a un parametro, usare l'elenco contenuto dinamico."
     }
   ],
   "e4Onhn": [
@@ -643,12 +601,6 @@
       "value": "Parametri"
     }
   ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "I parametri vengono condivisi tra flussi di lavoro in un'app per la logica."
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -751,6 +703,12 @@
     {
       "type": 0,
       "value": "Timeout"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "z4YYlQ": [

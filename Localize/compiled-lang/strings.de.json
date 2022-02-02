@@ -17,12 +17,6 @@
       "value": "URL kopieren"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "Sicheres Objekt"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -69,22 +63,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "Parameter"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Fehlerhaft"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "Parameter hinzufügen"
     }
   ],
   "5rkegy": [
@@ -167,12 +149,6 @@
       "value": "Der Kartentitel wird bearbeitet."
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "Parameter"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -231,12 +207,6 @@
     {
       "type": 0,
       "value": "Erfolgreich"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "In der Logik-App verwendete Parameter werden während der Generierung von Bereitstellungsvorlagen in eine Azure Resource Manager-Vorlage konvertiert."
     }
   ],
   "PaPPLr": [
@@ -323,12 +293,6 @@
       "value": "m"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "Hiermit werden Logic Apps-Parameter erstellt, verwaltet und mit einem Standardwert versehen."
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -339,6 +303,12 @@
     {
       "type": 0,
       "value": "Name"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -421,12 +391,6 @@
       "value": "Zeichenfolge"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "Sichere Zeichenfolge"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -449,12 +413,6 @@
     {
       "type": 0,
       "value": "Fehler beim Laden der Komponente."
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "Verwenden Sie die Liste dynamischer Inhalte, um auf einen Parameter zu verweisen."
     }
   ],
   "e4Onhn": [
@@ -639,12 +597,6 @@
       "value": "Parameter"
     }
   ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "Parameter werden workflowübergreifend in einer Logik-App freigegeben."
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -747,6 +699,12 @@
     {
       "type": 0,
       "value": "Timeout"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "z4YYlQ": [

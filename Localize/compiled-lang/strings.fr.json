@@ -17,12 +17,6 @@
       "value": "Copier l'URL"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "Objet sécurisé"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -69,22 +63,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "Paramètre"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "En échec"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "Ajouter un paramètre"
     }
   ],
   "5rkegy": [
@@ -167,12 +149,6 @@
       "value": "Modification du titre de la carte"
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "Paramètres"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -231,12 +207,6 @@
     {
       "type": 0,
       "value": "Réussi"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "Les paramètres utilisés dans l'application logique sont convertis en modèle Azure Resource Manager pendant la génération du modèle de déploiement."
     }
   ],
   "PaPPLr": [
@@ -319,12 +289,6 @@
       "value": " m"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "Créez et gérez les paramètres Logic Apps, donnez une valeur par défaut."
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -335,6 +299,12 @@
     {
       "type": 0,
       "value": "Nom"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -417,12 +387,6 @@
       "value": "Chaîne"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "Chaîne sécurisée"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -445,12 +409,6 @@
     {
       "type": 0,
       "value": "Erreur lors du chargement du composant."
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "Pour référencer un paramètre, utilisez la liste contenu dynamique."
     }
   ],
   "e4Onhn": [
@@ -635,12 +593,6 @@
       "value": "Paramètres"
     }
   ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "Les paramètres sont partagés entre les flux de travail d’une Application Logique."
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -743,6 +695,12 @@
     {
       "type": 0,
       "value": "Expiré"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "z4YYlQ": [

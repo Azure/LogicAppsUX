@@ -17,12 +17,6 @@
       "value": "复制 URL"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "安全对象"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -62,22 +56,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "参数"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "已出错"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "添加参数"
     }
   ],
   "5rkegy": [
@@ -149,12 +131,6 @@
       "value": "正在编辑卡标题"
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "参数"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -213,12 +189,6 @@
     {
       "type": 0,
       "value": "成功"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "在部署模板生成期间，逻辑应用中使用的参数将被转换为 Azure 资源管理器模板。"
     }
   ],
   "PaPPLr": [
@@ -290,12 +260,6 @@
       "value": " 分"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "创建、管理逻辑应用参数，并为其指定一个默认值。"
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -306,6 +270,12 @@
     {
       "type": 0,
       "value": "名称"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -392,12 +362,6 @@
       "value": "字符串"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "安全字符串"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -420,12 +384,6 @@
     {
       "type": 0,
       "value": "加载组件时出错。"
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "若要引用参数，请使用动态内容列表。"
     }
   ],
   "e4Onhn": [
@@ -599,12 +557,6 @@
       "value": "参数"
     }
   ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "在逻辑应用中的工作流之间共享参数。"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -696,6 +648,12 @@
     {
       "type": 0,
       "value": "已超时"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "z4YYlQ": [
