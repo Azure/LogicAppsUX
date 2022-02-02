@@ -1,0 +1,30 @@
+name: Azure Publish
+
+on:
+  push:
+    branches:
+      - resolutionServicePublish
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - run: npm ci
+      - run: npm run build:resolution-service
+
+      - uses: innerspacetrainings/azure-npm-publish@master
+        with:
+          package-dir: 'dist/libs/services/intl'
+          npm-email: 'travisharris@microsoft.com'
+          organization: 'One'
+          feed: 'microsoft-logic-apps'
+          username: 'logic-apps-automation'
+          base64-token: ${{ secrets.PUBLISHING_PAT }}
