@@ -8,6 +8,8 @@
     "build": "nx run designer:build",
     "test": "nx affected --target=test",
     "test:all": "nx run-many --all --target=test",
+    "test:e2e": "nx run designer-e2e:e2e",
+    "test:e2e:ci": "nx run designer-e2e:e2e:ci",
     "build-storybook": "NODE_ENV=production nx run designer:build-storybook",
     "lint": "nx affected --target=lint",
     "prepare": "husky install",
