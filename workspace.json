@@ -202,13 +202,22 @@
       "projectType": "library",
       "targets": {
         "build": {
-          "executor": "@nrwl/js:tsc",
+          "executor": "@nrwl/web:rollup",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/libs/services/resolution-service",
             "main": "libs/services/resolution-service/src/index.ts",
             "tsConfig": "libs/services/resolution-service/tsconfig.lib.json",
-            "assets": ["libs/services/resolution-service/*.md"]
+            "project": "libs/services/resolution-service/package.json",
+            "entryFile": "libs/services/resolution-service/src/index.ts",
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "libs/services/resolution-service/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
           }
         },
         "lint": {
