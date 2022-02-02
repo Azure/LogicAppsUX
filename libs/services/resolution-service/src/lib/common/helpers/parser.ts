@@ -168,6 +168,14 @@ export default class ExpressionParser {
         continue;
       }
 
+      if (previousPosition < currentPosition) {
+        const value = expression.substring(previousPosition, currentPosition);
+        segments.push({
+          type: ExpressionType.StringLiteral,
+          value: value,
+        });
+      }
+
       if (currentPosition > 0 && expression.charAt(currentPosition - 1) === '@') {
         previousPosition = ++currentPosition;
         continue;
