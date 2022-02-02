@@ -11,7 +11,7 @@ import { Icon, IIconProps } from '@fluentui/react/lib/Icon';
 import { getTheme, IStyle } from '@fluentui/react/lib/Styling';
 import { classNamesFunction } from '@fluentui/react/lib/Utilities';
 import * as React from 'react';
-import { getIntl } from '@microsoft-logic-apps/utils';
+import { getIntl } from '@microsoft-logic-apps/intl';
 
 import Constants from '../../constants';
 import { Flyout } from '../../flyout';
