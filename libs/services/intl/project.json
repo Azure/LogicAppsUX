@@ -1,0 +1,43 @@
+{
+  "root": "libs/services/intl",
+  "sourceRoot": "libs/services/intl/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/services/intl",
+        "tsConfig": "libs/services/intl/tsconfig.lib.json",
+        "project": "libs/services/intl/package.json",
+        "entryFile": "libs/services/intl/src/index.ts",
+        "external": ["react/jsx-runtime"],
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "compiler": "babel",
+        "assets": [
+          {
+            "glob": "libs/services/intl/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/services/intl/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/services/intl"],
+      "options": {
+        "jestConfig": "libs/services/intl/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

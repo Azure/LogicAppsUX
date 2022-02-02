@@ -1,12 +1,11 @@
 import { ThemeProvider, Theme } from '@fluentui/react';
 import React, { useEffect } from 'react';
-import { IntlProvider } from 'react-intl';
+import { IntlProvider } from '@microsoft-logic-apps/intl';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { RootState, store } from './store';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { loadLocaleMessages } from './state/localizationSlice';
-import { IntlGlobalProvider } from '@microsoft-logic-apps/utils';
 
 export interface DesignerProviderProps {
   theme?: Theme;
@@ -35,7 +34,7 @@ const DesignerProviderInner = ({ theme = AzureThemeLight, locale = 'en', childre
               throw err;
             }}
           >
-            <IntlGlobalProvider>{children}</IntlGlobalProvider>
+            {children}
           </IntlProvider>
         </Provider>
       </ThemeProvider>
