@@ -36,8 +36,8 @@ export default class ResolutionService {
   private get _isContextEmptyOrUndefined() {
     return (
       !this._context ||
-      ((this._context.parameters || Object.keys(this._context.parameters).length === 0) &&
-        (this._context.appsettings || Object.keys(this._context.appsettings).length === 0))
+      ((!this._context.parameters || Object.keys(this._context.parameters).length === 0) &&
+        (!this._context.appsettings || Object.keys(this._context.appsettings).length === 0))
     );
   }
 

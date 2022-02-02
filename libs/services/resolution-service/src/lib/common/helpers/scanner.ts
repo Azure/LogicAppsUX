@@ -1,6 +1,5 @@
 import { equals } from '@microsoft-logic-apps/utils';
-import { isNumeric } from 'rxjs/util/isNumeric';
-import { CommonConstants, isWhitespace } from '../constants';
+import { CommonConstants, isNumeric, isWhitespace } from '../constants';
 import { ExpressionExceptionCode } from '../exceptions/expression';
 import { ScannerException } from '../exceptions/scanner';
 import { ExpressionToken } from '../models/expression';
@@ -52,7 +51,7 @@ export default class ExpressionScanner {
 
   private _getToken(): ExpressionToken {
     const token = this._currentToken;
-    this._readNextToken();
+    this._currentToken = this._readNextToken();
     return token;
   }
 

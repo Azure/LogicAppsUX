@@ -15,6 +15,10 @@ export class CommonConstants {
   };
 }
 
+export function isNumeric(ch: string) {
+  return /[0-9]/g.test(ch);
+}
+
 export function isWhitespace(ch: string) {
   // NOTE(joechung): https://msdn.microsoft.com/en-us/library/system.char.iswhitespace.aspx
   switch (ch) {
