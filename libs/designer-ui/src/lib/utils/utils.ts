@@ -1,5 +1,5 @@
 import Constants from '../constants';
-import { getIntl } from '@microsoft-logic-apps/utils';
+import { getIntl } from '@microsoft-logic-apps/intl';
 /**
  * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)
  * @arg {number} milliseconds - The number of milliseconds in the duration

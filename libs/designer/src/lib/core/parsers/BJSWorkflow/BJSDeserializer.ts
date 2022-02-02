@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { isNullOrEmpty } from '@microsoft-logic-apps/utils';
-import { getIntl } from '@microsoft-logic-apps/utils';
+import { getIntl } from '@microsoft-logic-apps/intl';
 import { WorkflowNode } from '../models/workflowNode';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 
