@@ -23,7 +23,17 @@ const DesignerProviderInner = ({ theme = AzureThemeLight, locale = 'en', childre
     <ProviderWrappedContext.Provider value={true}>
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <IntlProvider locale={i18n.locale} defaultLocale={i18n.defaultLocale} messages={i18n.messages}>
+          <IntlProvider
+            locale={i18n.locale}
+            defaultLocale={i18n.defaultLocale}
+            messages={i18n.messages}
+            onError={(err) => {
+              if (err.code === 'MISSING_TRANSLATION') {
+                return;
+              }
+              throw err;
+            }}
+          >
             {children}
           </IntlProvider>
         </Provider>
