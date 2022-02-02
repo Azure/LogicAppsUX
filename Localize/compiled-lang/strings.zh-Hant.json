@@ -17,12 +17,6 @@
       "value": "複製 URL"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "安全物件"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -58,22 +52,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "參數"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "已故障"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "新增參數"
     }
   ],
   "5rkegy": [
@@ -145,12 +127,6 @@
       "value": "正在編輯卡片標題"
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "參數"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -209,12 +185,6 @@
     {
       "type": 0,
       "value": "已成功"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "在部署範本產生期間，Logic Apps 中使用的參數將會轉換成 Azure Resource Manager 範本。"
     }
   ],
   "PaPPLr": [
@@ -286,12 +256,6 @@
       "value": " 分鐘"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "建立、管理 Logic Apps 參數，並設定預設值。"
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -302,6 +266,12 @@
     {
       "type": 0,
       "value": "名稱"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -384,12 +354,6 @@
       "value": "字串"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "安全字串"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -412,12 +376,6 @@
     {
       "type": 0,
       "value": "載入元件時發生錯誤。"
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "若要參考參數，請使用動態內容清單。"
     }
   ],
   "e4Onhn": [
@@ -591,12 +549,6 @@
       "value": "參數"
     }
   ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "參數會在邏輯應用程式中跨工作流程共用。"
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -688,6 +640,12 @@
     {
       "type": 0,
       "value": "逾時"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "z4YYlQ": [

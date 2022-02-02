@@ -17,12 +17,6 @@
       "value": "Salin URL"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "Objek Aman"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -58,22 +52,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "Parameter"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Bermasalah"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "Tambahkan Parameter"
     }
   ],
   "5rkegy": [
@@ -145,12 +127,6 @@
       "value": "Mengedit judul kartu"
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "Parameter"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -209,12 +185,6 @@
     {
       "type": 0,
       "value": "Berhasil"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "Parameter yang digunakan dalam Aplikasi Logika akan dikonversi menjadi templat Azure Resource Manager selama pembuatan templat penerapan."
     }
   ],
   "PaPPLr": [
@@ -286,12 +256,6 @@
       "value": "m"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "Buat, kelola parameter Aplikasi Logika, berikan nilai default."
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -302,6 +266,12 @@
     {
       "type": 0,
       "value": "Nama"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -384,12 +354,6 @@
       "value": "String"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "String Aman"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -412,12 +376,6 @@
     {
       "type": 0,
       "value": "Kesalahan memuat komponen."
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "Untuk mereferensikan parameter, gunakan daftar konten dinamis."
     }
   ],
   "e4Onhn": [
@@ -591,12 +549,6 @@
       "value": "Parameter"
     }
   ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "Parameter dibagikan di seluruh alur kerja dalam Aplikasi Logika."
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -688,6 +640,12 @@
     {
       "type": 0,
       "value": "Waktu Habis"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "z4YYlQ": [

@@ -17,12 +17,6 @@
       "value": "URL 복사"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "보안 개체"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -58,22 +52,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "매개 변수"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "오류"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "매개 변수 추가"
     }
   ],
   "5rkegy": [
@@ -145,12 +127,6 @@
       "value": "카드 제목 편집"
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "매개 변수"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -209,12 +185,6 @@
     {
       "type": 0,
       "value": "성공함"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "논리 앱에서 사용되는 매개 변수는 배포 템플릿 생성 중에 Azure Resource Manager 템플릿으로 변환됩니다."
     }
   ],
   "PaPPLr": [
@@ -286,12 +256,6 @@
       "value": "분"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "Logic Apps 매개 변수를 만들고 관리하고 기본값을 지정합니다."
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -302,6 +266,12 @@
     {
       "type": 0,
       "value": "이름"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -384,12 +354,6 @@
       "value": "문자열"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "보안 문자열"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -412,12 +376,6 @@
     {
       "type": 0,
       "value": "구성 요소를 로드하는 동안 오류가 발생했습니다."
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "매개 변수를 참조하려면 동적 콘텐츠 목록을 사용하세요."
     }
   ],
   "e4Onhn": [
@@ -591,12 +549,6 @@
       "value": "매개 변수"
     }
   ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "매개 변수는 논리 앱의 워크플로 간에 공유됩니다."
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -688,6 +640,12 @@
     {
       "type": 0,
       "value": "시간 초과"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "z4YYlQ": [

@@ -17,12 +17,6 @@
       "value": "Copiar URL"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "Objeto Seguro"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -69,22 +63,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "Parâmetro"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Com falha"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "Adicionar Parâmetro"
     }
   ],
   "5rkegy": [
@@ -167,12 +149,6 @@
       "value": "Título do cartão de edição"
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "Parâmetros"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -231,12 +207,6 @@
     {
       "type": 0,
       "value": "Bem-sucedido"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "Os parâmetros usados no Aplicativo Lógico serão convertidos no modelo do Azure Resource Manager durante a geração do modelo de implantação."
     }
   ],
   "PaPPLr": [
@@ -319,12 +289,6 @@
       "value": "m"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "Crie, gerencie parâmetros de Aplicativos Lógicos, atribua a ele um valor padrão."
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -335,6 +299,12 @@
     {
       "type": 0,
       "value": "Nome"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -417,12 +387,6 @@
       "value": "Cadeia de Caracteres"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "Cadeia de Caracteres Segura"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -445,12 +409,6 @@
     {
       "type": 0,
       "value": "Erro ao carregar o componente."
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "Para fazer referência a um parâmetro, use a lista de conteúdo dinâmico."
     }
   ],
   "e4Onhn": [
@@ -635,12 +593,6 @@
       "value": "Parâmetros"
     }
   ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "Os parâmetros são compartilhados entre fluxos de trabalho em um Aplicativo Lógico."
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -743,6 +695,12 @@
     {
       "type": 0,
       "value": "Tempo Limite Expirado"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "z4YYlQ": [

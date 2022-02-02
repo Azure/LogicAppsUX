@@ -17,12 +17,6 @@
       "value": "URL のコピー"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "Secure Objcet"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -58,22 +52,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "パラメーター"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "エラー"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "パラメーターの追加"
     }
   ],
   "5rkegy": [
@@ -145,12 +127,6 @@
       "value": "カード タイトルの編集"
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "パラメーター"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -209,12 +185,6 @@
     {
       "type": 0,
       "value": "成功"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "ロジック アプリで使用されるパラメーターは、デプロイ テンプレートの生成中に Azure Resource Manager テンプレートに変換されます。"
     }
   ],
   "PaPPLr": [
@@ -286,12 +256,6 @@
       "value": " 分"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "ロジック アプリのパラメーターを作成、管理し、既定値を指定します。"
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -302,6 +266,12 @@
     {
       "type": 0,
       "value": "名前"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -384,12 +354,6 @@
       "value": "文字列"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "セキュリティで保護された文字列"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -412,12 +376,6 @@
     {
       "type": 0,
       "value": "コンポーネントの読み込みでエラーが発生しました。"
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "パラメーターを参照するには、動的コンテンツ リストを使用してください。"
     }
   ],
   "e4Onhn": [
@@ -570,7 +528,7 @@
   "lztiwS": [
     {
       "type": 0,
-      "value": "実際の値"
+      "value": "実績値"
     }
   ],
   "m7Y6Qf": [
@@ -589,12 +547,6 @@
     {
       "type": 0,
       "value": "パラメーター"
-    }
-  ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "ロジック アプリ内で、パラメーターはワークフロー間で共有されています。"
     }
   ],
   "qGfwxW": [
@@ -633,7 +585,7 @@
   "r9SVE4": [
     {
       "type": 0,
-      "value": "Int"
+      "value": "INT"
     }
   ],
   "ss5JPH": [
@@ -663,7 +615,7 @@
   "tNoZx2": [
     {
       "type": 0,
-      "value": "種類"
+      "value": "タイプ"
     }
   ],
   "uN4zFU": [
@@ -690,6 +642,12 @@
       "value": "タイムアウト"
     }
   ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
@@ -699,7 +657,7 @@
   "zjDJwP": [
     {
       "type": 0,
-      "value": "浮動小数点数"
+      "value": "浮動"
     }
   ]
 }

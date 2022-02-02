@@ -17,12 +17,6 @@
       "value": "Kopírovat adresu URL"
     }
   ],
-  "0zuBIl": [
-    {
-      "type": 0,
-      "value": "Zabezpečený objekt"
-    }
-  ],
   "1KSzxz": [
     {
       "type": 0,
@@ -103,22 +97,10 @@
       "value": "count"
     }
   ],
-  "2kCC7s": [
-    {
-      "type": 0,
-      "value": "Parametr"
-    }
-  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "S chybou"
-    }
-  ],
-  "4RTRDT": [
-    {
-      "type": 0,
-      "value": "Přidat parametr"
     }
   ],
   "5rkegy": [
@@ -223,12 +205,6 @@
       "value": "Úprava názvu karty"
     }
   ],
-  "L4hZzK": [
-    {
-      "type": 0,
-      "value": "Parametry"
-    }
-  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -287,12 +263,6 @@
     {
       "type": 0,
       "value": "Podařilo se"
-    }
-  ],
-  "PY5/AN": [
-    {
-      "type": 0,
-      "value": "Při generování šablony nasazení se parametry, které se používají v aplikaci Logic Apps, převedou na šablonu Azure Resource Manageru."
     }
   ],
   "PaPPLr": [
@@ -397,12 +367,6 @@
       "value": " m"
     }
   ],
-  "T7iaH/": [
-    {
-      "type": 0,
-      "value": "Vytvořte a spravujte parametry Logic Apps, nastavte jejich výchozí hodnoty."
-    }
-  ],
   "T8Xqt9": [
     {
       "type": 0,
@@ -413,6 +377,12 @@
     {
       "type": 0,
       "value": "Název"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "To reference a parameter, use the dynamic content list."
     }
   ],
   "VXBWrq": [
@@ -495,12 +465,6 @@
       "value": "Řetězec"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "Zabezpečený řetězec"
-    }
-  ],
   "ZazdvR": [
     {
       "type": 0,
@@ -523,12 +487,6 @@
     {
       "type": 0,
       "value": "Při načítání komponenty došlo k chybě."
-    }
-  ],
-  "duuXp2": [
-    {
-      "type": 0,
-      "value": "Pokud chcete odkazovat na parametr, použijte seznam dynamického obsahu."
     }
   ],
   "e4Onhn": [
@@ -735,12 +693,6 @@
       "value": "Parametry"
     }
   ],
-  "qGNaL0": [
-    {
-      "type": 0,
-      "value": "Parametry se sdílejí mezi pracovními postupy v aplikaci logiky."
-    }
-  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -865,6 +817,12 @@
     {
       "type": 0,
       "value": "Vypršel časový limit."
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameters are shared across workflows in a Logic App."
     }
   ],
   "z4YYlQ": [
