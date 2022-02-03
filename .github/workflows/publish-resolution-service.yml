@@ -26,4 +26,4 @@ jobs:
           dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
           working-directory: 'dist/libs/services/resolution-service'
 
-      - run: npm publish
+      - run: cd ./dist/libs/services/resolution-service && npm publish
