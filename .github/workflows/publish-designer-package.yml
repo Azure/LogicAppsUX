@@ -28,7 +28,7 @@ jobs:
           tag-prefix: 'designer@v'
 
       - run: npm ci
-      - run: npm run build:designer
+      - run: npm run build
 
       - name: Use .npmrc
         uses: bduff9/use-npmrc@v1.1
