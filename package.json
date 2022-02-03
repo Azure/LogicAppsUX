@@ -16,7 +16,8 @@
     "pretty": "nx format:write --uncommitted",
     "extract": "formatjs extract \"libs/**/*.ts*\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"Localize/compiled-lang/\" ",
-    "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"Localize/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA"
+    "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"Localize/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
+    "build:resolution-service": "nx run services-resolution-service:build"
   },
   "private": true,
   "dependencies": {
