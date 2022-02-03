@@ -20,7 +20,7 @@ jobs:
 
       - run: npm ci
       - name: 'Version Bump'
-        run: git config --global user.email "travisharris@microsoft.com" && git config --global user.name "RELEASE AUTOMATION" && npm run bump
+        run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && npm run bump
 
       - name: Push changes
         uses: ad-m/github-push-action@master
@@ -35,11 +35,11 @@ jobs:
       matrix:
         lib:
           [
-            './dist/libs/designer',
-            './dist/libs/utils',
-            './dist/libs/designer-ui',
-            './dist/libs/services/resolution-service',
-            './dist/libs/services/intl',
+            { dist: './dist/libs/designer', package: 'designer' },
+            { dist: './dist/libs/utils', package: 'utils' },
+            { dist: './dist/libs/designer-ui', package: 'designer-ui' },
+            { dist: './dist/libs/services/resolution-service', package: 'services-resolution-service' },
+            { dist: './dist/libs/services/intl', package: 'services-intl' },
           ]
     steps:
       - name: 'Checkout Github Action'
@@ -53,12 +53,12 @@ jobs:
           node-version: 16
 
       - run: npm ci
-      - run: npm run build:all
+      - run: npx nx build ${{ matrix.lib.dist }}
 
       - name: Use .npmrc
         uses: bduff9/use-npmrc@v1.1
         with:
           dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
-          working-directory: ${{ matrix.lib }}
+          working-directory: ${{ matrix.lib.dist }}
 
       # - run: cd ${{ matrix.lib }} && npm publish
