@@ -20,7 +20,7 @@ jobs:
 
       - run: npm ci
       - name: 'Version Bump'
-        run: npm run bump
+        run: git config --global user.email "travisharris@microsoft.com" && git config --global user.name "RELEASE AUTOMATION" && npm run bump
 
       - name: Push changes
         uses: ad-m/github-push-action@master
