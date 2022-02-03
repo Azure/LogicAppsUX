@@ -63,7 +63,7 @@ export const Checkbox = (props: CheckboxProps) => {
         checked={checked}
         className="msla-checkbox-label"
         id={id}
-        label={text + ' ' + getDurationString(1500, false)}
+        label={text}
         styles={checkboxStyles}
         disabled={disabled}
         onChange={handleChange as any}

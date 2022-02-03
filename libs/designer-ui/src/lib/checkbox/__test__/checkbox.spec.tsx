@@ -27,8 +27,19 @@ describe('ui/checkbox', () => {
     const checkbox = renderer.getRenderOutput();
     expect(checkbox.type).toBe('div');
 
-    const [label]: any[] = React.Children.toArray(checkbox.props.children); // tslint:disable-line: no-any
+    const [label]: any[] = React.Children.toArray(checkbox.props.children);
     expect(label.props.className).toBe('msla-checkbox-label');
+  });
+
+  it('should display correct text', () => {
+    const text = 'Test Text';
+    renderer.render(<Checkbox text={text} />);
+
+    const checkbox = renderer.getRenderOutput();
+    expect(checkbox.type).toBe('div');
+
+    const [fabricCheckbox]: any[] = React.Children.toArray(checkbox.props.children);
+    expect(fabricCheckbox.props.label).toBe(text);
   });
 
   it('should render additional class', () => {
@@ -42,7 +53,7 @@ describe('ui/checkbox', () => {
     renderer.render(<Checkbox className="additional-class" />);
 
     const checkbox = renderer.getRenderOutput();
-    const [input]: any[] = React.Children.toArray(checkbox.props.children); // tslint:disable-line: no-any
+    const [input]: any[] = React.Children.toArray(checkbox.props.children);
     expect(input.props.checked).toBeFalsy();
   });
 
@@ -50,7 +61,7 @@ describe('ui/checkbox', () => {
     renderer.render(<Checkbox className="additional-class" initChecked={false} />);
 
     const checkbox = renderer.getRenderOutput();
-    const [input]: any[] = React.Children.toArray(checkbox.props.children); // tslint:disable-line: no-any
+    const [input]: any[] = React.Children.toArray(checkbox.props.children);
     expect(input.props.checked).toBeFalsy();
   });
 
@@ -58,7 +69,7 @@ describe('ui/checkbox', () => {
     renderer.render(<Checkbox className="additional-class" initChecked={true} />);
 
     const checkbox = renderer.getRenderOutput();
-    const [input]: any[] = React.Children.toArray(checkbox.props.children); // tslint:disable-line: no-any
+    const [input]: any[] = React.Children.toArray(checkbox.props.children);
     expect(input.props.checked).toBeTruthy();
   });
 
@@ -67,7 +78,7 @@ describe('ui/checkbox', () => {
       renderer.render(<Checkbox descriptionText="description" />);
 
       const checkbox = renderer.getRenderOutput();
-      const [, button]: any[] = React.Children.toArray(checkbox.props.children); // tslint:disable-line: no-any
+      const [, button]: any[] = React.Children.toArray(checkbox.props.children);
 
       // TODO(joechung): Figure out how to test the render output after click.
       const e = {
@@ -85,7 +96,7 @@ describe('ui/checkbox', () => {
 
       // TODO(joechung): Figure out how to test the render output after input change.
       const checkbox = renderer.getRenderOutput();
-      const [input]: any[] = React.Children.toArray(checkbox.props.children); // tslint:disable-line: no-any
+      const [input]: any[] = React.Children.toArray(checkbox.props.children);
       input.props.onChange({});
       expect(onChange).toHaveBeenCalled();
     });
@@ -94,7 +105,7 @@ describe('ui/checkbox', () => {
       renderer.render(<Checkbox />);
 
       const checkbox = renderer.getRenderOutput();
-      const [input]: any[] = React.Children.toArray(checkbox.props.children); // tslint:disable-line: no-any
+      const [input]: any[] = React.Children.toArray(checkbox.props.children);
       expect(() => input.props.onChange({})).not.toThrow();
     });
 
@@ -104,7 +115,7 @@ describe('ui/checkbox', () => {
 
       // TODO(joechung): Figure out how to test the render output after input change.
       const checkbox = renderer.getRenderOutput();
-      const [input]: any[] = React.Children.toArray(checkbox.props.children); // tslint:disable-line: no-any
+      const [input]: any[] = React.Children.toArray(checkbox.props.children);
       input.props.onChange({});
     });
 
@@ -114,7 +125,7 @@ describe('ui/checkbox', () => {
 
       // TODO(joechung): Figure out how to test the render output after input change.
       const checkbox = renderer.getRenderOutput();
-      const [input]: any[] = React.Children.toArray(checkbox.props.children); // tslint:disable-line: no-any
+      const [input]: any[] = React.Children.toArray(checkbox.props.children);
       input.props.onChange({});
       input.props.onChange({});
     });
