@@ -20,7 +20,13 @@ jobs:
 
       - run: npm ci
       - name: 'Version Bump'
-        run: npm run bump && git push
+        run: npm run bump
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.AUTOMATION_PAT }}
+          branch: ${{ github.ref }}
 
   publish:
     needs: bump-version
