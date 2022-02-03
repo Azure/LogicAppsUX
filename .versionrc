@@ -17,6 +17,10 @@
   ],
   "bumpFiles": [
     {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
       "filename": "libs/designer/package.json",
       "type": "json"
     },

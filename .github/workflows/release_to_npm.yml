@@ -1,0 +1,32 @@
+name: Designer Publish
+on:
+  repository_dispatch:
+    types: [npm_push]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: 'Version Bump'
+        run: npm run bump && git push
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Use .npmrc
+        uses: bduff9/use-npmrc@v1.1
+        with:
+          dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
+          working-directory: './dist/libs/designer'
+
+      - run: cd ./dist/libs/designer && npm publish

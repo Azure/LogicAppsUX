@@ -6,6 +6,7 @@
     "start": "nx serve",
     "start:storybook": "nx run designer:storybook",
     "build": "nx run designer:build",
+    "build:all": "nx run-many --all --target=build",
     "test": "nx affected --target=test",
     "test:all": "nx run-many --all --target=test",
     "test:e2e": "nx run designer-e2e:e2e",
