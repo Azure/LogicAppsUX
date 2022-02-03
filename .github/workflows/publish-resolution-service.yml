@@ -24,6 +24,6 @@ jobs:
         uses: bduff9/use-npmrc@v1.1
         with:
           dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
-          working-directory: 'dist/libs/services/resolution-service'
+          working-directory: './dist/libs/services/resolution-service'
 
       - run: cd ./dist/libs/services/resolution-service && npm publish
