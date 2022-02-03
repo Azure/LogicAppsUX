@@ -1,6 +1,6 @@
 {
   "name": "microsoft-logic-apps",
-  "version": "0.0.0",
+  "version": "0.0.9",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -18,7 +18,8 @@
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"Localize/compiled-lang/\" ",
     "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"Localize/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "build:resolution-service": "nx run services-resolution-service:build",
-    "build:utils": "nx run utils:build"
+    "build:utils": "nx run utils:build",
+    "bump": "standard-version --no-verify"
   },
   "private": true,
   "dependencies": {
