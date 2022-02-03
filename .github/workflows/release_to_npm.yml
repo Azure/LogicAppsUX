@@ -18,10 +18,12 @@ jobs:
         with:
           node-version: 16
 
+      - run: npm ci
       - name: 'Version Bump'
         run: npm run bump && git push
 
   publish:
+    needs: bump-version
     runs-on: ubuntu-latest
     strategy:
       matrix:
