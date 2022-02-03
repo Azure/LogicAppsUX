@@ -20,13 +20,13 @@ jobs:
       - run: npm ci
       - run: npm run build:resolution-service
 
-      # - name: Use .npmrc
-      #   uses: bduff9/use-npmrc@v1.1
-      #   with:
-      #     dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
-      #     working-directory: './dist/libs/services/resolution-service'
+      - name: Use .npmrc
+        uses: bduff9/use-npmrc@v1.1
+        with:
+          dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
+          working-directory: './dist/libs/services/resolution-service'
 
-      - run: cd ./dist/libs/services/resolution-service && echo ${{ secrets.PUBLISHING_PAT }} >> .npmrc
+      # - run: cd ./dist/libs/services/resolution-service && echo ${{ secrets.PUBLISHING_PAT }} >> .npmrc
 
       - name: Upload WebApp2 Build Artifact
         uses: actions/upload-artifact@v2
