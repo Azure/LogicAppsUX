@@ -53,7 +53,7 @@ jobs:
           node-version: 16
 
       - run: npm ci
-      - run: npx nx build ${{ matrix.lib.dist }}
+      - run: npx nx build ${{ matrix.lib.package }}
 
       - name: Use .npmrc
         uses: bduff9/use-npmrc@v1.1
