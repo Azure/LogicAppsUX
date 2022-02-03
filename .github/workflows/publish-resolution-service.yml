@@ -1,6 +1,8 @@
 name: Azure Publish
 
-on: workflow_dispatch
+on:
+  repository_dispatch:
+    types: [release_resolution_service]
 
 jobs:
   publish:
