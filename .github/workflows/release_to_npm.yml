@@ -1,0 +1,63 @@
+name: Designer Publish
+on:
+  repository_dispatch:
+    types: [release_npm_packages]
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - run: npm ci
+      - name: 'Version Bump'
+        run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && npm run bump
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.AUTOMATION_PAT }}
+          branch: ${{ github.ref }}
+
+  publish:
+    needs: bump-version
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lib:
+          [
+            { dist: './dist/libs/designer', package: 'designer' },
+            { dist: './dist/libs/utils', package: 'utils' },
+            { dist: './dist/libs/designer-ui', package: 'designer-ui' },
+            { dist: './dist/libs/services/resolution-service', package: 'services-resolution-service' },
+            { dist: './dist/libs/services/intl', package: 'services-intl' },
+          ]
+    steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - run: npm ci
+      - run: npx nx build ${{ matrix.lib.package }}
+
+      - name: Use .npmrc
+        uses: bduff9/use-npmrc@v1.1
+        with:
+          dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
+          working-directory: ${{ matrix.lib.dist }}
+
+      - run: cd ${{ matrix.lib.dist }} && npm publish
