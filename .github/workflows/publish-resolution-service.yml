@@ -17,6 +17,16 @@ jobs:
         with:
           node-version: 16
 
+      - name: 'Automated Version Bump'
+        uses: 'phips28/gh-action-bump-version@master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.AUTOMATION_PAT }}
+        with:
+          bump-policy: 'ignore'
+          commit-message: 'CI: bumps version to {{version}} [skip ci]'
+          tag-prefix: 'resolution-service@v'
+          PACKAGEJSON_DIR: libs/services/resolution-service
+
       - run: npm ci
       - run: npm run build:resolution-service
 
