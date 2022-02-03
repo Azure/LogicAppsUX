@@ -20,11 +20,10 @@ jobs:
       - run: npm ci
       - run: npm run build:resolution-service
 
-      - uses: innerspacetrainings/azure-npm-publish@master
+      - name: Use .npmrc
+        uses: bduff9/use-npmrc@v1.1
         with:
-          package-dir: 'dist/libs/services/intl'
-          npm-email: 'travisharris@microsoft.com'
-          organization: 'One'
-          feed: 'microsoft-logic-apps'
-          username: 'logic-apps-automation'
-          base64-token: ${{ secrets.PUBLISHING_PAT }}
+          dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
+          working-directory: 'dist/libs/services/intl'
+
+      - run: npm publish
