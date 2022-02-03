@@ -1,10 +1,11 @@
 name: Designer Publish
 on:
-  repository_dispatch:
-    types: [npm_push]
+  push:
+    branches:
+      - standard-version
 
 jobs:
-  publish:
+  bump-version:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout Github Action'
@@ -20,13 +21,36 @@ jobs:
       - name: 'Version Bump'
         run: npm run bump && git push
 
+  publish:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lib:
+          [
+            './dist/libs/designer',
+            './dist/libs/utils',
+            './dist/libs/designer-ui',
+            './dist/libs/services/resolution-service',
+            './dist/libs/services/intl',
+          ]
+    steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
       - run: npm ci
-      - run: npm run build
+      - run: npm run build:all
 
       - name: Use .npmrc
         uses: bduff9/use-npmrc@v1.1
         with:
           dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
-          working-directory: './dist/libs/designer'
+          working-directory: ${{ matrix.lib }}
 
-      - run: cd ./dist/libs/designer && npm publish
+      # - run: cd ${{ matrix.lib }} && npm publish
