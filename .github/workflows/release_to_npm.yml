@@ -1,7 +1,8 @@
 name: Designer Publish
 on:
-  repository_dispatch:
-    types: [release_npm_packages]
+  push:
+    branches:
+      - standard-version
 
 jobs:
   bump-version:
