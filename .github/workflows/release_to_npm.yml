@@ -61,4 +61,4 @@ jobs:
           dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
           working-directory: ${{ matrix.lib.dist }}
 
-      # - run: cd ${{ matrix.lib }} && npm publish
+      - run: cd ${{ matrix.lib }} && npm publish
