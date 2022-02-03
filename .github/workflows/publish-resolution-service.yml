@@ -26,12 +26,4 @@ jobs:
           dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
           working-directory: './dist/libs/services/resolution-service'
 
-      # - run: cd ./dist/libs/services/resolution-service && echo ${{ secrets.PUBLISHING_PAT }} >> .npmrc
-
-      - name: Upload WebApp2 Build Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: WebApp2
-          path: ./dist/libs/services/resolution-service
-
-      # - run: cd ./dist/libs/services/resolution-service && npm publish
+      - run: cd ./dist/libs/services/resolution-service && npm publish
