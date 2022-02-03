@@ -1,9 +1,6 @@
 name: Azure Publish
 
-on:
-  push:
-    branches:
-      - resolutionServicePublish
+on: workflow_dispatch
 
 jobs:
   publish:
