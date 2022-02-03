@@ -9,7 +9,9 @@ jobs:
     steps:
       - name: 'Checkout Github Action'
         uses: actions/checkout@master
-
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+          
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
