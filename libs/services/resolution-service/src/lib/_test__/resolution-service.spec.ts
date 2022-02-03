@@ -1,4 +1,4 @@
-import ResolutionService from './../resolution-service';
+import { ResolutionService } from './../resolution-service';
 
 describe('Resolution Service tests', () => {
   it('should resolve a full string replacement correctly', () => {

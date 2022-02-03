@@ -18,7 +18,7 @@ import {
   ExpressionStringInterpolation,
 } from './common/models/expression';
 
-export default class ResolutionService {
+export class ResolutionService {
   private _context: ExpressionEvaluationContext;
 
   constructor(parameters: Record<string, unknown>, appsettings: Record<string, unknown>) {
