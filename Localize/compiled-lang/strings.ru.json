@@ -370,7 +370,7 @@
   "UCNM4L": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "Для ссылки на параметр используйте динамический список содержимого."
     }
   ],
   "VXBWrq": [
@@ -810,7 +810,7 @@
   "xt5TeT": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "Параметры являются общими для всех рабочих процессов в приложении логики."
     }
   ],
   "z4YYlQ": [
