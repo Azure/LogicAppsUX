@@ -271,7 +271,7 @@
   "UCNM4L": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "パラメーターを参照するには、動的コンテンツ リストを使用してください。"
     }
   ],
   "VXBWrq": [
@@ -645,7 +645,7 @@
   "xt5TeT": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "ロジック アプリ内で、パラメーターはワークフロー間で共有されています。"
     }
   ],
   "z4YYlQ": [
