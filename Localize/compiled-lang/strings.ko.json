@@ -271,7 +271,7 @@
   "UCNM4L": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "매개 변수를 참조하려면 동적 콘텐츠 목록을 사용하세요."
     }
   ],
   "VXBWrq": [
@@ -645,7 +645,7 @@
   "xt5TeT": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "매개 변수는 논리 앱의 워크플로 간에 공유됩니다."
     }
   ],
   "z4YYlQ": [

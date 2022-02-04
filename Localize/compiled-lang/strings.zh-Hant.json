@@ -271,7 +271,7 @@
   "UCNM4L": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "若要參考參數，請使用動態內容清單。"
     }
   ],
   "VXBWrq": [
@@ -645,7 +645,7 @@
   "xt5TeT": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "參數會在邏輯應用程式中跨工作流程共用。"
     }
   ],
   "z4YYlQ": [

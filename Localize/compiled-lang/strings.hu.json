@@ -308,7 +308,7 @@
   "UCNM4L": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "Egy paraméterre való hivatkozáshoz használja a dinamikus tartalomlistát."
     }
   ],
   "VXBWrq": [
@@ -704,7 +704,7 @@
   "xt5TeT": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "Egy logikai alkalmazásban a paraméterek meg vannak osztva a munkafolyamatok között."
     }
   ],
   "z4YYlQ": [

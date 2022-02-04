@@ -308,7 +308,7 @@
   "UCNM4L": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "Använd listan med dynamiskt innehåll om du vill referera till en parameter."
     }
   ],
   "VXBWrq": [
@@ -704,7 +704,7 @@
   "xt5TeT": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "Parametrar delas mellan arbetsflöden i en Logic-app."
     }
   ],
   "z4YYlQ": [
