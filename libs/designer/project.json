@@ -15,7 +15,6 @@
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
         "extractCss": true,
         "format": ["cjs", "esm"],
-        "buildableProjectDepsInPackageJsonType": "dependencies",
         "assets": [
           {
             "glob": "libs/designer/README.md",
