@@ -5,7 +5,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "./tools/executors/web:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/designer-ui",
@@ -14,7 +14,8 @@
         "entryFile": "libs/designer-ui/src/index.ts",
         "external": ["react/jsx-runtime"],
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-        "compiler": "babel",
+        "format": ["cjs", "esm"],
+        "buildableProjectDepsInPackageJsonType": "dependencies",
         "assets": [
           {
             "glob": "libs/designer-ui/README.md",
