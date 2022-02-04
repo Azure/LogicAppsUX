@@ -12,18 +12,17 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [16.x]
 
     steps:
       # checkout the repo
       - name: 'Checkout Github Action'
         uses: actions/checkout@master
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
-
-      - run: |
-          git fetch --no-tags --prune --depth=5 origin main
+          
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v2
 
       - name: Set up Node.js version ${{ matrix.node-version }}
         uses: actions/setup-node@v1
@@ -31,12 +30,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - run: npm ci
-      - run: npm run build
-      - run: npm run test:all
+      - run: npx nx affected --target=build --parallel --max-parallel=3
+      - run: npx nx affected --target=test --parallel --max-parallel=2
       - run: npm run test:e2e:ci
-
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: always()
-        with:
-          files: junit.xml
