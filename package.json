@@ -20,7 +20,8 @@
     "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"Localize/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "build:resolution-service": "nx run services-resolution-service:build",
     "build:utils": "nx run utils:build",
-    "bump": "standard-version --no-verify"
+    "bump": "standard-version --no-verify",
+    "postinstall": "tsc -p ./tools/executors/web/tsconfig.json"
   },
   "private": true,
   "dependencies": {
@@ -28,10 +29,12 @@
     "@fluentui/react": "^8.45.0",
     "@fluentui/react-hooks": "^8.3.3",
     "@fluentui/theme": "^2.3.2",
+    "@nrwl/devkit": "^13.7.2",
     "@reduxjs/toolkit": "1.6.2",
     "@storybook/builder-webpack5": "~6.4.5",
     "@storybook/manager-webpack5": "~6.4.5",
     "@types/dagre": "^0.7.46",
+    "chalk": "4.1.0",
     "core-js": "^3.6.5",
     "dagre": "^0.8.5",
     "eslint-plugin-formatjs": "^2.17.8",
@@ -50,6 +53,7 @@
     "react-syntax-highlighter": "^15.4.4",
     "react-use": "^17.3.1",
     "regenerator-runtime": "0.13.7",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
     "to-title-case": "^1.0.0",
     "tslib": "^2.0.0",
     "web-worker": "^1.1.0",
