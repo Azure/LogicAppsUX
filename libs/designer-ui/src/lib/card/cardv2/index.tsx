@@ -3,7 +3,6 @@ import { Icon, IIconProps } from '@fluentui/react/lib/Icon';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { css } from '@fluentui/react/lib/Utilities';
 import * as React from 'react';
-import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { EventHandler, Event } from '../../eventhandler';
 
@@ -19,6 +18,7 @@ import { MenuItemOption } from '../menu';
 import { ErrorBannerV2 } from './errorbannerv2';
 import { MessageBarType } from '@fluentui/react';
 import { CommentBoxProps } from '../commentbox';
+import type { ConnectDragSource, ConnectDragPreview } from 'react-dnd';
 
 type ISpinnerStyles = import('@fluentui/react/lib/Spinner').ISpinnerStyles;
 
@@ -45,6 +45,8 @@ export interface CardV2Props {
   connectionDisplayName?: string;
   connectionRequired?: boolean;
   staticResultsEnabled?: boolean;
+  drag: ConnectDragSource;
+  dragPreview: ConnectDragPreview;
 }
 
 interface CardBadgeBarProps {
@@ -81,25 +83,6 @@ export const CARD_LOADING_SPINNER_STYLE: ISpinnerStyles = {
 };
 
 export function CardV2(props: CardV2Props): JSX.Element {
-  const [, drag, dragPreview] = useDrag(() => ({
-    // "type" is required. It is used by the "accept" specification of drop targets.
-    type: 'BOX',
-    // The collect function utilizes a "monitor" instance (see the Overview for what this is)
-    // to pull important pieces of state from the DnD system.
-    end: (item, monitor) => {
-      const dropResult = monitor.getDropResult<{ parent: string; child: string }>();
-      if (item && dropResult) {
-        alert(`You dropped ${props.id} between ${dropResult.parent} and  ${dropResult.child}!`);
-      }
-    },
-    item: {
-      id: props.id,
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }));
-
   function handleContextMenu(e: React.MouseEvent): void {
     e.preventDefault();
     e.stopPropagation();
@@ -184,9 +167,9 @@ export function CardV2(props: CardV2Props): JSX.Element {
   };
 
   return (
-    <div ref={dragPreview}>
+    <div ref={props.dragPreview}>
       <div
-        ref={drag}
+        ref={props.drag}
         aria-describedby={describedBy}
         aria-label={title}
         className={rootClassNames}

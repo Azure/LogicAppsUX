@@ -13,7 +13,6 @@
         "project": "libs/services/resolution-service/package.json",
         "entryFile": "libs/services/resolution-service/src/index.ts",
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-        "buildableProjectDepsInPackageJsonType": "dependencies",
         "format": ["cjs", "esm"],
         "assets": [
           {

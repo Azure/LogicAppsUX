@@ -14,7 +14,6 @@
         "entryFile": "libs/utils/src/index.ts",
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
         "format": ["cjs", "esm"],
-        "buildableProjectDepsInPackageJsonType": "dependencies",
         "assets": [
           {
             "glob": "libs/utils/README.md",
