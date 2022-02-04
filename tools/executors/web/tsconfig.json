@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.tools.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "module": "commonjs",
+    "target": "ES5",
+    "types": ["node"],
+    "esModuleInterop": true,
+    "importHelpers": false
+  },
+  "include": ["**/*.ts"]
+}
