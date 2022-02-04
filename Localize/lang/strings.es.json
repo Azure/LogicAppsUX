@@ -31,7 +31,7 @@
   "SXb47U": "{minutes}m",
   "T8Xqt9": "Con errores",
   "TZv5JE": "Nombre",
-  "UCNM4L": "To reference a parameter, use the dynamic content list.",
+  "UCNM4L": "Para hacer referencia a un parámetro, uSEe la lista de contenido dinámico.",
   "VXBWrq": "Comentario",
   "W070M2": "de {max}",
   "X8JjjT": "{days} días {hours} horas",
@@ -75,7 +75,7 @@
   "ut5Med": "Valor predeterminado",
   "vwH/XV": "Crear parámetro",
   "wHYQyg": "Tiempo de espera agotado",
-  "xt5TeT": "Parameters are shared across workflows in a Logic App.",
+  "xt5TeT": "Los parámetros se comparten entre los flujos de trabajo de una Logic App.",
   "z4YYlQ": "Permite escribir un valor predeterminado para el parámetro.",
   "zjDJwP": "Flotante"
 }

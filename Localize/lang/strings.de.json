@@ -31,7 +31,7 @@
   "SXb47U": "{minutes}m",
   "T8Xqt9": "Fehlgeschlagen",
   "TZv5JE": "Name",
-  "UCNM4L": "To reference a parameter, use the dynamic content list.",
+  "UCNM4L": "Verwenden Sie die Liste dynamischer Inhalte, um auf einen Parameter zu verweisen.",
   "VXBWrq": "Kommentar",
   "W070M2": "von {max}",
   "X8JjjT": "{days} Tage {hours} Stunden",
@@ -75,7 +75,7 @@
   "ut5Med": "Standardwert",
   "vwH/XV": "Parameter erstellen",
   "wHYQyg": "Timeout",
-  "xt5TeT": "Parameters are shared across workflows in a Logic App.",
+  "xt5TeT": "Parameter werden workflowübergreifend in einer Logik-App freigegeben.",
   "z4YYlQ": "Geben Sie einen Standardwert für den Parameter ein.",
   "zjDJwP": "Gleitkomma"
 }

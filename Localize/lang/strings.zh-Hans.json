@@ -31,7 +31,7 @@
   "SXb47U": "{minutes} 分",
   "T8Xqt9": "失败",
   "TZv5JE": "名称",
-  "UCNM4L": "To reference a parameter, use the dynamic content list.",
+  "UCNM4L": "若要引用参数，请使用动态内容列表。",
   "VXBWrq": "评论",
   "W070M2": "共 {max} 个",
   "X8JjjT": "{days} 天 {hours} 小时",
@@ -75,7 +75,7 @@
   "ut5Med": "默认值",
   "vwH/XV": "创建参数",
   "wHYQyg": "已超时",
-  "xt5TeT": "Parameters are shared across workflows in a Logic App.",
+  "xt5TeT": "在逻辑应用中的工作流之间共享参数。",
   "z4YYlQ": "输入参数的默认值。",
   "zjDJwP": "浮点型"
 }

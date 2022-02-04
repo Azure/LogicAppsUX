@@ -31,7 +31,7 @@
   "SXb47U": "{minutes} 分鐘",
   "T8Xqt9": "失敗",
   "TZv5JE": "名稱",
-  "UCNM4L": "To reference a parameter, use the dynamic content list.",
+  "UCNM4L": "若要參考參數，請使用動態內容清單。",
   "VXBWrq": "註解",
   "W070M2": "/{max}",
   "X8JjjT": "{days} 天 {hours} 小時",
@@ -75,7 +75,7 @@
   "ut5Med": "預設值",
   "vwH/XV": "建立參數",
   "wHYQyg": "逾時",
-  "xt5TeT": "Parameters are shared across workflows in a Logic App.",
+  "xt5TeT": "參數會在邏輯應用程式中跨工作流程共用。",
   "z4YYlQ": "輸入參數的預設值。",
   "zjDJwP": "浮點數"
 }

@@ -31,7 +31,7 @@
   "SXb47U": "{minutes}m",
   "T8Xqt9": "Mislukt",
   "TZv5JE": "Naam",
-  "UCNM4L": "To reference a parameter, use the dynamic content list.",
+  "UCNM4L": "Gebruik de lijst met dynamische inhoud om te verwijzen naar een parameter.",
   "VXBWrq": "Opmerking",
   "W070M2": "van {max}",
   "X8JjjT": "{days} dagen {hours} uren",
@@ -75,7 +75,7 @@
   "ut5Med": "Standaardwaarde",
   "vwH/XV": "Parameter maken",
   "wHYQyg": "Time-out opgetreden",
-  "xt5TeT": "Parameters are shared across workflows in a Logic App.",
+  "xt5TeT": "Parameters worden gedeeld in workflows in een logische app.",
   "z4YYlQ": "Voer de standaardwaarde voor de parameter in.",
   "zjDJwP": "Zwevende komma"
 }

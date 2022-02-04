@@ -31,7 +31,7 @@
   "SXb47U": "{minutes}min",
   "T8Xqt9": "Misslyckades",
   "TZv5JE": "Namn",
-  "UCNM4L": "To reference a parameter, use the dynamic content list.",
+  "UCNM4L": "Använd listan med dynamiskt innehåll om du vill referera till en parameter.",
   "VXBWrq": "Kommentar",
   "W070M2": "av {max}",
   "X8JjjT": "{days} dagar {hours} timmar",
@@ -75,7 +75,7 @@
   "ut5Med": "Standardvärde",
   "vwH/XV": "Skapa parameter",
   "wHYQyg": "Tidsgränsen överskreds",
-  "xt5TeT": "Parameters are shared across workflows in a Logic App.",
+  "xt5TeT": "Parametrar delas mellan arbetsflöden i en Logic-app.",
   "z4YYlQ": "Ange standardvärde för parameter.",
   "zjDJwP": "Float"
 }

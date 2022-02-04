@@ -31,7 +31,7 @@
   "SXb47U": "{minutes}분",
   "T8Xqt9": "실패함",
   "TZv5JE": "이름",
-  "UCNM4L": "To reference a parameter, use the dynamic content list.",
+  "UCNM4L": "매개 변수를 참조하려면 동적 콘텐츠 목록을 사용하세요.",
   "VXBWrq": "메모",
   "W070M2": "{max} 중",
   "X8JjjT": "{days}일 {hours}시간",
@@ -75,7 +75,7 @@
   "ut5Med": "기본값",
   "vwH/XV": "매개 변수 만들기",
   "wHYQyg": "시간 초과",
-  "xt5TeT": "Parameters are shared across workflows in a Logic App.",
+  "xt5TeT": "매개 변수는 논리 앱의 워크플로 간에 공유됩니다.",
   "z4YYlQ": "매개 변수의 기본값을 입력하세요.",
   "zjDJwP": "부동"
 }
