@@ -1,6 +1,5 @@
 import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
-import { useState } from 'react';
 import { Login } from '../app/Login/login';
 import styles from './settings_box.module.less';
 
