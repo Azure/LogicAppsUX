@@ -22,8 +22,6 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   targetPosition,
   style = {},
   data,
-  arrowHeadType,
-  markerEndId,
 }) => {
   const edgePath = getSmoothStepPath({
     sourceX,
@@ -33,7 +31,7 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     targetY,
     targetPosition,
   });
-  const markerEnd = getMarkerEnd(arrowHeadType, markerEndId);
+  // const markerEnd = getMarkerEnd(arrowHeadType, markerEndId);
   const [edgeCenterX, edgeCenterY] = getEdgeCenter({
     sourceX,
     sourceY,
@@ -46,10 +44,10 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   });
 
   const firstChild = parentNode?.childrenNodes[parentNode.childrenNodes.length - 1] === data?.child;
-
+  //markerEnd={markerEnd}
   return (
     <>
-      <path id={id} style={style} className="react-flow__edge-path" d={edgePath} markerEnd={markerEnd} />
+      <path id={id} style={style} className="react-flow__edge-path" d={edgePath} />
       {firstChild && (parentNode?.childrenNodes.length ?? 0) > 1 && (
         <foreignObject
           width={foreignObjectWidth}
