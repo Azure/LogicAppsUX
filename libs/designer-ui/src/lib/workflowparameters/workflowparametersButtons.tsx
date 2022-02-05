@@ -1,10 +1,10 @@
-import React, { useRef } from 'react';
-import { IButton, IButtonStyles, IconButton } from '@fluentui/react/lib/Button';
+import { IButtonStyles, IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
-import { TooltipHost, ITooltipHostStyles } from '@fluentui/react/lib/Tooltip';
-import { WorkflowParameterDefinition } from './workflowparameter';
-import type { EventHandler } from '../eventhandler';
+import { ITooltipHostStyles, TooltipHost } from '@fluentui/react/lib/Tooltip';
+import React from 'react';
 import { useIntl } from 'react-intl';
+import type { EventHandler } from '../eventhandler';
+import { WorkflowParameterDefinition } from './workflowparameter';
 
 interface ButtonProps {
   onClick: React.MouseEventHandler<HTMLButtonElement>;

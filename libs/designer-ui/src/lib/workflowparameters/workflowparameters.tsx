@@ -1,9 +1,9 @@
-import { CommandBarButton, IButtonStyles, PrimaryButton } from '@fluentui/react/lib/Button';
+import { CommandBarButton } from '@fluentui/react/lib/Button';
 import { Icon, IIconProps, IIconStyles } from '@fluentui/react/lib/Icon';
 import { Link } from '@fluentui/react/lib/Link';
 import { List } from '@fluentui/react/lib/List';
 import { IMessageBarStyles, MessageBar } from '@fluentui/react/lib/MessageBar';
-import { getTheme, registerOnThemeChangeCallback, removeOnThemeChangeCallback } from '@fluentui/react/lib/Styling';
+import { registerOnThemeChangeCallback, removeOnThemeChangeCallback } from '@fluentui/react/lib/Styling';
 import React, { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import ParametersIcon from '../card/images/parameters.svg';
