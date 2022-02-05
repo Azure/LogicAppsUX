@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.12.13",
-    "@babel/plugin-transform-modules-commonjs": "^7.15.4",
+    "@babel/plugin-transform-modules-commonjs": "^7.16.8",
     "@babel/preset-typescript": "7.12.13",
     "@formatjs/cli": "^4.2.33",
     "@formatjs/intl": "^1.18.4",
