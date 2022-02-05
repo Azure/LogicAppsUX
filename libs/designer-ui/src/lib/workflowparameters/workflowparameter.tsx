@@ -5,12 +5,12 @@ import { ILabelStyles, Label } from '@fluentui/react/lib/Label';
 import { FontWeights, getTheme, IStyle } from '@fluentui/react/lib/Styling';
 import { ITextStyles, Text } from '@fluentui/react/lib/Text';
 import { ITextFieldProps, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
-import React, { useState } from 'react';
 import { equals, format } from '@microsoft-logic-apps/utils';
+import React, { useState } from 'react';
+import { useIntl } from 'react-intl';
 import Constants from '../constants';
 import type { EventHandler } from '../eventhandler';
 import { isHighContrastBlackOrInverted } from '../utils/theme';
-import { useIntl } from 'react-intl';
 import { EditOrDeleteButton } from './workflowparametersButtons';
 import { ReadOnlyParameters } from './workflowparametersReadOnly';
 
