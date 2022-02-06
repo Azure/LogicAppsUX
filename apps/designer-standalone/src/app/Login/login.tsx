@@ -64,6 +64,9 @@ export const Login: React.FC = () => {
 
   return (
     <div>
+      <div style={{ paddingBottom: '10px' }}>
+        <Checkbox label="Load From Arm" checked={loadingMethod === 'arm'} onChange={changeLoadingMethodCB} />
+      </div>
       {loadingMethod === 'arm' ? (
         <>
           <div>
@@ -85,9 +88,6 @@ export const Login: React.FC = () => {
           />
         </div>
       ) : null}
-      <div style={{ paddingTop: '10px' }}>
-        <Checkbox label="Load From Arm" checked={loadingMethod === 'arm'} onChange={changeLoadingMethodCB} />
-      </div>
     </div>
   );
 };
