@@ -1,24 +1,92 @@
-import { TextField } from '@fluentui/react';
+import { Checkbox, Dropdown, IDropdownOption, TextField } from '@fluentui/react';
+import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../state/store';
+import { changeArmToken, changeResourcePath, changeLoadingMethod, loadWorkflow } from '../../state/workflowLoadingSlice';
 
-export interface LoginProps {
-  setResourceId: (res: string) => void;
-  setToken: (res: string) => void;
-  token?: string | null;
-  resourceId?: string | null;
-}
+export const fileOptions = [
+  'ComplexConditionals.json',
+  'Conditionals.json',
+  'MoreComplex.json',
+  'MultipleRunAftersBig.json',
+  'Scoped.json',
+  'simpleBigworkflow.json',
+  'simpleScoped.json',
+  'straightLine.json',
+  'StressTest50.json',
+  'StressTest100.json',
+  'StressTest200.json',
+  'StressTest300.json',
+  'StressTest400.json',
+  'StressTest500.json',
+  'StressTest500Gross.json',
+  'StressTest600.json',
+  'StressTest1000.json',
+];
+export const Login: React.FC = () => {
+  const { resourcePath, armToken, loadingMethod } = useSelector((state: RootState) => {
+    const { resourcePath, armToken, loadingMethod } = state.workflowLoader;
+    return { resourcePath, armToken, loadingMethod };
+  });
+  const dispatch = useDispatch();
+  const changeResourcePathCB = useCallback(
+    (_: unknown, newValue?: string) => {
+      dispatch(changeResourcePath(newValue ?? ''));
+      dispatch(loadWorkflow());
+    },
+    [dispatch]
+  );
 
-export const Login: React.FC<LoginProps> = (props) => {
+  const changeResourcePathDropdownCB = useCallback(
+    (_: unknown, item: IDropdownOption | undefined) => {
+      dispatch(changeResourcePath((item?.key as string) ?? ''));
+      dispatch(loadWorkflow());
+    },
+    [dispatch]
+  );
+
+  const changeArmTokenCB = useCallback(
+    (_: unknown, newValue?: string) => {
+      dispatch(changeArmToken(newValue ?? ''));
+      dispatch(loadWorkflow());
+    },
+    [dispatch]
+  );
+
+  const changeLoadingMethodCB = useCallback(
+    (_: unknown, checked?: boolean) => {
+      dispatch(changeLoadingMethod(checked ? 'arm' : 'file'));
+      dispatch(loadWorkflow());
+    },
+    [dispatch]
+  );
+  const fileOptionsMap = fileOptions.map((x) => ({ key: x, text: x }));
+
   return (
     <div>
-      <div>
-        <TextField
-          label="Workflow Resource ID"
-          onChange={(e, newValue) => props.setResourceId(newValue ?? '')}
-          value={props.resourceId ?? ''}
-        />
-      </div>
-      <div>
-        <TextField label="ARM Token" onChange={(e, newValue) => props.setToken(newValue ?? '')} value={props.token ?? ''} />
+      {loadingMethod === 'arm' ? (
+        <>
+          <div>
+            <TextField label="Workflow Resource ID" onChange={changeResourcePathCB} value={resourcePath ?? ''} />
+          </div>
+          <div>
+            <TextField label="ARM Token" onChange={changeArmTokenCB} value={armToken ?? ''} />
+          </div>
+        </>
+      ) : null}
+      {loadingMethod === 'file' ? (
+        <div>
+          <Dropdown
+            label="Workflow File To Load"
+            selectedKey={resourcePath}
+            onChange={changeResourcePathDropdownCB}
+            placeholder="Select an option"
+            options={fileOptionsMap}
+          />
+        </div>
+      ) : null}
+      <div style={{ paddingTop: '10px' }}>
+        <Checkbox label="Load From Arm" checked={loadingMethod === 'arm'} onChange={changeLoadingMethodCB} />
       </div>
     </div>
   );
