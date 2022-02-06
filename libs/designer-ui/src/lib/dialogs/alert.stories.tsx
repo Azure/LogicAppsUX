@@ -1,11 +1,9 @@
-// Button.stories.ts | Button.stories.tsx
+// alert.stories.js|jsx|ts|tsx
 
-import React from 'react';
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-
-import { Alert, AlertProps } from './index';
 import { DefaultButton } from '@fluentui/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
+import { Alert, AlertProps } from './index';
 
 export default {
   component: Alert,
@@ -21,7 +19,7 @@ export const Standard: ComponentStory<typeof Alert> = (args: AlertProps) => {
 
   return (
     <>
-      <DefaultButton text="Show Confirm Dialog" onClick={handleClick}></DefaultButton>
+      <DefaultButton text="Show Alert Dialog" onClick={handleClick} />
       <Alert {...args} hidden={hidden} />
     </>
   );
