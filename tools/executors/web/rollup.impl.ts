@@ -231,7 +231,8 @@ export function createRollupOptions(
     input: options.entryFile,
     output: {
       globals,
-      format: 'cjs',
+      format: 'umd',
+      inlineDynamicImports: true,
       dir: `${options.outputPath}`,
       name: options.umdName || names(context.projectName).className,
       entryFileNames: `[name].js`,
