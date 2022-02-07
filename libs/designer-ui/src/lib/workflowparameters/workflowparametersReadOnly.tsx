@@ -1,5 +1,6 @@
 import React from 'react';
-import { labelStyles, ParameterFieldDetails, WorkflowParameterDefinition } from './workflowparameter';
+import { WorkflowParameterDefinition } from './workflowparameter';
+import { labelStyles, ParameterFieldDetails } from './workflowparametersField';
 import { Label } from '@fluentui/react/lib/Label';
 import { Text } from '@fluentui/react/lib/Text';
 import { FormattedMessage } from 'react-intl';
