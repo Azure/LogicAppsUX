@@ -52,7 +52,7 @@ const loadLocaleData = async (locale: string) => {
 export const loadLocaleMessages = createAsyncThunk('localizations/loadLocaleMessages', async (locale: string) => {
   const messages = await loadLocaleData(locale);
   return {
-    messages: messages,
+    messages: { ...messages },
     locale,
   };
 });
