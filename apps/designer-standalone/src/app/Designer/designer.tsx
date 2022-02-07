@@ -1,21 +1,19 @@
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { useSelector } from 'react-redux';
 import { SettingsBox } from '../../components/settings_box';
-import workflow from '../../../../../__mocks__/workflows/simpleBigworkflow.json';
-export interface DesignerWrapperProps {
-  workflow: LogicAppsV2.WorkflowDefinition;
-  setResourceId: (res: string) => void;
-  setToken: (res: string) => void;
-  token?: string | null;
-  resourceId?: string | null;
-}
-export const DesignerWrapper = ({ setResourceId, setToken, resourceId, token }: DesignerWrapperProps) => {
+import { RootState } from '../../state/store';
+
+export const DesignerWrapper = () => {
+  const workflow = useSelector((state: RootState) => state.workflowLoader.workflowDefinition);
   return (
     <>
-      <SettingsBox setResourceId={setResourceId} setToken={setToken} resourceId={resourceId} token={token} />
+      <SettingsBox />
       <DesignerProvider locale="en-US">
-        <BJSWorkflowProvider workflow={workflow.definition}>
-          <Designer></Designer>
-        </BJSWorkflowProvider>
+        {workflow ? (
+          <BJSWorkflowProvider workflow={workflow}>
+            <Designer></Designer>
+          </BJSWorkflowProvider>
+        ) : null}
       </DesignerProvider>
     </>
   );
