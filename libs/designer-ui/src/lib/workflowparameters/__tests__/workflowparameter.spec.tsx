@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import * as TestUtils from 'react-dom/test-utils';
 import { WorkflowParameter, WorkflowParameterProps } from '../workflowparameter';
+import { initializeIcons } from '@fluentui/react';
 import { CommandButton } from '@fluentui/react';
 
 describe('ui/workflowparameters/workflowparameter', () => {
@@ -10,6 +11,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
   beforeEach(() => {
     minimal = { definition: { id: 'id', name: '', type: 'Array' } };
     renderer = ReactShallowRenderer.createRenderer();
+    initializeIcons();
   });
 
   afterEach(() => {
@@ -32,11 +34,10 @@ describe('ui/workflowparameters/workflowparameter', () => {
     const [fieldsFragment]: any[] = React.Children.toArray(group.props.children);
     expect(fieldsFragment).toBeDefined();
 
-    const [commandBar, name, type, valueFragment]: any[] = React.Children.toArray(fieldsFragment.props.children);
+    const [commandBar]: any[] = React.Children.toArray(fieldsFragment.props.children);
     expect(commandBar).toBeDefined();
 
     expect(commandBar.props.className).toBe('msla-workflow-parameter-heading-button');
     expect(commandBar.props.text).toBe('New parameter');
-    console.log(fieldsFragment);
   });
 });
