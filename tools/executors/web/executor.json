@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "rollup": {
+      "implementation": "./dist/rollup.impl",
+      "schema": "./schema.json",
+      "description": "Package a library using rollup"
+    }
+  }
+}

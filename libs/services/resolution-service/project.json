@@ -4,7 +4,7 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "./tools/executors/web:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/services/resolution-service",
@@ -13,6 +13,7 @@
         "project": "libs/services/resolution-service/package.json",
         "entryFile": "libs/services/resolution-service/src/index.ts",
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "format": ["cjs", "esm"],
         "assets": [
           {
             "glob": "libs/services/resolution-service/README.md",

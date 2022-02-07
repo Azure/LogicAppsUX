@@ -1,0 +1,44 @@
+{
+  "header": "# Logic Apps Designer",
+  "infile": "CHANGELOG.md",
+  "types": [
+    {
+      "type": "feat",
+      "section": "Features"
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes"
+    },
+    {
+      "type": "breaking",
+      "section": "Potential Breaking Changes"
+    }
+  ],
+  "bumpFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/designer/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/designer-ui/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/utils/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/services/resolution-service/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/services/intl/package.json",
+      "type": "json"
+    }
+  ]
+}

@@ -31,9 +31,10 @@
 /libpeerconnection.log
 npm-debug.log
 yarn-error.log
+junit.xml
 testem.log
 /typings
-
+**/dist
 # System Files
 .DS_Store
 Thumbs.db

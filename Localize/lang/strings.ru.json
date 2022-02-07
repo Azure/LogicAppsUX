@@ -31,7 +31,7 @@
   "SXb47U": "{minutes} мин",
   "T8Xqt9": "Сбой",
   "TZv5JE": "Имя",
-  "UCNM4L": "To reference a parameter, use the dynamic content list.",
+  "UCNM4L": "Для ссылки на параметр используйте динамический список содержимого.",
   "VXBWrq": "Комментарий",
   "W070M2": "из {max}",
   "X8JjjT": "{days} дн. {hours} ч",
@@ -75,7 +75,7 @@
   "ut5Med": "Значение по умолчанию",
   "vwH/XV": "Создать параметр",
   "wHYQyg": "Время ожидания истекло",
-  "xt5TeT": "Parameters are shared across workflows in a Logic App.",
+  "xt5TeT": "Параметры являются общими для всех рабочих процессов в приложении логики.",
   "z4YYlQ": "Введите для параметра значение по умолчанию.",
   "zjDJwP": "Число с плавающей запятой"
 }

@@ -31,7 +31,7 @@
   "SXb47U": "{minutes} 分",
   "T8Xqt9": "失敗",
   "TZv5JE": "名前",
-  "UCNM4L": "To reference a parameter, use the dynamic content list.",
+  "UCNM4L": "パラメーターを参照するには、動的コンテンツ リストを使用してください。",
   "VXBWrq": "コメント",
   "W070M2": "/{max}",
   "X8JjjT": "{days} 日 {hours} 時間",
@@ -75,7 +75,7 @@
   "ut5Med": "既定値",
   "vwH/XV": "パラメーターの作成",
   "wHYQyg": "タイムアウト",
-  "xt5TeT": "Parameters are shared across workflows in a Logic App.",
+  "xt5TeT": "ロジック アプリ内で、パラメーターはワークフロー間で共有されています。",
   "z4YYlQ": "パラメーターの既定値を入力してください。",
   "zjDJwP": "浮動"
 }

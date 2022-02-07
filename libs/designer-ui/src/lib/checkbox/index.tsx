@@ -3,10 +3,9 @@ import { Callout, DirectionalHint } from '@fluentui/react/lib/Callout';
 import { Checkbox as FabricCheckbox, ICheckbox } from '@fluentui/react/lib/Checkbox';
 import { Icon } from '@fluentui/react/lib/Icon';
 import * as React from 'react';
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { calloutContentStyles, checkboxStyles } from '../fabric';
-import { getDurationString } from '../utils/utils';
 
 export interface CheckboxProps {
   ariaLabel?: string;
@@ -63,7 +62,7 @@ export const Checkbox = (props: CheckboxProps) => {
         checked={checked}
         className="msla-checkbox-label"
         id={id}
-        label={text + ' ' + getDurationString(1500, false)}
+        label={text}
         styles={checkboxStyles}
         disabled={disabled}
         onChange={handleChange as any}

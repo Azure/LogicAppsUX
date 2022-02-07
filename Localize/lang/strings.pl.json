@@ -31,7 +31,7 @@
   "SXb47U": "{minutes} min",
   "T8Xqt9": "Niepowodzenie",
   "TZv5JE": "Nazwa",
-  "UCNM4L": "To reference a parameter, use the dynamic content list.",
+  "UCNM4L": "Aby odwołać się do parametru, użyj listy zawartości dynamicznej.",
   "VXBWrq": "Komentarz",
   "W070M2": "z {max}",
   "X8JjjT": "{days} dni {hours} godz.",
@@ -75,7 +75,7 @@
   "ut5Med": "Wartość domyślna",
   "vwH/XV": "Utwórz parametr",
   "wHYQyg": "Przekroczono limit czasu",
-  "xt5TeT": "Parameters are shared across workflows in a Logic App.",
+  "xt5TeT": "Parametry są współużytkowane w ramach przepływów pracy w aplikacji logiki.",
   "z4YYlQ": "Wprowadź wartość domyślną dla parametru.",
   "zjDJwP": "Liczba zmiennoprzecinkowa"
 }

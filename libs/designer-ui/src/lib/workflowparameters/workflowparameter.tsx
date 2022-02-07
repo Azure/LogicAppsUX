@@ -4,9 +4,9 @@ import { FontWeights } from '@fluentui/react/lib/Styling';
 import React, { useState } from 'react';
 import type { EventHandler } from '../eventhandler';
 import { isHighContrastBlackOrInverted } from '../utils/theme';
-import { useIntl } from 'react-intl';
 import { EditOrDeleteButton } from './workflowparametersButtons';
 import { WorkflowparameterField } from './workflowparametersField';
+import { useIntl } from 'react-intl';
 
 const commandBarStyles: Partial<IButtonStyles> = {
   label: {

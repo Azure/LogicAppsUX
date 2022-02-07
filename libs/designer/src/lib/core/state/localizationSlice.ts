@@ -1,24 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { MessageFormatElement } from 'react-intl';
-import fr from '../../../../../../Localize/compiled-lang/strings.fr.json';
-import en from '../../../../../../Localize/compiled-lang/strings.json';
-import enxa from '../../../../../../Localize/compiled-lang/strings.en-XA.json';
-import cs from '../../../../../../Localize/compiled-lang/strings.cs.json';
-import de from '../../../../../../Localize/compiled-lang/strings.de.json';
-import es from '../../../../../../Localize/compiled-lang/strings.es.json';
-import hu from '../../../../../../Localize/compiled-lang/strings.hu.json';
-import it from '../../../../../../Localize/compiled-lang/strings.it.json';
-import ja from '../../../../../../Localize/compiled-lang/strings.ja.json';
-import ko from '../../../../../../Localize/compiled-lang/strings.ko.json';
-import nl from '../../../../../../Localize/compiled-lang/strings.nl.json';
-import pl from '../../../../../../Localize/compiled-lang/strings.pl.json';
-import ptbr from '../../../../../../Localize/compiled-lang/strings.pt-BR.json';
-import ptpt from '../../../../../../Localize/compiled-lang/strings.pt-PT.json';
-import ru from '../../../../../../Localize/compiled-lang/strings.ru.json';
-import sv from '../../../../../../Localize/compiled-lang/strings.sv.json';
-import tr from '../../../../../../Localize/compiled-lang/strings.tr.json';
-import zhhans from '../../../../../../Localize/compiled-lang/strings.zh-Hans.json';
-import zhhant from '../../../../../../Localize/compiled-lang/strings.zh-Hant.json';
+
 export interface LocalizationState {
   locale: string;
   defaultLocale: string;
@@ -28,50 +10,49 @@ export interface LocalizationState {
 const loadLocaleData = async (locale: string) => {
   switch (locale.split('-')[0].toLowerCase()) {
     case 'nl':
-      return nl;
+      return import('../../../../../../Localize/compiled-lang/strings.nl.json');
     case 'pl':
-      return pl;
+      return import('../../../../../../Localize/compiled-lang/strings.pl.json');
     case 'pt':
-      if (locale === 'pt-BR') return ptbr;
-      else return ptpt;
+      if (locale === 'pt-BR') return import('../../../../../../Localize/compiled-lang/strings.pt-BR.json');
+      else return import('../../../../../../Localize/compiled-lang/strings.pt-PT.json');
     case 'ru':
-      return ru;
+      return import('../../../../../../Localize/compiled-lang/strings.ru.json');
     case 'sv':
-      return sv;
+      return import('../../../../../../Localize/compiled-lang/strings.sv.json');
     case 'tr':
-      return tr;
+      return import('../../../../../../Localize/compiled-lang/strings.tr.json');
     case 'zh':
-      if (locale === 'zh-Hans') return zhhans;
-      else return zhhant;
+      if (locale === 'zh-Hans') return import('../../../../../../Localize/compiled-lang/strings.zh-Hans.json');
+      else return import('../../../../../../Localize/compiled-lang/strings.zh-Hant.json');
     case 'fr':
-      return fr;
+      return import('../../../../../../Localize/compiled-lang/strings.fr.json');
     case 'en':
-      if (locale === 'en-XA') return enxa;
-      else return en;
+      if (locale === 'en-XA') return import('../../../../../../Localize/compiled-lang/strings.en-XA.json');
+      else return import('../../../../../../Localize/compiled-lang/strings.json');
     case 'cs':
-      return cs;
+      return import('../../../../../../Localize/compiled-lang/strings.cs.json');
     case 'de':
-      return de;
+      return import('../../../../../../Localize/compiled-lang/strings.de.json');
     case 'es':
-      return es;
+      return import('../../../../../../Localize/compiled-lang/strings.es.json');
     case 'hu':
-      return hu;
+      return import('../../../../../../Localize/compiled-lang/strings.hu.json');
     case 'it':
-      return it;
+      return import('../../../../../../Localize/compiled-lang/strings.it.json');
     case 'ja':
-      return ja;
+      return import('../../../../../../Localize/compiled-lang/strings.ja.json');
     case 'ko':
-      return ko;
-
+      return import('../../../../../../Localize/compiled-lang/strings.ko.json');
     default:
-      return en;
+      return import('../../../../../../Localize/compiled-lang/strings.json');
   }
 };
 
 export const loadLocaleMessages = createAsyncThunk('localizations/loadLocaleMessages', async (locale: string) => {
   const messages = await loadLocaleData(locale);
   return {
-    messages: messages,
+    messages: { ...messages },
     locale,
   };
 });

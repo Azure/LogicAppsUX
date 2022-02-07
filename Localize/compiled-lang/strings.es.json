@@ -304,7 +304,7 @@
   "UCNM4L": [
     {
       "type": 0,
-      "value": "To reference a parameter, use the dynamic content list."
+      "value": "Para hacer referencia a un parámetro, uSEe la lista de contenido dinámico."
     }
   ],
   "VXBWrq": [
@@ -700,7 +700,7 @@
   "xt5TeT": [
     {
       "type": 0,
-      "value": "Parameters are shared across workflows in a Logic App."
+      "value": "Los parámetros se comparten entre los flujos de trabajo de una Logic App."
     }
   ],
   "z4YYlQ": [
