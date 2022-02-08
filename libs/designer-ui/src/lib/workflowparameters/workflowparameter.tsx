@@ -3,7 +3,6 @@ import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { FontWeights } from '@fluentui/react/lib/Styling';
 import React, { useState } from 'react';
 import type { EventHandler } from '../eventhandler';
-import { isHighContrastBlackOrInverted } from '../utils/theme';
 import { EditOrDeleteButton } from './workflowparametersButtons';
 import { WorkflowparameterField } from './workflowparametersField';
 import { useIntl } from 'react-intl';
