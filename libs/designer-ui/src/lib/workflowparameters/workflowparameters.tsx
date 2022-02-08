@@ -151,7 +151,6 @@ export function WorkflowParameters({
         key={item?.id}
         definition={item ?? { id: 'id' }}
         isReadOnly={isReadOnly}
-        isInverted={isInverted}
         onChange={onUpdateParameter}
         onDelete={onDeleteParameter}
         onRegisterLanguageProvider={onRegisterLanguageProvider}
