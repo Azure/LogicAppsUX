@@ -21,7 +21,7 @@ describe('ui/workflowparameters/workflowparametersButtons', () => {
 
   it('should construct.', () => {
     const button = renderer.render(<EditOrDeleteButton {...minimal} />);
-    expect(button).toBeDefined();
+    expect(button).toMatchSnapshot();
   });
 
   it('should render EditButton when no prop provided.', () => {

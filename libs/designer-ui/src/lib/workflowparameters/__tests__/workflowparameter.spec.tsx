@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import * as TestUtils from 'react-dom/test-utils';
 import { WorkflowParameter, WorkflowParameterProps } from '../workflowparameter';
 import { initializeIcons } from '@fluentui/react';
 
@@ -19,7 +18,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
 
   it('should construct.', () => {
     const parameter = renderer.render(<WorkflowParameter {...minimal} />);
-    expect(parameter).toBeDefined();
+    expect(parameter).toMatchSnapshot();
   });
 
   it('should render workflow parameter when passed a parameter definition.', () => {

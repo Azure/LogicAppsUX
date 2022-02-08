@@ -26,7 +26,6 @@ describe('ui/workflowparameters/workflowparameterReadOnly', () => {
 
   it('should construct.', () => {
     const ReadOnlyParameter = renderer.render(<ReadOnlyParameters {...minimal} />);
-
     expect(ReadOnlyParameter).toMatchSnapshot();
   });
 

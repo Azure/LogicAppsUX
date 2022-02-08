@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import * as TestUtils from 'react-dom/test-utils';
 import { WorkflowparameterField, WorkflowparameterFieldProps } from '../workflowparametersField';
 import { initializeIcons } from '@fluentui/react';
 import { useIntl } from 'react-intl';
