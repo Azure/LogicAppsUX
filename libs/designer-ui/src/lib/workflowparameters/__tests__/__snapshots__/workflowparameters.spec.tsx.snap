@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
+<div
+  className="msla-workflow-parameters"
+>
+  <h3
+    className="msla-workflow-parameters-create"
+  >
+    <Memo(MemoizedFormattedMessage)
+      defaultMessage={
+        Array [
+          Object {
+            "type": 0,
+            "value": "Parameters",
+          },
+        ]
+      }
+      id="pRUJff"
+    />
+  </h3>
+  <InfoBar
+    isInverted={false}
+  />
+  <div
+    className="msla-workflow-parameters-add"
+  >
+    <CustomizedCommandBarButton
+      className="msla-workflow-parameters-create-button"
+      iconProps={
+        Object {
+          "iconName": "Add",
+        }
+      }
+      onClick={[Function]}
+      text="Create parameter"
+    />
+  </div>
+  <List
+    items={
+      Array [
+        Object {
+          "defaultValue": "true",
+          "id": "test1",
+          "isEditable": true,
+          "name": "test",
+          "type": "Bool",
+        },
+        Object {
+          "defaultValue": "{}",
+          "id": "test2",
+          "isEditable": false,
+          "name": "test2",
+          "type": "Object",
+        },
+      ]
+    }
+    onRenderCell={[Function]}
+    renderedWindowsAhead={2}
+    renderedWindowsBehind={2}
+    startIndex={0}
+  />
+</div>
+`;
