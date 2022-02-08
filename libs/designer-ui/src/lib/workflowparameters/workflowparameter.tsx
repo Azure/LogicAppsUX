@@ -3,7 +3,6 @@ import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { FontWeights } from '@fluentui/react/lib/Styling';
 import React, { useState } from 'react';
 import type { EventHandler } from '../eventhandler';
-import { isHighContrastBlackOrInverted } from '../utils/theme';
 import { EditOrDeleteButton } from './workflowparametersButtons';
 import { WorkflowparameterField } from './workflowparametersField';
 import { useIntl } from 'react-intl';
@@ -39,15 +38,15 @@ export interface WorkflowParameterProps {
   definition: WorkflowParameterDefinition;
   isReadOnly?: boolean;
   validationErrors?: Record<string, string>;
+  isInverted?: boolean;
   onChange?: WorkflowParameterUpdateHandler;
   onDelete?: WorkflowParameterDeleteHandler;
   onRegisterLanguageProvider?: RegisterLanguageHandler;
 }
 
-export function WorkflowParameter({ definition, isReadOnly, ...props }: WorkflowParameterProps): JSX.Element {
+export function WorkflowParameter({ definition, isReadOnly, isInverted, ...props }: WorkflowParameterProps): JSX.Element {
   const [expanded, setExpanded] = useState(!!definition.isEditable);
   const [isEditable, setIsEditable] = useState(definition.isEditable);
-  const [isInverted, setIsInverted] = useState(isHighContrastBlackOrInverted());
   const [name, setName] = useState(definition.name);
 
   const intl = useIntl();
