@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { ReadOnlyParameters, ReadOnlyParametersProps } from '../workflowparametersReadOnly';
 
-describe('ui/workflowparameters/workflowparameter', () => {
+describe('ui/workflowparameters/workflowparameterReadOnly', () => {
   let minimal: ReadOnlyParametersProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {

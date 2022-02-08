@@ -18,7 +18,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
   });
 
   it('should construct.', () => {
-    const parameter = TestUtils.renderIntoDocument<WorkflowParameterProps>(<WorkflowParameter {...minimal} />);
+    const parameter = renderer.render(<WorkflowParameter {...minimal} />);
     expect(parameter).toBeDefined();
   });
 

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
+exports[`ui/workflowparameters/workflowparameters should construct. 1`] = `
 <div
   className="msla-workflow-parameters"
 >

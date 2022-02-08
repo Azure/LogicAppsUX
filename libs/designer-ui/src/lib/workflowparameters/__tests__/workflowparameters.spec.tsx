@@ -4,7 +4,7 @@ import { WorkflowParameters, WorkflowParametersProps } from '../workflowparamete
 import { initializeIcons } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
-describe('ui/workflowparameters/workflowparameter', () => {
+describe('ui/workflowparameters/workflowparameters', () => {
   let minimal: WorkflowParametersProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
