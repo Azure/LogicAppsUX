@@ -76,7 +76,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
     expect(textField3.props.disabled).toBeTruthy();
   });
 
-  // TODO: render correct type value when case does not match serialized type
+  // TODO: 12798972 render correct type value when case does not match serialized type
 
   it('should render nothing when type passed is invalid.', () => {
     const props = { ...minimal, definition: { ...minimal.definition, type: 'random' } };
@@ -86,5 +86,5 @@ describe('ui/workflowparameters/workflowparameter', () => {
     expect(type.props.selectedKey).toBeUndefined();
   });
 
-  // TODO: render error messages when validation errors have been passed for the properties
+  // TODO: 12798972 render error messages when validation errors have been passed for the properties
 });
