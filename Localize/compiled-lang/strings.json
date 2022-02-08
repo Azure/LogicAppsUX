@@ -543,6 +543,12 @@
       "value": "s"
     }
   ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "Download (Alt/Option + click)"
+    }
+  ],
   "kvUaFw": [
     {
       "type": 0,
@@ -647,6 +653,12 @@
       "value": "Int"
     }
   ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "Key"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
@@ -705,6 +717,12 @@
     {
       "type": 0,
       "value": "Parameters are shared across workflows in a Logic App."
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "z4YYlQ": [
