@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
+<React.Fragment>
+  <div
+    className="msla-workflow-parameter-field"
+  >
+    <StyledLabelBase
+      htmlFor="test-name"
+      styles={
+        Object {
+          "root": Object {
+            "display": "inline-block",
+            "minWidth": 100,
+            "verticalAlign": "top",
+          },
+        }
+      }
+    >
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Name",
+            },
+          ]
+        }
+        id="TZv5JE"
+      />
+    </StyledLabelBase>
+    <Text
+      className="msla-workflow-parameter-read-only"
+    >
+      test
+    </Text>
+  </div>
+  <div
+    className="msla-workflow-parameter-field"
+  >
+    <StyledLabelBase
+      htmlFor="test-type"
+      styles={
+        Object {
+          "root": Object {
+            "display": "inline-block",
+            "minWidth": 100,
+            "verticalAlign": "top",
+          },
+        }
+      }
+    >
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Title",
+            },
+          ]
+        }
+        id="lV77P8"
+      />
+    </StyledLabelBase>
+    <Text
+      className="msla-workflow-parameter-read-only"
+    >
+      Bool
+    </Text>
+  </div>
+  <div
+    className="msla-workflow-parameter-value-field"
+  >
+    <StyledLabelBase
+      htmlFor="test-value"
+      styles={
+        Object {
+          "root": Object {
+            "display": "inline-block",
+            "minWidth": 100,
+            "verticalAlign": "top",
+          },
+        }
+      }
+    >
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Value",
+            },
+          ]
+        }
+        id="ci6ex1"
+      />
+    </StyledLabelBase>
+    <Text
+      block={true}
+      className="msla-workflow-parameter-read-only"
+    >
+      true
+    </Text>
+  </div>
+</React.Fragment>
+`;

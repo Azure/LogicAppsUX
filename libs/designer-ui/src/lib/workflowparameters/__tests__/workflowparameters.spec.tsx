@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import * as TestUtils from 'react-dom/test-utils';
 import { WorkflowParameters, WorkflowParametersProps } from '../workflowparameters';
 import { initializeIcons } from '@fluentui/react';
 import { useIntl } from 'react-intl';
@@ -36,9 +35,8 @@ describe('ui/workflowparameters/workflowparameter', () => {
   });
 
   it('should construct.', () => {
-    const confirm = renderer.render(<WorkflowParameters {...minimal} />);
-
-    expect(confirm).toMatchSnapshot();
+    const parameters = renderer.render(<WorkflowParameters {...minimal} />);
+    expect(parameters).toMatchSnapshot();
   });
 
   it('should render parameters when provided.', () => {
