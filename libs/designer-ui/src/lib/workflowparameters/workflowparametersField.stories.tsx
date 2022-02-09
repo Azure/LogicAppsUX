@@ -4,13 +4,13 @@ import { WorkflowparameterField, WorkflowparameterFieldProps } from './workflowp
 
 export default {
   component: WorkflowparameterField,
-  title: 'Components/WorkflowParameter2',
+  title: 'Components/WorkflowParameter',
 } as ComponentMeta<typeof WorkflowparameterField>;
-export const Standard: ComponentStory<typeof WorkflowparameterField> = (args: WorkflowparameterFieldProps) => (
+export const Field: ComponentStory<typeof WorkflowparameterField> = (args: WorkflowparameterFieldProps) => (
   <WorkflowparameterField {...args} />
 );
 
-Standard.args = {
+Field.args = {
   isEditable: true,
   name: 'id',
   definition: { id: 'id', defaultValue: 'defaultValue', name: 'name', type: 'Array', value: 'testing' },
