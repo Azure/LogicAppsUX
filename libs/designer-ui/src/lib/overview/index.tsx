@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { getDurationString } from '../utils/utils';
 import { OverviewCommandBar } from './overviewcommandbar';
-import { OverviewProperties, type OverviewPropertiesProps } from './overviewproperties';
+import { OverviewProperties, OverviewPropertiesProps } from './overviewproperties';
 import { RunHistory } from './runhistory';
 import type { Run, RunDisplayItem, RunError } from './types';
 import { isRunError } from './utils';
