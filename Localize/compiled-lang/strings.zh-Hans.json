@@ -5,6 +5,12 @@
       "value": "正在等待"
     }
   ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Show run menu"
+    }
+  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -56,6 +62,12 @@
       "value": "count"
     }
   ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Identifier"
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -66,6 +78,12 @@
     {
       "type": 0,
       "value": "删除参数"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Show run"
     }
   ],
   "6oqk+A": [
@@ -86,10 +104,28 @@
       "value": "由于定义中存在多个触发器，因此无法呈现设计器。"
     }
   ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "State type:"
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "需要连接"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "FXLR5M": [
@@ -113,6 +149,12 @@
       "value": "hours"
     }
   ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "GreYWQ": [
     {
       "type": 0,
@@ -129,6 +171,12 @@
     {
       "type": 0,
       "value": "正在编辑卡标题"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Name:"
     }
   ],
   "M6U2LE": [
@@ -159,6 +207,12 @@
     {
       "type": 0,
       "value": "编辑参数"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Operation options:"
     }
   ],
   "Oib1mL": [
@@ -278,10 +332,22 @@
       "value": "若要引用参数，请使用动态内容列表。"
     }
   ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "The provided workflow run name is not valid."
+    }
+  ],
   "VXBWrq": [
     {
       "type": 0,
       "value": "评论"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Run History"
     }
   ],
   "W070M2": [
@@ -366,6 +432,12 @@
     {
       "type": 0,
       "value": "隐藏此评论"
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Load more"
     }
   ],
   "ci6ex1": [
@@ -503,6 +575,12 @@
       "value": " 秒"
     }
   ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "Download (Alt/Option + click)"
+    }
+  ],
   "kvUaFw": [
     {
       "type": 0,
@@ -527,10 +605,22 @@
       "value": " 分钟"
     }
   ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Run trigger"
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
       "value": "标题"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Stateless run mode:"
     }
   ],
   "lztiwS": [
@@ -551,10 +641,22 @@
       "value": "名称"
     }
   ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Enter the run identifier to open the run"
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "参数"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Refresh"
     }
   ],
   "qGfwxW": [
@@ -594,6 +696,12 @@
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "Key"
     }
   ],
   "ss5JPH": [
@@ -644,10 +752,22 @@
       "value": "创建参数"
     }
   ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Workflow Properties"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "已超时"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "Callback URL:"
     }
   ],
   "xt5TeT": [
@@ -656,10 +776,22 @@
       "value": "在逻辑应用中的工作流之间共享参数。"
     }
   ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "输入参数的默认值。"
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Summary"
     }
   ],
   "zjDJwP": [

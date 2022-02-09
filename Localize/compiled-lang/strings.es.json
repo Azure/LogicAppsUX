@@ -5,6 +5,12 @@
       "value": "Esperando"
     }
   ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Show run menu"
+    }
+  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -63,6 +69,12 @@
       "value": "count"
     }
   ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Identifier"
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -73,6 +85,12 @@
     {
       "type": 0,
       "value": "Eliminar parámetro"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Show run"
     }
   ],
   "6oqk+A": [
@@ -93,10 +111,28 @@
       "value": "No se puede representar el diseñador porque existen varios desencadenadores en la definición."
     }
   ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "State type:"
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Conexión obligatoria"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "FXLR5M": [
@@ -131,6 +167,12 @@
       "value": "hours"
     }
   ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "GreYWQ": [
     {
       "type": 0,
@@ -147,6 +189,12 @@
     {
       "type": 0,
       "value": "Edición del título de la tarjeta"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Name:"
     }
   ],
   "M6U2LE": [
@@ -177,6 +225,12 @@
     {
       "type": 0,
       "value": "Editar parámetro"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Operation options:"
     }
   ],
   "Oib1mL": [
@@ -307,10 +361,22 @@
       "value": "Para hacer referencia a un parámetro, uSEe la lista de contenido dinámico."
     }
   ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "The provided workflow run name is not valid."
+    }
+  ],
   "VXBWrq": [
     {
       "type": 0,
       "value": "Comentario"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Run History"
     }
   ],
   "W070M2": [
@@ -391,6 +457,12 @@
     {
       "type": 0,
       "value": "Ocultar este comentario"
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Load more"
     }
   ],
   "ci6ex1": [
@@ -539,6 +611,12 @@
       "value": "s"
     }
   ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "Download (Alt/Option + click)"
+    }
+  ],
   "kvUaFw": [
     {
       "type": 0,
@@ -563,10 +641,22 @@
       "value": " minutos"
     }
   ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Run trigger"
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
       "value": "Título"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Stateless run mode:"
     }
   ],
   "lztiwS": [
@@ -587,10 +677,22 @@
       "value": "Nombre"
     }
   ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Enter the run identifier to open the run"
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Parámetros"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Refresh"
     }
   ],
   "qGfwxW": [
@@ -643,6 +745,12 @@
       "value": "Int."
     }
   ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "Key"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
@@ -691,10 +799,22 @@
       "value": "Crear parámetro"
     }
   ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Workflow Properties"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Tiempo de espera agotado"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "Callback URL:"
     }
   ],
   "xt5TeT": [
@@ -703,10 +823,22 @@
       "value": "Los parámetros se comparten entre los flujos de trabajo de una Logic App."
     }
   ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "Permite escribir un valor predeterminado para el parámetro."
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Summary"
     }
   ],
   "zjDJwP": [
