@@ -1,5 +1,5 @@
 import * as React from 'react';
-import EmptyPanel from '../card/images/empty-panel.svg';
+import EmptyPanel from '../images/empty-panel.svg';
 import { FormattedMessage } from 'react-intl';
 
 export const EmptyContent = (): JSX.Element => {
