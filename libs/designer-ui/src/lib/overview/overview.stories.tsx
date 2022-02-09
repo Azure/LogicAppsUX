@@ -1,7 +1,7 @@
 // overview.stories.js|jsx|ts|tsx
 
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import { Overview, OverviewProps } from './index';
+import { Overview, type OverviewProps } from './index';
 
 export default {
   component: Overview,
