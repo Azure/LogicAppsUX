@@ -5,6 +5,12 @@
       "value": "Waiting"
     }
   ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Show run menu"
+    }
+  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -63,6 +69,12 @@
       "value": "count"
     }
   ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Identifier"
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -73,6 +85,12 @@
     {
       "type": 0,
       "value": "Delete Parameter"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Show run"
     }
   ],
   "6oqk+A": [
@@ -93,10 +111,28 @@
       "value": "Cannot render designer due to multiple triggers in definition."
     }
   ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "State type:"
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Connection required"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "FXLR5M": [
@@ -131,6 +167,12 @@
       "value": "hours"
     }
   ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "GreYWQ": [
     {
       "type": 0,
@@ -147,6 +189,12 @@
     {
       "type": 0,
       "value": "Editing card title"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Name:"
     }
   ],
   "M6U2LE": [
@@ -177,6 +225,12 @@
     {
       "type": 0,
       "value": "Edit Parameter"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Operation options:"
     }
   ],
   "Oib1mL": [
@@ -311,10 +365,22 @@
       "value": "To reference a parameter, use the dynamic content list."
     }
   ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "The provided workflow run name is not valid."
+    }
+  ],
   "VXBWrq": [
     {
       "type": 0,
       "value": "Comment"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Run History"
     }
   ],
   "W070M2": [
@@ -395,6 +461,12 @@
     {
       "type": 0,
       "value": "Hide this comment"
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Load more"
     }
   ],
   "ci6ex1": [
@@ -573,10 +645,22 @@
       "value": " minutes"
     }
   ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Run trigger"
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
       "value": "Title"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Stateless run mode:"
     }
   ],
   "lztiwS": [
@@ -597,10 +681,22 @@
       "value": "Name"
     }
   ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Enter the run identifier to open the run"
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Refresh"
     }
   ],
   "qGfwxW": [
@@ -707,10 +803,22 @@
       "value": "Create parameter"
     }
   ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Workflow Properties"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Timed Out"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "Callback URL:"
     }
   ],
   "xt5TeT": [
@@ -729,6 +837,12 @@
     {
       "type": 0,
       "value": "Enter default value for parameter."
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Summary"
     }
   ],
   "zjDJwP": [
