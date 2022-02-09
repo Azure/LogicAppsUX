@@ -77,7 +77,7 @@ export interface WorkflowParametersState {
   isInverted: boolean;
 }
 
-export default function WorkflowParameters({
+export function WorkflowParameters({
   parameters = [],
   isReadOnly,
   onManageParameters,
