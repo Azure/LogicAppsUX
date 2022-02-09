@@ -291,9 +291,7 @@ export const WorkflowparameterField = ({
       </>
     );
   } else {
-    return (
-      <ReadOnlyParameters name={name} defaultValue={defaultValue} type={type} definition={definition} parameterDetails={parameterDetails} />
-    );
+    return <ReadOnlyParameters name={name} defaultValue={defaultValue} type={type} parameterDetails={parameterDetails} />;
   }
 };
 
