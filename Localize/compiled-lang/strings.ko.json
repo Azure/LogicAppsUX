@@ -5,6 +5,12 @@
       "value": "대기 중"
     }
   ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Show run menu"
+    }
+  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -52,6 +58,12 @@
       "value": "count"
     }
   ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Identifier"
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -62,6 +74,12 @@
     {
       "type": 0,
       "value": "매개 변수 삭제"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Show run"
     }
   ],
   "6oqk+A": [
@@ -82,10 +100,28 @@
       "value": "정의에 있는 여러 트리거로 인해 디자이너를 렌더링할 수 없습니다."
     }
   ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "State type:"
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "연결 필요"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "FXLR5M": [
@@ -109,6 +145,12 @@
       "value": "hours"
     }
   ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "GreYWQ": [
     {
       "type": 0,
@@ -125,6 +167,12 @@
     {
       "type": 0,
       "value": "카드 제목 편집"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Name:"
     }
   ],
   "M6U2LE": [
@@ -155,6 +203,12 @@
     {
       "type": 0,
       "value": "매개 변수 편집"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Operation options:"
     }
   ],
   "Oib1mL": [
@@ -274,10 +328,22 @@
       "value": "매개 변수를 참조하려면 동적 콘텐츠 목록을 사용하세요."
     }
   ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "The provided workflow run name is not valid."
+    }
+  ],
   "VXBWrq": [
     {
       "type": 0,
       "value": "메모"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Run History"
     }
   ],
   "W070M2": [
@@ -358,6 +424,12 @@
     {
       "type": 0,
       "value": "이 메모 숨기기"
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Load more"
     }
   ],
   "ci6ex1": [
@@ -495,6 +567,12 @@
       "value": "초"
     }
   ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "Download (Alt/Option + click)"
+    }
+  ],
   "kvUaFw": [
     {
       "type": 0,
@@ -519,10 +597,22 @@
       "value": "분"
     }
   ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Run trigger"
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
       "value": "제목"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Stateless run mode:"
     }
   ],
   "lztiwS": [
@@ -543,10 +633,22 @@
       "value": "이름"
     }
   ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Enter the run identifier to open the run"
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "매개 변수"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Refresh"
     }
   ],
   "qGfwxW": [
@@ -586,6 +688,12 @@
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "Key"
     }
   ],
   "ss5JPH": [
@@ -636,10 +744,22 @@
       "value": "매개 변수 만들기"
     }
   ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Workflow Properties"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "시간 초과"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "Callback URL:"
     }
   ],
   "xt5TeT": [
@@ -648,10 +768,22 @@
       "value": "매개 변수는 논리 앱의 워크플로 간에 공유됩니다."
     }
   ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "매개 변수의 기본값을 입력하세요."
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Summary"
     }
   ],
   "zjDJwP": [
