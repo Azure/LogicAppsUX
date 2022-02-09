@@ -1,4 +1,4 @@
-import { CheckboxVisibility, ConstrainMode, DetailsList, DetailsListLayoutMode, IColumn, SelectionMode } from '@fluentui/react';
+import { CheckboxVisibility, DetailsList, DetailsListLayoutMode, IColumn, SelectionMode } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import type { ValueProps } from './types';
 
