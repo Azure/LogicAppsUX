@@ -8,7 +8,7 @@ import {
   ShimmeredDetailsList,
 } from '@fluentui/react';
 import { FormatDateOptions, useIntl } from 'react-intl';
-import type { Run, RunDisplayItem, RunError, Runs } from './types';
+import type { RunDisplayItem } from './types';
 
 export interface RunHistoryProps {
   items: RunDisplayItem[];
