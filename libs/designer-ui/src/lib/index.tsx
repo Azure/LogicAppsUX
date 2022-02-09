@@ -31,6 +31,7 @@ export * from './label';
 // export * from './less';
 // export * from './modaldialog';
 export * from './monitoring';
+export * from './overview';
 export * from './pager';
 // export * from './picker';
 export * from './documentationlinkitem';

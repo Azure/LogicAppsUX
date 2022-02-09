@@ -77,7 +77,7 @@ export interface WorkflowParametersState {
   isInverted: boolean;
 }
 
-export default function WorkflowParameters({
+export function WorkflowParameters({
   parameters = [],
   isReadOnly,
   onManageParameters,
@@ -151,6 +151,7 @@ export default function WorkflowParameters({
         key={item?.id}
         definition={item ?? { id: 'id' }}
         isReadOnly={isReadOnly}
+        isInverted={isInverted}
         onChange={onUpdateParameter}
         onDelete={onDeleteParameter}
         onRegisterLanguageProvider={onRegisterLanguageProvider}

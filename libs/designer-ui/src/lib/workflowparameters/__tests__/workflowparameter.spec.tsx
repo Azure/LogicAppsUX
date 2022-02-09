@@ -1,9 +1,7 @@
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import * as TestUtils from 'react-dom/test-utils';
 import { WorkflowParameter, WorkflowParameterProps } from '../workflowparameter';
 import { initializeIcons } from '@fluentui/react';
-import { CommandButton } from '@fluentui/react';
 
 describe('ui/workflowparameters/workflowparameter', () => {
   let minimal: WorkflowParameterProps, renderer: ReactShallowRenderer.ShallowRenderer;
@@ -19,11 +17,11 @@ describe('ui/workflowparameters/workflowparameter', () => {
   });
 
   it('should construct.', () => {
-    const parameter = TestUtils.renderIntoDocument<WorkflowParameterProps>(<WorkflowParameter {...minimal} />);
-    expect(parameter).toBeDefined();
+    const parameter = renderer.render(<WorkflowParameter {...minimal} />);
+    expect(parameter).toMatchSnapshot();
   });
 
-  it('should render all fields when passed a parameter definition.', () => {
+  it('should render workflow parameter when passed a parameter definition.', () => {
     renderer.render(<WorkflowParameter {...minimal} />);
     const parameter = renderer.getRenderOutput();
 

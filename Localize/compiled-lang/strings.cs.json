@@ -5,6 +5,12 @@
       "value": "Čekající"
     }
   ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Show run menu"
+    }
+  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -97,6 +103,12 @@
       "value": "count"
     }
   ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Identifier"
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -107,6 +119,12 @@
     {
       "type": 0,
       "value": "Odstranit parametr"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Show run"
     }
   ],
   "6oqk+A": [
@@ -127,10 +145,28 @@
       "value": "Návrhář se nedá vykreslit, protože v definici je více než jeden trigger."
     }
   ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "State type:"
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Připojení je povinné"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "FXLR5M": [
@@ -187,6 +223,12 @@
       "value": "hours"
     }
   ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "GreYWQ": [
     {
       "type": 0,
@@ -203,6 +245,12 @@
     {
       "type": 0,
       "value": "Úprava názvu karty"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Name:"
     }
   ],
   "M6U2LE": [
@@ -233,6 +281,12 @@
     {
       "type": 0,
       "value": "Upravit parametr"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Operation options:"
     }
   ],
   "Oib1mL": [
@@ -385,10 +439,22 @@
       "value": "Pokud chcete odkazovat na parametr, použijte seznam dynamického obsahu."
     }
   ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "The provided workflow run name is not valid."
+    }
+  ],
   "VXBWrq": [
     {
       "type": 0,
       "value": "Komentář"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Run History"
     }
   ],
   "W070M2": [
@@ -469,6 +535,12 @@
     {
       "type": 0,
       "value": "Skrýt tento komentář"
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Load more"
     }
   ],
   "ci6ex1": [
@@ -639,6 +711,12 @@
       "value": " s"
     }
   ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "Download (Alt/Option + click)"
+    }
+  ],
   "kvUaFw": [
     {
       "type": 0,
@@ -663,10 +741,22 @@
       "value": " m"
     }
   ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Run trigger"
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
       "value": "Název"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Stateless run mode:"
     }
   ],
   "lztiwS": [
@@ -687,10 +777,22 @@
       "value": "Název"
     }
   ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Enter the run identifier to open the run"
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Parametry"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Refresh"
     }
   ],
   "qGfwxW": [
@@ -765,6 +867,12 @@
       "value": "Int"
     }
   ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "Key"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
@@ -813,10 +921,22 @@
       "value": "Vytvořit parametr"
     }
   ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Workflow Properties"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Vypršel časový limit."
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "Callback URL:"
     }
   ],
   "xt5TeT": [
@@ -825,10 +945,22 @@
       "value": "Parametry se sdílejí mezi pracovními postupy v aplikaci logiky."
     }
   ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "Zadejte výchozí hodnotu parametru."
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Summary"
     }
   ],
   "zjDJwP": [
