@@ -535,20 +535,6 @@
       "value": "Ŋŏṭ śṗèćíḟíèḋ"
     }
   ],
-  "fejjJ6": [
-    {
-      "type": 1,
-      "value": "current_page"
-    },
-    {
-      "type": 0,
-      "value": " ŏḟ "
-    },
-    {
-      "type": 1,
-      "value": "max_page"
-    }
-  ],
   "ftwXvc": [
     {
       "type": 0,
@@ -727,6 +713,20 @@
     {
       "type": 0,
       "value": "Ŋâṁè"
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " ŏḟ "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
     }
   ],
   "oV0xQ9": [
