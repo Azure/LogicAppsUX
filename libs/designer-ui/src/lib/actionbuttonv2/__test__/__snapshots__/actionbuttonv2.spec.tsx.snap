@@ -1,0 +1,125 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/actionbuttonv2 should render 1`] = `
+<div
+  className="ms-TooltipHost root-109"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    aria-label="title"
+    className="msla-action-button-v2"
+    disabled={false}
+  >
+    <svg
+      fill="none"
+      height="14"
+      viewBox="0 0 14 14"
+      width="14"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.65625 6.34375H14V7.65625H7.65625V14H6.34375V7.65625H0V6.34375H6.34375V0H7.65625V6.34375Z"
+        fill="#0078D4"
+      />
+    </svg>
+  </button>
+</div>
+`;
+
+exports[`lib/actionbuttonv2 should render disabled 1`] = `
+<div
+  className="ms-TooltipHost root-109"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    aria-label="title"
+    className="msla-action-button-v2"
+    disabled={true}
+  >
+    <svg
+      fill="none"
+      height="14"
+      viewBox="0 0 14 14"
+      width="14"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.65625 6.34375H14V7.65625H7.65625V14H6.34375V7.65625H0V6.34375H6.34375V0H7.65625V6.34375Z"
+        fill="#0078D4"
+      />
+    </svg>
+  </button>
+</div>
+`;
+
+exports[`lib/actionbuttonv2 should render with a CSS class 1`] = `
+<div
+  className="ms-TooltipHost root-109"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    aria-label="title"
+    className="msla-action-button-v2 class-name"
+    disabled={false}
+  >
+    <svg
+      fill="none"
+      height="14"
+      viewBox="0 0 14 14"
+      width="14"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.65625 6.34375H14V7.65625H7.65625V14H6.34375V7.65625H0V6.34375H6.34375V0H7.65625V6.34375Z"
+        fill="#0078D4"
+      />
+    </svg>
+  </button>
+</div>
+`;
+
+exports[`lib/actionbuttonv2 should render with a ref 1`] = `
+<div
+  className="ms-TooltipHost root-109"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    aria-label="title"
+    className="msla-action-button-v2"
+    disabled={false}
+  >
+    <svg
+      fill="none"
+      height="14"
+      viewBox="0 0 14 14"
+      width="14"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.65625 6.34375H14V7.65625H7.65625V14H6.34375V7.65625H0V6.34375H6.34375V0H7.65625V6.34375Z"
+        fill="#0078D4"
+      />
+    </svg>
+  </button>
+</div>
+`;
