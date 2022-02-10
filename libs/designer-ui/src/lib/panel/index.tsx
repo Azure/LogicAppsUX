@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
-import { PanelPivot } from './panelPivot';
+import { PanelPivot } from './panelpivot';
+import { PanelContent } from './panelcontent';
 import { PageActionTelemetryData } from '../telemetry/models';
 
 export interface Tab {
@@ -34,6 +35,7 @@ export const PanelContainer = ({ isCollapsed, isRight, tabs, width, trackEvent }
         customWidth={width}
       >
         <PanelPivot isCollapsed={isCollapsed} tabs={tabs} selectedTab={selectedTab} onTabChange={onTabChange} trackEvent={trackEvent} />
+        <PanelContent tabs={tabs} selectedTab={selectedTab} />
       </Panel>
     </div>
   );

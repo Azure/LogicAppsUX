@@ -1,28 +1,19 @@
-import { Pivot, PivotItem, IPivotStyles } from '@fluentui/react/lib/Pivot';
-import { Tab } from './';
+import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
+import { Tab } from '.';
 import { EmptyContent } from '../card/cardv2/emptycontent';
-import { PageActionTelemetryData, UserAction } from '../telemetry/models';
 import Constants from '../constants';
+import { PageActionTelemetryData, UserAction } from '../telemetry/models';
 import React from 'react';
 
 export interface CategoryPivotProps {
   isCollapsed: boolean;
   tabs: Tab[];
-  disabled?: boolean;
   selectedTab?: string;
   onTabChange(tabName?: string): void;
   onCategoryClick?(item: PivotItem): void;
   trackEvent(data: PageActionTelemetryData): void;
 }
-export const PanelPivot = ({
-  isCollapsed,
-  tabs,
-  selectedTab,
-  disabled = false,
-  onTabChange,
-  trackEvent,
-  ...props
-}: CategoryPivotProps): JSX.Element => {
+export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackEvent }: CategoryPivotProps): JSX.Element => {
   const onTabSelected = (item?: PivotItem): void => {
     if (item) {
       const { itemKey } = item.props;
