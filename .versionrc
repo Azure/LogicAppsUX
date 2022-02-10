@@ -39,6 +39,10 @@
     {
       "filename": "libs/services/intl/package.json",
       "type": "json"
+    },
+    {
+      "filename": "apps/vs-code-designer/src/package.json",
+      "type": "json"
     }
   ]
 }
