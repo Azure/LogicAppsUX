@@ -10,6 +10,9 @@ module.exports = {
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
   },
+  moduleNameMapper: {
+    '@fluentui/react/lib/(.*)$': '@fluentui/react/lib-commonjs/$1',
+  },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/apps/vs-code-designer',
 };
