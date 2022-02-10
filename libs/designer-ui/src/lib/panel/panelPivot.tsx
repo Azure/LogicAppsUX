@@ -1,6 +1,5 @@
 import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
 import { Tab } from '.';
-import { EmptyContent } from '../card/cardv2/emptycontent';
 import Constants from '../constants';
 import { PageActionTelemetryData, UserAction } from '../telemetry/models';
 import React from 'react';
