@@ -9,7 +9,7 @@ export function Cancelled({ isInverted }: CancelledProps): JSX.Element {
   const pathFill = isInverted ? '#323130' : '#fff';
 
   return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="24" height="24" viewBox="2 2 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="14" cy="14" r="13" fill={circleFill} stroke={pathFill} strokeWidth="2" />
       <path
         d="M14.6221 14L19.3389 18.7236L18.7236 19.3389L14 14.6221L9.27637 19.3389L8.66113 18.7236L13.3779 14L8.66113 9.27637L9.27637 8.66113L14 13.3779L18.7236 8.66113L19.3389 9.27637L14.6221 14Z"
