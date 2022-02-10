@@ -2,6 +2,7 @@ import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
 import { Tab } from '.';
 import Constants from '../constants';
 import { PageActionTelemetryData, UserAction } from '../telemetry/models';
+import { useIntl } from 'react-intl';
 import React from 'react';
 
 export interface CategoryPivotProps {
@@ -13,6 +14,7 @@ export interface CategoryPivotProps {
   trackEvent(data: PageActionTelemetryData): void;
 }
 export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackEvent }: CategoryPivotProps): JSX.Element => {
+  const intl = useIntl();
   const onTabSelected = (item?: PivotItem): void => {
     if (item) {
       const { itemKey } = item.props;
@@ -32,6 +34,10 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackE
     //   controlId: Constants.TELEMETRY_IDENTIFIERS.PANEL_CONTAINER_TAB,
     // });
   };
+  const overflowLabel = intl.formatMessage({
+    defaultMessage: 'more panels',
+    description: 'This is a label to access the overflowed panels',
+  });
   return (
     <div className="msla-pivot" style={{ overflow: 'hidden' }}>
       <Pivot
@@ -39,7 +45,7 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackE
         className="msla-panel-select-card-container"
         onLinkClick={onTabSelected}
         overflowBehavior="menu"
-        overflowAriaLabel="more panel tabs"
+        overflowAriaLabel={overflowLabel}
       >
         {tabs.map(({ itemKey, itemText }: Tab) => (
           <PivotItem key={itemKey} itemKey={itemKey} headerText={itemText} />

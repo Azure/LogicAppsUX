@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 export const EmptyContent = (): JSX.Element => {
   return (
     <div className="msla-panel-select-card-container-empty">
-      <img src={EmptyPanel} alt="" />
+      <img src={EmptyPanel} alt="" role="presentation" />
       <div className="msla-panel-empty-text">
         <FormattedMessage defaultMessage="Please select a card to see the content" description="Empty Panel Content Message" />
       </div>
