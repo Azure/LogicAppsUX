@@ -1,9 +1,5 @@
-import { IconButton } from '@fluentui/react/lib/Button';
-import { Icon, IIconProps, IIconStyles } from '@fluentui/react/lib/Icon';
-import { Text } from '@fluentui/react/lib/Text';
-import { ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
-import { ITooltipHostStyles, TooltipHost } from '@fluentui/react/lib/Tooltip';
-import * as React from 'react';
+import { Icon, IconButton, IIconProps, IIconStyles, ITextFieldStyles, Text, TextField, TooltipHost } from '@fluentui/react';
+import React from 'react';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -65,13 +61,6 @@ const previousIconProps: IIconProps = {
   iconName: 'ChevronLeft',
 };
 
-// NOTE(joechung): This is necessary to position the tooltip correctly on IE.
-const tooltipHostStyles: ITooltipHostStyles = {
-  root: {
-    display: 'inline-block',
-  },
-};
-
 export const Pager: React.FC<PagerProps> = ({
   current: initialCurrent = 1,
   failedIterationProps,
@@ -80,7 +69,7 @@ export const Pager: React.FC<PagerProps> = ({
   min,
   readonlyPagerInput,
   onChange,
-}: PagerProps) => {
+}) => {
   const [current, setCurrent] = React.useState(initialCurrent);
 
   let failedMax = 0,
@@ -115,7 +104,7 @@ export const Pager: React.FC<PagerProps> = ({
     [changeValue]
   );
 
-  // NOTE(joechung): Prevent pager button clicks from selecting the foreach/until card.
+  // Prevent pager button clicks from selecting the foreach/until card.
   const handleClick = useCallback((e: React.MouseEvent<HTMLElement>): void => {
     e.stopPropagation();
   }, []);
@@ -140,7 +129,6 @@ export const Pager: React.FC<PagerProps> = ({
 
   const pagerPreviousString = intl.formatMessage({
     defaultMessage: 'Previous',
-
     description: 'Text of a button to go to previous page',
   });
 
@@ -152,14 +140,12 @@ export const Pager: React.FC<PagerProps> = ({
 
   const previousPagerFailedStrign = intl.formatMessage({
     defaultMessage: 'Previous failed',
-
     description: 'Label of a button to go to the previous failed page option',
   });
 
   const pagerOfString = intl.formatMessage(
     {
       defaultMessage: 'of {max}',
-
       description: 'Text on a pager where people can select a page number out of {max}',
     },
     {
@@ -170,8 +156,7 @@ export const Pager: React.FC<PagerProps> = ({
   const pagerOfStringAria = intl.formatMessage(
     {
       defaultMessage: '{current_page} of {max_page}',
-
-      description: 'Accessability label telling that the user is on page {current} of {max} pages',
+      description: 'Accessibility label telling that the user is on page {current} of {max} pages',
     },
     {
       current_page: current,
@@ -181,13 +166,11 @@ export const Pager: React.FC<PagerProps> = ({
 
   const pagerNextFailedString = intl.formatMessage({
     defaultMessage: 'Next failed',
-
     description: 'Button indicating to go to the next page with failed options',
   });
 
   const pagerNextString = intl.formatMessage({
     defaultMessage: 'Next',
-
     description: 'Button indicating to go to the next page',
   });
 
@@ -233,17 +216,16 @@ export const Pager: React.FC<PagerProps> = ({
   );
 };
 
-const PagerButton = ({ disabled, failed, iconProps, text, onClick }: PagerButtonProps) => {
+const PagerButton: React.FC<PagerButtonProps> = ({ disabled, failed, iconProps, text, onClick }) => {
   const intl = useIntl();
   const previousPagerFailedString = intl.formatMessage({
     defaultMessage: 'Previous failed',
-
     description: 'Label of a button to go to the previous failed page option',
   });
 
   return (
     <div className="msla-pager-failed-container">
-      <TooltipHost content={text} styles={tooltipHostStyles}>
+      <TooltipHost content={text}>
         <IconButton ariaLabel={text} disabled={disabled} iconProps={iconProps} text={text} onClick={onClick} />
       </TooltipHost>
       {failed && (
