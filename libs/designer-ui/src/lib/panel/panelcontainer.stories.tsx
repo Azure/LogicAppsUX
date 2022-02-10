@@ -9,5 +9,12 @@ export default {
 export const Standard: ComponentStory<typeof PanelContainer> = (args: PanelContainerProps) => <PanelContainer {...args} />;
 
 Standard.args = {
-  isOpen: true,
+  isRight: true,
+  width: '30vw',
+  tabs: [
+    { itemKey: 'Parameters', itemText: 'Parameters', content: <div> Parameters </div> },
+    { itemKey: 'Settings', itemText: 'Settings', content: <div> Settings </div> },
+    { itemKey: 'Code View', itemText: 'Code View', content: <div> Code View </div> },
+    { itemKey: 'Testing', itemText: 'Testing', content: <div> Testing </div> },
+  ],
 };

@@ -1,59 +1,31 @@
 import React from 'react';
-import { EmptyContent } from '../card/cardv2/emptycontent';
-import { Panel } from '@fluentui/react/lib/Panel';
-import { IPivotStyles, Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
-import { PageActionTelemetryData, UserAction } from '../telemetry/models';
-import Constants from '../constants';
 
+import { Panel, PanelType } from '@fluentui/react/lib/Panel';
+import { PanelPivot } from './panelPivot';
+import { PageActionTelemetryData } from '../telemetry/models';
+
+export interface Tab {
+  itemKey: string;
+  itemText: string;
+  content: JSX.Element;
+}
 export interface PanelContainerProps {
   isCollapsed: boolean;
-  isOpen?: boolean;
-  noNodeSelected?: boolean;
+  pivotDisabled?: boolean;
+  isRight?: boolean;
   selectedTab?: string;
-  tabs: JSX.Element[];
+  tabs: Tab[];
+  width: string;
   onTabChange(tabName?: string): void;
   trackEvent(data: PageActionTelemetryData): void;
 }
 
-const pivotStyle: Partial<IPivotStyles> = {
-  root: {
-    display: 'none',
-    height: '100%',
-  },
-};
-
-export function PanelContainer({ isCollapsed, isOpen, noNodeSelected, selectedTab, tabs, onTabChange, trackEvent }: PanelContainerProps) {
-  const onTabSelected = (item?: PivotItem): void => {
-    if (item) {
-      const { itemKey } = item.props;
-
-      trackEventHandler(isCollapsed, itemKey);
-
-      onTabChange(itemKey);
-    }
-  };
-
-  const trackEventHandler = (isCollapsed: boolean, itemKey?: string): void => {
-    trackEvent({
-      action: UserAction.click,
-      actionContext: {
-        isCollapsed,
-        itemKey,
-      },
-      controlId: Constants.TELEMETRY_IDENTIFIERS.PANEL_CONTAINER_TAB,
-    });
-  };
+export const PanelContainer = ({ isCollapsed, isRight, selectedTab, tabs, width, onTabChange, trackEvent }: PanelContainerProps) => {
   return (
     <div className="msla-resizable-panel-container">
-      <Panel isOpen={isOpen}>
-        {!noNodeSelected ? (
-          <Pivot className="msla-panel-select-card-container" selectedKey={selectedTab} styles={pivotStyle} onLinkClick={onTabSelected}>
-            {tabs}
-          </Pivot>
-        ) : (
-          <EmptyContent />
-        )}
+      <Panel isOpen={true} headerText={'THE NEW PANEL! :)'} type={isRight ? PanelType.custom : PanelType.customNear} customWidth={width}>
+        <PanelPivot isCollapsed={isCollapsed} tabs={tabs} selectedTab={selectedTab} onTabChange={onTabChange} trackEvent={trackEvent} />
       </Panel>
     </div>
   );
-}
+};
