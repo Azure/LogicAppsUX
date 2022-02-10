@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
+import { StatusPill, StatusPillProps } from '../index';
 
-import { StatusPill, StatusPillProps } from '../';
-
-describe('/ui/monitoring/statuspill/_statuspill', () => {
+describe('lib/monitoring/statuspill', () => {
   const classNames = {
     pill: 'msla-pill',
     pillInner: 'msla-pill--inner',
@@ -54,7 +53,7 @@ describe('/ui/monitoring/statuspill/_statuspill', () => {
     const inner = React.Children.only(tooltipHost.props.children);
     expect(inner.props.className).toBe(classNames.pillInner);
 
-    const [duration, image] = React.Children.toArray(inner.props.children) as React.ReactElement[];
+    const [duration, image]: any[] = React.Children.toArray(inner.props.children);
     expect(duration.props['aria-hidden']).toBeTruthy();
     expect(duration.props.children).toBe('1s');
     expect(image.props.status).toBe(minimal.status);
