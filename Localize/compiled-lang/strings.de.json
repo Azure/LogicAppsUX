@@ -1,4 +1,10 @@
 {
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "/NDLmg": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
       "value": "count"
     }
   ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "End time"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -79,6 +91,12 @@
     {
       "type": 0,
       "value": "Fehlerhaft"
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "Service request ID"
     }
   ],
   "5rkegy": [
@@ -103,6 +121,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "Status code"
     }
   ],
   "8L+oIz": [
@@ -133,6 +157,12 @@
     {
       "type": 0,
       "value": "Duration"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "Response"
     }
   ],
   "FXLR5M": [
@@ -191,10 +221,22 @@
       "value": "Der Kartentitel wird bearbeitet."
     }
   ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "Method"
+    }
+  ],
   "JnlcZQ": [
     {
       "type": 0,
       "value": "Name:"
+    }
+  ],
+  "LXT/ou": [
+    {
+      "type": 0,
+      "value": "Error"
     }
   ],
   "M6U2LE": [
@@ -219,6 +261,12 @@
     {
       "type": 0,
       "value": "Unerwarteter Fehler"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "Status"
     }
   ],
   "O36+wl": [
@@ -359,10 +407,22 @@
       "value": "Name"
     }
   ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "Client request ID"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
       "value": "Verwenden Sie die Liste dynamischer Inhalte, um auf einen Parameter zu verweisen."
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "Content not shown due to security configuration."
     }
   ],
   "VKAk5g": [
@@ -375,6 +435,12 @@
     {
       "type": 0,
       "value": "Kommentar"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "Vaacox": [
@@ -411,6 +477,12 @@
       "value": " Stunden"
     }
   ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "Retry"
+    }
+  ],
   "XOzn/3": [
     {
       "type": 0,
@@ -433,6 +505,12 @@
     {
       "type": 0,
       "value": " Sekunden"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "Request"
     }
   ],
   "Y0H9aX": [
@@ -487,30 +565,34 @@
       "value": "Fehler beim Laden der Komponente."
     }
   ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Nicht angegeben"
     }
   ],
-  "fejjJ6": [
-    {
-      "type": 1,
-      "value": "current_page"
-    },
+  "eRvRWs": [
     {
       "type": 0,
-      "value": " von "
-    },
-    {
-      "type": 1,
-      "value": "max_page"
+      "value": "Start time"
     }
   ],
   "ftwXvc": [
     {
       "type": 0,
       "value": "Ignoriert"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "URI"
     }
   ],
   "gKq3Jv": [
@@ -555,6 +637,12 @@
     {
       "type": 0,
       "value": "Kommentar"
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "iJOIca": [
@@ -681,10 +769,36 @@
       "value": "Name"
     }
   ],
+  "o1HOyf": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Enter the run identifier to open the run"
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "pRUJff": [
