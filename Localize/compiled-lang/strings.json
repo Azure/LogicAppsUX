@@ -129,6 +129,12 @@
       "value": "Status code"
     }
   ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Show more"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -423,6 +429,12 @@
     {
       "type": 0,
       "value": "Content not shown due to security configuration."
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Show less"
     }
   ],
   "VKAk5g": [
