@@ -21,7 +21,8 @@
     "build:resolution-service": "nx run services-resolution-service:build",
     "build:utils": "nx run utils:build",
     "bump": "standard-version --no-verify",
-    "postinstall": "tsc -p ./tools/executors/web/tsconfig.json"
+    "postinstall": "tsc -p ./tools/executors/web/tsconfig.json",
+    "vscode:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package"
   },
   "private": true,
   "dependencies": {
@@ -30,6 +31,7 @@
     "@fluentui/react-hooks": "^8.3.3",
     "@fluentui/theme": "^2.3.2",
     "@reduxjs/toolkit": "1.6.2",
+    "core-js": "^3.6.5",
     "dagre": "^0.8.5",
     "immer": "^9.0.6",
     "pretty-quick": "^3.1.1",
@@ -45,9 +47,11 @@
     "react-redux": "7.2.5",
     "react-syntax-highlighter": "^15.4.4",
     "react-use": "^17.3.1",
+    "regenerator-runtime": "0.13.7",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "to-title-case": "^1.0.0",
     "tslib": "^2.0.0",
+    "vscode": "^1.1.37",
     "web-worker": "^1.1.0",
     "worker-loader": "^3.0.8"
   },
@@ -64,6 +68,7 @@
     "@nrwl/eslint-plugin-nx": "^13.7.3",
     "@nrwl/jest": "^13.7.3",
     "@nrwl/linter": "^13.7.3",
+    "@nrwl/node": "^13.8.0",
     "@nrwl/react": "^13.7.3",
     "@nrwl/storybook": "^13.7.3",
     "@nrwl/tao": "^13.7.3",

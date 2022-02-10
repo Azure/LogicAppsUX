@@ -22,6 +22,11 @@
             "output": "."
           }
         ]
+      },
+      "configurations": {
+        "vscode": {
+          "outputPath": "dist/apps/vs-code-designer/designer"
+        }
       }
     },
     "lint": {
