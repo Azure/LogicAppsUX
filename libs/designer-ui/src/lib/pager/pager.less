@@ -90,11 +90,6 @@
         flex: 1;
         margin-top: 1px;
         text-align: center;
-
-        @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-          flex-basis: 288px;
-          margin-top: -1px;
-        }
       }
 
       a:last-child {
@@ -115,7 +110,7 @@
   justify-content: center;
   margin-bottom: 10px;
   position: relative;
-  z-index: 5; /* NOTE(joechung): Force pager to render over lines. */
+  z-index: 5; /* Force pager to render over lines. */
 
   &.alternate {
     justify-content: space-around;

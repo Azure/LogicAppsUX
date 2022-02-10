@@ -1,14 +1,16 @@
-// Button.stories.ts | Button.stories.tsx
-
-import React from 'react';
+// Pager.stories.js|jsx|ts|tsx
 
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-
 import { Pager, PagerProps } from './index';
 
 export default {
   component: Pager,
   title: 'Components/Pager',
+  argTypes: {
+    onChange: {
+      action: 'onChange',
+    },
+  },
 } as ComponentMeta<typeof Pager>;
 
 const Template: ComponentStory<typeof Pager> = (args: PagerProps) => <Pager {...args} />;

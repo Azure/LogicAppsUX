@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
+import { Pager, PagerProps } from '../index';
 
-import { PagerProps, Pager } from '../';
-
-describe('ui/pager/_Pager', () => {
+describe('lib/pager', () => {
   const classNames = {
     Pager: 'msla-pager-v2',
     PagerInner: 'msla-pager-v2--inner',
