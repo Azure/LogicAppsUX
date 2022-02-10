@@ -7,6 +7,8 @@
     "designer-ui": "libs/designer-ui",
     "services-intl": "libs/services/intl",
     "services-resolution-service": "libs/services/resolution-service",
-    "utils": "libs/utils"
+    "utils": "libs/utils",
+    "vs-code-designer": "apps/vs-code-designer",
+    "vs-code-designer-react": "apps/vs-code-designer-react"
   }
 }

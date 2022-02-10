@@ -1,0 +1,46 @@
+{
+  "name": "microsoft-logic-app-vscode-extension",
+  "version": "0.0.23",
+  "main": "main.js",
+  "engines": {
+    "vscode": "^1.44.0"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "logicAppsExtension.start",
+        "title": "Open New Designer"
+      }
+    ]
+  },
+  "extensionDependencies": [
+    "ms-vscode.azure-account"
+  ],
+  "activationEvents": [
+    "onCommand:logicAppsExtension.start"
+  ],
+  "galleryBanner": {
+    "color": "#015cda",
+    "theme": "dark"
+  },
+  "bugs": {
+    "url": "https://github.com/Azure/logicapps/issues"
+  },
+  "homepage": "https://azure.microsoft.com/services/logic-apps/",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "categories": [
+    "Azure"
+  ],
+  "keywords": [
+    "Azure",
+    "Logic App",
+    "serverless",
+    "multi-root ready"
+  ],
+  "preview": false,
+  "publisher": "ms-azuretools",
+  "icon": "assets/logicapp.png",
+  "dependencies": {
+    "tslib": "^2.0.0"
+  }
+}
