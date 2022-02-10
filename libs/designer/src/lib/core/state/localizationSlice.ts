@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { MessageFormatElement } from 'react-intl';
+// import { MessageFormatElement } from 'react-intl';
 
 export interface LocalizationState {
   locale: string;
   defaultLocale: string;
-  messages: Record<string, string> | Record<string, MessageFormatElement[]>;
+  messages: any; // Record<string, string> | Record<string, MessageFormatElement[]>;
 }
 
 const loadLocaleData = async (locale: string) => {
