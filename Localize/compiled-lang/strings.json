@@ -221,6 +221,12 @@
       "value": "Array"
     }
   ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "Please select a card to see the content"
+    }
+  ],
   "Ie4usD": [
     {
       "type": 0,
@@ -315,6 +321,12 @@
     {
       "type": 0,
       "value": "Succeeded"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "more panels"
     }
   ],
   "PaPPLr": [
