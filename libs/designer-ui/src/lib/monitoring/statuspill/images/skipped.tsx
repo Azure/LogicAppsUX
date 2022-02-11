@@ -1,10 +1,7 @@
-import * as React from 'react';
+import { useTheme } from '@fluentui/react';
 
-interface SkippedProps {
-  isInverted: boolean;
-}
-
-export function Skipped({ isInverted }: SkippedProps): JSX.Element {
+export const Skipped: React.FC = () => {
+  const { isInverted } = useTheme();
   const circleFill = isInverted ? '#323130' : '#fff';
   const pathFill = isInverted ? '#A19F9D' : '#605E5C';
 
@@ -17,4 +14,4 @@ export function Skipped({ isInverted }: SkippedProps): JSX.Element {
       />
     </svg>
   );
-}
+};
