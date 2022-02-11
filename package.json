@@ -50,7 +50,6 @@
     "regenerator-runtime": "0.13.7",
     "to-title-case": "^1.0.0",
     "tslib": "^2.0.0",
-    "vscode": "^1.1.37",
     "web-worker": "^1.1.0",
     "worker-loader": "^3.0.8"
   },
@@ -90,8 +89,10 @@
     "@types/react-dom": "^17.0.11",
     "@types/react-test-renderer": "^17.0.1",
     "@types/to-title-case": "^1.0.0",
+    "@types/vscode": "^1.64.0",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
+    "@vscode/test-electron": "^2.1.2",
     "babel-jest": "^27.5.1",
     "babel-loader": "^8.2.3",
     "babel-plugin-formatjs": "^10.3.17",

@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { commands, ExtensionContext, window, ViewColumn, Uri } from 'vscode';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
-//On activation
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function activate(context: ExtensionContext) {
   // Register command "start"
   commands.registerCommand('logicAppsExtension.start', async () => {
@@ -28,7 +25,7 @@ export function activate(context: ExtensionContext) {
       // For scripts & links
       const path = join(context.extensionPath, 'webview', link);
       const uri = Uri.file(path);
-      return `${prefix}="${panel.webview['asWebviewUri'](uri)}"`;
+      return `${prefix}="${panel.webview.asWebviewUri(uri)}"`;
     };
     panel.webview.html = html.replace(matchLinks, toUri);
 
