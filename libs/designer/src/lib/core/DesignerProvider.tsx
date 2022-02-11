@@ -21,7 +21,7 @@ const DesignerProviderInner = ({ theme = AzureThemeLight, locale = 'en', childre
   }, [dispatch, locale]);
   return (
     <ProviderWrappedContext.Provider value={true}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme} className="msla-theme-provider">
         <Provider store={store}>
           <IntlProvider
             locale={i18n.locale}

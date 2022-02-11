@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { convertActionIDToTitleCase } from '../common/utilities/Utils';
 import { RootState } from '../core/store';
-import React, { useEffect } from 'react';
-import ReactFlow, { ArrowHeadType, Elements, ReactFlowProvider, useStoreState, useZoomPanHelper } from 'react-flow-renderer';
+import { useCallback, useEffect } from 'react';
+import ReactFlow, { ReactFlowProvider, useNodes, useReactFlow, useStore, Node, Edge, useNodesState } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import { setShouldZoomToNode, triggerLayout, updateNodeSizes } from '../core/state/workflowSlice';
@@ -25,12 +25,13 @@ const edgeTypes = {
 };
 
 const ZoomNode = () => {
-  const nodes = useStoreState((store) => store.nodes);
-  const transform = useStoreState((store) => store.transform);
+  const nodes = useNodes();
+  const [_, __, zoom] = useStore((store) => store.transform);
   const shouldLayout = useSelector((state: RootState) => state.workflow.shouldLayout);
   const shouldFocusNode = useSelector((state: RootState) => state.workflow.shouldZoomToNode);
   const dispatch = useDispatch();
-  const { setCenter } = useZoomPanHelper();
+  const { setCenter } = useReactFlow();
+
   useEffect(() => {
     if (nodes.length && shouldLayout) {
       dispatch(updateNodeSizes(nodes));
@@ -41,16 +42,16 @@ const ZoomNode = () => {
 
             dispatch(setShouldZoomToNode(null));
             if (node) {
-              const x = node.__rf.position.x + node.__rf.width / 2;
-              const y = node.__rf.position.y + node.__rf.height / 2;
+              const x = node.position.x + (node.width ?? 0) / 2;
+              const y = node.position.y + (node.height ?? 0) / 2;
 
-              setCenter(x, y, transform[2]);
+              setCenter(x, y, { zoom });
             }
           }
         }
       });
     }
-  }, [dispatch, nodes, setCenter, shouldFocusNode, shouldLayout, transform]);
+  }, [dispatch, nodes, setCenter, shouldFocusNode, shouldLayout, zoom]);
   useEffect(() => {
     dispatch(triggerLayout());
   }, [dispatch, nodes.length]);
@@ -87,8 +88,9 @@ const DND_OPTIONS = {
 };
 
 export const Designer = ({ graphId = 'root' }: DesignerProps) => {
-  const nodes = useSelector((state: RootState) => {
-    const retNodes: Elements = [];
+  const [nodes, edges]: [Node[], Edge[]] = useSelector((state: RootState) => {
+    const retNodes: Node[] = [];
+    const retEdges: Edge[] = [];
     //TODO: Key off current graph rather than going through all nodes
     state.workflow.graphs[graphId]?.nodes.forEach((id) => {
       const node = state.workflow.nodes[id];
@@ -102,32 +104,40 @@ export const Designer = ({ graphId = 'root' }: DesignerProps) => {
         position: node.position,
       });
       for (const child of node.childrenNodes) {
-        retNodes.push({
+        retEdges.push({
           id: `entry-${node.id}-${child}`,
           source: node.id,
           target: child,
           data: { parent: node.id, child: child },
           type: 'buttonedge',
           animated: false,
-          arrowHeadType: ArrowHeadType.Arrow,
         });
       }
     });
-    return retNodes;
+    return [retNodes, retEdges];
   });
 
+  const dispatch = useDispatch();
+  const nodesChanged = useCallback(() => {
+    dispatch(triggerLayout());
+  }, [dispatch]);
   return (
     <DndProvider options={DND_OPTIONS as any}>
-      <div style={{ width: '100vw', height: '100vh' }} className="msla-designer-canvas msla-panel-mode">
+      <div className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
-            elements={nodes}
+            nodes={nodes}
+            onNodesChange={nodesChanged}
+            edges={edges}
             onConnect={() => {}}
             minZoom={0}
             nodesDraggable={false}
             edgeTypes={edgeTypes}
-            onElementsRemove={() => {}}
+            proOptions={{
+              account: 'paid-subscription',
+              hideAttribution: true,
+            }}
           ></ReactFlow>
           <ZoomNode></ZoomNode>
         </ReactFlowProvider>

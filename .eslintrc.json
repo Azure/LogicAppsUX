@@ -25,6 +25,12 @@
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nrwl/nx/typescript", "plugin:react/recommended", "plugin:react-hooks/recommended"],
       "rules": {
+        "react/jsx-no-useless-fragment": [
+          1,
+          {
+            "allowExpressions": true
+          }
+        ],
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "formatjs/enforce-placeholders": [
