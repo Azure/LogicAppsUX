@@ -29,24 +29,22 @@ describe('ui/monitoring/values/decimal', () => {
   });
 
   it('should render decimals without minus signs', () => {
-    props.value = '123.45';
-    renderer.render(<DecimalValue {...props} />);
+    renderer.render(<DecimalValue {...props} value="123.45" />);
 
     const value = renderer.getRenderOutput();
 
     const intl = getTestIntl();
-    const expected = intl.formatNumber(props.value);
+    const expected = intl.formatNumber(123.45);
     expect(value.props.value).toBe(expected);
   });
 
   it('should render decimals without decimal points', () => {
-    props.value = '-123';
-    renderer.render(<DecimalValue {...props} />);
+    renderer.render(<DecimalValue {...props} value="-123" />);
 
     const value = renderer.getRenderOutput();
 
     const intl = getTestIntl();
-    const expected = intl.formatNumber(props.value);
+    const expected = intl.formatNumber(-123);
     expect(value.props.value).toBe(expected);
   });
 });

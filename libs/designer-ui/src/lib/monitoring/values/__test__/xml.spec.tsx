@@ -79,4 +79,11 @@ describe('ui/monitoring/values/xml', () => {
       '<?xml version="1.0" encoding="utf-8"?><root><name username="JS1用户名">你好 John</name><name username="MI1用户名">中文测试</name></root>'
     );
   });
+
+  it('should not render when not visible', () => {
+    renderer.render(<XmlValue {...props} visible={false} />);
+
+    const section = renderer.getRenderOutput();
+    expect(section).toBeNull();
+  });
 });

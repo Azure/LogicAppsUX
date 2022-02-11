@@ -1,29 +1,60 @@
-import * as ReactShallowRenderer from 'react-test-renderer/shallow';
+import renderer from 'react-test-renderer';
+import ShallowRenderer from 'react-test-renderer/shallow';
+import { DateTimeValue } from '../datetime';
 import { Value } from '../index';
 import type { ValueProps } from '../types';
 
 describe('ui/monitoring/values/value', () => {
-  let renderer: ReactShallowRenderer.ShallowRenderer;
-
-  beforeEach(() => {
-    renderer = ReactShallowRenderer.createRenderer();
-  });
-
-  afterEach(() => {
-    renderer.unmount();
-  });
-
-  it('should render a date-time value', () => {
+  it('should render a body link value', () => {
     const props: ValueProps = {
-      displayName: 'date/time',
-      format: 'date-time',
-      value: new Date(2017, 8, 1, 0, 0, 0, 0).toISOString(),
-      visible: true,
+      displayName: 'displayName',
+      value: {
+        contentHash: {
+          algorithm: 'algorithm',
+          value: 'value',
+        },
+        contentSize: 425,
+        contentVersion: 'contentVersion',
+        uri: 'uri',
+      },
     };
-    renderer.render(<Value {...props} />);
+    const tree = renderer.create(<Value {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
 
-    const value = renderer.getRenderOutput();
-    expect(value.props).toEqual(props);
+  describe('date-time', () => {
+    let shallowRenderer: ShallowRenderer.ShallowRenderer;
+
+    beforeEach(() => {
+      shallowRenderer = ShallowRenderer.createRenderer();
+    });
+
+    afterEach(() => {
+      shallowRenderer.unmount();
+    });
+
+    it('should render a date-time value', () => {
+      const props: ValueProps = {
+        displayName: 'date/time',
+        format: 'date-time',
+        value: new Date(2017, 8, 1, 0, 0, 0, 0).toISOString(),
+      };
+      shallowRenderer.render(<Value {...props} />);
+
+      const value = shallowRenderer.getRenderOutput();
+      expect(value.type).toEqual(DateTimeValue);
+      expect(value.props).toEqual(props);
+    });
+  });
+
+  it('should render a decimal value', () => {
+    const props: ValueProps = {
+      displayName: 'display-name',
+      format: 'decimal',
+      value: '-123.45',
+    };
+    const tree = renderer.create(<Value {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
   it('should render a HTML value', () => {
@@ -31,24 +62,41 @@ describe('ui/monitoring/values/value', () => {
       displayName: 'date/time',
       format: 'html',
       value: '<table><tbody><tr><td>1</td></tr></tbody></table>',
-      visible: true,
     };
-    renderer.render(<Value {...props} />);
+    const tree = renderer.create(<Value {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
 
-    const value = renderer.getRenderOutput();
-    expect(value.props).toEqual(props);
+  it('should render a key-value pairs details list', () => {
+    const props: ValueProps = {
+      displayName: 'Headers',
+      format: 'key-value-pairs',
+      value: {
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': '*',
+        'Referrer-Policy': 'no-referred-when-downgrade',
+      },
+    };
+    const tree = renderer.create(<Value {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render a number value', () => {
+    const props: ValueProps = {
+      displayName: 'display-name',
+      value: -123.45,
+    };
+    const tree = renderer.create(<Value {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
   it('should render a raw value', () => {
     const props: ValueProps = {
       displayName: 'raw',
       value: 'Hello World',
-      visible: true,
     };
-    renderer.render(<Value {...props} />);
-
-    const value = renderer.getRenderOutput();
-    expect(value.props).toEqual(props);
+    const tree = renderer.create(<Value {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
   it('should render an XML value', () => {
@@ -58,11 +106,18 @@ describe('ui/monitoring/values/value', () => {
         '$content-type': 'application/xml',
         $content: 'PHhtbD48L3htbD4=',
       },
-      visible: true,
     };
-    renderer.render(<Value {...props} />);
+    const tree = renderer.create(<Value {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
 
-    const value = renderer.getRenderOutput();
-    expect(value.props).toEqual(props);
+  it('should not render when not visible', () => {
+    const props: ValueProps = {
+      displayName: 'raw',
+      value: 'Hello World',
+      visible: false,
+    };
+    const tree = renderer.create(<Value {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 });

@@ -44,4 +44,11 @@ describe('ui/monitoring/values/_html', () => {
       })
     );
   });
+
+  it('should not render when not visible', () => {
+    renderer.render(<HtmlValue {...props} visible={false} />);
+
+    const section = renderer.getRenderOutput();
+    expect(section).toBeNull();
+  });
 });
