@@ -8,14 +8,6 @@
   padding: 0 8px;
   width: fit-content;
 
-  /* NOTE(joechung): IE does not support width: fit-content */
-  @media screen {
-    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-      display: table;
-      width: auto;
-    }
-  }
-
   &.msla-has-comment {
     margin-bottom: -26px;
   }
@@ -327,52 +319,22 @@
   top: -40px;
   margin-bottom: -40px;
 
-  @media screen {
-    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-      margin-bottom: -30px;
-    }
-  }
-
   &.msla-body-small {
     top: -25px;
     margin-bottom: -25px;
 
-    @media screen {
-      @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-        margin-bottom: -15px;
-      }
-    }
-
     &.msla-has-comment {
       top: -50px;
       margin-bottom: -50px;
-
-      @media screen {
-        @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-          margin-bottom: -40px;
-        }
-      }
     }
 
     &.msla-has-status {
       top: -50px;
       margin-bottom: -50px;
 
-      @media screen {
-        @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-          margin-bottom: -40px;
-        }
-      }
-
       &.msla-has-comment {
         top: -75px;
         margin-bottom: -75px;
-
-        @media screen {
-          @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-            margin-bottom: -65px;
-          }
-        }
       }
     }
   }
