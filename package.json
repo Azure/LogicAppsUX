@@ -30,6 +30,7 @@
     "@fluentui/react": "^8.45.0",
     "@fluentui/react-hooks": "^8.3.3",
     "@fluentui/theme": "^2.3.2",
+    "@monaco-editor/react": "^4.3.1",
     "@reduxjs/toolkit": "1.6.2",
     "core-js": "^3.6.5",
     "dagre": "^0.8.5",
