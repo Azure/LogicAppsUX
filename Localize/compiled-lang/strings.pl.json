@@ -29,12 +29,6 @@
       "value": "Kopiuj adres URL"
     }
   ],
-  "1KSzxz": [
-    {
-      "type": 0,
-      "value": "Dodaj krótki komentarz"
-    }
-  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -122,7 +116,7 @@
   "33+WHG": [
     {
       "type": 0,
-      "value": "Identifier"
+      "value": "Identyfikator"
     }
   ],
   "3kI7xF": [
@@ -146,7 +140,7 @@
   "6jiO7t": [
     {
       "type": 0,
-      "value": "Show run"
+      "value": "Pokaż uruchomienie"
     }
   ],
   "6oqk+A": [
@@ -167,6 +161,12 @@
       "value": "Status code"
     }
   ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Show more"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -176,7 +176,7 @@
   "BKL0ZG": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Godzina rozpoczęcia"
     }
   ],
   "Bn8iTS": [
@@ -194,7 +194,7 @@
   "DZZ3fj": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Czas trwania"
     }
   ],
   "ERAWZA": [
@@ -260,7 +260,7 @@
   "FslNgF": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Stan"
     }
   ],
   "GreYWQ": [
@@ -275,10 +275,10 @@
       "value": "Tablica"
     }
   ],
-  "Ie4usD": [
+  "HfrUId": [
     {
       "type": 0,
-      "value": "Edytowanie tytułu karty"
+      "value": "Please select a card to see the content"
     }
   ],
   "JbgTET": [
@@ -290,7 +290,7 @@
   "JnlcZQ": [
     {
       "type": 0,
-      "value": "Name:"
+      "value": "Nazwa:"
     }
   ],
   "LXT/ou": [
@@ -369,6 +369,12 @@
     {
       "type": 0,
       "value": "Zakończono pomyślnie"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "more panels"
     }
   ],
   "PaPPLr": [
@@ -503,10 +509,16 @@
       "value": "Content not shown due to security configuration."
     }
   ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Show less"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
-      "value": "The provided workflow run name is not valid."
+      "value": "Podana nazwa przebiegu przepływu pracy jest nieprawidłowa."
     }
   ],
   "VXBWrq": [
@@ -524,7 +536,7 @@
   "Vaacox": [
     {
       "type": 0,
-      "value": "Run History"
+      "value": "Historia przebiegów"
     }
   ],
   "W070M2": [
@@ -613,16 +625,10 @@
       "value": "Ciąg"
     }
   ],
-  "ZazdvR": [
-    {
-      "type": 0,
-      "value": "Ukryj ten komentarz"
-    }
-  ],
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "Load more"
+      "value": "Załaduj więcej"
     }
   ],
   "ci6ex1": [
@@ -733,12 +739,6 @@
       "value": "seconds"
     }
   ],
-  "hPIR4j": [
-    {
-      "type": 0,
-      "value": "Komentarz"
-    }
-  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -806,13 +806,7 @@
   "kYivbS": [
     {
       "type": 0,
-      "value": "Download (Alt/Option + click)"
-    }
-  ],
-  "kvUaFw": [
-    {
-      "type": 0,
-      "value": "Więcej informacji"
+      "value": "Pobierz (Alt/Option + kliknięcie)"
     }
   ],
   "l36V56": [
@@ -910,7 +904,7 @@
   "pr9GwA": [
     {
       "type": 0,
-      "value": "Refresh"
+      "value": "Odśwież"
     }
   ],
   "qGfwxW": [
@@ -988,7 +982,7 @@
   "shF9tZ": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Klucz"
     }
   ],
   "ss5JPH": [
@@ -1042,7 +1036,7 @@
   "vz2gZC": [
     {
       "type": 0,
-      "value": "Workflow Properties"
+      "value": "Właściwości przepływu pracy"
     }
   ],
   "wHYQyg": [
@@ -1066,7 +1060,7 @@
   "xwEX2/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Wartość"
     }
   ],
   "z4YYlQ": [
@@ -1078,7 +1072,7 @@
   "ziYCiA": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Podsumowanie"
     }
   ],
   "zjDJwP": [

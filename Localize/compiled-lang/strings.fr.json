@@ -14,7 +14,7 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "Afficher le menu Exécuter"
     }
   ],
   "0ZlNtf": [
@@ -27,12 +27,6 @@
     {
       "type": 0,
       "value": "Copier l'URL"
-    }
-  ],
-  "1KSzxz": [
-    {
-      "type": 0,
-      "value": "Ajouter un bref commentaire"
     }
   ],
   "1R6Vaa": [
@@ -84,7 +78,7 @@
   "33+WHG": [
     {
       "type": 0,
-      "value": "Identifier"
+      "value": "Identificateur"
     }
   ],
   "3kI7xF": [
@@ -108,7 +102,7 @@
   "6jiO7t": [
     {
       "type": 0,
-      "value": "Show run"
+      "value": "Afficher l'exécution"
     }
   ],
   "6oqk+A": [
@@ -129,6 +123,12 @@
       "value": "Status code"
     }
   ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Show more"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -138,13 +138,13 @@
   "BKL0ZG": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Heure de début"
     }
   ],
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "Type d'état :"
     }
   ],
   "CG772M": [
@@ -156,7 +156,7 @@
   "DZZ3fj": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Durée"
     }
   ],
   "ERAWZA": [
@@ -200,7 +200,7 @@
   "FslNgF": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "État"
     }
   ],
   "GreYWQ": [
@@ -215,10 +215,10 @@
       "value": "Tableau"
     }
   ],
-  "Ie4usD": [
+  "HfrUId": [
     {
       "type": 0,
-      "value": "Modification du titre de la carte"
+      "value": "Please select a card to see the content"
     }
   ],
   "JbgTET": [
@@ -230,7 +230,7 @@
   "JnlcZQ": [
     {
       "type": 0,
-      "value": "Name:"
+      "value": "Nom :"
     }
   ],
   "LXT/ou": [
@@ -278,7 +278,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "Options d'opération :"
     }
   ],
   "Oib1mL": [
@@ -309,6 +309,12 @@
     {
       "type": 0,
       "value": "Réussi"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "more panels"
     }
   ],
   "PaPPLr": [
@@ -421,10 +427,16 @@
       "value": "Content not shown due to security configuration."
     }
   ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Show less"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
-      "value": "The provided workflow run name is not valid."
+      "value": "Le nom d'exécution de workflow fourni n'est pas valide."
     }
   ],
   "VXBWrq": [
@@ -442,7 +454,7 @@
   "Vaacox": [
     {
       "type": 0,
-      "value": "Run History"
+      "value": "Historique d’exécution"
     }
   ],
   "W070M2": [
@@ -531,16 +543,10 @@
       "value": "Chaîne"
     }
   ],
-  "ZazdvR": [
-    {
-      "type": 0,
-      "value": "Masquer ce commentaire"
-    }
-  ],
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "Load more"
+      "value": "Charger plus"
     }
   ],
   "ci6ex1": [
@@ -629,12 +635,6 @@
       "value": "seconds"
     }
   ],
-  "hPIR4j": [
-    {
-      "type": 0,
-      "value": "Commentaire"
-    }
-  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -702,13 +702,7 @@
   "kYivbS": [
     {
       "type": 0,
-      "value": "Download (Alt/Option + click)"
-    }
-  ],
-  "kvUaFw": [
-    {
-      "type": 0,
-      "value": "Plus d’informations"
+      "value": "Télécharger (Alt/Option + clic)"
     }
   ],
   "l36V56": [
@@ -732,7 +726,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "Déclencheur d'exécution"
     }
   ],
   "lV77P8": [
@@ -744,7 +738,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "Mode d’exécution sans état :"
     }
   ],
   "lztiwS": [
@@ -782,7 +776,7 @@
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "Entrer l’identificateur d’exécution pour ouvrir l’exécution"
     }
   ],
   "p16/4S": [
@@ -806,7 +800,7 @@
   "pr9GwA": [
     {
       "type": 0,
-      "value": "Refresh"
+      "value": "Actualiser"
     }
   ],
   "qGfwxW": [
@@ -862,7 +856,7 @@
   "shF9tZ": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Clé"
     }
   ],
   "ss5JPH": [
@@ -916,7 +910,7 @@
   "vz2gZC": [
     {
       "type": 0,
-      "value": "Workflow Properties"
+      "value": "Propriétés du flux de travail"
     }
   ],
   "wHYQyg": [
@@ -928,7 +922,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "URL de rappel :"
     }
   ],
   "xt5TeT": [
@@ -940,7 +934,7 @@
   "xwEX2/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Valeur"
     }
   ],
   "z4YYlQ": [
@@ -952,7 +946,7 @@
   "ziYCiA": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Résumé"
     }
   ],
   "zjDJwP": [

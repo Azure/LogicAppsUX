@@ -29,12 +29,6 @@
       "value": "Kopírovat adresu URL"
     }
   ],
-  "1KSzxz": [
-    {
-      "type": 0,
-      "value": "Přidat krátký komentář"
-    }
-  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -118,7 +112,7 @@
   "33+WHG": [
     {
       "type": 0,
-      "value": "Identifier"
+      "value": "Identifikátor"
     }
   ],
   "3kI7xF": [
@@ -142,7 +136,7 @@
   "6jiO7t": [
     {
       "type": 0,
-      "value": "Show run"
+      "value": "Zobrazit běh"
     }
   ],
   "6oqk+A": [
@@ -163,6 +157,12 @@
       "value": "Status code"
     }
   ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Show more"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -172,7 +172,7 @@
   "BKL0ZG": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Čas zahájení"
     }
   ],
   "Bn8iTS": [
@@ -190,7 +190,7 @@
   "DZZ3fj": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Doba trvání"
     }
   ],
   "ERAWZA": [
@@ -256,7 +256,7 @@
   "FslNgF": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Stav"
     }
   ],
   "GreYWQ": [
@@ -271,10 +271,10 @@
       "value": "Pole"
     }
   ],
-  "Ie4usD": [
+  "HfrUId": [
     {
       "type": 0,
-      "value": "Úprava názvu karty"
+      "value": "Please select a card to see the content"
     }
   ],
   "JbgTET": [
@@ -286,7 +286,7 @@
   "JnlcZQ": [
     {
       "type": 0,
-      "value": "Name:"
+      "value": "Název:"
     }
   ],
   "LXT/ou": [
@@ -365,6 +365,12 @@
     {
       "type": 0,
       "value": "Podařilo se"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "more panels"
     }
   ],
   "PaPPLr": [
@@ -499,10 +505,16 @@
       "value": "Content not shown due to security configuration."
     }
   ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Show less"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
-      "value": "The provided workflow run name is not valid."
+      "value": "Název běhu pracovního postupu není platný."
     }
   ],
   "VXBWrq": [
@@ -520,7 +532,7 @@
   "Vaacox": [
     {
       "type": 0,
-      "value": "Run History"
+      "value": "Historie spuštění"
     }
   ],
   "W070M2": [
@@ -609,16 +621,10 @@
       "value": "Řetězec"
     }
   ],
-  "ZazdvR": [
-    {
-      "type": 0,
-      "value": "Skrýt tento komentář"
-    }
-  ],
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "Load more"
+      "value": "Načíst další"
     }
   ],
   "ci6ex1": [
@@ -729,12 +735,6 @@
       "value": "seconds"
     }
   ],
-  "hPIR4j": [
-    {
-      "type": 0,
-      "value": "Komentář"
-    }
-  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -802,13 +802,7 @@
   "kYivbS": [
     {
       "type": 0,
-      "value": "Download (Alt/Option + click)"
-    }
-  ],
-  "kvUaFw": [
-    {
-      "type": 0,
-      "value": "Další informace"
+      "value": "Stáhnout (Alt/Option + kliknutí)"
     }
   ],
   "l36V56": [
@@ -906,7 +900,7 @@
   "pr9GwA": [
     {
       "type": 0,
-      "value": "Refresh"
+      "value": "Aktualizovat"
     }
   ],
   "qGfwxW": [
@@ -984,7 +978,7 @@
   "shF9tZ": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Klíč"
     }
   ],
   "ss5JPH": [
@@ -1038,7 +1032,7 @@
   "vz2gZC": [
     {
       "type": 0,
-      "value": "Workflow Properties"
+      "value": "Vlastnosti pracovního postupu"
     }
   ],
   "wHYQyg": [
@@ -1062,7 +1056,7 @@
   "xwEX2/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Hodnota"
     }
   ],
   "z4YYlQ": [
@@ -1074,7 +1068,7 @@
   "ziYCiA": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Shrnutí"
     }
   ],
   "zjDJwP": [

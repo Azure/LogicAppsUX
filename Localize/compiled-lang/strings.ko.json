@@ -29,12 +29,6 @@
       "value": "URL 복사"
     }
   ],
-  "1KSzxz": [
-    {
-      "type": 0,
-      "value": "짧은 주석 추가"
-    }
-  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -73,7 +67,7 @@
   "33+WHG": [
     {
       "type": 0,
-      "value": "Identifier"
+      "value": "식별자"
     }
   ],
   "3kI7xF": [
@@ -97,7 +91,7 @@
   "6jiO7t": [
     {
       "type": 0,
-      "value": "Show run"
+      "value": "실행 표시"
     }
   ],
   "6oqk+A": [
@@ -118,6 +112,12 @@
       "value": "Status code"
     }
   ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Show more"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -127,7 +127,7 @@
   "BKL0ZG": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "시작 시간"
     }
   ],
   "Bn8iTS": [
@@ -145,7 +145,7 @@
   "DZZ3fj": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "기간"
     }
   ],
   "ERAWZA": [
@@ -178,7 +178,7 @@
   "FslNgF": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "상태"
     }
   ],
   "GreYWQ": [
@@ -193,10 +193,10 @@
       "value": "배열"
     }
   ],
-  "Ie4usD": [
+  "HfrUId": [
     {
       "type": 0,
-      "value": "카드 제목 편집"
+      "value": "Please select a card to see the content"
     }
   ],
   "JbgTET": [
@@ -208,7 +208,7 @@
   "JnlcZQ": [
     {
       "type": 0,
-      "value": "Name:"
+      "value": "이름:"
     }
   ],
   "LXT/ou": [
@@ -287,6 +287,12 @@
     {
       "type": 0,
       "value": "성공함"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "more panels"
     }
   ],
   "PaPPLr": [
@@ -388,10 +394,16 @@
       "value": "Content not shown due to security configuration."
     }
   ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Show less"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
-      "value": "The provided workflow run name is not valid."
+      "value": "제공된 워크플로 실행 이름이 잘못되었습니다."
     }
   ],
   "VXBWrq": [
@@ -409,7 +421,7 @@
   "Vaacox": [
     {
       "type": 0,
-      "value": "Run History"
+      "value": "실행 기록"
     }
   ],
   "W070M2": [
@@ -498,16 +510,10 @@
       "value": "문자열"
     }
   ],
-  "ZazdvR": [
-    {
-      "type": 0,
-      "value": "이 메모 숨기기"
-    }
-  ],
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "Load more"
+      "value": "추가 로드"
     }
   ],
   "ci6ex1": [
@@ -585,12 +591,6 @@
       "value": "seconds"
     }
   ],
-  "hPIR4j": [
-    {
-      "type": 0,
-      "value": "메모"
-    }
-  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -658,13 +658,7 @@
   "kYivbS": [
     {
       "type": 0,
-      "value": "Download (Alt/Option + click)"
-    }
-  ],
-  "kvUaFw": [
-    {
-      "type": 0,
-      "value": "추가 정보"
+      "value": "다운로드(Alt/Option+클릭)"
     }
   ],
   "l36V56": [
@@ -762,7 +756,7 @@
   "pr9GwA": [
     {
       "type": 0,
-      "value": "Refresh"
+      "value": "새로 고침"
     }
   ],
   "qGfwxW": [
@@ -807,7 +801,7 @@
   "shF9tZ": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "키"
     }
   ],
   "ss5JPH": [
@@ -861,7 +855,7 @@
   "vz2gZC": [
     {
       "type": 0,
-      "value": "Workflow Properties"
+      "value": "워크플로 속성"
     }
   ],
   "wHYQyg": [
@@ -885,7 +879,7 @@
   "xwEX2/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "값"
     }
   ],
   "z4YYlQ": [
@@ -897,7 +891,7 @@
   "ziYCiA": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "요약"
     }
   ],
   "zjDJwP": [

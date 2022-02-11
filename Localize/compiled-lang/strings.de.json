@@ -29,12 +29,6 @@
       "value": "URL kopieren"
     }
   ],
-  "1KSzxz": [
-    {
-      "type": 0,
-      "value": "Kurzen Kommentar hinzufügen"
-    }
-  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -84,7 +78,7 @@
   "33+WHG": [
     {
       "type": 0,
-      "value": "Identifier"
+      "value": "Bezeichner"
     }
   ],
   "3kI7xF": [
@@ -108,7 +102,7 @@
   "6jiO7t": [
     {
       "type": 0,
-      "value": "Show run"
+      "value": "Ausführung anzeigen"
     }
   ],
   "6oqk+A": [
@@ -129,6 +123,12 @@
       "value": "Status code"
     }
   ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Show more"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -138,7 +138,7 @@
   "BKL0ZG": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Startzeit"
     }
   ],
   "Bn8iTS": [
@@ -156,7 +156,7 @@
   "DZZ3fj": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Dauer"
     }
   ],
   "ERAWZA": [
@@ -215,10 +215,10 @@
       "value": "Array"
     }
   ],
-  "Ie4usD": [
+  "HfrUId": [
     {
       "type": 0,
-      "value": "Der Kartentitel wird bearbeitet."
+      "value": "Please select a card to see the content"
     }
   ],
   "JbgTET": [
@@ -309,6 +309,12 @@
     {
       "type": 0,
       "value": "Erfolgreich"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "more panels"
     }
   ],
   "PaPPLr": [
@@ -425,10 +431,16 @@
       "value": "Content not shown due to security configuration."
     }
   ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Show less"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
-      "value": "The provided workflow run name is not valid."
+      "value": "Der angegebene Name der Workflowausführung ist ungültig."
     }
   ],
   "VXBWrq": [
@@ -446,7 +458,7 @@
   "Vaacox": [
     {
       "type": 0,
-      "value": "Run History"
+      "value": "Ausführungsverlauf"
     }
   ],
   "W070M2": [
@@ -535,16 +547,10 @@
       "value": "Zeichenfolge"
     }
   ],
-  "ZazdvR": [
-    {
-      "type": 0,
-      "value": "Diesen Kommentar ausblenden"
-    }
-  ],
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "Load more"
+      "value": "Mehr laden"
     }
   ],
   "ci6ex1": [
@@ -633,12 +639,6 @@
       "value": "seconds"
     }
   ],
-  "hPIR4j": [
-    {
-      "type": 0,
-      "value": "Kommentar"
-    }
-  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -706,13 +706,7 @@
   "kYivbS": [
     {
       "type": 0,
-      "value": "Download (Alt/Option + click)"
-    }
-  ],
-  "kvUaFw": [
-    {
-      "type": 0,
-      "value": "Weitere Informationen"
+      "value": "Herunterladen (ALT/WAHLTASTE + klicken)"
     }
   ],
   "l36V56": [
@@ -810,7 +804,7 @@
   "pr9GwA": [
     {
       "type": 0,
-      "value": "Refresh"
+      "value": "Aktualisieren"
     }
   ],
   "qGfwxW": [
@@ -866,7 +860,7 @@
   "shF9tZ": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Schlüssel"
     }
   ],
   "ss5JPH": [
@@ -920,7 +914,7 @@
   "vz2gZC": [
     {
       "type": 0,
-      "value": "Workflow Properties"
+      "value": "Workfloweigenschaften"
     }
   ],
   "wHYQyg": [
@@ -944,7 +938,7 @@
   "xwEX2/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Wert"
     }
   ],
   "z4YYlQ": [
@@ -956,7 +950,7 @@
   "ziYCiA": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Zusammenfassung"
     }
   ],
   "zjDJwP": [

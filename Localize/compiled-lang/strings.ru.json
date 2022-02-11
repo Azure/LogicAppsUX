@@ -14,7 +14,7 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "Показать меню запуска"
     }
   ],
   "0ZlNtf": [
@@ -27,12 +27,6 @@
     {
       "type": 0,
       "value": "Копировать URL-адрес"
-    }
-  ],
-  "1KSzxz": [
-    {
-      "type": 0,
-      "value": "Добавьте краткий комментарий"
     }
   ],
   "1R6Vaa": [
@@ -106,7 +100,7 @@
   "33+WHG": [
     {
       "type": 0,
-      "value": "Identifier"
+      "value": "Идентификатор"
     }
   ],
   "3kI7xF": [
@@ -130,7 +124,7 @@
   "6jiO7t": [
     {
       "type": 0,
-      "value": "Show run"
+      "value": "Показать сведения о выполнении"
     }
   ],
   "6oqk+A": [
@@ -151,6 +145,12 @@
       "value": "Status code"
     }
   ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Show more"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -160,13 +160,13 @@
   "BKL0ZG": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Время начала"
     }
   ],
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "Тип состояния:"
     }
   ],
   "CG772M": [
@@ -178,7 +178,7 @@
   "DZZ3fj": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Продолжительность"
     }
   ],
   "ERAWZA": [
@@ -244,7 +244,7 @@
   "FslNgF": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Состояние"
     }
   ],
   "GreYWQ": [
@@ -259,10 +259,10 @@
       "value": "Массив"
     }
   ],
-  "Ie4usD": [
+  "HfrUId": [
     {
       "type": 0,
-      "value": "Изменение названия карточки"
+      "value": "Please select a card to see the content"
     }
   ],
   "JbgTET": [
@@ -274,7 +274,7 @@
   "JnlcZQ": [
     {
       "type": 0,
-      "value": "Name:"
+      "value": "Имя:"
     }
   ],
   "LXT/ou": [
@@ -322,7 +322,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "Параметры операции:"
     }
   ],
   "Oib1mL": [
@@ -353,6 +353,12 @@
     {
       "type": 0,
       "value": "Выполнено"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "more panels"
     }
   ],
   "PaPPLr": [
@@ -487,10 +493,16 @@
       "value": "Content not shown due to security configuration."
     }
   ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Show less"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
-      "value": "The provided workflow run name is not valid."
+      "value": "Указанное имя запуска рабочего процесса недопустимо."
     }
   ],
   "VXBWrq": [
@@ -508,7 +520,7 @@
   "Vaacox": [
     {
       "type": 0,
-      "value": "Run History"
+      "value": "Журнал запусков"
     }
   ],
   "W070M2": [
@@ -597,16 +609,10 @@
       "value": "Строка"
     }
   ],
-  "ZazdvR": [
-    {
-      "type": 0,
-      "value": "Скрыть этот комментарий"
-    }
-  ],
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "Load more"
+      "value": "Загрузить еще"
     }
   ],
   "ci6ex1": [
@@ -717,12 +723,6 @@
       "value": "seconds"
     }
   ],
-  "hPIR4j": [
-    {
-      "type": 0,
-      "value": "Комментарий"
-    }
-  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -790,13 +790,7 @@
   "kYivbS": [
     {
       "type": 0,
-      "value": "Download (Alt/Option + click)"
-    }
-  ],
-  "kvUaFw": [
-    {
-      "type": 0,
-      "value": "Дополнительные сведения"
+      "value": "Скачать (ALT/OPTION + щелчок)"
     }
   ],
   "l36V56": [
@@ -820,7 +814,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "Запустить триггер"
     }
   ],
   "lV77P8": [
@@ -832,7 +826,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "Режим запуска без отслеживания состояния:"
     }
   ],
   "lztiwS": [
@@ -870,7 +864,7 @@
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "Введите идентификатор запуска, чтобы открыть его"
     }
   ],
   "p16/4S": [
@@ -894,7 +888,7 @@
   "pr9GwA": [
     {
       "type": 0,
-      "value": "Refresh"
+      "value": "Обновить"
     }
   ],
   "qGfwxW": [
@@ -972,7 +966,7 @@
   "shF9tZ": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "ключ"
     }
   ],
   "ss5JPH": [
@@ -1026,7 +1020,7 @@
   "vz2gZC": [
     {
       "type": 0,
-      "value": "Workflow Properties"
+      "value": "Свойства рабочего процесса"
     }
   ],
   "wHYQyg": [
@@ -1038,7 +1032,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "URL-адрес обратного вызова"
     }
   ],
   "xt5TeT": [
@@ -1050,7 +1044,7 @@
   "xwEX2/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Значение"
     }
   ],
   "z4YYlQ": [
@@ -1062,7 +1056,7 @@
   "ziYCiA": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Сводка"
     }
   ],
   "zjDJwP": [
