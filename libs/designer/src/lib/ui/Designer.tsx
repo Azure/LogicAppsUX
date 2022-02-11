@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { convertActionIDToTitleCase } from '../common/utilities/Utils';
-import { RootState } from '../core/store';
 import { useCallback, useEffect } from 'react';
-import ReactFlow, { ReactFlowProvider, useNodes, useReactFlow, useStore, Node, Edge, useNodesState } from 'react-flow-renderer';
-import { useDispatch, useSelector } from 'react-redux';
-import CustomTestNode from './CustomNodes/CustomTestNode';
-import { setShouldZoomToNode, triggerLayout, updateNodeSizes } from '../core/state/workflowSlice';
-import { processGraphLayout } from '../core/parsers/ProcessLayoutReduxAction';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { CustomEdge } from './connections/edge';
-import { DndProvider, createTransition } from 'react-dnd-multi-backend';
 import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { createTransition, DndProvider } from 'react-dnd-multi-backend';
+import ReactFlow, { Edge, Node, ReactFlowProvider, useNodes, useReactFlow, useStore } from 'react-flow-renderer';
+import { useDispatch, useSelector } from 'react-redux';
+import { convertActionIDToTitleCase } from '../common/utilities/Utils';
+import { processGraphLayout } from '../core/parsers/ProcessLayoutReduxAction';
+import { setShouldZoomToNode, triggerLayout, updateNodeSizes } from '../core/state/workflowSlice';
+import { RootState } from '../core/store';
+import { CustomEdge } from './connections/edge';
+import CustomTestNode from './CustomNodes/CustomTestNode';
 
 export interface DesignerProps {
   graphId?: string;
@@ -26,7 +26,7 @@ const edgeTypes = {
 
 const ZoomNode = () => {
   const nodes = useNodes();
-  const [_, __, zoom] = useStore((store) => store.transform);
+  const [, , zoom] = useStore((store) => store.transform);
   const shouldLayout = useSelector((state: RootState) => state.workflow.shouldLayout);
   const shouldFocusNode = useSelector((state: RootState) => state.workflow.shouldZoomToNode);
   const dispatch = useDispatch();

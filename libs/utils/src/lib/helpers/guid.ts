@@ -26,7 +26,6 @@ export function guid(): string {
   // 'Set the two most significant bits (bits 6 and 7) of the clock_seq_hi_and_reserved to zero and one, respectively'
   const clockSequenceHi = hexValues[(8 + Math.random() * 4) | 0];
 
-  // tslint:disable-next-line: prefer-template
   return (
     oct.substr(0, 8) +
     separator +
