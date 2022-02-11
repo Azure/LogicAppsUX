@@ -1,0 +1,146 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/copyinputcontrol should construct the copyinputcontrol correctly 1`] = `
+<div
+  className="msla-copy-input-control"
+>
+  <div
+    className="ms-TextField msla-copy-input-control-textbox root-110"
+  >
+    <div
+      className="ms-TextField-wrapper"
+    >
+      <div
+        className="ms-TextField-fieldGroup fieldGroup-111"
+      >
+        <input
+          aria-invalid={false}
+          className="ms-TextField-field field-112"
+          id="TextField0"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onFocus={[Function]}
+          onInput={[Function]}
+          placeholder="URL goes here"
+          readOnly={true}
+          type="text"
+          value="http://test.com"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    className="ms-TooltipHost root-121"
+    onBlurCapture={[Function]}
+    onFocusCapture={[Function]}
+    onKeyDown={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+    role="none"
+  >
+    <button
+      aria-disabled={true}
+      aria-label="Copy URL"
+      className="ms-Button ms-Button--icon is-disabled root-122"
+      data-is-focusable={false}
+      disabled={true}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-123"
+        data-automationid="splitbuttonprimary"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Icon root-105 ms-Button-icon icon-125"
+          data-icon-name="Copy"
+          style={
+            Object {
+              "fontFamily": undefined,
+            }
+          }
+        />
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`ui/copyinputcontrol should set the aria-labelledby attribute 1`] = `
+<div
+  className="msla-copy-input-control"
+>
+  <div
+    className="ms-TextField msla-copy-input-control-textbox root-110"
+  >
+    <div
+      className="ms-TextField-wrapper"
+    >
+      <div
+        className="ms-TextField-fieldGroup fieldGroup-111"
+      >
+        <input
+          aria-invalid={false}
+          aria-labelledby="aria-labelledby"
+          className="ms-TextField-field field-112"
+          id="TextField7"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onFocus={[Function]}
+          onInput={[Function]}
+          placeholder="URL goes here"
+          readOnly={true}
+          type="text"
+          value="http://test.com"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    className="ms-TooltipHost root-121"
+    onBlurCapture={[Function]}
+    onFocusCapture={[Function]}
+    onKeyDown={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+    role="none"
+  >
+    <button
+      aria-disabled={true}
+      aria-label="Copy URL"
+      className="ms-Button ms-Button--icon is-disabled root-122"
+      data-is-focusable={false}
+      disabled={true}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-123"
+        data-automationid="splitbuttonprimary"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Icon root-105 ms-Button-icon icon-125"
+          data-icon-name="Copy"
+          style={
+            Object {
+              "fontFamily": undefined,
+            }
+          }
+        />
+      </span>
+    </button>
+  </div>
+</div>
+`;

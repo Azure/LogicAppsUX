@@ -3,14 +3,13 @@
 @placeholderTextColor: #000;
 
 .msla-copy-input-control {
+  align-items: center;
   display: flex;
   white-space: nowrap;
 }
 
 .msla-copy-input-control-textbox {
-  display: inline-block;
-  overflow: hidden;
-  width: calc(100% - 27px); /* button width + margin between inputbox and button */
+  flex: 1;
 
   input {
     background-color: #c1c1c1;
@@ -18,26 +17,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    // WebKit, Blink (Safari, Google Chrome, Opera 15+) and Microsoft Edge
+    // WebKit and Blink (Safari, Google Chrome, Opera 15+)
     &::-webkit-input-placeholder {
-      color: @placeholderTextColor;
-      font-family: @font-family;
-    }
-
-    // Mozilla Firefox 4 to 18
-    &:-moz-placeholder {
       color: @placeholderTextColor;
       font-family: @font-family;
     }
 
     // Mozilla Firefox 19+
     &::-moz-placeholder {
-      color: @placeholderTextColor;
-      font-family: @font-family;
-    }
-
-    // Internet Explorer 10 and 11
-    &:-ms-input-placeholder {
       color: @placeholderTextColor;
       font-family: @font-family;
     }
@@ -61,23 +48,13 @@ body.dark {
     input {
       background-color: #4f4f4f;
 
-      // WebKit, Blink (Safari, Google Chrome, Opera 15+) and Microsoft Edge
+      // WebKit and Blink (Safari, Google Chrome, Opera 15+)
       &::-webkit-input-placeholder {
-        color: @ms-color-black;
-      }
-
-      // Mozilla Firefox 4 to 18
-      &:-moz-placeholder {
         color: @ms-color-black;
       }
 
       // Mozilla Firefox 19+
       &::-moz-placeholder {
-        color: @ms-color-black;
-      }
-
-      // Internet Explorer 10 and 11
-      &:-ms-input-placeholder {
         color: @ms-color-black;
       }
 

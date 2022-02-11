@@ -23,12 +23,6 @@
       "value": "Succeeded with retries"
     }
   ],
-  "0raQQP": [
-    {
-      "type": 0,
-      "value": "Copy URL"
-    }
-  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -127,6 +121,12 @@
     {
       "type": 0,
       "value": "Show more"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "8L+oIz": [
