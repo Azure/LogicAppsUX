@@ -55,24 +55,6 @@ exports[`ui/monitoring/values/value should render a body link value 1`] = `
 </section>
 `;
 
-exports[`ui/monitoring/values/value should render a date-time value 1`] = `
-<section
-  className="msla-trace-value-label"
->
-  <label
-    className="msla-trace-value-display-name"
-  >
-    date/time
-  </label>
-  <div
-    className="msla-trace-value-text"
-    tabIndex={0}
-  >
-    9/1/2017, 4:00:00 AM
-  </div>
-</section>
-`;
-
 exports[`ui/monitoring/values/value should render a decimal value 1`] = `
 <section
   className="msla-trace-value-label"

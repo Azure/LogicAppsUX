@@ -1,4 +1,6 @@
 import renderer from 'react-test-renderer';
+import ShallowRenderer from 'react-test-renderer/shallow';
+import { DateTimeValue } from '../datetime';
 import { Value } from '../index';
 import type { ValueProps } from '../types';
 
@@ -20,14 +22,29 @@ describe('ui/monitoring/values/value', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('should render a date-time value', () => {
-    const props: ValueProps = {
-      displayName: 'date/time',
-      format: 'date-time',
-      value: new Date(2017, 8, 1, 0, 0, 0, 0).toISOString(),
-    };
-    const tree = renderer.create(<Value {...props} />).toJSON();
-    expect(tree).toMatchSnapshot();
+  describe('date-time', () => {
+    let shallowRenderer: ShallowRenderer.ShallowRenderer;
+
+    beforeEach(() => {
+      shallowRenderer = ShallowRenderer.createRenderer();
+    });
+
+    afterEach(() => {
+      shallowRenderer.unmount();
+    });
+
+    it('should render a date-time value', () => {
+      const props: ValueProps = {
+        displayName: 'date/time',
+        format: 'date-time',
+        value: new Date(2017, 8, 1, 0, 0, 0, 0).toISOString(),
+      };
+      shallowRenderer.render(<Value {...props} />);
+
+      const value = shallowRenderer.getRenderOutput();
+      expect(value.type).toEqual(DateTimeValue);
+      expect(value.props).toEqual(props);
+    });
   });
 
   it('should render a decimal value', () => {
