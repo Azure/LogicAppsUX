@@ -1,5 +1,5 @@
 import React from 'react';
-import { labelStyles, ParameterFieldDetails, WorkflowParameterDefinition } from './workflowparameter';
+import { labelStyles, ParameterFieldDetails } from './workflowparametersField';
 import { Label } from '@fluentui/react/lib/Label';
 import { Text } from '@fluentui/react/lib/Text';
 import { FormattedMessage } from 'react-intl';
@@ -9,7 +9,6 @@ export interface ReadOnlyParametersProps {
   name?: string;
   type?: string;
   defaultValue?: string;
-  definition: WorkflowParameterDefinition;
 }
 
 export const ReadOnlyParameters = ({ name, type, defaultValue, parameterDetails }: ReadOnlyParametersProps): JSX.Element => {

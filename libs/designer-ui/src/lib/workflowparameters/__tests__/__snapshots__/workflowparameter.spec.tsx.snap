@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
+<div
+  className="msla-workflow-parameter"
+>
+  <div
+    className="msla-workflow-parameter-group"
+  >
+    <div>
+      <CustomizedCommandBarButton
+        className="msla-workflow-parameter-heading-button"
+        iconProps={
+          Object {
+            "iconName": "ChevronRightMed",
+            "styles": Object {
+              "root": Object {
+                "color": "#514f4e",
+                "fontSize": 14,
+              },
+            },
+          }
+        }
+        onClick={[Function]}
+        styles={
+          Object {
+            "label": Object {
+              "fontWeight": 600,
+            },
+          }
+        }
+        text="New parameter"
+      />
+    </div>
+  </div>
+  <div
+    className="msla-workflow-parameter-edit-or-delete-button"
+  >
+    <EditOrDeleteButton
+      definition={
+        Object {
+          "id": "id",
+          "name": "",
+          "type": "Array",
+        }
+      }
+      setExpanded={[Function]}
+      setIsEditable={[Function]}
+    />
+  </div>
+</div>
+`;
