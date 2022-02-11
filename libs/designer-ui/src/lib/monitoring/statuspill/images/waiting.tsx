@@ -1,10 +1,7 @@
-import * as React from 'react';
+import { useTheme } from '@fluentui/react';
 
-interface WaitingProps {
-  isInverted: boolean;
-}
-
-export function Waiting({ isInverted }: WaitingProps): JSX.Element {
+export const Waiting: React.FC = () => {
+  const { isInverted } = useTheme();
   const circleFill = isInverted ? '#323130' : '#fff';
   const pathFill = isInverted ? '#979593' : '#979593';
 
@@ -31,4 +28,4 @@ export function Waiting({ isInverted }: WaitingProps): JSX.Element {
       </defs>
     </svg>
   );
-}
+};

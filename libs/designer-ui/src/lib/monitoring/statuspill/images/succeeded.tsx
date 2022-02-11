@@ -1,10 +1,7 @@
-import * as React from 'react';
+import { useTheme } from '@fluentui/react';
 
-interface SucceededProps {
-  isInverted: boolean;
-}
-
-export function Succeeded({ isInverted }: SucceededProps): JSX.Element {
+export const Succeeded: React.FC = () => {
+  const { isInverted } = useTheme();
   const circleFill = isInverted ? '#323130' : '#fff';
   const pathFill = isInverted ? '#92C353' : '#428000';
 
@@ -17,4 +14,4 @@ export function Succeeded({ isInverted }: SucceededProps): JSX.Element {
       />
     </svg>
   );
-}
+};
