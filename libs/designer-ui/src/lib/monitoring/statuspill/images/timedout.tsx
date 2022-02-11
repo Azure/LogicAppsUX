@@ -1,10 +1,7 @@
-import * as React from 'react';
+import { useTheme } from '@fluentui/react';
 
-interface TimedOutProps {
-  isInverted: boolean;
-}
-
-export function TimedOut({ isInverted }: TimedOutProps): JSX.Element {
+export const TimedOut: React.FC = () => {
+  const { isInverted } = useTheme();
   const circleFill = isInverted ? 'black' : 'white';
   const pathFill = isInverted ? '#FCE100' : '#DB7500';
 
@@ -17,4 +14,4 @@ export function TimedOut({ isInverted }: TimedOutProps): JSX.Element {
       />
     </svg>
   );
-}
+};

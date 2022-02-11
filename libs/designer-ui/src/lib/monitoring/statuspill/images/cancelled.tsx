@@ -1,10 +1,7 @@
-import * as React from 'react';
+import { useTheme } from '@fluentui/react';
 
-interface CancelledProps {
-  isInverted: boolean;
-}
-
-export function Cancelled({ isInverted }: CancelledProps): JSX.Element {
+export const Cancelled: React.FC = () => {
+  const { isInverted } = useTheme();
   const circleFill = isInverted ? '#A19F9D' : '#605E5C';
   const pathFill = isInverted ? '#323130' : '#fff';
 
@@ -21,4 +18,4 @@ export function Cancelled({ isInverted }: CancelledProps): JSX.Element {
       />
     </svg>
   );
-}
+};
