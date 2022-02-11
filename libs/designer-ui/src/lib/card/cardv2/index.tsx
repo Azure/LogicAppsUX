@@ -1,26 +1,14 @@
-import { IButtonStyles } from '@fluentui/react/lib/Button';
-import { Icon, IIconProps } from '@fluentui/react/lib/Icon';
-import { TooltipHost } from '@fluentui/react/lib/Tooltip';
-import { css } from '@fluentui/react/lib/Utilities';
-import * as React from 'react';
-import { useIntl } from 'react-intl';
-import { EventHandler, Event } from '../../eventhandler';
-
+import { css, IButtonStyles, Icon, IIconProps, ISpinnerStyles, MessageBarType, TooltipHost } from '@fluentui/react';
 import { equals, hexToRgbA } from '@microsoft-logic-apps/utils';
-
+import * as React from 'react';
+import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
+import { useIntl } from 'react-intl';
 import Constants from '../../constants';
+import { Event, EventHandler } from '../../eventhandler';
 import { isDeleteKey, isEnterKey, isSpaceKey } from '../../utils/keyboardUtils';
-
 import { CardContextMenu } from '../cardcontextmenu';
 import { Gripper } from '../images/dynamicsvgs/gripper';
-import { MenuItemOption } from '../menu';
-
 import { ErrorBannerV2 } from './errorbannerv2';
-import { MessageBarType } from '@fluentui/react';
-import { CommentBoxProps } from '../commentbox';
-import type { ConnectDragSource, ConnectDragPreview } from 'react-dnd';
-
-type ISpinnerStyles = import('@fluentui/react/lib/Spinner').ISpinnerStyles;
 
 export interface CardV2Props {
   /**
@@ -60,6 +48,51 @@ interface CardBadgeProps {
   darkBackground?: boolean;
   iconProps: IIconProps;
   active: boolean;
+}
+
+interface CommentBoxProps {
+  brandColor: string;
+  comment: string;
+  isDismissed: boolean;
+  isEditing: boolean;
+  isPanelModeEnabled?: boolean;
+  styleWidth?: string;
+  onCommentChanged?: CommentChangeEventHandler;
+  onCommentCommitted?(): void;
+  onCommentDismissed?(): void;
+}
+
+interface CommentChangeEvent {
+  value: string;
+}
+
+type CommentChangeEventHandler = (e: CommentChangeEvent) => void;
+
+interface MenuItemOption {
+  disabled?: boolean;
+  disabledReason?: string;
+  iconName?: string;
+  iconUri?: string;
+  checked?: boolean;
+  key: string;
+  subMenuItems?: MenuItemOption[]; // NOTE(shimedh): Sub-menus are only supported for basic menu item by Fabric.
+  subtitle?: SubtitleOption;
+  title: string;
+  type: MenuItemType;
+  clickHandler?(e: React.SyntheticEvent<HTMLElement>): void;
+}
+
+interface SubtitleOption {
+  disabled?: boolean;
+  iconUri?: string;
+  title: string;
+}
+
+enum MenuItemType {
+  Normal = 0,
+  Divider = 1,
+  Header = 2,
+  Advanced = 3,
 }
 
 const gripperLightModeFill = '#605E5C';
