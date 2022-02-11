@@ -29,12 +29,6 @@
       "value": "URL'yi Kopyala"
     }
   ],
-  "1KSzxz": [
-    {
-      "type": 0,
-      "value": "Kısa bir açıklama ekleyin"
-    }
-  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -84,7 +78,7 @@
   "33+WHG": [
     {
       "type": 0,
-      "value": "Identifier"
+      "value": "Tanımlayıcı"
     }
   ],
   "3kI7xF": [
@@ -108,7 +102,7 @@
   "6jiO7t": [
     {
       "type": 0,
-      "value": "Show run"
+      "value": "Çalıştırmayı göster"
     }
   ],
   "6oqk+A": [
@@ -129,6 +123,12 @@
       "value": "Status code"
     }
   ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Show more"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -138,7 +138,7 @@
   "BKL0ZG": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Başlangıç saati"
     }
   ],
   "Bn8iTS": [
@@ -156,7 +156,7 @@
   "DZZ3fj": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Süre"
     }
   ],
   "ERAWZA": [
@@ -200,7 +200,7 @@
   "FslNgF": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Durum"
     }
   ],
   "GreYWQ": [
@@ -215,10 +215,10 @@
       "value": "Dizi"
     }
   ],
-  "Ie4usD": [
+  "HfrUId": [
     {
       "type": 0,
-      "value": "Kart başlığını düzenle"
+      "value": "Please select a card to see the content"
     }
   ],
   "JbgTET": [
@@ -230,7 +230,7 @@
   "JnlcZQ": [
     {
       "type": 0,
-      "value": "Name:"
+      "value": "Ad:"
     }
   ],
   "LXT/ou": [
@@ -309,6 +309,12 @@
     {
       "type": 0,
       "value": "Başarılı"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "more panels"
     }
   ],
   "PaPPLr": [
@@ -421,10 +427,16 @@
       "value": "Content not shown due to security configuration."
     }
   ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Show less"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
-      "value": "The provided workflow run name is not valid."
+      "value": "Belirtilen iş akışı çalıştırma adı geçersiz."
     }
   ],
   "VXBWrq": [
@@ -442,7 +454,7 @@
   "Vaacox": [
     {
       "type": 0,
-      "value": "Run History"
+      "value": "Çalıştırma Geçmişi"
     }
   ],
   "W070M2": [
@@ -531,16 +543,10 @@
       "value": "String"
     }
   ],
-  "ZazdvR": [
-    {
-      "type": 0,
-      "value": "Bu açıklamayı gizle"
-    }
-  ],
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "Load more"
+      "value": "Daha fazla yükle"
     }
   ],
   "ci6ex1": [
@@ -629,12 +635,6 @@
       "value": "seconds"
     }
   ],
-  "hPIR4j": [
-    {
-      "type": 0,
-      "value": "Yorum"
-    }
-  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -702,13 +702,7 @@
   "kYivbS": [
     {
       "type": 0,
-      "value": "Download (Alt/Option + click)"
-    }
-  ],
-  "kvUaFw": [
-    {
-      "type": 0,
-      "value": "Daha fazla bilgi"
+      "value": "İndir (Alt/Option + tıklama)"
     }
   ],
   "l36V56": [
@@ -806,7 +800,7 @@
   "pr9GwA": [
     {
       "type": 0,
-      "value": "Refresh"
+      "value": "Yenile"
     }
   ],
   "qGfwxW": [
@@ -862,7 +856,7 @@
   "shF9tZ": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Anahtar"
     }
   ],
   "ss5JPH": [
@@ -916,7 +910,7 @@
   "vz2gZC": [
     {
       "type": 0,
-      "value": "Workflow Properties"
+      "value": "İş Akışı Özellikleri"
     }
   ],
   "wHYQyg": [
@@ -940,7 +934,7 @@
   "xwEX2/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Değer"
     }
   ],
   "z4YYlQ": [
@@ -952,7 +946,7 @@
   "ziYCiA": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Özet"
     }
   ],
   "zjDJwP": [

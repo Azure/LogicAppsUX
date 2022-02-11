@@ -29,12 +29,6 @@
       "value": "URL másolása"
     }
   ],
-  "1KSzxz": [
-    {
-      "type": 0,
-      "value": "Rövid megjegyzés hozzáadása"
-    }
-  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -84,7 +78,7 @@
   "33+WHG": [
     {
       "type": 0,
-      "value": "Identifier"
+      "value": "Azonosító"
     }
   ],
   "3kI7xF": [
@@ -108,7 +102,7 @@
   "6jiO7t": [
     {
       "type": 0,
-      "value": "Show run"
+      "value": "Futtatás megjelenítése"
     }
   ],
   "6oqk+A": [
@@ -129,6 +123,12 @@
       "value": "Status code"
     }
   ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Show more"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -138,7 +138,7 @@
   "BKL0ZG": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Kezdés időpontja"
     }
   ],
   "Bn8iTS": [
@@ -156,7 +156,7 @@
   "DZZ3fj": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Időtartam"
     }
   ],
   "ERAWZA": [
@@ -200,7 +200,7 @@
   "FslNgF": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Állapot"
     }
   ],
   "GreYWQ": [
@@ -215,10 +215,10 @@
       "value": "Tömb"
     }
   ],
-  "Ie4usD": [
+  "HfrUId": [
     {
       "type": 0,
-      "value": "Kártyacím szerkesztése folyamatban"
+      "value": "Please select a card to see the content"
     }
   ],
   "JbgTET": [
@@ -230,7 +230,7 @@
   "JnlcZQ": [
     {
       "type": 0,
-      "value": "Name:"
+      "value": "Név:"
     }
   ],
   "LXT/ou": [
@@ -309,6 +309,12 @@
     {
       "type": 0,
       "value": "Sikeres"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "more panels"
     }
   ],
   "PaPPLr": [
@@ -425,10 +431,16 @@
       "value": "Content not shown due to security configuration."
     }
   ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Show less"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
-      "value": "The provided workflow run name is not valid."
+      "value": "A megadott munkafolyamat-futtatási név érvénytelen."
     }
   ],
   "VXBWrq": [
@@ -446,7 +458,7 @@
   "Vaacox": [
     {
       "type": 0,
-      "value": "Run History"
+      "value": "Futtatási előzmények"
     }
   ],
   "W070M2": [
@@ -535,16 +547,10 @@
       "value": "Sztring"
     }
   ],
-  "ZazdvR": [
-    {
-      "type": 0,
-      "value": "Megjegyzés elrejtése"
-    }
-  ],
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "Load more"
+      "value": "Továbbiak betöltése"
     }
   ],
   "ci6ex1": [
@@ -633,12 +639,6 @@
       "value": "seconds"
     }
   ],
-  "hPIR4j": [
-    {
-      "type": 0,
-      "value": "Megjegyzés"
-    }
-  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -706,13 +706,7 @@
   "kYivbS": [
     {
       "type": 0,
-      "value": "Download (Alt/Option + click)"
-    }
-  ],
-  "kvUaFw": [
-    {
-      "type": 0,
-      "value": "További információk"
+      "value": "Letöltés (Alt/Option + kattintás)"
     }
   ],
   "l36V56": [
@@ -810,7 +804,7 @@
   "pr9GwA": [
     {
       "type": 0,
-      "value": "Refresh"
+      "value": "Frissítés"
     }
   ],
   "qGfwxW": [
@@ -866,7 +860,7 @@
   "shF9tZ": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Kulcs"
     }
   ],
   "ss5JPH": [
@@ -920,7 +914,7 @@
   "vz2gZC": [
     {
       "type": 0,
-      "value": "Workflow Properties"
+      "value": "Munkafolyamat tulajdonságai"
     }
   ],
   "wHYQyg": [
@@ -944,7 +938,7 @@
   "xwEX2/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Érték"
     }
   ],
   "z4YYlQ": [
@@ -956,7 +950,7 @@
   "ziYCiA": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Összefoglalás"
     }
   ],
   "zjDJwP": [

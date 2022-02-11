@@ -29,12 +29,6 @@
       "value": "复制 URL"
     }
   ],
-  "1KSzxz": [
-    {
-      "type": 0,
-      "value": "添加简短注释"
-    }
-  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -77,7 +71,7 @@
   "33+WHG": [
     {
       "type": 0,
-      "value": "Identifier"
+      "value": "标识符"
     }
   ],
   "3kI7xF": [
@@ -101,7 +95,7 @@
   "6jiO7t": [
     {
       "type": 0,
-      "value": "Show run"
+      "value": "显示运行"
     }
   ],
   "6oqk+A": [
@@ -122,6 +116,12 @@
       "value": "Status code"
     }
   ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Show more"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -131,7 +131,7 @@
   "BKL0ZG": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "开始时间"
     }
   ],
   "Bn8iTS": [
@@ -149,7 +149,7 @@
   "DZZ3fj": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "持续时间"
     }
   ],
   "ERAWZA": [
@@ -182,7 +182,7 @@
   "FslNgF": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "状态"
     }
   ],
   "GreYWQ": [
@@ -197,10 +197,10 @@
       "value": "数组"
     }
   ],
-  "Ie4usD": [
+  "HfrUId": [
     {
       "type": 0,
-      "value": "正在编辑卡标题"
+      "value": "Please select a card to see the content"
     }
   ],
   "JbgTET": [
@@ -212,7 +212,7 @@
   "JnlcZQ": [
     {
       "type": 0,
-      "value": "Name:"
+      "value": "名称:"
     }
   ],
   "LXT/ou": [
@@ -291,6 +291,12 @@
     {
       "type": 0,
       "value": "成功"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "more panels"
     }
   ],
   "PaPPLr": [
@@ -392,10 +398,16 @@
       "value": "Content not shown due to security configuration."
     }
   ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Show less"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
-      "value": "The provided workflow run name is not valid."
+      "value": "所提供的工作流运行名称无效。"
     }
   ],
   "VXBWrq": [
@@ -413,7 +425,7 @@
   "Vaacox": [
     {
       "type": 0,
-      "value": "Run History"
+      "value": "运行历史记录"
     }
   ],
   "W070M2": [
@@ -506,16 +518,10 @@
       "value": "字符串"
     }
   ],
-  "ZazdvR": [
-    {
-      "type": 0,
-      "value": "隐藏此评论"
-    }
-  ],
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "Load more"
+      "value": "加载更多"
     }
   ],
   "ci6ex1": [
@@ -593,12 +599,6 @@
       "value": "seconds"
     }
   ],
-  "hPIR4j": [
-    {
-      "type": 0,
-      "value": "评论"
-    }
-  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -666,13 +666,7 @@
   "kYivbS": [
     {
       "type": 0,
-      "value": "Download (Alt/Option + click)"
-    }
-  ],
-  "kvUaFw": [
-    {
-      "type": 0,
-      "value": "详细信息"
+      "value": "下载(Alt/Option + 单击)"
     }
   ],
   "l36V56": [
@@ -770,7 +764,7 @@
   "pr9GwA": [
     {
       "type": 0,
-      "value": "Refresh"
+      "value": "刷新"
     }
   ],
   "qGfwxW": [
@@ -815,7 +809,7 @@
   "shF9tZ": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "密钥"
     }
   ],
   "ss5JPH": [
@@ -869,7 +863,7 @@
   "vz2gZC": [
     {
       "type": 0,
-      "value": "Workflow Properties"
+      "value": "工作流属性"
     }
   ],
   "wHYQyg": [
@@ -893,7 +887,7 @@
   "xwEX2/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "值"
     }
   ],
   "z4YYlQ": [
@@ -905,7 +899,7 @@
   "ziYCiA": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "摘要"
     }
   ],
   "zjDJwP": [

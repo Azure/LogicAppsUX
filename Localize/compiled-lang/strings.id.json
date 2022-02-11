@@ -29,12 +29,6 @@
       "value": "Salin URL"
     }
   ],
-  "1KSzxz": [
-    {
-      "type": 0,
-      "value": "Tambah komentar pendek"
-    }
-  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -73,7 +67,7 @@
   "33+WHG": [
     {
       "type": 0,
-      "value": "Identifier"
+      "value": "Pengidentifikasi"
     }
   ],
   "3kI7xF": [
@@ -97,7 +91,7 @@
   "6jiO7t": [
     {
       "type": 0,
-      "value": "Show run"
+      "value": "Tampilkan jalankan"
     }
   ],
   "6oqk+A": [
@@ -118,6 +112,12 @@
       "value": "Status code"
     }
   ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Show more"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -127,7 +127,7 @@
   "BKL0ZG": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Waktu mulai"
     }
   ],
   "Bn8iTS": [
@@ -145,7 +145,7 @@
   "DZZ3fj": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Durasi"
     }
   ],
   "ERAWZA": [
@@ -193,10 +193,10 @@
       "value": "Larik"
     }
   ],
-  "Ie4usD": [
+  "HfrUId": [
     {
       "type": 0,
-      "value": "Mengedit judul kartu"
+      "value": "Please select a card to see the content"
     }
   ],
   "JbgTET": [
@@ -208,7 +208,7 @@
   "JnlcZQ": [
     {
       "type": 0,
-      "value": "Name:"
+      "value": "Nama:"
     }
   ],
   "LXT/ou": [
@@ -287,6 +287,12 @@
     {
       "type": 0,
       "value": "Berhasil"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "more panels"
     }
   ],
   "PaPPLr": [
@@ -388,6 +394,12 @@
       "value": "Content not shown due to security configuration."
     }
   ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Show less"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
@@ -409,7 +421,7 @@
   "Vaacox": [
     {
       "type": 0,
-      "value": "Run History"
+      "value": "Riwayat Jalan"
     }
   ],
   "W070M2": [
@@ -498,16 +510,10 @@
       "value": "String"
     }
   ],
-  "ZazdvR": [
-    {
-      "type": 0,
-      "value": "Sembunyikan komentar ini"
-    }
-  ],
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "Load more"
+      "value": "Muat lebih banyak"
     }
   ],
   "ci6ex1": [
@@ -585,12 +591,6 @@
       "value": "seconds"
     }
   ],
-  "hPIR4j": [
-    {
-      "type": 0,
-      "value": "Komentar"
-    }
-  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -658,13 +658,7 @@
   "kYivbS": [
     {
       "type": 0,
-      "value": "Download (Alt/Option + click)"
-    }
-  ],
-  "kvUaFw": [
-    {
-      "type": 0,
-      "value": "Info selengkapnya"
+      "value": "Unduh (Alt/Option + klik)"
     }
   ],
   "l36V56": [
@@ -807,7 +801,7 @@
   "shF9tZ": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Kunci"
     }
   ],
   "ss5JPH": [
@@ -861,7 +855,7 @@
   "vz2gZC": [
     {
       "type": 0,
-      "value": "Workflow Properties"
+      "value": "Properti Alur Kerja"
     }
   ],
   "wHYQyg": [
@@ -885,7 +879,7 @@
   "xwEX2/": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Nilai"
     }
   ],
   "z4YYlQ": [
@@ -897,7 +891,7 @@
   "ziYCiA": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Ringkasan"
     }
   ],
   "zjDJwP": [
