@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Elements, Node } from 'react-flow-renderer';
+import { Node } from 'react-flow-renderer';
 import { WorkflowNode } from '../parsers/models/workflowNode';
 import { initializeGraphState } from '../parsers/ParseReduxAction';
 import { processGraphLayout } from '../parsers/ProcessLayoutReduxAction';
@@ -77,13 +77,13 @@ export const workflowSlice = createSlice({
 
       state.graphs[graph].nodes.push(id);
     },
-    updateNodeSizes: (state: WorkflowState, action: PayloadAction<Elements>) => {
+    updateNodeSizes: (state: WorkflowState, action: PayloadAction<Node[]>) => {
       const elements = action.payload;
 
       elements.forEach((el) => {
         if (state.nodes[el.id]) {
           const nodeEl = el as Node<unknown>;
-          state.nodes[el.id].size = { height: nodeEl.__rf?.height, width: nodeEl.__rf?.width };
+          state.nodes[el.id].size = { height: nodeEl.height ?? 0, width: nodeEl.width ?? 0 };
         }
       });
     },
