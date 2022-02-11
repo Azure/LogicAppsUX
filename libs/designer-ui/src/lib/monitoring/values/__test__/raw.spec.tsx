@@ -47,4 +47,11 @@ describe('ui/monitoring/values/_raw', () => {
     const [, text]: any[] = React.Children.toArray(section.props.children);
     expect(text.props.children).toBe(Constants.ZERO_WIDTH_SPACE);
   });
+
+  it('should not render when not visible', () => {
+    renderer.render(<RawValue {...props} visible={false} />);
+
+    const section = renderer.getRenderOutput();
+    expect(section).toBeNull();
+  });
 });

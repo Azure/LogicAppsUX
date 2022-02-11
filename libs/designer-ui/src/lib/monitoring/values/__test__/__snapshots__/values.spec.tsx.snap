@@ -1,0 +1,562 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/monitoring/values/value should not render when not visible 1`] = `null`;
+
+exports[`ui/monitoring/values/value should render a HTML value 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+    id="msla-html1"
+  >
+    date/time
+  </label>
+  <div
+    aria-labelledby="msla-html1"
+    className="msla-trace-value-text msla-trace-value-html-table"
+  >
+    <table
+      dangerouslySetInnerHTML={
+        Object {
+          "__html": "<table><tbody><tr><td>1</td></tr></tbody></table>",
+        }
+      }
+      tabIndex={0}
+    />
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/value should render a body link value 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+    id="msla-body-link0"
+  >
+    displayName
+  </label>
+  <div
+    className="msla-trace-value-text"
+  >
+    <a
+      aria-labelledby="msla-body-link0"
+      className="ms-Link root-109"
+      href="uri"
+      onClick={[Function]}
+      rel="noopener"
+      target="_blank"
+    >
+      Download (Alt/Option + click)
+    </a>
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/value should render a date-time value 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    date/time
+  </label>
+  <div
+    className="msla-trace-value-text"
+    tabIndex={0}
+  >
+    9/1/2017, 4:00:00 AM
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/value should render a decimal value 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    display-name
+  </label>
+  <div
+    className="msla-trace-value-text"
+    tabIndex={0}
+  >
+    -123.45
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/value should render a key-value pairs details list 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    Headers
+  </label>
+  <div
+    className="msla-trace-value-text msla-trace-value-key-value-pairs"
+  >
+    <div
+      className="ms-Viewport"
+      style={
+        Object {
+          "minHeight": 1,
+          "minWidth": 1,
+        }
+      }
+    >
+      <div
+        aria-label="Headers"
+        className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-110"
+        data-automationid="DetailsList"
+        data-is-scrollable="false"
+      >
+        <div
+          aria-colcount={2}
+          aria-readonly="true"
+          aria-rowcount={4}
+          role="grid"
+        >
+          <div
+            className="ms-DetailsList-headerWrapper"
+            onKeyDown={[Function]}
+            role="presentation"
+          >
+            <div
+              aria-label="Headers"
+              className="ms-FocusZone css-128 ms-DetailsHeader root-112"
+              data-automationid="DetailsHeader"
+              data-focuszone-id="FocusZone4"
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onMouseDownCapture={[Function]}
+              onMouseMove={[Function]}
+              role="row"
+            >
+              <div
+                aria-colindex={1}
+                aria-describedby="header3-$key-tooltip"
+                aria-labelledby="header3-$key-name"
+                aria-sort="none"
+                className="ms-DetailsHeader-cell is-actionable root-129"
+                data-automationid="ColumnsHeaderColumn"
+                data-is-draggable={false}
+                data-is-focusable="true"
+                data-item-key="$key"
+                draggable={false}
+                role="columnheader"
+                style={
+                  Object {
+                    "width": NaN,
+                  }
+                }
+              >
+                <span
+                  className="cellTooltip-137"
+                >
+                  <span
+                    className="ms-DetailsHeader-cellTitle cellTitle-135"
+                    id="header3-$key"
+                    onClick={[Function]}
+                    onContextMenu={[Function]}
+                  >
+                    <span
+                      className="ms-DetailsHeader-cellName cellName-136"
+                      id="header3-$key-name"
+                    >
+                      Key
+                    </span>
+                  </span>
+                </span>
+              </div>
+              <label
+                className="accessibleLabel-123"
+                id="header3-$key-tooltip"
+              >
+                Key
+              </label>
+              <div
+                aria-hidden={true}
+                className="ms-DetailsHeader-cellSizer cellSizer-119 cellSizerStart-120"
+                data-is-focusable={false}
+                data-sizer-index={0}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDoubleClick={[Function]}
+                role="button"
+              />
+              <div
+                aria-colindex={2}
+                aria-describedby="header3-$value-tooltip"
+                aria-labelledby="header3-$value-name"
+                aria-sort="none"
+                className="ms-DetailsHeader-cell is-actionable root-129"
+                data-automationid="ColumnsHeaderColumn"
+                data-is-draggable={false}
+                data-is-focusable="true"
+                data-item-key="$value"
+                draggable={false}
+                role="columnheader"
+                style={
+                  Object {
+                    "width": NaN,
+                  }
+                }
+              >
+                <span
+                  className="cellTooltip-137"
+                >
+                  <span
+                    className="ms-DetailsHeader-cellTitle cellTitle-135"
+                    id="header3-$value"
+                    onClick={[Function]}
+                    onContextMenu={[Function]}
+                  >
+                    <span
+                      className="ms-DetailsHeader-cellName cellName-136"
+                      id="header3-$value-name"
+                    >
+                      Value
+                    </span>
+                  </span>
+                </span>
+              </div>
+              <label
+                className="accessibleLabel-123"
+                id="header3-$value-tooltip"
+              >
+                Value
+              </label>
+              <div
+                aria-hidden={true}
+                className="ms-DetailsHeader-cellSizer cellSizer-119 cellSizerEnd-121"
+                data-is-focusable={false}
+                data-sizer-index={1}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDoubleClick={[Function]}
+                role="button"
+              />
+            </div>
+          </div>
+          <div
+            className="ms-DetailsList-contentWrapper"
+            onKeyDown={[Function]}
+            role="presentation"
+          >
+            <div
+              className="ms-SelectionZone"
+              onClick={[Function]}
+              onContextMenu={[Function]}
+              onDoubleClick={[Function]}
+              onFocusCapture={[Function]}
+              onKeyDown={[Function]}
+              onKeyDownCapture={[Function]}
+              onMouseDown={[Function]}
+              onMouseDownCapture={[Function]}
+              role="presentation"
+            >
+              <div
+                className="ms-FocusZone css-128 focusZone-111"
+                data-focuszone-id="FocusZone5"
+                onBlur={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onMouseDownCapture={[Function]}
+              >
+                <div
+                  className="ms-List"
+                  role="presentation"
+                >
+                  <div
+                    className="ms-List-surface"
+                    role="presentation"
+                  >
+                    <div
+                      className="ms-List-page"
+                      role="presentation"
+                      style={Object {}}
+                    >
+                      <div
+                        className="ms-List-cell"
+                        data-automationid="ListCell"
+                        data-list-index={0}
+                        role="presentation"
+                      >
+                        <div
+                          aria-rowindex={2}
+                          className="ms-FocusZone css-128 ms-DetailsRow root-143"
+                          data-automationid="DetailsRow"
+                          data-focuszone-id="FocusZone7"
+                          data-is-focusable={true}
+                          data-item-index={0}
+                          data-selection-index={0}
+                          data-selection-touch-invoke={true}
+                          id="row2-0"
+                          onFocus={[Function]}
+                          onKeyDown={[Function]}
+                          onMouseDownCapture={[Function]}
+                          role="row"
+                          style={
+                            Object {
+                              "minWidth": 0,
+                            }
+                          }
+                        >
+                          <div
+                            className="ms-DetailsRow-fields fields-150"
+                            data-automationid="DetailsRowFields"
+                            role="presentation"
+                          >
+                            <div
+                              aria-colindex={1}
+                              aria-readonly={true}
+                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              data-automation-key="$key"
+                              data-automationid="DetailsRowCell"
+                              role="gridcell"
+                              style={
+                                Object {
+                                  "width": "auto",
+                                }
+                              }
+                            >
+                              Access-Control-Allow-Credentials
+                            </div>
+                            <div
+                              aria-colindex={2}
+                              aria-readonly={true}
+                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              data-automation-key="$value"
+                              data-automationid="DetailsRowCell"
+                              role="gridcell"
+                              style={
+                                Object {
+                                  "width": "auto",
+                                }
+                              }
+                            >
+                              true
+                            </div>
+                          </div>
+                          <span
+                            aria-checked={false}
+                            className="checkCover-149"
+                            data-selection-toggle={true}
+                            role="checkbox"
+                          />
+                        </div>
+                      </div>
+                      <div
+                        className="ms-List-cell"
+                        data-automationid="ListCell"
+                        data-list-index={1}
+                        role="presentation"
+                      >
+                        <div
+                          aria-rowindex={3}
+                          className="ms-FocusZone css-128 ms-DetailsRow root-143"
+                          data-automationid="DetailsRow"
+                          data-focuszone-id="FocusZone9"
+                          data-is-focusable={true}
+                          data-item-index={1}
+                          data-selection-index={1}
+                          data-selection-touch-invoke={true}
+                          id="row2-1"
+                          onFocus={[Function]}
+                          onKeyDown={[Function]}
+                          onMouseDownCapture={[Function]}
+                          role="row"
+                          style={
+                            Object {
+                              "minWidth": 0,
+                            }
+                          }
+                        >
+                          <div
+                            className="ms-DetailsRow-fields fields-150"
+                            data-automationid="DetailsRowFields"
+                            role="presentation"
+                          >
+                            <div
+                              aria-colindex={1}
+                              aria-readonly={true}
+                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              data-automation-key="$key"
+                              data-automationid="DetailsRowCell"
+                              role="gridcell"
+                              style={
+                                Object {
+                                  "width": "auto",
+                                }
+                              }
+                            >
+                              Access-Control-Allow-Origin
+                            </div>
+                            <div
+                              aria-colindex={2}
+                              aria-readonly={true}
+                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              data-automation-key="$value"
+                              data-automationid="DetailsRowCell"
+                              role="gridcell"
+                              style={
+                                Object {
+                                  "width": "auto",
+                                }
+                              }
+                            >
+                              *
+                            </div>
+                          </div>
+                          <span
+                            aria-checked={false}
+                            className="checkCover-149"
+                            data-selection-toggle={true}
+                            role="checkbox"
+                          />
+                        </div>
+                      </div>
+                      <div
+                        className="ms-List-cell"
+                        data-automationid="ListCell"
+                        data-list-index={2}
+                        role="presentation"
+                      >
+                        <div
+                          aria-rowindex={4}
+                          className="ms-FocusZone css-128 ms-DetailsRow root-143"
+                          data-automationid="DetailsRow"
+                          data-focuszone-id="FocusZone11"
+                          data-is-focusable={true}
+                          data-item-index={2}
+                          data-selection-index={2}
+                          data-selection-touch-invoke={true}
+                          id="row2-2"
+                          onFocus={[Function]}
+                          onKeyDown={[Function]}
+                          onMouseDownCapture={[Function]}
+                          role="row"
+                          style={
+                            Object {
+                              "minWidth": 0,
+                            }
+                          }
+                        >
+                          <div
+                            className="ms-DetailsRow-fields fields-150"
+                            data-automationid="DetailsRowFields"
+                            role="presentation"
+                          >
+                            <div
+                              aria-colindex={1}
+                              aria-readonly={true}
+                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              data-automation-key="$key"
+                              data-automationid="DetailsRowCell"
+                              role="gridcell"
+                              style={
+                                Object {
+                                  "width": "auto",
+                                }
+                              }
+                            >
+                              Referrer-Policy
+                            </div>
+                            <div
+                              aria-colindex={2}
+                              aria-readonly={true}
+                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              data-automation-key="$value"
+                              data-automationid="DetailsRowCell"
+                              role="gridcell"
+                              style={
+                                Object {
+                                  "width": "auto",
+                                }
+                              }
+                            >
+                              no-referred-when-downgrade
+                            </div>
+                          </div>
+                          <span
+                            aria-checked={false}
+                            className="checkCover-149"
+                            data-selection-toggle={true}
+                            role="checkbox"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/value should render a number value 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    display-name
+  </label>
+  <div
+    className="msla-trace-value-text"
+    tabIndex={0}
+  >
+    -123.45
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/value should render a raw value 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    raw
+  </label>
+  <div
+    className="msla-trace-value-text"
+    tabIndex={0}
+  >
+    Hello World
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/value should render an XML value 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    XML
+  </label>
+  <div
+    className="msla-trace-value-text"
+    tabIndex={0}
+  >
+    &lt;xml&gt;&lt;/xml&gt;
+  </div>
+</section>
+`;
