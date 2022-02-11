@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
 import { IdentityDropdown, IdentityDropdownProps } from '..';
 
 describe('ui/identitydropdown', () => {
@@ -15,7 +14,7 @@ describe('ui/identitydropdown', () => {
     minimal = {
       defaultSelectedKey: 'key1',
       dropdownOptions: [{ key: 'key1', text: 'text1' }],
-      handleChange: jest.fn(), // tslint:disable-line: no-empty
+      handleChange: jest.fn(),
       readOnly: false,
     };
 

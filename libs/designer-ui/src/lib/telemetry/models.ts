@@ -8,5 +8,5 @@ export enum UserAction {
 export interface PageActionTelemetryData {
   controlId: string;
   action: UserAction;
-  actionContext?: Record<string, any>; // tslint:disable-line: no-any
+  actionContext?: Record<string, any>;
 }

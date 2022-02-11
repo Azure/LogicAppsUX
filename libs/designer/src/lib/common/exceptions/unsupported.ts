@@ -15,7 +15,6 @@ export enum UnsupportedExceptionCode {
 
 export class UnsupportedException extends BaseException {
   constructor(message: string, code?: UnsupportedExceptionCode, data?: Record<string, any>) {
-    // tslint:disable-line: no-any
     super(UnsupportedExceptionName, message, code, data);
   }
 }

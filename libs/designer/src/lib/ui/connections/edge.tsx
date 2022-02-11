@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
-import { getSmoothStepPath, getEdgeCenter, getMarkerEnd, EdgeProps } from 'react-flow-renderer';
+import { EdgeProps, getEdgeCenter, getSmoothStepPath } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../core/store';
 import { DropZone } from './dropzone';

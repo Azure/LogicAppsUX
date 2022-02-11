@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
 import { Label } from '../../label';
 
 describe('ui/label', () => {
@@ -73,7 +72,7 @@ describe('ui/label', () => {
       renderer.render(<Label isRequiredField text="label text" />);
 
       const label = renderer.getRenderOutput();
-      const [requiredParameterMarker]: any[] = React.Children.toArray(label.props.children); // tslint:disable-line: no-any
+      const [requiredParameterMarker]: any[] = React.Children.toArray(label.props.children);
       expect(requiredParameterMarker.props.isRequiredField).toBeTruthy();
     });
 
@@ -82,7 +81,7 @@ describe('ui/label', () => {
       renderer.render(<Label text={text} />);
 
       const label = renderer.getRenderOutput();
-      const [requiredParameterMarker]: any[] = React.Children.toArray(label.props.children); // tslint:disable-line: no-any
+      const [requiredParameterMarker]: any[] = React.Children.toArray(label.props.children);
       expect(requiredParameterMarker.props.isRequiredField).toBeFalsy();
     });
   });
@@ -93,7 +92,7 @@ describe('ui/label', () => {
       renderer.render(<Label text={text} />);
 
       const label = renderer.getRenderOutput();
-      const [, textContent]: any[] = React.Children.toArray(label.props.children); // tslint:disable-line: no-any
+      const [, textContent]: any[] = React.Children.toArray(label.props.children);
       expect(textContent).toBe(text);
     });
   });

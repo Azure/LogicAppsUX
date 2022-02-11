@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
 import { Tip, TipProps } from '..';
 
 describe('ui/tip', () => {
@@ -71,10 +70,10 @@ describe('ui/tip', () => {
       const inner = React.Children.only(callout.props.children);
       expect(inner.props.className).toBe(classNames.tipInner);
 
-      const [, actions]: any[] = React.Children.toArray(inner.props.children); // tslint:disable-line: no-any
+      const [, actions]: any[] = React.Children.toArray(inner.props.children);
       expect(actions.props.className).toBe(classNames.tipActions);
 
-      const [first, second]: any[] = React.Children.toArray(actions.props.children); // tslint:disable-line: no-any
+      const [first, second]: any[] = React.Children.toArray(actions.props.children);
       expect(first.props.children).toBe(items[0].children);
       expect(first.props.icon).toBe(items[0].icon);
       expect(second.props.children).toBe(items[1].children);
@@ -92,7 +91,7 @@ describe('ui/tip', () => {
       const inner = React.Children.only(callout.props.children);
       expect(inner.props.className).toBe(classNames.tipInner);
 
-      const [message]: any[] = React.Children.toArray(inner.props.children); // tslint:disable-line: no-any
+      const [message]: any[] = React.Children.toArray(inner.props.children);
       expect(message.props.className).toBe(classNames.tipMessage);
       expect(message.props.children).toBe(minimal.message);
     });

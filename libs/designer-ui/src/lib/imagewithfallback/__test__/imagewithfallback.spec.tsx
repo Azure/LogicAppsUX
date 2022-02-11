@@ -1,4 +1,3 @@
-import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { ImageWithFallback, ImageWithFallbackProps } from '..';
 
@@ -34,7 +33,7 @@ describe('ui/imagewithfallback', () => {
         setAttribute: attr,
       },
     };
-    image.props.onError(e as any); // tslint:disable-line: no-any
+    image.props.onError(e as any);
 
     expect(e.currentTarget.setAttribute).toHaveBeenCalledWith('src', 'defaulticon.svg');
   });
@@ -49,7 +48,7 @@ describe('ui/imagewithfallback', () => {
         setAttribute: jest.fn(),
       },
     };
-    image.props.onError(e as any); // tslint:disable-line: no-any
+    image.props.onError(e as any);
 
     expect(e.currentTarget.setAttribute).toHaveBeenCalledWith('src', fallback);
   });
