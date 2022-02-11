@@ -50,20 +50,12 @@
     }
 
     .msla-search-box-button {
-      @media only screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-        top: -1px;
-      }
-
       &[disabled] {
         background-color: initial;
       }
 
       &:hover {
         background-color: inherit;
-
-        @media only screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-          background-color: transparent;
-        }
       }
     }
 
@@ -637,12 +629,6 @@
 }
 
 .msla-card.msla-recommendation {
-  @media only screen and (max-width: @designer-desktop-max-width) {
-    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-      min-width: calc(@card-max-width - 18px); /* 9px padding on both sides */
-    }
-  }
-
   .msla-card-header-icon,
   .msla-card-header-title-view {
     cursor: default;
@@ -662,12 +648,6 @@
 }
 
 .msla-recommendation-v3.msla-triggers {
-  @media only screen and (max-width: @designer-desktop-max-width) {
-    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-      min-width: @card-max-width;
-    }
-  }
-
   .msla-connectors {
     height: 192px;
     padding: 12px 7px 3px 7px;
