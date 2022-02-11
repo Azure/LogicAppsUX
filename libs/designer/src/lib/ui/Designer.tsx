@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { convertActionIDToTitleCase } from '../common/utilities/Utils';
 import { RootState } from '../core/store';
-import { useEffect } from 'react';
-import ReactFlow, { ReactFlowProvider, useNodes, useReactFlow, useStore, Node, Edge } from 'react-flow-renderer';
+import { useCallback, useEffect } from 'react';
+import ReactFlow, { ReactFlowProvider, useNodes, useReactFlow, useStore, Node, Edge, useNodesState } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import { setShouldZoomToNode, triggerLayout, updateNodeSizes } from '../core/state/workflowSlice';
@@ -31,6 +31,7 @@ const ZoomNode = () => {
   const shouldFocusNode = useSelector((state: RootState) => state.workflow.shouldZoomToNode);
   const dispatch = useDispatch();
   const { setCenter } = useReactFlow();
+
   useEffect(() => {
     if (nodes.length && shouldLayout) {
       dispatch(updateNodeSizes(nodes));
@@ -116,6 +117,10 @@ export const Designer = ({ graphId = 'root' }: DesignerProps) => {
     return [retNodes, retEdges];
   });
 
+  const dispatch = useDispatch();
+  const nodesChanged = useCallback(() => {
+    dispatch(triggerLayout());
+  }, [dispatch]);
   return (
     <DndProvider options={DND_OPTIONS as any}>
       <div className="msla-designer-canvas msla-panel-mode">
@@ -123,6 +128,7 @@ export const Designer = ({ graphId = 'root' }: DesignerProps) => {
           <ReactFlow
             nodeTypes={nodeTypes}
             nodes={nodes}
+            onNodesChange={nodesChanged}
             edges={edges}
             onConnect={() => {}}
             minZoom={0}
