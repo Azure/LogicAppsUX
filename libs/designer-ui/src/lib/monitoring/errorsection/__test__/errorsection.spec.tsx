@@ -1,7 +1,7 @@
 import { MessageBarType } from '@fluentui/react';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import { ErrorSection, ErrorSectionProps } from '../errorsection';
+import { ErrorSection, ErrorSectionProps } from '..';
 
 describe('lib/monitoring/requestpanel/errorsection', () => {
   let minimal: ErrorSectionProps, renderer: ShallowRenderer.ShallowRenderer;
