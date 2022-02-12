@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { PageChangeEventHandler, Pager } from '../../pager';
-import { getDurationString } from '../../utils/utils';
+import { ErrorSection } from '../errorsection';
+import { calculateDuration } from '../utils';
 import { Value } from '../values';
 import { RetryHistory } from './types';
 
@@ -32,10 +33,6 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
     RETRY_HISTORY_END_TIME: intl.formatMessage({
       defaultMessage: 'End time',
       description: 'Label text for retry end time',
-    }),
-    RETRY_HISTORY_ERROR: intl.formatMessage({
-      defaultMessage: 'Error',
-      description: 'Label text for retry error details',
     }),
     RETRY_HISTORY_SERVICE_REQUEST_ID: intl.formatMessage({
       defaultMessage: 'Service request ID',
@@ -80,6 +77,7 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
         />
       </div>
       <div className="msla-panel-callout-content">
+        <ErrorSection className="msla-request-history-panel-error" error={error} />
         <div className="msla-trace-inputs-outputs">
           <div className="msla-trace-inputs-outputs-header">
             <header>{Resources.RETRY_PAGER_TITLE}</header>
@@ -95,14 +93,9 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
               value={serviceRequestId}
               visible={serviceRequestId !== undefined}
             />
-            <Value displayName={Resources.RETRY_HISTORY_ERROR} value={error} visible={error !== undefined} />
           </div>
         </div>
       </div>
     </>
   );
 };
-
-function calculateDuration(startTime: string, endTime: string | undefined): string {
-  return endTime ? getDurationString(Date.parse(endTime) - Date.parse(startTime), /* abbreviated */ false) : getDurationString(NaN);
-}
