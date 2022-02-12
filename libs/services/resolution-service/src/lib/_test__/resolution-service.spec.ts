@@ -115,4 +115,81 @@ describe('Resolution Service tests', () => {
     const service = new ResolutionService(parameters, {});
     expect(service.resolve(unresolvedObject)).toEqual(expectedObject);
   });
+
+  //This feels like a common enough scenario to test directly
+  it('should parse a arm resource ID', () => {
+    const appSettings: Record<string, unknown> = {
+      SUBSCRIPTION_ID: '0000-1111-2222-3333-4444',
+      RESOURCE_GROUP: 'rg1',
+      RESOURCE: 'resource1',
+    };
+
+    const unresolvedObject = {
+      resourceId:
+        "/subscriptions/@{appsetting('SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('RESOURCE_GROUP')}/providers/Microsoft.Logic/workflows/@{appsetting('RESOURCE')}",
+    };
+    const expectedObject = {
+      resourceId: '/subscriptions/0000-1111-2222-3333-4444/resourceGroups/rg1/providers/Microsoft.Logic/workflows/resource1',
+    };
+    const service = new ResolutionService({}, appSettings);
+    expect(service.resolve(unresolvedObject)).toEqual(expectedObject);
+  });
+
+  it('should resolve correctly when both parameters and app settings are given', () => {
+    const parameters = {
+      key: 'password',
+      username: 'username',
+    };
+
+    const appSettings = {
+      key: 'username',
+      password: 'password',
+    };
+
+    const input = {
+      username: "@parameters('username')",
+      username2: "Hello @{parameters('username')}",
+      password: "@appsetting('password')",
+      password2: "Bad @{appsetting('password')}",
+      combined: "@parameters(appsetting('key'))",
+      combined2: "Hello @{parameters(appsetting('key'))}",
+    };
+
+    const expectedObject = {
+      username: 'username',
+      username2: 'Hello username',
+      password: 'password',
+      password2: 'Bad password',
+      combined: 'username',
+      combined2: 'Hello username',
+    };
+    const service = new ResolutionService(parameters, appSettings);
+    expect(service.resolve(input)).toEqual(expectedObject);
+  });
+
+  it('should resolve with multiple layers of functions', () => {
+    const parameters = {
+      key: 'password',
+      username: 'username',
+    };
+
+    const appSettings = {
+      key: 'username',
+      password: 'password',
+    };
+
+    const input = {
+      combined: "@parameters(appsetting(parameters(parameters(appsetting(parameters(appsetting('key')))))))",
+      combined2: "Hello @{parameters(appsetting(parameters(parameters(appsetting(parameters(appsetting('key')))))))}",
+      combined3: "Bad @{parameters(appsetting(parameters(parameters(appsetting(parameters(parameters('key')))))))}",
+    };
+
+    const expectedObject = {
+      combined: 'username',
+      combined2: 'Hello username',
+      combined3: 'Bad password',
+    };
+    const service = new ResolutionService(parameters, appSettings);
+    expect(service.resolve(input)).toEqual(expectedObject);
+  });
 });

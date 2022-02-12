@@ -1,5 +1,5 @@
 import { equals, isNullOrEmpty } from '@microsoft-logic-apps/utils';
-import { Expression } from '../models/expression';
+import { Expression, ExpressionFunction, ExpressionLiteral, ExpressionStringInterpolation } from '../models/expression';
 
 export enum ExpressionType {
   NullLiteral = 'NullLiteral',
@@ -23,19 +23,19 @@ export function isTemplateExpression(value: string): boolean {
   return value.charAt(0) === '@' || value.indexOf('@{') > 0;
 }
 
-export function isStringLiteral(expression: Expression): boolean {
+export function isStringLiteral(expression: Expression): expression is ExpressionLiteral {
   return equals(expression.type, ExpressionType.StringLiteral);
 }
 
-export function isLiteralExpression(expression: Expression): boolean {
+export function isLiteralExpression(expression: Expression): expression is ExpressionLiteral {
   return isStringLiteral(expression) || isNumberLiteral(expression) || isBooleanLiteral(expression) || isNullLiteral(expression);
 }
 
-export function isFunction(expression: Expression): boolean {
+export function isFunction(expression: Expression): expression is ExpressionFunction {
   return equals(expression.type, ExpressionType.Function);
 }
 
-export function isStringInterpolation(expression: Expression): boolean {
+export function isStringInterpolation(expression: Expression): expression is ExpressionStringInterpolation {
   return equals(expression.type, ExpressionType.StringInterpolation);
 }
 
