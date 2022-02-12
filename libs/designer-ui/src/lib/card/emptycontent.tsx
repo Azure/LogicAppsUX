@@ -1,5 +1,5 @@
 import { FormattedMessage } from 'react-intl';
-import EmptyPanel from '../images/empty-panel.svg';
+import EmptyPanel from './images/empty-panel.svg';
 
 export const EmptyContent: React.FC = () => {
   return (
