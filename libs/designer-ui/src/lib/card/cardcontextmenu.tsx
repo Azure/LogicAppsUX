@@ -1,12 +1,9 @@
-import { ContextualMenu, DirectionalHint, IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
-import * as React from 'react';
+import { ContextualMenu, DirectionalHint, ICalloutProps, IContextualMenuItem, Target } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { CardV2Props } from './cardv2';
 
-type ICalloutProps = import('@fluentui/react/lib/Callout').ICalloutProps;
-
-export interface CardContextMenuProps extends Partial<CardV2Props> {
-  contextMenuLocation: { x: number; y: number };
+export interface CardContextMenuProps extends Pick<CardV2Props, 'contextMenuOptions' | 'title'> {
+  contextMenuLocation: Target | undefined;
   showContextMenu: boolean;
   onSetShowContextMenu(value: boolean): void;
 }
@@ -17,44 +14,42 @@ const calloutProps: ICalloutProps = {
   preventDismissOnScroll: false,
 };
 
-export function CardContextMenu({
+export const CardContextMenu: React.FC<CardContextMenuProps> = ({
   contextMenuLocation,
   contextMenuOptions = [],
   showContextMenu,
   title,
   onSetShowContextMenu,
-}: CardContextMenuProps): JSX.Element | null {
+}) => {
   const intl = useIntl();
 
-  function getMenuItems(): IContextualMenuItem[] {
+  if (!showContextMenu) {
+    return null;
+  }
+
+  const getMenuItems = (): IContextualMenuItem[] => {
     return contextMenuOptions.map((item) => ({
       key: item.key,
       disabled: item.disabled,
-      name: item.title,
       iconOnly: true,
       iconProps: {
         iconName: item.iconName,
       },
-      onClick: ((e: React.MouseEvent<HTMLElement>) => {
-        handleMenuItemClick(e, item);
-      }) as any,
+      name: item.title,
+      onClick(e) {
+        e?.stopPropagation();
+
+        if (item?.clickHandler) {
+          onSetShowContextMenu(false);
+          item.clickHandler(e);
+        }
+      },
     }));
-  }
+  };
 
-  function handleDismiss(): void {
+  const handleDismiss = () => {
     onSetShowContextMenu(false);
-  }
-
-  function handleMenuItemClick(e: React.MouseEvent<HTMLElement>, item: IContextualMenuItem): boolean | undefined {
-    e.stopPropagation();
-
-    const { clickHandler } = item;
-    if (clickHandler) {
-      onSetShowContextMenu(false);
-      return clickHandler(e);
-    }
-    return undefined;
-  }
+  };
 
   const CARD_CONTEXT_MENU_ARIA_LABEL = intl.formatMessage(
     {
@@ -65,19 +60,16 @@ export function CardContextMenu({
       title,
     }
   );
-  if (showContextMenu) {
-    return (
-      <ContextualMenu
-        aria-label={CARD_CONTEXT_MENU_ARIA_LABEL}
-        calloutProps={calloutProps}
-        directionalHint={DirectionalHint.bottomLeftEdge}
-        onDismiss={handleDismiss}
-        items={getMenuItems()}
-        isBeakVisible={false}
-        target={contextMenuLocation}
-      />
-    );
-  }
 
-  return null;
-}
+  return (
+    <ContextualMenu
+      ariaLabel={CARD_CONTEXT_MENU_ARIA_LABEL}
+      calloutProps={calloutProps}
+      directionalHint={DirectionalHint.bottomLeftEdge}
+      isBeakVisible={false}
+      items={getMenuItems()}
+      target={contextMenuLocation}
+      onDismiss={handleDismiss}
+    />
+  );
+};
