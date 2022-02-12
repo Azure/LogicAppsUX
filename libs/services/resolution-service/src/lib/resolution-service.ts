@@ -155,8 +155,7 @@ export class ResolutionService {
           return result;
         }
       } else if (isFunction(argument)) {
-        const value = this._evaluateFunctionExpression(argument, false) as string;
-        return value;
+        return this._evaluateFunctionExpression(argument, false) as string;
       }
     }
     return undefined;
