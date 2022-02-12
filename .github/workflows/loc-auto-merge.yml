@@ -33,7 +33,7 @@ jobs:
         run: gh pr edit --add-label "$AUTO_LOCALIZATION_LABEL" "$PR_URL"
 
       - name: Auto-approve
-        if: ${{ startsWith(${BRANCH_NAME}, 'loc/') || startsWith(${BRANCH_NAME}, 'locfiles/') }}
+        if: ${{ startsWith($BRANCH_NAME, 'loc/') || startsWith($BRANCH_NAME, 'locfiles/') }}
         run: gh pr review --approve "$PR_URL"
 
       - name: Enable Auto-merge
