@@ -14,7 +14,7 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "Çalıştırma menüsünü göster"
     }
   ],
   "0ZlNtf": [
@@ -120,7 +120,7 @@
   "7yEdSt": [
     {
       "type": 0,
-      "value": "Show more"
+      "value": "Daha fazla göster"
     }
   ],
   "7yFLpB": [
@@ -138,13 +138,13 @@
   "BKL0ZG": [
     {
       "type": 0,
-      "value": "Başlangıç saati"
+      "value": "Başlangıç zamanı"
     }
   ],
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "Durum türü:"
     }
   ],
   "CG772M": [
@@ -218,7 +218,7 @@
   "HfrUId": [
     {
       "type": 0,
-      "value": "Please select a card to see the content"
+      "value": "İçeriği görmek için lütfen bir kart seçin"
     }
   ],
   "JbgTET": [
@@ -278,7 +278,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "İşlem seçenekleri:"
     }
   ],
   "Oib1mL": [
@@ -430,7 +430,7 @@
   "V0ZbQO": [
     {
       "type": 0,
-      "value": "Show less"
+      "value": "Daha az göster"
     }
   ],
   "VKAk5g": [
@@ -726,7 +726,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "Tetikleyiciyi çalıştır"
     }
   ],
   "lV77P8": [
@@ -738,7 +738,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "Durum bilgisi olmayan çalıştırma modu:"
     }
   ],
   "lztiwS": [
@@ -776,7 +776,7 @@
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "Çalıştırmayı açmak için çalıştırma tanımlayıcısını girin"
     }
   ],
   "p16/4S": [
@@ -922,7 +922,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "Geri çağırma URL’si:"
     }
   ],
   "xt5TeT": [

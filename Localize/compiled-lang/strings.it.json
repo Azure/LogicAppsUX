@@ -14,7 +14,7 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "Mostra menu Esegui"
     }
   ],
   "0ZlNtf": [
@@ -120,7 +120,7 @@
   "7yEdSt": [
     {
       "type": 0,
-      "value": "Show more"
+      "value": "Mostra altro"
     }
   ],
   "7yFLpB": [
@@ -144,7 +144,7 @@
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "Tipo di stato:"
     }
   ],
   "CG772M": [
@@ -218,7 +218,7 @@
   "HfrUId": [
     {
       "type": 0,
-      "value": "Please select a card to see the content"
+      "value": "Selezionare una scheda per visualizzare il contenuto"
     }
   ],
   "JbgTET": [
@@ -278,7 +278,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "Opzioni dell'operazione:"
     }
   ],
   "Oib1mL": [
@@ -322,7 +322,7 @@
   "PP63jY": [
     {
       "type": 0,
-      "value": "more panels"
+      "value": "altri pannelli"
     }
   ],
   "PaPPLr": [
@@ -438,7 +438,7 @@
   "V0ZbQO": [
     {
       "type": 0,
-      "value": "Show less"
+      "value": "Mostra meno"
     }
   ],
   "VKAk5g": [
@@ -734,7 +734,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "Esegui trigger"
     }
   ],
   "lV77P8": [
@@ -746,7 +746,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "Modalità di esecuzione senza stato:"
     }
   ],
   "lztiwS": [
@@ -784,7 +784,7 @@
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "Immettere l'identificatore di esecuzione per aprire l'esecuzione"
     }
   ],
   "p16/4S": [
@@ -930,7 +930,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "URL callback:"
     }
   ],
   "xt5TeT": [
