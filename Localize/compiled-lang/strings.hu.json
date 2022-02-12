@@ -2,7 +2,7 @@
   "/I/U8L": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Törzs"
     }
   ],
   "/NDLmg": [
@@ -14,19 +14,13 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "Futtatási menü megjelenítése"
     }
   ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Újrapróbálkozásokkal sikeres"
-    }
-  ],
-  "0raQQP": [
-    {
-      "type": 0,
-      "value": "URL másolása"
     }
   ],
   "1R6Vaa": [
@@ -72,7 +66,7 @@
   "2K2fAj": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Befejezés időpontja"
     }
   ],
   "33+WHG": [
@@ -90,7 +84,7 @@
   "4vmGh0": [
     {
       "type": 0,
-      "value": "Service request ID"
+      "value": "Szolgáltatáskérés azonosítója"
     }
   ],
   "5rkegy": [
@@ -120,13 +114,19 @@
   "7k9jXx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Állapotkód"
     }
   ],
   "7yEdSt": [
     {
       "type": 0,
       "value": "Show more"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "8L+oIz": [
@@ -144,7 +144,7 @@
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "Állapot típusa:"
     }
   ],
   "CG772M": [
@@ -162,7 +162,7 @@
   "ERAWZA": [
     {
       "type": 0,
-      "value": "Response"
+      "value": "Válasz"
     }
   ],
   "FXLR5M": [
@@ -224,7 +224,7 @@
   "JbgTET": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Módszer"
     }
   ],
   "JnlcZQ": [
@@ -236,7 +236,7 @@
   "LXT/ou": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "Hiba"
     }
   ],
   "M6U2LE": [
@@ -266,7 +266,7 @@
   "NPUFgH": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Állapot"
     }
   ],
   "O36+wl": [
@@ -278,7 +278,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "Műveleti beállítások:"
     }
   ],
   "Oib1mL": [
@@ -416,7 +416,7 @@
   "Tb2QLA": [
     {
       "type": 0,
-      "value": "Client request ID"
+      "value": "Ügyfélkérelem azonosítója"
     }
   ],
   "UCNM4L": [
@@ -428,7 +428,7 @@
   "USVffu": [
     {
       "type": 0,
-      "value": "Content not shown due to security configuration."
+      "value": "A tartalom a biztonsági konfiguráció miatt nem jelenik meg."
     }
   ],
   "V0ZbQO": [
@@ -452,7 +452,7 @@
   "VZHick": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Időtartam"
     }
   ],
   "Vaacox": [
@@ -492,7 +492,7 @@
   "XFFpu/": [
     {
       "type": 0,
-      "value": "Retry"
+      "value": "Újra"
     }
   ],
   "XOzn/3": [
@@ -522,7 +522,7 @@
   "Xnn0uj": [
     {
       "type": 0,
-      "value": "Request"
+      "value": "Kérelem"
     }
   ],
   "Y0H9aX": [
@@ -574,7 +574,7 @@
   "cqiqcf": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Kezdés időpontja"
     }
   ],
   "e4Onhn": [
@@ -586,7 +586,7 @@
   "eRvRWs": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Kezdés időpontja"
     }
   ],
   "ftwXvc": [
@@ -642,7 +642,7 @@
   "hrbDu6": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Időtartam"
     }
   ],
   "iJOIca": [
@@ -730,7 +730,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "Trigger futtatása"
     }
   ],
   "lV77P8": [
@@ -742,7 +742,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "Állapot nélküli futtatási mód:"
     }
   ],
   "lztiwS": [
@@ -770,7 +770,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": "/"
     },
     {
       "type": 1,
@@ -780,19 +780,19 @@
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "Adja meg a futtatásazonosítót a futtatás megnyitásához"
     }
   ],
   "p16/4S": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Fejlécek"
     }
   ],
   "pIczsS": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Befejezés időpontja"
     }
   ],
   "pRUJff": [
@@ -926,7 +926,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "Visszahívási URL:"
     }
   ],
   "xt5TeT": [

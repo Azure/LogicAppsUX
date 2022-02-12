@@ -2,7 +2,7 @@
   "/I/U8L": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Corpo"
     }
   ],
   "/NDLmg": [
@@ -21,12 +21,6 @@
     {
       "type": 0,
       "value": "Operazione riuscita in più tentativi"
-    }
-  ],
-  "0raQQP": [
-    {
-      "type": 0,
-      "value": "Copia URL"
     }
   ],
   "1R6Vaa": [
@@ -72,7 +66,7 @@
   "2K2fAj": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Ora di fine"
     }
   ],
   "33+WHG": [
@@ -90,7 +84,7 @@
   "4vmGh0": [
     {
       "type": 0,
-      "value": "Service request ID"
+      "value": "ID richiesta servizio"
     }
   ],
   "5rkegy": [
@@ -120,13 +114,19 @@
   "7k9jXx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Codice stato"
     }
   ],
   "7yEdSt": [
     {
       "type": 0,
       "value": "Show more"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "8L+oIz": [
@@ -162,7 +162,7 @@
   "ERAWZA": [
     {
       "type": 0,
-      "value": "Response"
+      "value": "Risposta"
     }
   ],
   "FXLR5M": [
@@ -224,7 +224,7 @@
   "JbgTET": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Metodo"
     }
   ],
   "JnlcZQ": [
@@ -236,7 +236,7 @@
   "LXT/ou": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "Errore"
     }
   ],
   "M6U2LE": [
@@ -266,7 +266,7 @@
   "NPUFgH": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Stato"
     }
   ],
   "O36+wl": [
@@ -420,7 +420,7 @@
   "Tb2QLA": [
     {
       "type": 0,
-      "value": "Client request ID"
+      "value": "ID richiesta client"
     }
   ],
   "UCNM4L": [
@@ -432,7 +432,7 @@
   "USVffu": [
     {
       "type": 0,
-      "value": "Content not shown due to security configuration."
+      "value": "Il contenuto non è visualizzato a causa della configurazione di sicurezza."
     }
   ],
   "V0ZbQO": [
@@ -456,7 +456,7 @@
   "VZHick": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Durata"
     }
   ],
   "Vaacox": [
@@ -496,7 +496,7 @@
   "XFFpu/": [
     {
       "type": 0,
-      "value": "Retry"
+      "value": "Riprova"
     }
   ],
   "XOzn/3": [
@@ -526,7 +526,7 @@
   "Xnn0uj": [
     {
       "type": 0,
-      "value": "Request"
+      "value": "Richiesta"
     }
   ],
   "Y0H9aX": [
@@ -578,7 +578,7 @@
   "cqiqcf": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Ora di avvio"
     }
   ],
   "e4Onhn": [
@@ -590,7 +590,7 @@
   "eRvRWs": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Ora di avvio"
     }
   ],
   "ftwXvc": [
@@ -646,7 +646,7 @@
   "hrbDu6": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Durata"
     }
   ],
   "iJOIca": [
@@ -774,7 +774,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " di "
     },
     {
       "type": 1,
@@ -790,13 +790,13 @@
   "p16/4S": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Intestazioni"
     }
   ],
   "pIczsS": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Ora di fine"
     }
   ],
   "pRUJff": [

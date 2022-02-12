@@ -2,7 +2,7 @@
   "/I/U8L": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Corpo"
     }
   ],
   "/NDLmg": [
@@ -21,12 +21,6 @@
     {
       "type": 0,
       "value": "Novas tentativas realizadas com êxito"
-    }
-  ],
-  "0raQQP": [
-    {
-      "type": 0,
-      "value": "Copiar URL"
     }
   ],
   "1R6Vaa": [
@@ -72,7 +66,7 @@
   "2K2fAj": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Hora de fim"
     }
   ],
   "33+WHG": [
@@ -90,7 +84,7 @@
   "4vmGh0": [
     {
       "type": 0,
-      "value": "Service request ID"
+      "value": "ID de pedido do serviço"
     }
   ],
   "5rkegy": [
@@ -120,13 +114,19 @@
   "7k9jXx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Código de estado"
     }
   ],
   "7yEdSt": [
     {
       "type": 0,
       "value": "Show more"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "8L+oIz": [
@@ -162,7 +162,7 @@
   "ERAWZA": [
     {
       "type": 0,
-      "value": "Response"
+      "value": "Resposta"
     }
   ],
   "FXLR5M": [
@@ -224,7 +224,7 @@
   "JbgTET": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Método"
     }
   ],
   "JnlcZQ": [
@@ -236,7 +236,7 @@
   "LXT/ou": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "Erro"
     }
   ],
   "M6U2LE": [
@@ -266,7 +266,7 @@
   "NPUFgH": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Estado"
     }
   ],
   "O36+wl": [
@@ -412,7 +412,7 @@
   "Tb2QLA": [
     {
       "type": 0,
-      "value": "Client request ID"
+      "value": "ID de pedido do cliente"
     }
   ],
   "UCNM4L": [
@@ -424,7 +424,7 @@
   "USVffu": [
     {
       "type": 0,
-      "value": "Content not shown due to security configuration."
+      "value": "O conteúdo não foi apresentado devido à configuração de segurança."
     }
   ],
   "V0ZbQO": [
@@ -448,7 +448,7 @@
   "VZHick": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Duração"
     }
   ],
   "Vaacox": [
@@ -488,7 +488,7 @@
   "XFFpu/": [
     {
       "type": 0,
-      "value": "Retry"
+      "value": "Tentar novamente"
     }
   ],
   "XOzn/3": [
@@ -518,7 +518,7 @@
   "Xnn0uj": [
     {
       "type": 0,
-      "value": "Request"
+      "value": "Pedir"
     }
   ],
   "Y0H9aX": [
@@ -570,7 +570,7 @@
   "cqiqcf": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Hora de início"
     }
   ],
   "e4Onhn": [
@@ -582,7 +582,7 @@
   "eRvRWs": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Hora de início"
     }
   ],
   "ftwXvc": [
@@ -638,7 +638,7 @@
   "hrbDu6": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Duração"
     }
   ],
   "iJOIca": [
@@ -766,7 +766,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " de "
     },
     {
       "type": 1,
@@ -782,13 +782,13 @@
   "p16/4S": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Cabeçalhos"
     }
   ],
   "pIczsS": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Hora de fim"
     }
   ],
   "pRUJff": [

@@ -2,7 +2,7 @@
   "/I/U8L": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "正文"
     }
   ],
   "/NDLmg": [
@@ -14,19 +14,13 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "显示运行菜单"
     }
   ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "重试成功"
-    }
-  ],
-  "0raQQP": [
-    {
-      "type": 0,
-      "value": "复制 URL"
     }
   ],
   "1R6Vaa": [
@@ -65,7 +59,7 @@
   "2K2fAj": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "结束时间"
     }
   ],
   "33+WHG": [
@@ -83,7 +77,7 @@
   "4vmGh0": [
     {
       "type": 0,
-      "value": "Service request ID"
+      "value": "服务请求 ID"
     }
   ],
   "5rkegy": [
@@ -113,13 +107,19 @@
   "7k9jXx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "状态代码"
     }
   ],
   "7yEdSt": [
     {
       "type": 0,
       "value": "Show more"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "8L+oIz": [
@@ -137,7 +137,7 @@
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "状态类型:"
     }
   ],
   "CG772M": [
@@ -155,7 +155,7 @@
   "ERAWZA": [
     {
       "type": 0,
-      "value": "Response"
+      "value": "响应"
     }
   ],
   "FXLR5M": [
@@ -206,7 +206,7 @@
   "JbgTET": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "方法"
     }
   ],
   "JnlcZQ": [
@@ -218,7 +218,7 @@
   "LXT/ou": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "错误"
     }
   ],
   "M6U2LE": [
@@ -248,7 +248,7 @@
   "NPUFgH": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "状态"
     }
   ],
   "O36+wl": [
@@ -260,7 +260,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "操作选项:"
     }
   ],
   "Oib1mL": [
@@ -383,7 +383,7 @@
   "Tb2QLA": [
     {
       "type": 0,
-      "value": "Client request ID"
+      "value": "客户端请求 ID"
     }
   ],
   "UCNM4L": [
@@ -395,7 +395,7 @@
   "USVffu": [
     {
       "type": 0,
-      "value": "Content not shown due to security configuration."
+      "value": "由于安全配置而未显示内容。"
     }
   ],
   "V0ZbQO": [
@@ -419,7 +419,7 @@
   "VZHick": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "持续时间"
     }
   ],
   "Vaacox": [
@@ -463,7 +463,7 @@
   "XFFpu/": [
     {
       "type": 0,
-      "value": "Retry"
+      "value": "重试"
     }
   ],
   "XOzn/3": [
@@ -493,7 +493,7 @@
   "Xnn0uj": [
     {
       "type": 0,
-      "value": "Request"
+      "value": "请求"
     }
   ],
   "Y0H9aX": [
@@ -521,7 +521,7 @@
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "加载更多"
+      "value": "加载更多内容"
     }
   ],
   "ci6ex1": [
@@ -545,7 +545,7 @@
   "cqiqcf": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "开始时间"
     }
   ],
   "e4Onhn": [
@@ -557,7 +557,7 @@
   "eRvRWs": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "开始时间"
     }
   ],
   "ftwXvc": [
@@ -602,7 +602,7 @@
   "hrbDu6": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "持续时间"
     }
   ],
   "iJOIca": [
@@ -690,7 +690,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "运行触发器"
     }
   ],
   "lV77P8": [
@@ -702,7 +702,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "无状态运行模式:"
     }
   ],
   "lztiwS": [
@@ -725,34 +725,42 @@
   ],
   "o1HOyf": [
     {
+      "type": 0,
+      "value": "第 "
+    },
+    {
       "type": 1,
       "value": "current_page"
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " 页(共 "
     },
     {
       "type": 1,
       "value": "max_page"
+    },
+    {
+      "type": 0,
+      "value": " 页)"
     }
   ],
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "输入运行标识符以打开运行"
     }
   ],
   "p16/4S": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "标头"
     }
   ],
   "pIczsS": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "结束时间"
     }
   ],
   "pRUJff": [
@@ -875,7 +883,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "回叫 URL:"
     }
   ],
   "xt5TeT": [

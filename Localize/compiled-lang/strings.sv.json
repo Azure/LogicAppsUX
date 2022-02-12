@@ -2,7 +2,7 @@
   "/I/U8L": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Innehåll"
     }
   ],
   "/NDLmg": [
@@ -14,19 +14,13 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "Visa körningsmenyn"
     }
   ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Lyckades med återförsök"
-    }
-  ],
-  "0raQQP": [
-    {
-      "type": 0,
-      "value": "Kopiera webbadress"
     }
   ],
   "1R6Vaa": [
@@ -72,7 +66,7 @@
   "2K2fAj": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Sluttid"
     }
   ],
   "33+WHG": [
@@ -90,7 +84,7 @@
   "4vmGh0": [
     {
       "type": 0,
-      "value": "Service request ID"
+      "value": "Id för tjänstbegäran"
     }
   ],
   "5rkegy": [
@@ -120,13 +114,19 @@
   "7k9jXx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Statuskod"
     }
   ],
   "7yEdSt": [
     {
       "type": 0,
       "value": "Show more"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "8L+oIz": [
@@ -144,7 +144,7 @@
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "Tillståndstyp:"
     }
   ],
   "CG772M": [
@@ -162,7 +162,7 @@
   "ERAWZA": [
     {
       "type": 0,
-      "value": "Response"
+      "value": "Svar"
     }
   ],
   "FXLR5M": [
@@ -224,7 +224,7 @@
   "JbgTET": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Metod"
     }
   ],
   "JnlcZQ": [
@@ -236,7 +236,7 @@
   "LXT/ou": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "Fel"
     }
   ],
   "M6U2LE": [
@@ -278,7 +278,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "Åtgärdsalternativ:"
     }
   ],
   "Oib1mL": [
@@ -416,7 +416,7 @@
   "Tb2QLA": [
     {
       "type": 0,
-      "value": "Client request ID"
+      "value": "Id för klientbegäran"
     }
   ],
   "UCNM4L": [
@@ -428,7 +428,7 @@
   "USVffu": [
     {
       "type": 0,
-      "value": "Content not shown due to security configuration."
+      "value": "Innehållet visas inte på grund av säkerhetskonfigurationen."
     }
   ],
   "V0ZbQO": [
@@ -452,7 +452,7 @@
   "VZHick": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Varaktighet"
     }
   ],
   "Vaacox": [
@@ -492,7 +492,7 @@
   "XFFpu/": [
     {
       "type": 0,
-      "value": "Retry"
+      "value": "Försök igen"
     }
   ],
   "XOzn/3": [
@@ -522,7 +522,7 @@
   "Xnn0uj": [
     {
       "type": 0,
-      "value": "Request"
+      "value": "Förfrågan"
     }
   ],
   "Y0H9aX": [
@@ -574,7 +574,7 @@
   "cqiqcf": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Starttid"
     }
   ],
   "e4Onhn": [
@@ -586,7 +586,7 @@
   "eRvRWs": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Starttid"
     }
   ],
   "ftwXvc": [
@@ -642,7 +642,7 @@
   "hrbDu6": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Varaktighet"
     }
   ],
   "iJOIca": [
@@ -730,7 +730,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "Kör utlösare"
     }
   ],
   "lV77P8": [
@@ -742,7 +742,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "Tillståndslöst körningsläge:"
     }
   ],
   "lztiwS": [
@@ -770,7 +770,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " av "
     },
     {
       "type": 1,
@@ -780,19 +780,19 @@
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "Ange körningsidentifieraren för att öppna körningen"
     }
   ],
   "p16/4S": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Rubriker"
     }
   ],
   "pIczsS": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Sluttid"
     }
   ],
   "pRUJff": [
@@ -926,7 +926,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "Motringningsadress:"
     }
   ],
   "xt5TeT": [
