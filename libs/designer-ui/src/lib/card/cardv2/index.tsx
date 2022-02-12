@@ -79,7 +79,7 @@ interface MenuItemOption {
   subtitle?: SubtitleOption;
   title: string;
   type: MenuItemType;
-  clickHandler?(e: React.SyntheticEvent<HTMLElement>): void;
+  clickHandler?(e?: React.SyntheticEvent<HTMLElement>): void;
 }
 
 interface SubtitleOption {
@@ -88,7 +88,7 @@ interface SubtitleOption {
   title: string;
 }
 
-enum MenuItemType {
+export enum MenuItemType {
   Normal = 0,
   Divider = 1,
   Header = 2,
