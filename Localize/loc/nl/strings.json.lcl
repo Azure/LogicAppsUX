@@ -54,15 +54,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";1KSzxz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Add a short comment]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Een korte opmerking toevoegen]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";1R6Vaa#ExpandedPlural.0.few" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[# items matched.]]></Val>
@@ -201,6 +192,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";7yEdSt" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Show more]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Meer weergeven]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";8L+oIz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Cannot render designer due to multiple triggers in definition.]]></Val>
@@ -330,11 +330,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";Ie4usD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";HfrUId" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Editing card title]]></Val>
+          <Val><![CDATA[Please select a card to see the content]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Kaarttitel bewerken]]></Val>
+            <Val><![CDATA[Selecteer een kaart om de inhoud weer te geven]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -343,7 +343,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Method]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Wijze]]></Val>
+            <Val><![CDATA[Methode]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -452,6 +452,15 @@
           <Val><![CDATA[Succeeded]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Voltooid]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PP63jY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[more panels]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[meer deelvensters]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -603,6 +612,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";V0ZbQO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Show less]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Minder weergeven]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";VKAk5g" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The provided workflow run name is not valid.]]></Val>
@@ -716,15 +734,6 @@
           <Val><![CDATA[String]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tekenreeks]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";ZazdvR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Hide this comment]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Deze opmerking verbergen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -867,15 +876,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";hPIR4j" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Comment]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Opmerking]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";hrbDu6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Duration]]></Val>
@@ -953,15 +953,6 @@
           <Val><![CDATA[Download (Alt/Option + click)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Downloaden (Alt/Option + klikken)]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";kvUaFw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[More info]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Meer informatie]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
