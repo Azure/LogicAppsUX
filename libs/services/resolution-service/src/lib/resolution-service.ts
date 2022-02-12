@@ -1,4 +1,4 @@
-import { copy, equals } from '@microsoft-logic-apps/utils';
+import { copy, equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import { ExpressionException, ExpressionExceptionCode } from './common/exceptions/expression';
 import {
   ExpressionFunctionNames,
@@ -17,12 +17,22 @@ import {
   ExpressionLiteral,
   ExpressionStringInterpolation,
 } from './common/models/expression';
+import { isParametersObject } from './common/models/parameters';
 
 export class ResolutionService {
   private _context: ExpressionEvaluationContext;
 
   constructor(parameters: Record<string, unknown>, appsettings: Record<string, unknown>) {
-    this._context = { parameters, appsettings };
+    const parsedOutParameters: Record<string, any> = {};
+    for (const key in parameters) {
+      const value = parameters[key];
+      if (isParametersObject(value)) {
+        parsedOutParameters[key] = value.value;
+      } else {
+        parsedOutParameters[key] = value;
+      }
+    }
+    this._context = { parameters: parsedOutParameters, appsettings };
   }
 
   resolve(root: any) {
@@ -128,7 +138,7 @@ export class ResolutionService {
 
     if (isFunction(segment)) {
       const evaluatedExpression = this._evaluateFunctionExpression(segment, isStringInterpolationExpression);
-      if (evaluatedExpression) {
+      if (!isNullOrUndefined(evaluatedExpression)) {
         return evaluatedExpression;
       }
     }
