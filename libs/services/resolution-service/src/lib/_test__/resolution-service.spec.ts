@@ -46,6 +46,28 @@ describe('Resolution Service tests', () => {
     expect(service.resolve(resolvedString)).toEqual('Parameters: foo @ bar');
   });
 
+  it('should correctly parse out falsey values', () => {
+    const parameters = {
+      foo: '',
+      bar: false,
+    };
+    const unresolvedString = "Parameters: foo @{parameters('foo')} @{parameters('bar')}";
+    const service = new ResolutionService(parameters, {});
+    const resolvedString = service.resolve(unresolvedString);
+    expect(resolvedString).toEqual('Parameters: foo  false');
+  });
+
+  it('should correctly handle back to back interpoloations', () => {
+    const parameters = {
+      foo: 'foo',
+      bar: 'bar',
+    };
+    const unresolvedString = "@{parameters('foo')}@{parameters('bar')}";
+    const service = new ResolutionService(parameters, {});
+    const resolvedString = service.resolve(unresolvedString);
+    expect(resolvedString).toEqual('foobar');
+  });
+
   it('should resolve a simple string replacement correctly', () => {
     const parameters = {
       foo: 'bar',
@@ -112,6 +134,46 @@ describe('Resolution Service tests', () => {
         },
       },
     };
+    const service = new ResolutionService(parameters, {});
+    expect(service.resolve(unresolvedObject)).toEqual(expectedObject);
+  });
+
+  it('should correctly resolve expressions with parameters in type/value format', () => {
+    const parameters: Record<string, unknown> = {
+      arr: {
+        type: 'Array',
+        value: ['array', 'test', 'value'],
+      },
+      bool: {
+        type: 'Bool',
+        value: false,
+      },
+      str: {
+        type: 'String',
+        value: 'teststring',
+      },
+      obj: {
+        type: 'Object',
+        value: {
+          test: 'value',
+        },
+      },
+    };
+    const unresolvedObject = {
+      arr: "@parameters('arr')",
+      bool: "@parameters('bool')",
+      str: "@parameters('str')",
+      obj: "@parameters('obj')",
+    };
+    const expectedObject = {
+      arr: ['array', 'test', 'value'],
+      bool: false,
+      str: 'teststring',
+      obj: {
+        test: 'value',
+      },
+    };
+
     const service = new ResolutionService(parameters, {});
     expect(service.resolve(unresolvedObject)).toEqual(expectedObject);
   });
