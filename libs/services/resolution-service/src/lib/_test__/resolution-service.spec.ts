@@ -120,7 +120,7 @@ describe('Resolution Service tests', () => {
   it('should parse a arm resource ID', () => {
     const appSettings: Record<string, unknown> = {
       SUBSCRIPTION_ID: '0000-1111-2222-3333-4444',
-      RESOURCE_GROUP: 'rg1',
+      RESOURCE_GROUP: 'rg12',
       RESOURCE: 'resource1',
     };
 
@@ -129,7 +129,7 @@ describe('Resolution Service tests', () => {
         "/subscriptions/@{appsetting('SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('RESOURCE_GROUP')}/providers/Microsoft.Logic/workflows/@{appsetting('RESOURCE')}",
     };
     const expectedObject = {
-      resourceId: '/subscriptions/0000-1111-2222-3333-4444/resourceGroups/rg1/providers/Microsoft.Logic/workflows/resource1',
+      resourceId: '/subscriptions/0000-1111-2222-3333-4444/resourceGroups/rg12/providers/Microsoft.Logic/workflows/resource1',
     };
     const service = new ResolutionService({}, appSettings);
     expect(service.resolve(unresolvedObject)).toEqual(expectedObject);
