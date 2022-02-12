@@ -2,7 +2,7 @@
   "/I/U8L": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Treść"
     }
   ],
   "/NDLmg": [
@@ -14,19 +14,13 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "Pokaż menu uruchamiania"
     }
   ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Powodzenie dzięki ponownym próbom"
-    }
-  ],
-  "0raQQP": [
-    {
-      "type": 0,
-      "value": "Kopiuj adres URL"
     }
   ],
   "1R6Vaa": [
@@ -110,7 +104,7 @@
   "2K2fAj": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Godzina zakończenia"
     }
   ],
   "33+WHG": [
@@ -128,7 +122,7 @@
   "4vmGh0": [
     {
       "type": 0,
-      "value": "Service request ID"
+      "value": "Identyfikator żądania usługi"
     }
   ],
   "5rkegy": [
@@ -158,13 +152,19 @@
   "7k9jXx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Kod stanu"
     }
   ],
   "7yEdSt": [
     {
       "type": 0,
       "value": "Show more"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "8L+oIz": [
@@ -182,7 +182,7 @@
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "Typ stanu: "
     }
   ],
   "CG772M": [
@@ -200,7 +200,7 @@
   "ERAWZA": [
     {
       "type": 0,
-      "value": "Response"
+      "value": "Odpowiedź"
     }
   ],
   "FXLR5M": [
@@ -284,7 +284,7 @@
   "JbgTET": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Metoda"
     }
   ],
   "JnlcZQ": [
@@ -296,7 +296,7 @@
   "LXT/ou": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "Błąd"
     }
   ],
   "M6U2LE": [
@@ -326,7 +326,7 @@
   "NPUFgH": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Stan"
     }
   ],
   "O36+wl": [
@@ -338,7 +338,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "Opcje operacji: "
     }
   ],
   "Oib1mL": [
@@ -494,7 +494,7 @@
   "Tb2QLA": [
     {
       "type": 0,
-      "value": "Client request ID"
+      "value": "Identyfikator żądania klienta"
     }
   ],
   "UCNM4L": [
@@ -506,7 +506,7 @@
   "USVffu": [
     {
       "type": 0,
-      "value": "Content not shown due to security configuration."
+      "value": "Nie pokazano zawartości z powodu konfiguracji zabezpieczeń."
     }
   ],
   "V0ZbQO": [
@@ -530,13 +530,13 @@
   "VZHick": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Czas trwania"
     }
   ],
   "Vaacox": [
     {
       "type": 0,
-      "value": "Historia przebiegów"
+      "value": "Historia uruchamiania"
     }
   ],
   "W070M2": [
@@ -570,7 +570,7 @@
   "XFFpu/": [
     {
       "type": 0,
-      "value": "Retry"
+      "value": "Ponów próbę"
     }
   ],
   "XOzn/3": [
@@ -600,7 +600,7 @@
   "Xnn0uj": [
     {
       "type": 0,
-      "value": "Request"
+      "value": "Żądanie"
     }
   ],
   "Y0H9aX": [
@@ -652,7 +652,7 @@
   "cqiqcf": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Godzina rozpoczęcia"
     }
   ],
   "e4Onhn": [
@@ -664,7 +664,7 @@
   "eRvRWs": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Godzina rozpoczęcia"
     }
   ],
   "ftwXvc": [
@@ -676,7 +676,7 @@
   "gCXOd5": [
     {
       "type": 0,
-      "value": "URI"
+      "value": "Identyfikator URI"
     }
   ],
   "gKq3Jv": [
@@ -742,7 +742,7 @@
   "hrbDu6": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Czas trwania"
     }
   ],
   "iJOIca": [
@@ -830,7 +830,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "Uruchom wyzwalacz"
     }
   ],
   "lV77P8": [
@@ -842,7 +842,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "Tryb uruchamiania bezstanowego:"
     }
   ],
   "lztiwS": [
@@ -870,7 +870,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " z "
     },
     {
       "type": 1,
@@ -880,19 +880,19 @@
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "Wprowadź identyfikator uruchomienia, aby je otworzyć"
     }
   ],
   "p16/4S": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Nagłówki"
     }
   ],
   "pIczsS": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Godzina zakończenia"
     }
   ],
   "pRUJff": [
@@ -1048,7 +1048,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "Adres URL wywołania zwrotnego:"
     }
   ],
   "xt5TeT": [

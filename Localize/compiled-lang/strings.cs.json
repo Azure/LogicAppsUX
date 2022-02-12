@@ -2,7 +2,7 @@
   "/I/U8L": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Obsah"
     }
   ],
   "/NDLmg": [
@@ -14,19 +14,13 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "Zobrazit nabídku spuštění"
     }
   ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Proběhlo úspěšně s opakováním pokusů"
-    }
-  ],
-  "0raQQP": [
-    {
-      "type": 0,
-      "value": "Kopírovat adresu URL"
     }
   ],
   "1R6Vaa": [
@@ -106,7 +100,7 @@
   "2K2fAj": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Koncový čas"
     }
   ],
   "33+WHG": [
@@ -124,7 +118,7 @@
   "4vmGh0": [
     {
       "type": 0,
-      "value": "Service request ID"
+      "value": "ID žádosti o služby"
     }
   ],
   "5rkegy": [
@@ -136,7 +130,7 @@
   "6jiO7t": [
     {
       "type": 0,
-      "value": "Zobrazit běh"
+      "value": "Zobrazit spuštění"
     }
   ],
   "6oqk+A": [
@@ -154,13 +148,19 @@
   "7k9jXx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Stavový kód"
     }
   ],
   "7yEdSt": [
     {
       "type": 0,
       "value": "Show more"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "8L+oIz": [
@@ -178,7 +178,7 @@
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "Typ stavu:"
     }
   ],
   "CG772M": [
@@ -196,7 +196,7 @@
   "ERAWZA": [
     {
       "type": 0,
-      "value": "Response"
+      "value": "Odpověď"
     }
   ],
   "FXLR5M": [
@@ -280,7 +280,7 @@
   "JbgTET": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Metoda"
     }
   ],
   "JnlcZQ": [
@@ -292,7 +292,7 @@
   "LXT/ou": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "Chyba"
     }
   ],
   "M6U2LE": [
@@ -322,7 +322,7 @@
   "NPUFgH": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Stav"
     }
   ],
   "O36+wl": [
@@ -334,7 +334,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "Možnosti operace:"
     }
   ],
   "Oib1mL": [
@@ -490,7 +490,7 @@
   "Tb2QLA": [
     {
       "type": 0,
-      "value": "Client request ID"
+      "value": "ID žádosti klienta"
     }
   ],
   "UCNM4L": [
@@ -502,7 +502,7 @@
   "USVffu": [
     {
       "type": 0,
-      "value": "Content not shown due to security configuration."
+      "value": "Kvůli konfiguraci zabezpečení se obsah nezobrazuje."
     }
   ],
   "V0ZbQO": [
@@ -526,7 +526,7 @@
   "VZHick": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Doba trvání"
     }
   ],
   "Vaacox": [
@@ -566,7 +566,7 @@
   "XFFpu/": [
     {
       "type": 0,
-      "value": "Retry"
+      "value": "Zkusit znovu"
     }
   ],
   "XOzn/3": [
@@ -596,7 +596,7 @@
   "Xnn0uj": [
     {
       "type": 0,
-      "value": "Request"
+      "value": "Žádost"
     }
   ],
   "Y0H9aX": [
@@ -648,7 +648,7 @@
   "cqiqcf": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Čas zahájení"
     }
   ],
   "e4Onhn": [
@@ -660,7 +660,7 @@
   "eRvRWs": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Čas zahájení"
     }
   ],
   "ftwXvc": [
@@ -672,7 +672,7 @@
   "gCXOd5": [
     {
       "type": 0,
-      "value": "URI"
+      "value": "Identifikátor URI"
     }
   ],
   "gKq3Jv": [
@@ -738,7 +738,7 @@
   "hrbDu6": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Doba trvání"
     }
   ],
   "iJOIca": [
@@ -826,7 +826,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "Aktivační událost spuštění"
     }
   ],
   "lV77P8": [
@@ -838,7 +838,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "Bezstavový režim spuštění:"
     }
   ],
   "lztiwS": [
@@ -866,7 +866,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " z "
     },
     {
       "type": 1,
@@ -876,19 +876,19 @@
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "Zadejte identifikátor spuštění a spuštění otevřete."
     }
   ],
   "p16/4S": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Záhlaví"
     }
   ],
   "pIczsS": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Koncový čas"
     }
   ],
   "pRUJff": [
@@ -1044,7 +1044,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "Adresa URL pro zpětné volání:"
     }
   ],
   "xt5TeT": [

@@ -2,7 +2,7 @@
   "/I/U8L": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "本体"
     }
   ],
   "/NDLmg": [
@@ -14,19 +14,13 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "実行メニューの表示"
     }
   ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "再試行により成功"
-    }
-  ],
-  "0raQQP": [
-    {
-      "type": 0,
-      "value": "URL のコピー"
     }
   ],
   "1R6Vaa": [
@@ -61,7 +55,7 @@
   "2K2fAj": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "終了時刻"
     }
   ],
   "33+WHG": [
@@ -79,7 +73,7 @@
   "4vmGh0": [
     {
       "type": 0,
-      "value": "Service request ID"
+      "value": "サービス要求 ID"
     }
   ],
   "5rkegy": [
@@ -109,13 +103,19 @@
   "7k9jXx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "状態コード"
     }
   ],
   "7yEdSt": [
     {
       "type": 0,
       "value": "Show more"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "8L+oIz": [
@@ -133,7 +133,7 @@
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "状態の種類:"
     }
   ],
   "CG772M": [
@@ -151,7 +151,7 @@
   "ERAWZA": [
     {
       "type": 0,
-      "value": "Response"
+      "value": "応答"
     }
   ],
   "FXLR5M": [
@@ -202,7 +202,7 @@
   "JbgTET": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "メソッド"
     }
   ],
   "JnlcZQ": [
@@ -214,7 +214,7 @@
   "LXT/ou": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "エラー"
     }
   ],
   "M6U2LE": [
@@ -244,7 +244,7 @@
   "NPUFgH": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "状態"
     }
   ],
   "O36+wl": [
@@ -256,7 +256,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "操作オプション:"
     }
   ],
   "Oib1mL": [
@@ -379,7 +379,7 @@
   "Tb2QLA": [
     {
       "type": 0,
-      "value": "Client request ID"
+      "value": "クライアント要求 ID"
     }
   ],
   "UCNM4L": [
@@ -391,7 +391,7 @@
   "USVffu": [
     {
       "type": 0,
-      "value": "Content not shown due to security configuration."
+      "value": "セキュリティ構成のため、コンテンツは表示されません。"
     }
   ],
   "V0ZbQO": [
@@ -415,7 +415,7 @@
   "VZHick": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "期間"
     }
   ],
   "Vaacox": [
@@ -455,7 +455,7 @@
   "XFFpu/": [
     {
       "type": 0,
-      "value": "Retry"
+      "value": "再試行"
     }
   ],
   "XOzn/3": [
@@ -485,7 +485,7 @@
   "Xnn0uj": [
     {
       "type": 0,
-      "value": "Request"
+      "value": "要求"
     }
   ],
   "Y0H9aX": [
@@ -537,7 +537,7 @@
   "cqiqcf": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "開始時刻"
     }
   ],
   "e4Onhn": [
@@ -549,7 +549,7 @@
   "eRvRWs": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "開始時刻"
     }
   ],
   "ftwXvc": [
@@ -594,7 +594,7 @@
   "hrbDu6": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "期間"
     }
   ],
   "iJOIca": [
@@ -682,7 +682,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "トリガーの実行"
     }
   ],
   "lV77P8": [
@@ -694,7 +694,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "ステートレス実行モード:"
     }
   ],
   "lztiwS": [
@@ -718,33 +718,33 @@
   "o1HOyf": [
     {
       "type": 1,
-      "value": "current_page"
+      "value": "max_page"
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " 中の "
     },
     {
       "type": 1,
-      "value": "max_page"
+      "value": "current_page"
     }
   ],
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "実行を開く実行識別子を入力してください"
     }
   ],
   "p16/4S": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "ヘッダー"
     }
   ],
   "pIczsS": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "終了時刻"
     }
   ],
   "pRUJff": [
@@ -867,7 +867,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "コールバック URL"
     }
   ],
   "xt5TeT": [

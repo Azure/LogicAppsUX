@@ -2,7 +2,7 @@
   "/I/U8L": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Cuerpo"
     }
   ],
   "/NDLmg": [
@@ -14,19 +14,13 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "Mostrar menú de ejecución"
     }
   ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "Correcto con reintentos"
-    }
-  ],
-  "0raQQP": [
-    {
-      "type": 0,
-      "value": "Copiar URL"
     }
   ],
   "1R6Vaa": [
@@ -72,7 +66,7 @@
   "2K2fAj": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Hora de finalización"
     }
   ],
   "33+WHG": [
@@ -90,7 +84,7 @@
   "4vmGh0": [
     {
       "type": 0,
-      "value": "Service request ID"
+      "value": "Id. de solicitud de servicio"
     }
   ],
   "5rkegy": [
@@ -120,13 +114,19 @@
   "7k9jXx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Código de estado"
     }
   ],
   "7yEdSt": [
     {
       "type": 0,
       "value": "Show more"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "8L+oIz": [
@@ -144,7 +144,7 @@
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "Tipo de estado:"
     }
   ],
   "CG772M": [
@@ -162,7 +162,7 @@
   "ERAWZA": [
     {
       "type": 0,
-      "value": "Response"
+      "value": "Respuesta"
     }
   ],
   "FXLR5M": [
@@ -224,7 +224,7 @@
   "JbgTET": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Método"
     }
   ],
   "JnlcZQ": [
@@ -266,7 +266,7 @@
   "NPUFgH": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Estado"
     }
   ],
   "O36+wl": [
@@ -278,7 +278,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "Opciones de la operación:"
     }
   ],
   "Oib1mL": [
@@ -412,7 +412,7 @@
   "Tb2QLA": [
     {
       "type": 0,
-      "value": "Client request ID"
+      "value": "Id. de la solicitud del cliente"
     }
   ],
   "UCNM4L": [
@@ -424,7 +424,7 @@
   "USVffu": [
     {
       "type": 0,
-      "value": "Content not shown due to security configuration."
+      "value": "La configuración de seguridad impide la visualización del contenido."
     }
   ],
   "V0ZbQO": [
@@ -448,7 +448,7 @@
   "VZHick": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Duración"
     }
   ],
   "Vaacox": [
@@ -488,7 +488,7 @@
   "XFFpu/": [
     {
       "type": 0,
-      "value": "Retry"
+      "value": "Reintentar"
     }
   ],
   "XOzn/3": [
@@ -518,7 +518,7 @@
   "Xnn0uj": [
     {
       "type": 0,
-      "value": "Request"
+      "value": "Solicitar"
     }
   ],
   "Y0H9aX": [
@@ -570,7 +570,7 @@
   "cqiqcf": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Hora de inicio"
     }
   ],
   "e4Onhn": [
@@ -582,7 +582,7 @@
   "eRvRWs": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Hora de inicio"
     }
   ],
   "ftwXvc": [
@@ -638,7 +638,7 @@
   "hrbDu6": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Duración"
     }
   ],
   "iJOIca": [
@@ -726,7 +726,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "Ejecutar desencadenador"
     }
   ],
   "lV77P8": [
@@ -738,7 +738,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "Modo de ejecución sin estado:"
     }
   ],
   "lztiwS": [
@@ -766,7 +766,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " de "
     },
     {
       "type": 1,
@@ -776,19 +776,19 @@
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "Escriba el identificador de ejecución para abrir la ejecución"
     }
   ],
   "p16/4S": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Encabezados"
     }
   ],
   "pIczsS": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "Hora de finalización"
     }
   ],
   "pRUJff": [
@@ -922,7 +922,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "URL de devolución de llamadas:"
     }
   ],
   "xt5TeT": [

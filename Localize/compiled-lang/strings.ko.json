@@ -2,7 +2,7 @@
   "/I/U8L": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "본문"
     }
   ],
   "/NDLmg": [
@@ -14,19 +14,13 @@
   "0JTHTZ": [
     {
       "type": 0,
-      "value": "Show run menu"
+      "value": "실행 메뉴 표시"
     }
   ],
   "0ZlNtf": [
     {
       "type": 0,
       "value": "성공했지만 다시 시도해야 함"
-    }
-  ],
-  "0raQQP": [
-    {
-      "type": 0,
-      "value": "URL 복사"
     }
   ],
   "1R6Vaa": [
@@ -61,7 +55,7 @@
   "2K2fAj": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "종료 시간"
     }
   ],
   "33+WHG": [
@@ -79,7 +73,7 @@
   "4vmGh0": [
     {
       "type": 0,
-      "value": "Service request ID"
+      "value": "서비스 요청 ID"
     }
   ],
   "5rkegy": [
@@ -109,13 +103,19 @@
   "7k9jXx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "상태 코드"
     }
   ],
   "7yEdSt": [
     {
       "type": 0,
       "value": "Show more"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copy URL"
     }
   ],
   "8L+oIz": [
@@ -133,7 +133,7 @@
   "Bn8iTS": [
     {
       "type": 0,
-      "value": "State type:"
+      "value": "상태 유형:"
     }
   ],
   "CG772M": [
@@ -151,7 +151,7 @@
   "ERAWZA": [
     {
       "type": 0,
-      "value": "Response"
+      "value": "응답"
     }
   ],
   "FXLR5M": [
@@ -202,7 +202,7 @@
   "JbgTET": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "메서드"
     }
   ],
   "JnlcZQ": [
@@ -214,7 +214,7 @@
   "LXT/ou": [
     {
       "type": 0,
-      "value": "Error"
+      "value": "오류"
     }
   ],
   "M6U2LE": [
@@ -244,7 +244,7 @@
   "NPUFgH": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "상태"
     }
   ],
   "O36+wl": [
@@ -256,7 +256,7 @@
   "OFKZzQ": [
     {
       "type": 0,
-      "value": "Operation options:"
+      "value": "작업 옵션:"
     }
   ],
   "Oib1mL": [
@@ -379,7 +379,7 @@
   "Tb2QLA": [
     {
       "type": 0,
-      "value": "Client request ID"
+      "value": "클라이언트 요청 ID"
     }
   ],
   "UCNM4L": [
@@ -391,7 +391,7 @@
   "USVffu": [
     {
       "type": 0,
-      "value": "Content not shown due to security configuration."
+      "value": "보안 구성으로 인해 콘텐츠가 표시되지 않습니다."
     }
   ],
   "V0ZbQO": [
@@ -415,7 +415,7 @@
   "VZHick": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "기간"
     }
   ],
   "Vaacox": [
@@ -455,7 +455,7 @@
   "XFFpu/": [
     {
       "type": 0,
-      "value": "Retry"
+      "value": "다시 시도"
     }
   ],
   "XOzn/3": [
@@ -485,7 +485,7 @@
   "Xnn0uj": [
     {
       "type": 0,
-      "value": "Request"
+      "value": "요청"
     }
   ],
   "Y0H9aX": [
@@ -513,7 +513,7 @@
   "ba9yGJ": [
     {
       "type": 0,
-      "value": "추가 로드"
+      "value": "더 많이 로드"
     }
   ],
   "ci6ex1": [
@@ -537,7 +537,7 @@
   "cqiqcf": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "시작 시간"
     }
   ],
   "e4Onhn": [
@@ -549,7 +549,7 @@
   "eRvRWs": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "시작 시간"
     }
   ],
   "ftwXvc": [
@@ -594,7 +594,7 @@
   "hrbDu6": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "기간"
     }
   ],
   "iJOIca": [
@@ -682,7 +682,7 @@
   "lPTdSf": [
     {
       "type": 0,
-      "value": "Run trigger"
+      "value": "트리거 실행"
     }
   ],
   "lV77P8": [
@@ -694,7 +694,7 @@
   "lgs5sf": [
     {
       "type": 0,
-      "value": "Stateless run mode:"
+      "value": "상태 비저장 실행 모드:"
     }
   ],
   "lztiwS": [
@@ -722,7 +722,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " / "
     },
     {
       "type": 1,
@@ -732,19 +732,19 @@
   "oV0xQ9": [
     {
       "type": 0,
-      "value": "Enter the run identifier to open the run"
+      "value": "실행을 열려면 실행 식별자를 입력하세요."
     }
   ],
   "p16/4S": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "헤더"
     }
   ],
   "pIczsS": [
     {
       "type": 0,
-      "value": "End time"
+      "value": "종료 시간"
     }
   ],
   "pRUJff": [
@@ -867,7 +867,7 @@
   "woJQhv": [
     {
       "type": 0,
-      "value": "Callback URL:"
+      "value": "콜백 URL:"
     }
   ],
   "xt5TeT": [
