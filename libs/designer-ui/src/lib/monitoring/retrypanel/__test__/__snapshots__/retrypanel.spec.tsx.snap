@@ -1,0 +1,843 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/monitoring/retrypanel should render 1`] = `
+Array [
+  <div
+    className="msla-retrypanel-callout-pager"
+  >
+    <div
+      className="msla-pager-v2"
+      onClick={[Function]}
+    >
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Previous"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronLeft"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        className="msla-pager-v2--inner"
+      >
+        <span
+          className="css-118"
+        >
+          1 of 1
+        </span>
+      </div>
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Next"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronRight"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="msla-panel-callout-content"
+  >
+    <div
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header>
+          Retry
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Duration
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            --
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Start time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/8/2022, 7:52:00 PM
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Status
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            code
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Client request ID
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            clientRequestId
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>,
+]
+`;
+
+exports[`lib/monitoring/retrypanel should render a service request ID when available 1`] = `
+Array [
+  <div
+    className="msla-retrypanel-callout-pager"
+  >
+    <div
+      className="msla-pager-v2"
+      onClick={[Function]}
+    >
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Previous"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronLeft"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        className="msla-pager-v2--inner"
+      >
+        <span
+          className="css-118"
+        >
+          1 of 1
+        </span>
+      </div>
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Next"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronRight"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="msla-panel-callout-content"
+  >
+    <div
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header>
+          Retry
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Duration
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            --
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Start time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/8/2022, 7:52:00 PM
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Status
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            code
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Client request ID
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            clientRequestId
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Service request ID
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            serviceRequestId
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>,
+]
+`;
+
+exports[`lib/monitoring/retrypanel should render an end time and duration when available 1`] = `
+Array [
+  <div
+    className="msla-retrypanel-callout-pager"
+  >
+    <div
+      className="msla-pager-v2"
+      onClick={[Function]}
+    >
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Previous"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronLeft"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        className="msla-pager-v2--inner"
+      >
+        <span
+          className="css-118"
+        >
+          1 of 1
+        </span>
+      </div>
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Next"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronRight"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="msla-panel-callout-content"
+  >
+    <div
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header>
+          Retry
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Duration
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            18 minutes
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Start time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/8/2022, 7:52:00 PM
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/8/2022, 8:10:00 PM
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Status
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            code
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Client request ID
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            clientRequestId
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>,
+]
+`;
+
+exports[`lib/monitoring/retrypanel should render an error when available 1`] = `
+Array [
+  <div
+    className="msla-retrypanel-callout-pager"
+  >
+    <div
+      className="msla-pager-v2"
+      onClick={[Function]}
+    >
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Previous"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronLeft"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        className="msla-pager-v2--inner"
+      >
+        <span
+          className="css-118"
+        >
+          1 of 1
+        </span>
+      </div>
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Next"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronRight"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="msla-panel-callout-content"
+  >
+    <div
+      className="ms-MessageBar ms-MessageBar--severeWarning ms-MessageBar-multiline msla-request-history-panel-error root-119"
+    >
+      <div
+        className="ms-MessageBar-content content-120"
+      >
+        <div
+          aria-hidden={true}
+          className="ms-MessageBar-icon iconContainer-121"
+        >
+          <i
+            aria-hidden={true}
+            className="icon-128"
+            data-icon-name="Warning"
+          />
+        </div>
+        <div
+          aria-live="assertive"
+          className="ms-MessageBar-text text-123"
+          id="MessageBar32"
+          role="alert"
+        >
+          <span
+            className="ms-MessageBar-innerText innerText-124"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header>
+          Retry
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Duration
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            --
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Start time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/8/2022, 7:52:00 PM
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Status
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            code
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Client request ID
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            clientRequestId
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>,
+]
+`;

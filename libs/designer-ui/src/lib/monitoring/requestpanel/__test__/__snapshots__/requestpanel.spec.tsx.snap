@@ -1,0 +1,1446 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/monitoring/requestpanel should render 1`] = `
+Array [
+  <div
+    className="msla-retrypanel-callout-pager"
+  >
+    <div
+      className="msla-pager-v2"
+      onClick={[Function]}
+    >
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Previous"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronLeft"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        className="msla-pager-v2--inner"
+      >
+        <span
+          className="css-118"
+        >
+          1 of 1
+        </span>
+      </div>
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Next"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronRight"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="msla-panel-callout-content"
+  >
+    <div
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header>
+          Duration
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Duration
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            1 minute
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Start time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/9/2022, 1:52:00 PM
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/9/2022, 1:53:00 PM
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>,
+]
+`;
+
+exports[`lib/monitoring/requestpanel should render with a request 1`] = `
+Array [
+  <div
+    className="msla-retrypanel-callout-pager"
+  >
+    <div
+      className="msla-pager-v2"
+      onClick={[Function]}
+    >
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Previous"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronLeft"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        className="msla-pager-v2--inner"
+      >
+        <span
+          className="css-118"
+        >
+          1 of 1
+        </span>
+      </div>
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Next"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronRight"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="msla-panel-callout-content"
+  >
+    <div
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header>
+          Duration
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Duration
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            1 minute
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Start time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/9/2022, 1:52:00 PM
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/9/2022, 1:53:00 PM
+          </div>
+        </section>
+      </div>
+    </div>
+    <div
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header>
+          Request
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Method
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            GET
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            URI
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            https://httpbin.org/get
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Headers
+          </label>
+          <div
+            className="msla-trace-value-text msla-trace-value-key-value-pairs"
+          >
+            <div
+              className="ms-Viewport"
+              style={
+                Object {
+                  "minHeight": 1,
+                  "minWidth": 1,
+                }
+              }
+            >
+              <div
+                aria-label="Headers"
+                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-119"
+                data-automationid="DetailsList"
+                data-is-scrollable="false"
+              >
+                <div
+                  aria-colcount={2}
+                  aria-readonly="true"
+                  aria-rowcount={1}
+                  role="grid"
+                >
+                  <div
+                    className="ms-DetailsList-headerWrapper"
+                    onKeyDown={[Function]}
+                    role="presentation"
+                  >
+                    <div
+                      aria-label="Headers"
+                      className="ms-FocusZone css-137 ms-DetailsHeader root-121"
+                      data-automationid="DetailsHeader"
+                      data-focuszone-id="FocusZone18"
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      onMouseDownCapture={[Function]}
+                      onMouseMove={[Function]}
+                      role="row"
+                    >
+                      <div
+                        aria-colindex={1}
+                        aria-describedby="header17-$key-tooltip"
+                        aria-labelledby="header17-$key-name"
+                        aria-sort="none"
+                        className="ms-DetailsHeader-cell is-actionable root-138"
+                        data-automationid="ColumnsHeaderColumn"
+                        data-is-draggable={false}
+                        data-is-focusable="true"
+                        data-item-key="$key"
+                        draggable={false}
+                        role="columnheader"
+                        style={
+                          Object {
+                            "width": NaN,
+                          }
+                        }
+                      >
+                        <span
+                          className="cellTooltip-146"
+                        >
+                          <span
+                            className="ms-DetailsHeader-cellTitle cellTitle-144"
+                            id="header17-$key"
+                            onClick={[Function]}
+                            onContextMenu={[Function]}
+                          >
+                            <span
+                              className="ms-DetailsHeader-cellName cellName-145"
+                              id="header17-$key-name"
+                            >
+                              Key
+                            </span>
+                          </span>
+                        </span>
+                      </div>
+                      <label
+                        className="accessibleLabel-132"
+                        id="header17-$key-tooltip"
+                      >
+                        Key
+                      </label>
+                      <div
+                        aria-hidden={true}
+                        className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerStart-129"
+                        data-is-focusable={false}
+                        data-sizer-index={0}
+                        onBlur={[Function]}
+                        onClick={[Function]}
+                        onDoubleClick={[Function]}
+                        role="button"
+                      />
+                      <div
+                        aria-colindex={2}
+                        aria-describedby="header17-$value-tooltip"
+                        aria-labelledby="header17-$value-name"
+                        aria-sort="none"
+                        className="ms-DetailsHeader-cell is-actionable root-138"
+                        data-automationid="ColumnsHeaderColumn"
+                        data-is-draggable={false}
+                        data-is-focusable="true"
+                        data-item-key="$value"
+                        draggable={false}
+                        role="columnheader"
+                        style={
+                          Object {
+                            "width": NaN,
+                          }
+                        }
+                      >
+                        <span
+                          className="cellTooltip-146"
+                        >
+                          <span
+                            className="ms-DetailsHeader-cellTitle cellTitle-144"
+                            id="header17-$value"
+                            onClick={[Function]}
+                            onContextMenu={[Function]}
+                          >
+                            <span
+                              className="ms-DetailsHeader-cellName cellName-145"
+                              id="header17-$value-name"
+                            >
+                              Value
+                            </span>
+                          </span>
+                        </span>
+                      </div>
+                      <label
+                        className="accessibleLabel-132"
+                        id="header17-$value-tooltip"
+                      >
+                        Value
+                      </label>
+                      <div
+                        aria-hidden={true}
+                        className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerEnd-130"
+                        data-is-focusable={false}
+                        data-sizer-index={1}
+                        onBlur={[Function]}
+                        onClick={[Function]}
+                        onDoubleClick={[Function]}
+                        role="button"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="ms-DetailsList-contentWrapper"
+                    onKeyDown={[Function]}
+                    role="presentation"
+                  >
+                    <div
+                      className="ms-SelectionZone"
+                      onClick={[Function]}
+                      onContextMenu={[Function]}
+                      onDoubleClick={[Function]}
+                      onFocusCapture={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyDownCapture={[Function]}
+                      onMouseDown={[Function]}
+                      onMouseDownCapture={[Function]}
+                      role="presentation"
+                    >
+                      <div
+                        className="ms-FocusZone css-137 focusZone-120"
+                        data-focuszone-id="FocusZone19"
+                        onBlur={[Function]}
+                        onFocus={[Function]}
+                        onKeyDown={[Function]}
+                        onMouseDownCapture={[Function]}
+                      >
+                        <div
+                          className="ms-List"
+                        >
+                          <div
+                            className="ms-List-surface"
+                            role="presentation"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>,
+]
+`;
+
+exports[`lib/monitoring/requestpanel should render with a response 1`] = `
+Array [
+  <div
+    className="msla-retrypanel-callout-pager"
+  >
+    <div
+      className="msla-pager-v2"
+      onClick={[Function]}
+    >
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Previous"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronLeft"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        className="msla-pager-v2--inner"
+      >
+        <span
+          className="css-118"
+        >
+          1 of 1
+        </span>
+      </div>
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Next"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronRight"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="msla-panel-callout-content"
+  >
+    <div
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header>
+          Duration
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Duration
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            1 minute
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Start time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/9/2022, 1:52:00 PM
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/9/2022, 1:53:00 PM
+          </div>
+        </section>
+      </div>
+    </div>
+    <div
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header>
+          Response
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Status code
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            200
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Headers
+          </label>
+          <div
+            className="msla-trace-value-text msla-trace-value-key-value-pairs"
+          >
+            <div
+              className="ms-Viewport"
+              style={
+                Object {
+                  "minHeight": 1,
+                  "minWidth": 1,
+                }
+              }
+            >
+              <div
+                aria-label="Headers"
+                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-119"
+                data-automationid="DetailsList"
+                data-is-scrollable="false"
+              >
+                <div
+                  aria-colcount={2}
+                  aria-readonly="true"
+                  aria-rowcount={1}
+                  role="grid"
+                >
+                  <div
+                    className="ms-DetailsList-headerWrapper"
+                    onKeyDown={[Function]}
+                    role="presentation"
+                  >
+                    <div
+                      aria-label="Headers"
+                      className="ms-FocusZone css-137 ms-DetailsHeader root-121"
+                      data-automationid="DetailsHeader"
+                      data-focuszone-id="FocusZone38"
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      onMouseDownCapture={[Function]}
+                      onMouseMove={[Function]}
+                      role="row"
+                    >
+                      <div
+                        aria-colindex={1}
+                        aria-describedby="header37-$key-tooltip"
+                        aria-labelledby="header37-$key-name"
+                        aria-sort="none"
+                        className="ms-DetailsHeader-cell is-actionable root-138"
+                        data-automationid="ColumnsHeaderColumn"
+                        data-is-draggable={false}
+                        data-is-focusable="true"
+                        data-item-key="$key"
+                        draggable={false}
+                        role="columnheader"
+                        style={
+                          Object {
+                            "width": NaN,
+                          }
+                        }
+                      >
+                        <span
+                          className="cellTooltip-146"
+                        >
+                          <span
+                            className="ms-DetailsHeader-cellTitle cellTitle-144"
+                            id="header37-$key"
+                            onClick={[Function]}
+                            onContextMenu={[Function]}
+                          >
+                            <span
+                              className="ms-DetailsHeader-cellName cellName-145"
+                              id="header37-$key-name"
+                            >
+                              Key
+                            </span>
+                          </span>
+                        </span>
+                      </div>
+                      <label
+                        className="accessibleLabel-132"
+                        id="header37-$key-tooltip"
+                      >
+                        Key
+                      </label>
+                      <div
+                        aria-hidden={true}
+                        className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerStart-129"
+                        data-is-focusable={false}
+                        data-sizer-index={0}
+                        onBlur={[Function]}
+                        onClick={[Function]}
+                        onDoubleClick={[Function]}
+                        role="button"
+                      />
+                      <div
+                        aria-colindex={2}
+                        aria-describedby="header37-$value-tooltip"
+                        aria-labelledby="header37-$value-name"
+                        aria-sort="none"
+                        className="ms-DetailsHeader-cell is-actionable root-138"
+                        data-automationid="ColumnsHeaderColumn"
+                        data-is-draggable={false}
+                        data-is-focusable="true"
+                        data-item-key="$value"
+                        draggable={false}
+                        role="columnheader"
+                        style={
+                          Object {
+                            "width": NaN,
+                          }
+                        }
+                      >
+                        <span
+                          className="cellTooltip-146"
+                        >
+                          <span
+                            className="ms-DetailsHeader-cellTitle cellTitle-144"
+                            id="header37-$value"
+                            onClick={[Function]}
+                            onContextMenu={[Function]}
+                          >
+                            <span
+                              className="ms-DetailsHeader-cellName cellName-145"
+                              id="header37-$value-name"
+                            >
+                              Value
+                            </span>
+                          </span>
+                        </span>
+                      </div>
+                      <label
+                        className="accessibleLabel-132"
+                        id="header37-$value-tooltip"
+                      >
+                        Value
+                      </label>
+                      <div
+                        aria-hidden={true}
+                        className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerEnd-130"
+                        data-is-focusable={false}
+                        data-sizer-index={1}
+                        onBlur={[Function]}
+                        onClick={[Function]}
+                        onDoubleClick={[Function]}
+                        role="button"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="ms-DetailsList-contentWrapper"
+                    onKeyDown={[Function]}
+                    role="presentation"
+                  >
+                    <div
+                      className="ms-SelectionZone"
+                      onClick={[Function]}
+                      onContextMenu={[Function]}
+                      onDoubleClick={[Function]}
+                      onFocusCapture={[Function]}
+                      onKeyDown={[Function]}
+                      onKeyDownCapture={[Function]}
+                      onMouseDown={[Function]}
+                      onMouseDownCapture={[Function]}
+                      role="presentation"
+                    >
+                      <div
+                        className="ms-FocusZone css-137 focusZone-120"
+                        data-focuszone-id="FocusZone39"
+                        onBlur={[Function]}
+                        onFocus={[Function]}
+                        onKeyDown={[Function]}
+                        onMouseDownCapture={[Function]}
+                      >
+                        <div
+                          className="ms-List"
+                        >
+                          <div
+                            className="ms-List-surface"
+                            role="presentation"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Body
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            {}
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>,
+]
+`;
+
+exports[`lib/monitoring/requestpanel should render with a secured request 1`] = `
+Array [
+  <div
+    className="msla-retrypanel-callout-pager"
+  >
+    <div
+      className="msla-pager-v2"
+      onClick={[Function]}
+    >
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Previous"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronLeft"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        className="msla-pager-v2--inner"
+      >
+        <span
+          className="css-118"
+        >
+          1 of 1
+        </span>
+      </div>
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Next"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronRight"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="msla-panel-callout-content"
+  >
+    <div
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header>
+          Duration
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Duration
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            1 minute
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Start time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/9/2022, 1:52:00 PM
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/9/2022, 1:53:00 PM
+          </div>
+        </section>
+      </div>
+    </div>
+    <section
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header
+          style={
+            Object {
+              "borderColor": "rgba(71,71,71, 0.7)",
+            }
+          }
+        >
+          Request
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <div
+          className="msla-trace-inputs-outputs-secured"
+        >
+          <div
+            className="msla-trace-secured-text"
+          >
+            Content not shown due to security configuration.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>,
+]
+`;
+
+exports[`lib/monitoring/requestpanel should render with a secured response 1`] = `
+Array [
+  <div
+    className="msla-retrypanel-callout-pager"
+  >
+    <div
+      className="msla-pager-v2"
+      onClick={[Function]}
+    >
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Previous"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronLeft"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        className="msla-pager-v2--inner"
+      >
+        <span
+          className="css-118"
+        >
+          1 of 1
+        </span>
+      </div>
+      <div
+        className="msla-pager-failed-container"
+      >
+        <div
+          className="ms-TooltipHost root-109"
+          onBlurCapture={[Function]}
+          onFocusCapture={[Function]}
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="none"
+        >
+          <button
+            aria-disabled={true}
+            aria-label="Next"
+            className="ms-Button ms-Button--icon is-disabled root-110"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-111"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-113"
+                data-icon-name="ChevronRight"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+              <span
+                className="ms-Button-textContainer textContainer-112"
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="msla-panel-callout-content"
+  >
+    <div
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header>
+          Duration
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Duration
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            1 minute
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Start time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/9/2022, 1:52:00 PM
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-trace-value-text"
+            tabIndex={0}
+          >
+            2/9/2022, 1:53:00 PM
+          </div>
+        </section>
+      </div>
+    </div>
+    <section
+      className="msla-trace-inputs-outputs"
+    >
+      <div
+        className="msla-trace-inputs-outputs-header"
+      >
+        <header
+          style={
+            Object {
+              "borderColor": "rgba(71,71,71, 0.7)",
+            }
+          }
+        >
+          Response
+        </header>
+      </div>
+      <div
+        className="msla-trace-values"
+      >
+        <div
+          className="msla-trace-inputs-outputs-secured"
+        >
+          <div
+            className="msla-trace-secured-text"
+          >
+            Content not shown due to security configuration.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>,
+]
+`;

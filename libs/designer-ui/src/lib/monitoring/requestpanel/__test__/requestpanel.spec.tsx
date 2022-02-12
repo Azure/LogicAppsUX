@@ -1,9 +1,16 @@
-import React from 'react';
+import { setIconOptions } from '@fluentui/react';
+import renderer from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import { RequestPanel, RequestPanelProps } from '../index';
 
 describe('lib/monitoring/requestpanel', () => {
-  let minimal: RequestPanelProps, renderer: ShallowRenderer.ShallowRenderer;
+  let minimal: RequestPanelProps;
+
+  beforeAll(() => {
+    setIconOptions({
+      disableWarnings: true,
+    });
+  });
 
   beforeEach(() => {
     minimal = {
@@ -16,69 +23,119 @@ describe('lib/monitoring/requestpanel', () => {
         },
       ],
     };
-    renderer = ShallowRenderer.createRenderer();
-  });
-
-  afterEach(() => {
-    renderer.unmount();
   });
 
   it('should render', () => {
-    const [requestHistory] = minimal.requestHistory;
-    renderer.render(<RequestPanel {...minimal} />);
-
-    const section = renderer.getRenderOutput();
-    const [pagerContainer, calloutContent]: any[] = React.Children.toArray(section.props.children);
-    expect(pagerContainer.props.className).toBe('msla-retrypanel-callout-pager');
-    expect(calloutContent.props.className).toBe('msla-panel-callout-content');
-
-    const pager = React.Children.only(pagerContainer.props.children);
-    expect(pager.props).toEqual(
-      expect.objectContaining({
-        current: 1,
-        max: 1,
-        maxLength: 2,
-        min: 1,
-        pagerTitleText: 'Request',
-        readonlyPagerInput: true,
-      })
-    );
-
-    const [errorSection, durationContainer, request, response]: any[] = React.Children.toArray(calloutContent.props.children);
-    expect(errorSection.props.className).toBe('msla-request-history-panel-error');
-    expect(errorSection.props.error).toBe(requestHistory?.properties?.error);
-    expect(durationContainer.props.className).toBe('msla-trace-inputs-outputs');
-    expect(request.props.request).toEqual(requestHistory?.properties?.request);
-    expect(response.props.response).toEqual(requestHistory?.properties?.response);
-
-    const [durationHeaderContainer, durationValues]: any[] = React.Children.toArray(durationContainer.props.children);
-    expect(durationHeaderContainer.props.className).toBe('msla-trace-inputs-outputs-header');
-    expect(durationValues.props.className).toBe('msla-trace-values');
-
-    const durationHeader = React.Children.only(durationHeaderContainer.props.children);
-    expect(durationHeader.props.children).toBe('Duration');
-
-    const [duration, startTime, endTime]: any[] = React.Children.toArray(durationValues.props.children);
-    expect(duration.props).toEqual({
-      displayName: 'Duration',
-      value: '1 minute',
-    });
-    expect(startTime.props).toEqual({
-      displayName: 'Start time',
-      format: 'date-time',
-      value: requestHistory?.properties?.startTime,
-    });
-    expect(endTime.props).toEqual({
-      displayName: 'End time',
-      format: 'date-time',
-      value: requestHistory?.properties?.endTime,
-    });
+    const tree = renderer.create(<RequestPanel {...minimal} />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
-  it('should not render when not visible', () => {
-    renderer.render(<RequestPanel {...minimal} visible={false} />);
+  it('should render with a request', () => {
+    const props = {
+      ...minimal,
+      requestHistory: [
+        {
+          properties: {
+            ...minimal.requestHistory[0].properties,
+            request: {
+              headers: {},
+              method: 'GET',
+              uri: 'https://httpbin.org/get',
+            },
+          },
+        },
+      ],
+    };
 
-    const section = renderer.getRenderOutput();
-    expect(section).toBeNull();
+    const tree = renderer.create(<RequestPanel {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render with a secured request', () => {
+    const props = {
+      ...minimal,
+      requestHistory: [
+        {
+          properties: {
+            ...minimal.requestHistory[0].properties,
+            request: {
+              headers: {},
+              method: 'GET',
+              url: 'https://httpbin.org/get',
+            },
+            secureData: {
+              properties: ['request'],
+            },
+          },
+        },
+      ],
+    };
+
+    const tree = renderer.create(<RequestPanel {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render with a response', () => {
+    const props = {
+      ...minimal,
+      requestHistory: [
+        {
+          properties: {
+            ...minimal.requestHistory[0].properties,
+            response: {
+              body: {},
+              headers: {},
+              statusCode: 200,
+            },
+          },
+        },
+      ],
+    };
+
+    const tree = renderer.create(<RequestPanel {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render with a secured response', () => {
+    const props = {
+      ...minimal,
+      requestHistory: [
+        {
+          properties: {
+            ...minimal.requestHistory[0].properties,
+            response: {
+              body: {},
+              headers: {},
+              statusCode: 200,
+            },
+            secureData: {
+              properties: ['response'],
+            },
+          },
+        },
+      ],
+    };
+
+    const tree = renderer.create(<RequestPanel {...props} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+  describe('visible', () => {
+    let renderer: ShallowRenderer.ShallowRenderer;
+
+    beforeEach(() => {
+      renderer = ShallowRenderer.createRenderer();
+    });
+
+    afterEach(() => {
+      renderer.unmount();
+    });
+
+    it('should not render when not visible', () => {
+      renderer.render(<RequestPanel {...minimal} visible={false} />);
+
+      const section = renderer.getRenderOutput();
+      expect(section).toBeNull();
+    });
   });
 });
