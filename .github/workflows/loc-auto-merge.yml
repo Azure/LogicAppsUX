@@ -6,7 +6,7 @@ on:
 
 jobs:
   auto-merge-lcl-changes:
-    if: ${{ (startsWith(github.ref, 'refs/heads/loc/') || startsWith(github.ref, 'refs/heads/locfiles')) && (github.actor == 'csigs' || github.actor == 'hartra344')}}
+    if: ${{ startsWith(github.ref, 'refs/heads/loc/') || startsWith(github.ref, 'refs/heads/locfiles/') }}
     runs-on: ubuntu-latest
     env:
       PR_URL: ${{github.event.pull_request.html_url}}
