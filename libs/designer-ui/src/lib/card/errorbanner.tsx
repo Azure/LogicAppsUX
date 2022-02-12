@@ -1,7 +1,4 @@
-import { Icon, IIconStyles } from '@fluentui/react/lib/Icon';
-import { MessageBarType } from '@fluentui/react/lib/MessageBar';
-import { TooltipHost, TooltipOverflowMode } from '@fluentui/react/lib/Tooltip';
-import * as React from 'react';
+import { css, FontSizes, Icon, IIconStyles, MessageBarType, TooltipHost, TooltipOverflowMode } from '@fluentui/react';
 
 export interface ErrorBannerProps {
   errorLevel?: MessageBarType;
@@ -10,8 +7,8 @@ export interface ErrorBannerProps {
 
 const iconStyles: IIconStyles = {
   root: {
-    paddingRight: '2px',
-    fontSize: '12px',
+    paddingRight: 2,
+    fontSize: FontSizes.small,
     lineHeight: '16px',
     float: 'left',
   },
@@ -26,18 +23,17 @@ const ICON_MAP = {
   [MessageBarType.success]: 'Completed',
 };
 
-export function ErrorBannerV2(props: ErrorBannerProps): JSX.Element | null {
-  const { errorLevel, errorMessage } = props;
+export const ErrorBanner: React.FC<ErrorBannerProps> = ({ errorLevel, errorMessage }) => {
   if (errorLevel === undefined || !errorMessage) {
     return null;
   }
 
   return (
-    <div className={`panel-card-error ${MessageBarType[errorLevel]}`} tabIndex={0}>
+    <div className={css('panel-card-error', MessageBarType[errorLevel])} tabIndex={0}>
       <Icon iconName={ICON_MAP[errorLevel]} className="panel-card-error-icon" styles={iconStyles} />
       <TooltipHost content={errorMessage} overflowMode={TooltipOverflowMode.Parent}>
         {errorMessage}
       </TooltipHost>
     </div>
   );
-}
+};
