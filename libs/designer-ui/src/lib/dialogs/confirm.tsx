@@ -1,7 +1,4 @@
-import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
-import { Dialog, DialogFooter, IDialogContentProps } from '@fluentui/react/lib/Dialog';
-import { IModalProps } from '@fluentui/react/lib/Modal';
-import * as React from 'react';
+import { DefaultButton, Dialog, DialogFooter, IDialogContentProps, IModalProps, PrimaryButton } from '@fluentui/react';
 import { FormattedMessage } from 'react-intl';
 
 export interface ConfirmProps {
@@ -17,7 +14,7 @@ const modalProps: IModalProps = {
   firstFocusableSelector: 'dialog-ok-button',
 };
 
-export const Confirm = ({ hidden, message, title, onConfirm, onDismiss }: ConfirmProps): JSX.Element | null => {
+export const Confirm: React.FC<ConfirmProps> = ({ hidden, message, title, onConfirm, onDismiss }) => {
   if (hidden) {
     return null;
   }
