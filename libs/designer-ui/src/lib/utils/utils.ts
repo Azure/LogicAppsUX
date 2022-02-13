@@ -1,5 +1,6 @@
-import Constants from '../constants';
 import { getIntl } from '@microsoft-logic-apps/intl';
+import Constants from '../constants';
+
 /**
  * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)
  * @arg {number} milliseconds - The number of milliseconds in the duration
@@ -18,7 +19,6 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{seconds}s',
-
           description: 'This is a period in time in seconds. {seconds} is replaced by the number and s is an abbreviation of seconds',
         },
         {
@@ -29,7 +29,6 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
-
           description: 'A duration of time shown in seconds',
         },
         {
@@ -45,7 +44,6 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{minutes}m',
-
           description: 'This is a period in time in seconds. {minutes} is replaced by the number and m is an abbreviation of minutes',
         },
         {
@@ -56,7 +54,6 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{minutes, plural, one {# minute} other {# minutes}}',
-
           description: 'A duration of time shown in minutes',
         },
         {
@@ -72,7 +69,6 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{hours}h',
-
           description: 'This is a period in time in hours. {hours} is replaced by the number and h is an abbreviation of hours',
         },
         {
@@ -83,7 +79,6 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{hours, plural, one {# hour} other {# hours}}',
-
           description: 'A duration of time shown in hours',
         },
         {
@@ -98,7 +93,6 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
     return intl.formatMessage(
       {
         defaultMessage: '{days}d',
-
         description: 'This is a period in time in days. {days} is replaced by the number and d is an abbreviation of days',
       },
       {
@@ -109,7 +103,6 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
     return intl.formatMessage(
       {
         defaultMessage: '{days, plural, one {# day} other {# days}}',
-
         description: 'A duration of time shown in days',
       },
       {
@@ -129,6 +122,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
   if (isNaN(milliseconds)) {
     return '--';
   }
+
   const intl = getIntl();
   if (milliseconds < 1000) {
     const millisecondsRounded = Math.round(Math.abs(milliseconds / 1000) * 10) / 10;
@@ -136,7 +130,6 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{seconds}s',
-
           description: 'This is a period in time in seconds. {seconds} is replaced by the number and s is an abbreviation of seconds',
         },
         {
@@ -147,7 +140,6 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
-
           description: 'A duration of time shown in seconds',
         },
         {
@@ -163,7 +155,6 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{seconds}s',
-
           description: 'This is a period in time in seconds. {seconds} is replaced by the number and s is an abbreviation of seconds',
         },
         {
@@ -174,7 +165,6 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
-
           description: 'A duration of time shown in seconds',
         },
         {
@@ -192,7 +182,6 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{minutes}m {seconds}s',
-
           description: 'This is a time duration in abbreviated format',
         },
         {
@@ -204,7 +193,6 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{minutes} minutes {seconds} seconds',
-
           description: 'This is a time duration in full non abbreviated format',
         },
         {
@@ -217,13 +205,11 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
 
   const hours = Math.floor(Math.abs(milliseconds / 60 / 60 / 1000));
   const minutesCarry = Math.round(Math.abs(milliseconds - hours * 3600000) / 60 / 1000);
-
   if (hours < 24) {
     if (abbreviated) {
       return intl.formatMessage(
         {
           defaultMessage: '{hours}h {minutes}m',
-
           description: 'This is a time duration in abbreviated format',
         },
         {
@@ -235,7 +221,6 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{hours} hours {minutes} minutes',
-
           description: 'This is a time duration in full non abbreviated format',
         },
         {
@@ -252,7 +237,6 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
     return intl.formatMessage(
       {
         defaultMessage: '{days}d {hours}h',
-
         description: 'This is a time duration in abbreviated format',
       },
       {
@@ -264,7 +248,6 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
     return intl.formatMessage(
       {
         defaultMessage: '{days} days {hours} hours',
-
         description: 'This is a time duration in full non abbreviated format',
       },
       {
@@ -294,26 +277,22 @@ export function getStatusString(status: string, hasRetries: boolean): string {
     case Constants.STATUS.FAILED:
       return intl.formatMessage({
         defaultMessage: 'Failed',
-
         description: 'This is a status message to be shown in a monitoring view',
       });
     case Constants.STATUS.FAULTED:
       return intl.formatMessage({
         defaultMessage: 'Faulted',
-
         description: 'This is a status message to be shown in a monitoring view',
       });
     case Constants.STATUS.IGNORED:
       return intl.formatMessage({
         defaultMessage: 'Ignored',
-
         description: 'This is a status message to be shown in a monitoring view',
       });
 
     case Constants.STATUS.SKIPPED:
       return intl.formatMessage({
         defaultMessage: 'Skipped',
-
         description: 'This is a status message to be shown in a monitoring view',
       });
 
@@ -321,27 +300,23 @@ export function getStatusString(status: string, hasRetries: boolean): string {
       return hasRetries
         ? intl.formatMessage({
             defaultMessage: 'Succeeded with retries',
-
             description:
               'This is a status message to be shown in a monitoring view. This refers to the succeeded status of a previous action.',
           })
         : intl.formatMessage({
             defaultMessage: 'Succeeded',
-
             description: 'This is a status message to be shown in a monitoring view',
           });
 
     case Constants.STATUS.TIMEDOUT:
       return intl.formatMessage({
         defaultMessage: 'Timed Out',
-
         description: 'This is a status message to be shown in a monitoring view',
       });
 
     case Constants.STATUS.WAITING:
       return intl.formatMessage({
         defaultMessage: 'Waiting',
-
         description: 'This is a status message to be shown in a monitoring view',
       });
 
@@ -349,7 +324,6 @@ export function getStatusString(status: string, hasRetries: boolean): string {
     default:
       return intl.formatMessage({
         defaultMessage: 'Not specified',
-
         description: 'This is a status message to be shown in a monitoring view',
       });
   }
