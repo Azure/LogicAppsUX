@@ -1,3 +1,5 @@
+// card.stories.js|jsx|ts|tsx
+
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
