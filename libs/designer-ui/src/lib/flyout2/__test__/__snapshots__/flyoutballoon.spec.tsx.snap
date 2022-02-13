@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/flyout2/flyoutballoon should not render when not expanded 1`] = `null`;
