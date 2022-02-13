@@ -1,9 +1,6 @@
-// Button.stories.ts | Button.stories.tsx
-
-import React from 'react';
+// flyout2.stories.js|jsx|ts|tsx
 
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-
 import { Flyout2, Flyout2Props } from './index';
 
 export default {
@@ -13,6 +10,6 @@ export default {
 
 export const Standard: ComponentStory<typeof Flyout2> = (args: Flyout2Props) => <Flyout2 {...args} />;
 Standard.args = {
-  flyoutExpanded: true,
+  flyoutExpanded: false,
   text: 'Details can be found at http://aka.ms/logicapps-chunk.',
 };

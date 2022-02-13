@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/documentationlinkitem should render 1`] = `
+<div>
+  <a
+    href="https://aka.ms/logicapps-chunk"
+    rel="noopener noreferrer"
+    target="_blank"
+  />
+</div>
+`;
+
+exports[`lib/documentationlinkitem should render with a description 1`] = `
+<div>
+  <a
+    href="https://aka.ms/logicapps-chunk"
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    description
+  </a>
+</div>
+`;

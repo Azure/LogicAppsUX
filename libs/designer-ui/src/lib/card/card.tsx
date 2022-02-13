@@ -1,7 +1,7 @@
 import { css, IconButton, MessageBarType, TooltipHost } from '@fluentui/react';
 import { Event, EventHandler } from '../eventhandler';
 import * as React from 'react';
-import { DocLinkClickedEventHandler, TipProps, TitleChangeEvent } from '..';
+import { DocumentationLinkClickedEventHandler, TipProps, TitleChangeEvent } from '..';
 
 import { CommentBoxProps } from './commentbox';
 import { MenuItemOption } from './menu';
@@ -48,7 +48,7 @@ export interface CardProps {
   onCollapse?: EventHandler<any>;
   onCommitTitleChange?: EventHandler<TitleChangeEvent>;
   onDiscardTitleChange?: EventHandler<Event<typeof Title>>;
-  onDocLinkClick?: DocLinkClickedEventHandler;
+  onDocLinkClick?: DocumentationLinkClickedEventHandler;
   onDragEnd?(): void;
   onDragStart?: React.DragEventHandler<HTMLElement>;
   onMenuShown?(): void;
