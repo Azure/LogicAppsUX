@@ -150,7 +150,7 @@ export const Card: React.FC<CardProps> = ({
             staticResultsEnabled={staticResultsEnabled}
           />
         </div>
-        {contextMenuOptions ? (
+        {contextMenuOptions?.length > 0 ? (
           <CardContextMenu
             contextMenuLocation={contextMenuLocation}
             contextMenuOptions={contextMenuOptions}

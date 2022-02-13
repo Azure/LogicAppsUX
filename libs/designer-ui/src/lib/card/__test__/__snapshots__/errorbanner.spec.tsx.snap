@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/card/errorbanner should render 1`] = `
+<div
+  className="panel-card-error severeWarning"
+  tabIndex={0}
+>
+  <i
+    aria-hidden={true}
+    className="panel-card-error-icon root-109"
+    data-icon-name="Warning"
+  />
+  <div
+    className="ms-TooltipHost root-110"
+    onBlurCapture={[Function]}
+    onFocusCapture={[Function]}
+    onKeyDown={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+    role="none"
+  >
+    errorMessage
+  </div>
+</div>
+`;
