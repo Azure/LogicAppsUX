@@ -1,8 +1,7 @@
-import * as React from 'react';
-import EmptyPanel from '../images/empty-panel.svg';
 import { FormattedMessage } from 'react-intl';
+import EmptyPanel from './images/empty-panel.svg';
 
-export const EmptyContent = (): JSX.Element => {
+export const EmptyContent: React.FC = () => {
   return (
     <div className="msla-panel-select-card-container-empty">
       <img src={EmptyPanel} alt="" role="presentation" />

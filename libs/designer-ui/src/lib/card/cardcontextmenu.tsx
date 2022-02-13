@@ -1,8 +1,8 @@
 import { ContextualMenu, DirectionalHint, ICalloutProps, IContextualMenuItem, Target } from '@fluentui/react';
 import { useIntl } from 'react-intl';
-import { CardV2Props } from './cardv2';
+import { CardProps } from './index';
 
-export interface CardContextMenuProps extends Pick<CardV2Props, 'contextMenuOptions' | 'title'> {
+export interface CardContextMenuProps extends Pick<CardProps, 'contextMenuOptions' | 'title'> {
   contextMenuLocation: Target | undefined;
   showContextMenu: boolean;
   onSetShowContextMenu(value: boolean): void;

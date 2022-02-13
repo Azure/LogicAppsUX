@@ -64,9 +64,9 @@ export default {
 
   DARK_BRAND_COLOR: '#3A4148',
   DEFAULT_BRAND_COLOR: '#474747',
-  BRAND_COLOR : '#0058AD',
-  BACKGROUND_COLOR_LIGHT : '#F3F2F1',
-  BACKGROUND_COLOR_DARK : '#514f4e',
+  BRAND_COLOR: '#0058AD',
+  BACKGROUND_COLOR_LIGHT: '#F3F2F1',
+  BACKGROUND_COLOR_DARK: '#514f4e',
   FIELD_GROUP_BORDER_COLOR: '#c2c2c2',
   FIELD_GROUP_BORDER_COLOR_WARNING: '#ffb900',
 
@@ -162,7 +162,6 @@ export default {
     BASECOMPONENT: 'basecomponent',
     BUTTON: 'button',
     CARD: 'card',
-    CARDV2: 'cardv2',
     CARD_HEADER: 'card_header',
     CARD_HEADER_MENU: 'card_header_menu',
     CONFIG: 'config',
