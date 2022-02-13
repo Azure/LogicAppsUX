@@ -1,12 +1,17 @@
-import { IButtonStyles } from '@fluentui/react/lib/Button';
-import { ICalloutContentStyles } from '@fluentui/react/lib/Callout';
-import { ICheckboxStyles } from '@fluentui/react/lib/Checkbox';
-import { IComboBoxOptionStyles, IComboBoxStyles } from '@fluentui/react/lib/ComboBox';
-import { IDropdownStyles } from '@fluentui/react/lib/Dropdown';
-import { ISpinnerStyles } from '@fluentui/react/lib/Spinner';
-import { FontSizes, mergeStyleSets } from '@fluentui/react/lib/Styling';
-import { ITextFieldStyles } from '@fluentui/react/lib/TextField';
+import {
+  FontSizes,
+  IButtonStyles,
+  ICalloutContentStyles,
+  ICheckboxStyles,
+  IComboBoxOptionStyles,
+  IComboBoxStyles,
+  IDropdownStyles,
+  ISpinnerStyles,
+  ITextFieldStyles,
+  mergeStyleSets,
+} from '@fluentui/react';
 import './fabric.less';
+
 export const buttonStyles: IButtonStyles = {
   label: {
     fontSize: FontSizes.small,

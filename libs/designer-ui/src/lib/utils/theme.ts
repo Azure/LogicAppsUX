@@ -1,4 +1,4 @@
-import { getTheme } from '@fluentui/react/lib/Styling';
+import { getTheme } from '@fluentui/react';
 
 export function isHighContrastBlackOrInverted(): boolean {
   if (isHighContrastBlack()) {
@@ -15,7 +15,7 @@ function isHighContrastBlack(): boolean {
     return false;
   }
 
-  // NOTE(joechung): High contrast black sets the background color of the body element to black.
+  // High contrast black sets the background color of the body element to black.
   const computedStyle = window.getComputedStyle(document.body);
   return computedStyle.backgroundColor === 'rgb(0, 0, 0)';
 }
