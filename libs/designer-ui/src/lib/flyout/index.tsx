@@ -1,12 +1,8 @@
-import { DirectionalHint, FocusTrapCallout, ICalloutContentStyles } from '@fluentui/react/lib/Callout';
-import { IFocusTrapZoneProps } from '@fluentui/react/lib/FocusTrapZone';
-import { FontSizes, getTheme, mergeStyleSets } from '@fluentui/react/lib/Styling';
-import { ITooltipHostStyles, TooltipHost } from '@fluentui/react/lib/Tooltip';
-import * as React from 'react';
-
+import { ITooltipHostStyles, mergeStyleSets, TooltipHost } from '@fluentui/react';
+import React, { useRef, useState } from 'react';
 import InformationImage from '../card/images/information_tiny.svg';
-import { Event, EventHandler } from '../eventhandler';
 import { getDragStartHandlerWhenDisabled } from '../helper';
+import { FlyoutCallout } from './flyoutcallout';
 
 export interface FlyoutProps {
   ariaLabel?: string;
@@ -16,24 +12,10 @@ export interface FlyoutProps {
   text: string;
   title?: string;
   tooltipHostStyles?: ITooltipHostStyles;
-  clickHandler?: EventHandler<Event<Flyout>>;
-}
-
-export interface FlyoutState {
-  flyoutExpanded: boolean;
+  onClick?(): void;
 }
 
 const onDragStartWhenDisabled = getDragStartHandlerWhenDisabled();
-
-const focusTrapProps: IFocusTrapZoneProps = { isClickableOutsideFocusTrap: true };
-
-const calloutContentStyles: Partial<ICalloutContentStyles> = {
-  calloutMain: {
-    fontSize: FontSizes.small,
-    whiteSpace: 'pre-line',
-    width: 160,
-  },
-};
 
 const defaultTooltipHostStyles: ITooltipHostStyles = {
   root: {
@@ -41,31 +23,39 @@ const defaultTooltipHostStyles: ITooltipHostStyles = {
   },
 };
 
-export class Flyout extends React.Component<FlyoutProps, FlyoutState> {
-  static defaultProps = {
-    tabIndex: 0,
-  };
+export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
+  ({ ariaLabel, iconStyle, style, tabIndex = 0, text, tooltipHostStyles, onClick }, ref) => {
+    const buttonRef = useRef<HTMLButtonElement | null>(null);
+    const [flyoutExpanded, setFlyoutExpanded] = useState(false);
 
-  private _buttonRef = React.createRef<HTMLButtonElement>();
+    React.useImperativeHandle(ref, () => ({
+      collapseFlyout() {
+        setFlyoutExpanded(false);
+      },
+    }));
 
-  state = {
-    flyoutExpanded: false,
-  };
+    const handleDismiss = (): void => {
+      setFlyoutExpanded(false);
+    };
 
-  render(): JSX.Element {
-    const { ariaLabel, iconStyle, style, tabIndex, text, tooltipHostStyles } = this.props;
-    const { flyoutExpanded } = this.state;
+    const handleFlyoutClick: React.MouseEventHandler<HTMLElement> = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setFlyoutExpanded(!flyoutExpanded);
+      onClick?.();
+    };
+
     const styles = mergeStyleSets(defaultTooltipHostStyles, tooltipHostStyles);
 
     return (
       <TooltipHost content={ariaLabel} styles={styles}>
         <button
-          ref={this._buttonRef}
+          ref={buttonRef}
           aria-label={ariaLabel}
           className="msla-button msla-flyout"
           style={style}
           tabIndex={tabIndex}
-          onClick={this._handleFlyoutClick}
+          onClick={handleFlyoutClick}
         >
           <img
             alt=""
@@ -76,76 +66,11 @@ export class Flyout extends React.Component<FlyoutProps, FlyoutState> {
             src={InformationImage}
             onDragStart={onDragStartWhenDisabled}
           />
-          <FlyoutCallout target={this._buttonRef.current} text={text} visible={flyoutExpanded} onDismiss={this._handleDismiss} />
+          <FlyoutCallout target={buttonRef.current} text={text} visible={flyoutExpanded} onDismiss={handleDismiss} />
         </button>
       </TooltipHost>
     );
   }
+);
 
-  collapseFlyout(): void {
-    this.setState({
-      flyoutExpanded: false,
-    });
-  }
-
-  private _handleDismiss = (): void => {
-    this.setState({
-      flyoutExpanded: false,
-    });
-  };
-
-  private _handleFlyoutClick: React.MouseEventHandler<HTMLElement> = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const { flyoutExpanded } = this.state;
-    this.setState({
-      flyoutExpanded: !flyoutExpanded,
-    });
-
-    const { clickHandler } = this.props;
-    if (clickHandler) {
-      clickHandler({
-        currentTarget: this,
-      });
-    }
-  };
-}
-
-interface FlyoutCalloutProps {
-  target: HTMLElement | null;
-  text: string;
-  visible: boolean;
-  onDismiss(): void;
-}
-
-class FlyoutCallout extends React.Component<FlyoutCalloutProps> {
-  render(): JSX.Element | null {
-    const { visible } = this.props;
-    if (!visible) {
-      return null;
-    }
-
-    const { target, text, onDismiss } = this.props;
-    const palette = getTheme().palette;
-
-    return (
-      <FocusTrapCallout
-        ariaLabel={text}
-        beakWidth={8}
-        className="msla-flyout-callout"
-        directionalHint={DirectionalHint.rightTopEdge}
-        focusTrapProps={focusTrapProps}
-        gapSpace={0}
-        setInitialFocus={true}
-        styles={calloutContentStyles}
-        target={target}
-        onDismiss={onDismiss}
-      >
-        <div role="dialog" style={{ color: palette.neutralPrimary }} data-is-focusable={true} tabIndex={0}>
-          {text}
-        </div>
-      </FocusTrapCallout>
-    );
-  }
-}
+Flyout.displayName = 'Flyout';
