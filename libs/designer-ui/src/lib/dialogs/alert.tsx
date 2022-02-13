@@ -1,7 +1,4 @@
-import { PrimaryButton } from '@fluentui/react/lib/Button';
-import { Dialog, DialogFooter, IDialogContentProps } from '@fluentui/react/lib/Dialog';
-import { IModalProps } from '@fluentui/react/lib/Modal';
-import * as React from 'react';
+import { Dialog, DialogFooter, IDialogContentProps, IModalProps, PrimaryButton } from '@fluentui/react';
 import { FormattedMessage } from 'react-intl';
 
 export interface AlertProps {
@@ -16,8 +13,7 @@ const modalProps: IModalProps = {
   firstFocusableSelector: 'dialog-ok-button',
 };
 
-export function Alert(props: AlertProps): JSX.Element | null {
-  const { hidden, message, title, onDismiss } = props;
+export const Alert: React.FC<AlertProps> = ({ hidden, message, title, onDismiss }) => {
   if (hidden) {
     return null;
   }
@@ -36,4 +32,4 @@ export function Alert(props: AlertProps): JSX.Element | null {
       </DialogFooter>
     </Dialog>
   );
-}
+};
