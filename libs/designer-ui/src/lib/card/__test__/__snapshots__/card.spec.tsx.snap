@@ -1,0 +1,398 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/card should render 1`] = `
+<div>
+  <div
+    aria-label="title"
+    className="msla-panel-card-container"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      Object {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card should render as cloned 1`] = `
+<div>
+  <div
+    aria-label="title"
+    className="msla-panel-card-container msla-card-ghost-image"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      Object {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card should render as draggable 1`] = `
+<div>
+  <div
+    aria-label="title"
+    className="msla-panel-card-container"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      Object {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          >
+            <span
+              tabIndex={0}
+            >
+              <svg
+                fill="none"
+                height="15"
+                viewBox="0 0 2 10"
+                width="8"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0 2V0H2V2H0ZM0 6V4H2V6H0ZM0 10V8H2V10H0Z"
+                  fill="#605E5C"
+                />
+              </svg>
+            </span>
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card should render as inactive 1`] = `
+<div>
+  <div
+    aria-label="title"
+    className="msla-panel-card-container inactive"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      Object {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card should render as selected 1`] = `
+<div>
+  <div
+    aria-label="title"
+    className="msla-panel-card-container msla-panel-card-container-selected"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      Object {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card should render with a context menu 1`] = `
+<div>
+  <div
+    aria-label="title"
+    className="msla-panel-card-container"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      Object {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card should render with an icon 1`] = `
+<div>
+  <div
+    aria-label="title"
+    className="msla-panel-card-container"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      Object {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={0}
+  >
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <img
+              alt=""
+              className="panel-card-icon"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            />
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

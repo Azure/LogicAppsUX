@@ -1,4 +1,4 @@
-import { DirectionalHint, FontSizes } from '@fluentui/react';
+import { DirectionalHint } from '@fluentui/react';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import { FlyoutCallout, FlyoutCalloutProps } from '../flyoutcallout';
