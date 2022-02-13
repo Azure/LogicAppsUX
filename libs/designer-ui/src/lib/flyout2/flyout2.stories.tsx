@@ -10,6 +10,6 @@ export default {
 
 export const Standard: ComponentStory<typeof Flyout2> = (args: Flyout2Props) => <Flyout2 {...args} />;
 Standard.args = {
-  flyoutExpanded: true,
+  flyoutExpanded: false,
   text: 'Details can be found at http://aka.ms/logicapps-chunk.',
 };
