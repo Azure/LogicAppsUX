@@ -1,6 +1,14 @@
-import { Icon, IIconStyles } from '@fluentui/react/lib/Icon';
-import * as React from 'react';
-import { FormattedMessage } from 'react-intl';
+import {
+  FontSizes,
+  getTheme,
+  Icon,
+  IIconStyles,
+  ITheme,
+  registerOnThemeChangeCallback,
+  removeOnThemeChangeCallback,
+} from '@fluentui/react';
+import React from 'react';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 
 export type ErrorHandler = (error: Error, info: React.ErrorInfo) => void;
 
@@ -12,59 +20,88 @@ export interface ErrorBoundaryProps {
 
 interface ErrorBoundaryState {
   hasError: boolean;
+  isInverted: boolean;
 }
 
 const errorStyle: IIconStyles = {
   root: {
-    fontSize: 70,
+    fontSize: FontSizes.mega,
     alignSelf: 'center',
-    margin: '10% 0 15px 0',
-    color: 'rgb(224, 2, 2)',
+    margin: '10% 0 15px',
   },
 };
 
 const errorTextStyle: React.CSSProperties = {
-  fontSize: 20,
+  fontSize: FontSizes.large,
   alignSelf: 'center',
-  color: 'rgb(224, 2, 2)',
   marginBottom: '10%',
 };
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  state = {
-    hasError: false,
-  };
+const errorDark = '#fd4444';
+const errorLight = '#e00202';
+
+export class ErrorBoundaryInternal extends React.Component<ErrorBoundaryProps & WrappedComponentProps<'intl'>, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps & WrappedComponentProps<'intl'>) {
+    super(props);
+    this.state = {
+      hasError: false,
+      isInverted: getTheme().isInverted,
+    };
+  }
 
   static getDerivedStateFromError() {
     return { hasError: true };
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    const { onError } = this.props;
-    if (onError) {
-      onError(error, info);
-    }
+    this.props.onError?.(error, info);
+  }
+
+  compoenntDidMount() {
+    registerOnThemeChangeCallback(this._handleThemeChange);
+  }
+
+  componentWillUnmount() {
+    removeOnThemeChangeCallback(this._handleThemeChange);
   }
 
   render() {
-    const { children, className, fallback } = this.props;
-    if (this.state.hasError) {
-      const errorClassName = className ? className : 'msla-panel-container-error';
-      return fallback !== undefined ? (
-        fallback
-      ) : (
-        <div className={errorClassName}>
-          <Icon className="msla-card-title-button-icon" iconName="Error" styles={errorStyle} />
-          <span style={errorTextStyle}>
-            <FormattedMessage
-              defaultMessage="Error loading component."
-              description="This is a generic error message shown when something in the app fails to load."
-            ></FormattedMessage>
+    const { children, className, fallback, intl } = this.props;
+    const { hasError, isInverted } = this.state;
+
+    if (!hasError) {
+      return children;
+    } else if (fallback !== undefined) {
+      return fallback;
+    } else {
+      const iconStyles = {
+        ...errorStyle,
+        color: isInverted ? errorDark : errorLight,
+      };
+      const spanStyle = {
+        ...errorTextStyle,
+        color: isInverted ? errorDark : errorLight,
+      };
+
+      return (
+        <div className={className ? className : 'msla-panel-container-error'}>
+          <Icon className="msla-card-title-button-icon" iconName="Error" styles={iconStyles} />
+          <span style={spanStyle}>
+            {intl.formatMessage({
+              defaultMessage: 'Error loading component.',
+              description: 'This is a generic error message shown when something in the app fails to load.',
+            })}
           </span>
         </div>
       );
     }
-
-    return children;
   }
+
+  private _handleThemeChange = ({ isInverted }: ITheme) => {
+    this.setState({
+      isInverted,
+    });
+  };
 }
+
+export const ErrorBoundary = injectIntl<'intl', ErrorBoundaryProps & WrappedComponentProps<'intl'>>(ErrorBoundaryInternal);

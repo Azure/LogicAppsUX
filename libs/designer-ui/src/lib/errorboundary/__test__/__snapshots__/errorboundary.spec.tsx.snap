@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/errorboundary should render a default experience if an error occurs and no fallback is set 1`] = `
+<div
+  className="msla-panel-container-error"
+>
+  <i
+    aria-hidden={true}
+    className="msla-card-title-button-icon root-109"
+    data-icon-name="Error"
+  />
+  <span
+    style={
+      Object {
+        "alignSelf": "center",
+        "color": "#e00202",
+        "fontSize": "18px",
+        "marginBottom": "10%",
+      }
+    }
+  >
+    Error loading component.
+  </span>
+</div>
+`;
+
+exports[`lib/errorboundary should render children if there is no error 1`] = `
+<div>
+  Nothing happened.
+</div>
+`;
+
+exports[`lib/errorboundary should render the fallback if an error occurs and fallback is set 1`] = `
+<div>
+  Fallback rendered when error occurs
+</div>
+`;
