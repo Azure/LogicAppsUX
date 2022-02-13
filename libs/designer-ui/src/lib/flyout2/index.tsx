@@ -1,141 +1,79 @@
-import { Callout } from '@fluentui/react/lib/Callout';
-import { DirectionalHint } from '@fluentui/react/lib/common/DirectionalHint';
-import * as React from 'react';
-
+import { useRef } from 'react';
 import InformationImage from '../card/images/information_tiny.svg';
 import Constants from '../constants';
-import { calloutContentStyles } from '../fabric';
 import { getDragStartHandlerWhenDisabled } from '../helper';
-import { DocLinkClickedEventHandler, DocumentationLinkItem } from '../documentationlinkitem';
+import { FlyoutBalloon } from './flyoutballoon';
+import { FlyoutSelectedEventHandler } from './types';
+
 export interface Flyout2Props {
   ariaLabel?: string;
-  docLink?: Swagger.ExternalDocumentation;
+  documentationLink?: Swagger.ExternalDocumentation;
   flyoutExpanded: boolean;
   flyoutKey: string;
   tabIndex?: number;
   text: string;
   title?: string;
   onClick?: FlyoutSelectedEventHandler;
-  onDocLinkClick?: DocLinkClickedEventHandler;
-}
-
-export interface FlyoutSelectedEventArgs {
-  key: string;
-}
-
-export type FlyoutSelectedEventHandler = (e: FlyoutSelectedEventArgs) => void;
-
-interface FlyoutBalloonProps {
-  docLink?: Swagger.ExternalDocumentation;
-  flyoutExpanded: boolean;
-  target: HTMLElement;
-  text: string;
-  onClick?: FlyoutSelectedEventHandler;
-  onDocLinkClick?: DocLinkClickedEventHandler;
+  onDocumentationLinkClick?(): void;
 }
 
 const onDragStartWhenDisabled = getDragStartHandlerWhenDisabled();
 
-export class Flyout2 extends React.PureComponent<Flyout2Props> {
-  private _icon: HTMLElement | undefined | null;
+export const Flyout2: React.FC<Flyout2Props> = ({
+  ariaLabel,
+  documentationLink,
+  title,
+  flyoutExpanded,
+  flyoutKey,
+  tabIndex = 0,
+  text,
+  onClick,
+  onDocumentationLinkClick,
+}) => {
+  const iconRef = useRef<HTMLImageElement | null>(null);
 
-  render() {
-    const { ariaLabel, docLink, title, flyoutExpanded, text, onClick, onDocLinkClick } = this.props;
-    const tabIndex = this.props.tabIndex === undefined ? 0 : this.props.tabIndex;
-    return (
-      <button
-        aria-label={ariaLabel}
-        className="msla-button msla-flyout"
-        tabIndex={tabIndex}
-        title={title}
-        onClick={this._handleClick}
-        onKeyPress={this._handleEnterKeyPress}
-      >
-        <img
-          alt=""
-          className="msla-flyout-icon"
-          draggable={false}
-          ref={(icon) => (this._icon = icon)}
-          role="presentation"
-          src={InformationImage}
-          onDragStart={onDragStartWhenDisabled}
-        />
-        <FlyoutBalloon
-          flyoutExpanded={flyoutExpanded}
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          target={this._icon!}
-          text={text}
-          docLink={docLink}
-          onClick={onClick}
-          onDocLinkClick={onDocLinkClick}
-        />
-      </button>
-    );
-  }
-
-  protected get telemetryIdentifier(): string {
-    return Constants.TELEMETRY_IDENTIFIERS.FLYOUT;
-  }
-
-  private _handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-    this._handleClickOrEnterKeyPress(e);
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    handleClickOrEnterKeyPress(e);
   };
 
-  private _handleEnterKeyPress = (e: React.KeyboardEvent<HTMLButtonElement>): void => {
+  const handleEnterKeyPress: React.KeyboardEventHandler<HTMLButtonElement> = (e) => {
     if (e.which === Constants.KEYS.ENTER) {
-      this._handleClickOrEnterKeyPress(e);
+      handleClickOrEnterKeyPress(e);
     }
   };
 
-  private _handleClickOrEnterKeyPress(e: React.KeyboardEvent<HTMLButtonElement> | React.MouseEvent<HTMLButtonElement>): void {
+  const handleClickOrEnterKeyPress = (e: React.KeyboardEvent<HTMLButtonElement> | React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    const { onClick } = this.props;
-    if (onClick) {
-      const { flyoutExpanded, flyoutKey } = this.props;
-      const key = flyoutExpanded ? '' : flyoutKey;
-      onClick({ key });
-    }
-  }
-}
+    onClick?.({ key: flyoutExpanded ? '' : flyoutKey });
+  };
 
-function FlyoutBalloon(props: FlyoutBalloonProps) {
-  function handleDismiss() {
-    const { onClick } = props;
-    if (onClick) {
-      onClick({ key: '' });
-    }
-  }
-
-  function renderDocLink() {
-    const { docLink, onDocLinkClick } = props;
-    if (docLink) {
-      return <DocumentationLinkItem description={docLink.description} url={docLink.url} onClick={onDocLinkClick} />;
-    }
-    return undefined;
-  }
-
-  const { flyoutExpanded } = props;
-  if (!flyoutExpanded) {
-    return null;
-  }
-
-  const { target, text } = props;
   return (
-    <Callout
-      beakWidth={8}
-      className="msla-flyout-callout"
-      directionalHint={DirectionalHint.rightTopEdge}
-      gapSpace={0}
-      setInitialFocus={true}
-      styles={calloutContentStyles}
-      target={target}
-      onDismiss={handleDismiss}
+    <button
+      aria-label={ariaLabel}
+      className="msla-button msla-flyout"
+      tabIndex={tabIndex}
+      title={title}
+      onClick={handleClick}
+      onKeyPress={handleEnterKeyPress}
     >
-      <div aria-label={text} data-is-focusable={true} role="dialog" tabIndex={0}>
-        {text}
-        {renderDocLink()}
-      </div>
-    </Callout>
+      <img
+        alt=""
+        className="msla-flyout-icon"
+        draggable={false}
+        ref={iconRef}
+        role="presentation"
+        src={InformationImage}
+        onDragStart={onDragStartWhenDisabled}
+      />
+      <FlyoutBalloon
+        flyoutExpanded={flyoutExpanded}
+        target={iconRef.current}
+        text={text}
+        documentationLink={documentationLink}
+        onClick={onClick}
+        onDocumentationLinkClick={onDocumentationLinkClick}
+      />
+    </button>
   );
-}
+};
