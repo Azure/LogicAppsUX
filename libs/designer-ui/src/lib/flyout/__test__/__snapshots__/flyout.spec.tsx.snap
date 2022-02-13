@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/flyout should render 1`] = `
+<div
+  className="ms-TooltipHost root-116"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    className="msla-button msla-flyout"
+    onClick={[Function]}
+    tabIndex={0}
+  >
+    <img
+      alt=""
+      className="msla-flyout-icon"
+      draggable={false}
+      role="presentation"
+      src="information_tiny.svg"
+    />
+  </button>
+</div>
+`;
+
+exports[`ui/flyout should render with a non-zero tab index 1`] = `
+<div
+  className="ms-TooltipHost root-116"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    className="msla-button msla-flyout"
+    onClick={[Function]}
+    tabIndex={-1}
+  >
+    <img
+      alt=""
+      className="msla-flyout-icon"
+      draggable={false}
+      role="presentation"
+      src="information_tiny.svg"
+    />
+  </button>
+</div>
+`;
+
+exports[`ui/flyout should render with a title 1`] = `
+<div
+  className="ms-TooltipHost root-116"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    className="msla-button msla-flyout"
+    onClick={[Function]}
+    tabIndex={0}
+  >
+    <img
+      alt=""
+      className="msla-flyout-icon"
+      draggable={false}
+      role="presentation"
+      src="information_tiny.svg"
+    />
+  </button>
+</div>
+`;
+
+exports[`ui/flyout should render with an ARIA label 1`] = `
+<div
+  className="ms-TooltipHost root-116"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    aria-label="aria-label"
+    className="msla-button msla-flyout"
+    onClick={[Function]}
+    tabIndex={0}
+  >
+    <img
+      alt=""
+      className="msla-flyout-icon"
+      draggable={false}
+      role="presentation"
+      src="information_tiny.svg"
+    />
+  </button>
+</div>
+`;
