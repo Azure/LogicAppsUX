@@ -1,0 +1,188 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/checkbox should display correct text 1`] = `
+<div
+  className="msla-checkbox"
+>
+  <div
+    className="ms-Checkbox is-enabled msla-checkbox-label root-115"
+  >
+    <input
+      checked={false}
+      className="input-116"
+      data-ktp-execute-target={true}
+      id="checkbox-1"
+      onChange={[Function]}
+      type="checkbox"
+    />
+    <label
+      className="ms-Checkbox-label label-117"
+      htmlFor="checkbox-1"
+    >
+      <div
+        className="ms-Checkbox-checkbox checkbox-118"
+        data-ktp-target={true}
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Checkbox-checkmark checkmark-121"
+          data-icon-name="CheckMark"
+        />
+      </div>
+      <span
+        className="ms-Checkbox-text text-120"
+      >
+        Test Text
+      </span>
+    </label>
+  </div>
+</div>
+`;
+
+exports[`lib/checkbox should render 1`] = `
+<div
+  className="msla-checkbox"
+>
+  <div
+    className="ms-Checkbox is-enabled msla-checkbox-label root-115"
+  >
+    <input
+      checked={false}
+      className="input-116"
+      data-ktp-execute-target={true}
+      id="checkbox-0"
+      onChange={[Function]}
+      type="checkbox"
+    />
+    <label
+      className="ms-Checkbox-label label-117"
+      htmlFor="checkbox-0"
+    >
+      <div
+        className="ms-Checkbox-checkbox checkbox-118"
+        data-ktp-target={true}
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Checkbox-checkmark checkmark-121"
+          data-icon-name="CheckMark"
+        />
+      </div>
+    </label>
+  </div>
+</div>
+`;
+
+exports[`lib/checkbox should render an additional CSS class 1`] = `
+<div
+  className="additional-class msla-checkbox"
+>
+  <div
+    className="ms-Checkbox is-enabled msla-checkbox-label root-115"
+  >
+    <input
+      checked={false}
+      className="input-116"
+      data-ktp-execute-target={true}
+      id="checkbox-2"
+      onChange={[Function]}
+      type="checkbox"
+    />
+    <label
+      className="ms-Checkbox-label label-117"
+      htmlFor="checkbox-2"
+    >
+      <div
+        className="ms-Checkbox-checkbox checkbox-118"
+        data-ktp-target={true}
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Checkbox-checkmark checkmark-121"
+          data-icon-name="CheckMark"
+        />
+      </div>
+    </label>
+  </div>
+</div>
+`;
+
+exports[`lib/checkbox should render an info button if description text is set 1`] = `
+<div
+  className="msla-checkbox"
+>
+  <div
+    className="ms-Checkbox is-enabled msla-checkbox-label root-115"
+  >
+    <input
+      checked={false}
+      className="input-116"
+      data-ktp-execute-target={true}
+      id="checkbox-4"
+      onChange={[Function]}
+      type="checkbox"
+    />
+    <label
+      className="ms-Checkbox-label label-117"
+      htmlFor="checkbox-4"
+    >
+      <div
+        className="ms-Checkbox-checkbox checkbox-118"
+        data-ktp-target={true}
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Checkbox-checkmark checkmark-121"
+          data-icon-name="CheckMark"
+        />
+      </div>
+    </label>
+  </div>
+  <button
+    aria-label="More Info"
+    className="msla-button msla-checkbox-description-icon-button"
+    onClick={[Function]}
+    title="More Info"
+  >
+    <i
+      aria-hidden={true}
+      className="msla-checkbox-description-icon root-105"
+      data-icon-name="Info"
+    />
+  </button>
+</div>
+`;
+
+exports[`lib/checkbox should render with initial checked state set to true 1`] = `
+<div
+  className="additional-class msla-checkbox"
+>
+  <div
+    className="ms-Checkbox is-checked is-enabled msla-checkbox-label root-122"
+  >
+    <input
+      checked={true}
+      className="input-116"
+      data-ktp-execute-target={true}
+      id="checkbox-3"
+      onChange={[Function]}
+      type="checkbox"
+    />
+    <label
+      className="ms-Checkbox-label label-117"
+      htmlFor="checkbox-3"
+    >
+      <div
+        className="ms-Checkbox-checkbox checkbox-123"
+        data-ktp-target={true}
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Checkbox-checkmark checkmark-125"
+          data-icon-name="CheckMark"
+        />
+      </div>
+    </label>
+  </div>
+</div>
+`;
