@@ -1,8 +1,4 @@
-import { css } from '@fluentui/react';
-import { Callout, DirectionalHint } from '@fluentui/react/lib/Callout';
-import { Checkbox as FabricCheckbox, ICheckbox } from '@fluentui/react/lib/Checkbox';
-import { Icon } from '@fluentui/react/lib/Icon';
-import * as React from 'react';
+import { Callout, Checkbox as FluentCheckbox, css, DirectionalHint, ICheckbox, Icon } from '@fluentui/react';
 import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { calloutContentStyles, checkboxStyles } from '../fabric';
@@ -13,7 +9,7 @@ export interface CheckboxProps {
   descriptionText?: string;
   disabled?: boolean;
   id?: string;
-  initChecked?: boolean;
+  initialChecked?: boolean;
   text?: string;
   onChange?(checked: boolean): void;
 }
@@ -23,21 +19,29 @@ export interface CheckboxState {
   checked: boolean;
 }
 
-export const Checkbox = (props: CheckboxProps) => {
+export const Checkbox: React.FC<CheckboxProps> = ({
+  ariaLabel,
+  className,
+  descriptionText,
+  id,
+  initialChecked = false,
+  text,
+  disabled,
+  onChange,
+}) => {
   const [checkboxDescriptionExpanded, setCheckboxDescriptionExpanded] = useState(false);
-  const [checked, setChecked] = useState<boolean>(!!props.initChecked);
+  const [checked, setChecked] = useState<boolean>(initialChecked);
   const checkboxDescriptionButtonRef = useRef<HTMLButtonElement | null>();
   const checkboxRef = useRef<ICheckbox>();
   const intl = useIntl();
 
-  const handleCheckboxDescriptionDismiss = (): void => {
+  const handleCheckboxDescriptionDismiss = () => {
     setCheckboxDescriptionExpanded(false);
   };
 
   const handleChange: React.MouseEventHandler<HTMLInputElement> = () => {
     setChecked(!checked);
 
-    const { onChange } = props;
     if (onChange) {
       onChange(checked);
     }
@@ -48,15 +52,14 @@ export const Checkbox = (props: CheckboxProps) => {
     setCheckboxDescriptionExpanded(!checkboxDescriptionExpanded);
   };
 
-  const { ariaLabel, className, id, text, disabled } = props;
-
   const moreInfoMessage = intl.formatMessage({
     defaultMessage: 'More Info',
     description: 'This is shown as an aria label on button as well as the tooltip that is shown after clicking the button',
   });
+
   return (
     <div className={css(className, 'msla-checkbox')}>
-      <FabricCheckbox
+      <FluentCheckbox
         ariaLabel={ariaLabel}
         componentRef={(e) => (checkboxRef.current = e as any)}
         checked={checked}
@@ -67,7 +70,7 @@ export const Checkbox = (props: CheckboxProps) => {
         disabled={disabled}
         onChange={handleChange as any}
       />
-      {props.descriptionText ? (
+      {descriptionText ? (
         <button
           ref={(ref) => (checkboxDescriptionButtonRef.current = ref)}
           aria-label={moreInfoMessage}
@@ -80,7 +83,7 @@ export const Checkbox = (props: CheckboxProps) => {
       ) : null}
       {checkboxDescriptionExpanded ? (
         <Callout
-          ariaLabel={props.descriptionText}
+          ariaLabel={descriptionText}
           className="msla-checkbox-description-callout"
           directionalHint={DirectionalHint.rightCenter}
           gapSpace={0}
@@ -90,7 +93,7 @@ export const Checkbox = (props: CheckboxProps) => {
           onDismiss={handleCheckboxDescriptionDismiss}
         >
           <div data-is-focusable={true} role="dialog" tabIndex={0}>
-            {props.descriptionText}
+            {descriptionText}
           </div>
         </Callout>
       ) : null}
