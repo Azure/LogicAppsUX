@@ -2,11 +2,11 @@ import { useBoolean } from '@fluentui/react-hooks';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { useRef } from 'react';
 import { CardContextMenu, CardContextMenuProps } from './cardcontextmenu';
-import { MenuItemType } from './cardv2';
+import { MenuItemType } from './index';
 
 export default {
   component: CardContextMenu,
-  title: 'Components/CardV2/CardContextMenu',
+  title: 'Components/Card/CardContextMenu',
 } as ComponentMeta<typeof CardContextMenu>;
 
 const Template: ComponentStory<typeof CardContextMenu> = (args: CardContextMenuProps) => {
