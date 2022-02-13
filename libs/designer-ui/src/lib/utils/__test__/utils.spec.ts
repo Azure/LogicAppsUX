@@ -99,6 +99,7 @@ describe('ui/utils/utils', () => {
     { expectedValue: 'Succeeded with retries', hasRetries: true, status: Constants.STATUS.SUCCEEDED },
     { expectedValue: 'Timed Out', hasRetries: false, status: Constants.STATUS.TIMEDOUT },
     { expectedValue: 'Waiting', hasRetries: false, status: Constants.STATUS.WAITING },
+    { expectedValue: 'Not specified', hasRetries: false, status: Constants.STATUS.NOT_SPECIFIED },
   ]) {
     it(`should return '${expectedValue}' when status is '${status}' and hasRetries is ${hasRetries}`, () => {
       expect(getStatusString(status, hasRetries)).toBe(expectedValue);

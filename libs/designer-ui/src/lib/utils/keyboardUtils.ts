@@ -1,16 +1,15 @@
-import { KeyCodes } from '@fluentui/react/lib/Utilities';
-import * as React from 'react';
+import { KeyCodes } from '@fluentui/react';
 
 export const isUpArrowKey = (e: React.KeyboardEvent<HTMLElement>): boolean => {
-  return !!(e && e.which === KeyCodes.up);
+  return !!(e?.which === KeyCodes.up);
 };
 
 export const isDownArrowKey = (e: React.KeyboardEvent<HTMLElement>): boolean => {
-  return !!(e && e.which === KeyCodes.down);
+  return !!(e?.which === KeyCodes.down);
 };
 
 export const hasModifier = (e: React.KeyboardEvent<HTMLElement>): boolean => {
-  return !!(e && (e.altKey || e.metaKey));
+  return !!(e?.altKey || e?.metaKey);
 };
 
 export const isDeleteKey = (e: React.KeyboardEvent<HTMLElement>): boolean => {
