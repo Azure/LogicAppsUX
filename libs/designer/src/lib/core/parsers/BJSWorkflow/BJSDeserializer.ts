@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { isNullOrEmpty } from '@microsoft-logic-apps/utils';
+import { isNullOrEmpty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import { WorkflowNode } from '../models/workflowNode';
+import { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../models/workflowNode';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
 };
 
-export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Omit<any, 'shouldLayout'> => {
+export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): any => {
   throwIfMultipleTriggers(definition);
 
   //process Trigger
@@ -17,102 +17,96 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Omit<an
     const [[tID, trigger]] = Object.entries(definition.triggers);
     triggerNode = {
       id: tID,
-      type: trigger.type,
-      operation: trigger,
-      position: { x: 0, y: 0 },
-      size: { height: 0, width: 0 },
-      parentNodes: [],
-      childrenNodes: [],
+      // type: trigger.type,
+      // operation: trigger,
+      height: 0,
+      width: 0,
     };
   }
-  const actionsProcessed = ConvertActionsToGraph(definition.actions, 'root');
-  return {
-    rootGraph: 'root',
-    graphs: {
-      root: {
-        root: triggerNode?.id ?? '',
-        nodes: [...actionsProcessed.nodesInGraph, triggerNode?.id ?? ''].filter((x) => x),
-      },
-    },
-    nodes: markChildrenNodes(
-      actionsProcessed.nodesInGraph,
-      giveNodesTriggerAsParent(
-        actionsProcessed.nodesInGraph,
-        [...actionsProcessed.allNodes, triggerNode].filter((x) => x !== undefined && x !== null) as WorkflowNode[],
-        triggerNode?.id ?? ''
-      )
-    ),
+
+  const children = [];
+  const rootEdges = [];
+  if (triggerNode) {
+    children.push(triggerNode);
+  }
+
+  if (definition.actions) {
+    const entries = Object.entries(definition.actions);
+    const parentlessChildren = entries.filter(([, value]) => isNullOrEmpty(value.runAfter));
+    for (const [key] of parentlessChildren) {
+      rootEdges.push({
+        id: `${triggerNode?.id}-${key}`,
+        source: triggerNode?.id,
+        target: key,
+      });
+    }
+  }
+
+  const [remainingChildren, edges] = !isNullOrUndefined(definition.actions) ? buildGraphFromActions(definition.actions) : [[], []];
+  const graph: WorkflowGraph = {
+    id: 'root',
+    children: [...children, ...remainingChildren],
+    edges: [...rootEdges, ...edges],
   };
+
+  return graph;
 };
 
-const markChildrenNodes = (nodesInGraph: string[], nodes: WorkflowNode[]) => {
-  const nodeMap = nodes.reduce((acc, val) => {
-    acc.set(val.id, val);
-    return acc;
-  }, new Map<string, WorkflowNode>());
+const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.ScopeAction => {
+  return !isNullOrUndefined((action as any).actions);
+};
 
-  nodesInGraph.forEach((nodeId) => {
-    const currentNode = nodeMap.get(nodeId);
-    for (const pNodeID of currentNode?.parentNodes ?? []) {
-      const pNode = nodeMap.get(pNodeID);
-      if (pNode) {
-        nodeMap.set(pNodeID, {
-          ...pNode,
-          childrenNodes: [...pNode.childrenNodes, nodeId],
+const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.IfAction => {
+  return isScopeAction(action) && !isNullOrUndefined((action as any).else);
+};
+
+const buildGraphFromActions = (actions: LogicAppsV2.Actions): [WorkflowNode[], WorkflowEdge[]] => {
+  const nodes: WorkflowNode[] = [];
+  const edges: WorkflowEdge[] = [];
+  for (const [actionName, action] of Object.entries(actions)) {
+    const node: WorkflowNode = {
+      id: actionName,
+      // type: action.type,
+      // operation: action,
+      height: 0,
+      width: 0,
+    };
+
+    if (action.runAfter) {
+      for (const [runAfterAction] of Object.entries(action.runAfter)) {
+        edges.push({
+          id: `${runAfterAction}-${actionName}`,
+          source: runAfterAction,
+          target: actionName,
         });
       }
     }
-  });
-  const ret = Object.fromEntries(nodeMap);
-  return ret;
-};
+    if (isScopeAction(action)) {
+      const [children, edges] = !isNullOrUndefined(action.actions) ? buildGraphFromActions(action.actions) : [[], []];
 
-const giveNodesTriggerAsParent = (nodesInGraph: string[], nodes: WorkflowNode[], tiggerId: string) => {
-  const nodesInGraphSet = new Set(nodesInGraph);
-  return nodes.map((x) => {
-    if (!nodesInGraphSet.has(x.id)) return x;
-    if (x.parentNodes.length > 0) return x;
-    return {
-      ...x,
-      parentNodes: [tiggerId],
-    };
-  });
-};
-
-const ConvertActionsToGraph = (
-  actionList?: LogicAppsV2.Actions,
-  graphId = 'root'
-): {
-  nodesInGraph: string[];
-  childGraphs: any;
-  allNodes: WorkflowNode[];
-} => {
-  const childGraphs: any = {};
-  const allNodes: WorkflowNode[] = [];
-  const nodesInGraph: string[] = [];
-
-  for (const [id, action] of Object.entries(actionList ?? {})) {
-    nodesInGraph.push(id);
-    const runsAfter = action.runAfter;
-    const parents = [];
-    for (const [raID, ra] of Object.entries(runsAfter ?? {})) {
-      parents.push(raID);
+      const actionGraph: WorkflowGraph = {
+        id: `${actionName}-actions`,
+        children,
+        edges,
+      };
+      node.children = [actionGraph];
     }
-    allNodes.push({
-      id,
-      type: action.type,
-      operation: action,
-      position: { x: 0, y: 0 },
-      size: { height: 0, width: 0 },
-      parentNodes: parents,
-      childrenNodes: [],
-    });
+
+    if (isIfAction(action)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const [children, edges] = !isNullOrUndefined(action.else?.actions) ? buildGraphFromActions(action.else!.actions) : [[], []];
+
+      const actionGraph: WorkflowGraph = {
+        id: `${actionName}-elseActions`,
+        children,
+        edges,
+      };
+      node.children = [...(node.children ?? []), actionGraph];
+    }
+
+    nodes.push(node);
   }
-  return {
-    nodesInGraph,
-    childGraphs: {},
-    allNodes,
-  };
+  return [nodes, edges];
 };
 
 const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => {

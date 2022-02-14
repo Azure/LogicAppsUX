@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
-import { EdgeProps, getEdgeCenter, getSmoothStepPath } from 'react-flow-renderer';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../core/store';
-import { DropZone } from './dropzone';
+import { EdgeProps, getSmoothStepPath } from 'react-flow-renderer';
 
-const foreignObjectHeight = 30;
-const foreignObjectWidth = 200;
+// const foreignObjectHeight = 30;
+// const foreignObjectWidth = 200;
 export interface LogicAppsEdgeProps {
   id: string;
   parent: string;
@@ -32,23 +29,17 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     targetPosition,
   });
   // const markerEnd = getMarkerEnd(arrowHeadType, markerEndId);
-  const [edgeCenterX, edgeCenterY] = getEdgeCenter({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-  });
+  // const [edgeCenterX, edgeCenterY] = getEdgeCenter({
+  //   sourceX,
+  //   sourceY,
+  //   targetX,
+  //   targetY,
+  // });
 
-  const parentNode = useSelector((state: RootState) => {
-    return state.workflow.nodes[data?.parent ?? ''];
-  });
-
-  const firstChild = parentNode?.childrenNodes[parentNode.childrenNodes.length - 1] === data?.child;
-  //markerEnd={markerEnd}
   return (
     <>
       <path id={id} style={style} className="react-flow__edge-path" d={edgePath} />
-      {firstChild && (parentNode?.childrenNodes.length ?? 0) > 1 && (
+      {/* {firstChild && (parentNode?.childrenNodes.length ?? 0) > 1 && (
         <foreignObject
           width={foreignObjectWidth}
           height={foreignObjectHeight}
@@ -72,8 +63,8 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
       >
         <div style={{ padding: '4px' }}>
           <DropZone parent={data?.parent ?? ''} child={data?.child} />
-        </div>
-      </foreignObject>
+        </div> */}
+      {/* </foreignObject> */}
     </>
   );
 };

@@ -1,3 +1,5 @@
+import { WorkflowGraph } from '../../models/workflowNode';
+
 export const simpleWorkflowDefinitionInput = {
   $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
   actions: {
@@ -46,18 +48,20 @@ export const simpleWorkflowDefinitionInput = {
   },
 };
 
-export const expectedSimpleWorkflowDefinitionOutput = {
-  rootGraph: 'root',
-  graphs: {
-    root: {
-      root: 'manual',
-      nodes: ['Increment_variable', 'Initialize_variable', 'Response', 'manual'],
+export const expectedSimpleWorkflowDefinitionOutput: WorkflowGraph = {
+  id: 'root',
+  children: [
+    {
+      id: 'manual',
+      operation: {
+        inputs: {},
+        kind: 'Http',
+        type: 'Request',
+      },
+      type: 'Request',
     },
-  },
-  nodes: {
-    Increment_variable: {
+    {
       id: 'Increment_variable',
-      type: 'IncrementVariable',
       operation: {
         inputs: {
           name: 'var1',
@@ -68,20 +72,10 @@ export const expectedSimpleWorkflowDefinitionOutput = {
         },
         type: 'IncrementVariable',
       },
-      position: {
-        x: 0,
-        y: 0,
-      },
-      size: {
-        height: 0,
-        width: 0,
-      },
-      parentNodes: ['Initialize_variable'],
-      childrenNodes: ['Response'],
+      type: 'IncrementVariable',
     },
-    Initialize_variable: {
+    {
       id: 'Initialize_variable',
-      type: 'InitializeVariable',
       operation: {
         inputs: {
           variables: [
@@ -94,20 +88,10 @@ export const expectedSimpleWorkflowDefinitionOutput = {
         runAfter: {},
         type: 'InitializeVariable',
       },
-      position: {
-        x: 0,
-        y: 0,
-      },
-      size: {
-        height: 0,
-        width: 0,
-      },
-      parentNodes: ['manual'],
-      childrenNodes: ['Increment_variable'],
+      type: 'InitializeVariable',
     },
-    Response: {
+    {
       id: 'Response',
-      type: 'Response',
       operation: {
         inputs: {
           body: "@variables('var1')",
@@ -119,35 +103,19 @@ export const expectedSimpleWorkflowDefinitionOutput = {
         },
         type: 'Response',
       },
-      position: {
-        x: 0,
-        y: 0,
-      },
-      size: {
-        height: 0,
-        width: 0,
-      },
-      parentNodes: ['Increment_variable'],
-      childrenNodes: [],
+      type: 'Response',
     },
-    manual: {
-      id: 'manual',
-      type: 'Request',
-      operation: {
-        inputs: {},
-        kind: 'Http',
-        type: 'Request',
-      },
-      position: {
-        x: 0,
-        y: 0,
-      },
-      size: {
-        height: 0,
-        width: 0,
-      },
-      parentNodes: [],
-      childrenNodes: ['Initialize_variable'],
+  ],
+  edges: [
+    {
+      id: 'Initialize_variable-Increment_variable',
+      source: 'Initialize_variable',
+      target: 'Increment_variable',
     },
-  },
+    {
+      id: 'Increment_variable-Response',
+      source: 'Increment_variable',
+      target: 'Response',
+    },
+  ],
 };
