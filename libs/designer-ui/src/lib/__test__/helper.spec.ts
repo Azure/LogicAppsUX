@@ -1,6 +1,10 @@
 import { getDragStartHandlerWhenDisabled, isEdge, isFirefox } from '../helper';
 
 describe('lib/helper', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   describe('getDragStartHandlerWhenDisabled', () => {
     it('should return a handler for Firefox', () => {
       jest
