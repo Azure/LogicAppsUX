@@ -1,14 +1,9 @@
-import { CommandBarButton } from '@fluentui/react/lib/Button';
-import { Icon, IIconProps, IIconStyles } from '@fluentui/react/lib/Icon';
-import { Link } from '@fluentui/react/lib/Link';
-import { List } from '@fluentui/react/lib/List';
-import { IMessageBarStyles, MessageBar } from '@fluentui/react/lib/MessageBar';
-import { registerOnThemeChangeCallback, removeOnThemeChangeCallback } from '@fluentui/react/lib/Styling';
-import React, { useEffect, useState } from 'react';
+import { CommandBarButton, Icon, IIconProps, IIconStyles, IMessageBarStyles, Link, List, MessageBar, useTheme } from '@fluentui/react';
+import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import ParametersIcon from '../card/images/parameters.svg';
 import Constants from '../constants';
-import { isHighContrastBlackOrInverted } from '../utils/theme';
+import { isHighContrastBlack } from '../utils/theme';
 import {
   WorkflowParameter,
   WorkflowParameterDefinition,
@@ -87,22 +82,12 @@ export function WorkflowParameters({
   validationErrors,
   onRegisterLanguageProvider,
 }: WorkflowParametersProps): JSX.Element {
-  const [isInverted, setIsInverted] = useState(isHighContrastBlackOrInverted);
+  const theme = useTheme();
+  const isInverted = isHighContrastBlack() || theme.isInverted;
 
   const intl = useIntl();
 
   const addIcon: IIconProps = { iconName: 'Add' };
-
-  useEffect(() => {
-    registerOnThemeChangeCallback(handleThemeChange);
-    return () => {
-      removeOnThemeChangeCallback(handleThemeChange);
-    };
-  }, []);
-
-  const handleThemeChange = (): void => {
-    setIsInverted(isHighContrastBlackOrInverted());
-  };
 
   const handleAddParameter = (event: React.MouseEvent<HTMLButtonElement>): void => {
     if (onAddParameter) {
