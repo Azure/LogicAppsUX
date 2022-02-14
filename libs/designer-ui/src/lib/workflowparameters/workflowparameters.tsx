@@ -1,5 +1,4 @@
 import { CommandBarButton, Icon, IIconProps, IIconStyles, IMessageBarStyles, Link, List, MessageBar, useTheme } from '@fluentui/react';
-import { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import ParametersIcon from '../card/images/parameters.svg';
 import Constants from '../constants';
