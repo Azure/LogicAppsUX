@@ -196,7 +196,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Copy URL]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[URL'yi Kopyala]]></Val>
+            <Val><![CDATA[URL’yi Kopyala]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -353,15 +353,6 @@
           <Val><![CDATA[Name:]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Ad:]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";LXT/ou" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Error]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Hata]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
