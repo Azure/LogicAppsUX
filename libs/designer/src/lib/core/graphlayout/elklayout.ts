@@ -85,11 +85,16 @@ export const useLayout = (): [Node[], Edge[]] => {
     }
 
     const elkGraph: ElkNode = workflowGraph;
-    elkLayout(elkGraph).then((g) => {
-      const [n, e] = convertElkGraphToReactFlow(g);
-      setReactFlowNodes(n);
-      setReactFlowEdges(e);
-    });
+    elkLayout(elkGraph)
+      .then((g) => {
+        const [n, e] = convertElkGraphToReactFlow(g);
+        setReactFlowNodes(n);
+        setReactFlowEdges(e);
+      })
+      .catch(() => {
+        console.log('ELK through an error');
+        //TODO: Appropriately log this when we have analytics
+      });
   }, [workflowGraph]);
 
   return [reactFlowNodes, reactFlowEdges];
