@@ -1,5 +1,5 @@
 // // import { EdgeData, NodeData } from '../types';
-import ELK, { ElkLayoutArguments, ElkNode, ElkPrimitiveEdge } from 'elkjs/lib/main';
+import ELK, { ElkNode, ElkPrimitiveEdge } from 'elkjs/lib/main';
 import { Edge, Node } from 'react-flow-renderer';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -33,7 +33,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
   const edges: Edge[] = [];
 
   const processChildren = (node: ElkNode, parent?: string) => {
-    for (const edge of (node.edges as ElkPrimitiveEdge[]) ?? []) {
+    for (const edge of node.edges as ElkPrimitiveEdge[]) {
       edges.push({
         id: edge.id,
         target: edge.target,
@@ -56,7 +56,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
       });
     }
 
-    for (const n of node.children ?? []) {
+    for (const n of node.children as ElkNode[]) {
       nodes.push({
         id: n.id,
         position: { x: n.x ?? 0, y: n.y ?? 0 },
