@@ -1,18 +1,26 @@
-import { IconButton, IIconProps, ITextFieldStyles, MessageBar, MessageBarType, Pivot, PivotItem, TextField } from '@fluentui/react';
+import {
+  IconButton,
+  MessageBar,
+  MessageBarType,
+  Pivot,
+  PivotItem,
+  TextField,
+  type IIconProps,
+  type ITextFieldStyles,
+} from '@fluentui/react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { getDurationString } from '../utils/utils';
 import { OverviewCommandBar } from './overviewcommandbar';
 import { OverviewProperties, type OverviewPropertiesProps } from './overviewproperties';
 import { RunHistory } from './runhistory';
 import type { Run, RunDisplayItem, RunError } from './types';
-import { isRunError } from './utils';
+import { isRunError, mapToRunItem } from './utils';
 
 export interface OverviewProps {
   corsNotice?: string;
   errorMessage?: string;
-  hasMoreRuns: boolean;
-  loading: boolean;
+  hasMoreRuns?: boolean;
+  loading?: boolean;
   runItems: RunDisplayItem[];
   workflowProperties: OverviewPropertiesProps;
   onLoadMoreRuns(): void;
@@ -136,16 +144,3 @@ export const Overview: React.FC<OverviewProps> = ({
     </div>
   );
 };
-
-function mapToRunItem({ id, name: identifier, properties }: Run): RunDisplayItem {
-  const { endTime, startTime, status } = properties;
-  const duration = endTime ? getDurationString(Date.parse(endTime) - Date.parse(startTime), /* abbreviated */ false) : '--';
-
-  return {
-    duration,
-    id,
-    identifier,
-    startTime,
-    status,
-  };
-}

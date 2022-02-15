@@ -1,10 +1,9 @@
-import React from 'react';
-import ReactShallowRenderer from 'react-test-renderer/shallow';
-import { CallbackInfo } from '../overview';
-import { OverviewProperties, OverviewPropertiesProps } from '../overviewproperties';
+import renderer from 'react-test-renderer';
+import { OverviewProperties, type OverviewPropertiesProps } from '../overviewproperties';
+import type { CallbackInfo } from '../types';
 
 describe('lib/overview/overviewproperties', () => {
-  let minimal: OverviewPropertiesProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: OverviewPropertiesProps;
 
   beforeEach(() => {
     minimal = {
@@ -14,71 +13,28 @@ describe('lib/overview/overviewproperties', () => {
       name: 'name',
       stateType: 'stateType',
     };
-    renderer = ReactShallowRenderer.createRenderer();
   });
 
-  afterEach(() => {
-    renderer.unmount();
-  });
-
-  it('renders correctly', () => {
-    renderer.render(<OverviewProperties {...minimal} />);
-
-    const root = renderer.getRenderOutput();
-    const pivotItem = React.Children.only(root.props.children);
-    expect(pivotItem.props.headerText).toBe('Workflow Properties');
-
-    const properties = React.Children.only(pivotItem.props.children);
-    expect(properties.props.className).toBe('msla-workflow-properties');
-
-    const [name, stateType]: any[] = React.Children.toArray(properties.props.children);
-    const [nameKey, nameValue]: any[] = React.Children.toArray(name.props.children);
-    expect(nameKey.props.children).toBe('Name:');
-    expect(nameValue.props.children).toBe('name');
-
-    const [stateTypeKey, stateTypeValue]: any[] = React.Children.toArray(stateType.props.children);
-    expect(stateTypeKey.props.children).toBe('State type:');
-    expect(stateTypeValue.props.children).toBe('stateType');
+  it('renders', () => {
+    const tree = renderer.create(<OverviewProperties {...minimal} />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
   it('renders the operation options property', () => {
-    renderer.render(<OverviewProperties {...minimal} operationOptions="operationOptions" />);
-
-    const root = renderer.getRenderOutput();
-    const pivotItem = React.Children.only(root.props.children);
-    const properties = React.Children.only(pivotItem.props.children);
-    const [, , operationOptions]: any[] = React.Children.toArray(properties.props.children);
-    const [operationOptionsKey, operationOptionsValue]: any[] = React.Children.toArray(operationOptions.props.children);
-    expect(operationOptionsKey.props.children).toBe('Operation options:');
-    expect(operationOptionsValue.props.children).toBe('operationOptions');
+    const tree = renderer.create(<OverviewProperties {...minimal} operationOptions="operationOptions" />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
   it('renders the stateless run mode property', () => {
-    renderer.render(<OverviewProperties {...minimal} statelessRunMode="statelessRunMode" />);
-
-    const root = renderer.getRenderOutput();
-    const pivotItem = React.Children.only(root.props.children);
-    const properties = React.Children.only(pivotItem.props.children);
-    const [, , statelessRunMode]: any[] = React.Children.toArray(properties.props.children);
-    const [statelessRunModeKey, statelessRunModeValue]: any[] = React.Children.toArray(statelessRunMode.props.children);
-    expect(statelessRunModeKey.props.children).toBe('Stateless run mode:');
-    expect(statelessRunModeValue.props.children).toBe('statelessRunMode');
+    const tree = renderer.create(<OverviewProperties {...minimal} statelessRunMode="statelessRunMode" />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
   it('renders the callback URL property', () => {
     const callbackInfo: CallbackInfo = {
       value: 'callbackInfo.value',
     };
-    renderer.render(<OverviewProperties {...minimal} callbackInfo={callbackInfo} />);
-
-    const root = renderer.getRenderOutput();
-    const pivotItem = React.Children.only(root.props.children);
-    const properties = React.Children.only(pivotItem.props.children);
-    const [, , callbackUrl]: any[] = React.Children.toArray(properties.props.children);
-    const [callbackUrlKey, callbackUrlValueContainer]: any[] = React.Children.toArray(callbackUrl.props.children);
-    expect(callbackUrlKey.props.children).toBe('Callback URL:');
-
-    const callbackUrlValue = React.Children.only(callbackUrlValueContainer.props.children);
-    expect(callbackUrlValue.props.children).toBe(callbackInfo.value);
+    const tree = renderer.create(<OverviewProperties {...minimal} callbackInfo={callbackInfo} />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 });

@@ -12,7 +12,7 @@ import type { RunDisplayItem } from './types';
 
 export interface RunHistoryProps {
   items: RunDisplayItem[];
-  loading: boolean;
+  loading?: boolean;
   onOpenRun(run: RunDisplayItem): void;
 }
 
