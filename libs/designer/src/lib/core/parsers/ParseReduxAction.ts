@@ -5,7 +5,7 @@ import { WorkflowGraph } from './models/workflowNode';
 
 export const initializeGraphState = createAsyncThunk(
   'parser/deserialize',
-  async (graph: LogicAppsV2.WorkflowDefinition, thunkAPI): Promise<WorkflowGraph> => {
+  async (graph: LogicAppsV2.WorkflowDefinition, thunkAPI): Promise<{ graph: WorkflowGraph; actionData: LogicAppsV2.Actions }> => {
     const currentState: any = thunkAPI.getState() as any;
     const spec = currentState.workflow.workflowSpec;
 

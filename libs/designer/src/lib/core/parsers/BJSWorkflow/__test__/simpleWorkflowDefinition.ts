@@ -1,3 +1,4 @@
+import { Actions } from '../../../state/workflowSlice';
 import { WorkflowGraph } from '../../models/workflowNode';
 
 export const simpleWorkflowDefinitionInput = {
@@ -48,74 +49,41 @@ export const simpleWorkflowDefinitionInput = {
   },
 };
 
-export const expectedSimpleWorkflowDefinitionOutput: WorkflowGraph = {
-  id: 'root',
-  children: [
-    {
-      id: 'manual',
-      operation: {
-        inputs: {},
-        kind: 'Http',
-        type: 'Request',
-      },
-      type: 'Request',
-    },
-    {
-      id: 'Increment_variable',
-      operation: {
-        inputs: {
-          name: 'var1',
-          value: 2,
-        },
-        runAfter: {
-          Initialize_variable: ['Succeeded'],
-        },
-        type: 'IncrementVariable',
-      },
+export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowGraph; actionData: Actions } = {
+  graph: {
+    id: 'root',
+    children: [
+      { id: 'manual', height: 0, width: 0 },
+      { id: 'Increment_variable', height: 0, width: 0 },
+      { id: 'Initialize_variable', height: 0, width: 0 },
+      { id: 'Response', height: 0, width: 0 },
+    ],
+    edges: [
+      { id: 'manual-Initialize_variable', source: 'manual', target: 'Initialize_variable' },
+      { id: 'Initialize_variable-Increment_variable', source: 'Initialize_variable', target: 'Increment_variable' },
+      { id: 'Increment_variable-Response', source: 'Increment_variable', target: 'Response' },
+    ],
+  },
+  actionData: {
+    manual: { scope: 'root', inputs: {}, kind: 'Http', type: 'Request' },
+    Increment_variable: {
+      inputs: { name: 'var1', value: 2 },
+      runAfter: { Initialize_variable: ['Succeeded'] },
       type: 'IncrementVariable',
+      scope: 'root',
     },
-    {
-      id: 'Initialize_variable',
-      operation: {
-        inputs: {
-          variables: [
-            {
-              name: 'var1',
-              type: 'integer',
-            },
-          ],
-        },
-        runAfter: {},
-        type: 'InitializeVariable',
-      },
+    Initialize_variable: {
+      inputs: { variables: [{ name: 'var1', type: 'integer' }] },
+      runAfter: {},
       type: 'InitializeVariable',
+      scope: 'root',
     },
-    {
-      id: 'Response',
-      operation: {
-        inputs: {
-          body: "@variables('var1')",
-          statusCode: 200,
-        },
-        kind: 'http',
-        runAfter: {
-          Increment_variable: ['Succeeded'],
-        },
-        type: 'Response',
-      },
+    Response: {
+      inputs: { body: "@variables('var1')", statusCode: 200 },
+      kind: 'http',
+      runAfter: { Increment_variable: ['Succeeded'] },
       type: 'Response',
+      scope: 'root',
     },
-  ],
-  edges: [
-    {
-      id: 'Initialize_variable-Increment_variable',
-      source: 'Initialize_variable',
-      target: 'Increment_variable',
-    },
-    {
-      id: 'Increment_variable-Response',
-      source: 'Increment_variable',
-      target: 'Response',
-    },
-  ],
+  },
 };

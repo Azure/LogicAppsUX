@@ -9,10 +9,8 @@ export interface WorkflowGraph {
 export interface WorkflowNode {
   id: string;
   children?: WorkflowGraph[];
-  // type: string;
   height: number;
   width: number;
-  // operation: LogicAppsV2.ActionDefinition | LogicAppsV2.Operation;
 }
 
 export interface WorkflowEdge {

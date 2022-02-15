@@ -1,18 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Node, NodeChange, NodeDimensionChange } from 'react-flow-renderer';
+import { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
 import { isWorkflowNode, WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
 import { initializeGraphState } from '../parsers/ParseReduxAction';
 
 type SpecTypes = 'BJS' | 'CNCF';
 
+interface ActionLocation {
+  scope?: string;
+}
+
+export type Actions = Record<string, LogicAppsV2.ActionDefinition & ActionLocation>;
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
   graph?: WorkflowGraph | null;
+  actions: Actions;
 }
 
 const initialState: WorkflowState = {
   workflowSpec: 'BJS',
   graph: null,
+  actions: {},
 };
 
 interface AddNodePayload {
@@ -78,15 +85,9 @@ export const workflowSlice = createSlice({
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
-      state.graph = action.payload;
+      state.graph = action.payload.graph;
+      state.actions = action.payload.actionData;
     });
-    // builder.addCase(processGraphLayout.fulfilled, (state, action) => {
-    //   state.nodes = action.payload;
-    //   state.shouldLayout = false;
-    // });
-    // builder.addCase(processGraphLayout.rejected, (state, action) => {
-    //   //console.log(action.error);
-    // });
   },
 });
 

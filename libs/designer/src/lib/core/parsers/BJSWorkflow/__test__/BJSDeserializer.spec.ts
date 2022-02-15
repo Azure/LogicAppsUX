@@ -10,7 +10,6 @@ describe('core/parsers/BJSWorkflow/BJSDeserializer', () => {
 
   it('should deserialize a basic workflow with scoped nodes', () => {
     const test = Deserialize(scopedWorkflowDefinitionInput);
-    console.log(JSON.stringify(test));
     expect(test).toEqual(expectedScopedWorkflowDefinitionOutput);
   });
 });

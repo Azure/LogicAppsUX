@@ -1,3 +1,4 @@
+import { Actions } from '../../../state/workflowSlice';
 import { WorkflowGraph } from '../../models/workflowNode';
 
 export const scopedWorkflowDefinitionInput = {
@@ -85,84 +86,80 @@ export const scopedWorkflowDefinitionInput = {
   },
 };
 
-export const expectedScopedWorkflowDefinitionOutput: WorkflowGraph = {
-  id: 'root',
-  children: [
-    { id: 'manual', type: 'Request', operation: { inputs: {}, kind: 'Http', type: 'Request' }, height: 0, width: 0 },
-    {
-      id: 'Increment_variable',
-      type: 'IncrementVariable',
-      operation: { inputs: { name: 'var1', value: 2 }, runAfter: { Initialize_variable: ['Succeeded'] }, type: 'IncrementVariable' },
-    },
-    {
-      id: 'Initialize_variable',
-      type: 'InitializeVariable',
-      operation: { inputs: { variables: [{ name: 'var1', type: 'integer' }] }, runAfter: {}, type: 'InitializeVariable' },
-    },
-    {
-      id: 'ActionIf',
-      type: 'InitializeVariable',
-      operation: {
-        actions: {
-          Increment_variable2: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' },
-          Increment_variable4: {
-            inputs: { name: 'var1', value: 2 },
-            runAfter: { Increment_variable2: ['Succeeded'] },
-            type: 'IncrementVariable',
+export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; actionData: Actions } = {
+  graph: {
+    id: 'root',
+    children: [
+      { id: 'manual', height: 0, width: 0 },
+      { id: 'Increment_variable', height: 0, width: 0 },
+      { id: 'Initialize_variable', height: 0, width: 0 },
+      {
+        id: 'ActionIf',
+        height: 0,
+        width: 0,
+        children: [
+          {
+            id: 'ActionIf-actions',
+            children: [
+              { id: 'Increment_variable2', height: 0, width: 0 },
+              { id: 'Increment_variable4', height: 0, width: 0 },
+            ],
+            edges: [{ id: 'Increment_variable2-Increment_variable4', source: 'Increment_variable2', target: 'Increment_variable4' }],
           },
-        },
-        else: { actions: { Increment_variable3: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' } } },
-        runAfter: { Increment_variable: ['Succeeded'] },
-        type: 'InitializeVariable',
+          { id: 'ActionIf-elseActions', children: [{ id: 'Increment_variable3', height: 0, width: 0 }], edges: [] },
+        ],
       },
-      children: [
-        {
-          id: 'ActionIf-actions',
-          children: [
-            {
-              id: 'Increment_variable2',
-              type: 'IncrementVariable',
-              operation: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' },
-            },
-            {
-              id: 'Increment_variable4',
-              type: 'IncrementVariable',
-              operation: {
-                inputs: { name: 'var1', value: 2 },
-                runAfter: { Increment_variable2: ['Succeeded'] },
-                type: 'IncrementVariable',
-              },
-            },
-          ],
-          edges: [{ id: 'Increment_variable2-Increment_variable4', source: 'Increment_variable2', target: 'Increment_variable4' }],
-        },
-        {
-          id: 'ActionIf-elseActions',
-          children: [
-            {
-              id: 'Increment_variable3',
-              type: 'IncrementVariable',
-              operation: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' },
-            },
-          ],
-          edges: [],
-        },
-      ],
+      { id: 'Response', height: 0, width: 0 },
+    ],
+    edges: [
+      { id: 'manual-Initialize_variable', source: 'manual', target: 'Initialize_variable' },
+      { id: 'Initialize_variable-Increment_variable', source: 'Initialize_variable', target: 'Increment_variable' },
+      { id: 'Increment_variable-ActionIf', source: 'Increment_variable', target: 'ActionIf' },
+      { id: 'ActionIf-Response', source: 'ActionIf', target: 'Response' },
+    ],
+  },
+  actionData: {
+    manual: { scope: 'root', inputs: {}, kind: 'Http', type: 'Request' },
+    Increment_variable: {
+      inputs: { name: 'var1', value: 2 },
+      runAfter: { Initialize_variable: ['Succeeded'] },
+      type: 'IncrementVariable',
+      scope: 'root',
     },
-    {
-      id: 'Response',
+    Initialize_variable: {
+      inputs: { variables: [{ name: 'var1', type: 'integer' }] },
+      runAfter: {},
+      type: 'InitializeVariable',
+      scope: 'root',
+    },
+    ActionIf: {
+      actions: {
+        Increment_variable2: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' },
+        Increment_variable4: {
+          inputs: { name: 'var1', value: 2 },
+          runAfter: { Increment_variable2: ['Succeeded'] },
+          type: 'IncrementVariable',
+        },
+      },
+      else: { actions: { Increment_variable3: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' } } },
+      runAfter: { Increment_variable: ['Succeeded'] },
+      type: 'InitializeVariable',
+      scope: 'root',
+    },
+    Increment_variable2: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable', scope: 'ActionIf-actions' },
+    Increment_variable4: {
+      inputs: { name: 'var1', value: 2 },
+      runAfter: { Increment_variable2: ['Succeeded'] },
+      type: 'IncrementVariable',
+      scope: 'ActionIf-actions',
+    },
+    Increment_variable3: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable', scope: 'ActionIf-elseActions' },
+    Response: {
+      inputs: { body: "@variables('var1')", statusCode: 200 },
+      kind: 'http',
+      runAfter: { ActionIf: ['Succeeded'] },
       type: 'Response',
-      operation: {
-        inputs: { body: "@variables('var1')", statusCode: 200 },
-        kind: 'http',
-        runAfter: { ActionIf: ['Succeeded'] },
-        type: 'Response',
-      },
+      scope: 'root',
     },
-  ],
-  edges: [
-    { id: 'Initialize_variable-Increment_variable', source: 'Initialize_variable', target: 'Increment_variable' },
-    { id: 'Increment_variable-ActionIf', source: 'Increment_variable', target: 'ActionIf' },
-    { id: 'ActionIf-Response', source: 'ActionIf', target: 'Response' },
-  ],
+  },
 };
