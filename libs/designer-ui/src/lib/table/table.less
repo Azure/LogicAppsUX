@@ -29,7 +29,7 @@
     tr.msla-table-row {
       cursor: pointer;
       outline: none;
-      -ms-high-contrast-adjust: none;
+      forced-color-adjust: none;
 
       &:hover,
       &:focus,
@@ -40,7 +40,7 @@
         -ms-transition: background-color 0.5s ease;
         transition: background-color 0.5s ease;
 
-        @media screen and (-ms-high-contrast: active) {
+        @media (forced-colors: active) {
           background-color: highlight;
           color: highlightText;
         }

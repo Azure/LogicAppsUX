@@ -115,7 +115,7 @@
   display: flex;
   font-family: @font-family;
   outline: none;
-  -ms-high-contrast-adjust: none;
+  forced-color-adjust: none;
 
   &:focus,
   &:hover,
@@ -126,7 +126,7 @@
     -ms-transition: background-color 0.5s ease;
     transition: background-color 0.5s ease;
 
-    @media screen and (-ms-high-contrast: active) {
+    @media (forced-colors: active) {
       background-color: highlight;
       color: highlightText;
     }
@@ -164,7 +164,7 @@ a.msla-combobox-option-text {
   position: relative;
   white-space: nowrap;
   min-height: 16px;
-  -ms-high-contrast-adjust: none;
+  forced-color-adjust: none;
 
   &.highlighted,
   &:focus,
@@ -176,7 +176,7 @@ a.msla-combobox-option-text {
     -ms-transition: background-color 0.5s ease;
     transition: background-color 0.5s ease;
 
-    @media screen and (-ms-high-contrast: active) {
+    @media (forced-colors: active) {
       background-color: highlight;
       color: highlightText;
     }

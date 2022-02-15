@@ -11,13 +11,9 @@ function handleDragStartWhenDisabled(e: React.DragEvent<HTMLElement>): void {
 }
 
 export function isEdge(): boolean {
-  return /Edge\/\d+/.test(navigator.userAgent);
+  return /Edg\/\d+/.test(navigator.userAgent);
 }
 
 export function isFirefox(): boolean {
   return /Firefox\/\d+/.test(navigator.userAgent);
-}
-
-export function isInternetExplorer(): boolean {
-  return /(?:MSIE |Trident\/)/.test(navigator.userAgent);
 }
