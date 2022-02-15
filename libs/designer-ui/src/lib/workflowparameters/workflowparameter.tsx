@@ -1,5 +1,4 @@
-import type { IIconProps } from '@fluentui/react';
-import { CommandBarButton, FontWeights, type IButtonStyles } from '@fluentui/react';
+import { CommandBarButton, FontWeights, IButtonStyles, IIconProps } from '@fluentui/react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { EventHandler } from '../eventhandler';
