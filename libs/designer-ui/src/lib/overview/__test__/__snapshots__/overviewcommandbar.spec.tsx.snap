@@ -1,0 +1,210 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/overview/overviewcommandbar renders 1`] = `
+<div>
+  <div
+    style={
+      Object {
+        "position": "relative",
+      }
+    }
+  >
+    <div
+      data-automation-id="visibleContent"
+      style={
+        Object {
+          "position": "fixed",
+          "visibility": "hidden",
+        }
+      }
+    >
+      <div
+        className="ms-FocusZone css-112 ms-CommandBar root-109"
+        data-focuszone-id="FocusZone0"
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onMouseDownCapture={[Function]}
+        role="menubar"
+      >
+        <div
+          className="ms-OverflowSet ms-CommandBar-primaryCommand primarySet-113"
+          role="none"
+        >
+          <div
+            className="ms-OverflowSet-item item-114"
+            role="none"
+          >
+            <button
+              aria-label="Refresh"
+              className="ms-Button ms-Button--commandBar ms-CommandBarItem-link root-116"
+              data-is-focusable={true}
+              name="Refresh"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              role="menuitem"
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-117"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 ms-Button-icon icon-119"
+                  data-icon-name="Refresh"
+                  style={
+                    Object {
+                      "fontFamily": undefined,
+                    }
+                  }
+                />
+                <span
+                  className="ms-Button-textContainer textContainer-118"
+                >
+                  <span
+                    className="ms-Button-label label-120"
+                    id="id__1"
+                  >
+                    Refresh
+                  </span>
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
+<div>
+  <div
+    style={
+      Object {
+        "position": "relative",
+      }
+    }
+  >
+    <div
+      data-automation-id="visibleContent"
+      style={
+        Object {
+          "position": "fixed",
+          "visibility": "hidden",
+        }
+      }
+    >
+      <div
+        className="ms-FocusZone css-112 ms-CommandBar root-109"
+        data-focuszone-id="FocusZone4"
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onMouseDownCapture={[Function]}
+        role="menubar"
+      >
+        <div
+          className="ms-OverflowSet ms-CommandBar-primaryCommand primarySet-113"
+          role="none"
+        >
+          <div
+            className="ms-OverflowSet-item item-114"
+            role="none"
+          >
+            <button
+              aria-label="Refresh"
+              className="ms-Button ms-Button--commandBar ms-CommandBarItem-link root-116"
+              data-is-focusable={true}
+              name="Refresh"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              role="menuitem"
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-117"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 ms-Button-icon icon-119"
+                  data-icon-name="Refresh"
+                  style={
+                    Object {
+                      "fontFamily": undefined,
+                    }
+                  }
+                />
+                <span
+                  className="ms-Button-textContainer textContainer-118"
+                >
+                  <span
+                    className="ms-Button-label label-120"
+                    id="id__5"
+                  >
+                    Refresh
+                  </span>
+                </span>
+              </span>
+            </button>
+          </div>
+          <div
+            className="ms-OverflowSet-item item-114"
+            role="none"
+          >
+            <button
+              aria-label="Run trigger"
+              className="ms-Button ms-Button--commandBar ms-CommandBarItem-link root-116"
+              data-is-focusable={true}
+              name="Run trigger"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              role="menuitem"
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-117"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 ms-Button-icon icon-119"
+                  data-icon-name="Play"
+                  style={
+                    Object {
+                      "fontFamily": undefined,
+                    }
+                  }
+                />
+                <span
+                  className="ms-Button-textContainer textContainer-118"
+                >
+                  <span
+                    className="ms-Button-label label-120"
+                    id="id__8"
+                  >
+                    Run trigger
+                  </span>
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,9 +1,16 @@
-export interface CallbackInfo {
+import { isObject } from '@microsoft-logic-apps/utils';
+
+export type CallbackInfo = CallbackInfoWithRelativePath | CallbackInfoWithValue;
+
+export interface CallbackInfoWithRelativePath {
   basePath?: string;
-  method?: string;
+  method: string;
   relativeParameters?: unknown[];
-  relativePath?: string;
+  relativePath: string;
   queries?: Record<string, string>;
+}
+
+export interface CallbackInfoWithValue {
   value: string;
 }
 
@@ -49,4 +56,8 @@ export interface RunProperties {
 export interface Runs {
   nextLink?: string;
   runs: Run[];
+}
+
+export function isCallbackInfoWithRelativePath(value: any): value is CallbackInfoWithRelativePath {
+  return isObject(value) && typeof value.relativePath === 'string';
 }

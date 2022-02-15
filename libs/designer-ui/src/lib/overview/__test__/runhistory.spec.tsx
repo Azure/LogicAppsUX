@@ -1,69 +1,44 @@
-import { DetailsListLayoutMode, SelectionMode } from '@fluentui/react';
-import ReactShallowRenderer from 'react-test-renderer/shallow';
-import { RunHistory, RunHistoryProps } from '../runhistory';
+import { setIconOptions } from '@fluentui/react';
+import renderer from 'react-test-renderer';
+import { RunHistory, type RunHistoryProps } from '../runhistory';
 
 describe('lib/overview/runhistory', () => {
-  let minimal: RunHistoryProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: RunHistoryProps;
+
+  beforeAll(() => {
+    setIconOptions({
+      disableWarnings: true,
+    });
+  });
 
   beforeEach(() => {
     minimal = {
       items: [],
-      loading: false,
       onOpenRun: jest.fn(),
     };
-    renderer = ReactShallowRenderer.createRenderer();
   });
 
-  afterEach(() => {
-    renderer.unmount();
+  it('renders', () => {
+    const tree = renderer.create(<RunHistory {...minimal} />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
-  it('renders correctly', () => {
-    renderer.render(<RunHistory {...minimal} />);
+  it('renders a shimmered details list', () => {
+    const tree = renderer.create(<RunHistory {...minimal} loading />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
 
-    const root = renderer.getRenderOutput();
-    expect(root.props.columns).toEqual([
+  it('renders with items', () => {
+    const items = [
       {
-        fieldName: 'identifier',
-        isResizable: true,
-        key: 'identifier',
-        minWidth: 0,
-        name: 'Identifier',
+        duration: '1s',
+        id: '/workflows/run/versions/08585581919959304835',
+        identifier: '08585581919959304835',
+        startTime: '2022-02-04T17:58:19.6012324Z',
+        status: 'Succeeded',
       },
-      {
-        fieldName: 'status',
-        isResizable: true,
-        key: 'status',
-        minWidth: 0,
-        name: 'Status',
-      },
-      {
-        fieldName: 'startTime',
-        isResizable: true,
-        key: 'startTime',
-        minWidth: 200,
-        name: 'Start time',
-      },
-      {
-        fieldName: 'duration',
-        isResizable: true,
-        key: 'duration',
-        minWidth: 0,
-        name: 'Duration',
-      },
-      {
-        fieldName: 'contextMenu',
-        isResizable: true,
-        key: 'contextMenu',
-        minWidth: 0,
-        name: '',
-      },
-    ]);
-    expect(root.props.compact).toBeTruthy();
-    expect(root.props.enableShimmer).toBe(false);
-    expect(root.props.items).toEqual(minimal.items);
-    expect(root.props.layoutMode).toBe(DetailsListLayoutMode.justified);
-    expect(root.props.selectionMode).toBe(SelectionMode.none);
-    expect(root.props.shimmerLines).toBe(1);
+    ];
+    const tree = renderer.create(<RunHistory {...minimal} items={items} />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 });
