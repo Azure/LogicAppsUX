@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { css } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 export interface LabelProps {
@@ -14,32 +14,29 @@ interface RequiredParameterMarkerProps {
   isRequiredField: boolean;
 }
 
-const RequiredParameterMarker = (props: RequiredParameterMarkerProps) => {
-  const intl = useIntl();
-  const ariaLabel = intl.formatMessage({
-    defaultMessage: 'Required',
-
-    description: 'Accessibility prefix for the input label',
-  });
-  if (props.isRequiredField) {
-    return (
-      <span className="msla-label-required-parameter" aria-label={ariaLabel}>
-        *
-      </span>
-    );
-  } else {
-    return null;
-  }
-};
-
-export const Label: React.FC<LabelProps> = ({ className, htmlFor, id, isRequiredField, text, tooltip }: LabelProps) => {
-  const labelClassName = className ? `${className} msla-label` : 'msla-label';
-  const title = tooltip || text;
-
+export const Label: React.FC<LabelProps> = ({ className, htmlFor, id, isRequiredField = false, text, tooltip }) => {
   return (
-    <label className={labelClassName} htmlFor={htmlFor} id={id} title={title}>
-      <RequiredParameterMarker isRequiredField={isRequiredField ?? false} />
+    <label className={css(className, 'msla-label')} htmlFor={htmlFor} id={id} title={tooltip || text}>
+      <RequiredParameterMarker isRequiredField={isRequiredField} />
       {text}
     </label>
+  );
+};
+
+const RequiredParameterMarker: React.FC<RequiredParameterMarkerProps> = ({ isRequiredField }) => {
+  const intl = useIntl();
+  if (!isRequiredField) {
+    return null;
+  }
+
+  const ariaLabel = intl.formatMessage({
+    defaultMessage: 'Required',
+    description: 'Accessibility prefix for the input label',
+  });
+
+  return (
+    <span className="msla-label-required-parameter" aria-label={ariaLabel}>
+      *
+    </span>
   );
 };
