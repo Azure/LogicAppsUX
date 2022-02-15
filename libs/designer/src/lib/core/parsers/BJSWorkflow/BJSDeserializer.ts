@@ -26,7 +26,7 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): { graph
   }
 
   const children = [];
-  const rootEdges = [];
+  const rootEdges: WorkflowEdge[] = [];
   if (triggerNode) {
     children.push(triggerNode);
   }
@@ -37,7 +37,7 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): { graph
     for (const [key] of parentlessChildren) {
       rootEdges.push({
         id: `${triggerNode?.id}-${key}`,
-        source: triggerNode?.id,
+        source: triggerNode?.id ?? '',
         target: key,
       });
     }

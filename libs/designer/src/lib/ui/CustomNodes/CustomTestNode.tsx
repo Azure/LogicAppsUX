@@ -3,6 +3,7 @@ import { Card } from '@microsoft/designer-ui';
 import { memo } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
+import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import { DropZone } from '../connections/dropzone';
 
 const icon =
@@ -28,6 +29,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     }),
   }));
 
+  const edges = useEdgesByParent(data.label);
   return (
     <div>
       <div>
@@ -37,25 +39,25 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           isConnectable={false}
           style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
         />
-
-        <Card
-          title={data.label}
-          icon={icon}
-          draggable={true}
-          brandColor={'#770BD6'}
-          id={id}
-          connectionRequired={true}
-          connectionDisplayName="ttha222@outlook.com"
-          commentBox={{
-            brandColor: '#770BD6',
-            comment: 'This is a test comment',
-            isDismissed: false,
-            isEditing: false,
-          }}
-          drag={drag}
-          dragPreview={dragPreview}
-        />
-
+        <div>
+          <Card
+            title={data.label}
+            icon={icon}
+            draggable={true}
+            brandColor={'#770BD6'}
+            id={id}
+            connectionRequired={true}
+            connectionDisplayName="ttha222@outlook.com"
+            commentBox={{
+              brandColor: '#770BD6',
+              comment: 'This is a test comment',
+              isDismissed: false,
+              isEditing: false,
+            }}
+            drag={drag}
+            dragPreview={dragPreview}
+          />
+        </div>
         <Handle
           type="source"
           position={sourcePosition}
@@ -63,8 +65,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
         />
       </div>
-
-      {data?.children?.length === 0 && (
+      {edges.length === 0 && (
         <div style={{ display: 'grid', placeItems: 'center', width: '200', height: '30', marginTop: '5px' }}>
           <DropZone parent={id} />
         </div>
