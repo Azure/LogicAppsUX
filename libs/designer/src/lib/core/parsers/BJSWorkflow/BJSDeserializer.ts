@@ -99,7 +99,6 @@ const buildGraphFromActions = (actions: Actions, scope: string): [WorkflowNode[]
     }
 
     if (isIfAction(action)) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const [children, edges, elseActions] = !isNullOrUndefined(action.else?.actions)
         ? buildGraphFromActions(action.else?.actions ?? {}, `${actionName}-elseActions`)
         : [[], [], {}];

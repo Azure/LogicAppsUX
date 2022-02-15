@@ -37,31 +37,7 @@ export const workflowSlice = createSlice({
       state.workflowSpec = action.payload;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
-      // const { childId, parentId, id, graph = 'root' } = action.payload;
-      // const parentNode = state.nodes[action.payload.parentId];
-      // if (childId) {
-      //   state.nodes[childId] = {
-      //     ...state.nodes[childId],
-      //     parentNodes: [...state.nodes[childId].childrenNodes.filter((y) => y !== parentId), id],
-      //   };
-      // }
-      // state.nodes[parentId] = {
-      //   ...state.nodes[parentId],
-      //   childrenNodes: childId ? [...state.nodes[parentId].childrenNodes.filter((y) => y !== childId), id] : [id],
-      // };
-      // state.nodes[id] = {
-      //   id: action.payload.id,
-      //   type: '',
-      //   operation: null as any,
-      //   position: {
-      //     x: state.nodes[parentId]?.position.x ?? 0,
-      //     y: state.nodes[parentId]?.position.y ?? 0,
-      //   },
-      //   size: { height: 172, width: 38 },
-      //   parentNodes: [action.payload.parentId],
-      //   childrenNodes: action.payload.childId ? [action.payload.childId] : [...(parentNode?.childrenNodes ?? [])],
-      // };
-      // state.graphs[graph].nodes.push(id);
+      // TODO: Add node addition
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
       const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');
@@ -69,11 +45,19 @@ export const workflowSlice = createSlice({
         return;
       }
       const stack: (WorkflowGraph | WorkflowNode)[] = [state.graph];
+      const dimensionChangesById = dimensionChanges.reduce<Record<string, NodeDimensionChange>>((acc, val) => {
+        if (val.type !== 'dimensions') {
+          return acc;
+        }
+        return {
+          ...acc,
+          [val.id]: val,
+        };
+      }, {});
       while (stack.length) {
         const node = stack.shift();
-        const change = dimensionChanges.find((x) => x.id === node?.id);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        if (change && isWorkflowNode(node!)) {
+        const change = dimensionChangesById[node?.id ?? ''];
+        if (change && node && isWorkflowNode(node)) {
           const c = change as NodeDimensionChange;
           node.height = c.dimensions.height;
           node.width = c.dimensions.width;
