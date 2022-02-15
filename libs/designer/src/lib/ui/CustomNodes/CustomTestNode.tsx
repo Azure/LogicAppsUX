@@ -39,25 +39,23 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           isConnectable={false}
           style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
         />
-        <div>
-          <Card
-            title={data.label}
-            icon={icon}
-            draggable={true}
-            brandColor={'#770BD6'}
-            id={id}
-            connectionRequired={true}
-            connectionDisplayName="ttha222@outlook.com"
-            commentBox={{
-              brandColor: '#770BD6',
-              comment: 'This is a test comment',
-              isDismissed: false,
-              isEditing: false,
-            }}
-            drag={drag}
-            dragPreview={dragPreview}
-          />
-        </div>
+        <Card
+          title={data.label}
+          icon={icon}
+          draggable={true}
+          brandColor={'#770BD6'}
+          id={id}
+          connectionRequired={true}
+          connectionDisplayName="ttha222@outlook.com"
+          commentBox={{
+            brandColor: '#770BD6',
+            comment: 'This is a test comment',
+            isDismissed: false,
+            isEditing: false,
+          }}
+          drag={drag}
+          dragPreview={dragPreview}
+        />
         <Handle
           type="source"
           position={sourcePosition}
