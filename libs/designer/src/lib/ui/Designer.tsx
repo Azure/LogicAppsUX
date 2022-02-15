@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { useCallback, useEffect } from 'react';
 import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { createTransition, DndProvider } from 'react-dnd-multi-backend';
-import ReactFlow, { Edge, Node, ReactFlowProvider, useNodes, useReactFlow, useStore } from 'react-flow-renderer';
-import { useDispatch, useSelector } from 'react-redux';
-import { convertActionIDToTitleCase } from '../common/utilities/Utils';
-import { processGraphLayout } from '../core/parsers/ProcessLayoutReduxAction';
-import { setShouldZoomToNode, triggerLayout, updateNodeSizes } from '../core/state/workflowSlice';
-import { RootState } from '../core/store';
+import ReactFlow, { NodeChange, ReactFlowProvider } from 'react-flow-renderer';
 import { CustomEdge } from './connections/edge';
 import CustomTestNode from './CustomNodes/CustomTestNode';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { useLayout } from '../core/graphlayout/elklayout';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { updateNodeSizes } from '../core/state/workflowSlice';
 
 export interface DesignerProps {
   graphId?: string;
@@ -22,41 +21,6 @@ const nodeTypes = {
 
 const edgeTypes = {
   buttonedge: CustomEdge,
-};
-
-const ZoomNode = () => {
-  const nodes = useNodes();
-  const [, , zoom] = useStore((store) => store.transform);
-  const shouldLayout = useSelector((state: RootState) => state.workflow.shouldLayout);
-  const shouldFocusNode = useSelector((state: RootState) => state.workflow.shouldZoomToNode);
-  const dispatch = useDispatch();
-  const { setCenter } = useReactFlow();
-
-  useEffect(() => {
-    if (nodes.length && shouldLayout) {
-      dispatch(updateNodeSizes(nodes));
-      (dispatch(processGraphLayout()) as any).then(() => {
-        if (shouldFocusNode) {
-          if (shouldFocusNode) {
-            const node = nodes.find((x) => x.id === shouldFocusNode);
-
-            dispatch(setShouldZoomToNode(null));
-            if (node) {
-              const x = node.position.x + (node.width ?? 0) / 2;
-              const y = node.position.y + (node.height ?? 0) / 2;
-
-              setCenter(x, y, { zoom });
-            }
-          }
-        }
-      });
-    }
-  }, [dispatch, nodes, setCenter, shouldFocusNode, shouldLayout, zoom]);
-  useEffect(() => {
-    dispatch(triggerLayout());
-  }, [dispatch, nodes.length]);
-
-  return null;
 };
 
 const KeyboardTransition = createTransition('keydown', (event) => {
@@ -87,61 +51,38 @@ const DND_OPTIONS = {
   ],
 };
 
-export const Designer = ({ graphId = 'root' }: DesignerProps) => {
-  const [nodes, edges]: [Node[], Edge[]] = useSelector((state: RootState) => {
-    const retNodes: Node[] = [];
-    const retEdges: Edge[] = [];
-    //TODO: Key off current graph rather than going through all nodes
-    state.workflow.graphs[graphId]?.nodes.forEach((id) => {
-      const node = state.workflow.nodes[id];
-      retNodes.push({
-        id: node.id,
-        type: 'testNode',
-        data: {
-          label: convertActionIDToTitleCase(node.id),
-          children: node.childrenNodes,
-        },
-        position: node.position,
-      });
-      for (const child of node.childrenNodes) {
-        retEdges.push({
-          id: `entry-${node.id}-${child}`,
-          source: node.id,
-          target: child,
-          data: { parent: node.id, child: child },
-          type: 'buttonedge',
-          animated: false,
-        });
-      }
-    });
-    return [retNodes, retEdges];
-  });
-
+const queryClient = new QueryClient();
+export const Designer = () => {
+  const [nodes, edges] = useLayout();
   const dispatch = useDispatch();
-  const nodesChanged = useCallback(() => {
-    dispatch(triggerLayout());
-  }, [dispatch]);
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      dispatch(updateNodeSizes(changes));
+    },
+    [dispatch]
+  );
   return (
-    <DndProvider options={DND_OPTIONS as any}>
-      <div className="msla-designer-canvas msla-panel-mode">
-        <ReactFlowProvider>
-          <ReactFlow
-            nodeTypes={nodeTypes}
-            nodes={nodes}
-            onNodesChange={nodesChanged}
-            edges={edges}
-            onConnect={() => {}}
-            minZoom={0}
-            nodesDraggable={false}
-            edgeTypes={edgeTypes}
-            proOptions={{
-              account: 'paid-subscription',
-              hideAttribution: true,
-            }}
-          ></ReactFlow>
-          <ZoomNode></ZoomNode>
-        </ReactFlowProvider>
-      </div>
-    </DndProvider>
+    <QueryClientProvider client={queryClient}>
+      <DndProvider options={DND_OPTIONS as any}>
+        <div className="msla-designer-canvas msla-panel-mode">
+          <ReactFlowProvider>
+            <ReactFlow
+              nodeTypes={nodeTypes}
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onConnect={() => {}}
+              minZoom={0}
+              nodesDraggable={false}
+              edgeTypes={edgeTypes}
+              proOptions={{
+                account: 'paid-subscription',
+                hideAttribution: true,
+              }}
+            ></ReactFlow>
+          </ReactFlowProvider>
+        </div>
+      </DndProvider>
+    </QueryClientProvider>
   );
 };

@@ -24,6 +24,10 @@
     "postinstall": "tsc -p ./tools/executors/web/tsconfig.json",
     "vscode:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package"
   },
+  "engines": {
+    "node": "16",
+    "npm": "8"
+  },
   "private": true,
   "dependencies": {
     "@fluentui/azure-themes": "^8.1.63",
@@ -33,7 +37,9 @@
     "@monaco-editor/react": "^4.3.1",
     "@reduxjs/toolkit": "1.6.2",
     "core-js": "^3.21.0",
+    "d3-shape": "^3.1.0",
     "dagre": "^0.8.5",
+    "elkjs": "^0.7.1",
     "immer": "^9.0.6",
     "react": "17.0.2",
     "react-dnd": "^14.0.4",
@@ -43,12 +49,14 @@
     "react-dom": "17.0.2",
     "react-flow-renderer": "^10.0.0-next.39",
     "react-intl": "^5.20.10",
+    "react-query": "^3.34.15",
     "react-redux": "7.2.5",
     "react-syntax-highlighter": "^15.4.4",
     "react-use": "^17.3.1",
     "regenerator-runtime": "^0.13.9",
     "to-title-case": "^1.0.0",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "web-worker": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.2",
@@ -78,6 +86,7 @@
     "@svgr/webpack": "^5.4.0",
     "@testing-library/react": "12.1.2",
     "@testing-library/react-hooks": "7.0.2",
+    "@types/d3-shape": "^3.0.2",
     "@types/dagre": "^0.7.47",
     "@types/jest": "^27.4.0",
     "@types/node": "^16.11.25",
