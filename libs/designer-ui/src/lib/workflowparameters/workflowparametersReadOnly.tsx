@@ -1,8 +1,6 @@
-import React from 'react';
-import { labelStyles, ParameterFieldDetails } from './workflowparametersField';
-import { Label } from '@fluentui/react/lib/Label';
-import { Text } from '@fluentui/react/lib/Text';
+import { Label, Text } from '@fluentui/react';
 import { FormattedMessage } from 'react-intl';
+import { labelStyles, ParameterFieldDetails } from './workflowparametersField';
 
 export interface ReadOnlyParametersProps {
   parameterDetails: ParameterFieldDetails;

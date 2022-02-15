@@ -1,5 +1,4 @@
-import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
-import React from 'react';
+import { Pivot, PivotItem } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { Tab } from '.';
 import { PageActionTelemetryData } from '../telemetry/models';

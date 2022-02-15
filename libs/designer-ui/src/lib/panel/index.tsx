@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-
-import { Panel, PanelType } from '@fluentui/react/lib/Panel';
-import { PanelPivot } from './panelpivot';
-import { PanelContent } from './panelcontent';
+import { Panel, PanelType } from '@fluentui/react';
+import { useState } from 'react';
 import { PageActionTelemetryData } from '../telemetry/models';
+import { PanelContent } from './panelcontent';
+import { PanelPivot } from './panelpivot';
 
 export interface Tab {
   itemKey: string;
