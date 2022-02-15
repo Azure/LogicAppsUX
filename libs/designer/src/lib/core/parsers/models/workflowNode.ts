@@ -19,7 +19,6 @@ export interface WorkflowEdge {
   target: string;
 }
 
-export const isWorkflowNode = (node: WorkflowGraph | WorkflowNode): node is WorkflowNode => {
-  const n = node as WorkflowNode;
-  return !isNullOrUndefined(n.height) && !isNullOrUndefined(n.width);
+export const isWorkflowNode = (node: unknown): node is WorkflowNode => {
+  return isObject(node) && typeof node.id === 'string' && typeof node.height === 'number' && typeof node.width === 'number';
 };
