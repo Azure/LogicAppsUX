@@ -39,9 +39,9 @@ export const CardContextMenu: React.FC<CardContextMenuProps> = ({
       onClick(e) {
         e?.stopPropagation();
 
-        if (item?.clickHandler) {
+        if (item?.onClick) {
           onSetShowContextMenu(false);
-          item.clickHandler(e);
+          item.onClick(e);
         }
       },
     }));

@@ -24,9 +24,7 @@ jobs:
       # the head of the pull request instead of the merge commit.
       - run: git checkout HEAD^2
         if: ${{ github.event_name == 'pull_request' }}
-        
-      - uses: nelonoel/branch-name@v1
-      
+
         # Adding this label to help track and easily differentiate these PRs
       - name: Auto-Label
         run: gh pr edit --add-label "$AUTO_LOCALIZATION_LABEL" "$PR_URL"

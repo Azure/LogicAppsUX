@@ -1,7 +1,4 @@
-import { Dropdown, IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
-import { Label } from '@fluentui/react/lib/Label';
-import { FontSizes } from '@fluentui/react/lib/Styling';
-import * as React from 'react';
+import { Dropdown, FontSizes, IDropdownOption, IDropdownStyles, Label } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 export interface IdentityDropdownProps {
@@ -11,7 +8,7 @@ export interface IdentityDropdownProps {
   readOnly: boolean;
 }
 
-export const dropdownStyles: Partial<IDropdownStyles> = {
+export const dropdownStyles: Pick<IDropdownStyles, 'caretDown' | 'caretDownWrapper' | 'dropdownOptionText' | 'title'> = {
   caretDownWrapper: {
     lineHeight: 26,
     right: 8,
@@ -33,15 +30,13 @@ export const IdentityDropdown: React.FC<IdentityDropdownProps> = ({ defaultSelec
   const intl = useIntl();
   const managedIdentityLabel = intl.formatMessage({
     defaultMessage: 'Managed identity',
-
     description: 'A Label for a Dropdown',
   });
-
   const managedIdentityPlaceholder = intl.formatMessage({
     defaultMessage: 'Select a managed identity',
-
     description: 'A placeholder for the managed identity dropdown',
   });
+
   return (
     <div className="msla-identity-dropdown-container">
       <Label className="msla-identity-dropdown-label">{managedIdentityLabel}</Label>

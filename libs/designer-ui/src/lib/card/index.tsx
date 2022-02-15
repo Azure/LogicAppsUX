@@ -1,113 +1,41 @@
-import { css, IButtonStyles, Icon, IIconProps, ISpinnerStyles, MessageBarType, TooltipHost } from '@fluentui/react';
-import { equals, hexToRgbA } from '@microsoft-logic-apps/utils';
-import * as React from 'react';
+import { css, ISpinnerStyles, MessageBarType, useTheme } from '@fluentui/react';
+import { equals } from '@microsoft-logic-apps/utils';
+import { useState } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
-import { useIntl } from 'react-intl';
-import Constants from '../constants';
-import { Event, EventHandler } from '../eventhandler';
 import { isDeleteKey, isEnterKey, isSpaceKey } from '../utils/keyboardUtils';
-import { CardContextMenu, CardContextMenuProps } from './cardcontextmenu';
+import { CardContextMenu } from './cardcontextmenu';
+import { CardFooter } from './cardfooter';
 import { ErrorBanner } from './errorbanner';
 import { Gripper } from './images/dynamicsvgs/gripper';
+import type { CommentBoxProps, MenuItemOption } from './types';
+import { getCardStyle } from './utils';
 
 export interface CardProps {
-  /**
-   * @member {boolean} [active=true] - True if the card should render activated in the monitoring view, i.e., it is an action which can execute.
-   */
   active?: boolean;
-  contextMenuOptions?: MenuItemOption[];
-  id: string;
-  cloned?: boolean;
-  describedBy?: string;
-  rootRef?: React.RefObject<HTMLDivElement>;
-  onClick?: EventHandler<Event<any>>;
   brandColor: string;
-  draggable: boolean;
-  title: string;
-  errorLevel?: MessageBarType;
-  errorMessage?: string;
-  icon?: string;
-  selected?: boolean;
-
+  cloned?: boolean;
   commentBox?: CommentBoxProps;
   connectionDisplayName?: string;
   connectionRequired?: boolean;
-  staticResultsEnabled?: boolean;
+  contextMenuOptions?: MenuItemOption[];
+  describedBy?: string;
   drag: ConnectDragSource;
+  draggable: boolean;
   dragPreview: ConnectDragPreview;
-}
-
-export enum MenuItemType {
-  Normal = 0,
-  Divider = 1,
-  Header = 2,
-  Advanced = 3,
-}
-
-interface CardBadgeBarProps {
-  badges: CardBadgeProps[];
-  brandColor?: string;
-}
-
-interface CardBadgeProps {
+  errorLevel?: MessageBarType;
+  errorMessage?: string;
+  icon?: string;
+  id: string;
+  rootRef?: React.RefObject<HTMLDivElement>;
+  selected?: boolean;
+  staticResultsEnabled?: boolean;
   title: string;
-  content: string;
-  darkBackground?: boolean;
-  iconProps: IIconProps;
-  active: boolean;
+  onClick?(): void;
 }
 
-interface CommentBoxProps {
-  brandColor: string;
-  comment: string;
-  isDismissed: boolean;
-  isEditing: boolean;
-  isPanelModeEnabled?: boolean;
-  styleWidth?: string;
-  onCommentChanged?: CommentChangeEventHandler;
-  onCommentCommitted?(): void;
-  onCommentDismissed?(): void;
-}
+const gripperDark = '#9E9E9A';
 
-interface CommentChangeEvent {
-  value: string;
-}
-
-type CommentChangeEventHandler = (e: CommentChangeEvent) => void;
-
-interface MenuItemOption {
-  disabled?: boolean;
-  disabledReason?: string;
-  iconName?: string;
-  iconUri?: string;
-  checked?: boolean;
-  key: string;
-  subMenuItems?: MenuItemOption[]; // NOTE(shimedh): Sub-menus are only supported for basic menu item by Fabric.
-  subtitle?: SubtitleOption;
-  title: string;
-  type: MenuItemType;
-  clickHandler?(e?: React.SyntheticEvent<HTMLElement>): void;
-}
-
-interface SubtitleOption {
-  disabled?: boolean;
-  iconUri?: string;
-  title: string;
-}
-
-const gripperLightModeFill = '#605E5C';
-
-const commentIconProps: IIconProps = {
-  iconName: 'Comment',
-};
-
-const connectionIconProps: IIconProps = {
-  iconName: 'Link',
-};
-
-const staticResultIconProps: IIconProps = {
-  iconName: 'TestBeaker',
-};
+const gripperLight = '#605E5C';
 
 export const CARD_LOADING_SPINNER_STYLE: ISpinnerStyles = {
   root: {
@@ -115,100 +43,84 @@ export const CARD_LOADING_SPINNER_STYLE: ISpinnerStyles = {
   },
 };
 
-export function Card(props: CardProps): JSX.Element {
-  function handleContextMenu(e: React.MouseEvent): void {
-    e.preventDefault();
-    e.stopPropagation();
-    setShowContextMenu(true);
-    setContextMenuLocation({ x: e.clientX, y: e.clientY });
-  }
-
-  function handleCardClick(e: React.MouseEvent<HTMLElement>) {
-    e.stopPropagation();
-    cardClick();
-  }
-
-  function handleKeyUp(e: React.KeyboardEvent<HTMLElement>) {
-    if (isEnterKey(e) || isSpaceKey(e)) {
-      e.preventDefault();
-      e.stopPropagation();
-      cardClick();
-    } else if (isDeleteKey(e)) {
-      e.preventDefault();
-      e.stopPropagation();
-      const menuItemOptions = props.contextMenuOptions;
-      for (const itemOption of menuItemOptions ?? []) {
-        if (equals(itemOption.key, 'delete') && !itemOption.disabled) {
-          itemOption.clickHandler && itemOption.clickHandler(e);
-        }
-      }
-    }
-  }
-
-  // NOTE(absaafan): This function is used to prevent space from scrolling the page down when used to select a card.
-  function handleKeyDown(e: React.KeyboardEvent<HTMLElement>) {
-    if (isEnterKey(e) || isSpaceKey(e)) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  }
-
-  function onSetShowContextMenu(value: boolean): void {
-    setShowContextMenu(value);
-  }
-
-  function cardClick() {
-    if (props.onClick) {
-      props.onClick({
-        currentTarget: undefined,
-      });
-    }
-  }
-
-  const {
-    active = true,
-    brandColor,
-    cloned,
-    contextMenuOptions,
-    describedBy,
-    draggable,
-    errorLevel,
-    errorMessage,
-    icon,
-    selected,
-    title,
-  } = props;
-
-  const [showContextMenu, setShowContextMenu] = React.useState(false);
-  const [contextMenuLocation, setContextMenuLocation] = React.useState({
+export const Card: React.FC<CardProps> = ({
+  active = true,
+  brandColor,
+  cloned,
+  commentBox,
+  connectionDisplayName,
+  connectionRequired,
+  contextMenuOptions = [],
+  describedBy,
+  drag,
+  draggable,
+  dragPreview,
+  errorLevel,
+  errorMessage,
+  icon,
+  selected,
+  staticResultsEnabled,
+  title,
+  onClick,
+}) => {
+  const { isInverted } = useTheme();
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [contextMenuLocation, setContextMenuLocation] = useState({
     x: 0,
     y: 0,
   });
 
-  const rootClassNames = css(
-    'msla-panel-card-container',
-    selected && 'msla-panel-card-container-selected',
-    !active && 'inactive',
-    cloned && 'msla-card-ghost-image'
-  );
+  const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
+    e.stopPropagation();
+    onClick?.();
+  };
 
-  const contextMenuProps: CardContextMenuProps = {
-    ...props,
-    contextMenuLocation,
-    showContextMenu,
-    onSetShowContextMenu,
+  const handleContextMenu: React.MouseEventHandler = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowContextMenu(true);
+    setContextMenuLocation({ x: e.clientX, y: e.clientY });
+  };
+
+  // Prevent Enter and space bar keypresses from scrolling the page down when used to select a card.
+  const handleKeyDown: React.KeyboardEventHandler<HTMLElement> = (e) => {
+    if (isEnterKey(e) || isSpaceKey(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
+  const handleKeyUp: React.KeyboardEventHandler<HTMLElement> = (e) => {
+    if (isEnterKey(e) || isSpaceKey(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+      onClick?.();
+    } else if (isDeleteKey(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+      for (const contextMenuOption of contextMenuOptions) {
+        if (equals(contextMenuOption.key, 'delete') && !contextMenuOption.disabled) {
+          contextMenuOption.onClick?.(e);
+        }
+      }
+    }
   };
 
   return (
-    <div ref={props.dragPreview}>
+    <div ref={dragPreview}>
       <div
-        ref={props.drag}
+        ref={drag}
         aria-describedby={describedBy}
         aria-label={title}
-        className={rootClassNames}
+        className={css(
+          'msla-panel-card-container',
+          selected && 'msla-panel-card-container-selected',
+          !active && 'inactive',
+          cloned && 'msla-card-ghost-image'
+        )}
         role="button"
         style={getCardStyle(brandColor)}
-        onClick={handleCardClick}
+        onClick={handleClick}
         onContextMenu={handleContextMenu}
         onKeyDown={handleKeyDown}
         tabIndex={0}
@@ -217,7 +129,9 @@ export function Card(props: CardProps): JSX.Element {
         <div className="panel-card-main">
           <div className="panel-card-header">
             <div className="panel-card-content-container">
-              <div className="panel-card-content-gripper-section">{draggable ? Gripper({ fill: gripperLightModeFill }) : null}</div>
+              <div className="panel-card-content-gripper-section">
+                {draggable ? <Gripper fill={isInverted ? gripperDark : gripperLight} /> : null}
+              </div>
               {icon ? (
                 <div className="panel-card-content-icon-section">
                   <img className="panel-card-icon" src={icon} alt="" />
@@ -229,144 +143,23 @@ export function Card(props: CardProps): JSX.Element {
             </div>
             <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} />
           </div>
-          <CardFooter {...props} />
+          <CardFooter
+            commentBox={commentBox}
+            connectionDisplayName={connectionDisplayName}
+            connectionRequired={connectionRequired}
+            staticResultsEnabled={staticResultsEnabled}
+          />
         </div>
-        {contextMenuOptions ? <CardContextMenu {...contextMenuProps} /> : null}
+        {contextMenuOptions?.length > 0 ? (
+          <CardContextMenu
+            contextMenuLocation={contextMenuLocation}
+            contextMenuOptions={contextMenuOptions}
+            showContextMenu={showContextMenu}
+            title={title}
+            onSetShowContextMenu={setShowContextMenu}
+          />
+        ) : null}
       </div>
     </div>
   );
-}
-
-function getCardStyle(brandColor?: string): React.CSSProperties {
-  return {
-    borderLeft: `4px solid ${getBrandColorRgbA(brandColor, /* opacity */ 1)}`,
-    borderRadius: '2px',
-  };
-}
-
-export function getCardButtonsStyle(themeColor: string): IButtonStyles {
-  return {
-    icon: {
-      color: themeColor,
-      width: 15,
-      height: 15,
-    },
-    flexContainer: {
-      width: 15,
-      height: 15,
-    },
-    root: {
-      marginTop: 11,
-      padding: 0,
-      margin: 0,
-      width: 15,
-      marginLeft: 12,
-      marginRight: 10,
-    },
-  };
-}
-
-export function CardBadge({ title, content, darkBackground, iconProps, active }: CardBadgeProps): JSX.Element | null {
-  if (!content) {
-    return null;
-  }
-
-  if (active) {
-    return (
-      <TooltipHost content={content}>
-        <Icon
-          className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
-          {...iconProps}
-          ariaLabel={`${title}: ${content}`}
-          tabIndex={0}
-        />
-      </TooltipHost>
-    );
-  } else {
-    return <Icon className="panel-card-v2-badge inactive" {...iconProps} ariaLabel={title} tabIndex={0} />;
-  }
-}
-
-export function CardBadgeBar({ badges, brandColor }: CardBadgeBarProps): JSX.Element | null {
-  return (
-    <div className="msla-badges" style={getHeaderStyle(brandColor)}>
-      {badges.map(({ title, content, darkBackground, iconProps, active }) => (
-        <CardBadge key={title} title={title} content={content} darkBackground={darkBackground} iconProps={iconProps} active={active} />
-      ))}
-    </div>
-  );
-}
-
-export function CardFooter({ commentBox, connectionDisplayName, connectionRequired, staticResultsEnabled }: CardProps): JSX.Element | null {
-  const intl = useIntl();
-  const CONNECTION_NAME_DISPLAY = intl.formatMessage({
-    defaultMessage: 'Connection name',
-    description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
-  });
-  const CONNECTION_CONTAINER_CONNECTION_REQUIRED = intl.formatMessage({
-    defaultMessage: 'Connection required',
-    description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
-  });
-  const PANEL_STATIC_RESULT_TITLE = intl.formatMessage({
-    defaultMessage: 'Testing',
-    description: 'Title for a tab panel',
-  });
-  const MENU_STATIC_RESULT_ICON_TOOLTIP = intl.formatMessage({
-    defaultMessage: 'This Action has testing configured.',
-    description: "This is a tooltip for the Status results badge shown on a card. It's shown when the baged is hovered over.",
-  });
-  const COMMENT = intl.formatMessage({
-    defaultMessage: 'Comment',
-    description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
-  });
-  const connectionTitle = connectionDisplayName ? CONNECTION_NAME_DISPLAY : CONNECTION_CONTAINER_CONNECTION_REQUIRED;
-
-  const staticResultsBadge = {
-    title: PANEL_STATIC_RESULT_TITLE,
-    content: MENU_STATIC_RESULT_ICON_TOOLTIP,
-    iconProps: staticResultIconProps,
-    active: true,
-  };
-
-  const badges = [
-    ...(staticResultsEnabled ? [staticResultsBadge] : []),
-    ...(commentBox && commentBox.comment
-      ? [
-          {
-            title: COMMENT,
-            content: commentBox.comment,
-            iconProps: commentIconProps,
-            active: true,
-          },
-        ]
-      : []),
-    ...(connectionRequired
-      ? [
-          {
-            title: connectionTitle,
-            content: connectionDisplayName,
-            iconProps: connectionIconProps,
-            active: !!connectionDisplayName,
-          },
-        ]
-      : []),
-  ];
-
-  return (
-    <div className="msla-card-v2-footer">
-      <CardBadgeBar badges={badges as any} />
-    </div>
-  );
-}
-
-function getBrandColorRgbA(brandColor?: string, opacity = Constants.HEADER_AND_TOKEN_OPACITY): string {
-  try {
-    return hexToRgbA(brandColor ?? Constants.DEFAULT_BRAND_COLOR, opacity);
-  } catch {
-    return hexToRgbA(Constants.DEFAULT_BRAND_COLOR, opacity);
-  }
-}
-
-function getHeaderStyle(brandColor?: string): React.CSSProperties | undefined {
-  return brandColor ? { backgroundColor: getBrandColorRgbA(brandColor, /* opacity */ 1) } : undefined;
-}
+};
