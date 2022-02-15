@@ -1,7 +1,4 @@
-import { IButtonStyles, IconButton } from '@fluentui/react/lib/Button';
-import type { IIconProps } from '@fluentui/react/lib/Icon';
-import { ITooltipHostStyles, TooltipHost } from '@fluentui/react/lib/Tooltip';
-import React from 'react';
+import { IButtonStyles, IconButton, ITooltipHostStyles, TooltipHost, type IIconProps } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import type { EventHandler } from '../eventhandler';
 import { WorkflowParameterDefinition } from './workflowparameter';

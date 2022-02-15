@@ -1,11 +1,10 @@
-import { CommandBarButton, IButtonStyles } from '@fluentui/react/lib/Button';
-import type { IIconProps } from '@fluentui/react/lib/Icon';
-import { FontWeights } from '@fluentui/react/lib/Styling';
-import React, { useState } from 'react';
+import type { IIconProps } from '@fluentui/react';
+import { CommandBarButton, FontWeights, type IButtonStyles } from '@fluentui/react';
+import { useState } from 'react';
+import { useIntl } from 'react-intl';
 import type { EventHandler } from '../eventhandler';
 import { EditOrDeleteButton } from './workflowparametersButtons';
 import { WorkflowparameterField } from './workflowparametersField';
-import { useIntl } from 'react-intl';
 
 const commandBarStyles: Partial<IButtonStyles> = {
   label: {
