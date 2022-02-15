@@ -4,7 +4,7 @@ import { useDrop } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft-logic-apps/utils';
-import { addNode, setShouldZoomToNode, triggerLayout } from '../../core/state/workflowSlice';
+import { addNode } from '../../core/state/workflowSlice';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 
@@ -24,8 +24,6 @@ export const DropZone: React.FC<DropZoneProps> = ({ parent, child }) => {
         childId: child,
       })
     );
-    dispatch(triggerLayout());
-    dispatch(setShouldZoomToNode(newId));
   };
 
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
