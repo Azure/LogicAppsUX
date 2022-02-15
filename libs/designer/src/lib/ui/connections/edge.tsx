@@ -3,8 +3,6 @@ import React, { useMemo } from 'react';
 import { EdgeProps, getSmoothStepPath } from 'react-flow-renderer';
 import { curveBundle, line } from 'd3-shape';
 
-// const foreignObjectHeight = 30;
-// const foreignObjectWidth = 200;
 export interface LogicAppsEdgeProps {
   id: string;
   parent: string;
@@ -49,35 +47,5 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     }
   }, [data?.elkEdge?.sections, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
-  return (
-    <>
-      <path id={id} style={style} className="react-flow__edge-path" d={d} />
-      {/* {firstChild && (parentNode?.childrenNodes.length ?? 0) > 1 && (
-        <foreignObject
-          width={foreignObjectWidth}
-          height={foreignObjectHeight}
-          x={sourceX - foreignObjectWidth / 2}
-          y={sourceY + 20 - foreignObjectHeight / 2}
-          className="edgebutton-foreignobject"
-          requiredExtensions="http://www.w3.org/1999/xhtml"
-        >
-          <div style={{ padding: '4px' }}>
-            <DropZone parent={data?.parent ?? ''} />
-          </div>
-        </foreignObject>
-      )}
-      <foreignObject
-        width={foreignObjectWidth}
-        height={foreignObjectHeight}
-        x={parentNode?.childrenNodes.length === 1 ? edgeCenterX - foreignObjectWidth / 2 : targetX - foreignObjectWidth / 2}
-        y={parentNode?.childrenNodes.length === 1 ? edgeCenterY - foreignObjectHeight / 2 : targetY - 20 - foreignObjectHeight / 2}
-        className="edgebutton-foreignobject"
-        requiredExtensions="http://www.w3.org/1999/xhtml"
-      >
-        <div style={{ padding: '4px' }}>
-          <DropZone parent={data?.parent ?? ''} child={data?.child} />
-        </div> */}
-      {/* </foreignObject> */}
-    </>
-  );
+  return <path id={id} style={style} className="react-flow__edge-path" d={d} />;
 };

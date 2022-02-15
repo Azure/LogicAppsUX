@@ -1,4 +1,3 @@
-// // import { EdgeData, NodeData } from '../types';
 import ELK, { ElkNode, ElkPrimitiveEdge } from 'elkjs/lib/main';
 import { Edge, Node } from 'react-flow-renderer';
 import { useEffect, useState } from 'react';
