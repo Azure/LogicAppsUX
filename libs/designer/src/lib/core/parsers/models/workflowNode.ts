@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
+import { isObject } from '@microsoft-logic-apps/utils';
 
 export interface WorkflowGraph {
   id: string;
@@ -19,6 +19,6 @@ export interface WorkflowEdge {
   target: string;
 }
 
-export const isWorkflowNode = (node: unknown): node is WorkflowNode => {
+export const isWorkflowNode = (node: any): node is WorkflowNode => {
   return isObject(node) && typeof node.id === 'string' && typeof node.height === 'number' && typeof node.width === 'number';
 };
