@@ -24,6 +24,10 @@
     "postinstall": "tsc -p ./tools/executors/web/tsconfig.json",
     "vscode:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package"
   },
+  "engines": {
+    "node": "16",
+    "npm": "8"
+  },
   "private": true,
   "dependencies": {
     "@fluentui/azure-themes": "^8.1.63",
