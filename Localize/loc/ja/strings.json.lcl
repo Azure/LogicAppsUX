@@ -450,6 +450,9 @@
       <Item ItemId=";PP63jY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[more panels]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[その他のパネル]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
