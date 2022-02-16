@@ -2020,6 +2020,1090 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
 </div>
 `;
 
+exports[`lib/overview renders a shimmered run history details list when loading  1`] = `
+<div>
+  <div>
+    <div
+      style={
+        Object {
+          "position": "relative",
+        }
+      }
+    >
+      <div
+        data-automation-id="visibleContent"
+        style={
+          Object {
+            "position": "fixed",
+            "visibility": "hidden",
+          }
+        }
+      >
+        <div
+          className="ms-FocusZone css-112 ms-CommandBar root-109"
+          data-focuszone-id="FocusZone110"
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onMouseDownCapture={[Function]}
+          role="menubar"
+        >
+          <div
+            className="ms-OverflowSet ms-CommandBar-primaryCommand primarySet-113"
+            role="none"
+          >
+            <div
+              className="ms-OverflowSet-item item-114"
+              role="none"
+            >
+              <button
+                aria-label="Refresh"
+                className="ms-Button ms-Button--commandBar ms-CommandBarItem-link root-116"
+                data-is-focusable={true}
+                name="Refresh"
+                onClick={[Function]}
+                onKeyDown={[Function]}
+                onKeyPress={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseUp={[Function]}
+                role="menuitem"
+                type="button"
+              >
+                <span
+                  className="ms-Button-flexContainer flexContainer-117"
+                  data-automationid="splitbuttonprimary"
+                >
+                  <i
+                    aria-hidden={true}
+                    className="ms-Icon root-105 ms-Button-icon icon-119"
+                    data-icon-name="Refresh"
+                    style={
+                      Object {
+                        "fontFamily": undefined,
+                      }
+                    }
+                  />
+                  <span
+                    className="ms-Button-textContainer textContainer-118"
+                  >
+                    <span
+                      className="ms-Button-label label-120"
+                      id="id__111"
+                    >
+                      Refresh
+                    </span>
+                  </span>
+                </span>
+              </button>
+            </div>
+            <div
+              className="ms-OverflowSet-item item-114"
+              role="none"
+            >
+              <button
+                aria-label="Run trigger"
+                className="ms-Button ms-Button--commandBar ms-CommandBarItem-link root-116"
+                data-is-focusable={true}
+                name="Run trigger"
+                onClick={[Function]}
+                onKeyDown={[Function]}
+                onKeyPress={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseUp={[Function]}
+                role="menuitem"
+                type="button"
+              >
+                <span
+                  className="ms-Button-flexContainer flexContainer-117"
+                  data-automationid="splitbuttonprimary"
+                >
+                  <i
+                    aria-hidden={true}
+                    className="ms-Icon root-105 ms-Button-icon icon-119"
+                    data-icon-name="Play"
+                    style={
+                      Object {
+                        "fontFamily": undefined,
+                      }
+                    }
+                  />
+                  <span
+                    className="ms-Button-textContainer textContainer-118"
+                  >
+                    <span
+                      className="ms-Button-label label-120"
+                      id="id__114"
+                    >
+                      Run trigger
+                    </span>
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div
+      className="ms-FocusZone css-112 ms-Pivot root-124"
+      data-focuszone-id="FocusZone118"
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onMouseDownCapture={[Function]}
+      role="tablist"
+    >
+      <button
+        aria-selected={true}
+        className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-133"
+        data-content="Workflow Properties"
+        data-is-focusable={true}
+        id="Pivot117-Tab0"
+        name="Workflow Properties"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onKeyPress={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseUp={[Function]}
+        role="tab"
+        type="button"
+      >
+        <span
+          className="ms-Button-flexContainer flexContainer-134"
+          data-automationid="splitbuttonprimary"
+        >
+          <span
+            className="ms-Pivot-linkContent linkContent-130"
+          >
+            <span
+              className="ms-Pivot-text text-131"
+            >
+               
+              Workflow Properties
+            </span>
+          </span>
+        </span>
+      </button>
+    </div>
+    <div
+      aria-hidden={false}
+      aria-labelledby="Pivot117-Tab0"
+      className="itemContainer-125"
+      hidden={false}
+      role="tabpanel"
+    >
+      <div>
+        <div
+          className="msla-workflow-properties"
+        >
+          <label
+            className="ms-Label root-139"
+          >
+            <span
+              className="css-140"
+            >
+              Name:
+            </span>
+            <span
+              className="css-140"
+            >
+              workflowProperties.name
+            </span>
+          </label>
+          <label
+            className="ms-Label root-139"
+          >
+            <span
+              className="css-140"
+            >
+              State type:
+            </span>
+            <span
+              className="css-140"
+            >
+              workflowProperties.stateType
+            </span>
+          </label>
+          <label
+            className="ms-Label root-139"
+          >
+            <span
+              className="css-140"
+            >
+              Operation options:
+            </span>
+            <span
+              className="css-140"
+            >
+              workflowProperties.operationOptions
+            </span>
+          </label>
+          <label
+            className="ms-Label root-139"
+          >
+            <span
+              className="css-140"
+            >
+              Callback URL:
+            </span>
+            <div>
+              <a
+                className="ms-Link root-141"
+                href="workflowProperties.callbackInfo.value"
+                onClick={[Function]}
+                rel="noopener"
+                target="_blank"
+              >
+                workflowProperties.callbackInfo.value
+              </a>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div
+      className="ms-FocusZone css-112 ms-Pivot root-124"
+      data-focuszone-id="FocusZone123"
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onMouseDownCapture={[Function]}
+      role="tablist"
+    >
+      <button
+        aria-selected={true}
+        className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-133"
+        data-content="Run History"
+        data-is-focusable={true}
+        id="Pivot122-Tab0"
+        name="Run History"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onKeyPress={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseUp={[Function]}
+        role="tab"
+        type="button"
+      >
+        <span
+          className="ms-Button-flexContainer flexContainer-134"
+          data-automationid="splitbuttonprimary"
+        >
+          <span
+            className="ms-Pivot-linkContent linkContent-130"
+          >
+            <span
+              className="ms-Pivot-text text-131"
+            >
+               
+              Run History
+            </span>
+          </span>
+        </span>
+      </button>
+    </div>
+    <div
+      aria-hidden={false}
+      aria-labelledby="Pivot122-Tab0"
+      className="itemContainer-125"
+      hidden={false}
+      role="tabpanel"
+    >
+      <div>
+        <div
+          className="msla-run-history-filter"
+        >
+          <div
+            className="ms-TextField root-143"
+          >
+            <div
+              className="ms-TextField-wrapper"
+            >
+              <div
+                className="ms-TextField-fieldGroup fieldGroup-144"
+              >
+                <input
+                  aria-invalid={false}
+                  className="ms-TextField-field field-145"
+                  id="TextField127"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  onInput={[Function]}
+                  placeholder="Enter the run identifier to open the run"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            aria-disabled={true}
+            aria-label="Enter the run identifier to open the run"
+            className="ms-Button ms-Button--icon is-disabled root-154"
+            data-is-focusable={false}
+            disabled={true}
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            title="Enter the run identifier to open the run"
+            type="button"
+          >
+            <span
+              className="ms-Button-flexContainer flexContainer-117"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden={true}
+                className="ms-Icon root-105 ms-Button-icon icon-155"
+                data-icon-name="NavigateForward"
+                style={
+                  Object {
+                    "fontFamily": undefined,
+                  }
+                }
+              />
+            </span>
+          </button>
+        </div>
+        <div
+          className="ms-Viewport"
+          style={
+            Object {
+              "minHeight": 1,
+              "minWidth": 1,
+            }
+          }
+        >
+          <div
+            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-158"
+            data-automationid="DetailsList"
+            data-is-scrollable="false"
+          >
+            <div
+              aria-busy={true}
+              aria-colcount={5}
+              aria-readonly="true"
+              aria-rowcount={-1}
+              role="grid"
+            >
+              <div
+                className="ms-DetailsList-headerWrapper"
+                onKeyDown={[Function]}
+                role="presentation"
+              >
+                <div
+                  className="ms-FocusZone css-112 ms-DetailsHeader root-160"
+                  data-automationid="DetailsHeader"
+                  data-focuszone-id="FocusZone135"
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onMouseDownCapture={[Function]}
+                  onMouseMove={[Function]}
+                  role="row"
+                >
+                  <div
+                    aria-colindex={1}
+                    aria-labelledby="header134-identifier-name"
+                    aria-sort="none"
+                    className="ms-DetailsHeader-cell is-actionable root-176"
+                    data-automationid="ColumnsHeaderColumn"
+                    data-is-draggable={false}
+                    data-is-focusable="true"
+                    data-item-key="identifier"
+                    draggable={false}
+                    role="columnheader"
+                    style={
+                      Object {
+                        "width": 120,
+                      }
+                    }
+                  >
+                    <span
+                      className="cellTooltip-184"
+                    >
+                      <span
+                        className="ms-DetailsHeader-cellTitle cellTitle-182"
+                        id="header134-identifier"
+                        onClick={[Function]}
+                        onContextMenu={[Function]}
+                      >
+                        <span
+                          className="ms-DetailsHeader-cellName cellName-183"
+                          id="header134-identifier-name"
+                        >
+                          Identifier
+                        </span>
+                      </span>
+                    </span>
+                  </div>
+                  <div
+                    aria-hidden={true}
+                    className="ms-DetailsHeader-cellSizer cellSizer-167 cellSizerStart-168"
+                    data-is-focusable={false}
+                    data-sizer-index={0}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onDoubleClick={[Function]}
+                    role="button"
+                  />
+                  <div
+                    aria-colindex={2}
+                    aria-labelledby="header134-status-name"
+                    aria-sort="none"
+                    className="ms-DetailsHeader-cell is-actionable root-176"
+                    data-automationid="ColumnsHeaderColumn"
+                    data-is-draggable={false}
+                    data-is-focusable="true"
+                    data-item-key="status"
+                    draggable={false}
+                    role="columnheader"
+                    style={
+                      Object {
+                        "width": 120,
+                      }
+                    }
+                  >
+                    <span
+                      className="cellTooltip-184"
+                    >
+                      <span
+                        className="ms-DetailsHeader-cellTitle cellTitle-182"
+                        id="header134-status"
+                        onClick={[Function]}
+                        onContextMenu={[Function]}
+                      >
+                        <span
+                          className="ms-DetailsHeader-cellName cellName-183"
+                          id="header134-status-name"
+                        >
+                          Status
+                        </span>
+                      </span>
+                    </span>
+                  </div>
+                  <div
+                    aria-hidden={true}
+                    className="ms-DetailsHeader-cellSizer cellSizer-167 cellSizerStart-168"
+                    data-is-focusable={false}
+                    data-sizer-index={1}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onDoubleClick={[Function]}
+                    role="button"
+                  />
+                  <div
+                    aria-colindex={3}
+                    aria-labelledby="header134-startTime-name"
+                    aria-sort="none"
+                    className="ms-DetailsHeader-cell is-actionable root-176"
+                    data-automationid="ColumnsHeaderColumn"
+                    data-is-draggable={false}
+                    data-is-focusable="true"
+                    data-item-key="startTime"
+                    draggable={false}
+                    role="columnheader"
+                    style={
+                      Object {
+                        "width": 220,
+                      }
+                    }
+                  >
+                    <span
+                      className="cellTooltip-184"
+                    >
+                      <span
+                        className="ms-DetailsHeader-cellTitle cellTitle-182"
+                        id="header134-startTime"
+                        onClick={[Function]}
+                        onContextMenu={[Function]}
+                      >
+                        <span
+                          className="ms-DetailsHeader-cellName cellName-183"
+                          id="header134-startTime-name"
+                        >
+                          Start time
+                        </span>
+                      </span>
+                    </span>
+                  </div>
+                  <div
+                    aria-hidden={true}
+                    className="ms-DetailsHeader-cellSizer cellSizer-167 cellSizerStart-168"
+                    data-is-focusable={false}
+                    data-sizer-index={2}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onDoubleClick={[Function]}
+                    role="button"
+                  />
+                  <div
+                    aria-colindex={4}
+                    aria-labelledby="header134-duration-name"
+                    aria-sort="none"
+                    className="ms-DetailsHeader-cell is-actionable root-176"
+                    data-automationid="ColumnsHeaderColumn"
+                    data-is-draggable={false}
+                    data-is-focusable="true"
+                    data-item-key="duration"
+                    draggable={false}
+                    role="columnheader"
+                    style={
+                      Object {
+                        "width": 120,
+                      }
+                    }
+                  >
+                    <span
+                      className="cellTooltip-184"
+                    >
+                      <span
+                        className="ms-DetailsHeader-cellTitle cellTitle-182"
+                        id="header134-duration"
+                        onClick={[Function]}
+                        onContextMenu={[Function]}
+                      >
+                        <span
+                          className="ms-DetailsHeader-cellName cellName-183"
+                          id="header134-duration-name"
+                        >
+                          Duration
+                        </span>
+                      </span>
+                    </span>
+                  </div>
+                  <div
+                    aria-hidden={true}
+                    className="ms-DetailsHeader-cellSizer cellSizer-167 cellSizerStart-168"
+                    data-is-focusable={false}
+                    data-sizer-index={3}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onDoubleClick={[Function]}
+                    role="button"
+                  />
+                  <div
+                    aria-colindex={5}
+                    aria-labelledby="header134-contextMenu-name"
+                    aria-sort="none"
+                    className="ms-DetailsHeader-cell is-actionable is-empty root-189"
+                    data-automationid="ColumnsHeaderColumn"
+                    data-is-draggable={false}
+                    data-is-focusable="true"
+                    data-item-key="contextMenu"
+                    draggable={false}
+                    role="columnheader"
+                    style={
+                      Object {
+                        "width": 120,
+                      }
+                    }
+                  >
+                    <span
+                      className="cellTooltip-184"
+                    >
+                      <span
+                        className="ms-DetailsHeader-cellTitle cellTitle-182"
+                        id="header134-contextMenu"
+                        onClick={[Function]}
+                        onContextMenu={[Function]}
+                      >
+                        <span
+                          className="ms-DetailsHeader-cellName cellName-183"
+                          id="header134-contextMenu-name"
+                        >
+                          
+                        </span>
+                      </span>
+                    </span>
+                  </div>
+                  <div
+                    aria-hidden={true}
+                    className="ms-DetailsHeader-cellSizer cellSizer-167 cellSizerEnd-169"
+                    data-is-focusable={false}
+                    data-sizer-index={4}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onDoubleClick={[Function]}
+                    role="button"
+                  />
+                </div>
+              </div>
+              <div
+                className="ms-DetailsList-contentWrapper"
+                onKeyDown={[Function]}
+                role="presentation"
+              >
+                <div
+                  className="ms-SelectionZone"
+                  onClick={[Function]}
+                  onContextMenu={[Function]}
+                  onDoubleClick={[Function]}
+                  onFocusCapture={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyDownCapture={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseDownCapture={[Function]}
+                  role="presentation"
+                >
+                  <div
+                    className="ms-FocusZone css-112 focusZone-159"
+                    data-focuszone-id="FocusZone136"
+                    onBlur={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    onMouseDownCapture={[Function]}
+                  >
+                    <div
+                      className="ms-List root-157"
+                      role="presentation"
+                    >
+                      <div
+                        className="ms-List-surface"
+                        role="presentation"
+                      >
+                        <div
+                          className="ms-List-page"
+                          role="presentation"
+                          style={Object {}}
+                        >
+                          <div
+                            className="ms-List-cell"
+                            data-automationid="ListCell"
+                            data-list-index={0}
+                            role="presentation"
+                          >
+                            <div
+                              className="ms-Shimmer-container root-206"
+                            >
+                              <div
+                                className="ms-Shimmer-shimmerWrapper shimmerWrapper-207"
+                                style={
+                                  Object {
+                                    "width": "100%",
+                                  }
+                                }
+                              >
+                                <div
+                                  className="ms-Shimmer-shimmerGradient shimmerGradient-208"
+                                />
+                                <div
+                                  style={
+                                    Object {
+                                      "display": "flex",
+                                    }
+                                  }
+                                >
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "220px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "190px",
+                                          "width": 190,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "18px",
+                                          "width": 18,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "100%",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "auto",
+                                          "width": "100%",
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/overview renders an error message 1`] = `
 <div>
   <div>

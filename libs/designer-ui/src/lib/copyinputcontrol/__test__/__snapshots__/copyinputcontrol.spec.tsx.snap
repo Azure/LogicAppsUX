@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ui/copyinputcontrol should construct the copyinputcontrol correctly 1`] = `
+exports[`lib/copyinputcontrol should construct the copyinputcontrol correctly 1`] = `
 <div
   className="msla-copy-input-control"
 >
@@ -72,7 +72,7 @@ exports[`ui/copyinputcontrol should construct the copyinputcontrol correctly 1`]
 </div>
 `;
 
-exports[`ui/copyinputcontrol should set the aria-labelledby attribute 1`] = `
+exports[`lib/copyinputcontrol should set the aria-labelledby attribute 1`] = `
 <div
   className="msla-copy-input-control"
 >

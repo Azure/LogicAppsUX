@@ -1,9 +1,16 @@
+import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import { CardFooter, CardFooterProps } from '../cardfooter';
 import { CommentBoxProps } from '../types';
 
-describe('lib/card/errorbanner', () => {
+describe('lib/card/cardfooter', () => {
   let minimal: CardFooterProps;
+
+  beforeAll(() => {
+    setIconOptions({
+      disableWarnings: true,
+    });
+  });
 
   beforeEach(() => {
     minimal = {};

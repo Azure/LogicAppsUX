@@ -37,8 +37,8 @@ describe('lib/label', () => {
 
   describe('tooltip', () => {
     it('should set the "title" attribute if tooltip is set', () => {
-      const tree = renderer.create(<Label isRequiredField text="label text" title="title" />).toJSON();
-      const text = 'label text';
+      const tree = renderer.create(<Label isRequiredField text="label text" tooltip="title" />).toJSON();
+      expect(tree).toMatchSnapshot();
     });
   });
 });

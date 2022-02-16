@@ -1,8 +1,15 @@
+import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import { CopyInputControl, CopyInputControlProps } from '..';
 
-describe('ui/copyinputcontrol', () => {
+describe('lib/copyinputcontrol', () => {
   let minimal: CopyInputControlProps;
+
+  beforeAll(() => {
+    setIconOptions({
+      disableWarnings: true,
+    });
+  });
 
   beforeEach(() => {
     minimal = {
