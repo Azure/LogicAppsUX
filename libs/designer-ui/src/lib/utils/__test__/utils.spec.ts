@@ -1,5 +1,5 @@
 import Constants from '../../constants';
-import { getDurationString, getDurationStringPanelMode, getStatusString } from '../utils';
+import { getDurationString, getDurationStringPanelMode, getStatusString } from '../index';
 
 describe('ui/utils/utils', () => {
   describe('getDurationString', () => {
