@@ -1,4 +1,4 @@
-import { css, ISpinnerStyles, MessageBarType, useTheme } from '@fluentui/react';
+import { css, ISpinnerStyles, MessageBarType } from '@fluentui/react';
 import { equals } from '@microsoft-logic-apps/utils';
 import { useState } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
@@ -33,10 +33,6 @@ export interface CardProps {
   onClick?(): void;
 }
 
-const gripperDark = '#9E9E9A';
-
-const gripperLight = '#605E5C';
-
 export const CARD_LOADING_SPINNER_STYLE: ISpinnerStyles = {
   root: {
     margin: '6px 6px 0 0',
@@ -63,7 +59,6 @@ export const Card: React.FC<CardProps> = ({
   title,
   onClick,
 }) => {
-  const { isInverted } = useTheme();
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [contextMenuLocation, setContextMenuLocation] = useState({
     x: 0,
@@ -129,9 +124,7 @@ export const Card: React.FC<CardProps> = ({
         <div className="panel-card-main">
           <div className="panel-card-header">
             <div className="panel-card-content-container">
-              <div className="panel-card-content-gripper-section">
-                {draggable ? <Gripper fill={isInverted ? gripperDark : gripperLight} /> : null}
-              </div>
+              <div className="panel-card-content-gripper-section">{draggable ? <Gripper /> : null}</div>
               {icon ? (
                 <div className="panel-card-content-icon-section">
                   <img className="panel-card-icon" src={icon} alt="" />
