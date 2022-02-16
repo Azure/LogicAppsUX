@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`lib/card/errorbanner should render 1`] = `
+exports[`lib/card/cardfooter should render 1`] = `
 <div
   className="msla-card-v2-footer"
 >
@@ -10,7 +10,7 @@ exports[`lib/card/errorbanner should render 1`] = `
 </div>
 `;
 
-exports[`lib/card/errorbanner should render with a comment icon 1`] = `
+exports[`lib/card/cardfooter should render with a comment icon 1`] = `
 <div
   className="msla-card-v2-footer"
 >
@@ -38,7 +38,7 @@ exports[`lib/card/errorbanner should render with a comment icon 1`] = `
 </div>
 `;
 
-exports[`lib/card/errorbanner should render with a connection icon 1`] = `
+exports[`lib/card/cardfooter should render with a connection icon 1`] = `
 <div
   className="msla-card-v2-footer"
 >
@@ -66,7 +66,7 @@ exports[`lib/card/errorbanner should render with a connection icon 1`] = `
 </div>
 `;
 
-exports[`lib/card/errorbanner should render with a testing icon 1`] = `
+exports[`lib/card/cardfooter should render with a testing icon 1`] = `
 <div
   className="msla-card-v2-footer"
 >
@@ -94,7 +94,7 @@ exports[`lib/card/errorbanner should render with a testing icon 1`] = `
 </div>
 `;
 
-exports[`lib/card/errorbanner should render with an inactive connection icon 1`] = `
+exports[`lib/card/cardfooter should render with an inactive connection icon 1`] = `
 <div
   className="msla-card-v2-footer"
 >

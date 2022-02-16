@@ -52,3 +52,18 @@ exports[`lib/label should construct 1`] = `
   label
 </label>
 `;
+
+exports[`lib/label tooltip should set the "title" attribute if tooltip is set 1`] = `
+<label
+  className="msla-label"
+  title="title"
+>
+  <span
+    aria-label="Required"
+    className="msla-label-required-parameter"
+  >
+    *
+  </span>
+  label text
+</label>
+`;
