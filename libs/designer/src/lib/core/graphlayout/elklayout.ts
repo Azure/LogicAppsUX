@@ -1,8 +1,9 @@
-import ELK, { ElkNode, ElkPrimitiveEdge } from 'elkjs/lib/main';
+import ELK, { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import { Edge, Node } from 'react-flow-renderer';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { isWorkflowNode, WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
 
 const defaultLayoutOptions: Record<string, string> = {
   'elk.algorithm': 'org.eclipse.elk.layered',
@@ -32,11 +33,11 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
   const edges: Edge[] = [];
 
   const processChildren = (node: ElkNode, parent?: string) => {
-    for (const edge of node.edges as ElkPrimitiveEdge[]) {
+    for (const edge of node.edges as ElkExtendedEdge[]) {
       edges.push({
         id: edge.id,
-        target: edge.target,
-        source: edge.source,
+        target: edge.targets[0],
+        source: edge.sources[0],
         type: 'buttonedge',
         data: {
           elkEdge: edge,
@@ -74,6 +75,28 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
   return [nodes, edges];
 };
 
+export const convertWorkflowGraphToElkGraph = (node: WorkflowGraph | WorkflowNode): ElkNode => {
+  if (isWorkflowNode(node)) {
+    return {
+      ...node,
+      children: node.children && node.children.map(convertWorkflowGraphToElkGraph),
+    };
+  }
+  return {
+    ...node,
+    children: node.children && node.children.map(convertWorkflowGraphToElkGraph),
+    edges:
+      node.edges &&
+      node.edges.map((edge) => ({
+        ...edge,
+        targets: [edge.target],
+        sources: [edge.source],
+        target: undefined,
+        source: undefined,
+      })),
+  };
+};
+
 export const useLayout = (): [Node[], Edge[]] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<Node[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
@@ -84,15 +107,15 @@ export const useLayout = (): [Node[], Edge[]] => {
       return;
     }
 
-    const elkGraph: ElkNode = workflowGraph;
+    const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
     elkLayout(elkGraph)
       .then((g) => {
         const [n, e] = convertElkGraphToReactFlow(g);
         setReactFlowNodes(n);
         setReactFlowEdges(e);
       })
-      .catch(() => {
-        console.log('ELK through an error');
+      .catch((err) => {
+        console.error(err);
         //TODO: Appropriately log this when we have analytics
       });
   }, [workflowGraph]);
