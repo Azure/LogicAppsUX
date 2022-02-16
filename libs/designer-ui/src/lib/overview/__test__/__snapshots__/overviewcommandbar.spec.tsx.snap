@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`lib/overview/overviewcommandbar renders 1`] = `
-<div>
+<div
+  className="msla-overview-command-bar"
+>
   <div
     style={
       Object {
@@ -83,7 +85,9 @@ exports[`lib/overview/overviewcommandbar renders 1`] = `
 `;
 
 exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
-<div>
+<div
+  className="msla-overview-command-bar"
+>
   <div
     style={
       Object {

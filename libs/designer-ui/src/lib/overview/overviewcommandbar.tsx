@@ -45,5 +45,5 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ callback
     });
   }
 
-  return <CommandBar items={items} />;
+  return <CommandBar className="msla-overview-command-bar" items={items} />;
 };
