@@ -1,7 +1,14 @@
+import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import { Checkbox } from '../index';
 
 describe('lib/checkbox', () => {
+  beforeAll(() => {
+    setIconOptions({
+      disableWarnings: true,
+    });
+  });
+
   it('should render', () => {
     const tree = renderer.create(<Checkbox />).toJSON();
     expect(tree).toMatchSnapshot();

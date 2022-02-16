@@ -54,5 +54,6 @@ describe('lib/overview', () => {
 
   it('renders a shimmered run history details list when loading ', () => {
     const tree = renderer.create(<Overview {...minimal} loading />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 });
