@@ -44,5 +44,5 @@ export * from './pager';
 // export * from './textbox';
 export * from './tip';
 // export * from './tokenpicker';
-// export * from './utils';
+export * from './utils';
 // export * from './workflowparameters';

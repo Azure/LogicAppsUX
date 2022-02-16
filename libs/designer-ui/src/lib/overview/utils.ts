@@ -1,5 +1,5 @@
 import { isObject } from '@microsoft-logic-apps/utils';
-import { getDurationString } from '../utils/utils';
+import { getDurationString } from '../utils';
 import { CallbackInfo, isCallbackInfoWithRelativePath, Run, RunDisplayItem, RunError } from './types';
 
 export function getCallbackUrl(callbackInfo: CallbackInfo | undefined): string | undefined {
