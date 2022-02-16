@@ -11,7 +11,7 @@
         "main": "apps/vs-code-designer/src/main.ts",
         "tsConfig": "apps/vs-code-designer/tsconfig.app.json",
         "assets": ["apps/vs-code-designer/src/assets", "apps/vs-code-designer/src/package.json"],
-        "webpackConfig": "apps/vs-code-designer/webpackConfig.js"
+        "externalDependencies": ["vscode", "commonjs"]
       },
       "configurations": {
         "production": {
