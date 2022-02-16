@@ -6,8 +6,7 @@ import { from, Observable, of } from 'rxjs';
 import { catchError, concatMap, last, scan, tap } from 'rxjs/operators';
 import { eachValueFrom } from 'rxjs-for-await';
 import autoprefixer from 'autoprefixer';
-
-import type { ExecutorContext, ProjectGraphNode } from '@nrwl/devkit';
+import type { ExecutorContext, ProjectGraphExternalNode, ProjectGraphProjectNode } from '@nrwl/devkit';
 import { logger, names, readJsonFile, writeJsonFile } from '@nrwl/devkit';
 import { readCachedProjectGraph } from '@nrwl/workspace/src/core/project-graph';
 import {
@@ -275,7 +274,7 @@ function createCompilerOptions(format, options, dependencies) {
 function updatePackageJson(
   options: NormalizedWebRollupOptions,
   context: ExecutorContext,
-  target: ProjectGraphNode,
+  target: ProjectGraphProjectNode,
   dependencies: DependentBuildableProjectNode[],
   packageJson: any
 ) {
