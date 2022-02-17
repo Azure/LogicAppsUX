@@ -9,6 +9,7 @@
     "services-resolution-service": "libs/services/resolution-service",
     "utils": "libs/utils",
     "vs-code-designer": "apps/vs-code-designer",
-    "vs-code-designer-react": "apps/vs-code-designer-react"
+    "vs-code-designer-react": "apps/vs-code-designer-react",
+    "vs-code-overview-react": "apps/vs-code-overview-react"
   }
 }

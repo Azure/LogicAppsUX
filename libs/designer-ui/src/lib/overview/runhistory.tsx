@@ -148,7 +148,6 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
     <ShimmeredDetailsList
       columns={columns}
       compact
-      data-testid="msla-run-history-list"
       enableShimmer={loading}
       items={items}
       layoutMode={DetailsListLayoutMode.justified}
