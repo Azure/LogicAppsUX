@@ -112,7 +112,7 @@ export const Overview: React.FC<OverviewProps> = ({
         <PivotItem headerText={Resources.RUN_HISTORY}>
           <div className="msla-run-history-filter">
             <TextField
-              className="msla-run-history-filter-input"
+              data-testid="msla-run-history-filter-input"
               deferredValidationTime={1000}
               placeholder={Resources.WORKFLOW_OVERVIEW_FILTER_TEXT}
               styles={filterTextFieldStyles}
@@ -122,7 +122,7 @@ export const Overview: React.FC<OverviewProps> = ({
             />
             <IconButton
               aria-label={Resources.WORKFLOW_OVERVIEW_FILTER_TEXT}
-              className="msla-run-history-filter-button"
+              data-testid="msla-run-history-filter-button"
               disabled={navigateDisabled}
               iconProps={navigateForwardIconProps}
               title={Resources.WORKFLOW_OVERVIEW_FILTER_TEXT}
@@ -131,19 +131,19 @@ export const Overview: React.FC<OverviewProps> = ({
           </div>
           <RunHistory items={runItems} loading={loading} onOpenRun={onOpenRun} />
           {errorMessage ? (
-            <MessageBar className="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>
+            <MessageBar data-testid="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>
               {errorMessage}
             </MessageBar>
           ) : null}
           {hasMoreRuns ? (
-            <button className="msla-button msla-overview-load-more" onClick={onLoadMoreRuns}>
+            <button className="msla-button msla-overview-load-more" data-testid="msla-overview-load-more" onClick={onLoadMoreRuns}>
               {Resources.LOAD_MORE}
             </button>
           ) : null}
         </PivotItem>
       </Pivot>
       {corsNotice ? (
-        <MessageBar className="msla-overview-cors-notice" messageBarType={MessageBarType.info}>
+        <MessageBar data-testid="msla-overview-cors-notice" messageBarType={MessageBarType.info}>
           {corsNotice}
         </MessageBar>
       ) : null}

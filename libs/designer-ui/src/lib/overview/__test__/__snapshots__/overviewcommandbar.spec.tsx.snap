@@ -2,7 +2,7 @@
 
 exports[`lib/overview/overviewcommandbar renders 1`] = `
 <div
-  className="msla-overview-command-bar"
+  data-testid="msla-overview-command-bar"
 >
   <div
     style={
@@ -86,7 +86,7 @@ exports[`lib/overview/overviewcommandbar renders 1`] = `
 
 exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
 <div
-  className="msla-overview-command-bar"
+  data-testid="msla-overview-command-bar"
 >
   <div
     style={

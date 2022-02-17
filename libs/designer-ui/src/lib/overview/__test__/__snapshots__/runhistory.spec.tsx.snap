@@ -11,7 +11,7 @@ exports[`lib/overview/runhistory renders 1`] = `
   }
 >
   <div
-    className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained msla-run-history-list root-110"
+    className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-110"
     data-automationid="DetailsList"
     data-is-scrollable="false"
   >
@@ -316,7 +316,7 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
   }
 >
   <div
-    className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained msla-run-history-list root-110"
+    className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-110"
     data-automationid="DetailsList"
     data-is-scrollable="false"
   >
@@ -2699,7 +2699,7 @@ exports[`lib/overview/runhistory renders with items 1`] = `
   }
 >
   <div
-    className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained msla-run-history-list root-110"
+    className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-110"
     data-automationid="DetailsList"
     data-is-scrollable="false"
   >
