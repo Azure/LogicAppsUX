@@ -38,7 +38,6 @@
     "@reduxjs/toolkit": "1.6.2",
     "core-js": "^3.21.1",
     "d3-shape": "^3.1.0",
-    "dagre": "^0.8.5",
     "elkjs": "0.7.3-dev",
     "github-markdown-css": "^5.1.0",
     "immer": "^9.0.6",
@@ -54,12 +53,10 @@
     "react-query": "^3.34.15",
     "react-redux": "7.2.5",
     "react-remark": "^2.1.0",
-    "react-syntax-highlighter": "^15.4.4",
     "react-use": "^17.3.1",
     "regenerator-runtime": "^0.13.9",
     "to-title-case": "^1.0.0",
-    "tslib": "^2.0.0",
-    "web-worker": "^1.2.0"
+    "tslib": "^2.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
@@ -90,7 +87,6 @@
     "@testing-library/react": "^12.1.3",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/d3-shape": "^3.0.2",
-    "@types/dagre": "^0.7.47",
     "@types/jest": "^27.4.0",
     "@types/node": "^16.11.25",
     "@types/react": "^17.0.39",
