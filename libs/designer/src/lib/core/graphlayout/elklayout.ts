@@ -19,7 +19,7 @@ const defaultLayoutOptions: Record<string, string> = {
   'spacing.nodeNodeBetweenLayers': '70',
 };
 
-export const elkLayout = async (workflowGraph: ElkNode) => {
+const elkLayout = async (workflowGraph: ElkNode) => {
   const graph = new ELK();
 
   const layout = await graph.layout(JSON.parse(JSON.stringify(workflowGraph)), {
@@ -75,7 +75,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
   return [nodes, edges];
 };
 
-export const convertWorkflowGraphToElkGraph = (node: WorkflowGraph | WorkflowNode): ElkNode => {
+const convertWorkflowGraphToElkGraph = (node: WorkflowGraph | WorkflowNode): ElkNode => {
   if (isWorkflowNode(node)) {
     return {
       ...node,
@@ -121,4 +121,10 @@ export const useLayout = (): [Node[], Edge[]] => {
   }, [workflowGraph]);
 
   return [reactFlowNodes, reactFlowEdges];
+};
+
+export const exportForTesting = {
+  convertElkGraphToReactFlow,
+  convertWorkflowGraphToElkGraph,
+  elkLayout,
 };
