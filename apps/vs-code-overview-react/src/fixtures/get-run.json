@@ -15,11 +15,11 @@
     "trigger": {
       "name": "manual",
       "inputsLink": {
-        "uri": "https://13065281-standard.azurewebsites.net:443/runtime/webhooks/workflow/scaleUnits/prod-00/workflows/238448cd7d4d4b6ba0077d1d1351c92c/runs/08585565587643197854783809524CU00/contents/TriggerInputs?api-version=2018-11-01&code=WungGWNiEkhZez%2fSDtQgPOi9r1w4n8xml8MteJb1TWdNrjvz2o571Q%3d%3d&se=2022-02-17T01%3A00%3A00.0000000Z&sp=%2Fruns%2F08585565587643197854783809524CU00%2Fcontents%2FTriggerInputs%2Fread&sv=1.0&sig=NfDPf5uD0WjqWVw1Uvw1cnTTgoQ_07bGii2gdDZ-xT0",
+        "uri": "[REDACTED]",
         "contentSize": 2
       },
       "outputsLink": {
-        "uri": "https://13065281-standard.azurewebsites.net:443/runtime/webhooks/workflow/scaleUnits/prod-00/workflows/238448cd7d4d4b6ba0077d1d1351c92c/runs/08585565587643197854783809524CU00/contents/TriggerOutputs?api-version=2018-11-01&code=WungGWNiEkhZez%2fSDtQgPOi9r1w4n8xml8MteJb1TWdNrjvz2o571Q%3d%3d&se=2022-02-17T01%3A00%3A00.0000000Z&sp=%2Fruns%2F08585565587643197854783809524CU00%2Fcontents%2FTriggerOutputs%2Fread&sv=1.0&sig=BFWGTBWI9WoNy4fNqmSD_-e-Bun2woPPZog8a1IMOdo",
+        "uri": "[REDACTED]",
         "contentSize": 1541
       },
       "startTime": "2022-02-16T21:48:41.168964Z",
@@ -34,7 +34,7 @@
     "response": {
       "name": "Response",
       "outputsLink": {
-        "uri": "https://13065281-standard.azurewebsites.net:443/runtime/webhooks/workflow/scaleUnits/prod-00/workflows/238448cd7d4d4b6ba0077d1d1351c92c/runs/08585565587643197854783809524CU00/contents/ResponseOutputs?api-version=2018-11-01&code=WungGWNiEkhZez%2fSDtQgPOi9r1w4n8xml8MteJb1TWdNrjvz2o571Q%3d%3d&se=2022-02-17T01%3A00%3A00.0000000Z&sp=%2Fruns%2F08585565587643197854783809524CU00%2Fcontents%2FResponseOutputs%2Fread&sv=1.0&sig=mHYsp7cTzzFfPsjUd0mFkHWSp25abJV9vW6helUwLKg",
+        "uri": "[REDACTED]",
         "contentSize": 1560
       },
       "startTime": "2022-02-16T21:48:41.2804295Z",

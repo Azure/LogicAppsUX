@@ -51,14 +51,12 @@ class MockRunService extends RunService {
 }
 
 const callbackInfo: CallbackInfo = {
-  value:
-    'https://13065281-standard.azurewebsites.net:443/api/run/triggers/manual/invoke?api-version=2020-05-01-preview&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=oJOcuEO2R0ki0UA02ltRt-7Hjb6zc_GfWg4KNJKH37k',
+  value: '[REDACTED]',
 };
 
 const service = new MockRunService({
   apiVersion: '2018-11-01',
-  baseUrl:
-    'https://management.azure.com/subscriptions/f42cebc2-7290-432b-87ba-46487684bdb0/resourceGroups/joechung-eastus/providers/Microsoft.Web/sites/13065281-standard/hostruntime/runtime/webhooks/workflow/api/management',
+  baseUrl: '[REDACTED]',
   getAccessToken: async () => 'Bearer [REDACTED]',
 });
 
