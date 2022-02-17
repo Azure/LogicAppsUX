@@ -6,7 +6,7 @@ import ReactFlow, { NodeChange, ReactFlowProvider } from 'react-flow-renderer';
 import { CustomEdge } from './connections/edge';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { useLayout } from '../core/graphlayout/elklayout';
+import { useLayout } from '../core/graphlayout';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateNodeSizes } from '../core/state/workflowSlice';
