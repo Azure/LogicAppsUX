@@ -1,0 +1,70 @@
+{
+  "root": "apps/vs-code-overview-react",
+  "sourceRoot": "apps/vs-code-overview-react/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/vs-code-overview/webview",
+        "index": "apps/vs-code-overview-react/src/index.html",
+        "baseHref": "/",
+        "main": "apps/vs-code-overview-react/src/main.tsx",
+        "polyfills": "apps/vs-code-overview-react/src/polyfills.ts",
+        "tsConfig": "apps/vs-code-overview-react/tsconfig.app.json",
+        "assets": ["apps/vs-code-overview-react/src/favicon.ico", "apps/vs-code-overview-react/src/assets"],
+        "styles": ["apps/vs-code-overview-react/src/styles.less"],
+        "scripts": [],
+        "webpackConfig": "@nrwl/react/plugins/webpack"
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/vs-code-overview-react/src/environments/environment.ts",
+              "with": "apps/vs-code-overview-react/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "vs-code-overview-react:build",
+        "hmr": true
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "vs-code-overview-react:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/vs-code-overview-react/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/vs-code-overview-react"],
+      "options": {
+        "jestConfig": "apps/vs-code-overview-react/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
