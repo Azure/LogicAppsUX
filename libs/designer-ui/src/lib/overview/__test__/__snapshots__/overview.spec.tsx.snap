@@ -2,7 +2,9 @@
 
 exports[`lib/overview renders 1`] = `
 <div>
-  <div>
+  <div
+    data-testid="msla-overview-command-bar"
+  >
     <div
       style={
         Object {
@@ -310,6 +312,7 @@ exports[`lib/overview renders 1`] = `
                 <input
                   aria-invalid={false}
                   className="ms-TextField-field field-145"
+                  data-testid="msla-run-history-filter-input"
                   id="TextField17"
                   onBlur={[Function]}
                   onChange={[Function]}
@@ -327,6 +330,7 @@ exports[`lib/overview renders 1`] = `
             aria-label="Enter the run identifier to open the run"
             className="ms-Button ms-Button--icon is-disabled root-154"
             data-is-focusable={false}
+            data-testid="msla-run-history-filter-button"
             disabled={true}
             onClick={[Function]}
             onKeyDown={[Function]}
@@ -493,7 +497,7 @@ exports[`lib/overview renders 1`] = `
                     role="columnheader"
                     style={
                       Object {
-                        "width": 220,
+                        "width": 180,
                       }
                     }
                   >
@@ -664,7 +668,9 @@ exports[`lib/overview renders 1`] = `
 
 exports[`lib/overview renders a CORS notice 1`] = `
 <div>
-  <div>
+  <div
+    data-testid="msla-overview-command-bar"
+  >
     <div
       style={
         Object {
@@ -972,6 +978,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                 <input
                   aria-invalid={false}
                   className="ms-TextField-field field-145"
+                  data-testid="msla-run-history-filter-input"
                   id="TextField44"
                   onBlur={[Function]}
                   onChange={[Function]}
@@ -989,6 +996,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
             aria-label="Enter the run identifier to open the run"
             className="ms-Button ms-Button--icon is-disabled root-154"
             data-is-focusable={false}
+            data-testid="msla-run-history-filter-button"
             disabled={true}
             onClick={[Function]}
             onKeyDown={[Function]}
@@ -1155,7 +1163,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                     role="columnheader"
                     style={
                       Object {
-                        "width": 220,
+                        "width": 180,
                       }
                     }
                   >
@@ -1345,6 +1353,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
       >
         <span
           className="ms-MessageBar-innerText innerText-195"
+          data-testid="msla-overview-cors-notice"
         />
       </div>
     </div>
@@ -1354,7 +1363,9 @@ exports[`lib/overview renders a CORS notice 1`] = `
 
 exports[`lib/overview renders a load more button when there are more runs 1`] = `
 <div>
-  <div>
+  <div
+    data-testid="msla-overview-command-bar"
+  >
     <div
       style={
         Object {
@@ -1662,6 +1673,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                 <input
                   aria-invalid={false}
                   className="ms-TextField-field field-145"
+                  data-testid="msla-run-history-filter-input"
                   id="TextField100"
                   onBlur={[Function]}
                   onChange={[Function]}
@@ -1679,6 +1691,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
             aria-label="Enter the run identifier to open the run"
             className="ms-Button ms-Button--icon is-disabled root-154"
             data-is-focusable={false}
+            data-testid="msla-run-history-filter-button"
             disabled={true}
             onClick={[Function]}
             onKeyDown={[Function]}
@@ -1845,7 +1858,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                     role="columnheader"
                     style={
                       Object {
-                        "width": 220,
+                        "width": 180,
                       }
                     }
                   >
@@ -2010,6 +2023,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
         </div>
         <button
           className="msla-button msla-overview-load-more"
+          data-testid="msla-overview-load-more"
           onClick={[MockFunction]}
         >
           Load more
@@ -2022,7 +2036,9 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
 
 exports[`lib/overview renders a shimmered run history details list when loading  1`] = `
 <div>
-  <div>
+  <div
+    data-testid="msla-overview-command-bar"
+  >
     <div
       style={
         Object {
@@ -2330,6 +2346,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                 <input
                   aria-invalid={false}
                   className="ms-TextField-field field-145"
+                  data-testid="msla-run-history-filter-input"
                   id="TextField127"
                   onBlur={[Function]}
                   onChange={[Function]}
@@ -2347,6 +2364,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
             aria-label="Enter the run identifier to open the run"
             className="ms-Button ms-Button--icon is-disabled root-154"
             data-is-focusable={false}
+            data-testid="msla-run-history-filter-button"
             disabled={true}
             onClick={[Function]}
             onKeyDown={[Function]}
@@ -2513,7 +2531,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                     role="columnheader"
                     style={
                       Object {
-                        "width": 220,
+                        "width": 180,
                       }
                     }
                   >
@@ -2852,7 +2870,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                                     className="ms-ShimmerElementsGroup-root root-210"
                                     style={
                                       Object {
-                                        "width": "220px",
+                                        "width": "180px",
                                       }
                                     }
                                   >
@@ -2869,8 +2887,8 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                                       className="ms-ShimmerLine-root root-212"
                                       style={
                                         Object {
-                                          "minWidth": "190px",
-                                          "width": 190,
+                                          "minWidth": "152px",
+                                          "width": 152,
                                         }
                                       }
                                     >
@@ -2915,8 +2933,1664 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                                       className="ms-ShimmerGap-root root-211"
                                       style={
                                         Object {
-                                          "minWidth": "18px",
-                                          "width": 18,
+                                          "minWidth": "16px",
+                                          "width": 16,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "100%",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "auto",
+                                          "width": "100%",
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            className="ms-List-cell"
+                            data-automationid="ListCell"
+                            data-list-index={1}
+                            role="presentation"
+                          >
+                            <div
+                              className="ms-Shimmer-container root-206"
+                            >
+                              <div
+                                className="ms-Shimmer-shimmerWrapper shimmerWrapper-207"
+                                style={
+                                  Object {
+                                    "width": "100%",
+                                  }
+                                }
+                              >
+                                <div
+                                  className="ms-Shimmer-shimmerGradient shimmerGradient-208"
+                                />
+                                <div
+                                  style={
+                                    Object {
+                                      "display": "flex",
+                                    }
+                                  }
+                                >
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "180px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "152px",
+                                          "width": 152,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "16px",
+                                          "width": 16,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "100%",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "auto",
+                                          "width": "100%",
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            className="ms-List-cell"
+                            data-automationid="ListCell"
+                            data-list-index={2}
+                            role="presentation"
+                          >
+                            <div
+                              className="ms-Shimmer-container root-206"
+                            >
+                              <div
+                                className="ms-Shimmer-shimmerWrapper shimmerWrapper-207"
+                                style={
+                                  Object {
+                                    "width": "100%",
+                                  }
+                                }
+                              >
+                                <div
+                                  className="ms-Shimmer-shimmerGradient shimmerGradient-208"
+                                />
+                                <div
+                                  style={
+                                    Object {
+                                      "display": "flex",
+                                    }
+                                  }
+                                >
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "180px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "152px",
+                                          "width": 152,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "16px",
+                                          "width": 16,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "100%",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "auto",
+                                          "width": "100%",
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            className="ms-List-cell"
+                            data-automationid="ListCell"
+                            data-list-index={3}
+                            role="presentation"
+                          >
+                            <div
+                              className="ms-Shimmer-container root-206"
+                            >
+                              <div
+                                className="ms-Shimmer-shimmerWrapper shimmerWrapper-207"
+                                style={
+                                  Object {
+                                    "width": "100%",
+                                  }
+                                }
+                              >
+                                <div
+                                  className="ms-Shimmer-shimmerGradient shimmerGradient-208"
+                                />
+                                <div
+                                  style={
+                                    Object {
+                                      "display": "flex",
+                                    }
+                                  }
+                                >
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "180px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "152px",
+                                          "width": 152,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "16px",
+                                          "width": 16,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "100%",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "auto",
+                                          "width": "100%",
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            className="ms-List-cell"
+                            data-automationid="ListCell"
+                            data-list-index={4}
+                            role="presentation"
+                          >
+                            <div
+                              className="ms-Shimmer-container root-206"
+                            >
+                              <div
+                                className="ms-Shimmer-shimmerWrapper shimmerWrapper-207"
+                                style={
+                                  Object {
+                                    "width": "100%",
+                                  }
+                                }
+                              >
+                                <div
+                                  className="ms-Shimmer-shimmerGradient shimmerGradient-208"
+                                />
+                                <div
+                                  style={
+                                    Object {
+                                      "display": "flex",
+                                    }
+                                  }
+                                >
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "120px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "95px",
+                                          "width": 95,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "13px",
+                                          "width": 13,
+                                        }
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-ShimmerElementsGroup-root root-210"
+                                    style={
+                                      Object {
+                                        "width": "180px",
+                                      }
+                                    }
+                                  >
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "12px",
+                                          "width": 12,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      className="ms-ShimmerLine-root root-212"
+                                      style={
+                                        Object {
+                                          "minWidth": "152px",
+                                          "width": 152,
+                                        }
+                                      }
+                                    >
+                                      <svg
+                                        className="ms-ShimmerLine-topLeftCorner topLeftCorner-213"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 2 A 2 2, 0, 0, 1, 2 0 L 0 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-topRightCorner topRightCorner-214"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M0 0 A 2 2, 0, 0, 1, 2 2 L 2 0 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomRightCorner bottomRightCorner-215"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 0 A 2 2, 0, 0, 1, 0 2 L 2 2 Z"
+                                        />
+                                      </svg>
+                                      <svg
+                                        className="ms-ShimmerLine-bottomLeftCorner bottomLeftCorner-216"
+                                        height="2"
+                                        width="2"
+                                      >
+                                        <path
+                                          d="M2 2 A 2 2, 0, 0, 1, 0 0 L 0 2 Z"
+                                        />
+                                      </svg>
+                                    </div>
+                                    <div
+                                      className="ms-ShimmerGap-root root-211"
+                                      style={
+                                        Object {
+                                          "minWidth": "16px",
+                                          "width": 16,
                                         }
                                       }
                                     />
@@ -3106,7 +4780,9 @@ exports[`lib/overview renders a shimmered run history details list when loading 
 
 exports[`lib/overview renders an error message 1`] = `
 <div>
-  <div>
+  <div
+    data-testid="msla-overview-command-bar"
+  >
     <div
       style={
         Object {
@@ -3414,6 +5090,7 @@ exports[`lib/overview renders an error message 1`] = `
                 <input
                   aria-invalid={false}
                   className="ms-TextField-field field-145"
+                  data-testid="msla-run-history-filter-input"
                   id="TextField72"
                   onBlur={[Function]}
                   onChange={[Function]}
@@ -3431,6 +5108,7 @@ exports[`lib/overview renders an error message 1`] = `
             aria-label="Enter the run identifier to open the run"
             className="ms-Button ms-Button--icon is-disabled root-154"
             data-is-focusable={false}
+            data-testid="msla-run-history-filter-button"
             disabled={true}
             onClick={[Function]}
             onKeyDown={[Function]}
@@ -3597,7 +5275,7 @@ exports[`lib/overview renders an error message 1`] = `
                     role="columnheader"
                     style={
                       Object {
-                        "width": 220,
+                        "width": 180,
                       }
                     }
                   >
@@ -3784,6 +5462,7 @@ exports[`lib/overview renders an error message 1`] = `
             >
               <span
                 className="ms-MessageBar-innerText innerText-202"
+                data-testid="msla-overview-error-message"
               />
             </div>
           </div>
