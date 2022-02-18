@@ -19,6 +19,7 @@ import { isRunError, mapToRunItem } from './utils';
 export interface OverviewProps {
   corsNotice?: string;
   errorMessage?: string;
+  isRefreshing?: boolean;
   hasMoreRuns?: boolean;
   loading?: boolean;
   runItems: RunDisplayItem[];
@@ -29,6 +30,8 @@ export interface OverviewProps {
   onRunTrigger(): void;
   onVerifyRunId(runId: string): Promise<Run | RunError>;
 }
+
+export { OverviewPropertiesProps };
 
 const filterTextFieldStyles: Pick<ITextFieldStyles, 'root'> = {
   root: {
@@ -45,6 +48,7 @@ export const Overview: React.FC<OverviewProps> = ({
   hasMoreRuns = false,
   runItems,
   workflowProperties,
+  isRefreshing,
   onLoadMoreRuns,
   onLoadRuns,
   onOpenRun,
@@ -106,7 +110,12 @@ export const Overview: React.FC<OverviewProps> = ({
 
   return (
     <div>
-      <OverviewCommandBar callbackInfo={workflowProperties.callbackInfo} onRefresh={onLoadRuns} onRunTrigger={onRunTrigger} />
+      <OverviewCommandBar
+        callbackInfo={workflowProperties.callbackInfo}
+        isRefeshing={isRefreshing}
+        onRefresh={onLoadRuns}
+        onRunTrigger={onRunTrigger}
+      />
       <OverviewProperties {...workflowProperties} />
       <Pivot>
         <PivotItem headerText={Resources.RUN_HISTORY}>

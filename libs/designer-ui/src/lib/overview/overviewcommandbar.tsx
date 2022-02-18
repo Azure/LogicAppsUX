@@ -6,11 +6,12 @@ import { getCallbackUrl } from './utils';
 
 export interface OverviewCommandBarProps {
   callbackInfo?: CallbackInfo;
+  isRefeshing?: boolean;
   onRefresh(): void;
   onRunTrigger(): void;
 }
 
-export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ callbackInfo, onRefresh, onRunTrigger }) => {
+export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ callbackInfo, isRefeshing, onRefresh, onRunTrigger }) => {
   const intl = useIntl();
   const callbackUrl = useMemo(() => getCallbackUrl(callbackInfo), [callbackInfo]);
 
@@ -28,6 +29,7 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ callback
   const items: ICommandBarItemProps[] = [
     {
       ariaLabel: Resources.OVERVIEW_REFRESH,
+      disabled: isRefeshing,
       iconProps: { iconName: 'Refresh' },
       key: 'Refresh',
       name: Resources.OVERVIEW_REFRESH,
