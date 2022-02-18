@@ -78,7 +78,7 @@ const OverviewApp: React.FC<AppProps> = ({
     mutate: runTriggerCall,
     isLoading: runTriggerLoading,
     error: runTriggerError,
-  } = useMutation(() => runService.runTrigger(workflowProperties.callbackInfo), {
+  } = useMutation(() => runService.runTrigger(workflowProperties.callbackInfo ?? { value: '' }), {
     onSuccess: refetch,
   });
 

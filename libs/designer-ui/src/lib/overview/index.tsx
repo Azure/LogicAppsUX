@@ -110,7 +110,7 @@ export const Overview: React.FC<OverviewProps> = ({
     <div>
       <OverviewCommandBar
         callbackInfo={workflowProperties.callbackInfo}
-        isRefeshing={isRefreshing}
+        isRefreshing={isRefreshing}
         onRefresh={onLoadRuns}
         onRunTrigger={onRunTrigger}
       />
