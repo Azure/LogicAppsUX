@@ -31,8 +31,6 @@ export interface OverviewProps {
   onVerifyRunId(runId: string): Promise<Run | RunError>;
 }
 
-export { OverviewPropertiesProps };
-
 const filterTextFieldStyles: Pick<ITextFieldStyles, 'root'> = {
   root: {
     flex: 1,
@@ -159,3 +157,5 @@ export const Overview: React.FC<OverviewProps> = ({
     </div>
   );
 };
+
+export { isRunError, OverviewPropertiesProps };

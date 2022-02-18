@@ -1,5 +1,5 @@
 import type { OnErrorFn } from '@formatjs/intl';
-import { Overview, OverviewPropertiesProps } from '@microsoft/designer-ui';
+import { Overview, OverviewPropertiesProps, isRunError } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
 import messages from '../../../../libs/services/intl/src/compiled-lang/strings.json';
@@ -90,19 +90,31 @@ const OverviewApp: React.FC<AppProps> = ({
   );
 
   const errorMessage = useMemo((): string | undefined => {
-    const loadingErrorMessage = error ? (error instanceof Error ? error.message : String(error)) : undefined;
-    const triggerErrorMessage = runTriggerError
-      ? runTriggerError instanceof Error
-        ? runTriggerError.message
-        : String(runTriggerError)
-      : undefined;
+    let loadingErrorMessage: string | undefined;
+    let triggerErrorMessage: string | undefined;
+    if (error instanceof Error) {
+      loadingErrorMessage = error.message;
+    } else if (isRunError(error)) {
+      loadingErrorMessage = error.error.message;
+    } else if (error) {
+      loadingErrorMessage = String(error);
+    }
+
+    if (runTriggerError instanceof Error) {
+      triggerErrorMessage = runTriggerError.message;
+    } else if (isRunError(runTriggerError)) {
+      triggerErrorMessage = runTriggerError.error.message;
+    } else if (runTriggerError) {
+      triggerErrorMessage = String(runTriggerError);
+    }
+
     return loadingErrorMessage ?? triggerErrorMessage;
   }, [error, runTriggerError]);
 
   return (
     <Overview
       corsNotice={corsNotice}
-      errorMessage={errorMessage ?? undefined}
+      errorMessage={errorMessage}
       hasMoreRuns={hasNextPage}
       loading={isLoading || runTriggerLoading}
       runItems={runItems ?? []}
