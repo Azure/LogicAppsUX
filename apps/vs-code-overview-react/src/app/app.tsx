@@ -1,12 +1,10 @@
-import { useMount } from '@fluentui/react-hooks';
 import type { OnErrorFn } from '@formatjs/intl';
-import { Overview, OverviewProps } from '@microsoft/designer-ui';
-import { useState, useCallback, useMemo } from 'react';
+import { Overview, OverviewProps, isRunError } from '@microsoft/designer-ui';
+import { useCallback, useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
 import messages from '../../../../libs/services/intl/src/compiled-lang/strings.json';
 import { mapToRunItem, Run, RunDisplayItem, RunError, Runs } from '../run-service';
-import { QueryClient, QueryClientProvider, useInfiniteQuery, useMutation, useQuery } from 'react-query';
-import {} from '@storybook/addons';
+import { QueryClient, QueryClientProvider, useInfiniteQuery, useMutation } from 'react-query';
 
 const queryClient = new QueryClient();
 
@@ -50,7 +48,7 @@ const OverviewApp: React.FC<AppProps> = ({
   };
 
   const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>('runsData', loadRuns, {
-    getNextPageParam: (lastPage, pages) => lastPage.nextLink,
+    getNextPageParam: (lastPage) => lastPage.nextLink,
   });
 
   const runItems = useMemo(
@@ -65,19 +63,31 @@ const OverviewApp: React.FC<AppProps> = ({
   const { mutate: runTriggerCall, isLoading: runTriggerLoading, error: runTriggerError } = useMutation(runTrigger);
 
   const errorMessage = useMemo((): string | undefined => {
-    const loadingErrorMessage = error ? (error instanceof Error ? error.message : String(error)) : undefined;
-    const triggerErrorMessage = runTriggerError
-      ? runTriggerError instanceof Error
-        ? runTriggerError.message
-        : String(runTriggerError)
-      : undefined;
+    let loadingErrorMessage: string | undefined;
+    let triggerErrorMessage: string | undefined;
+    if (error instanceof Error) {
+      loadingErrorMessage = error.message;
+    } else if (isRunError(error)) {
+      loadingErrorMessage = error.error.message;
+    } else if (error) {
+      loadingErrorMessage = String(error);
+    }
+
+    if (runTriggerError instanceof Error) {
+      triggerErrorMessage = runTriggerError.message;
+    } else if (isRunError(runTriggerError)) {
+      triggerErrorMessage = runTriggerError.error.message;
+    } else if (runTriggerError) {
+      triggerErrorMessage = String(runTriggerError);
+    }
+
     return loadingErrorMessage ?? triggerErrorMessage;
   }, [error, runTriggerError]);
 
   return (
     <Overview
       corsNotice={corsNotice}
-      errorMessage={errorMessage ?? undefined}
+      errorMessage={errorMessage}
       hasMoreRuns={hasNextPage}
       loading={isLoading || runTriggerLoading || isRefetching}
       runItems={runItems ?? []}
