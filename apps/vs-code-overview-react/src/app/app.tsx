@@ -6,6 +6,7 @@ import messages from '../../../../libs/services/intl/src/compiled-lang/strings.j
 import { mapToRunItem, RunDisplayItem, Runs } from '../run-service';
 import { QueryClient, QueryClientProvider, useInfiniteQuery, useMutation } from 'react-query';
 import { RunService } from '../run-service';
+import invariant from 'tiny-invariant';
 
 const queryClient = new QueryClient();
 
@@ -78,9 +79,15 @@ const OverviewApp: React.FC<AppProps> = ({
     mutate: runTriggerCall,
     isLoading: runTriggerLoading,
     error: runTriggerError,
-  } = useMutation(() => runService.runTrigger(workflowProperties.callbackInfo ?? { value: '' }), {
-    onSuccess: refetch,
-  });
+  } = useMutation(
+    () => {
+      invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
+      return runService.runTrigger(workflowProperties.callbackInfo);
+    },
+    {
+      onSuccess: refetch,
+    }
+  );
 
   const onVerifyRunId = useCallback(
     (runId: string) => {
