@@ -1,5 +1,5 @@
 import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
-import { Tab } from '.';
+import { PanelTab } from '.';
 import Constants from '../constants';
 import { PageActionTelemetryData, UserAction } from '../telemetry/models';
 import { useIntl } from 'react-intl';
@@ -7,7 +7,7 @@ import React from 'react';
 
 export interface CategoryPivotProps {
   isCollapsed: boolean;
-  tabs: Tab[];
+  tabs: PanelTab[];
   selectedTab?: string;
   onTabChange(tabName?: string): void;
   onCategoryClick?(item: PivotItem): void;
@@ -47,8 +47,8 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackE
         overflowBehavior="menu"
         overflowAriaLabel={overflowLabel}
       >
-        {tabs.map(({ itemKey, itemText }: Tab) => (
-          <PivotItem key={itemKey} itemKey={itemKey} headerText={itemText} />
+        {tabs.map(({ name, title }: PanelTab) => (
+          <PivotItem key={name} itemKey={name} headerText={title} />
         ))}
       </Pivot>
     </div>

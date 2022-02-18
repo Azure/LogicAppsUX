@@ -4,23 +4,28 @@ import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import { PanelPivot } from './panelpivot';
 import { PanelContent } from './panelcontent';
 import { PageActionTelemetryData } from '../telemetry/models';
-
-export interface Tab {
-  itemKey: string;
-  itemText: string;
+export interface PanelTab {
+  name: string;
+  title: string;
+  description?: string;
+  icon?: string;
+  enabled?: boolean;
+  order?: number;
   content: JSX.Element;
+  visibilityPredicate?(): boolean;
 }
 export interface PanelContainerProps {
   isCollapsed: boolean;
   pivotDisabled?: boolean;
   isRight?: boolean;
-  tabs: Tab[];
+  tabs: PanelTab[];
+  selectedTab: string;
   width: string;
   trackEvent(data: PageActionTelemetryData): void;
+  setSelectedTab: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const PanelContainer = ({ isCollapsed, isRight, tabs, width, trackEvent }: PanelContainerProps) => {
-  const [selectedTab, setSelectedTab] = useState('');
+export const PanelContainer = ({ isCollapsed, isRight, tabs, selectedTab, width, setSelectedTab, trackEvent }: PanelContainerProps) => {
   const onTabChange = (itemKey: string): void => {
     setSelectedTab(itemKey);
   };
