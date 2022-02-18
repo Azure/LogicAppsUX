@@ -96,7 +96,7 @@ export const Overview: React.FC<OverviewProps> = ({
 
     const response = await onVerifyRunId(value);
     if (isRunError(response)) {
-      return response.error.message;
+      return response.error instanceof Error ? response.error.message : String(response.error);
     } else {
       setRunItem(mapToRunItem(response));
       setNavigateDisabled(false);

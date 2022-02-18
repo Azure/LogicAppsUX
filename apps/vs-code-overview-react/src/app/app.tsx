@@ -1,10 +1,14 @@
 import { useMount } from '@fluentui/react-hooks';
 import type { OnErrorFn } from '@formatjs/intl';
 import { Overview, OverviewProps } from '@microsoft/designer-ui';
-import { useCallback, useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
 import messages from '../../../../libs/services/intl/src/compiled-lang/strings.json';
 import { mapToRunItem, Run, RunDisplayItem, RunError, Runs } from '../run-service';
+import { QueryClient, QueryClientProvider, useInfiniteQuery, useMutation, useQuery } from 'react-query';
+import {} from '@storybook/addons';
+
+const queryClient = new QueryClient();
 
 export interface AppProps extends Pick<OverviewProps, 'corsNotice' | 'workflowProperties' | 'onOpenRun'> {
   listMoreRuns(continuationToken: string): Promise<Runs>;
@@ -13,94 +17,76 @@ export interface AppProps extends Pick<OverviewProps, 'corsNotice' | 'workflowPr
   verifyRunId(runId: string): Promise<Run | RunError>;
 }
 
-export const App: React.FC<AppProps> = ({ corsNotice, listMoreRuns, listRuns, runTrigger, workflowProperties, verifyRunId, onOpenRun }) => {
-  const [continuationToken, setContinuationToken] = useState<string | undefined>();
-  const [errorMessage, setErrorMessage] = useState<string | undefined>();
-  const [loading, setLoading] = useState(false);
-  const [runItems, setRunItems] = useState<RunDisplayItem[]>([]);
-
-  useMount(() => {
-    handleLoadRuns();
-  });
-
-  const handleError: OnErrorFn = (err) => {
+export const App: React.FC<AppProps> = (props) => {
+  const handleError: OnErrorFn = useCallback((err) => {
     if (err.code !== 'MISSING_TRANSLATION') {
       throw err;
     }
-  };
-
-  const handleLoadMoreRuns = useCallback(async () => {
-    try {
-      setErrorMessage(undefined);
-      setLoading(true);
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const { nextLink, runs } = await listMoreRuns(continuationToken!);
-      setContinuationToken(nextLink);
-      setRunItems([...runItems, ...runs.map(mapToRunItem)]);
-    } catch (ex) {
-      setErrorMessage(ex instanceof Error ? ex.message : String(ex));
-    } finally {
-      setLoading(false);
-    }
-  }, [continuationToken, listMoreRuns, runItems]);
-
-  const handleLoadRuns = useCallback(async () => {
-    try {
-      setErrorMessage(undefined);
-      setLoading(true);
-      const { nextLink, runs } = await listRuns();
-      setContinuationToken(nextLink);
-      setRunItems(runs.map(mapToRunItem));
-    } catch (ex) {
-      setErrorMessage(ex instanceof Error ? ex.message : String(ex));
-    } finally {
-      setLoading(false);
-    }
-  }, [listRuns]);
-
-  const handleRunTrigger = useCallback(async () => {
-    try {
-      setErrorMessage(undefined);
-      setLoading(true);
-      await runTrigger();
-    } catch (ex) {
-      setErrorMessage(ex instanceof Error ? ex.message : String(ex));
-    } finally {
-      setLoading(false);
-    }
-  }, [runTrigger]);
-
-  const handleVerifyRunId = useCallback(
-    async (runId: string): Promise<Run | RunError> => {
-      try {
-        return verifyRunId(runId);
-      } catch (ex) {
-        return {
-          error: {
-            code: '',
-            message: ex instanceof Error ? ex.message : String(ex),
-          },
-        };
-      }
-    },
-    [verifyRunId]
-  );
+  }, []);
 
   return (
     <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError}>
-      <Overview
-        corsNotice={corsNotice}
-        errorMessage={errorMessage}
-        hasMoreRuns={!!continuationToken}
-        loading={loading}
-        runItems={runItems}
-        workflowProperties={workflowProperties}
-        onLoadMoreRuns={handleLoadMoreRuns}
-        onLoadRuns={handleLoadRuns}
-        onOpenRun={onOpenRun}
-        onRunTrigger={handleRunTrigger}
-        onVerifyRunId={handleVerifyRunId}
-      />
+      <QueryClientProvider client={queryClient}>
+        <OverviewApp {...props} />
+      </QueryClientProvider>
     </IntlProvider>
+  );
+};
+
+const OverviewApp: React.FC<AppProps> = ({
+  corsNotice,
+  listMoreRuns,
+  listRuns,
+  runTrigger,
+  workflowProperties,
+  verifyRunId,
+  onOpenRun,
+}) => {
+  const loadRuns = ({ pageParam }: { pageParam?: string }) => {
+    if (pageParam) {
+      return listMoreRuns(pageParam);
+    }
+    return listRuns();
+  };
+
+  const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>('runsData', loadRuns, {
+    getNextPageParam: (lastPage, pages) => lastPage.nextLink,
+  });
+
+  const runItems = useMemo(
+    () =>
+      data?.pages?.reduce<RunDisplayItem[]>((acc, val) => {
+        acc = [...acc, ...val.runs.map(mapToRunItem)];
+        return acc;
+      }, []),
+    [data?.pages]
+  );
+
+  const { mutate: runTriggerCall, isLoading: runTriggerLoading, error: runTriggerError } = useMutation(runTrigger);
+
+  const errorMessage = useMemo((): string | undefined => {
+    const loadingErrorMessage = error ? (error instanceof Error ? error.message : String(error)) : undefined;
+    const triggerErrorMessage = runTriggerError
+      ? runTriggerError instanceof Error
+        ? runTriggerError.message
+        : String(runTriggerError)
+      : undefined;
+    return loadingErrorMessage ?? triggerErrorMessage;
+  }, [error, runTriggerError]);
+
+  return (
+    <Overview
+      corsNotice={corsNotice}
+      errorMessage={errorMessage ?? undefined}
+      hasMoreRuns={hasNextPage}
+      loading={isLoading || runTriggerLoading || isRefetching}
+      runItems={runItems ?? []}
+      workflowProperties={workflowProperties}
+      onLoadMoreRuns={fetchNextPage}
+      onLoadRuns={refetch}
+      onOpenRun={onOpenRun}
+      onRunTrigger={runTriggerCall}
+      onVerifyRunId={verifyRunId}
+    />
   );
 };
