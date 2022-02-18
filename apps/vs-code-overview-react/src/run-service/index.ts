@@ -74,8 +74,7 @@ export class RunService implements IRunService {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
-    const test: ArmResources<Run> = await response.json();
-    const { nextLink, value: runs } = test;
+    const { nextLink, value: runs }: ArmResources<Run> = await response.json();
     return { nextLink, runs };
   }
 
