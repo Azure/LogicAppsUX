@@ -13,11 +13,10 @@ const queryClient = new QueryClient();
 export interface AppProps {
   apiVersion: string;
   baseUrl: string;
-  workflowId: string;
   workflowProperties: OverviewPropertiesProps;
   corsNotice?: string;
+  accessToken?: string;
   onOpenRun(run: RunDisplayItem): void;
-  getAccessToken: () => Promise<string>;
 }
 
 export const App: React.FC<AppProps> = (props) => {
@@ -36,30 +35,23 @@ export const App: React.FC<AppProps> = (props) => {
   );
 };
 
-const OverviewApp: React.FC<AppProps> = ({
-  workflowProperties,
-  apiVersion,
-  baseUrl,
-  workflowId,
-  getAccessToken,
-  onOpenRun,
-  corsNotice,
-}) => {
+const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseUrl, accessToken, onOpenRun, corsNotice }) => {
   const runService = useMemo(
     () =>
       new RunService({
         baseUrl,
         apiVersion,
-        getAccessToken,
+        accessToken,
+        workflowName: workflowProperties.name,
       }),
-    [apiVersion, baseUrl, getAccessToken]
+    [baseUrl, apiVersion, accessToken, workflowProperties.name]
   );
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
     if (pageParam) {
       return runService.getMoreRuns(pageParam);
     }
-    return runService.getRuns(workflowId);
+    return runService.getRuns(`workflows/${workflowProperties.name}`);
   };
 
   const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>('runsData', loadRuns, {

@@ -50,5 +50,5 @@
     }
   },
   "tags": [],
-  "implicitDependencies": ["vs-code-designer-react"]
+  "implicitDependencies": ["vs-code-designer-react", "vs-code-overview-react"]
 }

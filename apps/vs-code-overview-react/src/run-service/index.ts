@@ -4,7 +4,8 @@ import { getCallbackUrl, isCallbackInfoWithRelativePath } from './utils';
 export interface RunServiceOptions {
   apiVersion: string;
   baseUrl: string;
-  getAccessToken(): Promise<string>;
+  accessToken?: string;
+  workflowName: string;
 }
 
 export class RunService implements IRunService {
@@ -36,10 +37,13 @@ export class RunService implements IRunService {
   }
 
   async getMoreRuns(continuationToken: string): Promise<Runs> {
-    const { getAccessToken } = this.options;
-    const headers = new Headers({
-      Authorization: await getAccessToken(),
-    });
+    const { accessToken } = this.options;
+    let headers: Headers | undefined;
+    if (accessToken) {
+      headers = new Headers({
+        Authorization: accessToken,
+      });
+    }
     const response = await fetch(continuationToken, { headers });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -50,11 +54,14 @@ export class RunService implements IRunService {
   }
 
   async getRun(runId: string): Promise<Run | RunError> {
-    const { apiVersion, baseUrl, getAccessToken } = this.options;
-    const headers = new Headers({
-      Authorization: await getAccessToken(),
-    });
-    const uri = `${baseUrl}/${runId}?api-version=${apiVersion}`;
+    const { apiVersion, baseUrl, accessToken, workflowName } = this.options;
+    let headers: Headers | undefined;
+    if (accessToken) {
+      headers = new Headers({
+        Authorization: accessToken,
+      });
+    }
+    const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}`;
     const response = await fetch(uri, { headers });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -64,11 +71,14 @@ export class RunService implements IRunService {
   }
 
   async getRuns(workflowId: string): Promise<Runs> {
-    const { apiVersion, baseUrl, getAccessToken } = this.options;
-    const headers = new Headers({
-      Authorization: await getAccessToken(),
-    });
-    const uri = `${baseUrl}/${workflowId}/runs?api-version=${apiVersion}`;
+    const { apiVersion, baseUrl, accessToken, workflowName } = this.options;
+    let headers: Headers | undefined;
+    if (accessToken) {
+      headers = new Headers({
+        Authorization: accessToken,
+      });
+    }
+    const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
     const response = await fetch(uri, { headers });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);

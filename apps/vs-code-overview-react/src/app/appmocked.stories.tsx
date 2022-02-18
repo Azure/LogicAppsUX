@@ -47,7 +47,7 @@ WithMockArgs.args = commonArgs;
 WithMockArgs.parameters = {
   mockData: [
     {
-      url: `https://baseurl/workflowId/runs?api-version=apiversion`,
+      url: `https://baseurl/workflows/run/runs?api-version=apiversion`,
 
       method: 'GET',
       status: 200,
@@ -69,7 +69,7 @@ WithMockArgs.parameters = {
       response: {},
     },
     {
-      url: `https://baseurl/:runId?api-version=apiversion`,
+      url: `https://baseurl/workflows/run/runs/:runId?api-version=apiversion`,
       method: 'GET',
       status: 200,
       delay: 800,

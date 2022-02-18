@@ -1,7 +1,7 @@
 describe('vs-code-overview-react/app', () => {
   beforeEach(() => {
     cy.visit('/iframe.html?id=fortesting-overview--e-2-e');
-    cy.intercept('GET', 'https://baseurl/workflowId/runs?api-version=apiversion', { fixture: 'overview/happy/get-runs.json' }).as(
+    cy.intercept('GET', 'https://baseurl/workflows/run/runs?api-version=apiversion', { fixture: 'overview/happy/get-runs.json' }).as(
       'getRuns'
     );
     cy.intercept('GET', 'https://runmorenextlink', { fixture: 'overview/happy/get-more-runs.json' }).as('getMoreRuns');
@@ -17,7 +17,7 @@ describe('vs-code-overview-react/app', () => {
     cy.intercept(
       {
         method: 'GET', // Route all GET requests
-        url: 'https://baseurl/*', // that have a URL that matches '/users/*'
+        url: 'https://baseurl/workflows/run/runs/*', // that have a URL that matches '/users/*'
       },
       { fixture: 'overview/happy/get-run.json' }
     ).as('getRun');
