@@ -1,0 +1,461 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/overview/overviewproperties renders 1`] = `
+<div>
+  <div
+    className="ms-FocusZone css-118 ms-Pivot root-109"
+    data-focuszone-id="FocusZone1"
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    onMouseDownCapture={[Function]}
+    role="tablist"
+  >
+    <button
+      aria-selected={true}
+      className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-119"
+      data-content="Workflow Properties"
+      data-is-focusable={true}
+      id="Pivot0-Tab0"
+      name="Workflow Properties"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      role="tab"
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-120"
+        data-automationid="splitbuttonprimary"
+      >
+        <span
+          className="ms-Pivot-linkContent linkContent-115"
+        >
+          <span
+            className="ms-Pivot-text text-116"
+          >
+             
+            Workflow Properties
+          </span>
+        </span>
+      </span>
+    </button>
+  </div>
+  <div
+    aria-hidden={false}
+    aria-labelledby="Pivot0-Tab0"
+    className="itemContainer-110"
+    hidden={false}
+    role="tabpanel"
+  >
+    <div>
+      <div
+        className="msla-workflow-properties"
+      >
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            Name:
+          </span>
+          <span
+            className="css-128"
+          >
+            name
+          </span>
+        </label>
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            State type:
+          </span>
+          <span
+            className="css-128"
+          >
+            stateType
+          </span>
+        </label>
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            Callback URL:
+          </span>
+          <div>
+            <a
+              className="ms-Link root-129"
+              href="callbackInfo.value"
+              onClick={[Function]}
+              rel="noopener"
+              target="_blank"
+            >
+              callbackInfo.value
+            </a>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/overview/overviewproperties renders the callback URL property 1`] = `
+<div>
+  <div
+    className="ms-FocusZone css-118 ms-Pivot root-109"
+    data-focuszone-id="FocusZone16"
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    onMouseDownCapture={[Function]}
+    role="tablist"
+  >
+    <button
+      aria-selected={true}
+      className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-119"
+      data-content="Workflow Properties"
+      data-is-focusable={true}
+      id="Pivot15-Tab0"
+      name="Workflow Properties"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      role="tab"
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-120"
+        data-automationid="splitbuttonprimary"
+      >
+        <span
+          className="ms-Pivot-linkContent linkContent-115"
+        >
+          <span
+            className="ms-Pivot-text text-116"
+          >
+             
+            Workflow Properties
+          </span>
+        </span>
+      </span>
+    </button>
+  </div>
+  <div
+    aria-hidden={false}
+    aria-labelledby="Pivot15-Tab0"
+    className="itemContainer-110"
+    hidden={false}
+    role="tabpanel"
+  >
+    <div>
+      <div
+        className="msla-workflow-properties"
+      >
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            Name:
+          </span>
+          <span
+            className="css-128"
+          >
+            name
+          </span>
+        </label>
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            State type:
+          </span>
+          <span
+            className="css-128"
+          >
+            stateType
+          </span>
+        </label>
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            Callback URL:
+          </span>
+          <div>
+            <a
+              className="ms-Link root-129"
+              href="callbackInfo.value"
+              onClick={[Function]}
+              rel="noopener"
+              target="_blank"
+            >
+              callbackInfo.value
+            </a>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/overview/overviewproperties renders the operation options property 1`] = `
+<div>
+  <div
+    className="ms-FocusZone css-118 ms-Pivot root-109"
+    data-focuszone-id="FocusZone6"
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    onMouseDownCapture={[Function]}
+    role="tablist"
+  >
+    <button
+      aria-selected={true}
+      className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-119"
+      data-content="Workflow Properties"
+      data-is-focusable={true}
+      id="Pivot5-Tab0"
+      name="Workflow Properties"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      role="tab"
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-120"
+        data-automationid="splitbuttonprimary"
+      >
+        <span
+          className="ms-Pivot-linkContent linkContent-115"
+        >
+          <span
+            className="ms-Pivot-text text-116"
+          >
+             
+            Workflow Properties
+          </span>
+        </span>
+      </span>
+    </button>
+  </div>
+  <div
+    aria-hidden={false}
+    aria-labelledby="Pivot5-Tab0"
+    className="itemContainer-110"
+    hidden={false}
+    role="tabpanel"
+  >
+    <div>
+      <div
+        className="msla-workflow-properties"
+      >
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            Name:
+          </span>
+          <span
+            className="css-128"
+          >
+            name
+          </span>
+        </label>
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            State type:
+          </span>
+          <span
+            className="css-128"
+          >
+            stateType
+          </span>
+        </label>
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            Operation options:
+          </span>
+          <span
+            className="css-128"
+          >
+            operationOptions
+          </span>
+        </label>
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            Callback URL:
+          </span>
+          <div>
+            <a
+              className="ms-Link root-129"
+              href="callbackInfo.value"
+              onClick={[Function]}
+              rel="noopener"
+              target="_blank"
+            >
+              callbackInfo.value
+            </a>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/overview/overviewproperties renders the stateless run mode property 1`] = `
+<div>
+  <div
+    className="ms-FocusZone css-118 ms-Pivot root-109"
+    data-focuszone-id="FocusZone11"
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    onMouseDownCapture={[Function]}
+    role="tablist"
+  >
+    <button
+      aria-selected={true}
+      className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-119"
+      data-content="Workflow Properties"
+      data-is-focusable={true}
+      id="Pivot10-Tab0"
+      name="Workflow Properties"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      role="tab"
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-120"
+        data-automationid="splitbuttonprimary"
+      >
+        <span
+          className="ms-Pivot-linkContent linkContent-115"
+        >
+          <span
+            className="ms-Pivot-text text-116"
+          >
+             
+            Workflow Properties
+          </span>
+        </span>
+      </span>
+    </button>
+  </div>
+  <div
+    aria-hidden={false}
+    aria-labelledby="Pivot10-Tab0"
+    className="itemContainer-110"
+    hidden={false}
+    role="tabpanel"
+  >
+    <div>
+      <div
+        className="msla-workflow-properties"
+      >
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            Name:
+          </span>
+          <span
+            className="css-128"
+          >
+            name
+          </span>
+        </label>
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            State type:
+          </span>
+          <span
+            className="css-128"
+          >
+            stateType
+          </span>
+        </label>
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            Stateless run mode:
+          </span>
+          <span
+            className="css-128"
+          >
+            statelessRunMode
+          </span>
+        </label>
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="css-128"
+          >
+            Callback URL:
+          </span>
+          <div>
+            <a
+              className="ms-Link root-129"
+              href="callbackInfo.value"
+              onClick={[Function]}
+              rel="noopener"
+              target="_blank"
+            >
+              callbackInfo.value
+            </a>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+`;

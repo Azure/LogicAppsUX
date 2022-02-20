@@ -2,9 +2,9 @@ import { equals } from '@microsoft-logic-apps/utils';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { PageChangeEventHandler, Pager } from '../../pager';
-import { getDurationString } from '../../utils/utils';
+import { ErrorSection } from '../errorsection';
+import { calculateDuration } from '../utils';
 import { Value } from '../values';
-import { ErrorSection } from './errorsection';
 import { Request } from './request';
 import { Response } from './response';
 import { SecureDataSection } from './securedatasection';
@@ -100,7 +100,3 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({ requestHistory, visi
     </>
   );
 };
-
-function calculateDuration(startTime: string, endTime: string | undefined): string {
-  return endTime ? getDurationString(Date.parse(endTime) - Date.parse(startTime), /* abbreviated */ false) : getDurationString(NaN);
-}

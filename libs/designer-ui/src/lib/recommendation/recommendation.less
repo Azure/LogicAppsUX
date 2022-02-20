@@ -50,20 +50,12 @@
     }
 
     .msla-search-box-button {
-      @media only screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-        top: -1px;
-      }
-
       &[disabled] {
         background-color: initial;
       }
 
       &:hover {
         background-color: inherit;
-
-        @media only screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-          background-color: transparent;
-        }
       }
     }
 
@@ -84,7 +76,6 @@
     height: 119px;
     overflow: hidden;
     padding: 12px 9px 3px;
-    -ms-user-select: none;
     user-select: none;
 
     &.msla-for-you {
@@ -146,7 +137,6 @@
         background-color: @hoverColor;
         -webkit-transition: background-color 0.5s ease;
         -moz-transition: background-color 0.5s ease;
-        -ms-transition: background-color 0.5s ease;
         transition: background-color 0.5s ease;
       }
 
@@ -218,7 +208,6 @@
     overflow: hidden;
     padding: 5px 0;
     position: relative;
-    -ms-user-select: none;
     user-select: none;
 
     &:first-child {
@@ -293,7 +282,6 @@
             background-color: @hoverColor;
             -webkit-transition: background-color 0.5s ease;
             -moz-transition: background-color 0.5s ease;
-            -ms-transition: background-color 0.5s ease;
             transition: background-color 0.5s ease;
           }
 
@@ -397,7 +385,6 @@
   }
 
   .msla-suggestions {
-    -ms-user-select: none;
     user-select: none;
     padding: 0 7px 3px 7px;
 
@@ -445,7 +432,6 @@
               background-color: @hoverColor;
               -webkit-transition: background-color 0.5s ease;
               -moz-transition: background-color 0.5s ease;
-              -ms-transition: background-color 0.5s ease;
               transition: background-color 0.5s ease;
             }
 
@@ -492,7 +478,6 @@
               background-color: @hoverColor;
               -webkit-transition: background-color 0.5s ease;
               -moz-transition: background-color 0.5s ease;
-              -ms-transition: background-color 0.5s ease;
               transition: background-color 0.5s ease;
             }
 
@@ -637,12 +622,6 @@
 }
 
 .msla-card.msla-recommendation {
-  @media only screen and (max-width: @designer-desktop-max-width) {
-    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-      min-width: calc(@card-max-width - 18px); /* 9px padding on both sides */
-    }
-  }
-
   .msla-card-header-icon,
   .msla-card-header-title-view {
     cursor: default;
@@ -662,12 +641,6 @@
 }
 
 .msla-recommendation-v3.msla-triggers {
-  @media only screen and (max-width: @designer-desktop-max-width) {
-    @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-      min-width: @card-max-width;
-    }
-  }
-
   .msla-connectors {
     height: 192px;
     padding: 12px 7px 3px 7px;

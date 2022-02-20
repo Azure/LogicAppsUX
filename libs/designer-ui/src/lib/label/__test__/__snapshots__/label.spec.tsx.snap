@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/label className should set the "class" attribute 1`] = `
+<label
+  className="class-name msla-label"
+  title="label text"
+>
+  label text
+</label>
+`;
+
+exports[`lib/label htmlFor should set the "for" attribute 1`] = `
+<label
+  className="msla-label"
+  htmlFor="an-input"
+  title="label text"
+>
+  label text
+</label>
+`;
+
+exports[`lib/label id should set the "id" attribute 1`] = `
+<label
+  className="msla-label"
+  id="label-id"
+  title="label text"
+>
+  label text
+</label>
+`;
+
+exports[`lib/label isRequiredField should render the required parameter marker if set 1`] = `
+<label
+  className="msla-label"
+  title="label text"
+>
+  <span
+    aria-label="Required"
+    className="msla-label-required-parameter"
+  >
+    *
+  </span>
+  label text
+</label>
+`;
+
+exports[`lib/label should construct 1`] = `
+<label
+  className="msla-label"
+  title="label"
+>
+  label
+</label>
+`;
+
+exports[`lib/label tooltip should set the "title" attribute if tooltip is set 1`] = `
+<label
+  className="msla-label"
+  title="title"
+>
+  <span
+    aria-label="Required"
+    className="msla-label-required-parameter"
+  >
+    *
+  </span>
+  label text
+</label>
+`;

@@ -1,5 +1,5 @@
 import { PanelTab } from '.';
-import { EmptyContent } from '../card/cardv2/emptycontent';
+import { EmptyContent } from '../card/emptycontent';
 import React from 'react';
 
 export interface PanelContentProps {

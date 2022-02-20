@@ -27,11 +27,6 @@
   min-width: @card-min-width;
   max-width: @card-max-width;
   width: 100%;
-
-  @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-    box-sizing: border-box;
-    min-width: @card-min-fixed-width;
-  }
 }
 
 .msla-card,
@@ -89,11 +84,6 @@
   position: relative;
   vertical-align: top;
   width: 100%;
-
-  /* Workaround for IE-only CSS bug */
-  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-    width: auto;
-  }
 }
 
 .msla-card-container-empty {
@@ -178,13 +168,6 @@
       flex: 1 1 auto;
       align-items: center;
       cursor: pointer;
-
-      /* Workaround for IE-only flexbox bug */
-      @media only screen {
-        @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-          flex: 1 1 100%;
-        }
-      }
 
       .msla-card-header-title-view,
       .msla-card-header-title-edit {
@@ -832,7 +815,6 @@ body.dark {
   border-radius: 2px;
   width: @panel-mode-card-width;
   -webkit-user-select: none;
-  -ms-user-select: none;
   user-select: none;
 
   &:focus {
@@ -895,10 +877,6 @@ body.dark {
           display: flex;
           flex-direction: column;
 
-          @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-            margin-top: 5px;
-          }
-
           .msla-card-edit-button {
             overflow: hidden;
             flex: 0 0 30px;
@@ -909,10 +887,6 @@ body.dark {
         .panel-card-content-icon-section {
           flex: 0 0;
           margin: 8px 8px 0 5px;
-
-          @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-            flex-basis: auto;
-          }
 
           .panel-card-icon {
             height: 24px;
@@ -950,10 +924,6 @@ body.dark {
           vertical-align: middle;
           background-color: transparent;
           border: none;
-
-          @media (-ms-high-contrast: active), (-ms-high-contrast: none) {
-            flex: 0 0 auto;
-          }
 
           &.loading {
             padding-bottom: 10px;

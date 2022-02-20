@@ -30,8 +30,8 @@ Standard.args = {
       code: 'Failed',
       endTime: '2017-10-06T22:51:00Z',
       error: {
-        code: 'Error code',
-        message: 'Error message',
+        code: 'GatewayTimeout',
+        message: 'Your server did not receive a timely response from another server upstream.',
       },
       serviceRequestId: 'd0c70b52-023f-4104-8865-3ce991addf3f',
       startTime: '2017-10-06T22:46:00Z',

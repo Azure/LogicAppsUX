@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/card/cardfooter should render 1`] = `
+<div
+  className="msla-card-v2-footer"
+>
+  <div
+    className="msla-badges"
+  />
+</div>
+`;
+
+exports[`lib/card/cardfooter should render with a comment icon 1`] = `
+<div
+  className="msla-card-v2-footer"
+>
+  <div
+    className="msla-badges"
+  >
+    <div
+      className="ms-TooltipHost root-109"
+      onBlurCapture={[Function]}
+      onFocusCapture={[Function]}
+      onKeyDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      role="none"
+    >
+      <i
+        aria-label="Comment: comment"
+        className="panel-card-v2-badge active root-105"
+        data-icon-name="Comment"
+        role="img"
+        tabIndex={0}
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/cardfooter should render with a connection icon 1`] = `
+<div
+  className="msla-card-v2-footer"
+>
+  <div
+    className="msla-badges"
+  >
+    <div
+      className="ms-TooltipHost root-109"
+      onBlurCapture={[Function]}
+      onFocusCapture={[Function]}
+      onKeyDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      role="none"
+    >
+      <i
+        aria-label="Connection name: joechung@microsoft.com"
+        className="panel-card-v2-badge active root-105"
+        data-icon-name="Link"
+        role="img"
+        tabIndex={0}
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/cardfooter should render with a testing icon 1`] = `
+<div
+  className="msla-card-v2-footer"
+>
+  <div
+    className="msla-badges"
+  >
+    <div
+      className="ms-TooltipHost root-109"
+      onBlurCapture={[Function]}
+      onFocusCapture={[Function]}
+      onKeyDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      role="none"
+    >
+      <i
+        aria-label="Testing: This Action has testing configured."
+        className="panel-card-v2-badge active root-105"
+        data-icon-name="TestBeaker"
+        role="img"
+        tabIndex={0}
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/cardfooter should render with an inactive connection icon 1`] = `
+<div
+  className="msla-card-v2-footer"
+>
+  <div
+    className="msla-badges"
+  >
+    <i
+      aria-label="Connection required"
+      className="panel-card-v2-badge inactive root-105"
+      data-icon-name="Link"
+      role="img"
+      tabIndex={0}
+    />
+  </div>
+</div>
+`;

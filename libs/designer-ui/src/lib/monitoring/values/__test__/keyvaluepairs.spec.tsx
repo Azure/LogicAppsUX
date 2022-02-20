@@ -89,4 +89,11 @@ describe('ui/monitoring/values/_keyvaluepairs', () => {
     expect(detailsList.props.layoutMode).toBe(DetailsListLayoutMode.fixedColumns);
     expect(detailsList.props.selectionMode).toBe(SelectionMode.none);
   });
+
+  it('should not render when not visible', () => {
+    renderer.render(<KeyValuePairs {...props} visible={false} />);
+
+    const section = renderer.getRenderOutput();
+    expect(section).toBeNull();
+  });
 });

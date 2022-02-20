@@ -1,18 +1,26 @@
-import { IconButton, IIconProps, ITextFieldStyles, MessageBar, MessageBarType, Pivot, PivotItem, TextField } from '@fluentui/react';
+import {
+  IconButton,
+  MessageBar,
+  MessageBarType,
+  Pivot,
+  PivotItem,
+  TextField,
+  type IIconProps,
+  type ITextFieldStyles,
+} from '@fluentui/react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { getDurationString } from '../utils/utils';
 import { OverviewCommandBar } from './overviewcommandbar';
 import { OverviewProperties, type OverviewPropertiesProps } from './overviewproperties';
 import { RunHistory } from './runhistory';
 import type { Run, RunDisplayItem, RunError } from './types';
-import { isRunError } from './utils';
+import { isRunError, mapToRunItem } from './utils';
 
 export interface OverviewProps {
   corsNotice?: string;
   errorMessage?: string;
-  hasMoreRuns: boolean;
-  loading: boolean;
+  hasMoreRuns?: boolean;
+  loading?: boolean;
   runItems: RunDisplayItem[];
   workflowProperties: OverviewPropertiesProps;
   onLoadMoreRuns(): void;
@@ -104,6 +112,7 @@ export const Overview: React.FC<OverviewProps> = ({
         <PivotItem headerText={Resources.RUN_HISTORY}>
           <div className="msla-run-history-filter">
             <TextField
+              data-testid="msla-run-history-filter-input"
               deferredValidationTime={1000}
               placeholder={Resources.WORKFLOW_OVERVIEW_FILTER_TEXT}
               styles={filterTextFieldStyles}
@@ -113,6 +122,7 @@ export const Overview: React.FC<OverviewProps> = ({
             />
             <IconButton
               aria-label={Resources.WORKFLOW_OVERVIEW_FILTER_TEXT}
+              data-testid="msla-run-history-filter-button"
               disabled={navigateDisabled}
               iconProps={navigateForwardIconProps}
               title={Resources.WORKFLOW_OVERVIEW_FILTER_TEXT}
@@ -121,31 +131,22 @@ export const Overview: React.FC<OverviewProps> = ({
           </div>
           <RunHistory items={runItems} loading={loading} onOpenRun={onOpenRun} />
           {errorMessage ? (
-            <MessageBar isMultiline={false} messageBarType={MessageBarType.error}>
+            <MessageBar data-testid="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>
               {errorMessage}
             </MessageBar>
           ) : null}
           {hasMoreRuns ? (
-            <button className="msla-button msla-overview-load-more" onClick={onLoadMoreRuns}>
+            <button className="msla-button msla-overview-load-more" data-testid="msla-overview-load-more" onClick={onLoadMoreRuns}>
               {Resources.LOAD_MORE}
             </button>
           ) : null}
         </PivotItem>
       </Pivot>
-      {corsNotice ? <MessageBar messageBarType={MessageBarType.info}>{corsNotice}</MessageBar> : null}
+      {corsNotice ? (
+        <MessageBar data-testid="msla-overview-cors-notice" messageBarType={MessageBarType.info}>
+          {corsNotice}
+        </MessageBar>
+      ) : null}
     </div>
   );
 };
-
-function mapToRunItem({ id, name: identifier, properties }: Run): RunDisplayItem {
-  const { endTime, startTime, status } = properties;
-  const duration = endTime ? getDurationString(Date.parse(endTime) - Date.parse(startTime), /* abbreviated */ false) : '--';
-
-  return {
-    duration,
-    id,
-    identifier,
-    startTime,
-    status,
-  };
-}

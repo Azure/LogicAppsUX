@@ -48,7 +48,6 @@
 @import './conditioncontrol/conditioncontrol.less';
 @import './card/query/query.less';
 @import './card/swaggerendpoint/swaggerendpoint.less';
-@import './card/commentbox/commentbox.less';
 @import './tokenpicker/tokenpicker.less';
 @import './floatingactionmenu/_floatingactionmenu.less';
 @import './monitoring/monitoring.less';
@@ -98,7 +97,7 @@
   min-height: 600px;
   margin: 0 auto;
   min-width: 100%;
-
+  height: 100%;
   @media only screen and (max-width: calc(@card-max-width + 40)) {
     width: 100%;
     min-width: @card-min-width;
@@ -163,16 +162,6 @@
 
 ::-webkit-input-placeholder {
   /* Chrome */
-  color: @parameter-placeholder-color;
-}
-
-:-ms-input-placeholder {
-  /* IE 10+ */
-  color: @parameter-placeholder-color;
-}
-
-::-ms-input-placeholder {
-  /* Edge */
   color: @parameter-placeholder-color;
 }
 
@@ -332,16 +321,6 @@ body.dark {
 
   ::-webkit-input-placeholder {
     /* Chrome */
-    color: @ms-color-neutralSecondary;
-  }
-
-  :-ms-input-placeholder {
-    /* IE 10+ */
-    color: @ms-color-neutralSecondary;
-  }
-
-  ::-ms-input-placeholder {
-    /* Edge */
     color: @ms-color-neutralSecondary;
   }
 

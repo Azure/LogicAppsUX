@@ -4,17 +4,18 @@ import { useState } from 'react';
 import { workflowParametersTab } from './registeredtabs';
 export interface PanelRootProps {
   selectedTabId?: string;
+  width: string;
 }
 
-export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
+export const PanelRoot = ({ selectedTabId, width }: PanelRootProps): JSX.Element => {
   const [selectedTab, setSelectedTab] = useState('');
   return (
     <PanelContainer
+      width={width}
       isRight
       isCollapsed={false}
       tabs={[workflowParametersTab]}
       selectedTab={selectedTab}
-      width={'30vw'}
       setSelectedTab={setSelectedTab}
       trackEvent={handleTrackEvent}
     />

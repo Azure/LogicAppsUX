@@ -187,7 +187,6 @@ export default {
     BASECOMPONENT: 'basecomponent',
     BUTTON: 'button',
     CARD: 'card',
-    CARDV2: 'cardv2',
     CARD_HEADER: 'card_header',
     CARD_HEADER_MENU: 'card_header_menu',
     CONFIG: 'config',

@@ -1,5 +1,5 @@
 import { TooltipHost } from '@fluentui/react';
-import { getStatusString } from '../../utils/utils';
+import { getStatusString } from '../../utils';
 import { StatusIcon } from './statusicon';
 
 export interface StatusPillProps {

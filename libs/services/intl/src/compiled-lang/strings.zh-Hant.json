@@ -1,0 +1,897 @@
+{
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "本文"
+    }
+  ],
+  "/NDLmg": [
+    {
+      "type": 0,
+      "value": "等待中"
+    }
+  ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "顯示執行功能表"
+    }
+  ],
+  "0ZlNtf": [
+    {
+      "type": 0,
+      "value": "重試後成功"
+    }
+  ],
+  "1R6Vaa": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "沒有任何相符項目。"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個相符項目。"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "結束時間"
+    }
+  ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "識別碼"
+    }
+  ],
+  "3kI7xF": [
+    {
+      "type": 0,
+      "value": "已故障"
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "服務要求識別碼"
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "刪除參數"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "顯示執行"
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "上一步"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "確定"
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "狀態碼"
+    }
+  ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "顯示較多內容"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "複製 URL"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "因為定義中有多個觸發程序，所以無法轉譯設計工具。"
+    }
+  ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "開始時間"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "狀態類型:"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "需要連線"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "持續時間"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "回應"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 小時"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "狀態"
+    }
+  ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "輸入參數名稱。"
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "陣列"
+    }
+  ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "請選取卡片以查看內容"
+    }
+  ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "方法"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "名稱:"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "儲存工作流程時，將會儲存參數。您可以在儲存前先在這裡編輯，或是在儲存後在參數頁面中編輯。"
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "布林值"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "下一個失敗"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "未預期的錯誤"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "狀態"
+    }
+  ],
+  "O36+wl": [
+    {
+      "type": 0,
+      "value": "編輯參數"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "作業選項:"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小時 "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分鐘"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "選取受控身分識別"
+    }
+  ],
+  "PF87Ew": [
+    {
+      "type": 0,
+      "value": "已成功"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "更多面板"
+    }
+  ],
+  "PaPPLr": [
+    {
+      "type": 0,
+      "value": "已中止"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "物件"
+    }
+  ],
+  "QQYzHC": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " 卡片的操作功能表"
+    }
+  ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "正在載入..."
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小時"
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 分鐘"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分鐘"
+    }
+  ],
+  "T8Xqt9": [
+    {
+      "type": 0,
+      "value": "失敗"
+    }
+  ],
+  "TZv5JE": [
+    {
+      "type": 0,
+      "value": "名稱"
+    }
+  ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "用戶端要求識別碼"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "若要參考參數，請使用動態內容清單。"
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "因為安全性設定的緣故，所以未顯示內容。"
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "顯示較少內容"
+    }
+  ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "提供的工作流程執行名稱無效。"
+    }
+  ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "註解"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "持續時間"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "執行歷程記錄"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 天 "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小時"
+    }
+  ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "重試"
+    }
+  ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "連線名稱"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分 "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "要求"
+    }
+  ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "詳細資訊"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 天"
+    }
+  ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "字串"
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "載入更多"
+    }
+  ],
+  "ci6ex1": [
+    {
+      "type": 0,
+      "value": "值"
+    }
+  ],
+  "cj+kyo": [
+    {
+      "type": 0,
+      "value": "已取消"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "載入元件時發生錯誤。"
+    }
+  ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "開始時間"
+    }
+  ],
+  "e4Onhn": [
+    {
+      "type": 0,
+      "value": "未指定"
+    }
+  ],
+  "eRvRWs": [
+    {
+      "type": 0,
+      "value": "開始時間"
+    }
+  ],
+  "ftwXvc": [
+    {
+      "type": 0,
+      "value": "已略過"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "URI"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "上一個失敗"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 秒"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "持續時間"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "下一步"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "此動作已設定測試。"
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒鐘"
+    }
+  ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "在 JSON 中編輯"
+    }
+  ],
+  "k41+13": [
+    {
+      "type": 0,
+      "value": "已跳過"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分 "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒"
+    }
+  ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "下載 (Alt/Option + 按一下)"
+    }
+  ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小時 "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分鐘"
+    }
+  ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "執行觸發程序"
+    }
+  ],
+  "lV77P8": [
+    {
+      "type": 0,
+      "value": "標題"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "無狀態執行模式:"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "實際值"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "測試"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "名稱"
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
+    }
+  ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "輸入執行識別碼以開啟執行"
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "標題"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "結束時間"
+    }
+  ],
+  "pRUJff": [
+    {
+      "type": 0,
+      "value": "參數"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "重新整理"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "受控識別"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "必要"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 天"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "整數"
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "索引鍵"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "新增參數"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 天 "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小時"
+    }
+  ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "類型"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "確定"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "預設值"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "建立參數"
+    }
+  ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "工作流程屬性"
+    }
+  ],
+  "wHYQyg": [
+    {
+      "type": 0,
+      "value": "逾時"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "回呼 URL:"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "參數會在邏輯應用程式中跨工作流程共用。"
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "值"
+    }
+  ],
+  "z4YYlQ": [
+    {
+      "type": 0,
+      "value": "輸入參數的預設值。"
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "摘要"
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "浮點數"
+    }
+  ]
+}

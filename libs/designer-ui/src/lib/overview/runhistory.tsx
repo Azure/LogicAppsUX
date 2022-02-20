@@ -12,7 +12,7 @@ import type { RunDisplayItem } from './types';
 
 export interface RunHistoryProps {
   items: RunDisplayItem[];
-  loading: boolean;
+  loading?: boolean;
   onOpenRun(run: RunDisplayItem): void;
 }
 
@@ -71,6 +71,7 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
   const columns: IColumn[] = [
     {
       fieldName: RunHistoryColumnKeys.IDENTIFIER,
+      flexGrow: 1,
       isResizable: true,
       key: RunHistoryColumnKeys.IDENTIFIER,
       minWidth: 0,
@@ -87,7 +88,7 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
       fieldName: RunHistoryColumnKeys.START_TIME,
       isResizable: true,
       key: RunHistoryColumnKeys.START_TIME,
-      minWidth: 200,
+      minWidth: 160,
       name: Resources.START_TIME,
     },
     {
@@ -151,7 +152,7 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
       items={items}
       layoutMode={DetailsListLayoutMode.justified}
       selectionMode={SelectionMode.none}
-      shimmerLines={1}
+      shimmerLines={items.length || 5}
       onRenderItemColumn={handleRenderItemColumn}
     />
   );

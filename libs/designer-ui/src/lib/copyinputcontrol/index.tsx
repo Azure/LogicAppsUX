@@ -1,13 +1,11 @@
-import { IButton, IconButton } from '@fluentui/react/lib/Button';
-import { ITextField, TextField } from '@fluentui/react/lib/TextField';
-import { TooltipHost } from '@fluentui/react/lib/Tooltip';
+import { IButton, IconButton, IIconProps, ITextField, TextField, TooltipHost } from '@fluentui/react';
+import { useConst } from '@fluentui/react-hooks';
 import * as React from 'react';
-import { injectIntl, WrappedComponentProps } from 'react-intl';
-type IIconProps = import('@fluentui/react/lib/Icon').IIconProps;
+import { useIntl } from 'react-intl';
 
 export interface CopyInputControlProps {
   ariaLabelledBy?: string;
-  placeholderText: string;
+  placeholder: string;
   text: string;
   onCopy?(): void;
 }
@@ -16,76 +14,67 @@ const iconProps: IIconProps = {
   iconName: 'Copy',
 };
 
-export class InnerClassCopyInput extends React.Component<CopyInputControlProps & WrappedComponentProps<'intl'>> {
-  private _buttonRef = React.createRef<IButton>();
-  private _textFieldRef = React.createRef<ITextField>();
-  private _copyInputContainer = React.createRef<HTMLDivElement>();
+export const CopyInputControl = React.forwardRef<Pick<HTMLElement, 'focus' | 'scrollIntoView'>, CopyInputControlProps>(
+  ({ ariaLabelledBy, placeholder, text, onCopy }, ref) => {
+    const disabled = useConst(() => {
+      try {
+        return !document.queryCommandSupported('Copy');
+      } catch {
+        return true;
+      }
+    });
+    const intl = useIntl();
+    const buttonRef = React.useRef<IButton | null>(null);
+    const containerRef = React.useRef<HTMLDivElement | null>(null);
+    const textFieldRef = React.useRef<ITextField | null>(null);
 
-  render(): JSX.Element {
-    const { ariaLabelledBy, placeholderText, text, intl } = this.props;
-    const disabled = this._isDisabled();
+    React.useImperativeHandle(ref, () => ({
+      focus() {
+        buttonRef.current?.focus();
+      },
+      scrollIntoView(options?: boolean | ScrollIntoViewOptions) {
+        containerRef.current?.scrollIntoView(options);
+      },
+    }));
 
     const DISPLAY_TEXT_COPY_URL = intl.formatMessage({
       defaultMessage: 'Copy URL',
-      description: 'This is shown as an aria label on button as well as the tooltip that is shown after clicking the button',
+      description: 'ARIA label and tooltip text for the copy button',
     });
 
+    const handleClick = () => {
+      const textbox = textFieldRef.current;
+      if (textbox) {
+        textbox.focus();
+        textbox.setSelectionRange(0, textbox.value?.length ?? 0);
+        document.execCommand('Copy');
+      }
+
+      onCopy?.();
+    };
+
     return (
-      <div className="msla-copy-input-control" ref={this._copyInputContainer}>
+      <div className="msla-copy-input-control" ref={(container) => (containerRef.current = container)}>
         <TextField
-          componentRef={this._textFieldRef}
           aria-labelledby={ariaLabelledBy}
           className="msla-copy-input-control-textbox"
-          placeholder={placeholderText}
+          componentRef={(textField) => (textFieldRef.current = textField)}
+          placeholder={placeholder}
           readOnly
           value={text}
         />
         <TooltipHost content={DISPLAY_TEXT_COPY_URL}>
           <IconButton
             ariaLabel={DISPLAY_TEXT_COPY_URL}
-            componentRef={this._buttonRef}
+            componentRef={(button) => (buttonRef.current = button)}
             disabled={disabled}
             iconProps={iconProps}
-            onClick={this._handleClick}
+            onClick={handleClick}
           />
         </TooltipHost>
       </div>
     );
   }
+);
 
-  focus(): void {
-    if (this._buttonRef.current) {
-      this._buttonRef.current.focus();
-    }
-  }
-
-  scrollIntoView(options?: boolean | ScrollIntoViewOptions): void {
-    if (this._copyInputContainer.current) {
-      this._copyInputContainer.current.scrollIntoView(options);
-    }
-  }
-
-  private _isDisabled(): boolean {
-    try {
-      return !document.queryCommandSupported('Copy');
-    } catch {
-      return true;
-    }
-  }
-
-  private _handleClick = (): void => {
-    const textbox = this._textFieldRef.current;
-    if (textbox) {
-      textbox.focus();
-      textbox.setSelectionRange(0, textbox?.value?.length ?? 0);
-      document.execCommand('Copy');
-    }
-
-    const { onCopy } = this.props;
-    if (onCopy) {
-      onCopy();
-    }
-  };
-}
-
-export const CopyInputControl = injectIntl<'intl', CopyInputControlProps & WrappedComponentProps<'intl'>>(InnerClassCopyInput);
+CopyInputControl.displayName = 'CopyInputControl';

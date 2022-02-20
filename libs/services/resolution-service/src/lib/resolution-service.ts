@@ -1,4 +1,4 @@
-import { copy, equals } from '@microsoft-logic-apps/utils';
+import { copy, equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import { ExpressionException, ExpressionExceptionCode } from './common/exceptions/expression';
 import {
   ExpressionFunctionNames,
@@ -17,12 +17,22 @@ import {
   ExpressionLiteral,
   ExpressionStringInterpolation,
 } from './common/models/expression';
+import { isParametersObject } from './common/models/parameters';
 
 export class ResolutionService {
   private _context: ExpressionEvaluationContext;
 
   constructor(parameters: Record<string, unknown>, appsettings: Record<string, unknown>) {
-    this._context = { parameters, appsettings };
+    const parsedOutParameters: Record<string, any> = {};
+    for (const key in parameters) {
+      const value = parameters[key];
+      if (isParametersObject(value)) {
+        parsedOutParameters[key] = value.value;
+      } else {
+        parsedOutParameters[key] = value;
+      }
+    }
+    this._context = { parameters: parsedOutParameters, appsettings };
   }
 
   resolve(root: any) {
@@ -61,11 +71,11 @@ export class ResolutionService {
     }
 
     if (isStringInterpolation(parsedExpression)) {
-      return this._resolveStringInterpolationExpression(parsedExpression as ExpressionStringInterpolation);
+      return this._resolveStringInterpolationExpression(parsedExpression);
     } else if (isFunction(parsedExpression)) {
-      return this._resolveFunction(parsedExpression as ExpressionFunction);
+      return this._resolveFunction(parsedExpression);
     } else if (isLiteralExpression(parsedExpression)) {
-      return this._resolveLiteralExpression(parsedExpression as ExpressionLiteral);
+      return this._resolveLiteralExpression(parsedExpression);
     } else {
       throw new ExpressionException(ExpressionExceptionCode.UNEXPECTED_CHARACTER, ExpressionExceptionCode.UNEXPECTED_CHARACTER);
     }
@@ -75,14 +85,12 @@ export class ResolutionService {
     let resolvedExpression = '';
 
     for (const segment of expression.segments) {
-      if (isFunction(segment) && this._isFunctionParameterOrAppSetting((segment as ExpressionFunction).name)) {
-        const functionExpression = segment as ExpressionFunction;
+      if (isFunction(segment) && this._isFunctionParameterOrAppSetting(segment.name)) {
         resolvedExpression = `${resolvedExpression}${this._evaluate(
-          `@${functionExpression.expression.substring(functionExpression.startPosition, functionExpression.endPosition)}`
+          `@${segment.expression.substring(segment.startPosition, segment.endPosition)}`
         )}`;
       } else if (isLiteralExpression(segment)) {
-        const literalExpression = segment as ExpressionLiteral;
-        resolvedExpression = `${resolvedExpression}${literalExpression.value}`;
+        resolvedExpression = `${resolvedExpression}${segment.value}`;
       }
     }
 
@@ -122,16 +130,15 @@ export class ResolutionService {
     let segment = parsedTemplateExpression;
     let isStringInterpolationExpression = false;
     if (isStringInterpolation(parsedTemplateExpression)) {
-      const stringInterpolationExpression = parsedTemplateExpression as ExpressionStringInterpolation;
-      if (stringInterpolationExpression.segments.length === 1) {
-        segment = stringInterpolationExpression.segments[0];
+      if (parsedTemplateExpression.segments.length === 1) {
+        segment = parsedTemplateExpression.segments[0];
         isStringInterpolationExpression = true;
       }
     }
 
     if (isFunction(segment)) {
-      const evaluatedExpression = this._evaluateFunctionExpression(segment as ExpressionFunction, isStringInterpolationExpression);
-      if (evaluatedExpression) {
+      const evaluatedExpression = this._evaluateFunctionExpression(segment, isStringInterpolationExpression);
+      if (!isNullOrUndefined(evaluatedExpression)) {
         return evaluatedExpression;
       }
     }
@@ -139,7 +146,7 @@ export class ResolutionService {
     return this._evaluateUsingRegex(expression);
   }
 
-  private _evaluateFunctionExpression(expression: ExpressionFunction, isStringInterpolationExpression: boolean) {
+  private _evaluateFunctionExpression(expression: ExpressionFunction, isStringInterpolationExpression: boolean): string | undefined {
     const functionName = expression.name;
     if (
       equals(functionName, ExpressionFunctionNames.PARAMETERS) ||
@@ -147,10 +154,9 @@ export class ResolutionService {
     ) {
       const argument = expression.arguments[0];
       if (isStringLiteral(argument)) {
-        const literal = argument as ExpressionLiteral;
         const result = equals(functionName, ExpressionFunctionNames.PARAMETERS)
-          ? this._context.parameters[literal.value]
-          : this._context.appsettings[literal.value];
+          ? this._context.parameters[argument.value]
+          : this._context.appsettings[argument.value];
         if (isStringInterpolationExpression) {
           if (!result && typeof result === 'string') {
             return result;
@@ -158,6 +164,8 @@ export class ResolutionService {
         } else {
           return result;
         }
+      } else if (isFunction(argument)) {
+        return this._evaluateFunctionExpression(argument, false) as string;
       }
     }
     return undefined;
