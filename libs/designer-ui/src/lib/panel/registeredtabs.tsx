@@ -1,23 +1,7 @@
 import * as React from 'react';
 import { PanelTab } from './';
 import constants from '../constants';
-import { useIntl } from 'react-intl';
 import { WorkflowParameters } from '../workflowparameters/workflowparameters';
-
-// const HandleIntl = (input: string): string => {
-//   const intl = useIntl();
-//   switch (input) {
-//     case 'workflowParameterTitle': {
-//       const workflowParameterTitle = intl.formatMessage({
-//         defaultMessage: 'Workflow Parameters',
-//         description: 'Label for workflow parameter panel title',
-//       });
-//       return workflowParameterTitle;
-//     }
-//     default:
-//       return '';
-//   }
-// };
 
 export const workflowParametersTab: PanelTab = {
   title: 'Workflow Parameters',
@@ -44,6 +28,26 @@ export const workflowParametersTab: PanelTab = {
       ]}
     />
   ),
+  order: 0,
+  icon: 'EditStyle',
+};
+
+export const aboutTab: PanelTab = {
+  title: 'About',
+  name: constants.PANEL_TAB_NAMES.ABOUT,
+  description: 'test tab',
+  enabled: true,
+  content: <div />,
+  order: 0,
+  icon: 'EditStyle',
+};
+
+export const connectionTab: PanelTab = {
+  title: 'Connection Long Name',
+  name: constants.PANEL_TAB_NAMES.AUTH_CONNECTION,
+  description: 'test tab',
+  enabled: true,
+  content: <div />,
   order: 0,
   icon: 'EditStyle',
 };

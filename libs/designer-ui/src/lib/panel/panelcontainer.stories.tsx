@@ -9,5 +9,5 @@ export default {
 export const Standard: ComponentStory<typeof PanelRoot> = (args: PanelRootProps) => <PanelRoot {...args} />;
 
 Standard.args = {
-  width: '500px',
+  isCollapsed: true,
 };

@@ -27,6 +27,7 @@ export interface PanelContainerProps {
 
 export const PanelContainer = ({ isCollapsed, isRight, tabs, selectedTab, width, setSelectedTab, trackEvent }: PanelContainerProps) => {
   const onTabChange = (itemKey: string): void => {
+    console.log(itemKey);
     setSelectedTab(itemKey);
   };
 
@@ -34,13 +35,21 @@ export const PanelContainer = ({ isCollapsed, isRight, tabs, selectedTab, width,
     <div className="msla-resizable-panel-container">
       {/* TODO: 12799012 Panel header */}
       <Panel
-        isOpen={true}
+        isOpen
         headerText={'TODO: 12799012 Panel header'}
+        isBlocking={false}
+        hasCloseButton={false}
         type={isRight ? PanelType.custom : PanelType.customNear}
         customWidth={width}
       >
-        <PanelPivot isCollapsed={isCollapsed} tabs={tabs} selectedTab={selectedTab} onTabChange={onTabChange} trackEvent={trackEvent} />
-        <PanelContent tabs={tabs} selectedTab={selectedTab} />
+        {isCollapsed ? (
+          <div />
+        ) : (
+          <>
+            <PanelPivot isCollapsed={isCollapsed} tabs={tabs} selectedTab={selectedTab} onTabChange={onTabChange} trackEvent={trackEvent} />
+            <PanelContent tabs={tabs} selectedTab={selectedTab} />
+          </>
+        )}
       </Panel>
     </div>
   );

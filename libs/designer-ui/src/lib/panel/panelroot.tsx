@@ -1,20 +1,24 @@
 import { PanelContainer } from './';
 import { PageActionTelemetryData } from '../telemetry/models';
-import { useState } from 'react';
-import { workflowParametersTab } from './registeredtabs';
+import { useEffect, useState } from 'react';
+import { workflowParametersTab, aboutTab, connectionTab } from './registeredtabs';
 export interface PanelRootProps {
   selectedTabId?: string;
-  width: string;
+  isCollapsed: boolean;
 }
 
-export const PanelRoot = ({ selectedTabId, width }: PanelRootProps): JSX.Element => {
-  const [selectedTab, setSelectedTab] = useState('');
+export const PanelRoot = ({ selectedTabId, isCollapsed }: PanelRootProps): JSX.Element => {
+  const [selectedTab, setSelectedTab] = useState(workflowParametersTab.name);
+  const [width, setWidth] = useState('500px');
+  useEffect(() => {
+    isCollapsed ? setWidth('50px') : setWidth('500px');
+  }, [isCollapsed]);
   return (
     <PanelContainer
       width={width}
       isRight
-      isCollapsed={false}
-      tabs={[workflowParametersTab]}
+      isCollapsed={isCollapsed}
+      tabs={[workflowParametersTab, aboutTab, connectionTab]}
       selectedTab={selectedTab}
       setSelectedTab={setSelectedTab}
       trackEvent={handleTrackEvent}
