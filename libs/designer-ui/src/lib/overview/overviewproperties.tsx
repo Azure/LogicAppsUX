@@ -5,7 +5,7 @@ import type { CallbackInfo } from './types';
 import { getCallbackUrl } from './utils';
 
 export interface OverviewPropertiesProps {
-  callbackInfo: CallbackInfo;
+  callbackInfo: CallbackInfo | undefined;
   name: string;
   operationOptions?: string;
   statelessRunMode?: string;
