@@ -42,9 +42,7 @@ export const PanelContainer = ({ isCollapsed, isRight, tabs, selectedTab, width,
         type={isRight ? PanelType.custom : PanelType.customNear}
         customWidth={width}
       >
-        {isCollapsed ? (
-          <div />
-        ) : (
+        {!isCollapsed && (
           <>
             <PanelPivot isCollapsed={isCollapsed} tabs={tabs} selectedTab={selectedTab} onTabChange={onTabChange} trackEvent={trackEvent} />
             <PanelContent tabs={tabs} selectedTab={selectedTab} />
