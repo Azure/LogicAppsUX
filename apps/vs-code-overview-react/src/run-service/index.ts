@@ -36,14 +36,19 @@ export class RunService implements IRunService {
     }
   }
 
-  async getMoreRuns(continuationToken: string): Promise<Runs> {
+  private getAccessTokenHeaders = () => {
     const { accessToken } = this.options;
-    let headers: Headers | undefined;
-    if (accessToken) {
-      headers = new Headers({
-        Authorization: accessToken,
-      });
+    if (!accessToken) {
+      return undefined;
     }
+
+    return new Headers({
+      Authorization: accessToken,
+    });
+  };
+
+  async getMoreRuns(continuationToken: string): Promise<Runs> {
+    const headers = this.getAccessTokenHeaders();
     const response = await fetch(continuationToken, { headers });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -54,13 +59,9 @@ export class RunService implements IRunService {
   }
 
   async getRun(runId: string): Promise<Run | RunError> {
-    const { apiVersion, baseUrl, accessToken, workflowName } = this.options;
-    let headers: Headers | undefined;
-    if (accessToken) {
-      headers = new Headers({
-        Authorization: accessToken,
-      });
-    }
+    const { apiVersion, baseUrl, workflowName } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
     const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}`;
     const response = await fetch(uri, { headers });
     if (!response.ok) {
@@ -71,13 +72,9 @@ export class RunService implements IRunService {
   }
 
   async getRuns(workflowId: string): Promise<Runs> {
-    const { apiVersion, baseUrl, accessToken, workflowName } = this.options;
-    let headers: Headers | undefined;
-    if (accessToken) {
-      headers = new Headers({
-        Authorization: accessToken,
-      });
-    }
+    const { apiVersion, baseUrl, workflowName } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
     const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
     const response = await fetch(uri, { headers });
     if (!response.ok) {
