@@ -10,8 +10,25 @@
         "devServerTarget": "designer:storybook"
       },
       "configurations": {
+        "debugchrome": {
+          "headed": true,
+          "browser": "chrome"
+        },
+        "debugedge": {
+          "headed": true,
+          "browser": "edge"
+        },
+        "debugfirefox": {
+          "headed": true,
+          "browser": "firefox"
+        },
+        "debug": {
+          "headed": true,
+          "exit": false
+        },
         "ci": {
-          "devServerTarget": "designer:storybook:ci"
+          "devServerTarget": "designer:storybook:ci",
+          "headed": false
         }
       }
     },

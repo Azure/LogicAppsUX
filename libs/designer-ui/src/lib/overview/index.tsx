@@ -19,6 +19,7 @@ import { isRunError, mapToRunItem } from './utils';
 export interface OverviewProps {
   corsNotice?: string;
   errorMessage?: string;
+  isRefreshing?: boolean;
   hasMoreRuns?: boolean;
   loading?: boolean;
   runItems: RunDisplayItem[];
@@ -45,6 +46,7 @@ export const Overview: React.FC<OverviewProps> = ({
   hasMoreRuns = false,
   runItems,
   workflowProperties,
+  isRefreshing,
   onLoadMoreRuns,
   onLoadRuns,
   onOpenRun,
@@ -106,7 +108,12 @@ export const Overview: React.FC<OverviewProps> = ({
 
   return (
     <div>
-      <OverviewCommandBar callbackInfo={workflowProperties.callbackInfo} onRefresh={onLoadRuns} onRunTrigger={onRunTrigger} />
+      <OverviewCommandBar
+        callbackInfo={workflowProperties.callbackInfo}
+        isRefreshing={isRefreshing}
+        onRefresh={onLoadRuns}
+        onRunTrigger={onRunTrigger}
+      />
       <OverviewProperties {...workflowProperties} />
       <Pivot>
         <PivotItem headerText={Resources.RUN_HISTORY}>
@@ -150,3 +157,5 @@ export const Overview: React.FC<OverviewProps> = ({
     </div>
   );
 };
+
+export { isRunError, OverviewPropertiesProps };
