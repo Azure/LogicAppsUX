@@ -139,10 +139,41 @@ Array [
             Duration
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            1 minute
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -154,10 +185,41 @@ Array [
             Start time
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            2/9/2022, 1:52:00 PM
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -169,10 +231,41 @@ Array [
             End time
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            2/9/2022, 1:53:00 PM
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
       </div>
@@ -320,10 +413,41 @@ Array [
             Duration
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            1 minute
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -335,10 +459,41 @@ Array [
             Start time
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            2/9/2022, 1:52:00 PM
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -350,10 +505,41 @@ Array [
             End time
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            2/9/2022, 1:53:00 PM
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
       </div>
@@ -380,10 +566,41 @@ Array [
             Method
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            GET
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -395,10 +612,41 @@ Array [
             URI
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            https://httpbin.org/get
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -741,10 +989,41 @@ Array [
             Duration
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            1 minute
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -756,10 +1035,41 @@ Array [
             Start time
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            2/9/2022, 1:52:00 PM
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -771,10 +1081,41 @@ Array [
             End time
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            2/9/2022, 1:53:00 PM
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
       </div>
@@ -801,10 +1142,41 @@ Array [
             Status code
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            200
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -1011,10 +1383,41 @@ Array [
             Body
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            {}
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
       </div>
@@ -1162,10 +1565,41 @@ Array [
             Duration
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            1 minute
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -1177,10 +1611,41 @@ Array [
             Start time
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            2/9/2022, 1:52:00 PM
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -1192,10 +1657,41 @@ Array [
             End time
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            2/9/2022, 1:53:00 PM
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
       </div>
@@ -1373,10 +1869,41 @@ Array [
             Duration
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            1 minute
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -1388,10 +1915,41 @@ Array [
             Start time
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            2/9/2022, 1:52:00 PM
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
         <section
@@ -1403,10 +1961,41 @@ Array [
             End time
           </label>
           <div
-            className="msla-trace-value-text"
-            tabIndex={0}
+            className="msla-colorizer-json-body"
           >
-            2/9/2022, 1:53:00 PM
+            <section
+              style={
+                Object {
+                  "display": "flex",
+                  "height": 19,
+                  "position": "relative",
+                  "textAlign": "initial",
+                  "width": "100%",
+                }
+              }
+            >
+              <div
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "width": "100%",
+                  }
+                }
+              >
+                Loading...
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "none",
+                    "width": "100%",
+                  }
+                }
+              />
+            </section>
           </div>
         </section>
       </div>
