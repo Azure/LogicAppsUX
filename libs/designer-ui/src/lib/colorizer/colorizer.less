@@ -2,24 +2,22 @@
 
 .msla-colorizer-json-body {
   margin: 0.5em 1.25em;
-  max-height: 12em;
+  max-height: 12rem; /* 192px = 12×16px = 10×19px + 2px borders */
   border: 1px solid lightgray;
 
-  .msla-monaco {
-    .monaco-editor {
-      .decorationsOverviewRuler {
-        display: none;
-      }
-
-      .overflowingContentWidgets {
-        display: none;
-      }
+  .monaco-editor {
+    .decorationsOverviewRuler {
+      display: none;
     }
 
-    .monaco-editor-scrollable {
-      .decorationsOverviewRuler {
-        display: none;
-      }
+    .overflowingContentWidgets {
+      display: none;
+    }
+  }
+
+  .monaco-editor-scrollable {
+    .decorationsOverviewRuler {
+      display: none;
     }
   }
 }

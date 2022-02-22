@@ -65,10 +65,41 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
     display-name
   </label>
   <div
-    className="msla-trace-value-text"
-    tabIndex={0}
+    className="msla-colorizer-json-body"
   >
-    -123.45
+    <section
+      style={
+        Object {
+          "display": "flex",
+          "height": 19,
+          "position": "relative",
+          "textAlign": "initial",
+          "width": "100%",
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "alignItems": "center",
+            "display": "flex",
+            "height": "100%",
+            "justifyContent": "center",
+            "width": "100%",
+          }
+        }
+      >
+        Loading...
+      </div>
+      <div
+        style={
+          Object {
+            "display": "none",
+            "width": "100%",
+          }
+        }
+      />
+    </section>
   </div>
 </section>
 `;
@@ -499,10 +530,41 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
     display-name
   </label>
   <div
-    className="msla-trace-value-text"
-    tabIndex={0}
+    className="msla-colorizer-json-body"
   >
-    -123.45
+    <section
+      style={
+        Object {
+          "display": "flex",
+          "height": 19,
+          "position": "relative",
+          "textAlign": "initial",
+          "width": "100%",
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "alignItems": "center",
+            "display": "flex",
+            "height": "100%",
+            "justifyContent": "center",
+            "width": "100%",
+          }
+        }
+      >
+        Loading...
+      </div>
+      <div
+        style={
+          Object {
+            "display": "none",
+            "width": "100%",
+          }
+        }
+      />
+    </section>
   </div>
 </section>
 `;
@@ -517,10 +579,41 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
     raw
   </label>
   <div
-    className="msla-trace-value-text"
-    tabIndex={0}
+    className="msla-colorizer-json-body"
   >
-    Hello World
+    <section
+      style={
+        Object {
+          "display": "flex",
+          "height": 19,
+          "position": "relative",
+          "textAlign": "initial",
+          "width": "100%",
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "alignItems": "center",
+            "display": "flex",
+            "height": "100%",
+            "justifyContent": "center",
+            "width": "100%",
+          }
+        }
+      >
+        Loading...
+      </div>
+      <div
+        style={
+          Object {
+            "display": "none",
+            "width": "100%",
+          }
+        }
+      />
+    </section>
   </div>
 </section>
 `;
@@ -535,10 +628,41 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
     XML
   </label>
   <div
-    className="msla-trace-value-text"
-    tabIndex={0}
+    className="msla-colorizer-json-body"
   >
-    &lt;xml&gt;&lt;/xml&gt;
+    <section
+      style={
+        Object {
+          "display": "flex",
+          "height": 19,
+          "position": "relative",
+          "textAlign": "initial",
+          "width": "100%",
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "alignItems": "center",
+            "display": "flex",
+            "height": "100%",
+            "justifyContent": "center",
+            "width": "100%",
+          }
+        }
+      >
+        Loading...
+      </div>
+      <div
+        style={
+          Object {
+            "display": "none",
+            "width": "100%",
+          }
+        }
+      />
+    </section>
   </div>
 </section>
 `;

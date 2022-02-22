@@ -1,4 +1,5 @@
 import Constants from '../../constants';
+import CustomEditor, { EditorLanguage } from '../../editor';
 import { RawValue } from './raw';
 import type { ValueProps } from './types';
 import { isXml } from './utils';
@@ -20,11 +21,20 @@ export const XmlValue: React.FC<ValueProps> = (props) => {
     valueAsString = String(value) || Constants.ZERO_WIDTH_SPACE;
   }
 
+  const height = 19 * Math.min(valueAsString.split('\n').length, 10);
+
   return (
     <section className="msla-trace-value-label">
       <label className="msla-trace-value-display-name">{displayName}</label>
-      <div className="msla-trace-value-text" tabIndex={0}>
-        {valueAsString}
+      <div className="msla-colorizer-json-body">
+        <CustomEditor
+          defaultValue={valueAsString}
+          height={height}
+          language={EditorLanguage.xml}
+          lineNumbers="off"
+          minimapEnabled={false}
+          readOnly={true}
+        />
       </div>
     </section>
   );

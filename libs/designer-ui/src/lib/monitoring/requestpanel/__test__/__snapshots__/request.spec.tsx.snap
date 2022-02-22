@@ -23,10 +23,41 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
         Method
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        GET
+        <section
+          style={
+            Object {
+              "display": "flex",
+              "height": 19,
+              "position": "relative",
+              "textAlign": "initial",
+              "width": "100%",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "height": "100%",
+                "justifyContent": "center",
+                "width": "100%",
+              }
+            }
+          >
+            Loading...
+          </div>
+          <div
+            style={
+              Object {
+                "display": "none",
+                "width": "100%",
+              }
+            }
+          />
+        </section>
       </div>
     </section>
     <section
@@ -38,10 +69,41 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
         URI
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        https://httpbin.org/get
+        <section
+          style={
+            Object {
+              "display": "flex",
+              "height": 19,
+              "position": "relative",
+              "textAlign": "initial",
+              "width": "100%",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "height": "100%",
+                "justifyContent": "center",
+                "width": "100%",
+              }
+            }
+          >
+            Loading...
+          </div>
+          <div
+            style={
+              Object {
+                "display": "none",
+                "width": "100%",
+              }
+            }
+          />
+        </section>
       </div>
     </section>
     <section
@@ -266,10 +328,41 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         Method
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        POST
+        <section
+          style={
+            Object {
+              "display": "flex",
+              "height": 19,
+              "position": "relative",
+              "textAlign": "initial",
+              "width": "100%",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "height": "100%",
+                "justifyContent": "center",
+                "width": "100%",
+              }
+            }
+          >
+            Loading...
+          </div>
+          <div
+            style={
+              Object {
+                "display": "none",
+                "width": "100%",
+              }
+            }
+          />
+        </section>
       </div>
     </section>
     <section
@@ -281,10 +374,41 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         URI
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        https://httpbin.org/post
+        <section
+          style={
+            Object {
+              "display": "flex",
+              "height": 19,
+              "position": "relative",
+              "textAlign": "initial",
+              "width": "100%",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "height": "100%",
+                "justifyContent": "center",
+                "width": "100%",
+              }
+            }
+          >
+            Loading...
+          </div>
+          <div
+            style={
+              Object {
+                "display": "none",
+                "width": "100%",
+              }
+            }
+          />
+        </section>
       </div>
     </section>
     <section
@@ -491,12 +615,41 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         Body
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        {
-  "hello": "world!"
-}
+        <section
+          style={
+            Object {
+              "display": "flex",
+              "height": 57,
+              "position": "relative",
+              "textAlign": "initial",
+              "width": "100%",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "height": "100%",
+                "justifyContent": "center",
+                "width": "100%",
+              }
+            }
+          >
+            Loading...
+          </div>
+          <div
+            style={
+              Object {
+                "display": "none",
+                "width": "100%",
+              }
+            }
+          />
+        </section>
       </div>
     </section>
   </div>
@@ -526,10 +679,41 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
         Method
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        POST
+        <section
+          style={
+            Object {
+              "display": "flex",
+              "height": 19,
+              "position": "relative",
+              "textAlign": "initial",
+              "width": "100%",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "height": "100%",
+                "justifyContent": "center",
+                "width": "100%",
+              }
+            }
+          >
+            Loading...
+          </div>
+          <div
+            style={
+              Object {
+                "display": "none",
+                "width": "100%",
+              }
+            }
+          />
+        </section>
       </div>
     </section>
     <section
@@ -541,10 +725,41 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
         URI
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        https://httpbin.org/post
+        <section
+          style={
+            Object {
+              "display": "flex",
+              "height": 19,
+              "position": "relative",
+              "textAlign": "initial",
+              "width": "100%",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "height": "100%",
+                "justifyContent": "center",
+                "width": "100%",
+              }
+            }
+          >
+            Loading...
+          </div>
+          <div
+            style={
+              Object {
+                "display": "none",
+                "width": "100%",
+              }
+            }
+          />
+        </section>
       </div>
     </section>
     <section
