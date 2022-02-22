@@ -9,7 +9,7 @@
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/vs-code-overview/webview",
+        "outputPath": "dist/apps/vs-code-designer/overview",
         "index": "apps/vs-code-overview-react/src/index.html",
         "baseHref": "/",
         "main": "apps/vs-code-overview-react/src/main.tsx",
