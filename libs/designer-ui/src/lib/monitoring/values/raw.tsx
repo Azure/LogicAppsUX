@@ -23,7 +23,15 @@ export const RawValue: React.FC<ValueProps> = ({ displayName, value, visible = t
     <section className="msla-trace-value-label">
       <label className="msla-trace-value-display-name">{displayName}</label>
       <div className="msla-colorizer-json-body">
-        <CustomEditor defaultValue={valueAsString} height={height} {...language} lineNumbers="off" minimapEnabled={false} readOnly={true} />
+        <CustomEditor
+          defaultValue={valueAsString}
+          folding={false}
+          height={height}
+          {...language}
+          lineNumbers="off"
+          minimapEnabled={false}
+          readOnly={true}
+        />
       </div>
     </section>
   );
