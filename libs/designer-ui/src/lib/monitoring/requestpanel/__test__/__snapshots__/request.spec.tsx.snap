@@ -26,7 +26,10 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
         className="msla-colorizer-json-body"
       >
         <div
+          aria-label="Method"
+          aria-readonly={true}
           className="msla-colorizer-wrapper"
+          role="textbox"
           tabIndex={0}
         >
           <pre
@@ -69,7 +72,10 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
         className="msla-colorizer-json-body"
       >
         <div
+          aria-label="URI"
+          aria-readonly={true}
           className="msla-colorizer-wrapper"
+          role="textbox"
           tabIndex={0}
         >
           <pre
@@ -345,7 +351,10 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         className="msla-colorizer-json-body"
       >
         <div
+          aria-label="Method"
+          aria-readonly={true}
           className="msla-colorizer-wrapper"
+          role="textbox"
           tabIndex={0}
         >
           <pre
@@ -388,7 +397,10 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         className="msla-colorizer-json-body"
       >
         <div
+          aria-label="URI"
+          aria-readonly={true}
           className="msla-colorizer-wrapper"
+          role="textbox"
           tabIndex={0}
         >
           <pre
@@ -646,7 +658,10 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         className="msla-colorizer-json-body"
       >
         <div
+          aria-label="Body"
+          aria-readonly={true}
           className="msla-colorizer-wrapper"
+          role="textbox"
           tabIndex={0}
         >
           <pre
@@ -792,7 +807,10 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
         className="msla-colorizer-json-body"
       >
         <div
+          aria-label="Method"
+          aria-readonly={true}
           className="msla-colorizer-wrapper"
+          role="textbox"
           tabIndex={0}
         >
           <pre
@@ -835,7 +853,10 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
         className="msla-colorizer-json-body"
       >
         <div
+          aria-label="URI"
+          aria-readonly={true}
           className="msla-colorizer-wrapper"
+          role="textbox"
           tabIndex={0}
         >
           <pre
@@ -1086,7 +1107,6 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
     >
       <label
         className="msla-trace-value-display-name"
-        id="msla-body-link12"
       >
         Body
       </label>
@@ -1094,7 +1114,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
         className="msla-trace-value-text"
       >
         <a
-          aria-labelledby="msla-body-link12"
+          aria-label="Alt/Option + click to download {displayName}"
           className="ms-Link root-141"
           href="[REDACTED]"
           onClick={[Function]}
