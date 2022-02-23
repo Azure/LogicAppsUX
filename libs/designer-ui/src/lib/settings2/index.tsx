@@ -1,5 +1,6 @@
 import { IconButton, Separator } from '@fluentui/react';
-import { format } from '@microsoft-logic-apps/utils';
+// import { format } from '../../../../utils/src';
+// import { format } from '@microsoft-logic-apps/utils';
 // import { useState } from 'react';
 import { SettingSectionComponentProps } from './settingsection';
 
@@ -31,7 +32,7 @@ export function SettingsSection({ id, title, expanded, renderContent, onClick, i
       <div className="msla-setting-section-header" onClick={() => onClick(id)}>
         <IconButton
           className="msla-setting-section-header-icon"
-          ariaLabel={format(Resources.EXPAND_OR_COLLAPSE, title)}
+          ariaLabel={`Expand or collapse ${title}`}
           iconProps={iconProp}
           styles={chevronStyles}
         />

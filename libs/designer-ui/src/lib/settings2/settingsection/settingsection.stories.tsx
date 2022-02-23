@@ -1,6 +1,6 @@
 // import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { SettingSectionComponentProps } from './';
+import { SettingSectionComponentProps } from '.';
 import { SettingsSection, renderSetting, Resources, Categories } from '../';
 
 const categoryNames: Record<string, string> = {
