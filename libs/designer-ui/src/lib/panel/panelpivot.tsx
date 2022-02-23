@@ -24,15 +24,7 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackE
   };
 
   const trackEventHandler = (isCollapsed: boolean, itemKey?: string): void => {
-    // TODO: 12799013 Panel root
-    // trackEvent({
-    //   action: UserAction.click,
-    //   actionContext: {
-    //     isCollapsed,
-    //     itemKey,
-    //   },
-    //   controlId: Constants.TELEMETRY_IDENTIFIERS.PANEL_CONTAINER_TAB,
-    // });
+    // TODO: 12798935 Analytics (event logging)
   };
   const overflowLabel = intl.formatMessage({
     defaultMessage: 'more panels',
