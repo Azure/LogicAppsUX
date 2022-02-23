@@ -141,39 +141,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    --
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -187,39 +184,141 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    8
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      Object {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    7
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      Object {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    52
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      Object {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -233,39 +332,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    code
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -279,39 +375,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    clientRequestId
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
       </div>
@@ -461,39 +554,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    --
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -507,39 +597,141 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    8
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      Object {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    7
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      Object {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    52
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      Object {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -553,39 +745,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    code
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -599,39 +788,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    clientRequestId
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -645,39 +831,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    serviceRequestId
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
       </div>
@@ -827,39 +1010,46 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    18
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     minutes
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -873,39 +1063,141 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    8
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      Object {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    7
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      Object {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    52
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      Object {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -919,39 +1211,141 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    8
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      Object {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    8
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      Object {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    10
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      Object {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -965,39 +1359,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    code
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -1011,39 +1402,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    clientRequestId
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
       </div>
@@ -1221,39 +1609,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    --
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -1267,39 +1652,141 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    8
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                    /
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    2022
+                  </span>
+                  <span
+                    className="token punctuation"
+                    style={
+                      Object {
+                        "color": "rgb(4, 81, 165)",
+                      }
+                    }
+                  >
+                    ,
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    7
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      Object {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    52
+                  </span>
+                  <span
+                    className="token operator"
+                    style={
+                      Object {
+                        "color": "rgb(0, 0, 0)",
+                      }
+                    }
+                  >
+                    :
+                  </span>
+                  <span
+                    className="token number"
+                    style={
+                      Object {
+                        "color": "rgb(9, 134, 88)",
+                      }
+                    }
+                  >
+                    00
+                  </span>
+                  <span
+                    className="token plain"
+                  >
+                     PM
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -1313,39 +1800,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    code
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
         <section
@@ -1359,39 +1843,36 @@ Array [
           <div
             className="msla-colorizer-json-body"
           >
-            <section
-              style={
-                Object {
-                  "display": "flex",
-                  "height": 19,
-                  "position": "relative",
-                  "textAlign": "initial",
-                  "width": "100%",
-                }
-              }
+            <div
+              className="msla-colorizer-wrapper"
+              tabIndex={0}
             >
-              <div
+              <pre
+                className="prism-code language-json"
                 style={
                   Object {
-                    "alignItems": "center",
-                    "display": "flex",
-                    "height": "100%",
-                    "justifyContent": "center",
-                    "width": "100%",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
-                Loading...
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "none",
-                    "width": "100%",
+                <div
+                  className="token-line"
+                  style={
+                    Object {
+                      "backgroundColor": null,
+                      "color": "#000000",
+                    }
                   }
-                }
-              />
-            </section>
+                >
+                  <span
+                    className="token plain"
+                  >
+                    clientRequestId
+                  </span>
+                </div>
+              </pre>
+            </div>
           </div>
         </section>
       </div>

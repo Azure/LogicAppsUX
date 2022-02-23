@@ -14,39 +14,36 @@ exports[`ui/monitoring/values/_raw should render 1`] = `
   <div
     className="msla-colorizer-json-body"
   >
-    <section
-      style={
-        Object {
-          "display": "flex",
-          "height": 19,
-          "position": "relative",
-          "textAlign": "initial",
-          "width": "100%",
-        }
-      }
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
     >
-      <div
+      <pre
+        className="prism-code language-json"
         style={
           Object {
-            "alignItems": "center",
-            "display": "flex",
-            "height": "100%",
-            "justifyContent": "center",
-            "width": "100%",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
-        Loading...
-      </div>
-      <div
-        style={
-          Object {
-            "display": "none",
-            "width": "100%",
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
           }
-        }
-      />
-    </section>
+        >
+          <span
+            className="token plain"
+          >
+            value
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;
@@ -63,39 +60,36 @@ exports[`ui/monitoring/values/_raw should rendered a zero-width space if value i
   <div
     className="msla-colorizer-json-body"
   >
-    <section
-      style={
-        Object {
-          "display": "flex",
-          "height": 19,
-          "position": "relative",
-          "textAlign": "initial",
-          "width": "100%",
-        }
-      }
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
     >
-      <div
+      <pre
+        className="prism-code language-json"
         style={
           Object {
-            "alignItems": "center",
-            "display": "flex",
-            "height": "100%",
-            "justifyContent": "center",
-            "width": "100%",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
-        Loading...
-      </div>
-      <div
-        style={
-          Object {
-            "display": "none",
-            "width": "100%",
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
           }
-        }
-      />
-    </section>
+        >
+          <span
+            className="token plain"
+          >
+            ‌
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;

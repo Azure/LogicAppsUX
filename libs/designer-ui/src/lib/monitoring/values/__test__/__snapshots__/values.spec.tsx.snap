@@ -67,39 +67,41 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
   <div
     className="msla-colorizer-json-body"
   >
-    <section
-      style={
-        Object {
-          "display": "flex",
-          "height": 19,
-          "position": "relative",
-          "textAlign": "initial",
-          "width": "100%",
-        }
-      }
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
     >
-      <div
+      <pre
+        className="prism-code language-json"
         style={
           Object {
-            "alignItems": "center",
-            "display": "flex",
-            "height": "100%",
-            "justifyContent": "center",
-            "width": "100%",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
-        Loading...
-      </div>
-      <div
-        style={
-          Object {
-            "display": "none",
-            "width": "100%",
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
           }
-        }
-      />
-    </section>
+        >
+          <span
+            className="token number"
+            style={
+              Object {
+                "color": "rgb(9, 134, 88)",
+              }
+            }
+          >
+            -123.45
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;
@@ -532,39 +534,41 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
   <div
     className="msla-colorizer-json-body"
   >
-    <section
-      style={
-        Object {
-          "display": "flex",
-          "height": 19,
-          "position": "relative",
-          "textAlign": "initial",
-          "width": "100%",
-        }
-      }
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
     >
-      <div
+      <pre
+        className="prism-code language-json"
         style={
           Object {
-            "alignItems": "center",
-            "display": "flex",
-            "height": "100%",
-            "justifyContent": "center",
-            "width": "100%",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
-        Loading...
-      </div>
-      <div
-        style={
-          Object {
-            "display": "none",
-            "width": "100%",
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
           }
-        }
-      />
-    </section>
+        >
+          <span
+            className="token number"
+            style={
+              Object {
+                "color": "rgb(9, 134, 88)",
+              }
+            }
+          >
+            -123.45
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;
@@ -581,39 +585,36 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
   <div
     className="msla-colorizer-json-body"
   >
-    <section
-      style={
-        Object {
-          "display": "flex",
-          "height": 19,
-          "position": "relative",
-          "textAlign": "initial",
-          "width": "100%",
-        }
-      }
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
     >
-      <div
+      <pre
+        className="prism-code language-json"
         style={
           Object {
-            "alignItems": "center",
-            "display": "flex",
-            "height": "100%",
-            "justifyContent": "center",
-            "width": "100%",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
-        Loading...
-      </div>
-      <div
-        style={
-          Object {
-            "display": "none",
-            "width": "100%",
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
           }
-        }
-      />
-    </section>
+        >
+          <span
+            className="token plain"
+          >
+            Hello World
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;
@@ -630,39 +631,36 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
   <div
     className="msla-colorizer-json-body"
   >
-    <section
-      style={
-        Object {
-          "display": "flex",
-          "height": 19,
-          "position": "relative",
-          "textAlign": "initial",
-          "width": "100%",
-        }
-      }
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
     >
-      <div
+      <pre
+        className="prism-code language-json"
         style={
           Object {
-            "alignItems": "center",
-            "display": "flex",
-            "height": "100%",
-            "justifyContent": "center",
-            "width": "100%",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
-        Loading...
-      </div>
-      <div
-        style={
-          Object {
-            "display": "none",
-            "width": "100%",
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
           }
-        }
-      />
-    </section>
+        >
+          <span
+            className="token plain"
+          >
+            &lt;xml&gt;&lt;/xml&gt;
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;
