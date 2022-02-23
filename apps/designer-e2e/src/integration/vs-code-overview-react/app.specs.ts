@@ -45,17 +45,13 @@ describe('vs-code-overview-react/app', () => {
     cy.get('[data-testid="msla-overview-cors-notice"]').should('not.exist');
   });
 
-  it('should enable the filter button if a valid run name is entered', () => {
+  it('should handle filter inputs correctly', () => {
     cy.get('[data-testid="msla-run-history-filter-input"]').type('08585565587643197854783809524CU00');
     cy.get('[data-testid="msla-run-history-filter-button"]').should('not.have.attr', 'disabled');
-  });
 
-  it('should display an error message if a run name is entered and then cleared', () => {
-    cy.get('[data-testid="msla-run-history-filter-input"]').type('08585565587643197854783809524CU00');
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.get('[data-testid="msla-run-history-filter-input"]')
-      .type('08585565587643197854783809524CU00')
-      .wait(1000) // deferredValidation set to 1000
+      .wait(1000) // deferredValidationTime set to 1000
       .clear();
     cy.get('[data-testid="msla-run-history-filter-button"]').should('have.attr', 'disabled');
     cy.get('[data-automation-id="error-message"]').should('exist');
