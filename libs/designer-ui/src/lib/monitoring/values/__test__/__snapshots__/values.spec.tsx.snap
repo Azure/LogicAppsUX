@@ -8,12 +8,12 @@ exports[`ui/monitoring/values/value should render a HTML value 1`] = `
 >
   <label
     className="msla-trace-value-display-name"
-    id="msla-html1"
+    id="msla-html0"
   >
     date/time
   </label>
   <div
-    aria-labelledby="msla-html1"
+    aria-labelledby="msla-html0"
     className="msla-trace-value-text msla-trace-value-html-table"
   >
     <table
@@ -34,7 +34,6 @@ exports[`ui/monitoring/values/value should render a body link value 1`] = `
 >
   <label
     className="msla-trace-value-display-name"
-    id="msla-body-link0"
   >
     displayName
   </label>
@@ -42,7 +41,7 @@ exports[`ui/monitoring/values/value should render a body link value 1`] = `
     className="msla-trace-value-text"
   >
     <a
-      aria-labelledby="msla-body-link0"
+      aria-label="Alt/Option + click to download {displayName}"
       className="ms-Link root-109"
       href="uri"
       onClick={[Function]}
@@ -68,7 +67,10 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
     className="msla-colorizer-json-body"
   >
     <div
+      aria-label="display-name"
+      aria-readonly={true}
       className="msla-colorizer-wrapper"
+      role="textbox"
       tabIndex={0}
     >
       <pre
@@ -148,7 +150,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
               aria-label="Headers"
               className="ms-FocusZone css-128 ms-DetailsHeader root-112"
               data-automationid="DetailsHeader"
-              data-focuszone-id="FocusZone4"
+              data-focuszone-id="FocusZone3"
               onFocus={[Function]}
               onKeyDown={[Function]}
               onMouseDownCapture={[Function]}
@@ -157,8 +159,8 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
             >
               <div
                 aria-colindex={1}
-                aria-describedby="header3-$key-tooltip"
-                aria-labelledby="header3-$key-name"
+                aria-describedby="header2-$key-tooltip"
+                aria-labelledby="header2-$key-name"
                 aria-sort="none"
                 className="ms-DetailsHeader-cell is-actionable root-129"
                 data-automationid="ColumnsHeaderColumn"
@@ -178,13 +180,13 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                 >
                   <span
                     className="ms-DetailsHeader-cellTitle cellTitle-135"
-                    id="header3-$key"
+                    id="header2-$key"
                     onClick={[Function]}
                     onContextMenu={[Function]}
                   >
                     <span
                       className="ms-DetailsHeader-cellName cellName-136"
-                      id="header3-$key-name"
+                      id="header2-$key-name"
                     >
                       Key
                     </span>
@@ -193,7 +195,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
               </div>
               <label
                 className="accessibleLabel-123"
-                id="header3-$key-tooltip"
+                id="header2-$key-tooltip"
               >
                 Key
               </label>
@@ -209,8 +211,8 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
               />
               <div
                 aria-colindex={2}
-                aria-describedby="header3-$value-tooltip"
-                aria-labelledby="header3-$value-name"
+                aria-describedby="header2-$value-tooltip"
+                aria-labelledby="header2-$value-name"
                 aria-sort="none"
                 className="ms-DetailsHeader-cell is-actionable root-129"
                 data-automationid="ColumnsHeaderColumn"
@@ -230,13 +232,13 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                 >
                   <span
                     className="ms-DetailsHeader-cellTitle cellTitle-135"
-                    id="header3-$value"
+                    id="header2-$value"
                     onClick={[Function]}
                     onContextMenu={[Function]}
                   >
                     <span
                       className="ms-DetailsHeader-cellName cellName-136"
-                      id="header3-$value-name"
+                      id="header2-$value-name"
                     >
                       Value
                     </span>
@@ -245,7 +247,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
               </div>
               <label
                 className="accessibleLabel-123"
-                id="header3-$value-tooltip"
+                id="header2-$value-tooltip"
               >
                 Value
               </label>
@@ -280,7 +282,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
             >
               <div
                 className="ms-FocusZone css-128 focusZone-111"
-                data-focuszone-id="FocusZone5"
+                data-focuszone-id="FocusZone4"
                 onBlur={[Function]}
                 onFocus={[Function]}
                 onKeyDown={[Function]}
@@ -309,12 +311,12 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           aria-rowindex={2}
                           className="ms-FocusZone css-128 ms-DetailsRow root-143"
                           data-automationid="DetailsRow"
-                          data-focuszone-id="FocusZone7"
+                          data-focuszone-id="FocusZone6"
                           data-is-focusable={true}
                           data-item-index={0}
                           data-selection-index={0}
                           data-selection-touch-invoke={true}
-                          id="row2-0"
+                          id="row1-0"
                           onFocus={[Function]}
                           onKeyDown={[Function]}
                           onMouseDownCapture={[Function]}
@@ -379,12 +381,12 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           aria-rowindex={3}
                           className="ms-FocusZone css-128 ms-DetailsRow root-143"
                           data-automationid="DetailsRow"
-                          data-focuszone-id="FocusZone9"
+                          data-focuszone-id="FocusZone8"
                           data-is-focusable={true}
                           data-item-index={1}
                           data-selection-index={1}
                           data-selection-touch-invoke={true}
-                          id="row2-1"
+                          id="row1-1"
                           onFocus={[Function]}
                           onKeyDown={[Function]}
                           onMouseDownCapture={[Function]}
@@ -449,12 +451,12 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           aria-rowindex={4}
                           className="ms-FocusZone css-128 ms-DetailsRow root-143"
                           data-automationid="DetailsRow"
-                          data-focuszone-id="FocusZone11"
+                          data-focuszone-id="FocusZone10"
                           data-is-focusable={true}
                           data-item-index={2}
                           data-selection-index={2}
                           data-selection-touch-invoke={true}
-                          id="row2-2"
+                          id="row1-2"
                           onFocus={[Function]}
                           onKeyDown={[Function]}
                           onMouseDownCapture={[Function]}
@@ -535,7 +537,10 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
     className="msla-colorizer-json-body"
   >
     <div
+      aria-label="display-name"
+      aria-readonly={true}
       className="msla-colorizer-wrapper"
+      role="textbox"
       tabIndex={0}
     >
       <pre
@@ -586,7 +591,10 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
     className="msla-colorizer-json-body"
   >
     <div
+      aria-label="raw"
+      aria-readonly={true}
       className="msla-colorizer-wrapper"
+      role="textbox"
       tabIndex={0}
     >
       <pre
@@ -632,7 +640,10 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
     className="msla-colorizer-json-body"
   >
     <div
+      aria-label="XML"
+      aria-readonly={true}
       className="msla-colorizer-wrapper"
+      role="textbox"
       tabIndex={0}
     >
       <pre
