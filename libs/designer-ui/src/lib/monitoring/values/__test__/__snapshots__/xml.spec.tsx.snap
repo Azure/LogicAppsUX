@@ -15,7 +15,10 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
     className="msla-colorizer-json-body"
   >
     <div
+      aria-label="XML"
+      aria-readonly={true}
       className="msla-colorizer-wrapper"
+      role="textbox"
       tabIndex={0}
     >
       <pre
@@ -61,7 +64,10 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
     className="msla-colorizer-json-body"
   >
     <div
+      aria-label="XML"
+      aria-readonly={true}
       className="msla-colorizer-wrapper"
+      role="textbox"
       tabIndex={0}
     >
       <pre
@@ -167,7 +173,10 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
     className="msla-colorizer-json-body"
   >
     <div
+      aria-label="XML"
+      aria-readonly={true}
       className="msla-colorizer-wrapper"
+      role="textbox"
       tabIndex={0}
     >
       <pre
@@ -213,7 +222,10 @@ exports[`ui/monitoring/values/xml should render a zero-width space if value is e
     className="msla-colorizer-json-body"
   >
     <div
+      aria-label="XML"
+      aria-readonly={true}
       className="msla-colorizer-wrapper"
+      role="textbox"
       tabIndex={0}
     >
       <pre

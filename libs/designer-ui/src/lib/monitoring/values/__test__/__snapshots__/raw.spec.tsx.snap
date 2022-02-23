@@ -15,7 +15,10 @@ exports[`ui/monitoring/values/_raw should render 1`] = `
     className="msla-colorizer-json-body"
   >
     <div
+      aria-label="display-name"
+      aria-readonly={true}
       className="msla-colorizer-wrapper"
+      role="textbox"
       tabIndex={0}
     >
       <pre
@@ -61,7 +64,10 @@ exports[`ui/monitoring/values/_raw should rendered a zero-width space if value i
     className="msla-colorizer-json-body"
   >
     <div
+      aria-label="display-name"
+      aria-readonly={true}
       className="msla-colorizer-wrapper"
+      role="textbox"
       tabIndex={0}
     >
       <pre

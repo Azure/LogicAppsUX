@@ -25,7 +25,7 @@ export const XmlValue: React.FC<ValueProps> = (props) => {
     <section className="msla-trace-value-label">
       <label className="msla-trace-value-display-name">{displayName}</label>
       <div className="msla-colorizer-json-body">
-        <Colorizer code={valueAsString} />
+        <Colorizer ariaLabel={displayName} code={valueAsString} />
       </div>
     </section>
   );

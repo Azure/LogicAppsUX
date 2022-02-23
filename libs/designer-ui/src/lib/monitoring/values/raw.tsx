@@ -21,7 +21,7 @@ export const RawValue: React.FC<ValueProps> = ({ displayName, value, visible = t
     <section className="msla-trace-value-label">
       <label className="msla-trace-value-display-name">{displayName}</label>
       <div className="msla-colorizer-json-body">
-        <Colorizer code={valueAsString} {...language} />
+        <Colorizer ariaLabel={displayName} code={valueAsString} {...language} />
       </div>
     </section>
   );

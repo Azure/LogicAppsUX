@@ -142,7 +142,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Duration"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -185,7 +188,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Start time"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -333,7 +339,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Status"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -376,7 +385,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Client request ID"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -555,7 +567,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Duration"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -598,7 +613,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Start time"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -746,7 +764,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Status"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -789,7 +810,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Client request ID"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -832,7 +856,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Service request ID"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -1011,7 +1038,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Duration"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -1064,7 +1094,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Start time"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -1212,7 +1245,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="End time"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -1360,7 +1396,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Status"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -1403,7 +1442,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Client request ID"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -1610,7 +1652,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Duration"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -1653,7 +1698,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Start time"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -1801,7 +1849,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Status"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre
@@ -1844,7 +1895,10 @@ Array [
             className="msla-colorizer-json-body"
           >
             <div
+              aria-label="Client request ID"
+              aria-readonly={true}
               className="msla-colorizer-wrapper"
+              role="textbox"
               tabIndex={0}
             >
               <pre

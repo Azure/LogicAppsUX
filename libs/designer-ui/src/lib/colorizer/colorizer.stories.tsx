@@ -12,6 +12,7 @@ const Template: ComponentStory<typeof Colorizer> = (args: ColorizerProps) => <Co
 
 export const JSON = Template.bind({});
 JSON.args = {
+  ariaLabel: 'JSON',
   code: `{
   "glossary": {
     "title": "example glossary",
@@ -39,6 +40,7 @@ JSON.args = {
 
 export const XML = Template.bind({});
 XML.args = {
+  ariaLabel: 'XML',
   code: `<note>
   <to>Tove</to>
   <from>Jani</from>
