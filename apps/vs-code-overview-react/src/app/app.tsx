@@ -71,15 +71,11 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
     mutate: runTriggerCall,
     isLoading: runTriggerLoading,
     error: runTriggerError,
-  } = useMutation(
-    () => {
-      invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
-      return runService.runTrigger(workflowProperties.callbackInfo);
-    },
-    {
-      onSuccess: refetch,
-    }
-  );
+  } = useMutation(() => {
+    invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
+    runService.runTrigger(workflowProperties.callbackInfo);
+    return refetch();
+  });
 
   const onVerifyRunId = useCallback(
     (runId: string) => {
