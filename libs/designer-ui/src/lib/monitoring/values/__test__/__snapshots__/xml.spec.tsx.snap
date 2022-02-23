@@ -1,0 +1,247 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/monitoring/values/xml should not render when not visible 1`] = `null`;
+
+exports[`ui/monitoring/values/xml should render XML 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    XML
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
+    >
+      <pre
+        className="prism-code language-json"
+        style={
+          Object {
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            &lt;xml&gt;&lt;/xml&gt;
+          </span>
+        </div>
+      </pre>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese correctly 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    XML
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
+    >
+      <pre
+        className="prism-code language-json"
+        style={
+          Object {
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            &lt;?xml version=
+          </span>
+          <span
+            className="token string"
+            style={
+              Object {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "1.0"
+          </span>
+          <span
+            className="token plain"
+          >
+             encoding=
+          </span>
+          <span
+            className="token string"
+            style={
+              Object {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "utf-8"
+          </span>
+          <span
+            className="token plain"
+          >
+            ?&gt;&lt;root&gt;&lt;name username=
+          </span>
+          <span
+            className="token string"
+            style={
+              Object {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "JS1用户名"
+          </span>
+          <span
+            className="token plain"
+          >
+            &gt;你好 John&lt;/name&gt;&lt;name username=
+          </span>
+          <span
+            className="token string"
+            style={
+              Object {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "MI1用户名"
+          </span>
+          <span
+            className="token plain"
+          >
+            &gt;中文测试&lt;/name&gt;&lt;/root&gt;
+          </span>
+        </div>
+      </pre>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order mark (BOM) 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    XML
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
+    >
+      <pre
+        className="prism-code language-json"
+        style={
+          Object {
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            &lt;xml&gt;&lt;/xml&gt;
+          </span>
+        </div>
+      </pre>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/xml should render a zero-width space if value is empty 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    XML
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
+    >
+      <pre
+        className="prism-code language-json"
+        style={
+          Object {
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            ‌
+          </span>
+        </div>
+      </pre>
+    </div>
+  </div>
+</section>
+`;

@@ -1,25 +1,38 @@
 @import (reference) '../variables.less';
 
-.msla-colorizer-json-body {
-  margin: 0.5em 1.25em;
-  max-height: 12em;
+.msla-colorizer-json-body,
+.msla-colorizer-wrapper {
   border: 1px solid lightgray;
+  margin: 0.5em 1.25em;
+  max-height: 12rem; /* 192px = 12×16px = 10×19px + 2px borders */
+}
 
-  .msla-monaco {
-    .monaco-editor {
-      .decorationsOverviewRuler {
-        display: none;
-      }
-
-      .overflowingContentWidgets {
-        display: none;
-      }
+.msla-colorizer-json-body {
+  .monaco-editor {
+    .decorationsOverviewRuler {
+      display: none;
     }
 
-    .monaco-editor-scrollable {
-      .decorationsOverviewRuler {
-        display: none;
-      }
+    .overflowingContentWidgets {
+      display: none;
     }
+  }
+
+  .monaco-editor-scrollable {
+    .decorationsOverviewRuler {
+      display: none;
+    }
+  }
+}
+
+.msla-colorizer-wrapper {
+  font-size: 13px;
+  margin: 0;
+  overflow: auto;
+  padding: 0.5em 1.25em;
+
+  pre {
+    margin: 0;
+    white-space: pre-wrap;
   }
 }

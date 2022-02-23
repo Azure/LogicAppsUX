@@ -65,10 +65,43 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
     display-name
   </label>
   <div
-    className="msla-trace-value-text"
-    tabIndex={0}
+    className="msla-colorizer-json-body"
   >
-    -123.45
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
+    >
+      <pre
+        className="prism-code language-json"
+        style={
+          Object {
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
+          }
+        >
+          <span
+            className="token number"
+            style={
+              Object {
+                "color": "rgb(9, 134, 88)",
+              }
+            }
+          >
+            -123.45
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;
@@ -499,10 +532,43 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
     display-name
   </label>
   <div
-    className="msla-trace-value-text"
-    tabIndex={0}
+    className="msla-colorizer-json-body"
   >
-    -123.45
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
+    >
+      <pre
+        className="prism-code language-json"
+        style={
+          Object {
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
+          }
+        >
+          <span
+            className="token number"
+            style={
+              Object {
+                "color": "rgb(9, 134, 88)",
+              }
+            }
+          >
+            -123.45
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;
@@ -517,10 +583,38 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
     raw
   </label>
   <div
-    className="msla-trace-value-text"
-    tabIndex={0}
+    className="msla-colorizer-json-body"
   >
-    Hello World
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
+    >
+      <pre
+        className="prism-code language-json"
+        style={
+          Object {
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            Hello World
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;
@@ -535,10 +629,38 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
     XML
   </label>
   <div
-    className="msla-trace-value-text"
-    tabIndex={0}
+    className="msla-colorizer-json-body"
   >
-    &lt;xml&gt;&lt;/xml&gt;
+    <div
+      className="msla-colorizer-wrapper"
+      tabIndex={0}
+    >
+      <pre
+        className="prism-code language-json"
+        style={
+          Object {
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            &lt;xml&gt;&lt;/xml&gt;
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;

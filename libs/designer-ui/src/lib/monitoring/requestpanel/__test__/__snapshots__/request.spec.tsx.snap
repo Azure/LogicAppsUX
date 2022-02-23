@@ -23,10 +23,38 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
         Method
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        GET
+        <div
+          className="msla-colorizer-wrapper"
+          tabIndex={0}
+        >
+          <pre
+            className="prism-code language-json"
+            style={
+              Object {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+              }
+            }
+          >
+            <div
+              className="token-line"
+              style={
+                Object {
+                  "backgroundColor": null,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                GET
+              </span>
+            </div>
+          </pre>
+        </div>
       </div>
     </section>
     <section
@@ -38,10 +66,58 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
         URI
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        https://httpbin.org/get
+        <div
+          className="msla-colorizer-wrapper"
+          tabIndex={0}
+        >
+          <pre
+            className="prism-code language-json"
+            style={
+              Object {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+              }
+            }
+          >
+            <div
+              className="token-line"
+              style={
+                Object {
+                  "backgroundColor": null,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                https
+              </span>
+              <span
+                className="token operator"
+                style={
+                  Object {
+                    "color": "rgb(0, 0, 0)",
+                  }
+                }
+              >
+                :
+              </span>
+              <span
+                className="token comment"
+                style={
+                  Object {
+                    "color": "rgb(0, 128, 0)",
+                  }
+                }
+              >
+                //httpbin.org/get
+              </span>
+            </div>
+          </pre>
+        </div>
       </div>
     </section>
     <section
@@ -266,10 +342,38 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         Method
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        POST
+        <div
+          className="msla-colorizer-wrapper"
+          tabIndex={0}
+        >
+          <pre
+            className="prism-code language-json"
+            style={
+              Object {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+              }
+            }
+          >
+            <div
+              className="token-line"
+              style={
+                Object {
+                  "backgroundColor": null,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                POST
+              </span>
+            </div>
+          </pre>
+        </div>
       </div>
     </section>
     <section
@@ -281,10 +385,58 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         URI
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        https://httpbin.org/post
+        <div
+          className="msla-colorizer-wrapper"
+          tabIndex={0}
+        >
+          <pre
+            className="prism-code language-json"
+            style={
+              Object {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+              }
+            }
+          >
+            <div
+              className="token-line"
+              style={
+                Object {
+                  "backgroundColor": null,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                https
+              </span>
+              <span
+                className="token operator"
+                style={
+                  Object {
+                    "color": "rgb(0, 0, 0)",
+                  }
+                }
+              >
+                :
+              </span>
+              <span
+                className="token comment"
+                style={
+                  Object {
+                    "color": "rgb(0, 128, 0)",
+                  }
+                }
+              >
+                //httpbin.org/post
+              </span>
+            </div>
+          </pre>
+        </div>
       </div>
     </section>
     <section
@@ -491,12 +643,123 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         Body
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        {
-  "hello": "world!"
-}
+        <div
+          className="msla-colorizer-wrapper"
+          tabIndex={0}
+        >
+          <pre
+            className="prism-code language-json"
+            style={
+              Object {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+              }
+            }
+          >
+            <div
+              className="token-line"
+              style={
+                Object {
+                  "backgroundColor": null,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token punctuation"
+                style={
+                  Object {
+                    "color": "rgb(4, 81, 165)",
+                  }
+                }
+              >
+                {
+              </span>
+              <span
+                className="token plain"
+              >
+                
+              </span>
+            </div>
+            <div
+              className="token-line"
+              style={
+                Object {
+                  "backgroundColor": null,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                  
+              </span>
+              <span
+                className="token property"
+              >
+                "hello"
+              </span>
+              <span
+                className="token operator"
+                style={
+                  Object {
+                    "color": "rgb(0, 0, 0)",
+                  }
+                }
+              >
+                :
+              </span>
+              <span
+                className="token plain"
+              >
+                 
+              </span>
+              <span
+                className="token string"
+                style={
+                  Object {
+                    "color": "rgb(163, 21, 21)",
+                  }
+                }
+              >
+                "world!"
+              </span>
+              <span
+                className="token plain"
+              >
+                
+              </span>
+            </div>
+            <div
+              className="token-line"
+              style={
+                Object {
+                  "backgroundColor": null,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                
+              </span>
+              <span
+                className="token punctuation"
+                style={
+                  Object {
+                    "color": "rgb(4, 81, 165)",
+                  }
+                }
+              >
+                }
+              </span>
+            </div>
+          </pre>
+        </div>
       </div>
     </section>
   </div>
@@ -526,10 +789,38 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
         Method
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        POST
+        <div
+          className="msla-colorizer-wrapper"
+          tabIndex={0}
+        >
+          <pre
+            className="prism-code language-json"
+            style={
+              Object {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+              }
+            }
+          >
+            <div
+              className="token-line"
+              style={
+                Object {
+                  "backgroundColor": null,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                POST
+              </span>
+            </div>
+          </pre>
+        </div>
       </div>
     </section>
     <section
@@ -541,10 +832,58 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
         URI
       </label>
       <div
-        className="msla-trace-value-text"
-        tabIndex={0}
+        className="msla-colorizer-json-body"
       >
-        https://httpbin.org/post
+        <div
+          className="msla-colorizer-wrapper"
+          tabIndex={0}
+        >
+          <pre
+            className="prism-code language-json"
+            style={
+              Object {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+              }
+            }
+          >
+            <div
+              className="token-line"
+              style={
+                Object {
+                  "backgroundColor": null,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                https
+              </span>
+              <span
+                className="token operator"
+                style={
+                  Object {
+                    "color": "rgb(0, 0, 0)",
+                  }
+                }
+              >
+                :
+              </span>
+              <span
+                className="token comment"
+                style={
+                  Object {
+                    "color": "rgb(0, 128, 0)",
+                  }
+                }
+              >
+                //httpbin.org/post
+              </span>
+            </div>
+          </pre>
+        </div>
       </div>
     </section>
     <section
