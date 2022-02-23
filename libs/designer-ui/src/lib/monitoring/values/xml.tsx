@@ -29,6 +29,7 @@ export const XmlValue: React.FC<ValueProps> = (props) => {
       <div className="msla-colorizer-json-body">
         <CustomEditor
           defaultValue={valueAsString}
+          folding={false}
           height={height}
           language={EditorLanguage.xml}
           lineNumbers="off"

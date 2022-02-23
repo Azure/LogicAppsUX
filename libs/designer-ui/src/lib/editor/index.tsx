@@ -10,6 +10,7 @@ export enum EditorLanguage {
 
 export interface EditorProps {
   defaultValue?: string;
+  folding?: boolean;
   height?: number | string;
   language?: EditorLanguage;
   lineNumbers?: 'on' | 'off' | 'relative' | 'interval' | ((lineNumber: number) => string);
@@ -21,6 +22,7 @@ export interface EditorProps {
 
 const CustomEditor: React.FC<EditorProps> = (props) => {
   const {
+    folding = true,
     height = '100%',
     width = '100%',
     lineNumbers = 'on',
@@ -45,7 +47,7 @@ const CustomEditor: React.FC<EditorProps> = (props) => {
     <Editor
       height={height}
       width={width}
-      options={{ lineNumbers, minimap: { enabled: minimapEnabled }, readOnly }}
+      options={{ folding, lineNumbers, minimap: { enabled: minimapEnabled }, readOnly }}
       value={value}
       defaultValue={defaultValue}
       defaultLanguage={language ? language.toString() : undefined}
