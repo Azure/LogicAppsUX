@@ -9,5 +9,6 @@
   "videosFolder": "../../dist/cypress/apps/designer-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/designer-e2e/screenshots",
   "chromeWebSecurity": false,
-  "baseUrl": "http://localhost:4400"
+  "baseUrl": "http://localhost:4400",
+  "retries": 3
 }

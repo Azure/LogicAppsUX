@@ -8,6 +8,7 @@ module.exports = {
     ...rootMain.stories,
     '../../**/*.stories.mdx',
     '../src/lib/docs/**/*.stories.@(js|jsx|ts|tsx)', // This makes sure any Designer Docs are ordered before others
+    '../../../apps/**/*.stories.@(js|jsx|ts|tsx)',
     '../../**/*.stories.@(js|jsx|ts|tsx)',
   ],
   addons: [...rootMain.addons, '@nrwl/react/plugins/storybook'],

@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/monitoring/values/_raw should not render when not visible 1`] = `null`;
+
+exports[`ui/monitoring/values/_raw should render 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    display-name
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <section
+      style={
+        Object {
+          "display": "flex",
+          "height": 19,
+          "position": "relative",
+          "textAlign": "initial",
+          "width": "100%",
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "alignItems": "center",
+            "display": "flex",
+            "height": "100%",
+            "justifyContent": "center",
+            "width": "100%",
+          }
+        }
+      >
+        Loading...
+      </div>
+      <div
+        style={
+          Object {
+            "display": "none",
+            "width": "100%",
+          }
+        }
+      />
+    </section>
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/_raw should rendered a zero-width space if value is empty 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    display-name
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <section
+      style={
+        Object {
+          "display": "flex",
+          "height": 19,
+          "position": "relative",
+          "textAlign": "initial",
+          "width": "100%",
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "alignItems": "center",
+            "display": "flex",
+            "height": "100%",
+            "justifyContent": "center",
+            "width": "100%",
+          }
+        }
+      >
+        Loading...
+      </div>
+      <div
+        style={
+          Object {
+            "display": "none",
+            "width": "100%",
+          }
+        }
+      />
+    </section>
+  </div>
+</section>
+`;
