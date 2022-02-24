@@ -56,6 +56,8 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
 
   const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>('runsData', loadRuns, {
     getNextPageParam: (lastPage) => lastPage.nextLink,
+    refetchInterval: 5000, // 5 seconds refresh interval
+    refetchIntervalInBackground: false, // It will automatically refetch when window is focused
   });
 
   const runItems = useMemo(

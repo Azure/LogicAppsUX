@@ -61,4 +61,10 @@ describe('vs-code-overview-react/app', () => {
     cy.get('[data-testid="msla-overview-load-more"]').click();
     cy.get('[data-testid="msla-overview-load-more"]').should('not.exist');
   });
+
+  it('Should refetch data every 5 seconds', () => {
+    cy.wait('@getRuns'); // initial call
+    cy.clock().tick(5000); // wait 5 seconds
+    cy.wait('@getRuns');
+  });
 });
