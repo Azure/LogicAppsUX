@@ -12,7 +12,7 @@ export interface DesignerProviderProps {
   children: React.ReactNode;
 }
 
-export const DesignerProviderInner = ({ theme = AzureThemeLight, locale = 'en', children }: DesignerProviderProps) => {
+export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', children }: DesignerProviderProps) => {
   return (
     <ReduxProvider store={store}>
       <ProviderWrappedContext.Provider value={true}>
