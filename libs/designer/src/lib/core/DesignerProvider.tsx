@@ -16,20 +16,18 @@ const DesignerProviderInner = ({ theme = AzureThemeLight, locale = 'en', childre
   return (
     <ProviderWrappedContext.Provider value={true}>
       <ThemeProvider theme={theme} className="msla-theme-provider">
-        <Provider store={store}>
-          <IntlProvider
-            locale={locale}
-            defaultLocale={locale}
-            onError={(err) => {
-              if (err.code === 'MISSING_TRANSLATION') {
-                return;
-              }
-              throw err;
-            }}
-          >
-            {children}
-          </IntlProvider>
-        </Provider>
+        <IntlProvider
+          locale={locale}
+          defaultLocale={locale}
+          onError={(err) => {
+            if (err.code === 'MISSING_TRANSLATION') {
+              return;
+            }
+            throw err;
+          }}
+        >
+          {children}
+        </IntlProvider>
       </ThemeProvider>
     </ProviderWrappedContext.Provider>
   );
