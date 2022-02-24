@@ -71,9 +71,9 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
     mutate: runTriggerCall,
     isLoading: runTriggerLoading,
     error: runTriggerError,
-  } = useMutation(() => {
+  } = useMutation(async () => {
     invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
-    runService.runTrigger(workflowProperties.callbackInfo);
+    await runService.runTrigger(workflowProperties.callbackInfo);
     return refetch();
   });
 
