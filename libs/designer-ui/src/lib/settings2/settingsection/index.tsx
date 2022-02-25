@@ -1,11 +1,11 @@
 export interface SettingSectionComponentProps {
   id: string;
   title: string;
-  expanded: boolean;
-  renderContent: JSXRenderer;
-  onClick: SectionClickHandler;
+  renderContent: any;
   isInverted: boolean;
+  [name: string]: any;
 }
 
-type JSXRenderer = (id: string) => JSX.Element;
-type SectionClickHandler = (id: string) => void;
+export interface SettingSectionTextFieldProps {
+  value: string;
+}

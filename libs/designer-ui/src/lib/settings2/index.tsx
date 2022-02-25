@@ -1,7 +1,6 @@
-import { IconButton, Separator } from '@fluentui/react';
-// import { format } from '../../../../utils/src';
-// import { format } from '@microsoft-logic-apps/utils';
-// import { useState } from 'react';
+import { Separator } from '@fluentui/azure-themes/node_modules/@fluentui/react';
+import { IconButton } from '@fluentui/react';
+import { useState } from 'react';
 import { SettingSectionComponentProps } from './settingsection';
 
 export const Resources = {
@@ -14,22 +13,27 @@ export const Resources = {
   SETTING_CATEGORY_TRACKING_TITLE: 'Tracking',
 };
 
-export enum Categories {
-  General = 'General',
-  RunAfter = 'RunAfter',
-  Networking = 'Networking',
-  DataHandling = 'DataHandling',
-  Security = 'Security',
-  Tracking = 'Tracking',
-}
-
-export function SettingsSection({ id, title, expanded, renderContent, onClick, isInverted }: SettingSectionComponentProps): JSX.Element {
-  const iconProp = { iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed' };
+export function SettingsSection({ title, renderContent, isInverted, textFieldValue }: SettingSectionComponentProps): JSX.Element {
+  const [expandedState, setExpanded] = useState(false);
+  const iconProp = { iconName: expandedState ? 'ChevronDownMed' : 'ChevronRightMed' };
   const chevronStyles = { icon: { color: '#8a8886', fontSize: 12 } };
   const separatorStyles = { root: { color: isInverted ? '#323130' : '#eaeaea' } };
+  const render = (): any => {
+    if (expandedState && textFieldValue) {
+      return renderContent(textFieldValue);
+    } else if (expandedState) {
+      return renderContent();
+    } else return null;
+  };
+
   return (
     <div className="msla-setting-section-content">
-      <div className="msla-setting-section-header" onClick={() => onClick(id)}>
+      <div
+        className="msla-setting-section-header"
+        onClick={() => {
+          setExpanded(!expandedState);
+        }}
+      >
         <IconButton
           className="msla-setting-section-header-icon"
           ariaLabel={`Expand or collapse ${title}`}
@@ -38,30 +42,8 @@ export function SettingsSection({ id, title, expanded, renderContent, onClick, i
         />
         <div className="msla-setting-section-header-text">{title}</div>
       </div>
-      {expanded ? renderContent(id) : null}
+      {render()}
       <Separator className="msla-setting-section-separator" styles={separatorStyles} />
     </div>
   );
-}
-
-export function renderSetting(settingKey: string): JSX.Element {
-  // const { graphNodeId: nodeId } = this.props;
-  // const { enabledSettings, readOnly } = this.state;
-  // const settingProps: SettingProps = { nodeId, settings: enabledSettings[settingKey], readOnly };
-  // switch (settingKey) {
-  //     case Categories.Async:
-  //         return <Async {...settingProps} />;
-  //     case Categories.Data:
-  //         const settingHydratingProps: DataProps = {
-  //             ...settingProps,
-  //             hydratingProps: this._getHydratingProps('trackedpropertiesdictionary'),
-  //             trackEvent: this.trackEvent,
-  //         };
-  //         return <Data {...settingHydratingProps} />;
-  //     case Categories.Headers:
-  //         return <WorkflowHeaders {...settingProps} />;
-  //     default:
-  //         return null;
-  // }
-  return <div>{`This is the ${settingKey} setting body`}</div>;
 }
