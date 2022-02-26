@@ -5,7 +5,7 @@ import { WorkflowParameters } from '../workflowparameters/workflowparameters';
 
 export const workflowParametersTab: PanelTab = {
   title: 'Workflow Parameters',
-  name: constants.PANEL_TAB_NAMES.WORKFLOW_PARAMETERS,
+  name: constants.PANEL.PANEL_TAB_NAMES.WORKFLOW_PARAMETERS,
   description: 'Workflow Parameters',
   enabled: true,
   content: (
@@ -34,7 +34,7 @@ export const workflowParametersTab: PanelTab = {
 
 export const aboutTab: PanelTab = {
   title: 'About',
-  name: constants.PANEL_TAB_NAMES.ABOUT,
+  name: constants.PANEL.PANEL_TAB_NAMES.ABOUT,
   description: 'test tab',
   enabled: true,
   content: <div />,
@@ -44,7 +44,7 @@ export const aboutTab: PanelTab = {
 
 export const connectionTab: PanelTab = {
   title: 'Connection Long Name',
-  name: constants.PANEL_TAB_NAMES.AUTH_CONNECTION,
+  name: constants.PANEL.PANEL_TAB_NAMES.AUTH_CONNECTION,
   description: 'test tab',
   enabled: true,
   content: <div />,

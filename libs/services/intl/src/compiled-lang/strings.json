@@ -23,6 +23,12 @@
       "value": "Succeeded with retries"
     }
   ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -855,6 +861,12 @@
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Card Title"
     }
   ],
   "shF9tZ": [
