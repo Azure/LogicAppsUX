@@ -357,15 +357,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";LXT/ou" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Error]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[错误]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";M6U2LE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save.]]></Val>
@@ -873,6 +864,15 @@
       <Item ItemId=";hN7iBP.icu.content" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{seconds, plural, one {# second} other {# seconds}}]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";hdnZ9Y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Alt/Option + click to download '{displayName}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Alt/Option + 单击以下载 "{displayName}"]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
