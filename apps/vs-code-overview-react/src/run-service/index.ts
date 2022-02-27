@@ -86,7 +86,7 @@ export class RunService implements IRunService {
     return { nextLink, runs };
   }
 
-  async runTrigger(callbackInfo: CallbackInfo): Promise<any> {
+  async runTrigger(callbackInfo: CallbackInfo): Promise<void> {
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : 'POST';
     const uri = getCallbackUrl(callbackInfo);
     if (!uri) {
@@ -94,11 +94,8 @@ export class RunService implements IRunService {
     }
 
     const response = await fetch(uri, { method, mode: 'no-cors' });
-    if (!response.ok) {
+    if (!response.ok && response.status !== 0) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
-
-    const json = await response.json();
-    return json;
   }
 }

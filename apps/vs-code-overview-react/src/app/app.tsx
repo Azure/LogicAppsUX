@@ -56,6 +56,8 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
 
   const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>('runsData', loadRuns, {
     getNextPageParam: (lastPage) => lastPage.nextLink,
+    refetchInterval: 5000, // 5 seconds refresh interval
+    refetchIntervalInBackground: false, // It will automatically refetch when window is focused
   });
 
   const runItems = useMemo(
@@ -71,15 +73,11 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
     mutate: runTriggerCall,
     isLoading: runTriggerLoading,
     error: runTriggerError,
-  } = useMutation(
-    () => {
-      invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
-      return runService.runTrigger(workflowProperties.callbackInfo);
-    },
-    {
-      onSuccess: refetch,
-    }
-  );
+  } = useMutation(async () => {
+    invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
+    await runService.runTrigger(workflowProperties.callbackInfo);
+    return refetch();
+  });
 
   const onVerifyRunId = useCallback(
     (runId: string) => {
