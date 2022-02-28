@@ -23,8 +23,9 @@ export interface PanelHeaderProps {
   renameTitleDisabled?: boolean;
   showCommentBox?: boolean;
   title?: string;
-  setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  commentChange?(panelCommentChangeEvent?: string): void;
   onRenderWarningMessage?(): JSX.Element;
+  setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 enum PanelHeaderControlType {
   DISMISS_BUTTON,
@@ -39,7 +40,6 @@ const collapseIconStyle: IButtonStyles = {
 
 const calloutProps: ICalloutProps = {
   directionalHint: DirectionalHint.leftCenter,
-  setInitialFocus: false,
 };
 
 const tooltipStyles: ITooltipHostStyles = {
@@ -74,8 +74,9 @@ export const PanelHeader = ({
   renameTitleDisabled,
   showCommentBox,
   title,
-  setIsCollapsed,
+  commentChange,
   onRenderWarningMessage,
+  setIsCollapsed,
 }: PanelHeaderProps): JSX.Element => {
   const intl = useIntl();
 
@@ -175,29 +176,51 @@ export const PanelHeader = ({
   };
 
   const getCommentEditor = (): JSX.Element => {
+    const commentClassName = commentHasFocus ? 'msla-card-comment-focused' : 'msla-card-comment';
     const commentTitle = intl.formatMessage({
       defaultMessage: 'Comment',
       description: 'Label for the comment textfield',
     });
     return (
-      <div className={css(!readOnlyMode && commentHasFocus && 'focused')}>
-        <TextField
-          componentRef={commentTextFieldRef}
-          readOnly={readOnlyMode}
-          styles={commentTextFieldStyle}
-          ariaLabel={commentTitle}
-          maxLength={constants.PANEL.MAX_COMMENT_LENGTH}
-          value={cardComment}
-          onChange={onCommentChange}
-          multiline
-          autoAdjustHeight
-        />
-      </div>
+      <TextField
+        className={css(!readOnlyMode && commentClassName)}
+        borderless
+        multiline
+        autoAdjustHeight
+        componentRef={commentTextFieldRef}
+        readOnly={readOnlyMode}
+        styles={commentTextFieldStyle}
+        ariaLabel={commentTitle}
+        maxLength={constants.PANEL.MAX_COMMENT_LENGTH}
+        value={cardComment}
+        onChange={onCommentChange}
+        onBlur={readOnlyMode ? undefined : onCommentBlur}
+        onFocus={onFocusComment}
+        onKeyDown={onCommentTextFieldEscape}
+      />
     );
   };
 
   const onCommentChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     setCardComment(newValue);
+  };
+
+  const onCommentBlur = (_: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    const newComment = comment;
+    commentChange && commentChange(newComment);
+    setCommentHasFocus(false);
+  };
+
+  const onFocusComment = (): void => {
+    setCommentHasFocus(true);
+  };
+
+  const onCommentTextFieldEscape = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    if (isEscapeKey(e)) {
+      const prevComment = comment;
+      setCommentHasFocus(false);
+      setCardComment(prevComment);
+    }
   };
 
   return (
