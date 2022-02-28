@@ -267,5 +267,6 @@ export default {
   PANEL: {
     PANEL_TAB_NAMES,
     MAX_TITLE_LENGTH: 80,
+    MAX_COMMENT_LENGTH: 256,
   },
 };

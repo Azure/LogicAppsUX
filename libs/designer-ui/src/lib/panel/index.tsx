@@ -51,6 +51,7 @@ export const PanelContainer = ({
         noNodeSelected={false}
         readOnlyMode={false}
         title={'This is a title'}
+        comment={'This is a test comment'}
         setIsCollapsed={setIsCollapsed}
       />
     );

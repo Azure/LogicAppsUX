@@ -4,7 +4,7 @@ import { isEscapeKey } from '../utils/keyboardUtils';
 import { DirectionalHint, ICalloutProps } from '@fluentui/react/lib/Callout';
 import { IButton, IButtonStyles, IconButton } from '@fluentui/react/lib/Button';
 import { FontSizes } from '@fluentui/react/lib/Styling';
-import { TooltipHost } from '@fluentui/react/lib/Tooltip';
+import { ITooltipHostStyles, TooltipHost } from '@fluentui/react/lib/Tooltip';
 
 import { css } from '@fluentui/react/lib/Utilities';
 import { ITextField, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
@@ -38,7 +38,14 @@ const collapseIconStyle: IButtonStyles = {
 };
 
 const calloutProps: ICalloutProps = {
-  directionalHint: DirectionalHint.topCenter,
+  directionalHint: DirectionalHint.leftCenter,
+  setInitialFocus: false,
+};
+
+const tooltipStyles: ITooltipHostStyles = {
+  root: {
+    display: 'block',
+  },
 };
 
 const titleTextFieldStyle: Partial<ITextFieldStyles> = {
@@ -73,7 +80,7 @@ export const PanelHeader = ({
   const intl = useIntl();
 
   const menuButtonRef = React.createRef<IButton>();
-  const commentEditorRef = React.createRef<typeof Editor>();
+  const commentTextFieldRef = React.createRef<ITextField>();
   const titleTextFieldRef = React.createRef<ITextField>();
 
   const [cardTitle, setCardTitle] = useState(title);
@@ -168,19 +175,34 @@ export const PanelHeader = ({
   };
 
   const getCommentEditor = (): JSX.Element => {
-    // const { commentHasFocus } = this.state;
-    // const { readOnlyMode } = this.props;
-
+    const commentTitle = intl.formatMessage({
+      defaultMessage: 'Comment',
+      description: 'Label for the comment textfield',
+    });
     return (
       <div className={css(!readOnlyMode && commentHasFocus && 'focused')}>
-        <TextField multiline autoAdjustHeight styles={commentTextFieldStyle} />
+        <TextField
+          componentRef={commentTextFieldRef}
+          readOnly={readOnlyMode}
+          styles={commentTextFieldStyle}
+          ariaLabel={commentTitle}
+          maxLength={constants.PANEL.MAX_COMMENT_LENGTH}
+          value={cardComment}
+          onChange={onCommentChange}
+          multiline
+          autoAdjustHeight
+        />
       </div>
     );
   };
 
+  const onCommentChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
+    setCardComment(newValue);
+  };
+
   return (
     <div className="msla-panel-header">
-      <TooltipHost calloutProps={calloutProps} content={panelCollapseTitle}>
+      <TooltipHost calloutProps={calloutProps} content={panelCollapseTitle} styles={tooltipStyles}>
         <IconButton
           ariaLabel={panelCollapseTitle}
           className={getIconClassName()}
