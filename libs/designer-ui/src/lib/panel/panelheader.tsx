@@ -50,6 +50,12 @@ const titleTextFieldStyle: Partial<ITextFieldStyles> = {
   },
 };
 
+const commentTextFieldStyle: Partial<ITextFieldStyles> = {
+  field: {
+    backgroundColor: '#faf9f8',
+  },
+};
+
 export const PanelHeader = ({
   isCollapsed,
   isRight,
@@ -167,15 +173,7 @@ export const PanelHeader = ({
 
     return (
       <div className={css(!readOnlyMode && commentHasFocus && 'focused')}>
-        {/* <Editor
-                    onChange={this._onCommentChange}
-                    readOnly={readOnlyMode}
-                    onBlur={readOnlyMode ? undefined : this._onCommentBlur}
-                    handleBeforeInput={this._handleBeforeInput}
-                    handlePastedText={this._handlePastedText}
-                    onFocus={this._onFocusComment}
-                    onEscape={this._onCommentEditorEscape}
-                /> */}
+        <TextField multiline autoAdjustHeight styles={commentTextFieldStyle} />
       </div>
     );
   };
@@ -211,7 +209,6 @@ export const PanelHeader = ({
           </div>
         ) : null}
       </div>
-      {/* {!isCollapsed && <div>PANEL HEADER</div>} */}
     </div>
   );
 };

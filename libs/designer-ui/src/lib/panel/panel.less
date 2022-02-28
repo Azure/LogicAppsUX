@@ -1,36 +1,187 @@
 @import (reference) '../variables.less';
+
 .msla-panel-container {
   display: flex;
   justify-content: space-between;
 
-  .msla-main-page {
-    flex: 1 1 auto;
-    position: relative;
+  .msla-panel-select-card-container-empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-    .msla-panel-select-card-container {
-      .msla-tab-component-container {
-        height: 100%;
+    .msla-panel-empty-text {
+      color: #60535c;
+      font-size: 14px;
+      margin-top: 24px;
+    }
+  }
 
-        .msla-card-body-container {
-          height: 100%;
+  .msla-panel-header {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
 
-          .msla-card-body {
-            height: 100%;
+    .msla-panel-card-header {
+      overflow: visible;
+      width: auto;
+      .msla-panel-card-icon {
+        height: 30px;
+        width: 30px;
+        border-radius: 2px;
+        margin: 5px;
+        float: left;
+      }
+      .msla-title-container {
+        float: left;
+        text-align: center;
+        width: 80%;
+        .msla-card-title {
+          &:hover {
+            outline: 0.75px solid @panel-mode-panel-border-color;
           }
+        }
+        .msla-card-title-focused {
+          outline: 0.75px solid @panel-mode-panel-border-color;
+        }
+      }
+      .msla-panel-comment-container-wrapper {
+        background-color: @panel-mode-comment-field-color_light;
+        width: 100%;
+        overflow: auto;
 
-          .msla-card-body-container {
-            height: 100%;
-
-            .msla-card-body {
-              height: 100%;
-
-              .msla-card-inner-body {
-                height: 100%;
-              }
+        .msla-panel-comment-container {
+          margin-left: 35px;
+          margin-right: 10px;
+          padding: 5px;
+          width: auto;
+          height: auto;
+          overflow: hidden;
+          .DraftEditor-root {
+            float: left;
+            width: 90%;
+            padding-left: 5px;
+            padding-right: 5px;
+            &:hover {
+              outline: 0.75px solid @panel-mode-panel-border-color;
             }
+          }
+          .focused {
+            .DraftEditor-root {
+              outline: 0.75px solid @panel-mode-panel-border-color;
+            }
+          }
+          .msla-comment-icon {
+            float: left;
+            margin: 18px 13px 0 5px;
+            font-size: @card-header-font-size;
           }
         }
       }
+    }
+
+    .msla-panel-header-controls {
+      float: right;
+      height: 32px;
+    }
+
+    .collapse-toggle-left {
+      right: 0px;
+      top: 0px;
+      float: right;
+    }
+
+    .collapse-toggle-right {
+      right: 0px;
+      top: 0px;
+      float: left;
+    }
+  }
+
+  .msla-panel-menu {
+    margin-left: 35px;
+  }
+
+  .msla-panel-trace-container {
+    padding: 10px 30px 0 30px;
+  }
+
+  .msla-retry-content {
+    font-family: @font-family;
+    font-size: 12px;
+    overflow: auto;
+    padding: 0 1em;
+
+    .msla-trace-inputs-outputs {
+      margin: 0 0 20px;
+    }
+  }
+
+  .msla-request-content {
+    font-family: @font-family;
+    font-size: 12px;
+    overflow: auto;
+    padding: 0 1em;
+
+    .msla-trace-inputs-outputs {
+      margin: 0 0 20px;
+    }
+  }
+
+  .msla-tab-component-container {
+    .msla-panel-about-container {
+      flex-direction: column;
+      display: flex;
+      padding-left: 30px;
+      padding-right: 30px;
+      .msla-panel-connector-label {
+        font-weight: @semibold-font-family;
+      }
+      .msla-panel-connector-name {
+        font-weight: normal;
+        padding: 0;
+        margin-bottom: 20px;
+      }
+      .msla-panel-description-label {
+        font-weight: @semibold-font-family;
+      }
+      .msla-panel-description {
+        margin-bottom: 20px;
+      }
+      .msla-panel-tags-label {
+        font-weight: @semibold-font-family;
+      }
+      .msla-panel-tags {
+        .msla-panel-tag {
+          border: @badge-border solid;
+          padding: 2px;
+          display: inline-block;
+          font-size: @card-label-font-size;
+          height: 14px;
+          line-height: 13px;
+          margin-right: 5px;
+          text-align: center;
+          text-transform: uppercase;
+          min-width: @badge-width;
+        }
+      }
+    }
+  }
+
+  .msla-content-container {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: stretch;
+    flex-direction: column;
+    padding-top: 10px;
+    overflow-y: auto;
+
+    &.msla-no-node-selected {
+      border-top: none;
+    }
+
+    & > div {
+      height: 100%;
     }
 
     .msla-panel-select-card-container-empty {
@@ -43,251 +194,6 @@
         color: #60535c; /* @ms-color-neutralSecondary */
         font-size: 14px;
         margin-top: 24px;
-      }
-    }
-  }
-
-  .panel-container {
-    position: relative;
-    align-self: flex-end;
-    margin-top: -7px;
-    margin-bottom: -7px;
-    text-align: left;
-
-    &.left {
-      margin-left: -7px;
-      align-self: flex-start;
-      border-right: 1px solid @panel-mode-panel-border-color;
-    }
-
-    &.right {
-      margin-right: -7px;
-      border-left: 1px solid @panel-mode-panel-border-color;
-    }
-
-    .msla-panel-root {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background-color: transparent;
-      height: calc(100vh - 12px);
-      background-color: @panel-background-color;
-
-      .msla-panel-header {
-        width: 100%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-
-        .msla-panel-card-header {
-          overflow: visible;
-          width: auto;
-          .msla-panel-card-icon {
-            height: 30px;
-            width: 30px;
-            border-radius: 2px;
-            margin: 5px;
-            float: left;
-          }
-          .msla-title-container {
-            float: left;
-            text-align: center;
-            width: 80%;
-            .msla-card-title {
-              &:hover {
-                outline: 0.75px solid @panel-mode-panel-border-color;
-              }
-            }
-            .msla-card-title-focused {
-              outline: 0.75px solid @panel-mode-panel-border-color;
-            }
-          }
-          .msla-panel-comment-container-wrapper {
-            background-color: @panel-mode-comment-field-color_light;
-            width: 100%;
-            overflow: auto;
-
-            .msla-panel-comment-container {
-              margin-left: 35px;
-              margin-right: 10px;
-              padding: 5px;
-              width: auto;
-              height: auto;
-              overflow: hidden;
-              .DraftEditor-root {
-                float: left;
-                width: 90%;
-                padding-left: 5px;
-                padding-right: 5px;
-                &:hover {
-                  outline: 0.75px solid @panel-mode-panel-border-color;
-                }
-              }
-              .focused {
-                .DraftEditor-root {
-                  outline: 0.75px solid @panel-mode-panel-border-color;
-                }
-              }
-              .msla-comment-icon {
-                float: left;
-                margin: 18px 13px 0 5px;
-                font-size: @card-header-font-size;
-              }
-            }
-          }
-        }
-
-        .msla-panel-header-controls {
-          float: right;
-          height: 32px;
-        }
-
-        .collapse-toggle-left {
-          right: 0px;
-          top: 0px;
-          float: right;
-        }
-
-        .collapse-toggle-right {
-          right: 0px;
-          top: 0px;
-          float: left;
-        }
-      }
-
-      .msla-panel-menu {
-        margin-left: 35px;
-      }
-
-      .msla-panel-trace-container {
-        padding: 10px 30px 0 30px;
-      }
-
-      .msla-retry-content {
-        font-family: @font-family;
-        font-size: 12px;
-        overflow: auto;
-        padding: 0 1em;
-
-        .msla-trace-inputs-outputs {
-          margin: 0 0 20px;
-        }
-      }
-
-      .msla-request-content {
-        font-family: @font-family;
-        font-size: 12px;
-        overflow: auto;
-        padding: 0 1em;
-
-        .msla-trace-inputs-outputs {
-          margin: 0 0 20px;
-        }
-      }
-
-      .msla-tab-component-container {
-        .msla-panel-about-container {
-          flex-direction: column;
-          display: flex;
-          padding-left: 30px;
-          padding-right: 30px;
-          .msla-panel-connector-label {
-            font-weight: @semibold-font-family;
-          }
-          .msla-panel-connector-name {
-            font-weight: normal;
-            padding: 0;
-            margin-bottom: 20px;
-          }
-          .msla-panel-description-label {
-            font-weight: @semibold-font-family;
-          }
-          .msla-panel-description {
-            margin-bottom: 20px;
-          }
-          .msla-panel-tags-label {
-            font-weight: @semibold-font-family;
-          }
-          .msla-panel-tags {
-            .msla-panel-tag {
-              border: @badge-border solid;
-              padding: 2px;
-              display: inline-block;
-              font-size: @card-label-font-size;
-              height: 14px;
-              line-height: 13px;
-              margin-right: 5px;
-              text-align: center;
-              text-transform: uppercase;
-              min-width: @badge-width;
-            }
-          }
-        }
-      }
-
-      .msla-content-container {
-        flex: 1 1 auto;
-        display: flex;
-        justify-content: stretch;
-        flex-direction: column;
-        padding-top: 10px;
-        overflow-y: auto;
-
-        &.msla-no-node-selected {
-          border-top: none;
-        }
-
-        & > div {
-          height: 100%;
-        }
-
-        .msla-panel-select-card-container-empty {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-
-          .msla-panel-empty-text {
-            color: #60535c; /* @ms-color-neutralSecondary */
-            font-size: 14px;
-            margin-top: 24px;
-          }
-        }
-      }
-    }
-  }
-}
-
-.msla-panel-container-error {
-  display: flex;
-  flex-direction: column;
-}
-
-body.dark {
-  .msla-panel-container {
-    .panel-container {
-      &.right {
-        border-left-color: @ms-color-white;
-      }
-
-      .msla-content-container,
-      .msla-main-page {
-        .msla-panel-select-card-container-empty {
-          .msla-panel-empty-text {
-            color: #a19f9d;
-          }
-        }
-      }
-
-      .msla-panel-root {
-        background-color: #252423;
-
-        .msla-panel-header {
-          .msla-panel-card-header {
-            .msla-panel-comment-container-wrapper {
-              background-color: @panel-mode-comment-field-color_dark;
-            }
-          }
-        }
       }
     }
   }

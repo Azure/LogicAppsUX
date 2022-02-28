@@ -47,29 +47,16 @@ export const PanelContainer = ({
         cardIcon="https://connectoricons-prod.azureedge.net/releases/v1.0.1550/1.0.1550.2686/azureblob/icon.png"
         isCollapsed={isCollapsed}
         isRight={isRight}
+        showCommentBox
         noNodeSelected={false}
         readOnlyMode={false}
         title={'This is a title'}
         setIsCollapsed={setIsCollapsed}
       />
     );
-    // isCollapsed,
-    // isRight,
-    // cardIcon,
-    // comment,
-    // noNodeSelected,
-    // panelHeaderControlType,
-    // readOnlyMode,
-    // renameTitleDisabled,
-    // showCommentBox,
-    // title,
-    // setIsCollapsed,
-    // onRenderWarningMessage,
   };
 
   return (
-    // <div className="msla-resizable-panel-container">
-    //   <div className={isRight ? 'panel-container right' : 'panel-container left'}>
     <Panel
       className="msla-panel-container"
       headerClassName="msla-panel-header"
@@ -90,7 +77,5 @@ export const PanelContainer = ({
         </>
       )}
     </Panel>
-    //   </div>
-    // </div>
   );
 };
