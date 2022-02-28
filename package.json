@@ -35,7 +35,7 @@
     "@fluentui/react-hooks": "8.3.7",
     "@fluentui/theme": "2.4.4",
     "@monaco-editor/react": "^4.3.1",
-    "@reduxjs/toolkit": "1.7.2",
+    "@reduxjs/toolkit": "1.8.0",
     "@use-it/event-listener": "^0.1.7",
     "core-js": "^3.21.1",
     "d3-shape": "^3.1.0",
