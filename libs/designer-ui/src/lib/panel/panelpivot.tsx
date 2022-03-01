@@ -1,6 +1,6 @@
 import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
 import { PanelTab } from '.';
-import { PageActionTelemetryData, UserAction } from '../telemetry/models';
+import { PageActionTelemetryData } from '../telemetry/models';
 import { useIntl } from 'react-intl';
 import React from 'react';
 
