@@ -42,11 +42,11 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
       defaultMessage: 'Add a comment',
       description: 'Text to tell users to click to add comments',
     });
-
     const commentDelete = intl.formatMessage({
       defaultMessage: 'Delete comment',
       description: 'Text to tell users to click to delete comments',
     });
+
     options.push({
       disabled: readOnlyMode,
       type: MenuItemType.Advanced,
@@ -63,12 +63,12 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
       defaultMessage: 'Delete',
       description: 'Delete text',
     });
-    // TODO: More disabled descriptions to be implemented when panel actions gets built
+    // TODO: Disabled reason/description tobe implemented when panel actions gets built
+    const canDelete = true;
     const disabledDeleteAction = intl.formatMessage({
       defaultMessage: 'This operation has already been deleted.',
       description: 'Text to tell users why delete is disabled',
     });
-    const canDelete = true;
 
     options.push({
       key: deleteDescription,
@@ -80,6 +80,7 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
     });
     return options;
   };
+
   return (
     <PanelContainer
       comment={comment}
