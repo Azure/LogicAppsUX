@@ -24,7 +24,7 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
 
   const getPanelHeaderMenu = (): MenuItemOption[] => {
     const menuOptions: MenuItemOption[] = [];
-    // TODO: Conditionals to decide when to show these menu options
+    // TODO: 13067650 Conditionals to decide when to show these menu options
     getCommentMenuItem(menuOptions);
     getDeleteMenuItem(menuOptions);
     return menuOptions;
@@ -65,7 +65,7 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
       defaultMessage: 'Delete',
       description: 'Delete text',
     });
-    // TODO: Disabled reason/description tobe implemented when panel actions gets built
+    // TODO: 13067650 Disabled reason/description tobe implemented when panel actions gets built
     const canDelete = true;
     const disabledDeleteAction = intl.formatMessage({
       defaultMessage: 'This operation has already been deleted.',
@@ -79,6 +79,7 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
       iconName: 'Delete',
       title: deleteDescription,
       type: MenuItemType.Advanced,
+      onClick: handleDeleteMenuClick,
     });
     return options;
   };
@@ -93,6 +94,10 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
     }
   };
 
+  // TODO: 12798945? onClick for delete when node store gets built
+  const handleDeleteMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
+    console.log('Node deleted!');
+  };
   return (
     <PanelContainer
       comment={currentComment}
