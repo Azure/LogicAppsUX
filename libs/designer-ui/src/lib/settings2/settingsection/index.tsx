@@ -1,9 +1,10 @@
-export interface SettingSectionComponentProps {
+export interface SettingSectionComponentProps extends Record<string, any> {
   id: string;
   title: string;
-  renderContent: any;
+  expanded: boolean;
+  renderContent: React.FC<any>;
   isInverted: boolean;
-  [name: string]: any;
+  isReadOnly: boolean;
 }
 
 export interface SettingSectionTextFieldProps {

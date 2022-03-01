@@ -1,9 +1,10 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
+
 import { SettingSectionComponentProps } from '.';
+import { ReactiveToggle } from './settingreactiveinput';
+import { SettingTextField } from './settingtextfield';
+import { RenderToggleSetting } from './settingtoggle';
 import { SettingsSection } from '../';
-import { ReactiveToggle } from './settingcombo';
-import { renderTextFieldSetting } from './settingfield';
-import { renderToggleSetting } from './settingtoggle';
 
 export default {
   component: SettingsSection,
@@ -15,21 +16,24 @@ export const toggleSetting = Template.bind({});
 toggleSetting.args = {
   id: 'toggleable',
   title: 'Sample Setting',
-  renderContent: renderToggleSetting,
+  expanded: false,
+  renderContent: RenderToggleSetting,
 };
 
 export const textField = Template.bind({});
 textField.args = {
   id: 'textField',
   title: 'Text Field',
+  expanded: false,
   textFieldValue: '',
-  renderContent: renderTextFieldSetting,
+  renderContent: SettingTextField,
 };
 
 export const reactiveToggleWithText = Template.bind({});
 reactiveToggleWithText.args = {
-  id: 'textField',
+  id: 'textFieldandToggle',
   title: 'Reactive Toggle',
+  expanded: false,
   textFieldValue: '',
   renderContent: ReactiveToggle,
 };

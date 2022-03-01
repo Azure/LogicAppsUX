@@ -38,7 +38,7 @@ export * from './pager';
 // export * from './selector';
 // export * from './selector2';
 // export * from './settings';
-export * from './settings2/settingsection';
+export * from './settings2/';
 // export * from './table';
 // export * from './telemetry';
 // export * from './textbox';

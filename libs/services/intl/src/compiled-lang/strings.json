@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -67,6 +73,12 @@
     {
       "type": 0,
       "value": "End time"
+    }
+  ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
     }
   ],
   "33+WHG": [
@@ -153,6 +165,12 @@
       "value": "Connection required"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -219,6 +237,12 @@
     {
       "type": 0,
       "value": "Please select a card to see the content"
+    }
+  ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
     }
   ],
   "JbgTET": [
@@ -545,6 +569,12 @@
     {
       "type": 0,
       "value": "Load more"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
