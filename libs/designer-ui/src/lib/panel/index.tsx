@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import { PanelPivot } from './panelpivot';
 import { PanelContent } from './panelcontent';
-import { PanelHeader, PanelHeaderControlType } from './panelheader';
+import { PanelHeader, PanelHeaderControlType } from './panelheader/panelheader';
 import { PageActionTelemetryData } from '../telemetry/models';
 import { MenuItemOption } from '../card/types';
 export interface PanelTab {
@@ -51,7 +51,7 @@ export const PanelContainer = ({
     setSelectedTab(itemKey);
   };
 
-  const renderHeader = (): JSX.Element => {
+  const renderHeader = useCallback((): JSX.Element => {
     return (
       <PanelHeader
         cardIcon="https://connectoricons-prod.azureedge.net/releases/v1.0.1550/1.0.1550.2686/azureblob/icon.png"
@@ -67,7 +67,7 @@ export const PanelContainer = ({
         setIsCollapsed={setIsCollapsed}
       />
     );
-  };
+  }, [comment, isCollapsed, isRight, noNodeSelected, panelHeaderMenu, readOnlyMode, setIsCollapsed, showCommentBox]);
 
   return (
     <Panel
