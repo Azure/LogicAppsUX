@@ -2,8 +2,9 @@ import React from 'react';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import { PanelPivot } from './panelpivot';
 import { PanelContent } from './panelcontent';
-import { PanelHeader } from './panelheader';
+import { PanelHeader, PanelHeaderControlType } from './panelheader';
 import { PageActionTelemetryData } from '../telemetry/models';
+import { MenuItemOption } from '../card/types';
 export interface PanelTab {
   name: string;
   title: string;
@@ -15,11 +16,16 @@ export interface PanelTab {
   visibilityPredicate?(): boolean;
 }
 export interface PanelContainerProps {
+  comment?: string;
   isCollapsed: boolean;
-  pivotDisabled?: boolean;
   isRight?: boolean;
-  tabs: PanelTab[];
+  noNodeSelected: boolean;
+  pivotDisabled?: boolean;
+  panelHeaderMenu: MenuItemOption[];
   selectedTab: string;
+  showCommentBox: boolean;
+  readOnlyMode?: boolean;
+  tabs: PanelTab[];
   width: string;
   trackEvent(data: PageActionTelemetryData): void;
   setSelectedTab: React.Dispatch<React.SetStateAction<string>>;
@@ -27,17 +33,21 @@ export interface PanelContainerProps {
 }
 
 export const PanelContainer = ({
+  comment,
   isCollapsed,
   isRight,
-  tabs,
+  noNodeSelected,
+  panelHeaderMenu,
   selectedTab,
+  showCommentBox,
+  readOnlyMode,
+  tabs,
   width,
   setSelectedTab,
   setIsCollapsed,
   trackEvent,
 }: PanelContainerProps) => {
   const onTabChange = (itemKey: string): void => {
-    console.log(itemKey);
     setSelectedTab(itemKey);
   };
 
@@ -47,11 +57,13 @@ export const PanelContainer = ({
         cardIcon="https://connectoricons-prod.azureedge.net/releases/v1.0.1550/1.0.1550.2686/azureblob/icon.png"
         isCollapsed={isCollapsed}
         isRight={isRight}
-        showCommentBox
-        noNodeSelected={false}
-        readOnlyMode={false}
+        showCommentBox={showCommentBox}
+        noNodeSelected={noNodeSelected}
+        panelHeaderMenu={panelHeaderMenu}
+        panelHeaderControlType={PanelHeaderControlType.MENU}
+        readOnlyMode={readOnlyMode}
         title={'This is a title'}
-        comment={'This is a test comment'}
+        comment={comment}
         setIsCollapsed={setIsCollapsed}
       />
     );

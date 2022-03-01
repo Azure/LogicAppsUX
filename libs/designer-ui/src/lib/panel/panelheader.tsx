@@ -9,8 +9,9 @@ import { ITooltipHostStyles, TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { css } from '@fluentui/react/lib/Utilities';
 import { ITextField, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
 import constants from '../constants';
-import Editor from '@monaco-editor/react';
 import { Icon } from '@fluentui/react/lib/Icon';
+import { IOverflowSetItemProps, IOverflowSetStyles, OverflowSet } from '@fluentui/react/lib/OverflowSet';
+import { MenuItemOption } from '../card/types';
 
 export interface PanelHeaderProps {
   isCollapsed: boolean;
@@ -18,6 +19,7 @@ export interface PanelHeaderProps {
   cardIcon?: string;
   comment?: string;
   panelHeaderControlType?: PanelHeaderControlType;
+  panelHeaderMenu: MenuItemOption[];
   noNodeSelected?: boolean;
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
@@ -27,7 +29,7 @@ export interface PanelHeaderProps {
   onRenderWarningMessage?(): JSX.Element;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
-enum PanelHeaderControlType {
+export enum PanelHeaderControlType {
   DISMISS_BUTTON,
   MENU,
 }
@@ -40,6 +42,14 @@ const collapseIconStyle: IButtonStyles = {
 
 const calloutProps: ICalloutProps = {
   directionalHint: DirectionalHint.leftCenter,
+};
+
+const overflowStyle: Partial<IOverflowSetStyles> = {
+  root: {
+    height: '100%',
+    backgroundColor: 'transparent',
+    width: '100%',
+  },
 };
 
 const tooltipStyles: ITooltipHostStyles = {
@@ -70,6 +80,7 @@ export const PanelHeader = ({
   comment,
   noNodeSelected,
   panelHeaderControlType,
+  panelHeaderMenu,
   readOnlyMode,
   renameTitleDisabled,
   showCommentBox,
@@ -133,7 +144,7 @@ export const PanelHeader = ({
         onBlur={readOnly ? undefined : onTitleBlur}
         onFocus={onFocusTitle}
         onKeyUp={handleOnKeyUpTitle}
-        onKeyDown={handleOnKeyDownTitle}
+        onKeyDown={handleOnEscapeDown}
       />
     );
   };
@@ -165,7 +176,7 @@ export const PanelHeader = ({
     }
   };
 
-  const handleOnKeyDownTitle = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+  const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     if (e.key === 'Escape') {
       e.preventDefault();
     }
@@ -196,7 +207,8 @@ export const PanelHeader = ({
         onChange={onCommentChange}
         onBlur={readOnlyMode ? undefined : onCommentBlur}
         onFocus={onFocusComment}
-        onKeyDown={onCommentTextFieldEscape}
+        onKeyUp={onCommentTextFieldEscape}
+        onKeyDown={handleOnEscapeDown}
       />
     );
   };
@@ -223,6 +235,52 @@ export const PanelHeader = ({
     }
   };
 
+  const getPanelHeaderMenu = (): JSX.Element => {
+    const panelHeaderMenuItems = panelHeaderMenu.map((item) => ({
+      key: item.key,
+      name: item.title,
+      iconProps: {
+        iconName: item.iconName,
+      },
+      onClick: item.onClick,
+      iconOnly: true,
+      disabled: item.disabled,
+    }));
+    return (
+      <OverflowSet
+        styles={overflowStyle}
+        items={[]}
+        overflowItems={panelHeaderMenuItems}
+        onRenderOverflowButton={onRenderOverflowButton}
+        onRenderItem={function (item: IOverflowSetItemProps) {
+          throw new Error('Function not implemented.');
+        }}
+      />
+    );
+  };
+
+  const onRenderOverflowButton = (overflowItems: any[] | undefined): JSX.Element => {
+    // tslint:disable-line: no-any
+    const calloutProps: ICalloutProps = {
+      directionalHint: DirectionalHint.leftCenter,
+    };
+
+    const PanelHeaderMenuCommands = intl.formatMessage({
+      defaultMessage: 'More commands',
+      description: 'Label for commands in panel header',
+    });
+    return (
+      <TooltipHost calloutProps={calloutProps} content={PanelHeaderMenuCommands}>
+        <IconButton
+          ariaLabel={PanelHeaderMenuCommands}
+          styles={overflowStyle}
+          componentRef={menuButtonRef}
+          menuIconProps={{ iconName: 'More' }}
+          menuProps={{ items: overflowItems! }}
+        />
+      </TooltipHost>
+    );
+  };
   return (
     <div className="msla-panel-header">
       <TooltipHost calloutProps={calloutProps} content={panelCollapseTitle} styles={tooltipStyles}>
@@ -241,15 +299,15 @@ export const PanelHeader = ({
           {!noNodeSelected && getCardTitleEditor()}
         </div>
         <div className="msla-panel-header-controls" hidden={isCollapsed}>
-          {/* {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.MENU ? getPanelHeaderMenu(panelHeaderMenu) : null}
-                    {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON ? getDismissButton() : null} */}
+          {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.MENU && getPanelHeaderMenu()}
+          {/* {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON && getDismissButton()} */}
         </div>
         {onRenderWarningMessage && onRenderWarningMessage()}
         {showCommentBox ? (
           <div className="msla-panel-comment-container-wrapper" hidden={isCollapsed}>
             <div className="msla-panel-comment-container">
-              {!noNodeSelected ? getCommentIcon() : null}
-              {!noNodeSelected ? getCommentEditor() : null}
+              {!noNodeSelected && getCommentIcon()}
+              {!noNodeSelected && getCommentEditor()}
             </div>
           </div>
         ) : null}

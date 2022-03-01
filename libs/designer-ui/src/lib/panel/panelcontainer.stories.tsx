@@ -8,4 +8,6 @@ export default {
 } as ComponentMeta<typeof PanelRoot>;
 export const Standard: ComponentStory<typeof PanelRoot> = (args: PanelRootProps) => <PanelRoot {...args} />;
 
-Standard.args = {};
+Standard.args = {
+  comment: 'Test comment!',
+};
