@@ -1,6 +1,5 @@
 import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
 import { PanelTab } from '.';
-import Constants from '../constants';
 import { PageActionTelemetryData, UserAction } from '../telemetry/models';
 import { useIntl } from 'react-intl';
 import React from 'react';
@@ -31,10 +30,10 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackE
     description: 'This is a label to access the overflowed panels',
   });
   return (
-    <div className="msla-pivot" style={{ overflow: 'hidden' }}>
+    <div className="msla-pivot">
       <Pivot
         selectedKey={selectedTab}
-        className="msla-panel-select-card-container"
+        className="msla-panel-menu"
         onLinkClick={onTabSelected}
         overflowBehavior="menu"
         overflowAriaLabel={overflowLabel}
