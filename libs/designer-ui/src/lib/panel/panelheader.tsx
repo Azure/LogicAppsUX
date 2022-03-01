@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { isEscapeKey } from '../utils/keyboardUtils';
 import { DirectionalHint, ICalloutProps } from '@fluentui/react/lib/Callout';
@@ -99,6 +99,10 @@ export const PanelHeader = ({
   const [cardComment, setCardComment] = useState(comment);
   const [titleHasFocus, setTitleHasFocus] = useState(false);
   const [commentHasFocus, setCommentHasFocus] = useState(false);
+
+  useEffect(() => {
+    setCardComment(comment);
+  }, [comment]);
 
   const panelCollapseTitle = intl.formatMessage({
     defaultMessage: 'Collapse/Expand',
@@ -260,7 +264,6 @@ export const PanelHeader = ({
   };
 
   const onRenderOverflowButton = (overflowItems: any[] | undefined): JSX.Element => {
-    // tslint:disable-line: no-any
     const calloutProps: ICalloutProps = {
       directionalHint: DirectionalHint.leftCenter,
     };
@@ -276,7 +279,7 @@ export const PanelHeader = ({
           styles={overflowStyle}
           componentRef={menuButtonRef}
           menuIconProps={{ iconName: 'More' }}
-          menuProps={{ items: overflowItems! }}
+          menuProps={overflowItems && { items: overflowItems }}
         />
       </TooltipHost>
     );
@@ -303,14 +306,14 @@ export const PanelHeader = ({
           {/* {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON && getDismissButton()} */}
         </div>
         {onRenderWarningMessage && onRenderWarningMessage()}
-        {showCommentBox ? (
+        {showCommentBox && (
           <div className="msla-panel-comment-container-wrapper" hidden={isCollapsed}>
             <div className="msla-panel-comment-container">
               {!noNodeSelected && getCommentIcon()}
               {!noNodeSelected && getCommentEditor()}
             </div>
           </div>
-        ) : null}
+        )}
       </div>
     </div>
   );

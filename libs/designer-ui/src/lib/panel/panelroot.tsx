@@ -14,8 +14,9 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
   const intl = useIntl();
 
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
+  const [currentComment, setCurrentComment] = useState(comment);
   const [selectedTab, setSelectedTab] = useState(workflowParametersTab.name);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [width, setWidth] = useState('auto');
   useEffect(() => {
     isCollapsed ? setWidth('auto') : setWidth('630px');
@@ -54,6 +55,7 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
       iconName: 'Comment',
       key: commentDescription,
       title: showCommentBox ? commentDelete : commentAdd,
+      onClick: handleCommentMenuClick,
     });
     return options;
   };
@@ -81,9 +83,19 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
     return options;
   };
 
+  const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
+    if (currentComment != null) {
+      setCurrentComment(undefined);
+      setShowCommentBox(false);
+    } else {
+      setCurrentComment('');
+      setShowCommentBox(true);
+    }
+  };
+
   return (
     <PanelContainer
-      comment={comment}
+      comment={currentComment}
       isRight
       isCollapsed={isCollapsed}
       noNodeSelected={false}
