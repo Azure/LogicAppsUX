@@ -98,8 +98,8 @@ export const PanelHeaderComment = ({
   return (
     <div className="msla-panel-comment-container-wrapper" hidden={isCollapsed}>
       <div className="msla-panel-comment-container">
-        {!noNodeSelected && getCommentIcon()}
-        {!noNodeSelected && getCommentEditor()}
+        {!noNodeSelected ? getCommentIcon() : null}
+        {!noNodeSelected ? getCommentEditor() : null}
       </div>
     </div>
   );

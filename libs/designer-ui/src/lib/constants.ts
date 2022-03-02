@@ -268,5 +268,6 @@ export default {
     PANEL_TAB_NAMES,
     MAX_TITLE_LENGTH: 80,
     MAX_COMMENT_LENGTH: 256,
+    DEFAULT_ICON: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1550/1.0.1550.2686/azureblob/icon.png',
   },
 };
