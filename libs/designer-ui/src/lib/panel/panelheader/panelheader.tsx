@@ -159,7 +159,6 @@ export const PanelHeader = ({
           </div>
           <div className="msla-panel-header-controls" hidden={isCollapsed}>
             {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.MENU ? getPanelHeaderMenu() : null}
-
             {/* 
             TODO: 13067650 implemented when panel actions gets built
             {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON ? getDismissButton() : null} 
