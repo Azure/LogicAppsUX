@@ -5,12 +5,15 @@ import { workflowParametersTab, aboutTab, connectionTab } from './registeredtabs
 import { MenuItemOption, MenuItemType } from '../card/types';
 import { useIntl } from 'react-intl';
 export interface PanelRootProps {
+  cardIcon?: string;
   comment?: string;
+  noNodeSelected: boolean;
   selectedTabId?: string;
   readOnlyMode?: boolean;
+  title: string;
 }
 
-export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootProps): JSX.Element => {
+export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, readOnlyMode, title }: PanelRootProps): JSX.Element => {
   const intl = useIntl();
 
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
@@ -100,10 +103,11 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
   };
   return (
     <PanelContainer
+      cardIcon={cardIcon}
       comment={currentComment}
       isRight
       isCollapsed={isCollapsed}
-      noNodeSelected={false}
+      noNodeSelected={noNodeSelected}
       panelHeaderMenu={getPanelHeaderMenu()}
       selectedTab={selectedTab}
       showCommentBox={showCommentBox}
@@ -112,6 +116,7 @@ export const PanelRoot = ({ comment, selectedTabId, readOnlyMode }: PanelRootPro
       setSelectedTab={setSelectedTab}
       setIsCollapsed={setIsCollapsed}
       trackEvent={handleTrackEvent}
+      title={title}
     />
   );
 };

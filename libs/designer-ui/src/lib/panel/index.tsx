@@ -5,6 +5,8 @@ import { PanelContent } from './panelcontent';
 import { PanelHeader, PanelHeaderControlType } from './panelheader/panelheader';
 import { PageActionTelemetryData } from '../telemetry/models';
 import { MenuItemOption } from '../card/types';
+import { EmptyContent } from '../card/emptycontent';
+import constants from '../constants';
 export interface PanelTab {
   name: string;
   title: string;
@@ -16,6 +18,7 @@ export interface PanelTab {
   visibilityPredicate?(): boolean;
 }
 export interface PanelContainerProps {
+  cardIcon?: string;
   comment?: string;
   isCollapsed: boolean;
   isRight?: boolean;
@@ -26,6 +29,7 @@ export interface PanelContainerProps {
   showCommentBox: boolean;
   readOnlyMode?: boolean;
   tabs: PanelTab[];
+  title: string;
   width: string;
   trackEvent(data: PageActionTelemetryData): void;
   setSelectedTab: React.Dispatch<React.SetStateAction<string>>;
@@ -33,6 +37,7 @@ export interface PanelContainerProps {
 }
 
 export const PanelContainer = ({
+  cardIcon,
   comment,
   isCollapsed,
   isRight,
@@ -42,6 +47,7 @@ export const PanelContainer = ({
   showCommentBox,
   readOnlyMode,
   tabs,
+  title,
   width,
   setSelectedTab,
   setIsCollapsed,
@@ -54,7 +60,7 @@ export const PanelContainer = ({
   const renderHeader = useCallback((): JSX.Element => {
     return (
       <PanelHeader
-        cardIcon="https://connectoricons-prod.azureedge.net/releases/v1.0.1550/1.0.1550.2686/azureblob/icon.png"
+        cardIcon={cardIcon ?? constants.PANEL.DEFAULT_ICON}
         isCollapsed={isCollapsed}
         isRight={isRight}
         showCommentBox={showCommentBox}
@@ -62,12 +68,12 @@ export const PanelContainer = ({
         panelHeaderMenu={panelHeaderMenu}
         panelHeaderControlType={PanelHeaderControlType.MENU}
         readOnlyMode={readOnlyMode}
-        title={'This is a title'}
+        title={title}
         comment={comment}
         setIsCollapsed={setIsCollapsed}
       />
     );
-  }, [comment, isCollapsed, isRight, noNodeSelected, panelHeaderMenu, readOnlyMode, setIsCollapsed, showCommentBox]);
+  }, [cardIcon, comment, isCollapsed, isRight, noNodeSelected, panelHeaderMenu, readOnlyMode, showCommentBox, title, setIsCollapsed]);
 
   return (
     <Panel
@@ -84,10 +90,22 @@ export const PanelContainer = ({
       }}
     >
       {!isCollapsed && (
-        <>
-          <PanelPivot isCollapsed={isCollapsed} tabs={tabs} selectedTab={selectedTab} onTabChange={onTabChange} trackEvent={trackEvent} />
-          <PanelContent tabs={tabs} selectedTab={selectedTab} />
-        </>
+        <div className="msla-panel-content-container">
+          {noNodeSelected ? (
+            <EmptyContent />
+          ) : (
+            <div className="msla-panel-content">
+              <PanelPivot
+                isCollapsed={isCollapsed}
+                tabs={tabs}
+                selectedTab={selectedTab}
+                onTabChange={onTabChange}
+                trackEvent={trackEvent}
+              />
+              <PanelContent tabs={tabs} selectedTab={selectedTab} />
+            </div>
+          )}
+        </div>
       )}
     </Panel>
   );
