@@ -151,26 +151,31 @@ export const PanelHeader = ({
           onClick={toggleCollapse}
         />
       </TooltipHost>
-      <div className="msla-panel-card-header">
-        {cardIcon && <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" />}
-        <div className="msla-title-container" hidden={isCollapsed}>
-          {!noNodeSelected && <PanelHeaderTitle readOnlyMode={readOnlyMode} renameTitleDisabled={renameTitleDisabled} title={title} />}
+      {!noNodeSelected ? (
+        <div className="msla-panel-card-header">
+          {cardIcon ? <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" /> : null}
+          <div className="msla-title-container" hidden={isCollapsed}>
+            <PanelHeaderTitle readOnlyMode={readOnlyMode} renameTitleDisabled={renameTitleDisabled} title={title} />
+          </div>
+          <div className="msla-panel-header-controls" hidden={isCollapsed}>
+            {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.MENU ? getPanelHeaderMenu() : null}
+            {/* 
+            TODO: 13067650 implemented when panel actions gets built
+            {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON ? getDismissButton() : null} 
+            */}
+          </div>
+          {onRenderWarningMessage ? onRenderWarningMessage() : null}
+          {showCommentBox ? (
+            <PanelHeaderComment
+              comment={comment}
+              isCollapsed={isCollapsed}
+              noNodeSelected={noNodeSelected}
+              readOnlyMode={readOnlyMode}
+              commentChange={commentChange}
+            />
+          ) : null}
         </div>
-        <div className="msla-panel-header-controls" hidden={isCollapsed}>
-          {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.MENU && getPanelHeaderMenu()}
-          {/* {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON && getDismissButton()} */}
-        </div>
-        {onRenderWarningMessage && onRenderWarningMessage()}
-        {showCommentBox && (
-          <PanelHeaderComment
-            comment={comment}
-            isCollapsed={isCollapsed}
-            noNodeSelected={noNodeSelected}
-            readOnlyMode={readOnlyMode}
-            commentChange={commentChange}
-          />
-        )}
-      </div>
+      ) : null}
     </div>
   );
 };
