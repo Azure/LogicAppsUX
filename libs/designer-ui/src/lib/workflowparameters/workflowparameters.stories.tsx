@@ -10,17 +10,17 @@ export const Standard: ComponentStory<typeof WorkflowParameters> = (args: Workfl
 Standard.args = {
   parameters: [
     {
-      id: 'test1',
+      id: 'first',
       defaultValue: 'true',
       type: 'Bool',
-      name: 'test',
+      name: 'ParameterOne',
       isEditable: true,
     },
     {
-      id: 'test2',
+      id: 'second',
       defaultValue: '{}',
       type: 'Object',
-      name: 'test2',
+      name: 'ParameterTwo',
       isEditable: false,
     },
   ],
