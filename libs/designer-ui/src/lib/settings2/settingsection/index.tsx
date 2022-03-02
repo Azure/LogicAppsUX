@@ -6,7 +6,3 @@ export interface SettingSectionComponentProps extends Record<string, any> {
   isInverted: boolean;
   isReadOnly: boolean;
 }
-
-export interface SettingSectionTextFieldProps {
-  value: string;
-}

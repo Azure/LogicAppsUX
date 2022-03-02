@@ -335,6 +335,12 @@
       "value": "more panels"
     }
   ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -679,6 +685,12 @@
     {
       "type": 0,
       "value": "This Action has testing configured."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [

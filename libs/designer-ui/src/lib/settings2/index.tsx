@@ -1,6 +1,7 @@
 import { Separator, useTheme } from '@fluentui/azure-themes/node_modules/@fluentui/react';
 import { IconButton, IIconProps } from '@fluentui/react';
 import { FormEvent, useCallback, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 import { SettingSectionComponentProps } from './settingsection';
 import { isHighContrastBlack } from '../utils/theme';
@@ -15,7 +16,7 @@ export interface SettingTextFieldProps {
   onValueChange?: TextInputChangeHandler;
 }
 
-// create component with dynamic addition of setting heys and values, (dictionary)
+// TODO (andrewfowose): create component with dynamic addition of setting keys and values, (dictionary)
 
 export function SettingsSection({ title, expanded, renderContent, textFieldValue }: SettingSectionComponentProps): JSX.Element {
   const [expandedState, setExpanded] = useState(!!expanded);
@@ -36,21 +37,20 @@ export function SettingsSection({ title, expanded, renderContent, textFieldValue
   };
   const chevronStyles = { icon: { color: '#8a8886', fontSize: 12 } };
   const separatorStyles = { root: { color: isInverted ? '#323130' : '#eaeaea' } };
-  const Resources = {
-    EXPAND_OR_COLLAPSE: "Expand or collapse '{0}'",
-    SETTING_CATEGORY_GENERAL_TITLE: 'General',
-    SETTING_CATEGORY_RUN_AFTER_TITLE: 'Run After',
-    SETTING_CATEGORY_NETWORKING_TITLE: 'Networking',
-    SETTING_CATEGORY_DATA_HANDLING_TITLE: 'Data Handling',
-    SETTING_CATEGORY_SECURITY_TITLE: 'Security',
-    SETTING_CATEGORY_TRACKING_TITLE: 'Tracking',
-  };
   const RenderContent = ({ value }: Partial<SettingTextFieldProps>): JSX.Element => {
-    value = value ? value : '';
     return <>{renderContent(value)}</>;
   };
-  const children =
-    expandedState && textFieldValue ? <RenderContent value={textFieldValue} /> : expandedState ? <RenderContent value="" /> : null;
+  const children = expandedState && <RenderContent value={textFieldValue ?? ''} />;
+
+  const intl = useIntl();
+  const expandAriaLabel = intl.formatMessage({
+    defaultMessage: 'Expand',
+    description: 'An accessible label for expand toggle icon',
+  });
+  const collapseAriaLabel = intl.formatMessage({
+    defaultMessage: 'Collapse',
+    description: 'An accessible label for collapse toggle icon',
+  });
 
   return (
     <div className="msla-setting-section">
@@ -58,7 +58,7 @@ export function SettingsSection({ title, expanded, renderContent, textFieldValue
         <div className="msla-setting-section-header" role="button" tabIndex={0} onClick={handleClick}>
           <IconButton
             className="msla-setting-section-header-icon"
-            ariaLabel={`Expand or collapse ${title}`}
+            ariaLabel={expandedState ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
             iconProps={iconProps}
             styles={chevronStyles}
           />

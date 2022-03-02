@@ -5,11 +5,11 @@ import { useIntl } from 'react-intl';
 import { SettingTextFieldProps } from '..';
 
 export const SettingTextField: React.FC<SettingTextFieldProps> = ({ value, id, isReadOnly }): JSX.Element => {
-  const [textVal, setVal] = useState(value ? value : '');
+  const [textVal, setVal] = useState(value ?? '');
   const handleTextInputChange = (e: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined): void => {
     e.stopPropagation();
     e.preventDefault();
-    setVal(newValue ? newValue : '');
+    setVal(newValue ?? '');
   };
 
   const intl = useIntl();
@@ -32,6 +32,7 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({ value, id, i
 
   return (
     <TextField
+      className="msla-setting-section-textField"
       id={id}
       label={textFieldLabel}
       // onRenderLabel={} //custom render fn
@@ -44,8 +45,3 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({ value, id, i
     />
   );
 };
-
-// add aria label
-// add description
-// onChange prop
-// add state to handle value change
