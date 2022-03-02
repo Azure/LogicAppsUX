@@ -1,10 +1,10 @@
 # Logic Apps Designer
-### 0.0.26 (2022-02-17)
 
+### 0.0.26 (2022-02-17)
 
 ### Features
 
-* Add CHANGELOG to storybooks ([#251](https://github.com/Azure/logic_apps_designer/issues/251)) ([6e943fa](https://github.com/Azure/logic_apps_designer/commit/6e943fa78b79f53d083510736bb43ebc79016811))
+- Add CHANGELOG to storybooks ([#251](https://github.com/Azure/logic_apps_designer/issues/251)) ([6e943fa](https://github.com/Azure/logic_apps_designer/commit/6e943fa78b79f53d083510736bb43ebc79016811))
 
 ### 0.0.25 (2022-02-12)
 

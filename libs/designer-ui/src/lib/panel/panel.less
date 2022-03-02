@@ -1,0 +1,200 @@
+@import (reference) '../variables.less';
+
+.msla-panel-container {
+  display: flex;
+  justify-content: space-between;
+
+  .msla-panel-select-card-container-empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .msla-panel-empty-text {
+      color: #60535c;
+      font-size: 14px;
+      margin-top: 24px;
+    }
+  }
+
+  .msla-panel-header {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    .msla-panel-card-header {
+      overflow: visible;
+      width: auto;
+      .msla-panel-card-icon {
+        height: 30px;
+        width: 30px;
+        border-radius: 2px;
+        margin: 5px;
+        float: left;
+      }
+      .msla-title-container {
+        float: left;
+        text-align: center;
+        width: 80%;
+        .msla-card-title {
+          &:hover {
+            outline: 0.75px solid @panel-mode-panel-border-color;
+          }
+        }
+        .msla-card-title-focused {
+          outline: 0.75px solid @panel-mode-panel-border-color;
+        }
+      }
+      .msla-panel-comment-container-wrapper {
+        background-color: @panel-mode-comment-field-color_light;
+        width: 100%;
+        overflow: auto;
+
+        .msla-panel-comment-container {
+          margin-left: 35px;
+          margin-right: 10px;
+          padding: 5px;
+          width: auto;
+          height: auto;
+          overflow: hidden;
+          .msla-card-comment {
+            .ms-TextField-fieldGroup {
+              outline: 0.75px solid @panel-mode-panel-border-color;
+              &:hover {
+                outline: 1.25px solid @panel-mode-panel-border-color-dark;
+              }
+            }
+          }
+          .msla-card-comment-focused {
+            .ms-TextField-fieldGroup {
+              outline: 1.25px solid @panel-mode-panel-border-color-dark;
+            }
+          }
+          .msla-comment-icon {
+            float: left;
+            margin: 18px 13px 0 5px;
+            font-size: @card-header-font-size;
+          }
+        }
+      }
+    }
+
+    .msla-panel-header-controls {
+      float: right;
+      height: 32px;
+    }
+
+    .collapse-toggle-left {
+      right: 0px;
+      top: 0px;
+      float: right;
+    }
+
+    .collapse-toggle-right {
+      right: 0px;
+      top: 0px;
+      float: left;
+    }
+  }
+
+  .msla-pivot {
+    overflow: hidden;
+    clear: left;
+  }
+
+  .msla-panel-trace-container {
+    padding: 10px 30px 0 30px;
+  }
+
+  .msla-retry-content {
+    font-family: @font-family;
+    font-size: 12px;
+    overflow: auto;
+    padding: 0 1em;
+
+    .msla-trace-inputs-outputs {
+      margin: 0 0 20px;
+    }
+  }
+
+  .msla-request-content {
+    font-family: @font-family;
+    font-size: 12px;
+    overflow: auto;
+    padding: 0 1em;
+
+    .msla-trace-inputs-outputs {
+      margin: 0 0 20px;
+    }
+  }
+
+  .msla-tab-component-container {
+    .msla-panel-about-container {
+      flex-direction: column;
+      display: flex;
+      padding-left: 30px;
+      padding-right: 30px;
+      .msla-panel-connector-label {
+        font-weight: @semibold-font-family;
+      }
+      .msla-panel-connector-name {
+        font-weight: normal;
+        padding: 0;
+        margin-bottom: 20px;
+      }
+      .msla-panel-description-label {
+        font-weight: @semibold-font-family;
+      }
+      .msla-panel-description {
+        margin-bottom: 20px;
+      }
+      .msla-panel-tags-label {
+        font-weight: @semibold-font-family;
+      }
+      .msla-panel-tags {
+        .msla-panel-tag {
+          border: @badge-border solid;
+          padding: 2px;
+          display: inline-block;
+          font-size: @card-label-font-size;
+          height: 14px;
+          line-height: 13px;
+          margin-right: 5px;
+          text-align: center;
+          text-transform: uppercase;
+          min-width: @badge-width;
+        }
+      }
+    }
+  }
+
+  .msla-content-container {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: stretch;
+    flex-direction: column;
+    padding-top: 10px;
+    overflow-y: auto;
+
+    &.msla-no-node-selected {
+      border-top: none;
+    }
+
+    & > div {
+      height: 100%;
+    }
+
+    .msla-panel-select-card-container-empty {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .msla-panel-empty-text {
+        color: #60535c; /* @ms-color-neutralSecondary */
+        font-size: 14px;
+        margin-top: 24px;
+      }
+    }
+  }
+}

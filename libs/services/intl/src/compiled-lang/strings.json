@@ -23,6 +23,18 @@
       "value": "Succeeded with retries"
     }
   ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "More commands"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -79,6 +91,12 @@
     {
       "type": 0,
       "value": "Faulted"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Comments can only be added while editing the inputs of a step."
     }
   ],
   "4vmGh0": [
@@ -233,6 +251,12 @@
       "value": "Name:"
     }
   ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Add a comment"
+    }
+  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -273,6 +297,12 @@
     {
       "type": 0,
       "value": "Operation options:"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Comment"
     }
   ],
   "Oib1mL": [
@@ -413,6 +443,12 @@
       "value": "Client request ID"
     }
   ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Collapse/Expand"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -541,6 +577,12 @@
       "value": "String"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "This operation has already been deleted."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
@@ -569,6 +611,12 @@
     {
       "type": 0,
       "value": "Start time"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Delete comment"
     }
   ],
   "e4Onhn": [
@@ -643,6 +691,12 @@
     {
       "type": 0,
       "value": "Duration"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Comment"
     }
   ],
   "iJOIca": [
@@ -857,6 +911,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Card Title"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -903,6 +963,12 @@
     {
       "type": 0,
       "value": "Default Value"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "vwH/XV": [
