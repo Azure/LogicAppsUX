@@ -35,14 +35,6 @@ export function SettingsSection({ title, expanded, renderContent, textFieldValue
   const handleClick = useCallback(() => {
     setExpanded(!expandedState);
   }, [expandedState]);
-  const handleKeyDown: EventHandler<any> = (event: KeyboardEvent): void => {
-    const { key } = event;
-    event.preventDefault();
-    event.stopPropagation();
-    if (key === 'Enter' || key === ' ') {
-      handleClick();
-    }
-  };
 
   const iconProps: IIconProps = {
     iconName: expandedState ? 'ChevronDownMed' : 'ChevronRightMed',
@@ -71,18 +63,19 @@ export function SettingsSection({ title, expanded, renderContent, textFieldValue
     defaultMessage: 'Collapse',
     description: 'An accessible label for collapse toggle icon',
   });
+  const headerTextClassName = isInverted ? 'msla-setting-section-header-text-dark' : 'msla-setting-section-header-text';
 
   return (
     <div className="msla-setting-section">
       <div className="msla-setting-section-content">
-        <div className="msla-setting-section-header" role="button" tabIndex={0} onClick={handleClick} onKeyDown={handleKeyDown}>
+        <div className="msla-setting-section-header" onClick={handleClick}>
           <IconButton
             className="msla-setting-section-header-icon"
             ariaLabel={expandedState ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
             iconProps={iconProps}
             styles={chevronStyles}
           />
-          <div className="msla-setting-section-header-text">{title}</div>
+          <button className={headerTextClassName}>{title}</button>
         </div>
         {children}
         <Separator className="msla-setting-section-separator" styles={separatorStyles} />
