@@ -6,6 +6,7 @@ exports[`ui/workflowparameters/workflowparameterReadOnly should construct. 1`] =
     className="msla-workflow-parameter-field"
   >
     <StyledLabelBase
+      data-cy="readonly-name-label"
       htmlFor="test-name"
       styles={
         Object {
