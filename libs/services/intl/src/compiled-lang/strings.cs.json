@@ -23,6 +23,18 @@
       "value": "Proběhlo úspěšně s opakováním pokusů"
     }
   ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "More commands"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -113,6 +125,12 @@
     {
       "type": 0,
       "value": "S chybou"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Comments can only be added while editing the inputs of a step."
     }
   ],
   "4vmGh0": [
@@ -289,6 +307,12 @@
       "value": "Název:"
     }
   ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Add a comment"
+    }
+  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -329,6 +353,12 @@
     {
       "type": 0,
       "value": "Možnosti operace:"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Comment"
     }
   ],
   "Oib1mL": [
@@ -487,6 +517,12 @@
       "value": "ID žádosti klienta"
     }
   ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Collapse/Expand"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -615,6 +651,12 @@
       "value": "Řetězec"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "This operation has already been deleted."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
@@ -643,6 +685,12 @@
     {
       "type": 0,
       "value": "Čas zahájení"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Delete comment"
     }
   ],
   "e4Onhn": [
@@ -732,13 +780,23 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "Stisknutí Alt/Option + kliknutím stáhnete "
+    },
+    {
+      "type": 1,
+      "value": "displayName"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Doba trvání"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Comment"
     }
   ],
   "iJOIca": [
@@ -975,6 +1033,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Card Title"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -1021,6 +1085,12 @@
     {
       "type": 0,
       "value": "Výchozí hodnota"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "vwH/XV": [
