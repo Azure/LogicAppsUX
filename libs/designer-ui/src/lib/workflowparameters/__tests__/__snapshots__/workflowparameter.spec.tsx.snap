@@ -10,6 +10,7 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
     <div>
       <CustomizedCommandBarButton
         className="msla-workflow-parameter-heading-button"
+        data-cy="-parameter-heading-button"
         iconProps={
           Object {
             "iconName": "ChevronRightMed",
