@@ -23,6 +23,18 @@
       "value": "Выполнено с повторными попытками"
     }
   ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "More commands"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -101,6 +113,12 @@
     {
       "type": 0,
       "value": "Со сбоем"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Comments can only be added while editing the inputs of a step."
     }
   ],
   "4vmGh0": [
@@ -277,6 +295,12 @@
       "value": "Имя:"
     }
   ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Add a comment"
+    }
+  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -317,6 +341,12 @@
     {
       "type": 0,
       "value": "Параметры операции:"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Comment"
     }
   ],
   "Oib1mL": [
@@ -475,6 +505,12 @@
       "value": "Идентификатор запроса клиента"
     }
   ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Collapse/Expand"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -603,6 +639,12 @@
       "value": "Строка"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "This operation has already been deleted."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
@@ -631,6 +673,12 @@
     {
       "type": 0,
       "value": "Время начала"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Delete comment"
     }
   ],
   "e4Onhn": [
@@ -720,13 +768,27 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "ALT/OPTION + щелчок для скачивания \""
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Продолжительность"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Comment"
     }
   ],
   "iJOIca": [
@@ -963,6 +1025,12 @@
       "value": "Целое число"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Card Title"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -1009,6 +1077,12 @@
     {
       "type": 0,
       "value": "Значение по умолчанию"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "vwH/XV": [

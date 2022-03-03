@@ -23,6 +23,18 @@
       "value": "再試行により成功"
     }
   ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "More commands"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
   "1R6Vaa": [
     {
       "offset": 0,
@@ -68,6 +80,12 @@
     {
       "type": 0,
       "value": "エラー"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Comments can only be added while editing the inputs of a step."
     }
   ],
   "4vmGh0": [
@@ -211,6 +229,12 @@
       "value": "名前:"
     }
   ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Add a comment"
+    }
+  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -251,6 +275,12 @@
     {
       "type": 0,
       "value": "操作オプション:"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Comment"
     }
   ],
   "Oib1mL": [
@@ -374,6 +404,12 @@
     {
       "type": 0,
       "value": "クライアント要求 ID"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Collapse/Expand"
     }
   ],
   "UCNM4L": [
@@ -504,6 +540,12 @@
       "value": "文字列"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "This operation has already been deleted."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
@@ -532,6 +574,12 @@
     {
       "type": 0,
       "value": "開始時刻"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Delete comment"
     }
   ],
   "e4Onhn": [
@@ -588,13 +636,19 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "Alt または Option キーを押しながらクリックして {displayName} をダウンロードします"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "期間"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Comment"
     }
   ],
   "iJOIca": [
@@ -798,6 +852,12 @@
       "value": "INT"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Card Title"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -844,6 +904,12 @@
     {
       "type": 0,
       "value": "既定値"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "vwH/XV": [
