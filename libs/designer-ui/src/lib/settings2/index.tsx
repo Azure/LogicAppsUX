@@ -1,6 +1,6 @@
 import { Separator, useTheme } from '@fluentui/azure-themes/node_modules/@fluentui/react';
 import { IconButton, IIconProps } from '@fluentui/react';
-import { FormEvent, useCallback, useState } from 'react';
+import { FormEvent, useCallback, useState, EventHandler } from 'react';
 import { useIntl } from 'react-intl';
 
 import constants from '../constants';
@@ -25,15 +25,24 @@ export interface SettingSectionComponentProps extends Record<string, any> {
   isReadOnly: boolean;
 }
 
-// TODO (andrewfowose): create component with dynamic addition of setting keys and values, (dictionary)
+// TODO (andrewfowose - 13363298): create component with dynamic addition of setting keys and values, (dictionary)
 
 export function SettingsSection({ title, expanded, renderContent, textFieldValue }: SettingSectionComponentProps): JSX.Element {
   const [expandedState, setExpanded] = useState(!!expanded);
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
+
   const handleClick = useCallback(() => {
     setExpanded(!expandedState);
   }, [expandedState]);
+  const handleKeyDown: EventHandler<any> = (event: KeyboardEvent): void => {
+    const { key } = event;
+    event.preventDefault();
+    event.stopPropagation();
+    if (key === 'Enter' || key === ' ') {
+      handleClick();
+    }
+  };
 
   const iconProps: IIconProps = {
     iconName: expandedState ? 'ChevronDownMed' : 'ChevronRightMed',
@@ -66,7 +75,7 @@ export function SettingsSection({ title, expanded, renderContent, textFieldValue
   return (
     <div className="msla-setting-section">
       <div className="msla-setting-section-content">
-        <div className="msla-setting-section-header" role="button" tabIndex={0} onClick={handleClick}>
+        <div className="msla-setting-section-header" role="button" tabIndex={0} onClick={handleClick} onKeyDown={handleKeyDown}>
           <IconButton
             className="msla-setting-section-header-icon"
             ariaLabel={expandedState ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
