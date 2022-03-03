@@ -3,7 +3,7 @@ import { IconButton, IIconProps } from '@fluentui/react';
 import { FormEvent, useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-import { SettingSectionComponentProps } from './settingsection';
+import constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
 
 export type TextInputChangeHandler = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => void;
@@ -14,6 +14,15 @@ export interface SettingTextFieldProps {
   label: string;
   isReadOnly: boolean;
   onValueChange?: TextInputChangeHandler;
+}
+
+export interface SettingSectionComponentProps extends Record<string, any> {
+  id: string;
+  title: string;
+  expanded: boolean;
+  renderContent: React.FC<any>;
+  isInverted: boolean;
+  isReadOnly: boolean;
 }
 
 // TODO (andrewfowose): create component with dynamic addition of setting keys and values, (dictionary)
@@ -31,12 +40,14 @@ export function SettingsSection({ title, expanded, renderContent, textFieldValue
     styles: {
       root: {
         fontSize: 14,
-        color: isInverted ? 'white' : '#514f4e',
+        color: isInverted ? 'white' : constants.CHEVRON_ROOT_COLOR_LIGHT,
       },
     },
   };
-  const chevronStyles = { icon: { color: '#8a8886', fontSize: 12 } };
-  const separatorStyles = { root: { color: isInverted ? '#323130' : '#eaeaea' } };
+  const chevronStyles = { icon: { color: constants.CHEVRON_COLOR, fontSize: 12 } };
+  const separatorStyles = {
+    root: { color: isInverted ? constants.SETTING_SEPARATOR_COLOR_DARK : constants.SETTING_SEPARATOR_COLOR_LIGHT },
+  };
   const RenderContent = ({ value }: Partial<SettingTextFieldProps>): JSX.Element => {
     return <>{renderContent(value)}</>;
   };

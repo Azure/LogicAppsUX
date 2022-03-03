@@ -1,10 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 
-import { SettingSectionComponentProps } from '.';
 import { ReactiveToggle } from './settingreactiveinput';
 import { SettingTextField } from './settingtextfield';
 import { RenderToggleSetting } from './settingtoggle';
-import { SettingsSection } from '../';
+import { SettingsSection, SettingSectionComponentProps } from '../';
 
 export default {
   component: SettingsSection,
