@@ -25,7 +25,7 @@ export interface SettingSectionComponentProps extends Record<string, any> {
   isReadOnly: boolean;
 }
 
-// TODO (andrewfowose - 13363298): create component with dynamic addition of setting keys and values, (dictionary)
+// TODO (andrewfowose #13363298): create component with dynamic addition of setting keys and values, (dictionary)
 
 export function SettingsSection({ title, expanded, renderContent, textFieldValue }: SettingSectionComponentProps): JSX.Element {
   const [expandedState, setExpanded] = useState(!!expanded);
