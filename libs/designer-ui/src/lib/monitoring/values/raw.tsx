@@ -1,15 +1,13 @@
 import { useMemo } from 'react';
+import { Colorizer, type Language } from '../../colorizer';
 import Constants from '../../constants';
-import CustomEditor, { EditorLanguage } from '../../editor';
 import type { ValueProps } from './types';
 
 export const RawValue: React.FC<ValueProps> = ({ displayName, value, visible = true }) => {
-  const { height, language, valueAsString } = useMemo(() => {
+  const { language, valueAsString } = useMemo(() => {
     const valueAsString = (typeof value === 'string' ? value : JSON.stringify(value, null, 2)) || Constants.ZERO_WIDTH_SPACE;
-    const language = typeof value === 'string' ? undefined : { language: EditorLanguage.json };
-    const height = 19 * Math.min(valueAsString.split('\n').length, 10);
+    const language: { language: Language } | undefined = typeof value === 'string' ? undefined : { language: 'json' };
     return {
-      height,
       language,
       valueAsString,
     };
@@ -23,15 +21,7 @@ export const RawValue: React.FC<ValueProps> = ({ displayName, value, visible = t
     <section className="msla-trace-value-label">
       <label className="msla-trace-value-display-name">{displayName}</label>
       <div className="msla-colorizer-json-body">
-        <CustomEditor
-          defaultValue={valueAsString}
-          folding={false}
-          height={height}
-          {...language}
-          lineNumbers="off"
-          minimapEnabled={false}
-          readOnly={true}
-        />
+        <Colorizer ariaLabel={displayName} code={valueAsString} {...language} />
       </div>
     </section>
   );

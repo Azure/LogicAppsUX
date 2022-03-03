@@ -14,39 +14,39 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
   <div
     className="msla-colorizer-json-body"
   >
-    <section
-      style={
-        Object {
-          "display": "flex",
-          "height": 19,
-          "position": "relative",
-          "textAlign": "initial",
-          "width": "100%",
-        }
-      }
+    <div
+      aria-label="XML"
+      aria-readonly={true}
+      className="msla-colorizer-wrapper"
+      role="textbox"
+      tabIndex={0}
     >
-      <div
+      <pre
+        className="prism-code language-json"
         style={
           Object {
-            "alignItems": "center",
-            "display": "flex",
-            "height": "100%",
-            "justifyContent": "center",
-            "width": "100%",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
-        Loading...
-      </div>
-      <div
-        style={
-          Object {
-            "display": "none",
-            "width": "100%",
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
           }
-        }
-      />
-    </section>
+        >
+          <span
+            className="token plain"
+          >
+            &lt;xml&gt;&lt;/xml&gt;
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;
@@ -63,39 +63,99 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
   <div
     className="msla-colorizer-json-body"
   >
-    <section
-      style={
-        Object {
-          "display": "flex",
-          "height": 19,
-          "position": "relative",
-          "textAlign": "initial",
-          "width": "100%",
-        }
-      }
+    <div
+      aria-label="XML"
+      aria-readonly={true}
+      className="msla-colorizer-wrapper"
+      role="textbox"
+      tabIndex={0}
     >
-      <div
+      <pre
+        className="prism-code language-json"
         style={
           Object {
-            "alignItems": "center",
-            "display": "flex",
-            "height": "100%",
-            "justifyContent": "center",
-            "width": "100%",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
-        Loading...
-      </div>
-      <div
-        style={
-          Object {
-            "display": "none",
-            "width": "100%",
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
           }
-        }
-      />
-    </section>
+        >
+          <span
+            className="token plain"
+          >
+            &lt;?xml version=
+          </span>
+          <span
+            className="token string"
+            style={
+              Object {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "1.0"
+          </span>
+          <span
+            className="token plain"
+          >
+             encoding=
+          </span>
+          <span
+            className="token string"
+            style={
+              Object {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "utf-8"
+          </span>
+          <span
+            className="token plain"
+          >
+            ?&gt;&lt;root&gt;&lt;name username=
+          </span>
+          <span
+            className="token string"
+            style={
+              Object {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "JS1用户名"
+          </span>
+          <span
+            className="token plain"
+          >
+            &gt;你好 John&lt;/name&gt;&lt;name username=
+          </span>
+          <span
+            className="token string"
+            style={
+              Object {
+                "color": "rgb(163, 21, 21)",
+              }
+            }
+          >
+            "MI1用户名"
+          </span>
+          <span
+            className="token plain"
+          >
+            &gt;中文测试&lt;/name&gt;&lt;/root&gt;
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;
@@ -112,39 +172,39 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
   <div
     className="msla-colorizer-json-body"
   >
-    <section
-      style={
-        Object {
-          "display": "flex",
-          "height": 19,
-          "position": "relative",
-          "textAlign": "initial",
-          "width": "100%",
-        }
-      }
+    <div
+      aria-label="XML"
+      aria-readonly={true}
+      className="msla-colorizer-wrapper"
+      role="textbox"
+      tabIndex={0}
     >
-      <div
+      <pre
+        className="prism-code language-json"
         style={
           Object {
-            "alignItems": "center",
-            "display": "flex",
-            "height": "100%",
-            "justifyContent": "center",
-            "width": "100%",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
-        Loading...
-      </div>
-      <div
-        style={
-          Object {
-            "display": "none",
-            "width": "100%",
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
           }
-        }
-      />
-    </section>
+        >
+          <span
+            className="token plain"
+          >
+            &lt;xml&gt;&lt;/xml&gt;
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;
@@ -161,39 +221,39 @@ exports[`ui/monitoring/values/xml should render a zero-width space if value is e
   <div
     className="msla-colorizer-json-body"
   >
-    <section
-      style={
-        Object {
-          "display": "flex",
-          "height": 19,
-          "position": "relative",
-          "textAlign": "initial",
-          "width": "100%",
-        }
-      }
+    <div
+      aria-label="XML"
+      aria-readonly={true}
+      className="msla-colorizer-wrapper"
+      role="textbox"
+      tabIndex={0}
     >
-      <div
+      <pre
+        className="prism-code language-json"
         style={
           Object {
-            "alignItems": "center",
-            "display": "flex",
-            "height": "100%",
-            "justifyContent": "center",
-            "width": "100%",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
-        Loading...
-      </div>
-      <div
-        style={
-          Object {
-            "display": "none",
-            "width": "100%",
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
           }
-        }
-      />
-    </section>
+        >
+          <span
+            className="token plain"
+          >
+            ‌
+          </span>
+        </div>
+      </pre>
+    </div>
   </div>
 </section>
 `;

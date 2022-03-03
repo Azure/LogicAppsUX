@@ -1,20 +1,17 @@
-import { Tab } from '.';
-import { EmptyContent } from '../card/emptycontent';
+import React from 'react';
+import { PanelTab } from '.';
 
 export interface PanelContentProps {
-  tabs: Tab[];
   selectedTab?: string;
+  tabs: PanelTab[];
 }
 
 export const PanelContent = ({ tabs, selectedTab }: PanelContentProps): JSX.Element => {
-  if (!selectedTab && tabs.length === 0) {
-    return <EmptyContent />;
-  }
   return (
     <div className="msla-content">
       {
         tabs.find((t) => {
-          return t.itemKey === selectedTab;
+          return t.name === selectedTab;
         })?.content
       }
     </div>
