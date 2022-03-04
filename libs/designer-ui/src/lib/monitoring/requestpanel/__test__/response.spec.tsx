@@ -1,6 +1,7 @@
+import type { ResponseProps } from '../response';
+import { Response } from '../response';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import { Response, ResponseProps } from '../response';
 
 describe('lib/monitoring/requestpanel/response', () => {
   let minimal: ResponseProps, renderer: ShallowRenderer.ShallowRenderer;

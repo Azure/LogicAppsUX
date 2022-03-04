@@ -1,5 +1,8 @@
-import { Callout, CommandButton, DirectionalHint, IButtonProps } from '@fluentui/react';
-import React, { ReactNode } from 'react';
+import type { IButtonProps } from '@fluentui/react';
+import { Callout, CommandButton, DirectionalHint } from '@fluentui/react';
+import type { ReactNode } from 'react';
+import React from 'react';
+
 export const DEFAULT_TIP_GAP_SPACE = 0;
 export const DEFAULT_DIRECTIONAL_HINT = DirectionalHint.leftCenter;
 export interface TipButton extends IButtonProps {

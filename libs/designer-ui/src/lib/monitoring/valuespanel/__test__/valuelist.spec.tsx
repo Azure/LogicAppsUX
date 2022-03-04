@@ -1,6 +1,7 @@
+import type { ValueListProps } from '../valuelist';
+import { ValueList } from '../valuelist';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import { ValueList, ValueListProps } from '../valuelist';
 
 describe('lib/monitoring/valuespanel/valuelist', () => {
   let minimal: ValueListProps, renderer: ShallowRenderer.ShallowRenderer;

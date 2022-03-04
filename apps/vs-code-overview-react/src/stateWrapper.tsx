@@ -1,9 +1,9 @@
+import { App } from './app/app';
+import type { RunDisplayItem } from './run-service';
+import type { RootState } from './state/store';
+import { VSCodeContext } from './webviewCommunication';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { App } from './app/app';
-import { RunDisplayItem } from './run-service';
-import { RootState } from './state/store';
-import { VSCodeContext } from './webviewCommunication';
 
 export const StateWrapper: React.FC = () => {
   const overviewState = useSelector((state: RootState) => state.overview);

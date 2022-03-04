@@ -1,5 +1,6 @@
-import { DirectionalHint, FocusTrapCallout, IFocusTrapZoneProps, mergeStyleSets, Target, useTheme } from '@fluentui/react';
 import { calloutContentStyles } from '../fabric';
+import type { IFocusTrapZoneProps, Target } from '@fluentui/react';
+import { DirectionalHint, FocusTrapCallout, mergeStyleSets, useTheme } from '@fluentui/react';
 
 export interface FlyoutCalloutProps {
   target: Target | undefined;

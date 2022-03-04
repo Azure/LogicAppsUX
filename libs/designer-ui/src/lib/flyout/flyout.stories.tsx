@@ -1,10 +1,8 @@
 // Button.stories.ts | Button.stories.tsx
-
+import type { FlyoutProps } from './index';
+import { Flyout } from './index';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-
-import { Flyout, FlyoutProps } from './index';
 
 export default {
   component: Flyout,

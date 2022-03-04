@@ -1,7 +1,8 @@
-import { css, Icon, IIconProps, TooltipHost } from '@fluentui/react';
-import { useIntl } from 'react-intl';
-import { CardProps } from './index';
+import type { CardProps } from './index';
 import { getHeaderStyle } from './utils';
+import type { IIconProps } from '@fluentui/react';
+import { css, Icon, TooltipHost } from '@fluentui/react';
+import { useIntl } from 'react-intl';
 
 export type CardFooterProps = Pick<CardProps, 'commentBox' | 'connectionDisplayName' | 'connectionRequired' | 'staticResultsEnabled'>;
 

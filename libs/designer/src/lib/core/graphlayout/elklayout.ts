@@ -1,9 +1,11 @@
-import ELK, { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
-import { Edge, Node } from 'react-flow-renderer';
+import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
+import { isWorkflowNode } from '../parsers/models/workflowNode';
+import type { RootState } from '../store';
+import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
+import ELK from 'elkjs/lib/elk.bundled';
 import { useEffect, useState } from 'react';
+import type { Edge, Node } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { isWorkflowNode, WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
 
 const defaultLayoutOptions: Record<string, string> = {
   'elk.algorithm': 'org.eclipse.elk.layered',

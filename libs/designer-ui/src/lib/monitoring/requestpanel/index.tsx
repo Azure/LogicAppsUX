@@ -1,14 +1,15 @@
-import { equals } from '@microsoft-logic-apps/utils';
-import React, { useState } from 'react';
-import { useIntl } from 'react-intl';
-import { PageChangeEventHandler, Pager } from '../../pager';
+import type { PageChangeEventHandler } from '../../pager';
+import { Pager } from '../../pager';
 import { ErrorSection } from '../errorsection';
 import { calculateDuration } from '../utils';
 import { Value } from '../values';
 import { Request } from './request';
 import { Response } from './response';
 import { SecureDataSection } from './securedatasection';
-import { RequestHistory } from './types';
+import type { RequestHistory } from './types';
+import { equals } from '@microsoft-logic-apps/utils';
+import React, { useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export interface RequestPanelProps {
   requestHistory: RequestHistory[];

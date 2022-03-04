@@ -1,14 +1,8 @@
-import {
-  FontSizes,
-  getTheme,
-  Icon,
-  IIconStyles,
-  ITheme,
-  registerOnThemeChangeCallback,
-  removeOnThemeChangeCallback,
-} from '@fluentui/react';
+import type { IIconStyles, ITheme } from '@fluentui/react';
+import { FontSizes, getTheme, Icon, registerOnThemeChangeCallback, removeOnThemeChangeCallback } from '@fluentui/react';
 import React from 'react';
-import { injectIntl, WrappedComponentProps } from 'react-intl';
+import type { WrappedComponentProps } from 'react-intl';
+import { injectIntl } from 'react-intl';
 
 export type ErrorHandler = (error: Error, info: React.ErrorInfo) => void;
 

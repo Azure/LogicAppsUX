@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { useIntl } from 'react-intl';
-import { PageChangeEventHandler, Pager } from '../../pager';
+import type { PageChangeEventHandler } from '../../pager';
+import { Pager } from '../../pager';
 import { ErrorSection } from '../errorsection';
 import { calculateDuration } from '../utils';
 import { Value } from '../values';
-import { RetryHistory } from './types';
+import type { RetryHistory } from './types';
+import { useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export interface RetryPanelProps {
   retryHistories: RetryHistory[];

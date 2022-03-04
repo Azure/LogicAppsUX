@@ -1,4 +1,3 @@
-import { ISpinnerStyles, Spinner, SpinnerSize } from '@fluentui/react';
 import Constants from '../../constants';
 import { Aborted } from './images/aborted';
 import { Cancelled } from './images/cancelled';
@@ -8,6 +7,8 @@ import { Succeeded } from './images/succeeded';
 import { SucceededWithRetries } from './images/succeededwithretries';
 import { TimedOut } from './images/timedout';
 import { Waiting } from './images/waiting';
+import type { ISpinnerStyles } from '@fluentui/react';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 
 export interface StatusIconProps {
   hasRetries: boolean;

@@ -1,9 +1,9 @@
 // valuespanel.stories.js|jsx|ts|tsx
-
+import type { ValuesPanelProps } from './index';
+import { ValuesPanel } from './index';
 import { DefaultButton, Panel, PanelType, ThemeProvider } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { ValuesPanel, ValuesPanelProps } from './index';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: ValuesPanel,

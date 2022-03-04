@@ -1,10 +1,10 @@
+import Constants from '../../constants';
+import type { StatusPillProps } from './index';
+import { StatusPill } from './index';
+import './statuspill.story.less';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-
-import { StatusPill, StatusPillProps } from './index';
-import './statuspill.story.less';
-import Constants from '../../constants';
 export default {
   component: StatusPill,
   title: 'Components/Monitoring/StatusPill',

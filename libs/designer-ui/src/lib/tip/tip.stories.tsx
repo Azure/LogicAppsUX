@@ -1,10 +1,9 @@
-import React from 'react';
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-
-import { Tip, TipProps } from './index';
-import { useBoolean, useId } from '@fluentui/react-hooks';
+import type { TipProps } from './index';
+import { Tip } from './index';
 import { DefaultButton } from '@fluentui/react';
+import { useBoolean, useId } from '@fluentui/react-hooks';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
 
 export default {
   component: Tip,

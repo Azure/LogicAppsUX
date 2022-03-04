@@ -1,7 +1,7 @@
 // copyinputcontrol.stories.js|jsx|ts|tsx
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { CopyInputControl, CopyInputControlProps } from './index';
+import type { CopyInputControlProps } from './index';
+import { CopyInputControl } from './index';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: CopyInputControl,

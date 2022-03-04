@@ -1,6 +1,7 @@
-import { ContextualMenu, DirectionalHint, ICalloutProps, IContextualMenuItem, Target } from '@fluentui/react';
+import type { CardProps } from './index';
+import type { ICalloutProps, IContextualMenuItem, Target } from '@fluentui/react';
+import { ContextualMenu, DirectionalHint } from '@fluentui/react';
 import { useIntl } from 'react-intl';
-import { CardProps } from './index';
 
 export interface CardContextMenuProps extends Pick<CardProps, 'contextMenuOptions' | 'title'> {
   contextMenuLocation: Target | undefined;

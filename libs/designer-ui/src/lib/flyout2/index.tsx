@@ -1,9 +1,9 @@
-import { useRef } from 'react';
 import InformationImage from '../card/images/information_tiny.svg';
 import Constants from '../constants';
 import { getDragStartHandlerWhenDisabled } from '../helper';
 import { FlyoutBalloon } from './flyoutballoon';
-import { FlyoutSelectedEventHandler } from './types';
+import type { FlyoutSelectedEventHandler } from './types';
+import { useRef } from 'react';
 
 export interface Flyout2Props {
   ariaLabel?: string;

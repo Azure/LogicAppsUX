@@ -1,6 +1,7 @@
+import type { PagerProps } from '../index';
+import { Pager } from '../index';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { Pager, PagerProps } from '../index';
 
 describe('lib/pager', () => {
   const classNames = {

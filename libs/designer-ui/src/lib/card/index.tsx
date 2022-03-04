@@ -1,7 +1,3 @@
-import { css, ISpinnerStyles, MessageBarType } from '@fluentui/react';
-import { equals } from '@microsoft-logic-apps/utils';
-import { useState } from 'react';
-import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { isDeleteKey, isEnterKey, isSpaceKey } from '../utils/keyboardUtils';
 import { CardContextMenu } from './cardcontextmenu';
 import { CardFooter } from './cardfooter';
@@ -9,6 +5,11 @@ import { ErrorBanner } from './errorbanner';
 import { Gripper } from './images/dynamicsvgs/gripper';
 import type { CommentBoxProps, MenuItemOption } from './types';
 import { getCardStyle } from './utils';
+import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
+import { css } from '@fluentui/react';
+import { equals } from '@microsoft-logic-apps/utils';
+import { useState } from 'react';
+import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 
 export interface CardProps {
   active?: boolean;

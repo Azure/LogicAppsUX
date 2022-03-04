@@ -1,4 +1,4 @@
-import { ContentLink } from '../types';
+import type { ContentLink } from '../types';
 import { isContentLink } from '../utils';
 
 describe('libs/monitoring/values/utils', () => {

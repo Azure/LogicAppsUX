@@ -1,8 +1,8 @@
+import type { PanelTab } from '.';
+import type { PageActionTelemetryData } from '../telemetry/models';
 import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
-import { PanelTab } from '.';
-import { PageActionTelemetryData } from '../telemetry/models';
-import { useIntl } from 'react-intl';
 import React from 'react';
+import { useIntl } from 'react-intl';
 
 export interface CategoryPivotProps {
   isCollapsed: boolean;

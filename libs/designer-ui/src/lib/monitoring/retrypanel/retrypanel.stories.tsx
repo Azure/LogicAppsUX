@@ -1,9 +1,9 @@
 // retrypanel.stories.js|jsx|ts|tsx
-
+import type { RetryPanelProps } from './index';
+import { RetryPanel } from './index';
 import { DefaultButton, Panel, PanelType } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { RetryPanel, RetryPanelProps } from './index';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: RetryPanel,

@@ -1,6 +1,6 @@
-import { useIntl } from 'react-intl';
 import { Value } from '../values';
-import { RequestHistoryRequest } from './types';
+import type { RequestHistoryRequest } from './types';
+import { useIntl } from 'react-intl';
 
 export interface RequestProps {
   request: RequestHistoryRequest | undefined;

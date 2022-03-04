@@ -1,6 +1,6 @@
+import type { CallbackInfo, CallbackInfoWithRelativePath, Run, RunDisplayItem } from './types';
 import { isObject } from '@microsoft-logic-apps/utils';
 import { getDurationString } from '@microsoft/designer-ui';
-import { CallbackInfo, CallbackInfoWithRelativePath, Run, RunDisplayItem } from './types';
 
 export function getCallbackUrl(callbackInfo: CallbackInfo | undefined): string | undefined {
   if (!callbackInfo) {

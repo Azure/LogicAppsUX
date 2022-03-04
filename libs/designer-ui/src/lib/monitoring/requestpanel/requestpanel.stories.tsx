@@ -1,9 +1,9 @@
 // requestpanel.stories.js|jsx|ts|tsx
-
+import type { RequestPanelProps } from './index';
+import { RequestPanel } from './index';
 import { DefaultButton, Panel, PanelType } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { RequestPanel, RequestPanelProps } from './index';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: RequestPanel,

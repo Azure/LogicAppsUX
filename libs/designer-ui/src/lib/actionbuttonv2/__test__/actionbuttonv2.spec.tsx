@@ -1,6 +1,7 @@
+import type { ActionButtonV2Props } from '../index';
+import { ActionButtonV2 } from '../index';
 import { createRef } from 'react';
 import renderer from 'react-test-renderer';
-import { ActionButtonV2, ActionButtonV2Props } from '../index';
 
 describe('lib/actionbuttonv2', () => {
   let minimal: ActionButtonV2Props;

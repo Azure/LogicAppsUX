@@ -1,6 +1,7 @@
+import type { StatusPillProps } from '../index';
+import { StatusPill } from '../index';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { StatusPill, StatusPillProps } from '../index';
 
 describe('lib/monitoring/statuspill', () => {
   const classNames = {

@@ -1,10 +1,11 @@
+import type { InitializePayload } from './state/overviewSlice';
+import { initialize, updateAccessToken } from './state/overviewSlice';
+import type { AppDispatch } from './state/store';
 import useEventListener from '@use-it/event-listener';
-import React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { WebviewApi } from 'vscode-webview';
-import { initialize, InitializePayload, updateAccessToken } from './state/overviewSlice';
-import { AppDispatch } from './state/store';
+import type { WebviewApi } from 'vscode-webview';
+
 interface InjectValuesMessage {
   command: 'initialize-frame';
   data: InitializePayload;

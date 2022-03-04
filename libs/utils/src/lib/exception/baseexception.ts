@@ -1,4 +1,4 @@
-import { Exception } from './exception';
+import type { Exception } from './exception';
 
 export abstract class BaseException extends Error implements Exception {
   constructor(

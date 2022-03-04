@@ -1,5 +1,6 @@
+import type { FlyoutProps } from '../index';
+import { Flyout } from '../index';
 import renderer from 'react-test-renderer';
-import { Flyout, FlyoutProps } from '../index';
 
 describe('ui/flyout', () => {
   let minimal: FlyoutProps;

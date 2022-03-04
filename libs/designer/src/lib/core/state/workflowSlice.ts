@@ -1,7 +1,9 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
-import { isWorkflowNode, WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
 import { initializeGraphState } from '../parsers/ParseReduxAction';
+import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
+import { isWorkflowNode } from '../parsers/models/workflowNode';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
 
 type SpecTypes = 'BJS' | 'CNCF';
 

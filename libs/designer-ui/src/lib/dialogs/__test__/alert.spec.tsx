@@ -1,7 +1,7 @@
+import type { AlertProps } from '../alert';
+import { Alert } from '../alert';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
-import { Alert, AlertProps } from '../alert';
 
 describe('ui/dialogs/_alert', () => {
   let minimal: AlertProps;

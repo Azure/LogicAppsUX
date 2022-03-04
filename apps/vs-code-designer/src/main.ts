@@ -1,6 +1,7 @@
-import { commands, ExtensionContext, window, ViewColumn, Uri } from 'vscode';
 import { promises as fs } from 'fs';
 import { join } from 'path';
+import type { ExtensionContext } from 'vscode';
+import { commands, window, ViewColumn, Uri } from 'vscode';
 
 export function activate(context: ExtensionContext) {
   // Register command "start"

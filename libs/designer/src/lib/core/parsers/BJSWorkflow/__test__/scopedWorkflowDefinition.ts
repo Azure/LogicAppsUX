@@ -1,5 +1,5 @@
-import { Actions } from '../../../state/workflowSlice';
-import { WorkflowGraph } from '../../models/workflowNode';
+import type { Actions } from '../../../state/workflowSlice';
+import type { WorkflowGraph } from '../../models/workflowNode';
 
 export const scopedWorkflowDefinitionInput = {
   $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',

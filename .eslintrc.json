@@ -23,7 +23,13 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript", "plugin:react/recommended", "plugin:react-hooks/recommended"],
+      "extends": [
+        "plugin:@nrwl/nx/typescript",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:import/recommended",
+        "plugin:import/typescript"
+      ],
       "rules": {
         "react/jsx-no-useless-fragment": [
           1,
@@ -31,8 +37,16 @@
             "allowExpressions": true
           }
         ],
+        "import/no-unresolved": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/consistent-type-imports": [
+          2,
+          {
+            "prefer": "type-imports",
+            "disallowTypeAnnotations": true
+          }
+        ],
         "formatjs/enforce-placeholders": [
           "error",
           {

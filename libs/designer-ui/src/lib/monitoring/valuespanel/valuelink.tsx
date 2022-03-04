@@ -1,4 +1,5 @@
-import { ActionButton, IButtonStyles, IIconProps } from '@fluentui/react';
+import type { IButtonStyles, IIconProps } from '@fluentui/react';
+import { ActionButton } from '@fluentui/react';
 
 export interface ValueLinkProps {
   linkText: string;

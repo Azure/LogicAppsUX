@@ -1,5 +1,6 @@
-import { css, DirectionalHint, ICalloutProps, TooltipHost } from '@fluentui/react';
 import { Plus } from './images/plus';
+import type { ICalloutProps } from '@fluentui/react';
+import { css, DirectionalHint, TooltipHost } from '@fluentui/react';
 
 export interface ActionButtonV2Props {
   buttonRef?: React.RefObject<HTMLButtonElement>;

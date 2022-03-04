@@ -1,7 +1,8 @@
+import type { CardContextMenuProps } from '../cardcontextmenu';
+import { CardContextMenu } from '../cardcontextmenu';
+import { MenuItemType } from '../types';
 import { DirectionalHint } from '@fluentui/react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import { CardContextMenu, CardContextMenuProps } from '../cardcontextmenu';
-import { MenuItemType } from '../types';
 
 describe('lib/card/cardcontextmenu', () => {
   let minimal: CardContextMenuProps, renderer: ShallowRenderer.ShallowRenderer;

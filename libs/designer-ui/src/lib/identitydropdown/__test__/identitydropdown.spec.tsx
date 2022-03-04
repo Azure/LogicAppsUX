@@ -1,6 +1,7 @@
+import type { IdentityDropdownProps } from '../index';
+import { IdentityDropdown } from '../index';
 import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
-import { IdentityDropdown, IdentityDropdownProps } from '../index';
 
 describe('lib/identitydropdown', () => {
   let minimal: IdentityDropdownProps;

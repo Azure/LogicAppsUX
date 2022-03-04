@@ -1,7 +1,7 @@
 // errorboundary.stories.js|jsx|ts|tsx
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { ErrorBoundary, ErrorBoundaryProps } from './index';
+import type { ErrorBoundaryProps } from './index';
+import { ErrorBoundary } from './index';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: ErrorBoundary,

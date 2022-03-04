@@ -1,5 +1,6 @@
+import type { AnnouncedMatchesProps } from '../index';
+import { AnnouncedMatches } from '../index';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { AnnouncedMatches, AnnouncedMatchesProps } from '../index';
 
 describe('ui/announcedmatches', () => {
   let minimal: AnnouncedMatchesProps, renderer: ReactShallowRenderer.ShallowRenderer;

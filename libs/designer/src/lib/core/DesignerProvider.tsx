@@ -1,10 +1,11 @@
-import { ThemeProvider, Theme } from '@fluentui/react';
-import React from 'react';
-import { IntlProvider } from '@microsoft-logic-apps/intl';
-import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
-import { store } from './store';
-import { Provider as ReduxProvider } from 'react-redux';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
+import { store } from './store';
+import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
+import type { Theme } from '@fluentui/react';
+import { ThemeProvider } from '@fluentui/react';
+import { IntlProvider } from '@microsoft-logic-apps/intl';
+import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 
 export interface DesignerProviderProps {
   theme?: Theme;

@@ -1,7 +1,8 @@
+import type { ErrorBannerProps } from '../errorbanner';
+import { ErrorBanner } from '../errorbanner';
 import { MessageBarType, setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import { ErrorBanner, ErrorBannerProps } from '../errorbanner';
 
 describe('lib/card/errorbanner', () => {
   let minimal: ErrorBannerProps;

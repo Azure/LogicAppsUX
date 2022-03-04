@@ -1,6 +1,7 @@
+import type { RequestProps } from '../request';
+import { Request } from '../request';
 import renderer from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import { Request, RequestProps } from '../request';
 
 describe('lib/monitoring/requestpanel/request', () => {
   let minimal: RequestProps;

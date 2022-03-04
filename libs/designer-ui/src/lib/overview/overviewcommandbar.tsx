@@ -1,8 +1,9 @@
-import { CommandBar, ICommandBarItemProps } from '@fluentui/react';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import type { CallbackInfo } from './types';
 import { getCallbackUrl } from './utils';
+import type { ICommandBarItemProps } from '@fluentui/react';
+import { CommandBar } from '@fluentui/react';
+import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 export interface OverviewCommandBarProps {
   callbackInfo?: CallbackInfo;

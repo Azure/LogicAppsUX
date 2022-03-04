@@ -1,8 +1,9 @@
-import { ITooltipHostStyles, mergeStyleSets, TooltipHost } from '@fluentui/react';
-import React, { useRef, useState } from 'react';
 import InformationImage from '../card/images/information_tiny.svg';
 import { getDragStartHandlerWhenDisabled } from '../helper';
 import { FlyoutCallout } from './flyoutcallout';
+import type { ITooltipHostStyles } from '@fluentui/react';
+import { mergeStyleSets, TooltipHost } from '@fluentui/react';
+import React, { useRef, useState } from 'react';
 
 export interface FlyoutProps {
   ariaLabel?: string;
