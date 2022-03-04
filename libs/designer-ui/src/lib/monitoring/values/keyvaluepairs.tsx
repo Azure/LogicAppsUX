@@ -1,6 +1,7 @@
-import { CheckboxVisibility, DetailsList, DetailsListLayoutMode, IColumn, SelectionMode } from '@fluentui/react';
-import { useIntl } from 'react-intl';
 import type { ValueProps } from './types';
+import type { IColumn } from '@fluentui/react';
+import { CheckboxVisibility, DetailsList, DetailsListLayoutMode, SelectionMode } from '@fluentui/react';
+import { useIntl } from 'react-intl';
 
 export const KeyValuePairs: React.FC<ValueProps> = ({ displayName, value = {}, visible = true }) => {
   const intl = useIntl();

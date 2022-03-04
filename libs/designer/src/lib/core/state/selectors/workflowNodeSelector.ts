@@ -1,6 +1,8 @@
+import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../../parsers/models/workflowNode';
+import { isWorkflowGraph } from '../../parsers/models/workflowNode';
+import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
-import { isWorkflowGraph, WorkflowEdge, WorkflowGraph, WorkflowNode } from '../../parsers/models/workflowNode';
-import { RootState } from '../../store';
+
 export const getWorkflowNodeFromState = (state: RootState, actionId: string) => {
   const graph = state.workflow.graph;
   const traverseGraph = (gnode: WorkflowGraph): WorkflowGraph | WorkflowNode | undefined => {

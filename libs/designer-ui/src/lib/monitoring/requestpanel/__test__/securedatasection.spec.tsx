@@ -1,6 +1,7 @@
+import type { SecureDataSectionProps } from '../securedatasection';
+import { SecureDataSection } from '../securedatasection';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import { SecureDataSection, SecureDataSectionProps } from '../securedatasection';
 
 describe('lib/monitoring/requestpanel/securedatasection', () => {
   let minimal: SecureDataSectionProps, renderer: ShallowRenderer.ShallowRenderer;

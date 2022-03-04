@@ -1,6 +1,7 @@
-import React from 'react';
+import type { PanelRootProps } from './panelroot';
+import { PanelRoot } from './panelroot';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import { PanelRoot, PanelRootProps } from './panelroot';
+import React from 'react';
 
 export default {
   component: PanelRoot,

@@ -1,7 +1,7 @@
 // colorizer.stories.js|jsx|ts|tsx
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { Colorizer, ColorizerProps } from '.';
+import type { ColorizerProps } from '.';
+import { Colorizer } from '.';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: Colorizer,

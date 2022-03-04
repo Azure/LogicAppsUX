@@ -1,8 +1,8 @@
 // app.stories.js|jsx|ts|tsx
-
-import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import type { CallbackInfo } from '../run-service/types';
-import { App, AppProps } from './app';
+import type { AppProps } from './app';
+import { App } from './app';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: App,

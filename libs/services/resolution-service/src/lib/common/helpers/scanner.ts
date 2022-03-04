@@ -1,8 +1,8 @@
-import { equals } from '@microsoft-logic-apps/utils';
 import { CommonConstants, isNumeric, isWhitespace } from '../constants';
 import { ExpressionExceptionCode } from '../exceptions/expression';
 import { ScannerException } from '../exceptions/scanner';
-import { ExpressionToken } from '../models/expression';
+import type { ExpressionToken } from '../models/expression';
+import { equals } from '@microsoft-logic-apps/utils';
 
 export enum ExpressionTokenType {
   Dot = 'Dot',

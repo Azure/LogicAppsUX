@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from './store';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 export interface WorkflowLoadingState {
   armToken?: string;
   resourcePath?: string;

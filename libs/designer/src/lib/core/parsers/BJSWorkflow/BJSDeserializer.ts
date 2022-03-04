@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { isNullOrEmpty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../models/workflowNode';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
-import { Actions } from '../../state/workflowSlice';
+import type { Actions } from '../../state/workflowSlice';
+import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../models/workflowNode';
+import { getIntl } from '@microsoft-logic-apps/intl';
+import { isNullOrEmpty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;

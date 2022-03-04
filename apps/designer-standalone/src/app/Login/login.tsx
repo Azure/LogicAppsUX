@@ -1,8 +1,9 @@
-import { Checkbox, Dropdown, IDropdownOption, TextField } from '@fluentui/react';
+import type { RootState } from '../../state/store';
+import { changeArmToken, changeResourcePath, changeLoadingMethod, loadWorkflow } from '../../state/workflowLoadingSlice';
+import type { IDropdownOption } from '@fluentui/react';
+import { Checkbox, Dropdown, TextField } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../state/store';
-import { changeArmToken, changeResourcePath, changeLoadingMethod, loadWorkflow } from '../../state/workflowLoadingSlice';
 
 export const fileOptions = [
   'ComplexConditionals.json',

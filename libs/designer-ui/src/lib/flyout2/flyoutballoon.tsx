@@ -1,7 +1,8 @@
-import { Callout, DirectionalHint, Target } from '@fluentui/react';
 import { DocumentationLinkItem } from '../documentationlinkitem';
 import { calloutContentStyles } from '../fabric';
-import { FlyoutSelectedEventHandler } from './types';
+import type { FlyoutSelectedEventHandler } from './types';
+import type { Target } from '@fluentui/react';
+import { Callout, DirectionalHint } from '@fluentui/react';
 
 export interface FlyoutBalloonProps {
   documentationLink?: Swagger.ExternalDocumentation;

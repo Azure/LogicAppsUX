@@ -1,7 +1,7 @@
 // Pager.stories.js|jsx|ts|tsx
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { Pager, PagerProps } from './index';
+import type { PagerProps } from './index';
+import { Pager } from './index';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: Pager,

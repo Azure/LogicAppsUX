@@ -1,7 +1,7 @@
 // Checkbox.stories.js|jsx|ts|tsx
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { Checkbox, CheckboxProps } from './index';
+import type { CheckboxProps } from './index';
+import { Checkbox } from './index';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: Checkbox,
