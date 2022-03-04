@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { ITextField, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
+import constants from '../../constants';
 import { isEscapeKey } from '../../utils/keyboardUtils';
 import { handleOnEscapeDown } from './panelheader';
+import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
+import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
-import constants from '../../constants';
+import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const titleTextFieldStyle: Partial<ITextFieldStyles> = {

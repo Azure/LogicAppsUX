@@ -1,8 +1,7 @@
 // values.stories.js|jsx|ts|tsx
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { Value } from './index';
-import { ValueProps } from './types';
+import type { ValueProps } from './types';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: Value,

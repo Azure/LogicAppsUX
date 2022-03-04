@@ -1,7 +1,8 @@
-import { Callout, Checkbox as FluentCheckbox, css, DirectionalHint, ICheckbox, Icon } from '@fluentui/react';
+import { calloutContentStyles, checkboxStyles } from '../fabric';
+import type { ICheckbox } from '@fluentui/react';
+import { Callout, Checkbox as FluentCheckbox, css, DirectionalHint, Icon } from '@fluentui/react';
 import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { calloutContentStyles, checkboxStyles } from '../fabric';
 
 export interface CheckboxProps {
   ariaLabel?: string;

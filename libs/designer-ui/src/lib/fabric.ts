@@ -1,5 +1,5 @@
-import {
-  FontSizes,
+import './fabric.less';
+import type {
   IButtonStyles,
   ICalloutContentStyles,
   ICheckboxStyles,
@@ -8,9 +8,8 @@ import {
   IDropdownStyles,
   ISpinnerStyles,
   ITextFieldStyles,
-  mergeStyleSets,
 } from '@fluentui/react';
-import './fabric.less';
+import { FontSizes, mergeStyleSets } from '@fluentui/react';
 
 export const buttonStyles: IButtonStyles = {
   label: {

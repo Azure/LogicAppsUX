@@ -1,4 +1,5 @@
-import { IButton, IconButton, IIconProps, ITextField, TextField, TooltipHost } from '@fluentui/react';
+import type { IButton, IIconProps, ITextField } from '@fluentui/react';
+import { IconButton, TextField, TooltipHost } from '@fluentui/react';
 import { useConst } from '@fluentui/react-hooks';
 import * as React from 'react';
 import { useIntl } from 'react-intl';

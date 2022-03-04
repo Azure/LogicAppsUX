@@ -1,4 +1,5 @@
-import { DefaultButton, Dialog, DialogFooter, IDialogContentProps, IModalProps, PrimaryButton } from '@fluentui/react';
+import type { IDialogContentProps, IModalProps } from '@fluentui/react';
+import { DefaultButton, Dialog, DialogFooter, PrimaryButton } from '@fluentui/react';
 import { FormattedMessage } from 'react-intl';
 
 export interface ConfirmProps {

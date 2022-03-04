@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { PanelTab } from './';
 import constants from '../constants';
 import { WorkflowParameters } from '../workflowparameters/workflowparameters';
+import type { PanelTab } from './';
+import * as React from 'react';
 
 export const workflowParametersTab: PanelTab = {
   title: 'Workflow Parameters',

@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import React from 'react';
-import { createIntl, createIntlCache, IntlShape, useIntl } from 'react-intl';
+import type { IntlShape } from 'react-intl';
+import { createIntl, createIntlCache, useIntl } from 'react-intl';
 
 interface IntlGlobalProviderProps {
   children: React.ReactNode;

@@ -1,6 +1,6 @@
-import { Icon, IconButton, IIconProps, IIconStyles, ITextFieldStyles, Text, TextField, TooltipHost } from '@fluentui/react';
-import React from 'react';
-import { useCallback } from 'react';
+import type { IIconProps, IIconStyles, ITextFieldStyles } from '@fluentui/react';
+import { Icon, IconButton, Text, TextField, TooltipHost } from '@fluentui/react';
+import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 export type PageChangeEventHandler = (e: PageChangeEventArgs) => void;

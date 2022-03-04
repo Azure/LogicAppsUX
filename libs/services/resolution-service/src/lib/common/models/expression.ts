@@ -1,5 +1,5 @@
-import { ExpressionType } from '../helpers/expression';
-import { ExpressionTokenType } from '../helpers/scanner';
+import type { ExpressionType } from '../helpers/expression';
+import type { ExpressionTokenType } from '../helpers/scanner';
 
 export interface Dereference {
   isSafe: boolean;

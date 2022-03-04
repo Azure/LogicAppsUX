@@ -1,8 +1,9 @@
+import type { FlyoutBalloonProps } from '../flyoutballoon';
+import { FlyoutBalloon } from '../flyoutballoon';
 import { DirectionalHint } from '@fluentui/react';
 import React from 'react';
 import renderer from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import { FlyoutBalloon, FlyoutBalloonProps } from '../flyoutballoon';
 
 describe('lib/flyout2/flyoutballoon', () => {
   let minimal: FlyoutBalloonProps;

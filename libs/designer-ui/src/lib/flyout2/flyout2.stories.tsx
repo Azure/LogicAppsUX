@@ -1,7 +1,7 @@
 // flyout2.stories.js|jsx|ts|tsx
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { Flyout2, Flyout2Props } from './index';
+import type { Flyout2Props } from './index';
+import { Flyout2 } from './index';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: Flyout2,

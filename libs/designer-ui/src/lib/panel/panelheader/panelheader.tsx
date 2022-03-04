@@ -1,14 +1,18 @@
+import type { MenuItemOption } from '../../card/types';
+import { PanelHeaderComment } from './panelheadercomment';
+import { PanelHeaderTitle } from './panelheadertitle';
+import type { IButton, IButtonStyles } from '@fluentui/react/lib/Button';
+import { IconButton } from '@fluentui/react/lib/Button';
+import type { ICalloutProps } from '@fluentui/react/lib/Callout';
+import { DirectionalHint } from '@fluentui/react/lib/Callout';
+import type { IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react/lib/OverflowSet';
+import { OverflowSet } from '@fluentui/react/lib/OverflowSet';
+import { FontSizes } from '@fluentui/react/lib/Styling';
+import type { ITooltipHostStyles } from '@fluentui/react/lib/Tooltip';
+import { TooltipHost } from '@fluentui/react/lib/Tooltip';
+import { css } from '@fluentui/react/lib/Utilities';
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { DirectionalHint, ICalloutProps } from '@fluentui/react/lib/Callout';
-import { IButton, IButtonStyles, IconButton } from '@fluentui/react/lib/Button';
-import { FontSizes } from '@fluentui/react/lib/Styling';
-import { ITooltipHostStyles, TooltipHost } from '@fluentui/react/lib/Tooltip';
-import { css } from '@fluentui/react/lib/Utilities';
-import { IOverflowSetItemProps, IOverflowSetStyles, OverflowSet } from '@fluentui/react/lib/OverflowSet';
-import { MenuItemOption } from '../../card/types';
-import { PanelHeaderTitle } from './panelheadertitle';
-import { PanelHeaderComment } from './panelheadercomment';
 
 export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
   if (e.key === 'Escape') {

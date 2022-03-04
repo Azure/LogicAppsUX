@@ -1,14 +1,11 @@
-import { CommandBarButton, Icon, IIconProps, IIconStyles, IMessageBarStyles, Link, List, MessageBar, useTheme } from '@fluentui/react';
-import { FormattedMessage, useIntl } from 'react-intl';
 import ParametersIcon from '../card/images/parameters.svg';
 import Constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
-import {
-  WorkflowParameter,
-  WorkflowParameterDefinition,
-  WorkflowParameterDeleteHandler,
-  WorkflowParameterUpdateHandler,
-} from './workflowparameter';
+import type { WorkflowParameterDefinition, WorkflowParameterDeleteHandler, WorkflowParameterUpdateHandler } from './workflowparameter';
+import { WorkflowParameter } from './workflowparameter';
+import type { IIconProps, IIconStyles, IMessageBarStyles } from '@fluentui/react';
+import { CommandBarButton, Icon, Link, List, MessageBar, useTheme } from '@fluentui/react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const navigateIconStyle: IIconStyles = {
   root: {

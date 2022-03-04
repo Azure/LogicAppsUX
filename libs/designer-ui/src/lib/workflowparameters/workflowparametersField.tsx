@@ -1,7 +1,8 @@
-import {
-  Dropdown,
-  FontWeights,
-  getTheme,
+import Constants from '../constants';
+import type { EventHandler } from '../eventhandler';
+import type { WorkflowParameterDefinition } from './workflowparameter';
+import { ReadOnlyParameters } from './workflowparametersReadOnly';
+import type {
   IDropdownOption,
   IDropdownStyles,
   ILabelStyles,
@@ -9,17 +10,11 @@ import {
   ITextFieldProps,
   ITextFieldStyles,
   ITextStyles,
-  Label,
-  Text,
-  TextField,
 } from '@fluentui/react';
+import { Dropdown, FontWeights, getTheme, Label, Text, TextField } from '@fluentui/react';
 import { equals, format } from '@microsoft-logic-apps/utils';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import Constants from '../constants';
-import type { EventHandler } from '../eventhandler';
-import type { WorkflowParameterDefinition } from './workflowparameter';
-import { ReadOnlyParameters } from './workflowparametersReadOnly';
 
 export const labelStyles: Partial<ILabelStyles> = {
   root: {

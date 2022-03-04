@@ -1,7 +1,8 @@
-import type { ElkNode } from 'elkjs/lib/elk-api';
-import { Edge, Node } from 'react-flow-renderer';
 import type { WorkflowGraph } from '../../parsers/models/workflowNode';
 import { exportForTesting } from '../elklayout';
+import type { ElkNode } from 'elkjs/lib/elk-api';
+import type { Edge, Node } from 'react-flow-renderer';
+
 const { convertWorkflowGraphToElkGraph, convertElkGraphToReactFlow, elkLayout } = exportForTesting;
 describe('elklayout', () => {
   describe('convertWorkflowGraphToElkGraph', () => {

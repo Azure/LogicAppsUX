@@ -1,5 +1,6 @@
-import { OverviewPropertiesProps } from '@microsoft/designer-ui';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 export interface InitializePayload {
   apiVersion: string;

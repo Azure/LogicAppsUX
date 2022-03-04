@@ -1,5 +1,5 @@
+import type { Expression, ExpressionFunction, ExpressionLiteral, ExpressionStringInterpolation } from '../models/expression';
 import { equals, isNullOrEmpty } from '@microsoft-logic-apps/utils';
-import { Expression, ExpressionFunction, ExpressionLiteral, ExpressionStringInterpolation } from '../models/expression';
 
 export enum ExpressionType {
   NullLiteral = 'NullLiteral',
