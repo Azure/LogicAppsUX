@@ -1,20 +1,13 @@
-import {
-  IconButton,
-  MessageBar,
-  MessageBarType,
-  Pivot,
-  PivotItem,
-  TextField,
-  type IIconProps,
-  type ITextFieldStyles,
-} from '@fluentui/react';
-import { useState } from 'react';
-import { useIntl } from 'react-intl';
 import { OverviewCommandBar } from './overviewcommandbar';
-import { OverviewProperties, type OverviewPropertiesProps } from './overviewproperties';
+import { OverviewProperties, OverviewPropertiesProps } from './overviewproperties';
 import { RunHistory } from './runhistory';
 import type { Run, RunDisplayItem, RunError } from './types';
 import { isRunError, mapToRunItem } from './utils';
+import type { IIconProps, ITextFieldStyles } from '@fluentui/react';
+import { IconButton, MessageBar, MessageBarType, Pivot, PivotItem, TextField } from '@fluentui/react';
+import { useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 export interface OverviewProps {
   corsNotice?: string;
@@ -136,16 +129,27 @@ export const Overview: React.FC<OverviewProps> = ({
               onClick={handleNavigateClick}
             />
           </div>
-          <RunHistory items={runItems} loading={loading} onOpenRun={onOpenRun} />
+          <InfiniteScroll
+            dataLength={runItems.length}
+            next={onLoadMoreRuns}
+            hasMore={hasMoreRuns}
+            loader={
+              <div data-testid="msla-overview-load-more">
+                <p style={{ textAlign: 'center' }}>
+                  <FormattedMessage
+                    defaultMessage="Loading..."
+                    description="A message shown at the bottom of a list when the next set of data is loading"
+                  />
+                </p>
+              </div>
+            }
+          >
+            <RunHistory items={runItems} loading={loading} onOpenRun={onOpenRun} />
+          </InfiniteScroll>
           {errorMessage ? (
             <MessageBar data-testid="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>
               {errorMessage}
             </MessageBar>
-          ) : null}
-          {hasMoreRuns ? (
-            <button className="msla-button msla-overview-load-more" data-testid="msla-overview-load-more" onClick={onLoadMoreRuns}>
-              {Resources.LOAD_MORE}
-            </button>
           ) : null}
         </PivotItem>
       </Pivot>
