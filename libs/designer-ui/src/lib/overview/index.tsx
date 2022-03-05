@@ -7,7 +7,7 @@ import type { IIconProps, ITextFieldStyles } from '@fluentui/react';
 import { IconButton, MessageBar, MessageBarType, Pivot, PivotItem, TextField } from '@fluentui/react';
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 export interface OverviewProps {
   corsNotice?: string;
@@ -70,6 +70,10 @@ export const Overview: React.FC<OverviewProps> = ({
     WORKFLOW_OVERVIEW_NAVIGATE_EMPTY: intl.formatMessage({
       defaultMessage: 'The provided workflow run name is not valid.',
       description: 'Message text for an invalid run ID',
+    }),
+    LOADING_BOTTOM: intl.formatMessage({
+      defaultMessage: 'Loading...',
+      description: 'A message shown at the bottom of a list when the next set of data is loading',
     }),
   };
 
@@ -135,12 +139,7 @@ export const Overview: React.FC<OverviewProps> = ({
             hasMore={hasMoreRuns}
             loader={
               <div data-testid="msla-overview-load-more">
-                <p style={{ textAlign: 'center' }}>
-                  <FormattedMessage
-                    defaultMessage="Loading..."
-                    description="A message shown at the bottom of a list when the next set of data is loading"
-                  />
-                </p>
+                <p style={{ textAlign: 'center' }}>{Resources.LOADING_BOTTOM}</p>
               </div>
             }
           >
