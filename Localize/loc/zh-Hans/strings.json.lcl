@@ -388,7 +388,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add a comment]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[添加注释]]></Val>
+            <Val><![CDATA[添加评论]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -633,6 +633,9 @@
       <Item ItemId=";Tz5jTR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Collapse/Expand]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[折叠/展开]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -838,7 +841,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Delete comment]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[删除注释]]></Val>
+            <Val><![CDATA[删除评论]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
