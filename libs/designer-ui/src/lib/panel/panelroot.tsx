@@ -4,7 +4,8 @@ import type { PageActionTelemetryData } from '../telemetry/models';
 import { PanelContainer } from './';
 import type { PanelTab } from './panelUtil';
 import { registerTab, getTabs } from './panelUtil';
-import { retryTab } from './registeredtabs';
+import { retryTab, requestTab } from './registeredtabs';
+import { request } from 'http';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -30,6 +31,7 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
 
   useEffect(() => {
     setRegisteredTabs(registerTab(retryTab, registeredTabs));
+    setRegisteredTabs(registerTab(requestTab, registeredTabs));
     setSelectedTab(getTabs(true, registeredTabs)[0]?.name.toLowerCase());
   }, [registeredTabs]);
 

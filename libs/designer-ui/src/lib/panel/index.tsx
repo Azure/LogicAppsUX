@@ -46,7 +46,6 @@ export const PanelContainer = ({
   trackEvent,
 }: PanelContainerProps) => {
   const onTabChange = (itemKey: string): void => {
-    console.log(itemKey);
     setSelectedTab && setSelectedTab(itemKey);
   };
 
