@@ -145,8 +145,8 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
       enableShimmer={loading}
       items={items}
       layoutMode={DetailsListLayoutMode.justified}
-      selectionMode={SelectionMode.none}
       shimmerLines={items.length || 5}
+      selectionMode={SelectionMode.none}
       onRenderItemColumn={handleRenderItemColumn}
     />
   );

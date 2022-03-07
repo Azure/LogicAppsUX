@@ -58,7 +58,8 @@ describe('vs-code-overview-react/app', () => {
   });
 
   it('should hide the "Load more" button if there are no more runs which can be fetched', () => {
-    cy.get('[data-testid="msla-overview-load-more"]').click();
+    cy.get('[data-testid="msla-overview-load-more"]').scrollIntoView();
+    cy.wait('@getMoreRuns'); // initial call
     cy.get('[data-testid="msla-overview-load-more"]').should('not.exist');
   });
 

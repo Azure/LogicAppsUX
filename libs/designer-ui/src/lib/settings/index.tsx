@@ -1,10 +1,11 @@
-import { Separator, useTheme } from '@fluentui/azure-themes/node_modules/@fluentui/react';
-import { IconButton, IIconProps } from '@fluentui/react';
-import { FormEvent, useCallback, useState, EventHandler } from 'react';
-import { useIntl } from 'react-intl';
-
 import constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
+import { Separator, useTheme } from '@fluentui/azure-themes/node_modules/@fluentui/react';
+import type { IIconProps } from '@fluentui/react';
+import { IconButton } from '@fluentui/react';
+import type { FormEvent } from 'react';
+import { useCallback, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export type TextInputChangeHandler = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => void;
 
