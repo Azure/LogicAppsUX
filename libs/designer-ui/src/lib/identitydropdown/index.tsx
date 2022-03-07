@@ -1,4 +1,5 @@
-import { Dropdown, FontSizes, IDropdownOption, IDropdownStyles, Label } from '@fluentui/react';
+import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
+import { Dropdown, FontSizes, Label } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 export interface IdentityDropdownProps {

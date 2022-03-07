@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "Operazione riuscita in più tentativi"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Altri comandi"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Commento"
     }
   ],
   "1R6Vaa": [
@@ -69,6 +87,12 @@
       "value": "Ora di fine"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -79,6 +103,12 @@
     {
       "type": 0,
       "value": "Con errori"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "È possibile aggiungere i commenti solo durante la modifica degli input di un passaggio."
     }
   ],
   "4vmGh0": [
@@ -153,6 +183,12 @@
       "value": "Connessione richiesta"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -221,6 +257,12 @@
       "value": "Selezionare una scheda per visualizzare il contenuto"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -231,6 +273,12 @@
     {
       "type": 0,
       "value": "Nome:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Aggiungere un commento"
     }
   ],
   "M6U2LE": [
@@ -275,6 +323,12 @@
       "value": "Opzioni dell'operazione:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Commento"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -317,6 +371,12 @@
     {
       "type": 0,
       "value": "altri pannelli"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -415,6 +475,12 @@
     {
       "type": 0,
       "value": "ID richiesta client"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Comprimere/espandere"
     }
   ],
   "UCNM4L": [
@@ -545,10 +611,22 @@
       "value": "Stringa"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "Questa operazione è già stata eliminata."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Carica altro"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -573,6 +651,12 @@
     {
       "type": 0,
       "value": "Ora di avvio"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Eliminare commento"
     }
   ],
   "e4Onhn": [
@@ -640,13 +724,19 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "ALT/OPZIONE + clic per scaricare {displayName}"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Durata"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Commento"
     }
   ],
   "iJOIca": [
@@ -659,6 +749,12 @@
     {
       "type": 0,
       "value": "Questa azione ha il testing configurato."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -861,6 +957,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Titolo scheda"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -907,6 +1009,12 @@
     {
       "type": 0,
       "value": "Valore predefinito"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Eliminare"
     }
   ],
   "vwH/XV": [

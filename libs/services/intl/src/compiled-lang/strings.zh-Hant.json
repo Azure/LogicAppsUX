@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "重試後成功"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "更多命令"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "註解"
     }
   ],
   "1R6Vaa": [
@@ -58,6 +76,12 @@
       "value": "結束時間"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -68,6 +92,12 @@
     {
       "type": 0,
       "value": "已故障"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "只能在編輯步驟的輸入時新增註解。"
     }
   ],
   "4vmGh0": [
@@ -142,6 +172,12 @@
       "value": "需要連線"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -199,6 +235,12 @@
       "value": "請選取卡片以查看內容"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -209,6 +251,12 @@
     {
       "type": 0,
       "value": "名稱:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "新增註解"
     }
   ],
   "M6U2LE": [
@@ -253,6 +301,12 @@
       "value": "作業選項:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "註解"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -287,6 +341,12 @@
     {
       "type": 0,
       "value": "更多面板"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -374,6 +434,12 @@
     {
       "type": 0,
       "value": "用戶端要求識別碼"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "摺疊/展開"
     }
   ],
   "UCNM4L": [
@@ -504,10 +570,22 @@
       "value": "字串"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "已刪除這項作業。"
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "載入更多"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -532,6 +610,12 @@
     {
       "type": 0,
       "value": "開始時間"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "刪除註解"
     }
   ],
   "e4Onhn": [
@@ -588,13 +672,19 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "Alt/Option + 按一下以下載 {displayName}"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "持續時間"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "註解"
     }
   ],
   "iJOIca": [
@@ -607,6 +697,12 @@
     {
       "type": 0,
       "value": "此動作已設定測試。"
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -798,6 +894,12 @@
       "value": "整數"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "卡片標題"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -844,6 +946,12 @@
     {
       "type": 0,
       "value": "預設值"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "刪除"
     }
   ],
   "vwH/XV": [

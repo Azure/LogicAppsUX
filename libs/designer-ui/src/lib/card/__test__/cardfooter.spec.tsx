@@ -1,7 +1,8 @@
+import type { CardFooterProps } from '../cardfooter';
+import { CardFooter } from '../cardfooter';
+import type { CommentBoxProps } from '../types';
 import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
-import { CardFooter, CardFooterProps } from '../cardfooter';
-import { CommentBoxProps } from '../types';
 
 describe('lib/card/cardfooter', () => {
   let minimal: CardFooterProps;

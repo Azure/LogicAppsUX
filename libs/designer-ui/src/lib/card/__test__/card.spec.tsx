@@ -1,6 +1,8 @@
+import type { CardProps } from '../index';
+import { Card } from '../index';
+import type { MenuItemOption } from '../types';
+import { MenuItemType } from '../types';
 import renderer from 'react-test-renderer';
-import { Card, CardProps } from '../index';
-import { MenuItemOption, MenuItemType } from '../types';
 
 describe('lib/card', () => {
   let minimal: CardProps;

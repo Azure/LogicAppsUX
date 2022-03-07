@@ -1,7 +1,8 @@
+import type { RetryPanelProps } from '../index';
+import { RetryPanel } from '../index';
 import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import { RetryPanel, RetryPanelProps } from '../index';
 
 describe('lib/monitoring/retrypanel', () => {
   let minimal: RetryPanelProps;

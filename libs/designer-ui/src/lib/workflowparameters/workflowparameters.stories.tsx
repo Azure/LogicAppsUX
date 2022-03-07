@@ -1,5 +1,6 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { WorkflowParameters, WorkflowParametersProps } from './workflowparameters';
+import type { WorkflowParametersProps } from './workflowparameters';
+import { WorkflowParameters } from './workflowparameters';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: WorkflowParameters,

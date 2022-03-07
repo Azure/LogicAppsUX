@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "Voltooid met nieuwe pogingen"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Meer opdrachten"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Opmerking"
     }
   ],
   "1R6Vaa": [
@@ -69,6 +87,12 @@
       "value": "Eindtijd"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -79,6 +103,12 @@
     {
       "type": 0,
       "value": "Mislukt"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Opmerkingen kunnen alleen worden toegevoegd tijdens de invoerfasen van een stap."
     }
   ],
   "4vmGh0": [
@@ -153,6 +183,12 @@
       "value": "Een verbinding is vereist"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -221,6 +257,12 @@
       "value": "Selecteer een kaart om de inhoud weer te geven"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -231,6 +273,12 @@
     {
       "type": 0,
       "value": "Naam:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Opmerking toevoegen"
     }
   ],
   "M6U2LE": [
@@ -275,6 +323,12 @@
       "value": "Bewerkingsopties:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Opmerking"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -309,6 +363,12 @@
     {
       "type": 0,
       "value": "meer deelvensters"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -411,6 +471,12 @@
     {
       "type": 0,
       "value": "Clientaanvraag-id"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Samenvouwen/uitvouwen"
     }
   ],
   "UCNM4L": [
@@ -541,10 +607,22 @@
       "value": "Tekenreeks"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "Deze bewerking is al verwijderd."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Meer laden"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -569,6 +647,12 @@
     {
       "type": 0,
       "value": "Begintijd"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Opmerking verwijderen"
     }
   ],
   "e4Onhn": [
@@ -636,13 +720,27 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "Alt/Option + klik om "
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": " te downloaden"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Duur"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Opmerking"
     }
   ],
   "iJOIca": [
@@ -655,6 +753,12 @@
     {
       "type": 0,
       "value": "Voor deze actie zijn tests geconfigureerd."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -857,6 +961,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Kaarttitel"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -903,6 +1013,12 @@
     {
       "type": 0,
       "value": "Standaardwaarde"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Verwijderen"
     }
   ],
   "vwH/XV": [

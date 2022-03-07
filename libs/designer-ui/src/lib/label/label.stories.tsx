@@ -1,10 +1,8 @@
 // Button.stories.ts | Button.stories.tsx
-
+import type { LabelProps } from './index';
+import { Label } from './index';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-
-import { Label, LabelProps } from './index';
 
 export default {
   component: Label,

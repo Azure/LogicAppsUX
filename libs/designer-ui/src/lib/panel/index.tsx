@@ -1,13 +1,14 @@
-import React, { useCallback } from 'react';
-import { Panel, PanelType } from '@fluentui/react/lib/Panel';
-import { PanelPivot } from './panelpivot';
+import { EmptyContent } from '../card/emptycontent';
+import type { MenuItemOption } from '../card/types';
+import constants from '../constants';
+import type { PageActionTelemetryData } from '../telemetry/models';
+import type { PanelTab } from './panelUtil';
 import { PanelContent } from './panelcontent';
 import { PanelHeader, PanelHeaderControlType } from './panelheader/panelheader';
-import { PageActionTelemetryData } from '../telemetry/models';
-import { MenuItemOption } from '../card/types';
-import { EmptyContent } from '../card/emptycontent';
-import constants from '../constants';
-import { PanelTab } from './panelUtil';
+import { PanelPivot } from './panelpivot';
+import { Panel, PanelType } from '@fluentui/react/lib/Panel';
+import React, { useCallback } from 'react';
+
 export interface PanelContainerProps {
   cardIcon?: string;
   comment?: string;

@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "Újrapróbálkozásokkal sikeres"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "További parancsok"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Megjegyzés"
     }
   ],
   "1R6Vaa": [
@@ -69,6 +87,12 @@
       "value": "Befejezés időpontja"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -79,6 +103,12 @@
     {
       "type": 0,
       "value": "Hibás"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Megjegyzéseket csak a lépés bemeneteinek szerkesztése közben adhat hozzá."
     }
   ],
   "4vmGh0": [
@@ -153,6 +183,12 @@
       "value": "Kapcsolat szükséges"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -221,6 +257,12 @@
       "value": "Válasszon ki egy kártyát a tartalom megtekintéséhez"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -231,6 +273,12 @@
     {
       "type": 0,
       "value": "Név:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Hozzászólás hozzáadása"
     }
   ],
   "M6U2LE": [
@@ -275,6 +323,12 @@
       "value": "Műveleti beállítások:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Megjegyzés"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -309,6 +363,12 @@
     {
       "type": 0,
       "value": "további panelek"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -411,6 +471,12 @@
     {
       "type": 0,
       "value": "Ügyfélkérelem azonosítója"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Összecsukás/kibontás"
     }
   ],
   "UCNM4L": [
@@ -541,10 +607,22 @@
       "value": "Sztring"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "Ezt a műveletet már törölték."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Továbbiak betöltése"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -569,6 +647,12 @@
     {
       "type": 0,
       "value": "Kezdés időpontja"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Hozzászólás törlése"
     }
   ],
   "e4Onhn": [
@@ -636,13 +720,27 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "A(z) „"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "“ letöltéséhez nyomja le az Alt/Option billentyűt, és kattintson"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Időtartam"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Megjegyzés"
     }
   ],
   "iJOIca": [
@@ -655,6 +753,12 @@
     {
       "type": 0,
       "value": "A Művelet tesztelése konfigurálva van."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -857,6 +961,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Kártya címe"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -903,6 +1013,12 @@
     {
       "type": 0,
       "value": "Alapértelmezett érték"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Törlés"
     }
   ],
   "vwH/XV": [

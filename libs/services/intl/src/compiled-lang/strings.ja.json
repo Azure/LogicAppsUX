@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "再試行により成功"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "その他のコマンド"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "コメント"
     }
   ],
   "1R6Vaa": [
@@ -58,6 +76,12 @@
       "value": "終了時刻"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -68,6 +92,12 @@
     {
       "type": 0,
       "value": "エラー"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "コメントを追加できるのは、ステップの入力を編集している間だけです。"
     }
   ],
   "4vmGh0": [
@@ -142,6 +172,12 @@
       "value": "接続が必要"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -199,6 +235,12 @@
       "value": "コンテンツを表示するには、カードを選択してください"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -209,6 +251,12 @@
     {
       "type": 0,
       "value": "名前:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "コメントの追加"
     }
   ],
   "M6U2LE": [
@@ -253,6 +301,12 @@
       "value": "操作オプション:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "コメント"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -287,6 +341,12 @@
     {
       "type": 0,
       "value": "その他のパネル"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -374,6 +434,12 @@
     {
       "type": 0,
       "value": "クライアント要求 ID"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "折りたたむまたは展開する"
     }
   ],
   "UCNM4L": [
@@ -504,10 +570,22 @@
       "value": "文字列"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "この操作は既に削除されています。"
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "さらに読み込む"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -532,6 +610,12 @@
     {
       "type": 0,
       "value": "開始時刻"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "コメントの削除"
     }
   ],
   "e4Onhn": [
@@ -588,13 +672,19 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "Alt または Option キーを押しながらクリックして {displayName} をダウンロードします"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "期間"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "コメント"
     }
   ],
   "iJOIca": [
@@ -607,6 +697,12 @@
     {
       "type": 0,
       "value": "このアクションにはテストが構成されています。"
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -798,6 +894,12 @@
       "value": "INT"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "カード タイトル"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -844,6 +946,12 @@
     {
       "type": 0,
       "value": "既定値"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "削除"
     }
   ],
   "vwH/XV": [

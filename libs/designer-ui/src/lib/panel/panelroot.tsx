@@ -1,11 +1,13 @@
+import type { MenuItemOption } from '../card/types';
+import { MenuItemType } from '../card/types';
+import type { PageActionTelemetryData } from '../telemetry/models';
 import { PanelContainer } from './';
-import { PageActionTelemetryData } from '../telemetry/models';
-import { useEffect, useState } from 'react';
-import { retryTab } from './registeredtabs';
-import { MenuItemOption, MenuItemType } from '../card/types';
-import { useIntl } from 'react-intl';
-import { PanelTab } from './panelUtil';
+import type { PanelTab } from './panelUtil';
 import { registerTab } from './panelUtil';
+import { retryTab } from './registeredtabs';
+import React, { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
+
 export interface PanelRootProps {
   cardIcon?: string;
   comment?: string;

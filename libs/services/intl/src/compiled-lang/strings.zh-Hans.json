@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "重试成功"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "更多命令"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "评论"
     }
   ],
   "1R6Vaa": [
@@ -62,6 +80,12 @@
       "value": "结束时间"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -72,6 +96,12 @@
     {
       "type": 0,
       "value": "已出错"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "只可在编辑某步骤的输入时添加注释。"
     }
   ],
   "4vmGh0": [
@@ -146,6 +176,12 @@
       "value": "需要连接"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -203,6 +239,12 @@
       "value": "请选择卡片以查看内容"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -213,6 +255,12 @@
     {
       "type": 0,
       "value": "名称:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "添加评论"
     }
   ],
   "M6U2LE": [
@@ -257,6 +305,12 @@
       "value": "操作选项:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "评论"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -291,6 +345,12 @@
     {
       "type": 0,
       "value": "更多面板"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -378,6 +438,12 @@
     {
       "type": 0,
       "value": "客户端请求 ID"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "折叠/展开"
     }
   ],
   "UCNM4L": [
@@ -512,10 +578,22 @@
       "value": "字符串"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "已删除此操作。"
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "加载更多内容"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -540,6 +618,12 @@
     {
       "type": 0,
       "value": "开始时间"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "删除评论"
     }
   ],
   "e4Onhn": [
@@ -596,13 +680,27 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "Alt/Option + 单击以下载 \""
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "持续时间"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "评论"
     }
   ],
   "iJOIca": [
@@ -615,6 +713,12 @@
     {
       "type": 0,
       "value": "此操作已配置测试。"
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -814,6 +918,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "卡标题"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -860,6 +970,12 @@
     {
       "type": 0,
       "value": "默认值"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "删除"
     }
   ],
   "vwH/XV": [

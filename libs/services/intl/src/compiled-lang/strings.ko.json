@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "성공했지만 다시 시도해야 함"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "기타 명령"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "메모"
     }
   ],
   "1R6Vaa": [
@@ -58,6 +76,12 @@
       "value": "종료 시간"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -68,6 +92,12 @@
     {
       "type": 0,
       "value": "오류"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "단계 입력을 편집하는 동안에만 주석을 추가할 수 있습니다."
     }
   ],
   "4vmGh0": [
@@ -142,6 +172,12 @@
       "value": "연결 필요"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -199,6 +235,12 @@
       "value": "콘텐츠를 볼 카드를 선택하세요."
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -209,6 +251,12 @@
     {
       "type": 0,
       "value": "이름:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "주석 추가"
     }
   ],
   "M6U2LE": [
@@ -253,6 +301,12 @@
       "value": "작업 옵션:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "메모"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -287,6 +341,12 @@
     {
       "type": 0,
       "value": "추가 패널"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -374,6 +434,12 @@
     {
       "type": 0,
       "value": "클라이언트 요청 ID"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "축소/확장"
     }
   ],
   "UCNM4L": [
@@ -504,10 +570,22 @@
       "value": "문자열"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "이 작업은 이미 삭제되었습니다."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "더 많이 로드"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -532,6 +610,12 @@
     {
       "type": 0,
       "value": "시작 시간"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "주석 삭제"
     }
   ],
   "e4Onhn": [
@@ -588,13 +672,19 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "{displayName}을(를) 다운로드하려면 Alt/Option + 클릭하세요."
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "기간"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "메모"
     }
   ],
   "iJOIca": [
@@ -607,6 +697,12 @@
     {
       "type": 0,
       "value": "이 작업에는 테스트가 구성되어 있습니다."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -798,6 +894,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "카드 타일"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -844,6 +946,12 @@
     {
       "type": 0,
       "value": "기본값"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "삭제"
     }
   ],
   "vwH/XV": [

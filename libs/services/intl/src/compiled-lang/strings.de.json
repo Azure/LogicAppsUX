@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "Erfolgreich mit Wiederholungen"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Weitere Befehle"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Kommentar"
     }
   ],
   "1R6Vaa": [
@@ -69,6 +87,12 @@
       "value": "Endzeit"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -79,6 +103,12 @@
     {
       "type": 0,
       "value": "Fehlerhaft"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Kommentare können nur beim Bearbeiten der Eingaben für einen Schritt hinzugefügt werden."
     }
   ],
   "4vmGh0": [
@@ -153,6 +183,12 @@
       "value": "Verbindung erforderlich"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -221,6 +257,12 @@
       "value": "Wählen Sie eine Karte aus, um den Inhalt anzuzeigen."
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -231,6 +273,12 @@
     {
       "type": 0,
       "value": "Name:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Kommentar hinzufügen"
     }
   ],
   "M6U2LE": [
@@ -275,6 +323,12 @@
       "value": "Vorgangsoptionen:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Kommentar"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -309,6 +363,12 @@
     {
       "type": 0,
       "value": "weitere Bereiche"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -411,6 +471,12 @@
     {
       "type": 0,
       "value": "Clientanforderungs-ID"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Reduzieren/Erweitern"
     }
   ],
   "UCNM4L": [
@@ -541,10 +607,22 @@
       "value": "Zeichenfolge"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "Dieser Vorgang wurde bereits gelöscht."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Weitere laden"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -569,6 +647,12 @@
     {
       "type": 0,
       "value": "Startzeit"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Kommentar löschen"
     }
   ],
   "e4Onhn": [
@@ -636,13 +720,19 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "ALT/OPTION + Klicken Sie, um {displayName} herunterzuladen"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Dauer"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Kommentar"
     }
   ],
   "iJOIca": [
@@ -655,6 +745,12 @@
     {
       "type": 0,
       "value": "Für diese Aktion sind Tests konfiguriert."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -857,6 +953,12 @@
       "value": "Int."
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Kartentitel"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -903,6 +1005,12 @@
     {
       "type": 0,
       "value": "Standardwert"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Löschen"
     }
   ],
   "vwH/XV": [

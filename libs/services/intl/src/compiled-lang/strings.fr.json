@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "Réussi avec nouvelles tentatives"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Autres commandes"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Commentaire"
     }
   ],
   "1R6Vaa": [
@@ -69,6 +87,12 @@
       "value": "Heure de fin"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -79,6 +103,12 @@
     {
       "type": 0,
       "value": "En échec"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Des commentaires ne peuvent être ajoutés que lors de la modification des entrées d'une étape."
     }
   ],
   "4vmGh0": [
@@ -153,6 +183,12 @@
       "value": "Connexion obligatoire"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -221,6 +257,12 @@
       "value": "Sélectionnez une carte pour voir le contenu"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -231,6 +273,12 @@
     {
       "type": 0,
       "value": "Nom :"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Ajouter un commentaire"
     }
   ],
   "M6U2LE": [
@@ -275,6 +323,12 @@
       "value": "Options d'opération :"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Commentaire"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -309,6 +363,12 @@
     {
       "type": 0,
       "value": "plus de panneaux"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -407,6 +467,12 @@
     {
       "type": 0,
       "value": "ID de demande de client"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Réduire/développer"
     }
   ],
   "UCNM4L": [
@@ -537,10 +603,22 @@
       "value": "Chaîne"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "Cette opération a déjà été supprimée."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Charger plus"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -565,6 +643,12 @@
     {
       "type": 0,
       "value": "Heure de début"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Supprimer le commentaire"
     }
   ],
   "e4Onhn": [
@@ -632,13 +716,27 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "Alt/Option + cliquer pour télécharger « "
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": " »"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Durée"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Commentaire"
     }
   ],
   "iJOIca": [
@@ -651,6 +749,12 @@
     {
       "type": 0,
       "value": "Des tests sont configurés pour cette action."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -853,6 +957,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Titre de carte"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -899,6 +1009,12 @@
     {
       "type": 0,
       "value": "Valeur par défaut"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Supprimer"
     }
   ],
   "vwH/XV": [

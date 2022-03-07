@@ -1,7 +1,7 @@
-import React from 'react';
+import type { PageActionTelemetryData } from '../telemetry/models';
+import type { PanelTab } from './panelUtil';
 import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
-import { PageActionTelemetryData } from '../telemetry/models';
-import { PanelTab } from './panelUtil';
+import React from 'react';
 import { useIntl } from 'react-intl';
 
 export interface CategoryPivotProps {

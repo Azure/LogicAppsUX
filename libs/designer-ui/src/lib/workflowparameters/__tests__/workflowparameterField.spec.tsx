@@ -1,8 +1,9 @@
-import * as React from 'react';
-import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { WorkflowparameterField, WorkflowparameterFieldProps } from '../workflowparametersField';
+import type { WorkflowparameterFieldProps } from '../workflowparametersField';
+import { WorkflowparameterField } from '../workflowparametersField';
 import { initializeIcons } from '@fluentui/react';
+import * as React from 'react';
 import { useIntl } from 'react-intl';
+import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('ui/workflowparameters/workflowparameterField', () => {
   let minimal: WorkflowparameterFieldProps, renderer: ReactShallowRenderer.ShallowRenderer;

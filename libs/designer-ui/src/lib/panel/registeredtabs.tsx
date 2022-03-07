@@ -1,7 +1,7 @@
-import * as React from 'react';
 import constants from '../constants';
 import { RetryPanelTab } from './panelTabs/retryTab';
-import { PanelTab } from './panelUtil';
+import type { PanelTab } from './panelUtil';
+import * as React from 'react';
 
 export const retryTab: PanelTab = {
   title: 'Retry History',

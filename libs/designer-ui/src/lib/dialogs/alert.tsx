@@ -1,4 +1,5 @@
-import { Dialog, DialogFooter, IDialogContentProps, IModalProps, PrimaryButton } from '@fluentui/react';
+import type { IDialogContentProps, IModalProps } from '@fluentui/react';
+import { Dialog, DialogFooter, PrimaryButton } from '@fluentui/react';
 import { FormattedMessage } from 'react-intl';
 
 export interface AlertProps {

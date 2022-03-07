@@ -1,14 +1,8 @@
-import {
-  DefaultButton,
-  DetailsListLayoutMode,
-  IColumn,
-  IContextualMenuItem,
-  Link,
-  SelectionMode,
-  ShimmeredDetailsList,
-} from '@fluentui/react';
-import { FormatDateOptions, useIntl } from 'react-intl';
 import type { RunDisplayItem } from './types';
+import type { IColumn, IContextualMenuItem } from '@fluentui/react';
+import { DefaultButton, DetailsListLayoutMode, Link, SelectionMode, ShimmeredDetailsList } from '@fluentui/react';
+import type { FormatDateOptions } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 export interface RunHistoryProps {
   items: RunDisplayItem[];

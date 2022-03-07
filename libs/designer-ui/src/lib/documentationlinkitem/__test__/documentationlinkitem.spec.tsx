@@ -1,5 +1,6 @@
+import type { DocumentationLinkItemProps } from '../index';
+import { DocumentationLinkItem } from '../index';
 import renderer from 'react-test-renderer';
-import { DocumentationLinkItem, DocumentationLinkItemProps } from '../index';
 
 describe('lib/documentationlinkitem', () => {
   let minimal: DocumentationLinkItemProps;

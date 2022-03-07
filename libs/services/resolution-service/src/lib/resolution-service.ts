@@ -1,4 +1,3 @@
-import { copy, equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import { ExpressionException, ExpressionExceptionCode } from './common/exceptions/expression';
 import {
   ExpressionFunctionNames,
@@ -10,7 +9,7 @@ import {
   isTemplateExpression,
 } from './common/helpers/expression';
 import ExpressionParser from './common/helpers/parser';
-import {
+import type {
   Expression,
   ExpressionEvaluationContext,
   ExpressionFunction,
@@ -18,6 +17,7 @@ import {
   ExpressionStringInterpolation,
 } from './common/models/expression';
 import { isParametersObject } from './common/models/parameters';
+import { copy, equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
 export class ResolutionService {
   private _context: ExpressionEvaluationContext;

@@ -1,8 +1,9 @@
-import { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import React, { useMemo } from 'react';
-import { EdgeProps, getEdgeCenter, getSmoothStepPath } from 'react-flow-renderer';
 import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import { DropZone } from './dropzone';
+import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
+import React, { useMemo } from 'react';
+import type { EdgeProps } from 'react-flow-renderer';
+import { getEdgeCenter, getSmoothStepPath } from 'react-flow-renderer';
 
 export interface LogicAppsEdgeProps {
   id: string;

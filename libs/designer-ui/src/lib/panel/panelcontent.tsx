@@ -1,5 +1,5 @@
+import type { PanelTab } from './panelUtil';
 import React from 'react';
-import { PanelTab } from './panelUtil';
 
 export interface PanelContentProps {
   selectedTab?: string;

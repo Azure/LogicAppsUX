@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "Berhasil dengan percobaan ulang"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Perintah lainnya"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Komentar"
     }
   ],
   "1R6Vaa": [
@@ -58,6 +76,12 @@
       "value": "Waktu berakhir"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -68,6 +92,12 @@
     {
       "type": 0,
       "value": "Bermasalah"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Komentar hanya dapat ditambahkan saat mengedit input langkah."
     }
   ],
   "4vmGh0": [
@@ -142,6 +172,12 @@
       "value": "Koneksi diperlukan"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -199,6 +235,12 @@
       "value": "Pilih kartu untuk melihat konten"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -209,6 +251,12 @@
     {
       "type": 0,
       "value": "Nama:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Tambahkan komentar"
     }
   ],
   "M6U2LE": [
@@ -253,6 +301,12 @@
       "value": "Opsi operasi:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Komentar"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -287,6 +341,12 @@
     {
       "type": 0,
       "value": "panel lainnya"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -374,6 +434,12 @@
     {
       "type": 0,
       "value": "ID permintaan klien"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Ciutkan/Luaskan"
     }
   ],
   "UCNM4L": [
@@ -504,10 +570,22 @@
       "value": "String"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "Operasi ini sudah dihapus."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Muat lainnya"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -532,6 +610,12 @@
     {
       "type": 0,
       "value": "Waktu mulai"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Hapus komentar"
     }
   ],
   "e4Onhn": [
@@ -588,13 +672,19 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "Alt/Option + klik untuk mengunduh {displayName}"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Durasi"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Komentar"
     }
   ],
   "iJOIca": [
@@ -607,6 +697,12 @@
     {
       "type": 0,
       "value": "Tindakan ini memiliki pengujian yang dikonfigurasi."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -798,6 +894,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Judul Kartu"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -844,6 +946,12 @@
     {
       "type": 0,
       "value": "Nilai Default"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Hapus"
     }
   ],
   "vwH/XV": [

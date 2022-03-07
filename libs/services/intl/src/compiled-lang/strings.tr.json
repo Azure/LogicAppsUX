@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "Yeniden denemeler ile başarılı oldu"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Diğer komutlar"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Yorum"
     }
   ],
   "1R6Vaa": [
@@ -69,6 +87,12 @@
       "value": "Bitiş zamanı"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -79,6 +103,12 @@
     {
       "type": 0,
       "value": "Hatalı"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Açıklamalar yalnızca bir adımın girişleri düzenlenirken eklenebilir."
     }
   ],
   "4vmGh0": [
@@ -153,6 +183,12 @@
       "value": "Bağlantı gerekli"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -221,6 +257,12 @@
       "value": "İçeriği görmek için lütfen bir kart seçin"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -231,6 +273,12 @@
     {
       "type": 0,
       "value": "Ad:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Yorum ekle"
     }
   ],
   "M6U2LE": [
@@ -275,6 +323,12 @@
       "value": "İşlem seçenekleri:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Yorum"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -309,6 +363,12 @@
     {
       "type": 0,
       "value": "diğer paneller"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -407,6 +467,12 @@
     {
       "type": 0,
       "value": "İstemci istek kimliği"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Daralt/Genişlet"
     }
   ],
   "UCNM4L": [
@@ -537,10 +603,22 @@
       "value": "String"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "Bu işlem zaten silinmiş."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Daha fazla yükle"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -565,6 +643,12 @@
     {
       "type": 0,
       "value": "Başlangıç zamanı"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Yorumu sil"
     }
   ],
   "e4Onhn": [
@@ -632,13 +716,19 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "{displayName} indirmek için Alt/Option + tıklama"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Süre"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Yorum"
     }
   ],
   "iJOIca": [
@@ -651,6 +741,12 @@
     {
       "type": 0,
       "value": "Bu Eylemde test yapılandırıldı."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -853,6 +949,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Kart Başlığı"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -899,6 +1001,12 @@
     {
       "type": 0,
       "value": "Varsayılan Değer"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Sil"
     }
   ],
   "vwH/XV": [

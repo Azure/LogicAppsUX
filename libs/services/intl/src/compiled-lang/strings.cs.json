@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "Proběhlo úspěšně s opakováním pokusů"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Další příkazy"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Komentář"
     }
   ],
   "1R6Vaa": [
@@ -103,6 +121,12 @@
       "value": "Koncový čas"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -113,6 +137,12 @@
     {
       "type": 0,
       "value": "S chybou"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Komentáře je možné přidávat jenom při úpravách vstupů kroku."
     }
   ],
   "4vmGh0": [
@@ -185,6 +215,12 @@
     {
       "type": 0,
       "value": "Připojení je povinné"
+    }
+  ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
     }
   ],
   "DZZ3fj": [
@@ -277,6 +313,12 @@
       "value": "Pokud si chcete zobrazit obsah, vyberte prosím kartu."
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -287,6 +329,12 @@
     {
       "type": 0,
       "value": "Název:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Přidat komentář"
     }
   ],
   "M6U2LE": [
@@ -331,6 +379,12 @@
       "value": "Možnosti operace:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Komentář"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -365,6 +419,12 @@
     {
       "type": 0,
       "value": "více panelů"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -485,6 +545,12 @@
     {
       "type": 0,
       "value": "ID žádosti klienta"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Sbalit nebo rozbalit"
     }
   ],
   "UCNM4L": [
@@ -615,10 +681,22 @@
       "value": "Řetězec"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "Tato operace už byla odstraněna."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Načíst další"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -643,6 +721,12 @@
     {
       "type": 0,
       "value": "Čas zahájení"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Odstranit komentář"
     }
   ],
   "e4Onhn": [
@@ -732,13 +816,23 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "Stisknutí Alt/Option + kliknutím stáhnete "
+    },
+    {
+      "type": 1,
+      "value": "displayName"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Doba trvání"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Komentář"
     }
   ],
   "iJOIca": [
@@ -751,6 +845,12 @@
     {
       "type": 0,
       "value": "Tato akce má nakonfigurované testování."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -975,6 +1075,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Název karty"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -1021,6 +1127,12 @@
     {
       "type": 0,
       "value": "Výchozí hodnota"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Odstranit"
     }
   ],
   "vwH/XV": [

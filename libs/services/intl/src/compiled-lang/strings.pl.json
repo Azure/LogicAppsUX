@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "Powodzenie dzięki ponownym próbom"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Więcej poleceń"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Komentarz"
     }
   ],
   "1R6Vaa": [
@@ -107,6 +125,12 @@
       "value": "Godzina zakończenia"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -117,6 +141,12 @@
     {
       "type": 0,
       "value": "Błędne"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Komentarze można dodawać tylko podczas edytowania danych wejściowych kroku."
     }
   ],
   "4vmGh0": [
@@ -189,6 +219,12 @@
     {
       "type": 0,
       "value": "Wymagane połączenie"
+    }
+  ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
     }
   ],
   "DZZ3fj": [
@@ -281,6 +317,12 @@
       "value": "Wybierz kartę, aby zobaczyć zawartość"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -291,6 +333,12 @@
     {
       "type": 0,
       "value": "Nazwa:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Dodaj komentarz"
     }
   ],
   "M6U2LE": [
@@ -335,6 +383,12 @@
       "value": "Opcje operacji: "
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Komentarz"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -369,6 +423,12 @@
     {
       "type": 0,
       "value": "więcej paneli"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -489,6 +549,12 @@
     {
       "type": 0,
       "value": "Identyfikator żądania klienta"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Zwiń/rozwiń"
     }
   ],
   "UCNM4L": [
@@ -619,10 +685,22 @@
       "value": "Ciąg"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "Ta operacja została już usunięta."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Załaduj więcej"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -647,6 +725,12 @@
     {
       "type": 0,
       "value": "Godzina rozpoczęcia"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Usuń komentarz"
     }
   ],
   "e4Onhn": [
@@ -736,13 +820,27 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "Alt/Option + kliknij, aby pobrać „"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "”"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Czas trwania"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Komentarz"
     }
   ],
   "iJOIca": [
@@ -755,6 +853,12 @@
     {
       "type": 0,
       "value": "Ta akcja ma skonfigurowane testowanie."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -979,6 +1083,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Tytuł karty"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -1025,6 +1135,12 @@
     {
       "type": 0,
       "value": "Wartość domyślna"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Usuń"
     }
   ],
   "vwH/XV": [

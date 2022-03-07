@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { ITextField, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
+import constants from '../../constants';
 import { isEscapeKey } from '../../utils/keyboardUtils';
 import { handleOnEscapeDown } from './panelheader';
-import { css } from '@fluentui/react/lib/Utilities';
-import constants from '../../constants';
-import { useIntl } from 'react-intl';
 import { Icon } from '@fluentui/react/lib/Icon';
+import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
+import { TextField } from '@fluentui/react/lib/TextField';
+import { css } from '@fluentui/react/lib/Utilities';
+import React, { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 interface PanelHeaderCommentProps {
   comment?: string;

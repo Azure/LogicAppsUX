@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -21,6 +27,18 @@
     {
       "type": 0,
       "value": "Lyckades med återförsök"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Fler kommandon"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Kommentar"
     }
   ],
   "1R6Vaa": [
@@ -69,6 +87,12 @@
       "value": "Sluttid"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -79,6 +103,12 @@
     {
       "type": 0,
       "value": "Fel"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Du kan bara lägga till kommentarer när du redigerar ett stegs indata."
     }
   ],
   "4vmGh0": [
@@ -153,6 +183,12 @@
       "value": "Anslutning krävs"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -221,6 +257,12 @@
       "value": "Välj ett kort för att visa innehållet"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Setting Value"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -231,6 +273,12 @@
     {
       "type": 0,
       "value": "Namn:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Lägg till en kommentar"
     }
   ],
   "M6U2LE": [
@@ -275,6 +323,12 @@
       "value": "Åtgärdsalternativ:"
     }
   ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Kommentar"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -309,6 +363,12 @@
     {
       "type": 0,
       "value": "fler paneler"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "PaPPLr": [
@@ -411,6 +471,12 @@
     {
       "type": 0,
       "value": "Id för klientbegäran"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Minimera/expandera"
     }
   ],
   "UCNM4L": [
@@ -541,10 +607,22 @@
       "value": "Sträng"
     }
   ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "Den här åtgärden har redan tagits bort."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Läs in fler"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -569,6 +647,12 @@
     {
       "type": 0,
       "value": "Starttid"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Ta bort kommentar"
     }
   ],
   "e4Onhn": [
@@ -636,13 +720,23 @@
   "hdnZ9Y": [
     {
       "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
+      "value": "Alt/Option+ klicka för att ladda ned "
+    },
+    {
+      "type": 1,
+      "value": "displayName"
     }
   ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Varaktighet"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Kommentar"
     }
   ],
   "iJOIca": [
@@ -655,6 +749,12 @@
     {
       "type": 0,
       "value": "Den här åtgärden har konfigurerats för testning."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "iUs7pv": [
@@ -857,6 +957,12 @@
       "value": "Int"
     }
   ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Kortrubrik"
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
@@ -903,6 +1009,12 @@
     {
       "type": 0,
       "value": "Standardvärde"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Ta bort"
     }
   ],
   "vwH/XV": [
