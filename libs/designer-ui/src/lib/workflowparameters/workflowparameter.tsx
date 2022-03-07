@@ -73,7 +73,7 @@ export function WorkflowParameter({ definition, isReadOnly, isInverted, ...props
       <div className="msla-workflow-parameter-group">
         <div>
           <CommandBarButton
-            data-cy={name + '-parameter-heading-button'}
+            data-testid={name + '-parameter-heading-button'}
             className="msla-workflow-parameter-heading-button"
             iconProps={iconProps}
             onClick={handleToggleExpand}
