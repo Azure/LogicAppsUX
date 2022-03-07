@@ -124,7 +124,7 @@
   "2mnU/w": [
     {
       "type": 0,
-      "value": "Off"
+      "value": "Vypnuto"
     }
   ],
   "33+WHG": [
@@ -220,7 +220,7 @@
   "DFo+mo": [
     {
       "type": 0,
-      "value": "On"
+      "value": "Zapnuto"
     }
   ],
   "DZZ3fj": [
@@ -316,7 +316,7 @@
   "HymOpF": [
     {
       "type": 0,
-      "value": "Setting Value"
+      "value": "Hodnota nastavení"
     }
   ],
   "JbgTET": [
@@ -424,7 +424,7 @@
   "PQOiAc": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Sbalit"
     }
   ],
   "PaPPLr": [
@@ -850,7 +850,7 @@
   "iU1OJh": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Rozbalit"
     }
   ],
   "iUs7pv": [
