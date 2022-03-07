@@ -5,7 +5,6 @@ import { PanelContainer } from './';
 import type { PanelTab } from './panelUtil';
 import { registerTab, getTabs } from './panelUtil';
 import { retryTab, requestTab } from './registeredtabs';
-import { request } from 'http';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
