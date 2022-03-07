@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
+    "storybook:axe": "axe-storybook --storybook-address http://localhost:4400",
     "start:storybook": "nx run designer:storybook",
     "build": "nx run designer:build",
     "build:all": "nx run-many --all --target=build",
@@ -36,6 +37,7 @@
     "@fluentui/theme": "^2.3.2",
     "@monaco-editor/react": "^4.3.1",
     "@reduxjs/toolkit": "1.6.2",
+    "@swc/core-win32-x64-msvc": "^1.2.151",
     "core-js": "^3.21.0",
     "d3-shape": "^3.1.0",
     "dagre": "^0.8.5",
@@ -62,6 +64,7 @@
     "@babel/core": "^7.17.2",
     "@babel/plugin-transform-modules-commonjs": "^7.16.8",
     "@babel/preset-typescript": "^7.16.7",
+    "@chanzuckerberg/axe-storybook-testing": "^5.0.0",
     "@formatjs/cli": "^4.8.2",
     "@formatjs/intl": "^2.0.0",
     "@formatjs/ts-transformer": "^3.9.2",
