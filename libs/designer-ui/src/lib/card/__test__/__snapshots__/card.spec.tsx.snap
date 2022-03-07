@@ -5,7 +5,7 @@ exports[`lib/card should render 1`] = `
   <div
     aria-label="title"
     className="msla-panel-card-container"
-    data-cy="card-title"
+    data-testid="card-title"
     onClick={[Function]}
     onContextMenu={[Function]}
     onKeyDown={[Function]}
@@ -59,7 +59,7 @@ exports[`lib/card should render as cloned 1`] = `
   <div
     aria-label="title"
     className="msla-panel-card-container msla-card-ghost-image"
-    data-cy="card-title"
+    data-testid="card-title"
     onClick={[Function]}
     onContextMenu={[Function]}
     onKeyDown={[Function]}
@@ -113,7 +113,7 @@ exports[`lib/card should render as draggable 1`] = `
   <div
     aria-label="title"
     className="msla-panel-card-container"
-    data-cy="card-title"
+    data-testid="card-title"
     onClick={[Function]}
     onContextMenu={[Function]}
     onKeyDown={[Function]}
@@ -184,7 +184,7 @@ exports[`lib/card should render as inactive 1`] = `
   <div
     aria-label="title"
     className="msla-panel-card-container inactive"
-    data-cy="card-title"
+    data-testid="card-title"
     onClick={[Function]}
     onContextMenu={[Function]}
     onKeyDown={[Function]}
@@ -238,7 +238,7 @@ exports[`lib/card should render as selected 1`] = `
   <div
     aria-label="title"
     className="msla-panel-card-container msla-panel-card-container-selected"
-    data-cy="card-title"
+    data-testid="card-title"
     onClick={[Function]}
     onContextMenu={[Function]}
     onKeyDown={[Function]}
@@ -292,7 +292,7 @@ exports[`lib/card should render with a context menu 1`] = `
   <div
     aria-label="title"
     className="msla-panel-card-container"
-    data-cy="card-title"
+    data-testid="card-title"
     onClick={[Function]}
     onContextMenu={[Function]}
     onKeyDown={[Function]}
@@ -346,7 +346,7 @@ exports[`lib/card should render with an icon 1`] = `
   <div
     aria-label="title"
     className="msla-panel-card-container"
-    data-cy="card-title"
+    data-testid="card-title"
     onClick={[Function]}
     onContextMenu={[Function]}
     onKeyDown={[Function]}
