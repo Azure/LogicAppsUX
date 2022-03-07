@@ -1,6 +1,7 @@
+import { DATA_CY_ATTR } from '../shared';
+
 describe('designer: WorkflowParameters component', () => {
   beforeEach(() => cy.visit('/iframe.html?id=components-workflowparameter--standard'));
-  const DATA_CY_ATTR = 'data-cy';
 
   it('should open on close and toggle, and process form fields', () => {
     const firstParameterHeaderName = 'ParameterOne';
