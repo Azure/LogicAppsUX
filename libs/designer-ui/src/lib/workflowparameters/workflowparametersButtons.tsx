@@ -105,7 +105,7 @@ function EditButton({ onClick }: ButtonProps): JSX.Element {
   return (
     <TooltipHost content={editTitle}>
       <IconButton
-        data-cy="parameter-edit-icon-button"
+        data-testid="parameter-edit-icon-button"
         className="msla-edit-parameter-button"
         ariaLabel={editTitle}
         iconProps={editIcon}

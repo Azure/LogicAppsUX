@@ -14,7 +14,7 @@ export const ReadOnlyParameters = ({ name, type, defaultValue, parameterDetails 
   return (
     <>
       <div className="msla-workflow-parameter-field">
-        <Label data-cy="readonly-name-label" styles={labelStyles} htmlFor={parameterDetails.name}>
+        <Label data-testid="readonly-name-label" styles={labelStyles} htmlFor={parameterDetails.name}>
           <FormattedMessage defaultMessage="Name" description="Name Title" />
         </Label>
         <Text className="msla-workflow-parameter-read-only">{name}</Text>
