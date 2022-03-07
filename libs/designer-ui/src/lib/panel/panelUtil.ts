@@ -1,6 +1,6 @@
-import { format, getPropertyValue } from '@microsoft-logic-apps/utils';
 import { ValidationErrorCode, ValidationException } from '../validation';
 import { getIntl } from '@microsoft-logic-apps/intl';
+import { format, getPropertyValue } from '@microsoft-logic-apps/utils';
 
 export enum PanelLocation {
   Right = 'RIGHT',

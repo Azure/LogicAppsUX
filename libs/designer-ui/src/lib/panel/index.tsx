@@ -17,14 +17,14 @@ export interface PanelContainerProps {
   noNodeSelected: boolean;
   pivotDisabled?: boolean;
   panelHeaderMenu: MenuItemOption[];
-  selectedTab: string;
+  selectedTab: string | undefined;
   showCommentBox: boolean;
   readOnlyMode?: boolean;
   tabs: Record<string, PanelTab>;
   title: string;
   width: string;
   trackEvent(data: PageActionTelemetryData): void;
-  setSelectedTab: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedTab: React.Dispatch<React.SetStateAction<string | undefined>>;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -46,7 +46,8 @@ export const PanelContainer = ({
   trackEvent,
 }: PanelContainerProps) => {
   const onTabChange = (itemKey: string): void => {
-    setSelectedTab(itemKey);
+    console.log(itemKey);
+    setSelectedTab && setSelectedTab(itemKey);
   };
 
   const renderHeader = useCallback((): JSX.Element => {

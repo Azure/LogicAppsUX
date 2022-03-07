@@ -3,7 +3,7 @@ import { MenuItemType } from '../card/types';
 import type { PageActionTelemetryData } from '../telemetry/models';
 import { PanelContainer } from './';
 import type { PanelTab } from './panelUtil';
-import { registerTab } from './panelUtil';
+import { registerTab, getTabs } from './panelUtil';
 import { retryTab } from './registeredtabs';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -22,15 +22,15 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
 
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
   const [currentComment, setCurrentComment] = useState(comment);
-  const [selectedTab, setSelectedTab] = useState(retryTab.title);
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [selectedTab, setSelectedTab] = useState(selectedTabId);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [width, setWidth] = useState('auto');
 
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
 
   useEffect(() => {
     setRegisteredTabs(registerTab(retryTab, registeredTabs));
-    console.log(registeredTabs);
+    setSelectedTab(getTabs(true, registeredTabs)[0]?.name.toLowerCase());
   }, [registeredTabs]);
 
   useEffect(() => {
