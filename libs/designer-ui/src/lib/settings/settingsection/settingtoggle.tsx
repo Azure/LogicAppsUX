@@ -1,4 +1,5 @@
-import { Toggle, IToggleProps } from '@fluentui/react';
+import type { IToggleProps } from '@fluentui/react';
+import { Toggle } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
