@@ -17,7 +17,7 @@ export interface PanelContainerProps {
   noNodeSelected: boolean;
   pivotDisabled?: boolean;
   panelHeaderMenu: MenuItemOption[];
-  selectedTab: string | undefined;
+  selectedTab?: string;
   showCommentBox: boolean;
   readOnlyMode?: boolean;
   tabs: Record<string, PanelTab>;
