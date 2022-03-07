@@ -1,9 +1,8 @@
-import React from 'react';
 import { RetryPanel } from './../../monitoring/retrypanel';
+import React from 'react';
 
 export const RetryPanelTab = () => {
-  // Validation and some way to fetch the data...
-  // Fow now I'll just hard code it
+  // TODO: Retrieve logic from a redux store?
   const histories = [
     {
       clientRequestId: 'a0b2b0fe-1be6-4640-8948-ab0ed223436a',
