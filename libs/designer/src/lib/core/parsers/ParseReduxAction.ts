@@ -1,7 +1,6 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
-import { WorkflowGraph } from './models/workflowNode';
+import type { WorkflowGraph } from './models/workflowNode';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const initializeGraphState = createAsyncThunk(
   'parser/deserialize',

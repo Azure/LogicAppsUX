@@ -1,7 +1,8 @@
-import {
-  Dropdown,
-  FontWeights,
-  getTheme,
+import Constants from '../constants';
+import type { EventHandler } from '../eventhandler';
+import type { WorkflowParameterDefinition } from './workflowparameter';
+import { ReadOnlyParameters } from './workflowparametersReadOnly';
+import type {
   IDropdownOption,
   IDropdownStyles,
   ILabelStyles,
@@ -9,17 +10,11 @@ import {
   ITextFieldProps,
   ITextFieldStyles,
   ITextStyles,
-  Label,
-  Text,
-  TextField,
 } from '@fluentui/react';
+import { Dropdown, FontWeights, getTheme, Label, Text, TextField } from '@fluentui/react';
 import { equals, format } from '@microsoft-logic-apps/utils';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import Constants from '../constants';
-import type { EventHandler } from '../eventhandler';
-import type { WorkflowParameterDefinition } from './workflowparameter';
-import { ReadOnlyParameters } from './workflowparametersReadOnly';
 
 export const labelStyles: Partial<ILabelStyles> = {
   root: {
@@ -244,6 +239,7 @@ export const WorkflowparameterField = ({
             {nameTitle}
           </Label>
           <TextField
+            data-testid={parameterDetails.name}
             styles={textFieldStyles}
             id={parameterDetails.name}
             ariaLabel={nameTitle}
@@ -259,6 +255,7 @@ export const WorkflowparameterField = ({
             {typeTitle}
           </Label>
           <Dropdown
+            data-testid={parameterDetails.type}
             id={parameterDetails.type}
             ariaLabel={typeTitle}
             options={typeOptions}
@@ -273,6 +270,7 @@ export const WorkflowparameterField = ({
             {defaultValueTitle}
           </Label>
           <TextField
+            data-testid={parameterDetails.defaultValue}
             id={parameterDetails.defaultValue}
             ariaLabel={defaultValueTitle}
             placeholder={defaultValueDescription}
@@ -290,6 +288,7 @@ export const WorkflowparameterField = ({
             {actualValueTitle}
           </Label>
           <TextField
+            data-testid={parameterDetails.value}
             styles={disabledTextFieldStyles}
             id={parameterDetails.value}
             ariaLabel={actualValueTitle}

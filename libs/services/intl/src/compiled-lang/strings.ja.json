@@ -1,0 +1,969 @@
+{
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "本文"
+    }
+  ],
+  "/NDLmg": [
+    {
+      "type": 0,
+      "value": "待機中"
+    }
+  ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "実行メニューの表示"
+    }
+  ],
+  "0ZlNtf": [
+    {
+      "type": 0,
+      "value": "再試行により成功"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "More commands"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "1R6Vaa": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "一致する項目はありません。"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個の項目が一致しました。"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "終了時刻"
+    }
+  ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "識別子"
+    }
+  ],
+  "3kI7xF": [
+    {
+      "type": 0,
+      "value": "エラー"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Comments can only be added while editing the inputs of a step."
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "サービス要求 ID"
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "パラメーターの削除"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "実行を表示"
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "前へ"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "状態コード"
+    }
+  ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "表示数を増やす"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "URL のコピー"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "定義に複数のトリガーが含まれているため、デザイナーをレンダリングできません。"
+    }
+  ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "開始時刻"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "状態の種類:"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "接続が必要"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "期間"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "応答"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 時間"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "状態"
+    }
+  ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "パラメーター名を入力してください。"
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "アレイ"
+    }
+  ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "コンテンツを表示するには、カードを選択してください"
+    }
+  ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "メソッド"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "名前:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Add a comment"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "ワークフローを保存すると、パラメーターが保存されます。保存前にこちらで編集するか、保存後にパラメーター ページで編集することができます。"
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "ブール値"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "次の失敗"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "予期しないエラー"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "状態"
+    }
+  ],
+  "O36+wl": [
+    {
+      "type": 0,
+      "value": "パラメーターの編集"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "操作オプション:"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 時間 "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "マネージド ID を選択してください"
+    }
+  ],
+  "PF87Ew": [
+    {
+      "type": 0,
+      "value": "成功"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "その他のパネル"
+    }
+  ],
+  "PaPPLr": [
+    {
+      "type": 0,
+      "value": "中止"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "オブジェクト"
+    }
+  ],
+  "QQYzHC": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " カードのコンテキスト メニュー"
+    }
+  ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "読み込んでいます..."
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 時間"
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 分"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分"
+    }
+  ],
+  "T8Xqt9": [
+    {
+      "type": 0,
+      "value": "失敗"
+    }
+  ],
+  "TZv5JE": [
+    {
+      "type": 0,
+      "value": "名前"
+    }
+  ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "クライアント要求 ID"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Collapse/Expand"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "パラメーターを参照するには、動的コンテンツ リストを使用してください。"
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "セキュリティ構成のため、コンテンツは表示されません。"
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "表示数を少なくする"
+    }
+  ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "指定されたワークフロー実行名が無効です。"
+    }
+  ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "コメント"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "期間"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "実行履歴"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 日 "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 時間"
+    }
+  ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "再試行"
+    }
+  ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "接続名"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分 "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "要求"
+    }
+  ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "詳細情報"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 日"
+    }
+  ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "文字列"
+    }
+  ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "This operation has already been deleted."
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "さらに読み込む"
+    }
+  ],
+  "ci6ex1": [
+    {
+      "type": 0,
+      "value": "値"
+    }
+  ],
+  "cj+kyo": [
+    {
+      "type": 0,
+      "value": "取り消し済み"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "コンポーネントの読み込みでエラーが発生しました。"
+    }
+  ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "開始時刻"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Delete comment"
+    }
+  ],
+  "e4Onhn": [
+    {
+      "type": 0,
+      "value": "指定なし"
+    }
+  ],
+  "eRvRWs": [
+    {
+      "type": 0,
+      "value": "開始時刻"
+    }
+  ],
+  "ftwXvc": [
+    {
+      "type": 0,
+      "value": "無視"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "URI"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "前の失敗"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 秒"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hdnZ9Y": [
+    {
+      "type": 0,
+      "value": "Alt または Option キーを押しながらクリックして {displayName} をダウンロードします"
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "期間"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "次へ"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "このアクションにはテストが構成されています。"
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "キャンセル"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒"
+    }
+  ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "JSON 内で編集"
+    }
+  ],
+  "k41+13": [
+    {
+      "type": 0,
+      "value": "スキップ"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分 "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒"
+    }
+  ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "ダウンロード (Alt/Option + クリック)"
+    }
+  ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 時間 "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分"
+    }
+  ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "トリガーの実行"
+    }
+  ],
+  "lV77P8": [
+    {
+      "type": 0,
+      "value": "タイトル"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "ステートレス実行モード:"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "実績値"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "テスト"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "名前"
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 1,
+      "value": "max_page"
+    },
+    {
+      "type": 0,
+      "value": " 中の "
+    },
+    {
+      "type": 1,
+      "value": "current_page"
+    }
+  ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "実行を開く実行識別子を入力してください"
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "ヘッダー"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "終了時刻"
+    }
+  ],
+  "pRUJff": [
+    {
+      "type": 0,
+      "value": "パラメーター"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "最新の情報に更新"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "マネージド ID"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "必須"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 日"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "INT"
+    }
+  ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Card Title"
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "キー"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "新しいパラメーター"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 日 "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 時間"
+    }
+  ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "タイプ"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "既定値"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "パラメーターの作成"
+    }
+  ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "ワークフローのプロパティ"
+    }
+  ],
+  "wHYQyg": [
+    {
+      "type": 0,
+      "value": "タイムアウト"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "コールバック URL"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "ロジック アプリ内で、パラメーターはワークフロー間で共有されています。"
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "値"
+    }
+  ],
+  "z4YYlQ": [
+    {
+      "type": 0,
+      "value": "パラメーターの既定値を入力してください。"
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "概要"
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "浮動"
+    }
+  ]
+}

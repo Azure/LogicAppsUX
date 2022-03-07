@@ -1,6 +1,7 @@
-import { FormatDateOptions, useIntl } from 'react-intl';
 import { RawValue } from './raw';
 import type { ValueProps } from './types';
+import type { FormatDateOptions } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 const options: FormatDateOptions = {
   day: 'numeric',

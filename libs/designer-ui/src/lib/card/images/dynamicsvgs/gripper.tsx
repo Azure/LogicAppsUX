@@ -1,10 +1,8 @@
-import * as React from 'react';
+import { useTheme } from '@fluentui/react';
 
-interface GripperProps {
-  fill: string;
-}
-
-export function Gripper({ fill }: GripperProps): JSX.Element {
+export const Gripper: React.FC = () => {
+  const { isInverted } = useTheme();
+  const fill = isInverted ? '#9E9E9A' : '#605E5C';
   return (
     <span tabIndex={0}>
       <svg width="8" height="15" viewBox="0 0 2 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -12,4 +10,4 @@ export function Gripper({ fill }: GripperProps): JSX.Element {
       </svg>
     </span>
   );
-}
+};

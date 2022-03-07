@@ -1,7 +1,8 @@
-import { IButtonStyles, IconButton, IIconProps, ITooltipHostStyles, TooltipHost } from '@fluentui/react';
-import { useIntl } from 'react-intl';
 import type { EventHandler } from '../eventhandler';
 import type { WorkflowParameterDefinition } from './workflowparameter';
+import type { IButtonStyles, IIconProps, ITooltipHostStyles } from '@fluentui/react';
+import { IconButton, TooltipHost } from '@fluentui/react';
+import { useIntl } from 'react-intl';
 
 interface ButtonProps {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
@@ -104,6 +105,7 @@ function EditButton({ onClick }: ButtonProps): JSX.Element {
   return (
     <TooltipHost content={editTitle}>
       <IconButton
+        data-testid="parameter-edit-icon-button"
         className="msla-edit-parameter-button"
         ariaLabel={editTitle}
         iconProps={editIcon}

@@ -1,24 +1,18 @@
-import {
-  IconButton,
-  MessageBar,
-  MessageBarType,
-  Pivot,
-  PivotItem,
-  TextField,
-  type IIconProps,
-  type ITextFieldStyles,
-} from '@fluentui/react';
-import { useState } from 'react';
-import { useIntl } from 'react-intl';
 import { OverviewCommandBar } from './overviewcommandbar';
-import { OverviewProperties, type OverviewPropertiesProps } from './overviewproperties';
+import { OverviewProperties, OverviewPropertiesProps } from './overviewproperties';
 import { RunHistory } from './runhistory';
 import type { Run, RunDisplayItem, RunError } from './types';
 import { isRunError, mapToRunItem } from './utils';
+import type { IIconProps, ITextFieldStyles } from '@fluentui/react';
+import { IconButton, MessageBar, MessageBarType, Pivot, PivotItem, TextField } from '@fluentui/react';
+import { useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useIntl } from 'react-intl';
 
 export interface OverviewProps {
   corsNotice?: string;
   errorMessage?: string;
+  isRefreshing?: boolean;
   hasMoreRuns?: boolean;
   loading?: boolean;
   runItems: RunDisplayItem[];
@@ -45,6 +39,7 @@ export const Overview: React.FC<OverviewProps> = ({
   hasMoreRuns = false,
   runItems,
   workflowProperties,
+  isRefreshing,
   onLoadMoreRuns,
   onLoadRuns,
   onOpenRun,
@@ -76,6 +71,10 @@ export const Overview: React.FC<OverviewProps> = ({
       defaultMessage: 'The provided workflow run name is not valid.',
       description: 'Message text for an invalid run ID',
     }),
+    LOADING_BOTTOM: intl.formatMessage({
+      defaultMessage: 'Loading...',
+      description: 'A message shown at the bottom of a list when the next set of data is loading',
+    }),
   };
 
   const handleChange = () => {
@@ -106,12 +105,18 @@ export const Overview: React.FC<OverviewProps> = ({
 
   return (
     <div>
-      <OverviewCommandBar callbackInfo={workflowProperties.callbackInfo} onRefresh={onLoadRuns} onRunTrigger={onRunTrigger} />
+      <OverviewCommandBar
+        callbackInfo={workflowProperties.callbackInfo}
+        isRefreshing={isRefreshing}
+        onRefresh={onLoadRuns}
+        onRunTrigger={onRunTrigger}
+      />
       <OverviewProperties {...workflowProperties} />
       <Pivot>
         <PivotItem headerText={Resources.RUN_HISTORY}>
           <div className="msla-run-history-filter">
             <TextField
+              data-testid="msla-run-history-filter-input"
               deferredValidationTime={1000}
               placeholder={Resources.WORKFLOW_OVERVIEW_FILTER_TEXT}
               styles={filterTextFieldStyles}
@@ -121,26 +126,39 @@ export const Overview: React.FC<OverviewProps> = ({
             />
             <IconButton
               aria-label={Resources.WORKFLOW_OVERVIEW_FILTER_TEXT}
+              data-testid="msla-run-history-filter-button"
               disabled={navigateDisabled}
               iconProps={navigateForwardIconProps}
               title={Resources.WORKFLOW_OVERVIEW_FILTER_TEXT}
               onClick={handleNavigateClick}
             />
           </div>
-          <RunHistory items={runItems} loading={loading} onOpenRun={onOpenRun} />
+          <InfiniteScroll
+            dataLength={runItems.length}
+            next={onLoadMoreRuns}
+            hasMore={hasMoreRuns}
+            loader={
+              <div data-testid="msla-overview-load-more">
+                <p style={{ textAlign: 'center' }}>{Resources.LOADING_BOTTOM}</p>
+              </div>
+            }
+          >
+            <RunHistory items={runItems} loading={loading} onOpenRun={onOpenRun} />
+          </InfiniteScroll>
           {errorMessage ? (
-            <MessageBar isMultiline={false} messageBarType={MessageBarType.error}>
+            <MessageBar data-testid="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>
               {errorMessage}
             </MessageBar>
           ) : null}
-          {hasMoreRuns ? (
-            <button className="msla-button msla-overview-load-more" onClick={onLoadMoreRuns}>
-              {Resources.LOAD_MORE}
-            </button>
-          ) : null}
         </PivotItem>
       </Pivot>
-      {corsNotice ? <MessageBar messageBarType={MessageBarType.info}>{corsNotice}</MessageBar> : null}
+      {corsNotice ? (
+        <MessageBar data-testid="msla-overview-cors-notice" messageBarType={MessageBarType.info}>
+          {corsNotice}
+        </MessageBar>
+      ) : null}
     </div>
   );
 };
+
+export { isRunError, OverviewPropertiesProps };

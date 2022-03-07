@@ -1,3 +1,4 @@
+import { Colorizer } from '../../colorizer';
 import Constants from '../../constants';
 import { RawValue } from './raw';
 import type { ValueProps } from './types';
@@ -23,8 +24,8 @@ export const XmlValue: React.FC<ValueProps> = (props) => {
   return (
     <section className="msla-trace-value-label">
       <label className="msla-trace-value-display-name">{displayName}</label>
-      <div className="msla-trace-value-text" tabIndex={0}>
-        {valueAsString}
+      <div className="msla-colorizer-json-body">
+        <Colorizer ariaLabel={displayName} code={valueAsString} />
       </div>
     </section>
   );

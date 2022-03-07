@@ -1,11 +1,11 @@
-import { ThemeProvider, Theme } from '@fluentui/react';
-import React, { useEffect } from 'react';
-import { IntlProvider } from '@microsoft-logic-apps/intl';
-import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
-import { RootState, store } from './store';
-import { Provider, useDispatch, useSelector } from 'react-redux';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
-import { loadLocaleMessages } from './state/localizationSlice';
+import { store } from './store';
+import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
+import type { Theme } from '@fluentui/react';
+import { ThemeProvider } from '@fluentui/react';
+import { IntlProvider } from '@microsoft-logic-apps/intl';
+import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 
 export interface DesignerProviderProps {
   theme?: Theme;
@@ -13,20 +13,14 @@ export interface DesignerProviderProps {
   children: React.ReactNode;
 }
 
-const DesignerProviderInner = ({ theme = AzureThemeLight, locale = 'en', children }: DesignerProviderProps) => {
-  const i18n = useSelector((state: RootState) => state.localization);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(loadLocaleMessages(locale));
-  }, [dispatch, locale]);
+export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', children }: DesignerProviderProps) => {
   return (
-    <ProviderWrappedContext.Provider value={true}>
-      <ThemeProvider theme={theme} className="msla-theme-provider">
-        <Provider store={store}>
+    <ReduxProvider store={store}>
+      <ProviderWrappedContext.Provider value={true}>
+        <ThemeProvider theme={theme} className="msla-theme-provider">
           <IntlProvider
-            locale={i18n.locale}
-            defaultLocale={i18n.defaultLocale}
-            messages={i18n.messages}
+            locale={locale}
+            defaultLocale={locale}
             onError={(err) => {
               if (err.code === 'MISSING_TRANSLATION') {
                 return;
@@ -36,16 +30,8 @@ const DesignerProviderInner = ({ theme = AzureThemeLight, locale = 'en', childre
           >
             {children}
           </IntlProvider>
-        </Provider>
-      </ThemeProvider>
-    </ProviderWrappedContext.Provider>
-  );
-};
-
-export const DesignerProvider = (props: DesignerProviderProps) => {
-  return (
-    <Provider store={store}>
-      <DesignerProviderInner {...props}></DesignerProviderInner>
-    </Provider>
+        </ThemeProvider>
+      </ProviderWrappedContext.Provider>
+    </ReduxProvider>
   );
 };

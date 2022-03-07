@@ -20,7 +20,7 @@ export interface Run {
   properties: RunProperties;
   kind?: string;
   location?: string;
-  tags?: string;
+  tags?: Record<string, string>;
   type: string;
 }
 

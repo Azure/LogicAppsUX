@@ -1,0 +1,1028 @@
+{
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "Textkörper"
+    }
+  ],
+  "/NDLmg": [
+    {
+      "type": 0,
+      "value": "Wartet"
+    }
+  ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Ausführungsmenü anzeigen"
+    }
+  ],
+  "0ZlNtf": [
+    {
+      "type": 0,
+      "value": "Erfolgreich mit Wiederholungen"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "More commands"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "1R6Vaa": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "keine Elemente stimmen überein."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Element stimmt überein."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Elemente stimmen überein."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "Endzeit"
+    }
+  ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Bezeichner"
+    }
+  ],
+  "3kI7xF": [
+    {
+      "type": 0,
+      "value": "Fehlerhaft"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Comments can only be added while editing the inputs of a step."
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "Dienstanforderungs-ID"
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "Parameter löschen"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Ausführung anzeigen"
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "Zurück"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "Statuscode"
+    }
+  ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Mehr anzeigen"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "URL kopieren"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Der Designer kann aufgrund mehrerer Trigger in der Definition nicht gerendert werden."
+    }
+  ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Startzeit"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "Zustandstyp:"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Verbindung erforderlich"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Dauer"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "Antwort"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Stunde"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Stunden"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "Geben Sie den Parameternamen ein."
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "Wählen Sie eine Karte aus, um den Inhalt anzuzeigen."
+    }
+  ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "Methode"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Name:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Add a comment"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "Die Parameter werden gespeichert, wenn der Workflow gespeichert wird. Sie können sie hier bearbeiten, bevor Sie sie speichern oder nach dem Speichern auf der Parameterseite bearbeiten."
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "Boolesch"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "Nächster Fehler"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unerwarteter Fehler"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
+  "O36+wl": [
+    {
+      "type": 0,
+      "value": "Parameter bearbeiten"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Vorgangsoptionen:"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität auswählen"
+    }
+  ],
+  "PF87Ew": [
+    {
+      "type": 0,
+      "value": "Erfolgreich"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "weitere Bereiche"
+    }
+  ],
+  "PaPPLr": [
+    {
+      "type": 0,
+      "value": "Abgebrochen"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "Objekt"
+    }
+  ],
+  "QQYzHC": [
+    {
+      "type": 0,
+      "value": "Kontextmenü für Karte \""
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Wird geladen..."
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h"
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Minute"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Minuten"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m"
+    }
+  ],
+  "T8Xqt9": [
+    {
+      "type": 0,
+      "value": "Fehlgeschlagen"
+    }
+  ],
+  "TZv5JE": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "Clientanforderungs-ID"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Collapse/Expand"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "Verwenden Sie die Liste dynamischer Inhalte, um auf einen Parameter zu verweisen."
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "Der Inhalt wird aufgrund der Sicherheitskonfiguration nicht angezeigt."
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Weniger anzeigen"
+    }
+  ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "Der angegebene Name der Workflowausführung ist ungültig."
+    }
+  ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "Kommentar"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "Dauer"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Ausführungsverlauf"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "von "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " Tage "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " Stunden"
+    }
+  ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "Wiederholen"
+    }
+  ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "Verbindungsname"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " Minuten "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " Sekunden"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "Anfordern"
+    }
+  ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "Weitere Informationen"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "d"
+    }
+  ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "Zeichenfolge"
+    }
+  ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "This operation has already been deleted."
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Weitere laden"
+    }
+  ],
+  "ci6ex1": [
+    {
+      "type": 0,
+      "value": "Wert"
+    }
+  ],
+  "cj+kyo": [
+    {
+      "type": 0,
+      "value": "Abgebrochen"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Fehler beim Laden der Komponente."
+    }
+  ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "Startzeit"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Delete comment"
+    }
+  ],
+  "e4Onhn": [
+    {
+      "type": 0,
+      "value": "Nicht angegeben"
+    }
+  ],
+  "eRvRWs": [
+    {
+      "type": 0,
+      "value": "Startzeit"
+    }
+  ],
+  "ftwXvc": [
+    {
+      "type": 0,
+      "value": "Ignoriert"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "URI"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "Vorheriger Fehler"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Sekunde"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Sekunden"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hdnZ9Y": [
+    {
+      "type": 0,
+      "value": "ALT/OPTION + Klicken Sie, um {displayName} herunterzuladen"
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "Dauer"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "Weiter"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "Für diese Aktion sind Tests konfiguriert."
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "In JSON bearbeiten"
+    }
+  ],
+  "k41+13": [
+    {
+      "type": 0,
+      "value": "Übersprungen"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "Herunterladen (ALT/WAHLTASTE + klicken)"
+    }
+  ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " Stunden "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " Minuten"
+    }
+  ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Trigger ausführen"
+    }
+  ],
+  "lV77P8": [
+    {
+      "type": 0,
+      "value": "Titel"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Zustandsloser Ausführungsmodus:"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Istwert"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
+    }
+  ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Geben Sie den Ausführungsbezeichner ein, um die Ausführung zu öffnen."
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "Header"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "Endzeit"
+    }
+  ],
+  "pRUJff": [
+    {
+      "type": 0,
+      "value": "Parameter"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Aktualisieren"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "Erforderlich"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Tag"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Tage"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "Int."
+    }
+  ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Card Title"
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "Schlüssel"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "Neuer Parameter"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "d "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h"
+    }
+  ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "Typ"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Standardwert"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "Parameter erstellen"
+    }
+  ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Workfloweigenschaften"
+    }
+  ],
+  "wHYQyg": [
+    {
+      "type": 0,
+      "value": "Timeout"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "Rückruf-URL:"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameter werden workflowübergreifend in einer Logik-App freigegeben."
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Wert"
+    }
+  ],
+  "z4YYlQ": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen Standardwert für den Parameter ein."
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Zusammenfassung"
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "Gleitkomma"
+    }
+  ]
+}

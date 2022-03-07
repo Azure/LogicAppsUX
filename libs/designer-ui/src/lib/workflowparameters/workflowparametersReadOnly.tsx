@@ -1,6 +1,7 @@
+import type { ParameterFieldDetails } from './workflowparametersField';
+import { labelStyles } from './workflowparametersField';
 import { Label, Text } from '@fluentui/react';
 import { FormattedMessage } from 'react-intl';
-import { labelStyles, ParameterFieldDetails } from './workflowparametersField';
 
 export interface ReadOnlyParametersProps {
   parameterDetails: ParameterFieldDetails;
@@ -13,7 +14,7 @@ export const ReadOnlyParameters = ({ name, type, defaultValue, parameterDetails 
   return (
     <>
       <div className="msla-workflow-parameter-field">
-        <Label styles={labelStyles} htmlFor={parameterDetails.name}>
+        <Label data-testid="readonly-name-label" styles={labelStyles} htmlFor={parameterDetails.name}>
           <FormattedMessage defaultMessage="Name" description="Name Title" />
         </Label>
         <Text className="msla-workflow-parameter-read-only">{name}</Text>

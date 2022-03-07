@@ -1,11 +1,9 @@
 // Button.stories.ts | Button.stories.tsx
-
-import React from 'react';
-
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-
-import { Confirm, ConfirmProps } from './index';
+import type { ConfirmProps } from './index';
+import { Confirm } from './index';
 import { DefaultButton } from '@fluentui/react';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
 
 export default {
   component: Confirm,

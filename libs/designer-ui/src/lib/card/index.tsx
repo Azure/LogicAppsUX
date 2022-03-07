@@ -1,7 +1,3 @@
-import { css, ISpinnerStyles, MessageBarType, useTheme } from '@fluentui/react';
-import { equals } from '@microsoft-logic-apps/utils';
-import { useState } from 'react';
-import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { isDeleteKey, isEnterKey, isSpaceKey } from '../utils/keyboardUtils';
 import { CardContextMenu } from './cardcontextmenu';
 import { CardFooter } from './cardfooter';
@@ -9,6 +5,11 @@ import { ErrorBanner } from './errorbanner';
 import { Gripper } from './images/dynamicsvgs/gripper';
 import type { CommentBoxProps, MenuItemOption } from './types';
 import { getCardStyle } from './utils';
+import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
+import { css } from '@fluentui/react';
+import { equals } from '@microsoft-logic-apps/utils';
+import { useState } from 'react';
+import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 
 export interface CardProps {
   active?: boolean;
@@ -32,10 +33,6 @@ export interface CardProps {
   title: string;
   onClick?(): void;
 }
-
-const gripperDark = '#9E9E9A';
-
-const gripperLight = '#605E5C';
 
 export const CARD_LOADING_SPINNER_STYLE: ISpinnerStyles = {
   root: {
@@ -63,7 +60,6 @@ export const Card: React.FC<CardProps> = ({
   title,
   onClick,
 }) => {
-  const { isInverted } = useTheme();
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [contextMenuLocation, setContextMenuLocation] = useState({
     x: 0,
@@ -125,13 +121,12 @@ export const Card: React.FC<CardProps> = ({
         onKeyDown={handleKeyDown}
         tabIndex={0}
         onKeyUp={handleKeyUp}
+        data-testid={`card-${title}`}
       >
         <div className="panel-card-main">
           <div className="panel-card-header">
             <div className="panel-card-content-container">
-              <div className="panel-card-content-gripper-section">
-                {draggable ? <Gripper fill={isInverted ? gripperDark : gripperLight} /> : null}
-              </div>
+              <div className="panel-card-content-gripper-section">{draggable ? <Gripper /> : null}</div>
               {icon ? (
                 <div className="panel-card-content-icon-section">
                   <img className="panel-card-icon" src={icon} alt="" />

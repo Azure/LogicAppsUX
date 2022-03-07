@@ -1,16 +1,18 @@
-import { CommandBar, ICommandBarItemProps } from '@fluentui/react';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import type { CallbackInfo } from './types';
 import { getCallbackUrl } from './utils';
+import type { ICommandBarItemProps } from '@fluentui/react';
+import { CommandBar } from '@fluentui/react';
+import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 export interface OverviewCommandBarProps {
   callbackInfo?: CallbackInfo;
+  isRefreshing?: boolean;
   onRefresh(): void;
   onRunTrigger(): void;
 }
 
-export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ callbackInfo, onRefresh, onRunTrigger }) => {
+export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ callbackInfo, isRefreshing, onRefresh, onRunTrigger }) => {
   const intl = useIntl();
   const callbackUrl = useMemo(() => getCallbackUrl(callbackInfo), [callbackInfo]);
 
@@ -28,6 +30,7 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ callback
   const items: ICommandBarItemProps[] = [
     {
       ariaLabel: Resources.OVERVIEW_REFRESH,
+      disabled: isRefreshing,
       iconProps: { iconName: 'Refresh' },
       key: 'Refresh',
       name: Resources.OVERVIEW_REFRESH,
@@ -45,5 +48,5 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ callback
     });
   }
 
-  return <CommandBar items={items} />;
+  return <CommandBar data-testid="msla-overview-command-bar" items={items} />;
 };

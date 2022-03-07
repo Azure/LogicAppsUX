@@ -1,4 +1,5 @@
-import { css, FontSizes, Icon, IIconStyles, MessageBarType, TooltipHost, TooltipOverflowMode } from '@fluentui/react';
+import type { IIconStyles } from '@fluentui/react';
+import { css, FontSizes, Icon, MessageBarType, TooltipHost, TooltipOverflowMode } from '@fluentui/react';
 
 export interface ErrorBannerProps {
   errorLevel?: MessageBarType;

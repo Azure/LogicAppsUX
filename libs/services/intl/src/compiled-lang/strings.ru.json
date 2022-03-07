@@ -1,0 +1,1142 @@
+{
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "Текст"
+    }
+  ],
+  "/NDLmg": [
+    {
+      "type": 0,
+      "value": "Ожидание"
+    }
+  ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Показать меню запуска"
+    }
+  ],
+  "0ZlNtf": [
+    {
+      "type": 0,
+      "value": "Выполнено с повторными попытками"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "More commands"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "1R6Vaa": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "нет соответствующих элементов."
+            }
+          ]
+        },
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " соответствующих элемента."
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " соответствующих элементов."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " соответствующий элемент."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " соответствующих элемента."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "Время окончания"
+    }
+  ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Идентификатор"
+    }
+  ],
+  "3kI7xF": [
+    {
+      "type": 0,
+      "value": "Со сбоем"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Comments can only be added while editing the inputs of a step."
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "Идентификатор запроса службы"
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "Удалить параметр"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Показать сведения о выполнении"
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "Назад"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "ОК"
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "Код состояния"
+    }
+  ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Показать больше"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Копировать URL-адрес"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Не удается отобразить конструктор из-за наличия нескольких триггеров в определении."
+    }
+  ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Время начала"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "Тип состояния:"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Требуется подключение"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Продолжительность"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "Отклик"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ч"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ч"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " час"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ч"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Состояние"
+    }
+  ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "Введите имя параметра."
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "Массив"
+    }
+  ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "Выберите карточку, чтобы просмотреть содержимое."
+    }
+  ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "Метод"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Имя:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Add a comment"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "Параметры будут сохранены при сохранении рабочего процесса. Вы можете отредактировать их перед сохранением или измененить на странице параметров после сохранения."
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "Логическое значение"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "Следующее со сбоем"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Неожиданная ошибка"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "Состояние"
+    }
+  ],
+  "O36+wl": [
+    {
+      "type": 0,
+      "value": "Изменить параметр"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Параметры операции:"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ч "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " мин"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "Выберите управляемое удостоверение"
+    }
+  ],
+  "PF87Ew": [
+    {
+      "type": 0,
+      "value": "Выполнено"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "дополнительные панели"
+    }
+  ],
+  "PaPPLr": [
+    {
+      "type": 0,
+      "value": "Прервано"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "Объект"
+    }
+  ],
+  "QQYzHC": [
+    {
+      "type": 0,
+      "value": "Контекстное меню для карточки "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    }
+  ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Загрузка..."
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ч"
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " мин"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " мин"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " минута"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " мин"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " мин"
+    }
+  ],
+  "T8Xqt9": [
+    {
+      "type": 0,
+      "value": "Сбой"
+    }
+  ],
+  "TZv5JE": [
+    {
+      "type": 0,
+      "value": "Имя"
+    }
+  ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "Идентификатор запроса клиента"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Collapse/Expand"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "Для ссылки на параметр используйте динамический список содержимого."
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "Содержимое не показано из-за конфигурации безопасности."
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Показать меньше"
+    }
+  ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "Указанное имя запуска рабочего процесса недопустимо."
+    }
+  ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "Комментарий"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "Продолжительность"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Журнал запусков"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "из "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " дн. "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ч"
+    }
+  ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "Повторить"
+    }
+  ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "Имя соединения"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " мин "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " с"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "Запрос"
+    }
+  ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "Дополнительные сведения"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " дн."
+    }
+  ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "Строка"
+    }
+  ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "This operation has already been deleted."
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Загрузить еще"
+    }
+  ],
+  "ci6ex1": [
+    {
+      "type": 0,
+      "value": "Значение"
+    }
+  ],
+  "cj+kyo": [
+    {
+      "type": 0,
+      "value": "Отменено"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Ошибка при загрузке компонента."
+    }
+  ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "Время начала"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Delete comment"
+    }
+  ],
+  "e4Onhn": [
+    {
+      "type": 0,
+      "value": "Не указано"
+    }
+  ],
+  "eRvRWs": [
+    {
+      "type": 0,
+      "value": "Время начала"
+    }
+  ],
+  "ftwXvc": [
+    {
+      "type": 0,
+      "value": "Пропущено"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "URI"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "Предыдущее со сбоем"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " с"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " с"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " секунда"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " с"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hdnZ9Y": [
+    {
+      "type": 0,
+      "value": "ALT/OPTION + щелчок для скачивания \""
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "Продолжительность"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "Далее"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "Для этого действия настроено тестирование."
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Отмена"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " с"
+    }
+  ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "Изменить в JSON"
+    }
+  ],
+  "k41+13": [
+    {
+      "type": 0,
+      "value": "Пропущено"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " мин "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " с"
+    }
+  ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "Скачать (ALT/OPTION + щелчок)"
+    }
+  ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ч "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " мин"
+    }
+  ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Запустить триггер"
+    }
+  ],
+  "lV77P8": [
+    {
+      "type": 0,
+      "value": "Заголовок"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Режим запуска без отслеживания состояния:"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Фактическое значение"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "Тестирование"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "Имя"
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " из "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
+    }
+  ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Введите идентификатор запуска, чтобы открыть его"
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "Заголовки"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "Время окончания"
+    }
+  ],
+  "pRUJff": [
+    {
+      "type": 0,
+      "value": "Параметры"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Обновить"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "Управляемое удостоверение"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "Требуется"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " дн."
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " дн."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " день"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " дн."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "Целое число"
+    }
+  ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Card Title"
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "ключ"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "Новый параметр"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " дн. "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ч"
+    }
+  ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "Тип"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "ОК"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Значение по умолчанию"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "Создать параметр"
+    }
+  ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Свойства рабочего процесса"
+    }
+  ],
+  "wHYQyg": [
+    {
+      "type": 0,
+      "value": "Время ожидания истекло"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "URL-адрес обратного вызова"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Параметры являются общими для всех рабочих процессов в приложении логики."
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Значение"
+    }
+  ],
+  "z4YYlQ": [
+    {
+      "type": 0,
+      "value": "Введите для параметра значение по умолчанию."
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Сводка"
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "Число с плавающей запятой"
+    }
+  ]
+}

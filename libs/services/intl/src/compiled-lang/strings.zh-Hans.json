@@ -1,0 +1,993 @@
+{
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "正文"
+    }
+  ],
+  "/NDLmg": [
+    {
+      "type": 0,
+      "value": "正在等待"
+    }
+  ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "显示运行菜单"
+    }
+  ],
+  "0ZlNtf": [
+    {
+      "type": 0,
+      "value": "重试成功"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "More commands"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "1R6Vaa": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "没有任何项匹配。"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "有 "
+            },
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 项匹配。"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "结束时间"
+    }
+  ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "标识符"
+    }
+  ],
+  "3kI7xF": [
+    {
+      "type": 0,
+      "value": "已出错"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Comments can only be added while editing the inputs of a step."
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "服务请求 ID"
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "删除参数"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "显示运行"
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "上一页"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "确定"
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "状态代码"
+    }
+  ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "显示更多"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "复制 URL"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "由于定义中存在多个触发器，因此无法呈现设计器。"
+    }
+  ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "开始时间"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "状态类型:"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "需要连接"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "持续时间"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "响应"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 小时"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "状态"
+    }
+  ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "输入参数名称。"
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "数组"
+    }
+  ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "请选择卡片以查看内容"
+    }
+  ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "方法"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "名称:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Add a comment"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "保存工作流时，将保存参数。你可以在保存前在此处进行编辑，也可以在保存后在参数页中进行编辑。"
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "布尔型"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "下一次失败"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "意外错误"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "状态"
+    }
+  ],
+  "O36+wl": [
+    {
+      "type": 0,
+      "value": "编辑参数"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "操作选项:"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 时 "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "选择托管标识"
+    }
+  ],
+  "PF87Ew": [
+    {
+      "type": 0,
+      "value": "成功"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "更多面板"
+    }
+  ],
+  "PaPPLr": [
+    {
+      "type": 0,
+      "value": "已中止"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "对象"
+    }
+  ],
+  "QQYzHC": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " 卡的关联菜单"
+    }
+  ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "正在加载..."
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小时"
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 分钟"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分"
+    }
+  ],
+  "T8Xqt9": [
+    {
+      "type": 0,
+      "value": "失败"
+    }
+  ],
+  "TZv5JE": [
+    {
+      "type": 0,
+      "value": "名称"
+    }
+  ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "客户端请求 ID"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Collapse/Expand"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "若要引用参数，请使用动态内容列表。"
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "由于安全配置而未显示内容。"
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "显示更少"
+    }
+  ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "所提供的工作流运行名称无效。"
+    }
+  ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "评论"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "持续时间"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "运行历史记录"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "共 "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    },
+    {
+      "type": 0,
+      "value": " 个"
+    }
+  ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 天 "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小时"
+    }
+  ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "重试"
+    }
+  ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "连接名称"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分钟 "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "请求"
+    }
+  ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "详细信息"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 天"
+    }
+  ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "字符串"
+    }
+  ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "This operation has already been deleted."
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "加载更多内容"
+    }
+  ],
+  "ci6ex1": [
+    {
+      "type": 0,
+      "value": "值"
+    }
+  ],
+  "cj+kyo": [
+    {
+      "type": 0,
+      "value": "已取消"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "加载组件时出错。"
+    }
+  ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "开始时间"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Delete comment"
+    }
+  ],
+  "e4Onhn": [
+    {
+      "type": 0,
+      "value": "未指定"
+    }
+  ],
+  "eRvRWs": [
+    {
+      "type": 0,
+      "value": "开始时间"
+    }
+  ],
+  "ftwXvc": [
+    {
+      "type": 0,
+      "value": "已忽略"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "URI"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "上一次失败"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 秒"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hdnZ9Y": [
+    {
+      "type": 0,
+      "value": "Alt/Option + 单击以下载 \""
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "持续时间"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "下一页"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "此操作已配置测试。"
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒"
+    }
+  ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "在 JSON 中编辑"
+    }
+  ],
+  "k41+13": [
+    {
+      "type": 0,
+      "value": "已跳过"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分 "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒"
+    }
+  ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "下载(Alt/Option + 单击)"
+    }
+  ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小时 "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分钟"
+    }
+  ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "运行触发器"
+    }
+  ],
+  "lV77P8": [
+    {
+      "type": 0,
+      "value": "标题"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "无状态运行模式:"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "实际值"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "测试"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "名称"
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 0,
+      "value": "第 "
+    },
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " 页(共 "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
+    },
+    {
+      "type": 0,
+      "value": " 页)"
+    }
+  ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "输入运行标识符以打开运行"
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "标头"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "结束时间"
+    }
+  ],
+  "pRUJff": [
+    {
+      "type": 0,
+      "value": "参数"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "刷新"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "托管标识"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "必需"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 天"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "Int"
+    }
+  ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Card Title"
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "密钥"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "新建参数"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 天 "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小时"
+    }
+  ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "类型"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "确定"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "默认值"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "创建参数"
+    }
+  ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "工作流属性"
+    }
+  ],
+  "wHYQyg": [
+    {
+      "type": 0,
+      "value": "已超时"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "回叫 URL:"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "在逻辑应用中的工作流之间共享参数。"
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "值"
+    }
+  ],
+  "z4YYlQ": [
+    {
+      "type": 0,
+      "value": "输入参数的默认值。"
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "摘要"
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "浮点型"
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 // alert.stories.js|jsx|ts|tsx
-
+import type { AlertProps } from './index';
+import { Alert } from './index';
 import { DefaultButton } from '@fluentui/react';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import { Alert, AlertProps } from './index';
 
 export default {
   component: Alert,

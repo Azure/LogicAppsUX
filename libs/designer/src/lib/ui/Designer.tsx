@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { useLayout } from '../core/graphlayout';
+import { updateNodeSizes } from '../core/state/workflowSlice';
+import CustomTestNode from './CustomNodes/CustomTestNode';
+import { CustomEdge } from './connections/edge';
+import { useCallback } from 'react';
 import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { createTransition, DndProvider } from 'react-dnd-multi-backend';
-import ReactFlow, { NodeChange, ReactFlowProvider } from 'react-flow-renderer';
-import { CustomEdge } from './connections/edge';
-import CustomTestNode from './CustomNodes/CustomTestNode';
+import type { NodeChange } from 'react-flow-renderer';
+import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { useLayout } from '../core/graphlayout/elklayout';
-import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { updateNodeSizes } from '../core/state/workflowSlice';
 
 export interface DesignerProps {
   graphId?: string;

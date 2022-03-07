@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/monitoring/values/_raw should not render when not visible 1`] = `null`;
+
+exports[`ui/monitoring/values/_raw should render 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    display-name
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <div
+      aria-label="display-name"
+      aria-readonly={true}
+      className="msla-colorizer-wrapper"
+      role="textbox"
+      tabIndex={0}
+    >
+      <pre
+        className="prism-code language-json"
+        style={
+          Object {
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            value
+          </span>
+        </div>
+      </pre>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/_raw should rendered a zero-width space if value is empty 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    display-name
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <div
+      aria-label="display-name"
+      aria-readonly={true}
+      className="msla-colorizer-wrapper"
+      role="textbox"
+      tabIndex={0}
+    >
+      <pre
+        className="prism-code language-json"
+        style={
+          Object {
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            Object {
+              "backgroundColor": null,
+              "color": "#000000",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            ‌
+          </span>
+        </div>
+      </pre>
+    </div>
+  </div>
+</section>
+`;

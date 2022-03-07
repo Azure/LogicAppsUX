@@ -1,0 +1,1150 @@
+{
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "Obsah"
+    }
+  ],
+  "/NDLmg": [
+    {
+      "type": 0,
+      "value": "Čekající"
+    }
+  ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Zobrazit nabídku spuštění"
+    }
+  ],
+  "0ZlNtf": [
+    {
+      "type": 0,
+      "value": "Proběhlo úspěšně s opakováním pokusů"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "More commands"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "1R6Vaa": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "žádné odpovídající položky."
+            }
+          ]
+        },
+        "few": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Počet odpovídajících položek: "
+            },
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": "."
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Počet odpovídajících položek: "
+            },
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": "."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " odpovídající položka."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Počet odpovídajících položek: "
+            },
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": "."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "Koncový čas"
+    }
+  ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Identifikátor"
+    }
+  ],
+  "3kI7xF": [
+    {
+      "type": 0,
+      "value": "S chybou"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Comments can only be added while editing the inputs of a step."
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "ID žádosti o služby"
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "Odstranit parametr"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Zobrazit spuštění"
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "Předchozí"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "Stavový kód"
+    }
+  ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Zobrazit více"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Kopírovat adresu URL"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Návrhář se nedá vykreslit, protože v definici je více než jeden trigger."
+    }
+  ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Čas zahájení"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "Typ stavu:"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Připojení je povinné"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Doba trvání"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "Odpověď"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hodiny"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hodin"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hodina"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hodin"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Stav"
+    }
+  ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "Zadejte název parametru."
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "Pole"
+    }
+  ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "Pokud si chcete zobrazit obsah, vyberte prosím kartu."
+    }
+  ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "Metoda"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Název:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Add a comment"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "Parametry budou uloženy při uložení pracovního postupu. Tady je můžete před uložením upravit, případně je můžete po uložení upravit na stránce parametrů."
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "Logická hodnota (Bool)"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "Další neúspěšné"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Neočekávaná chyba"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "Stav"
+    }
+  ],
+  "O36+wl": [
+    {
+      "type": 0,
+      "value": "Upravit parametr"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Možnosti operace:"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " h "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " m"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "Vyberte spravovanou identitu"
+    }
+  ],
+  "PF87Ew": [
+    {
+      "type": 0,
+      "value": "Podařilo se"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "více panelů"
+    }
+  ],
+  "PaPPLr": [
+    {
+      "type": 0,
+      "value": "Přerušeno"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "Objekt"
+    }
+  ],
+  "QQYzHC": [
+    {
+      "type": 0,
+      "value": "Místní nabídka pro kartu "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    }
+  ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Načítání…"
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " h"
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minuty"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minut"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minuta"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minut"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " m"
+    }
+  ],
+  "T8Xqt9": [
+    {
+      "type": 0,
+      "value": "Selhání"
+    }
+  ],
+  "TZv5JE": [
+    {
+      "type": 0,
+      "value": "Název"
+    }
+  ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "ID žádosti klienta"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Collapse/Expand"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "Pokud chcete odkazovat na parametr, použijte seznam dynamického obsahu."
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "Kvůli konfiguraci zabezpečení se obsah nezobrazuje."
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Zobrazit méně"
+    }
+  ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "Název běhu pracovního postupu není platný."
+    }
+  ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "Komentář"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "Doba trvání"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Historie spuštění"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "z "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " d "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " h"
+    }
+  ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "Zkusit znovu"
+    }
+  ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "Název připojení"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " m "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " s"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "Žádost"
+    }
+  ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "Další informace"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " d"
+    }
+  ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "Řetězec"
+    }
+  ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "This operation has already been deleted."
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Načíst další"
+    }
+  ],
+  "ci6ex1": [
+    {
+      "type": 0,
+      "value": "Hodnota"
+    }
+  ],
+  "cj+kyo": [
+    {
+      "type": 0,
+      "value": "Zrušeno"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Při načítání komponenty došlo k chybě."
+    }
+  ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "Čas zahájení"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Delete comment"
+    }
+  ],
+  "e4Onhn": [
+    {
+      "type": 0,
+      "value": "Neuvedeno"
+    }
+  ],
+  "eRvRWs": [
+    {
+      "type": 0,
+      "value": "Čas zahájení"
+    }
+  ],
+  "ftwXvc": [
+    {
+      "type": 0,
+      "value": "Ignorováno"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "Identifikátor URI"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "Předchozí neúspěšné"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " sekundy"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " sekund"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " sekunda"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " sekund"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hdnZ9Y": [
+    {
+      "type": 0,
+      "value": "Stisknutí Alt/Option + kliknutím stáhnete "
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "Doba trvání"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Comment"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "Další"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "Tato akce má nakonfigurované testování."
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Zrušit"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " s"
+    }
+  ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "Upravit ve formátu JSON"
+    }
+  ],
+  "k41+13": [
+    {
+      "type": 0,
+      "value": "Vynecháno"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " m "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " s"
+    }
+  ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "Stáhnout (Alt/Option + kliknutí)"
+    }
+  ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " h "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " m"
+    }
+  ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Aktivační událost spuštění"
+    }
+  ],
+  "lV77P8": [
+    {
+      "type": 0,
+      "value": "Název"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Bezstavový režim spuštění:"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Skutečná hodnota"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "Testování"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "Název"
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " z "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
+    }
+  ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Zadejte identifikátor spuštění a spuštění otevřete."
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "Záhlaví"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "Koncový čas"
+    }
+  ],
+  "pRUJff": [
+    {
+      "type": 0,
+      "value": "Parametry"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Aktualizovat"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "Spravovaná identita"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "Povinné"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " dny"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " dnů"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " den"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " dnů"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "Int"
+    }
+  ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Card Title"
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "Klíč"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "Nový parametr"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " d "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " h"
+    }
+  ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "Typ"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Výchozí hodnota"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "Vytvořit parametr"
+    }
+  ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Vlastnosti pracovního postupu"
+    }
+  ],
+  "wHYQyg": [
+    {
+      "type": 0,
+      "value": "Vypršel časový limit."
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "Adresa URL pro zpětné volání:"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parametry se sdílejí mezi pracovními postupy v aplikaci logiky."
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Hodnota"
+    }
+  ],
+  "z4YYlQ": [
+    {
+      "type": 0,
+      "value": "Zadejte výchozí hodnotu parametru."
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Shrnutí"
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "Plovoucí desetinná čárka"
+    }
+  ]
+}

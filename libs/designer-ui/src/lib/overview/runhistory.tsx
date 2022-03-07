@@ -1,14 +1,8 @@
-import {
-  DefaultButton,
-  DetailsListLayoutMode,
-  IColumn,
-  IContextualMenuItem,
-  Link,
-  SelectionMode,
-  ShimmeredDetailsList,
-} from '@fluentui/react';
-import { FormatDateOptions, useIntl } from 'react-intl';
 import type { RunDisplayItem } from './types';
+import type { IColumn, IContextualMenuItem } from '@fluentui/react';
+import { DefaultButton, DetailsListLayoutMode, Link, SelectionMode, ShimmeredDetailsList } from '@fluentui/react';
+import type { FormatDateOptions } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 export interface RunHistoryProps {
   items: RunDisplayItem[];
@@ -71,6 +65,7 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
   const columns: IColumn[] = [
     {
       fieldName: RunHistoryColumnKeys.IDENTIFIER,
+      flexGrow: 1,
       isResizable: true,
       key: RunHistoryColumnKeys.IDENTIFIER,
       minWidth: 0,
@@ -87,7 +82,7 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
       fieldName: RunHistoryColumnKeys.START_TIME,
       isResizable: true,
       key: RunHistoryColumnKeys.START_TIME,
-      minWidth: 200,
+      minWidth: 160,
       name: Resources.START_TIME,
     },
     {
@@ -150,8 +145,8 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
       enableShimmer={loading}
       items={items}
       layoutMode={DetailsListLayoutMode.justified}
+      shimmerLines={items.length || 5}
       selectionMode={SelectionMode.none}
-      shimmerLines={1}
       onRenderItemColumn={handleRenderItemColumn}
     />
   );

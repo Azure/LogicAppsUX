@@ -1,0 +1,1076 @@
+{
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Ṡèṭṭíńĝ Ļâḃèĺ"
+    }
+  ],
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "Ḃŏḋẏ"
+    }
+  ],
+  "/NDLmg": [
+    {
+      "type": 0,
+      "value": "Ẅâíṭíńĝ"
+    }
+  ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Ṡḫŏẘ ŕůń ṁèńů"
+    }
+  ],
+  "0ZlNtf": [
+    {
+      "type": 0,
+      "value": "Ṡůććèèḋèḋ ẘíṭḫ ŕèṭŕíèś"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Ḿŏŕè ćŏṁṁâńḋś"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Ḉŏṁṁèńṭ"
+    }
+  ],
+  "1R6Vaa": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "ńŏ íṭèṁś ṁâṭćḫèḋ."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " íṭèṁ ṁâṭćḫèḋ."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " íṭèṁś ṁâṭćḫèḋ."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "Ḕńḋ ṭíṁè"
+    }
+  ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Õḟḟ"
+    }
+  ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Ḭḋèńṭíḟíèŕ"
+    }
+  ],
+  "3kI7xF": [
+    {
+      "type": 0,
+      "value": "Ḟâůĺṭèḋ"
+    }
+  ],
+  "4cVuMw": [
+    {
+      "type": 0,
+      "value": "Ḉŏṁṁèńṭś ćâń ŏńĺẏ ḃè âḋḋèḋ ẘḫíĺè èḋíṭíńĝ ṭḫè íńṗůṭś ŏḟ â śṭèṗ."
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "Ṡèŕṿíćè ŕèɋůèśṭ ḬḊ"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Ļŏâḋíńĝ..."
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "Ḋèĺèṭè Ṕâŕâṁèṭèŕ"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Ṡḫŏẘ ŕůń"
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "Ṕŕèṿíŏůś"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "ÕḴ"
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "Ṡṭâṭůś ćŏḋè"
+    }
+  ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Ṡḫŏẘ ṁŏŕè"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Ḉŏṗẏ ŨŔĻ"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Ḉâńńŏṭ ŕèńḋèŕ ḋèśíĝńèŕ ḋůè ṭŏ ṁůĺṭíṗĺè ṭŕíĝĝèŕś íń ḋèḟíńíṭíŏń."
+    }
+  ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Ṡṭâŕṭ ṭíṁè"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "Ṡṭâṭè ṭẏṗè:"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Ḉŏńńèćṭíŏń ŕèɋůíŕèḋ"
+    }
+  ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "Õń"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Ḋůŕâṭíŏń"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "Ŕèśṗŏńśè"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ḫŏůŕ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ḫŏůŕś"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Ṡṭâṭůś"
+    }
+  ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "Ḕńṭèŕ ṗâŕâṁèṭèŕ ńâṁè."
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "Ḁŕŕâẏ"
+    }
+  ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "Ṕĺèâśè śèĺèćṭ â ćâŕḋ ṭŏ śèè ṭḫè ćŏńṭèńṭ"
+    }
+  ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Ṡèṭṭíńĝ Ṽâĺůè"
+    }
+  ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "Ḿèṭḫŏḋ"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Ŋâṁè:"
+    }
+  ],
+  "M0HMjE": [
+    {
+      "type": 0,
+      "value": "Ḁḋḋ â ćŏṁṁèńṭ"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "Ṯḫè ṗâŕâṁèṭèŕś ẘíĺĺ ḃè śâṿèḋ ẘḫèń ṭḫè ẘŏŕǩḟĺŏẘ íś śâṿèḋ. Ÿŏů ćâń èḋíṭ íṭ ḫèŕè ḃèḟŏŕè śâṿè ŏŕ èḋíṭ íṭ íń ṭḫè ṗâŕâṁèṭèŕ ṗâĝè âḟṭèŕ śâṿè."
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "Ḃŏŏĺ"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "Ŋèẋṭ ḟâíĺèḋ"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Ũńèẋṗèćṭèḋ èŕŕŏŕ"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "Ṡṭâṭůś"
+    }
+  ],
+  "O36+wl": [
+    {
+      "type": 0,
+      "value": "Ḕḋíṭ Ṕâŕâṁèṭèŕ"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Õṗèŕâṭíŏń ŏṗṭíŏńś:"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Ḉŏṁṁèńṭ"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "ḫ "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "ṁ"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "Ṡèĺèćṭ â ṁâńâĝèḋ íḋèńṭíṭẏ"
+    }
+  ],
+  "PF87Ew": [
+    {
+      "type": 0,
+      "value": "Ṡůććèèḋèḋ"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "ṁŏŕè ṗâńèĺś"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Ḉŏĺĺâṗśè"
+    }
+  ],
+  "PaPPLr": [
+    {
+      "type": 0,
+      "value": "Ḁḃŏŕṭèḋ"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "Õḃĵèćṭ"
+    }
+  ],
+  "QQYzHC": [
+    {
+      "type": 0,
+      "value": "Ḉŏńṭèẋṭ ṁèńů ḟŏŕ "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " ćâŕḋ"
+    }
+  ],
+  "QknZQ1": [
+    {
+      "type": 0,
+      "value": "Ļŏâḋíńĝ..."
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "ḫ"
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ṁíńůṭè"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ṁíńůṭèś"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "ṁ"
+    }
+  ],
+  "T8Xqt9": [
+    {
+      "type": 0,
+      "value": "Ḟâíĺèḋ"
+    }
+  ],
+  "TZv5JE": [
+    {
+      "type": 0,
+      "value": "Ŋâṁè"
+    }
+  ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "Ḉĺíèńṭ ŕèɋůèśṭ ḬḊ"
+    }
+  ],
+  "Tz5jTR": [
+    {
+      "type": 0,
+      "value": "Ḉŏĺĺâṗśè/Ḕẋṗâńḋ"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "Ṯŏ ŕèḟèŕèńćè â ṗâŕâṁèṭèŕ, ůśè ṭḫè ḋẏńâṁíć ćŏńṭèńṭ ĺíśṭ."
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "Ḉŏńṭèńṭ ńŏṭ śḫŏẘń ḋůè ṭŏ śèćůŕíṭẏ ćŏńḟíĝůŕâṭíŏń."
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Ṡḫŏẘ ĺèśś"
+    }
+  ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "Ṯḫè ṗŕŏṿíḋèḋ ẘŏŕǩḟĺŏẘ ŕůń ńâṁè íś ńŏṭ ṿâĺíḋ."
+    }
+  ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "Ḉŏṁṁèńṭ"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "Ḋůŕâṭíŏń"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Ŕůń Ḣíśṭŏŕẏ"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "ŏḟ "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " ḋâẏś "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ḫŏůŕś"
+    }
+  ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "Ŕèṭŕẏ"
+    }
+  ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "Ḉŏńńèćṭíŏń ńâṁè"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " ṁíńůṭèś "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " śèćŏńḋś"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "Ŕèɋůèśṭ"
+    }
+  ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "Ḿŏŕè Ḭńḟŏ"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "ḋ"
+    }
+  ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "Ṡṭŕíńĝ"
+    }
+  ],
+  "ZbX8xq": [
+    {
+      "type": 0,
+      "value": "Ṯḫíś ŏṗèŕâṭíŏń ḫâś âĺŕèâḋẏ ḃèèń ḋèĺèṭèḋ."
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Ļŏâḋ ṁŏŕè"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Ļâḃèĺ śèṭṭíńĝ"
+    }
+  ],
+  "ci6ex1": [
+    {
+      "type": 0,
+      "value": "Ṽâĺůè"
+    }
+  ],
+  "cj+kyo": [
+    {
+      "type": 0,
+      "value": "Ḉâńćèĺĺèḋ"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Ḕŕŕŏŕ ĺŏâḋíńĝ ćŏṁṗŏńèńṭ."
+    }
+  ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "Ṡṭâŕṭ ṭíṁè"
+    }
+  ],
+  "d3bSQA": [
+    {
+      "type": 0,
+      "value": "Ḋèĺèṭè ćŏṁṁèńṭ"
+    }
+  ],
+  "e4Onhn": [
+    {
+      "type": 0,
+      "value": "Ŋŏṭ śṗèćíḟíèḋ"
+    }
+  ],
+  "eRvRWs": [
+    {
+      "type": 0,
+      "value": "Ṡṭâŕṭ ṭíṁè"
+    }
+  ],
+  "ftwXvc": [
+    {
+      "type": 0,
+      "value": "Ḭĝńŏŕèḋ"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "ŨŔḬ"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "Ṕŕèṿíŏůś ḟâíĺèḋ"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " śèćŏńḋ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " śèćŏńḋś"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hdnZ9Y": [
+    {
+      "type": 0,
+      "value": "Ḁĺṭ/Õṗṭíŏń + ćĺíćǩ ṭŏ ḋŏẘńĺŏâḋ {ḋíśṗĺâẏŊâṁè}"
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "Ḋůŕâṭíŏń"
+    }
+  ],
+  "iBlvhu": [
+    {
+      "type": 0,
+      "value": "Ḉŏṁṁèńṭ"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "Ŋèẋṭ"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "Ṯḫíś Ḁćṭíŏń ḫâś ṭèśṭíńĝ ćŏńḟíĝůŕèḋ."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Ḕẋṗâńḋ"
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Ḉâńćèĺ"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "ś"
+    }
+  ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "Ḕḋíṭ íń ĴṠÕŊ"
+    }
+  ],
+  "k41+13": [
+    {
+      "type": 0,
+      "value": "Ṡǩíṗṗèḋ"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "ṁ "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "ś"
+    }
+  ],
+  "kYivbS": [
+    {
+      "type": 0,
+      "value": "Ḋŏẘńĺŏâḋ (Ḁĺṭ/Õṗṭíŏń + ćĺíćǩ)"
+    }
+  ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ḫŏůŕś "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " ṁíńůṭèś"
+    }
+  ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Ŕůń ṭŕíĝĝèŕ"
+    }
+  ],
+  "lV77P8": [
+    {
+      "type": 0,
+      "value": "Ṯíṭĺè"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Ṡṭâṭèĺèśś ŕůń ṁŏḋè:"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Ḁćṭůâĺ Ṽâĺůè"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "Ṯèśṭíńĝ"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "Ŋâṁè"
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " ŏḟ "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
+    }
+  ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Ḕńṭèŕ ṭḫè ŕůń íḋèńṭíḟíèŕ ṭŏ ŏṗèń ṭḫè ŕůń"
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "Ḣèâḋèŕś"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "Ḕńḋ ṭíṁè"
+    }
+  ],
+  "pRUJff": [
+    {
+      "type": 0,
+      "value": "Ṕâŕâṁèṭèŕś"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Ŕèḟŕèśḫ"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "Ḿâńâĝèḋ íḋèńṭíṭẏ"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "Ŕèɋůíŕèḋ"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ḋâẏ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ḋâẏś"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "Ḭńṭ"
+    }
+  ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Ḉâŕḋ Ṯíṭĺè"
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "Ḵèẏ"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "Ŋèẘ ṗâŕâṁèṭèŕ"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "ḋ "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "ḫ"
+    }
+  ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "Ṯẏṗè"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "ÕḴ"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Ḋèḟâůĺṭ Ṽâĺůè"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Ḋèĺèṭè"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "Ḉŕèâṭè ṗâŕâṁèṭèŕ"
+    }
+  ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Ẅŏŕǩḟĺŏẘ Ṕŕŏṗèŕṭíèś"
+    }
+  ],
+  "wHYQyg": [
+    {
+      "type": 0,
+      "value": "Ṯíṁèḋ Õůṭ"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "Ḉâĺĺḃâćǩ ŨŔĻ:"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Ṕâŕâṁèṭèŕś âŕè śḫâŕèḋ âćŕŏśś ẘŏŕǩḟĺŏẘś íń â Ļŏĝíć Ḁṗṗ."
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Ṽâĺůè"
+    }
+  ],
+  "z4YYlQ": [
+    {
+      "type": 0,
+      "value": "Ḕńṭèŕ ḋèḟâůĺṭ ṿâĺůè ḟŏŕ ṗâŕâṁèṭèŕ."
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Ṡůṁṁâŕẏ"
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "Ḟĺŏâṭ"
+    }
+  ]
+}

@@ -1,7 +1,8 @@
+import type { RequestPanelProps } from '../index';
+import { RequestPanel } from '../index';
 import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import { RequestPanel, RequestPanelProps } from '../index';
 
 describe('lib/monitoring/requestpanel', () => {
   let minimal: RequestPanelProps;
