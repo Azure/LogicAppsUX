@@ -1131,7 +1131,7 @@ Array [
             >
               <div
                 aria-label="Headers"
-                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-119"
+                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-119"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -1171,7 +1171,7 @@ Array [
                         role="columnheader"
                         style={
                           Object {
-                            "width": NaN,
+                            "width": 120,
                           }
                         }
                       >
@@ -1223,7 +1223,7 @@ Array [
                         role="columnheader"
                         style={
                           Object {
-                            "width": NaN,
+                            "width": 120,
                           }
                         }
                       >
@@ -1886,7 +1886,7 @@ Array [
             >
               <div
                 aria-label="Headers"
-                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-119"
+                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-119"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -1926,7 +1926,7 @@ Array [
                         role="columnheader"
                         style={
                           Object {
-                            "width": NaN,
+                            "width": 120,
                           }
                         }
                       >
@@ -1978,7 +1978,7 @@ Array [
                         role="columnheader"
                         style={
                           Object {
-                            "width": NaN,
+                            "width": 120,
                           }
                         }
                       >

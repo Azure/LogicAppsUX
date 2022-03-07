@@ -148,7 +148,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
         >
           <div
             aria-label="Headers"
-            className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-109"
+            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-109"
             data-automationid="DetailsList"
             data-is-scrollable="false"
           >
@@ -188,7 +188,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                     role="columnheader"
                     style={
                       Object {
-                        "width": NaN,
+                        "width": 120,
                       }
                     }
                   >
@@ -240,7 +240,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                     role="columnheader"
                     style={
                       Object {
-                        "width": NaN,
+                        "width": 120,
                       }
                     }
                   >
@@ -473,7 +473,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         >
           <div
             aria-label="Headers"
-            className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-109"
+            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-109"
             data-automationid="DetailsList"
             data-is-scrollable="false"
           >
@@ -513,7 +513,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                     role="columnheader"
                     style={
                       Object {
-                        "width": NaN,
+                        "width": 120,
                       }
                     }
                   >
@@ -565,7 +565,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                     role="columnheader"
                     style={
                       Object {
-                        "width": NaN,
+                        "width": 120,
                       }
                     }
                   >
@@ -929,7 +929,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
         >
           <div
             aria-label="Headers"
-            className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-109"
+            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-109"
             data-automationid="DetailsList"
             data-is-scrollable="false"
           >
@@ -969,7 +969,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                     role="columnheader"
                     style={
                       Object {
-                        "width": NaN,
+                        "width": 120,
                       }
                     }
                   >
@@ -1021,7 +1021,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                     role="columnheader"
                     style={
                       Object {
-                        "width": NaN,
+                        "width": 120,
                       }
                     }
                   >
