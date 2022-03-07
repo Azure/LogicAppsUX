@@ -1,6 +1,7 @@
+import { DATA_CY_ATTR } from './shared';
+
 describe('designer: Canvas', () => {
   beforeEach(() => cy.visit('/iframe.html?id=designer-designer-composition--simple-but-big-definition'));
-  const DATA_CY_ATTR = 'data-cy';
 
   it('should drag and drop node to correct location', () => {
     const cardTitle = 'Increment_variable_10';
@@ -9,6 +10,7 @@ describe('designer: Canvas', () => {
     cy.get(cardSelector).trigger('dragstart');
     cy.get('.msla-action-button-v2').first().trigger('drop');
 
+    // this will improve as we change the designer to update upon drop
     cy.on('window:alert', (str) => {
       expect(str).to.contain(cardTitle);
     });
