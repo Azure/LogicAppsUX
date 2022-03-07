@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Beállításcímke"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -26,13 +32,13 @@
   "0y5eia": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "További parancsok"
     }
   ],
   "1A1P5b": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Megjegyzés"
     }
   ],
   "1R6Vaa": [
@@ -81,6 +87,12 @@
       "value": "Befejezés időpontja"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Kikapcsolva"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -96,7 +108,7 @@
   "4cVuMw": [
     {
       "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
+      "value": "Megjegyzéseket csak a lépés bemeneteinek szerkesztése közben adhat hozzá."
     }
   ],
   "4vmGh0": [
@@ -171,6 +183,12 @@
       "value": "Kapcsolat szükséges"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "Bekapcsolva"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -239,6 +257,12 @@
       "value": "Válasszon ki egy kártyát a tartalom megtekintéséhez"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Beállításérték"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -254,7 +278,7 @@
   "M0HMjE": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "Hozzászólás hozzáadása"
     }
   ],
   "M6U2LE": [
@@ -302,7 +326,7 @@
   "OSHNZ2": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Megjegyzés"
     }
   ],
   "Oib1mL": [
@@ -339,6 +363,12 @@
     {
       "type": 0,
       "value": "további panelek"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Összecsukás"
     }
   ],
   "PaPPLr": [
@@ -446,7 +476,7 @@
   "Tz5jTR": [
     {
       "type": 0,
-      "value": "Collapse/Expand"
+      "value": "Összecsukás/kibontás"
     }
   ],
   "UCNM4L": [
@@ -580,13 +610,19 @@
   "ZbX8xq": [
     {
       "type": 0,
-      "value": "This operation has already been deleted."
+      "value": "Ezt a műveletet már törölték."
     }
   ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Továbbiak betöltése"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Címke beállítása"
     }
   ],
   "ci6ex1": [
@@ -616,7 +652,7 @@
   "d3bSQA": [
     {
       "type": 0,
-      "value": "Delete comment"
+      "value": "Hozzászólás törlése"
     }
   ],
   "e4Onhn": [
@@ -704,7 +740,7 @@
   "iBlvhu": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Megjegyzés"
     }
   ],
   "iJOIca": [
@@ -717,6 +753,12 @@
     {
       "type": 0,
       "value": "A Művelet tesztelése konfigurálva van."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Kibontás"
     }
   ],
   "iUs7pv": [
@@ -922,7 +964,7 @@
   "rCl53e": [
     {
       "type": 0,
-      "value": "Card Title"
+      "value": "Kártya címe"
     }
   ],
   "shF9tZ": [
@@ -976,7 +1018,7 @@
   "vSlNPe": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Törlés"
     }
   ],
   "vwH/XV": [

@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Setting Label"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -26,13 +32,13 @@
   "0y5eia": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Weitere Befehle"
     }
   ],
   "1A1P5b": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Kommentar"
     }
   ],
   "1R6Vaa": [
@@ -81,6 +87,12 @@
       "value": "Endzeit"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Aus"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -96,7 +108,7 @@
   "4cVuMw": [
     {
       "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
+      "value": "Kommentare können nur beim Bearbeiten der Eingaben für einen Schritt hinzugefügt werden."
     }
   ],
   "4vmGh0": [
@@ -171,6 +183,12 @@
       "value": "Verbindung erforderlich"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "Ein"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -239,6 +257,12 @@
       "value": "Wählen Sie eine Karte aus, um den Inhalt anzuzeigen."
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Einstellungswert"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -254,7 +278,7 @@
   "M0HMjE": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "Kommentar hinzufügen"
     }
   ],
   "M6U2LE": [
@@ -302,7 +326,7 @@
   "OSHNZ2": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Kommentar"
     }
   ],
   "Oib1mL": [
@@ -339,6 +363,12 @@
     {
       "type": 0,
       "value": "weitere Bereiche"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Reduzieren"
     }
   ],
   "PaPPLr": [
@@ -446,7 +476,7 @@
   "Tz5jTR": [
     {
       "type": 0,
-      "value": "Collapse/Expand"
+      "value": "Reduzieren/Erweitern"
     }
   ],
   "UCNM4L": [
@@ -580,13 +610,19 @@
   "ZbX8xq": [
     {
       "type": 0,
-      "value": "This operation has already been deleted."
+      "value": "Dieser Vorgang wurde bereits gelöscht."
     }
   ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Weitere laden"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Label setting"
     }
   ],
   "ci6ex1": [
@@ -616,7 +652,7 @@
   "d3bSQA": [
     {
       "type": 0,
-      "value": "Delete comment"
+      "value": "Kommentar löschen"
     }
   ],
   "e4Onhn": [
@@ -696,7 +732,7 @@
   "iBlvhu": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Kommentar"
     }
   ],
   "iJOIca": [
@@ -709,6 +745,12 @@
     {
       "type": 0,
       "value": "Für diese Aktion sind Tests konfiguriert."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Erweitern"
     }
   ],
   "iUs7pv": [
@@ -914,7 +956,7 @@
   "rCl53e": [
     {
       "type": 0,
-      "value": "Card Title"
+      "value": "Kartentitel"
     }
   ],
   "shF9tZ": [
@@ -968,7 +1010,7 @@
   "vSlNPe": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Löschen"
     }
   ],
   "vwH/XV": [
