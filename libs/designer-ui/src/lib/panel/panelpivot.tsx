@@ -1,12 +1,12 @@
-import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
-import { PanelTab } from '.';
-import { PageActionTelemetryData } from '../telemetry/models';
-import { useIntl } from 'react-intl';
 import React from 'react';
+import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
+import { PageActionTelemetryData } from '../telemetry/models';
+import { PanelTab } from './panelUtil';
+import { useIntl } from 'react-intl';
 
 export interface CategoryPivotProps {
   isCollapsed: boolean;
-  tabs: PanelTab[];
+  tabs: Record<string, PanelTab>;
   selectedTab?: string;
   onTabChange(tabName?: string): void;
   onCategoryClick?(item: PivotItem): void;
@@ -38,9 +38,9 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackE
         overflowBehavior="menu"
         overflowAriaLabel={overflowLabel}
       >
-        {tabs.map(({ name, title }: PanelTab) => (
-          <PivotItem key={name} itemKey={name} headerText={title} />
-        ))}
+        {Object.entries(tabs).map(([name, PanelTab]) => {
+          return <PivotItem key={name} itemKey={name} headerText={PanelTab.title} />;
+        })}
       </Pivot>
     </div>
   );

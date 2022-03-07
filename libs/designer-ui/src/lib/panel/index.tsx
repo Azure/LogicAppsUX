@@ -7,16 +7,7 @@ import { PageActionTelemetryData } from '../telemetry/models';
 import { MenuItemOption } from '../card/types';
 import { EmptyContent } from '../card/emptycontent';
 import constants from '../constants';
-export interface PanelTab {
-  name: string;
-  title: string;
-  description?: string;
-  icon?: string;
-  enabled?: boolean;
-  order?: number;
-  content: JSX.Element;
-  visibilityPredicate?(): boolean;
-}
+import { PanelTab } from './panelUtil';
 export interface PanelContainerProps {
   cardIcon?: string;
   comment?: string;
@@ -28,7 +19,7 @@ export interface PanelContainerProps {
   selectedTab: string;
   showCommentBox: boolean;
   readOnlyMode?: boolean;
-  tabs: PanelTab[];
+  tabs: Record<string, PanelTab>;
   title: string;
   width: string;
   trackEvent(data: PageActionTelemetryData): void;

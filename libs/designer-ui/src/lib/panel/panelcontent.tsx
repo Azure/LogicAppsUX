@@ -1,18 +1,18 @@
 import React from 'react';
-import { PanelTab } from '.';
+import { PanelTab } from './panelUtil';
 
 export interface PanelContentProps {
   selectedTab?: string;
-  tabs: PanelTab[];
+  tabs: Record<string, PanelTab>;
 }
 
 export const PanelContent = ({ tabs, selectedTab }: PanelContentProps): JSX.Element => {
   return (
     <div className="msla-content">
       {
-        tabs.find((t) => {
-          return t.name === selectedTab;
-        })?.content
+        Object.entries(tabs).find((tab) => {
+          return tab[0] === selectedTab;
+        })?.[1].content
       }
     </div>
   );

@@ -1,9 +1,11 @@
 import { PanelContainer } from './';
 import { PageActionTelemetryData } from '../telemetry/models';
 import { useEffect, useState } from 'react';
-import { workflowParametersTab, aboutTab, connectionTab } from './registeredtabs';
+import { retryTab } from './registeredtabs';
 import { MenuItemOption, MenuItemType } from '../card/types';
 import { useIntl } from 'react-intl';
+import { PanelTab } from './panelUtil';
+import { registerTab } from './panelUtil';
 export interface PanelRootProps {
   cardIcon?: string;
   comment?: string;
@@ -18,9 +20,17 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
 
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
   const [currentComment, setCurrentComment] = useState(comment);
-  const [selectedTab, setSelectedTab] = useState(workflowParametersTab.name);
+  const [selectedTab, setSelectedTab] = useState(retryTab.title);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [width, setWidth] = useState('auto');
+
+  const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
+
+  useEffect(() => {
+    setRegisteredTabs(registerTab(retryTab, registeredTabs));
+    console.log(registeredTabs);
+  }, [registeredTabs]);
+
   useEffect(() => {
     isCollapsed ? setWidth('auto') : setWidth('630px');
   }, [isCollapsed]);
@@ -111,7 +121,7 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
       panelHeaderMenu={getPanelHeaderMenu()}
       selectedTab={selectedTab}
       showCommentBox={showCommentBox}
-      tabs={[workflowParametersTab, aboutTab, connectionTab]}
+      tabs={registeredTabs}
       width={width}
       setSelectedTab={setSelectedTab}
       setIsCollapsed={setIsCollapsed}
