@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Inställningsetikett"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -26,13 +32,13 @@
   "0y5eia": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Fler kommandon"
     }
   ],
   "1A1P5b": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Kommentar"
     }
   ],
   "1R6Vaa": [
@@ -81,6 +87,12 @@
       "value": "Sluttid"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Av"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -96,13 +108,19 @@
   "4cVuMw": [
     {
       "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
+      "value": "Du kan bara lägga till kommentarer när du redigerar ett stegs indata."
     }
   ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "Id för tjänstbegäran"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "5rkegy": [
@@ -169,6 +187,12 @@
     {
       "type": 0,
       "value": "Anslutning krävs"
+    }
+  ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "På"
     }
   ],
   "DZZ3fj": [
@@ -239,6 +263,12 @@
       "value": "Välj ett kort för att visa innehållet"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Inställningsvärde"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -254,7 +284,7 @@
   "M0HMjE": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "Lägg till en kommentar"
     }
   ],
   "M6U2LE": [
@@ -302,7 +332,7 @@
   "OSHNZ2": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Kommentar"
     }
   ],
   "Oib1mL": [
@@ -339,6 +369,12 @@
     {
       "type": 0,
       "value": "fler paneler"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Dölj"
     }
   ],
   "PaPPLr": [
@@ -446,7 +482,7 @@
   "Tz5jTR": [
     {
       "type": 0,
-      "value": "Collapse/Expand"
+      "value": "Minimera/expandera"
     }
   ],
   "UCNM4L": [
@@ -580,13 +616,19 @@
   "ZbX8xq": [
     {
       "type": 0,
-      "value": "This operation has already been deleted."
+      "value": "Den här åtgärden har redan tagits bort."
     }
   ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Läs in fler"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Etikettinställning"
     }
   ],
   "ci6ex1": [
@@ -616,7 +658,7 @@
   "d3bSQA": [
     {
       "type": 0,
-      "value": "Delete comment"
+      "value": "Ta bort kommentar"
     }
   ],
   "e4Onhn": [
@@ -700,7 +742,7 @@
   "iBlvhu": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Kommentar"
     }
   ],
   "iJOIca": [
@@ -713,6 +755,12 @@
     {
       "type": 0,
       "value": "Den här åtgärden har konfigurerats för testning."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expandera"
     }
   ],
   "iUs7pv": [
@@ -918,7 +966,7 @@
   "rCl53e": [
     {
       "type": 0,
-      "value": "Card Title"
+      "value": "Kortrubrik"
     }
   ],
   "shF9tZ": [
@@ -972,7 +1020,7 @@
   "vSlNPe": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Ta bort"
     }
   ],
   "vwH/XV": [

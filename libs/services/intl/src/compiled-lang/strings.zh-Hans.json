@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "设置标签"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -26,13 +32,13 @@
   "0y5eia": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "更多命令"
     }
   ],
   "1A1P5b": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "评论"
     }
   ],
   "1R6Vaa": [
@@ -74,6 +80,12 @@
       "value": "结束时间"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -89,13 +101,19 @@
   "4cVuMw": [
     {
       "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
+      "value": "只可在编辑某步骤的输入时添加注释。"
     }
   ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "服务请求 ID"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "5rkegy": [
@@ -164,6 +182,12 @@
       "value": "需要连接"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "开启"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -221,6 +245,12 @@
       "value": "请选择卡片以查看内容"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "设置值"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -236,7 +266,7 @@
   "M0HMjE": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "添加评论"
     }
   ],
   "M6U2LE": [
@@ -284,7 +314,7 @@
   "OSHNZ2": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "评论"
     }
   ],
   "Oib1mL": [
@@ -321,6 +351,12 @@
     {
       "type": 0,
       "value": "更多面板"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "折叠"
     }
   ],
   "PaPPLr": [
@@ -413,7 +449,7 @@
   "Tz5jTR": [
     {
       "type": 0,
-      "value": "Collapse/Expand"
+      "value": "折叠/展开"
     }
   ],
   "UCNM4L": [
@@ -551,13 +587,19 @@
   "ZbX8xq": [
     {
       "type": 0,
-      "value": "This operation has already been deleted."
+      "value": "已删除此操作。"
     }
   ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "加载更多内容"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "标签设置"
     }
   ],
   "ci6ex1": [
@@ -587,7 +629,7 @@
   "d3bSQA": [
     {
       "type": 0,
-      "value": "Delete comment"
+      "value": "删除评论"
     }
   ],
   "e4Onhn": [
@@ -664,7 +706,7 @@
   "iBlvhu": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "评论"
     }
   ],
   "iJOIca": [
@@ -677,6 +719,12 @@
     {
       "type": 0,
       "value": "此操作已配置测试。"
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "展开"
     }
   ],
   "iUs7pv": [
@@ -879,7 +927,7 @@
   "rCl53e": [
     {
       "type": 0,
-      "value": "Card Title"
+      "value": "卡标题"
     }
   ],
   "shF9tZ": [
@@ -933,7 +981,7 @@
   "vSlNPe": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "删除"
     }
   ],
   "vwH/XV": [

@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "設定標籤"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -26,13 +32,13 @@
   "0y5eia": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "更多命令"
     }
   ],
   "1A1P5b": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "註解"
     }
   ],
   "1R6Vaa": [
@@ -70,6 +76,12 @@
       "value": "結束時間"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "關閉"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -85,13 +97,19 @@
   "4cVuMw": [
     {
       "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
+      "value": "只能在編輯步驟的輸入時新增註解。"
     }
   ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "服務要求識別碼"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "5rkegy": [
@@ -160,6 +178,12 @@
       "value": "需要連線"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "開啟"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -217,6 +241,12 @@
       "value": "請選取卡片以查看內容"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "設定值"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -232,7 +262,7 @@
   "M0HMjE": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "新增註解"
     }
   ],
   "M6U2LE": [
@@ -280,7 +310,7 @@
   "OSHNZ2": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "註解"
     }
   ],
   "Oib1mL": [
@@ -317,6 +347,12 @@
     {
       "type": 0,
       "value": "更多面板"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "摺疊"
     }
   ],
   "PaPPLr": [
@@ -409,7 +445,7 @@
   "Tz5jTR": [
     {
       "type": 0,
-      "value": "Collapse/Expand"
+      "value": "摺疊/展開"
     }
   ],
   "UCNM4L": [
@@ -543,13 +579,19 @@
   "ZbX8xq": [
     {
       "type": 0,
-      "value": "This operation has already been deleted."
+      "value": "已刪除這項作業。"
     }
   ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "載入更多"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "標籤設定"
     }
   ],
   "ci6ex1": [
@@ -579,7 +621,7 @@
   "d3bSQA": [
     {
       "type": 0,
-      "value": "Delete comment"
+      "value": "刪除註解"
     }
   ],
   "e4Onhn": [
@@ -648,7 +690,7 @@
   "iBlvhu": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "註解"
     }
   ],
   "iJOIca": [
@@ -661,6 +703,12 @@
     {
       "type": 0,
       "value": "此動作已設定測試。"
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "展開"
     }
   ],
   "iUs7pv": [
@@ -855,7 +903,7 @@
   "rCl53e": [
     {
       "type": 0,
-      "value": "Card Title"
+      "value": "卡片標題"
     }
   ],
   "shF9tZ": [
@@ -909,7 +957,7 @@
   "vSlNPe": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "刪除"
     }
   ],
   "vwH/XV": [

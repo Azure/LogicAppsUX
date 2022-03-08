@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Rótulo da Configuração"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -26,13 +32,13 @@
   "0y5eia": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Mais comandos"
     }
   ],
   "1A1P5b": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Comentar"
     }
   ],
   "1R6Vaa": [
@@ -81,6 +87,12 @@
       "value": "Hora de término"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Desligar"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -96,13 +108,19 @@
   "4cVuMw": [
     {
       "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
+      "value": "Comentários podem ser adicionados somente ao editar as saídas de uma etapa."
     }
   ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "ID da solicitação de serviço"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "5rkegy": [
@@ -169,6 +187,12 @@
     {
       "type": 0,
       "value": "Conexão exigida"
+    }
+  ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "Ligar"
     }
   ],
   "DZZ3fj": [
@@ -239,6 +263,12 @@
       "value": "Selecione um cartão para ver o conteúdo"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Valor da Configuração"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -254,7 +284,7 @@
   "M0HMjE": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "Adicionar um comentário"
     }
   ],
   "M6U2LE": [
@@ -302,7 +332,7 @@
   "OSHNZ2": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Comentar"
     }
   ],
   "Oib1mL": [
@@ -339,6 +369,12 @@
     {
       "type": 0,
       "value": "mais painéis"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Recolher"
     }
   ],
   "PaPPLr": [
@@ -442,7 +478,7 @@
   "Tz5jTR": [
     {
       "type": 0,
-      "value": "Collapse/Expand"
+      "value": "Recolher/Expandir"
     }
   ],
   "UCNM4L": [
@@ -576,13 +612,19 @@
   "ZbX8xq": [
     {
       "type": 0,
-      "value": "This operation has already been deleted."
+      "value": "Esta operação já foi excluída."
     }
   ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Carregar mais"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Configuração do rótulo"
     }
   ],
   "ci6ex1": [
@@ -612,7 +654,7 @@
   "d3bSQA": [
     {
       "type": 0,
-      "value": "Delete comment"
+      "value": "Excluir comentário"
     }
   ],
   "e4Onhn": [
@@ -692,7 +734,7 @@
   "iBlvhu": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Comentar"
     }
   ],
   "iJOIca": [
@@ -705,6 +747,12 @@
     {
       "type": 0,
       "value": "Esta Ação tem testes configurados."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expandir"
     }
   ],
   "iUs7pv": [
@@ -910,7 +958,7 @@
   "rCl53e": [
     {
       "type": 0,
-      "value": "Card Title"
+      "value": "Título do Cartão"
     }
   ],
   "shF9tZ": [
@@ -964,7 +1012,7 @@
   "vSlNPe": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Excluir"
     }
   ],
   "vwH/XV": [
