@@ -2,11 +2,11 @@ name: Test Runner
 
 on:
   push:
-    branches: [main]
+    branches: [dacogbur/axe-storybook]
   pull_request:
     branches: [main]
   workflow_dispatch:
-
+    branches: [dacogbur/axe-storybook]
 jobs:
   build:
     runs-on: ubuntu-latest
