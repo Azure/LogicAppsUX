@@ -5,6 +5,8 @@
   "scripts": {
     "start": "nx serve",
     "start:storybook": "nx run designer:storybook",
+    "storybook:axe": "axe-storybook --storybook-address http://localhost:4400",
+    "storybook:files-axe": "axe-storybook --build-dir dist/storybook/designer/ --headless false --browser chromium",
     "build": "nx run designer:build",
     "build:all": "nx run-many --all --target=build",
     "test": "nx affected --target=test",
@@ -68,6 +70,7 @@
     "@babel/core": "^7.17.5",
     "@babel/plugin-transform-modules-commonjs": "^7.16.8",
     "@babel/preset-typescript": "^7.16.7",
+    "@chanzuckerberg/axe-storybook-testing": "^5.0.0",
     "@formatjs/cli": "^4.8.2",
     "@formatjs/intl": "^2.0.0",
     "@formatjs/ts-transformer": "^3.9.2",
