@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Label Pengaturan"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -26,13 +32,13 @@
   "0y5eia": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Perintah lainnya"
     }
   ],
   "1A1P5b": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Komentar"
     }
   ],
   "1R6Vaa": [
@@ -70,6 +76,12 @@
       "value": "Waktu berakhir"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Tidak Aktif"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -85,13 +97,19 @@
   "4cVuMw": [
     {
       "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
+      "value": "Komentar hanya dapat ditambahkan saat mengedit input langkah."
     }
   ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "ID permintaan layanan"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "5rkegy": [
@@ -160,6 +178,12 @@
       "value": "Koneksi diperlukan"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "Aktif"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -217,6 +241,12 @@
       "value": "Pilih kartu untuk melihat konten"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Nilai Pengaturan"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -232,7 +262,7 @@
   "M0HMjE": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "Tambahkan komentar"
     }
   ],
   "M6U2LE": [
@@ -280,7 +310,7 @@
   "OSHNZ2": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Komentar"
     }
   ],
   "Oib1mL": [
@@ -317,6 +347,12 @@
     {
       "type": 0,
       "value": "panel lainnya"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Ciutkan"
     }
   ],
   "PaPPLr": [
@@ -409,7 +445,7 @@
   "Tz5jTR": [
     {
       "type": 0,
-      "value": "Collapse/Expand"
+      "value": "Ciutkan/Luaskan"
     }
   ],
   "UCNM4L": [
@@ -543,13 +579,19 @@
   "ZbX8xq": [
     {
       "type": 0,
-      "value": "This operation has already been deleted."
+      "value": "Operasi ini sudah dihapus."
     }
   ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Muat lainnya"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Pengaturan label"
     }
   ],
   "ci6ex1": [
@@ -579,7 +621,7 @@
   "d3bSQA": [
     {
       "type": 0,
-      "value": "Delete comment"
+      "value": "Hapus komentar"
     }
   ],
   "e4Onhn": [
@@ -648,7 +690,7 @@
   "iBlvhu": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Komentar"
     }
   ],
   "iJOIca": [
@@ -661,6 +703,12 @@
     {
       "type": 0,
       "value": "Tindakan ini memiliki pengujian yang dikonfigurasi."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Luaskan"
     }
   ],
   "iUs7pv": [
@@ -855,7 +903,7 @@
   "rCl53e": [
     {
       "type": 0,
-      "value": "Card Title"
+      "value": "Judul Kartu"
     }
   ],
   "shF9tZ": [
@@ -909,7 +957,7 @@
   "vSlNPe": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Hapus"
     }
   ],
   "vwH/XV": [

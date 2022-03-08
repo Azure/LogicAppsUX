@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Label voor instelling"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -26,13 +32,13 @@
   "0y5eia": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Meer opdrachten"
     }
   ],
   "1A1P5b": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Opmerking"
     }
   ],
   "1R6Vaa": [
@@ -81,6 +87,12 @@
       "value": "Eindtijd"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Uit"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -96,13 +108,19 @@
   "4cVuMw": [
     {
       "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
+      "value": "Opmerkingen kunnen alleen worden toegevoegd tijdens de invoerfasen van een stap."
     }
   ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "Serviceaanvraag-id"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "5rkegy": [
@@ -169,6 +187,12 @@
     {
       "type": 0,
       "value": "Een verbinding is vereist"
+    }
+  ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "Aan"
     }
   ],
   "DZZ3fj": [
@@ -239,6 +263,12 @@
       "value": "Selecteer een kaart om de inhoud weer te geven"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Instellingswaarde"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -254,7 +284,7 @@
   "M0HMjE": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "Opmerking toevoegen"
     }
   ],
   "M6U2LE": [
@@ -302,7 +332,7 @@
   "OSHNZ2": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Opmerking"
     }
   ],
   "Oib1mL": [
@@ -339,6 +369,12 @@
     {
       "type": 0,
       "value": "meer deelvensters"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Samenvouwen"
     }
   ],
   "PaPPLr": [
@@ -446,7 +482,7 @@
   "Tz5jTR": [
     {
       "type": 0,
-      "value": "Collapse/Expand"
+      "value": "Samenvouwen/uitvouwen"
     }
   ],
   "UCNM4L": [
@@ -580,13 +616,19 @@
   "ZbX8xq": [
     {
       "type": 0,
-      "value": "This operation has already been deleted."
+      "value": "Deze bewerking is al verwijderd."
     }
   ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Meer laden"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Labelinstelling"
     }
   ],
   "ci6ex1": [
@@ -616,7 +658,7 @@
   "d3bSQA": [
     {
       "type": 0,
-      "value": "Delete comment"
+      "value": "Opmerking verwijderen"
     }
   ],
   "e4Onhn": [
@@ -704,7 +746,7 @@
   "iBlvhu": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Opmerking"
     }
   ],
   "iJOIca": [
@@ -717,6 +759,12 @@
     {
       "type": 0,
       "value": "Voor deze actie zijn tests geconfigureerd."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Uitvouwen"
     }
   ],
   "iUs7pv": [
@@ -922,7 +970,7 @@
   "rCl53e": [
     {
       "type": 0,
-      "value": "Card Title"
+      "value": "Kaarttitel"
     }
   ],
   "shF9tZ": [
@@ -976,7 +1024,7 @@
   "vSlNPe": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Verwijderen"
     }
   ],
   "vwH/XV": [

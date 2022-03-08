@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Popisek nastavení"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -26,13 +32,13 @@
   "0y5eia": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Další příkazy"
     }
   ],
   "1A1P5b": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Komentář"
     }
   ],
   "1R6Vaa": [
@@ -115,6 +121,12 @@
       "value": "Koncový čas"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "Vypnuto"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -130,13 +142,19 @@
   "4cVuMw": [
     {
       "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
+      "value": "Komentáře je možné přidávat jenom při úpravách vstupů kroku."
     }
   ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "ID žádosti o služby"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "5rkegy": [
@@ -203,6 +221,12 @@
     {
       "type": 0,
       "value": "Připojení je povinné"
+    }
+  ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "Zapnuto"
     }
   ],
   "DZZ3fj": [
@@ -295,6 +319,12 @@
       "value": "Pokud si chcete zobrazit obsah, vyberte prosím kartu."
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Hodnota nastavení"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -310,7 +340,7 @@
   "M0HMjE": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "Přidat komentář"
     }
   ],
   "M6U2LE": [
@@ -358,7 +388,7 @@
   "OSHNZ2": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Komentář"
     }
   ],
   "Oib1mL": [
@@ -395,6 +425,12 @@
     {
       "type": 0,
       "value": "více panelů"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Sbalit"
     }
   ],
   "PaPPLr": [
@@ -520,7 +556,7 @@
   "Tz5jTR": [
     {
       "type": 0,
-      "value": "Collapse/Expand"
+      "value": "Sbalit nebo rozbalit"
     }
   ],
   "UCNM4L": [
@@ -654,13 +690,19 @@
   "ZbX8xq": [
     {
       "type": 0,
-      "value": "This operation has already been deleted."
+      "value": "Tato operace už byla odstraněna."
     }
   ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Načíst další"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Nastavení popisku"
     }
   ],
   "ci6ex1": [
@@ -690,7 +732,7 @@
   "d3bSQA": [
     {
       "type": 0,
-      "value": "Delete comment"
+      "value": "Odstranit komentář"
     }
   ],
   "e4Onhn": [
@@ -796,7 +838,7 @@
   "iBlvhu": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Komentář"
     }
   ],
   "iJOIca": [
@@ -809,6 +851,12 @@
     {
       "type": 0,
       "value": "Tato akce má nakonfigurované testování."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Rozbalit"
     }
   ],
   "iUs7pv": [
@@ -1036,7 +1084,7 @@
   "rCl53e": [
     {
       "type": 0,
-      "value": "Card Title"
+      "value": "Název karty"
     }
   ],
   "shF9tZ": [
@@ -1090,7 +1138,7 @@
   "vSlNPe": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Odstranit"
     }
   ],
   "vwH/XV": [
