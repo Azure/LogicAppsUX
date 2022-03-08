@@ -239,7 +239,7 @@ export const WorkflowparameterField = ({
             {nameTitle}
           </Label>
           <TextField
-            data-cy={parameterDetails.name}
+            data-testid={parameterDetails.name}
             styles={textFieldStyles}
             id={parameterDetails.name}
             ariaLabel={nameTitle}
@@ -255,7 +255,7 @@ export const WorkflowparameterField = ({
             {typeTitle}
           </Label>
           <Dropdown
-            data-cy={parameterDetails.type}
+            data-testid={parameterDetails.type}
             id={parameterDetails.type}
             ariaLabel={typeTitle}
             options={typeOptions}
@@ -270,7 +270,7 @@ export const WorkflowparameterField = ({
             {defaultValueTitle}
           </Label>
           <TextField
-            data-cy={parameterDetails.defaultValue}
+            data-testid={parameterDetails.defaultValue}
             id={parameterDetails.defaultValue}
             ariaLabel={defaultValueTitle}
             placeholder={defaultValueDescription}
@@ -288,7 +288,7 @@ export const WorkflowparameterField = ({
             {actualValueTitle}
           </Label>
           <TextField
-            data-cy={parameterDetails.value}
+            data-testid={parameterDetails.value}
             styles={disabledTextFieldStyles}
             id={parameterDetails.value}
             ariaLabel={actualValueTitle}

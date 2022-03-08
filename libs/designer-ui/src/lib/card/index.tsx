@@ -121,6 +121,7 @@ export const Card: React.FC<CardProps> = ({
         onKeyDown={handleKeyDown}
         tabIndex={0}
         onKeyUp={handleKeyUp}
+        data-testid={`card-${title}`}
       >
         <div className="panel-card-main">
           <div className="panel-card-header">
