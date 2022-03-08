@@ -1,4 +1,10 @@
 {
+  "+UirjI": [
+    {
+      "type": 0,
+      "value": "Etichetta impostazione"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -26,13 +32,13 @@
   "0y5eia": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Altri comandi"
     }
   ],
   "1A1P5b": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Commento"
     }
   ],
   "1R6Vaa": [
@@ -81,6 +87,12 @@
       "value": "Ora di fine"
     }
   ],
+  "2mnU/w": [
+    {
+      "type": 0,
+      "value": "No"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -96,7 +108,7 @@
   "4cVuMw": [
     {
       "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
+      "value": "È possibile aggiungere i commenti solo durante la modifica degli input di un passaggio."
     }
   ],
   "4vmGh0": [
@@ -171,6 +183,12 @@
       "value": "Connessione richiesta"
     }
   ],
+  "DFo+mo": [
+    {
+      "type": 0,
+      "value": "Sì"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -239,6 +257,12 @@
       "value": "Selezionare una scheda per visualizzare il contenuto"
     }
   ],
+  "HymOpF": [
+    {
+      "type": 0,
+      "value": "Valore impostazione"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
@@ -254,7 +278,7 @@
   "M0HMjE": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "Aggiungere un commento"
     }
   ],
   "M6U2LE": [
@@ -302,7 +326,7 @@
   "OSHNZ2": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Commento"
     }
   ],
   "Oib1mL": [
@@ -347,6 +371,12 @@
     {
       "type": 0,
       "value": "altri pannelli"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Comprimi"
     }
   ],
   "PaPPLr": [
@@ -450,7 +480,7 @@
   "Tz5jTR": [
     {
       "type": 0,
-      "value": "Collapse/Expand"
+      "value": "Comprimere/espandere"
     }
   ],
   "UCNM4L": [
@@ -584,13 +614,19 @@
   "ZbX8xq": [
     {
       "type": 0,
-      "value": "This operation has already been deleted."
+      "value": "Questa operazione è già stata eliminata."
     }
   ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Carica altro"
+    }
+  ],
+  "bgfjqS": [
+    {
+      "type": 0,
+      "value": "Impostazione etichetta"
     }
   ],
   "ci6ex1": [
@@ -620,7 +656,7 @@
   "d3bSQA": [
     {
       "type": 0,
-      "value": "Delete comment"
+      "value": "Eliminare commento"
     }
   ],
   "e4Onhn": [
@@ -700,7 +736,7 @@
   "iBlvhu": [
     {
       "type": 0,
-      "value": "Comment"
+      "value": "Commento"
     }
   ],
   "iJOIca": [
@@ -713,6 +749,12 @@
     {
       "type": 0,
       "value": "Questa azione ha il testing configurato."
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Espandi"
     }
   ],
   "iUs7pv": [
@@ -918,7 +960,7 @@
   "rCl53e": [
     {
       "type": 0,
-      "value": "Card Title"
+      "value": "Titolo scheda"
     }
   ],
   "shF9tZ": [
@@ -972,7 +1014,7 @@
   "vSlNPe": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Eliminare"
     }
   ],
   "vwH/XV": [
