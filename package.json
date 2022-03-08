@@ -7,7 +7,6 @@
     "start:storybook": "nx run designer:storybook",
     "storybook:axe": "axe-storybook --storybook-address http://localhost:4400",
     "storybook:files-axe": "axe-storybook --build-dir dist/storybook/designer/",
-    "storybook:files-axe-local": "axe-storybook --build-dir dist/storybook/designer/ --headless false",
     "build": "nx run designer:build",
     "build:all": "nx run-many --all --target=build",
     "test": "nx affected --target=test",
