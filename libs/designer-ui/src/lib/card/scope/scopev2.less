@@ -5,7 +5,6 @@
 .msla-scope-v2 {
   display: block;
   margin: 0 auto -20px;
-  padding: 0 8px;
   width: fit-content;
 
   &.msla-has-comment {
@@ -50,6 +49,8 @@
   padding: 20px 8px 15px 8px;
   position: relative;
   top: -20px;
+  width: 100%;
+  height: calc(100% - 40px);
 
   &.msla-expanded {
     min-height: 72px;
@@ -310,7 +311,7 @@
 }
 
 .panel-card-content-gripper-section {
-  margin: 10px 0 0 5px;
+  margin: 10px 0 0 -8px;
   visibility: hidden;
 }
 
@@ -381,6 +382,8 @@
 
 body.dark {
   .msla-scope-v2--body {
+    width: 100%;
+    height: calc(100% - 40px);
     background: #252423;
     border: 2px solid #8a8886;
 
@@ -430,4 +433,9 @@ body.dark {
   .msla-monitoring-scope-container .msla-pill {
     color: @ms-color-black;
   }
+}
+
+.msla-scope-card {
+  width: 100%;
+  height: calc(100% + 8px);
 }

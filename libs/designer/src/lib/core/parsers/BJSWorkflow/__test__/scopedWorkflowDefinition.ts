@@ -1,4 +1,4 @@
-import type { Actions } from '../../../state/workflowSlice';
+import type { Actions, NodesMetadata } from '../../../state/workflowSlice';
 import type { WorkflowGraph } from '../../models/workflowNode';
 
 export const scopedWorkflowDefinitionInput = {
@@ -86,7 +86,7 @@ export const scopedWorkflowDefinitionInput = {
   },
 };
 
-export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; actionData: Actions } = {
+export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; actionData: Actions; nodesMetadata: NodesMetadata } = {
   graph: {
     id: 'root',
     children: [
@@ -119,18 +119,16 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; act
     ],
   },
   actionData: {
-    manual: { scope: 'root', inputs: {}, kind: 'Http', type: 'Request' },
+    manual: { inputs: {}, kind: 'Http', type: 'Request' },
     Increment_variable: {
       inputs: { name: 'var1', value: 2 },
       runAfter: { Initialize_variable: ['Succeeded'] },
       type: 'IncrementVariable',
-      scope: 'root',
     },
     Initialize_variable: {
       inputs: { variables: [{ name: 'var1', type: 'integer' }] },
       runAfter: {},
       type: 'InitializeVariable',
-      scope: 'root',
     },
     ActionIf: {
       actions: {
@@ -144,22 +142,29 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; act
       else: { actions: { Increment_variable3: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' } } },
       runAfter: { Increment_variable: ['Succeeded'] },
       type: 'InitializeVariable',
-      scope: 'root',
     },
-    Increment_variable2: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable', scope: 'ActionIf-actions' },
+    Increment_variable2: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' },
     Increment_variable4: {
       inputs: { name: 'var1', value: 2 },
       runAfter: { Increment_variable2: ['Succeeded'] },
       type: 'IncrementVariable',
-      scope: 'ActionIf-actions',
     },
-    Increment_variable3: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable', scope: 'ActionIf-elseActions' },
+    Increment_variable3: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' },
     Response: {
       inputs: { body: "@variables('var1')", statusCode: 200 },
       kind: 'http',
       runAfter: { ActionIf: ['Succeeded'] },
       type: 'Response',
-      scope: 'root',
     },
+  },
+  nodesMetadata: {
+    manual: { graphId: 'root' },
+    Increment_variable: { graphId: 'root' },
+    Initialize_variable: { graphId: 'root' },
+    ActionIf: { graphId: 'root' },
+    Increment_variable2: { graphId: 'ActionIf-actions' },
+    Increment_variable4: { graphId: 'ActionIf-actions' },
+    Increment_variable3: { graphId: 'ActionIf-elseActions' },
+    Response: { graphId: 'root' },
   },
 };

@@ -7,28 +7,33 @@ import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
 
 type SpecTypes = 'BJS' | 'CNCF';
 
-interface ActionLocation {
-  scope?: string;
+export interface NodesMetadata {
+  [nodeId: string]: {
+    graphId: string;
+    isPlaceholderNode?: boolean;
+  };
 }
 
-export type Actions = Record<string, LogicAppsV2.ActionDefinition & ActionLocation>;
+export type Actions = Record<string, LogicAppsV2.ActionDefinition>;
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
   graph?: WorkflowGraph | null;
   actions: Actions;
+  nodesMetadata: NodesMetadata;
 }
 
 const initialState: WorkflowState = {
   workflowSpec: 'BJS',
   graph: null,
   actions: {},
+  nodesMetadata: {},
 };
 
 interface AddNodePayload {
   id: string;
-  parentId: string;
+  parentId?: string;
   childId?: string;
-  graph?: string;
+  graphId: string;
 }
 
 export const workflowSlice = createSlice({
@@ -73,6 +78,7 @@ export const workflowSlice = createSlice({
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
       state.graph = action.payload.graph;
       state.actions = action.payload.actionData;
+      state.nodesMetadata = action.payload.nodesMetadata;
     });
   },
 });
