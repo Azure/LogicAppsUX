@@ -53,7 +53,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
         position: { x: node.x ?? 0, y: node.y ?? 0 },
         data: { label: node.id },
         parentNode: parent,
-        type: node.children ? undefined : 'testNode',
+        type: node.children ? 'graphNode' : 'testNode',
         style: node.children ? { height: node.height, width: node.width } : undefined,
       });
     }
@@ -64,7 +64,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
         position: { x: n.x ?? 0, y: n.y ?? 0 },
         data: { label: n.id },
         parentNode: node.id !== 'root' ? node.id : undefined,
-        type: n.children ? undefined : 'testNode',
+        type: n.children ? 'graphNode' : 'testNode',
         style: n.children ? { height: n.height, width: n.width } : undefined,
       });
 

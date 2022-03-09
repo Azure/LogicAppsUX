@@ -680,7 +680,7 @@ declare namespace LogicAppsV2 {
   }
 
   interface Operation {
-    type: OpterationTypes;
+    type: string;
     kind?: string;
     description?: string;
     metadata?: any;

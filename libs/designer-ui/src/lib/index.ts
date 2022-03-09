@@ -3,6 +3,7 @@ export * from './announcedmatches';
 // export * from './arrayeditor';
 // export * from './authentication';
 export * from './card';
+export * from './card/scope';
 export * from './checkbox';
 // export * from './colorizer';
 // export * from './combobox';
