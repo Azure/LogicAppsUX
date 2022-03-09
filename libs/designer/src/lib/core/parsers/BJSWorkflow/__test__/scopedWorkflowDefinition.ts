@@ -61,7 +61,13 @@ export const scopedWorkflowDefinitionInput = {
       runAfter: {
         Increment_variable: ['Succeeded'],
       },
-      type: 'InitializeVariable',
+      type: 'If',
+    },
+    EmptyScope: {
+      runAfter: {
+        ActionIf: ['Succeeded'],
+      },
+      type: 'Scope',
     },
     Response: {
       inputs: {
@@ -70,7 +76,7 @@ export const scopedWorkflowDefinitionInput = {
       },
       kind: 'http',
       runAfter: {
-        ActionIf: ['Succeeded'],
+        EmptyScope: ['Succeeded'],
       },
       type: 'Response',
     },
@@ -109,13 +115,26 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; act
           { id: 'ActionIf-elseActions', children: [{ id: 'Increment_variable3', height: 0, width: 0 }], edges: [] },
         ],
       },
+      {
+        id: 'EmptyScope',
+        height: 0,
+        width: 0,
+        children: [
+          {
+            id: 'EmptyScope-actions',
+            children: [{ id: 'EmptyScope-actions-emptyNode', height: 0, width: 0 }],
+            edges: [],
+          },
+        ],
+      },
       { id: 'Response', height: 0, width: 0 },
     ],
     edges: [
       { id: 'manual-Initialize_variable', source: 'manual', target: 'Initialize_variable' },
       { id: 'Initialize_variable-Increment_variable', source: 'Initialize_variable', target: 'Increment_variable' },
       { id: 'Increment_variable-ActionIf', source: 'Increment_variable', target: 'ActionIf' },
-      { id: 'ActionIf-Response', source: 'ActionIf', target: 'Response' },
+      { id: 'ActionIf-EmptyScope', source: 'ActionIf', target: 'EmptyScope' },
+      { id: 'EmptyScope-Response', source: 'EmptyScope', target: 'Response' },
     ],
   },
   actionData: {
@@ -141,7 +160,7 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; act
       },
       else: { actions: { Increment_variable3: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' } } },
       runAfter: { Increment_variable: ['Succeeded'] },
-      type: 'InitializeVariable',
+      type: 'If',
     },
     Increment_variable2: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' },
     Increment_variable4: {
@@ -150,10 +169,14 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; act
       type: 'IncrementVariable',
     },
     Increment_variable3: { inputs: { name: 'var1', value: 2 }, type: 'IncrementVariable' },
+    EmptyScope: {
+      runAfter: { ActionIf: ['Succeeded'] },
+      type: 'Scope',
+    },
     Response: {
       inputs: { body: "@variables('var1')", statusCode: 200 },
       kind: 'http',
-      runAfter: { ActionIf: ['Succeeded'] },
+      runAfter: { EmptyScope: ['Succeeded'] },
       type: 'Response',
     },
   },
@@ -165,6 +188,8 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; act
     Increment_variable2: { graphId: 'ActionIf-actions' },
     Increment_variable4: { graphId: 'ActionIf-actions' },
     Increment_variable3: { graphId: 'ActionIf-elseActions' },
+    EmptyScope: { graphId: 'root' },
+    'EmptyScope-actions-emptyNode': { graphId: 'EmptyScope-actions', isPlaceholderNode: true },
     Response: { graphId: 'root' },
   },
 };
