@@ -1,5 +1,5 @@
 import type { PanelTab } from './panelUtil';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 export interface PanelContentProps {
   selectedTab?: string;
@@ -7,20 +7,11 @@ export interface PanelContentProps {
 }
 
 export const PanelContent = ({ tabs, selectedTab }: PanelContentProps): JSX.Element => {
-  return (
-    <div className="msla-content">
-      {
-        let tab = Object.entries(tabs).find(([tabId]) => {
-          return tabId === selectedTab;
-        });
-        
-        if(!tab){
-             return null;
-        }
-        return tab[1].content;
-          return tab[0] === selectedTab;
-        })?.[1].content
-      }
-    </div>
-  );
+  const tabContent = useMemo(() => {
+    const tab = Object.entries(tabs).find(([tabId]) => {
+      return tabId === selectedTab;
+    });
+    return tab ? tab[1].content : null;
+  }, [selectedTab, tabs]);
+  return <div className="msla-content">{tabContent}</div>;
 };

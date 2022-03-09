@@ -29,8 +29,10 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
 
   useEffect(() => {
-    setRegisteredTabs(registerTab(retryTab, registeredTabs));
-    setRegisteredTabs(registerTab(requestTab, registeredTabs));
+    setRegisteredTabs((currentTabs) => registerTab(requestTab, registerTab(retryTab, currentTabs)));
+  }, []);
+
+  useEffect(() => {
     setSelectedTab(getTabs(true, registeredTabs)[0]?.name.toLowerCase());
   }, [registeredTabs]);
 
