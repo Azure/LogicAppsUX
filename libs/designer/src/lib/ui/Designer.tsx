@@ -2,6 +2,7 @@
 import { useLayout } from '../core/graphlayout';
 import { updateNodeSizes } from '../core/state/workflowSlice';
 import CustomTestNode from './CustomNodes/CustomTestNode';
+import GraphNode from './CustomNodes/GraphNode';
 import { CustomEdge } from './connections/edge';
 import { useCallback } from 'react';
 import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
@@ -18,6 +19,7 @@ export interface DesignerProps {
 
 const nodeTypes = {
   testNode: CustomTestNode,
+  graphNode: GraphNode,
 };
 
 const edgeTypes = {

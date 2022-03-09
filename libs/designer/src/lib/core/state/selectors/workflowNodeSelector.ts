@@ -5,14 +5,18 @@ import { useSelector } from 'react-redux';
 
 export const getWorkflowNodeFromState = (state: RootState, actionId: string) => {
   const graph = state.workflow.graph;
-  const traverseGraph = (gnode: WorkflowGraph): WorkflowGraph | WorkflowNode | undefined => {
-    for (const g of gnode.children) {
-      if (g.id === actionId) {
-        return g;
+  const traverseGraph = (workflowGraph: WorkflowGraph): WorkflowGraph | WorkflowNode | undefined => {
+    for (const actionNode of workflowGraph.children) {
+      if (actionNode.id === actionId) {
+        return actionNode;
       }
-      const child: WorkflowGraph | undefined = g.children?.filter((c) => c.children).find((c) => traverseGraph(c));
-      if (child) {
-        return child;
+
+      const nestedGraphs = actionNode.children?.filter((g) => g.children?.length) ?? [];
+      for (const graph of nestedGraphs) {
+        const node = traverseGraph(graph);
+        if (node) {
+          return node;
+        }
       }
     }
     return undefined;
@@ -48,5 +52,24 @@ export const useEdgesByParent = (parentId?: string) => {
       traverseGraph(state.workflow.graph);
     }
     return edges.filter((x) => x.source === parentId);
+  });
+};
+
+export const useEdgesByChild = (childId?: string) => {
+  return useSelector((state: RootState) => {
+    if (!childId) {
+      return [];
+    }
+    let edges: WorkflowEdge[] = [];
+    const traverseGraph = (gnode: WorkflowGraph | WorkflowNode): void => {
+      if (isWorkflowGraph(gnode)) {
+        edges = [...edges, ...gnode.edges];
+      }
+      gnode.children?.forEach(traverseGraph);
+    };
+    if (state.workflow.graph) {
+      traverseGraph(state.workflow.graph);
+    }
+    return edges.filter((x) => x.target === childId);
   });
 };
