@@ -81,6 +81,12 @@
       "value": "count"
     }
   ],
+  "1zgFh1": [
+    {
+      "type": 0,
+      "value": "Dismiss"
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
@@ -643,6 +649,12 @@
     {
       "type": 0,
       "value": "Label setting"
+    }
+  ],
+  "c6XbVI": [
+    {
+      "type": 0,
+      "value": "panel"
     }
   ],
   "ci6ex1": [

@@ -5,6 +5,7 @@ import type { IButton, IButtonStyles } from '@fluentui/react/lib/Button';
 import { IconButton } from '@fluentui/react/lib/Button';
 import type { ICalloutProps } from '@fluentui/react/lib/Callout';
 import { DirectionalHint } from '@fluentui/react/lib/Callout';
+import type { IIconProps } from '@fluentui/react/lib/Icon';
 import type { IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react/lib/OverflowSet';
 import { OverflowSet } from '@fluentui/react/lib/OverflowSet';
 import { FontSizes } from '@fluentui/react/lib/Styling';
@@ -24,6 +25,7 @@ export interface PanelHeaderProps {
   isRight?: boolean;
   cardIcon?: string;
   comment?: string;
+  dismissEnabled?: boolean;
   panelHeaderControlType?: PanelHeaderControlType;
   panelHeaderMenu: MenuItemOption[];
   noNodeSelected?: boolean;
@@ -50,6 +52,14 @@ const calloutProps: ICalloutProps = {
   directionalHint: DirectionalHint.leftCenter,
 };
 
+const dismissIconProps: IIconProps = {
+  iconName: 'Clear',
+};
+
+const menuIconProps: IIconProps = {
+  iconName: 'More',
+};
+
 const overflowStyle: Partial<IOverflowSetStyles> = {
   root: {
     height: '100%',
@@ -69,6 +79,7 @@ export const PanelHeader = ({
   isRight,
   cardIcon,
   comment,
+  dismissEnabled,
   noNodeSelected,
   panelHeaderControlType,
   panelHeaderMenu,
@@ -122,6 +133,36 @@ export const PanelHeader = ({
     );
   };
 
+  const getDismissButton = (): JSX.Element => {
+    const panelHeaderMenuItems = panelHeaderMenu.map((item) => ({
+      key: item.key,
+      name: item.title,
+      iconProps: {
+        iconName: item.iconName,
+      },
+      onClick: item.onClick,
+      iconOnly: true,
+      disabled: item.disabled,
+    }));
+    const dissmissLabel = intl.formatMessage({
+      defaultMessage: 'Dismiss',
+      description: 'Label for dismiss button in panel header',
+    });
+
+    return (
+      <OverflowSet
+        styles={overflowStyle}
+        items={panelHeaderMenuItems}
+        onRenderItem={function (item: IOverflowSetItemProps) {
+          <TooltipHost calloutProps={calloutProps} content={dissmissLabel}>
+            <IconButton disabled={!dismissEnabled} iconProps={dismissIconProps} onClick={item[0].onClick} />
+          </TooltipHost>;
+        }}
+        onRenderOverflowButton={onRenderOverflowButton}
+      />
+    );
+  };
+
   const onRenderOverflowButton = (overflowItems: any[] | undefined): JSX.Element => {
     const calloutProps: ICalloutProps = {
       directionalHint: DirectionalHint.leftCenter,
@@ -137,7 +178,7 @@ export const PanelHeader = ({
           ariaLabel={PanelHeaderMenuCommands}
           styles={overflowStyle}
           componentRef={menuButtonRef}
-          menuIconProps={{ iconName: 'More' }}
+          menuIconProps={menuIconProps}
           menuProps={overflowItems && { items: overflowItems }}
         />
       </TooltipHost>
@@ -163,10 +204,7 @@ export const PanelHeader = ({
           </div>
           <div className="msla-panel-header-controls" hidden={isCollapsed}>
             {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.MENU ? getPanelHeaderMenu() : null}
-            {/* 
-            TODO: 13067650 implemented when panel actions gets built
-            {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON ? getDismissButton() : null} 
-            */}
+            {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON ? getDismissButton() : null}
           </div>
           {onRenderWarningMessage ? onRenderWarningMessage() : null}
           {showCommentBox ? (
