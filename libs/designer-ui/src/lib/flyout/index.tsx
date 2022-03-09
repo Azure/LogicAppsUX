@@ -25,7 +25,7 @@ const defaultTooltipHostStyles: ITooltipHostStyles = {
 };
 
 export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
-  ({ ariaLabel, iconStyle, style, tabIndex = 0, text, tooltipHostStyles, onClick }, ref) => {
+  ({ ariaLabel, iconStyle, style, tabIndex = 0, text, tooltipHostStyles, onClick, title }, ref) => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const [flyoutExpanded, setFlyoutExpanded] = useState(false);
 
@@ -52,7 +52,7 @@ export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
       <TooltipHost content={ariaLabel} styles={styles}>
         <button
           ref={buttonRef}
-          aria-label={ariaLabel}
+          aria-label={ariaLabel ?? title ?? text}
           className="msla-button msla-flyout"
           style={style}
           tabIndex={tabIndex}
