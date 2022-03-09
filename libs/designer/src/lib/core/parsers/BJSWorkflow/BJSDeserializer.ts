@@ -1,20 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
-import type { Actions } from '../../state/workflowSlice';
+import type { Actions, NodesMetadata } from '../../state/workflowSlice';
 import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../models/workflowNode';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import { isNullOrEmpty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
+import { equals, isNullOrEmpty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
 };
 
-export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): { graph: WorkflowGraph; actionData: Actions } => {
+export const Deserialize = (
+  definition: LogicAppsV2.WorkflowDefinition
+): { graph: WorkflowGraph; actionData: Actions; nodesMetadata: NodesMetadata } => {
   throwIfMultipleTriggers(definition);
 
   //process Trigger
   let triggerNode: WorkflowNode | null = null;
   let allActions: Actions = {};
+  let nodesMetadata: NodesMetadata = {};
   if (definition.triggers && !isNullOrEmpty(definition.triggers)) {
     const [[tID, trigger]] = Object.entries(definition.triggers);
     triggerNode = {
@@ -22,7 +25,8 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): { graph
       height: 0,
       width: 0,
     };
-    allActions[tID] = { scope: 'root', ...trigger };
+    allActions[tID] = { ...trigger };
+    nodesMetadata[tID] = { graphId: 'root' };
   }
 
   const children = [];
@@ -43,31 +47,38 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): { graph
     }
   }
 
-  const [remainingChildren, edges, actions] = !isNullOrUndefined(definition.actions)
+  const [remainingChildren, edges, actions, actionNodesMetadata] = !isNullOrUndefined(definition.actions)
     ? buildGraphFromActions(definition.actions, 'root')
     : [[], [], {}];
   allActions = { ...allActions, ...actions };
+  nodesMetadata = { ...nodesMetadata, ...actionNodesMetadata };
   const graph: WorkflowGraph = {
     id: 'root',
     children: [...children, ...remainingChildren],
     edges: [...rootEdges, ...edges],
   };
 
-  return { graph, actionData: allActions };
+  return { graph, actionData: allActions, nodesMetadata };
 };
 
 const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.ScopeAction => {
-  return !isNullOrUndefined((action as any).actions);
+  const actionType = action.type.toLowerCase();
+  return actionType === 'scope' || actionType === 'foreach' || actionType === 'until' || actionType === 'if' || actionType === 'switch';
 };
 
 const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.IfAction => {
-  return isScopeAction(action) && !isNullOrUndefined((action as any).else);
+  return equals(action.type, 'if');
 };
 
-const buildGraphFromActions = (actions: Actions, scope: string): [WorkflowNode[], WorkflowEdge[], Actions] => {
+const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.SwitchAction => {
+  return equals(action.type, 'switch');
+};
+
+const buildGraphFromActions = (actions: Actions, graphId: string): [WorkflowNode[], WorkflowEdge[], Actions, NodesMetadata] => {
   const nodes: WorkflowNode[] = [];
   const edges: WorkflowEdge[] = [];
   let allActions: Actions = {};
+  let nodesMetadata: NodesMetadata = {};
   for (const [actionName, action] of Object.entries(actions)) {
     const node: WorkflowNode = {
       id: actionName,
@@ -75,7 +86,8 @@ const buildGraphFromActions = (actions: Actions, scope: string): [WorkflowNode[]
       width: 0,
     };
 
-    allActions[actionName] = { ...action, scope };
+    allActions[actionName] = { ...action };
+    nodesMetadata[actionName] = { graphId };
     if (action.runAfter) {
       for (const [runAfterAction] of Object.entries(action.runAfter)) {
         edges.push({
@@ -85,35 +97,86 @@ const buildGraphFromActions = (actions: Actions, scope: string): [WorkflowNode[]
         });
       }
     }
-    if (isScopeAction(action)) {
-      const [children, edges, scopeActions] = !isNullOrUndefined(action.actions)
-        ? buildGraphFromActions(action.actions, `${actionName}-actions`)
-        : [[], []];
-      allActions = { ...allActions, ...scopeActions };
-      const actionGraph: WorkflowGraph = {
-        id: `${actionName}-actions`,
-        children,
-        edges,
-      };
-      node.children = [actionGraph];
-    }
 
-    if (isIfAction(action)) {
-      const [children, edges, elseActions] = !isNullOrUndefined(action.else?.actions)
-        ? buildGraphFromActions(action.else?.actions ?? {}, `${actionName}-elseActions`)
-        : [[], [], {}];
-      allActions = { ...allActions, ...elseActions };
-      const actionGraph: WorkflowGraph = {
-        id: `${actionName}-elseActions`,
-        children,
-        edges,
-      };
-      node.children = [...(node.children ?? []), actionGraph];
+    if (isScopeAction(action)) {
+      const [scopeGraphs, scopeActions, scopeNodesMetadata] = processScopeActions(actionName, action);
+      node.children = [...scopeGraphs];
+      allActions = { ...allActions, ...scopeActions };
+      nodesMetadata = { ...nodesMetadata, ...scopeNodesMetadata };
     }
 
     nodes.push(node);
   }
-  return [nodes, edges, allActions];
+  return [nodes, edges, allActions, nodesMetadata];
+};
+
+const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction): [WorkflowGraph[], Actions, NodesMetadata] => {
+  const actionGraphs: WorkflowGraph[] = [];
+  let allActions: Actions = {};
+  let nodesMetadata: NodesMetadata = {};
+
+  if (isSwitchAction(action)) {
+    const [defaultGraph, defaultActions, defaultNodesMetadata] = processNestedActions(
+      `${actionName}-defaultActions`,
+      action.default?.actions
+    );
+    actionGraphs.push(defaultGraph);
+    allActions = { ...defaultActions };
+    nodesMetadata = { ...defaultNodesMetadata };
+
+    addEmptyPlaceholderNodeIfNeeded(defaultGraph, nodesMetadata);
+    for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
+      const [caseGraph, caseActions, caseNodesMetadata] = processNestedActions(`${actionName}-${caseName}Actions`, caseAction.actions);
+      actionGraphs.push(caseGraph);
+      allActions = { ...allActions, ...caseActions };
+      nodesMetadata = { ...nodesMetadata, ...caseNodesMetadata };
+      addEmptyPlaceholderNodeIfNeeded(caseGraph, nodesMetadata);
+    }
+  } else {
+    const [scopeGraph, scopeActions, scopeNodesMetadata] = processNestedActions(`${actionName}-actions`, action.actions);
+    actionGraphs.push(scopeGraph);
+    allActions = { ...allActions, ...scopeActions };
+    nodesMetadata = { ...nodesMetadata, ...scopeNodesMetadata };
+    addEmptyPlaceholderNodeIfNeeded(scopeGraph, nodesMetadata);
+
+    if (isIfAction(action)) {
+      const [elseGraph, elseActions, elseNodesMetadata] = processNestedActions(`${actionName}-elseActions`, action.else?.actions);
+      actionGraphs.push(elseGraph);
+      allActions = { ...allActions, ...elseActions };
+      nodesMetadata = { ...nodesMetadata, ...elseNodesMetadata };
+      addEmptyPlaceholderNodeIfNeeded(elseGraph, nodesMetadata);
+    }
+  }
+
+  return [actionGraphs, allActions, nodesMetadata];
+};
+
+const processNestedActions = (graphId: string, actions: LogicAppsV2.Actions | undefined): [WorkflowGraph, Actions, NodesMetadata] => {
+  const [children, edges, scopeActions, scopeNodesMetadata] = !isNullOrUndefined(actions)
+    ? buildGraphFromActions(actions, graphId)
+    : [[], [], {}, {}];
+
+  return [
+    {
+      id: graphId,
+      children,
+      edges,
+    },
+    scopeActions,
+    scopeNodesMetadata,
+  ];
+};
+
+const addEmptyPlaceholderNodeIfNeeded = (graph: WorkflowGraph, nodesMetadata: NodesMetadata): void => {
+  if (!graph.children.length) {
+    const nodeId = `${graph.id}-emptyNode`;
+    graph.children.push({
+      id: nodeId,
+      height: 0,
+      width: 0,
+    });
+    nodesMetadata[nodeId] = { graphId: graph.id, isPlaceholderNode: true };
+  }
 };
 
 const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => {

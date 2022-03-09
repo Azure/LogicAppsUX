@@ -10,6 +10,16 @@
             },
             "runAfter": {},
             "type": "Terminate"
+          },
+          "Increment_variable_4": {
+            "inputs": {
+              "name": "var1",
+              "value": 1
+            },
+            "runAfter": {
+              "Terminate": ["Failed"]
+            },
+            "type": "IncrementVariable"
           }
         },
         "else": {
@@ -46,98 +56,8 @@
             }
           ]
         },
-        "runAfter": {
-          "Get_a_goal": ["Succeeded"]
-        },
-        "type": "If"
-      },
-      "Create_a_goal": {
-        "inputs": {
-          "body": {
-            "name": "@variables('goalName')",
-            "note": "",
-            "owner": "@variables('goalOwner')",
-            "status": "On track",
-            "target": "@{variables('goalTarget')}",
-            "value": "@{variables('goalValue')}"
-          },
-          "host": {
-            "connection": {
-              "referenceName": "powerbi-andrewga"
-            }
-          },
-          "method": "post",
-          "path": "/v1.0/myOrg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals",
-          "queries": {
-            "pbi_source": "powerAutomate"
-          }
-        },
-        "runAfter": {
-          "Initialize_owner": ["Succeeded"]
-        },
-        "type": "ApiConnection"
-      },
-      "Get_a_goal": {
-        "inputs": {
-          "host": {
-            "connection": {
-              "referenceName": "powerbi-andrewga"
-            }
-          },
-          "method": "get",
-          "path": "/v1.0/myOrg/groups/@{encodeURIComponent('bf1e0f11-6eb5-438a-93d4-786307191e15')}/internalScorecards(@{encodeURIComponent('365fd340-9e05-45b6-aea8-f01f1ebac54b')})/goals(@{encodeURIComponent(body('Create_a_goal')['id'])})",
-          "queries": {
-            "$expand": "aggregations",
-            "pbi_source": "powerAutomate"
-          }
-        },
-        "runAfter": {
-          "Create_a_goal": ["Succeeded"]
-        },
-        "type": "ApiConnection"
-      },
-      "Initialize_goal_name": {
-        "inputs": {
-          "variables": [
-            {
-              "name": "goalName",
-              "type": "string",
-              "value": "create_and_get_a_single_goal_succeeds(@{utcNow()})"
-            }
-          ]
-        },
         "runAfter": {},
-        "type": "InitializeVariable"
-      },
-      "Initialize_goal_target": {
-        "inputs": {
-          "variables": [
-            {
-              "name": "goalTarget",
-              "type": "integer",
-              "value": "@rand(0, 100)"
-            }
-          ]
-        },
-        "runAfter": {
-          "Initialize_goal_value": ["Succeeded"]
-        },
-        "type": "InitializeVariable"
-      },
-      "Initialize_goal_value": {
-        "inputs": {
-          "variables": [
-            {
-              "name": "goalValue",
-              "type": "integer",
-              "value": "@rand(0, 100)"
-            }
-          ]
-        },
-        "runAfter": {
-          "Initialize_goal_name": ["Succeeded"]
-        },
-        "type": "InitializeVariable"
+        "type": "If"
       },
       "Initialize_owner": {
         "inputs": {
@@ -150,7 +70,7 @@
           ]
         },
         "runAfter": {
-          "Initialize_goal_target": ["Succeeded"]
+          "Condition": ["Succeeded"]
         },
         "type": "InitializeVariable"
       }

@@ -1,4 +1,4 @@
-import type { Actions } from '../../../state/workflowSlice';
+import type { Actions, NodesMetadata } from '../../../state/workflowSlice';
 import type { WorkflowGraph } from '../../models/workflowNode';
 
 export const simpleWorkflowDefinitionInput = {
@@ -49,7 +49,7 @@ export const simpleWorkflowDefinitionInput = {
   },
 };
 
-export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowGraph; actionData: Actions } = {
+export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowGraph; actionData: Actions; nodesMetadata: NodesMetadata } = {
   graph: {
     id: 'root',
     children: [
@@ -65,25 +65,28 @@ export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowGraph; act
     ],
   },
   actionData: {
-    manual: { scope: 'root', inputs: {}, kind: 'Http', type: 'Request' },
+    manual: { inputs: {}, kind: 'Http', type: 'Request' },
     Increment_variable: {
       inputs: { name: 'var1', value: 2 },
       runAfter: { Initialize_variable: ['Succeeded'] },
       type: 'IncrementVariable',
-      scope: 'root',
     },
     Initialize_variable: {
       inputs: { variables: [{ name: 'var1', type: 'integer' }] },
       runAfter: {},
       type: 'InitializeVariable',
-      scope: 'root',
     },
     Response: {
       inputs: { body: "@variables('var1')", statusCode: 200 },
       kind: 'http',
       runAfter: { Increment_variable: ['Succeeded'] },
       type: 'Response',
-      scope: 'root',
     },
+  },
+  nodesMetadata: {
+    manual: { graphId: 'root' },
+    Increment_variable: { graphId: 'root' },
+    Initialize_variable: { graphId: 'root' },
+    Response: { graphId: 'root' },
   },
 };
