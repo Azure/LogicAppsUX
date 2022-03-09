@@ -11,6 +11,7 @@ export interface WorkflowNode {
   children?: WorkflowGraph[];
   height: number;
   width: number;
+  testingcommit: number;
 }
 
 export interface WorkflowEdge {
