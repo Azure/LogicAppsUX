@@ -4,6 +4,7 @@ import type { PageActionTelemetryData } from '../telemetry/models';
 import type { PanelTab } from './panelUtil';
 import { registerTab, getTabs } from './panelUtil';
 import { PanelContainer } from './panelcontainer';
+import { PanelHeaderControlType } from './panelheader/panelheader';
 import { retryTab, requestTab } from './registeredtabs';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -11,13 +12,22 @@ import { useIntl } from 'react-intl';
 export interface PanelRootProps {
   cardIcon?: string;
   comment?: string;
+  isRecommendation: boolean;
   noNodeSelected: boolean;
   selectedTabId?: string;
   readOnlyMode?: boolean;
   title: string;
 }
 
-export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, readOnlyMode, title }: PanelRootProps): JSX.Element => {
+export const PanelRoot = ({
+  cardIcon,
+  comment,
+  isRecommendation,
+  noNodeSelected,
+  selectedTabId,
+  readOnlyMode,
+  title,
+}: PanelRootProps): JSX.Element => {
   const intl = useIntl();
 
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
@@ -40,12 +50,9 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
     isCollapsed ? setWidth('auto') : setWidth('630px');
   }, [isCollapsed]);
 
-  const getPanelHeaderControlType = (): MenuItemOption[] => {
-    const menuOptions: MenuItemOption[] = [];
-    // TODO: 13067650 Conditionals to decide when to show these menu options
-    getCommentMenuItem(menuOptions);
-    getDeleteMenuItem(menuOptions);
-    return menuOptions;
+  const getPanelHeaderControlType = (): boolean => {
+    // TODO: 13067650
+    return isRecommendation;
   };
 
   const getPanelHeaderMenu = (): MenuItemOption[] => {
@@ -105,7 +112,7 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
       iconName: 'Delete',
       title: deleteDescription,
       type: MenuItemType.Advanced,
-      onClick: handleDeleteMenuClick,
+      onClick: handleDelete,
     });
     return options;
   };
@@ -121,10 +128,11 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
   };
 
   // TODO: 12798945? onClick for delete when node store gets built
-  const handleDeleteMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
+  const handleDelete = (): void => {
     // TODO: 12798935 Analytics (event logging)
     console.log('Node deleted!');
   };
+
   return (
     <PanelContainer
       cardIcon={cardIcon}
@@ -132,12 +140,13 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
       isRight
       isCollapsed={isCollapsed}
       noNodeSelected={noNodeSelected}
-      // panelHeaderControlType={getPanelHeaderControlType()}
+      panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}
       selectedTab={selectedTab}
       showCommentBox={showCommentBox}
       tabs={registeredTabs}
       width={width}
+      onDismissButtonClicked={handleDelete}
       setSelectedTab={setSelectedTab}
       setIsCollapsed={setIsCollapsed}
       trackEvent={handleTrackEvent}

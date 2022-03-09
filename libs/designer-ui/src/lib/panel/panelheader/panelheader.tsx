@@ -34,6 +34,7 @@ export interface PanelHeaderProps {
   showCommentBox?: boolean;
   title?: string;
   commentChange?(panelCommentChangeEvent?: string): void;
+  onDismissButtonClicked?(): void;
   onRenderWarningMessage?(): JSX.Element;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -88,6 +89,7 @@ export const PanelHeader = ({
   showCommentBox,
   title,
   commentChange,
+  onDismissButtonClicked,
   onRenderWarningMessage,
   setIsCollapsed,
 }: PanelHeaderProps): JSX.Element => {
@@ -134,32 +136,15 @@ export const PanelHeader = ({
   };
 
   const getDismissButton = (): JSX.Element => {
-    const panelHeaderMenuItems = panelHeaderMenu.map((item) => ({
-      key: item.key,
-      name: item.title,
-      iconProps: {
-        iconName: item.iconName,
-      },
-      onClick: item.onClick,
-      iconOnly: true,
-      disabled: item.disabled,
-    }));
     const dissmissLabel = intl.formatMessage({
       defaultMessage: 'Dismiss',
       description: 'Label for dismiss button in panel header',
     });
 
     return (
-      <OverflowSet
-        styles={overflowStyle}
-        items={panelHeaderMenuItems}
-        onRenderItem={function (item: IOverflowSetItemProps) {
-          <TooltipHost calloutProps={calloutProps} content={dissmissLabel}>
-            <IconButton disabled={!dismissEnabled} iconProps={dismissIconProps} onClick={item[0].onClick} />
-          </TooltipHost>;
-        }}
-        onRenderOverflowButton={onRenderOverflowButton}
-      />
+      <TooltipHost calloutProps={calloutProps} content={dissmissLabel}>
+        <IconButton iconProps={dismissIconProps} onClick={onDismissButtonClicked} />
+      </TooltipHost>
     );
   };
 

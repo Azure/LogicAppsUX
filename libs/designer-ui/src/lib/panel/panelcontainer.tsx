@@ -26,6 +26,7 @@ export interface PanelContainerProps {
   tabs: Record<string, PanelTab>;
   title: string;
   width: string;
+  onDismissButtonClicked?(): void;
   trackEvent(data: PageActionTelemetryData): void;
   setSelectedTab: React.Dispatch<React.SetStateAction<string | undefined>>;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -45,6 +46,7 @@ export const PanelContainer = ({
   tabs,
   title,
   width,
+  onDismissButtonClicked,
   setSelectedTab,
   setIsCollapsed,
   trackEvent,
@@ -62,6 +64,7 @@ export const PanelContainer = ({
         isRight={isRight}
         showCommentBox={showCommentBox}
         noNodeSelected={noNodeSelected}
+        onDismissButtonClicked={onDismissButtonClicked}
         panelHeaderMenu={panelHeaderMenu}
         panelHeaderControlType={panelHeaderControlType}
         readOnlyMode={readOnlyMode}
@@ -76,6 +79,7 @@ export const PanelContainer = ({
     isRight,
     showCommentBox,
     noNodeSelected,
+    onDismissButtonClicked,
     panelHeaderMenu,
     panelHeaderControlType,
     readOnlyMode,
