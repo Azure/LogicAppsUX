@@ -2,7 +2,7 @@
   "+UirjI": [
     {
       "type": 0,
-      "value": "Setting Label"
+      "value": "ラベルの設定"
     }
   ],
   "/I/U8L": [
@@ -104,6 +104,12 @@
     {
       "type": 0,
       "value": "サービス要求 ID"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "5rkegy": [
@@ -585,7 +591,7 @@
   "bgfjqS": [
     {
       "type": 0,
-      "value": "Label setting"
+      "value": "ラベル設定"
     }
   ],
   "ci6ex1": [

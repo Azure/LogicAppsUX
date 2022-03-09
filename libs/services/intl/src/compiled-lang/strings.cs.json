@@ -2,7 +2,7 @@
   "+UirjI": [
     {
       "type": 0,
-      "value": "Setting Label"
+      "value": "Popisek nastavení"
     }
   ],
   "/I/U8L": [
@@ -149,6 +149,12 @@
     {
       "type": 0,
       "value": "ID žádosti o služby"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "5rkegy": [
@@ -696,7 +702,7 @@
   "bgfjqS": [
     {
       "type": 0,
-      "value": "Label setting"
+      "value": "Nastavení popisku"
     }
   ],
   "ci6ex1": [

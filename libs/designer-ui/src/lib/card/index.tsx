@@ -114,17 +114,19 @@ export const Card: React.FC<CardProps> = ({
           !active && 'inactive',
           cloned && 'msla-card-ghost-image'
         )}
-        role="button"
         style={getCardStyle(brandColor)}
-        onClick={handleClick}
-        onContextMenu={handleContextMenu}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-        onKeyUp={handleKeyUp}
         data-testid={`card-${title}`}
       >
         <div className="panel-card-main">
-          <div className="panel-card-header">
+          <div
+            className="panel-card-header"
+            role="button"
+            onClick={handleClick}
+            onContextMenu={handleContextMenu}
+            onKeyDown={handleKeyDown}
+            tabIndex={0}
+            onKeyUp={handleKeyUp}
+          >
             <div className="panel-card-content-container">
               <div className="panel-card-content-gripper-section">{draggable ? <Gripper /> : null}</div>
               {icon ? (

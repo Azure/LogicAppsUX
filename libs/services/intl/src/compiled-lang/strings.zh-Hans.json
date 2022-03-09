@@ -2,7 +2,7 @@
   "+UirjI": [
     {
       "type": 0,
-      "value": "Setting Label"
+      "value": "设置标签"
     }
   ],
   "/I/U8L": [
@@ -110,6 +110,12 @@
       "value": "服务请求 ID"
     }
   ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "5rkegy": [
     {
       "type": 0,
@@ -179,7 +185,7 @@
   "DFo+mo": [
     {
       "type": 0,
-      "value": "开"
+      "value": "开启"
     }
   ],
   "DZZ3fj": [
@@ -593,7 +599,7 @@
   "bgfjqS": [
     {
       "type": 0,
-      "value": "Label setting"
+      "value": "标签设置"
     }
   ],
   "ci6ex1": [

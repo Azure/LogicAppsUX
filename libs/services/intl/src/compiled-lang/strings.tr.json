@@ -2,7 +2,7 @@
   "+UirjI": [
     {
       "type": 0,
-      "value": "Setting Label"
+      "value": "Ayar Etiketi"
     }
   ],
   "/I/U8L": [
@@ -115,6 +115,12 @@
     {
       "type": 0,
       "value": "Hizmet istek kimliği"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "5rkegy": [
@@ -618,7 +624,7 @@
   "bgfjqS": [
     {
       "type": 0,
-      "value": "Label setting"
+      "value": "Etiket ayarı"
     }
   ],
   "ci6ex1": [
