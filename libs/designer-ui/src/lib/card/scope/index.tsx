@@ -27,13 +27,10 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   onCollapse,
 }) => {
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
-    e.stopPropagation();
     onClick?.();
   };
 
   const handleCollapse = (e: React.MouseEvent<HTMLButtonElement>): void => {
-    e.stopPropagation();
-
     if (onCollapse) {
       onCollapse({
         currentTarget: undefined,
@@ -45,15 +42,15 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   const toggleText = collapsed ? 'Expand' : 'Collapse';
   const badges = [
     ...(commentBox && commentBox.comment
-      ? [{ title: 'Comment', content: commentBox.comment, darkBackground: true, iconProps: { iconName: 'Comment' }, active: true }]
+      ? [{ title: 'Comment', content: commentBox.comment, darkBackground: true, iconProps: { iconName: 'Comment' }, active }]
       : []),
   ];
-  const cardStyle = { width: '100%', height: '100%', 'z-index': 100 };
+  const bgStyle = { backgroundColor: brandColor };
   return (
-    <div ref={dragPreview} style={cardStyle}>
-      <div ref={drag} aria-describedby={describedBy} aria-label={title} style={cardStyle} role="button" onClick={handleClick} tabIndex={0}>
-        <div className="msla-scope-v2--header" style={{ border: `2px solid #8c3900` }}>
-          <button className="msla-inner" style={{ backgroundColor: brandColor, width: '100%', height: 50 }}>
+    <div ref={dragPreview} className="msla-content-fit">
+      <div ref={drag} aria-describedby={describedBy} className="msla-content-fit" aria-label={title} role="button" onClick={handleClick} tabIndex={0}>
+        <div className="msla-scope-v2--header msla-scope-header-style" style={{ borderColor: brandColor }}>
+          <button className="msla-inner msla-scope-header-inner" style={bgStyle}>
             <button className="msla-selector" draggable={true} tabIndex={-1}>
               <div className="panel-card-content-gripper-section">{draggable ? <Gripper fill={'#FFFFF'} /> : null}</div>
               {scopeIcon && <img alt="" role="presentation" src={scopeIcon} width="24" height="24" />}
@@ -66,7 +63,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             </TooltipHost>
           </button>
           <div>
-            <div className="msla-badges" style={{ backgroundColor: brandColor }}>
+            <div className="msla-badges" style={bgStyle}>
               {badges.map(({ title, content, darkBackground, iconProps }) => (
                 <TooltipHost key={title} content={content}>
                   <Icon
