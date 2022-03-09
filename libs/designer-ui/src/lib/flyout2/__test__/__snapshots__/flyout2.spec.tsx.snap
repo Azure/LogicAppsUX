@@ -2,6 +2,7 @@
 
 exports[`lib/flyout2 should render 1`] = `
 <button
+  aria-label="text"
   className="msla-button msla-flyout"
   onClick={[Function]}
   onKeyPress={[Function]}
@@ -19,6 +20,7 @@ exports[`lib/flyout2 should render 1`] = `
 
 exports[`lib/flyout2 should render with a documentation link 1`] = `
 <button
+  aria-label="text"
   className="msla-button msla-flyout"
   onClick={[Function]}
   onKeyPress={[Function]}
@@ -36,6 +38,7 @@ exports[`lib/flyout2 should render with a documentation link 1`] = `
 
 exports[`lib/flyout2 should render with a non-zero tab index 1`] = `
 <button
+  aria-label="text"
   className="msla-button msla-flyout"
   onClick={[Function]}
   onKeyPress={[Function]}
@@ -53,6 +56,7 @@ exports[`lib/flyout2 should render with a non-zero tab index 1`] = `
 
 exports[`lib/flyout2 should render with a title 1`] = `
 <button
+  aria-label="title"
   className="msla-button msla-flyout"
   onClick={[Function]}
   onKeyPress={[Function]}
