@@ -50,7 +50,7 @@ export const Flyout2: React.FC<Flyout2Props> = ({
 
   return (
     <button
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? title ?? text}
       className="msla-button msla-flyout"
       tabIndex={tabIndex}
       title={title}
