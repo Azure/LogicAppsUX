@@ -11,6 +11,7 @@ exports[`ui/flyout should render 1`] = `
   role="none"
 >
   <button
+    aria-label="text"
     className="msla-button msla-flyout"
     onClick={[Function]}
     tabIndex={0}
@@ -37,6 +38,7 @@ exports[`ui/flyout should render with a non-zero tab index 1`] = `
   role="none"
 >
   <button
+    aria-label="text"
     className="msla-button msla-flyout"
     onClick={[Function]}
     tabIndex={-1}
@@ -63,6 +65,7 @@ exports[`ui/flyout should render with a title 1`] = `
   role="none"
 >
   <button
+    aria-label="title"
     className="msla-button msla-flyout"
     onClick={[Function]}
     tabIndex={0}
