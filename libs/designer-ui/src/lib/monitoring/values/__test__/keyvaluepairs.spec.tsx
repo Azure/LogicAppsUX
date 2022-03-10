@@ -1,8 +1,8 @@
+import { KeyValuePairs } from '../keyvaluepairs';
+import type { ValueProps } from '../types';
 import { CheckboxVisibility, DetailsListLayoutMode, SelectionMode } from '@fluentui/react';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { KeyValuePairs } from '../keyvaluepairs';
-import type { ValueProps } from '../types';
 
 describe('ui/monitoring/values/_keyvaluepairs', () => {
   const classNames = {
@@ -86,7 +86,7 @@ describe('ui/monitoring/values/_keyvaluepairs', () => {
         $value: 'no-referred-when-downgrade',
       },
     ]);
-    expect(detailsList.props.layoutMode).toBe(DetailsListLayoutMode.fixedColumns);
+    expect(detailsList.props.layoutMode).toBe(DetailsListLayoutMode.justified);
     expect(detailsList.props.selectionMode).toBe(SelectionMode.none);
   });
 

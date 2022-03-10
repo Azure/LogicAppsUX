@@ -1,12 +1,12 @@
 # Logic Apps Designer
+
 ### 0.0.28 (2022-03-07)
 
 ### 0.0.27 (2022-03-07)
 
-
 ### Features
 
-* Add infinite loading to run history in VSCode Overview ([#299](https://github.com/Azure/logic_apps_designer/issues/299)) ([04f1055](https://github.com/Azure/logic_apps_designer/commit/04f10558278210ee5fd79196b6960c63a010e1f2))
+- Add infinite loading to run history in VSCode Overview ([#299](https://github.com/Azure/logic_apps_designer/issues/299)) ([04f1055](https://github.com/Azure/logic_apps_designer/commit/04f10558278210ee5fd79196b6960c63a010e1f2))
 
 ### 0.0.26 (2022-02-17)
 

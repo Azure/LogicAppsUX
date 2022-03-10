@@ -1,31 +1,59 @@
 import type { MenuItemOption } from '../card/types';
 import { MenuItemType } from '../card/types';
 import type { PageActionTelemetryData } from '../telemetry/models';
-import { PanelContainer } from './';
-import { workflowParametersTab, aboutTab, connectionTab } from './registeredtabs';
-import { useEffect, useState } from 'react';
+import type { PanelTab } from './panelUtil';
+import { registerTab, getTabs } from './panelUtil';
+import { PanelContainer } from './panelcontainer';
+import { PanelHeaderControlType } from './panelheader/panelheader';
+import { retryTab, requestTab } from './registeredtabs';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface PanelRootProps {
   cardIcon?: string;
   comment?: string;
+  isRecommendation: boolean;
   noNodeSelected: boolean;
   selectedTabId?: string;
   readOnlyMode?: boolean;
   title: string;
 }
 
-export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, readOnlyMode, title }: PanelRootProps): JSX.Element => {
+export const PanelRoot = ({
+  cardIcon,
+  comment,
+  isRecommendation,
+  noNodeSelected,
+  selectedTabId,
+  readOnlyMode,
+  title,
+}: PanelRootProps): JSX.Element => {
   const intl = useIntl();
 
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
   const [currentComment, setCurrentComment] = useState(comment);
-  const [selectedTab, setSelectedTab] = useState(workflowParametersTab.name);
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [selectedTab, setSelectedTab] = useState(selectedTabId);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [width, setWidth] = useState('auto');
+
+  const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
+
+  useEffect(() => {
+    setRegisteredTabs((currentTabs) => registerTab(requestTab, registerTab(retryTab, currentTabs)));
+  }, []);
+
+  useEffect(() => {
+    setSelectedTab(getTabs(true, registeredTabs)[0]?.name.toLowerCase());
+  }, [registeredTabs]);
+
   useEffect(() => {
     isCollapsed ? setWidth('auto') : setWidth('630px');
   }, [isCollapsed]);
+
+  const getPanelHeaderControlType = (): boolean => {
+    // TODO: 13067650
+    return isRecommendation;
+  };
 
   const getPanelHeaderMenu = (): MenuItemOption[] => {
     const menuOptions: MenuItemOption[] = [];
@@ -84,7 +112,7 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
       iconName: 'Delete',
       title: deleteDescription,
       type: MenuItemType.Advanced,
-      onClick: handleDeleteMenuClick,
+      onClick: handleDelete,
     });
     return options;
   };
@@ -100,9 +128,11 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
   };
 
   // TODO: 12798945? onClick for delete when node store gets built
-  const handleDeleteMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
+  const handleDelete = (): void => {
+    // TODO: 12798935 Analytics (event logging)
     console.log('Node deleted!');
   };
+
   return (
     <PanelContainer
       cardIcon={cardIcon}
@@ -110,11 +140,13 @@ export const PanelRoot = ({ cardIcon, comment, noNodeSelected, selectedTabId, re
       isRight
       isCollapsed={isCollapsed}
       noNodeSelected={noNodeSelected}
+      panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}
       selectedTab={selectedTab}
       showCommentBox={showCommentBox}
-      tabs={[workflowParametersTab, aboutTab, connectionTab]}
+      tabs={registeredTabs}
       width={width}
+      onDismissButtonClicked={handleDelete}
       setSelectedTab={setSelectedTab}
       setIsCollapsed={setIsCollapsed}
       trackEvent={handleTrackEvent}

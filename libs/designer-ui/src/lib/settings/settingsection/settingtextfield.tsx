@@ -1,8 +1,8 @@
 import type { SettingTextFieldProps } from '..';
 import type { ITextFieldStyles } from '@fluentui/react';
 import { TextField } from '@fluentui/react';
+import React, { useState } from 'react';
 import type { FormEvent } from 'react';
-import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export const SettingTextField: React.FC<SettingTextFieldProps> = ({ value, id, isReadOnly }): JSX.Element => {

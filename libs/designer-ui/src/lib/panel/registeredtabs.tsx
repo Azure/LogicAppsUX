@@ -1,53 +1,25 @@
 import constants from '../constants';
-import { WorkflowParameters } from '../workflowparameters/workflowparameters';
-import type { PanelTab } from './';
+import { RequestPanelTab } from './panelTabs/requestTab';
+import { RetryPanelTab } from './panelTabs/retryTab';
+import type { PanelTab } from './panelUtil';
 import * as React from 'react';
 
-export const workflowParametersTab: PanelTab = {
-  title: 'Workflow Parameters',
-  name: constants.PANEL.PANEL_TAB_NAMES.WORKFLOW_PARAMETERS,
-  description: 'Workflow Parameters',
+export const retryTab: PanelTab = {
+  title: 'Retry',
+  name: constants.PANEL.PANEL_TAB_NAMES.RETRY_HISTORY,
+  description: 'Retry History',
   enabled: true,
-  content: (
-    <WorkflowParameters
-      parameters={[
-        {
-          id: 'test1',
-          defaultValue: 'true',
-          type: 'Bool',
-          name: 'test',
-          isEditable: true,
-        },
-        {
-          id: 'test2',
-          defaultValue: '{}',
-          type: 'Object',
-          name: 'test2',
-          isEditable: false,
-        },
-      ]}
-    />
-  ),
+  content: <RetryPanelTab />,
   order: 0,
   icon: 'EditStyle',
 };
 
-export const aboutTab: PanelTab = {
-  title: 'About',
-  name: constants.PANEL.PANEL_TAB_NAMES.ABOUT,
-  description: 'test tab',
+export const requestTab: PanelTab = {
+  title: 'Request',
+  name: constants.PANEL.PANEL_TAB_NAMES.REQUEST_HISTORY,
+  description: 'Request History',
   enabled: true,
-  content: <div />,
-  order: 0,
-  icon: 'EditStyle',
-};
-
-export const connectionTab: PanelTab = {
-  title: 'Connection Long Name',
-  name: constants.PANEL.PANEL_TAB_NAMES.AUTH_CONNECTION,
-  description: 'test tab',
-  enabled: true,
-  content: <div />,
+  content: <RequestPanelTab />,
   order: 0,
   icon: 'EditStyle',
 };

@@ -58,7 +58,7 @@ export const KeyValuePairs: React.FC<ValueProps> = ({ displayName, value = {}, v
           compact={true}
           isHeaderVisible={true}
           items={items}
-          layoutMode={DetailsListLayoutMode.fixedColumns}
+          layoutMode={DetailsListLayoutMode.justified}
           selectionMode={SelectionMode.none}
         />
       </div>

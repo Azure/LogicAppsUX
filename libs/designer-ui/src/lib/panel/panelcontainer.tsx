@@ -2,22 +2,15 @@ import { EmptyContent } from '../card/emptycontent';
 import type { MenuItemOption } from '../card/types';
 import constants from '../constants';
 import type { PageActionTelemetryData } from '../telemetry/models';
+import type { PanelTab } from './panelUtil';
 import { PanelContent } from './panelcontent';
-import { PanelHeader, PanelHeaderControlType } from './panelheader/panelheader';
+import type { PanelHeaderControlType } from './panelheader/panelheader';
+import { PanelHeader } from './panelheader/panelheader';
 import { PanelPivot } from './panelpivot';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import React, { useCallback } from 'react';
+import { useIntl } from 'react-intl';
 
-export interface PanelTab {
-  name: string;
-  title: string;
-  description?: string;
-  icon?: string;
-  enabled?: boolean;
-  order?: number;
-  content: JSX.Element;
-  visibilityPredicate?(): boolean;
-}
 export interface PanelContainerProps {
   cardIcon?: string;
   comment?: string;
@@ -25,15 +18,17 @@ export interface PanelContainerProps {
   isRight?: boolean;
   noNodeSelected: boolean;
   pivotDisabled?: boolean;
+  panelHeaderControlType?: PanelHeaderControlType;
   panelHeaderMenu: MenuItemOption[];
-  selectedTab: string;
+  selectedTab?: string;
   showCommentBox: boolean;
   readOnlyMode?: boolean;
-  tabs: PanelTab[];
+  tabs: Record<string, PanelTab>;
   title: string;
   width: string;
+  onDismissButtonClicked?(): void;
   trackEvent(data: PageActionTelemetryData): void;
-  setSelectedTab: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedTab: React.Dispatch<React.SetStateAction<string | undefined>>;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -43,6 +38,7 @@ export const PanelContainer = ({
   isCollapsed,
   isRight,
   noNodeSelected,
+  panelHeaderControlType,
   panelHeaderMenu,
   selectedTab,
   showCommentBox,
@@ -50,12 +46,14 @@ export const PanelContainer = ({
   tabs,
   title,
   width,
+  onDismissButtonClicked,
   setSelectedTab,
   setIsCollapsed,
   trackEvent,
 }: PanelContainerProps) => {
+  const intl = useIntl();
   const onTabChange = (itemKey: string): void => {
-    setSelectedTab(itemKey);
+    setSelectedTab && setSelectedTab(itemKey);
   };
 
   const renderHeader = useCallback((): JSX.Element => {
@@ -66,20 +64,41 @@ export const PanelContainer = ({
         isRight={isRight}
         showCommentBox={showCommentBox}
         noNodeSelected={noNodeSelected}
+        onDismissButtonClicked={onDismissButtonClicked}
         panelHeaderMenu={panelHeaderMenu}
-        panelHeaderControlType={PanelHeaderControlType.MENU}
+        panelHeaderControlType={panelHeaderControlType}
         readOnlyMode={readOnlyMode}
         title={title}
         comment={comment}
         setIsCollapsed={setIsCollapsed}
       />
     );
-  }, [cardIcon, comment, isCollapsed, isRight, noNodeSelected, panelHeaderMenu, readOnlyMode, showCommentBox, title, setIsCollapsed]);
+  }, [
+    cardIcon,
+    isCollapsed,
+    isRight,
+    showCommentBox,
+    noNodeSelected,
+    onDismissButtonClicked,
+    panelHeaderMenu,
+    panelHeaderControlType,
+    readOnlyMode,
+    title,
+    comment,
+    setIsCollapsed,
+  ]);
+
+  const panelLabel = intl.formatMessage({
+    defaultMessage: 'panel',
+    description: 'label for panel component',
+  });
 
   return (
     <Panel
+      aria-label={panelLabel}
       className="msla-panel-container"
       headerClassName="msla-panel-header"
+      headerText={title}
       isOpen
       onRenderHeader={renderHeader}
       isBlocking={false}
