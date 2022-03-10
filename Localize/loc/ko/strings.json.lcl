@@ -187,7 +187,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Loading...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[로드 중...]]></Val>
+            <Val><![CDATA[로드 중]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
