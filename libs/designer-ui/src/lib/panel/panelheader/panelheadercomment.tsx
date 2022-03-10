@@ -71,9 +71,11 @@ export const PanelHeaderComment = ({
 
     const onCommentTextFieldEscape = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
       if (isEscapeKey(e)) {
-        const prevComment = comment;
         setCommentHasFocus(false);
-        setCardComment(prevComment);
+        setCardComment(comment);
+        if (commentTextFieldRef.current) {
+          commentTextFieldRef.current.blur();
+        }
       }
     };
     return (
