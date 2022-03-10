@@ -1,19 +1,17 @@
-import type { PanelTab } from '.';
-import React from 'react';
+import type { PanelTab } from './panelUtil';
+import React, { useMemo } from 'react';
 
 export interface PanelContentProps {
   selectedTab?: string;
-  tabs: PanelTab[];
+  tabs: Record<string, PanelTab>;
 }
 
 export const PanelContent = ({ tabs, selectedTab }: PanelContentProps): JSX.Element => {
-  return (
-    <div className="msla-content">
-      {
-        tabs.find((t) => {
-          return t.name === selectedTab;
-        })?.content
-      }
-    </div>
-  );
+  const tabContent = useMemo(() => {
+    const tab = Object.entries(tabs).find(([tabId]) => {
+      return tabId === selectedTab;
+    });
+    return tab ? tab[1].content : null;
+  }, [selectedTab, tabs]);
+  return <div className="msla-content">{tabContent}</div>;
 };

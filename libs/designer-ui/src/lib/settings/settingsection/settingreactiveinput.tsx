@@ -1,7 +1,6 @@
-import { useState } from 'react';
-
 import { SettingTextField } from './settingtextfield';
 import { RenderToggleSetting } from './settingtoggle';
+import { useState } from 'react';
 
 interface ReactiveToggleProps {
   textFieldLabel: string;
