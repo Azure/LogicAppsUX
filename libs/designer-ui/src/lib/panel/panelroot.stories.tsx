@@ -12,7 +12,7 @@ export const Standard: ComponentStory<typeof PanelRoot> = (args: PanelRootProps)
 Standard.args = {
   cardIcon: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1550/1.0.1550.2686/azureblob/icon.png',
   comment: 'Test comment!',
-  isRecommendation: true,
+  isRecommendation: false,
   noNodeSelected: false,
   title: 'Testing Title',
 };
