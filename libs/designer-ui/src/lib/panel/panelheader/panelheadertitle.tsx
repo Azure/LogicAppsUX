@@ -38,8 +38,8 @@ export const PanelHeaderTitle = ({ title, readOnlyMode, renameTitleDisabled }: P
     const titleInvalid = false;
     if (titleInvalid) {
       setCardTitle(title);
-      setTitleHasFocus(false);
     }
+    setTitleHasFocus(false);
   };
 
   const onFocusTitle = (): void => {
