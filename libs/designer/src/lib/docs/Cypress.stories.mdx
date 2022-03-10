@@ -1,0 +1,24 @@
+import { Meta } from '@storybook/addon-docs';
+
+<Meta title="E2E Testing" />
+
+# Cypress Testing
+
+## Running Cypress
+
+## Best Practices
+
+Before starting, read through the [Best Practices Guide](https://docs.cypress.io/guides/references/best-practices)
+
+Top priorities:
+
+1. Be specific when selecting elements [Selecting Elements | Cypress Documentation](https://docs.cypress.io/guides/references/best-practices#Selecting-Elements)
+   - Avoid using styling attributes like `id` and `class` to select elements
+   - Prevents any future styling changes from breaking tests
+   - Use one of the following:
+     - Select by text: `cy.contains('Submit').click()`
+     - Select by Cypress attribute: `cy.get('[data-testId=submit]').click()`
+2. Extract actions that can be reused in other tests
+   - Move these to shared files
+3. Avoid using `.wait({time in milliseconds})`
+   - Instead wait on API calls to complete using [aliases](https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Requests)
