@@ -25,7 +25,7 @@ export interface PanelHeaderProps {
   isRight?: boolean;
   cardIcon?: string;
   comment?: string;
-  dismissEnabled?: boolean;
+  titleId?: string;
   panelHeaderControlType?: PanelHeaderControlType;
   panelHeaderMenu: MenuItemOption[];
   noNodeSelected?: boolean;
@@ -80,8 +80,8 @@ export const PanelHeader = ({
   isRight,
   cardIcon,
   comment,
-  dismissEnabled,
   noNodeSelected,
+  titleId,
   panelHeaderControlType,
   panelHeaderMenu,
   readOnlyMode,
@@ -185,7 +185,7 @@ export const PanelHeader = ({
         <div className="msla-panel-card-header">
           {cardIcon ? <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" /> : null}
           <div className="msla-title-container" hidden={isCollapsed}>
-            <PanelHeaderTitle readOnlyMode={readOnlyMode} renameTitleDisabled={renameTitleDisabled} title={title} />
+            <PanelHeaderTitle titleId={titleId} readOnlyMode={readOnlyMode} renameTitleDisabled={renameTitleDisabled} title={title} />
           </div>
           <div className="msla-panel-header-controls" hidden={isCollapsed}>
             {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.MENU ? getPanelHeaderMenu() : null}

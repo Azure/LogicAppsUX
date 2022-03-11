@@ -84,6 +84,7 @@ export const PanelHeaderComment = ({
         borderless
         multiline
         autoAdjustHeight
+        resizable={false}
         componentRef={commentTextFieldRef}
         readOnly={readOnlyMode}
         styles={commentTextFieldStyle}
