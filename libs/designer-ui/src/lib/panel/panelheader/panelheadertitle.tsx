@@ -20,9 +20,10 @@ interface PanelHeaderTitleProps {
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
   title?: string;
+  titleId?: string;
 }
 
-export const PanelHeaderTitle = ({ title, readOnlyMode, renameTitleDisabled }: PanelHeaderTitleProps): JSX.Element => {
+export const PanelHeaderTitle = ({ title, titleId, readOnlyMode, renameTitleDisabled }: PanelHeaderTitleProps): JSX.Element => {
   const intl = useIntl();
   const [cardTitle, setCardTitle] = useState(title);
   const [titleHasFocus, setTitleHasFocus] = useState(false);
@@ -63,6 +64,7 @@ export const PanelHeaderTitle = ({ title, readOnlyMode, renameTitleDisabled }: P
   });
   return (
     <TextField
+      id={titleId}
       className={css(!readOnly && titleClassName)}
       componentRef={titleTextFieldRef}
       readOnly={readOnly}

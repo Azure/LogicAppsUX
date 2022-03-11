@@ -7,6 +7,7 @@ import { PanelContent } from './panelcontent';
 import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
 import { PanelPivot } from './panelpivot';
+import type { IPanelHeaderRenderer, IPanelProps } from '@fluentui/react/lib/Panel';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -56,37 +57,41 @@ export const PanelContainer = ({
     setSelectedTab && setSelectedTab(itemKey);
   };
 
-  const renderHeader = useCallback((): JSX.Element => {
-    return (
-      <PanelHeader
-        cardIcon={cardIcon ?? constants.PANEL.DEFAULT_ICON}
-        isCollapsed={isCollapsed}
-        isRight={isRight}
-        showCommentBox={showCommentBox}
-        noNodeSelected={noNodeSelected}
-        onDismissButtonClicked={onDismissButtonClicked}
-        panelHeaderMenu={panelHeaderMenu}
-        panelHeaderControlType={panelHeaderControlType}
-        readOnlyMode={readOnlyMode}
-        title={title}
-        comment={comment}
-        setIsCollapsed={setIsCollapsed}
-      />
-    );
-  }, [
-    cardIcon,
-    isCollapsed,
-    isRight,
-    showCommentBox,
-    noNodeSelected,
-    onDismissButtonClicked,
-    panelHeaderMenu,
-    panelHeaderControlType,
-    readOnlyMode,
-    title,
-    comment,
-    setIsCollapsed,
-  ]);
+  const renderHeader = useCallback(
+    (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string): JSX.Element => {
+      return (
+        <PanelHeader
+          cardIcon={cardIcon ?? constants.PANEL.DEFAULT_ICON}
+          isCollapsed={isCollapsed}
+          isRight={isRight}
+          showCommentBox={showCommentBox}
+          noNodeSelected={noNodeSelected}
+          onDismissButtonClicked={onDismissButtonClicked}
+          panelHeaderMenu={panelHeaderMenu}
+          panelHeaderControlType={panelHeaderControlType}
+          readOnlyMode={readOnlyMode}
+          titleId={headerTextId}
+          title={title}
+          comment={comment}
+          setIsCollapsed={setIsCollapsed}
+        />
+      );
+    },
+    [
+      cardIcon,
+      isCollapsed,
+      isRight,
+      showCommentBox,
+      noNodeSelected,
+      onDismissButtonClicked,
+      panelHeaderMenu,
+      panelHeaderControlType,
+      readOnlyMode,
+      title,
+      comment,
+      setIsCollapsed,
+    ]
+  );
 
   const panelLabel = intl.formatMessage({
     defaultMessage: 'panel',
