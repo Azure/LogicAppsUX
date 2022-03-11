@@ -81,6 +81,12 @@
       "value": "count"
     }
   ],
+  "1zgFh1": [
+    {
+      "type": 0,
+      "value": "Dismiss"
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
@@ -619,6 +625,20 @@
       "value": "Den här åtgärden har redan tagits bort."
     }
   ],
+  "bH5LtI": [
+    {
+      "type": 0,
+      "value": "Tab with : "
+    },
+    {
+      "type": 1,
+      "value": "tabname"
+    },
+    {
+      "type": 0,
+      "value": " name is already registered"
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
@@ -629,6 +649,12 @@
     {
       "type": 0,
       "value": "Etikettinställning"
+    }
+  ],
+  "c6XbVI": [
+    {
+      "type": 0,
+      "value": "panel"
     }
   ],
   "ci6ex1": [
