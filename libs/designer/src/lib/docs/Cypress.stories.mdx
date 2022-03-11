@@ -4,6 +4,24 @@ import { Meta } from '@storybook/addon-docs';
 
 # Cypress Testing
 
+## Running Cypress
+
+Open an interactive Cypress session
+
+`npx cypress open`
+
+Run in Chrome
+
+`npx cypress run --headed --browser chrome`
+
+Run in Edge
+
+`npx cypress run --headed --browser edge`
+
+Run in Firefox
+
+`npx cypress run --headed --browser firefox`
+
 ## Best Practices
 
 Before starting, read through the [Best Practices Guide](https://docs.cypress.io/guides/references/best-practices)
@@ -24,3 +42,6 @@ Top priorities:
 ## Accessibility Testing
 
 Write tests for accessibility scenarios not covered in Storybook automation using [jest-axe.](https://github.com/component-driven/cypress-axe)
+
+See example in "Flyout.spec.ts"
+To examine a falure, click on the failure on the Cypress page, then navigate to details in the console.
