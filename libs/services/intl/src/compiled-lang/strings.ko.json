@@ -70,6 +70,12 @@
       "value": "count"
     }
   ],
+  "1zgFh1": [
+    {
+      "type": 0,
+      "value": "Dismiss"
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
@@ -109,7 +115,7 @@
   "5qzZMo": [
     {
       "type": 0,
-      "value": "로드 중..."
+      "value": "로드 중"
     }
   ],
   "5rkegy": [
@@ -582,6 +588,20 @@
       "value": "이 작업은 이미 삭제되었습니다."
     }
   ],
+  "bH5LtI": [
+    {
+      "type": 0,
+      "value": "Tab with : "
+    },
+    {
+      "type": 1,
+      "value": "tabname"
+    },
+    {
+      "type": 0,
+      "value": " name is already registered"
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
@@ -592,6 +612,12 @@
     {
       "type": 0,
       "value": "레이블 설정"
+    }
+  ],
+  "c6XbVI": [
+    {
+      "type": 0,
+      "value": "panel"
     }
   ],
   "ci6ex1": [
