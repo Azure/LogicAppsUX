@@ -133,7 +133,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Dismiss]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Elvetés]]></Val>
+            <Val><![CDATA[Bezárás]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -858,6 +858,9 @@
       <Item ItemId=";bH5LtI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tab with : {tabname} name is already registered]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Már regisztrálva van egy {tabname} nevű lap]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
