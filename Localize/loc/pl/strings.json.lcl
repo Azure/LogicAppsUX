@@ -876,6 +876,9 @@
       <Item ItemId=";bH5LtI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tab with : {tabname} name is already registered]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Karta z: nazwą {tabname} jest już zarejestrowana]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
