@@ -106,7 +106,7 @@
   "1zgFh1": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "Закрыть"
     }
   ],
   "2K2fAj": [
@@ -690,7 +690,7 @@
   "bH5LtI": [
     {
       "type": 0,
-      "value": "Tab with : "
+      "value": "Вкладка с именем \""
     },
     {
       "type": 1,
@@ -698,7 +698,7 @@
     },
     {
       "type": 0,
-      "value": " name is already registered"
+      "value": "\" уже зарегистрирована"
     }
   ],
   "ba9yGJ": [
@@ -716,7 +716,7 @@
   "c6XbVI": [
     {
       "type": 0,
-      "value": "panel"
+      "value": "панель"
     }
   ],
   "ci6ex1": [

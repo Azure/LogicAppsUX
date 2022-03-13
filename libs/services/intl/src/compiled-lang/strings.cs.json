@@ -118,7 +118,7 @@
   "1zgFh1": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "Zavřít"
     }
   ],
   "2K2fAj": [
@@ -702,7 +702,7 @@
   "bH5LtI": [
     {
       "type": 0,
-      "value": "Tab with : "
+      "value": "Karta s názvem "
     },
     {
       "type": 1,
@@ -710,7 +710,7 @@
     },
     {
       "type": 0,
-      "value": " name is already registered"
+      "value": " se už zaregistrovala."
     }
   ],
   "ba9yGJ": [

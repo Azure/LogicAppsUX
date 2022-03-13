@@ -84,7 +84,7 @@
   "1zgFh1": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "Ignora"
     }
   ],
   "2K2fAj": [
@@ -632,7 +632,7 @@
   "bH5LtI": [
     {
       "type": 0,
-      "value": "Tab with : "
+      "value": "La scheda con il nome "
     },
     {
       "type": 1,
@@ -640,7 +640,7 @@
     },
     {
       "type": 0,
-      "value": " name is already registered"
+      "value": " è già registrata"
     }
   ],
   "ba9yGJ": [
@@ -658,7 +658,7 @@
   "c6XbVI": [
     {
       "type": 0,
-      "value": "panel"
+      "value": "pannello"
     }
   ],
   "ci6ex1": [

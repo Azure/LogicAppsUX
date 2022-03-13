@@ -84,7 +84,7 @@
   "1zgFh1": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "Descartar"
     }
   ],
   "2K2fAj": [
@@ -624,7 +624,7 @@
   "bH5LtI": [
     {
       "type": 0,
-      "value": "Tab with : "
+      "value": "La pestaña con el nombre "
     },
     {
       "type": 1,
@@ -632,7 +632,7 @@
     },
     {
       "type": 0,
-      "value": " name is already registered"
+      "value": " ya está registrada"
     }
   ],
   "ba9yGJ": [
