@@ -73,7 +73,7 @@
   "1zgFh1": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "關閉"
     }
   ],
   "2K2fAj": [
@@ -591,7 +591,7 @@
   "bH5LtI": [
     {
       "type": 0,
-      "value": "Tab with : "
+      "value": "已註冊過名為 "
     },
     {
       "type": 1,
@@ -599,7 +599,7 @@
     },
     {
       "type": 0,
-      "value": " name is already registered"
+      "value": " 的索引標籤"
     }
   ],
   "ba9yGJ": [
@@ -617,7 +617,7 @@
   "c6XbVI": [
     {
       "type": 0,
-      "value": "panel"
+      "value": "面板"
     }
   ],
   "ci6ex1": [
