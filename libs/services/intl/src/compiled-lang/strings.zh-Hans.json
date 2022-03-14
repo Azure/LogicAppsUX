@@ -599,7 +599,7 @@
   "bH5LtI": [
     {
       "type": 0,
-      "value": "Tab with : "
+      "value": "名为 "
     },
     {
       "type": 1,
@@ -607,7 +607,7 @@
     },
     {
       "type": 0,
-      "value": " name is already registered"
+      "value": " 的选项卡名称已注册"
     }
   ],
   "ba9yGJ": [
