@@ -84,7 +84,7 @@
   "1zgFh1": [
     {
       "type": 0,
-      "value": "Elvetés"
+      "value": "Bezárás"
     }
   ],
   "2K2fAj": [
@@ -628,7 +628,7 @@
   "bH5LtI": [
     {
       "type": 0,
-      "value": "Tab with : "
+      "value": "Már regisztrálva van egy "
     },
     {
       "type": 1,
@@ -636,7 +636,7 @@
     },
     {
       "type": 0,
-      "value": " name is already registered"
+      "value": " nevű lap"
     }
   ],
   "ba9yGJ": [
