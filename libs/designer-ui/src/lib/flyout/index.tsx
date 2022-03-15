@@ -51,6 +51,7 @@ export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
     return (
       <TooltipHost content={ariaLabel} styles={styles}>
         <button
+          data-testid="callout-btn"
           ref={buttonRef}
           aria-label={ariaLabel ?? title ?? text}
           className="msla-button msla-flyout"
