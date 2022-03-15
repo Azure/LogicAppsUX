@@ -32,5 +32,5 @@ jobs:
       - run: npx nx affected --target=build --parallel --max-parallel=3
       - run: npx nx affected --target=test --parallel --max-parallel=2
       - run: npm run test:e2e:ci
-      #- run: npm run build-storybook
-      #- run: npm run storybook:files-axe
+      - run: npm run build-storybook
+      - run: npm run storybook:files-axe

@@ -38,7 +38,7 @@ export const FlyoutCallout: React.FC<FlyoutCalloutProps> = ({ target, text, visi
       target={target}
       onDismiss={onDismiss}
     >
-      <div role="dialog" style={{ color: palette.neutralPrimary }} data-is-focusable={true} tabIndex={0}>
+      <div role="dialog" style={{ color: palette.neutralPrimary }} data-testid="callout-text" data-is-focusable={true} tabIndex={0}>
         {text}
       </div>
     </FocusTrapCallout>

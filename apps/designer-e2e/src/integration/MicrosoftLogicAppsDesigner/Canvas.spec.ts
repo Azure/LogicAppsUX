@@ -1,4 +1,4 @@
-import { DATA_CY_ATTR } from './shared';
+import { DATA_CY_ATTR } from '../shared';
 
 describe('designer: Canvas', () => {
   beforeEach(() => cy.visit('/iframe.html?id=designer-designer-composition--simple-but-big-definition'));
