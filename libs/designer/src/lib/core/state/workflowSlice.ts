@@ -1,8 +1,7 @@
 import { initializeGraphState } from '../parsers/ParseReduxAction';
 import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
 
 type SpecTypes = 'BJS' | 'CNCF';
@@ -26,7 +25,7 @@ const initialState: WorkflowState = {
   workflowSpec: 'BJS',
   graph: null,
   actions: {},
-  nodesMetadata: {},
+  nodesMetadata: {}
 };
 
 interface AddNodePayload {
@@ -87,3 +86,4 @@ export const workflowSlice = createSlice({
 export const { initWorkflowSpec, addNode, updateNodeSizes } = workflowSlice.actions;
 
 export default workflowSlice.reducer;
+

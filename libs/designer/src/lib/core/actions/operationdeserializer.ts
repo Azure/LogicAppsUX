@@ -1,16 +1,15 @@
-import { createListenerMiddleware, addListener } from '@reduxjs/toolkit'
-import type { TypedStartListening, TypedAddListener } from '@reduxjs/toolkit'
+import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
 
 import { initializeGraphState } from '../parsers/ParseReduxAction';
 import { useDispatch } from 'react-redux';
-import { initializeOperationInfo } from '../state/operationMetadata';
+import { initializeOperationInfo } from '../state/operationMetadataSlice';
 
-export const listenerMiddleware = createListenerMiddleware();
+export const operationDeserializer = createListenerMiddleware();
 
-listenerMiddleware.startListening({
+operationDeserializer.startListening({
   actionCreator: initializeGraphState.fulfilled,
   effect: async (action, listenerApi) => {
-    const dispatch = useDispatch();
+    const dispatch = listenerApi.dispatch;
     const { actionData } = action.payload;
     console.log("there are over ", Object.keys(actionData).length, " entries in actions");
     dispatch(initializeOperationInfo({
@@ -19,4 +18,4 @@ listenerMiddleware.startListening({
       operationId: 'manualOperation'
     }));
   }
-})
+});
