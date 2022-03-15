@@ -23,9 +23,9 @@ describe('Resolution Service tests', () => {
     const parameters = {
       foo: 'bar',
     };
-    const unresolvedString = "@appsettings('foo')";
+    const unresolvedString = "@appsetting('foo')";
     const service = new ResolutionService(parameters, {});
-    expect(service.resolve(unresolvedString)).toEqual("@appsettings('foo')");
+    expect(service.resolve(unresolvedString)).toEqual("@appsetting('foo')");
   });
 
   it('should not throw an error when the parameter values are not provided', () => {
