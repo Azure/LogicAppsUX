@@ -23,9 +23,17 @@ describe('Resolution Service tests', () => {
     const parameters = {
       foo: 'bar',
     };
-    const unresolvedString = "@appsettings('foo')";
     const service = new ResolutionService(parameters, {});
-    expect(service.resolve(unresolvedString)).toEqual("@appsettings('foo')");
+    expect(service.resolve("@appsetting('foo')")).toEqual("@appsetting('foo')");
+    expect(service.resolve("@bar('foo')")).toEqual("@bar('foo')");
+  });
+
+  it('should not resolve expressions but return a literal value for escaped expressions', () => {
+    const parameters = {
+      foo: 'bar',
+    };
+    const service = new ResolutionService(parameters, {});
+    expect(service.resolve("@@appsetting('foo')")).toEqual("@appsetting('foo')");
   });
 
   it('should not throw an error when the parameter values are not provided', () => {
