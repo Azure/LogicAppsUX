@@ -138,9 +138,7 @@ export class ResolutionService {
 
     if (isFunction(segment)) {
       const evaluatedExpression = this._evaluateFunctionExpression(segment, isStringInterpolationExpression);
-      if (!isNullOrUndefined(evaluatedExpression)) {
-        return evaluatedExpression;
-      }
+      return !isNullOrUndefined(evaluatedExpression) ? evaluatedExpression : expression;
     }
 
     return this._evaluateUsingRegex(expression);
