@@ -1,7 +1,9 @@
 import React, { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { initializeServices } from './actions/initialize';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
+import { registerAllServices } from './state/servicesSlice';
 import { initWorkflowSpec } from './state/workflowSlice';
 export interface BJSWorkflowProviderProps {
   workflow: LogicAppsV2.WorkflowDefinition;
@@ -10,6 +12,7 @@ export interface BJSWorkflowProviderProps {
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children }) => {
   const dispatch = useDispatch();
   useEffect(() => {
+    dispatch(registerAllServices(initializeServices('BJS')));
     dispatch(initWorkflowSpec('BJS'));
     dispatch(initializeGraphState(workflow));
   }, [dispatch, workflow]);

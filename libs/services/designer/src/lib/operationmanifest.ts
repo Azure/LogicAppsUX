@@ -1,7 +1,4 @@
-interface OperationInfo {
-    connectorId: string;
-    operationId: string;
-}
+import { OperationInfo, OperationManifest } from './common/models/operationmanifest';
 
 /**
  * The operation manifest service.
@@ -28,5 +25,5 @@ export interface OperationManifestService {
      * @arg {string} operationId - The operation id.
      * @return {Promise<any>}
      */
-    getOperationManifest(connectorId: string, operationId: string): Promise<any>;
+    getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest>;
 }

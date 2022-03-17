@@ -119,6 +119,7 @@ export interface Documentation {
     url: string;
 }
 
+type SwaggerSchema = any;
 export interface OperationManifest {
     properties: {
         iconUri: string;
@@ -131,11 +132,11 @@ export interface OperationManifest {
 
         recurrence?: RecurrenceSetting;
 
-        inputs?: Swagger.Schema;
+        inputs?: SwaggerSchema;
         inputsLocation?: string[]; // NOTE(tonytang): If not specified, default value is [ 'inputs' ]
         isInputsOptional?: boolean;
 
-        outputs?: Swagger.Schema;
+        outputs?: SwaggerSchema;
         /*
          * NOTE(trbaratc): Output resolution takes place as follows. If no payload outputs are present, then use outputs.
          * If payload outputs are present then walk the path defined by alternativeOutputs.keyPath to find the outputsKey. If the outputsKey is not defined, use outputs.
@@ -144,8 +145,8 @@ export interface OperationManifest {
          */
         alternativeOutputs?: {
             keyPath: string[];
-            defaultSchema: Swagger.Schema;
-            schemas: Record<string, Swagger.Schema>;
+            defaultSchema: SwaggerSchema;
+            schemas: Record<string, SwaggerSchema>;
         };
         isOutputsOptional?: boolean;
 

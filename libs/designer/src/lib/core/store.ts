@@ -3,12 +3,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import type { AnyObject } from 'immer/dist/internal';
 import { operationDeserializer } from './actions/operationdeserializer';
 import operationMetadataReducer from './state/operationMetadataSlice';
+import servicesReducer from './state/servicesSlice';
 import workflowReducer from './state/workflowSlice';
 
 export const store = configureStore({
   reducer: {
     workflow: workflowReducer,
-    operations: operationMetadataReducer
+    operations: operationMetadataReducer,
+    context: servicesReducer
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().prepend(operationDeserializer.middleware)
 });

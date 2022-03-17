@@ -1,7 +1,5 @@
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
-
 import { initializeGraphState } from '../parsers/ParseReduxAction';
-import { useDispatch } from 'react-redux';
 import { initializeOperationInfo } from '../state/operationMetadataSlice';
 
 export const operationDeserializer = createListenerMiddleware();
