@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface AddServicePayload {
   serviceName: string;
@@ -6,7 +7,7 @@ export interface AddServicePayload {
 }
 
 const initialState: Record<string, any> = {
-    services: {}
+  services: {},
 };
 
 export const servicesSlice = createSlice({
@@ -14,17 +15,16 @@ export const servicesSlice = createSlice({
   initialState,
   reducers: {
     registerAllServices: (state, action: PayloadAction<Record<string, any>>) => {
-        state.services = { ...action.payload };
+      state.services = { ...action.payload };
     },
     registerService: (state, action: PayloadAction<AddServicePayload>) => {
-        const { serviceName, service } = action.payload;
-        state.services[serviceName] = service;
-    }
-  }
+      const { serviceName, service } = action.payload;
+      state.services[serviceName] = service;
+    },
+  },
 });
 
 // Action creators are generated for each case reducer function
 export const { registerAllServices, registerService } = servicesSlice.actions;
 
 export default servicesSlice.reducer;
-

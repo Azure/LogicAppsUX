@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface OperationInfo {
   connectorId: string;
@@ -10,7 +11,7 @@ export interface OperationMetadataState {
 }
 
 const initialState: OperationMetadataState = {
-  operationInfo: {}
+  operationInfo: {},
 };
 
 interface AddOperationInfoPayload extends OperationInfo {
@@ -25,11 +26,10 @@ export const operationMetadataSlice = createSlice({
       const { id, connectorId, operationId } = action.payload;
       state.operationInfo[id] = { connectorId, operationId };
     },
-  }
+  },
 });
 
 // Action creators are generated for each case reducer function
 export const { initializeOperationInfo } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;
-

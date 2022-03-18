@@ -1,1 +1,2 @@
-export const OperationManifest = 'OPERATIONMANIFEST';
+export const CONNECTION = 'CONNECTION';
+export const OPERATION_MANIFEST = 'OPERATIONMANIFEST';

@@ -2,9 +2,6 @@ import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
 import { css, DirectionalHint, Icon, TooltipHost } from '@fluentui/react';
 
-const scopeIcon =
-  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGQ9Im0wIDBoMzJ2MzJoLTMyeiIgZmlsbD0iIzhDMzkwMCIvPg0KIDxwYXRoIGQ9Im04IDEwaDE2djEyaC0xNnptMTUgMTF2LTEwaC0xNHYxMHptLTItOHY2aC0xMHYtNnptLTEgNXYtNGgtOHY0eiIgZmlsbD0iI2ZmZiIvPg0KPC9zdmc+DQo=';
-
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
   onCollapse?: (event: { currentTarget: any }) => void;
@@ -19,6 +16,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   drag,
   draggable,
   dragPreview,
+  icon,
   errorLevel,
   errorMessage,
   selected,
@@ -48,12 +46,20 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   const bgStyle = { backgroundColor: brandColor };
   return (
     <div ref={dragPreview} className="msla-content-fit">
-      <div ref={drag} aria-describedby={describedBy} className="msla-content-fit" aria-label={title} role="button" onClick={handleClick} tabIndex={0}>
+      <div
+        ref={drag}
+        aria-describedby={describedBy}
+        className="msla-content-fit"
+        aria-label={title}
+        role="button"
+        onClick={handleClick}
+        tabIndex={0}
+      >
         <div className="msla-scope-v2--header msla-scope-header-style" style={{ borderColor: brandColor }}>
           <button className="msla-inner msla-scope-header-inner" style={bgStyle}>
             <button className="msla-selector" draggable={true} tabIndex={-1}>
               <div className="panel-card-content-gripper-section">{draggable ? <Gripper fill={'#FFFFF'} /> : null}</div>
-              {scopeIcon && <img alt="" role="presentation" src={scopeIcon} width="24" height="24" />}
+              {icon && <img alt="" role="presentation" src={icon} width="24" height="24" />}
               <span>{title}</span>
             </button>
             <TooltipHost content={toggleText} directionalHint={DirectionalHint.rightCenter}>

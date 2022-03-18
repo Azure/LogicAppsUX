@@ -1,103 +1,102 @@
 {
-    "definition": {
-      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-      "actions": {
-        "Initialize_variable": {
-          "inputs": {
-            "variables": [
-              {
-                "name": "var1",
-                "type": "integer"
-              }
-            ]
-          },
-          "runAfter": {},
-          "type": "InitializeVariable"
-        },
-        "Response": {
-          "inputs": {
-            "body": "@variables('var1')",
-            "statusCode": 200
-          },
-          "kind": "http",
-          "runAfter": {
-            "Scope": ["Succeeded"]
-          },
-          "type": "Response"
-        },
-        "Foreach": {
-          "actions": {
-            "Increment_variable_2": {
-              "inputs": {
-                "name": "var1",
-                "value": 1
-              },
-              "runAfter": {},
-              "type": "IncrementVariable"
-            },
-            "Increment_variable_3": {
-              "inputs": {
-                "name": "var1",
-                "value": 1
-              },
-              "runAfter": {
-                "Increment_variable_2": ["Succeeded"]
-              },
-              "type": "IncrementVariable"
-            },
-            "Foreach_nested": {
-              "actions": {
-                "Increment_variable_4": {
-                  "inputs": {
-                    "name": "var1",
-                    "value": 1
-                  },
-                  "runAfter": {},
-                  "type": "IncrementVariable"
-                },
-                "Increment_variable_5": {
-                  "inputs": {
-                    "name": "var1",
-                    "value": 1
-                  },
-                  "runAfter": {
-                    "Increment_variable_4": ["Succeeded"]
-                  },
-                  "type": "IncrementVariable"
-                }
-              },
-              "foreach": "@item()",
-              "runAfter": {
-                "Increment_variable_3": ["Succeeded"]
-              },
-              "type": "Foreach"
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Initialize_variable": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "var1",
+              "type": "integer"
             }
-          },
-          "foreach": "@triggerBody()",
-          "runAfter": {
-            "Initialize_variable": ["Succeeded"]
-          },
-          "type": "Foreach"
+          ]
         },
-        "Foreach_empty": {
-            "actions": {},
-            "runAfter": {
-              "Foreach": ["Succeeded"]
-            },
-            "foreach": "@triggerBody()",
-            "type": "Foreach"
-        }
+        "runAfter": {},
+        "type": "InitializeVariable"
       },
-      "contentVersion": "1.0.0.0",
-      "outputs": {},
-      "triggers": {
-        "manual": {
-          "inputs": {},
-          "kind": "Http",
-          "type": "Request"
-        }
+      "Response": {
+        "inputs": {
+          "body": "@variables('var1')",
+          "statusCode": 200
+        },
+        "kind": "http",
+        "runAfter": {
+          "Foreach": ["Succeeded"]
+        },
+        "type": "Response"
+      },
+      "Foreach": {
+        "actions": {
+          "Increment_variable_2": {
+            "inputs": {
+              "name": "var1",
+              "value": 1
+            },
+            "runAfter": {},
+            "type": "IncrementVariable"
+          },
+          "Increment_variable_3": {
+            "inputs": {
+              "name": "var1",
+              "value": 1
+            },
+            "runAfter": {
+              "Increment_variable_2": ["Succeeded"]
+            },
+            "type": "IncrementVariable"
+          },
+          "Foreach_nested": {
+            "actions": {
+              "Increment_variable_4": {
+                "inputs": {
+                  "name": "var1",
+                  "value": 1
+                },
+                "runAfter": {},
+                "type": "IncrementVariable"
+              },
+              "Increment_variable_5": {
+                "inputs": {
+                  "name": "var1",
+                  "value": 1
+                },
+                "runAfter": {
+                  "Increment_variable_4": ["Succeeded"]
+                },
+                "type": "IncrementVariable"
+              }
+            },
+            "foreach": "@item()",
+            "runAfter": {
+              "Increment_variable_3": ["Succeeded"]
+            },
+            "type": "Foreach"
+          }
+        },
+        "foreach": "@triggerBody()",
+        "runAfter": {
+          "Initialize_variable": ["Succeeded"]
+        },
+        "type": "Foreach"
+      },
+      "Foreach_empty": {
+        "actions": {},
+        "runAfter": {
+          "Foreach": ["Succeeded"]
+        },
+        "foreach": "@triggerBody()",
+        "type": "Foreach"
       }
     },
-    "kind": "Stateless"
-  }
-  
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "manual": {
+        "inputs": {},
+        "kind": "Http",
+        "type": "Request"
+      }
+    }
+  },
+  "kind": "Stateless"
+}

@@ -1,168 +1,170 @@
-import { Connector } from './connector';
+import type { Connector } from './connector';
 
 export interface UploadChunkMetadata {
-    chunkTransferSupported?: boolean;
-    acceptUploadSize?: boolean;
-    minimumSize?: number;
-    maximumSize?: number;
+  chunkTransferSupported?: boolean;
+  acceptUploadSize?: boolean;
+  minimumSize?: number;
+  maximumSize?: number;
 }
 
 export interface DownloadChunkMetadata {
-    acceptDownloadSize?: boolean;
-    minimumSize?: number;
-    maximumSize?: number;
+  acceptDownloadSize?: boolean;
+  minimumSize?: number;
+  maximumSize?: number;
 }
 
 export interface OperationInfo {
-    connectorId: string;
-    operationId: string;
+  connectorId: string;
+  operationId: string;
 }
 
 export interface SecureDataOptions {
-    outputsMode?: OutputSecureDataMode;
+  outputsMode?: OutputSecureDataMode;
 }
 
 export enum OutputSecureDataMode {
-    Disabled = 'disabled',
-    LinkedToInputs = 'linkedtoinputs',
+  Disabled = 'disabled',
+  LinkedToInputs = 'linkedtoinputs',
 }
 
 export enum SettingScope {
-    Trigger = 'trigger',
-    Action = 'action',
+  Trigger = 'trigger',
+  Action = 'action',
 }
 
 export enum ExecutionOrder {
-    Parallel = 'parallel',
-    Sequential = 'sequential',
+  Parallel = 'parallel',
+  Sequential = 'sequential',
 }
 
 export enum OperationOptions {
-    Asynchronous = 'Asynchronous',
-    DisableAsyncPattern = 'DisableAsyncPattern',
-    DisableAutomaticDecompression = 'DisableAutomaticDecompression',
-    EnableSchemaValidation = 'EnableSchemaValidation',
-    SuppressWorkflowHeaders = 'SuppressWorkflowHeaders',
-    SuppressWorkflowHeadersOnResponse = 'SuppressWorkflowHeadersOnResponse',
+  Asynchronous = 'Asynchronous',
+  DisableAsyncPattern = 'DisableAsyncPattern',
+  DisableAutomaticDecompression = 'DisableAutomaticDecompression',
+  EnableSchemaValidation = 'EnableSchemaValidation',
+  SuppressWorkflowHeaders = 'SuppressWorkflowHeaders',
+  SuppressWorkflowHeadersOnResponse = 'SuppressWorkflowHeadersOnResponse',
 }
 
 export enum ConnectionType {
-    Function = 'function',
-    ServiceProvider = 'serviceprovider',
+  Function = 'function',
+  ServiceProvider = 'serviceprovider',
 }
 
 export enum ConnectionReferenceKeyFormat {
-    Function = 'function',
-    OpenApi = 'openapi',
-    ServiceProvider = 'serviceprovider',
+  Function = 'function',
+  OpenApi = 'openapi',
+  ServiceProvider = 'serviceprovider',
 }
 
 export interface Operation {
-    connectorId?: string;
-    operationId: string;
+  connectorId?: string;
+  operationId: string;
 }
 
 export interface ActionSetting {
-    allowedOperations?: Operation[];
-    executionOrder?: ExecutionOrder;
-    allowedSettings?: string[];
-    isOptional: boolean;
+  allowedOperations?: Operation[];
+  executionOrder?: ExecutionOrder;
+  allowedSettings?: string[];
+  isOptional: boolean;
 }
 
 export type SplitOn = string | any[] | undefined; // tslint:disable-line: no-any
 
 export interface OperationManifestSetting<T> {
-    scopes?: SettingScope[]; // NOTE(yuxyao): If the scopes set to undefined, then the options apply to all scopes.
-    options?: T;
+  scopes?: SettingScope[]; // NOTE(yuxyao): If the scopes set to undefined, then the options apply to all scopes.
+  options?: T;
 }
 
 // TODO (vikanand): Combine chunking and download chunking.
 export interface OperationManifestSettings {
-    chunking?: OperationManifestSetting<UploadChunkMetadata>;
-    concurrency?: OperationManifestSetting<void>;
-    correlation?: OperationManifestSetting<void>;
-    downloadChunking?: OperationManifestSetting<DownloadChunkMetadata>;
-    operationOptions?: OperationManifestSetting<OperationOptions[]>;
-    paging?: OperationManifestSetting<void>;
-    retryPolicy?: OperationManifestSetting<void>;
-    secureData?: OperationManifestSetting<SecureDataOptions>;
-    timeout?: OperationManifestSetting<void>;
-    trackedProperties?: OperationManifestSetting<void>;
+  chunking?: OperationManifestSetting<UploadChunkMetadata>;
+  concurrency?: OperationManifestSetting<void>;
+  correlation?: OperationManifestSetting<void>;
+  downloadChunking?: OperationManifestSetting<DownloadChunkMetadata>;
+  operationOptions?: OperationManifestSetting<OperationOptions[]>;
+  paging?: OperationManifestSetting<void>;
+  retryPolicy?: OperationManifestSetting<void>;
+  secureData?: OperationManifestSetting<SecureDataOptions>;
+  timeout?: OperationManifestSetting<void>;
+  trackedProperties?: OperationManifestSetting<void>;
 }
 
 export interface Badge {
-    name: string;
-    description: string;
+  name: string;
+  description: string;
 }
 
 export enum RecurrenceType {
-    None = 'none',
-    Basic = 'basic',
-    Advanced = 'advanced',
+  None = 'none',
+  Basic = 'basic',
+  Advanced = 'advanced',
 }
 
 export interface RecurrenceSetting {
-    type: RecurrenceType;
-    useLegacyParameterGroup?: boolean;
+  type: RecurrenceType;
+  useLegacyParameterGroup?: boolean;
 }
 
 export interface ConnectionMetadata {
-    required: boolean;
-    type?: ConnectionType;
+  required: boolean;
+  type?: ConnectionType;
 }
 
 export interface ConnectionReference {
-    referenceKeyFormat: ConnectionReferenceKeyFormat;
+  referenceKeyFormat: ConnectionReferenceKeyFormat;
 }
 
 export interface Documentation {
-    url: string;
+  url: string;
 }
 
 type SwaggerSchema = any;
 export interface OperationManifest {
-    properties: {
-        iconUri: string;
-        brandColor: string;
-        description?: string;
-        summary?: string;
+  properties: {
+    iconUri: string;
+    brandColor: string;
+    description?: string;
+    summary?: string;
 
-        statusBadge?: Badge;
-        environmentBadge?: Badge;
+    allowChildOperations?: boolean;
 
-        recurrence?: RecurrenceSetting;
+    statusBadge?: Badge;
+    environmentBadge?: Badge;
 
-        inputs?: SwaggerSchema;
-        inputsLocation?: string[]; // NOTE(tonytang): If not specified, default value is [ 'inputs' ]
-        isInputsOptional?: boolean;
+    recurrence?: RecurrenceSetting;
 
-        outputs?: SwaggerSchema;
-        /*
-         * NOTE(trbaratc): Output resolution takes place as follows. If no payload outputs are present, then use outputs.
-         * If payload outputs are present then walk the path defined by alternativeOutputs.keyPath to find the outputsKey. If the outputsKey is not defined, use outputs.
-         * If outputsKey is defined and specifically present inside of alternativeOutputs.schemas, use the corresponding schema from alternativeOutputs.schemas.
-         * Else, if outputsKey is defined but not specifically considered, use alternativeOutputs.defaultSchema.
-         */
-        alternativeOutputs?: {
-            keyPath: string[];
-            defaultSchema: SwaggerSchema;
-            schemas: Record<string, SwaggerSchema>;
-        };
-        isOutputsOptional?: boolean;
+    inputs?: SwaggerSchema;
+    inputsLocation?: string[]; // NOTE(tonytang): If not specified, default value is [ 'inputs' ]
+    isInputsOptional?: boolean;
 
-        settings?: OperationManifestSettings;
-
-        trigger?: string;
-        triggerHint?: string;
-        connector?: Connector;
-        autoCast?: boolean;
-        includeRootOutputs?: boolean;
-
-        actions?: ActionSetting[];
-
-        connection?: ConnectionMetadata;
-        connectionReference?: ConnectionReference;
-
-        externalDocs?: Documentation;
+    outputs?: SwaggerSchema;
+    /*
+     * NOTE(trbaratc): Output resolution takes place as follows. If no payload outputs are present, then use outputs.
+     * If payload outputs are present then walk the path defined by alternativeOutputs.keyPath to find the outputsKey. If the outputsKey is not defined, use outputs.
+     * If outputsKey is defined and specifically present inside of alternativeOutputs.schemas, use the corresponding schema from alternativeOutputs.schemas.
+     * Else, if outputsKey is defined but not specifically considered, use alternativeOutputs.defaultSchema.
+     */
+    alternativeOutputs?: {
+      keyPath: string[];
+      defaultSchema: SwaggerSchema;
+      schemas: Record<string, SwaggerSchema>;
     };
+    isOutputsOptional?: boolean;
+
+    settings?: OperationManifestSettings;
+
+    trigger?: string;
+    triggerHint?: string;
+    connector?: Connector;
+    autoCast?: boolean;
+    includeRootOutputs?: boolean;
+
+    actions?: ActionSetting[];
+
+    connection?: ConnectionMetadata;
+    connectionReference?: ConnectionReference;
+
+    externalDocs?: Documentation;
+  };
 }
