@@ -61,3 +61,43 @@ const MSLA_REQUEST_ACCESS_TOKEN = 'MSLA.REQUEST.ACCESSTOKEN';
 
 // TODO: Implement adding header operation in all the services then remove this funcationality from http client;
 let HttpExtraHeaders: Record<string, string>;
+
+export interface HttpOptions {
+  //analytics: Analytics;
+  baseUrl?: string;
+  getAccessToken?(): Promise<string>;
+  locale?: string;
+}
+
+export function odataEscape(stringToEscape: string): string {
+  if (stringToEscape) {
+    return stringToEscape.replace(/'/g, `''`);
+  } else {
+    return stringToEscape;
+  }
+}
+
+export function getClientRequestIdFromHeaders(headers: Headers | Record<string, string>): string {
+  if (headers) {
+    return headers instanceof Headers ? headers.get(X_MS_CLIENT_REQUEST_ID)! : headers[X_MS_CLIENT_REQUEST_ID];
+  }
+
+  return '';
+}
+
+export function addHeaderIfNotExists<TRequestBody>(request: HttpRequest<TRequestBody>, key: string, value: string) {
+  const headers: RequestHeaders = request.headers || new Headers();
+  key = key.toLowerCase();
+
+  if (headers instanceof Headers) {
+    if (!headers.has(key)) {
+      headers.set(key, value);
+    }
+  } else {
+    if (!Object.prototype.hasOwnProperty.call(headers as Record<string, string>, key)) {
+      (headers as Record<string, string>)[key] = value;
+    }
+  }
+
+  request.headers = headers;
+}
