@@ -1,0 +1,48 @@
+import type { PanelContainerProps } from '../panelcontainer';
+import { PanelContainer } from '../panelcontainer';
+import * as React from 'react';
+import * as ReactShallowRenderer from 'react-test-renderer/shallow';
+
+describe('ui/workflowparameters/workflowparameter', () => {
+  let minimal: PanelContainerProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  beforeEach(() => {
+    minimal = {
+      isCollapsed: false,
+      noNodeSelected: false,
+      panelHeaderMenu: [],
+      showCommentBox: true,
+      tabs: {},
+      title: 'test title',
+      width: '630px',
+      trackEvent: jest.fn(),
+      setSelectedTab: jest.fn(),
+      setIsCollapsed: jest.fn(),
+    };
+    renderer = ReactShallowRenderer.createRenderer();
+  });
+
+  afterEach(() => {
+    renderer.unmount();
+  });
+
+  it('should construct.', () => {
+    const panel = renderer.render(<PanelContainer {...minimal} />);
+    expect(panel).toMatchSnapshot();
+  });
+
+  it('should render.', () => {
+    renderer.render(<PanelContainer {...minimal} />);
+    const panel = renderer.getRenderOutput();
+
+    expect(panel.props.className).toBe('msla-panel-container');
+    expect(panel.props.headerClassName).toBe('msla-panel-header');
+    expect(panel.props.headerText).toBe(minimal.title);
+    expect(panel.props.customWidth).toBe(minimal.width);
+
+    const panelContentContainer = panel.props.children;
+    expect(panelContentContainer.props.className).toBe('msla-panel-content-container');
+
+    const panelContent = panelContentContainer.props.children;
+    expect(panelContent.props.className).toBe('msla-panel-content');
+  });
+});

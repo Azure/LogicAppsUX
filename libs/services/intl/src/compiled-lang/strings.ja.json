@@ -590,16 +590,12 @@
   ],
   "bH5LtI": [
     {
-      "type": 0,
-      "value": "Tab with : "
-    },
-    {
       "type": 1,
       "value": "tabname"
     },
     {
       "type": 0,
-      "value": " name is already registered"
+      "value": " という名前のタブは既に登録されています"
     }
   ],
   "ba9yGJ": [
