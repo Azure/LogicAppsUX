@@ -1,0 +1,38 @@
+@import (reference) '../variables.less';
+.msla-panel-about-container {
+  flex-direction: column;
+  display: flex;
+  padding-left: 30px;
+  padding-right: 30px;
+  .msla-panel-connector-label {
+    font-family: @semibold-font-family;
+  }
+  .msla-panel-connector-name {
+    font-weight: normal;
+    padding: 0;
+    margin-bottom: 20px;
+  }
+  .msla-panel-description-label {
+    font-family: @semibold-font-family;
+  }
+  .msla-panel-description {
+    margin-bottom: 20px;
+  }
+  .msla-panel-tags-label {
+    font-family: @semibold-font-family;
+  }
+  .msla-panel-tags {
+    .msla-panel-tag {
+      border: @badge-border solid;
+      padding: 2px;
+      display: inline-block;
+      font-size: @card-label-font-size;
+      height: 14px;
+      line-height: 13px;
+      margin-right: 5px;
+      text-align: center;
+      text-transform: uppercase;
+      min-width: @badge-width;
+    }
+  }
+}
