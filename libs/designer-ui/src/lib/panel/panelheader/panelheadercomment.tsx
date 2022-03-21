@@ -8,7 +8,7 @@ import { css } from '@fluentui/react/lib/Utilities';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-interface PanelHeaderCommentProps {
+export interface PanelHeaderCommentProps {
   comment?: string;
   isCollapsed: boolean;
   noNodeSelected?: boolean;

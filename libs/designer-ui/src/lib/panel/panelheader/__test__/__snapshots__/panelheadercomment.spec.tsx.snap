@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/panel/panelheadertitle should construct. 1`] = `
+<div
+  className="msla-panel-comment-container-wrapper"
+  hidden={false}
+>
+  <div
+    className="msla-panel-comment-container"
+  >
+    <Memo(Icon)
+      ariaLabel="Comment"
+      className="msla-comment-icon"
+      iconName="Comment"
+    />
+    <StyledTextFieldBase
+      ariaLabel="Comment"
+      autoAdjustHeight={true}
+      borderless={true}
+      className="msla-card-comment"
+      componentRef={
+        Object {
+          "current": null,
+        }
+      }
+      maxLength={256}
+      multiline={true}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      resizable={false}
+      styles={
+        Object {
+          "field": Object {
+            "backgroundColor": "#faf9f8",
+          },
+        }
+      }
+    />
+  </div>
+</div>
+`;

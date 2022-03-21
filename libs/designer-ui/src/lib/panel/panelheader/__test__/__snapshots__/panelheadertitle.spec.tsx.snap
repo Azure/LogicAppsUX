@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/panel/panelheadertitle should construct. 1`] = `
+<StyledTextFieldBase
+  ariaLabel="Card Title"
+  borderless={true}
+  className="msla-card-title"
+  componentRef={
+    Object {
+      "current": null,
+    }
+  }
+  maxLength={80}
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  styles={
+    Object {
+      "fieldGroup": Object {
+        "background": "inherit",
+      },
+      "root": Object {
+        "marginTop": "5px",
+      },
+    }
+  }
+/>
+`;
