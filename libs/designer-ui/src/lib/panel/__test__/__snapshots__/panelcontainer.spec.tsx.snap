@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
+<StyledPanelBase
+  aria-label="panel"
+  className="msla-panel-container"
+  customWidth="630px"
+  hasCloseButton={false}
+  headerClassName="msla-panel-header"
+  headerText="test title"
+  isBlocking={false}
+  isOpen={true}
+  onRenderHeader={[Function]}
+  styles={
+    Object {
+      "content": false,
+    }
+  }
+  type={8}
+>
+  <div
+    className="msla-panel-content-container"
+  >
+    <div
+      className="msla-panel-content"
+    >
+      <PanelPivot
+        isCollapsed={false}
+        onTabChange={[Function]}
+        tabs={Object {}}
+        trackEvent={[MockFunction]}
+      />
+      <PanelContent
+        tabs={Object {}}
+      />
+    </div>
+  </div>
+</StyledPanelBase>
+`;

@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
+<PanelContainer
+  isCollapsed={false}
+  isRight={true}
+  noNodeSelected={false}
+  onDismissButtonClicked={[Function]}
+  panelHeaderControlType={1}
+  panelHeaderMenu={
+    Array [
+      Object {
+        "disabled": undefined,
+        "disabledReason": "Comments can only be added while editing the inputs of a step.",
+        "iconName": "Comment",
+        "key": "Comment",
+        "onClick": [Function],
+        "title": "Add a comment",
+        "type": 3,
+      },
+      Object {
+        "disabled": false,
+        "disabledReason": "This operation has already been deleted.",
+        "iconName": "Delete",
+        "key": "Delete",
+        "onClick": [Function],
+        "title": "Delete",
+        "type": 3,
+      },
+    ]
+  }
+  setIsCollapsed={[Function]}
+  setSelectedTab={[Function]}
+  showCommentBox={false}
+  tabs={Object {}}
+  title="Test Title"
+  trackEvent={[Function]}
+  width="auto"
+/>
+`;

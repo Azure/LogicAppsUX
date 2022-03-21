@@ -16,7 +16,7 @@ const pivotStyles: Partial<IPivotStyles> = {
     },
   },
 };
-export interface CategoryPivotProps {
+export interface PanelPivotProps {
   isCollapsed: boolean;
   tabs: Record<string, PanelTab>;
   selectedTab?: string;
@@ -24,7 +24,7 @@ export interface CategoryPivotProps {
   onCategoryClick?(item: PivotItem): void;
   trackEvent(data: PageActionTelemetryData): void;
 }
-export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackEvent }: CategoryPivotProps): JSX.Element => {
+export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackEvent }: PanelPivotProps): JSX.Element => {
   const intl = useIntl();
   const onTabSelected = (item?: PivotItem): void => {
     if (item) {
