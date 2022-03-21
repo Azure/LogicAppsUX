@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
+<div
+  className="msla-pivot"
+>
+  <StyledPivot
+    className="msla-panel-menu"
+    onLinkClick={[Function]}
+    overflowAriaLabel="more panels"
+    overflowBehavior="menu"
+    styles={
+      Object {
+        "link": Object {
+          "margin": "1px 24px 1px 1px",
+        },
+        "text": Object {
+          "&:hover": Object {
+            "color": "#0078D4",
+          },
+        },
+      }
+    }
+  />
+</div>
+`;
