@@ -9,5 +9,11 @@ export default {
 export const Standard: ComponentStory<typeof About> = (args: AboutProps) => <About {...args} />;
 
 Standard.args = {
-  description: 'blah',
+  connectorDisplayName: 'Node Name',
+  description: 'This is a description ',
+  descriptionDocumentation: { url: 'www.example.com', description: 'more info' },
+  headerIcons: [
+    { title: 'Tag1', badgeText: 'test' },
+    { title: 'Tag2', badgeText: 'more' },
+  ],
 };

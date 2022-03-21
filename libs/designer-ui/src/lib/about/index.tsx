@@ -11,7 +11,7 @@ export interface AboutProps {
   headerIcons?: BadgeProps[];
 }
 
-export const About = ({ connectorDisplayName, description, descriptionDocumentation, headerIcons, ...props }: AboutProps): JSX.Element => {
+export const About = ({ connectorDisplayName, description, descriptionDocumentation, headerIcons }: AboutProps): JSX.Element => {
   const intl = useIntl();
 
   const badgeHeaderIcons = (badges: BadgeProps[]): JSX.Element => {
