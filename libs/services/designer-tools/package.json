@@ -1,0 +1,6 @@
+{
+  "name": "designer-tools",
+  "version": "1.0.0",
+  "description": "tools for the Logic Apps designer",
+  "main": "index.js"
+}
