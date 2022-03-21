@@ -1,0 +1,173 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/panel/panelheader/main should render 1`] = `
+<div
+  className="msla-panel-header"
+>
+  <div
+    className="ms-TooltipHost root-109"
+    onBlurCapture={[Function]}
+    onFocusCapture={[Function]}
+    onKeyDown={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+    role="none"
+  >
+    <button
+      aria-label="Collapse/Expand"
+      className="ms-Button ms-Button--icon collapse-toggle-left root-110"
+      data-is-focusable={true}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-111"
+        data-automationid="splitbuttonprimary"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
+          data-icon-name="DoubleChevronRight8"
+          style={
+            Object {
+              "fontFamily": "\\"FabricMDL2Icons-12\\"",
+            }
+          }
+        >
+          
+        </i>
+      </span>
+    </button>
+  </div>
+  <div
+    className="msla-panel-card-header"
+  >
+    <div
+      className="msla-title-container"
+      hidden={false}
+    >
+      <div
+        className="ms-TextField ms-TextField--borderless msla-card-title root-121"
+      >
+        <div
+          className="ms-TextField-wrapper"
+        >
+          <div
+            className="ms-TextField-fieldGroup fieldGroup-122"
+          >
+            <input
+              aria-invalid={false}
+              aria-label="Card Title"
+              className="ms-TextField-field field-123"
+              maxLength={80}
+              onBlur={[Function]}
+              onChange={[Function]}
+              onFocus={[Function]}
+              onInput={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="msla-panel-header-controls"
+      hidden={false}
+    />
+  </div>
+</div>
+`;
+
+exports[`lib/panel/panelheader/main should render with panel header menu 1`] = `
+<div
+  className="msla-panel-header"
+>
+  <div
+    className="ms-TooltipHost root-109"
+    onBlurCapture={[Function]}
+    onFocusCapture={[Function]}
+    onKeyDown={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+    role="none"
+  >
+    <button
+      aria-label="Collapse/Expand"
+      className="ms-Button ms-Button--icon collapse-toggle-left root-110"
+      data-is-focusable={true}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-111"
+        data-automationid="splitbuttonprimary"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
+          data-icon-name="DoubleChevronRight8"
+          style={
+            Object {
+              "fontFamily": "\\"FabricMDL2Icons-12\\"",
+            }
+          }
+        >
+          
+        </i>
+      </span>
+    </button>
+  </div>
+  <div
+    className="msla-panel-card-header"
+  >
+    <div
+      className="msla-title-container"
+      hidden={false}
+    >
+      <div
+        className="ms-TextField ms-TextField--borderless msla-card-title root-121"
+      >
+        <div
+          className="ms-TextField-wrapper"
+        >
+          <div
+            className="ms-TextField-fieldGroup fieldGroup-122"
+          >
+            <input
+              aria-invalid={false}
+              aria-label="Card Title"
+              className="ms-TextField-field field-123"
+              maxLength={80}
+              onBlur={[Function]}
+              onChange={[Function]}
+              onFocus={[Function]}
+              onInput={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="msla-panel-header-controls"
+      hidden={false}
+    />
+  </div>
+</div>
+`;

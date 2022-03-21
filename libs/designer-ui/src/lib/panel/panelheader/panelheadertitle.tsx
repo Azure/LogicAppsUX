@@ -16,7 +16,7 @@ const titleTextFieldStyle: Partial<ITextFieldStyles> = {
   },
 };
 
-interface PanelHeaderTitleProps {
+export interface PanelHeaderTitleProps {
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
   title?: string;
