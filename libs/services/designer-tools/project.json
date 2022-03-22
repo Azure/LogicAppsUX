@@ -1,0 +1,44 @@
+{
+    "root": "libs/services/designer-tools",
+    "sourceRoot": "libs/services/designer-tools/src",
+    "projectType": "library",
+    "targets": {
+      "build": {
+        "executor": "./tools/executors/web:rollup",
+        "outputs": ["{options.outputPath}"],
+        "options": {
+          "outputPath": "dist/libs/services/designer-tools",
+          "main": "libs/services/designer-tools/src/index.ts",
+          "tsConfig": "libs/services/designer-tools/tsconfig.lib.json",
+          "project": "libs/services/designer-tools/package.json",
+          "entryFile": "libs/services/designer-tools/src/index.ts",
+          "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+          "format": ["cjs", "esm"],
+          "assets": [
+            {
+              "glob": "libs/services/designer-tools/README.md",
+              "input": ".",
+              "output": "."
+            }
+          ]
+        }
+      },
+      "lint": {
+        "executor": "@nrwl/linter:eslint",
+        "outputs": ["{options.outputFile}"],
+        "options": {
+          "lintFilePatterns": ["libs/services/designer-tools/**/*.ts"]
+        }
+      },
+      "test": {
+        "executor": "@nrwl/jest:jest",
+        "outputs": ["coverage/libs/services/designer-tools"],
+        "options": {
+          "jestConfig": "libs/services/designer-tools/jest.config.js",
+          "passWithNoTests": true
+        }
+      }
+    },
+    "tags": []
+  }
+  

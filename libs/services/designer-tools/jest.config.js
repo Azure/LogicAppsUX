@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'services-resolution-service',
+  displayName: 'services-designer-tools',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
