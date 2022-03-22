@@ -1,8 +1,15 @@
 import type { BadgeProps } from '../card';
 import { DocumentationItem } from '../recommendation/documentationItem';
+import type { ILabelStyles } from '@fluentui/react/lib/Label';
 import { Label } from '@fluentui/react/lib/Label';
 import * as React from 'react';
 import { useIntl } from 'react-intl';
+
+const labelStyles: Partial<ILabelStyles> = {
+  root: {
+    fontSize: '14px',
+  },
+};
 
 export interface AboutProps {
   connectorDisplayName?: string;
@@ -59,11 +66,15 @@ export const About = ({ connectorDisplayName, description, descriptionDocumentat
   return (
     <div className="msla-panel-about-container">
       <div className="msla-panel-about-name">
-        <Label className="msla-panel-connector-label">{nameLabel}</Label>
+        <Label className="msla-panel-connector-label" styles={labelStyles}>
+          {nameLabel}
+        </Label>
         <Label className="msla-panel-connector-name">{connectorDisplayName ? connectorDisplayName : notAvailable}</Label>
       </div>
       <div className="msla-panel-about-description">
-        <Label className="msla-panel-description-label">{operationLabel}</Label>
+        <Label className="msla-panel-description-label" styles={labelStyles}>
+          {operationLabel}
+        </Label>
         <div className="msla-panel-description">
           <DocumentationItem
             description={description}
@@ -74,7 +85,9 @@ export const About = ({ connectorDisplayName, description, descriptionDocumentat
         </div>
       </div>
       <div className="msla-panel-about-tags">
-        <Label className="msla-panel-tags-label">{tagLabel}</Label>
+        <Label className="msla-panel-tags-label" styles={labelStyles}>
+          {tagLabel}
+        </Label>
         <div className="msla-panel-tags">{headerIcons && headerIcons.length > 0 ? badgeHeaderIcons(headerIcons) : noTags}</div>
       </div>
     </div>
