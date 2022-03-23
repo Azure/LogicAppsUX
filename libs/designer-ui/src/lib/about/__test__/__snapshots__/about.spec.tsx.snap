@@ -7,39 +7,90 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
   <div
     className="msla-panel-about-name"
   >
-    <label
-      className="ms-Label msla-panel-connector-label root-101"
+    <StyledLabelBase
+      className="msla-panel-connector-label"
+      styles={
+        Object {
+          "root": Object {
+            "fontSize": "14px",
+          },
+        }
+      }
     >
-      Connector
-    </label>
-    <label
-      className="ms-Label msla-panel-connector-name root-101"
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Connector",
+            },
+          ]
+        }
+        id="99vsJy"
+      />
+    </StyledLabelBase>
+    <StyledLabelBase
+      className="msla-panel-connector-name"
     >
       Not available
-    </label>
+    </StyledLabelBase>
   </div>
   <div
     className="msla-panel-about-description"
   >
-    <label
-      className="ms-Label msla-panel-description-label root-101"
+    <StyledLabelBase
+      className="msla-panel-description-label"
+      styles={
+        Object {
+          "root": Object {
+            "fontSize": "14px",
+          },
+        }
+      }
     >
-      Operation note
-    </label>
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Operation note",
+            },
+          ]
+        }
+        id="YHsAKl"
+      />
+    </StyledLabelBase>
     <div
       className="msla-panel-description"
     >
-      <div />
+      <DocumentationItem />
     </div>
   </div>
   <div
     className="msla-panel-about-tags"
   >
-    <label
-      className="ms-Label msla-panel-tags-label root-101"
+    <StyledLabelBase
+      className="msla-panel-tags-label"
+      styles={
+        Object {
+          "root": Object {
+            "fontSize": "14px",
+          },
+        }
+      }
     >
-      Tags
-    </label>
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Tags",
+            },
+          ]
+        }
+        id="TgcgXE"
+      />
+    </StyledLabelBase>
     <div
       className="msla-panel-tags"
     >
@@ -56,60 +107,111 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
   <div
     className="msla-panel-about-name"
   >
-    <label
-      className="ms-Label msla-panel-connector-label root-101"
+    <StyledLabelBase
+      className="msla-panel-connector-label"
+      styles={
+        Object {
+          "root": Object {
+            "fontSize": "14px",
+          },
+        }
+      }
     >
-      Connector
-    </label>
-    <label
-      className="ms-Label msla-panel-connector-name root-101"
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Connector",
+            },
+          ]
+        }
+        id="99vsJy"
+      />
+    </StyledLabelBase>
+    <StyledLabelBase
+      className="msla-panel-connector-name"
     >
       test
-    </label>
+    </StyledLabelBase>
   </div>
   <div
     className="msla-panel-about-description"
   >
-    <label
-      className="ms-Label msla-panel-description-label root-101"
+    <StyledLabelBase
+      className="msla-panel-description-label"
+      styles={
+        Object {
+          "root": Object {
+            "fontSize": "14px",
+          },
+        }
+      }
     >
-      Operation note
-    </label>
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Operation note",
+            },
+          ]
+        }
+        id="YHsAKl"
+      />
+    </StyledLabelBase>
     <div
       className="msla-panel-description"
     >
-      <div>
-        <span>
-          This is a description 
-        </span>
-      </div>
+      <DocumentationItem
+        description="This is a description "
+      />
     </div>
   </div>
   <div
     className="msla-panel-about-tags"
   >
-    <label
-      className="ms-Label msla-panel-tags-label root-101"
+    <StyledLabelBase
+      className="msla-panel-tags-label"
+      styles={
+        Object {
+          "root": Object {
+            "fontSize": "14px",
+          },
+        }
+      }
     >
-      Tags
-    </label>
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Tags",
+            },
+          ]
+        }
+        id="TgcgXE"
+      />
+    </StyledLabelBase>
     <div
       className="msla-panel-tags"
     >
-      <div
-        aria-label="test"
-        className="msla-panel-tag"
-        title="Tag1"
-      >
-        test
-      </div>
-      <div
-        aria-label="more"
-        className="msla-panel-tag"
-        title="Tag2"
-      >
-        more
-      </div>
+      <React.Fragment>
+        <div
+          aria-label="test"
+          className="msla-panel-tag"
+          title="Tag1"
+        >
+          test
+        </div>
+        <div
+          aria-label="more"
+          className="msla-panel-tag"
+          title="Tag2"
+        >
+          more
+        </div>
+      </React.Fragment>
     </div>
   </div>
 </div>
@@ -122,68 +224,117 @@ exports[`lib/monitoring/requestpanel/request should render a description with ex
   <div
     className="msla-panel-about-name"
   >
-    <label
-      className="ms-Label msla-panel-connector-label root-101"
+    <StyledLabelBase
+      className="msla-panel-connector-label"
+      styles={
+        Object {
+          "root": Object {
+            "fontSize": "14px",
+          },
+        }
+      }
     >
-      Connector
-    </label>
-    <label
-      className="ms-Label msla-panel-connector-name root-101"
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Connector",
+            },
+          ]
+        }
+        id="99vsJy"
+      />
+    </StyledLabelBase>
+    <StyledLabelBase
+      className="msla-panel-connector-name"
     >
       test
-    </label>
+    </StyledLabelBase>
   </div>
   <div
     className="msla-panel-about-description"
   >
-    <label
-      className="ms-Label msla-panel-description-label root-101"
+    <StyledLabelBase
+      className="msla-panel-description-label"
+      styles={
+        Object {
+          "root": Object {
+            "fontSize": "14px",
+          },
+        }
+      }
     >
-      Operation note
-    </label>
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Operation note",
+            },
+          ]
+        }
+        id="YHsAKl"
+      />
+    </StyledLabelBase>
     <div
       className="msla-panel-description"
     >
-      <div>
-        <span>
-          This is a description 
-        </span>
-        <a
-          href="www.microsoft.com"
-          onClick={[Function]}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Learn more
-        </a>
-      </div>
+      <DocumentationItem
+        description="This is a description "
+        link={
+          Object {
+            "url": "www.microsoft.com",
+            "urlDescription": "Learn more",
+          }
+        }
+      />
     </div>
   </div>
   <div
     className="msla-panel-about-tags"
   >
-    <label
-      className="ms-Label msla-panel-tags-label root-101"
+    <StyledLabelBase
+      className="msla-panel-tags-label"
+      styles={
+        Object {
+          "root": Object {
+            "fontSize": "14px",
+          },
+        }
+      }
     >
-      Tags
-    </label>
+      <Memo(MemoizedFormattedMessage)
+        defaultMessage={
+          Array [
+            Object {
+              "type": 0,
+              "value": "Tags",
+            },
+          ]
+        }
+        id="TgcgXE"
+      />
+    </StyledLabelBase>
     <div
       className="msla-panel-tags"
     >
-      <div
-        aria-label="test"
-        className="msla-panel-tag"
-        title="Tag1"
-      >
-        test
-      </div>
-      <div
-        aria-label="more"
-        className="msla-panel-tag"
-        title="Tag2"
-      >
-        more
-      </div>
+      <React.Fragment>
+        <div
+          aria-label="test"
+          className="msla-panel-tag"
+          title="Tag1"
+        >
+          test
+        </div>
+        <div
+          aria-label="more"
+          className="msla-panel-tag"
+          title="Tag2"
+        >
+          more
+        </div>
+      </React.Fragment>
     </div>
   </div>
 </div>
