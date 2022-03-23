@@ -34,7 +34,7 @@ describe('lib/monitoring/requestpanel/request', () => {
       ...minimal,
       connectorDisplayName: 'test',
       description: 'This is a description ',
-      descriptionDocumentation: { url: 'www.example.com', description: 'more info' },
+      descriptionDocumentation: { url: 'www.microsoft.com', description: 'more info' },
       headerIcons: [
         { title: 'Tag1', badgeText: 'test' },
         { title: 'Tag2', badgeText: 'more' },

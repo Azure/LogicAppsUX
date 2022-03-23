@@ -149,7 +149,7 @@ exports[`lib/monitoring/requestpanel/request should render a description with ex
           This is a description 
         </span>
         <a
-          href="www.example.com"
+          href="www.microsoft.com"
           onClick={[Function]}
           rel="noopener noreferrer"
           target="_blank"
