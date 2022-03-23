@@ -1,9 +1,10 @@
+import { AssertionErrorCode, AssertionException } from './common/exceptions/assertion';
 import type { OperationInfo, OperationManifest } from './common/models/operationmanifest';
 
 /**
  * The operation manifest service.
  */
-export interface OperationManifestService {
+export interface IOperationManifestService {
   /**
    * Checks if the operation type is supported.
    * @arg {string} operationType - The operation type.
@@ -27,3 +28,20 @@ export interface OperationManifestService {
    */
   getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest>;
 }
+
+let service: IOperationManifestService;
+
+export const InitOperationManifestService = (manifestService: IOperationManifestService): void => {
+  service = manifestService;
+};
+
+export const OperationManifestService = (): IOperationManifestService => {
+  if (!service) {
+    throw new AssertionException(
+      AssertionErrorCode.SERVICE_NOT_INITIALIZED,
+      'OperationManifestService need to be initialized before using'
+    );
+  }
+
+  return service;
+};

@@ -21,7 +21,7 @@
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/services/intl/src/compiled-lang/\" ",
     "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/services/intl/src/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "build:resolution-service": "nx run services-resolution-service:build",
-    "build:services-designer": "nx run services-designer:build",
+    "build:designer-client-services": "nx run services-designer-client-services:build",
     "build:utils": "nx run utils:build",
     "bump": "standard-version --no-verify",
     "postinstall": "tsc -p ./tools/executors/web/tsconfig.json",

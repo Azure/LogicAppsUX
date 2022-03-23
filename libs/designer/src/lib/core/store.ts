@@ -1,7 +1,6 @@
 import { operationDeserializer } from './actions/operationdeserializer';
 import connectorsReducer from './state/connectorSlice';
 import operationMetadataReducer from './state/operationMetadataSlice';
-import servicesReducer from './state/servicesSlice';
 import workflowReducer from './state/workflowSlice';
 import { configureStore } from '@reduxjs/toolkit';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -12,7 +11,6 @@ export const store = configureStore({
     workflow: workflowReducer,
     operations: operationMetadataReducer,
     connectors: connectorsReducer,
-    context: servicesReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(operationDeserializer.middleware),
 });

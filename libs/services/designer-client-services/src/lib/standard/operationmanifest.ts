@@ -1,7 +1,7 @@
 import { UnsupportedException } from '../common/exceptions/unsupported';
 import { SettingScope } from '../common/models/operationmanifest';
 import type { OperationInfo, OperationManifest } from '../common/models/operationmanifest';
-import type { OperationManifestService as IOperationManifestService } from '../operationmanifest';
+import type { IOperationManifestService } from '../operationmanifest';
 import { equals } from '@microsoft-logic-apps/utils';
 
 const invokefunction = 'invokefunction';
@@ -44,9 +44,7 @@ const supportedManifestTypes = [
   swiftencode,
 ];
 
-export class OperationManifestService implements IOperationManifestService {
-  private operationManifests: Record<string, OperationManifest> = {};
-
+export class StandardOperationManifestService implements IOperationManifestService {
   constructor(private readonly options: unknown) {}
 
   isSupported(operationType: string, operationKind?: string): boolean {
@@ -69,14 +67,6 @@ export class OperationManifestService implements IOperationManifestService {
   }
 
   async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
-    const operationManifestKey = `${connectorId}-${operationId}`;
-
-    const cachedOperationManifest = this.operationManifests[operationManifestKey];
-
-    if (cachedOperationManifest) {
-      return cachedOperationManifest;
-    }
-
     if (operationId === foreach) {
       return foreachManifest;
     }

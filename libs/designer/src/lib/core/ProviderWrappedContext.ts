@@ -1,3 +1,8 @@
 import React from 'react';
 
-export const ProviderWrappedContext = React.createContext<boolean | null>(null);
+export interface DesignerOptions {
+  readOnly?: boolean;
+  servicesInitialized?: boolean;
+}
+
+export const ProviderWrappedContext = React.createContext<DesignerOptions | null>(null);

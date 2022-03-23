@@ -5,7 +5,7 @@
     "designer-e2e": "apps/designer-e2e",
     "designer-standalone": "apps/designer-standalone",
     "designer-ui": "libs/designer-ui",
-    "services-designer": "libs/services/designer",
+    "services-designer-client-services": "libs/services/designer-client-services",
     "services-intl": "libs/services/intl",
     "services-resolution-service": "libs/services/resolution-service",
     "utils": "libs/utils",

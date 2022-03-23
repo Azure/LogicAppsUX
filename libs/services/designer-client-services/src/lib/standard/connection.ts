@@ -1,7 +1,7 @@
 import type { Connector } from '../common/models/connector';
-import type { ConnectionService as IConnectionService } from '../connection';
+import type { IConnectionService } from '../connection';
 
-export class ConnectionService implements IConnectionService {
+export class StandardConnectionService implements IConnectionService {
   constructor(public readonly options: unknown) {}
 
   dispose(): void {

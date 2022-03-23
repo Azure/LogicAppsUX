@@ -1,4 +1,4 @@
-import type { Connector, OperationManifest } from '@microsoft-logic-apps/designer-services';
+import type { Connector, OperationManifest } from '@microsoft-logic-apps/designer-client-services';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 

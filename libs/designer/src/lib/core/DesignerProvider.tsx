@@ -1,3 +1,4 @@
+import type { DesignerOptions } from './ProviderWrappedContext';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { store } from './store';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
@@ -10,13 +11,14 @@ import { Provider as ReduxProvider } from 'react-redux';
 export interface DesignerProviderProps {
   theme?: Theme;
   locale?: string;
+  options: DesignerOptions;
   children: React.ReactNode;
 }
 
-export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', children }: DesignerProviderProps) => {
+export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', options, children }: DesignerProviderProps) => {
   return (
     <ReduxProvider store={store}>
-      <ProviderWrappedContext.Provider value={true}>
+      <ProviderWrappedContext.Provider value={options}>
         <ThemeProvider theme={theme} className="msla-theme-provider">
           <IntlProvider
             locale={locale}
