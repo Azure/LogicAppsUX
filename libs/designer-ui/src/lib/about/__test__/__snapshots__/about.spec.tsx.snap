@@ -1,0 +1,190 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/monitoring/requestpanel/request should render 1`] = `
+<div
+  className="msla-panel-about-container"
+>
+  <div
+    className="msla-panel-about-name"
+  >
+    <label
+      className="ms-Label msla-panel-connector-label root-101"
+    >
+      Connector
+    </label>
+    <label
+      className="ms-Label msla-panel-connector-name root-101"
+    >
+      Not available
+    </label>
+  </div>
+  <div
+    className="msla-panel-about-description"
+  >
+    <label
+      className="ms-Label msla-panel-description-label root-101"
+    >
+      Operation note
+    </label>
+    <div
+      className="msla-panel-description"
+    >
+      <div />
+    </div>
+  </div>
+  <div
+    className="msla-panel-about-tags"
+  >
+    <label
+      className="ms-Label msla-panel-tags-label root-101"
+    >
+      Tags
+    </label>
+    <div
+      className="msla-panel-tags"
+    >
+      None
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
+<div
+  className="msla-panel-about-container"
+>
+  <div
+    className="msla-panel-about-name"
+  >
+    <label
+      className="ms-Label msla-panel-connector-label root-101"
+    >
+      Connector
+    </label>
+    <label
+      className="ms-Label msla-panel-connector-name root-101"
+    >
+      test
+    </label>
+  </div>
+  <div
+    className="msla-panel-about-description"
+  >
+    <label
+      className="ms-Label msla-panel-description-label root-101"
+    >
+      Operation note
+    </label>
+    <div
+      className="msla-panel-description"
+    >
+      <div>
+        <span>
+          This is a description 
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    className="msla-panel-about-tags"
+  >
+    <label
+      className="ms-Label msla-panel-tags-label root-101"
+    >
+      Tags
+    </label>
+    <div
+      className="msla-panel-tags"
+    >
+      <div
+        aria-label="test"
+        className="msla-panel-tag"
+        title="Tag1"
+      >
+        test
+      </div>
+      <div
+        aria-label="more"
+        className="msla-panel-tag"
+        title="Tag2"
+      >
+        more
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/monitoring/requestpanel/request should render a description with external link 1`] = `
+<div
+  className="msla-panel-about-container"
+>
+  <div
+    className="msla-panel-about-name"
+  >
+    <label
+      className="ms-Label msla-panel-connector-label root-101"
+    >
+      Connector
+    </label>
+    <label
+      className="ms-Label msla-panel-connector-name root-101"
+    >
+      test
+    </label>
+  </div>
+  <div
+    className="msla-panel-about-description"
+  >
+    <label
+      className="ms-Label msla-panel-description-label root-101"
+    >
+      Operation note
+    </label>
+    <div
+      className="msla-panel-description"
+    >
+      <div>
+        <span>
+          This is a description 
+        </span>
+        <a
+          href="www.example.com"
+          onClick={[Function]}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Learn more
+        </a>
+      </div>
+    </div>
+  </div>
+  <div
+    className="msla-panel-about-tags"
+  >
+    <label
+      className="ms-Label msla-panel-tags-label root-101"
+    >
+      Tags
+    </label>
+    <div
+      className="msla-panel-tags"
+    >
+      <div
+        aria-label="test"
+        className="msla-panel-tag"
+        title="Tag1"
+      >
+        test
+      </div>
+      <div
+        aria-label="more"
+        className="msla-panel-tag"
+        title="Tag2"
+      >
+        more
+      </div>
+    </div>
+  </div>
+</div>
+`;
