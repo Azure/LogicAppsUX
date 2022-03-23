@@ -93,6 +93,8 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowGraph | WorkflowNode): Elk
         ...edge,
         targets: [edge.target],
         sources: [edge.source],
+        target: undefined,
+        source: undefined,
       })),
   };
 };

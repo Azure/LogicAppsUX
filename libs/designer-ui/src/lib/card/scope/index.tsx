@@ -59,7 +59,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           <button className="msla-inner msla-scope-header-inner" style={bgStyle}>
             <button className="msla-selector" draggable={true} tabIndex={-1}>
               <div className="panel-card-content-gripper-section">{draggable ? <Gripper fill={'#FFFFF'} /> : null}</div>
-              {icon && <img alt="" role="presentation" src={icon} width="24" height="24" />}
+              {icon ? <img alt="" role="presentation" src={icon} width="24" height="24" /> : null}
               <span>{title}</span>
             </button>
             <TooltipHost content={toggleText} directionalHint={DirectionalHint.rightCenter}>
