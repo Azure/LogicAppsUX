@@ -1,16 +1,21 @@
 import type { AboutProps } from '../';
 import { About } from '../';
-import renderer from 'react-test-renderer';
+import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('lib/monitoring/requestpanel/request', () => {
-  let minimal: AboutProps;
+  let minimal: AboutProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
     minimal = {};
+    renderer = ReactShallowRenderer.createRenderer();
+  });
+
+  afterEach(() => {
+    renderer.unmount();
   });
 
   it('should render', () => {
-    const tree = renderer.create(<About {...minimal} />).toJSON();
+    const tree = renderer.render(<About {...minimal} />);
     expect(tree).toMatchSnapshot();
   });
 
@@ -25,7 +30,7 @@ describe('lib/monitoring/requestpanel/request', () => {
       ],
     };
 
-    const tree = renderer.create(<About {...props} />).toJSON();
+    const tree = renderer.render(<About {...props} />);
     expect(tree).toMatchSnapshot();
   });
 
@@ -41,7 +46,7 @@ describe('lib/monitoring/requestpanel/request', () => {
       ],
     };
 
-    const tree = renderer.create(<About {...props} />).toJSON();
+    const tree = renderer.render(<About {...props} />);
     expect(tree).toMatchSnapshot();
   });
 });

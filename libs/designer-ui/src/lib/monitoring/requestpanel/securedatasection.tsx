@@ -1,6 +1,6 @@
+import Constants from '../../constants';
 import { hexToRgbA } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
-import Constants from '../../constants';
 
 export interface SecureDataSectionProps {
   brandColor?: string;
@@ -24,7 +24,9 @@ export const SecureDataSection: React.FC<SecureDataSectionProps> = ({ brandColor
   return (
     <section className="msla-trace-inputs-outputs">
       <div className="msla-trace-inputs-outputs-header">
-        <header style={borderStyle}>{headerText}</header>
+        <div style={borderStyle} className="msla-trace-inputs-outputs-header-text">
+          {headerText}
+        </div>
       </div>
       <div className="msla-trace-values">
         <div className="msla-trace-inputs-outputs-secured">

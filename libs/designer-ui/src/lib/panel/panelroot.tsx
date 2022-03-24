@@ -5,7 +5,7 @@ import type { PanelTab } from './panelUtil';
 import { registerTab, getTabs } from './panelUtil';
 import { PanelContainer } from './panelcontainer';
 import { PanelHeaderControlType } from './panelheader/panelheader';
-import { retryTab, requestTab } from './registeredtabs';
+import { monitorRetryTab, monitorRequestTab, aboutTab } from './registeredtabs';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -39,7 +39,7 @@ export const PanelRoot = ({
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
 
   useEffect(() => {
-    setRegisteredTabs((currentTabs) => registerTab(requestTab, registerTab(retryTab, currentTabs)));
+    setRegisteredTabs((currentTabs) => registerTab(aboutTab, registerTab(monitorRetryTab, registerTab(monitorRequestTab, currentTabs))));
   }, []);
 
   useEffect(() => {

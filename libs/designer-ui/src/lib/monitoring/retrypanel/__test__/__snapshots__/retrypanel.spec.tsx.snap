@@ -123,9 +123,11 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header>
+        <div
+          className="msla-trace-inputs-outputs-header-text"
+        >
           Retry
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"
@@ -548,9 +550,11 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header>
+        <div
+          className="msla-trace-inputs-outputs-header-text"
+        >
           Retry
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"
@@ -1019,9 +1023,11 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header>
+        <div
+          className="msla-trace-inputs-outputs-header-text"
+        >
           Retry
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"
@@ -1633,9 +1639,11 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header>
+        <div
+          className="msla-trace-inputs-outputs-header-text"
+        >
           Retry
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"

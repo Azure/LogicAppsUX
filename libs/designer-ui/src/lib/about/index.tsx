@@ -3,7 +3,7 @@ import { DocumentationItem } from '../recommendation/documentationItem';
 import type { ILabelStyles } from '@fluentui/react/lib/Label';
 import { Label } from '@fluentui/react/lib/Label';
 import * as React from 'react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const labelStyles: Partial<ILabelStyles> = {
   root: {
@@ -33,24 +33,9 @@ export const About = ({ connectorDisplayName, description, descriptionDocumentat
     );
   };
 
-  const nameLabel = intl.formatMessage({
-    defaultMessage: 'Connector',
-    description: 'Label For Connector Name in About Panel',
-  });
-
-  const operationLabel = intl.formatMessage({
-    defaultMessage: 'Operation note',
-    description: 'Label For Operation Description in About Panel',
-  });
-
   const documentationURLDescription = intl.formatMessage({
     defaultMessage: 'Learn more',
     description: 'Link text to open URL',
-  });
-
-  const tagLabel = intl.formatMessage({
-    defaultMessage: 'Tags',
-    description: 'Label For Tags in About Panel',
   });
 
   const notAvailable = intl.formatMessage({
@@ -67,13 +52,13 @@ export const About = ({ connectorDisplayName, description, descriptionDocumentat
     <div className="msla-panel-about-container">
       <div className="msla-panel-about-name">
         <Label className="msla-panel-connector-label" styles={labelStyles}>
-          {nameLabel}
+          <FormattedMessage defaultMessage="Connector" description="Label For Connector Name in About Panel" />
         </Label>
         <Label className="msla-panel-connector-name">{connectorDisplayName ? connectorDisplayName : notAvailable}</Label>
       </div>
       <div className="msla-panel-about-description">
         <Label className="msla-panel-description-label" styles={labelStyles}>
-          {operationLabel}
+          <FormattedMessage defaultMessage="Operation note" description="Label For Operation Description in About Panel" />
         </Label>
         <div className="msla-panel-description">
           <DocumentationItem
@@ -86,7 +71,7 @@ export const About = ({ connectorDisplayName, description, descriptionDocumentat
       </div>
       <div className="msla-panel-about-tags">
         <Label className="msla-panel-tags-label" styles={labelStyles}>
-          {tagLabel}
+          <FormattedMessage defaultMessage="Tags" description="Label For Tags in About Panel" />
         </Label>
         <div className="msla-panel-tags">{headerIcons && headerIcons.length > 0 ? badgeHeaderIcons(headerIcons) : noTags}</div>
       </div>
