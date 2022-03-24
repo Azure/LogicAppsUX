@@ -9,7 +9,7 @@ export default {
 
 export const SimpleButBigDefinition = () => (
   <div style={{ height: '100vh' }}>
-    <DesignerProvider locale="en-US">
+    <DesignerProvider locale="en-US" options={{}}>
       <BJSWorkflowProvider workflow={TestWorkflow.definition}>
         <Designer></Designer>
       </BJSWorkflowProvider>
