@@ -166,6 +166,12 @@
       "value": "定義に複数のトリガーが含まれているため、デザイナーをレンダリングできません。"
     }
   ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Connector"
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
@@ -227,6 +233,12 @@
     {
       "type": 0,
       "value": "状態"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Not available"
     }
   ],
   "GreYWQ": [
@@ -448,6 +460,12 @@
       "value": "クライアント要求 ID"
     }
   ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Tags"
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
@@ -566,6 +584,12 @@
       "value": "詳細情報"
     }
   ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Operation note"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -580,6 +604,12 @@
     {
       "type": 0,
       "value": "文字列"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "ZbX8xq": [
@@ -644,6 +674,12 @@
     {
       "type": 0,
       "value": "コメントの削除"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "e4Onhn": [

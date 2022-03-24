@@ -211,6 +211,12 @@
       "value": "Návrhář se nedá vykreslit, protože v definici je více než jeden trigger."
     }
   ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Connector"
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
@@ -305,6 +311,12 @@
     {
       "type": 0,
       "value": "Stav"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Not available"
     }
   ],
   "GreYWQ": [
@@ -559,6 +571,12 @@
       "value": "ID žádosti klienta"
     }
   ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Tags"
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
@@ -677,6 +695,12 @@
       "value": "Další informace"
     }
   ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Operation note"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -691,6 +715,12 @@
     {
       "type": 0,
       "value": "Řetězec"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "ZbX8xq": [
@@ -759,6 +789,12 @@
     {
       "type": 0,
       "value": "Odstranit komentář"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "e4Onhn": [

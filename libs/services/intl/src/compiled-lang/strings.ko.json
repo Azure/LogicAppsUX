@@ -166,6 +166,12 @@
       "value": "정의에 있는 여러 트리거로 인해 디자이너를 렌더링할 수 없습니다."
     }
   ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Connector"
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
@@ -227,6 +233,12 @@
     {
       "type": 0,
       "value": "상태"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Not available"
     }
   ],
   "GreYWQ": [
@@ -448,6 +460,12 @@
       "value": "클라이언트 요청 ID"
     }
   ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Tags"
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
@@ -566,6 +584,12 @@
       "value": "추가 정보"
     }
   ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Operation note"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -580,6 +604,12 @@
     {
       "type": 0,
       "value": "문자열"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "ZbX8xq": [
@@ -648,6 +678,12 @@
     {
       "type": 0,
       "value": "주석 삭제"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "e4Onhn": [

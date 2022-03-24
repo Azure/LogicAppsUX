@@ -170,6 +170,12 @@
       "value": "由于定义中存在多个触发器，因此无法呈现设计器。"
     }
   ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Connector"
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
@@ -231,6 +237,12 @@
     {
       "type": 0,
       "value": "状态"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Not available"
     }
   ],
   "GreYWQ": [
@@ -452,6 +464,12 @@
       "value": "客户端请求 ID"
     }
   ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Tags"
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
@@ -574,6 +592,12 @@
       "value": "详细信息"
     }
   ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Operation note"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -588,6 +612,12 @@
     {
       "type": 0,
       "value": "字符串"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "ZbX8xq": [
@@ -656,6 +686,12 @@
     {
       "type": 0,
       "value": "删除评论"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "e4Onhn": [
