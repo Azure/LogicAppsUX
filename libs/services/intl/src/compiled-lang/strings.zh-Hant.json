@@ -166,6 +166,12 @@
       "value": "因為定義中有多個觸發程序，所以無法轉譯設計工具。"
     }
   ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Connector"
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
@@ -227,6 +233,12 @@
     {
       "type": 0,
       "value": "狀態"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Not available"
     }
   ],
   "GreYWQ": [
@@ -448,6 +460,12 @@
       "value": "用戶端要求識別碼"
     }
   ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Tags"
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
@@ -566,6 +584,12 @@
       "value": "詳細資訊"
     }
   ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Operation note"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -580,6 +604,12 @@
     {
       "type": 0,
       "value": "字串"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "ZbX8xq": [
@@ -648,6 +678,12 @@
     {
       "type": 0,
       "value": "刪除註解"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "e4Onhn": [

@@ -177,6 +177,12 @@
       "value": "Kan de designer niet weergeven vanwege meerdere triggers in de definitie."
     }
   ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Connector"
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
@@ -249,6 +255,12 @@
     {
       "type": 0,
       "value": "Status"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Not available"
     }
   ],
   "GreYWQ": [
@@ -485,6 +497,12 @@
       "value": "Clientaanvraag-id"
     }
   ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Tags"
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
@@ -603,6 +621,12 @@
       "value": "Meer informatie"
     }
   ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Operation note"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -617,6 +641,12 @@
     {
       "type": 0,
       "value": "Tekenreeks"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "ZbX8xq": [
@@ -685,6 +715,12 @@
     {
       "type": 0,
       "value": "Opmerking verwijderen"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "e4Onhn": [
