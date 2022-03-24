@@ -215,6 +215,12 @@
       "value": "Nie można renderować projektanta z powodu wielu wyzwalaczy w definicji."
     }
   ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Connector"
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
@@ -309,6 +315,12 @@
     {
       "type": 0,
       "value": "Stan"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Not available"
     }
   ],
   "GreYWQ": [
@@ -563,6 +575,12 @@
       "value": "Identyfikator żądania klienta"
     }
   ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Tags"
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
@@ -681,6 +699,12 @@
       "value": "Więcej informacji"
     }
   ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Operation note"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -695,6 +719,12 @@
     {
       "type": 0,
       "value": "Ciąg"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "ZbX8xq": [
@@ -763,6 +793,12 @@
     {
       "type": 0,
       "value": "Usuń komentarz"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "e4Onhn": [

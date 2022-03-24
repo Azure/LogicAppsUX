@@ -34,6 +34,12 @@ export interface CardProps {
   onClick?(): void;
 }
 
+export interface BadgeProps {
+  additionalClassNames?: string[];
+  badgeText: string;
+  title: string;
+}
+
 export const CARD_LOADING_SPINNER_STYLE: ISpinnerStyles = {
   root: {
     margin: '6px 6px 0 0',

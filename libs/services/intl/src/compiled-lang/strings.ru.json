@@ -199,6 +199,12 @@
       "value": "Не удается отобразить конструктор из-за наличия нескольких триггеров в определении."
     }
   ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Connector"
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
@@ -293,6 +299,12 @@
     {
       "type": 0,
       "value": "Состояние"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Not available"
     }
   ],
   "GreYWQ": [
@@ -547,6 +559,12 @@
       "value": "Идентификатор запроса клиента"
     }
   ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Tags"
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
@@ -665,6 +683,12 @@
       "value": "Дополнительные сведения"
     }
   ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Operation note"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -679,6 +703,12 @@
     {
       "type": 0,
       "value": "Строка"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "ZbX8xq": [
@@ -747,6 +777,12 @@
     {
       "type": 0,
       "value": "Удалить комментарий"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "e4Onhn": [

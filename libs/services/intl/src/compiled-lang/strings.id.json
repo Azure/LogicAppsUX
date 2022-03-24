@@ -166,6 +166,12 @@
       "value": "Tidak dapat merender perancang karena terdapat beberapa pemicu dalam definisi."
     }
   ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Connector"
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
@@ -227,6 +233,12 @@
     {
       "type": 0,
       "value": "Status"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Not available"
     }
   ],
   "GreYWQ": [
@@ -448,6 +460,12 @@
       "value": "ID permintaan klien"
     }
   ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Tags"
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
@@ -566,6 +584,12 @@
       "value": "Info Selengkapnya"
     }
   ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Operation note"
+    }
+  ],
   "YIBDSH": [
     {
       "type": 1,
@@ -580,6 +604,12 @@
     {
       "type": 0,
       "value": "String"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "None"
     }
   ],
   "ZbX8xq": [
@@ -648,6 +678,12 @@
     {
       "type": 0,
       "value": "Hapus komentar"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "e4Onhn": [

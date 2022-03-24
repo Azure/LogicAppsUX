@@ -123,9 +123,11 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header>
+        <div
+          className="msla-trace-inputs-outputs-header-text"
+        >
           Duration
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"
@@ -617,9 +619,11 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header>
+        <div
+          className="msla-trace-inputs-outputs-header-text"
+        >
           Duration
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"
@@ -990,9 +994,11 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header>
+        <div
+          className="msla-trace-inputs-outputs-header-text"
+        >
           Request
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"
@@ -1433,9 +1439,11 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header>
+        <div
+          className="msla-trace-inputs-outputs-header-text"
+        >
           Duration
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"
@@ -1806,9 +1814,11 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header>
+        <div
+          className="msla-trace-inputs-outputs-header-text"
+        >
           Response
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"
@@ -2249,9 +2259,11 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header>
+        <div
+          className="msla-trace-inputs-outputs-header-text"
+        >
           Duration
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"
@@ -2622,7 +2634,8 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header
+        <div
+          className="msla-trace-inputs-outputs-header-text"
           style={
             Object {
               "borderColor": "rgba(71,71,71, 0.7)",
@@ -2630,7 +2643,7 @@ Array [
           }
         >
           Request
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"
@@ -2773,9 +2786,11 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header>
+        <div
+          className="msla-trace-inputs-outputs-header-text"
+        >
           Duration
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"
@@ -3146,7 +3161,8 @@ Array [
       <div
         className="msla-trace-inputs-outputs-header"
       >
-        <header
+        <div
+          className="msla-trace-inputs-outputs-header-text"
           style={
             Object {
               "borderColor": "rgba(71,71,71, 0.7)",
@@ -3154,7 +3170,7 @@ Array [
           }
         >
           Response
-        </header>
+        </div>
       </div>
       <div
         className="msla-trace-values"

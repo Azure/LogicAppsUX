@@ -37,6 +37,7 @@ jobs:
             { dist: './dist/libs/designer', package: 'designer' },
             { dist: './dist/libs/utils', package: 'utils' },
             { dist: './dist/libs/designer-ui', package: 'designer-ui' },
+            { dist: './dist/libs/services/designer-client-services', package: 'designer-client-services' },
             { dist: './dist/libs/services/resolution-service', package: 'services-resolution-service' },
             { dist: './dist/libs/services/designer-tools', package: 'services-designer-tools' },
             { dist: './dist/libs/services/intl', package: 'services-intl' },

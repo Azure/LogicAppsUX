@@ -35,7 +35,7 @@ export const Response: React.FC<ResponseProps> = ({ response }) => {
   return (
     <div className="msla-trace-inputs-outputs">
       <div className="msla-trace-inputs-outputs-header">
-        <header>{Resources.REQUEST_HISTORY_LABEL_RESPONSE_TEXT}</header>
+        <div className="msla-trace-inputs-outputs-header-text">{Resources.REQUEST_HISTORY_LABEL_RESPONSE_TEXT}</div>
       </div>
       <div className="msla-trace-values">
         <Value displayName={Resources.REQUEST_HISTORY_LABEL_STATUS_CODE_TEXT} value={response.statusCode} />
