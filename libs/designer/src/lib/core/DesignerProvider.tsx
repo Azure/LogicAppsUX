@@ -1,4 +1,4 @@
-import type { DesignerOptions } from './ProviderWrappedContext';
+import type { DesignerOptionsContext } from './ProviderWrappedContext';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { store } from './store';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
@@ -11,7 +11,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 export interface DesignerProviderProps {
   theme?: Theme;
   locale?: string;
-  options: DesignerOptions;
+  options: DesignerOptionsContext;
   children: React.ReactNode;
 }
 

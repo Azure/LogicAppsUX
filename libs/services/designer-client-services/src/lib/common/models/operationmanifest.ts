@@ -69,7 +69,7 @@ export interface ActionSetting {
   isOptional: boolean;
 }
 
-export type SplitOn = string | any[] | undefined; // tslint:disable-line: no-any
+export type SplitOn = string | any[] | undefined;
 
 export interface OperationManifestSetting<T> {
   scopes?: SettingScope[]; // NOTE(yuxyao): If the scopes set to undefined, then the options apply to all scopes.

@@ -53,7 +53,6 @@ export class StandardOperationManifestService implements IOperationManifestServi
   }
 
   async getOperationInfo(definition: any): Promise<OperationInfo> {
-    // tslint:disable-line: no-any
     if (isInBuiltOperation(definition)) {
       return getBuiltInOperationInfo(definition);
     } else if (isServiceProviderOperation(definition)) {
@@ -79,12 +78,10 @@ export class StandardOperationManifestService implements IOperationManifestServi
 }
 
 function isServiceProviderOperation(definition: any): boolean {
-  // tslint:disable-line: no-any
   return equals(definition.type, 'ServiceProvider');
 }
 
 function isInBuiltOperation(definition: any): boolean {
-  // tslint:disable-line: no-any
   switch (definition.type.toLowerCase()) {
     case compose:
     case foreach:
@@ -110,7 +107,6 @@ function isInBuiltOperation(definition: any): boolean {
 }
 
 function getBuiltInOperationInfo(definition: any): OperationInfo {
-  // tslint:disable-line: no-any
   const normalizedOperationType = definition.type.toLowerCase();
   const kind = definition.kind ? definition.kind.toLowerCase() : undefined;
 

@@ -26,7 +26,7 @@ export enum ConnectionParameterTypes {
 
 export interface ConnectionParameterAllowedValue {
   text?: string;
-  value: any /* tslint:disable-line: no-any */;
+  value: any;
 }
 
 export type LiteralBoolean = 'true' | 'false';
@@ -42,7 +42,7 @@ export interface ParameterSchema {
   format?: string;
   description?: string;
   'x-ms-editor'?: string;
-  'x-ms-editor-options'?: any /* tslint:disable-line: no-any */;
+  'x-ms-editor-options'?: any;
 }
 
 export interface ConnectionParameterSetParameterUIDefinition extends ConnectionParameterUIDefinitionBase {
@@ -159,10 +159,8 @@ export interface ConnectorProperty {
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSets?: ConnectionParameterSets;
   connectionAlternativeParameters?: ConnectionAlternativeParameters;
-  /* tslint:disable: no-any */
   swagger?: any;
   [property: string]: any;
-  /* tslint:enable: no-any */
   wadlUrl?: string;
   brandColor?: string;
   termsOfUseUrl?: string;

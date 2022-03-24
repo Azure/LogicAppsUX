@@ -18,7 +18,7 @@ export interface IOperationManifestService {
    * @arg {any} definition - The operation definition.
    * @return {Promise<OperationInfo>}
    */
-  getOperationInfo(definition: any): Promise<OperationInfo>; // tslint:disable-line: no-any
+  getOperationInfo(definition: any): Promise<OperationInfo>;
 
   /**
    * Gets the operation manifest for an operation.

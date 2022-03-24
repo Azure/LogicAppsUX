@@ -1,4 +1,4 @@
-import { BaseException } from './baseexception';
+import { BaseException } from '@microsoft-logic-apps/utils';
 
 export const AssertionExceptionName = 'Core.AssertionException';
 
@@ -51,8 +51,8 @@ export class AssertionException extends BaseException {
   constructor(
     code: AssertionErrorCode,
     message: string,
-    data?: Record<string, any> /* tslint:disable-line: no-any */,
-    innerException?: any /* tslint:disable-line: no-any */
+    data?: Record<string, any>,
+    innerException?: any
   ) {
     super(AssertionExceptionName, message, code, data, innerException);
   }

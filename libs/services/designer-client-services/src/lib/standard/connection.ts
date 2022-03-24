@@ -5,7 +5,6 @@ export class StandardConnectionService implements IConnectionService {
   constructor(public readonly options: unknown) {}
 
   dispose(): void {
-    // tslint:disable-line: no-empty
   }
 
   async getConnector(connectorId: string): Promise<Connector> {
