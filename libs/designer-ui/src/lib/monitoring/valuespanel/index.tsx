@@ -1,9 +1,9 @@
-import { hexToRgbA } from '@microsoft-logic-apps/utils';
-import React from 'react';
 import Constants from '../../constants';
 import type { BoundParameters } from './types';
 import { ValueLink } from './valuelink';
 import { ValueList } from './valuelist';
+import { hexToRgbA } from '@microsoft-logic-apps/utils';
+import React from 'react';
 
 export interface ValuesPanelProps {
   brandColor?: string;
@@ -37,9 +37,9 @@ export const ValuesPanel: React.FC<ValuesPanelProps> = ({
   return (
     <section className="msla-trace-inputs-outputs">
       <div className="msla-trace-inputs-outputs-header">
-        <header id={labelledBy} style={borderStyle}>
+        <div className="msla-trace-inputs-outputs-header-text" id={labelledBy} style={borderStyle}>
           {headerText}
-        </header>
+        </div>
         {linkText ? <ValueLink linkText={linkText} visible={showLink} onLinkClick={onLinkClick} /> : null}
       </div>
       <ValueList labelledBy={labelledBy} noValuesText={noValuesText} showMore={showMore} values={values} onMoreClick={onMoreClick} />

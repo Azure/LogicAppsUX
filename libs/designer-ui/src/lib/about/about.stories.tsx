@@ -1,4 +1,4 @@
-import type { AboutProps } from '.';
+import type { AboutProps } from './';
 import { About } from './';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 

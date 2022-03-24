@@ -7,9 +7,11 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
   <div
     className="msla-trace-inputs-outputs-header"
   >
-    <header>
+    <div
+      className="msla-trace-inputs-outputs-header-text"
+    >
       Request
-    </header>
+    </div>
   </div>
   <div
     className="msla-trace-values"
@@ -332,9 +334,11 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
   <div
     className="msla-trace-inputs-outputs-header"
   >
-    <header>
+    <div
+      className="msla-trace-inputs-outputs-header-text"
+    >
       Request
-    </header>
+    </div>
   </div>
   <div
     className="msla-trace-values"
@@ -788,9 +792,11 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
   <div
     className="msla-trace-inputs-outputs-header"
   >
-    <header>
+    <div
+      className="msla-trace-inputs-outputs-header-text"
+    >
       Request
-    </header>
+    </div>
   </div>
   <div
     className="msla-trace-values"

@@ -81,7 +81,7 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
         <ErrorSection className="msla-request-history-panel-error" error={error} />
         <div className="msla-trace-inputs-outputs">
           <div className="msla-trace-inputs-outputs-header">
-            <header>{Resources.RETRY_PAGER_TITLE}</header>
+            <div className="msla-trace-inputs-outputs-header-text">{Resources.RETRY_PAGER_TITLE}</div>
           </div>
           <div className="msla-trace-values">
             <Value displayName={Resources.RETRY_HISTORY_DURATION} value={retryDuration} />
