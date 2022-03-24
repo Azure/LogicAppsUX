@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { WorkflowGraph } from '../../core/parsers/models/workflowNode';
-import { useActionMetadata } from '../../core/state/selectors/actionMetadataSelector';
+import { useBrandColor, useIconUri, useActionMetadata } from '../../core/state/selectors/actionMetadataSelector';
 import { useWorkflowNode } from '../../core/state/selectors/workflowNodeSelector';
 import { DropZone } from '../connections/dropzone';
 import { ScopeCard } from '@microsoft/designer-ui';
@@ -31,14 +31,17 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   }));
 
   const graph = useWorkflowNode(id) as WorkflowGraph;
+  const brandColor = useBrandColor(id) ?? '';
+  const iconUri = useIconUri(id) ?? '';
 
   if (!node) {
     return null;
   }
 
   const isEmptyGraph = !graph?.edges && (graph?.children[0] as any).children.length === 0;
+  const normalizedType = node.type.toLowerCase();
 
-  if (node.type.toLowerCase() === 'scope') {
+  if (normalizedType === 'scope' || normalizedType === 'foreach') {
     return (
       <div className="msla-scope-v2 msla-scope-card">
         <Handle
@@ -48,7 +51,8 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
         />
         <ScopeCard
-          brandColor={'#8c3900'}
+          brandColor={brandColor}
+          icon={iconUri}
           collapsed={false}
           drag={drag}
           draggable={true}
