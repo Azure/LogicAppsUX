@@ -37,6 +37,10 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const hasNestedParent = metadata?.graphId !== 'root';
   const style = hasNestedParent && !parentEdges.length ? { marginTop: 40 } : undefined;
 
+  const nodeClick = (): void => {
+    console.log(`You clicked ${id}`);
+  };
+
   if (metadata?.isPlaceholderNode) {
     return (
       <div style={{ ...{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }, ...style }}>
@@ -74,6 +78,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           }}
           drag={drag}
           dragPreview={dragPreview}
+          onClick={nodeClick}
         />
         <Handle
           type="source"

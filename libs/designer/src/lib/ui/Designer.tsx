@@ -4,6 +4,7 @@ import { updateNodeSizes } from '../core/state/workflowSlice';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import GraphNode from './CustomNodes/GraphNode';
 import { CustomEdge } from './connections/edge';
+import { PanelRoot } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -82,7 +83,9 @@ export const Designer = () => {
                 account: 'paid-subscription',
                 hideAttribution: true,
               }}
-            ></ReactFlow>
+            >
+              <PanelRoot isRecommendation={false} noNodeSelected={false} title={'Test Panel'} />
+            </ReactFlow>
           </ReactFlowProvider>
         </div>
       </DndProvider>

@@ -122,17 +122,11 @@ export const Card: React.FC<CardProps> = ({
         )}
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
+        role="button"
+        onClick={handleClick}
       >
         <div className="panel-card-main">
-          <div
-            className="panel-card-header"
-            role="button"
-            onClick={handleClick}
-            onContextMenu={handleContextMenu}
-            onKeyDown={handleKeyDown}
-            tabIndex={0}
-            onKeyUp={handleKeyUp}
-          >
+          <div className="panel-card-header" onContextMenu={handleContextMenu} onKeyDown={handleKeyDown} tabIndex={0} onKeyUp={handleKeyUp}>
             <div className="panel-card-content-container">
               <div className="panel-card-content-gripper-section">{draggable ? <Gripper /> : null}</div>
               {icon ? (
