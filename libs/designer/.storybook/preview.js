@@ -58,7 +58,7 @@ export const globalTypes = {
 initializeIcons();
 export const decorators = [
   (Story, context) => (
-    <DesignerProvider locale={context.globals.locale}>
+    <DesignerProvider locale={context.globals.locale} options={{}}>
       <Story />
     </DesignerProvider>
   ),

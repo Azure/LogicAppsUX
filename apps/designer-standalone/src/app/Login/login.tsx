@@ -14,6 +14,7 @@ export const fileOptions = [
   'Scoped.json',
   'simpleBigworkflow.json',
   'simpleScoped.json',
+  'simpleForeach.json',
   'straightLine.json',
   'StressTest50.json',
   'StressTest100.json',
