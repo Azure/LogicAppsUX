@@ -7,26 +7,26 @@ export class AccessTokenHelper {
   constructor(private _getAccessToken: () => Promise<string>, private _doNotAddBearer = false) {}
 
   getAccessToken = async (): Promise<string> => {
-    if (!isTokenExpired(this._accessToken)) {
-      return this._accessToken!;
-    }
+    if (this._accessToken && !isTokenExpired(this._accessToken)) 
+      return this._accessToken;
 
+    this._accessToken = await this.getNewAccessToken();
+    return this._accessToken;
+  };
+
+  private async getNewAccessToken(): Promise<string> {
     const accessToken = await this._getAccessToken();
-    this._accessToken = this._doNotAddBearer
+    const newAccessToken = this._doNotAddBearer
       ? accessToken
       : accessToken && accessToken.startsWith('Bearer')
       ? accessToken
       : `Bearer ${accessToken}`;
-
-    return this._accessToken;
-  };
+    return newAccessToken;
+  }
 }
 
-export function isTokenExpired(accessToken: string | undefined): boolean {
-  if (!accessToken) {
-    return true;
-  }
 
+export function isTokenExpired(accessToken: string): boolean {
   const tokenPayload = jwtDecode<JwtPayload>(accessToken);
   const expiry = tokenPayload.exp;
 

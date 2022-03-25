@@ -1,5 +1,5 @@
 {
-  "name": "designer-tools",
+  "name": "@microsoft-logic-apps/designer-tools",
   "projectType": "library",
   "description": "tools for the Logic Apps designer",
   "main": "index.js"
