@@ -2,7 +2,6 @@
 
 exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
 <PanelContainer
-  isCollapsed={false}
   isRight={true}
   noNodeSelected={false}
   onDismissButtonClicked={[Function]}

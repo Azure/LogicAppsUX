@@ -12,6 +12,7 @@ import { useIntl } from 'react-intl';
 export interface PanelRootProps {
   cardIcon?: string;
   comment?: string;
+  collapsed: boolean;
   isRecommendation: boolean;
   noNodeSelected: boolean;
   selectedTabId?: string;
@@ -23,6 +24,7 @@ export const PanelRoot = ({
   cardIcon,
   comment,
   isRecommendation,
+  collapsed,
   noNodeSelected,
   selectedTabId,
   readOnlyMode,
@@ -33,7 +35,7 @@ export const PanelRoot = ({
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
   const [currentComment, setCurrentComment] = useState(comment);
   const [selectedTab, setSelectedTab] = useState(selectedTabId);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const [width, setWidth] = useState('auto');
 
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});

@@ -84,7 +84,7 @@ export const Designer = () => {
                 hideAttribution: true,
               }}
             >
-              <PanelRoot isRecommendation={false} noNodeSelected={false} title={'Test Panel'} />
+              <PanelRoot collapsed={true} isRecommendation={false} noNodeSelected={false} title={'Test Panel'} />
             </ReactFlow>
           </ReactFlowProvider>
         </div>
