@@ -886,7 +886,7 @@
         <Str Cat="Text">
           <Val><![CDATA[None]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nessuna]]></Val>
+            <Val><![CDATA[Nessuno]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
