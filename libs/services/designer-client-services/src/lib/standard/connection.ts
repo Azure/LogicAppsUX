@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { Connector } from '../common/models/connector';
-import type { HttpOptions} from '@microsoft-logic-apps/designer-tools';
-import {HttpClient} from '@microsoft-logic-apps/designer-tools';
+import type { HttpOptions } from '@microsoft-logic-apps/designer-tools';
+import { HttpClient } from '@microsoft-logic-apps/designer-tools';
 
 interface StandardConnectionServiceArgs {
   apiVersion: string;
@@ -12,23 +12,15 @@ interface StandardConnectionServiceArgs {
 export class StandardConnectionService {
   private _httpClient: HttpClient;
   private httpOptions: HttpOptions = {
-    baseUrl: "",
-    locale: "US",
-    getAccessToken: this.tempGetToken
-  }
+    baseUrl: '',
+    locale: 'US',
+  };
 
   constructor(public readonly options: StandardConnectionServiceArgs) {
-    this._httpClient = new HttpClient({...this.httpOptions, baseUrl: options.baseUrl});
+    this._httpClient = new HttpClient({ ...this.httpOptions, baseUrl: options.baseUrl });
   }
 
-  tempGetToken(): Promise<string> { // Danielle for testing purposes
-    return new Promise<string>((resolve, reject ) => resolve(
-""    ));
-  }
-
-  dispose(): void {
-
-  }
+  dispose(): void {}
 
   async getConnector(connectorId: string): Promise<Connector> {
     const { apiVersion, baseUrl } = this.options;

@@ -3,16 +3,23 @@ import jwtDecode from 'jwt-decode';
 
 export class AccessTokenHelper {
   private _accessToken: string | undefined;
+  private _getAccessToken: () => Promise<string>;
 
-  constructor(private _getAccessToken: () => Promise<string>, private _doNotAddBearer = false) {}
+  constructor(private _doNotAddBearer = false) {
+    this._getAccessToken = () => new Promise<string>((resolve, reject) => resolve(''));
+  }
 
   getAccessToken = async (): Promise<string> => {
-    if (this._accessToken && !isTokenExpired(this._accessToken)) 
-      return this._accessToken;
+    if (this._accessToken && !isTokenExpired(this._accessToken)) return this._accessToken;
 
     this._accessToken = await this.getNewAccessToken();
     return this._accessToken;
   };
+
+  tempGetAccessToken(): string {
+    // Danielle for testing purposes
+    return '';
+  }
 
   private async getNewAccessToken(): Promise<string> {
     const accessToken = await this._getAccessToken();
@@ -24,7 +31,6 @@ export class AccessTokenHelper {
     return newAccessToken;
   }
 }
-
 
 export function isTokenExpired(accessToken: string): boolean {
   const tokenPayload = jwtDecode<JwtPayload>(accessToken);
