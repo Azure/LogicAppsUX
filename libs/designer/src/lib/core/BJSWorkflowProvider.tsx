@@ -2,10 +2,10 @@ import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { InitializeServices } from './actions/bjsworkflow/initialize';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import { initWorkflowSpec } from './state/workflowSlice';
-import React, { useContext, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { useQuery } from 'react-query';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
+import React, { useContext, useEffect } from 'react';
+import { useQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
   workflow: LogicAppsV2.WorkflowDefinition;
@@ -17,8 +17,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
     dispatch(initWorkflowSpec('BJS'));
     dispatch(initializeGraphState(workflow));
   }, [dispatch, workflow]);
-  const conn = useQuery(['connection', "AzureBlob"], () => ConnectionService().getConnector("AzureBlob"));
-  console.log(conn);
+  const conn = useQuery(['connection', 'AzureBlob'], () => ConnectionService().getConnector('AzureBlob'));
   return <>{children}</>;
 };
 
