@@ -64,6 +64,7 @@ export const Designer = () => {
     },
     [dispatch]
   );
+
   return (
     <QueryClientProvider client={queryClient}>
       <DndProvider options={DND_OPTIONS as any}>

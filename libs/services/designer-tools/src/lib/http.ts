@@ -1,31 +1,7 @@
 import { AccessTokenHelper } from './common/accessTokenHelper';
+import type {AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse} from 'axios';
+import Axios from 'axios'
 
-export type BeforeRequestHandler = (request: HttpRequest<any>) => Promise<HttpRequest<any>>;
-export type RequestHeaders = Headers | Record<string, string>;
-
-export interface HttpRequest<T> {
-  body?: T;
-  headers?: RequestHeaders;
-  path?: string;
-  query?: Record<string, any>;
-  dontAddAccessToken?: boolean;
-  url?: string;
-
-  json?: boolean;
-  shouldIncludeClientRequestId?: boolean;
-}
-
-export interface HttpResponse<T> {
-  body: T;
-  headers: Headers;
-  ok: boolean;
-  status: number;
-  url: string;
-}
-
-
-// TODO: Implement adding header operation in all the services then remove this funcationality from http client;
-let HttpExtraHeaders: Record<string, string>;
 
 export interface HttpOptions {
   baseUrl: string;
@@ -34,34 +10,41 @@ export interface HttpOptions {
 }
                                                            
 export class HttpClient {
-    private _accessTokenHelper: AccessTokenHelper;
-    private _baseUrl: string;
-    private _beforeRequestHandler: BeforeRequestHandler;
+    private _axios: AxiosInstance;
     private _locale: string;
 
     public static createInstance(options: HttpOptions): HttpClient {
         return new HttpClient(options);
     }
 
-    private static _defaultRequestHandler(request: HttpRequest<any>): Promise<HttpRequest<any>> {
-        return Promise.resolve(request);
-    }
-
     constructor(options: HttpOptions) {
-        this._baseUrl = options.baseUrl;
-        this._beforeRequestHandler = HttpClient._defaultRequestHandler;
+      const accessToken = new AccessTokenHelper(options.getAccessToken);
 
-        this._accessTokenHelper = new AccessTokenHelper(options.getAccessToken);
+        this._axios = Axios.create({
+          baseURL: options.baseUrl,
+          headers: {
+            "Authorization": `Bearer ${accessToken})`
+          }
+        });
+
+        this._axios.interceptors.request.use(
+          config => {
+            if (config.headers) {
+              config.headers['Authorization'] = `Bearer ${accessToken})`}; 
+              return config;
+            },
+            error => {
+                return Promise.reject(error);
+            }
+        );
 
         this._locale = options.locale;
     }
 
-    public async fetch(path: string): Promise<Response> {
-        const token = await this._accessTokenHelper.getAccessToken();
-        const headers = new Headers();
-        headers.append("authorization", token);
-        const idk: RequestInit = {headers}
-        return await fetch(this._baseUrl+path, idk);
+    public async get<T>(path: string): Promise<T> {
+        const response =  await this._axios.get<T>(path);
+        console.log(response.headers);
+        return response.data;
     }
 
 

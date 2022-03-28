@@ -41,6 +41,7 @@
     "@monaco-editor/react": "^4.3.1",
     "@reduxjs/toolkit": "1.8.0",
     "@use-it/event-listener": "^0.1.7",
+    "axios": "^0.26.1",
     "core-js": "^3.21.1",
     "d3-shape": "^3.1.0",
     "elkjs": "0.7.3-dev",
