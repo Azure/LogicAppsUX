@@ -12,36 +12,25 @@ export interface HttpOptions {
 export class HttpClient {
     private _axios: AxiosInstance;
     private _locale: string;
+    private _tokenHelper: AccessTokenHelper
 
     public static createInstance(options: HttpOptions): HttpClient {
         return new HttpClient(options);
     }
 
     constructor(options: HttpOptions) {
-      const accessToken = new AccessTokenHelper(options.getAccessToken);
+      this._tokenHelper = new AccessTokenHelper(options.getAccessToken);
 
         this._axios = Axios.create({
           baseURL: options.baseUrl,
-          headers: {
-            "Authorization": `Bearer ${accessToken})`
-          }
         });
-
-        this._axios.interceptors.request.use(
-          config => {
-            if (config.headers) {
-              config.headers['Authorization'] = `Bearer ${accessToken})`}; 
-              return config;
-            },
-            error => {
-                return Promise.reject(error);
-            }
-        );
 
         this._locale = options.locale;
     }
 
     public async get<T>(path: string): Promise<T> {
+      const token = await this._tokenHelper.getAccessToken();
+      this._axios.defaults.headers.common['Authorization'] = token;
         const response =  await this._axios.get<T>(path);
         console.log(response.headers);
         return response.data;
@@ -49,17 +38,3 @@ export class HttpClient {
 
 
    }
-
-export interface ResponseData {
-    status: number;
-    contentLength?: number;
-    serviceRequestId?: string;
-    /* tslint:disable: no-any */
-    responseBodyOnError?: any;
-    data?: any;
-    /* tslint:enable: no-any */
-    hostName?: string;
-    apiVersion?: string;
-}
-
-
