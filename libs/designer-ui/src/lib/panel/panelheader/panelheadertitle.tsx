@@ -4,7 +4,7 @@ import { handleOnEscapeDown } from './panelheader';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const titleTextFieldStyle: Partial<ITextFieldStyles> = {
@@ -27,6 +27,10 @@ export const PanelHeaderTitle = ({ title, titleId, readOnlyMode, renameTitleDisa
   const intl = useIntl();
   const [cardTitle, setCardTitle] = useState(title);
   const [titleHasFocus, setTitleHasFocus] = useState(false);
+
+  useEffect(() => {
+    setCardTitle(title);
+  }, [title]);
 
   const titleTextFieldRef = React.createRef<ITextField>();
 

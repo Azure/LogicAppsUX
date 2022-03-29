@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useLayout } from '../core/graphlayout';
+import { closePanel } from '../core/state/panelSlice';
 import { updateNodeSizes } from '../core/state/workflowSlice';
+import type { RootState } from '../core/store';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import GraphNode from './CustomNodes/GraphNode';
 import { CustomEdge } from './connections/edge';
 import { PanelRoot } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
-import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
+import { KeyboardBackend, isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { createTransition, DndProvider } from 'react-dnd-multi-backend';
 import type { NodeChange } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export interface DesignerProps {
   graphId?: string;
@@ -57,14 +59,24 @@ const DND_OPTIONS = {
 
 const queryClient = new QueryClient();
 export const Designer = () => {
+  const { collapsed, selectedNode } = useSelector((state: RootState) => {
+    const { collapsed, selectedNode } = state.panel;
+    return { collapsed, selectedNode };
+  });
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch();
+
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
       dispatch(updateNodeSizes(changes));
     },
     [dispatch]
   );
+
+  const collapsePanel = useCallback(() => {
+    dispatch(closePanel());
+  }, [dispatch]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <DndProvider options={DND_OPTIONS as any}>
@@ -84,7 +96,13 @@ export const Designer = () => {
                 hideAttribution: true,
               }}
             >
-              <PanelRoot collapsed={true} isRecommendation={false} noNodeSelected={false} title={'Test Panel'} />
+              <PanelRoot
+                collapsePanel={collapsePanel}
+                collapsed={collapsed}
+                isRecommendation={false}
+                noNodeSelected={false}
+                title={selectedNode}
+              />
             </ReactFlow>
           </ReactFlowProvider>
         </div>

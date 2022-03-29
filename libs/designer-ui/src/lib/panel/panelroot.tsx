@@ -18,6 +18,7 @@ export interface PanelRootProps {
   selectedTabId?: string;
   readOnlyMode?: boolean;
   title: string;
+  collapsePanel?: () => void;
 }
 
 export const PanelRoot = ({
@@ -29,6 +30,7 @@ export const PanelRoot = ({
   selectedTabId,
   readOnlyMode,
   title,
+  collapsePanel,
 }: PanelRootProps): JSX.Element => {
   const intl = useIntl();
 
@@ -51,6 +53,10 @@ export const PanelRoot = ({
   useEffect(() => {
     isCollapsed ? setWidth('auto') : setWidth('630px');
   }, [isCollapsed]);
+
+  useEffect(() => {
+    setIsCollapsed(collapsed);
+  }, [collapsed]);
 
   const getPanelHeaderControlType = (): boolean => {
     // TODO: 13067650
@@ -135,6 +141,13 @@ export const PanelRoot = ({
     console.log('Node deleted!');
   };
 
+  const togglePanel = (): void => {
+    if (collapsePanel && !collapsed) {
+      collapsePanel();
+    }
+    setIsCollapsed(!collapsed);
+  };
+
   return (
     <PanelContainer
       cardIcon={cardIcon}
@@ -150,7 +163,7 @@ export const PanelRoot = ({
       width={width}
       onDismissButtonClicked={handleDelete}
       setSelectedTab={setSelectedTab}
-      setIsCollapsed={setIsCollapsed}
+      toggleCollapse={togglePanel}
       trackEvent={handleTrackEvent}
       title={title}
     />

@@ -16,13 +16,17 @@ export const panelSlice = createSlice({
   initialState,
   reducers: {
     openPanel: (state, action: PayloadAction<string>) => {
+      if (!action) return;
       state.selectedNode = action.payload;
       state.collapsed = false;
+    },
+    closePanel: (state) => {
+      state.collapsed = true;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { openPanel } = panelSlice.actions;
+export const { openPanel, closePanel } = panelSlice.actions;
 
 export default panelSlice.reducer;

@@ -12,7 +12,7 @@ import { FontSizes } from '@fluentui/react/lib/Styling';
 import type { ITooltipHostStyles } from '@fluentui/react/lib/Tooltip';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useIntl } from 'react-intl';
 
 export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
@@ -36,7 +36,7 @@ export interface PanelHeaderProps {
   commentChange?(panelCommentChangeEvent?: string): void;
   onDismissButtonClicked?(): void;
   onRenderWarningMessage?(): JSX.Element;
-  setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleCollapse: () => void;
 }
 export enum PanelHeaderControlType {
   DISMISS_BUTTON,
@@ -91,7 +91,7 @@ export const PanelHeader = ({
   commentChange,
   onDismissButtonClicked,
   onRenderWarningMessage,
-  setIsCollapsed,
+  toggleCollapse,
 }: PanelHeaderProps): JSX.Element => {
   const intl = useIntl();
 
@@ -105,11 +105,6 @@ export const PanelHeader = ({
   const getIconClassName: string = css(isRight ? 'collapse-toggle-right' : 'collapse-toggle-left', isCollapsed && 'collapsed');
 
   const getCollapseIconName: string = isRight && isCollapsed ? 'DoubleChevronLeft8' : 'DoubleChevronRight8';
-
-  const toggleCollapse = useCallback((): void => {
-    // TODO: 12798935 Analytics (event logging)
-    setIsCollapsed(!isCollapsed);
-  }, [isCollapsed, setIsCollapsed]);
 
   const getPanelHeaderMenu = (): JSX.Element => {
     const panelHeaderMenuItems = panelHeaderMenu.map((item) => ({
