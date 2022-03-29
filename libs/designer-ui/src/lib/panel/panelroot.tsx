@@ -142,10 +142,10 @@ export const PanelRoot = ({
   };
 
   const togglePanel = (): void => {
-    if (collapsePanel && !collapsed) {
+    if (collapsePanel && !isCollapsed) {
       collapsePanel();
     }
-    setIsCollapsed(!collapsed);
+    setIsCollapsed(!isCollapsed);
   };
 
   return (
