@@ -23,6 +23,7 @@ export class HttpClient {
         authorization: tokenHelper.tempGetAccessToken(),
       },
     });
+    this._axios.defaults.headers.common['Authorization'] = tokenHelper.tempGetAccessToken();
   }
 
   public async get<T>(path: string): Promise<T> {

@@ -10,7 +10,6 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { createTransition, DndProvider } from 'react-dnd-multi-backend';
 import type { NodeChange } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 export interface DesignerProps {
@@ -54,7 +53,6 @@ const DND_OPTIONS = {
   ],
 };
 
-const queryClient = new QueryClient();
 export const Designer = () => {
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch();
@@ -66,27 +64,25 @@ export const Designer = () => {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <DndProvider options={DND_OPTIONS as any}>
-        <div className="msla-designer-canvas msla-panel-mode">
-          <ReactFlowProvider>
-            <ReactFlow
-              nodeTypes={nodeTypes}
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onConnect={() => {}}
-              minZoom={0}
-              nodesDraggable={false}
-              edgeTypes={edgeTypes}
-              proOptions={{
-                account: 'paid-subscription',
-                hideAttribution: true,
-              }}
-            ></ReactFlow>
-          </ReactFlowProvider>
-        </div>
-      </DndProvider>
-    </QueryClientProvider>
+    <DndProvider options={DND_OPTIONS as any}>
+      <div className="msla-designer-canvas msla-panel-mode">
+        <ReactFlowProvider>
+          <ReactFlow
+            nodeTypes={nodeTypes}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onConnect={() => {}}
+            minZoom={0}
+            nodesDraggable={false}
+            edgeTypes={edgeTypes}
+            proOptions={{
+              account: 'paid-subscription',
+              hideAttribution: true,
+            }}
+          ></ReactFlow>
+        </ReactFlowProvider>
+      </div>
+    </DndProvider>
   );
 };
