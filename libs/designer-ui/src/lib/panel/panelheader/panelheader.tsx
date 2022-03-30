@@ -165,7 +165,7 @@ export const PanelHeader = ({
     );
   };
   return (
-    <div className="msla-panel-header">
+    <div className="msla-panel-header" id={noNodeSelected ? titleId : title}>
       <TooltipHost calloutProps={calloutProps} content={panelCollapseTitle} styles={tooltipStyles}>
         <IconButton
           ariaLabel={panelCollapseTitle}
@@ -183,8 +183,8 @@ export const PanelHeader = ({
             <PanelHeaderTitle titleId={titleId} readOnlyMode={readOnlyMode} renameTitleDisabled={renameTitleDisabled} title={title} />
           </div>
           <div className="msla-panel-header-controls" hidden={isCollapsed}>
-            {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.MENU ? getPanelHeaderMenu() : null}
-            {!noNodeSelected && panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON ? getDismissButton() : null}
+            {panelHeaderControlType === PanelHeaderControlType.MENU ? getPanelHeaderMenu() : null}
+            {panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON ? getDismissButton() : null}
           </div>
           {onRenderWarningMessage ? onRenderWarningMessage() : null}
           {showCommentBox ? (

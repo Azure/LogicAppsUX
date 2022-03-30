@@ -103,7 +103,7 @@ export const PanelContainer = ({
       aria-label={panelLabel}
       className="msla-panel-container"
       headerClassName="msla-panel-header"
-      headerText={title}
+      headerText={title || panelLabel}
       isOpen
       onRenderHeader={renderHeader}
       isBlocking={false}

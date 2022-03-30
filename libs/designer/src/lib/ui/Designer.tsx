@@ -100,7 +100,7 @@ export const Designer = () => {
                 collapsePanel={collapsePanel}
                 collapsed={collapsed}
                 isRecommendation={false}
-                noNodeSelected={false}
+                noNodeSelected={!selectedNode}
                 title={selectedNode}
               />
             </ReactFlow>

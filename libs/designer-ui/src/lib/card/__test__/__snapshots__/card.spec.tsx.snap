@@ -7,7 +7,6 @@ exports[`lib/card should render 1`] = `
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
-    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -23,6 +22,7 @@ exports[`lib/card should render 1`] = `
         onContextMenu={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
+        role="button"
         tabIndex={0}
       >
         <div
@@ -61,7 +61,6 @@ exports[`lib/card should render as cloned 1`] = `
     className="msla-panel-card-container msla-card-ghost-image"
     data-testid="card-title"
     onClick={[Function]}
-    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -77,6 +76,7 @@ exports[`lib/card should render as cloned 1`] = `
         onContextMenu={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
+        role="button"
         tabIndex={0}
       >
         <div
@@ -115,7 +115,6 @@ exports[`lib/card should render as draggable 1`] = `
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
-    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -131,6 +130,7 @@ exports[`lib/card should render as draggable 1`] = `
         onContextMenu={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
+        role="button"
         tabIndex={0}
       >
         <div
@@ -186,7 +186,6 @@ exports[`lib/card should render as inactive 1`] = `
     className="msla-panel-card-container inactive"
     data-testid="card-title"
     onClick={[Function]}
-    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -202,6 +201,7 @@ exports[`lib/card should render as inactive 1`] = `
         onContextMenu={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
+        role="button"
         tabIndex={0}
       >
         <div
@@ -240,7 +240,6 @@ exports[`lib/card should render as selected 1`] = `
     className="msla-panel-card-container msla-panel-card-container-selected"
     data-testid="card-title"
     onClick={[Function]}
-    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -256,6 +255,7 @@ exports[`lib/card should render as selected 1`] = `
         onContextMenu={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
+        role="button"
         tabIndex={0}
       >
         <div
@@ -294,7 +294,6 @@ exports[`lib/card should render with a context menu 1`] = `
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
-    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -310,6 +309,7 @@ exports[`lib/card should render with a context menu 1`] = `
         onContextMenu={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
+        role="button"
         tabIndex={0}
       >
         <div
@@ -348,7 +348,6 @@ exports[`lib/card should render with an icon 1`] = `
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
-    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -364,6 +363,7 @@ exports[`lib/card should render with an icon 1`] = `
         onContextMenu={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
+        role="button"
         tabIndex={0}
       >
         <div
