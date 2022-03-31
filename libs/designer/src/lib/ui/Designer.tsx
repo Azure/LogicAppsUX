@@ -79,7 +79,7 @@ export const Designer = () => {
               nodesDraggable={false}
               edgeTypes={edgeTypes}
               proOptions={{
-                account: 'paid-subscription',
+                account: 'paid-sponsor',
                 hideAttribution: true,
               }}
             ></ReactFlow>
