@@ -19,6 +19,7 @@ export interface PanelRootProps {
   readOnlyMode?: boolean;
   title: string;
   collapsePanel?: () => void;
+  expandPanel?: () => void;
 }
 
 export const PanelRoot = ({
@@ -31,13 +32,13 @@ export const PanelRoot = ({
   readOnlyMode,
   title,
   collapsePanel,
+  expandPanel,
 }: PanelRootProps): JSX.Element => {
   const intl = useIntl();
 
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
   const [currentComment, setCurrentComment] = useState(comment);
   const [selectedTab, setSelectedTab] = useState(selectedTabId);
-  const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const [width, setWidth] = useState('auto');
 
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
@@ -51,11 +52,7 @@ export const PanelRoot = ({
   }, [registeredTabs]);
 
   useEffect(() => {
-    isCollapsed ? setWidth('auto') : setWidth('630px');
-  }, [isCollapsed]);
-
-  useEffect(() => {
-    setIsCollapsed(collapsed);
+    collapsed ? setWidth('auto') : setWidth('630px');
   }, [collapsed]);
 
   const getPanelHeaderControlType = (): boolean => {
@@ -142,10 +139,11 @@ export const PanelRoot = ({
   };
 
   const togglePanel = (): void => {
-    if (collapsePanel && !isCollapsed) {
-      collapsePanel();
+    if (!collapsed) {
+      collapsePanel && collapsePanel();
+    } else {
+      expandPanel && expandPanel();
     }
-    setIsCollapsed(!isCollapsed);
   };
 
   return (
@@ -153,7 +151,7 @@ export const PanelRoot = ({
       cardIcon={cardIcon}
       comment={currentComment}
       isRight
-      isCollapsed={isCollapsed}
+      isCollapsed={collapsed}
       noNodeSelected={noNodeSelected}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}

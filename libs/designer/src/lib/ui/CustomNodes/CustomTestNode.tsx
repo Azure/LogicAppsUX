@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { openPanel } from '../../core/state/panelSlice';
+import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
 import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
 import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import { DropZone } from '../connections/dropzone';
@@ -41,7 +41,8 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const style = hasNestedParent && !parentEdges.length ? { marginTop: 40 } : undefined;
 
   const nodeClick = useCallback(() => {
-    dispatch(openPanel(id));
+    dispatch(expandPanel());
+    dispatch(changePanelNode(id));
   }, [dispatch, id]);
 
   if (metadata?.isPlaceholderNode) {
