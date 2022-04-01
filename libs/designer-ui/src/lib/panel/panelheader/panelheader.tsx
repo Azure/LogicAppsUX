@@ -180,7 +180,7 @@ export const PanelHeader = ({
         <div className="msla-panel-card-header">
           {cardIcon ? <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" /> : null}
           <div className="msla-title-container" hidden={isCollapsed}>
-            <PanelHeaderTitle titleId={titleId} readOnlyMode={readOnlyMode} renameTitleDisabled={renameTitleDisabled} title={title} />
+            <PanelHeaderTitle titleId={titleId} readOnlyMode={readOnlyMode} renameTitleDisabled={renameTitleDisabled} savedTitle={title} />
           </div>
           <div className="msla-panel-header-controls" hidden={isCollapsed}>
             {panelHeaderControlType === PanelHeaderControlType.MENU ? getPanelHeaderMenu() : null}

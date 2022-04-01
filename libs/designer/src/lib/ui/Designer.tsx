@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useLayout } from '../core/graphlayout';
-import { closePanel } from '../core/state/panelSlice';
+import { collapsePanel, expandPanel } from '../core/state/panelSlice';
 import { updateNodeSizes } from '../core/state/workflowSlice';
 import type { RootState } from '../core/store';
 import CustomTestNode from './CustomNodes/CustomTestNode';
@@ -73,8 +73,12 @@ export const Designer = () => {
     [dispatch]
   );
 
-  const collapsePanel = useCallback(() => {
-    dispatch(closePanel());
+  const collapse = useCallback(() => {
+    dispatch(collapsePanel());
+  }, [dispatch]);
+
+  const expand = useCallback(() => {
+    dispatch(expandPanel());
   }, [dispatch]);
 
   return (
@@ -97,7 +101,8 @@ export const Designer = () => {
               }}
             >
               <PanelRoot
-                collapsePanel={collapsePanel}
+                collapsePanel={collapse}
+                expandPanel={expand}
                 collapsed={collapsed}
                 isRecommendation={false}
                 noNodeSelected={!selectedNode}

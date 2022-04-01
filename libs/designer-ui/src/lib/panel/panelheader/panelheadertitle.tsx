@@ -19,30 +19,30 @@ const titleTextFieldStyle: Partial<ITextFieldStyles> = {
 export interface PanelHeaderTitleProps {
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
-  title?: string;
+  savedTitle?: string;
   titleId?: string;
 }
 
-export const PanelHeaderTitle = ({ title, titleId, readOnlyMode, renameTitleDisabled }: PanelHeaderTitleProps): JSX.Element => {
+export const PanelHeaderTitle = ({ savedTitle, titleId, readOnlyMode, renameTitleDisabled }: PanelHeaderTitleProps): JSX.Element => {
   const intl = useIntl();
-  const [cardTitle, setCardTitle] = useState(title);
+  const [editedTitle, setEditedTitle] = useState('');
   const [titleHasFocus, setTitleHasFocus] = useState(false);
 
   useEffect(() => {
-    setCardTitle(title);
-  }, [title]);
+    setEditedTitle('');
+  }, [savedTitle]);
 
   const titleTextFieldRef = React.createRef<ITextField>();
 
   const onTitleChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    setCardTitle(newValue);
+    setEditedTitle(newValue || '');
   };
 
   const onTitleBlur = (_: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     // TODO: 13067650 PANEL title validation
     const titleInvalid = false;
     if (titleInvalid) {
-      setCardTitle(title);
+      setEditedTitle(savedTitle || '');
     }
     setTitleHasFocus(false);
   };
@@ -54,7 +54,7 @@ export const PanelHeaderTitle = ({ title, titleId, readOnlyMode, renameTitleDisa
   const handleOnKeyUpTitle = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     if (isEscapeKey(e)) {
       setTitleHasFocus(false);
-      setCardTitle(title);
+      setEditedTitle(savedTitle || '');
       if (titleTextFieldRef.current) {
         titleTextFieldRef.current.blur();
       }
@@ -76,7 +76,7 @@ export const PanelHeaderTitle = ({ title, titleId, readOnlyMode, renameTitleDisa
       ariaLabel={panelHeaderCardTitle}
       maxLength={constants.PANEL.MAX_TITLE_LENGTH}
       borderless
-      value={cardTitle}
+      value={editedTitle || savedTitle}
       onChange={onTitleChange}
       onBlur={readOnly ? undefined : onTitleBlur}
       onFocus={onFocusTitle}
