@@ -33,6 +33,7 @@ export * from './label';
 export * from './monitoring';
 export * from './overview';
 export * from './pager';
+export * from './panel/panelroot';
 // export * from './picker';
 // export * from './rulescontrol';
 // export * from './schemaeditor2';

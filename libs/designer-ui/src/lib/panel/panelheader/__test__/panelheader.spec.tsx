@@ -15,7 +15,7 @@ describe('lib/panel/panelheader/main', () => {
     minimal = {
       isCollapsed: false,
       panelHeaderMenu: [],
-      setIsCollapsed: jest.fn(),
+      toggleCollapse: jest.fn(),
     };
     minimalWithHeader = {
       isCollapsed: false,
@@ -39,7 +39,7 @@ describe('lib/panel/panelheader/main', () => {
           onClick: jest.fn(),
         },
       ],
-      setIsCollapsed: jest.fn(),
+      toggleCollapse: jest.fn(),
     };
     shallow = ReactShallowRenderer.createRenderer();
     initializeIcons();
@@ -99,7 +99,7 @@ describe('lib/panel/panelheader/main', () => {
     expect(title.props.titleId).toBe(props.titleId);
     expect(title.props.readOnlyMode).toBe(props.readOnlyMode);
     expect(title.props.renameTitleDisabled).toBe(props.renameTitleDisabled);
-    expect(title.props.title).toBe(props.title);
+    expect(title.props.savedTitle).toBe(props.title);
 
     expect(panelControls.props.className).toBe('msla-panel-header-controls');
 
