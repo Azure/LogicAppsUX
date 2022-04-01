@@ -60,6 +60,7 @@ Footer.args = {
 export const Error = Template.bind({});
 Error.args = {
   ...Standard.args,
+  draggable: false,
   commentBox: {
     brandColor: '#474747',
     comment: 'This is a comment.',
