@@ -7,7 +7,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
   let minimal: PanelRootProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
-    minimal = { isRecommendation: false, noNodeSelected: false, title: 'Test Title' };
+    minimal = { collapsed: false, isRecommendation: false, noNodeSelected: false, title: 'Test Title' };
     renderer = ReactShallowRenderer.createRenderer();
   });
 

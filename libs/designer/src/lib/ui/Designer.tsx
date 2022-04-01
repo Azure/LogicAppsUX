@@ -6,7 +6,7 @@ import type { RootState } from '../core/store';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import GraphNode from './CustomNodes/GraphNode';
 import { CustomEdge } from './connections/edge';
-import { PanelRoot } from '@microsoft/designer-ui';
+import { PanelRoot } from './panel/panelroot';
 import { useCallback } from 'react';
 import { KeyboardBackend, isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';

@@ -1,4 +1,4 @@
-import constants from '../constants';
+import constants from '../../common/constants';
 import { AboutTab } from './panelTabs/aboutTab';
 import { RequestPanelTab } from './panelTabs/requestTab';
 import { RetryPanelTab } from './panelTabs/retryTab';
@@ -7,7 +7,7 @@ import * as React from 'react';
 
 export const monitorRetryTab: PanelTab = {
   title: 'Retry',
-  name: constants.PANEL.PANEL_TAB_NAMES.RETRY_HISTORY,
+  name: constants.PANEL_TAB_NAMES.RETRY_HISTORY,
   description: 'Retry History',
   enabled: true,
   content: <RetryPanelTab />,
@@ -17,7 +17,7 @@ export const monitorRetryTab: PanelTab = {
 
 export const monitorRequestTab: PanelTab = {
   title: 'Request',
-  name: constants.PANEL.PANEL_TAB_NAMES.REQUEST_HISTORY,
+  name: constants.PANEL_TAB_NAMES.REQUEST_HISTORY,
   description: 'Request History',
   enabled: true,
   content: <RequestPanelTab />,
@@ -27,7 +27,7 @@ export const monitorRequestTab: PanelTab = {
 
 export const aboutTab: PanelTab = {
   title: 'About',
-  name: constants.PANEL.PANEL_TAB_NAMES.ABOUT,
+  name: constants.PANEL_TAB_NAMES.ABOUT,
   description: 'Request History',
   enabled: true,
   content: <AboutTab />,

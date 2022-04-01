@@ -1,11 +1,8 @@
-import type { MenuItemOption } from '../card/types';
-import { MenuItemType } from '../card/types';
-import type { PageActionTelemetryData } from '../telemetry/models';
 import type { PanelTab } from './panelUtil';
 import { registerTab, getTabs } from './panelUtil';
-import { PanelContainer } from './panelcontainer';
-import { PanelHeaderControlType } from './panelheader/panelheader';
-import { monitorRetryTab, monitorRequestTab, aboutTab } from './registeredtabs';
+import { aboutTab, monitorRetryTab, monitorRequestTab } from './registeredtabs';
+import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
+import { MenuItemType, PanelContainer, PanelHeaderControlType } from '@microsoft/designer-ui';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
