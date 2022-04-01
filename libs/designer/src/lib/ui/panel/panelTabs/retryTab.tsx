@@ -1,4 +1,4 @@
-import { RetryPanel } from './../../monitoring/retrypanel';
+import { RetryPanel } from '@microsoft/designer-ui';
 import React from 'react';
 
 export const RetryPanelTab = () => {

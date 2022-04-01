@@ -1,4 +1,4 @@
-import { RequestPanel } from './../../monitoring/requestpanel';
+import { RequestPanel } from '@microsoft/designer-ui';
 import React from 'react';
 
 export const RequestPanelTab = () => {
