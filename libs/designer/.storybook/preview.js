@@ -1,6 +1,6 @@
-import { initializeIcons } from '@fluentui/react';
 import { DesignerProvider } from '../src/lib/core/DesignerProvider';
 import '../src/lib/ui/logicapps.less';
+import { initializeIcons } from '@fluentui/react';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },

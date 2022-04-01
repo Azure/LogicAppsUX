@@ -30,7 +30,7 @@ export interface PanelContainerProps {
   onDismissButtonClicked?(): void;
   trackEvent(data: PageActionTelemetryData): void;
   setSelectedTab: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleCollapse: () => void;
 }
 
 export const PanelContainer = ({
@@ -49,7 +49,7 @@ export const PanelContainer = ({
   width,
   onDismissButtonClicked,
   setSelectedTab,
-  setIsCollapsed,
+  toggleCollapse,
   trackEvent,
 }: PanelContainerProps) => {
   const intl = useIntl();
@@ -73,7 +73,7 @@ export const PanelContainer = ({
           titleId={headerTextId}
           title={title}
           comment={comment}
-          setIsCollapsed={setIsCollapsed}
+          toggleCollapse={toggleCollapse}
         />
       );
     },
@@ -89,7 +89,7 @@ export const PanelContainer = ({
       readOnlyMode,
       title,
       comment,
-      setIsCollapsed,
+      toggleCollapse,
     ]
   );
 
@@ -103,7 +103,7 @@ export const PanelContainer = ({
       aria-label={panelLabel}
       className="msla-panel-container"
       headerClassName="msla-panel-header"
-      headerText={title}
+      headerText={title || panelLabel}
       isOpen
       onRenderHeader={renderHeader}
       isBlocking={false}
