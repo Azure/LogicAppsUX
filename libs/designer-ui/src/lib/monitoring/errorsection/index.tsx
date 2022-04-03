@@ -8,6 +8,7 @@ export interface ErrorSectionProps {
 interface ErrorShape {
   code: string;
   message: string;
+  messageBarType?: MessageBarType;
 }
 
 export const ErrorSection: React.FC<ErrorSectionProps> = ({ className, error }) => {
@@ -15,9 +16,9 @@ export const ErrorSection: React.FC<ErrorSectionProps> = ({ className, error }) 
     return null;
   }
 
-  const { code, message } = error;
+  const { code, message, messageBarType } = error;
   return (
-    <MessageBar className={className} messageBarType={MessageBarType.severeWarning}>
+    <MessageBar className={className} messageBarType={messageBarType ?? MessageBarType.severeWarning}>
       <strong>{code}</strong>
       <div>{message}</div>
     </MessageBar>

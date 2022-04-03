@@ -3,7 +3,6 @@
 exports[`lib/card/errorbanner should render 1`] = `
 <div
   className="panel-card-error severeWarning"
-  tabIndex={0}
 >
   <i
     aria-hidden={true}
