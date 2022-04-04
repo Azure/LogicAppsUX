@@ -1,5 +1,3 @@
-import { operationDeserializer } from './actions/operationdeserializer';
-import connectorsReducer from './state/connectorSlice';
 import operationMetadataReducer from './state/operationMetadataSlice';
 import workflowReducer from './state/workflowSlice';
 import { configureStore } from '@reduxjs/toolkit';
@@ -10,9 +8,8 @@ export const store = configureStore({
   reducer: {
     workflow: workflowReducer,
     operations: operationMetadataReducer,
-    connectors: connectorsReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(operationDeserializer.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

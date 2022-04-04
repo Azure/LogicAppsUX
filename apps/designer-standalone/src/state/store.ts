@@ -1,7 +1,7 @@
 import workflowSlice from './workflowLoadingSlice';
 import { configureStore } from '@reduxjs/toolkit';
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { AnyObject } from 'immer/dist/internal';
 
 export const store = configureStore({
   reducer: {

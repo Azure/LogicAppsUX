@@ -1,4 +1,8 @@
 import type { RootState } from '../../store';
+import type { OperationIds } from '../operationMetadataSlice';
+import type { OperationManifestProperties } from '@microsoft-logic-apps/designer-client-services';
+import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 export const useActionMetadata = (actionId?: string) => {
@@ -20,91 +24,87 @@ export const useNodeMetadata = (nodeId?: string) => {
 };
 
 export const useConnector = (connectorId: string) => {
-  return useSelector((state: RootState) => getConnector(state, connectorId));
+  const connectionService = ConnectionService();
+  return useQuery(['connector', { connectorId }], () => connectionService.getConnector(connectorId), {
+    enabled: !!connectorId,
+  });
 };
 
 export const useOperationManifest = (connectorId: string, operationId: string) => {
-  return useSelector((state: RootState) => getOperationManifest(state, connectorId, operationId));
+  const operationManifestService = OperationManifestService();
+  const manifestQuery = useQuery(
+    ['manifest', { connectorId }, { operationId }],
+    () =>
+      // Danielle .tolowercase?
+      operationManifestService.getOperationManifest(connectorId, operationId),
+    {
+      enabled: !!connectorId && !!operationId,
+    }
+  );
+
+  return manifestQuery;
 };
 
-export const useSwagger = (connectorId: string): any => {
-  return useSelector((state: RootState) => {
-    if (!connectorId) {
-      return undefined;
-    }
+// export const useSwagger = (connectorId: string): any => {
+//   return useSelector((state: RootState) => {
+//     if (!connectorId) {
+//       return undefined;
+//     }
 
-    return state.connectors.swaggers[connectorId.toUpperCase()];
-  });
+//     return state.connectors.swaggers[connectorId.toUpperCase()];
+//   });
+// };
+
+export const useNodeAttribute = (nodeId: string, attributeName: keyof OperationManifestProperties): string => {
+  const { data: operationIds } = useOperationIds(nodeId);
+
+  const { connectorId, operationId } = operationIds ? operationIds : { connectorId: '', operationId: '' };
+
+  const { data: manifest } = useOperationManifest(connectorId, operationId);
+
+  const { data: connector } = useConnector(connectorId);
+
+  if (manifest) {
+    return manifest.properties[attributeName];
+  }
+
+  if (connector) {
+    return connector.properties[attributeName];
+  }
+
+  return '';
 };
 
 export const useBrandColor = (nodeId: string) => {
-  return useSelector((state: RootState) => {
-    if (!nodeId) {
-      return undefined;
-    }
-
-    const operationInfo = state.operations.operationInfo[nodeId];
-    if (!operationInfo) {
-      return undefined;
-    }
-
-    const { connectorId, operationId } = operationInfo;
-    const manifest = getOperationManifest(state, connectorId, operationId);
-    if (manifest) {
-      return manifest.properties.brandColor;
-    }
-
-    const connector = getConnector(state, connectorId);
-    if (connector) {
-      return connector.properties.brandColor;
-    }
-
-    return undefined;
-  });
+  return useNodeAttribute(nodeId, 'brandColor');
 };
 
 export const useIconUri = (nodeId: string) => {
-  return useSelector((state: RootState) => {
-    if (!nodeId) {
-      return undefined;
-    }
+  return useNodeAttribute(nodeId, 'iconUri');
+};
 
-    const operationInfo = state.operations.operationInfo[nodeId];
-    if (!operationInfo) {
-      return undefined;
-    }
+export const useOperationIds = (nodeId: string) => {
+  const operationManifestService = OperationManifestService();
 
-    const { connectorId, operationId } = operationInfo;
-    const manifest = getOperationManifest(state, connectorId, operationId);
-    if (manifest) {
-      return manifest.properties.iconUri;
-    }
-
-    const connector = getConnector(state, connectorId);
-    if (connector) {
-      return connector.properties.iconUri;
-    }
-
-    return undefined;
+  const operationInfo = useQuery<OperationIds>(['deserialized', { nodeId }], () => operationManifestService.getOperationInfo(null), {
+    enabled: !!nodeId,
   });
+  return operationInfo;
 };
 
-export const getConnector = (state: RootState, connectorId: string) => {
-  if (!connectorId) {
-    return undefined;
-  }
+// export const fetchOperationInfo = async (connectorId: string, operationId: string) => {
+//   const queryClient = getReactQueryClient();
+//   const operationManifestService = OperationManifestService();
 
-  return state.connectors.connectors[connectorId.toUpperCase()];
-};
+//   const operationInfo = await queryClient.fetchQuery<OperationInfo>('deserialized', () =>
+//     operationManifestService.getOperationInfo(operation)
+//   );
+//   if (!connectorId || !operationId) {
+//     return undefined;
+//   }
+//   const manifestQuery = queryClient.fetchQuery(['manifest', { connectorId }, { operationId }], () => // Danielle .tolowercase?
+//       operationManifestService.getOperationManifest(connectorId, operationId )
+//     )
 
-export const getOperationManifest = (state: RootState, connectorId: string, operationId: string) => {
-  if (!connectorId || !operationId) {
-    return undefined;
-  }
-
-  return state.connectors.manifests[getOperationManifestKey(connectorId, operationId)];
-};
-
-const getOperationManifestKey = (connectorId: string, operationId: string): string => {
-  return `${connectorId.toLowerCase()}-${operationId.toLowerCase()}`;
-};
+//   return manifestQuery;
+// };

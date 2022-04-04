@@ -1,7 +1,7 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
-import type { Operation, OperationInfo } from '@microsoft-logic-apps/designer-client-services';
+import type { Connector, Operation, OperationInfo, OperationManifest } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -28,11 +28,11 @@ export const initializeGraphState = createAsyncThunk(
 export const createWorkflow = async (deserialized: DeserializedWorkflow): Promise<void> => {
   const operations = deserialized.actionData;
 
-  const operationPromises: Promise<Operation>[] = [];
-  const connectionPromises: Promise<Operation>[] = [];
+  const operationPromises: Promise<OperationManifest>[] = [];
+  const connectionPromises: Promise<Connector>[] = [];
   const operationEntries = Object.entries(operations ? operations : {});
   for (let i = 0; i < operationEntries.length; i++) {
-    await initializeOperationDetailsForManifest(operationEntries[i][1], operationPromises, connectionPromises);
+    await initializeOperationDetailsForManifest(operationEntries[i][0], operationEntries[i][1], operationPromises, connectionPromises);
   }
   await Promise.all(operationPromises);
   await Promise.all(connectionPromises);
@@ -40,33 +40,48 @@ export const createWorkflow = async (deserialized: DeserializedWorkflow): Promis
 };
 
 const initializeOperationDetailsForManifest = async (
+  nodeId: string,
   operation: LogicAppsV2.ActionDefinition,
-  operationPromises: Promise<Operation>[],
-  connectionPromises: Promise<Operation>[]
+  operationPromises: Promise<OperationManifest>[], // Danielle: or do we need regular "operation"
+  connectionPromises: Promise<Connector>[]
 ): Promise<void> => {
   const queryClient = getReactQueryClient();
-  const connectionService = ConnectionService();
   const operationManifestService = OperationManifestService();
-  const operationInfo = await queryClient.fetchQuery<OperationInfo>('deserialized', () =>
+  const operationInfo = await queryClient.fetchQuery<OperationInfo>(['deserialized', { nodeId: nodeId }], () =>
     operationManifestService.getOperationInfo(operation)
   );
-  operationPromises.push(
-    queryClient.fetchQuery(['manifest', { connectorId: operationInfo?.connectorId }, { operationId: operationInfo?.operationId }], () =>
-      operationManifestService.getOperationManifest(
-        operationInfo ? operationInfo.connectorId : '',
-        operationInfo ? operationInfo.operationId : ''
-      )
-    )
-  );
-
-  connectionPromises.push(
-    queryClient.fetchQuery(['connection', { connectorId: operationInfo?.connectorId }, { operationId: operationInfo?.operationId }], () =>
-      connectionService.getConnector(operationInfo ? operationInfo.connectorId : '')
-    )
-  );
+  if (operationInfo) {
+    const operationManifest = fetchOperationManifest(operationInfo.connectorId, operationInfo.operationId);
+    if (operationManifest) {
+      operationPromises.push(operationManifest);
+    }
+    const connector = fetchConnector(operationInfo.connectorId);
+    if (connector) {
+      connectionPromises.push(connector);
+    }
+  }
 };
 
-const getWorkflow = (workflow: LogicAppsV2.WorkflowDefinition): Promise<DeserializedWorkflow> => {
-  const deserialized = BJSDeserialize(workflow);
-  return new Promise((resolve) => deserialized);
+const fetchConnector = (connectorId: string) => {
+  const queryClient = getReactQueryClient();
+  const connectionService = ConnectionService();
+  if (!connectorId) {
+    return undefined;
+  }
+  const connectorQuery = queryClient.fetchQuery(['connector', { connectorId }], () => connectionService.getConnector(connectorId));
+  return connectorQuery;
+};
+
+const fetchOperationManifest = (connectorId: string, operationId: string) => {
+  const queryClient = getReactQueryClient();
+  const operationManifestService = OperationManifestService();
+  if (!connectorId || !operationId) {
+    return undefined;
+  }
+  const manifestQuery = queryClient.fetchQuery(['manifest', { connectorId }, { operationId }], () =>
+    // Danielle .tolowercase?
+    operationManifestService.getOperationManifest(connectorId, operationId)
+  );
+
+  return manifestQuery;
 };

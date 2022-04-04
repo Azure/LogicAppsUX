@@ -1,20 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-export interface OperationInfo {
+export interface OperationIds {
   connectorId: string;
   operationId: string;
 }
 
 export interface OperationMetadataState {
-  operationInfo: Record<string, OperationInfo>;
+  operationInfo: Record<string, OperationIds>;
 }
 
 const initialState: OperationMetadataState = {
   operationInfo: {},
 };
 
-interface AddOperationInfoPayload extends OperationInfo {
+interface AddOperationInfoPayload extends OperationIds {
   id: string;
 }
 
