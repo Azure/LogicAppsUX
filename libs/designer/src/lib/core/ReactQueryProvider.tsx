@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 interface ProviderProps {
   children: React.ReactNode;
@@ -17,5 +18,10 @@ export const ReactQueryProvider = (props: ProviderProps) => {
   if (!reactQueryClient) {
     reactQueryClient = new QueryClient();
   }
-  return <QueryClientProvider client={reactQueryClient}>{props.children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={reactQueryClient}>
+      <ReactQueryDevtools initialIsOpen={true} />
+      {props.children}
+    </QueryClientProvider>
+  );
 };

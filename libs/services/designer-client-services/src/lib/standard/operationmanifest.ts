@@ -21,6 +21,7 @@ const scope = 'scope';
 const foreach = 'foreach';
 const initializevariable = 'initializevariable';
 const request = 'request';
+
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 
 // TODO(psamband): Need to figure out how to identify without hard coding.
@@ -61,8 +62,12 @@ export class StandardOperationManifestService implements IOperationManifestServi
         operationId: definition.inputs.serviceProviderConfiguration.operationId,
       };
     }
+    return {
+      connectorId: '123',
+      operationId: '1234',
+    };
 
-    throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
+    //throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
   }
 
   async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
