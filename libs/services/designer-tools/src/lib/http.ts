@@ -5,6 +5,7 @@ import Axios from 'axios';
 export interface HttpOptions {
   baseUrl: string;
   locale: string;
+  getToken?: () => string;
 }
 
 export class HttpClient {
@@ -16,14 +17,15 @@ export class HttpClient {
 
   constructor(options: HttpOptions) {
     const tokenHelper = new AccessTokenHelper();
+    const token = (options.getToken && options.getToken()) ?? '';
 
     this._axios = Axios.create({
       baseURL: options.baseUrl,
       headers: {
-        authorization: tokenHelper.tempGetAccessToken(),
+        authorization: token,
       },
     });
-    this._axios.defaults.headers.common['Authorization'] = tokenHelper.tempGetAccessToken();
+    this._axios.defaults.headers.common['Authorization'] = token;
   }
 
   public async get<T>(path: string): Promise<T> {

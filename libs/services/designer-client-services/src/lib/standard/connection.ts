@@ -7,6 +7,7 @@ interface StandardConnectionServiceArgs {
   apiVersion: string;
   baseUrl: string;
   locale?: string;
+  getToken: () => string;
 }
 
 export class StandardConnectionService {
@@ -17,7 +18,7 @@ export class StandardConnectionService {
   };
 
   constructor(public readonly options: StandardConnectionServiceArgs) {
-    this._httpClient = new HttpClient({ ...this.httpOptions, baseUrl: options.baseUrl });
+    this._httpClient = new HttpClient({ ...this.httpOptions, baseUrl: options.baseUrl, getToken: options.getToken });
   }
 
   dispose(): void {}

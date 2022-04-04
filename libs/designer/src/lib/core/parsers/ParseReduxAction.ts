@@ -47,7 +47,7 @@ const initializeOperationDetailsForManifest = async (
 ): Promise<void> => {
   const queryClient = getReactQueryClient();
   const operationManifestService = OperationManifestService();
-  const operationInfo = await queryClient.fetchQuery<OperationInfo>(['deserialized', { nodeId: nodeId }], () =>
+  const operationInfo = await queryClient.fetchQuery<OperationInfo>(['operationIds', { nodeId: nodeId }], () =>
     operationManifestService.getOperationInfo(operation)
   );
   if (operationInfo) {

@@ -45,16 +45,6 @@ export const useOperationManifest = (connectorId: string, operationId: string) =
   return manifestQuery;
 };
 
-// export const useSwagger = (connectorId: string): any => {
-//   return useSelector((state: RootState) => {
-//     if (!connectorId) {
-//       return undefined;
-//     }
-
-//     return state.connectors.swaggers[connectorId.toUpperCase()];
-//   });
-// };
-
 export const useNodeAttribute = (nodeId: string, attributeName: keyof OperationManifestProperties): string => {
   const { data: operationIds } = useOperationIds(nodeId);
 
@@ -86,7 +76,7 @@ export const useIconUri = (nodeId: string) => {
 export const useOperationIds = (nodeId: string) => {
   const operationManifestService = OperationManifestService();
 
-  const operationInfo = useQuery<OperationIds>(['deserialized', { nodeId }], () => operationManifestService.getOperationInfo(null), {
+  const operationInfo = useQuery<OperationIds>(['operationIds', { nodeId }], () => operationManifestService.getOperationInfo(null), {
     enabled: !!nodeId,
   });
   return operationInfo;
