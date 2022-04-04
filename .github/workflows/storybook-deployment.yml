@@ -11,7 +11,7 @@ on:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if: (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')) && github.actor != 'csigs' &&  github.actor != 'azure-logic-apps-automation'
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
@@ -30,7 +30,7 @@ jobs:
           output_location: 'dist/storybook/designer'
 
   close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    if: (github.event_name == 'pull_request' && github.event.action == 'closed') && github.actor != 'csigs' &&  github.actor != 'azure-logic-apps-automation'
     runs-on: ubuntu-latest
     name: Close Pull Request Job
     steps:
