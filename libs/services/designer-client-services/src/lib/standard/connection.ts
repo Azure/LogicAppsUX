@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import type { Connector } from '../common/models/connector';
 import type { HttpOptions } from '@microsoft-logic-apps/designer-tools';
 import { HttpClient } from '@microsoft-logic-apps/designer-tools';
@@ -21,7 +20,9 @@ export class StandardConnectionService {
     this._httpClient = new HttpClient({ ...this.httpOptions, baseUrl: options.baseUrl, getToken: options.getToken });
   }
 
-  dispose(): void {}
+  dispose(): void {
+    console.log('dispose');
+  }
 
   async getConnector(connectorId: string): Promise<Connector> {
     const { apiVersion, baseUrl } = this.options;

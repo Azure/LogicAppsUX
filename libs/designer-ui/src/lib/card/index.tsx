@@ -122,12 +122,12 @@ export const Card: React.FC<CardProps> = ({
         )}
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
+        onClick={handleClick}
       >
         <div className="panel-card-main">
           <div
             className="panel-card-header"
             role="button"
-            onClick={handleClick}
             onContextMenu={handleContextMenu}
             onKeyDown={handleKeyDown}
             tabIndex={0}

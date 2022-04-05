@@ -1,39 +1,41 @@
-import type { MenuItemOption } from '../card/types';
-import { MenuItemType } from '../card/types';
-import type { PageActionTelemetryData } from '../telemetry/models';
 import type { PanelTab } from './panelUtil';
 import { registerTab, getTabs } from './panelUtil';
-import { PanelContainer } from './panelcontainer';
-import { PanelHeaderControlType } from './panelheader/panelheader';
-import { monitorRetryTab, monitorRequestTab, aboutTab } from './registeredtabs';
+import { aboutTab, monitorRetryTab, monitorRequestTab } from './registeredtabs';
+import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
+import { MenuItemType, PanelContainer, PanelHeaderControlType } from '@microsoft/designer-ui';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface PanelRootProps {
   cardIcon?: string;
   comment?: string;
+  collapsed: boolean;
   isRecommendation: boolean;
   noNodeSelected: boolean;
   selectedTabId?: string;
   readOnlyMode?: boolean;
   title: string;
+  collapsePanel?: () => void;
+  expandPanel?: () => void;
 }
 
 export const PanelRoot = ({
   cardIcon,
   comment,
   isRecommendation,
+  collapsed,
   noNodeSelected,
   selectedTabId,
   readOnlyMode,
   title,
+  collapsePanel,
+  expandPanel,
 }: PanelRootProps): JSX.Element => {
   const intl = useIntl();
 
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
   const [currentComment, setCurrentComment] = useState(comment);
   const [selectedTab, setSelectedTab] = useState(selectedTabId);
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [width, setWidth] = useState('auto');
 
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
@@ -47,8 +49,8 @@ export const PanelRoot = ({
   }, [registeredTabs]);
 
   useEffect(() => {
-    isCollapsed ? setWidth('auto') : setWidth('630px');
-  }, [isCollapsed]);
+    collapsed ? setWidth('auto') : setWidth('630px');
+  }, [collapsed]);
 
   const getPanelHeaderControlType = (): boolean => {
     // TODO: 13067650
@@ -133,12 +135,20 @@ export const PanelRoot = ({
     console.log('Node deleted!');
   };
 
+  const togglePanel = (): void => {
+    if (!collapsed) {
+      collapsePanel && collapsePanel();
+    } else {
+      expandPanel && expandPanel();
+    }
+  };
+
   return (
     <PanelContainer
       cardIcon={cardIcon}
       comment={currentComment}
       isRight
-      isCollapsed={isCollapsed}
+      isCollapsed={collapsed}
       noNodeSelected={noNodeSelected}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}
@@ -148,7 +158,7 @@ export const PanelRoot = ({
       width={width}
       onDismissButtonClicked={handleDelete}
       setSelectedTab={setSelectedTab}
-      setIsCollapsed={setIsCollapsed}
+      toggleCollapse={togglePanel}
       trackEvent={handleTrackEvent}
       title={title}
     />

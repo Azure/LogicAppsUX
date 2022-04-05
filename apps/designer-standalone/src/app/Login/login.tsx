@@ -6,6 +6,7 @@ import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 export const fileOptions = [
+  'Panel.json',
   'ComplexConditionals.json',
   'Conditionals.json',
   'MoreComplex.json',

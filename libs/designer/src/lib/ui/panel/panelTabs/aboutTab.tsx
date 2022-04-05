@@ -1,4 +1,4 @@
-import { About } from './../../about';
+import { About } from '@microsoft/designer-ui';
 import React from 'react';
 
 export const AboutTab = () => {

@@ -1,16 +1,19 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useLayout } from '../core/graphlayout';
+import { collapsePanel, expandPanel } from '../core/state/panelSlice';
 import { updateNodeSizes } from '../core/state/workflowSlice';
+import type { RootState } from '../core/store';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import GraphNode from './CustomNodes/GraphNode';
 import { CustomEdge } from './connections/edge';
+import { PanelRoot } from './panel/panelroot';
 import { useCallback } from 'react';
-import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
+import { KeyboardBackend, isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { createTransition, DndProvider } from 'react-dnd-multi-backend';
 import type { NodeChange } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export interface DesignerProps {
   graphId?: string;
@@ -54,14 +57,27 @@ const DND_OPTIONS = {
 };
 
 export const Designer = () => {
+  const { collapsed, selectedNode } = useSelector((state: RootState) => {
+    const { collapsed, selectedNode } = state.panel;
+    return { collapsed, selectedNode };
+  });
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch();
+
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
       dispatch(updateNodeSizes(changes));
     },
     [dispatch]
   );
+
+  const collapse = useCallback(() => {
+    dispatch(collapsePanel());
+  }, [dispatch]);
+
+  const expand = useCallback(() => {
+    dispatch(expandPanel());
+  }, [dispatch]);
 
   return (
     <DndProvider options={DND_OPTIONS as any}>
@@ -77,10 +93,19 @@ export const Designer = () => {
             nodesDraggable={false}
             edgeTypes={edgeTypes}
             proOptions={{
-              account: 'paid-subscription',
+              account: 'paid-sponsor',
               hideAttribution: true,
             }}
-          ></ReactFlow>
+          >
+            <PanelRoot
+              collapsePanel={collapse}
+              expandPanel={expand}
+              collapsed={collapsed}
+              isRecommendation={false}
+              noNodeSelected={!selectedNode}
+              title={selectedNode}
+            />
+          </ReactFlow>
         </ReactFlowProvider>
       </div>
     </DndProvider>

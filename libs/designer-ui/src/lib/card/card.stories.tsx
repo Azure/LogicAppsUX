@@ -2,6 +2,7 @@
 import type { CardProps } from './index';
 import { Card } from './index';
 import { MenuItemType } from './types';
+import { MessageBarType } from '@fluentui/react';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -51,6 +52,23 @@ Footer.args = {
     isDismissed: false,
     isEditing: false,
   },
+  connectionDisplayName: 'joechung@microsoft.com',
+  connectionRequired: true,
+  staticResultsEnabled: true,
+};
+
+export const Error = Template.bind({});
+Error.args = {
+  ...Standard.args,
+  draggable: false,
+  commentBox: {
+    brandColor: '#474747',
+    comment: 'This is a comment.',
+    isDismissed: false,
+    isEditing: false,
+  },
+  errorLevel: MessageBarType.severeWarning,
+  errorMessage: 'This is an error card',
   connectionDisplayName: 'joechung@microsoft.com',
   connectionRequired: true,
   staticResultsEnabled: true,
