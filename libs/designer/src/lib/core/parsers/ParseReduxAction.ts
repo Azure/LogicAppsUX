@@ -16,7 +16,7 @@ export const initializeGraphState = createAsyncThunk(
     }
     if (spec === 'BJS') {
       const deserialized = BJSDeserialize(graph);
-      await createWorkflow(deserialized);
+      createWorkflow(deserialized);
       return deserialized;
     } else if (spec === 'CNCF') {
       throw new Error('Spec not implemented.');

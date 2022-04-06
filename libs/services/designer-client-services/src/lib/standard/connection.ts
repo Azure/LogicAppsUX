@@ -27,8 +27,9 @@ export class StandardConnectionService {
   async getConnector(connectorId: string): Promise<Connector> {
     const { apiVersion, baseUrl } = this.options;
     const url = `/operationGroups/${connectorId.split('/').slice(-1)[0]}?api-version=${apiVersion}`;
-    const response = await this._httpClient.get<Connector>(url);
-    return response;
+    //const response = await this._httpClient.get<Connector>(url);
+    //return response;
+    return {} as any;
   }
 
   async getConnectors(): Promise<Connector[]> {
