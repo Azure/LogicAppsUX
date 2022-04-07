@@ -5,6 +5,6 @@
     "declaration": true,
     "types": []
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "../../utils/src/lib/models/connector.ts", "../../utils/src/lib/models/operationmanifest.ts"],
   "exclude": ["**/*.spec.ts"]
 }

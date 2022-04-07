@@ -1,5 +1,5 @@
-import { AssertionErrorCode, AssertionException } from './common/exceptions/assertion';
-import type { Connector } from './common/models/connector';
+import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
+import type { Connector } from '@microsoft-logic-apps/utils';
 
 export interface IConnectionService {
   dispose(): void;
