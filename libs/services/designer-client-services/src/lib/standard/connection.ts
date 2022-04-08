@@ -1,14 +1,14 @@
-import type { Connector } from '../common/models/connector';
 import type { IConnectionService } from '../connection';
+import type { Connector } from '@microsoft-logic-apps/utils';
 
 export class StandardConnectionService implements IConnectionService {
   constructor(public readonly options: unknown) {}
 
   dispose(): void {
-    console.log('dispose');
+    return;
   }
 
-  async getConnector(connectorId: string): Promise<Connector> {
+  async getConnector(_connectorId: string): Promise<Connector> {
     // TODO(psamband): To be implemented
     return {} as any;
   }

@@ -1,0 +1,43 @@
+{
+  "root": "libs/parsers",
+  "sourceRoot": "libs/parsers/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/web:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/parsers",
+        "main": "libs/parsers/src/index.ts",
+        "tsConfig": "libs/parsers/tsconfig.lib.json",
+        "project": "libs/parsers/package.json",
+        "entryFile": "libs/parsers/src/index.ts",
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "format": ["cjs", "esm"],
+        "assets": [
+          {
+            "glob": "libs/parsers/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/parsers/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/parsers"],
+      "options": {
+        "jestConfig": "libs/parsers/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
