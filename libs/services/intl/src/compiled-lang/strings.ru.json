@@ -461,6 +461,12 @@
       "value": "title"
     }
   ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Item"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -941,6 +947,12 @@
       "value": "Пропущено"
     }
   ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Yes"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -1133,6 +1145,12 @@
     {
       "type": 0,
       "value": "Целое число"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "No"
     }
   ],
   "rCl53e": [

@@ -395,6 +395,12 @@
       "value": " カードのコンテキスト メニュー"
     }
   ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Item"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -797,6 +803,12 @@
       "value": "スキップ"
     }
   ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Yes"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -956,6 +968,12 @@
     {
       "type": 0,
       "value": "INT"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "No"
     }
   ],
   "rCl53e": [
