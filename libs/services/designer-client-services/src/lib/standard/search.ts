@@ -1,9 +1,5 @@
 import { ConnectorsMock } from '../mocks/connectors';
-import type { SearchResult } from '../search';
-
-interface ISearchService {
-  search(term: string): Promise<SearchResult>;
-}
+import type { ISearchService, SearchResult } from '../search';
 
 export class StandardSearchService implements ISearchService {
   search = (term: string): Promise<SearchResult> => {

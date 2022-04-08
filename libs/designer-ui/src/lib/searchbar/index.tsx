@@ -6,6 +6,11 @@ export interface SearchBoxProps {
   name: string;
 }
 
+// const getSearchResult = (term: string): Promise<SearchResult> => {
+//   const searchService2 = SearchService();
+//   const data = searchService
+// }
+
 export const DesignerSearchBox: React.FC<SearchBoxProps> = (props) => {
   const [searchTerm, setSearchTerm] = React.useState('');
 
