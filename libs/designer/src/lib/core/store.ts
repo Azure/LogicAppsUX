@@ -1,8 +1,7 @@
+import operationMetadataReducer from './state/operationMetadataSlice';
 import panelReducer from './state/panelSlice';
 import workflowReducer from './state/workflowSlice';
 import { configureStore } from '@reduxjs/toolkit';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { AnyObject } from 'immer/dist/internal';
 
 export const store = configureStore({
   reducer: {
