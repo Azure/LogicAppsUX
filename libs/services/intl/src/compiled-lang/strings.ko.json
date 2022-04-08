@@ -395,6 +395,12 @@
       "value": " 카드에 대한 상황에 맞는 메뉴"
     }
   ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Item"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -801,6 +807,12 @@
       "value": "건너뜀"
     }
   ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Yes"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -960,6 +972,12 @@
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "No"
     }
   ],
   "rCl53e": [

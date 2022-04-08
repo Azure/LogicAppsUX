@@ -399,6 +399,12 @@
       "value": " 卡的关联菜单"
     }
   ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Item"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -817,6 +823,12 @@
       "value": "已跳过"
     }
   ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Yes"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -984,6 +996,12 @@
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "No"
     }
   ],
   "rCl53e": [

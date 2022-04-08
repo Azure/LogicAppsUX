@@ -395,6 +395,12 @@
       "value": " 卡片的操作功能表"
     }
   ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Item"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -801,6 +807,12 @@
       "value": "已跳過"
     }
   ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Yes"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -960,6 +972,12 @@
     {
       "type": 0,
       "value": "整數"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "No"
     }
   ],
   "rCl53e": [
