@@ -1,4 +1,5 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
+import type { Actions } from '../state/workflowSlice';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import type { Connector, Operation, OperationInfo, OperationManifest } from '@microsoft-logic-apps/designer-client-services';
@@ -16,7 +17,7 @@ export const initializeGraphState = createAsyncThunk(
     }
     if (spec === 'BJS') {
       const deserialized = BJSDeserialize(graph);
-      createWorkflow(deserialized);
+      createWorkflow(deserialized.actionData);
       return deserialized;
     } else if (spec === 'CNCF') {
       throw new Error('Spec not implemented.');
@@ -25,12 +26,10 @@ export const initializeGraphState = createAsyncThunk(
   }
 );
 
-export const createWorkflow = async (deserialized: DeserializedWorkflow): Promise<void> => {
-  const operations = deserialized.actionData;
-
+export const createWorkflow = async (actions: Actions): Promise<void> => {
   const operationPromises: Promise<OperationManifest>[] = [];
   const connectionPromises: Promise<Connector>[] = [];
-  const operationEntries = Object.entries(operations ? operations : {});
+  const operationEntries = Object.entries(actions ? actions : {});
   for (let i = 0; i < operationEntries.length; i++) {
     await initializeOperationDetailsForManifest(operationEntries[i][0], operationEntries[i][1], operationPromises, connectionPromises);
   }

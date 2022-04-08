@@ -19,7 +19,6 @@
     "baseUrl": ".",
     "paths": {
       "@microsoft-logic-apps/designer-client-services": ["libs/services/designer-client-services/src/index.ts"],
-      "@microsoft-logic-apps/designer-tools": ["libs/services/designer-tools/src/index.ts"],
       "@microsoft-logic-apps/intl": ["libs/services/intl/src/index.ts"],
       "@microsoft-logic-apps/resolution-service": ["libs/services/resolution-service/src/index.ts"],
       "@microsoft-logic-apps/utils": ["libs/utils/src/index.ts"],

@@ -1,4 +1,4 @@
-import { AccessTokenHelper } from './common/accessTokenHelper';
+import { AccessTokenHelper } from './accessTokenHelper';
 import type { AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
 import Axios from 'axios';
 
@@ -18,14 +18,12 @@ export class HttpClient {
   constructor(options: HttpOptions) {
     const tokenHelper = new AccessTokenHelper();
     const token = (options.getToken && options.getToken()) ?? '';
+    const headers: AxiosRequestHeaders = token ? { authorization: token } : {};
 
     this._axios = Axios.create({
       baseURL: options.baseUrl,
-      headers: {
-        authorization: token,
-      },
+      headers,
     });
-    this._axios.defaults.headers.common['Authorization'] = token;
   }
 
   public async get<T>(path: string): Promise<T> {

@@ -1,4 +1,4 @@
-import { isTokenExpired } from './accessTokenHelper'
+import { isTokenExpired } from './accessTokenHelper';
 
 describe('token helpers', () => {
   it('returns true for expired token', () => {

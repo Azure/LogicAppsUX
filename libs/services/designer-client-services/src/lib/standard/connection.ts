@@ -1,6 +1,6 @@
+import type { HttpOptions } from '../common/http/http';
+import { HttpClient } from '../common/http/http';
 import type { Connector } from '../common/models/connector';
-import type { HttpOptions } from '@microsoft-logic-apps/designer-tools';
-import { HttpClient } from '@microsoft-logic-apps/designer-tools';
 
 interface StandardConnectionServiceArgs {
   apiVersion: string;
