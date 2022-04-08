@@ -6,10 +6,11 @@ export class AccessTokenHelper {
   private _getAccessToken: () => Promise<string>;
 
   constructor(private _doNotAddBearer = false) {
+    // todo: add getAccessToken to the constructor
     this._getAccessToken = () => new Promise<string>((resolve, reject) => resolve(''));
   }
 
-  getAccessToken = async (): Promise<string> => {
+  getCurrentAccessToken = async (): Promise<string> => {
     if (this._accessToken && !isTokenExpired(this._accessToken)) return this._accessToken;
 
     this._accessToken = await this.getNewAccessToken();
@@ -23,11 +24,8 @@ export class AccessTokenHelper {
 
   private async getNewAccessToken(): Promise<string> {
     const accessToken = await this._getAccessToken();
-    const newAccessToken = this._doNotAddBearer
-      ? accessToken
-      : accessToken && accessToken.startsWith('Bearer')
-      ? accessToken
-      : `Bearer ${accessToken}`;
+    if (this._doNotAddBearer) return accessToken;
+    const newAccessToken = accessToken && accessToken.startsWith('Bearer') ? accessToken : `Bearer ${accessToken}`;
     return newAccessToken;
   }
 }

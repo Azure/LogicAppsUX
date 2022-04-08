@@ -7,6 +7,7 @@ import type { AnyObject } from 'immer/dist/internal';
 export const store = configureStore({
   reducer: {
     workflow: workflowReducer,
+    operations: operationMetadataReducer,
     panel: panelReducer,
   },
 });
