@@ -32,11 +32,11 @@ export const useConnector = (connectorId: string) => {
 
 export const useOperationManifest = (connectorId: string, operationId: string) => {
   const operationManifestService = OperationManifestService();
+  connectorId = connectorId.toLowerCase();
+  operationId = operationId.toLowerCase();
   const manifestQuery = useQuery(
     ['manifest', { connectorId }, { operationId }],
-    () =>
-      // Danielle .tolowercase?
-      operationManifestService.getOperationManifest(connectorId, operationId),
+    () => operationManifestService.getOperationManifest(connectorId, operationId),
     {
       enabled: !!connectorId && !!operationId,
     }
@@ -45,7 +45,7 @@ export const useOperationManifest = (connectorId: string, operationId: string) =
   return manifestQuery;
 };
 
-export const useNodeAttribute = (nodeId: string, attributeName: keyof OperationManifestProperties): string => {
+const useNodeAttribute = (nodeId: string, attributeName: keyof OperationManifestProperties): string => {
   const { data: operationIds } = useOperationIds(nodeId);
 
   const { connectorId, operationId } = operationIds ? operationIds : { connectorId: '', operationId: '' };

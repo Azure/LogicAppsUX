@@ -42,12 +42,13 @@ export const createWorkflow = async (deserialized: DeserializedWorkflow): Promis
 const initializeOperationDetailsForManifest = async (
   nodeId: string,
   operation: LogicAppsV2.ActionDefinition,
-  operationPromises: Promise<OperationManifest>[], // Danielle: or do we need regular "operation"
+  operationPromises: Promise<OperationManifest>[],
   connectionPromises: Promise<Connector>[]
 ): Promise<void> => {
   const queryClient = getReactQueryClient();
   const operationManifestService = OperationManifestService();
-  const operationInfo = await queryClient.fetchQuery<OperationIds>(['operationIds', { nodeId: nodeId }], () =>
+  nodeId = nodeId.toLowerCase();
+  const operationInfo = await queryClient.fetchQuery<OperationIds>(['operationIds', { nodeId }], () =>
     // this is sync
     operationManifestService.getOperationInfo(operation)
   );
@@ -67,8 +68,9 @@ const fetchConnector = (connectorId: string) => {
   const queryClient = getReactQueryClient();
   const connectionService = ConnectionService();
   if (!connectorId) {
-    return undefined;
+    throw new Error('ConnectorId must be defined');
   }
+  connectorId = connectorId.toLowerCase();
   const connectorQuery = queryClient.fetchQuery(['connector', { connectorId }], () => connectionService.getConnector(connectorId));
   return connectorQuery;
 };
@@ -79,8 +81,9 @@ const fetchOperationManifest = (connectorId: string, operationId: string) => {
   if (!connectorId || !operationId) {
     return undefined;
   }
+  connectorId = connectorId.toLowerCase();
+  operationId = operationId.toLowerCase();
   const manifestQuery = queryClient.fetchQuery(['manifest', { connectorId }, { operationId }], () =>
-    // Danielle .tolowercase?
     operationManifestService.getOperationManifest(connectorId, operationId)
   );
 

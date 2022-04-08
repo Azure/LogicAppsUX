@@ -9,7 +9,6 @@ export const store = configureStore({
     workflow: workflowReducer,
     panel: panelReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
