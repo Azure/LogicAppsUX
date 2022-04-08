@@ -13,7 +13,7 @@ export class StandardConnectionService {
   private _httpClient: HttpClient;
   private httpOptions: HttpOptions = {
     baseUrl: '',
-    locale: 'US',
+    locale: 'en-US',
   };
 
   constructor(public readonly options: StandardConnectionServiceArgs) {

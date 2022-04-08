@@ -1,5 +1,5 @@
 import { AssertionErrorCode, AssertionException } from './common/exceptions/assertion';
-import type { OperationIds, OperationManifest } from './common/models/operationmanifest';
+import type { OperationInfo, OperationManifest } from './common/models/operationmanifest';
 
 /**
  * The operation manifest service.
@@ -16,9 +16,9 @@ export interface IOperationManifestService {
   /**
    * Gets the operation info.
    * @arg {any} definition - The operation definition.
-   * @return {Promise<OperationIds>}
+   * @return {Promise<OperationInfo>}
    */
-  getOperationInfo(definition: any): Promise<OperationIds>;
+  getOperationInfo(definition: any): Promise<OperationInfo>;
 
   /**
    * Gets the operation manifest for an operation.

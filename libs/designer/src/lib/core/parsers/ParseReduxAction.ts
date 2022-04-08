@@ -1,7 +1,7 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
-import type { Connector, Operation, OperationIds, OperationManifest } from '@microsoft-logic-apps/designer-client-services';
+import type { Connector, Operation, OperationInfo, OperationManifest } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -48,7 +48,7 @@ const initializeOperationDetailsForManifest = async (
   const queryClient = getReactQueryClient();
   const operationManifestService = OperationManifestService();
   nodeId = nodeId.toLowerCase();
-  const operationInfo = await queryClient.fetchQuery<OperationIds>(['operationIds', { nodeId }], () =>
+  const operationInfo = await queryClient.fetchQuery<OperationInfo>(['operationIds', { nodeId }], () =>
     // this is sync
     operationManifestService.getOperationInfo(operation)
   );

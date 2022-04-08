@@ -1,6 +1,6 @@
 import { UnsupportedException } from '../common/exceptions/unsupported';
 import { SettingScope } from '../common/models/operationmanifest';
-import type { OperationIds, OperationManifest } from '../common/models/operationmanifest';
+import type { OperationInfo, OperationManifest } from '../common/models/operationmanifest';
 import type { IOperationManifestService } from '../operationmanifest';
 import { equals } from '@microsoft-logic-apps/utils';
 
@@ -53,7 +53,7 @@ export class StandardOperationManifestService implements IOperationManifestServi
     return supportedManifestTypes.indexOf(normalizedOperationType) > -1;
   }
 
-  async getOperationInfo(definition: any): Promise<OperationIds> {
+  async getOperationInfo(definition: any): Promise<OperationInfo> {
     if (isInBuiltOperation(definition)) {
       return getBuiltInOperationInfo(definition);
     } else if (isServiceProviderOperation(definition)) {
@@ -111,7 +111,7 @@ function isInBuiltOperation(definition: any): boolean {
   }
 }
 
-function getBuiltInOperationInfo(definition: any): OperationIds {
+function getBuiltInOperationInfo(definition: any): OperationInfo {
   const normalizedOperationType = definition.type.toLowerCase();
   const kind = definition.kind ? definition.kind.toLowerCase() : undefined;
 
@@ -161,7 +161,7 @@ function getBuiltInOperationInfo(definition: any): OperationIds {
   }
 }
 
-const inBuiltOperationsMetadata: Record<string, OperationIds> = {
+const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   [compose]: {
     connectorId: 'connectionProviders/dataOperationNew',
     operationId: 'composeNew',

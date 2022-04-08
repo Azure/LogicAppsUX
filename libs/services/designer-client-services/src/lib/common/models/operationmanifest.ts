@@ -13,7 +13,7 @@ export interface DownloadChunkMetadata {
   maximumSize?: number;
 }
 
-export interface OperationIds {
+export interface OperationInfo {
   connectorId: string;
   operationId: string;
 }

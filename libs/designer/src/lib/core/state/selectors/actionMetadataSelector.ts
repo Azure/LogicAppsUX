@@ -54,12 +54,12 @@ const useNodeAttribute = (nodeId: string, attributeName: keyof OperationManifest
 
   const { data: connector } = useConnector(connectorId);
 
-  if (manifest) {
-    return manifest.properties[attributeName];
-  }
-
   if (connector) {
     return connector.properties[attributeName];
+  }
+
+  if (manifest) {
+    return manifest.properties[attributeName];
   }
 
   return '';

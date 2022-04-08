@@ -1,7 +1,7 @@
 import { getReactQueryClient } from './ReactQueryProvider';
 import type { DeserializedWorkflow } from './parsers/BJSWorkflow/BJSDeserializer';
 import { Deserialize } from './parsers/BJSWorkflow/BJSDeserializer';
-import type { Operation, OperationIds } from '@microsoft-logic-apps/designer-client-services';
+import type { Operation, OperationInfo } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 
 export const createWorkflow = async (workflow: LogicAppsV2.WorkflowDefinition): Promise<void> => {
@@ -9,7 +9,7 @@ export const createWorkflow = async (workflow: LogicAppsV2.WorkflowDefinition): 
   const deserialized = workflow;
 
   const operationManifestService = OperationManifestService();
-  const operationInfo = await queryClient.fetchQuery<OperationIds>('deserialized', () =>
+  const operationInfo = await queryClient.fetchQuery<OperationInfo>('deserialized', () =>
     operationManifestService.getOperationInfo(deserialized)
   );
   const operations = deserialized.actionData;
