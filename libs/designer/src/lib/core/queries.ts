@@ -5,7 +5,7 @@ import type { Actions } from './state/workflowSlice';
 import type { Connector, Operation, OperationInfo, OperationManifest } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 
-export const createWorkflow = async (actions: Actions): Promise<void> => {
+export const createWorkflow = async (actions: Actions): Promise<(Connector | OperationManifest)[]> => {
   const operationPromises: Promise<OperationManifest>[] = [];
   const connectionPromises: Promise<Connector>[] = [];
   const operationDetailsPromises: Promise<void>[] = [];
@@ -19,9 +19,7 @@ export const createWorkflow = async (actions: Actions): Promise<void> => {
     );
     operationDetailsPromises.push(operationDetails);
   }
-  await Promise.all(operationPromises);
-  await Promise.all(connectionPromises);
-  return new Promise((resolve) => null);
+  return Promise.all([...operationPromises, ...connectionPromises]);
 };
 
 const initializeOperationDetailsForManifest = async (
