@@ -68,6 +68,24 @@ exports[`lib/copyinputcontrol should construct the copyinputcontrol correctly 1`
         />
       </span>
     </button>
+    <div
+      hidden={true}
+      id="tooltip5"
+      style={
+        Object {
+          "border": 0,
+          "height": 1,
+          "margin": -1,
+          "overflow": "hidden",
+          "padding": 0,
+          "position": "absolute",
+          "whiteSpace": "nowrap",
+          "width": 1,
+        }
+      }
+    >
+      Copy URL
+    </div>
   </div>
 </div>
 `;
@@ -89,7 +107,7 @@ exports[`lib/copyinputcontrol should set the aria-labelledby attribute 1`] = `
           aria-invalid={false}
           aria-labelledby="aria-labelledby"
           className="ms-TextField-field field-112"
-          id="TextField7"
+          id="TextField9"
           onBlur={[Function]}
           onChange={[Function]}
           onFocus={[Function]}
@@ -141,6 +159,24 @@ exports[`lib/copyinputcontrol should set the aria-labelledby attribute 1`] = `
         />
       </span>
     </button>
+    <div
+      hidden={true}
+      id="tooltip14"
+      style={
+        Object {
+          "border": 0,
+          "height": 1,
+          "margin": -1,
+          "overflow": "hidden",
+          "padding": 0,
+          "position": "absolute",
+          "whiteSpace": "nowrap",
+          "width": 1,
+        }
+      }
+    >
+      Copy URL
+    </div>
   </div>
 </div>
 `;

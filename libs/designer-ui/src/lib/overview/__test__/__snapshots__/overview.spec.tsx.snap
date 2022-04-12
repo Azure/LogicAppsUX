@@ -401,7 +401,7 @@ exports[`lib/overview renders 1`] = `
                     <div
                       className="ms-FocusZone css-112 ms-DetailsHeader root-160"
                       data-automationid="DetailsHeader"
-                      data-focuszone-id="FocusZone25"
+                      data-focuszone-id="FocusZone27"
                       onFocus={[Function]}
                       onKeyDown={[Function]}
                       onMouseDownCapture={[Function]}
@@ -409,8 +409,7 @@ exports[`lib/overview renders 1`] = `
                       role="row"
                     >
                       <div
-                        aria-colindex={1}
-                        aria-labelledby="header24-identifier-name"
+                        aria-labelledby="header26-identifier-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -430,13 +429,13 @@ exports[`lib/overview renders 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header24-identifier"
+                            id="header26-identifier"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header24-identifier-name"
+                              id="header26-identifier-name"
                             >
                               Identifier
                             </span>
@@ -454,8 +453,7 @@ exports[`lib/overview renders 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={2}
-                        aria-labelledby="header24-status-name"
+                        aria-labelledby="header26-status-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -475,13 +473,13 @@ exports[`lib/overview renders 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header24-status"
+                            id="header26-status"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header24-status-name"
+                              id="header26-status-name"
                             >
                               Status
                             </span>
@@ -499,8 +497,7 @@ exports[`lib/overview renders 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={3}
-                        aria-labelledby="header24-startTime-name"
+                        aria-labelledby="header26-startTime-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -520,13 +517,13 @@ exports[`lib/overview renders 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header24-startTime"
+                            id="header26-startTime"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header24-startTime-name"
+                              id="header26-startTime-name"
                             >
                               Start time
                             </span>
@@ -544,8 +541,7 @@ exports[`lib/overview renders 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={4}
-                        aria-labelledby="header24-duration-name"
+                        aria-labelledby="header26-duration-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -565,13 +561,13 @@ exports[`lib/overview renders 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header24-duration"
+                            id="header26-duration"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header24-duration-name"
+                              id="header26-duration-name"
                             >
                               Duration
                             </span>
@@ -589,8 +585,7 @@ exports[`lib/overview renders 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={5}
-                        aria-labelledby="header24-contextMenu-name"
+                        aria-labelledby="header26-contextMenu-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable is-empty root-189"
                         data-automationid="ColumnsHeaderColumn"
@@ -610,13 +605,13 @@ exports[`lib/overview renders 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header24-contextMenu"
+                            id="header26-contextMenu"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header24-contextMenu-name"
+                              id="header26-contextMenu-name"
                             >
                               
                             </span>
@@ -654,7 +649,7 @@ exports[`lib/overview renders 1`] = `
                     >
                       <div
                         className="ms-FocusZone css-112 focusZone-159"
-                        data-focuszone-id="FocusZone26"
+                        data-focuszone-id="FocusZone28"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onKeyDown={[Function]}
@@ -705,7 +700,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
       >
         <div
           className="ms-FocusZone css-112 ms-CommandBar root-109"
-          data-focuszone-id="FocusZone27"
+          data-focuszone-id="FocusZone29"
           onFocus={[Function]}
           onKeyDown={[Function]}
           onMouseDownCapture={[Function]}
@@ -752,7 +747,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                   >
                     <span
                       className="ms-Button-label label-120"
-                      id="id__28"
+                      id="id__30"
                     >
                       Refresh
                     </span>
@@ -797,7 +792,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                   >
                     <span
                       className="ms-Button-label label-120"
-                      id="id__31"
+                      id="id__33"
                     >
                       Run trigger
                     </span>
@@ -813,7 +808,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
   <div>
     <div
       className="ms-FocusZone css-112 ms-Pivot root-124"
-      data-focuszone-id="FocusZone35"
+      data-focuszone-id="FocusZone37"
       onFocus={[Function]}
       onKeyDown={[Function]}
       onMouseDownCapture={[Function]}
@@ -824,7 +819,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
         className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-133"
         data-content="Workflow Properties"
         data-is-focusable={true}
-        id="Pivot34-Tab0"
+        id="Pivot36-Tab0"
         name="Workflow Properties"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -854,7 +849,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
     </div>
     <div
       aria-hidden={false}
-      aria-labelledby="Pivot34-Tab0"
+      aria-labelledby="Pivot36-Tab0"
       className="itemContainer-125"
       hidden={false}
       role="tabpanel"
@@ -932,7 +927,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
   <div>
     <div
       className="ms-FocusZone css-112 ms-Pivot root-124"
-      data-focuszone-id="FocusZone40"
+      data-focuszone-id="FocusZone42"
       onFocus={[Function]}
       onKeyDown={[Function]}
       onMouseDownCapture={[Function]}
@@ -943,7 +938,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
         className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-133"
         data-content="Run History"
         data-is-focusable={true}
-        id="Pivot39-Tab0"
+        id="Pivot41-Tab0"
         name="Run History"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -973,7 +968,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
     </div>
     <div
       aria-hidden={false}
-      aria-labelledby="Pivot39-Tab0"
+      aria-labelledby="Pivot41-Tab0"
       className="itemContainer-125"
       hidden={false}
       role="tabpanel"
@@ -995,7 +990,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                   aria-invalid={false}
                   className="ms-TextField-field field-145"
                   data-testid="msla-run-history-filter-input"
-                  id="TextField44"
+                  id="TextField46"
                   onBlur={[Function]}
                   onChange={[Function]}
                   onFocus={[Function]}
@@ -1083,7 +1078,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                     <div
                       className="ms-FocusZone css-112 ms-DetailsHeader root-160"
                       data-automationid="DetailsHeader"
-                      data-focuszone-id="FocusZone52"
+                      data-focuszone-id="FocusZone56"
                       onFocus={[Function]}
                       onKeyDown={[Function]}
                       onMouseDownCapture={[Function]}
@@ -1091,8 +1086,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                       role="row"
                     >
                       <div
-                        aria-colindex={1}
-                        aria-labelledby="header51-identifier-name"
+                        aria-labelledby="header55-identifier-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -1112,13 +1106,13 @@ exports[`lib/overview renders a CORS notice 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header51-identifier"
+                            id="header55-identifier"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header51-identifier-name"
+                              id="header55-identifier-name"
                             >
                               Identifier
                             </span>
@@ -1136,8 +1130,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={2}
-                        aria-labelledby="header51-status-name"
+                        aria-labelledby="header55-status-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -1157,13 +1150,13 @@ exports[`lib/overview renders a CORS notice 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header51-status"
+                            id="header55-status"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header51-status-name"
+                              id="header55-status-name"
                             >
                               Status
                             </span>
@@ -1181,8 +1174,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={3}
-                        aria-labelledby="header51-startTime-name"
+                        aria-labelledby="header55-startTime-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -1202,13 +1194,13 @@ exports[`lib/overview renders a CORS notice 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header51-startTime"
+                            id="header55-startTime"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header51-startTime-name"
+                              id="header55-startTime-name"
                             >
                               Start time
                             </span>
@@ -1226,8 +1218,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={4}
-                        aria-labelledby="header51-duration-name"
+                        aria-labelledby="header55-duration-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -1247,13 +1238,13 @@ exports[`lib/overview renders a CORS notice 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header51-duration"
+                            id="header55-duration"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header51-duration-name"
+                              id="header55-duration-name"
                             >
                               Duration
                             </span>
@@ -1271,8 +1262,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={5}
-                        aria-labelledby="header51-contextMenu-name"
+                        aria-labelledby="header55-contextMenu-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable is-empty root-189"
                         data-automationid="ColumnsHeaderColumn"
@@ -1292,13 +1282,13 @@ exports[`lib/overview renders a CORS notice 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header51-contextMenu"
+                            id="header55-contextMenu"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header51-contextMenu-name"
+                              id="header55-contextMenu-name"
                             >
                               
                             </span>
@@ -1336,7 +1326,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                     >
                       <div
                         className="ms-FocusZone css-112 focusZone-159"
-                        data-focuszone-id="FocusZone53"
+                        data-focuszone-id="FocusZone57"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onKeyDown={[Function]}
@@ -1380,7 +1370,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
       <div
         aria-live="polite"
         className="ms-MessageBar-text text-194"
-        id="MessageBar54"
+        id="MessageBar58"
         role="status"
       >
         <span
@@ -1416,7 +1406,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
       >
         <div
           className="ms-FocusZone css-112 ms-CommandBar root-109"
-          data-focuszone-id="FocusZone83"
+          data-focuszone-id="FocusZone89"
           onFocus={[Function]}
           onKeyDown={[Function]}
           onMouseDownCapture={[Function]}
@@ -1463,7 +1453,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                   >
                     <span
                       className="ms-Button-label label-120"
-                      id="id__84"
+                      id="id__90"
                     >
                       Refresh
                     </span>
@@ -1508,7 +1498,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                   >
                     <span
                       className="ms-Button-label label-120"
-                      id="id__87"
+                      id="id__93"
                     >
                       Run trigger
                     </span>
@@ -1524,7 +1514,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
   <div>
     <div
       className="ms-FocusZone css-112 ms-Pivot root-124"
-      data-focuszone-id="FocusZone91"
+      data-focuszone-id="FocusZone97"
       onFocus={[Function]}
       onKeyDown={[Function]}
       onMouseDownCapture={[Function]}
@@ -1535,7 +1525,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
         className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-133"
         data-content="Workflow Properties"
         data-is-focusable={true}
-        id="Pivot90-Tab0"
+        id="Pivot96-Tab0"
         name="Workflow Properties"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -1565,7 +1555,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
     </div>
     <div
       aria-hidden={false}
-      aria-labelledby="Pivot90-Tab0"
+      aria-labelledby="Pivot96-Tab0"
       className="itemContainer-125"
       hidden={false}
       role="tabpanel"
@@ -1643,7 +1633,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
   <div>
     <div
       className="ms-FocusZone css-112 ms-Pivot root-124"
-      data-focuszone-id="FocusZone96"
+      data-focuszone-id="FocusZone102"
       onFocus={[Function]}
       onKeyDown={[Function]}
       onMouseDownCapture={[Function]}
@@ -1654,7 +1644,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
         className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-133"
         data-content="Run History"
         data-is-focusable={true}
-        id="Pivot95-Tab0"
+        id="Pivot101-Tab0"
         name="Run History"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -1684,7 +1674,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
     </div>
     <div
       aria-hidden={false}
-      aria-labelledby="Pivot95-Tab0"
+      aria-labelledby="Pivot101-Tab0"
       className="itemContainer-125"
       hidden={false}
       role="tabpanel"
@@ -1706,7 +1696,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                   aria-invalid={false}
                   className="ms-TextField-field field-145"
                   data-testid="msla-run-history-filter-input"
-                  id="TextField100"
+                  id="TextField106"
                   onBlur={[Function]}
                   onChange={[Function]}
                   onFocus={[Function]}
@@ -1794,7 +1784,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                     <div
                       className="ms-FocusZone css-112 ms-DetailsHeader root-160"
                       data-automationid="DetailsHeader"
-                      data-focuszone-id="FocusZone108"
+                      data-focuszone-id="FocusZone116"
                       onFocus={[Function]}
                       onKeyDown={[Function]}
                       onMouseDownCapture={[Function]}
@@ -1802,8 +1792,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                       role="row"
                     >
                       <div
-                        aria-colindex={1}
-                        aria-labelledby="header107-identifier-name"
+                        aria-labelledby="header115-identifier-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -1823,13 +1812,13 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header107-identifier"
+                            id="header115-identifier"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header107-identifier-name"
+                              id="header115-identifier-name"
                             >
                               Identifier
                             </span>
@@ -1847,8 +1836,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                         role="button"
                       />
                       <div
-                        aria-colindex={2}
-                        aria-labelledby="header107-status-name"
+                        aria-labelledby="header115-status-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -1868,13 +1856,13 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header107-status"
+                            id="header115-status"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header107-status-name"
+                              id="header115-status-name"
                             >
                               Status
                             </span>
@@ -1892,8 +1880,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                         role="button"
                       />
                       <div
-                        aria-colindex={3}
-                        aria-labelledby="header107-startTime-name"
+                        aria-labelledby="header115-startTime-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -1913,13 +1900,13 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header107-startTime"
+                            id="header115-startTime"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header107-startTime-name"
+                              id="header115-startTime-name"
                             >
                               Start time
                             </span>
@@ -1937,8 +1924,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                         role="button"
                       />
                       <div
-                        aria-colindex={4}
-                        aria-labelledby="header107-duration-name"
+                        aria-labelledby="header115-duration-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -1958,13 +1944,13 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header107-duration"
+                            id="header115-duration"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header107-duration-name"
+                              id="header115-duration-name"
                             >
                               Duration
                             </span>
@@ -1982,8 +1968,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                         role="button"
                       />
                       <div
-                        aria-colindex={5}
-                        aria-labelledby="header107-contextMenu-name"
+                        aria-labelledby="header115-contextMenu-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable is-empty root-189"
                         data-automationid="ColumnsHeaderColumn"
@@ -2003,13 +1988,13 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header107-contextMenu"
+                            id="header115-contextMenu"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header107-contextMenu-name"
+                              id="header115-contextMenu-name"
                             >
                               
                             </span>
@@ -2047,7 +2032,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                     >
                       <div
                         className="ms-FocusZone css-112 focusZone-159"
-                        data-focuszone-id="FocusZone109"
+                        data-focuszone-id="FocusZone117"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onKeyDown={[Function]}
@@ -2111,7 +2096,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
       >
         <div
           className="ms-FocusZone css-112 ms-CommandBar root-109"
-          data-focuszone-id="FocusZone110"
+          data-focuszone-id="FocusZone118"
           onFocus={[Function]}
           onKeyDown={[Function]}
           onMouseDownCapture={[Function]}
@@ -2158,7 +2143,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                   >
                     <span
                       className="ms-Button-label label-120"
-                      id="id__111"
+                      id="id__119"
                     >
                       Refresh
                     </span>
@@ -2203,7 +2188,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                   >
                     <span
                       className="ms-Button-label label-120"
-                      id="id__114"
+                      id="id__122"
                     >
                       Run trigger
                     </span>
@@ -2219,7 +2204,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
   <div>
     <div
       className="ms-FocusZone css-112 ms-Pivot root-124"
-      data-focuszone-id="FocusZone118"
+      data-focuszone-id="FocusZone126"
       onFocus={[Function]}
       onKeyDown={[Function]}
       onMouseDownCapture={[Function]}
@@ -2230,7 +2215,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
         className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-133"
         data-content="Workflow Properties"
         data-is-focusable={true}
-        id="Pivot117-Tab0"
+        id="Pivot125-Tab0"
         name="Workflow Properties"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -2260,7 +2245,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
     </div>
     <div
       aria-hidden={false}
-      aria-labelledby="Pivot117-Tab0"
+      aria-labelledby="Pivot125-Tab0"
       className="itemContainer-125"
       hidden={false}
       role="tabpanel"
@@ -2338,7 +2323,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
   <div>
     <div
       className="ms-FocusZone css-112 ms-Pivot root-124"
-      data-focuszone-id="FocusZone123"
+      data-focuszone-id="FocusZone131"
       onFocus={[Function]}
       onKeyDown={[Function]}
       onMouseDownCapture={[Function]}
@@ -2349,7 +2334,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
         className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-133"
         data-content="Run History"
         data-is-focusable={true}
-        id="Pivot122-Tab0"
+        id="Pivot130-Tab0"
         name="Run History"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -2379,7 +2364,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
     </div>
     <div
       aria-hidden={false}
-      aria-labelledby="Pivot122-Tab0"
+      aria-labelledby="Pivot130-Tab0"
       className="itemContainer-125"
       hidden={false}
       role="tabpanel"
@@ -2401,7 +2386,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                   aria-invalid={false}
                   className="ms-TextField-field field-145"
                   data-testid="msla-run-history-filter-input"
-                  id="TextField127"
+                  id="TextField135"
                   onBlur={[Function]}
                   onChange={[Function]}
                   onFocus={[Function]}
@@ -2489,7 +2474,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                     <div
                       className="ms-FocusZone css-112 ms-DetailsHeader root-160"
                       data-automationid="DetailsHeader"
-                      data-focuszone-id="FocusZone135"
+                      data-focuszone-id="FocusZone145"
                       onFocus={[Function]}
                       onKeyDown={[Function]}
                       onMouseDownCapture={[Function]}
@@ -2497,8 +2482,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                       role="row"
                     >
                       <div
-                        aria-colindex={1}
-                        aria-labelledby="header134-identifier-name"
+                        aria-labelledby="header144-identifier-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -2518,13 +2502,13 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header134-identifier"
+                            id="header144-identifier"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header134-identifier-name"
+                              id="header144-identifier-name"
                             >
                               Identifier
                             </span>
@@ -2542,8 +2526,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                         role="button"
                       />
                       <div
-                        aria-colindex={2}
-                        aria-labelledby="header134-status-name"
+                        aria-labelledby="header144-status-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -2563,13 +2546,13 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header134-status"
+                            id="header144-status"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header134-status-name"
+                              id="header144-status-name"
                             >
                               Status
                             </span>
@@ -2587,8 +2570,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                         role="button"
                       />
                       <div
-                        aria-colindex={3}
-                        aria-labelledby="header134-startTime-name"
+                        aria-labelledby="header144-startTime-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -2608,13 +2590,13 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header134-startTime"
+                            id="header144-startTime"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header134-startTime-name"
+                              id="header144-startTime-name"
                             >
                               Start time
                             </span>
@@ -2632,8 +2614,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                         role="button"
                       />
                       <div
-                        aria-colindex={4}
-                        aria-labelledby="header134-duration-name"
+                        aria-labelledby="header144-duration-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -2653,13 +2634,13 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header134-duration"
+                            id="header144-duration"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header134-duration-name"
+                              id="header144-duration-name"
                             >
                               Duration
                             </span>
@@ -2677,8 +2658,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                         role="button"
                       />
                       <div
-                        aria-colindex={5}
-                        aria-labelledby="header134-contextMenu-name"
+                        aria-labelledby="header144-contextMenu-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable is-empty root-189"
                         data-automationid="ColumnsHeaderColumn"
@@ -2698,13 +2678,13 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header134-contextMenu"
+                            id="header144-contextMenu"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header134-contextMenu-name"
+                              id="header144-contextMenu-name"
                             >
                               
                             </span>
@@ -2742,7 +2722,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                     >
                       <div
                         className="ms-FocusZone css-112 focusZone-159"
-                        data-focuszone-id="FocusZone136"
+                        data-focuszone-id="FocusZone146"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onKeyDown={[Function]}
@@ -4871,7 +4851,7 @@ exports[`lib/overview renders an error message 1`] = `
       >
         <div
           className="ms-FocusZone css-112 ms-CommandBar root-109"
-          data-focuszone-id="FocusZone55"
+          data-focuszone-id="FocusZone59"
           onFocus={[Function]}
           onKeyDown={[Function]}
           onMouseDownCapture={[Function]}
@@ -4918,7 +4898,7 @@ exports[`lib/overview renders an error message 1`] = `
                   >
                     <span
                       className="ms-Button-label label-120"
-                      id="id__56"
+                      id="id__60"
                     >
                       Refresh
                     </span>
@@ -4963,7 +4943,7 @@ exports[`lib/overview renders an error message 1`] = `
                   >
                     <span
                       className="ms-Button-label label-120"
-                      id="id__59"
+                      id="id__63"
                     >
                       Run trigger
                     </span>
@@ -4979,7 +4959,7 @@ exports[`lib/overview renders an error message 1`] = `
   <div>
     <div
       className="ms-FocusZone css-112 ms-Pivot root-124"
-      data-focuszone-id="FocusZone63"
+      data-focuszone-id="FocusZone67"
       onFocus={[Function]}
       onKeyDown={[Function]}
       onMouseDownCapture={[Function]}
@@ -4990,7 +4970,7 @@ exports[`lib/overview renders an error message 1`] = `
         className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-133"
         data-content="Workflow Properties"
         data-is-focusable={true}
-        id="Pivot62-Tab0"
+        id="Pivot66-Tab0"
         name="Workflow Properties"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -5020,7 +5000,7 @@ exports[`lib/overview renders an error message 1`] = `
     </div>
     <div
       aria-hidden={false}
-      aria-labelledby="Pivot62-Tab0"
+      aria-labelledby="Pivot66-Tab0"
       className="itemContainer-125"
       hidden={false}
       role="tabpanel"
@@ -5098,7 +5078,7 @@ exports[`lib/overview renders an error message 1`] = `
   <div>
     <div
       className="ms-FocusZone css-112 ms-Pivot root-124"
-      data-focuszone-id="FocusZone68"
+      data-focuszone-id="FocusZone72"
       onFocus={[Function]}
       onKeyDown={[Function]}
       onMouseDownCapture={[Function]}
@@ -5109,7 +5089,7 @@ exports[`lib/overview renders an error message 1`] = `
         className="ms-Button ms-Button--action ms-Button--command ms-Pivot-link is-selected linkIsSelected-133"
         data-content="Run History"
         data-is-focusable={true}
-        id="Pivot67-Tab0"
+        id="Pivot71-Tab0"
         name="Run History"
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -5139,7 +5119,7 @@ exports[`lib/overview renders an error message 1`] = `
     </div>
     <div
       aria-hidden={false}
-      aria-labelledby="Pivot67-Tab0"
+      aria-labelledby="Pivot71-Tab0"
       className="itemContainer-125"
       hidden={false}
       role="tabpanel"
@@ -5161,7 +5141,7 @@ exports[`lib/overview renders an error message 1`] = `
                   aria-invalid={false}
                   className="ms-TextField-field field-145"
                   data-testid="msla-run-history-filter-input"
-                  id="TextField72"
+                  id="TextField76"
                   onBlur={[Function]}
                   onChange={[Function]}
                   onFocus={[Function]}
@@ -5249,7 +5229,7 @@ exports[`lib/overview renders an error message 1`] = `
                     <div
                       className="ms-FocusZone css-112 ms-DetailsHeader root-160"
                       data-automationid="DetailsHeader"
-                      data-focuszone-id="FocusZone80"
+                      data-focuszone-id="FocusZone86"
                       onFocus={[Function]}
                       onKeyDown={[Function]}
                       onMouseDownCapture={[Function]}
@@ -5257,8 +5237,7 @@ exports[`lib/overview renders an error message 1`] = `
                       role="row"
                     >
                       <div
-                        aria-colindex={1}
-                        aria-labelledby="header79-identifier-name"
+                        aria-labelledby="header85-identifier-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -5278,13 +5257,13 @@ exports[`lib/overview renders an error message 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header79-identifier"
+                            id="header85-identifier"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header79-identifier-name"
+                              id="header85-identifier-name"
                             >
                               Identifier
                             </span>
@@ -5302,8 +5281,7 @@ exports[`lib/overview renders an error message 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={2}
-                        aria-labelledby="header79-status-name"
+                        aria-labelledby="header85-status-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -5323,13 +5301,13 @@ exports[`lib/overview renders an error message 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header79-status"
+                            id="header85-status"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header79-status-name"
+                              id="header85-status-name"
                             >
                               Status
                             </span>
@@ -5347,8 +5325,7 @@ exports[`lib/overview renders an error message 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={3}
-                        aria-labelledby="header79-startTime-name"
+                        aria-labelledby="header85-startTime-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -5368,13 +5345,13 @@ exports[`lib/overview renders an error message 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header79-startTime"
+                            id="header85-startTime"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header79-startTime-name"
+                              id="header85-startTime-name"
                             >
                               Start time
                             </span>
@@ -5392,8 +5369,7 @@ exports[`lib/overview renders an error message 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={4}
-                        aria-labelledby="header79-duration-name"
+                        aria-labelledby="header85-duration-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-176"
                         data-automationid="ColumnsHeaderColumn"
@@ -5413,13 +5389,13 @@ exports[`lib/overview renders an error message 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header79-duration"
+                            id="header85-duration"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header79-duration-name"
+                              id="header85-duration-name"
                             >
                               Duration
                             </span>
@@ -5437,8 +5413,7 @@ exports[`lib/overview renders an error message 1`] = `
                         role="button"
                       />
                       <div
-                        aria-colindex={5}
-                        aria-labelledby="header79-contextMenu-name"
+                        aria-labelledby="header85-contextMenu-name"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable is-empty root-189"
                         data-automationid="ColumnsHeaderColumn"
@@ -5458,13 +5433,13 @@ exports[`lib/overview renders an error message 1`] = `
                         >
                           <span
                             className="ms-DetailsHeader-cellTitle cellTitle-182"
-                            id="header79-contextMenu"
+                            id="header85-contextMenu"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
                               className="ms-DetailsHeader-cellName cellName-183"
-                              id="header79-contextMenu-name"
+                              id="header85-contextMenu-name"
                             >
                               
                             </span>
@@ -5502,7 +5477,7 @@ exports[`lib/overview renders an error message 1`] = `
                     >
                       <div
                         className="ms-FocusZone css-112 focusZone-159"
-                        data-focuszone-id="FocusZone81"
+                        data-focuszone-id="FocusZone87"
                         onBlur={[Function]}
                         onFocus={[Function]}
                         onKeyDown={[Function]}
@@ -5543,7 +5518,7 @@ exports[`lib/overview renders an error message 1`] = `
             <div
               aria-live="assertive"
               className="ms-MessageBar-text text-194"
-              id="MessageBar82"
+              id="MessageBar88"
               role="alert"
             >
               <span

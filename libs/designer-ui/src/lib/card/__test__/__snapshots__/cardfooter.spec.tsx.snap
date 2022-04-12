@@ -33,6 +33,24 @@ exports[`lib/card/cardfooter should render with a comment icon 1`] = `
         role="img"
         tabIndex={0}
       />
+      <div
+        hidden={true}
+        id="tooltip0"
+        style={
+          Object {
+            "border": 0,
+            "height": 1,
+            "margin": -1,
+            "overflow": "hidden",
+            "padding": 0,
+            "position": "absolute",
+            "whiteSpace": "nowrap",
+            "width": 1,
+          }
+        }
+      >
+        comment
+      </div>
     </div>
   </div>
 </div>
@@ -61,6 +79,24 @@ exports[`lib/card/cardfooter should render with a connection icon 1`] = `
         role="img"
         tabIndex={0}
       />
+      <div
+        hidden={true}
+        id="tooltip1"
+        style={
+          Object {
+            "border": 0,
+            "height": 1,
+            "margin": -1,
+            "overflow": "hidden",
+            "padding": 0,
+            "position": "absolute",
+            "whiteSpace": "nowrap",
+            "width": 1,
+          }
+        }
+      >
+        joechung@microsoft.com
+      </div>
     </div>
   </div>
 </div>
@@ -89,6 +125,24 @@ exports[`lib/card/cardfooter should render with a testing icon 1`] = `
         role="img"
         tabIndex={0}
       />
+      <div
+        hidden={true}
+        id="tooltip2"
+        style={
+          Object {
+            "border": 0,
+            "height": 1,
+            "margin": -1,
+            "overflow": "hidden",
+            "padding": 0,
+            "position": "absolute",
+            "whiteSpace": "nowrap",
+            "width": 1,
+          }
+        }
+      >
+        This Action has testing configured.
+      </div>
     </div>
   </div>
 </div>

@@ -43,6 +43,24 @@ exports[`lib/panel/panelheader/main should render 1`] = `
         </i>
       </span>
     </button>
+    <div
+      hidden={true}
+      id="tooltip0"
+      style={
+        Object {
+          "border": 0,
+          "height": 1,
+          "margin": -1,
+          "overflow": "hidden",
+          "padding": 0,
+          "position": "absolute",
+          "whiteSpace": "nowrap",
+          "width": 1,
+        }
+      }
+    >
+      Collapse/Expand
+    </div>
   </div>
   <div
     className="msla-panel-card-header"
@@ -129,6 +147,24 @@ exports[`lib/panel/panelheader/main should render with panel header menu 1`] = `
         </i>
       </span>
     </button>
+    <div
+      hidden={true}
+      id="tooltip9"
+      style={
+        Object {
+          "border": 0,
+          "height": 1,
+          "margin": -1,
+          "overflow": "hidden",
+          "padding": 0,
+          "position": "absolute",
+          "whiteSpace": "nowrap",
+          "width": 1,
+        }
+      }
+    >
+      Collapse/Expand
+    </div>
   </div>
   <div
     className="msla-panel-card-header"

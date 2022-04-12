@@ -38,7 +38,6 @@ exports[`lib/overview/runhistory renders 1`] = `
           role="row"
         >
           <div
-            aria-colindex={1}
             aria-labelledby="header1-identifier-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -83,7 +82,6 @@ exports[`lib/overview/runhistory renders 1`] = `
             role="button"
           />
           <div
-            aria-colindex={2}
             aria-labelledby="header1-status-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -128,7 +126,6 @@ exports[`lib/overview/runhistory renders 1`] = `
             role="button"
           />
           <div
-            aria-colindex={3}
             aria-labelledby="header1-startTime-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -173,7 +170,6 @@ exports[`lib/overview/runhistory renders 1`] = `
             role="button"
           />
           <div
-            aria-colindex={4}
             aria-labelledby="header1-duration-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -218,7 +214,6 @@ exports[`lib/overview/runhistory renders 1`] = `
             role="button"
           />
           <div
-            aria-colindex={5}
             aria-labelledby="header1-contextMenu-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable is-empty root-142"
@@ -343,7 +338,6 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
           role="row"
         >
           <div
-            aria-colindex={1}
             aria-labelledby="header5-identifier-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -388,7 +382,6 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
             role="button"
           />
           <div
-            aria-colindex={2}
             aria-labelledby="header5-status-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -433,7 +426,6 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
             role="button"
           />
           <div
-            aria-colindex={3}
             aria-labelledby="header5-startTime-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -478,7 +470,6 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
             role="button"
           />
           <div
-            aria-colindex={4}
             aria-labelledby="header5-duration-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -523,7 +514,6 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
             role="button"
           />
           <div
-            aria-colindex={5}
             aria-labelledby="header5-contextMenu-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable is-empty root-142"
@@ -2726,7 +2716,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
           role="row"
         >
           <div
-            aria-colindex={1}
             aria-labelledby="header9-identifier-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -2771,7 +2760,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
             role="button"
           />
           <div
-            aria-colindex={2}
             aria-labelledby="header9-status-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -2816,7 +2804,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
             role="button"
           />
           <div
-            aria-colindex={3}
             aria-labelledby="header9-startTime-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -2861,7 +2848,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
             role="button"
           />
           <div
-            aria-colindex={4}
             aria-labelledby="header9-duration-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
@@ -2906,7 +2892,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
             role="button"
           />
           <div
-            aria-colindex={5}
             aria-labelledby="header9-contextMenu-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable is-empty root-142"
@@ -3022,7 +3007,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                         role="presentation"
                       >
                         <div
-                          aria-colindex={1}
                           aria-readonly={true}
                           className="ms-DetailsRow-cell cell-160 cellUnpadded-158"
                           data-automation-key="identifier"
@@ -3043,7 +3027,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                           </button>
                         </div>
                         <div
-                          aria-colindex={2}
                           aria-readonly={true}
                           className="ms-DetailsRow-cell cell-160 cellUnpadded-158"
                           data-automation-key="status"
@@ -3058,7 +3041,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                           Succeeded
                         </div>
                         <div
-                          aria-colindex={3}
                           aria-readonly={true}
                           className="ms-DetailsRow-cell cell-160 cellUnpadded-158"
                           data-automation-key="startTime"
@@ -3073,7 +3055,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                           2/4/2022, 5:58:19 PM
                         </div>
                         <div
-                          aria-colindex={4}
                           aria-readonly={true}
                           className="ms-DetailsRow-cell cell-160 cellUnpadded-158"
                           data-automation-key="duration"
@@ -3088,7 +3069,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                           1s
                         </div>
                         <div
-                          aria-colindex={5}
                           aria-readonly={true}
                           className="ms-DetailsRow-cell cell-160 cellUnpadded-158"
                           data-automation-key="contextMenu"

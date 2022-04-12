@@ -54,6 +54,24 @@ Array [
               />
             </span>
           </button>
+          <div
+            hidden={true}
+            id="tooltip0"
+            style={
+              Object {
+                "border": 0,
+                "height": 1,
+                "margin": -1,
+                "overflow": "hidden",
+                "padding": 0,
+                "position": "absolute",
+                "whiteSpace": "nowrap",
+                "width": 1,
+              }
+            }
+          >
+            Previous
+          </div>
         </div>
       </div>
       <div
@@ -110,6 +128,24 @@ Array [
               />
             </span>
           </button>
+          <div
+            hidden={true}
+            id="tooltip4"
+            style={
+              Object {
+                "border": 0,
+                "height": 1,
+                "margin": -1,
+                "overflow": "hidden",
+                "padding": 0,
+                "position": "absolute",
+                "whiteSpace": "nowrap",
+                "width": 1,
+              }
+            }
+          >
+            Next
+          </div>
         </div>
       </div>
     </div>
@@ -550,6 +586,24 @@ Array [
               />
             </span>
           </button>
+          <div
+            hidden={true}
+            id="tooltip8"
+            style={
+              Object {
+                "border": 0,
+                "height": 1,
+                "margin": -1,
+                "overflow": "hidden",
+                "padding": 0,
+                "position": "absolute",
+                "whiteSpace": "nowrap",
+                "width": 1,
+              }
+            }
+          >
+            Previous
+          </div>
         </div>
       </div>
       <div
@@ -606,6 +660,24 @@ Array [
               />
             </span>
           </button>
+          <div
+            hidden={true}
+            id="tooltip12"
+            style={
+              Object {
+                "border": 0,
+                "height": 1,
+                "margin": -1,
+                "overflow": "hidden",
+                "padding": 0,
+                "position": "absolute",
+                "whiteSpace": "nowrap",
+                "width": 1,
+              }
+            }
+          >
+            Next
+          </div>
         </div>
       </div>
     </div>
@@ -1164,9 +1236,7 @@ Array [
                       role="row"
                     >
                       <div
-                        aria-colindex={1}
-                        aria-describedby="header17-$key-tooltip"
-                        aria-labelledby="header17-$key-name"
+                        aria-label="Key"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-138"
                         data-automationid="ColumnsHeaderColumn"
@@ -1199,12 +1269,6 @@ Array [
                           </span>
                         </span>
                       </div>
-                      <label
-                        className="accessibleLabel-132"
-                        id="header17-$key-tooltip"
-                      >
-                        Key
-                      </label>
                       <div
                         aria-hidden={true}
                         className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerStart-129"
@@ -1216,9 +1280,7 @@ Array [
                         role="button"
                       />
                       <div
-                        aria-colindex={2}
-                        aria-describedby="header17-$value-tooltip"
-                        aria-labelledby="header17-$value-name"
+                        aria-label="Value"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-138"
                         data-automationid="ColumnsHeaderColumn"
@@ -1251,12 +1313,6 @@ Array [
                           </span>
                         </span>
                       </div>
-                      <label
-                        className="accessibleLabel-132"
-                        id="header17-$value-tooltip"
-                      >
-                        Value
-                      </label>
                       <div
                         aria-hidden={true}
                         className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerEnd-130"
@@ -1370,6 +1426,24 @@ Array [
               />
             </span>
           </button>
+          <div
+            hidden={true}
+            id="tooltip28"
+            style={
+              Object {
+                "border": 0,
+                "height": 1,
+                "margin": -1,
+                "overflow": "hidden",
+                "padding": 0,
+                "position": "absolute",
+                "whiteSpace": "nowrap",
+                "width": 1,
+              }
+            }
+          >
+            Previous
+          </div>
         </div>
       </div>
       <div
@@ -1426,6 +1500,24 @@ Array [
               />
             </span>
           </button>
+          <div
+            hidden={true}
+            id="tooltip32"
+            style={
+              Object {
+                "border": 0,
+                "height": 1,
+                "margin": -1,
+                "overflow": "hidden",
+                "padding": 0,
+                "position": "absolute",
+                "whiteSpace": "nowrap",
+                "width": 1,
+              }
+            }
+          >
+            Next
+          </div>
         </div>
       </div>
     </div>
@@ -1923,9 +2015,7 @@ Array [
                       role="row"
                     >
                       <div
-                        aria-colindex={1}
-                        aria-describedby="header37-$key-tooltip"
-                        aria-labelledby="header37-$key-name"
+                        aria-label="Key"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-138"
                         data-automationid="ColumnsHeaderColumn"
@@ -1958,12 +2048,6 @@ Array [
                           </span>
                         </span>
                       </div>
-                      <label
-                        className="accessibleLabel-132"
-                        id="header37-$key-tooltip"
-                      >
-                        Key
-                      </label>
                       <div
                         aria-hidden={true}
                         className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerStart-129"
@@ -1975,9 +2059,7 @@ Array [
                         role="button"
                       />
                       <div
-                        aria-colindex={2}
-                        aria-describedby="header37-$value-tooltip"
-                        aria-labelledby="header37-$value-name"
+                        aria-label="Value"
                         aria-sort="none"
                         className="ms-DetailsHeader-cell is-actionable root-138"
                         data-automationid="ColumnsHeaderColumn"
@@ -2010,12 +2092,6 @@ Array [
                           </span>
                         </span>
                       </div>
-                      <label
-                        className="accessibleLabel-132"
-                        id="header37-$value-tooltip"
-                      >
-                        Value
-                      </label>
                       <div
                         aria-hidden={true}
                         className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerEnd-130"
@@ -2190,6 +2266,24 @@ Array [
               />
             </span>
           </button>
+          <div
+            hidden={true}
+            id="tooltip20"
+            style={
+              Object {
+                "border": 0,
+                "height": 1,
+                "margin": -1,
+                "overflow": "hidden",
+                "padding": 0,
+                "position": "absolute",
+                "whiteSpace": "nowrap",
+                "width": 1,
+              }
+            }
+          >
+            Previous
+          </div>
         </div>
       </div>
       <div
@@ -2246,6 +2340,24 @@ Array [
               />
             </span>
           </button>
+          <div
+            hidden={true}
+            id="tooltip24"
+            style={
+              Object {
+                "border": 0,
+                "height": 1,
+                "margin": -1,
+                "overflow": "hidden",
+                "padding": 0,
+                "position": "absolute",
+                "whiteSpace": "nowrap",
+                "width": 1,
+              }
+            }
+          >
+            Next
+          </div>
         </div>
       </div>
     </div>
@@ -2717,6 +2829,24 @@ Array [
               />
             </span>
           </button>
+          <div
+            hidden={true}
+            id="tooltip40"
+            style={
+              Object {
+                "border": 0,
+                "height": 1,
+                "margin": -1,
+                "overflow": "hidden",
+                "padding": 0,
+                "position": "absolute",
+                "whiteSpace": "nowrap",
+                "width": 1,
+              }
+            }
+          >
+            Previous
+          </div>
         </div>
       </div>
       <div
@@ -2773,6 +2903,24 @@ Array [
               />
             </span>
           </button>
+          <div
+            hidden={true}
+            id="tooltip44"
+            style={
+              Object {
+                "border": 0,
+                "height": 1,
+                "margin": -1,
+                "overflow": "hidden",
+                "padding": 0,
+                "position": "absolute",
+                "whiteSpace": "nowrap",
+                "width": 1,
+              }
+            }
+          >
+            Next
+          </div>
         </div>
       </div>
     </div>
