@@ -1,6 +1,5 @@
-import { AssertionErrorCode, AssertionException } from './common/exceptions/assertion';
-import type { Connector } from './common/models/connector';
-import type { Operation } from './common/models/operationmanifest';
+import type { Connector } from '@microsoft-logic-apps/utils';
+import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
 
 export interface ISearchService {
   search(term: string): Promise<SearchResult>;
@@ -20,6 +19,11 @@ export const SearchService = (): ISearchService => {
 
   return service;
 };
+
+interface Operation {
+  // placeholder
+  data: string;
+}
 
 export interface SearchResult {
   searchConnectors: Connector[];

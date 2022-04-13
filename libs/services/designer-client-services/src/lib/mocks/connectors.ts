@@ -1,4 +1,4 @@
-import type { Connector } from '../common/models/connector';
+import type { Connector } from '@microsoft-logic-apps/utils';
 
 export const ConnectorsMock: Connector[] = [
   {
