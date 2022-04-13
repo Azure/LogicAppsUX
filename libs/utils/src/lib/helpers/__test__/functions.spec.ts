@@ -267,7 +267,7 @@ describe('lib/helpers/functions', () => {
         },
       ];
 
-      const copiedValue = <any[]>copyArray(arrayObject);
+      const copiedValue = copyArray(arrayObject) as any[];
       expect(copiedValue).not.toBeNull();
       expect(copiedValue.length).toEqual(2);
 
@@ -514,7 +514,7 @@ describe('lib/helpers/functions', () => {
   });
 
   describe('exclude', () => {
-    for (const array of <any[]>[null, undefined, []]) {
+    for (const array of [null, undefined, []] as any[]) {
       it('should handle null, undefined or empty list when tried to exclude from', () => {
         exclude(array, ['a', 'b', 'c']);
 
@@ -523,7 +523,7 @@ describe('lib/helpers/functions', () => {
       });
     }
 
-    for (const value of <any[]>[null, undefined, []]) {
+    for (const value of [null, undefined, []] as any[]) {
       it(`should return original list if excluding list is null, undefined, or an empty list`, () => {
         const array = ['a', 'b', 'c'];
         const expectedArray = array;
@@ -814,7 +814,7 @@ describe('lib/helpers/functions', () => {
       expect(getObjectPropertyValue(object, ['foo', 'quux'])).toBeUndefined();
     });
 
-    for (const value of <any[]>[null, undefined]) {
+    for (const value of [null, undefined] as any[]) {
       it('always returns undefined when passed a null or undefined object', () => {
         expect(getObjectPropertyValue(value, ['foo', 'bar'])).toBeUndefined();
       });
@@ -835,7 +835,7 @@ describe('lib/helpers/functions', () => {
       expect(getPropertyValue({ foo: 1 }, 'bar')).toBeUndefined();
     });
 
-    for (const value of <any[]>[null, undefined]) {
+    for (const value of [null, undefined] as any[]) {
       it(`always returns undefined when passed '${String(value)}'`, () => {
         expect(getPropertyValue(undefined, 'bar')).toBeUndefined();
       });
@@ -900,7 +900,7 @@ describe('lib/helpers/functions', () => {
   });
 
   describe('isNullOrEmpty', () => {
-    for (const value of <any[]>[null, undefined, {}]) {
+    for (const value of [null, undefined, {}] as any[]) {
       it(`returns true if a '${String(value)}' is null, undefined, or an empty object`, () => {
         expect(isNullOrEmpty(value)).toBe(true);
       });
@@ -1132,7 +1132,7 @@ describe('lib/helpers/functions', () => {
   });
 
   describe('remove', () => {
-    for (const array of <any[]>[null, undefined, []]) {
+    for (const array of [null, undefined, []] as any[]) {
       it('should handle null, undefined or empty list when tried to remove from', () => {
         const expectedArray = array;
 
@@ -1142,7 +1142,7 @@ describe('lib/helpers/functions', () => {
       });
     }
 
-    for (const value of <any[]>[null, undefined, 'd']) {
+    for (const value of [null, undefined, 'd'] as any) {
       it(`should return original list if the item to remove is null, undefined or not present in the list`, () => {
         const array = ['a', 'b', 'c'];
         const expectedArray = array;
@@ -1180,8 +1180,8 @@ describe('lib/helpers/functions', () => {
     });
 
     it('should throw if argument is invalid.', () => {
-      expect(() => removeKeys(<any>null, ['key1', 'key3'])).toThrow();
-      expect(() => removeKeys(<any>undefined, ['key1', 'key3'])).toThrow();
+      expect(() => removeKeys(null as any, ['key1', 'key3'])).toThrow();
+      expect(() => removeKeys(undefined as any, ['key1', 'key3'])).toThrow();
     });
 
     it('should return false if no keys removed.', () => {
