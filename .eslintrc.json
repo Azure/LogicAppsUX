@@ -40,6 +40,7 @@
         "import/no-unresolved": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/consistent-type-assertions": ["error", { "assertionStyle": "as" }],
         "@typescript-eslint/consistent-type-imports": [
           2,
           {
