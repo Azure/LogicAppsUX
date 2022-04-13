@@ -13,6 +13,7 @@ export const InitConnectionService = (connectionService: IConnectionService): vo
 };
 
 export const ConnectionService = (): IConnectionService => {
+  // Danielle: we need this for every service, how do we extract?
   if (!service) {
     throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'ConectionService need to be initialized before using');
   }
