@@ -28,6 +28,24 @@ exports[`lib/actionbuttonv2 should render 1`] = `
       />
     </svg>
   </button>
+  <div
+    hidden={true}
+    id="tooltip0"
+    style={
+      Object {
+        "border": 0,
+        "height": 1,
+        "margin": -1,
+        "overflow": "hidden",
+        "padding": 0,
+        "position": "absolute",
+        "whiteSpace": "nowrap",
+        "width": 1,
+      }
+    }
+  >
+    title
+  </div>
 </div>
 `;
 
@@ -59,6 +77,24 @@ exports[`lib/actionbuttonv2 should render disabled 1`] = `
       />
     </svg>
   </button>
+  <div
+    hidden={true}
+    id="tooltip2"
+    style={
+      Object {
+        "border": 0,
+        "height": 1,
+        "margin": -1,
+        "overflow": "hidden",
+        "padding": 0,
+        "position": "absolute",
+        "whiteSpace": "nowrap",
+        "width": 1,
+      }
+    }
+  >
+    title
+  </div>
 </div>
 `;
 
@@ -90,6 +126,24 @@ exports[`lib/actionbuttonv2 should render with a CSS class 1`] = `
       />
     </svg>
   </button>
+  <div
+    hidden={true}
+    id="tooltip1"
+    style={
+      Object {
+        "border": 0,
+        "height": 1,
+        "margin": -1,
+        "overflow": "hidden",
+        "padding": 0,
+        "position": "absolute",
+        "whiteSpace": "nowrap",
+        "width": 1,
+      }
+    }
+  >
+    title
+  </div>
 </div>
 `;
 
@@ -121,5 +175,23 @@ exports[`lib/actionbuttonv2 should render with a ref 1`] = `
       />
     </svg>
   </button>
+  <div
+    hidden={true}
+    id="tooltip3"
+    style={
+      Object {
+        "border": 0,
+        "height": 1,
+        "margin": -1,
+        "overflow": "hidden",
+        "padding": 0,
+        "position": "absolute",
+        "whiteSpace": "nowrap",
+        "width": 1,
+      }
+    }
+  >
+    title
+  </div>
 </div>
 `;

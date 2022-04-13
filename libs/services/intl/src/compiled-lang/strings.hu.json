@@ -421,6 +421,12 @@
       "value": " kártya helyi menüje"
     }
   ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Elem"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -857,6 +863,12 @@
       "value": "Kihagyva"
     }
   ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Igen"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -1027,6 +1039,12 @@
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "Nem"
     }
   ],
   "rCl53e": [
