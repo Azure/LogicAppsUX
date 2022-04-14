@@ -3,6 +3,7 @@ import { DesignerSearchBox } from '../..';
 import { OperationCard } from './card';
 import { AutoScroll, List, Panel } from '@fluentui/react';
 import { Text } from '@fluentui/react';
+import type { Operation } from '@microsoft-logic-apps/utils';
 // danielle will fix
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import type { CommonPanelProps } from 'libs/designer-ui/src/lib/panel/panelUtil';
@@ -38,28 +39,3 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     </Panel>
   );
 };
-
-export interface Operation {
-  // Danielle: do we want more data than this?
-  brandColor: string;
-  connector?: string;
-  connectorKind?: string;
-  description: string;
-
-  //documentation?: Swagger.ExternalDocumentation;
-
-  environmentBadge?: {
-    name: string;
-    description: string;
-  };
-  //externalDocs?: Swagger.ExternalDocumentation;
-  iconUri: string;
-  id: string;
-  important?: boolean;
-  operationType?: string;
-  premium?: boolean;
-  preview?: boolean;
-  promotionIndex?: number;
-  subtitle?: string;
-  title: string;
-}
