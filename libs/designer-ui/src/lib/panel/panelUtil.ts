@@ -24,6 +24,7 @@ export interface PanelTab {
 
 export interface CommonPanelProps {
   isCollapsed: boolean;
+  toggleCollapse: () => void;
   width: string;
 }
 

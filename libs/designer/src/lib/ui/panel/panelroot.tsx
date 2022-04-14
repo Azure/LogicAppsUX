@@ -1,6 +1,6 @@
 import type { PanelTab } from './panelUtil';
 import { registerTab, getTabs } from './panelUtil';
-import { RecommendationPanelContext } from './recommendation/recommendationPanel';
+import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { aboutTab, monitorRetryTab, monitorRequestTab } from './registeredtabs';
 import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { MenuItemType, PanelContainer, PanelHeaderControlType } from '@microsoft/designer-ui';
@@ -145,7 +145,7 @@ export const PanelRoot = ({
   };
 
   return isRecommendation ? (
-    <RecommendationPanelContext isCollapsed={false} width={width}></RecommendationPanelContext>
+    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width}></RecommendationPanelContext>
   ) : (
     <PanelContainer
       cardIcon={cardIcon}
