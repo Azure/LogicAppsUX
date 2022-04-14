@@ -1,5 +1,5 @@
 // Button.stories.ts | Button.stories.tsx
-import { DesignerSearchBox } from './index';
+import { DesignerSearchBox } from '.';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
