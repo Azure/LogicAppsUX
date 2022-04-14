@@ -11,7 +11,7 @@ export interface CommonCardProps {
 
 export const OperationCard = (props: OperationCardProps) => {
   return (
-    <div key={props.id} style={{ height: '60px', border: '1px' }}>
+    <div key={props.id} className="msla-operation-card">
       <Text>{props.title}</Text>
     </div>
   );

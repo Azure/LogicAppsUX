@@ -1,12 +1,8 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { DesignerSearchBox } from '../..';
+import type { CommonPanelProps } from '../panelUtil';
 import { OperationCard } from './card';
-import { AutoScroll, List, Panel } from '@fluentui/react';
-import { Text } from '@fluentui/react';
+import { Text, List, Panel } from '@fluentui/react';
 import type { Operation } from '@microsoft-logic-apps/utils';
-// danielle will fix
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import type { CommonPanelProps } from 'libs/designer-ui/src/lib/panel/panelUtil';
 import React, { useEffect } from 'react';
 
 export type RecommendationPanelProps = {
@@ -33,7 +29,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
   return (
     <Panel customWidth={props.width} isOpen={!props.isCollapsed} onDismiss={props.toggleCollapse}>
       <DesignerSearchBox name="idk" onSearch={props.onSearch}></DesignerSearchBox>
-      <div style={{ overflow: 'auto', height: '500px' }}>
+      <div className="msla-result-list">
         <List items={searchResults}></List>
       </div>
     </Panel>

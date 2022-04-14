@@ -36,6 +36,7 @@ export * from './monitoring';
 export * from './overview';
 export * from './pager';
 export * from './panel/panelcontainer';
+export * from './panel/panelUtil';
 export * from './panel/panelheader/panelheader';
 export * from './panel/recommendationpanel/recommendationpanel';
 // export * from './picker';
