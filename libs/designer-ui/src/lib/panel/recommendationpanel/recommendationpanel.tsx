@@ -27,8 +27,15 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
   const [searchResults, setSearchResults] = React.useState<JSX.Element[]>([]);
   useEffect(() => setSearchResults(getResultCards(props.operationSearchResults)), [props.operationSearchResults]);
   return (
-    <Panel customWidth={props.width} isOpen={!props.isCollapsed} onDismiss={props.toggleCollapse}>
+    <Panel
+      aria-label="recommendation panel"
+      customWidth={props.width}
+      isOpen={!props.isCollapsed}
+      onDismiss={props.toggleCollapse}
+      closeButtonAriaLabel="close"
+    >
       <DesignerSearchBox name="idk" onSearch={props.onSearch}></DesignerSearchBox>
+      <OperationCard title="title" key="id" id="id"></OperationCard>
       <div className="msla-result-list">
         <List items={searchResults}></List>
       </div>
