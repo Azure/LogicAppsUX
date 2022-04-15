@@ -22,6 +22,12 @@ export interface PanelTab {
   visibilityPredicate?(): boolean;
 }
 
+export interface CommonPanelProps {
+  isCollapsed: boolean;
+  toggleCollapse: () => void;
+  width: string;
+}
+
 export function registerTab(tabInfo: PanelTab, registeredTabs: Record<string, PanelTab>): Record<string, PanelTab> {
   const intl = getIntl();
   const tabAlreadyRegistered = intl.formatMessage(
