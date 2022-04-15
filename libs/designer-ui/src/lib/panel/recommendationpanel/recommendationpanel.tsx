@@ -4,6 +4,7 @@ import { OperationCard } from './card';
 import { Text, List, Panel } from '@fluentui/react';
 import type { Operation } from '@microsoft-logic-apps/utils';
 import React, { useEffect } from 'react';
+import { useIntl } from 'react-intl';
 
 export type RecommendationPanelProps = {
   placeholder: string;
@@ -24,11 +25,18 @@ const getResultCards = (results: Operation[]) => {
 };
 
 export const RecommendationPanel = (props: RecommendationPanelProps) => {
+  const intl = useIntl();
+
+  const panelLabel = intl.formatMessage({
+    defaultMessage: 'panel',
+    description: 'recommendation panel',
+  });
   const [searchResults, setSearchResults] = React.useState<JSX.Element[]>([]);
   useEffect(() => setSearchResults(getResultCards(props.operationSearchResults)), [props.operationSearchResults]);
   return (
     <Panel
-      aria-label="recommendation panel"
+      headerText="Actions and Triggers"
+      aria-label={panelLabel}
       customWidth={props.width}
       isOpen={!props.isCollapsed}
       onDismiss={props.toggleCollapse}
