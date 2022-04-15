@@ -15,7 +15,7 @@ export type RecommendationPanelProps = {
 const getResultCards = (results: Operation[]) => {
   return results.map((operation) => (
     <>
-      <OperationCard title={operation.title} key={operation.id} id={operation.id}></OperationCard>
+      <OperationCard iconUrl={operation.iconUri} title={operation.title} key={operation.id} id={operation.id}></OperationCard>
       <div key={operation.id} style={{ height: '60px', border: '1px' }}>
         <Text>{operation.title}</Text>
       </div>
@@ -35,7 +35,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
       closeButtonAriaLabel="close"
     >
       <DesignerSearchBox name="idk" onSearch={props.onSearch}></DesignerSearchBox>
-      <OperationCard title="title" key="id" id="id"></OperationCard>
+      <OperationCard title="title" key="id" id="id" iconUrl="123"></OperationCard>
       <div className="msla-result-list">
         <List items={searchResults}></List>
       </div>
