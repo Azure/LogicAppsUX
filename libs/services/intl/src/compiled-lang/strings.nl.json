@@ -421,6 +421,12 @@
       "value": "-kaart"
     }
   ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Onderdeel"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -857,6 +863,12 @@
       "value": "Overgeslagen"
     }
   ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Ja"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -1027,6 +1039,12 @@
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "Nee"
     }
   ],
   "rCl53e": [

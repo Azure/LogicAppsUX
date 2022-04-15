@@ -57,13 +57,8 @@ export enum ConnectionReferenceKeyFormat {
   ServiceProvider = 'serviceprovider',
 }
 
-export interface Operation {
-  connectorId?: string;
-  operationId: string;
-}
-
 export interface ActionSetting {
-  allowedOperations?: Operation[];
+  allowedOperations?: OperationInfo[];
   executionOrder?: ExecutionOrder;
   allowedSettings?: string[];
   isOptional: boolean;

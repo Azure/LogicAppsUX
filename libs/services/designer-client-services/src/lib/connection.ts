@@ -1,5 +1,5 @@
-import { AssertionErrorCode, AssertionException } from './common/exceptions/assertion';
-import type { Connector } from './common/models/connector';
+import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
+import type { Connector } from '@microsoft-logic-apps/utils';
 
 export interface IConnectionService {
   dispose(): void;
@@ -13,6 +13,7 @@ export const InitConnectionService = (connectionService: IConnectionService): vo
 };
 
 export const ConnectionService = (): IConnectionService => {
+  // Danielle: we need this for every service, how do we extract?
   if (!service) {
     throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'ConectionService need to be initialized before using');
   }
