@@ -14,6 +14,7 @@ import { createTransition, DndProvider } from 'react-dnd-multi-backend';
 import type { NodeChange } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface DesignerProps {
@@ -59,9 +60,9 @@ const DND_OPTIONS = {
 
 const queryClient = new QueryClient();
 export const Designer = () => {
-  const { collapsed, selectedNode } = useSelector((state: RootState) => {
-    const { collapsed, selectedNode } = state.panel;
-    return { collapsed, selectedNode };
+  const { collapsed, selectedNode, isDiscovery } = useSelector((state: RootState) => {
+    const { collapsed, selectedNode, isDiscovery } = state.panel;
+    return { collapsed, selectedNode, isDiscovery };
   });
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch();
@@ -83,6 +84,7 @@ export const Designer = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={false} />
       <DndProvider options={DND_OPTIONS as any}>
         <div className="msla-designer-canvas msla-panel-mode">
           <ReactFlowProvider>
@@ -104,7 +106,7 @@ export const Designer = () => {
                 collapsePanel={collapse}
                 expandPanel={expand}
                 collapsed={collapsed}
-                isRecommendation={false}
+                isRecommendation={isDiscovery}
                 noNodeSelected={!selectedNode}
                 title={selectedNode}
               />

@@ -1,4 +1,4 @@
-import type { Connector } from '@microsoft-logic-apps/utils';
+import type { Connector, Operation } from '@microsoft-logic-apps/utils';
 import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
 
 export interface ISearchService {
@@ -19,11 +19,6 @@ export const SearchService = (): ISearchService => {
 
   return service;
 };
-
-interface Operation {
-  // placeholder
-  data: string;
-}
 
 export interface SearchResult {
   searchConnectors: Connector[];

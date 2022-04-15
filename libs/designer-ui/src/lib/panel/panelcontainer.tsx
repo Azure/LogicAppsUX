@@ -2,7 +2,7 @@ import { EmptyContent } from '../card/emptycontent';
 import type { MenuItemOption } from '../card/types';
 import constants from '../constants';
 import type { PageActionTelemetryData } from '../telemetry/models';
-import type { PanelTab } from './panelUtil';
+import type { CommonPanelProps, PanelTab } from './panelUtil';
 import { PanelContent } from './panelcontent';
 import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
@@ -12,10 +12,9 @@ import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface PanelContainerProps {
+export type PanelContainerProps = {
   cardIcon?: string;
   comment?: string;
-  isCollapsed: boolean;
   isRight?: boolean;
   noNodeSelected: boolean;
   pivotDisabled?: boolean;
@@ -26,12 +25,11 @@ export interface PanelContainerProps {
   readOnlyMode?: boolean;
   tabs: Record<string, PanelTab>;
   title: string;
-  width: string;
   onDismissButtonClicked?(): void;
   trackEvent(data: PageActionTelemetryData): void;
   setSelectedTab: React.Dispatch<React.SetStateAction<string | undefined>>;
   toggleCollapse: () => void;
-}
+} & CommonPanelProps;
 
 export const PanelContainer = ({
   cardIcon,

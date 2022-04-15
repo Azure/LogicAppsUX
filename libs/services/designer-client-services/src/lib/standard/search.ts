@@ -1,12 +1,13 @@
-import { ConnectorsMock } from '../mocks/connectors';
 import type { ISearchService, SearchResult } from '../search';
+import { ConnectorsMock, MockSearchOperations } from '@microsoft-logic-apps/utils';
 
 export class StandardSearchService implements ISearchService {
   search = (term: string): Promise<SearchResult> => {
     const result: SearchResult = {
       searchConnectors: ConnectorsMock,
-      searchOperations: [],
+      searchOperations: MockSearchOperations,
     };
-    return new Promise((resolve): SearchResult => result);
+
+    return Promise.resolve(result);
   };
 }
