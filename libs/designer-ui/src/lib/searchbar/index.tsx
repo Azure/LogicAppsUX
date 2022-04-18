@@ -2,7 +2,6 @@ import { SearchBox } from '@fluentui/react/lib/SearchBox';
 import * as React from 'react';
 
 export interface SearchBoxProps {
-  name: string;
   onSearch: (term: string) => void;
 }
 
@@ -14,7 +13,7 @@ export const DesignerSearchBox: React.FC<SearchBoxProps> = (props) => {
   };
 
   return (
-    <label title={props.name}>
+    <label title="Search for operations">
       <SearchBox onChange={(e, value) => updateTerm(e, value)} onSearch={(term) => props.onSearch(term)} />
     </label>
   );

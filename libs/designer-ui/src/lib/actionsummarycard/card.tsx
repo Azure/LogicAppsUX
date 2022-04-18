@@ -15,11 +15,11 @@ export interface CommonCardProps {
 export const OperationCard = (props: OperationCardProps) => {
   return (
     <div className="msla-operation-card">
-      <div style={{ height: '22px' }}>
-        <div style={{ display: 'inline-block' }}>
+      <div>
+        <div className="msla-card-title-container">
           <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={'logo for ' + props.title}></Image>
         </div>
-        <div style={{ display: 'inline-block' }}>
+        <div className="msla-card-title-container">
           <Text className="msla-card-title">{props.title}</Text>
         </div>
       </div>
