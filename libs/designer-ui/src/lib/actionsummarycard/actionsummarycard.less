@@ -1,4 +1,7 @@
 @small-logo-dimension: 22px;
+@grey-card-border: #bdbdbd;
+@card-title-color: #323130;
+@grey-card-description: #333333;
 
 .msla-action-header {
   display: inline-block;
@@ -8,7 +11,7 @@
   padding: 13px;
   max-width: 400px;
   height: 111px;
-  border: 1px solid #bdbdbd;
+  border: 1px solid @grey-card-border;
 
   .msla-card-title-container {
     display: inline-block;
@@ -22,7 +25,7 @@
 
   .msla-card-title {
     font-size: 14px;
-    color: #323130;
+    color: @card-title-color;
     font-weight: 600;
     margin-left: 13px;
   }
@@ -31,7 +34,7 @@
     display: block;
     font-size: 12px;
     padding-top: 11px;
-    color: #333333;
+    color: @grey-card-description;
     line-height: 16px;
   }
 

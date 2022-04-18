@@ -12,9 +12,5 @@ export const DesignerSearchBox: React.FC<SearchBoxProps> = (props) => {
     setSearchTerm(newValue ?? '');
   };
 
-  return (
-    <label title="Search for operations">
-      <SearchBox onChange={(e, value) => updateTerm(e, value)} onSearch={(term) => props.onSearch(term)} />
-    </label>
-  );
+  return <SearchBox onChange={(e, value) => updateTerm(e, value)} onSearch={(term) => props.onSearch(term)} />;
 };

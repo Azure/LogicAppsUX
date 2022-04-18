@@ -1,4 +1,6 @@
 import { Text, Image, ImageFit } from '@fluentui/react';
+import { getIntl } from '@microsoft-logic-apps/intl';
+import type { MessageDescriptor } from 'react-intl';
 
 export type OperationCardProps = {
   title: string;
@@ -13,11 +15,19 @@ export interface CommonCardProps {
 }
 
 export const OperationCard = (props: OperationCardProps) => {
+  const intl = getIntl();
+  const logoAltDescriptor: MessageDescriptor = {
+    id: 'logo-description',
+    defaultMessage: 'logo for ' + props.connectorName,
+    description: 'Alternate text for accessibility, describes logo for corresponding connector',
+  };
+  const logoAltText = intl.formatMessage(logoAltDescriptor);
+
   return (
     <div className="msla-operation-card">
       <div>
         <div className="msla-card-title-container">
-          <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={'logo for ' + props.connectorName}></Image>
+          <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={logoAltText}></Image>
         </div>
         <div className="msla-card-title-container">
           <Text className="msla-card-title">{props.title}</Text>
