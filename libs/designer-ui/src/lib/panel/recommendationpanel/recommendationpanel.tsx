@@ -1,6 +1,6 @@
 import { DesignerSearchBox } from '../..';
+import { OperationCard } from '../../actionsummarycard/card';
 import type { CommonPanelProps } from '../panelUtil';
-import { OperationCard } from './card';
 import { Text, List, Panel } from '@fluentui/react';
 import type { Operation } from '@microsoft-logic-apps/utils';
 import React, { useEffect } from 'react';
@@ -16,7 +16,13 @@ export type RecommendationPanelProps = {
 const getResultCards = (results: Operation[]) => {
   return results.map((operation) => (
     <>
-      <OperationCard iconUrl={operation.iconUri} title={operation.title} key={operation.id} id={operation.id}></OperationCard>
+      <OperationCard
+        iconUrl={operation.iconUri}
+        title={operation.title}
+        key={operation.id}
+        id={operation.id}
+        connectorName={operation.connector}
+      ></OperationCard>
       <div key={operation.id} style={{ height: '60px', border: '1px' }}>
         <Text>{operation.title}</Text>
       </div>
@@ -42,8 +48,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
       onDismiss={props.toggleCollapse}
       closeButtonAriaLabel="close"
     >
-      <DesignerSearchBox name="idk" onSearch={props.onSearch}></DesignerSearchBox>
-      <OperationCard title="title" key="id" id="id" iconUrl="123"></OperationCard>
+      <DesignerSearchBox onSearch={props.onSearch}></DesignerSearchBox>
       <div className="msla-result-list">
         <List items={searchResults}></List>
       </div>
