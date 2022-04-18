@@ -6,7 +6,8 @@ export const MockSearchOperations: Operation[] = [
     brandColor: '#D40100',
     description: 'This operation triggers when a new asset is added to Creative Cloud.',
     iconUri: 'https://cpgeneralstore.blob.core.windows.net/icons/adobecreativecloud.png',
-    title: 'When an asset is added',
+    title: 'Add an asset',
+    subtitle: 'When an asset is added',
   },
   {
     id: 'azureBlob2',

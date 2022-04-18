@@ -1,6 +1,6 @@
 import { DesignerSearchBox } from '../..';
+import { OperationCard } from '../../actionsummarycard/card';
 import type { CommonPanelProps } from '../panelUtil';
-import { OperationCard } from './card';
 import { Text, List, Panel } from '@fluentui/react';
 import type { Operation } from '@microsoft-logic-apps/utils';
 import React, { useEffect } from 'react';

@@ -14,9 +14,17 @@ export interface CommonCardProps {
 export const OperationCard = (props: OperationCardProps) => {
   return (
     <div key={props.id} className="msla-operation-card">
-      <Image src={props.iconUrl} alt={'logo for ' + props.title}></Image>
-      <Text>{props.title}</Text>
-      <Text>{props.subtitle}</Text>
+      <div style={{ display: 'inline-block' }}>
+        <Image className="msla-card-logo" src={props.iconUrl} alt={'logo for ' + props.title}></Image>
+      </div>
+      <div style={{ display: 'inline-block' }}>
+        <Text variant="mediumPlus">{props.title}</Text>
+      </div>
+      <Text>
+        {' '}
+        style={{ display: 'inline' }}
+        {props.subtitle}
+      </Text>
     </div>
   );
 };
