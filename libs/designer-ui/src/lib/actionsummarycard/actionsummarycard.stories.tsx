@@ -17,4 +17,5 @@ Container.args = {
   id: operation.id,
   iconUrl: operation.iconUri,
   brandColor: operation.brandColor,
+  connectorName: operation.connector,
 };

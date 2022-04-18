@@ -1,17 +1,48 @@
-@small-logo-dimension: 50px;
+@small-logo-dimension: 22px;
 
 .msla-action-header {
   display: inline-block;
 }
 
 .msla-operation-card {
-  margin: 10px;
-  max-width: 500px;
-  height: 60px;
-  border: 1px solid black;
-  background-color: aqua;
+  padding: 13px;
+  max-width: 400px;
+  height: 111px;
+  border: 1px solid #bdbdbd;
+
   .msla-card-logo {
     height: @small-logo-dimension;
     width: @small-logo-dimension;
+    border-radius: 4px;
+  }
+
+  .msla-card-title {
+    font-size: 14px;
+    color: #323130;
+    font-weight: 600;
+    margin-left: 13px;
+  }
+
+  .msla-card-description {
+    display: block;
+    font-size: 12px;
+    padding-top: 11px;
+    color: #333333;
+    line-height: 16px;
+  }
+
+  .msla-tag-container {
+    margin-top: 7px;
+
+    .msla-tag {
+      display: inline-block;
+      font-size: 12px;
+      line-height: 16px;
+      color: white;
+      background-color: #949494;
+      border-radius: 12px;
+      padding: 1px 9px 1px;
+      margin-right: 4px;
+    }
   }
 }
