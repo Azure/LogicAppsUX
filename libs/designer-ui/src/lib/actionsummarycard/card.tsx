@@ -17,7 +17,7 @@ export const OperationCard = (props: OperationCardProps) => {
     <div className="msla-operation-card">
       <div>
         <div className="msla-card-title-container">
-          <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={'logo for ' + props.title}></Image>
+          <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={'logo for ' + props.connectorName}></Image>
         </div>
         <div className="msla-card-title-container">
           <Text className="msla-card-title">{props.title}</Text>

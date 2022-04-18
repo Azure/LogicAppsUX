@@ -48,7 +48,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
       onDismiss={props.toggleCollapse}
       closeButtonAriaLabel="close"
     >
-      <DesignerSearchBox name="idk" onSearch={props.onSearch}></DesignerSearchBox>
+      <DesignerSearchBox onSearch={props.onSearch}></DesignerSearchBox>
       <div className="msla-result-list">
         <List items={searchResults}></List>
       </div>
