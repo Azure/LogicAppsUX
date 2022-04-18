@@ -1,6 +1,6 @@
 export interface Operation {
   brandColor: string;
-  connector?: string;
+  connector: string;
   connectorKind?: string;
   description: string;
 
