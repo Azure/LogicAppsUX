@@ -1,10 +1,11 @@
-import { Text, Image } from '@fluentui/react';
+import { Text, Image, ImageFit } from '@fluentui/react';
 
 export type OperationCardProps = {
   title: string;
   subtitle?: string;
   id: string;
   iconUrl: string;
+  connectorName: string;
 } & CommonCardProps;
 
 export interface CommonCardProps {
@@ -13,18 +14,19 @@ export interface CommonCardProps {
 
 export const OperationCard = (props: OperationCardProps) => {
   return (
-    <div key={props.id} className="msla-operation-card">
-      <div style={{ display: 'inline-block' }}>
-        <Image className="msla-card-logo" src={props.iconUrl} alt={'logo for ' + props.title}></Image>
+    <div className="msla-operation-card">
+      <div style={{ height: '22px' }}>
+        <div style={{ display: 'inline-block' }}>
+          <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={'logo for ' + props.title}></Image>
+        </div>
+        <div style={{ display: 'inline-block' }}>
+          <Text className="msla-card-title">{props.title}</Text>
+        </div>
       </div>
-      <div style={{ display: 'inline-block' }}>
-        <Text variant="mediumPlus">{props.title}</Text>
+      <Text className="msla-card-description">{props.subtitle}</Text>
+      <div className="msla-tag-container">
+        <Text className="msla-tag">{props.connectorName}</Text>
       </div>
-      <Text>
-        {' '}
-        style={{ display: 'inline' }}
-        {props.subtitle}
-      </Text>
     </div>
   );
 };

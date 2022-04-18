@@ -8,6 +8,7 @@ export const MockSearchOperations: Operation[] = [
     iconUri: 'https://cpgeneralstore.blob.core.windows.net/icons/adobecreativecloud.png',
     title: 'Add an asset',
     subtitle: 'When an asset is added',
+    connector: 'Azure Blob',
   },
   {
     id: 'azureBlob2',
@@ -15,6 +16,7 @@ export const MockSearchOperations: Operation[] = [
     description: "This operation triggers when an asset's contents are updated in Creative Cloud.",
     iconUri: 'https://cpgeneralstore.blob.core.windows.net/icons/adobecreativecloud.png',
     title: 'When an asset is updated',
+    connector: 'Azure Blob',
   },
   {
     id: 'azureBlob3',
@@ -22,6 +24,7 @@ export const MockSearchOperations: Operation[] = [
     description: 'Fire an action when there is a new review',
     iconUri: 'https://cpgeneralstore.blob.core.windows.net/icons/appfigures.png',
     title: 'When there is a new review',
+    connector: 'Azure Blob',
   },
   {
     id: 'azureBlob4',
@@ -29,6 +32,7 @@ export const MockSearchOperations: Operation[] = [
     description: 'Triggers when a new project is created.',
     iconUri: 'https://cpgeneralstore.blob.core.windows.net/icons/asana.png',
     title: 'When a project is created',
+    connector: 'Azure Blob',
   },
   {
     id: 'azureBlob5',
@@ -36,6 +40,7 @@ export const MockSearchOperations: Operation[] = [
     description: 'This operation triggers a flow when one or more blobs are added or modified in a container.',
     iconUri: 'https://az818438.vo.msecnd.net/icons/azureblob.png',
     title: 'When one or more blobs are added or modified (metadata only)',
+    connector: 'Azure Blob',
   },
   {
     id: 'azureBlob6',
@@ -44,6 +49,7 @@ export const MockSearchOperations: Operation[] = [
       'Triggers any time there are messages in the queue, returning up to 32 messages. The messages will be hidden but remain on the queue until...',
     iconUri: 'https://cpgeneralstore.blob.core.windows.net/icons/azurequeues.png',
     title: 'When there are messages in a queue',
+    connector: 'Azure Blob',
   },
   {
     id: 'azureBlob7',
@@ -51,6 +57,7 @@ export const MockSearchOperations: Operation[] = [
     description: 'Trigger a flow when there is a new document in a project.',
     iconUri: 'https://cpgeneralstore.blob.core.windows.net/icons/basecamp2.png',
     title: 'When a document is created',
+    connector: 'Azure Blob',
   },
   {
     id: 'azureBlob8',
@@ -58,6 +65,7 @@ export const MockSearchOperations: Operation[] = [
     description: 'When a document is created',
     iconUri: 'https://cpgeneralstore.blob.core.windows.net/icons/basecamp.png',
     title: 'When a document is created',
+    connector: 'Azure Blob',
   },
   {
     id: 'azureBlob9',
@@ -65,5 +73,6 @@ export const MockSearchOperations: Operation[] = [
     description: 'Triggers when a new booking is made in 10to8.',
     iconUri: 'https://cpgeneralstore.blob.core.windows.net/icons/10to8.png',
     title: 'When a booking is made',
+    connector: 'Azure Blob',
   },
 ];
