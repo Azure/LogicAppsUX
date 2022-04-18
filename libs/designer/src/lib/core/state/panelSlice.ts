@@ -4,11 +4,13 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 export interface PanelState {
   collapsed: boolean;
   selectedNode: string;
+  isDiscovery: boolean;
 }
 
 const initialState: PanelState = {
   collapsed: true,
   selectedNode: '',
+  isDiscovery: false,
 };
 
 export const panelSlice = createSlice({
@@ -24,11 +26,16 @@ export const panelSlice = createSlice({
     changePanelNode: (state, action: PayloadAction<string>) => {
       if (!action) return;
       state.selectedNode = action.payload;
+      state.isDiscovery = false;
+    },
+    expandDiscoveryPanel: (state) => {
+      state.collapsed = false;
+      state.isDiscovery = true;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { expandPanel, collapsePanel, changePanelNode } = panelSlice.actions;
+export const { expandPanel, collapsePanel, changePanelNode, expandDiscoveryPanel } = panelSlice.actions;
 
 export default panelSlice.reducer;
