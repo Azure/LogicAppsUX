@@ -45,7 +45,7 @@ export * from './panel/recommendationpanel/recommendationpanel';
 // export * from './selector';
 // export * from './selector2';
 export * from './settings';
-export * from './searchbar';
+export * from './searchbox';
 // export * from './table';
 export * from './telemetry/models';
 // export * from './textbox';
