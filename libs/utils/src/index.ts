@@ -14,3 +14,4 @@ export * from './lib/models/operation';
 
 export * from './lib/mocks/connectors';
 export * from './lib/mocks/operations';
+export * from './lib/mocks/connectorsSearchResultsMock';
