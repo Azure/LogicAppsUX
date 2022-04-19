@@ -88,16 +88,22 @@ export function createLanguageDefinition(templateFunctions: FunctionDefinition[]
 export function createCompletionItemProviderForFunctions(templateFunctions: FunctionDefinition[]): CompletionItemProvider {
   return {
     triggerCharacters: ['.'],
-    provideCompletionItems: (): ProviderResult<CompletionList> => {
+    provideCompletionItems: (model: monaco.editor.ITextModel, position: monaco.Position): ProviderResult<CompletionList> => {
       const suggestions = templateFunctions.map((templateFunction) => {
         const { name: label, description: documentation, signatures } = templateFunction;
         const shouldAutoComplete = signatures.every((signature: { parameters: string | any[] }) => signature.parameters.length === 0);
+        const word = model.getWordUntilPosition(position);
         return {
           label,
           kind: monaco.languages.CompletionItemKind.Function,
           insertText: shouldAutoComplete ? `${label}()` : label,
           documentation,
-          range: undefined as unknown as monaco.IRange, // NOTE(joechung): Work around a monaco.d.ts bug introduced by 0.17.0.
+          range: {
+            startLineNumber: position.lineNumber,
+            endLineNumber: position.lineNumber,
+            startColumn: word.startColumn,
+            endColumn: word.endColumn,
+          },
         };
       });
 
@@ -110,13 +116,19 @@ export function createCompletionItemProviderForFunctions(templateFunctions: Func
 
 export function createCompletionItemProviderForValues(): CompletionItemProvider {
   return {
-    provideCompletionItems: (): ProviderResult<CompletionList> => {
+    provideCompletionItems: (model: monaco.editor.ITextModel, position: monaco.Position): ProviderResult<CompletionList> => {
       const suggestions = keywords.map((value) => {
+        const word = model.getWordUntilPosition(position);
         return {
           label: value,
           kind: monaco.languages.CompletionItemKind.Value,
           insertText: value,
-          range: undefined as unknown as monaco.IRange, // NOTE(joechung): Work around a monaco.d.ts bug introduced by 0.17.0.
+          range: {
+            startLineNumber: position.lineNumber,
+            endLineNumber: position.lineNumber,
+            startColumn: word.startColumn,
+            endColumn: word.endColumn,
+          },
         };
       });
 
@@ -175,7 +187,7 @@ function getSignaturesInfo(expressionInfo: ExpressionInfo): SignatureHelpResult 
 
   if (activeSignature !== undefined && activeParameter !== undefined) {
     return {
-      dispose: () => {
+      dispose() {
         // eslint:disable-line: no-empty
       },
       value: {
