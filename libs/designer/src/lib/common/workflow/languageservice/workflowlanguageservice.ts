@@ -175,7 +175,7 @@ function getSignaturesInfo(expressionInfo: ExpressionInfo): SignatureHelpResult 
 
   if (activeSignature !== undefined && activeParameter !== undefined) {
     return {
-      dispose() {
+      dispose: () => {
         // eslint:disable-line: no-empty
       },
       value: {
