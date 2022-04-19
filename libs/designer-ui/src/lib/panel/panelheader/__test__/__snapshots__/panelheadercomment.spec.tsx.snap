@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ui/panel/panelheadertitle should construct. 1`] = `
+exports[`ui/panel/panelheadercomment should construct. 1`] = `
 <div
   className="msla-panel-comment-container-wrapper"
   hidden={false}
