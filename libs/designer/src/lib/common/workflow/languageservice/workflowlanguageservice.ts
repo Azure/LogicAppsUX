@@ -37,33 +37,6 @@ interface IdentifierTokenInfo {
   argumentsCovered: number;
 }
 
-export function createThemeData(): IStandaloneThemeData {
-  return {
-    base: 'vs',
-    inherit: true,
-    rules: [
-      {
-        token: tokenNames['FUNCTION'],
-        foreground: '110188',
-        fontStyle: 'bold',
-      },
-      {
-        token: tokenNames['STRING'],
-        foreground: 'a31515',
-      },
-      {
-        token: tokenNames['NUMBER'],
-        foreground: '09885a',
-      },
-      {
-        token: tokenNames['KEYWORD'],
-        foreground: '0000ff',
-      },
-    ],
-    colors: {},
-  };
-}
-
 export function createLanguageDefinition(templateFunctions: FunctionDefinition[]): IMonarchLanguage {
   const keywordRules = keywords.map((keyword) => ({
     regex: keyword,
