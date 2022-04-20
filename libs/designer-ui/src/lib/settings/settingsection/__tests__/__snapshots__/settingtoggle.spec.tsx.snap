@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/settings/settingtoggle should construct 1`] = `
+<StyledToggleBase
+  checked={false}
+  className="msla-setting-section-toggle"
+  disabled={false}
+  offText="Off"
+  onText="On"
+/>
+`;
