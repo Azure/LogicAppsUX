@@ -3,7 +3,7 @@ import { PanelHeaderComment } from '../panelheadercomment';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
-describe('ui/panel/panelheadertitle', () => {
+describe('ui/panel/panelheadercomment', () => {
   let minimal: PanelHeaderCommentProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
