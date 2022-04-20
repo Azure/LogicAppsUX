@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/settings/settingsection should construct 1`] = `
+<div
+  className="msla-setting-section"
+>
+  <div
+    className="msla-setting-section-content"
+  >
+    <div
+      className="msla-setting-section-header"
+      onClick={[Function]}
+    >
+      <CustomizedIconButton
+        ariaLabel="Expand random setting"
+        className="msla-setting-section-header-icon"
+        iconProps={
+          Object {
+            "iconName": "ChevronRightMed",
+            "styles": Object {
+              "root": Object {
+                "color": "#514f4e",
+                "fontSize": 14,
+              },
+            },
+          }
+        }
+        styles={
+          Object {
+            "icon": Object {
+              "color": "#8a8886",
+              "fontSize": 12,
+            },
+          }
+        }
+      />
+      <button
+        className="msla-setting-section-header-text"
+      >
+        random setting
+      </button>
+    </div>
+    <Separator
+      className="msla-setting-section-separator"
+      styles={
+        Object {
+          "root": Object {
+            "color": "#eaeaea",
+          },
+        }
+      }
+    />
+  </div>
+</div>
+`;
