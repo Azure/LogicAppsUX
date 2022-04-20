@@ -1,6 +1,5 @@
 import type { SettingTextFieldProps } from '../..';
 import { SettingTextField } from '../settingtextfield';
-import * as React from 'react';
 import renderer from 'react-test-renderer';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
