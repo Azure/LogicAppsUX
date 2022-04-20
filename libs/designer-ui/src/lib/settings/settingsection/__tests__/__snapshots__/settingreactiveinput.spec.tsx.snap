@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/settings/settingreactiveinput should construct 1`] = `
+<React.Fragment>
+  <RenderToggleSetting
+    checked={false}
+    isReadOnly={false}
+    onToggleInputChange={[Function]}
+  />
+</React.Fragment>
+`;

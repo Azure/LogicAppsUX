@@ -2,7 +2,7 @@ import { SettingTextField } from './settingtextfield';
 import { RenderToggleSetting } from './settingtoggle';
 import { useState } from 'react';
 
-interface ReactiveToggleProps {
+export interface ReactiveToggleProps {
   textFieldLabel: string;
   isReadOnly: boolean;
   textFieldId: string;
