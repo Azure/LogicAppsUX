@@ -56,4 +56,9 @@ describe('lib/flyout/flyoutcallout', () => {
     const callout = renderer.getRenderOutput();
     expect(callout).toBeNull();
   });
+
+  it('should render', () => {
+    const callout = renderer.render(<FlyoutCallout {...minimal} />);
+    expect(callout).toMatchSnapshot();
+  });
 });
