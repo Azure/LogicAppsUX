@@ -4,33 +4,16 @@ import { ConnectorSummaryCard } from '../../connectorsummarycard/connectorsummar
 import type { CommonPanelProps } from '../panelUtil';
 import { Text, List, Panel } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import type { Connector, Operation } from '@microsoft-logic-apps/utils';
+import type { Connector, Operation, OperationSearchResult } from '@microsoft-logic-apps/utils';
 import React, { useEffect } from 'react';
 
 export type RecommendationPanelProps = {
   placeholder: string;
   onSearch: (term: string) => void;
   toggleCollapse: () => void;
-  operationSearchResults: Operation[];
+  operationSearchResults: OperationSearchResult[];
   connectorBrowse: Connector[];
 } & CommonPanelProps;
-
-const getResultCards = (results: Operation[]) => {
-  return results.map((operation) => (
-    <div key={operation.id}>
-      <OperationCard
-        iconUrl={operation.iconUri}
-        title={operation.title}
-        key={operation.id}
-        id={operation.id}
-        connectorName={operation.connector}
-      ></OperationCard>
-      <div key={operation.id} style={{ height: '60px', border: '1px' }}>
-        <Text>{operation.title}</Text>
-      </div>
-    </div>
-  ));
-};
 
 export const RecommendationPanel = (props: RecommendationPanelProps) => {
   const intl = getIntl();
@@ -44,18 +27,15 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     description: 'Operations in search panel',
   });
 
-  const [searchResults, setSearchResults] = React.useState<JSX.Element[]>([]);
-  useEffect(() => setSearchResults(getResultCards(props.operationSearchResults)), [props.operationSearchResults]);
-
-  const onRenderOperationCell = React.useCallback((operation: Operation | undefined, index: number | undefined) => {
+  const onRenderOperationCell = React.useCallback((operation: OperationSearchResult | undefined, index: number | undefined) => {
     if (!operation) return;
     return (
       <OperationCard
-        iconUrl={operation.iconUri}
-        title={operation.title}
+        iconUrl={operation.properties.api.iconUri}
+        title={operation.properties.summary}
         key={operation.id}
         id={operation.id}
-        connectorName={operation.connector}
+        connectorName={operation.properties.api.displayName}
       ></OperationCard>
     );
   }, []);
