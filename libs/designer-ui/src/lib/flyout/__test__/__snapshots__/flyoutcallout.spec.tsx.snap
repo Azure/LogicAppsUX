@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lib/flyout/flyoutcallout should render 1`] = `
+<FocusTrapCallout
+  ariaLabel="text"
+  beakWidth={8}
+  className="msla-flyout-callout"
+  directionalHint={11}
+  focusTrapProps={
+    Object {
+      "isClickableOutsideFocusTrap": true,
+    }
+  }
+  gapSpace={0}
+  onDismiss={[MockFunction]}
+  setInitialFocus={true}
+  styles={
+    Object {
+      "calloutMain": "calloutMain-115",
+      "subComponentStyles": Object {},
+    }
+  }
+>
+  <div
+    aria-label="text"
+    data-is-focusable={true}
+    data-testid="callout-text"
+    role="dialog"
+    style={
+      Object {
+        "color": "#323130",
+      }
+    }
+    tabIndex={0}
+  >
+    text
+  </div>
+</FocusTrapCallout>
+`;

@@ -1,6 +1,6 @@
-import { DesignerSearchBox } from '../..';
 import { OperationCard } from '../../actionsummarycard/card';
 import { ConnectorSummaryCard } from '../../connectorsummarycard/connectorsummarycard';
+import { DesignerSearchBox } from '../../searchbox';
 import type { CommonPanelProps } from '../panelUtil';
 import { Text, List, Panel, DefaultButton } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
