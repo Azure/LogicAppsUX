@@ -1,4 +1,4 @@
-import { useIntl } from 'react-intl';
+import { getIntl } from '@microsoft-logic-apps/intl';
 
 export interface FunctionGroupDefinition {
   id: string;
@@ -28,7 +28,7 @@ export interface FunctionDefinition {
 }
 
 export const FunctionGroupDefinitions = (): FunctionGroupDefinition[] => {
-  const intl = useIntl();
+  const intl = getIntl();
 
   const Resources = {
     TOKEN_FUNCTION_SECTION_STRING: intl.formatMessage({
