@@ -1,5 +1,5 @@
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
-import { ConnectorsMock } from '@microsoft-logic-apps/utils';
+import { connectorsSearchResultsMock } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel } from '@microsoft/designer-ui';
 import React from 'react';
@@ -12,7 +12,7 @@ const getSearchResult = (term: string) => {
 };
 
 const getBrowseResult = () => {
-  const data = ConnectorsMock;
+  const data = connectorsSearchResultsMock;
   return data;
 };
 

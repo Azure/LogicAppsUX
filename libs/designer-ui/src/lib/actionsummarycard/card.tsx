@@ -8,6 +8,7 @@ export type OperationCardProps = {
   id: string;
   iconUrl: string;
   connectorName: string;
+  category: 'Built-in' | 'Azure' | '';
 } & CommonCardProps;
 
 export interface CommonCardProps {
@@ -36,6 +37,8 @@ export const OperationCard = (props: OperationCardProps) => {
       <Text className="msla-card-description">{props.subtitle}</Text>
       <div className="msla-tag-container">
         <Text className="msla-tag">{props.connectorName}</Text>
+        <Text className="msla-tag">Trigger</Text>
+        <Text className="msla-tag">{props.category}</Text>
       </div>
     </div>
   );

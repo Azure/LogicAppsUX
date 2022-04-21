@@ -27,6 +27,7 @@ type VisibilityTypes = 'important' | 'advanced';
 
 export interface OperationSearchResult {
   properties: {
+    category: 'Azure' | 'Built-in';
     summary: string;
     description: string;
     visibility?: VisibilityTypes;

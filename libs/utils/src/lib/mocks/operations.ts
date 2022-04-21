@@ -4,6 +4,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   {
     properties: {
       summary: 'When a blob is added or modified (properties only) (V2)',
+      category: 'Azure',
       description:
         'This operation triggers a flow when one or more blobs are added or modified in a container. This trigger will only fetch the file metadata. To get the file content, you can use the \\"Get file content\\" operation. The trigger does not fire if a file is added/updated in a subfolder. If it is required to trigger on subfolders, multiple triggers should be created.',
       visibility: 'important',
@@ -33,6 +34,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
+      category: 'Azure',
       summary: 'When a rule is fired',
       description: 'Create an action which triggers when a rule is fired in IoT Central.',
       trigger: 'single',
@@ -61,6 +63,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
+      category: 'Azure',
       summary: 'When a task is added',
       description: 'This operation triggers when a new task is created.',
       visibility: 'important',
@@ -91,6 +94,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
+      category: 'Built-in',
       summary: 'When a task is completed',
       description: 'This operation triggers when a task is marked as complete.',
       visibility: 'advanced',
@@ -121,6 +125,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
+      category: 'Azure',
       summary: 'When a dataflow refresh completes',
       description: 'This operation triggers when a dataflow refresh completes.',
       visibility: 'important',
@@ -151,6 +156,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
+      category: 'Built-in',
       summary: 'When an Azure Security Center Alert is created or triggered',
       description:
         'Triggers when an alert is created in Security Center and matches the evaluation criteria configured in an automation, or when manually run on a specific alert.\nNote: automated running of this trigger requires enabling automation in Azure Security Center and enabling the Standard tier as a preliminary step.\nPlease visit Azure Security Center to do so.',
@@ -182,6 +188,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
+      category: 'Azure',
       summary: 'When an Azure Security Center Recommendation is created or triggered',
       description:
         'Triggers when a recommendation is created in Security Center and matches the evaluation criteria configured in an automation, or when manually run on a specific recommendation.\nNote: automated running of this trigger requires enabling automation in Azure Security Center.\nPlease visit Azure Security Center to do so.',
@@ -213,6 +220,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
+      category: 'Azure',
       summary: 'When a Security Center Regulatory Compliance Assessment is created or triggered',
       description:
         'Triggers when a regulatory compliance assessment is created in Security Center and matches the evaluation criteria configured in an automation. Note: automated running of this trigger requires enabling automation in Azure Security Center. Please visit Azure Security Center to do so.',
@@ -244,6 +252,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
+      category: 'Built-in',
       summary: 'When one or more messages arrive in a queue (auto-complete)',
       description:
         'The operation receives one or more messages from a queue. If maximum message count is not provided, it reads 20 messages.',
@@ -276,6 +285,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
+      category: 'Azure',
       summary: 'When one or more messages arrive in a topic (auto-complete)',
       description:
         'The operation receives one or more messages from a topic. If maximum message count is not provided, it reads 20 messages.',
@@ -308,6 +318,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
+      category: 'Built-in',
       summary: 'When one or more messages arrive in a queue (peek-lock)',
       description:
         'The operation receives one or more messages from a queue with peek-lock. If maximum message count is not provided, it reads 20 messages.',
@@ -340,6 +351,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
+      category: 'Built-in',
       summary: 'When one or more messages arrive in a topic (peek-lock)',
       description:
         'The operation receives one or more messages from a topic with peek-lock. If maximum message count is not provided, it reads 20 messages.',
