@@ -98,9 +98,9 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
       <DesignerSearchBox onSearch={props.onSearch}></DesignerSearchBox>
       <div className="msla-result-list">
         <div>
-          <div className="msla-filter-container" style={{ padding: '5px' }}>
-            <Text style={{ display: 'block' }}>Filters</Text>
-            <div style={{ display: 'block' }}>
+          <div className="msla-filter-container">
+            <Text className="msla-block">Filters</Text>
+            <div className="msla-block">
               {filterButton('Built-in')}
               {filterButton('Azure')}
             </div>
