@@ -17,12 +17,12 @@ export type SignatureHelpProvider = monaco.languages.SignatureHelpProvider;
 type SignatureInformation = monaco.languages.SignatureInformation;
 type SignatureHelpResult = monaco.languages.SignatureHelpResult;
 
-const tokenNames: Record<string, string> = {
-  FUNCTION: 'function-name',
-  KEYWORD: 'keywords',
-  NUMBER: 'number-literal',
-  STRING: 'string-literal',
-};
+const enum tokenNames {
+  FUNCTION = 'function-name',
+  KEYWORD = 'keywords',
+  NUMBER = 'number-literal',
+  STRING = 'string-literal',
+}
 
 const keywords: string[] = ['null', 'true', 'false'];
 
@@ -41,7 +41,7 @@ export function createLanguageDefinition(templateFunctions: FunctionDefinition[]
   const keywordRules = keywords.map((keyword) => ({
     regex: keyword,
     action: {
-      token: tokenNames['KEYWORD'],
+      token: tokenNames.KEYWORD,
     },
   }));
 
@@ -49,7 +49,7 @@ export function createLanguageDefinition(templateFunctions: FunctionDefinition[]
     return {
       regex: templateFunction.name,
       action: {
-        token: tokenNames['FUNCTION'],
+        token: tokenNames.FUNCTION,
       },
     };
   });
@@ -57,7 +57,7 @@ export function createLanguageDefinition(templateFunctions: FunctionDefinition[]
   const stringLiteralRule = {
     regex: /'[^']*'/g,
     action: {
-      token: tokenNames['STRING'],
+      token: tokenNames.STRING,
     },
   };
 
@@ -65,13 +65,13 @@ export function createLanguageDefinition(templateFunctions: FunctionDefinition[]
     {
       regex: /\d*\.\d+([eE][-+]?\d+)?/,
       action: {
-        token: tokenNames['NUMBER'],
+        token: tokenNames.NUMBER,
       },
     },
     {
       regex: /\d+/,
       action: {
-        token: tokenNames['NUMBER'],
+        token: tokenNames.NUMBER,
       },
     },
   ];
