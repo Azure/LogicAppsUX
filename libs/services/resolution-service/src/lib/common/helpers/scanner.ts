@@ -19,7 +19,7 @@ export enum ExpressionTokenType {
   EndOfData = 'EndOfData',
 }
 
-export default class ExpressionScanner {
+export class ExpressionScanner {
   private _expression: string;
   private _startPosition: number;
   private _currentToken: ExpressionToken;
@@ -38,15 +38,34 @@ export default class ExpressionScanner {
     }
   }
 
+  /**
+   * Gets the expression.
+   * @return {string}
+   */
   public get expression(): string {
     return this._expression;
   }
 
+  /**
+   * Gets the token with specified expression token type.
+   * @arg {ExpressionTokenType} type - The expression token type.
+   * @arg {string} value - The expression token value.
+   * @return {ExpressionToken}
+   */
   public getTokenForTypeAndValue(type: ExpressionTokenType, value?: string): ExpressionToken | undefined {
     if (this._currentToken.type === type && (!value || equals(value, this._currentToken.value))) {
       return this._getToken();
     }
     return undefined;
+  }
+
+  /**
+   * Gets the next token.
+   * @return {ExpressionToken}
+   */
+  public getNextToken(): ExpressionToken {
+    this._readNextToken();
+    return this._currentToken;
   }
 
   private _getToken(): ExpressionToken {
