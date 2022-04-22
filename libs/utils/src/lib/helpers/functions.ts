@@ -484,10 +484,7 @@ export function isValidIcon(icon: string): boolean {
  * @arg {string | null | undefined} keyName - The name of the property with the key identifying the item.
  * @return {Record<string, T>} - An object mapping string keys to elements of type T.
  */
-export function map<T>(
-  array: T[] | null | undefined,
-  keyName: string | null | undefined
-): Record<string, T> {
+export function map<T extends object>(array: T[] | null | undefined, keyName: string | null | undefined): Record<string, T> {
   if (!keyName) {
     throw new Error('key required');
   }
