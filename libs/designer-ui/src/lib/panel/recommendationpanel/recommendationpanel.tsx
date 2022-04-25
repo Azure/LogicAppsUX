@@ -1,47 +1,96 @@
-import { DesignerSearchBox } from '../..';
 import { OperationCard } from '../../actionsummarycard/card';
+import { ConnectorSummaryCard } from '../../connectorsummarycard/connectorsummarycard';
+import { DesignerSearchBox } from '../../searchbox';
 import type { CommonPanelProps } from '../panelUtil';
-import { Text, List, Panel } from '@fluentui/react';
-import type { Operation } from '@microsoft-logic-apps/utils';
-import React, { useEffect } from 'react';
-import { useIntl } from 'react-intl';
+import { Text, List, Panel, DefaultButton } from '@fluentui/react';
+import { getIntl } from '@microsoft-logic-apps/intl';
+import type { Connector, OperationSearchResult } from '@microsoft-logic-apps/utils';
+import React from 'react';
 
 export type RecommendationPanelProps = {
   placeholder: string;
   onSearch: (term: string) => void;
   toggleCollapse: () => void;
-  operationSearchResults: Operation[];
+  operationSearchResults: OperationSearchResult[];
+  connectorBrowse: Connector[];
 } & CommonPanelProps;
 
-const getResultCards = (results: Operation[]) => {
-  return results.map((operation) => (
-    <>
-      <OperationCard
-        iconUrl={operation.iconUri}
-        title={operation.title}
-        key={operation.id}
-        id={operation.id}
-        connectorName={operation.connector}
-      ></OperationCard>
-      <div key={operation.id} style={{ height: '60px', border: '1px' }}>
-        <Text>{operation.title}</Text>
-      </div>
-    </>
-  ));
-};
-
 export const RecommendationPanel = (props: RecommendationPanelProps) => {
-  const intl = useIntl();
+  type Filter = 'Built-in' | 'Azure' | '';
+  const [filter, setFilter] = React.useState<Filter>('');
+
+  const [operationSearchResults, setOperationSearchResults] = React.useState([...props.operationSearchResults]);
+
+  React.useEffect(() => {
+    setOperationSearchResults([...props.operationSearchResults]);
+  }, [props.operationSearchResults]);
+
+  const intl = getIntl();
 
   const panelLabel = intl.formatMessage({
     defaultMessage: 'panel',
     description: 'recommendation panel',
   });
-  const [searchResults, setSearchResults] = React.useState<JSX.Element[]>([]);
-  useEffect(() => setSearchResults(getResultCards(props.operationSearchResults)), [props.operationSearchResults]);
+  const header = intl.formatMessage({
+    defaultMessage: 'Operations',
+    description: 'Operations in search panel',
+  });
+
+  const onRenderOperationCell = React.useCallback((operation: OperationSearchResult | undefined, index: number | undefined) => {
+    if (!operation) return;
+    const properties = operation.properties;
+
+    return (
+      <OperationCard
+        category={properties.category}
+        iconUrl={properties.api.iconUri}
+        title={properties.summary}
+        key={operation.id}
+        id={operation.id}
+        connectorName={properties.api.displayName}
+        subtitle={properties.description}
+      ></OperationCard>
+    );
+  }, []);
+
+  const onRenderConnectorCell = React.useCallback((connector: Connector | undefined, index: number | undefined) => {
+    if (!connector) return;
+    const properties = connector.properties;
+
+    return (
+      <ConnectorSummaryCard
+        connectorName={properties.displayName}
+        description={properties['description'] ? properties['description'] : ''}
+        id={connector.id}
+        iconUrl={properties.iconUri}
+        brandColor={properties.brandColor}
+      ></ConnectorSummaryCard>
+    );
+  }, []);
+
+  const callSetFilter = (term: Filter) => {
+    setFilter(term);
+    const filteredResult = props.operationSearchResults.filter((op) => {
+      const category = op.properties.category;
+      if (filter && category !== filter) {
+        return false;
+      }
+      return true;
+    });
+    setOperationSearchResults(filteredResult);
+  };
+
+  const filterButton = (text: Filter) => {
+    return (
+      <DefaultButton onClick={(e) => callSetFilter(text)} className={`msla-filter-btn ${filter === text ? 'msla-filter-selected' : ''}`}>
+        {text}
+      </DefaultButton>
+    );
+  };
+
   return (
     <Panel
-      headerText="Actions and Triggers"
+      headerText={header}
       aria-label={panelLabel}
       customWidth={props.width}
       isOpen={!props.isCollapsed}
@@ -50,7 +99,20 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     >
       <DesignerSearchBox onSearch={props.onSearch}></DesignerSearchBox>
       <div className="msla-result-list">
-        <List items={searchResults}></List>
+        <div>
+          <div className="msla-filter-container">
+            <Text className="msla-block">Filters</Text>
+            <div className="msla-block">
+              {filterButton('Built-in')}
+              {filterButton('Azure')}
+            </div>
+          </div>
+        </div>
+        {props.operationSearchResults.length !== 0 ? (
+          <List items={operationSearchResults} onRenderCell={onRenderOperationCell}></List>
+        ) : (
+          <List items={props.connectorBrowse} onRenderCell={onRenderConnectorCell}></List>
+        )}
       </div>
     </Panel>
   );
