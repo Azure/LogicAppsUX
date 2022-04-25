@@ -1,6 +1,6 @@
-import type { EnumObject, OutputMetadata, ParameterDynamicSchema, ParameterDynamicValues } from '../models/operation';
-import { DynamicSchemaType, DynamicValuesType } from '../models/operation';
-import * as Constants from './constants';
+import type { EnumObject, OutputMetadata, ParameterDynamicSchema, ParameterDynamicValues } from '../../models/operation';
+import { DynamicSchemaType, DynamicValuesType } from '../../models/operation';
+import * as Constants from '../constants';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 

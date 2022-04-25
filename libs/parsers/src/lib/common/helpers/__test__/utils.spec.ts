@@ -1,5 +1,5 @@
-import { DynamicSchemaType, DynamicValuesType } from '../../models/operation';
-import { ExtensionProperties } from '../constants';
+import { DynamicSchemaType, DynamicValuesType } from '../../../models/operation';
+import { ExtensionProperties } from '../../constants';
 import { getParameterDynamicSchema, getParameterDynamicValues } from '../utils';
 
 type SchemaObject = OpenAPIV2.SchemaObject;

@@ -2,9 +2,9 @@
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import * as SwaggerConstants from './constants';
-import { dereferenceRefSchema , getEnum, getParameterDynamicSchema, getParameterDynamicValues } from './utils';
+import { dereferenceRefSchema , getEnum, getParameterDynamicSchema, getParameterDynamicValues } from './helpers/utils';
 
-import * as ParameterKeyUtility from './keysutility';
+import * as ParameterKeyUtility from './helpers/keysutility';
 import type { SchemaProperty } from '../models/operation';
 
 export type Schema = OpenAPIV2.Schema;

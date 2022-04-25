@@ -160,7 +160,10 @@ declare namespace OpenAPIV2 {
       externalDocs?: ExternalDocumentationObject;
       example?: any;
       default?: any;
-      items?: ItemsObject;
+      items?: SchemaObject;
+      allOf?: SchemaObject[];
+      anyOf?: SchemaObject[];
+      oneOf?: SchemaObject[];
       properties?: {
           [name: string]: SchemaObject;
       };
@@ -219,8 +222,7 @@ declare namespace OpenAPIV2 {
       url?: string;
   }
 
-  
-interface IJsonSchema {
+  interface IJsonSchema {
     id?: string;
     $schema?: string;
     title?: string;

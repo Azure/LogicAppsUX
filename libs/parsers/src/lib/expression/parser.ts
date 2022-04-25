@@ -1,7 +1,7 @@
-import { ExpressionExceptionCode } from '../exceptions/expression';
-import { ParserException } from '../exceptions/parser';
+import { ExpressionExceptionCode } from '../common/exceptions/expression';
+import { ParserException } from '../common/exceptions/parser';
 import type { Dereference, Expression, ExpressionFunction, ExpressionStringInterpolation, ExpressionToken } from '../models/expression';
-import { ExpressionType, isTemplateExpression } from './expression';
+import { ExpressionType, isTemplateExpression } from '../common/helpers/expression';
 import ExpressionScanner, { ExpressionTokenType } from './scanner';
 import { equals } from '@microsoft-logic-apps/utils';
 

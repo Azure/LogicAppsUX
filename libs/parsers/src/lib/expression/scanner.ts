@@ -1,8 +1,9 @@
-import { CommonConstants, isNumeric, isWhitespace } from '../constants';
-import { ExpressionExceptionCode } from '../exceptions/expression';
-import { ScannerException } from '../exceptions/scanner';
+import { ExpressionExceptionCode } from '../common/exceptions/expression';
+import { ScannerException } from '../common/exceptions/scanner';
 import type { ExpressionToken } from '../models/expression';
 import { equals } from '@microsoft-logic-apps/utils';
+import { ExpressionConstants } from '../common/constants';
+import { isNumeric, isWhitespace } from '../common/helpers/expression';
 
 export enum ExpressionTokenType {
   Dot = 'Dot',
@@ -25,7 +26,7 @@ export default class ExpressionScanner {
   private _currentToken: ExpressionToken;
 
   constructor(expression: string, prefetch = true) {
-    if (expression.length > CommonConstants.Expression.maxExpressionLimit) {
+    if (expression.length > ExpressionConstants.Expression.maxExpressionLimit) {
       throw new ScannerException(ExpressionExceptionCode.LIMIT_EXCEEDED, ExpressionExceptionCode.LIMIT_EXCEEDED);
     }
 
@@ -68,7 +69,7 @@ export default class ExpressionScanner {
       const currentChar = expression.charAt(currentPos);
       token = this._checkAndReturnValidToken(currentPos);
       if (!token) {
-        if (equals(currentChar, CommonConstants.TokenValue.singleQuote)) {
+        if (equals(currentChar, ExpressionConstants.TokenValue.singleQuote)) {
           token = this._processAndgetTokenForSingleQuote(currentPos);
         } else {
           token = this._processAndGetToken(currentPos);
@@ -130,9 +131,9 @@ export default class ExpressionScanner {
     const expression = this._expression;
     const startPos = currentPos;
     while (currentPos < expression.length) {
-      currentPos = this._scanForwardUsingPredicate(currentPos + 1, (c) => c !== CommonConstants.TokenValue.singleQuote);
+      currentPos = this._scanForwardUsingPredicate(currentPos + 1, (c) => c !== ExpressionConstants.TokenValue.singleQuote);
 
-      if (currentPos + 1 < expression.length && expression.charAt(currentPos + 1) === CommonConstants.TokenValue.singleQuote) {
+      if (currentPos + 1 < expression.length && expression.charAt(currentPos + 1) === ExpressionConstants.TokenValue.singleQuote) {
         currentPos++;
       } else {
         break;
@@ -146,7 +147,7 @@ export default class ExpressionScanner {
       );
     }
 
-    const litervalValue = expression.substring(startPos + 1, currentPos).replace(/''/g, CommonConstants.TokenValue.singleQuote);
+    const litervalValue = expression.substring(startPos + 1, currentPos).replace(/''/g, ExpressionConstants.TokenValue.singleQuote);
     const token = this._createToken(litervalValue, ExpressionTokenType.StringLiteral, this._startPosition, currentPos + 1);
     this._startPosition = currentPos + 1;
     return token;
@@ -156,39 +157,39 @@ export default class ExpressionScanner {
     let tokenType;
     let tokenValue;
     switch (this._expression.charAt(currentPos)) {
-      case CommonConstants.TokenValue.dot: {
+      case ExpressionConstants.TokenValue.dot: {
         tokenType = ExpressionTokenType.Dot;
-        tokenValue = CommonConstants.TokenValue.dot;
+        tokenValue = ExpressionConstants.TokenValue.dot;
         break;
       }
-      case CommonConstants.TokenValue.comma: {
+      case ExpressionConstants.TokenValue.comma: {
         tokenType = ExpressionTokenType.Comma;
-        tokenValue = CommonConstants.TokenValue.comma;
+        tokenValue = ExpressionConstants.TokenValue.comma;
         break;
       }
-      case CommonConstants.TokenValue.leftParenthesis: {
+      case ExpressionConstants.TokenValue.leftParenthesis: {
         tokenType = ExpressionTokenType.LeftParenthesis;
-        tokenValue = CommonConstants.TokenValue.leftParenthesis;
+        tokenValue = ExpressionConstants.TokenValue.leftParenthesis;
         break;
       }
-      case CommonConstants.TokenValue.rightParenthesis: {
+      case ExpressionConstants.TokenValue.rightParenthesis: {
         tokenType = ExpressionTokenType.RightParenthesis;
-        tokenValue = CommonConstants.TokenValue.rightParenthesis;
+        tokenValue = ExpressionConstants.TokenValue.rightParenthesis;
         break;
       }
-      case CommonConstants.TokenValue.leftSquareBracket: {
+      case ExpressionConstants.TokenValue.leftSquareBracket: {
         tokenType = ExpressionTokenType.LeftSquareBracket;
-        tokenValue = CommonConstants.TokenValue.leftSquareBracket;
+        tokenValue = ExpressionConstants.TokenValue.leftSquareBracket;
         break;
       }
-      case CommonConstants.TokenValue.rightSquareBracket: {
+      case ExpressionConstants.TokenValue.rightSquareBracket: {
         tokenType = ExpressionTokenType.RightSquareBracket;
-        tokenValue = CommonConstants.TokenValue.rightSquareBracket;
+        tokenValue = ExpressionConstants.TokenValue.rightSquareBracket;
         break;
       }
-      case CommonConstants.TokenValue.questionMark: {
+      case ExpressionConstants.TokenValue.questionMark: {
         tokenType = ExpressionTokenType.QuestionMark;
-        tokenValue = CommonConstants.TokenValue.questionMark;
+        tokenValue = ExpressionConstants.TokenValue.questionMark;
         break;
       }
       default: {
