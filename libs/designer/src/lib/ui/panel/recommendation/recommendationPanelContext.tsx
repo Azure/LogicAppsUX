@@ -38,8 +38,8 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   return (
     <RecommendationPanel
       placeholder={''}
-      operationSearchResults={searchResults ? searchResults.searchOperations : []}
-      connectorBrowse={browseResults ? browseResults : []}
+      operationSearchResults={searchResults?.searchOperations || []}
+      connectorBrowse={browseResults || []}
       {...props}
       onSearch={search}
     ></RecommendationPanel>

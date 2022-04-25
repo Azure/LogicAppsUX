@@ -38,16 +38,17 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
 
   const onRenderOperationCell = React.useCallback((operation: OperationSearchResult | undefined, index: number | undefined) => {
     if (!operation) return;
+    const properties = operation.properties;
 
     return (
       <OperationCard
-        category={operation.properties.category}
-        iconUrl={operation.properties.api.iconUri}
-        title={operation.properties.summary}
+        category={properties.category}
+        iconUrl={properties.api.iconUri}
+        title={properties.summary}
         key={operation.id}
         id={operation.id}
-        connectorName={operation.properties.api.displayName}
-        subtitle={operation.properties.description}
+        connectorName={properties.api.displayName}
+        subtitle={properties.description}
       ></OperationCard>
     );
   }, []);

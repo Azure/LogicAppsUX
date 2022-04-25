@@ -1,7 +1,6 @@
 import type { RecommendationPanelProps } from './../recommendationpanel';
 import { RecommendationPanel } from './../recommendationpanel';
 import { ConnectorsMock } from '@microsoft-logic-apps/utils';
-import renderer from 'react-test-renderer';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('recommendation panel', () => {
