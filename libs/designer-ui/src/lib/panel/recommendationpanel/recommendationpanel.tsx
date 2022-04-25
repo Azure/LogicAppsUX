@@ -55,14 +55,15 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
 
   const onRenderConnectorCell = React.useCallback((connector: Connector | undefined, index: number | undefined) => {
     if (!connector) return;
+    const properties = connector.properties;
 
     return (
       <ConnectorSummaryCard
-        connectorName={connector.properties.displayName}
-        description={connector.properties['description'] ? connector.properties['description'] : ''}
+        connectorName={properties.displayName}
+        description={properties['description'] ? properties['description'] : ''}
         id={connector.id}
-        iconUrl={connector.properties.iconUri}
-        brandColor={connector.properties.brandColor}
+        iconUrl={properties.iconUri}
+        brandColor={properties.brandColor}
       ></ConnectorSummaryCard>
     );
   }, []);
