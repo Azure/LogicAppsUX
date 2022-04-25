@@ -8,13 +8,13 @@
   "+g+mch": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of an action"
+      "value": "Egy művelet többrészes kimenetéből az egyik rész törzsét adja vissza."
     }
   ],
   "+lpuMl": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'false'."
+      "value": "Kötelező megadni. Az akkor visszaadandó érték, ha a kifejezés hamis."
     }
   ],
   "/I/U8L": [
@@ -32,49 +32,49 @@
   "/QqADs": [
     {
       "type": 0,
-      "value": "Returns the elements in the array starting at index Count"
+      "value": "A tömb elemeit adja vissza, az indexszámmal kezdve."
     }
   ],
   "/doURb": [
     {
       "type": 0,
-      "value": "Convert the input to an array"
+      "value": "A bemenet átalakítása tömbbé."
     }
   ],
   "/qchXQ": [
     {
       "type": 0,
-      "value": "Required. The collection to join items from."
+      "value": "Kötelező megadni. A gyűjtemény, melynek elemeit össze kell kapcsolni."
     }
   ],
   "/ut0u7": [
     {
       "type": 0,
-      "value": "Returns the first Count elements from the array or string passed in"
+      "value": "Az átadott tömb vagy sztring első Count elemeit adja vissza."
     }
   ],
   "07ZsoY": [
     {
       "type": 0,
-      "value": "Returns the start of the hour to a string timestamp passed in"
+      "value": "Egy átadott sztring típusú időbélyegből az óra kezdetét adja vissza."
     }
   ],
   "09B9CU": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action. Note: This function can only be used in an httpWebhook and apiConnectionWebhook, not in a manual, recurrence, http, or apiConnection."
+      "value": "A trigger vagy a művelet meghívásához használt URL-címet adja vissza. Megjegyzés: A függvény csak httpWebhook vagy apiConnectionWebhook triggerben használható, manuális, erőforrás-, HTTP- vagy apiConnection triggerben nem."
     }
   ],
   "0FzNJV": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Kötelező megadni. A Base64 kódolású sztring."
     }
   ],
   "0GqNGo": [
     {
       "type": 0,
-      "value": "Url decodes the input string"
+      "value": "A bemeneti sztringet URl-ként dekódolja."
     }
   ],
   "0JTHTZ": [
@@ -86,7 +86,7 @@
   "0R2D5l": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a URI encoded string"
+      "value": "Egy URI-ként kódolt sztring bináris megfelelőjét adja vissza."
     }
   ],
   "0ZlNtf": [
@@ -98,25 +98,25 @@
   "0i/6TR": [
     {
       "type": 0,
-      "value": "Required. The string to convert to upper casing. If a character in the string does not have an uppercase equivalent, the character is included unchanged in the returned string."
+      "value": "Kötelező megadni. A nagybetűssé alakítandó sztring. A sztring azon karakterei, melyeknek nincs nagybetűs megfelelője, változatlanul fognak szerepelni a visszaadott sztringben."
     }
   ],
   "0p+pJq": [
     {
       "type": 0,
-      "value": "Returns the remainder after dividing the two numbers (modulo)"
+      "value": "A két szám osztása utáni maradékot (modulus) adja vissza."
     }
   ],
   "0qV0Qe": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Kötelező megadni. Az a sztring, amely az értéket tartalmazhatja."
     }
   ],
   "0uj1Li": [
     {
       "type": 0,
-      "value": "Returns a binary representation of an input data URI string"
+      "value": "Egy bemenetiadat-URI sztringjét bináris kódolású sztringként adja vissza."
     }
   ],
   "0y5eia": [
@@ -128,13 +128,13 @@
   "1+Z8n9": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to String representation."
+      "value": "Kötelező megadni. A sztring típusú ábrázolásra átalakítandó adat-URI."
     }
   ],
   "109OPL": [
     {
       "type": 0,
-      "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
+      "value": "A port visszaadása egy URI azonosítóból. Ha nincs megadva port, a protokoll alapértelmezett portjának visszaadása"
     }
   ],
   "1A1P5b": [
@@ -146,19 +146,19 @@
   "1D047X": [
     {
       "type": 0,
-      "value": "Required. The value to convert to XML."
+      "value": "Kötelező megadni. Az XML formátumúvá alakítandó érték."
     }
   ],
   "1Fn5n+": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Kötelező megadni. Az URI-ként kódolt sztring."
     }
   ],
   "1NBvKu": [
     {
       "type": 0,
-      "value": "Convert the parameter argument to a floating-point number"
+      "value": "A paraméterargumentum átalakítása lebegőpontos számmá."
     }
   ],
   "1R6Vaa": [
@@ -204,13 +204,13 @@
   "1TE0e8": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Kötelező megadni. Az érték, melynek meg kell keresni az indexét."
     }
   ],
   "1jhzOM": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than value being compared to."
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy kisebb-e, mint a vele összehasonlított érték."
     }
   ],
   "1zgFh1": [
@@ -222,13 +222,13 @@
   "23fENy": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a base 64 encoded string"
+      "value": "Egy Base 64 kódolású sztringet bináris kódolású sztringként ad vissza."
     }
   ],
   "23szE+": [
     {
       "type": 0,
-      "value": "Required. The value to convert to data URI."
+      "value": "Kötelező megadni. Az adat-URI-vá alakítandó érték."
     }
   ],
   "2K2fAj": [
@@ -240,13 +240,13 @@
   "2cVEMV": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded action output"
+      "value": "Egy olyan értéket ad vissza az űrlapadatokból vagy a művelet űrlapként kódolt kimenetéből, amely megegyezik a kulcsnévvel."
     }
   ],
   "2gzGrJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Kötelező megadni. Az űrlapadatokat tartalmazó vagy űrlapként formázott választ adó művelet neve."
     }
   ],
   "2mnU/w": [
@@ -264,7 +264,7 @@
   "3NhwIJ": [
     {
       "type": 0,
-      "value": "Required. The separator."
+      "value": "Kötelező megadni. Az elválasztó."
     }
   ],
   "3kI7xF": [
@@ -276,37 +276,37 @@
   "3rzrWf": [
     {
       "type": 0,
-      "value": "Required. The object to remove the property from."
+      "value": "Kötelező megadni. Az objektum, melyből el kívánja távolítani a tulajdonságot."
     }
   ],
   "3vCCY7": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to subtract."
+      "value": "Kötelező megadni. A megadott időegység kivonandó mennyisége."
     }
   ],
   "47kOXr": [
     {
       "type": 0,
-      "value": "Required. The lowest integer that can be returned."
+      "value": "Kötelező megadni. A legkisebb visszaadható egész szám."
     }
   ],
   "4BrA0z": [
     {
       "type": 0,
-      "value": "Required. The number of days to add. Can be negative to subtract days."
+      "value": "Kötelező megadni. A hozzáadni kívánt napok száma. Lehet negatív érték is napok kivonása céljából."
     }
   ],
   "4YKQAF": [
     {
       "type": 0,
-      "value": "Required. The unit of time specified in the interval."
+      "value": "Kötelező megadni. Az intervallumban megadott időegység."
     }
   ],
   "4c0uPQ": [
     {
       "type": 0,
-      "value": "Required. The name of the parameter whose values you want."
+      "value": "Kötelező megadni. Azon paraméter neve, melynek értékei szükségesek."
     }
   ],
   "4cVuMw": [
@@ -318,7 +318,7 @@
   "4vcnOA": [
     {
       "type": 0,
-      "value": "Returns the minimum value in the input array of numbers"
+      "value": "A legkisebb értéket adja vissza a bemeneti számtömbből."
     }
   ],
   "4vmGh0": [
@@ -330,25 +330,25 @@
   "5J7j9k": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Kötelező megadni. A kiértékelendő XPath-kifejezés."
     }
   ],
   "5aa76N": [
     {
       "type": 0,
-      "value": "Returns the first element in the array or string passed in"
+      "value": "Az átadott tömb vagy sztring első elemét adja vissza."
     }
   ],
   "5b0sKi": [
     {
       "type": 0,
-      "value": "Returns true if an object, array, or string is empty"
+      "value": "Igaz értéket ad vissza, ha egy objektum, tömb vagy sztring üres."
     }
   ],
   "5cPiWA": [
     {
       "type": 0,
-      "value": "Required. The name of the loop whose item you want."
+      "value": "Kötelező megadni. Azon ciklus neve, melynek az eleme szükséges."
     }
   ],
   "5qzZMo": [
@@ -366,7 +366,7 @@
   "63/zYN": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than value being compared to."
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy nagyobb-e, mint a vele összehasonlított érték."
     }
   ],
   "6jiO7t": [
@@ -378,13 +378,13 @@
   "6jsWn/": [
     {
       "type": 0,
-      "value": "Required. The collection to search within."
+      "value": "Kötelező megadni. A gyűjtemény, melyben keresni kell."
     }
   ],
   "6kSpHL": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a multipart response."
+      "value": "Kötelező megadni. A többrészes választ adó művelet neve."
     }
   ],
   "6oqk+A": [
@@ -396,7 +396,7 @@
   "6qkBwz": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 2 with."
+      "value": "Kötelező megadni. A szám, amellyel meg kell szorozni a 2. szorzandót."
     }
   ],
   "7GSk99": [
@@ -408,13 +408,13 @@
   "7QymrD": [
     {
       "type": 0,
-      "value": "Required. The string from which the substring is taken."
+      "value": "Kötelező megadni. Az a sztring, amelyből a sztringrész származik."
     }
   ],
   "7aJqIH": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when formatting (defaults to 'en-us')."
+      "value": "Opcionális. A formázáskor használni kívánt területi beállítás (alapértelmezés: „en-us”)."
     }
   ],
   "7k9jXx": [
@@ -426,7 +426,7 @@
   "7lnElz": [
     {
       "type": 0,
-      "value": "Returns the number of ticks (100 nanoseconds interval) since 1 January 0001 00:00:00 UT of a string timestamp"
+      "value": "Egy sztring típusú időbélyegből a 100 nanoszekundumos időközönkénti óraütések számát adja vissza a 0001. január 1 00:00:00 (UT) időponttal kezdődően"
     }
   ],
   "7yEdSt": [
@@ -444,25 +444,25 @@
   "7zzPsK": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Kötelező megadni. Az a sztring, amely az értéket tartalmazhatja."
     }
   ],
   "8CWFEh": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'true'."
+      "value": "Kötelező megadni. Az akkor visszaadandó érték, ha a kifejezés igaz."
     }
   ],
   "8DFwxH": [
     {
       "type": 0,
-      "value": "Returns a formatted number string"
+      "value": "Formázott, szám típusú sztringet ad vissza"
     }
   ],
   "8FjOSh": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater or equal to the comparing object."
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy a hasonlított objektumnál nagyobb vagy azzal egyenlő-e."
     }
   ],
   "8L+oIz": [
@@ -474,19 +474,19 @@
   "8U0KPg": [
     {
       "type": 0,
-      "value": "Required. The string to be URI encoded."
+      "value": "Kötelező megadni. Az URI-ként kódolandó sztring."
     }
   ],
   "8wr0zO": [
     {
       "type": 0,
-      "value": "Adds an integer number of days to a string timestamp passed in"
+      "value": "Egy, a napok számát egész számmal megadó érték hozzáadása az átadott sztring típusú időbélyeghez."
     }
   ],
   "9/UeTh": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in"
+      "value": "Egyetlen olyan tömböt vagy objektumot ad vissza, amely az átadott tömbökben vagy objektumokban is megtalálható elemeket tartalmaz."
     }
   ],
   "99vsJy": [
@@ -498,13 +498,13 @@
   "9JuvQ4": [
     {
       "type": 0,
-      "value": "Returns a data URI of a value"
+      "value": "Értéket azonosító adat-URI visszaadása"
     }
   ],
   "9Jv3+1": [
     {
       "type": 0,
-      "value": "Returns an object with an additional property value pair"
+      "value": "Egy objektumot ad vissza, melyhez hozzá lett adva egy tulajdonság-érték pár"
     }
   ],
   "9b4xDa": [
@@ -516,43 +516,43 @@
   "9djnqI": [
     {
       "type": 0,
-      "value": "Returns the result from adding the two numbers"
+      "value": "Két szám összeadásának eredményét adja vissza."
     }
   ],
   "9u/Ae3": [
     {
       "type": 0,
-      "value": "Returns true if both parameters are true"
+      "value": "Igaz értéket ad vissza, ha mindkét paraméter igaz."
     }
   ],
   "ANbEeQ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose values you want."
+      "value": "Kötelező megadni. Azon művelet neve, melynek értékei szükségesek."
     }
   ],
   "ArTh0/": [
     {
       "type": 0,
-      "value": "Required. The string to encode into base64 representation."
+      "value": "Kötelező megadni. A Base64-ábrázolással kódolandó sztring."
     }
   ],
   "B2s0iG": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Kötelező megadni. A beolvasandó rész indexe."
     }
   ],
   "BCAnZP": [
     {
       "type": 0,
-      "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
+      "value": "Egyetlen formátummegadó karakter, vagy pedig egy egyéni formátumminta, mely az időbélyeg értékének formátumát határozza meg. Ha nincs megadva formátum, a rendszer az ISO 8601 formátumot („o”) használja."
     }
   ],
   "BHe7qY": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Kötelező megadni. Az URI-ként kódolt sztring."
     }
   ],
   "BKL0ZG": [
@@ -564,7 +564,7 @@
   "BQCPY7": [
     {
       "type": 0,
-      "value": "Required. The string to decode the URL-unsafe characters from."
+      "value": "Kötelező megadni. Az a sztring, amelynek URL-címekben nem biztonságos karaktereit dekódolni kell."
     }
   ],
   "Bn8iTS": [
@@ -576,13 +576,13 @@
   "BuYrD3": [
     {
       "type": 0,
-      "value": "A single format specifier that indicates how to format the value of this Guid."
+      "value": "Egyetlen formátummegadó, mely a GUID azonosító formátumát határozza meg."
     }
   ],
   "BxITRH": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than comparing object."
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy nagyobb-e a hasonlított objektumnál."
     }
   ],
   "CG772M": [
@@ -594,13 +594,13 @@
   "D+Ptnq": [
     {
       "type": 0,
-      "value": "Returns the path and query from a URI"
+      "value": "Az elérési út és a lekérdezés visszaadása egy URI azonosítóból"
     }
   ],
   "D1lgsT": [
     {
       "type": 0,
-      "value": "Required. The string from which to remove leading and trailing whitespace."
+      "value": "Kötelező megadni. Az a sztring, amelyből el kell távolítani a kezdő és záró szóközöket."
     }
   ],
   "DFo+mo": [
@@ -618,7 +618,7 @@
   "ECZC6Y": [
     {
       "type": 0,
-      "value": "Converts the parameter to a decimal number"
+      "value": "Tizedestörtté alakítja a paramétert"
     }
   ],
   "ERAWZA": [
@@ -630,37 +630,37 @@
   "EZz5q7": [
     {
       "type": 0,
-      "value": "Required. The index of where to start extracting the substring."
+      "value": "Kötelező megadni. A sztringrészlet kinyerésének elejét jelző hely indexe."
     }
   ],
   "F3IDl8": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to add."
+      "value": "Kötelező megadni. A megadott időegység hozzáadandó mennyisége."
     }
   ],
   "FDF4Qb": [
     {
       "type": 0,
-      "value": "Returns a parameter value that is defined in the definition"
+      "value": "Egy olyan paraméterértéket ad vissza, amely meg van adva a definícióban."
     }
   ],
   "FN5zHQ": [
     {
       "type": 0,
-      "value": "Returns a section of a string defined by the start index and the end index"
+      "value": "Egy sztringnek a kezdőindex és a záróindex által meghatározott szakaszát adja vissza."
     }
   ],
   "FS+/Tb": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "A trigger többrészes kimenetéből az egyik rész törzsét adja vissza."
     }
   ],
   "FVavKy": [
     {
       "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
+      "value": "Egy átadott sztring típusú időbélyegnek az év napját megadó összetevőjét adja vissza."
     }
   ],
   "FXLR5M": [
@@ -698,13 +698,13 @@
   "Fgq3Db": [
     {
       "type": 0,
-      "value": "Required. The collection to take the last object from."
+      "value": "Kötelező megadni. A gyűjtemény, melyből be kell olvasni az utolsó objektumot."
     }
   ],
   "Fh2HDb": [
     {
       "type": 0,
-      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Egy sztringbeli érték első indexét adja vissza (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
     }
   ],
   "FslNgF": [
@@ -716,31 +716,31 @@
   "G0XYrd": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Kötelező megadni. Az a sztring, amely az értéket tartalmazhatja."
     }
   ],
   "GAY7b8": [
     {
       "type": 0,
-      "value": "Returns the query from a URI"
+      "value": "A lekérdezés visszaadása egy URI azonosítóból"
     }
   ],
   "GLd3MU": [
     {
       "type": 0,
-      "value": "Required. The object to find inside the Within collection."
+      "value": "Kötelező megadni. A tartalmazó gyűjteményben keresendő objektum."
     }
   ],
   "GYvF54": [
     {
       "type": 0,
-      "value": "Referencing functions"
+      "value": "Hivatkozási függvények"
     }
   ],
   "GcG0qf": [
     {
       "type": 0,
-      "value": "Returns true if the parameters are false"
+      "value": "Igaz értéket ad vissza, ha a paraméterek hamisak."
     }
   ],
   "Gmya+V": [
@@ -764,25 +764,25 @@
   "H17jEE": [
     {
       "type": 0,
-      "value": "URI parsing functions"
+      "value": "URI-elemzési függvények"
     }
   ],
   "H1wnHr": [
     {
       "type": 0,
-      "value": "Required. The string to slice."
+      "value": "Kötelező megadni. A szeletelni kívánt sztring."
     }
   ],
   "H8bEUn": [
     {
       "type": 0,
-      "value": "Required. The number that Subtrahend is removed from."
+      "value": "Kötelező megadni. A szám, amelyből a rendszer kivonja a kivonandót."
     }
   ],
   "HDqP2g": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Kötelező megadni. A visszaadandó űrlapadatérték kulcsneve."
     }
   ],
   "HfrUId": [
@@ -800,37 +800,37 @@
   "IW2MjQ": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+      "value": "Egy UTC formátumban átadott sztring típusú időbélyeg konvertálása egy célidőzónára"
     }
   ],
   "Ip7Iax": [
     {
       "type": 0,
-      "value": "Returns the index of the n-th occurrence of a value within a string (case-insensitive, invariant culture)"
+      "value": "Egy értéknek egy sztringben való n. előfordulásának indexét adja vissza (a kis- és nagybetűk nincsenek megkülönböztetve, invariáns kulturális környezet)."
     }
   ],
   "IpVwYT": [
     {
       "type": 0,
-      "value": "Returns the first non-null object in the arguments passed in"
+      "value": "Az átadott argumentumok első nem nullértékű objektumát adja vissza."
     }
   ],
   "J5/7vN": [
     {
       "type": 0,
-      "value": "Converts a string to lowercase using the casing rules of the invariant culture"
+      "value": "Sztring átalakítása kisbetűssé az invariáns kulturális környezet kis- és nagybetű-használati szabályai alapján."
     }
   ],
   "JNQHws": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time."
+      "value": "Kötelező megadni. Az időt tartalmazó sztring."
     }
   ],
   "JSfWJ0": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a boolean."
+      "value": "Kötelező megadni. A logikai értékké alakítandó érték."
     }
   ],
   "Jaz3EC": [
@@ -848,13 +848,13 @@
   "Ji6663": [
     {
       "type": 0,
-      "value": "Returns true if a dictionary contains a key, if an array contains a value, or if a string contains a substring"
+      "value": "Igaz értéket ad vissza, ha egy szótár kulcsot tartalmaz, ha egy tömb értéket tartalmaz, vagy ha egy sztring sztringrészletet tartalmaz."
     }
   ],
   "JjTfC7": [
     {
       "type": 0,
-      "value": "Required. The number to be formatted."
+      "value": "Kötelező. A formázni kívánt szám."
     }
   ],
   "JnlcZQ": [
@@ -866,43 +866,43 @@
   "Jq2Y/o": [
     {
       "type": 0,
-      "value": "Required. The numeric format string."
+      "value": "Kötelező. A numerikus formázó sztring."
     }
   ],
   "K50znc": [
     {
       "type": 0,
-      "value": "Required. The object to add a new property to."
+      "value": "Kötelező megadni. Az objektum, melyhez hozzá kívánja adni az új tulajdonságot."
     }
   ],
   "K90YEU": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string"
+      "value": "Karakterek részhalmazát adja vissza egy sztringből."
     }
   ],
   "L+PY+j": [
     {
       "type": 0,
-      "value": "Required. The number of objects to take from the Collection. Must be a positive integer."
+      "value": "Kötelező megadni. A gyűjteményből beolvasandó objektumok száma. Pozitív egész számnak kell lennie."
     }
   ],
   "L0UAzs": [
     {
       "type": 0,
-      "value": "Returns the day of week component of a string timestamp"
+      "value": "Egy sztring típusú időbélyegnek a hét napját megadó összetevőjét adja vissza."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
-      "value": "Returns the scheme from a URI"
+      "value": "A séma visszaadása egy URI azonosítóból"
     }
   ],
   "LoGUT3": [
     {
       "type": 0,
-      "value": "When used inside for-each loop, this function returns the current item of the specified loop."
+      "value": "For-each ciklusban való használat esetén ez a függvény a megadott ciklus aktuális elemét adja vissza."
     }
   ],
   "Lub7NN": [
@@ -926,31 +926,31 @@
   "M8Aqm4": [
     {
       "type": 0,
-      "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
+      "value": "Nem kötelező. Annak a hatóköri műveletnek a neve, ahol az adott hatókör legfelső szintű műveleteinek bemeneteit és kimeneteit szeretné használni."
     }
   ],
   "M9mzP6": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Kötelező megadni. A 2. összeadandóhoz hozzáadandó szám."
     }
   ],
   "MDbmMw": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object must be in all collections passed in to appear in the result."
+      "value": "Kötelező megadni. A kiértékelendő gyűjtemények. Egy adott objektumnak minden átadott gyűjteményben szerepelnie kell ahhoz, hogy megjelenjen az eredményben."
     }
   ],
   "MKTdNk": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to binary representation."
+      "value": "Kötelező megadni. A bináris ábrázolásra átalakítandó adat-URI."
     }
   ],
   "MTR4Vg": [
     {
       "type": 0,
-      "value": "Returns the current timestamp as a string"
+      "value": "Az aktuális időbélyeget adja vissza sztringként."
     }
   ],
   "Mb+Eaq": [
@@ -974,7 +974,7 @@
   "N2CF0J": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Kötelező megadni. A visszaadandó űrlapadatértékek kulcsneve."
     }
   ],
   "NPUFgH": [
@@ -986,7 +986,7 @@
   "O+8vRv": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a value"
+      "value": "Egy értéket bináris értékként ad vissza."
     }
   ],
   "O36+wl": [
@@ -998,7 +998,7 @@
   "OD8igU": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Kötelező megadni. A forrásidőzóna nevét tartalmazó sztring. A részleteket lásd: https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
   "OFKZzQ": [
@@ -1016,7 +1016,7 @@
   "OVvieE": [
     {
       "type": 0,
-      "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
+      "value": "A legfelső szintű hatóköri műveletek eredményeit adja vissza a megadott hatóköri műveletben, például „For_each”, „Until” vagy „Scope action”."
     }
   ],
   "Oib1mL": [
@@ -1040,13 +1040,13 @@
   "OihxQE": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when parsing the date time string."
+      "value": "Nem kötelező. A dátumot/időt megadó sztring elemzéséhez használni kívánt területi beállítás."
     }
   ],
   "OjGJ8Y": [
     {
       "type": 0,
-      "value": "Returns the host from a URI"
+      "value": "Az eszköz visszaadása egy URI azonosítóból"
     }
   ],
   "OnrO5/": [
@@ -1058,7 +1058,7 @@
   "P2A5dB": [
     {
       "type": 0,
-      "value": "Required. This value is the number of integers that is in the array."
+      "value": "Kötelező megadni. Az érték a tömbben található egész számok száma."
     }
   ],
   "P4rEwD": [
@@ -1070,7 +1070,7 @@
   "P8ZBF9": [
     {
       "type": 0,
-      "value": "Required. The collection to take the first object from."
+      "value": "Kötelező megadni. A gyűjtemény, melyből be kell olvasni az első objektumot."
     }
   ],
   "PF87Ew": [
@@ -1082,7 +1082,7 @@
   "PKMkb/": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Kötelező megadni. Az 1. összeadandóhoz hozzáadandó szám."
     }
   ],
   "PP63jY": [
@@ -1100,7 +1100,7 @@
   "PRnqYA": [
     {
       "type": 0,
-      "value": "Required. The number of seconds to add. Can be negative to subtract seconds."
+      "value": "Kötelező megadni. A hozzáadni kívánt másodpercek száma. Lehet negatív érték is másodpercek kivonása céljából."
     }
   ],
   "PaPPLr": [
@@ -1112,13 +1112,13 @@
   "PfCJlN": [
     {
       "type": 0,
-      "value": "Workflow functions"
+      "value": "Munkafolyamat-függvények"
     }
   ],
   "Pvm0xB": [
     {
       "type": 0,
-      "value": "Returns the base 64 representation of the input string"
+      "value": "A bemeneti sztringet Base 64 kódolású sztringként adja vissza."
     }
   ],
   "Q/7unA": [
@@ -1130,13 +1130,13 @@
   "Q0xpPQ": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less or equal to the comparing object."
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy a hasonlított objektumnál kisebb vagy azzal egyenlő-e."
     }
   ],
   "QEp3C8": [
     {
       "type": 0,
-      "value": "Convert the input to a JSON type value"
+      "value": "A bemenet átalakítása JSON típusú értékké."
     }
   ],
   "QQYzHC": [
@@ -1156,13 +1156,13 @@
   "QZBPUx": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded trigger output"
+      "value": "Egy olyan értéket ad vissza az űrlapadatokból vagy a trigger űrlapként kódolt kimenetéből, amely megegyezik a kulcsnévvel."
     }
   ],
   "QZrxUk": [
     {
       "type": 0,
-      "value": "String functions"
+      "value": "Sztringfüggvények"
     }
   ],
   "QbJDi7": [
@@ -1174,7 +1174,7 @@
   "QeE0k/": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Kötelező megadni. A binárissá alakítandó érték."
     }
   ],
   "QknZQ1": [
@@ -1186,13 +1186,13 @@
   "Qn8qxn": [
     {
       "type": 0,
-      "value": "Returns a string in date format"
+      "value": "Egy dátumformátumú sztringet ad vissza."
     }
   ],
   "QpRRt3": [
     {
       "type": 0,
-      "value": "Required. The string to delimit items with."
+      "value": "Kötelező megadni. Az elemek elhatárolásához használandó sztring."
     }
   ],
   "QrQDdp": [
@@ -1214,7 +1214,7 @@
   "RX2Shm": [
     {
       "type": 0,
-      "value": "Required. The string that is split."
+      "value": "Kötelező megadni. A szétvágandó sztring."
     }
   ],
   "RhH4pF": [
@@ -1252,13 +1252,13 @@
   "SKXopi": [
     {
       "type": 0,
-      "value": "Convert the parameter to an integer"
+      "value": "A paraméter átalakítása egész számmá."
     }
   ],
   "SLZ0n4": [
     {
       "type": 0,
-      "value": "Checks if the string starts with a value (case-insensitive, invariant culture)"
+      "value": "Annak ellenőrzése, hogy a sztring egy adott értékkel kezdődik-e (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
     }
   ],
   "SXb47U": [
@@ -1274,7 +1274,7 @@
   "SY04wn": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Kötelező megadni. Az űrlapadatokat tartalmazó vagy űrlapként formázott választ adó művelet neve."
     }
   ],
   "T7zcR6": [
@@ -1292,13 +1292,13 @@
   "TI44R1": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Egy tömb összes elemét tartalmazó, az elemeket határolóval összekötő sztringet ad vissza."
     }
   ],
   "TO7qos": [
     {
       "type": 0,
-      "value": "Returns the start of the month of a string timestamp"
+      "value": "Egy átadott sztring típusú időbélyegből a hónap kezdetét adja vissza."
     }
   ],
   "TZv5JE": [
@@ -1322,7 +1322,7 @@
   "Twfck/": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 1 with."
+      "value": "Kötelező megadni. A szám, amellyel meg kell szorozni az 1. szorzandót."
     }
   ],
   "Tz5jTR": [
@@ -1334,7 +1334,7 @@
   "U3iWVd": [
     {
       "type": 0,
-      "value": "Generates an array of integers starting from a certain number"
+      "value": "Egész számokból álló tömb létrehozása egy meghatározott számmal kezdődően."
     }
   ],
   "UCNM4L": [
@@ -1346,7 +1346,7 @@
   "UHCVNK": [
     {
       "type": 0,
-      "value": "Replaces a string with a given string"
+      "value": "Sztring lecserélése egy adott sztringre."
     }
   ],
   "USVffu": [
@@ -1370,7 +1370,7 @@
   "VVfYvq": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Kötelező megadni. Az osztóval elosztandó szám."
     }
   ],
   "VXBWrq": [
@@ -1404,25 +1404,25 @@
   "W6FdMh": [
     {
       "type": 0,
-      "value": "Required. The name of the new property."
+      "value": "Kötelező megadni. Az új tulajdonság neve."
     }
   ],
   "WS9kXD": [
     {
       "type": 0,
-      "value": "Required. The first integer in the array."
+      "value": "Kötelező megadni. A tömbben található első egész szám."
     }
   ],
   "WUe3DY": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs"
+      "value": "A trigger().outputs rövid függvényneve."
     }
   ],
   "WgoP7R": [
     {
       "type": 0,
-      "value": "Returns the result from multiplying the two numbers"
+      "value": "A két szám szorzásának eredményét adja vissza."
     }
   ],
   "X8JjjT": [
@@ -1446,13 +1446,13 @@
   "XCunbR": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs"
+      "value": "Az actions('actionName').outputs. rövid függvényneve."
     }
   ],
   "XEuptL": [
     {
       "type": 0,
-      "value": "Combines any number of strings together"
+      "value": "Tetszőleges számú sztring kombinációjának létrehozása."
     }
   ],
   "XFFpu/": [
@@ -1494,13 +1494,13 @@
   "XtuP5e": [
     {
       "type": 0,
-      "value": "Math functions"
+      "value": "Matematikai függvények"
     }
   ],
   "Xx/naD": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose body outputs you want."
+      "value": "Kötelező megadni. Azon művelet neve, melynek törzskimenetei szükségesek."
     }
   ],
   "Y0H9aX": [
@@ -1512,7 +1512,7 @@
   "Y9kBz5": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a data URI"
+      "value": "Adat-URI bináris értékként való visszaadása."
     }
   ],
   "YHsAKl": [
@@ -1540,13 +1540,13 @@
   "YKXmKD": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime trigger"
+      "value": "Lehetővé teszi, hogy egy kifejezés az értékét más JSON-alapú név–érték párokból vagy a futásidejű trigger kimenetéből származtassa."
     }
   ],
   "YaFjJQ": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
+      "value": "Egyetlen olyan tömböt vagy objektumot ad vissza, amely a függvénynek átadott tömbök vagy objektumok bármelyikében szereplő elemeket tartalmazza. A függvény paramétereit egy objektumhalmazban vagy egy tömbökből álló halmazban (a kettő kombinációjával viszont nem) lehet megadni. Két egyforma nevű objektum szereplése esetén a végső objektumban az utolsó adott nevű objektum fog megjelenni."
     }
   ],
   "YoQara": [
@@ -1558,19 +1558,19 @@
   "ZME5hh": [
     {
       "type": 0,
-      "value": "Returns the day of month component of a string timestamp"
+      "value": "Egy sztring típusú időbélyegnek a hónap napját megadó összetevőjét adja vissza."
     }
   ],
   "ZUaz3Y": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs.body"
+      "value": "A trigger().outputs.body rövid függvényneve."
     }
   ],
   "ZaIeDG": [
     {
       "type": 0,
-      "value": "Required. The value the string may start with."
+      "value": "Kötelező megadni. Az érték, amellyel a sztring kezdődhet."
     }
   ],
   "ZbX8xq": [
@@ -1582,19 +1582,19 @@
   "a7j3gS": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Kötelező megadni. Az osztóval elosztandó szám."
     }
   ],
   "aAXnqw": [
     {
       "type": 0,
-      "value": "Required. The number of the occurrence of the substring to find."
+      "value": "Kötelező megadni. A keresett sztringrészlet előfordulásainak száma."
     }
   ],
   "aGyVJT": [
     {
       "type": 0,
-      "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
+      "value": "Kötelező megadni. A gyűjtemény elejéről eltávolítandó objektumok száma. Pozitív egész számnak kell lennie."
     }
   ],
   "bH5LtI": [
@@ -1614,7 +1614,7 @@
   "bTrk+S": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than or equal to value being compared to."
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy a vele összehasonlított értéknél nagyobb vagy azzal egyenlő-e."
     }
   ],
   "ba9yGJ": [
@@ -1626,7 +1626,7 @@
   "bf7078": [
     {
       "type": 0,
-      "value": "Returns the maximum value in the input array of numbers"
+      "value": "A legnagyobb értéket adja vissza a bemeneti számtömbből."
     }
   ],
   "bgfjqS": [
@@ -1638,13 +1638,13 @@
   "bzF/qn": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Kötelező megadni. A gyűjtemény, melyből be kell olvasni az első Count objektumokat."
     }
   ],
   "c3G/zq": [
     {
       "type": 0,
-      "value": "Returns an object with a property set to the provided value"
+      "value": "Egy objektumot ad vissza, melyben egy tulajdonság be lett állítva a megadott értékre"
     }
   ],
   "c6XbVI": [
@@ -1656,7 +1656,7 @@
   "cJm+ah": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Kötelező megadni. Az érték, melynek meg kell keresni az indexét."
     }
   ],
   "ci6ex1": [
@@ -1686,7 +1686,7 @@
   "cscezV": [
     {
       "type": 0,
-      "value": "Required. The collection to skip the first Count objects from."
+      "value": "Kötelező megadni. A gyűjtemény, melynek első Count objektumait ki kell hagyni."
     }
   ],
   "d3bSQA": [
@@ -1704,25 +1704,25 @@
   "dhvk0u": [
     {
       "type": 0,
-      "value": "Returns a string representation of a base 64 encoded string"
+      "value": "Egy Base 64 kódolású sztringet sztringként ad vissza."
     }
   ],
   "dqgt9y": [
     {
       "type": 0,
-      "value": "Convert the parameter to a Boolean"
+      "value": "A paraméter átalakítása logikai értékké."
     }
   ],
   "drM9Sl": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded action output"
+      "value": "Egy olyan értéktömböt ad vissza az űrlapadatokból vagy a művelet űrlapként kódolt kimenetéből, amely megegyezik a kulcsnévvel."
     }
   ],
   "dsz+Ae": [
     {
       "type": 0,
-      "value": "Splits the string using a separator"
+      "value": "Sztring kettéosztása elválasztóval."
     }
   ],
   "e4Onhn": [
@@ -1734,7 +1734,7 @@
   "eHgi14": [
     {
       "type": 0,
-      "value": "Required. The name of the variable whose value you want."
+      "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
     }
   ],
   "eRvRWs": [
@@ -1746,37 +1746,37 @@
   "eT+b9W": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by."
+      "value": "Kötelező megadni. A szám, mellyel el kell osztani az osztandót."
     }
   ],
   "egLI8P": [
     {
       "type": 0,
-      "value": "Required. The index of where the substring begins in parameter 1."
+      "value": "Kötelező megadni. A sztringrész kezdetének indexe az 1. paraméterben."
     }
   ],
   "f/lWTW": [
     {
       "type": 0,
-      "value": "Required. The objects to check for null."
+      "value": "Kötelező megadni. Az objektumok, melyeket ellenőrizni kell, hogy null értékűek-e."
     }
   ],
   "f1j0to": [
     {
       "type": 0,
-      "value": "Optional. The index of where to stop extracting the substring."
+      "value": "Nem kötelező. A sztringrészlet kinyerésének végét jelző hely indexe."
     }
   ],
   "fBQBw/": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than or equal to the second"
+      "value": "Igaz értéket ad vissza, ha az első argumentum nagyobb a másodiknál, vagy azzal egyenlő."
     }
   ],
   "fg/34o": [
     {
       "type": 0,
-      "value": "Logical functions"
+      "value": "Logikai függvények"
     }
   ],
   "ftwXvc": [
@@ -1794,19 +1794,19 @@
   "gDDfek": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time plus the specified time interval."
+      "value": "Ez a függvény a következő időbélyeget adja vissza: aktuális idő plusz a megadott időintervallum."
     }
   ],
   "gDY9xk": [
     {
       "type": 0,
-      "value": "Returns the result from dividing the two numbers"
+      "value": "Két szám hányadosát adja vissza."
     }
   ],
   "gIK0WG": [
     {
       "type": 0,
-      "value": "Required. A boolean value that determines which value the expression should return."
+      "value": "Kötelező megadni. Logikai érték, mely meghatározza a kifejezés által visszaadott értéket."
     }
   ],
   "gKq3Jv": [
@@ -1818,19 +1818,19 @@
   "gMhc5o": [
     {
       "type": 0,
-      "value": "Required. The string to combine into a single string."
+      "value": "Kötelező megadni. Az egyetlen sztringben egyesítendő sztringek."
     }
   ],
   "gQt/0f": [
     {
       "type": 0,
-      "value": "Conversion functions"
+      "value": "Konverziós függvények"
     }
   ],
   "gu9o9z": [
     {
       "type": 0,
-      "value": "When used inside until loop, this function returns the current iteration index of the specified loop."
+      "value": "Until ciklusban való használat esetén ez a függvény a megadott ciklus aktuális iterációs indexét adja vissza."
     }
   ],
   "hN7iBP": [
@@ -1868,7 +1868,7 @@
   "hPM6iC": [
     {
       "type": 0,
-      "value": "Returns the result from subtracting two numbers"
+      "value": "Két szám kivonásának eredményét adja vissza."
     }
   ],
   "hdnZ9Y": [
@@ -1900,7 +1900,7 @@
   "iCSHJG": [
     {
       "type": 0,
-      "value": "Converts a string to uppercase using the casing rules of the invariant culture"
+      "value": "Sztring átalakítása nagybetűssé az invariáns kulturális környezet kis- és nagybetű-használati szabályai alapján."
     }
   ],
   "iJOIca": [
@@ -1912,7 +1912,7 @@
   "iMicOQ": [
     {
       "type": 0,
-      "value": "Required. The URI to parse."
+      "value": "Kötelező megadni. Az elemezni kívánt URI."
     }
   ],
   "iRjBf4": [
@@ -1952,43 +1952,43 @@
   "j2MU0b": [
     {
       "type": 0,
-      "value": "Returns an object with a property removed"
+      "value": "Egy objektumot ad vissza, melyből el lett távolítva egy tulajdonság"
     }
   ],
   "j39557": [
     {
       "type": 0,
-      "value": "Returns the value of the variable specified."
+      "value": "A megadott változó értékének visszaadása."
     }
   ],
   "jHHF/u": [
     {
       "type": 0,
-      "value": "Returns a random integer from a specified range, which is inclusive only at the starting end."
+      "value": "Egy véletlenszerű egész számot ad vissza egy megadott tartományból, amely csak a kezdő végnél inkluzív."
     }
   ],
   "jKsMS6": [
     {
       "type": 0,
-      "value": "Required. The expression that will be negated."
+      "value": "Kötelező megadni. A kifejezés, amelyet negálni kell."
     }
   ],
   "jQ0Aqj": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a string."
+      "value": "Kötelező megadni. A sztringgé alakítandó érték."
     }
   ],
   "jVpanH": [
     {
       "type": 0,
-      "value": "Required. A base64 input string."
+      "value": "Kötelező megadni. Base64 kódolású bemeneti sztring."
     }
   ],
   "jcA3Ig": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Kötelező megadni. A visszaadandó űrlapadatértékek kulcsneve."
     }
   ],
   "jfInxm": [
@@ -2000,7 +2000,7 @@
   "k/oqFL": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Kötelező megadni. A Base64 kódolású sztring."
     }
   ],
   "k41+13": [
@@ -2036,7 +2036,7 @@
   "kN6kce": [
     {
       "type": 0,
-      "value": "Returns a string representation of an input based64 string"
+      "value": "Egy Base 64 kódolású bementi sztringet sztringként ad vissza."
     }
   ],
   "kYivbS": [
@@ -2048,19 +2048,19 @@
   "kZuYgD": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second"
+      "value": "Igaz értéket ad vissza, ha az első argumentum kisebb a másodiknál."
     }
   ],
   "keb4r1": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal"
+      "value": "Igaz értéket ad vissza, ha két érték egyenlő."
     }
   ],
   "knylNW": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that could be returned."
+      "value": "Kötelező megadni. Az érték a legnagyobb visszaadható egész szám utáni egész szám."
     }
   ],
   "l36V56": [
@@ -2102,7 +2102,7 @@
   "ljAOR6": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs.body"
+      "value": "Az actions('actionName').outputs.body rövid függvényneve."
     }
   ],
   "lztiwS": [
@@ -2126,73 +2126,73 @@
   "mGUdCO": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time minus the specified time interval."
+      "value": "Ez a függvény a következő időbélyeget adja vissza: aktuális idő mínusz a megadott időintervallum."
     }
   ],
   "mGpKsl": [
     {
       "type": 0,
-      "value": "Returns a string representation of a data URI"
+      "value": "Adat-URI sztringként való visszaadása."
     }
   ],
   "mPakaD": [
     {
       "type": 0,
-      "value": "Url encodes the input string"
+      "value": "A bemeneti sztringet URl-ként kódolja."
     }
   ],
   "mZRMD9": [
     {
       "type": 0,
-      "value": "Required. The string to convert to lower casing. If a character in the string does not have a lowercase equivalent, the character is included unchanged in the returned string."
+      "value": "Kötelező megadni. A kisbetűssé alakítandó sztring. A sztring azon karakterei, melyeknek nincs kisbetűs megfelelője, változatlanul fognak szerepelni a visszaadott sztringben."
     }
   ],
   "n35O/+": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a floating-point number."
+      "value": "Kötelező megadni. A lebegőpontos számmá alakítandó érték."
     }
   ],
   "nGds/r": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than or equal to value being compared to."
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy a vele összehasonlított értéknél kisebb vagy azzal egyenlő-e."
     }
   ],
   "nHseED": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the future."
+      "value": "Kötelező megadni. Az időegységek azon mennyisége, amellyel a kívánt időpont a jövőben van."
     }
   ],
   "nTA155": [
     {
       "type": 0,
-      "value": "Required. The name of the property to remove."
+      "value": "Kötelező megadni. Az eltávolítandó tulajdonság neve."
     }
   ],
   "ngsC44": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than comparing object."
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy kisebb-e, mint a hasonlított objektum."
     }
   ],
   "nkk1mu": [
     {
       "type": 0,
-      "value": "Adds an integer number of minutes to a string timestamp passed in"
+      "value": "Egy egész számmal megadott percszám hozzáadása az átadott sztring típusú időbélyeghez."
     }
   ],
   "o/0SEj": [
     {
       "type": 0,
-      "value": "Returns the last element in the array or string passed in"
+      "value": "Az átadott tömb vagy sztring utolsó elemét adja vissza."
     }
   ],
   "o14STH": [
     {
       "type": 0,
-      "value": "Required. The XML on which to evaluate the XPath expression."
+      "value": "Kötelező megadni. Az XML-fájl, melyen ki kell értékelni az XPath-kifejezést."
     }
   ],
   "o1HOyf": [
@@ -2212,7 +2212,7 @@
   "oAFcW6": [
     {
       "type": 0,
-      "value": "Required. The dataURI to decode into a binary representation."
+      "value": "Kötelező megadni. A bináris ábrázolásúként dekódolandó adat-URI."
     }
   ],
   "oV0xQ9": [
@@ -2224,7 +2224,7 @@
   "p/0r2N": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Kötelező megadni. A visszaadandó űrlapadatérték kulcsneve."
     }
   ],
   "p16/4S": [
@@ -2242,7 +2242,7 @@
   "pOTcUO": [
     {
       "type": 0,
-      "value": "Required. The values to combine into an array."
+      "value": "Kötelező megadni. A tömbben egyesítendő értékek."
     }
   ],
   "pRUJff": [
@@ -2254,25 +2254,25 @@
   "pXmFGf": [
     {
       "type": 0,
-      "value": "Covert the input to an Xml type value"
+      "value": "A bemenet átalakítása XML típusú értékké."
     }
   ],
   "pYtSyE": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by. After the division, the remainder is taken."
+      "value": "Kötelező megadni. A szám, mellyel el kell osztani az osztandót. Az osztás után a függvény a maradékot használja fel."
     }
   ],
   "pcuZKB": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in. The parameters for the function can either be a set of objects or a set of arrays (not a mixture of both). If there are two objects with the same name, the last object with that name appears in the final object."
+      "value": "Egyetlen olyan tömböt vagy objektumot ad vissza, amely az átadott tömbök vagy objektumok közös elemeit tartalmazza. A függvény paramétereit egy objektumhalmazban vagy egy tömbökből álló halmazban (a kettő kombinációjával viszont nem) lehet megadni. Két egyforma nevű objektum szereplése esetén a végső objektumban az utolsó adott nevű objektum fog megjelenni."
     }
   ],
   "pozypE": [
     {
       "type": 0,
-      "value": "Trims leading and trailing whitespace from a string"
+      "value": "A kezdő és záró szóközök levágása egy sztringről"
     }
   ],
   "pr9GwA": [
@@ -2284,25 +2284,25 @@
   "q/+Uex": [
     {
       "type": 0,
-      "value": "Returns an XML node, nodeset or value as JSON from the provided XPath expression"
+      "value": "Egy XML-csomópontot, -csomópontkészlet vagy értéket ad vissza JSON formájában a megadott XPath-kifejezés alapján"
     }
   ],
   "q2OCEx": [
     {
       "type": 0,
-      "value": "Required. The value to assign to the property."
+      "value": "Kötelező megadni. A tulajdonsághoz hozzárendelendő érték."
     }
   ],
   "q2w8Sk": [
     {
       "type": 0,
-      "value": "Convert the parameter to a string"
+      "value": "A paraméter átalakítása sztringgé."
     }
   ],
   "q87X20": [
     {
       "type": 0,
-      "value": "Adds an integer number of seconds to a string timestamp passed in"
+      "value": "Egy egész számmal megadott másodpercszám hozzáadása az átadott sztring típusú időbélyeghez."
     }
   ],
   "qGfwxW": [
@@ -2314,13 +2314,13 @@
   "qJpnIL": [
     {
       "type": 0,
-      "value": "Checks if the string ends with a value (case-insensitive, invariant culture)"
+      "value": "Annak ellenőrzése, hogy a sztring egy adott értékre végződik-e (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
     }
   ],
   "qSejoi": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than or equal to the second"
+      "value": "Igaz értéket ad vissza, ha az első argumentum kisebb a másodiknál, vagy azzal egyenlő."
     }
   ],
   "qSt0Sb": [
@@ -2364,19 +2364,19 @@
   "qc5S69": [
     {
       "type": 0,
-      "value": "Returns the number of elements in an array or string"
+      "value": "Egy tömb vagy sztring elemeinek számát adja vissza."
     }
   ],
   "qnI4Y1": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an integer."
+      "value": "Kötelező megadni. Az egész számmá alakítandó érték."
     }
   ],
   "r8aZXs": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime action"
+      "value": "Lehetővé teszi, hogy egy kifejezés az értékét más JSON-alapú név–érték párokból vagy a futásidejű művelet kimenetéből származtassa."
     }
   ],
   "r9SVE4": [
@@ -2400,43 +2400,43 @@
   "raBiud": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the maximum value, or the first value of a set."
+      "value": "Kötelező megadni. Egy értéktömb, melyben meg kell keresni a maximális értéket, vagy pedig egy halmaz első értéke."
     }
   ],
   "rcz4w4": [
     {
       "type": 0,
-      "value": "Returns a URI encoded representation of a value"
+      "value": "Egy értéket URI-ként kódolt értékként ad vissza."
     }
   ],
   "s5RV9B": [
     {
       "type": 0,
-      "value": "Returns the day of year component of a string timestamp"
+      "value": "Egy sztring típusú időbélyegnek az év napját megadó összetevőjét adja vissza."
     }
   ],
   "sDkAVZ": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded trigger output"
+      "value": "Egy olyan értéktömböt ad vissza az űrlapadatokból vagy a trigger űrlapként kódolt kimenetéből, amely megegyezik a kulcsnévvel."
     }
   ],
   "sZ0G/Z": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to add."
+      "value": "Kötelező megadni. A hozzáadandó intervallumban megadott időegységet tartalmazó sztring."
     }
   ],
   "sbPZ9S": [
     {
       "type": 0,
-      "value": "Required. The collection to check if it is empty."
+      "value": "Kötelező megadni. A gyűjtemény, melyet ellenőrizni kell, hogy üres-e."
     }
   ],
   "sfJTHV": [
     {
       "type": 0,
-      "value": "Required. The number to remove from the Minuend."
+      "value": "Kötelező megadni. A szám, amelyet ki kell vonni a kisebbítendőből."
     }
   ],
   "shF9tZ": [
@@ -2448,7 +2448,7 @@
   "soqP+Z": [
     {
       "type": 0,
-      "value": "Returns true if either parameter is true"
+      "value": "Igaz értéket ad vissza, ha az egyik paraméter igaz."
     }
   ],
   "ss5JPH": [
@@ -2460,13 +2460,13 @@
   "t+XCkg": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the destination time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Kötelező megadni. A célidőzóna nevét tartalmazó sztring. A részleteket lásd: https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
   "tE7Zam": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action"
+      "value": "A triggert vagy műveletet aktiváló URL-cím visszaadása."
     }
   ],
   "tImHz/": [
@@ -2490,13 +2490,13 @@
   "tLZ9Sh": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Kötelező megadni. A beolvasandó rész indexe."
     }
   ],
   "tMRPnG": [
     {
       "type": 0,
-      "value": "This function provides you details for the workflow itself at runtime"
+      "value": "Ez a függvény futásidőben magáról a munkafolyamatról szolgáltat adatokat."
     }
   ],
   "tNoZx2": [
@@ -2508,13 +2508,13 @@
   "tZj2Xn": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than the second"
+      "value": "Igaz értéket ad vissza, ha az első argumentum nagyobb a másodiknál."
     }
   ],
   "taPCmY": [
     {
       "type": 0,
-      "value": "Required. The number of hours to add. Can be negative to subtract hours."
+      "value": "Kötelező megadni. A hozzáadni kívánt órák száma. Lehet negatív érték is órák kivonása céljából."
     }
   ],
   "uN4zFU": [
@@ -2526,25 +2526,25 @@
   "uR9WuI": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object that appears in any of the collections also appears in the result."
+      "value": "Kötelező megadni. A kiértékelendő gyűjtemények. Az eredményben minden olyan objektum megjelenik, mely a gyűjtemények bármelyikében szerepel."
     }
   ],
   "uUlBZ8": [
     {
       "type": 0,
-      "value": "Adds an integer number of hours to a string timestamp passed in"
+      "value": "Egy egész számmal megadott óraszám hozzáadása az átadott sztring típusú időbélyeghez."
     }
   ],
   "uc/PoD": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the past."
+      "value": "Kötelező megadni. Az időegységek azon mennyisége, amellyel a kívánt időpont a múltban van."
     }
   ],
   "uczA5c": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Kötelező megadni. Az a sztring, amely az értéket tartalmazhatja."
     }
   ],
   "ut5Med": [
@@ -2556,25 +2556,25 @@
   "uzsleE": [
     {
       "type": 0,
-      "value": "Creates an array from the parameters"
+      "value": "Tömb létrehozása a paraméterekből."
     }
   ],
   "v39HKj": [
     {
       "type": 0,
-      "value": "Generates a globally unique string (GUID)"
+      "value": "Globálisan egyedi sztring (GUID) létrehozása"
     }
   ],
   "vEBhDX": [
     {
       "type": 0,
-      "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Egy sztringbeli érték utolsó indexét adja vissza (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
     }
   ],
   "vQcQkU": [
     {
       "type": 0,
-      "value": "Required. The value the string may end with."
+      "value": "Kötelező megadni. Az érték, amelyre a sztring végződhet."
     }
   ],
   "vSlNPe": [
@@ -2586,7 +2586,7 @@
   "va40BJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose outputs you want."
+      "value": "Kötelező megadni. Azon művelet neve, melynek kimenetei szükségesek."
     }
   ],
   "vwH/XV": [
@@ -2604,13 +2604,13 @@
   "wEaGWn": [
     {
       "type": 0,
-      "value": "Subtracts an integer number of a specified unit of time from a string timestamp passed in"
+      "value": "Egész számú megadott időegység kivonása egy átadott sztring típusú időbélyegből"
     }
   ],
   "wFCkpM": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the minimum value, or the first value of a set."
+      "value": "Kötelező megadni. Egy értéktömb, melyben meg kell keresni a minimális értéket, vagy pedig egy halmaz első értéke."
     }
   ],
   "wHYQyg": [
@@ -2622,31 +2622,31 @@
   "wQcEXt": [
     {
       "type": 0,
-      "value": "Required. The string that is searched for parameter 2 and updated with parameter 3, when parameter 2 is found in parameter 1."
+      "value": "Kötelező megadni. Az a sztring, melyben a függvény a 2. paramétert keresi, és amelyet a 3. paraméterrel frissít, ha a 2. paraméter előfordul az 1. paraméterben."
     }
   ],
   "wQsEwc": [
     {
       "type": 0,
-      "value": "Required. The length of the substring."
+      "value": "Kötelező megadni. A sztring hossza."
     }
   ],
   "wWVQuK": [
     {
       "type": 0,
-      "value": "Returns a specified value based on whether the expression resulted in true or false"
+      "value": "Egy megadott értéket ad vissza annak alapján, hogy a kifejezés eredménye igaz-e, vagy hamis."
     }
   ],
   "wmDUGV": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to UTC"
+      "value": "Egy forrásidőzónából átadott sztring típusú időbélyeg konvertálása UTC formátumba"
     }
   ],
   "wmw/ai": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either the array or object passed to this function"
+      "value": "Egyetlen tömböt vagy objektumot ad vissza a függvénynek átadott tömb vagy objektum összes elemével együtt."
     }
   ],
   "woJQhv": [
@@ -2658,25 +2658,25 @@
   "x0or2o": [
     {
       "type": 0,
-      "value": "Required. The collection for which to get the length."
+      "value": "Kötelező megadni. A gyűjtemény, melynek be kell olvasni a hosszát."
     }
   ],
   "xJ6vjn": [
     {
       "type": 0,
-      "value": "Returns a string representation of a URI encoded string"
+      "value": "Egy URI-ként kódolt sztringet sztringként ad vissza."
     }
   ],
   "xV/oyK": [
     {
       "type": 0,
-      "value": "Required. The name of the new or existing property."
+      "value": "Kötelező megadni. Az új vagy meglévő tulajdonság neve."
     }
   ],
   "xYyPR8": [
     {
       "type": 0,
-      "value": "Returns the path from a URI. If path is not specified, returns '/'"
+      "value": "Az elérési út visszaadása egy URI azonosítóból. Ha nincs megadva elérési út, „/” visszaadása"
     }
   ],
   "xt5TeT": [
@@ -2700,13 +2700,13 @@
   "y6BcVN": [
     {
       "type": 0,
-      "value": "Required. The string to escape URL-unsafe characters from."
+      "value": "Kötelező megadni. Az a sztring, amelynek URL-címekben nem biztonságos karaktereit fel kell oldani."
     }
   ],
   "yBrsFJ": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an array."
+      "value": "Kötelező megadni. A tömbbé alakítandó érték."
     }
   ],
   "yqRrQ/": [
@@ -2724,19 +2724,19 @@
   "zBMVKg": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a decimal number."
+      "value": "Kötelező megadni. A tizedestörtté alakítandó érték."
     }
   ],
   "zIDVd9": [
     {
       "type": 0,
-      "value": "Required. The string that is converted to a native type value."
+      "value": "Kötelező megadni. A natív típusú értékké alakítandó sztring."
     }
   ],
   "zcZpHT": [
     {
       "type": 0,
-      "value": "Converts a string, with optionally a locale and a format to a date"
+      "value": "Átalakít egy – opcionálisan területi beállítást és formátumot is tartalmazó – sztringet dátummá."
     }
   ],
   "ziYCiA": [
@@ -2754,13 +2754,13 @@
   "znGyyU": [
     {
       "type": 0,
-      "value": "Adds an integer number of a specified unit of time to a string timestamp passed in"
+      "value": "Egész számú megadott időegység hozzáadása egy átadott sztring típusú időbélyeghez"
     }
   ],
   "zxe9hh": [
     {
       "type": 0,
-      "value": "Required. The number of minutes to add. Can be negative to subtract minutes."
+      "value": "Kötelező megadni. A hozzáadni kívánt percek száma. Lehet negatív érték is percek kivonása céljából."
     }
   ]
 }

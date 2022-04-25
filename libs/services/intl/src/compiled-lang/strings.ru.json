@@ -8,13 +8,13 @@
   "+g+mch": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of an action"
+      "value": "Возвращает тело части в составных выходных данных действия"
     }
   ],
   "+lpuMl": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'false'."
+      "value": "Обязательное поле. Значение, которое нужно вернуть, если выражение имеет значение false."
     }
   ],
   "/I/U8L": [
@@ -32,49 +32,49 @@
   "/QqADs": [
     {
       "type": 0,
-      "value": "Returns the elements in the array starting at index Count"
+      "value": "Возвращает элементы в массиве, начиная со счетчика индекса"
     }
   ],
   "/doURb": [
     {
       "type": 0,
-      "value": "Convert the input to an array"
+      "value": "Преобразует входные данные в массив"
     }
   ],
   "/qchXQ": [
     {
       "type": 0,
-      "value": "Required. The collection to join items from."
+      "value": "Обязательное поле. Коллекция, элементы которой необходимо объединить."
     }
   ],
   "/ut0u7": [
     {
       "type": 0,
-      "value": "Returns the first Count elements from the array or string passed in"
+      "value": "Возвращает первый элемент счетчика из переданного в функцию массива или строки"
     }
   ],
   "07ZsoY": [
     {
       "type": 0,
-      "value": "Returns the start of the hour to a string timestamp passed in"
+      "value": "Возвращает начало часа в метку времени строки, переданную в функцию"
     }
   ],
   "09B9CU": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action. Note: This function can only be used in an httpWebhook and apiConnectionWebhook, not in a manual, recurrence, http, or apiConnection."
+      "value": "Возвращает URL-адрес для вызова триггера или действия. Примечание: эта функция может использоваться только в httpWebhook и apiConnectionWebhook. Она не может использоваться в manual, recurrence, http или apiConnection."
     }
   ],
   "0FzNJV": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Требуется. Строка в кодировке base64."
     }
   ],
   "0GqNGo": [
     {
       "type": 0,
-      "value": "Url decodes the input string"
+      "value": "Выполняет декодирование URL входной строки"
     }
   ],
   "0JTHTZ": [
@@ -86,7 +86,7 @@
   "0R2D5l": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a URI encoded string"
+      "value": "Возвращает двоичное представление сроки в кодировке URI"
     }
   ],
   "0ZlNtf": [
@@ -98,25 +98,25 @@
   "0i/6TR": [
     {
       "type": 0,
-      "value": "Required. The string to convert to upper casing. If a character in the string does not have an uppercase equivalent, the character is included unchanged in the returned string."
+      "value": "Обязательное поле. Строка, которую необходимо преобразовать в верхний регистр. Если у символа в строке нет соответствующего символа в верхнем регистре, этот символ включается в результирующую строку без изменения."
     }
   ],
   "0p+pJq": [
     {
       "type": 0,
-      "value": "Returns the remainder after dividing the two numbers (modulo)"
+      "value": "Возвращает остаток деления двух чисел (остаток целочисленного деления)"
     }
   ],
   "0qV0Qe": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Обязательное поле. Строка, которая может содержать значение."
     }
   ],
   "0uj1Li": [
     {
       "type": 0,
-      "value": "Returns a binary representation of an input data URI string"
+      "value": "Возвращает двоичное представление строки URI входных данных"
     }
   ],
   "0y5eia": [
@@ -128,13 +128,13 @@
   "1+Z8n9": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to String representation."
+      "value": "Требуется. URI данных, который преобразуется в представление строки."
     }
   ],
   "109OPL": [
     {
       "type": 0,
-      "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
+      "value": "Возвращает порт из URI. Если порт не указан, возвращает порт по умолчанию для протокола"
     }
   ],
   "1A1P5b": [
@@ -146,19 +146,19 @@
   "1D047X": [
     {
       "type": 0,
-      "value": "Required. The value to convert to XML."
+      "value": "Обязательное поле. Значение, которое необходимо преобразовать в код XML."
     }
   ],
   "1Fn5n+": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Требуется. Строка в кодировке URI."
     }
   ],
   "1NBvKu": [
     {
       "type": 0,
-      "value": "Convert the parameter argument to a floating-point number"
+      "value": "Преобразует аргумент параметра в число с плавающей запятой"
     }
   ],
   "1R6Vaa": [
@@ -226,13 +226,13 @@
   "1TE0e8": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Обязательное поле. Значение, индекс которого необходимо определить."
     }
   ],
   "1jhzOM": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than value being compared to."
+      "value": "Обязательное поле. Объект, который нужно сравнить со значением на отношение \"меньше\"."
     }
   ],
   "1zgFh1": [
@@ -244,13 +244,13 @@
   "23fENy": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a base 64 encoded string"
+      "value": "Возвращает двоичное представление строки в кодировке Base 64"
     }
   ],
   "23szE+": [
     {
       "type": 0,
-      "value": "Required. The value to convert to data URI."
+      "value": "Требуется. Значение, которое преобразуется в URI данных."
     }
   ],
   "2K2fAj": [
@@ -262,13 +262,13 @@
   "2cVEMV": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded action output"
+      "value": "Возвращает одно значение, соответствующее имени ключа из выходных данных действия form-data или form-encoded"
     }
   ],
   "2gzGrJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Требуется. Имя действия с ответом form-data или form-encoded."
     }
   ],
   "2mnU/w": [
@@ -286,7 +286,7 @@
   "3NhwIJ": [
     {
       "type": 0,
-      "value": "Required. The separator."
+      "value": "Обязательное поле. Разделитель."
     }
   ],
   "3kI7xF": [
@@ -298,37 +298,37 @@
   "3rzrWf": [
     {
       "type": 0,
-      "value": "Required. The object to remove the property from."
+      "value": "Требуется. Объект, из которого удаляется свойство."
     }
   ],
   "3vCCY7": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to subtract."
+      "value": "Обязательно. Количество указанных единиц измерения времени для вычитания."
     }
   ],
   "47kOXr": [
     {
       "type": 0,
-      "value": "Required. The lowest integer that can be returned."
+      "value": "Требуется. Наименьшее целое число, которое можно вернуть."
     }
   ],
   "4BrA0z": [
     {
       "type": 0,
-      "value": "Required. The number of days to add. Can be negative to subtract days."
+      "value": "Требуется. Число добавляемых дней. Значение может быть отрицательным для вычитания дней."
     }
   ],
   "4YKQAF": [
     {
       "type": 0,
-      "value": "Required. The unit of time specified in the interval."
+      "value": "Обязательно. Единица измерения времени интервала."
     }
   ],
   "4c0uPQ": [
     {
       "type": 0,
-      "value": "Required. The name of the parameter whose values you want."
+      "value": "Требуется. Имя параметра, значения которого требуются."
     }
   ],
   "4cVuMw": [
@@ -340,7 +340,7 @@
   "4vcnOA": [
     {
       "type": 0,
-      "value": "Returns the minimum value in the input array of numbers"
+      "value": "Возвращает минимальное значение во входном массиве чисел"
     }
   ],
   "4vmGh0": [
@@ -352,25 +352,25 @@
   "5J7j9k": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Обязательное поле. Выражение XPath для вычисления."
     }
   ],
   "5aa76N": [
     {
       "type": 0,
-      "value": "Returns the first element in the array or string passed in"
+      "value": "Возвращает первый элемент в переданном в функцию массиве или строке"
     }
   ],
   "5b0sKi": [
     {
       "type": 0,
-      "value": "Returns true if an object, array, or string is empty"
+      "value": "Возвращает значение true, если объект, массив или строка пусты"
     }
   ],
   "5cPiWA": [
     {
       "type": 0,
-      "value": "Required. The name of the loop whose item you want."
+      "value": "Требуется. Имя цикла, элемент которого нужно получить."
     }
   ],
   "5qzZMo": [
@@ -388,7 +388,7 @@
   "63/zYN": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than value being compared to."
+      "value": "Обязательное поле. Объект, который нужно сравнить со значением на отношение \"больше\"."
     }
   ],
   "6jiO7t": [
@@ -400,13 +400,13 @@
   "6jsWn/": [
     {
       "type": 0,
-      "value": "Required. The collection to search within."
+      "value": "Обязательное поле. Коллекция, в которой будет выполнен поиск."
     }
   ],
   "6kSpHL": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a multipart response."
+      "value": "Требуется. Имя действия с ответом в нескольких частях."
     }
   ],
   "6oqk+A": [
@@ -418,7 +418,7 @@
   "6qkBwz": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 2 with."
+      "value": "Требуется. Число, на которое умножается множитель 2."
     }
   ],
   "7GSk99": [
@@ -430,13 +430,13 @@
   "7QymrD": [
     {
       "type": 0,
-      "value": "Required. The string from which the substring is taken."
+      "value": "Обязательное поле. Строка, из которой извлекается подстрока."
     }
   ],
   "7aJqIH": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when formatting (defaults to 'en-us')."
+      "value": "Используемая при форматировании локаль, по умолчанию \"en-us\" (необязательно)."
     }
   ],
   "7k9jXx": [
@@ -448,7 +448,7 @@
   "7lnElz": [
     {
       "type": 0,
-      "value": "Returns the number of ticks (100 nanoseconds interval) since 1 January 0001 00:00:00 UT of a string timestamp"
+      "value": "Возвращает число тактов (интервалов в 100 наносекунд) с 1 января 0001 г. 00:00:00 (время в формате UT) для метки времени строки."
     }
   ],
   "7yEdSt": [
@@ -466,25 +466,25 @@
   "7zzPsK": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Обязательное поле. Строка, которая может содержать значение."
     }
   ],
   "8CWFEh": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'true'."
+      "value": "Обязательное поле. Значение, которое нужно вернуть, если выражение имеет значение true."
     }
   ],
   "8DFwxH": [
     {
       "type": 0,
-      "value": "Returns a formatted number string"
+      "value": "Возвращает отформатированную числовую строку"
     }
   ],
   "8FjOSh": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater or equal to the comparing object."
+      "value": "Обязательное поле. Объект, который нужно сравнить с другим объектом на отношение \"больше\" или на равенство."
     }
   ],
   "8L+oIz": [
@@ -496,19 +496,19 @@
   "8U0KPg": [
     {
       "type": 0,
-      "value": "Required. The string to be URI encoded."
+      "value": "Требуется. Строка, которая будет закодирована с помощью URI."
     }
   ],
   "8wr0zO": [
     {
       "type": 0,
-      "value": "Adds an integer number of days to a string timestamp passed in"
+      "value": "Добавляет целое число дней в метку времени строки, переданной в функцию"
     }
   ],
   "9/UeTh": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in"
+      "value": "Возвращает один массив или объект, который имеет общие элементы с переданными в функцию массивами или объектами"
     }
   ],
   "99vsJy": [
@@ -520,13 +520,13 @@
   "9JuvQ4": [
     {
       "type": 0,
-      "value": "Returns a data URI of a value"
+      "value": "Возвращает URI данных значения"
     }
   ],
   "9Jv3+1": [
     {
       "type": 0,
-      "value": "Returns an object with an additional property value pair"
+      "value": "Возвращает объект с дополнительной парой \"свойство-значение\""
     }
   ],
   "9b4xDa": [
@@ -538,43 +538,43 @@
   "9djnqI": [
     {
       "type": 0,
-      "value": "Returns the result from adding the two numbers"
+      "value": "Возвращает результат сложения двух чисел"
     }
   ],
   "9u/Ae3": [
     {
       "type": 0,
-      "value": "Returns true if both parameters are true"
+      "value": "Возвращает значение true, если оба параметра имеют значение true"
     }
   ],
   "ANbEeQ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose values you want."
+      "value": "Требуется. Имя действия, значения которого нужны."
     }
   ],
   "ArTh0/": [
     {
       "type": 0,
-      "value": "Required. The string to encode into base64 representation."
+      "value": "Требуется. Строка, которая кодируется в представление base64."
     }
   ],
   "B2s0iG": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Требуется. Индекс извлекаемой части."
     }
   ],
   "BCAnZP": [
     {
       "type": 0,
-      "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
+      "value": "Один символ описателя формата или шаблон с пользовательским форматом, который указывает, как форматировать значение этой метки времени. Если формат не указан, используется ISO 8601 (\"o\")."
     }
   ],
   "BHe7qY": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Требуется. Строка в кодировке URI."
     }
   ],
   "BKL0ZG": [
@@ -586,7 +586,7 @@
   "BQCPY7": [
     {
       "type": 0,
-      "value": "Required. The string to decode the URL-unsafe characters from."
+      "value": "Требуется. Строка, из которой декодируются небезопасные символы URL-адресов."
     }
   ],
   "Bn8iTS": [
@@ -598,13 +598,13 @@
   "BuYrD3": [
     {
       "type": 0,
-      "value": "A single format specifier that indicates how to format the value of this Guid."
+      "value": "Одинарный описатель формата, указывающий формат значения этого идентификатора GUID."
     }
   ],
   "BxITRH": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than comparing object."
+      "value": "Обязательное поле. Объект, который нужно сравнить с другим объектом на отношение \"больше\"."
     }
   ],
   "CG772M": [
@@ -616,13 +616,13 @@
   "D+Ptnq": [
     {
       "type": 0,
-      "value": "Returns the path and query from a URI"
+      "value": "Возвращает путь и запрос из URI"
     }
   ],
   "D1lgsT": [
     {
       "type": 0,
-      "value": "Required. The string from which to remove leading and trailing whitespace."
+      "value": "Требуется. Строка, из которой необходимо удалить пробел в начале и конце."
     }
   ],
   "DFo+mo": [
@@ -640,7 +640,7 @@
   "ECZC6Y": [
     {
       "type": 0,
-      "value": "Converts the parameter to a decimal number"
+      "value": "Преобразует параметр в десятичное число"
     }
   ],
   "ERAWZA": [
@@ -652,37 +652,37 @@
   "EZz5q7": [
     {
       "type": 0,
-      "value": "Required. The index of where to start extracting the substring."
+      "value": "Обязательно. Индекс места начала извлечения substring."
     }
   ],
   "F3IDl8": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to add."
+      "value": "Обязательно. Количество единиц измерения времени для добавления."
     }
   ],
   "FDF4Qb": [
     {
       "type": 0,
-      "value": "Returns a parameter value that is defined in the definition"
+      "value": "Возвращает значение параметра, заданное в определении"
     }
   ],
   "FN5zHQ": [
     {
       "type": 0,
-      "value": "Returns a section of a string defined by the start index and the end index"
+      "value": "Возвращает раздел строки, определяемый начальным и конечным индексом"
     }
   ],
   "FS+/Tb": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Возвращает тело части в составных выходных данных триггера"
     }
   ],
   "FVavKy": [
     {
       "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
+      "value": "Возвращает начало дня в метку времени строки, переданную в функцию"
     }
   ],
   "FXLR5M": [
@@ -742,13 +742,13 @@
   "Fgq3Db": [
     {
       "type": 0,
-      "value": "Required. The collection to take the last object from."
+      "value": "Обязательное поле. Коллекция, из которой необходимо извлечь последний объект."
     }
   ],
   "Fh2HDb": [
     {
       "type": 0,
-      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Возвращает первый индекс значения в строке (без учета регистра, инвариантные язык и региональные параметры)"
     }
   ],
   "FslNgF": [
@@ -760,31 +760,31 @@
   "G0XYrd": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Обязательное поле. Строка, которая может содержать значение."
     }
   ],
   "GAY7b8": [
     {
       "type": 0,
-      "value": "Returns the query from a URI"
+      "value": "Возвращает запрос из URI"
     }
   ],
   "GLd3MU": [
     {
       "type": 0,
-      "value": "Required. The object to find inside the Within collection."
+      "value": "Обязательное поле. Объект, который необходимо найти в коллекции."
     }
   ],
   "GYvF54": [
     {
       "type": 0,
-      "value": "Referencing functions"
+      "value": "Функции создания ссылок"
     }
   ],
   "GcG0qf": [
     {
       "type": 0,
-      "value": "Returns true if the parameters are false"
+      "value": "Возвращает значение true, если параметры имеют значение false"
     }
   ],
   "Gmya+V": [
@@ -808,25 +808,25 @@
   "H17jEE": [
     {
       "type": 0,
-      "value": "URI parsing functions"
+      "value": "Функции анализа URI"
     }
   ],
   "H1wnHr": [
     {
       "type": 0,
-      "value": "Required. The string to slice."
+      "value": "Обязательно. Строка для среза."
     }
   ],
   "H8bEUn": [
     {
       "type": 0,
-      "value": "Required. The number that Subtrahend is removed from."
+      "value": "Требуется. Число, из которого вычитается вычитаемое."
     }
   ],
   "HDqP2g": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Требуется. Имя ключа возвращаемого значения данных форм."
     }
   ],
   "HfrUId": [
@@ -844,43 +844,43 @@
   "IW2MjQ": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+      "value": "Преобразует переданную строку метки времени в формате UTC в целевой часовой пояс"
     }
   ],
   "Ip7Iax": [
     {
       "type": 0,
-      "value": "Returns the index of the n-th occurrence of a value within a string (case-insensitive, invariant culture)"
+      "value": "Возвращает индекс n-го вхождения значения в строке (без учета регистра, инвариантные язык и региональные параметры)"
     }
   ],
   "IpVwYT": [
     {
       "type": 0,
-      "value": "Returns the first non-null object in the arguments passed in"
+      "value": "Возвращает первый ненулевой объект в переданных в функцию аргументах"
     }
   ],
   "J5/7vN": [
     {
       "type": 0,
-      "value": "Converts a string to lowercase using the casing rules of the invariant culture"
+      "value": "Преобразует строку в нижний регистр, используя правила использования регистра инвариантных языка и региональных параметров"
     }
   ],
   "JNQHws": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time."
+      "value": "Требуется. Строка, которая содержит время."
     }
   ],
   "JSfWJ0": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a boolean."
+      "value": "Обязательное поле. Значение, которое преобразуется в логическое значение."
     }
   ],
   "Jaz3EC": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+      "value": "Преобразует переданную строку метки времени из исходного часового пояса в целевой часовой пояс"
     }
   ],
   "JbgTET": [
@@ -892,13 +892,13 @@
   "Ji6663": [
     {
       "type": 0,
-      "value": "Returns true if a dictionary contains a key, if an array contains a value, or if a string contains a substring"
+      "value": "Возвращает значение true, если словарь содержит ключ, массив содержит значение или строка содержит подстроку"
     }
   ],
   "JjTfC7": [
     {
       "type": 0,
-      "value": "Required. The number to be formatted."
+      "value": "Форматируемое число (обязательно)."
     }
   ],
   "JnlcZQ": [
@@ -910,49 +910,49 @@
   "Jq2Y/o": [
     {
       "type": 0,
-      "value": "Required. The numeric format string."
+      "value": "Строка в числовом формате (обязательно)."
     }
   ],
   "K50znc": [
     {
       "type": 0,
-      "value": "Required. The object to add a new property to."
+      "value": "Требуется. Объект, к которому добавляется новое свойство."
     }
   ],
   "K90YEU": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string"
+      "value": "Возвращает подмножество символов из строки"
     }
   ],
   "L+PY+j": [
     {
       "type": 0,
-      "value": "Required. The number of objects to take from the Collection. Must be a positive integer."
+      "value": "Обязательное поле. Количество объектов, которое необходимо получить с начала коллекции. Необходимо указать положительное целое число."
     }
   ],
   "L0UAzs": [
     {
       "type": 0,
-      "value": "Returns the day of week component of a string timestamp"
+      "value": "Возвращает компонент дня недели метки времени строки"
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
-      "value": "Returns the scheme from a URI"
+      "value": "Возвращает схему из URI"
     }
   ],
   "LoGUT3": [
     {
       "type": 0,
-      "value": "When used inside for-each loop, this function returns the current item of the specified loop."
+      "value": "При использовании внутри цикла for-each эта функция возвращает текущий элемент указанного цикла."
     }
   ],
   "Lub7NN": [
     {
       "type": 0,
-      "value": "Required. The expressions that may be true."
+      "value": "Обязательно. Выражения, которые могут иметь значение true."
     }
   ],
   "M0HMjE": [
@@ -970,31 +970,31 @@
   "M8Aqm4": [
     {
       "type": 0,
-      "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
+      "value": "Необязательно. Имя действия области, где вы хотите использовать входные и выходные данные из действий верхнего уровня этой области."
     }
   ],
   "M9mzP6": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Требуется. Число, которое прибавляется к слагаемому 2."
     }
   ],
   "MDbmMw": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object must be in all collections passed in to appear in the result."
+      "value": "Обязательное поле. Коллекции для обработки. Чтобы объект появился в результате, он должен входить во все переданные коллекции."
     }
   ],
   "MKTdNk": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to binary representation."
+      "value": "Требуется. URI данных, который преобразуется в двоичное представление."
     }
   ],
   "MTR4Vg": [
     {
       "type": 0,
-      "value": "Returns the current timestamp as a string"
+      "value": "Возвращает текущую метку времени в виде строки"
     }
   ],
   "Mb+Eaq": [
@@ -1018,7 +1018,7 @@
   "N2CF0J": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Требуется. Имя ключа возвращаемых значений данных форм."
     }
   ],
   "NPUFgH": [
@@ -1030,7 +1030,7 @@
   "O+8vRv": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a value"
+      "value": "Возвращает двоичное представление значения"
     }
   ],
   "O36+wl": [
@@ -1042,7 +1042,7 @@
   "OD8igU": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Обязательно. Строка, содержащая название исходного часового пояса. Дополнительные сведения: https://msdn.microsoft.com/ru-ru/library/gg154758.aspx."
     }
   ],
   "OFKZzQ": [
@@ -1060,7 +1060,7 @@
   "OVvieE": [
     {
       "type": 0,
-      "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
+      "value": "Возвращает результаты действий верхнего уровня в заданном действии области, например For_each, Until или Scope."
     }
   ],
   "Oib1mL": [
@@ -1084,13 +1084,13 @@
   "OihxQE": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when parsing the date time string."
+      "value": "Необязательно. Языковой стандарт, используемый при синтаксическом анализе строки даты и времени."
     }
   ],
   "OjGJ8Y": [
     {
       "type": 0,
-      "value": "Returns the host from a URI"
+      "value": "Возвращает узел из URI"
     }
   ],
   "OnrO5/": [
@@ -1102,19 +1102,19 @@
   "P2A5dB": [
     {
       "type": 0,
-      "value": "Required. This value is the number of integers that is in the array."
+      "value": "Требуется. Это значение — число целых чисел в массиве."
     }
   ],
   "P4rEwD": [
     {
       "type": 0,
-      "value": "Collection functions"
+      "value": "Функции сбора"
     }
   ],
   "P8ZBF9": [
     {
       "type": 0,
-      "value": "Required. The collection to take the first object from."
+      "value": "Обязательное поле. Коллекция, из которой необходимо извлечь первый объект."
     }
   ],
   "PF87Ew": [
@@ -1126,7 +1126,7 @@
   "PKMkb/": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Требуется. Число, которое прибавляется к слагаемому 1."
     }
   ],
   "PP63jY": [
@@ -1144,7 +1144,7 @@
   "PRnqYA": [
     {
       "type": 0,
-      "value": "Required. The number of seconds to add. Can be negative to subtract seconds."
+      "value": "Требуется. Число добавляемых секунд. Значение может быть отрицательным для вычитания секунд."
     }
   ],
   "PaPPLr": [
@@ -1156,13 +1156,13 @@
   "PfCJlN": [
     {
       "type": 0,
-      "value": "Workflow functions"
+      "value": "Функции рабочего процесса"
     }
   ],
   "Pvm0xB": [
     {
       "type": 0,
-      "value": "Returns the base 64 representation of the input string"
+      "value": "Возвращает представление входной строки в кодировке Base 64"
     }
   ],
   "Q/7unA": [
@@ -1174,13 +1174,13 @@
   "Q0xpPQ": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less or equal to the comparing object."
+      "value": "Обязательное поле. Объект, который нужно сравнить с другим объектом на отношение \"меньше\" или на равенство."
     }
   ],
   "QEp3C8": [
     {
       "type": 0,
-      "value": "Convert the input to a JSON type value"
+      "value": "Преобразует входные данные в значение типа JSON"
     }
   ],
   "QQYzHC": [
@@ -1196,13 +1196,13 @@
   "QZBPUx": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded trigger output"
+      "value": "Возвращает одно значение, соответствующее имени ключа из выходных данных триггера form-data или form-encoded"
     }
   ],
   "QZrxUk": [
     {
       "type": 0,
-      "value": "String functions"
+      "value": "Строковые функции"
     }
   ],
   "QbJDi7": [
@@ -1214,7 +1214,7 @@
   "QeE0k/": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Требуется. Значение, которое преобразуется в двоичный файл."
     }
   ],
   "QknZQ1": [
@@ -1226,19 +1226,19 @@
   "Qn8qxn": [
     {
       "type": 0,
-      "value": "Returns a string in date format"
+      "value": "Возвращает строку в формате даты"
     }
   ],
   "QpRRt3": [
     {
       "type": 0,
-      "value": "Required. The string to delimit items with."
+      "value": "Обязательное поле. Строка, которая служит в качестве разделителя элементов."
     }
   ],
   "QrQDdp": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to subtract."
+      "value": "Обязательно. Строка, содержащая единицу интервала времени для вычитаемого интервала."
     }
   ],
   "Qu1HkA": [
@@ -1254,7 +1254,7 @@
   "RX2Shm": [
     {
       "type": 0,
-      "value": "Required. The string that is split."
+      "value": "Обязательное поле. Строка, которая будет разделена."
     }
   ],
   "RhH4pF": [
@@ -1314,13 +1314,13 @@
   "SKXopi": [
     {
       "type": 0,
-      "value": "Convert the parameter to an integer"
+      "value": "Преобразует параметр в целое число"
     }
   ],
   "SLZ0n4": [
     {
       "type": 0,
-      "value": "Checks if the string starts with a value (case-insensitive, invariant culture)"
+      "value": "Проверяет, начинается ли строка со значения (без учета регистра, инвариантные язык и региональные параметры)"
     }
   ],
   "SXb47U": [
@@ -1336,13 +1336,13 @@
   "SY04wn": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Требуется. Имя действия с ответом form-data или form-encoded."
     }
   ],
   "T7zcR6": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Обязательно. Выражения, которые должны иметь значение true."
     }
   ],
   "T8Xqt9": [
@@ -1354,13 +1354,13 @@
   "TI44R1": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Возвращает строку с каждым элементом массива, присоединенным с помощью разделителя"
     }
   ],
   "TO7qos": [
     {
       "type": 0,
-      "value": "Returns the start of the month of a string timestamp"
+      "value": "Возвращает начало месяца метки времени строки"
     }
   ],
   "TZv5JE": [
@@ -1384,7 +1384,7 @@
   "Twfck/": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 1 with."
+      "value": "Требуется. Число, на которое умножается множитель 1."
     }
   ],
   "Tz5jTR": [
@@ -1396,7 +1396,7 @@
   "U3iWVd": [
     {
       "type": 0,
-      "value": "Generates an array of integers starting from a certain number"
+      "value": "Создает массив целых чисел, начиная с определенного числа"
     }
   ],
   "UCNM4L": [
@@ -1408,7 +1408,7 @@
   "UHCVNK": [
     {
       "type": 0,
-      "value": "Replaces a string with a given string"
+      "value": "Заменяет строку заданной строкой"
     }
   ],
   "USVffu": [
@@ -1432,7 +1432,7 @@
   "VVfYvq": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Требуется. Число, которое делится на делитель."
     }
   ],
   "VXBWrq": [
@@ -1466,25 +1466,25 @@
   "W6FdMh": [
     {
       "type": 0,
-      "value": "Required. The name of the new property."
+      "value": "Требуется. Имя нового свойства."
     }
   ],
   "WS9kXD": [
     {
       "type": 0,
-      "value": "Required. The first integer in the array."
+      "value": "Требуется. Первое целое число в массиве."
     }
   ],
   "WUe3DY": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs"
+      "value": "Сокращение для trigger().outputs"
     }
   ],
   "WgoP7R": [
     {
       "type": 0,
-      "value": "Returns the result from multiplying the two numbers"
+      "value": "Возвращает результат умножения двух чисел"
     }
   ],
   "X8JjjT": [
@@ -1508,13 +1508,13 @@
   "XCunbR": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs"
+      "value": "Сокращение для actions('actionName').outputs"
     }
   ],
   "XEuptL": [
     {
       "type": 0,
-      "value": "Combines any number of strings together"
+      "value": "Объединяет любое количество строк"
     }
   ],
   "XFFpu/": [
@@ -1556,13 +1556,13 @@
   "XtuP5e": [
     {
       "type": 0,
-      "value": "Math functions"
+      "value": "Математические функции"
     }
   ],
   "Xx/naD": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose body outputs you want."
+      "value": "Требуется. Имя действия, выходные данные текста которого нужны."
     }
   ],
   "Y0H9aX": [
@@ -1574,7 +1574,7 @@
   "Y9kBz5": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a data URI"
+      "value": "Возвращает двоичное представление URI данных"
     }
   ],
   "YHsAKl": [
@@ -1602,13 +1602,13 @@
   "YKXmKD": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime trigger"
+      "value": "Позволяет выражению наследовать свое значение из другого имени JSON и пары значений или выходных данных триггера времени выполнения"
     }
   ],
   "YaFjJQ": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
+      "value": "Возвращает один массив или объект, который содержит все элементы массива или объекта, переданные этой функции. В качестве параметров может использоваться набор объектов или набор массивов (и не может использоваться набор, состоящий из объектов и массивов). При наличии двух объектов с одинаковыми именами в результирующий объект включается последний объект с этим именем."
     }
   ],
   "YoQara": [
@@ -1620,19 +1620,19 @@
   "ZME5hh": [
     {
       "type": 0,
-      "value": "Returns the day of month component of a string timestamp"
+      "value": "Возвращает компонент дня месяца метки времени строки"
     }
   ],
   "ZUaz3Y": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs.body"
+      "value": "Сокращение для trigger().outputs.body"
     }
   ],
   "ZaIeDG": [
     {
       "type": 0,
-      "value": "Required. The value the string may start with."
+      "value": "Обязательное поле. Значение, с которого может начинаться строка."
     }
   ],
   "ZbX8xq": [
@@ -1644,19 +1644,19 @@
   "a7j3gS": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Требуется. Число, которое делится на делитель."
     }
   ],
   "aAXnqw": [
     {
       "type": 0,
-      "value": "Required. The number of the occurrence of the substring to find."
+      "value": "Обязательно. Число вхождений substring для поиска."
     }
   ],
   "aGyVJT": [
     {
       "type": 0,
-      "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
+      "value": "Обязательное поле. Количество объектов, которое необходимо удалить с начала коллекции. Необходимо указать положительное целое число."
     }
   ],
   "bH5LtI": [
@@ -1676,7 +1676,7 @@
   "bTrk+S": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than or equal to value being compared to."
+      "value": "Обязательное поле. Объект, который нужно сравнить с другим объектом на отношение \"больше\" или на равенство."
     }
   ],
   "ba9yGJ": [
@@ -1688,7 +1688,7 @@
   "bf7078": [
     {
       "type": 0,
-      "value": "Returns the maximum value in the input array of numbers"
+      "value": "Возвращает максимальное значение во входном массиве чисел"
     }
   ],
   "bgfjqS": [
@@ -1700,13 +1700,13 @@
   "bzF/qn": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Обязательное поле. Коллекция, для которой необходимо получить указанное количество объектов с начала."
     }
   ],
   "c3G/zq": [
     {
       "type": 0,
-      "value": "Returns an object with a property set to the provided value"
+      "value": "Возвращает объект со свойством, равным указанному значению"
     }
   ],
   "c6XbVI": [
@@ -1718,7 +1718,7 @@
   "cJm+ah": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Обязательное поле. Значение, индекс которого необходимо определить."
     }
   ],
   "ci6ex1": [
@@ -1748,7 +1748,7 @@
   "cscezV": [
     {
       "type": 0,
-      "value": "Required. The collection to skip the first Count objects from."
+      "value": "Обязательное поле. Коллекция, для которой необходимо пропустить указанное количество объектов с начала."
     }
   ],
   "d3bSQA": [
@@ -1766,25 +1766,25 @@
   "dhvk0u": [
     {
       "type": 0,
-      "value": "Returns a string representation of a base 64 encoded string"
+      "value": "Возвращает строковое представление строки в кодировке Base 64"
     }
   ],
   "dqgt9y": [
     {
       "type": 0,
-      "value": "Convert the parameter to a Boolean"
+      "value": "Преобразует параметр в логическое значение"
     }
   ],
   "drM9Sl": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded action output"
+      "value": "Возвращает массив значений, соответствующих имени ключа из выходных данных действий form-data или form-encoded"
     }
   ],
   "dsz+Ae": [
     {
       "type": 0,
-      "value": "Splits the string using a separator"
+      "value": "Разбивает строку с помощью разделителя"
     }
   ],
   "e4Onhn": [
@@ -1796,7 +1796,7 @@
   "eHgi14": [
     {
       "type": 0,
-      "value": "Required. The name of the variable whose value you want."
+      "value": "Требуется. Имя переменной, значение которой нужно получить."
     }
   ],
   "eRvRWs": [
@@ -1808,37 +1808,37 @@
   "eT+b9W": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by."
+      "value": "Требуется. Число, на которое делится делимое."
     }
   ],
   "egLI8P": [
     {
       "type": 0,
-      "value": "Required. The index of where the substring begins in parameter 1."
+      "value": "Обязательное поле. Индекс начала подстроки в параметре 1."
     }
   ],
   "f/lWTW": [
     {
       "type": 0,
-      "value": "Required. The objects to check for null."
+      "value": "Требуется. Объекты, в которых ищется значение NULL."
     }
   ],
   "f1j0to": [
     {
       "type": 0,
-      "value": "Optional. The index of where to stop extracting the substring."
+      "value": "Необязательно. Индекс места остановки извлечения substring."
     }
   ],
   "fBQBw/": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than or equal to the second"
+      "value": "Возвращает значение true, если первый аргумент больше второго или равен ему"
     }
   ],
   "fg/34o": [
     {
       "type": 0,
-      "value": "Logical functions"
+      "value": "Логические функции"
     }
   ],
   "ftwXvc": [
@@ -1856,19 +1856,19 @@
   "gDDfek": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time plus the specified time interval."
+      "value": "Возвращает метку времени (текущее время плюс заданный интервал времени)."
     }
   ],
   "gDY9xk": [
     {
       "type": 0,
-      "value": "Returns the result from dividing the two numbers"
+      "value": "Возвращает результат деления двух чисел"
     }
   ],
   "gIK0WG": [
     {
       "type": 0,
-      "value": "Required. A boolean value that determines which value the expression should return."
+      "value": "Обязательное поле. Логическое значение, которое определяет, какое значение должно вернуть выражение."
     }
   ],
   "gKq3Jv": [
@@ -1880,19 +1880,19 @@
   "gMhc5o": [
     {
       "type": 0,
-      "value": "Required. The string to combine into a single string."
+      "value": "Обязательное поле. Строка, которая будет объединена в другую строку."
     }
   ],
   "gQt/0f": [
     {
       "type": 0,
-      "value": "Conversion functions"
+      "value": "Функции преобразования"
     }
   ],
   "gu9o9z": [
     {
       "type": 0,
-      "value": "When used inside until loop, this function returns the current iteration index of the specified loop."
+      "value": "При использовании внутри цикла until эта функция возвращает текущий индекс итерации указанного цикла."
     }
   ],
   "hN7iBP": [
@@ -1952,7 +1952,7 @@
   "hPM6iC": [
     {
       "type": 0,
-      "value": "Returns the result from subtracting two numbers"
+      "value": "Возвращает результат вычитания двух чисел"
     }
   ],
   "hdnZ9Y": [
@@ -1984,7 +1984,7 @@
   "iCSHJG": [
     {
       "type": 0,
-      "value": "Converts a string to uppercase using the casing rules of the invariant culture"
+      "value": "Преобразует строку в верхний регистр, используя правила использования регистра инвариантных языка и региональных параметров"
     }
   ],
   "iJOIca": [
@@ -1996,7 +1996,7 @@
   "iMicOQ": [
     {
       "type": 0,
-      "value": "Required. The URI to parse."
+      "value": "Требуется. URI для анализа."
     }
   ],
   "iRjBf4": [
@@ -2014,7 +2014,7 @@
   "iU5Fdh": [
     {
       "type": 0,
-      "value": "Manipulation functions"
+      "value": "Функции манипулирования"
     }
   ],
   "iUs7pv": [
@@ -2036,43 +2036,43 @@
   "j2MU0b": [
     {
       "type": 0,
-      "value": "Returns an object with a property removed"
+      "value": "Возвращает объект с удаленным свойством"
     }
   ],
   "j39557": [
     {
       "type": 0,
-      "value": "Returns the value of the variable specified."
+      "value": "Возвращает значения указанной переменной."
     }
   ],
   "jHHF/u": [
     {
       "type": 0,
-      "value": "Returns a random integer from a specified range, which is inclusive only at the starting end."
+      "value": "Возвращает случайное целое числа из указанного диапазона. Диапазон закрытый слева и открытый справа."
     }
   ],
   "jKsMS6": [
     {
       "type": 0,
-      "value": "Required. The expression that will be negated."
+      "value": "Обязательное поле. Выражение, от которого будет получено отрицание."
     }
   ],
   "jQ0Aqj": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a string."
+      "value": "Обязательное поле. Значение, которое будет преобразовано в строку."
     }
   ],
   "jVpanH": [
     {
       "type": 0,
-      "value": "Required. A base64 input string."
+      "value": "Требуется. Входная строка base64."
     }
   ],
   "jcA3Ig": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Требуется. Имя ключа возвращаемых значений данных форм."
     }
   ],
   "jfInxm": [
@@ -2084,7 +2084,7 @@
   "k/oqFL": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Требуется. Строка в кодировке base64."
     }
   ],
   "k41+13": [
@@ -2120,7 +2120,7 @@
   "kN6kce": [
     {
       "type": 0,
-      "value": "Returns a string representation of an input based64 string"
+      "value": "Возвращает строковое представление входной строки в формате Base 64"
     }
   ],
   "kYivbS": [
@@ -2132,19 +2132,19 @@
   "kZuYgD": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second"
+      "value": "Возвращает значение true, если первый аргумент меньше второго"
     }
   ],
   "keb4r1": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal"
+      "value": "Возвращает значение true, если два значения равны"
     }
   ],
   "knylNW": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that could be returned."
+      "value": "Требуется. Это значение — следующее целое число после наибольшего целого числа, которое можно вернуть."
     }
   ],
   "l36V56": [
@@ -2186,7 +2186,7 @@
   "ljAOR6": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs.body"
+      "value": "Сокращение для actions('actionName').outputs.body"
     }
   ],
   "lztiwS": [
@@ -2210,73 +2210,73 @@
   "mGUdCO": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time minus the specified time interval."
+      "value": "Возвращает метку времени (текущее время минус заданный интервал времени)."
     }
   ],
   "mGpKsl": [
     {
       "type": 0,
-      "value": "Returns a string representation of a data URI"
+      "value": "Возвращает строковое представление URI данных"
     }
   ],
   "mPakaD": [
     {
       "type": 0,
-      "value": "Url encodes the input string"
+      "value": "Выполняет кодировку URL входной строки"
     }
   ],
   "mZRMD9": [
     {
       "type": 0,
-      "value": "Required. The string to convert to lower casing. If a character in the string does not have a lowercase equivalent, the character is included unchanged in the returned string."
+      "value": "Обязательное поле. Строка, которую необходимо преобразовать в нижний регистр. Если у символа в строке нет соответствующего символа в нижнем регистре, этот символ включается в результирующую строку без изменения."
     }
   ],
   "n35O/+": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a floating-point number."
+      "value": "Обязательное поле. Значение, которое необходимо преобразовать в число с плавающей точкой."
     }
   ],
   "nGds/r": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than or equal to value being compared to."
+      "value": "Обязательное поле. Объект, который нужно сравнить со значением на отношение \"меньше\" или на равенство."
     }
   ],
   "nHseED": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the future."
+      "value": "Обязательно. Количество единиц измерения времени, на которое желаемая дата находится в будущем по отношению к текущему времени."
     }
   ],
   "nTA155": [
     {
       "type": 0,
-      "value": "Required. The name of the property to remove."
+      "value": "Требуется. Имя удаляемого свойства."
     }
   ],
   "ngsC44": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than comparing object."
+      "value": "Обязательное поле. Объект, который нужно сравнить с другим объектом на отношение \"меньше\"."
     }
   ],
   "nkk1mu": [
     {
       "type": 0,
-      "value": "Adds an integer number of minutes to a string timestamp passed in"
+      "value": "Добавляет целое число минут в метку времени строки, переданной в функцию"
     }
   ],
   "o/0SEj": [
     {
       "type": 0,
-      "value": "Returns the last element in the array or string passed in"
+      "value": "Возвращает последний элемент в переданном в функцию массиве или строке"
     }
   ],
   "o14STH": [
     {
       "type": 0,
-      "value": "Required. The XML on which to evaluate the XPath expression."
+      "value": "Обязательное поле. Код XML, для которого необходимо вычислить выражение XPath."
     }
   ],
   "o1HOyf": [
@@ -2296,7 +2296,7 @@
   "oAFcW6": [
     {
       "type": 0,
-      "value": "Required. The dataURI to decode into a binary representation."
+      "value": "Требуется. dataURI для декодирования в двоичное представление."
     }
   ],
   "oV0xQ9": [
@@ -2308,7 +2308,7 @@
   "p/0r2N": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Требуется. Имя ключа возвращаемого значения данных форм."
     }
   ],
   "p16/4S": [
@@ -2326,7 +2326,7 @@
   "pOTcUO": [
     {
       "type": 0,
-      "value": "Required. The values to combine into an array."
+      "value": "Требуется. Значения, которые объединяются в массив."
     }
   ],
   "pRUJff": [
@@ -2338,25 +2338,25 @@
   "pXmFGf": [
     {
       "type": 0,
-      "value": "Covert the input to an Xml type value"
+      "value": "Преобразует входные данные в значение типа XML"
     }
   ],
   "pYtSyE": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by. After the division, the remainder is taken."
+      "value": "Требуется. Число, на которое делится делимое. После деления вычитается остаток."
     }
   ],
   "pcuZKB": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in. The parameters for the function can either be a set of objects or a set of arrays (not a mixture of both). If there are two objects with the same name, the last object with that name appears in the final object."
+      "value": "Возвращает один массив или объект, который содержит общие элементы переданных массивов или объектов. В качестве параметров может использоваться набор объектов или набор массивов (и не может использоваться набор, состоящий из объектов и массивов). При наличии двух объектов с одинаковыми именами в результирующий объект включается последний объект с этим именем."
     }
   ],
   "pozypE": [
     {
       "type": 0,
-      "value": "Trims leading and trailing whitespace from a string"
+      "value": "Усекает пробел в начале и конце строки"
     }
   ],
   "pr9GwA": [
@@ -2368,25 +2368,25 @@
   "q/+Uex": [
     {
       "type": 0,
-      "value": "Returns an XML node, nodeset or value as JSON from the provided XPath expression"
+      "value": "Возвращает узел XML, набор узлов или значение JSON из предоставленного выражения XPath"
     }
   ],
   "q2OCEx": [
     {
       "type": 0,
-      "value": "Required. The value to assign to the property."
+      "value": "Требуется. Значение, присваиваемое свойству."
     }
   ],
   "q2w8Sk": [
     {
       "type": 0,
-      "value": "Convert the parameter to a string"
+      "value": "Преобразует параметр в строку"
     }
   ],
   "q87X20": [
     {
       "type": 0,
-      "value": "Adds an integer number of seconds to a string timestamp passed in"
+      "value": "Добавляет целое число секунд в метку времени строки, переданной в функцию"
     }
   ],
   "qGfwxW": [
@@ -2398,13 +2398,13 @@
   "qJpnIL": [
     {
       "type": 0,
-      "value": "Checks if the string ends with a value (case-insensitive, invariant culture)"
+      "value": "Проверяет, заканчивается ли строка значением (без учета регистра, инвариантные язык и региональные параметры)"
     }
   ],
   "qSejoi": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than or equal to the second"
+      "value": "Возвращает значение true, если первый аргумент меньше второго или равен ему"
     }
   ],
   "qSt0Sb": [
@@ -2470,19 +2470,19 @@
   "qc5S69": [
     {
       "type": 0,
-      "value": "Returns the number of elements in an array or string"
+      "value": "Возвращает число элементов в массиве или строке"
     }
   ],
   "qnI4Y1": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an integer."
+      "value": "Обязательное поле. Значение, которое необходимо преобразовать в целое число."
     }
   ],
   "r8aZXs": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime action"
+      "value": "Позволяет выражению наследовать свое значение из другого имени JSON и пары значений или выходных данных действия времени выполнения"
     }
   ],
   "r9SVE4": [
@@ -2506,43 +2506,43 @@
   "raBiud": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the maximum value, or the first value of a set."
+      "value": "Требуется. Массив значений для поиска максимального значения или первое значение набора."
     }
   ],
   "rcz4w4": [
     {
       "type": 0,
-      "value": "Returns a URI encoded representation of a value"
+      "value": "Возвращает представление значения в кодировке URI"
     }
   ],
   "s5RV9B": [
     {
       "type": 0,
-      "value": "Returns the day of year component of a string timestamp"
+      "value": "Возвращает компонент дня года метки времени строки"
     }
   ],
   "sDkAVZ": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded trigger output"
+      "value": "Возвращает массив значений, соответствующих имени ключа из выходных данных триггера form-data или form-encoded"
     }
   ],
   "sZ0G/Z": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to add."
+      "value": "Обязательно. Строка, содержащая единицу интервала времени для добавляемого интервала."
     }
   ],
   "sbPZ9S": [
     {
       "type": 0,
-      "value": "Required. The collection to check if it is empty."
+      "value": "Обязательное поле. Коллекция, наличие элементов в которой нужно проверить."
     }
   ],
   "sfJTHV": [
     {
       "type": 0,
-      "value": "Required. The number to remove from the Minuend."
+      "value": "Требуется. Число, которое вычитается из уменьшаемого."
     }
   ],
   "shF9tZ": [
@@ -2554,7 +2554,7 @@
   "soqP+Z": [
     {
       "type": 0,
-      "value": "Returns true if either parameter is true"
+      "value": "Возвращает значение true, если любой параметр имеет значение true"
     }
   ],
   "ss5JPH": [
@@ -2566,13 +2566,13 @@
   "t+XCkg": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the destination time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Обязательно. Строка, содержащая название часового пояса назначения. Дополнительные сведения: https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
   "tE7Zam": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action"
+      "value": "Возвращает URL-адрес для вызова триггера или действия"
     }
   ],
   "tImHz/": [
@@ -2596,13 +2596,13 @@
   "tLZ9Sh": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Требуется. Индекс извлекаемой части."
     }
   ],
   "tMRPnG": [
     {
       "type": 0,
-      "value": "This function provides you details for the workflow itself at runtime"
+      "value": "Эта функция предоставляет подробные сведения для самого рабочего процесса во время выполнения"
     }
   ],
   "tNoZx2": [
@@ -2614,13 +2614,13 @@
   "tZj2Xn": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than the second"
+      "value": "Возвращает значение true, если первый аргумент больше второго"
     }
   ],
   "taPCmY": [
     {
       "type": 0,
-      "value": "Required. The number of hours to add. Can be negative to subtract hours."
+      "value": "Требуется. Число добавляемых часов. Значение может быть отрицательным для вычитания часов."
     }
   ],
   "uN4zFU": [
@@ -2632,25 +2632,25 @@
   "uR9WuI": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object that appears in any of the collections also appears in the result."
+      "value": "Обязательное поле. Коллекции для обработки. Чтобы объект появился в результате, он должен входить в любую из этих коллекций."
     }
   ],
   "uUlBZ8": [
     {
       "type": 0,
-      "value": "Adds an integer number of hours to a string timestamp passed in"
+      "value": "Добавляет целое число часов в метку времени строки, переданной в функцию"
     }
   ],
   "uc/PoD": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the past."
+      "value": "Обязательно. Количество единиц измерения времени, на которое желаемая дата находится в прошлом по отношению к текущему времени."
     }
   ],
   "uczA5c": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Обязательное поле. Строка, которая может содержать значение."
     }
   ],
   "ut5Med": [
@@ -2662,25 +2662,25 @@
   "uzsleE": [
     {
       "type": 0,
-      "value": "Creates an array from the parameters"
+      "value": "Создает массив на основе параметров"
     }
   ],
   "v39HKj": [
     {
       "type": 0,
-      "value": "Generates a globally unique string (GUID)"
+      "value": "Создает глобальную уникальную строку (GUID)"
     }
   ],
   "vEBhDX": [
     {
       "type": 0,
-      "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Возвращает последний индекс значения в строке (без учета регистра, инвариантные язык и региональные параметры)"
     }
   ],
   "vQcQkU": [
     {
       "type": 0,
-      "value": "Required. The value the string may end with."
+      "value": "Обязательное поле. Значение, на которое может заканчиваться строка."
     }
   ],
   "vSlNPe": [
@@ -2692,7 +2692,7 @@
   "va40BJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose outputs you want."
+      "value": "Требуется. Имя действия, выходные данные которого нужны."
     }
   ],
   "vwH/XV": [
@@ -2710,13 +2710,13 @@
   "wEaGWn": [
     {
       "type": 0,
-      "value": "Subtracts an integer number of a specified unit of time from a string timestamp passed in"
+      "value": "Вычитает целое число указанных единиц времени из переданной строки метки времени"
     }
   ],
   "wFCkpM": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the minimum value, or the first value of a set."
+      "value": "Требуется. Массив значений для поиска минимального значения или первое значение набора."
     }
   ],
   "wHYQyg": [
@@ -2728,31 +2728,31 @@
   "wQcEXt": [
     {
       "type": 0,
-      "value": "Required. The string that is searched for parameter 2 and updated with parameter 3, when parameter 2 is found in parameter 1."
+      "value": "Обязательное поле. Строка, в которой выполняется поиск параметра 2 и в которую записывается параметр 3, если параметр 2 найден в параметре 1."
     }
   ],
   "wQsEwc": [
     {
       "type": 0,
-      "value": "Required. The length of the substring."
+      "value": "Обязательное поле. Длина подстроки."
     }
   ],
   "wWVQuK": [
     {
       "type": 0,
-      "value": "Returns a specified value based on whether the expression resulted in true or false"
+      "value": "Возвращает указанное значение в зависимости от результата выражения: true или false"
     }
   ],
   "wmDUGV": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to UTC"
+      "value": "Преобразует переданную строку метки времени из исходного часового пояса в формат UTC"
     }
   ],
   "wmw/ai": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either the array or object passed to this function"
+      "value": "Возвращает один массив или объект со всеми элементами массива или объекта, переданного в функцию"
     }
   ],
   "woJQhv": [
@@ -2764,25 +2764,25 @@
   "x0or2o": [
     {
       "type": 0,
-      "value": "Required. The collection for which to get the length."
+      "value": "Обязательное поле. Коллекция, длину которой нужно определить."
     }
   ],
   "xJ6vjn": [
     {
       "type": 0,
-      "value": "Returns a string representation of a URI encoded string"
+      "value": "Возвращает строковое представление сроки в кодировке URI"
     }
   ],
   "xV/oyK": [
     {
       "type": 0,
-      "value": "Required. The name of the new or existing property."
+      "value": "Требуется. Имя нового или существующего свойства."
     }
   ],
   "xYyPR8": [
     {
       "type": 0,
-      "value": "Returns the path from a URI. If path is not specified, returns '/'"
+      "value": "Возвращает путь из URI. Если путь не указан, возвращает \"/\""
     }
   ],
   "xt5TeT": [
@@ -2800,25 +2800,25 @@
   "y3AZQB": [
     {
       "type": 0,
-      "value": "Required. The object to compare equality."
+      "value": "Обязательно. Объект для сравнения равенства."
     }
   ],
   "y6BcVN": [
     {
       "type": 0,
-      "value": "Required. The string to escape URL-unsafe characters from."
+      "value": "Требуется. Строка, из которой исключаются небезопасные символы URL-адресов."
     }
   ],
   "yBrsFJ": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an array."
+      "value": "Требуется. Значение, которое преобразуется в массив."
     }
   ],
   "yqRrQ/": [
     {
       "type": 0,
-      "value": "Date and time functions"
+      "value": "Функции даты и времени"
     }
   ],
   "z4YYlQ": [
@@ -2830,19 +2830,19 @@
   "zBMVKg": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a decimal number."
+      "value": "Обязательно. Значение, преобразуемое в десятичное число."
     }
   ],
   "zIDVd9": [
     {
       "type": 0,
-      "value": "Required. The string that is converted to a native type value."
+      "value": "Обязательное поле. Строка, которая преобразуется в значение собственного типа."
     }
   ],
   "zcZpHT": [
     {
       "type": 0,
-      "value": "Converts a string, with optionally a locale and a format to a date"
+      "value": "Преобразует строку с дополнительным языковым стандартом и форматом в дату"
     }
   ],
   "ziYCiA": [
@@ -2860,13 +2860,13 @@
   "znGyyU": [
     {
       "type": 0,
-      "value": "Adds an integer number of a specified unit of time to a string timestamp passed in"
+      "value": "Добавляет целое число указанных единиц времени к переданной строке метки времени"
     }
   ],
   "zxe9hh": [
     {
       "type": 0,
-      "value": "Required. The number of minutes to add. Can be negative to subtract minutes."
+      "value": "Требуется. Число добавляемых минут. Значение может быть отрицательным для вычитания минут."
     }
   ]
 }
