@@ -35,6 +35,7 @@ const RequiredParameterMarker: React.FC<RequiredParameterMarkerProps> = ({ isReq
   });
 
   return (
+    // eslint-disable-next-line react/jsx-no-literals
     <span className="msla-label-required-parameter" aria-label={ariaLabel}>
       *
     </span>
