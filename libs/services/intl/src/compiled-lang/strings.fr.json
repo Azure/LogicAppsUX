@@ -5,6 +5,18 @@
       "value": "Étiquette de paramètre"
     }
   ],
+  "+g+mch": [
+    {
+      "type": 0,
+      "value": "Retourne le corps d'une partie dans une sortie en plusieurs parties d'une action"
+    }
+  ],
+  "+lpuMl": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur à retourner si l'expression est false."
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -17,10 +29,64 @@
       "value": "Attente"
     }
   ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "Retourne les éléments du tableau en commençant au niveau du nombre d'index"
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "Convertir l'entrée en tableau"
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collection à partir de laquelle joindre des éléments."
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Retourne les premiers éléments Count du tableau ou de la chaîne transmis(e)"
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Retourne le début de l'heure en horodateur de chaîne transmis"
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "Retourne l'URL pour appeler le déclencheur ou l'action. Remarque : cette fonction peut être utilisée uniquement dans un httpWebhook et un apiConnectionWebhook, et non dans un élément manuel, périodique, HTTP ou apiConnection."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne codée en base64."
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "L'URL décode la chaîne d'entrée"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
       "value": "Afficher le menu Exécuter"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "Retourne la représentation binaire d'une chaîne encodée sous forme d'URI"
     }
   ],
   "0ZlNtf": [
@@ -29,16 +95,70 @@
       "value": "Réussi avec nouvelles tentatives"
     }
   ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne à convertir en majuscules. Si un caractère de la chaîne n'a pas d'équivalent en majuscules, le caractère reste inchangé dans la chaîne retournée."
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "Retourne le nombre restant après la division de deux nombres (modulo)"
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne pouvant contenir la valeur."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Retourne la représentation binaire d'une chaîne d'entrée d'URI de données"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
       "value": "Autres commandes"
     }
   ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Obligatoire. URI de données à convertir en représentation sous forme de chaîne."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "Renvoie le port d’un URI. Si le port n’est pas spécifié, renvoie le port par défaut pour le protocole"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
       "value": "Commentaire"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur à convertir en XML."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne encodée dans un URI."
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "Convertir l'argument de paramètre en nombre à virgule flottante"
     }
   ],
   "1R6Vaa": [
@@ -81,16 +201,52 @@
       "value": "count"
     }
   ],
+  "1TE0e8": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur pour laquelle rechercher l'index."
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objet à vérifier pour voir s'il est inférieur à la valeur comparée."
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Ignorer"
     }
   ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Retourne la représentation binaire d'une chaîne codée en base 64"
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur à convertir en URI de données."
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
       "value": "Heure de fin"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Retourne une valeur unique correspondant au nom de clé d'une sortie d'action de données de formulaire ou encodée dans un formulaire"
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de l'action avec une réponse encodée dans le formulaire ou avec des données de formulaire."
     }
   ],
   "2mnU/w": [
@@ -105,10 +261,52 @@
       "value": "Identificateur"
     }
   ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Séparateur."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "En échec"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objet duquel supprimer la propriété."
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre correspondant à une unité de temps spécifiée à soustraire."
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Entier le plus bas qui peut être retourné."
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre de jours à ajouter. Peut être négatif pour soustraire des jours."
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Unité de temps spécifiée dans l'intervalle."
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom du paramètre dont vous voulez obtenir les valeurs."
     }
   ],
   "4cVuMw": [
@@ -117,10 +315,40 @@
       "value": "Des commentaires ne peuvent être ajoutés que lors de la modification des entrées d'une étape."
     }
   ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "Retourne la valeur minimale dans le tableau d'entrée de nombres"
+    }
+  ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "ID de demande de service"
+    }
+  ],
+  "5J7j9k": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Expression XPath à évaluer."
+    }
+  ],
+  "5aa76N": [
+    {
+      "type": 0,
+      "value": "Retourne le premier élément du tableau ou de la chaîne transmis(e)"
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Retourne true si un objet, un tableau ou une chaîne est vide"
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de la boucle dont vous voulez l'élément."
     }
   ],
   "5qzZMo": [
@@ -135,10 +363,28 @@
       "value": "Supprimer un paramètre"
     }
   ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objet à vérifier pour voir s'il est supérieur à la valeur comparée."
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
       "value": "Afficher l'exécution"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collection dans laquelle effectuer la recherche."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de l'action avec une réponse en plusieurs parties."
     }
   ],
   "6oqk+A": [
@@ -147,16 +393,40 @@
       "value": "Précédent"
     }
   ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre avec lequel multiplier le multiplicande 2."
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
       "value": "OK"
     }
   ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne dont la sous-chaîne est extraite."
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "Facultatif. Paramètres régionaux à utiliser lors de la mise en forme (par défaut : « en-us »)."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Code d'état"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Retourne le nombre de cycles (intervalle de 100 nanosecondes) depuis le 1er janvier 0001 00:00:00 UT d'un horodatage de chaîne"
     }
   ],
   "7yEdSt": [
@@ -171,10 +441,52 @@
       "value": "Copier l'URL"
     }
   ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne pouvant contenir la valeur."
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur à retourner si l'expression est true."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Retourne une chaîne numérique mise en forme"
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objet à vérifier pour voir s'il est supérieur ou égal à l'objet comparé."
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
       "value": "Impossible d'afficher le concepteur en raison de plusieurs déclencheurs dans la définition."
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne à encoder sous forme d'URI."
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Ajoute un nombre entier de jours à un horodateur de chaîne transmis"
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Retourne un objet ou tableau unique qui a des éléments communs avec les tableaux ou objets transmis"
     }
   ],
   "99vsJy": [
@@ -183,10 +495,64 @@
       "value": "Connecteur"
     }
   ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Retourne l'URI de données d'une valeur"
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Renvoie un objet avec une paire de valeurs de propriété supplémentaires"
+    }
+  ],
   "9b4xDa": [
     {
       "type": 0,
-      "value": "panel"
+      "value": "panneau"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "Retourne le résultat de l'ajout de deux nombres"
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "Retourne true si les deux paramètres ont la valeur true"
+    }
+  ],
+  "ANbEeQ": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de l'action dont vous voulez obtenir les valeurs."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne à encoder dans une représentation en base64."
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Index de la partie à récupérer."
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Caractère de spécificateur de format unique ou modèle de format personnalisé qui indique comment mettre en forme la valeur de cet horodateur. Si aucun format n'est fourni, le format ISO 8601 (« o ») est utilisé."
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne encodée dans un URI."
     }
   ],
   "BKL0ZG": [
@@ -195,16 +561,46 @@
       "value": "Heure de début"
     }
   ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne pour laquelle décoder les caractères d'URL non fiables."
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
       "value": "Type d'état :"
     }
   ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "Spécificateur de format unique qui indique comment mettre en forme la valeur de ce GUID."
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objet à vérifier pour voir s'il est supérieur à l'objet comparé."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Connexion obligatoire"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Renvoie le chemin d’accès et la requête d’un URI"
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne de laquelle supprimer les espaces à gauche et à droite."
     }
   ],
   "DFo+mo": [
@@ -219,10 +615,52 @@
       "value": "Durée"
     }
   ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Convertit le paramètre en nombre décimal"
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
       "value": "Réponse"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Index de l’emplacement où commencer l’extraction de la sous-chaîne."
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre correspondant à une unité de temps spécifiée à ajouter."
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Retourne une valeur de paramètre définie dans la définition"
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Retourne une section d’une chaîne définie par l’index de début et l’index de fin"
+    }
+  ],
+  "FS+/Tb": [
+    {
+      "type": 0,
+      "value": "Retourne le corps d'une partie dans une sortie en plusieurs parties du déclencheur"
+    }
+  ],
+  "FVavKy": [
+    {
+      "type": 0,
+      "value": "Retourne le début du jour en horodateur de chaîne transmis"
     }
   ],
   "FXLR5M": [
@@ -257,10 +695,52 @@
       "value": "hours"
     }
   ],
+  "Fgq3Db": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collection dans laquelle prendre le dernier objet."
+    }
+  ],
+  "Fh2HDb": [
+    {
+      "type": 0,
+      "value": "Retourne le premier index d'une valeur au sein d'une chaîne (culture invariante qui ne respecte pas la casse)"
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
       "value": "État"
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne pouvant contenir la valeur."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "Renvoie la requête d’un URI"
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objet à trouver dans la collection Within."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Fonctions de références"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Retourne true si les paramètres ont la valeur false"
     }
   ],
   "Gmya+V": [
@@ -281,6 +761,30 @@
       "value": "Tableau"
     }
   ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "Fonctions d’analyse des URI"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne à découper."
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre dont le plus petit terme est supprimé."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de clé de la valeur de données de formulaire à retourner."
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -293,16 +797,118 @@
       "value": "Valeur de paramètre"
     }
   ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Convertit un horodateur de chaîne transmis d'une heure UTC à un fuseau horaire cible"
+    }
+  ],
+  "Ip7Iax": [
+    {
+      "type": 0,
+      "value": "Retourne l’index de la n-ième occurrence d’une valeur dans une chaîne (non sensible à la casse, culture invariante)"
+    }
+  ],
+  "IpVwYT": [
+    {
+      "type": 0,
+      "value": "Retourne le premier objet non-Null dans les arguments transmis"
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Convertit une chaîne en minuscules à l'aide des règles de casse de la culture invariante"
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne contenant l'heure."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur convertie en booléen."
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
       "value": "Méthode"
     }
   ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Retourne true si un dictionnaire contient une clé, si un tableau contient une valeur ou si une chaîne contient une sous-chaîne"
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre à mettre en forme."
+    }
+  ],
   "JnlcZQ": [
     {
       "type": 0,
       "value": "Nom :"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne de format numérique."
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objet auquel ajouter une nouvelle propriété."
+    }
+  ],
+  "K90YEU": [
+    {
+      "type": 0,
+      "value": "Retourne un sous-ensemble de caractères à partir d'une chaîne"
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre d'objets à prendre dans la collection. Doit être un entier positif."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Retourne le jour du composant Semaine d'un horodateur de chaîne"
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "Renvoie le schéma d’un URI"
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "Utilisée dans une boucle for-each, cette fonction retourne l'élément actuel de la boucle spécifiée."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that may be true."
     }
   ],
   "M0HMjE": [
@@ -315,6 +921,36 @@
     {
       "type": 0,
       "value": "Les paramètres seront enregistrés lors de l’enregistrement du flux de travail. Vous pouvez le modifier ici avant de l’enregistrer ou le modifier dans la page de paramètres après l’enregistrement."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "Facultatif. Nom de l'action délimitée dans l'étendue de laquelle vous voulez voir les entrées et les sorties des actions de niveau supérieur."
+    }
+  ],
+  "M9mzP6": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Numéro à ajouter à l'opérande 2."
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collections à évaluer. Un objet doit être dans toutes les collections transmises pour apparaître dans le résultat."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Obligatoire. URI de données à convertir en représentation binaire."
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Retourne l'horodateur actuel en tant que chaîne"
     }
   ],
   "Mb+Eaq": [
@@ -335,16 +971,34 @@
       "value": "Erreur inattendue"
     }
   ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de clé des valeurs de données de formulaire à retourner."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
       "value": "État"
     }
   ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Retourne la représentation binaire d'une valeur"
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
       "value": "Modifier le paramètre"
+    }
+  ],
+  "OD8igU": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne contenant le nom du fuseau horaire source. Pour plus d'informations, consultez https://msdn.microsoft.com/fr-fr/library/gg154758.aspx."
     }
   ],
   "OFKZzQ": [
@@ -357,6 +1011,12 @@
     {
       "type": 0,
       "value": "Commentaire"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "Retourne les résultats des actions de niveau supérieur dans l'action délimitée spécifiée, par exemple, une action For_each, Until ou Scope."
     }
   ],
   "Oib1mL": [
@@ -377,16 +1037,52 @@
       "value": " m"
     }
   ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "Facultatif. Paramètres régionaux à utiliser lors de l’analyse de la chaîne d’heure de date."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Renvoie l’hôte d’un URI"
+    }
+  ],
   "OnrO5/": [
     {
       "type": 0,
       "value": "Sélectionner une identité managée"
     }
   ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Cette valeur correspond au nombre d'entiers qui se trouvent dans le tableau."
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Collection functions"
+    }
+  ],
+  "P8ZBF9": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collection dans laquelle prendre le premier objet."
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
       "value": "Réussi"
+    }
+  ],
+  "PKMkb/": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Numéro à ajouter à l'opérande 1."
     }
   ],
   "PP63jY": [
@@ -401,16 +1097,46 @@
       "value": "Réduire"
     }
   ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre de secondes à ajouter. Peut être négatif pour soustraire des secondes."
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
       "value": "Abandonné"
     }
   ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "Fonctions de workflow"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "Retourne la représentation en base 64 de la chaîne entrée"
+    }
+  ],
   "Q/7unA": [
     {
       "type": 0,
       "value": "Objet"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objet à vérifier pour voir s'il est inférieur ou égal à l'objet comparé."
+    }
+  ],
+  "QEp3C8": [
+    {
+      "type": 0,
+      "value": "Convertir l'entrée en valeur de type JSON"
     }
   ],
   "QQYzHC": [
@@ -423,16 +1149,52 @@
       "value": "title"
     }
   ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Retourne une valeur unique correspondant au nom de clé d'une sortie de déclencheur de données de formulaire ou encodée dans un formulaire"
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Fonctions de chaîne"
+    }
+  ],
   "QbJDi7": [
     {
       "type": 0,
       "value": "Élément"
     }
   ],
+  "QeE0k/": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur convertie en binaire."
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
       "value": "Chargement..."
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Retourne une chaîne au format de date"
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne avec laquelle délimiter les éléments."
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Required. A string containing the unit of time specified in the interval to subtract."
     }
   ],
   "Qu1HkA": [
@@ -443,6 +1205,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne fractionnée."
     }
   ],
   "RhH4pF": [
@@ -477,6 +1245,18 @@
       "value": "minutes"
     }
   ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "Convertir le paramètre en entier"
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Vérifie si la chaîne commence par une valeur (culture invariante qui ne respecte pas la casse)"
+    }
+  ],
   "SXb47U": [
     {
       "type": 1,
@@ -487,10 +1267,34 @@
       "value": " m"
     }
   ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de l'action avec une réponse encodée dans le formulaire ou avec des données de formulaire."
+    }
+  ],
+  "T7zcR6": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that must be true."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
       "value": "Échec"
+    }
+  ],
+  "TI44R1": [
+    {
+      "type": 0,
+      "value": "Retourne une chaîne avec chaque élément d'un tableau joint par un délimiteur"
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Retourne le début du mois en horodateur de chaîne"
     }
   ],
   "TZv5JE": [
@@ -511,16 +1315,34 @@
       "value": "Étiquettes"
     }
   ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre avec lequel multiplier le multiplicande 1."
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
       "value": "Réduire/développer"
     }
   ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Génère un tableau d'entiers commençant à partir d'un certain nombre"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
       "value": "Pour référencer un paramètre, utilisez la liste contenu dynamique."
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Remplace une chaîne par une chaîne donnée"
     }
   ],
   "USVffu": [
@@ -539,6 +1361,12 @@
     {
       "type": 0,
       "value": "Le nom d'exécution de workflow fourni n'est pas valide."
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre à diviser par le diviseur."
     }
   ],
   "VXBWrq": [
@@ -569,6 +1397,30 @@
       "value": "max"
     }
   ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de la nouvelle propriété."
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Premier entier du tableau."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "Raccourci pour trigger().outputs"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "Retourne le résultat de la multiplication de deux nombres"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -585,6 +1437,18 @@
     {
       "type": 0,
       "value": " heures"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "Raccourci pour actions('actionName').outputs"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Combine un nombre quelconque de chaînes"
     }
   ],
   "XFFpu/": [
@@ -623,10 +1487,28 @@
       "value": "Demande"
     }
   ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Fonctions mathématiques"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de l'action dont vous voulez obtenir les sorties de corps."
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Plus d'informations"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Retourne la représentation binaire d'un URI de données"
     }
   ],
   "YHsAKl": [
@@ -651,16 +1533,64 @@
       "value": "Chaîne"
     }
   ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Permet à une expression de dériver sa valeur d'autres paires de nom et valeur JSON ou de la sortie du déclencheur de runtime"
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Retourne un unique tableau ou objet avec tous les éléments qui sont dans l'objet ou tableau transmis à cette fonction. Les paramètres de la fonction peuvent être un ensemble d'objets ou de tableaux (et non un mélange des deux). Si deux objets portent le même nom dans la sortie finale, le dernier objet avec ce nom s'affiche dans l'objet final."
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "Aucun"
     }
   ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Retourne le jour du composant Mois d'un horodateur de chaîne"
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "Raccourci pour trigger().outputs.body"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur avec laquelle la chaîne peut commencer."
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
       "value": "Cette opération a déjà été supprimée."
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre à diviser par le diviseur."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Numéro de l’occurrence de la sous-chaîne à rechercher."
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre d'objets à supprimer de l'avant de la collection. Doit être un entier positif."
     }
   ],
   "bH5LtI": [
@@ -677,10 +1607,22 @@
       "value": " est déjà inscrit"
     }
   ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objet à vérifier pour voir s'il est supérieur ou égal à la valeur comparée."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Charger plus"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "Retourne la valeur maximale dans le tableau d'entrée de nombres"
     }
   ],
   "bgfjqS": [
@@ -689,10 +1631,28 @@
       "value": "Paramètre d’étiquette"
     }
   ],
+  "bzF/qn": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collection à partir de laquelle prendre les premiers objets Count."
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Renvoie un objet avec une propriété définie sur la valeur fournie"
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "volet"
+    }
+  ],
+  "cJm+ah": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur pour laquelle rechercher l'index."
     }
   ],
   "ci6ex1": [
@@ -719,6 +1679,12 @@
       "value": "Heure de début"
     }
   ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collection dans laquelle ignorer les premiers objets Count."
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -731,16 +1697,82 @@
       "value": "En savoir plus"
     }
   ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Retourne la représentation sous forme de chaîne d'une chaîne codée en base 64"
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "Convertir le paramètre en valeur booléenne"
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Retourne un tableau de valeurs correspondant au nom de clé d'une sortie d'action de données de formulaire ou encodée dans un formulaire"
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Fractionne la chaîne à l'aide d'un séparateur"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Non spécifié"
     }
   ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de la variable dont vous voulez la valeur."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
       "value": "Heure de début"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre par lequel diviser le dividende."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Index d'où la sous-chaîne commence dans le paramètre 1."
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objets à vérifier pour voir s'ils ont la valeur Null."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "Facultatif. Index de l’emplacement où arrêter l’extraction de la sous-chaîne."
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Retourne true si le premier argument est supérieur ou égal à la seconde"
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Fonctions logiques"
     }
   ],
   "ftwXvc": [
@@ -755,10 +1787,46 @@
       "value": "URI"
     }
   ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Retourne un timestamp qui correspond à l'heure actuelle plus l'intervalle de temps spécifié."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "Retourne le résultat de la division de deux nombres"
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur booléenne qui détermine la valeur que l'expression doit retourner."
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "Précédent échec"
+    }
+  ],
+  "gMhc5o": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne à combiner en une seule chaîne."
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Fonctions de conversion"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "Utilisée dans une boucle Until, cette fonction retourne l’index d’itération actuel de la boucle spécifiée."
     }
   ],
   "hN7iBP": [
@@ -793,6 +1861,12 @@
       "value": "seconds"
     }
   ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "Retourne le résultat de la soustraction de deux nombres"
+    }
+  ],
   "hdnZ9Y": [
     {
       "type": 0,
@@ -819,10 +1893,22 @@
       "value": "Commentaire"
     }
   ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Convertit une chaîne en majuscules à l'aide des règles de casse de la culture invariante"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
       "value": "Suivant"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Obligatoire. URI à analyser."
     }
   ],
   "iRjBf4": [
@@ -835,6 +1921,12 @@
     {
       "type": 0,
       "value": "Développer"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Manipulation functions"
     }
   ],
   "iUs7pv": [
@@ -853,10 +1945,58 @@
       "value": " s"
     }
   ],
+  "j2MU0b": [
+    {
+      "type": 0,
+      "value": "Renvoie un objet avec une propriété supprimée"
+    }
+  ],
+  "j39557": [
+    {
+      "type": 0,
+      "value": "Renvoie la valeur de la variable spécifiée."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Retourne un entier aléatoire d'une plage spécifiée, inclus uniquement au début de la plage."
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Expression à inverser."
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur convertie en chaîne."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne d'entrée en base64."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de clé des valeurs de données de formulaire à retourner."
+    }
+  ],
   "jfInxm": [
     {
       "type": 0,
       "value": "Modifier dans JSON"
+    }
+  ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne codée en base64."
     }
   ],
   "k41+13": [
@@ -889,10 +2029,34 @@
       "value": " s"
     }
   ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Retourne la représentation sous forme de chaîne d'une chaîne d'entrée en base 64"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
       "value": "Télécharger (Alt/Option + clic)"
+    }
+  ],
+  "kZuYgD": [
+    {
+      "type": 0,
+      "value": "Retourne true si le premier argument est inférieur à la seconde"
+    }
+  ],
+  "keb4r1": [
+    {
+      "type": 0,
+      "value": "Retourne true si les deux valeurs sont égales"
+    }
+  ],
+  "knylNW": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Cette valeur est l'entier suivant après l'entier le plus grand qui peut être retourné."
     }
   ],
   "l36V56": [
@@ -931,6 +2095,12 @@
       "value": "Mode d’exécution sans état :"
     }
   ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "Raccourci pour actions('actionName').outputs.body"
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -949,6 +2119,78 @@
       "value": "Nom"
     }
   ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Retourne un timestamp qui correspond à l'heure actuelle moins l'intervalle de temps spécifié."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Retourne la représentation sous forme de chaîne d'un URI de données"
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "L'URL encode la chaîne d'entrée"
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne à convertir en minuscules. Si un caractère de la chaîne n'a pas d'équivalent en minuscules, le caractère reste inchangé dans la chaîne retournée."
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur convertie en nombre à virgule flottante."
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objet à vérifier pour voir s'il est inférieur ou égal à la valeur comparée."
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre d'unités de temps de l'heure souhaitée dans le futur."
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de la propriété à supprimer."
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Objet à vérifier pour voir s'il est inférieur à l'objet comparé."
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Ajoute un nombre entier de minutes à un horodateur de chaîne transmis"
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Retourne le dernier élément du tableau ou de la chaîne transmis(e)"
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Obligatoire. XML sur lequel évaluer l'expression XPath."
+    }
+  ],
   "o1HOyf": [
     {
       "type": 1,
@@ -963,10 +2205,22 @@
       "value": "max_page"
     }
   ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Obligatoire. dataURI à décoder en représentation binaire."
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Entrer l’identificateur d’exécution pour ouvrir l’exécution"
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de clé de la valeur de données de formulaire à retourner."
     }
   ],
   "p16/4S": [
@@ -981,10 +2235,40 @@
       "value": "Heure de fin"
     }
   ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeurs à combiner dans un tableau."
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Paramètres"
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "Convertir l'entrée en valeur de type XML"
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre par lequel diviser le dividende. Après la division, le chiffre restant est accepté."
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Retourne un unique tableau ou objet qui a des éléments communs avec les objets ou tableaux transmis. Les paramètres de la fonction peuvent être un ensemble d'objets ou de tableaux (et non un mélange des deux). Si deux objets portent le même nom, le dernier objet avec ce nom s'affiche dans l'objet final."
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "Supprime les espaces de début et de fin d’une chaîne"
     }
   ],
   "pr9GwA": [
@@ -993,10 +2277,46 @@
       "value": "Actualiser"
     }
   ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Retourne un nœud XML, un jeu de nœuds ou une valeur au format JSON à partir de l'expression XPath fournie"
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Obligatoire. La valeur à assigner à la propriété."
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "Convertir le paramètre en chaîne"
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Ajoute un nombre entier de secondes à un horodateur de chaîne transmis"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Identité managée"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Vérifie si la chaîne se termine par une valeur (culture invariante qui ne respecte pas la casse)"
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Retourne true si le premier argument est inférieur ou égal à la seconde"
     }
   ],
   "qSt0Sb": [
@@ -1037,6 +2357,24 @@
       "value": "days"
     }
   ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Retourne le nombre d'éléments d'un tableau ou d'une chaîne"
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur convertie en entier."
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Permet à une expression de dériver sa valeur d'autres paires de nom et valeur JSON ou de la sortie de l'action de runtime"
+    }
+  ],
   "r9SVE4": [
     {
       "type": 0,
@@ -1055,16 +2393,76 @@
       "value": "Titre de carte"
     }
   ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Soit un tableau de valeurs dans lequel rechercher la valeur maximale soit la première valeur d'un ensemble."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Retourne la représentation encodée sous forme d'URI d'une valeur"
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Retourne le jour du composant Année d'un horodateur de chaîne"
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Retourne un tableau de valeurs correspondant au nom de clé d'une sortie de déclencheur de données de formulaire ou encodée dans un formulaire"
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne contenant l'unité de temps spécifiée dans l'intervalle à ajouter."
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collection à vérifier pour voir si elle est vide."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre à supprimer du nombre à diminuer."
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
       "value": "Clé"
     }
   ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Retourne true si l'un des paramètres a la valeur true"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Nouveau paramètre"
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne contenant le nom du fuseau horaire de destination. Pour plus d'informations, consultez https://msdn.microsoft.com/fr-fr/library/gg154758.aspx."
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "Retourne l'URL pour appeler le déclencheur ou l'action"
     }
   ],
   "tImHz/": [
@@ -1085,10 +2483,34 @@
       "value": " h"
     }
   ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Index de la partie à récupérer."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Cette fonction vous fournit des détails pour le workflow proprement dit au moment du runtime"
+    }
+  ],
   "tNoZx2": [
     {
       "type": 0,
       "value": "Type"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Retourne true si le premier argument est supérieur à la seconde"
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre d'heures à ajouter. Peut être négatif pour soustraire des heures."
     }
   ],
   "uN4zFU": [
@@ -1097,16 +2519,70 @@
       "value": "OK"
     }
   ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collections à évaluer. Un objet qui apparaît dans une des collections s'affiche également dans le résultat."
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Ajoute un nombre entier d'heures à un horodateur de chaîne transmis"
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre d'unités de temps de l'heure souhaitée dans le passé."
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne pouvant contenir la valeur."
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
       "value": "Valeur par défaut"
     }
   ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Crée un tableau à partir des paramètres"
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Génère un GUID (identificateur global unique)"
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Retourne le dernier index d'une valeur au sein d'une chaîne (culture invariante qui ne respecte pas la casse)"
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur avec laquelle la chaîne peut se terminer."
+    }
+  ],
   "vSlNPe": [
     {
       "type": 0,
       "value": "Supprimer"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de l'action dont vous voulez obtenir les sorties."
     }
   ],
   "vwH/XV": [
@@ -1121,16 +2597,82 @@
       "value": "Propriétés du flux de travail"
     }
   ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Soustrait un nombre entier dans une unité de temps spécifiée à partir d'un horodateur de chaîne transmis"
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Soit un tableau de valeurs dans lequel rechercher la valeur minimale soit la première valeur d'un ensemble."
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Expiré"
     }
   ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne dans laquelle rechercher le paramètre 2 et qui est mise à jour avec le paramètre 3 lorsque le paramètre 2 se trouve dans le paramètre 1."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Longueur de la sous-chaîne."
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "Retourne une valeur spécifiée en fonction de ce que l'expression a renvoyé : true ou false"
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Convertit un horodateur de chaîne transmis d'un fuseau horaire cible à une heure UTC"
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Retourne un tableau ou objet unique avec tous les éléments qui se trouvent dans le tableau ou l'objet transmis à cette fonction"
+    }
+  ],
   "woJQhv": [
     {
       "type": 0,
       "value": "URL de rappel :"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Collection pour laquelle obtenir la longueur."
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "Retourne la représentation sous forme de chaîne d'une chaîne encodée sous forme d'URI"
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nom de la propriété nouvelle ou existante."
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Renvoie le chemin d’accès d’un URI. Si le chemin d’accès n’est pas spécifié, renvoie « / »"
     }
   ],
   "xt5TeT": [
@@ -1145,10 +2687,52 @@
       "value": "Valeur"
     }
   ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Required. The object to compare equality."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne où il faut ajouter un caractère d'échappement aux caractères d'URL non fiables."
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur convertie en tableau."
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Date and time functions"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "Entrez une valeur par défaut pour le paramètre."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Valeur convertie en nombre à virgule décimal."
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Chaîne convertie en une valeur de type native."
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Convertit une chaîne, avec éventuellement des paramètres régionaux et un format de date"
     }
   ],
   "ziYCiA": [
@@ -1161,6 +2745,18 @@
     {
       "type": 0,
       "value": "Flottant"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Ajoute un nombre entier dans une unité de temps spécifiée à un horodateur de chaîne transmis"
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Obligatoire. Nombre de minutes à ajouter. Peut être négatif pour soustraire des minutes."
     }
   ]
 }

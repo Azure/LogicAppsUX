@@ -251,6 +251,9 @@ export default {
     USERVOICE: 'http://aka.ms/connectorfeedback',
     WORKFLOW: 'http://aka.ms/logicapps-nesteddoc',
   },
+  LANGUAGE_NAMES: {
+    WORKFLOW: 'TemplateExpressionLanguage',
+  },
   LOCATION: {
     australiaeast: 'Australia East',
     australiasoutheast: 'Australia Southeast',

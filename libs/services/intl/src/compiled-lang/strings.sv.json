@@ -5,6 +5,18 @@
       "value": "Inställningsetikett"
     }
   ],
+  "+g+mch": [
+    {
+      "type": 0,
+      "value": "Returnerar brödtexten för en del i en åtgärds multipart-utdata"
+    }
+  ],
+  "+lpuMl": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde som ska returneras om uttrycket är falskt."
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -17,10 +29,64 @@
       "value": "Väntar"
     }
   ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "Returnerar elementen i den matris som börjar vid antalindexet"
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "Konverterar indata till en matris"
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den samling som objekt ska kopplas från."
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Returnerar de första Count-elementen i den matris eller sträng som har skickats in"
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Returnerar en timmas start till en strängtidsstämpel som skickats in"
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "Returnerar URL:en för att anropa utlösaren eller åtgärden. OBS! Den här funktionen kan bara användas i httpWebhook eller apiConnectionWebhook, inte i manual, recurrence, http eller apiConnection."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Krävs. Den base64-kodade strängen."
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "URL:en avkodar indatasträngen"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
       "value": "Visa körningsmenyn"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "Returnerar en binär representation av en URI-kodad sträng"
     }
   ],
   "0ZlNtf": [
@@ -29,16 +95,70 @@
       "value": "Lyckades med återförsök"
     }
   ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den sträng som ska konverteras till versaler. Om ett tecken i strängen inte har någon versal motsvarighet, så inkluderas tecknet oförändrat i den returnerade strängen."
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "Returnerar återstoden efter att ha dividerat de två talen (modulo)"
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Strängen kan innehålla värdet."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Returnerar en binär representation av en indata-URI-sträng"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
       "value": "Fler kommandon"
     }
   ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Krävs. Data-URI att konvertera till strängrepresentation."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "Returnerar porten från en URI. Om port inte anges, returneras standardporten för protokollet"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
       "value": "Kommentar"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde som ska konverteras till XML."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Krävs. Den URI-kodade strängen."
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "Konverterar parameterargumentet till ett flyttalsnummer"
     }
   ],
   "1R6Vaa": [
@@ -81,16 +201,52 @@
       "value": "count"
     }
   ],
+  "1TE0e8": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde det ska sökas efter i indexet."
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är mindre än det värde det jämförs med."
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Stäng"
     }
   ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Returnerar en binär representation av en Base 64-kodad sträng"
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Krävs. Värdet att konvertera till data-URI."
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
       "value": "Sluttid"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Returnerar ett enskild värde som matchar nyckelnamnen från formulärdata eller formulärkodade åtgärdsutdata"
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Krävs. Namnet på åtgärden med ett formulärdata- eller formulärkodat svar."
     }
   ],
   "2mnU/w": [
@@ -105,10 +261,52 @@
       "value": "Identifierare"
     }
   ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Avgränsaren."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Fel"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det objekt från vilket egenskapen ska tas bort."
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Krävs. Antalet angivna tidsenheter som ska subtraheras."
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Krävs. Det lägsta heltalet som kunde returneras."
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Krävs. Antalet dagar att lägga till. Kan vara negativt för att subtrahera dagar."
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Krävs. Den tidsenhet som specificeras i intervallet."
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Krävs. Namnet på parametern vars värden du vill ha."
     }
   ],
   "4cVuMw": [
@@ -117,10 +315,40 @@
       "value": "Du kan bara lägga till kommentarer när du redigerar ett stegs indata."
     }
   ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "Returnerar minimivärdet i indatamatrisen med tal"
+    }
+  ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "Id för tjänstbegäran"
+    }
+  ],
+  "5J7j9k": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det XPath-uttryck som ska utvärderas."
+    }
+  ],
+  "5aa76N": [
+    {
+      "type": 0,
+      "value": "Returnerar det första elementet i den matris eller sträng som har skickats in"
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Returnerar sant om ett objekt, en matris eller en sträng är tom"
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Krävs. Namnet på den slinga vars artikeln du vill ha."
     }
   ],
   "5qzZMo": [
@@ -135,10 +363,28 @@
       "value": "Ta bort parameter"
     }
   ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är större än det värde det jämförs med."
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
       "value": "Visa körning"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den samling som sökningen ska göras i."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Krävs. Namnet på åtgärden med ett svar i flera delar."
     }
   ],
   "6oqk+A": [
@@ -147,16 +393,40 @@
       "value": "Föregående"
     }
   ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Krävs. Talet att multiplicera Multiplikand 2 med."
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
       "value": "OK"
     }
   ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den sträng från vilken delsträngen hämtas."
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "Valfritt. De nationella inställningar som ska användas vid formatering (standardinställningen är en-us)."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Statuskod"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Returnerar antalet tick (100 nanosekunders intervall) sedan den 1 januari 0001 00:00:00 UT för en strängtidsstämpel"
     }
   ],
   "7yEdSt": [
@@ -171,10 +441,52 @@
       "value": "Kopiera webbadress"
     }
   ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Strängen kan innehålla värdet."
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde som ska returneras om uttrycket är sant."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Returnerar en formaterad nummersträng"
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är större än eller lika med det objekt det jämförs med."
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
       "value": "Det går inte att återge designern pga flera utlösare i definitionen."
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Krävs. Strängen som ska URI-kodas."
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Lägger till ett heltalsvärde för det antal dagar för vilka en strängtidsstämpel skickas in"
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Returnerar en enskild matris eller ett objekt som har gemensamma objekt med matriser eller objekt som har skickats in"
     }
   ],
   "99vsJy": [
@@ -183,10 +495,64 @@
       "value": "Anslutning"
     }
   ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Returnerar ett värdes data-URI"
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Returnerar ett objekt med ett extra egenskapsvärdepar"
+    }
+  ],
   "9b4xDa": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "Returnerar resultatet av att lägga till de två talen"
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "Returnerar sant om båda parametrarna är sanna"
+    }
+  ],
+  "ANbEeQ": [
+    {
+      "type": 0,
+      "value": "Krävs. Namnet på åtgärden vars värden du vill ha."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Krävs. Strängen som ska kodas till base64-representation."
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Krävs. Index för delen att hämta."
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Antingen ett enskilt formatspecificerartecken eller ett anpassat formatmönster som indikerar hur värdet för den här tidsstämpeln ska formateras. Om formatet inte anges så används ISO 8601-formatet (o)."
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Krävs. Den URI-kodade strängen."
     }
   ],
   "BKL0ZG": [
@@ -195,16 +561,46 @@
       "value": "Starttid"
     }
   ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Krävs. Strängen att avkoda de URL-osäkra tecknen från."
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
       "value": "Tillståndstyp:"
     }
   ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "En enskild formatspecifierare som indikerar hur värdet för detta GUID ska formateras."
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är större än det objekt det jämförs med."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Anslutning krävs"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Returnerar sökvägen och frågan från en URI"
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Krävs. Den sträng som du vill ta bort inledande och efterföljande blanksteg från."
     }
   ],
   "DFo+mo": [
@@ -219,10 +615,52 @@
       "value": "Varaktighet"
     }
   ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Omvandlar parametern till ett decimaltal"
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
       "value": "Svar"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Indexet för var delsträngen ska börja extraheras."
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Krävs. Antalet angivna tidsenheter som ska läggas till."
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Returnerar ett parametervärde som definieras i definitionen"
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Returnerar ett avsnitt i en sträng som definieras av start- och slutindexet"
+    }
+  ],
+  "FS+/Tb": [
+    {
+      "type": 0,
+      "value": "Returnerar brödtexten för en del i utlösarens multipart-utdata"
+    }
+  ],
+  "FVavKy": [
+    {
+      "type": 0,
+      "value": "Returnerar en dags start till en strängtidsstämpel som skickats in"
     }
   ],
   "FXLR5M": [
@@ -257,10 +695,52 @@
       "value": "hours"
     }
   ],
+  "Fgq3Db": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den samling som det sista objektet ska hämtas från."
+    }
+  ],
+  "Fh2HDb": [
+    {
+      "type": 0,
+      "value": "Returnerar det första indexet för ett värde i en sträng (skiftlägesokänslig, invariant kultur)"
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
       "value": "Status"
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Strängen kan innehålla värdet."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "Returnerar frågan från en URI"
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det objekt det ska sökas efter i Within-samlingen."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Referensfunktioner"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Returnerar sant om båda parametrarna är falsk"
     }
   ],
   "Gmya+V": [
@@ -281,6 +761,30 @@
       "value": "Matris"
     }
   ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "URI-parsningsfunktioner"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Strängen som ska segmenteras."
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Krävs. Talet som subtrahenden tas bort från."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Krävs. Nyckelnamnet för formulärdatavärdet att returnera."
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -293,16 +797,118 @@
       "value": "Inställningsvärde"
     }
   ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Konverterar en inskickad tidsstämpelsträng från en UTC till en måltidszon"
+    }
+  ],
+  "Ip7Iax": [
+    {
+      "type": 0,
+      "value": "Returnerar indexet för den n:te förekomsten av ett värde i en sträng (skiftlägesokänslig, invariant kultur)"
+    }
+  ],
+  "IpVwYT": [
+    {
+      "type": 0,
+      "value": "Returnerar det första icke-null-objektet i det argument som har skickats in"
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Konverterar en sträng till gemena bokstäver med skiftlägesregler för den invarianta kulturen"
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Krävs. En sträng som innehåller tiden."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde som konverteras till ett booleskt värde."
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Omvandlar en inskickad tidsstämpelsträng från källtidszon till en måltidszon"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
       "value": "Metod"
     }
   ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Returnerar sant om en ordlista innehåller en nyckel, om en matris innehåller ett värde eller om en sträng innehåller en delsträng"
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Krävs. Det tal som ska formateras."
+    }
+  ],
   "JnlcZQ": [
     {
       "type": 0,
       "value": "Namn:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Krävs. Den numeriska formatsträngen."
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det objekt till vilket en ny egenskap ska läggas till."
+    }
+  ],
+  "K90YEU": [
+    {
+      "type": 0,
+      "value": "Returnerar en delmängd av tecken från en sträng"
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det antal objekt som ska hämtas från samlingen. Det måste vara ett positivt heltal."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Returnerar en strängtidsstämpels veckokomponent"
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "Returnerar schemat från en URI"
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "När den används inuti en for-each-loop, returnerar den här funktionen det aktuella objektet för den angivna loopen."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. De uttryck som kan ha värdet sant."
     }
   ],
   "M0HMjE": [
@@ -315,6 +921,36 @@
     {
       "type": 0,
       "value": "Parametrarna sparas när arbetsflödet sparas. Du kan redigera det här innan du sparar eller redigera det på parametersidan när du har sparat."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "Valfritt. Namnet på den omfångsdefinierade åtgärd där du vill ha indata och utdata från åtgärderna på toppnivå i det omfånget."
+    }
+  ],
+  "M9mzP6": [
+    {
+      "type": 0,
+      "value": "Krävs. Talet som ska läggas till i Summand 2."
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. De samlingar som ska utvärderas. Det måste finnas ett objekt i alla samlingar som skickas och visas i resultatet."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Krävs. Data-URI att konvertera till binär representation."
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Returnerar den aktuella tidsstämpeln som en sträng"
     }
   ],
   "Mb+Eaq": [
@@ -335,16 +971,34 @@
       "value": "Oväntat fel"
     }
   ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Krävs. Nyckelnamnet för formulärdatavärdena att returnera."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
       "value": "Status"
     }
   ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Returnerar en binär representation av ett värde"
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
       "value": "Redigera parameter"
+    }
+  ],
+  "OD8igU": [
+    {
+      "type": 0,
+      "value": "Krävs. En sträng som innehåller tidszonnamnet för källtidszonen. Se https://msdn.microsoft.com/sv-se/library/gg154758.aspx för information."
     }
   ],
   "OFKZzQ": [
@@ -357,6 +1011,12 @@
     {
       "type": 0,
       "value": "Kommentar"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "Returnerar resultaten från åtgärderna på toppnivå i den angivna omfångsdefinierade åtgärden, till exempel en For_each, Until eller Scope."
     }
   ],
   "Oib1mL": [
@@ -377,16 +1037,52 @@
       "value": " min"
     }
   ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "Valfritt. De nationella inställningarna som ska användas vid parsning av datum-/tidssträngen."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Returnerar värden från en URI"
+    }
+  ],
   "OnrO5/": [
     {
       "type": 0,
       "value": "Välj en hanterad identitet"
     }
   ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Krävs. Det här värdet är antalet heltal som finns i matrisen."
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Samlingsfunktioner"
+    }
+  ],
+  "P8ZBF9": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den samling som det första objektet ska hämtas från."
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
       "value": "Slutfört"
+    }
+  ],
+  "PKMkb/": [
+    {
+      "type": 0,
+      "value": "Krävs. Talet som ska läggas till i Summand 1."
     }
   ],
   "PP63jY": [
@@ -401,16 +1097,46 @@
       "value": "Dölj"
     }
   ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Krävs. Antalet sekunder att lägga till. Kan vara negativt för att subtrahera sekunder."
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
       "value": "Avbruten"
     }
   ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "Arbetsflödesfunktioner"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "Returnerar indatasträngens Base 64-representation"
+    }
+  ],
   "Q/7unA": [
     {
       "type": 0,
       "value": "Objekt"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är mindre än eller lika med det objekt det jämförs med."
+    }
+  ],
+  "QEp3C8": [
+    {
+      "type": 0,
+      "value": "Konverterar indata till ett värde av JSON-typ"
     }
   ],
   "QQYzHC": [
@@ -427,16 +1153,52 @@
       "value": " kort"
     }
   ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Returnerar ett enskild värde som matchar nyckelnamnen från formulärdata eller formulärkodade utlösarutdata"
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Strängfunktioner"
+    }
+  ],
   "QbJDi7": [
     {
       "type": 0,
       "value": "Objekt"
     }
   ],
+  "QeE0k/": [
+    {
+      "type": 0,
+      "value": "Krävs. Värdet som konverteras till binärt."
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
       "value": "Läser in…"
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Returnerar en sträng i datumformat"
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den sträng som objekt ska avgränsas med."
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. En sträng som innehåller den angivna tidsenheten i intervallet som ska dras ifrån."
     }
   ],
   "Qu1HkA": [
@@ -447,6 +1209,12 @@
     {
       "type": 0,
       "value": "tim"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den sträng som ska delas."
     }
   ],
   "RhH4pF": [
@@ -481,6 +1249,18 @@
       "value": "minutes"
     }
   ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "Konverterar parametern till ett heltal"
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Kontrollerar om strängen startar med ett värde (skiftlägseokänsligt, invariant kultur)"
+    }
+  ],
   "SXb47U": [
     {
       "type": 1,
@@ -491,10 +1271,34 @@
       "value": "min"
     }
   ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Krävs. Namnet på åtgärden med ett formulärdata- eller formulärkodat svar."
+    }
+  ],
+  "T7zcR6": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. De uttryck som måste ha värdet sant."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
       "value": "Misslyckades"
+    }
+  ],
+  "TI44R1": [
+    {
+      "type": 0,
+      "value": "Returnerar en sträng med varje objekt i en matris som har kopplats med en avgränsare"
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Returnerar månadens start för en strängtidsstämpel"
     }
   ],
   "TZv5JE": [
@@ -515,16 +1319,34 @@
       "value": "Taggar"
     }
   ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Krävs. Talet att multiplicera Multiplikand 1 med."
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
       "value": "Minimera/expandera"
     }
   ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Genererar en matris av heltal med början från ett visst tal"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
       "value": "Använd listan med dynamiskt innehåll om du vill referera till en parameter."
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Ersätter en sträng med an given sträng"
     }
   ],
   "USVffu": [
@@ -543,6 +1365,12 @@
     {
       "type": 0,
       "value": "Angivet namn för arbetsflödeskörning är inte giltigt."
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Krävs. Talet att dela med nämnaren."
     }
   ],
   "VXBWrq": [
@@ -573,6 +1401,30 @@
       "value": "max"
     }
   ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den nya egenskapens namn."
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Krävs. Det första heltalet i matrisen."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "Snabbformat för trigger().outputs"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "Returnerar resultatet av att ha dividerat de två talen"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -589,6 +1441,18 @@
     {
       "type": 0,
       "value": " timmar"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "Snabbformat för actions('actionName').outputs"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Kombinerar ett valfritt antal strängar"
     }
   ],
   "XFFpu/": [
@@ -627,10 +1491,28 @@
       "value": "Förfrågan"
     }
   ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Matematikfunktioner"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Krävs. Namnet på åtgärden vars brödtextutdata du vill ha."
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Mer information"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Returnerar en binär representation av ett data-URI"
     }
   ],
   "YHsAKl": [
@@ -655,16 +1537,64 @@
       "value": "Sträng"
     }
   ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Aktiverar ett uttryck som hämtar sitt värde från ett annat JSON-namn och värdepar eller utdata från körningsutlösaren"
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Returnerar en enskild matris eller ett objekt med alla de element som finns i den matris eller det objekt som har skickats till den här funktionen. Funktionens parametrar kan antingen vara en uppsättning objekt eller en uppsättning matriser (inte en blandning av båda). Om det finns två objekt med samma namn i utdata, så visas det sista objektet med det namnet i det slutliga objektet."
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "Inget"
     }
   ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Returnerar en strängtidsstämpels månadsdagskomponent"
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "Snabbformat för trigger().outputs.body"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde som strängen kan inledas med."
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
       "value": "Den här åtgärden har redan tagits bort."
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Krävs. Talet att dela med nämnaren."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Antalet förekomster av delsträngen som ska hittas."
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det antal objekt som ska tas bort från samlingens framsida. Det måste vara ett positivt heltal."
     }
   ],
   "bH5LtI": [
@@ -681,10 +1611,22 @@
       "value": " har redan registrerats"
     }
   ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är större än eller lika med det värde det jämförs med."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Läs in fler"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "Returnerar maxvärdet i indatamatrisen med tal"
     }
   ],
   "bgfjqS": [
@@ -693,10 +1635,28 @@
       "value": "Etikettinställning"
     }
   ],
+  "bzF/qn": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den samling som från vilken de första Count-objekten ska hämtas."
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Returnerar ett objekt med en egenskap som är inställd på det angivna värdet"
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "cJm+ah": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde det ska sökas efter i indexet."
     }
   ],
   "ci6ex1": [
@@ -723,6 +1683,12 @@
       "value": "Starttid"
     }
   ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den samling som från vilken de första Count-objekten ska hoppas över."
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -735,16 +1701,82 @@
       "value": "Läs mer"
     }
   ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Returnerar en strängrepresentation av en Base 64-kodad sträng"
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "Konverterar parametern till ett booleskt värde"
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Returnerar en matris med värden som matchar nyckelnamnen från formulärdata eller formulärkodade åtgärdsutdata"
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Delar strängen med hjälp av en avgränsare"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Inte angivet"
     }
   ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Krävs. Namnet på variabeln vars värde du vill ha."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
       "value": "Starttid"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Krävs. Talet att dela nämnaren med."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det index i vilket delsträngen börjar i parameter 1."
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Krävs. Objekten att kontrollera efter null."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "Valfritt. Indexet för var understrängen ska sluta extraheras."
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Returnerar sant om det första argumentet är större än eller lika med det andra"
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Logiska funktioner"
     }
   ],
   "ftwXvc": [
@@ -759,10 +1791,46 @@
       "value": "URI"
     }
   ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Returnerar en tidsstämpel som är aktuell tid plus det angivna tidsintervallet."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "Returnerar resultatet av att dividera de två talen"
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. A booleskt värde som bestämmer vilket värde uttrycket ska returnera."
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "Föregående misslyckad"
+    }
+  ],
+  "gMhc5o": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den sträng som ska kombineras till en enskild sträng."
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Omvandlingsfunktioner"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "När den här funktionen används inuti fram till loopen returnerar den det aktuella iterationsindexet för den angivna loopen."
     }
   ],
   "hN7iBP": [
@@ -797,6 +1865,12 @@
       "value": "seconds"
     }
   ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "Returnerar resultatet av att ha subtraherat två tal"
+    }
+  ],
   "hdnZ9Y": [
     {
       "type": 0,
@@ -819,10 +1893,22 @@
       "value": "Kommentar"
     }
   ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Konverterar en sträng till versala bokstäver med skiftlägesregler för den invarianta kulturen"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
       "value": "Nästa"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Krävs. Den URI som ska parsas."
     }
   ],
   "iRjBf4": [
@@ -835,6 +1921,12 @@
     {
       "type": 0,
       "value": "Expandera"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Manipuleringsfunktioner"
     }
   ],
   "iUs7pv": [
@@ -853,10 +1945,58 @@
       "value": "s"
     }
   ],
+  "j2MU0b": [
+    {
+      "type": 0,
+      "value": "Returnerar ett objekt med en egenskap som har tagits bort"
+    }
+  ],
+  "j39557": [
+    {
+      "type": 0,
+      "value": "Returnerar värdet för den angivna variabeln."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Returnerar ett slumpmässigt heltal från ett angivet intervall, vilket endast är inkluderande i startänden."
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det uttryck som ska negeras."
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde som konverteras till en sträng."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Krävs. En base64-indatasträng."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Krävs. Nyckelnamnet för formulärdatavärdena att returnera."
+    }
+  ],
   "jfInxm": [
     {
       "type": 0,
       "value": "Redigera i JSON"
+    }
+  ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Krävs. Den base64-kodade strängen."
     }
   ],
   "k41+13": [
@@ -889,10 +2029,34 @@
       "value": " s"
     }
   ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Returnerar en strängrepresentation av en indata-Base 64-sträng"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
       "value": "Hämta (Alt/Option + klicka)"
+    }
+  ],
+  "kZuYgD": [
+    {
+      "type": 0,
+      "value": "Returnerar sant om det första argumentet är mindre än det andra"
+    }
+  ],
+  "keb4r1": [
+    {
+      "type": 0,
+      "value": "Returnerar sant om två värden är lika stora"
+    }
+  ],
+  "knylNW": [
+    {
+      "type": 0,
+      "value": "Krävs. Det här värdet är nästa heltal efter det högsta heltalet som kunde returneras."
     }
   ],
   "l36V56": [
@@ -931,6 +2095,12 @@
       "value": "Tillståndslöst körningsläge:"
     }
   ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "Kortkommando för åtgärder(actionName).outputs.body"
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -949,6 +2119,78 @@
       "value": "Namn"
     }
   ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Returnerar en tidsstämpel som är den aktuella tiden minus det angivna tidsintervallet."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Returnerar en strängrepresentation av ett data-URI"
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "URL:en kodar indatasträngen"
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den sträng som ska konverteras till gemener. Om ett tecken i strängen inte har någon gemen motsvarighet, så inkluderas tecknet oförändrat i den returnerade strängen."
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde som konverteras till ett flyttalsnummer."
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är mindre än eller lika med det värde det jämförs med."
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Krävs. Antalet tidsenheter som den önskade tiden är i framtiden."
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Namnet på den egenskap som ska tas bort."
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är mindre än det objekt det jämförs med."
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Lägger till ett heltalsvärde för det antal minuter för vilka en strängtidsstämpel skickas in"
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Returnerar det sista elementet i den matris eller sträng som har skickats in"
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den XML för vilken XPath-uttrycket ska utvärderas."
+    }
+  ],
   "o1HOyf": [
     {
       "type": 1,
@@ -963,10 +2205,22 @@
       "value": "max_page"
     }
   ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Krävs. dataURI att avkoda till binär representation."
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Ange körningsidentifieraren för att öppna körningen"
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Krävs. Nyckelnamnet för formulärdatavärdet att returnera."
     }
   ],
   "p16/4S": [
@@ -981,10 +2235,40 @@
       "value": "Sluttid"
     }
   ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Krävs. Värdena att kombinera till en matris."
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Parametrar"
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "Konverterar indata till ett värde av XML-typ"
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Krävs. Talet att dela nämnaren med. Efter divisionen tas resten."
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Returnerar en enskild matris eller ett objekt som har gemensamma element med matriser eller objekt som har passats in. Funktionens parametrar kan antingen vara en uppsättning objekt eller en uppsättning matriser (inte en blandning av båda). Om det finns två objekt med samma namn, så visas det sista objektet med det namnet i det slutliga objektet."
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "Beskär inledande och efterföljande blanksteg från en sträng"
     }
   ],
   "pr9GwA": [
@@ -993,10 +2277,46 @@
       "value": "Uppdatera"
     }
   ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Rerturnerar en XML-nod, en noduppsättning eller ett värde som JSON från det tillhandahållna XPath-uttrycket"
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde som egenskapen ska tilldelas."
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "Konverterar parametern till en sträng"
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Lägger till ett heltalsvärde för det antal sekunder för vilka en strängtidsstämpel skickas in"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Hanterad identitet"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Kontrollerar om strängen slutar med ett värde (skiftlägseokänsligt, invariant kultur)"
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Returnerar sant om det första argumentet är mindre än eller lika med det andra"
     }
   ],
   "qSt0Sb": [
@@ -1037,6 +2357,24 @@
       "value": "days"
     }
   ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Returnerar antalet element i en matris eller sträng"
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde som konverteras till ett heltal."
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Aktiverar ett uttryck som hämtar sitt värde från ett annat JSON-namn och värdepar eller utdata från körningsåtgärden"
+    }
+  ],
   "r9SVE4": [
     {
       "type": 0,
@@ -1055,16 +2393,76 @@
       "value": "Kortrubrik"
     }
   ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Krävs. Antingen en matris med värden för att hitta maxvärdet, eller det första värdet i en uppsättning."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Returnerar en URI-kodad representation av ett värde"
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Returnerar en strängtidsstämpels årsdagskomponent"
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Returnerar en matris med värden som matchar nyckelnamnen från formulärdata eller formulärkodade utlösarutdata"
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Krävs. En sträng som innehåller den angivna tidsenheten i intervallet som ska läggas till."
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den samling som ska kontrolleras om den är tom."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Krävs. Talet att ta bort från minuenden."
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
       "value": "Nyckel"
     }
   ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Returnerar sant om endera av parametrarna är sann"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Ny parameter"
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Krävs. En sträng som innehåller tidszonnamnet för måltidszonen. Se https://msdn.microsoft.com/sv-se/library/gg154758.aspx för Information."
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "Returnerar URL:en för att anropa utlösaren eller åtgärden"
     }
   ],
   "tImHz/": [
@@ -1085,10 +2483,34 @@
       "value": " tim"
     }
   ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Krävs. Index för delen att hämta."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Den här funktionen ger dig information för själva arbetsflödet under körningen"
+    }
+  ],
   "tNoZx2": [
     {
       "type": 0,
       "value": "Typ"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Returnerar sant om det första argumentet är större än det andra"
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Krävs. Antalet timmar att lägga till. Kan vara negativt för att subtrahera timmar."
     }
   ],
   "uN4zFU": [
@@ -1097,16 +2519,70 @@
       "value": "OK"
     }
   ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. De samlingar som ska utvärderas. Ett objekt som visas i någon av samlingarna visas också i resultatet."
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Lägger till ett heltalsvärde för det antal timmar för vilka en strängtidsstämpel skickas in"
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Krävs. Antalet tidsenheter som den önskade tiden är i det förflutna."
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Strängen kan innehålla värdet."
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
       "value": "Standardvärde"
     }
   ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Skapar en matris från parametrarna"
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Genererar en globalt unik sträng (GUID)"
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Returnerar det sista indexet för ett värde i en sträng (skiftlägesokänslig, invariant kultur)"
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Det värde som strängen kan avslutas med."
+    }
+  ],
   "vSlNPe": [
     {
       "type": 0,
       "value": "Ta bort"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Krävs. Namnet på åtgärden vars utdata du vill ha."
     }
   ],
   "vwH/XV": [
@@ -1121,16 +2597,82 @@
       "value": "Arbetsflödesegenskaper"
     }
   ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Subtraherar ett heltal av en angiven tidsenhet från en inskickad tidsstämpelsträng"
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Krävs. Antingen en matris med värden för att hitta minsta värdet, eller det första värdet i en uppsättning."
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Tidsgränsen överskreds"
     }
   ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den sträng i vilken sökning efter parameter 2 görs och som uppdateras med parameter 3, när parameter 2 påträffas i parameter 1."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Delsträngens längd."
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "Returnerar ett specificerat värde baserat på huruvida uttrycket har resulterat i sant eller falskt"
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Konverterar en inskickad tidsstämpelsträng från en källtidszon till UTC"
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Returnerar en enskild matris eller ett objekt med alla de element som finns i den matris eller det objekt som har skickats till den här funktionen"
+    }
+  ],
   "woJQhv": [
     {
       "type": 0,
       "value": "Motringningsadress:"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den samling för vilken längden ska hämtas."
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "Returnerar en strängrepresentation av en URI-kodad sträng"
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den nya eller befintliga egenskapens namn."
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Returnerar sökvägen från en URI. Om sökvägen inte anges, returneras /"
     }
   ],
   "xt5TeT": [
@@ -1145,10 +2687,52 @@
       "value": "Värde"
     }
   ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Objektet för att jämföra likhet."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Krävs. Strängen ta bort de URL-osäkra tecknen från."
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Krävs. Värdet som konverteras till en matris."
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Datum- och tidsfunktioner"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "Ange standardvärde för parameter."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Måste anges. Värdet som omvandlas till ett decimaltal."
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Obligatoriskt. Den sträng som konverteras till ett värde av ursprunglig typ."
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Konverterar en sträng, med alternativ för nationella inställningar och format, till ett datum"
     }
   ],
   "ziYCiA": [
@@ -1161,6 +2745,18 @@
     {
       "type": 0,
       "value": "Float"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Lägger till ett heltal av en viss tidsenhet till en inskickad tidsstämpelsträng"
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Krävs. Antalet minuter att lägga till. Kan vara negativt för att subtrahera minuter."
     }
   ]
 }
