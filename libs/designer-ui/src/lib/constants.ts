@@ -267,6 +267,9 @@ export default {
 
   WORKFLOW_PARAMETER_SERIALIZED_TYPE,
   WORKFLOW_PARAMETER_TYPE,
+  LANGUAGE_NAMES: {
+    WORKFLOW: 'TemplateExpressionLanguage',
+  },
 
   PANEL: {
     PANEL_TAB_NAMES,
