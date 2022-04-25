@@ -1,4 +1,4 @@
-@small-logo-dimension: 22px;
+@med-logo-dimension: 60px;
 @grey-card-border: #bdbdbd;
 @card-title-color: #323130;
 @grey-card-description: #333333;
@@ -7,9 +7,10 @@
   display: inline-block;
 }
 
-.msla-operation-card {
+.msla-connector-card {
   padding: 13px;
   max-width: 400px;
+  height: 111px;
   border: 1px solid @grey-card-border;
 
   .msla-card-title-container {
@@ -17,14 +18,12 @@
   }
 
   .msla-card-logo {
-    height: @small-logo-dimension;
-    width: @small-logo-dimension;
+    height: @med-logo-dimension;
+    width: @med-logo-dimension;
     border-radius: 4px;
   }
 
   .msla-card-title {
-    display: inline-block;
-    max-width: 200px;
     font-size: 14px;
     color: @card-title-color;
     font-weight: 600;
@@ -52,7 +51,6 @@
       border-radius: 12px;
       padding: 1px 9px 1px;
       margin-right: 4px;
-      margin-top: 2px;
     }
   }
 }

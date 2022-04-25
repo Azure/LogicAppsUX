@@ -1,6 +1,6 @@
 import type { RecommendationPanelProps } from './recommendationpanel';
 import { RecommendationPanel } from './recommendationpanel';
-import { MockSearchOperations } from '@microsoft-logic-apps/utils';
+import { connectorsSearchResultsMock, MockSearchOperations } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
@@ -14,4 +14,5 @@ Container.args = {
   isCollapsed: false,
   width: '630px',
   operationSearchResults: MockSearchOperations,
+  connectorBrowse: connectorsSearchResultsMock,
 };

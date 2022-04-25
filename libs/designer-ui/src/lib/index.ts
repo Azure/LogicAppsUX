@@ -48,7 +48,6 @@ export * from './settings';
 export * from './settings/settingsection/settingreactiveinput';
 export * from './settings/settingsection/settingtextfield';
 export * from './settings/settingsection/settingtoggle';
-export * from './searchbar';
 // export * from './table';
 export * from './telemetry/models';
 // export * from './textbox';

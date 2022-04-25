@@ -1641,6 +1641,12 @@
       "value": "Required. The collection from where to take the first Count objects."
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -2509,6 +2515,12 @@
       "value": "Required. The number of hours to add. Can be negative to subtract hours."
     }
   ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Operations"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -2699,6 +2711,16 @@
     {
       "type": 0,
       "value": "Required. The value that is converted to an array."
+    }
+  ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "logo for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "yqRrQ/": [

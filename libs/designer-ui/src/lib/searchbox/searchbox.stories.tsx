@@ -12,7 +12,6 @@ export default {
 const mockSearch = (term: string) => null;
 
 const props: SearchBoxProps = {
-  name: 'AzureBlob',
   onSearch: mockSearch,
 };
 
