@@ -1,11 +1,11 @@
-import Constants from '../../common/constants';
+import Constants from '../constants';
 import {
   createCompletionItemProviderForFunctions,
   createCompletionItemProviderForValues,
   createSignatureHelpProvider,
   createLanguageDefinition,
   getTemplateFunctions,
-} from '../../common/workflow/languageservice/workflowlanguageservice';
+} from '../workflow/languageservice/workflowlanguageservice';
 import { map } from '@microsoft-logic-apps/utils';
 import Editor, { loader } from '@monaco-editor/react';
 import { useEffect } from 'react';
