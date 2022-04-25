@@ -6,7 +6,7 @@ import { SchemaProcessor } from './schemaprocessor';
 import { getArrayOutputMetadata } from './utils';
 import { equals, startsWith } from '@microsoft-logic-apps/utils';
 
-export type Responses = Swagger.Responses;
+export type Responses = OpenAPIV2.ResponsesObject;
 
 export class OutputsProcessor {
   private _options: SchemaProcessorOptions;

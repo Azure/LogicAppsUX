@@ -1,6 +1,8 @@
 import Editor, { loader } from '@monaco-editor/react';
 import { useEffect } from 'react';
 
+export * from './models/parameter';
+
 // TODO: Add more languages
 export enum EditorLanguage {
   javascript = 'javascript',

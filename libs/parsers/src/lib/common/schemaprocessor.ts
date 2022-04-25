@@ -7,7 +7,8 @@ import { dereferenceRefSchema , getEnum, getParameterDynamicSchema, getParameter
 import * as ParameterKeyUtility from './keysutility';
 import type { SchemaProperty } from '../models/operation';
 
-export type Schema = Swagger.Schema;
+export type Schema = OpenAPIV2.Schema;
+type SchemaObject = OpenAPIV2.SchemaObject;
 
 export interface ParentPropertyInfo {
     arrayName?: string;
@@ -73,7 +74,7 @@ export class SchemaProcessor {
     }
 
     getSchemaProperties(schema: Schema): SchemaProperty[] {
-        schema = this._dereferenceRefSchema(schema) as Swagger.Schema;
+        schema = this._dereferenceRefSchema(schema) as SchemaObject;
 
         let properties: SchemaProperty[];
         switch (schema.type) {
@@ -116,8 +117,8 @@ export class SchemaProcessor {
     }
 
     // TODO(uxteam): Might have to redo for handling primitive arrays
-    private _getArrayProperties(schema: Schema, skipParent = false): SchemaProperty[] {
-        const itemsSchema = this._dereferenceRefSchema(schema.items) || {};
+    private _getArrayProperties(schema: SchemaObject, skipParent = false): SchemaProperty[] {
+        const itemsSchema = (this._dereferenceRefSchema(schema.items as Schema) || {}) as SchemaObject;
         const itemsType = itemsSchema.type;
         const arrayOutputs = skipParent ? [] : this._getScalarProperties(schema);
         const isReadOnlyInputParameter = this.options.isInputSchema && this._isReadOnlyParameter(schema);
@@ -188,7 +189,7 @@ export class SchemaProcessor {
     }
 
     // TODO(nimrodg): This should go away once Button ui supports Object type parameters. for now - convert the object to scalar and sets contentHint to FILE.
-    private _getFileProperties(schema: Schema): SchemaProperty[] {
+    private _getFileProperties(schema: SchemaObject): SchemaProperty[] {
         const clonedSchema = clone(schema);
         clonedSchema.type = SwaggerConstants.Types.String;
         clonedSchema.format = SwaggerConstants.FormatByte;
@@ -197,7 +198,7 @@ export class SchemaProcessor {
         return this._getScalarProperties(clonedSchema);
     }
 
-    private _getObjectProperties(schema: Schema, keyPrefix: string | undefined, titlePrefix: string | undefined, summaryPrefix: string | undefined): SchemaProperty[] {
+    private _getObjectProperties(schema: SchemaObject, keyPrefix: string | undefined, titlePrefix: string | undefined, summaryPrefix: string | undefined): SchemaProperty[] {
         const properties: SchemaProperty[] = [];
         const propertyOutputs = this._getObjectPropertyOutputs(schema, keyPrefix, titlePrefix, summaryPrefix);
 
@@ -217,7 +218,7 @@ export class SchemaProcessor {
         }
     }
 
-    private _getObjectPropertyOutputs(schema: Schema, keyPrefix: string | undefined, titlePrefix: string | undefined, summaryPrefix: string | undefined): SchemaProperty[] {
+    private _getObjectPropertyOutputs(schema: SchemaObject, keyPrefix: string | undefined, titlePrefix: string | undefined, summaryPrefix: string | undefined): SchemaProperty[] {
         const properties: Record<string, Schema> = schema.properties || {};
         const requiredProperties = schema.required || [];
         const keys = Object.keys(properties);
@@ -230,7 +231,7 @@ export class SchemaProcessor {
 
         if (keys.length && !this._isInternalParameter(schema) && !isReadOnlyInputParameter) {
             const outputs = keys.map(key => {
-                const childOutput = properties[key];
+                const childOutput = properties[key] as SchemaObject;
 
                 let parentKeyPrefix = keyPrefix || this.options.keyPrefix;
                 parentKeyPrefix = parentKeyPrefix ? parentKeyPrefix : '$';
@@ -327,7 +328,7 @@ export class SchemaProcessor {
             let schemas = schemaProperty.schema['oneOf'];
             if (!this.options.selectAllOneOfSchemas) {
                 const value = ParameterKeyUtility.getValue(schemaProperty.key, <string>this.options.dataKeyPrefix, this.options.data);
-                schemas = [this._selectSchema(schemaProperty.schema['oneOf'], value)];
+                schemas = [this._selectSchema(schemaProperty.schema['oneOf'] as SchemaObject[], value)];
             }
 
             const schemaProcessorOptions: SchemaProcessorOptions = {
@@ -346,7 +347,7 @@ export class SchemaProcessor {
             const schemaProperties: SchemaProperty[] = [];
             for (const schema of schemas) {
                 if (schema) {
-                    schemaProperties.push(...schemaProcessor.getSchemaProperties(schema));
+                    schemaProperties.push(...schemaProcessor.getSchemaProperties(schema as SchemaObject));
                 }
             }
             return schemaProperties;
@@ -355,7 +356,7 @@ export class SchemaProcessor {
         return [schemaProperty];
     }
 
-    private _selectSchema(schemas: Swagger.Schema[], data: any): Swagger.Schema {
+    private _selectSchema(schemas: SchemaObject[], data: any): SchemaObject {
         for (const schema of schemas) {
             if (data !== undefined) {
                 let match = false;
@@ -374,7 +375,7 @@ export class SchemaProcessor {
         return schemas[0];
     }
 
-    private _dereferenceRefSchema(schema: Schema | undefined): Schema | undefined {
+    private _dereferenceRefSchema(schema: Schema | undefined): SchemaObject | undefined {
         if (isNullOrUndefined(schema)) {
             return schema;
         }
@@ -423,7 +424,7 @@ export class SchemaProcessor {
         return this.options.prefix || this.options.currentKey;
     }
 
-    private _getPropertyDetails(inputSchema: Schema, $schema?: Schema, isArrayItems = false): SchemaProperty | undefined {
+    private _getPropertyDetails(inputSchema: SchemaObject, $schema?: SchemaObject, isArrayItems = false): SchemaProperty | undefined {
         const { isInputSchema, parentProperty, permission: $permission, required: $required } = this.options;
 
         let keyPrefix = this.options.keyPrefix ? this.options.keyPrefix : '$';
@@ -440,7 +441,7 @@ export class SchemaProcessor {
         const encode = schema[SwaggerConstants.ExtensionProperties.Encode];
         const $enum = getEnum(schema, $required);
         const format = <string>schema.format;
-        const itemSchema = this._dereferenceRefSchema(schema.items);
+        const itemSchema = this._dereferenceRefSchema(schema.items as Schema);
         const isInsideArray = parentProperty && parentProperty.isArray;
         const isNested = this.options.isNested;
         const isNotificationUrl = schema[SwaggerConstants.ExtensionProperties.NotificationUrl];
@@ -515,7 +516,7 @@ export class SchemaProcessor {
         return titlePrefix && titleText ? `${titlePrefix} ${titleText}` : titleText;
     }
 
-    private _getVisibility(schema: Schema): string {
+    private _getVisibility(schema: SchemaObject): string {
         return schema[SwaggerConstants.ExtensionProperties.Visibility] || (this.options.parentProperty ? this.options.parentProperty.visibility : '');
     }
 
@@ -553,13 +554,13 @@ export class SchemaProcessor {
         return sortedParameters;
     }
 
-    private _isReadOnlyParameter(schema: Schema): boolean {
+    private _isReadOnlyParameter(schema: SchemaObject): boolean {
         const readOnly = schema.readOnly;
         const permission = schema[SwaggerConstants.ExtensionProperties.Permission] || this.options.permission;
         return readOnly || equals(permission, SwaggerConstants.Permissions.ReadOnly);
     }
 
-    private _isInternalParameter(schema: Schema): boolean {
+    private _isInternalParameter(schema: SchemaObject): boolean {
         return equals(schema[SwaggerConstants.ExtensionProperties.Visibility], SwaggerConstants.Visibility.Internal);
     }
 

@@ -7,13 +7,15 @@ import type { SchemaProcessorOptions } from '../common/schemaprocessor';
 import { SchemaProcessor } from '../common/schemaprocessor';
 import * as SwaggerConstants from '../common/constants';
 
+type SchemaObject = OpenAPIV2.SchemaObject;
+
 export interface SplitOnAliasMetadata {
     alias?: string;
     propertyName?: string;
     required?: boolean;
 }
 
-export function getSplitOnArrayAliasMetadata(schema: Swagger.Schema, required: boolean, propertyName?: string): SplitOnAliasMetadata {
+export function getSplitOnArrayAliasMetadata(schema: SchemaObject, required: boolean, propertyName?: string): SplitOnAliasMetadata {
     if (schema.type === SwaggerConstants.Types.Array) {
         return {
             alias: <any>schema[SwaggerConstants.ExtensionProperties.Alias],
@@ -26,7 +28,7 @@ export function getSplitOnArrayAliasMetadata(schema: Swagger.Schema, required: b
         if (keys.length === 1) {
             const firstKey = keys[0];
             const propertyRequired = required && (schema.required || []).indexOf(firstKey) !== -1;
-            return getSplitOnArrayAliasMetadata(schema.properties?.[firstKey] as Swagger.Schema, propertyRequired, firstKey);
+            return getSplitOnArrayAliasMetadata(schema.properties?.[firstKey] as SchemaObject, propertyRequired, firstKey);
         }
     }
 
@@ -104,7 +106,7 @@ export class ManifestParser {
 
         const selectedManifestOutputsSchema = this.getOutputsSchema(outputs);
 
-        const schemaProperties = new SchemaProcessor(schemaProcessorOptions).getSchemaProperties(selectedManifestOutputsSchema as Swagger.Schema);
+        const schemaProperties = new SchemaProcessor(schemaProcessorOptions).getSchemaProperties(selectedManifestOutputsSchema as SchemaObject);
         const outputParameters = schemaProperties.map(item => OutputsProcessor.convertSchemaPropertyToOutputParameter(item, SwaggerConstants.OutputSource.Outputs, 'outputs'));
 
         /*
@@ -118,13 +120,13 @@ export class ManifestParser {
         return map(filteredOutputParameters, SwaggerConstants.OutputMapKey);
     }
 
-    private getOutputsSchema(outputs: any | undefined): Swagger.Schema | undefined {
+    private getOutputsSchema(outputs: any | undefined): SchemaObject | undefined {
         const alternativeSchema = this.getAlternativeOutputSchema(outputs);
 
         return alternativeSchema || this._operationManifest.properties.outputs;
     }
 
-    private getAlternativeOutputSchema(outputs: any | undefined): Swagger.Schema | undefined {
+    private getAlternativeOutputSchema(outputs: any | undefined): SchemaObject | undefined {
         if (!outputs) {
             return undefined;
         }
