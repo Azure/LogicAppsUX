@@ -1,0 +1,1728 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`recommendation panel renders browse view when there are no search results 1`] = `
+<StyledPanelBase
+  aria-label="panel"
+  closeButtonAriaLabel="close"
+  customWidth="500px"
+  headerText="Operations"
+  isOpen={true}
+  onDismiss={[MockFunction]}
+>
+  <DesignerSearchBox
+    onSearch={[MockFunction]}
+  />
+  <div
+    className="msla-result-list"
+  >
+    <div>
+      <div
+        className="msla-filter-container"
+      >
+        <Text
+          className="msla-block"
+        >
+          Filters
+        </Text>
+        <div
+          className="msla-block"
+        >
+          <CustomizedDefaultButton
+            className="msla-filter-btn "
+            onClick={[Function]}
+          >
+            Built-in
+          </CustomizedDefaultButton>
+          <CustomizedDefaultButton
+            className="msla-filter-btn "
+            onClick={[Function]}
+          >
+            Azure
+          </CustomizedDefaultButton>
+        </div>
+      </div>
+    </div>
+    <List
+      items={
+        Array [
+          Object {
+            "id": "/providers/Microsoft.PowerApps/apis/shared_dropbox",
+            "name": "shared_dropbox",
+            "properties": Object {
+              "capabilities": Array [
+                "blob",
+              ],
+              "connectionParameters": Object {
+                "token": Object {
+                  "oAuthSettings": Object {
+                    "clientId": "34d1z2joflga5d8",
+                    "identityProvider": "dropbox",
+                    "properties": Object {
+                      "IsFirstParty": "False",
+                    },
+                    "redirectUrl": "https://tip1-shared.consent.azure-apim.net/redirect",
+                    "scopes": Array [],
+                  },
+                  "type": "oauthSetting",
+                  "uiDefinition": Object {
+                    "constraints": Object {
+                      "required": "true",
+                    },
+                    "description": "Login with DropBox Credentials",
+                    "displayName": "Login with DropBox Credentials",
+                    "tooltip": "Provide DropBox Credentials",
+                  },
+                },
+              },
+              "description": "DropboxT is a service that keeps your files safe, synced, and easy to share. Connect to Dropbox to manage your files.
+                        You can perform various actions such as upload, update, get, and delete files in Dropbox.",
+              "displayName": "Dropbox",
+              "environment": "Shared",
+              "iconUri": "https://tip1icons.azureedge.net/dropbox.png",
+              "metadata": Object {
+                "brandColor": "#007ee5",
+                "source": "marketplace",
+              },
+              "primaryRuntimeUrl": "https://tip1-shared.azure-apim.net/apim/dropbox",
+              "purpose": "NotSpecified",
+              "runtimeUrls": Array [
+                "https://tip1-shared.azure-apim.net/apim/dropbox",
+              ],
+              "swagger": Object {
+                "basePath": "/apim/dropbox",
+                "definitions": Object {
+                  "BlobDataSetsMetadata": Object {
+                    "properties": Object {
+                      "displayName": Object {
+                        "type": "string",
+                      },
+                      "source": Object {
+                        "type": "string",
+                      },
+                      "urlEncoding": Object {
+                        "type": "string",
+                      },
+                    },
+                    "type": "object",
+                  },
+                  "BlobMetadata": Object {
+                    "properties": Object {
+                      "DisplayName": Object {
+                        "type": "string",
+                      },
+                      "ETag": Object {
+                        "type": "string",
+                      },
+                      "FileLocator": Object {
+                        "type": "string",
+                      },
+                      "Id": Object {
+                        "type": "string",
+                      },
+                      "IsFolder": Object {
+                        "type": "boolean",
+                      },
+                      "LastModified": Object {
+                        "format": "date-time",
+                        "type": "string",
+                      },
+                      "MediaType": Object {
+                        "type": "string",
+                      },
+                      "Name": Object {
+                        "type": "string",
+                      },
+                      "Path": Object {
+                        "type": "string",
+                      },
+                      "Size": Object {
+                        "format": "int64",
+                        "type": "integer",
+                      },
+                    },
+                    "type": "object",
+                  },
+                  "DataSetsMetadata": Object {
+                    "properties": Object {
+                      "blob": Object {
+                        "$ref": "#/definitions/BlobDataSetsMetadata",
+                      },
+                      "tabular": Object {
+                        "$ref": "#/definitions/TabularDataSetsMetadata",
+                      },
+                    },
+                    "type": "object",
+                  },
+                  "Object": Object {
+                    "properties": Object {},
+                    "type": "object",
+                  },
+                  "TabularDataSetsMetadata": Object {
+                    "properties": Object {
+                      "displayName": Object {
+                        "type": "string",
+                      },
+                      "source": Object {
+                        "type": "string",
+                      },
+                      "tableDisplayName": Object {
+                        "type": "string",
+                      },
+                      "tablePluralName": Object {
+                        "type": "string",
+                      },
+                      "urlEncoding": Object {
+                        "type": "string",
+                      },
+                    },
+                    "type": "object",
+                  },
+                },
+                "host": "tip1-shared.azure-apim.net",
+                "info": Object {
+                  "description": "Connect to Dropbox to manage your files. You can perform various actions such as upload, update, get, and delete files in Dropbox.",
+                  "title": "Dropbox",
+                  "version": "1.0",
+                },
+                "paths": Object {
+                  "/{connectionId}/$metadata.json/datasets": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "GetDataSetsMetadata",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "$ref": "#/definitions/DataSetsMetadata",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxDataSetsMetadata",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/api/blob/GetFileByPath": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "GetFileMetadataByPath_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "query",
+                          "name": "path",
+                          "required": true,
+                          "type": "string",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "$ref": "#/definitions/BlobMetadata",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/api/blob/GetFileContentByPath": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "GetFileContentByPath_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "query",
+                          "name": "path",
+                          "required": true,
+                          "type": "string",
+                        },
+                      ],
+                      "produces": Array [],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/api/blob/copyFile": Object {
+                    "post": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "CopyFile_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "query",
+                          "name": "source",
+                          "required": true,
+                          "type": "string",
+                        },
+                        Object {
+                          "in": "query",
+                          "name": "destination",
+                          "required": true,
+                          "type": "string",
+                        },
+                        Object {
+                          "default": false,
+                          "in": "query",
+                          "name": "overwrite",
+                          "required": false,
+                          "type": "boolean",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "$ref": "#/definitions/BlobMetadata",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/api/blob/extractFolder": Object {
+                    "post": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "ExtractFolder_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "query",
+                          "name": "source",
+                          "required": true,
+                          "type": "string",
+                        },
+                        Object {
+                          "in": "query",
+                          "name": "destination",
+                          "required": true,
+                          "type": "string",
+                        },
+                        Object {
+                          "default": false,
+                          "in": "query",
+                          "name": "overwrite",
+                          "required": false,
+                          "type": "boolean",
+                        },
+                      ],
+                      "produces": Array [],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFolderData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/api/blob/files": Object {
+                    "post": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "CreateFile_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "query",
+                          "name": "folderPath",
+                          "required": true,
+                          "type": "string",
+                        },
+                        Object {
+                          "in": "query",
+                          "name": "name",
+                          "required": true,
+                          "type": "string",
+                        },
+                        Object {
+                          "in": "body",
+                          "name": "body",
+                          "required": true,
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                          },
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "$ref": "#/definitions/BlobMetadata",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/api/blob/files/{id}": Object {
+                    "delete": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "DeleteFile_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "path",
+                          "name": "id",
+                          "required": true,
+                          "type": "string",
+                        },
+                      ],
+                      "produces": Array [],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "GetFileMetadata_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "path",
+                          "name": "id",
+                          "required": true,
+                          "type": "string",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "$ref": "#/definitions/BlobMetadata",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                    "put": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "UpdateFile_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "path",
+                          "name": "id",
+                          "required": true,
+                          "type": "string",
+                        },
+                        Object {
+                          "in": "body",
+                          "name": "body",
+                          "required": true,
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                          },
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "$ref": "#/definitions/BlobMetadata",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/api/blob/files/{id}/content": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "GetFileContent_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "path",
+                          "name": "id",
+                          "required": true,
+                          "type": "string",
+                        },
+                      ],
+                      "produces": Array [],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/api/blob/folders": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "ListRootFolder_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "items": Object {
+                              "$ref": "#/definitions/BlobMetadata",
+                            },
+                            "type": "array",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFolderData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/api/blob/folders/{id}": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "ListFolder_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "path",
+                          "name": "id",
+                          "required": true,
+                          "type": "string",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "items": Object {
+                              "$ref": "#/definitions/BlobMetadata",
+                            },
+                            "type": "array",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFolderData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/api/trigger/onnewfile": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "OnNewFile_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "query",
+                          "name": "folderId",
+                          "required": true,
+                          "type": "string",
+                        },
+                      ],
+                      "produces": Array [],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "headers": Object {
+                            "Content-Type": Object {
+                              "description": "File content type",
+                              "type": "string",
+                            },
+                            "x-ms-file-etag": Object {
+                              "description": "File entity tag",
+                              "type": "string",
+                            },
+                            "x-ms-file-id": Object {
+                              "description": "File identifier",
+                              "type": "string",
+                            },
+                            "x-ms-file-name": Object {
+                              "description": "File name",
+                              "type": "string",
+                            },
+                            "x-ms-file-path": Object {
+                              "description": "File path",
+                              "type": "string",
+                            },
+                          },
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFileDataTrigger",
+                      ],
+                      "x-ms-trigger": "single",
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/api/trigger/onupdatedfile": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "OnUpdatedFile_Old",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "in": "query",
+                          "name": "folderId",
+                          "required": true,
+                          "type": "string",
+                        },
+                      ],
+                      "produces": Array [],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "headers": Object {
+                            "Content-Type": Object {
+                              "description": "File content type",
+                              "type": "string",
+                            },
+                            "x-ms-file-etag": Object {
+                              "description": "File entity tag",
+                              "type": "string",
+                            },
+                            "x-ms-file-id": Object {
+                              "description": "File identifier",
+                              "type": "string",
+                            },
+                            "x-ms-file-name": Object {
+                              "description": "File name",
+                              "type": "string",
+                            },
+                            "x-ms-file-path": Object {
+                              "description": "File path",
+                              "type": "string",
+                            },
+                          },
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFileDataTrigger",
+                      ],
+                      "x-ms-trigger": "single",
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/datasets/default/GetFileByPath": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Retrieves file metadata from Dropbox using path",
+                      "operationId": "GetFileMetadataByPath",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Unique path to the file in Dropbox",
+                          "in": "query",
+                          "name": "path",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [],
+                              "isFolder": false,
+                            },
+                            "value-path": "Path",
+                          },
+                          "x-ms-summary": "File path",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "$ref": "#/definitions/BlobMetadata",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "Get file metadata using path",
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "advanced",
+                    },
+                  },
+                  "/{connectionId}/datasets/default/GetFileContentByPath": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Retrieves file contents from Dropbox using path",
+                      "operationId": "GetFileContentByPath",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Unique path to the file in Dropbox",
+                          "in": "query",
+                          "name": "path",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [],
+                              "isFolder": false,
+                            },
+                            "value-path": "Path",
+                          },
+                          "x-ms-summary": "File path",
+                        },
+                      ],
+                      "produces": Array [],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                            "x-ms-summary": "File content",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "Get file content using path",
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                    },
+                  },
+                  "/{connectionId}/datasets/default/copyFile": Object {
+                    "post": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Copies a file to Dropbox",
+                      "operationId": "CopyFile",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Url to source file",
+                          "in": "query",
+                          "name": "source",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-summary": "Source url",
+                        },
+                        Object {
+                          "description": "Destination file path in Dropbox, including target filename",
+                          "in": "query",
+                          "name": "destination",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-summary": "Destination file path",
+                        },
+                        Object {
+                          "default": false,
+                          "description": "Overwrites the destination file if set to 'true",
+                          "in": "query",
+                          "name": "overwrite",
+                          "required": false,
+                          "type": "boolean",
+                          "x-ms-summary": "Overwrite?",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "$ref": "#/definitions/BlobMetadata",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "Copy file",
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "advanced",
+                    },
+                  },
+                  "/{connectionId}/datasets/default/extractFolderV2": Object {
+                    "post": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Extracts an archive file into a folder in Dropbox (example: .zip)",
+                      "operationId": "ExtractFolderV2",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Path to the archive file",
+                          "in": "query",
+                          "name": "source",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [
+                                "application/zip",
+                                "application/x-zip-compressed",
+                              ],
+                              "isFolder": false,
+                            },
+                            "value-path": "Path",
+                          },
+                          "x-ms-summary": "Source archive file path",
+                        },
+                        Object {
+                          "description": "Path in Dropbox to extract the archive contents",
+                          "in": "query",
+                          "name": "destination",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [],
+                              "isFolder": true,
+                            },
+                            "value-path": "Path",
+                          },
+                          "x-ms-summary": "Destination folder path",
+                        },
+                        Object {
+                          "default": false,
+                          "description": "Overwrites the destination files if set to 'true",
+                          "in": "query",
+                          "name": "overwrite",
+                          "required": false,
+                          "type": "boolean",
+                          "x-ms-summary": "Overwrite?",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "items": Object {
+                              "$ref": "#/definitions/BlobMetadata",
+                            },
+                            "type": "array",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "Extract archive to folder",
+                      "tags": Array [
+                        "DropboxFolderData",
+                      ],
+                      "x-ms-visibility": "advanced",
+                    },
+                  },
+                  "/{connectionId}/datasets/default/files": Object {
+                    "post": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Uploads a file to Dropbox",
+                      "operationId": "CreateFile",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Folder path to upload the file to Dropbox",
+                          "in": "query",
+                          "name": "folderPath",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [],
+                              "isFolder": true,
+                            },
+                            "value-path": "Path",
+                          },
+                          "x-ms-summary": "Folder path",
+                        },
+                        Object {
+                          "description": "Name of the file to create in Dropbox",
+                          "in": "query",
+                          "name": "name",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-summary": "File name",
+                        },
+                        Object {
+                          "description": "Content of the file to upload to Dropbox",
+                          "in": "body",
+                          "name": "body",
+                          "required": true,
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                          },
+                          "x-ms-summary": "File content",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "$ref": "#/definitions/BlobMetadata",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "Create file",
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "important",
+                    },
+                  },
+                  "/{connectionId}/datasets/default/files/{id}": Object {
+                    "delete": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Deletes a file from Dropbox",
+                      "operationId": "DeleteFile",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Specify the file to delete",
+                          "in": "path",
+                          "name": "id",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [],
+                              "isFolder": false,
+                            },
+                            "value-path": "Id",
+                          },
+                          "x-ms-summary": "File",
+                        },
+                      ],
+                      "produces": Array [],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "Delete file",
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                    },
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Retrieves file metadata from Dropbox using file id",
+                      "operationId": "GetFileMetadata",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Specify the file",
+                          "in": "path",
+                          "name": "id",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [],
+                              "isFolder": false,
+                            },
+                            "value-path": "Id",
+                          },
+                          "x-ms-summary": "File",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "$ref": "#/definitions/BlobMetadata",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "Get file metadata using id",
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                      "x-ms-visibility": "advanced",
+                    },
+                    "put": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Updates a file in Dropbox",
+                      "operationId": "UpdateFile",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Specify the file to update",
+                          "in": "path",
+                          "name": "id",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [],
+                              "isFolder": false,
+                            },
+                            "value-path": "Id",
+                          },
+                          "x-ms-summary": "File",
+                        },
+                        Object {
+                          "description": "Content of the file to update in Dropbox",
+                          "in": "body",
+                          "name": "body",
+                          "required": true,
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                          },
+                          "x-ms-summary": "File content",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "$ref": "#/definitions/BlobMetadata",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "Update file",
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                    },
+                  },
+                  "/{connectionId}/datasets/default/files/{id}/content": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Retrieves file contents from Dropbox using id",
+                      "operationId": "GetFileContent",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Specify the file",
+                          "in": "path",
+                          "name": "id",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [],
+                              "isFolder": false,
+                            },
+                            "value-path": "Id",
+                          },
+                          "x-ms-summary": "File",
+                        },
+                      ],
+                      "produces": Array [],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                            "x-ms-summary": "File content",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "Get file content using id",
+                      "tags": Array [
+                        "DropboxFileData",
+                      ],
+                    },
+                  },
+                  "/{connectionId}/datasets/default/folders": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Lists files and folders in the Dropbox root folder",
+                      "operationId": "ListRootFolder",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "items": Object {
+                              "$ref": "#/definitions/BlobMetadata",
+                            },
+                            "type": "array",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "List files and folders in root folder",
+                      "tags": Array [
+                        "DropboxFolderData",
+                      ],
+                      "x-ms-visibility": "advanced",
+                    },
+                  },
+                  "/{connectionId}/datasets/default/folders/{id}": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Lists files and folders in a Dropbox folder",
+                      "operationId": "ListFolder",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Specify the folder",
+                          "in": "path",
+                          "name": "id",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [],
+                              "isFolder": true,
+                            },
+                            "value-path": "Id",
+                          },
+                          "x-ms-summary": "Folder",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "items": Object {
+                              "$ref": "#/definitions/BlobMetadata",
+                            },
+                            "type": "array",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "List files and folders in folder",
+                      "tags": Array [
+                        "DropboxFolderData",
+                      ],
+                      "x-ms-visibility": "important",
+                    },
+                  },
+                  "/{connectionId}/datasets/default/rootfolders": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "operationId": "ListAllRootFolders",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                      ],
+                      "produces": Array [
+                        "application/json",
+                        "text/json",
+                        "application/xml",
+                        "text/xml",
+                      ],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "schema": Object {
+                            "items": Object {
+                              "$ref": "#/definitions/BlobMetadata",
+                            },
+                            "type": "array",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "tags": Array [
+                        "DropboxFolderData",
+                      ],
+                      "x-ms-visibility": "internal",
+                    },
+                  },
+                  "/{connectionId}/datasets/default/triggers/onnewfile": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Triggers a flow when a new file is created in a Dropbox folder",
+                      "operationId": "OnNewFile",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Specify a folder",
+                          "in": "query",
+                          "name": "folderId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [],
+                              "isFolder": true,
+                            },
+                            "value-path": "Id",
+                          },
+                          "x-ms-summary": "Folder",
+                        },
+                      ],
+                      "produces": Array [],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "headers": Object {
+                            "Content-Type": Object {
+                              "description": "File content type",
+                              "type": "string",
+                            },
+                            "x-ms-file-etag": Object {
+                              "description": "File entity tag",
+                              "type": "string",
+                            },
+                            "x-ms-file-id": Object {
+                              "description": "File identifier",
+                              "type": "string",
+                            },
+                            "x-ms-file-name": Object {
+                              "description": "File name",
+                              "type": "string",
+                            },
+                            "x-ms-file-path": Object {
+                              "description": "File path",
+                              "type": "string",
+                            },
+                          },
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                            "x-ms-summary": "File content",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "When a file is created",
+                      "tags": Array [
+                        "DropboxFileDataTrigger",
+                      ],
+                      "x-ms-trigger": "single",
+                      "x-ms-trigger-hint": "To see it work now, add a file to the Dropbox folder you selected.",
+                      "x-ms-visibility": "important",
+                    },
+                  },
+                  "/{connectionId}/datasets/default/triggers/onupdatedfile": Object {
+                    "get": Object {
+                      "consumes": Array [],
+                      "deprecated": false,
+                      "description": "Triggers a flow when a file is modified in a Dropbox folder",
+                      "operationId": "OnUpdatedFile",
+                      "parameters": Array [
+                        Object {
+                          "in": "path",
+                          "name": "connectionId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-visibility": "internal",
+                        },
+                        Object {
+                          "description": "Specify a folder",
+                          "in": "query",
+                          "name": "folderId",
+                          "required": true,
+                          "type": "string",
+                          "x-ms-dynamic-values": Object {
+                            "capability": "file-picker",
+                            "parameters": Object {
+                              "dataset": null,
+                              "fileFilter": Array [],
+                              "isFolder": true,
+                            },
+                            "value-path": "Id",
+                          },
+                          "x-ms-summary": "Folder",
+                        },
+                      ],
+                      "produces": Array [],
+                      "responses": Object {
+                        "200": Object {
+                          "description": "OK",
+                          "headers": Object {
+                            "Content-Type": Object {
+                              "description": "File content type",
+                              "type": "string",
+                            },
+                            "x-ms-file-etag": Object {
+                              "description": "File entity tag",
+                              "type": "string",
+                            },
+                            "x-ms-file-id": Object {
+                              "description": "File identifier",
+                              "type": "string",
+                            },
+                            "x-ms-file-name": Object {
+                              "description": "File name",
+                              "type": "string",
+                            },
+                            "x-ms-file-path": Object {
+                              "description": "File path",
+                              "type": "string",
+                            },
+                          },
+                          "schema": Object {
+                            "format": "binary",
+                            "type": "string",
+                            "x-ms-summary": "File content",
+                          },
+                        },
+                        "default": Object {
+                          "description": "Operation Failed.",
+                        },
+                      },
+                      "summary": "When a file is modified",
+                      "tags": Array [
+                        "DropboxFileDataTrigger",
+                      ],
+                      "x-ms-trigger": "single",
+                      "x-ms-trigger-hint": "To see it work now, modify a file in the Dropbox folder you selected.",
+                    },
+                  },
+                },
+                "schemes": Array [
+                  "https",
+                ],
+                "swagger": "2.0",
+                "x-ms-capabilities": Object {
+                  "file-picker": Object {
+                    "browse": Object {
+                      "operationId": "ListFolder",
+                      "parameters": Object {
+                        "id": Object {
+                          "value-property": "Id",
+                        },
+                      },
+                    },
+                    "open": Object {
+                      "operationId": "ListAllRootFolders",
+                    },
+                    "value-folder-property": "IsFolder",
+                    "value-media-property": "MediaType",
+                    "value-title": "DisplayName",
+                  },
+                },
+              },
+              "wadlUrl": "https://pafeblobtip1bl.blob.core.windows.net:443/apiwadls-72f988bf-86f1-41af-91ab-2d7cd011db47/shared:2Ddropbox?sv=2014-02-14&sr=c&sig=rXiw3WwJ%2F
+                        %2FuYY3UTRqSV1mC6rYpGRUROkH%2BT8quq3Lo%3D&se=2016-05-21T00%3A03%3A16Z&sp=rl",
+            },
+            "type": "/providers/Microsoft.PowerApps/apis",
+          },
+        ]
+      }
+      onRenderCell={[Function]}
+      renderedWindowsAhead={2}
+      renderedWindowsBehind={2}
+      startIndex={0}
+    />
+  </div>
+</StyledPanelBase>
+`;
