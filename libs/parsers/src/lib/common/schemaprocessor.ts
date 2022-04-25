@@ -466,7 +466,7 @@ export class SchemaProcessor {
     const required = $required;
     let title = this._getTitle(schema.title || schema[SwaggerConstants.ExtensionProperties.Summary], this.options.currentKey as string);
     const summary = this._getSummary(schema[SwaggerConstants.ExtensionProperties.Summary], '');
-    const type = schema.type || SwaggerConstants.Types.Any;
+    const type = (schema.type as string) || SwaggerConstants.Types.Any;
     const visibility = this._getVisibility(schema);
     const alias = schema[SwaggerConstants.ExtensionProperties.Alias];
 
