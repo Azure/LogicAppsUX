@@ -18,7 +18,14 @@ describe('designer: Callout', () => {
     cy.get(buttonSelector).click();
     cy.get(textSelector).should('have.text', 'Details can be found at http://aka.ms/logicapps-chunk.'); // change this to have the same text
 
-    // after manipulating the DOM to have new output, we can scan again for accessibility to check these newly rendered components
-    cy.checkA11y(null, null, null, true); // Danielle to remove once accessibility bug 13821043
+    // NOTE(ccastrotrejo): Disable color-contrast rule as cypress-axe library fails
+    cy.checkA11y(
+      {},
+      {
+        rules: {
+          'color-contrast': { enabled: false },
+        },
+      }
+    );
   });
 });

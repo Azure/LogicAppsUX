@@ -5,6 +5,18 @@
       "value": "Beállításcímke"
     }
   ],
+  "+g+mch": [
+    {
+      "type": 0,
+      "value": "Egy művelet többrészes kimenetéből az egyik rész törzsét adja vissza."
+    }
+  ],
+  "+lpuMl": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az akkor visszaadandó érték, ha a kifejezés hamis."
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -17,10 +29,64 @@
       "value": "Várakozás"
     }
   ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "A tömb elemeit adja vissza, az indexszámmal kezdve."
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "A bemenet átalakítása tömbbé."
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A gyűjtemény, melynek elemeit össze kell kapcsolni."
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Az átadott tömb vagy sztring első Count elemeit adja vissza."
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Egy átadott sztring típusú időbélyegből az óra kezdetét adja vissza."
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "A trigger vagy a művelet meghívásához használt URL-címet adja vissza. Megjegyzés: A függvény csak httpWebhook vagy apiConnectionWebhook triggerben használható, manuális, erőforrás-, HTTP- vagy apiConnection triggerben nem."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A Base64 kódolású sztring."
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "A bemeneti sztringet URl-ként dekódolja."
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
       "value": "Futtatási menü megjelenítése"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "Egy URI-ként kódolt sztring bináris megfelelőjét adja vissza."
     }
   ],
   "0ZlNtf": [
@@ -29,16 +95,70 @@
       "value": "Újrapróbálkozásokkal sikeres"
     }
   ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A nagybetűssé alakítandó sztring. A sztring azon karakterei, melyeknek nincs nagybetűs megfelelője, változatlanul fognak szerepelni a visszaadott sztringben."
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "A két szám osztása utáni maradékot (modulus) adja vissza."
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az a sztring, amely az értéket tartalmazhatja."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Egy bemenetiadat-URI sztringjét bináris kódolású sztringként adja vissza."
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
       "value": "További parancsok"
     }
   ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A sztring típusú ábrázolásra átalakítandó adat-URI."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "A port visszaadása egy URI azonosítóból. Ha nincs megadva port, a protokoll alapértelmezett portjának visszaadása"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
       "value": "Megjegyzés"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az XML formátumúvá alakítandó érték."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az URI-ként kódolt sztring."
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "A paraméterargumentum átalakítása lebegőpontos számmá."
     }
   ],
   "1R6Vaa": [
@@ -81,16 +201,52 @@
       "value": "count"
     }
   ],
+  "1TE0e8": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az érték, melynek meg kell keresni az indexét."
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy kisebb-e, mint a vele összehasonlított érték."
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Bezárás"
     }
   ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Egy Base 64 kódolású sztringet bináris kódolású sztringként ad vissza."
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az adat-URI-vá alakítandó érték."
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
       "value": "Befejezés időpontja"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Egy olyan értéket ad vissza az űrlapadatokból vagy a művelet űrlapként kódolt kimenetéből, amely megegyezik a kulcsnévvel."
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az űrlapadatokat tartalmazó vagy űrlapként formázott választ adó művelet neve."
     }
   ],
   "2mnU/w": [
@@ -105,10 +261,52 @@
       "value": "Azonosító"
     }
   ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az elválasztó."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Hibás"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az objektum, melyből el kívánja távolítani a tulajdonságot."
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A megadott időegység kivonandó mennyisége."
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A legkisebb visszaadható egész szám."
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A hozzáadni kívánt napok száma. Lehet negatív érték is napok kivonása céljából."
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az intervallumban megadott időegység."
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Azon paraméter neve, melynek értékei szükségesek."
     }
   ],
   "4cVuMw": [
@@ -117,10 +315,40 @@
       "value": "Megjegyzéseket csak a lépés bemeneteinek szerkesztése közben adhat hozzá."
     }
   ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "A legkisebb értéket adja vissza a bemeneti számtömbből."
+    }
+  ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "Szolgáltatáskérés azonosítója"
+    }
+  ],
+  "5J7j9k": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A kiértékelendő XPath-kifejezés."
+    }
+  ],
+  "5aa76N": [
+    {
+      "type": 0,
+      "value": "Az átadott tömb vagy sztring első elemét adja vissza."
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Igaz értéket ad vissza, ha egy objektum, tömb vagy sztring üres."
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Azon ciklus neve, melynek az eleme szükséges."
     }
   ],
   "5qzZMo": [
@@ -135,10 +363,28 @@
       "value": "Paraméter törlése"
     }
   ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy nagyobb-e, mint a vele összehasonlított érték."
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
       "value": "Futtatás megjelenítése"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A gyűjtemény, melyben keresni kell."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A többrészes választ adó művelet neve."
     }
   ],
   "6oqk+A": [
@@ -147,16 +393,40 @@
       "value": "Előző"
     }
   ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A szám, amellyel meg kell szorozni a 2. szorzandót."
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
       "value": "OK"
     }
   ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az a sztring, amelyből a sztringrész származik."
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "Opcionális. A formázáskor használni kívánt területi beállítás (alapértelmezés: „en-us”)."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Állapotkód"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Egy sztring típusú időbélyegből a 100 nanoszekundumos időközönkénti óraütések számát adja vissza a 0001. január 1 00:00:00 (UT) időponttal kezdődően"
     }
   ],
   "7yEdSt": [
@@ -171,10 +441,52 @@
       "value": "URL másolása"
     }
   ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az a sztring, amely az értéket tartalmazhatja."
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az akkor visszaadandó érték, ha a kifejezés igaz."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Formázott, szám típusú sztringet ad vissza"
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy a hasonlított objektumnál nagyobb vagy azzal egyenlő-e."
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
       "value": "Nem sikerült megjeleníteni a tervezőt, mert a definícióban több trigger található."
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az URI-ként kódolandó sztring."
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Egy, a napok számát egész számmal megadó érték hozzáadása az átadott sztring típusú időbélyeghez."
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Egyetlen olyan tömböt vagy objektumot ad vissza, amely az átadott tömbökben vagy objektumokban is megtalálható elemeket tartalmaz."
     }
   ],
   "99vsJy": [
@@ -183,10 +495,76 @@
       "value": "Összekötő"
     }
   ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Értéket azonosító adat-URI visszaadása"
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Egy objektumot ad vissza, melyhez hozzá lett adva egy tulajdonság-érték pár"
+    }
+  ],
+  "9b4xDa": [
+    {
+      "type": 0,
+      "value": "panel"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "Két szám összeadásának eredményét adja vissza."
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "Igaz értéket ad vissza, ha mindkét paraméter igaz."
+    }
+  ],
+  "ANbEeQ": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Azon művelet neve, melynek értékei szükségesek."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A Base64-ábrázolással kódolandó sztring."
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A beolvasandó rész indexe."
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Egyetlen formátummegadó karakter, vagy pedig egy egyéni formátumminta, mely az időbélyeg értékének formátumát határozza meg. Ha nincs megadva formátum, a rendszer az ISO 8601 formátumot („o”) használja."
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az URI-ként kódolt sztring."
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
       "value": "Kezdés időpontja"
+    }
+  ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az a sztring, amelynek URL-címekben nem biztonságos karaktereit dekódolni kell."
     }
   ],
   "Bn8iTS": [
@@ -195,10 +573,34 @@
       "value": "Állapot típusa:"
     }
   ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "Egyetlen formátummegadó, mely a GUID azonosító formátumát határozza meg."
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy nagyobb-e a hasonlított objektumnál."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Kapcsolat szükséges"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Az elérési út és a lekérdezés visszaadása egy URI azonosítóból"
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az a sztring, amelyből el kell távolítani a kezdő és záró szóközöket."
     }
   ],
   "DFo+mo": [
@@ -213,10 +615,52 @@
       "value": "Időtartam"
     }
   ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Tizedestörtté alakítja a paramétert"
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
       "value": "Válasz"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A sztringrészlet kinyerésének elejét jelző hely indexe."
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A megadott időegység hozzáadandó mennyisége."
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Egy olyan paraméterértéket ad vissza, amely meg van adva a definícióban."
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Egy sztringnek a kezdőindex és a záróindex által meghatározott szakaszát adja vissza."
+    }
+  ],
+  "FS+/Tb": [
+    {
+      "type": 0,
+      "value": "A trigger többrészes kimenetéből az egyik rész törzsét adja vissza."
+    }
+  ],
+  "FVavKy": [
+    {
+      "type": 0,
+      "value": "Egy átadott sztring típusú időbélyegnek az év napját megadó összetevőjét adja vissza."
     }
   ],
   "FXLR5M": [
@@ -251,10 +695,52 @@
       "value": "hours"
     }
   ],
+  "Fgq3Db": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A gyűjtemény, melyből be kell olvasni az utolsó objektumot."
+    }
+  ],
+  "Fh2HDb": [
+    {
+      "type": 0,
+      "value": "Egy sztringbeli érték első indexét adja vissza (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
       "value": "Állapot"
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az a sztring, amely az értéket tartalmazhatja."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "A lekérdezés visszaadása egy URI azonosítóból"
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A tartalmazó gyűjteményben keresendő objektum."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Hivatkozási függvények"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Igaz értéket ad vissza, ha a paraméterek hamisak."
     }
   ],
   "Gmya+V": [
@@ -275,6 +761,30 @@
       "value": "Tömb"
     }
   ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "URI-elemzési függvények"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A szeletelni kívánt sztring."
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A szám, amelyből a rendszer kivonja a kivonandót."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A visszaadandó űrlapadatérték kulcsneve."
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -287,16 +797,118 @@
       "value": "Beállításérték"
     }
   ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Egy UTC formátumban átadott sztring típusú időbélyeg konvertálása egy célidőzónára"
+    }
+  ],
+  "Ip7Iax": [
+    {
+      "type": 0,
+      "value": "Egy értéknek egy sztringben való n. előfordulásának indexét adja vissza (a kis- és nagybetűk nincsenek megkülönböztetve, invariáns kulturális környezet)."
+    }
+  ],
+  "IpVwYT": [
+    {
+      "type": 0,
+      "value": "Az átadott argumentumok első nem nullértékű objektumát adja vissza."
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Sztring átalakítása kisbetűssé az invariáns kulturális környezet kis- és nagybetű-használati szabályai alapján."
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az időt tartalmazó sztring."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A logikai értékké alakítandó érték."
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
       "value": "Módszer"
     }
   ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Igaz értéket ad vissza, ha egy szótár kulcsot tartalmaz, ha egy tömb értéket tartalmaz, vagy ha egy sztring sztringrészletet tartalmaz."
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Kötelező. A formázni kívánt szám."
+    }
+  ],
   "JnlcZQ": [
     {
       "type": 0,
       "value": "Név:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Kötelező. A numerikus formázó sztring."
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az objektum, melyhez hozzá kívánja adni az új tulajdonságot."
+    }
+  ],
+  "K90YEU": [
+    {
+      "type": 0,
+      "value": "Karakterek részhalmazát adja vissza egy sztringből."
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A gyűjteményből beolvasandó objektumok száma. Pozitív egész számnak kell lennie."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Egy sztring típusú időbélyegnek a hét napját megadó összetevőjét adja vissza."
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "A séma visszaadása egy URI azonosítóból"
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "For-each ciklusban való használat esetén ez a függvény a megadott ciklus aktuális elemét adja vissza."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that may be true."
     }
   ],
   "M0HMjE": [
@@ -309,6 +921,36 @@
     {
       "type": 0,
       "value": "A paraméterek a munkafolyamat mentésekor lesznek mentve. Mentés előtt itt szerkesztheti őket, illetve mentés után a paraméterlapon szerkesztheti őket."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "Nem kötelező. Annak a hatóköri műveletnek a neve, ahol az adott hatókör legfelső szintű műveleteinek bemeneteit és kimeneteit szeretné használni."
+    }
+  ],
+  "M9mzP6": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A 2. összeadandóhoz hozzáadandó szám."
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A kiértékelendő gyűjtemények. Egy adott objektumnak minden átadott gyűjteményben szerepelnie kell ahhoz, hogy megjelenjen az eredményben."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A bináris ábrázolásra átalakítandó adat-URI."
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Az aktuális időbélyeget adja vissza sztringként."
     }
   ],
   "Mb+Eaq": [
@@ -329,16 +971,34 @@
       "value": "Váratlan hiba"
     }
   ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A visszaadandó űrlapadatértékek kulcsneve."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
       "value": "Állapot"
     }
   ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Egy értéket bináris értékként ad vissza."
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
       "value": "Paraméter szerkesztése"
+    }
+  ],
+  "OD8igU": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A forrásidőzóna nevét tartalmazó sztring. A részleteket lásd: https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
   "OFKZzQ": [
@@ -351,6 +1011,12 @@
     {
       "type": 0,
       "value": "Megjegyzés"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "A legfelső szintű hatóköri műveletek eredményeit adja vissza a megadott hatóköri műveletben, például „For_each”, „Until” vagy „Scope action”."
     }
   ],
   "Oib1mL": [
@@ -371,16 +1037,52 @@
       "value": " perc"
     }
   ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "Nem kötelező. A dátumot/időt megadó sztring elemzéséhez használni kívánt területi beállítás."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Az eszköz visszaadása egy URI azonosítóból"
+    }
+  ],
   "OnrO5/": [
     {
       "type": 0,
       "value": "Felügyelt identitás kiválasztása"
     }
   ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az érték a tömbben található egész számok száma."
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Collection functions"
+    }
+  ],
+  "P8ZBF9": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A gyűjtemény, melyből be kell olvasni az első objektumot."
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
       "value": "Sikeres"
+    }
+  ],
+  "PKMkb/": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az 1. összeadandóhoz hozzáadandó szám."
     }
   ],
   "PP63jY": [
@@ -395,16 +1097,46 @@
       "value": "Összecsukás"
     }
   ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A hozzáadni kívánt másodpercek száma. Lehet negatív érték is másodpercek kivonása céljából."
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
       "value": "Megszakítva"
     }
   ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "Munkafolyamat-függvények"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "A bemeneti sztringet Base 64 kódolású sztringként adja vissza."
+    }
+  ],
   "Q/7unA": [
     {
       "type": 0,
       "value": "Objektum"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy a hasonlított objektumnál kisebb vagy azzal egyenlő-e."
+    }
+  ],
+  "QEp3C8": [
+    {
+      "type": 0,
+      "value": "A bemenet átalakítása JSON típusú értékké."
     }
   ],
   "QQYzHC": [
@@ -421,10 +1153,52 @@
       "value": " kártya helyi menüje"
     }
   ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Egy olyan értéket ad vissza az űrlapadatokból vagy a trigger űrlapként kódolt kimenetéből, amely megegyezik a kulcsnévvel."
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Sztringfüggvények"
+    }
+  ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Elem"
+    }
+  ],
+  "QeE0k/": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A binárissá alakítandó érték."
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
       "value": "Betöltés..."
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Egy dátumformátumú sztringet ad vissza."
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az elemek elhatárolásához használandó sztring."
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Required. A string containing the unit of time specified in the interval to subtract."
     }
   ],
   "Qu1HkA": [
@@ -435,6 +1209,12 @@
     {
       "type": 0,
       "value": " ó"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A szétvágandó sztring."
     }
   ],
   "RhH4pF": [
@@ -469,6 +1249,18 @@
       "value": "minutes"
     }
   ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "A paraméter átalakítása egész számmá."
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Annak ellenőrzése, hogy a sztring egy adott értékkel kezdődik-e (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
+    }
+  ],
   "SXb47U": [
     {
       "type": 1,
@@ -479,10 +1271,34 @@
       "value": " p"
     }
   ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az űrlapadatokat tartalmazó vagy űrlapként formázott választ adó művelet neve."
+    }
+  ],
+  "T7zcR6": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that must be true."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
       "value": "Sikertelen"
+    }
+  ],
+  "TI44R1": [
+    {
+      "type": 0,
+      "value": "Egy tömb összes elemét tartalmazó, az elemeket határolóval összekötő sztringet ad vissza."
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Egy átadott sztring típusú időbélyegből a hónap kezdetét adja vissza."
     }
   ],
   "TZv5JE": [
@@ -503,16 +1319,34 @@
       "value": "Címkék"
     }
   ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A szám, amellyel meg kell szorozni az 1. szorzandót."
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
       "value": "Összecsukás/kibontás"
     }
   ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Egész számokból álló tömb létrehozása egy meghatározott számmal kezdődően."
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
       "value": "Egy paraméterre való hivatkozáshoz használja a dinamikus tartalomlistát."
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Sztring lecserélése egy adott sztringre."
     }
   ],
   "USVffu": [
@@ -531,6 +1365,12 @@
     {
       "type": 0,
       "value": "A megadott munkafolyamat-futtatási név érvénytelen."
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az osztóval elosztandó szám."
     }
   ],
   "VXBWrq": [
@@ -561,6 +1401,30 @@
       "value": "max"
     }
   ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az új tulajdonság neve."
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A tömbben található első egész szám."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "A trigger().outputs rövid függvényneve."
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "A két szám szorzásának eredményét adja vissza."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -577,6 +1441,18 @@
     {
       "type": 0,
       "value": " óra"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "Az actions('actionName').outputs. rövid függvényneve."
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Tetszőleges számú sztring kombinációjának létrehozása."
     }
   ],
   "XFFpu/": [
@@ -615,10 +1491,28 @@
       "value": "Kérelem"
     }
   ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Matematikai függvények"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Azon művelet neve, melynek törzskimenetei szükségesek."
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "További információ"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Adat-URI bináris értékként való visszaadása."
     }
   ],
   "YHsAKl": [
@@ -643,16 +1537,64 @@
       "value": "Sztring"
     }
   ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Lehetővé teszi, hogy egy kifejezés az értékét más JSON-alapú név–érték párokból vagy a futásidejű trigger kimenetéből származtassa."
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Egyetlen olyan tömböt vagy objektumot ad vissza, amely a függvénynek átadott tömbök vagy objektumok bármelyikében szereplő elemeket tartalmazza. A függvény paramétereit egy objektumhalmazban vagy egy tömbökből álló halmazban (a kettő kombinációjával viszont nem) lehet megadni. Két egyforma nevű objektum szereplése esetén a végső objektumban az utolsó adott nevű objektum fog megjelenni."
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "Nincs"
     }
   ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Egy sztring típusú időbélyegnek a hónap napját megadó összetevőjét adja vissza."
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "A trigger().outputs.body rövid függvényneve."
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az érték, amellyel a sztring kezdődhet."
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
       "value": "Ezt a műveletet már törölték."
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az osztóval elosztandó szám."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A keresett sztringrészlet előfordulásainak száma."
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A gyűjtemény elejéről eltávolítandó objektumok száma. Pozitív egész számnak kell lennie."
     }
   ],
   "bH5LtI": [
@@ -669,10 +1611,22 @@
       "value": " nevű lap"
     }
   ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy a vele összehasonlított értéknél nagyobb vagy azzal egyenlő-e."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Továbbiak betöltése"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "A legnagyobb értéket adja vissza a bemeneti számtömbből."
     }
   ],
   "bgfjqS": [
@@ -681,10 +1635,28 @@
       "value": "Címke beállítása"
     }
   ],
+  "bzF/qn": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A gyűjtemény, melyből be kell olvasni az első Count objektumokat."
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Egy objektumot ad vissza, melyben egy tulajdonság be lett állítva a megadott értékre"
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "cJm+ah": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az érték, melynek meg kell keresni az indexét."
     }
   ],
   "ci6ex1": [
@@ -711,6 +1683,12 @@
       "value": "Kezdés időpontja"
     }
   ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A gyűjtemény, melynek első Count objektumait ki kell hagyni."
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -723,16 +1701,82 @@
       "value": "További információ"
     }
   ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Egy Base 64 kódolású sztringet sztringként ad vissza."
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "A paraméter átalakítása logikai értékké."
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Egy olyan értéktömböt ad vissza az űrlapadatokból vagy a művelet űrlapként kódolt kimenetéből, amely megegyezik a kulcsnévvel."
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Sztring kettéosztása elválasztóval."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Nincs megadva"
     }
   ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
       "value": "Kezdés időpontja"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A szám, mellyel el kell osztani az osztandót."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A sztringrész kezdetének indexe az 1. paraméterben."
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az objektumok, melyeket ellenőrizni kell, hogy null értékűek-e."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "Nem kötelező. A sztringrészlet kinyerésének végét jelző hely indexe."
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Igaz értéket ad vissza, ha az első argumentum nagyobb a másodiknál, vagy azzal egyenlő."
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Logikai függvények"
     }
   ],
   "ftwXvc": [
@@ -747,10 +1791,46 @@
       "value": "URI"
     }
   ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Ez a függvény a következő időbélyeget adja vissza: aktuális idő plusz a megadott időintervallum."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "Két szám hányadosát adja vissza."
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Logikai érték, mely meghatározza a kifejezés által visszaadott értéket."
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "Előző sikertelen"
+    }
+  ],
+  "gMhc5o": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az egyetlen sztringben egyesítendő sztringek."
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Konverziós függvények"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "Until ciklusban való használat esetén ez a függvény a megadott ciklus aktuális iterációs indexét adja vissza."
     }
   ],
   "hN7iBP": [
@@ -785,6 +1865,12 @@
       "value": "seconds"
     }
   ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "Két szám kivonásának eredményét adja vissza."
+    }
+  ],
   "hdnZ9Y": [
     {
       "type": 0,
@@ -811,10 +1897,22 @@
       "value": "Megjegyzés"
     }
   ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Sztring átalakítása nagybetűssé az invariáns kulturális környezet kis- és nagybetű-használati szabályai alapján."
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
       "value": "Tovább"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az elemezni kívánt URI."
     }
   ],
   "iRjBf4": [
@@ -827,6 +1925,12 @@
     {
       "type": 0,
       "value": "Kibontás"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Manipulation functions"
     }
   ],
   "iUs7pv": [
@@ -845,16 +1949,70 @@
       "value": " mp"
     }
   ],
+  "j2MU0b": [
+    {
+      "type": 0,
+      "value": "Egy objektumot ad vissza, melyből el lett távolítva egy tulajdonság"
+    }
+  ],
+  "j39557": [
+    {
+      "type": 0,
+      "value": "A megadott változó értékének visszaadása."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Egy véletlenszerű egész számot ad vissza egy megadott tartományból, amely csak a kezdő végnél inkluzív."
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A kifejezés, amelyet negálni kell."
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A sztringgé alakítandó érték."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Base64 kódolású bemeneti sztring."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A visszaadandó űrlapadatértékek kulcsneve."
+    }
+  ],
   "jfInxm": [
     {
       "type": 0,
       "value": "Szerkesztés JSON formátumban"
     }
   ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A Base64 kódolású sztring."
+    }
+  ],
   "k41+13": [
     {
       "type": 0,
       "value": "Kihagyva"
+    }
+  ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Igen"
     }
   ],
   "kHcCxH": [
@@ -875,10 +2033,34 @@
       "value": " másodperc"
     }
   ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Egy Base 64 kódolású bementi sztringet sztringként ad vissza."
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
       "value": "Letöltés (Alt/Option + kattintás)"
+    }
+  ],
+  "kZuYgD": [
+    {
+      "type": 0,
+      "value": "Igaz értéket ad vissza, ha az első argumentum kisebb a másodiknál."
+    }
+  ],
+  "keb4r1": [
+    {
+      "type": 0,
+      "value": "Igaz értéket ad vissza, ha két érték egyenlő."
+    }
+  ],
+  "knylNW": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az érték a legnagyobb visszaadható egész szám utáni egész szám."
     }
   ],
   "l36V56": [
@@ -917,6 +2099,12 @@
       "value": "Állapot nélküli futtatási mód:"
     }
   ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "Az actions('actionName').outputs.body rövid függvényneve."
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -935,6 +2123,78 @@
       "value": "Név"
     }
   ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Ez a függvény a következő időbélyeget adja vissza: aktuális idő mínusz a megadott időintervallum."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Adat-URI sztringként való visszaadása."
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "A bemeneti sztringet URl-ként kódolja."
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A kisbetűssé alakítandó sztring. A sztring azon karakterei, melyeknek nincs kisbetűs megfelelője, változatlanul fognak szerepelni a visszaadott sztringben."
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A lebegőpontos számmá alakítandó érték."
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy a vele összehasonlított értéknél kisebb vagy azzal egyenlő-e."
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az időegységek azon mennyisége, amellyel a kívánt időpont a jövőben van."
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az eltávolítandó tulajdonság neve."
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy kisebb-e, mint a hasonlított objektum."
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Egy egész számmal megadott percszám hozzáadása az átadott sztring típusú időbélyeghez."
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Az átadott tömb vagy sztring utolsó elemét adja vissza."
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az XML-fájl, melyen ki kell értékelni az XPath-kifejezést."
+    }
+  ],
   "o1HOyf": [
     {
       "type": 1,
@@ -949,10 +2209,22 @@
       "value": "max_page"
     }
   ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A bináris ábrázolásúként dekódolandó adat-URI."
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Adja meg a futtatásazonosítót a futtatás megnyitásához"
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A visszaadandó űrlapadatérték kulcsneve."
     }
   ],
   "p16/4S": [
@@ -967,10 +2239,40 @@
       "value": "Befejezés időpontja"
     }
   ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A tömbben egyesítendő értékek."
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Paraméterek"
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "A bemenet átalakítása XML típusú értékké."
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A szám, mellyel el kell osztani az osztandót. Az osztás után a függvény a maradékot használja fel."
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Egyetlen olyan tömböt vagy objektumot ad vissza, amely az átadott tömbök vagy objektumok közös elemeit tartalmazza. A függvény paramétereit egy objektumhalmazban vagy egy tömbökből álló halmazban (a kettő kombinációjával viszont nem) lehet megadni. Két egyforma nevű objektum szereplése esetén a végső objektumban az utolsó adott nevű objektum fog megjelenni."
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "A kezdő és záró szóközök levágása egy sztringről"
     }
   ],
   "pr9GwA": [
@@ -979,10 +2281,46 @@
       "value": "Frissítés"
     }
   ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Egy XML-csomópontot, -csomópontkészlet vagy értéket ad vissza JSON formájában a megadott XPath-kifejezés alapján"
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A tulajdonsághoz hozzárendelendő érték."
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "A paraméter átalakítása sztringgé."
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Egy egész számmal megadott másodpercszám hozzáadása az átadott sztring típusú időbélyeghez."
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Felügyelt identitás"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Annak ellenőrzése, hogy a sztring egy adott értékre végződik-e (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Igaz értéket ad vissza, ha az első argumentum kisebb a másodiknál, vagy azzal egyenlő."
     }
   ],
   "qSt0Sb": [
@@ -1023,10 +2361,34 @@
       "value": "days"
     }
   ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Egy tömb vagy sztring elemeinek számát adja vissza."
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az egész számmá alakítandó érték."
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Lehetővé teszi, hogy egy kifejezés az értékét más JSON-alapú név–érték párokból vagy a futásidejű művelet kimenetéből származtassa."
+    }
+  ],
   "r9SVE4": [
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "Nem"
     }
   ],
   "rCl53e": [
@@ -1035,16 +2397,76 @@
       "value": "Kártya címe"
     }
   ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Egy értéktömb, melyben meg kell keresni a maximális értéket, vagy pedig egy halmaz első értéke."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Egy értéket URI-ként kódolt értékként ad vissza."
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Egy sztring típusú időbélyegnek az év napját megadó összetevőjét adja vissza."
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Egy olyan értéktömböt ad vissza az űrlapadatokból vagy a trigger űrlapként kódolt kimenetéből, amely megegyezik a kulcsnévvel."
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A hozzáadandó intervallumban megadott időegységet tartalmazó sztring."
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A gyűjtemény, melyet ellenőrizni kell, hogy üres-e."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A szám, amelyet ki kell vonni a kisebbítendőből."
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
       "value": "Kulcs"
     }
   ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Igaz értéket ad vissza, ha az egyik paraméter igaz."
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Új paraméter"
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A célidőzóna nevét tartalmazó sztring. A részleteket lásd: https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "A triggert vagy műveletet aktiváló URL-cím visszaadása."
     }
   ],
   "tImHz/": [
@@ -1065,10 +2487,34 @@
       "value": " óra"
     }
   ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A beolvasandó rész indexe."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Ez a függvény futásidőben magáról a munkafolyamatról szolgáltat adatokat."
+    }
+  ],
   "tNoZx2": [
     {
       "type": 0,
       "value": "Típus"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Igaz értéket ad vissza, ha az első argumentum nagyobb a másodiknál."
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A hozzáadni kívánt órák száma. Lehet negatív érték is órák kivonása céljából."
     }
   ],
   "uN4zFU": [
@@ -1077,16 +2523,70 @@
       "value": "OK"
     }
   ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A kiértékelendő gyűjtemények. Az eredményben minden olyan objektum megjelenik, mely a gyűjtemények bármelyikében szerepel."
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Egy egész számmal megadott óraszám hozzáadása az átadott sztring típusú időbélyeghez."
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az időegységek azon mennyisége, amellyel a kívánt időpont a múltban van."
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az a sztring, amely az értéket tartalmazhatja."
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
       "value": "Alapértelmezett érték"
     }
   ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Tömb létrehozása a paraméterekből."
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Globálisan egyedi sztring (GUID) létrehozása"
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Egy sztringbeli érték utolsó indexét adja vissza (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az érték, amelyre a sztring végződhet."
+    }
+  ],
   "vSlNPe": [
     {
       "type": 0,
       "value": "Törlés"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Azon művelet neve, melynek kimenetei szükségesek."
     }
   ],
   "vwH/XV": [
@@ -1101,16 +2601,82 @@
       "value": "Munkafolyamat tulajdonságai"
     }
   ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Egész számú megadott időegység kivonása egy átadott sztring típusú időbélyegből"
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Egy értéktömb, melyben meg kell keresni a minimális értéket, vagy pedig egy halmaz első értéke."
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Túllépte az időkorlátot"
     }
   ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az a sztring, melyben a függvény a 2. paramétert keresi, és amelyet a 3. paraméterrel frissít, ha a 2. paraméter előfordul az 1. paraméterben."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A sztring hossza."
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "Egy megadott értéket ad vissza annak alapján, hogy a kifejezés eredménye igaz-e, vagy hamis."
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Egy forrásidőzónából átadott sztring típusú időbélyeg konvertálása UTC formátumba"
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Egyetlen tömböt vagy objektumot ad vissza a függvénynek átadott tömb vagy objektum összes elemével együtt."
+    }
+  ],
   "woJQhv": [
     {
       "type": 0,
       "value": "Visszahívási URL:"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A gyűjtemény, melynek be kell olvasni a hosszát."
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "Egy URI-ként kódolt sztringet sztringként ad vissza."
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az új vagy meglévő tulajdonság neve."
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Az elérési út visszaadása egy URI azonosítóból. Ha nincs megadva elérési út, „/” visszaadása"
     }
   ],
   "xt5TeT": [
@@ -1125,10 +2691,52 @@
       "value": "Érték"
     }
   ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Required. The object to compare equality."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. Az a sztring, amelynek URL-címekben nem biztonságos karaktereit fel kell oldani."
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A tömbbé alakítandó érték."
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Date and time functions"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "Adja meg a paraméter alapértelmezett értékét."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A tizedestörtté alakítandó érték."
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A natív típusú értékké alakítandó sztring."
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Átalakít egy – opcionálisan területi beállítást és formátumot is tartalmazó – sztringet dátummá."
     }
   ],
   "ziYCiA": [
@@ -1141,6 +2749,18 @@
     {
       "type": 0,
       "value": "Lebegőpontos"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Egész számú megadott időegység hozzáadása egy átadott sztring típusú időbélyeghez"
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Kötelező megadni. A hozzáadni kívánt percek száma. Lehet negatív érték is percek kivonása céljából."
     }
   ]
 }

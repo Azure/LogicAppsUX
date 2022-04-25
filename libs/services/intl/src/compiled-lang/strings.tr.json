@@ -5,6 +5,18 @@
       "value": "Ayar Etiketi"
     }
   ],
+  "+g+mch": [
+    {
+      "type": 0,
+      "value": "Bir eylemin çok parçalı çıkışında, bir parçanın gövdesini döndürür"
+    }
+  ],
+  "+lpuMl": [
+    {
+      "type": 0,
+      "value": "Gerekli. İfadenin 'false' olması durumunda döndürülecek değer."
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -17,10 +29,64 @@
       "value": "Bekliyor"
     }
   ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "Dizideki öğeleri Sayı dizininden başlayarak döndürür"
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "Bir diziye yönelik girişi dönüştürür"
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Gerekli. Birleştirilecek öğelerin ait olduğu koleksiyon."
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Geçirilen dizi veya dizeden ilk Count öğelerini döndürür"
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Geçirilen bir dize zaman damgası için saatin başlangıcını döndürür"
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "Tetikleyici veya eylemi çağırmaya yönelik URL döndürülür. Not: Yalnızca bir httpWebhook ve apiConnectionWebhook'ta kullanılabilen bu işlev bir el ile, yinelenme, http veya apiConnection'da kullanılamaz."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Gerekli. Base64 kodlamalı dize."
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "URL, giriş dizesinin kodunu çözer"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
       "value": "Çalıştırma menüsünü göster"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "URI ile kodlanmış bir dizenin ikili gösterimini döndürür"
     }
   ],
   "0ZlNtf": [
@@ -29,16 +95,70 @@
       "value": "Yeniden denemeler ile başarılı oldu"
     }
   ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Gerekli. Büyük harfe dönüştürülecek dize. Dizedeki bir karakterin büyük harf eşdeğeri yoksa, karakter, döndürülen dizeye değiştirilmeden eklenir."
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "İki sayı arasındaki bölme işleminden kalanı döndürür (mod)"
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Gerekli. Değeri içeriyor olabilecek dize."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Bir giriş verisi URI dizesinin ikili gösterimini döndürür"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
       "value": "Diğer komutlar"
     }
   ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Gerekli. Dize gösterimine dönüştürülecek veri URI'si."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "Bir URI'den bağlantı noktasını döndürür. Bağlantı noktası belirtilmezse, iletişim kuralı için varsayılan bağlantı noktasını döndürür"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
       "value": "Yorum"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Gerekli. XML'ye dönüştürülecek değer."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Gerekli. URI kodlamalı dize."
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "Parametre bağımsız değişkenini bir kayan noktalı sayıya dönüştürür"
     }
   ],
   "1R6Vaa": [
@@ -81,16 +201,52 @@
       "value": "count"
     }
   ],
+  "1TE0e8": [
+    {
+      "type": 0,
+      "value": "Gerekli. Dizini aranacak değer."
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Gerekli. Karşılaştırılan değerden küçük olup olmadığı denetlenecek nesne."
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Kapat"
     }
   ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Base 64 ile kodlanmış bir dizenin ikili gösterimini döndürür"
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Gerekli. Veri URI'sine dönüştürülecek değer."
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
       "value": "Bitiş zamanı"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Form-data veya form-encoded eylem çıkışındaki anahtar adı ile eşleşen tek bir değer döndürür"
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Gerekli. Form-data veya form-encoded yanıtı içeren eylemin adı."
     }
   ],
   "2mnU/w": [
@@ -105,10 +261,52 @@
       "value": "Tanımlayıcı"
     }
   ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Gerekli. Ayırıcı."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Hatalı"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Gerekli. Özelliğin kaldırılacağı nesne."
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Zorunlu. Çıkarmak için belirtilen zaman birimi sayısı."
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Gerekli. Döndürülebilecek en düşük tamsayı."
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Gerekli. Eklenecek gün sayısı. Gün sayısının çıkarılması için negatif olabilir."
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Zorunlu. Aralıkta belirtilen zaman birimi."
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Gerekli. Değerlerini istediğiniz parametrenin adı."
     }
   ],
   "4cVuMw": [
@@ -117,10 +315,40 @@
       "value": "Açıklamalar yalnızca bir adımın girişleri düzenlenirken eklenebilir."
     }
   ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "Sayılardan oluşan giriş dizisinin en küçük değerini döndürür"
+    }
+  ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "Hizmet istek kimliği"
+    }
+  ],
+  "5J7j9k": [
+    {
+      "type": 0,
+      "value": "Gerekli. Değerlendirilecek XPath ifadesi."
+    }
+  ],
+  "5aa76N": [
+    {
+      "type": 0,
+      "value": "Geçirilen dizi veya dizedeki ilk öğeyi döndürür"
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Bir nesne, dizi veya dize boşsa true döndürür"
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Gerekli. Öğesini istediğiniz döngünün adı."
     }
   ],
   "5qzZMo": [
@@ -135,10 +363,28 @@
       "value": "Parametreyi Sil"
     }
   ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Gerekli. Karşılaştırılan değerden büyük olup olmadığı denetlenecek nesne."
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
       "value": "Çalıştırmayı göster"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Gerekli. İçinde arama yapılacak koleksiyon."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Gerekli. Çok bölümlü bir yanıt içeren eylemin adı."
     }
   ],
   "6oqk+A": [
@@ -147,16 +393,40 @@
       "value": "Önceki"
     }
   ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Gerekli. Çarpan 2'nin çarpılacağı sayı."
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
       "value": "Tamam"
     }
   ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Gerekli. Alt dizenin alındığı dize."
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "İsteğe bağlı. Biçimlendirme sırasında kullanılacak yerel ayar (varsayılan olarak 'tr-tr' kullanılır)."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Durum kodu"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Dize zaman damgasında 1 Ocak 0001 00:00:00 UTC tarihinden sonraki zaman aralığı sayısını (100 nanosaniyelik aralık) döndürür"
     }
   ],
   "7yEdSt": [
@@ -171,10 +441,52 @@
       "value": "URL’yi Kopyala"
     }
   ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Gerekli. Değeri içeriyor olabilecek dize."
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Gerekli. İfadenin 'true' olması durumunda döndürülecek değer."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Biçimlendirilmiş bir sayı dizesi döndürür"
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Gerekli. Karşılaştırma nesnesinden büyük veya bu nesneye eşit olup olmadığı denetlenecek nesne."
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
       "value": "Tanımda birden çok tetikleyici olması nedeniyle tasarımcı işlenemiyor."
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Gerekli. URI ile kodlanacak dize."
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir gün sayısı ekler"
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Geçirilen diziler veya nesneler arasında ortak öğeleri olan tek bir dizi veya nesne döndürür"
     }
   ],
   "99vsJy": [
@@ -183,10 +495,76 @@
       "value": "Bağlayıcı"
     }
   ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Bir değerin veri URI'sini döndürür"
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Ek özellik-değer çifti içeren bir nesneyi döndürür"
+    }
+  ],
+  "9b4xDa": [
+    {
+      "type": 0,
+      "value": "panel"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "İki sayı arasındaki toplama işleminin sonucunu döndürür"
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "İki parametre de true ise true döndürür"
+    }
+  ],
+  "ANbEeQ": [
+    {
+      "type": 0,
+      "value": "Gerekli. Değerlerini istediğiniz eylemin adı."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Gerekli. Base64 gösterimine kodlanacak dize."
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Gerekli. Alınacak bölümün dizini."
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Bu zaman damgasının değerinin nasıl biçimlendirileceğini gösteren tek bir biçim tanımlayıcı karakteri veya özel biçim deseni. Biçim belirtilmezse ISO 8601 biçimi ('o') kullanılır."
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Gerekli. URI kodlamalı dize."
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
       "value": "Başlangıç zamanı"
+    }
+  ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Gerekli. URL güvenli olmayan karakterlerin kodunun çözülmesi için kullanılacak dize."
     }
   ],
   "Bn8iTS": [
@@ -195,10 +573,34 @@
       "value": "Durum türü:"
     }
   ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "Bu Guid değerinin nasıl biçimlendirileceğini gösteren tek bir biçim belirtici."
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Gerekli. Karşılaştırma nesnesinden büyük olup olmadığı denetlenecek nesne."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Bağlantı gerekli"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Bir URI'den yolu ve sorguyu döndürür"
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Gerekli. Baştaki ve sondaki boşluğun kaldırılacağı dize."
     }
   ],
   "DFo+mo": [
@@ -213,10 +615,52 @@
       "value": "Süre"
     }
   ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Parametreyi ondalık sayıya dönüştürür"
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
       "value": "Yanıt"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Gerekli. Alt dizeyi ayıklama işleminin başlatılacağı yeri belirten dizin."
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Zorunlu. Eklemek için belirtilen zaman birimi sayısı."
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Tanım içinde tanımlanan bir parametre değeri döndürür"
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Başlangıç dizini ve bitiş dizini tarafından tanımlanan bir dize bölümü döndürür"
+    }
+  ],
+  "FS+/Tb": [
+    {
+      "type": 0,
+      "value": "Tetikleyicinin çok parçalı çıkışında, bir parçanın gövdesini döndürür"
+    }
+  ],
+  "FVavKy": [
+    {
+      "type": 0,
+      "value": "Geçirilen bir dize zaman damgası için günün başlangıcını döndürür"
     }
   ],
   "FXLR5M": [
@@ -251,10 +695,52 @@
       "value": "hours"
     }
   ],
+  "Fgq3Db": [
+    {
+      "type": 0,
+      "value": "Gerekli. Son nesnenin alınacağı koleksiyon."
+    }
+  ],
+  "Fh2HDb": [
+    {
+      "type": 0,
+      "value": "Bir dize içindeki bir değerin ilk dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)"
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
       "value": "Durum"
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Gerekli. Değeri içeriyor olabilecek dize."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "Bir URI'den sorguyu döndürür"
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Gerekli. Koleksiyon içinde bulunacak nesne."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Başvuru işlevleri"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Parametreler false ise true döndürür"
     }
   ],
   "Gmya+V": [
@@ -275,6 +761,30 @@
       "value": "Dizi"
     }
   ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "URI ayrıştırma işlevleri"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Gerekli. Dilim dizesi."
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Gerekli. Çıkanın çıkarıldığı sayı."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Gerekli. Döndürülecek form verileri değerinin anahtar adı."
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -287,16 +797,118 @@
       "value": "Ayar Değeri"
     }
   ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Geçirilen bir dize zaman damgasını UTC'den hedef saat dilimine dönüştürür"
+    }
+  ],
+  "Ip7Iax": [
+    {
+      "type": 0,
+      "value": "Bir dize içindeki bir değerin n. tekrarının dizinini döndürür (büyük/küçük harfe duyarlı değil, sabit kültür)"
+    }
+  ],
+  "IpVwYT": [
+    {
+      "type": 0,
+      "value": "Geçirilen bağımsız değişkenlerdeki null olmayan ilk nesneyi döndürür"
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Sabit kültürün büyük-küçük harf kurallarını kullanarak bir dizeyi küçük harfe dönüştürür"
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Gerekli. Zamanı içeren bir dize."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Gerekli. Boole'ye dönüştürülen değer."
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
       "value": "Yöntem"
     }
   ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Bir sözlüğün anahtar içermesi, bir dizinin değer içermesi veya bir dizenin alt dize içermesi durumunda true döndürür"
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Gerekli. Biçimlendirilecek sayı."
+    }
+  ],
   "JnlcZQ": [
     {
       "type": 0,
       "value": "Ad:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Gerekli. Sayısal biçim dizesi."
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Gerekli. Yeni özelliğin ekleneceği nesne."
+    }
+  ],
+  "K90YEU": [
+    {
+      "type": 0,
+      "value": "Bir dizedeki karakterlerin bir alt kümesini döndürür"
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Gerekli. Koleksiyondan alınacak nesne sayısı. Pozitif bir tamsayı olmalıdır."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Bir dize zaman damgası için haftanın günü bileşenini döndürür"
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "Bir URI'den düzeni döndürür"
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "Bir for-each döngüsünde kullanıldığında bu işlev belirtilen döngünün geçerli öğesini döndürür."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that may be true."
     }
   ],
   "M0HMjE": [
@@ -309,6 +921,36 @@
     {
       "type": 0,
       "value": "Parametreler, iş akışı kaydedildiğinde kaydedilir. Parametreyi kaydetmeden önce burada düzenleyebilir veya kaydettikten sonra parametre sayfasında düzenleyebilirsiniz."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "İsteğe bağlı. Bu kapsamdaki en üst düzey eylemlerden giriş ve çıkışları istediğiniz kapsamlı eylemin adı."
+    }
+  ],
+  "M9mzP6": [
+    {
+      "type": 0,
+      "value": "Gerekli. Toplanan 2'ye eklenecek sayı."
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Gerekli. Değerlendirilecek koleksiyonlar. Bir nesne, sonuçta görüntülenmek üzere geçirilen tüm koleksiyonlarda olmalıdır."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Gerekli. İkili gösterime dönüştürülecek veri URI'si."
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Geçerli zaman damgasını dize olarak döndürür"
     }
   ],
   "Mb+Eaq": [
@@ -329,16 +971,34 @@
       "value": "Beklenmeyen hata"
     }
   ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Gerekli. Döndürülecek form verileri değerlerinin anahtar adı."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
       "value": "Durum"
     }
   ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Bir değerin ikili gösterimini döndürür"
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
       "value": "Parametreyi Düzenle"
+    }
+  ],
+  "OD8igU": [
+    {
+      "type": 0,
+      "value": "Zorunlu. Kaynak saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
   "OFKZzQ": [
@@ -351,6 +1011,12 @@
     {
       "type": 0,
       "value": "Yorum"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "Bir For_each, Until veya Scope eylemi gibi, belirtilen kapsamlı eylemdeki en üst düzey eylemlerden sonuçları döndürür."
     }
   ],
   "Oib1mL": [
@@ -371,16 +1037,52 @@
       "value": " dk"
     }
   ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "İsteğe bağlı. Tarih saat dizesi ayrıştırılırken kullanılacak yerel ayar."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Bir URI'den ana bilgisayarı döndürür"
+    }
+  ],
   "OnrO5/": [
     {
       "type": 0,
       "value": "Yönetilen kimlik seçin"
     }
   ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Gerekli. Bu değer, dizideki tamsayıların sayısıdır."
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Collection functions"
+    }
+  ],
+  "P8ZBF9": [
+    {
+      "type": 0,
+      "value": "Gerekli. İlk nesnenin alınacağı koleksiyon."
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
       "value": "Başarılı"
+    }
+  ],
+  "PKMkb/": [
+    {
+      "type": 0,
+      "value": "Gerekli. Toplanan 1'e eklenecek sayı."
     }
   ],
   "PP63jY": [
@@ -395,16 +1097,46 @@
       "value": "Daralt"
     }
   ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Gerekli. Eklenecek saniye sayısı. Saniye sayısının çıkarılması için negatif olabilir."
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
       "value": "İptal edildi"
     }
   ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "İş akışı işlevleri"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "Giriş dizesinin base 64 gösterimini döndürür"
+    }
+  ],
   "Q/7unA": [
     {
       "type": 0,
       "value": "Nesne"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Gerekli. Karşılaştırma nesnesinden küçük veya bu nesneye eşit olup olmadığı denetlenecek nesne."
+    }
+  ],
+  "QEp3C8": [
+    {
+      "type": 0,
+      "value": "Girişi JSON türü değere dönüştürür"
     }
   ],
   "QQYzHC": [
@@ -417,10 +1149,52 @@
       "value": " kartı için bağlam menüsü"
     }
   ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Form-data veya form-encoded tetikleyici çıkışındaki anahtar adı ile eşleşen tek bir değer döndürür"
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Dize işlevleri"
+    }
+  ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Öğe"
+    }
+  ],
+  "QeE0k/": [
+    {
+      "type": 0,
+      "value": "Gerekli. İkiliye dönüştürülen değer."
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
       "value": "Yükleniyor..."
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Tarih biçiminde bir dize döndürür"
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Gerekli. Öğeleri sınırlamak için kullanılacak dize."
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Required. A string containing the unit of time specified in the interval to subtract."
     }
   ],
   "Qu1HkA": [
@@ -431,6 +1205,12 @@
     {
       "type": 0,
       "value": " sa"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Gerekli. Bölünen dize."
     }
   ],
   "RhH4pF": [
@@ -465,6 +1245,18 @@
       "value": "minutes"
     }
   ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "Parametreyi bir tamsayıya dönüştürür"
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Dizenin bir değer ile başlayıp başlamadığını kontrol eder (büyük-küçük harf duyarsız, sabit kültür)"
+    }
+  ],
   "SXb47U": [
     {
       "type": 1,
@@ -475,10 +1267,34 @@
       "value": " dk"
     }
   ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Gerekli. Form-data veya form-encoded yanıtı içeren eylemin adı."
+    }
+  ],
+  "T7zcR6": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that must be true."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
       "value": "Başarısız"
+    }
+  ],
+  "TI44R1": [
+    {
+      "type": 0,
+      "value": "Bir dizinin her öğesinin bir sınırlandırıcı ile birleştirildiği bir dize döndürür"
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Bir dize zaman damgası için ayın başlangıcını döndürür"
     }
   ],
   "TZv5JE": [
@@ -499,16 +1315,34 @@
       "value": "Etiketler"
     }
   ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Gerekli. Çarpan 1'in çarpılacağı sayı."
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
       "value": "Daralt/Genişlet"
     }
   ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Belirli bir sayıdan başlayan bir tamsayı dizisi üretir"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
       "value": "Bir parametreye başvurmak için dinamik içerik listesini kullanın."
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Bir dizeyi belirli bir dize ile değiştirir"
     }
   ],
   "USVffu": [
@@ -527,6 +1361,12 @@
     {
       "type": 0,
       "value": "Belirtilen iş akışı çalıştırma adı geçersiz."
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Gerekli. Bölen tarafından bölünecek sayı."
     }
   ],
   "VXBWrq": [
@@ -557,6 +1397,30 @@
       "value": "max"
     }
   ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Gerekli. Yeni özelliğin adı."
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Gerekli. Dizideki ilk tamsayı."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "trigger().outputs için kısayol"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "İki sayı arasındaki çarpma işleminin sonucunu döndürür"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -573,6 +1437,18 @@
     {
       "type": 0,
       "value": " saat"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "actions('eylemAdı').outputs için kısayol"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Herhangi bir sayıda dizeyi birleştirir"
     }
   ],
   "XFFpu/": [
@@ -611,10 +1487,28 @@
       "value": "İstek"
     }
   ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Matematiksel işlevler"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Gerekli. Gövde çıkışlarını istediğiniz eylemin adı."
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Daha Fazla Bilgi"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Bir veri URI'sinin ikili gösterimini döndürür"
     }
   ],
   "YHsAKl": [
@@ -639,16 +1533,64 @@
       "value": "String"
     }
   ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Bir ifadenin, değerini diğer JSON ad ve değer çiftlerinden veya çalışma zamanı tetikleyicisinin çıkışından alabilmesine olanak sağlar"
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Bu işleve geçirilen dizi veya nesneden herhangi birindeki tüm öğeleri içeren tek bir dizi veya nesne döndürür. İşlevin parametreleri bir nesne kümesi ya da bir dizi kümesi olabilir (ikisinin karışımı olamaz). Son çıkışta aynı ada sahip iki nesne varsa, son nesnede bu ada sahip son nesne görünür."
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "Yok"
     }
   ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Bir dize zaman damgası için ayın günü bileşenini döndürür"
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "trigger().outputs.body için kısayol"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Gerekli. Dizenin başlangıcı olabilecek değer."
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
       "value": "Bu işlem zaten silinmiş."
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Gerekli. Bölen tarafından bölünecek sayı."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Gerekli. Bulunacak alt dizenin tekrar sayısı."
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Gerekli. Koleksiyonun önünden kaldırılacak nesne sayısı. Pozitif bir tamsayı olmalıdır."
     }
   ],
   "bH5LtI": [
@@ -661,10 +1603,22 @@
       "value": " adlı sekme zaten kayıtlı"
     }
   ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Gerekli. Karşılaştırılan değerden büyük veya bu değere eşit olup olmadığı denetlenecek nesne."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Daha fazla yükle"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "Sayılardan oluşan giriş dizisinin en büyük değerini döndürür"
     }
   ],
   "bgfjqS": [
@@ -673,10 +1627,28 @@
       "value": "Etiket ayarı"
     }
   ],
+  "bzF/qn": [
+    {
+      "type": 0,
+      "value": "Gerekli. İlk Count nesnenin alınacağı koleksiyon."
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Bir özelliğin sağlanan değere ayarlandığı nesneyi döndürür"
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "cJm+ah": [
+    {
+      "type": 0,
+      "value": "Gerekli. Dizini aranacak değer."
     }
   ],
   "ci6ex1": [
@@ -703,6 +1675,12 @@
       "value": "Başlangıç zamanı"
     }
   ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Gerekli. İlk Count nesnenin atlanacağı koleksiyon."
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -715,16 +1693,82 @@
       "value": "Daha fazla bilgi edinin"
     }
   ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Base 64 ile kodlanmış bir dizenin dize gösterimini döndürür"
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "Parametreyi bir Boole değerine dönüştürür"
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Form-data veya form-encoded eylem çıkışındaki anahtar adı ile eşleşen değerlerin dizisini döndürür"
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Ayırıcı kullanarak dizeyi böler"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Belirtilmedi"
     }
   ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Gerekli. Değerini istediğiniz değişkenin adı."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
       "value": "Başlangıç zamanı"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Gerekli. Bölünenin bölüneceği sayı."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Gerekli. Parametre 1'de alt dizenin başladığı konumun dizini."
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Gerekli. Null denetimi yapılacak nesneler."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "İsteğe bağlı. Alt dizeyi ayıklama işleminin durdurulacağı yeri belirten dizin."
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Birinci bağımsız değişken ikinciden büyük veya ikinciye eşitse true döndürür"
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Mantıksal işlevler"
     }
   ],
   "ftwXvc": [
@@ -739,10 +1783,46 @@
       "value": "URI"
     }
   ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Geçerli saatle belirtilen zaman aralığının toplanması sonucunda elde edilen zaman damgasını döndürür."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "İki sayı arasındaki bölme işleminin sonucunu döndürür"
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Gerekli. İfadenin hangi değeri döndürmesi gerektiğini belirleyen bir boole değer."
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "Önceki seçeneği başarısız oldu"
+    }
+  ],
+  "gMhc5o": [
+    {
+      "type": 0,
+      "value": "Gerekli. Tek bir dize olarak birleştirilecek dize."
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Dönüşüm işlevleri"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "Bir until döngüsünde kullanıldığında bu işlev belirtilen döngünün geçerli yineleme dizinini döndürür."
     }
   ],
   "hN7iBP": [
@@ -777,6 +1857,12 @@
       "value": "seconds"
     }
   ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "İki sayı arasındaki çıkarma işleminin sonucunu döndürür"
+    }
+  ],
   "hdnZ9Y": [
     {
       "type": 0,
@@ -795,10 +1881,22 @@
       "value": "Yorum"
     }
   ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Sabit kültürün büyük-küçük harf kurallarını kullanarak bir dizeyi büyük harfe dönüştürür"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
       "value": "İleri"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Gerekli. Ayrıştırılacak URI."
     }
   ],
   "iRjBf4": [
@@ -811,6 +1909,12 @@
     {
       "type": 0,
       "value": "Genişlet"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Manipulation functions"
     }
   ],
   "iUs7pv": [
@@ -829,16 +1933,70 @@
       "value": " sn"
     }
   ],
+  "j2MU0b": [
+    {
+      "type": 0,
+      "value": "Bir özelliğin kaldırıldığı nesneyi döndürür"
+    }
+  ],
+  "j39557": [
+    {
+      "type": 0,
+      "value": "Belirtilen değişkenin değerini döndürür."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Yalnızca başlangıç ucunda kapsayıcı olan belirtilen aralıktan rastgele bir tamsayı döndürür."
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Gerekli. Negatif yapılacak ifade."
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Gerekli. Dizeye dönüştürülen değer."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Gerekli. Base64 giriş dizesi."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Gerekli. Döndürülecek form verileri değerlerinin anahtar adı."
+    }
+  ],
   "jfInxm": [
     {
       "type": 0,
       "value": "JSON dosyasında düzenle"
     }
   ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Gerekli. Base64 kodlamalı dize."
+    }
+  ],
   "k41+13": [
     {
       "type": 0,
       "value": "Atlandı"
+    }
+  ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Evet"
     }
   ],
   "kHcCxH": [
@@ -859,10 +2017,34 @@
       "value": " sn"
     }
   ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Giriş base 64 ile kodlanmış bir dizenin dize gösterimini döndürür"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
       "value": "İndir (Alt/Option + tıklama)"
+    }
+  ],
+  "kZuYgD": [
+    {
+      "type": 0,
+      "value": "Birinci bağımsız değişken ikinciden küçükse true döndürür"
+    }
+  ],
+  "keb4r1": [
+    {
+      "type": 0,
+      "value": "İki değer eşitse true döndürür"
+    }
+  ],
+  "knylNW": [
+    {
+      "type": 0,
+      "value": "Gerekli. Bu değer, döndürülebilecek en yüksek tamsayıdan bir sonraki tamsayıdır."
     }
   ],
   "l36V56": [
@@ -901,6 +2083,12 @@
       "value": "Durum bilgisi olmayan çalıştırma modu:"
     }
   ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "actions('eylemAdı').outputs.body için kısayol"
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -919,6 +2107,78 @@
       "value": "Ad"
     }
   ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Geçerli saatten belirtilen zaman aralığının çıkarılması sonucunda elde edilen zaman damgasını döndürür."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Bir veri URI'sinin dize gösterimini döndürür"
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "URL, giriş dizesini kodlar"
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Gerekli. Küçük harfe dönüştürülecek dize. Dizedeki bir karakterin küçük harf eşdeğeri yoksa, karakter, döndürülen dizeye değiştirilmeden eklenir."
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Gerekli. Kayan noktalı sayıya dönüştürülen değer."
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Gerekli. Karşılaştırılan değerden küçük veya bu değere eşit olup olmadığı denetlenecek nesne."
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Zorunlu. İstenen saatin gelecekteki zaman birimlerinin sayısı."
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Gerekli. Kaldırılacak özelliğin adı."
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Gerekli. Karşılaştırma nesnesinden küçük olup olmadığı denetlenecek nesne."
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir dakika sayısı ekler"
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Geçirilen dizi veya dizedeki son öğeyi döndürür"
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Gerekli. XPath ifadesinin üzerinde değerlendirileceği XML."
+    }
+  ],
   "o1HOyf": [
     {
       "type": 1,
@@ -933,10 +2193,22 @@
       "value": "max_page"
     }
   ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Gerekli. İkili gösterim olarak kodu çözülecek dataURI."
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Çalıştırmayı açmak için çalıştırma tanımlayıcısını girin"
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Gerekli. Döndürülecek form verileri değerinin anahtar adı."
     }
   ],
   "p16/4S": [
@@ -951,10 +2223,40 @@
       "value": "Bitiş zamanı"
     }
   ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Gerekli. Bir dizi olarak birleştirilecek değerler."
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Parametreler"
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "Girişi XML türü değere dönüştürür"
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Gerekli. Bölünenin bölüneceği sayı. Bölme işleminden sonra kalan alınır."
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Geçirilen dizi veya nesneler arasında ortak öğeleri olan tek bir dizi veya nesneyi döndürür. İşlevin parametreleri bir nesne kümesi ya da bir dizi kümesi olabilir (ikisinin karışımı olamaz). Aynı ada sahip iki nesne varsa, son nesnede bu ada sahip son nesne görünür."
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "Bir dizenin başındaki ve sonundaki boşlukları kırpar"
     }
   ],
   "pr9GwA": [
@@ -963,10 +2265,46 @@
       "value": "Yenile"
     }
   ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Bir XML düğümünü, düğüm kümesini veya değeri, sağlanan XPath ifadesinden JSON olarak döndürür"
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Gerekli. Özelliğe atanacak değer."
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "Parametreyi bir dizeye dönüştürür"
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir saniye sayısı ekler"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Yönetilen kimlik"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Dizenin bir değer ile bitip bitmediğini kontrol eder (büyük-küçük harf duyarsız, sabit kültür)"
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Birinci bağımsız değişken ikinciden küçük veya ikinciye eşitse true döndürür"
     }
   ],
   "qSt0Sb": [
@@ -1007,10 +2345,34 @@
       "value": "days"
     }
   ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Bir dizi veya dizedeki öğelerin sayısını döndürür"
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Gerekli. Tamsayıya dönüştürülen değer."
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Bir ifadenin, değerini diğer JSON ad ve değer çiftlerinden veya çalışma zamanı eyleminin çıkışından alabilmesine olanak sağlar"
+    }
+  ],
   "r9SVE4": [
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "Hayır"
     }
   ],
   "rCl53e": [
@@ -1019,16 +2381,76 @@
       "value": "Kart Başlığı"
     }
   ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Gerekli. En büyük değeri bulunacak değerler dizisi veya bir kümenin ilk değeri."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Bir değerin URI ile kodlanmış gösterimini döndürür"
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Bir dize zaman damgası için yılın günü bileşenini döndürür"
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Form-data veya form-encoded tetikleyici çıkışındaki anahtar adı ile eşleşen değerlerin dizisini döndürür"
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Zorunlu. Eklemek için zaman aralığında belirtilen zaman birimini içeren bir dize."
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Gerekli. Boş olup olmadığı denetlenecek koleksiyon."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Gerekli. Çıkarılandan çıkarılacak sayı."
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
       "value": "Anahtar"
     }
   ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Herhangi bir parametre true ise true döndürür"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Yeni parametre"
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Zorunlu. Hedef saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "Tetikleyici veya eylemi çağırmaya yönelik URL'yi döndürür"
     }
   ],
   "tImHz/": [
@@ -1049,10 +2471,34 @@
       "value": " sa"
     }
   ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Gerekli. Alınacak bölümün dizini."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Bu işlev, çalışma zamanındaki iş akışı hakkında ayrıntılar sağlar"
+    }
+  ],
   "tNoZx2": [
     {
       "type": 0,
       "value": "Tür"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Birinci bağımsız değişken ikinciden büyükse true döndürür"
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Gerekli. Eklenecek saat sayısı. Saat sayısının çıkarılması için negatif olabilir."
     }
   ],
   "uN4zFU": [
@@ -1061,16 +2507,70 @@
       "value": "Tamam"
     }
   ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Gerekli. Değerlendirilecek koleksiyonlar. Koleksiyonların herhangi birinde görünen bir nesne sonuçta da görüntülenir."
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir saat sayısı ekler"
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Zorunlu. İstenen saatin geçmişteki zaman birimlerinin sayısı."
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Gerekli. Değeri içeriyor olabilecek dize."
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
       "value": "Varsayılan Değer"
     }
   ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Parametrelerden bir dizi oluşturur"
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Genel benzersiz dize (GUID) oluşturur"
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Bir dize içindeki bir değerin son dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)"
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Gerekli. Dizenin sonu olabilecek değer."
+    }
+  ],
   "vSlNPe": [
     {
       "type": 0,
       "value": "Sil"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Gerekli. Çıkışlarını istediğiniz eylemin adı."
     }
   ],
   "vwH/XV": [
@@ -1085,16 +2585,82 @@
       "value": "İş Akışı Özellikleri"
     }
   ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Geçirilen bir dize zaman damgasından belirtilen bir zaman biriminin tam sayı değerini çıkarır"
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Gerekli. En küçük değeri bulunacak değerler dizisi veya bir kümenin ilk değeri."
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Zaman Aşımı Oluştu"
     }
   ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Gerekli. İçinde parametre 2'nin arandığı ve parametre 1'de parametre 2 bulunduğunda, parametre 3 ile güncelleştirilen dize."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Gerekli. Alt dizenin uzunluğu."
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "İfadenin true veya false ile sonuçlanmasına bağlı olarak belirli bir değer döndürür"
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Geçirilen bir dize zaman damgasını kaynak saat diliminden UTC'ye dönüştürür"
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Tüm öğeleri, bu işleve geçirilen dizi veya nesnede olan tek bir dizi veya nesne döndürür"
+    }
+  ],
   "woJQhv": [
     {
       "type": 0,
       "value": "Geri çağırma URL’si:"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Gerekli. Uzunluğun alınacağı koleksiyon."
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "URI ile kodlanmış bir dizenin dize gösterimini döndürür"
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Gerekli. Yeni veya mevcut özelliğin adı."
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Bir URI'den yolu döndürür. Yol belirtilmezse, '/' döndürür"
     }
   ],
   "xt5TeT": [
@@ -1109,10 +2675,52 @@
       "value": "Değer"
     }
   ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Required. The object to compare equality."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Gerekli. URL güvenli olmayan karakterlerin kaçırılacağı dize."
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Gerekli. Diziye dönüştürülen değer."
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Date and time functions"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "Parametre için varsayılan değer girin."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Gerekli. Ondalık sayıya dönüştürülen değer."
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Gerekli. Yerel tür değerine dönüştürülen değer."
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Bir dizeyi dönüştürür, isteğe bağlı olarak bir yerel ayar ve bir tarih biçimi içerir"
     }
   ],
   "ziYCiA": [
@@ -1125,6 +2733,18 @@
     {
       "type": 0,
       "value": "Kayan"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Geçirilen bir dize zaman damgasına belirtilen bir zaman biriminin tam sayı değerini ekler"
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Gerekli. Eklenecek dakika sayısı. Dakika sayısının çıkarılması için negatif olabilir."
     }
   ]
 }

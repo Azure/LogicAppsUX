@@ -5,6 +5,18 @@
       "value": "Rótulo da Configuração"
     }
   ],
+  "+g+mch": [
+    {
+      "type": 0,
+      "value": "Retorna o corpo de uma parte de uma saída de várias partes de uma ação"
+    }
+  ],
+  "+lpuMl": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor a retornar se a expressão for 'false'."
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -17,10 +29,64 @@
       "value": "Aguardando"
     }
   ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "Retorna os elementos na matriz começando na Contagem do índice"
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "Converter a entrada em uma matriz"
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Necessário. A coleção da qual juntar itens."
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Retorna os primeiros elementos de Contagem na matriz ou na cadeia de caracteres passada"
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Retorna o início da hora para um carimbo de data/hora de cadeia de caracteres passado"
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "Retorna a URL para invocar o gatilho ou a ação. Observação: esta função só pode ser usada em uma httpWebhook e uma apiConnectionWebhook, não em um manual, uma recorrência, um http ou uma apiConnection."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres codificada em base64."
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "A URL decodifica a cadeia de caracteres de entrada"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
       "value": "Mostrar menu de execução"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "Retorna uma representação binária de uma cadeia de caracteres codificada no URI"
     }
   ],
   "0ZlNtf": [
@@ -29,16 +95,70 @@
       "value": "Novas tentativas bem-sucedidas"
     }
   ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres a ser convertida em letras maiúsculas. Se um caractere na cadeia de caracteres não tiver um equivalente em letras maiúsculas, ele será incluído inalterado na cadeia de caracteres retornada."
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "Retorna o resto da divisão dos dois números (módulo)"
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres que pode conter o valor."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Retorna uma representação binária de uma cadeia de caracteres de URI de dados de entrada"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
       "value": "Mais comandos"
     }
   ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Necessário. O URI de dados para converter em representação de Cadeia de caracteres."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "Retorna a porta de um URI. Se a porta não for especificada, retornará a porta padrão do protocolo"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
       "value": "Comentar"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor para converter em XML."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres codificada no URI."
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "Converter o argumento do parâmetro em um número de ponto flutuante"
     }
   ],
   "1R6Vaa": [
@@ -81,16 +201,52 @@
       "value": "count"
     }
   ],
+  "1TE0e8": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor com o índice a ser pesquisado."
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto para verificar se é menor que o valor de comparação."
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Ignorar"
     }
   ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Retorna uma representação binária de uma cadeia de caracteres codificada em base 64"
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor para converter em URI de dados."
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
       "value": "Hora de término"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Retorna um único valor que corresponde ao nome da chave da saída da ação de dados do formulário ou codificada no formulário"
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da ação com uma resposta de dados do formulário ou codificada no formulário."
     }
   ],
   "2mnU/w": [
@@ -105,10 +261,52 @@
       "value": "Identificador"
     }
   ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Necessário. O separador."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Com falha"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto do qual a propriedade será removida."
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Necessário. O número de uma unidade de tempo especificada para subtrair."
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Necessário. O menor inteiro que pode ser retornado."
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Necessário. O número de dias a adicionar. Pode ser negativo para subtrair dias."
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Necessário. A unidade de tempo especificada no intervalo."
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome do parâmetro cujos valores você deseja."
     }
   ],
   "4cVuMw": [
@@ -117,10 +315,40 @@
       "value": "Comentários podem ser adicionados somente ao editar as saídas de uma etapa."
     }
   ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "Retorna o valor mínimo na matriz de entrada de números"
+    }
+  ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "ID da solicitação de serviço"
+    }
+  ],
+  "5J7j9k": [
+    {
+      "type": 0,
+      "value": "Necessário. A expressão XPath a ser avaliada."
+    }
+  ],
+  "5aa76N": [
+    {
+      "type": 0,
+      "value": "Retorna o primeiro elemento na matriz ou na cadeia de caracteres passada"
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Retornará true se um objeto, uma matriz ou uma cadeia de caracteres estiver vazia"
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome do loop cujo item você deseja."
     }
   ],
   "5qzZMo": [
@@ -135,10 +363,28 @@
       "value": "Excluir Parâmetro"
     }
   ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto para verificar se é maior que o valor de comparação."
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
       "value": "Mostrar execução"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Necessário. A coleção na qual pesquisar."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da ação com uma resposta de várias partes."
     }
   ],
   "6oqk+A": [
@@ -147,16 +393,40 @@
       "value": "Anterior"
     }
   ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Necessário. O número pelo qual multiplicar o Multiplicando 2."
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
       "value": "OK"
     }
   ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres da qual a subcadeia de caracteres é obtida."
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "Opcional. A localidade a ser usada ao formatar (o padrão é 'en-us')."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Código de status"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Retorna o número de tiques (intervalo de 100 nanossegundos) desde 1º de janeiro de 0001, 00:00:00 UT, de um carimbo de data/hora de cadeia de caracteres"
     }
   ],
   "7yEdSt": [
@@ -171,10 +441,52 @@
       "value": "Copiar URL"
     }
   ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres que pode conter o valor."
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor a retornar se a expressão for 'true'."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Retorna uma cadeia de caracteres de número formatada"
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto para verificar se é maior ou igual ao objeto de comparação."
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
       "value": "Não é possível renderizar o designer devido à presença de vários gatilhos na definição."
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres a ser codificada no URI."
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Adiciona um número inteiro de dias em um carimbo de data/hora de cadeia de caracteres passado"
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Retorna uma única matriz ou um único objeto que tenha elementos comuns entre as matrizes ou os objetos passados"
     }
   ],
   "99vsJy": [
@@ -183,10 +495,76 @@
       "value": "Conector"
     }
   ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Retorna um URI de dados de um valor"
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Retorna um objeto com um par de valor de propriedade adicional"
+    }
+  ],
+  "9b4xDa": [
+    {
+      "type": 0,
+      "value": "painel"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "Retorna o resultado da soma de dois números"
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "Retornará true se ambos os parâmetros forem true"
+    }
+  ],
+  "ANbEeQ": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da ação cujos valores você deseja."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres a ser codificada em representação base64."
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Necessário. O índice da parte a recuperar."
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Um caractere especificador de formato único ou um padrão de formato personalizado que indica como formatar o valor desse carimbo de data/hora. Se o formato não for fornecido, o formato ISO 8601 ('o') será usado."
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres codificada no URI."
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
       "value": "Hora de início"
+    }
+  ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres da qual decodificar os caracteres não seguros da URL."
     }
   ],
   "Bn8iTS": [
@@ -195,10 +573,34 @@
       "value": "Tipo de estado:"
     }
   ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "Um especificador de formato único que indica como formatar o valor deste Guid."
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto para verificar se é maior que o objeto de comparação."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Conexão exigida"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Retorna o caminho e a consulta de um URI"
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres da qual deseja remover os espaços em branco à esquerda e à direita."
     }
   ],
   "DFo+mo": [
@@ -213,10 +615,52 @@
       "value": "Duração"
     }
   ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Converte o parâmetro em um número decimal"
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
       "value": "Resposta"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O índice de onde começar a extração da substring."
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Necessário. O número de uma unidade de tempo especificada para adicionar."
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Retorna um valor de parâmetro que está definido na definição"
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Retorna uma seção de uma cadeia de caracteres definida pelo índice inicial e pelo índice final"
+    }
+  ],
+  "FS+/Tb": [
+    {
+      "type": 0,
+      "value": "Retorna o corpo de uma parte de uma saída de várias partes de um gatilho"
+    }
+  ],
+  "FVavKy": [
+    {
+      "type": 0,
+      "value": "Retorna o início do dia para um carimbo de data/hora de cadeia de caracteres passado"
     }
   ],
   "FXLR5M": [
@@ -251,10 +695,52 @@
       "value": "hours"
     }
   ],
+  "Fgq3Db": [
+    {
+      "type": 0,
+      "value": "Necessário. A coleção da qual tirar o último objeto."
+    }
+  ],
+  "Fh2HDb": [
+    {
+      "type": 0,
+      "value": "Retorna o primeiro índice de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável)"
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
       "value": "Status"
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres que pode conter o valor."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "Retorna a consulta de um URI"
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto a ser localizado na coleção Within."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Funções de referência"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Retornará true se os parâmetros forem false"
     }
   ],
   "Gmya+V": [
@@ -275,6 +761,30 @@
       "value": "Matriz"
     }
   ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "Funções de análise de URI"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia de caracteres que será fatiada."
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Necessário. O número do qual o Subtraendo é removido."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da chave do valor de dados do formulário a retornar."
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -287,16 +797,118 @@
       "value": "Valor da Configuração"
     }
   ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Converte uma cadeia de caracteres que o carimbo de data/hora passou de um UTC para um fuso horário de destino"
+    }
+  ],
+  "Ip7Iax": [
+    {
+      "type": 0,
+      "value": "Retorna o índice da enésima ocorrência de um valor dentro de uma cadeia de caracteres (cultura invariável e não diferencia maiúsculas de minúsculas)"
+    }
+  ],
+  "IpVwYT": [
+    {
+      "type": 0,
+      "value": "Retorna o primeiro objeto não nulo nos argumentos passados"
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Converte uma cadeia de caracteres em minúsculas usando as regras de uso de maiúsculas da cultura invariável"
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Necessário. Uma cadeia de caracteres que contém o tempo."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor que é convertido em um booliano."
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
       "value": "Método"
     }
   ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Retornará true se um dicionário contiver uma chave, se uma matriz contiver um valor ou se uma cadeia de caracteres contiver uma subcadeia de caracteres"
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número a ser formatado."
+    }
+  ],
   "JnlcZQ": [
     {
       "type": 0,
       "value": "Nome:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia de caracteres de formato numérico."
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto ao qual uma nova propriedade será adicionada."
+    }
+  ],
+  "K90YEU": [
+    {
+      "type": 0,
+      "value": "Retorna um subconjunto de caracteres de uma cadeia de caracteres"
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Necessário. O número de objetos a serem obtidos da Coleção. Deve ser um inteiro positivo."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Retorna o dia do componente de semana de um carimbo de data/hora de cadeia de caracteres"
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "Retorna o esquema de um URI"
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "Quando usada dentro do loop for-each, esta função retorna o item atual do loop especificado."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that may be true."
     }
   ],
   "M0HMjE": [
@@ -309,6 +921,36 @@
     {
       "type": 0,
       "value": "Os parâmetros serão salvos quando o fluxo de trabalho for salvo. Você pode editá-lo aqui antes de salvar ou editá-lo na página de parâmetro após salvar."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "Opcional. O nome da ação com escopo em cujo escopo você deseja que estejam as entradas e saídas das ações de nível superior."
+    }
+  ],
+  "M9mzP6": [
+    {
+      "type": 0,
+      "value": "Necessário. O número a ser adicionado à Parcela 2."
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Necessário. As coleções a serem avaliadas. Um objeto deve estar em todas as coleções passadas para aparecer no resultado."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Necessário. O URI de dados para converter em representação binária."
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Retorna o carimbo de data/hora atual como uma cadeia de caracteres"
     }
   ],
   "Mb+Eaq": [
@@ -329,16 +971,34 @@
       "value": "Erro inesperado"
     }
   ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da chave dos valores de dados do formulário a retornar."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
       "value": "Status"
     }
   ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Retorna uma representação binária de um valor"
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
       "value": "Editar Parâmetro"
+    }
+  ],
+  "OD8igU": [
+    {
+      "type": 0,
+      "value": "Necessário. Uma cadeia de caracteres que contém o nome do fuso horário de origem. Consulte https://msdn.microsoft.com/en-us/library/gg154758.aspx para obter detalhes."
     }
   ],
   "OFKZzQ": [
@@ -351,6 +1011,12 @@
     {
       "type": 0,
       "value": "Comentar"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "Retorna os resultados das ações de nível superior na ação com escopo especificada, como uma ação For_each, Until ou Scope."
     }
   ],
   "Oib1mL": [
@@ -371,16 +1037,52 @@
       "value": "m"
     }
   ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "Opcional. O local a ser usado ao analisar a cadeia de caracteres de data e hora."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Retorna o host de um URI"
+    }
+  ],
   "OnrO5/": [
     {
       "type": 0,
       "value": "Selecionar uma identidade gerenciada"
     }
   ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Necessário. Este valor é o número de inteiros que está na matriz."
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Collection functions"
+    }
+  ],
+  "P8ZBF9": [
+    {
+      "type": 0,
+      "value": "Necessário. A coleção da qual tirar o primeiro objeto."
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
       "value": "Bem-sucedido"
+    }
+  ],
+  "PKMkb/": [
+    {
+      "type": 0,
+      "value": "Necessário. O número a ser adicionado à Parcela 1."
     }
   ],
   "PP63jY": [
@@ -395,16 +1097,46 @@
       "value": "Recolher"
     }
   ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Necessário. O número de segundos a adicionar. Pode ser negativo para subtrair segundos."
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
       "value": "Anulado"
     }
   ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "Funções de fluxo de trabalho"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "Retorna a representação de base 64 da cadeia de caracteres de entrada"
+    }
+  ],
   "Q/7unA": [
     {
       "type": 0,
       "value": "Objeto"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto para verificar se é menor ou igual ao objeto de comparação."
+    }
+  ],
+  "QEp3C8": [
+    {
+      "type": 0,
+      "value": "Converter a entrada em um valor do tipo JSON"
     }
   ],
   "QQYzHC": [
@@ -417,10 +1149,52 @@
       "value": "title"
     }
   ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Retorna um único valor que corresponde ao nome da chave da saída do gatilho de dados do formulário ou codificado no formulário"
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Funções de cadeia de caracteres"
+    }
+  ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Item"
+    }
+  ],
+  "QeE0k/": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor que é convertido em binário."
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
       "value": "Carregando..."
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Retorna uma cadeia de caracteres no formato de data"
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres com a qual delimitar itens."
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Required. A string containing the unit of time specified in the interval to subtract."
     }
   ],
   "Qu1HkA": [
@@ -431,6 +1205,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres que é dividida."
     }
   ],
   "RhH4pF": [
@@ -465,6 +1245,18 @@
       "value": "minutes"
     }
   ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "Converter o parâmetro em um inteiro"
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Verifica se a cadeia de caracteres começa com um valor (não diferencia maiúsculas de minúsculas, cultura invariável)"
+    }
+  ],
   "SXb47U": [
     {
       "type": 1,
@@ -475,10 +1267,34 @@
       "value": "m"
     }
   ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da ação com uma resposta de dados do formulário ou codificada no formulário."
+    }
+  ],
+  "T7zcR6": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that must be true."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
       "value": "Falhou"
+    }
+  ],
+  "TI44R1": [
+    {
+      "type": 0,
+      "value": "Retorna uma cadeia de caracteres com cada item de uma matriz unida por um delimitador"
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Retorna o início do mês de um carimbo de data/hora de cadeia de caracteres"
     }
   ],
   "TZv5JE": [
@@ -499,16 +1315,34 @@
       "value": "Categorias"
     }
   ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Necessário. O número pelo qual multiplicar o Multiplicando 1."
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
       "value": "Recolher/Expandir"
     }
   ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Gera uma matriz de inteiros começando em um determinado número"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
       "value": "Para fazer referência a um parâmetro, use a lista de conteúdo dinâmico."
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Substitui uma cadeia de caracteres por uma determinada cadeia de caracteres"
     }
   ],
   "USVffu": [
@@ -527,6 +1361,12 @@
     {
       "type": 0,
       "value": "O nome da execução do fluxo de trabalho fornecido não é válido."
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Necessário. O número a ser dividido pelo Divisor."
     }
   ],
   "VXBWrq": [
@@ -557,6 +1397,30 @@
       "value": "max"
     }
   ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da nova propriedade."
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Necessário. O primeiro inteiro na matriz."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "Abreviação de trigger().outputs"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "Retorna o resultado da multiplicação dos dois números"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -573,6 +1437,18 @@
     {
       "type": 0,
       "value": " horas"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "Abreviação de actions('actionName').outputs"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Combina qualquer número de cadeias de caracteres"
     }
   ],
   "XFFpu/": [
@@ -611,10 +1487,28 @@
       "value": "Solicitação"
     }
   ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Funções matemáticas"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da ação cujas saídas do corpo você deseja."
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Mais Informações"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Retorna uma representação binária de um URI de dados"
     }
   ],
   "YHsAKl": [
@@ -639,16 +1533,64 @@
       "value": "Cadeia de Caracteres"
     }
   ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Permite que uma expressão derive seu valor de outros pares nome-valor JSON ou da saída do gatilho de runtime"
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Retorna uma única matriz ou um único objeto com todos os elementos que estão na matriz ou no objeto passados para esta função. Os parâmetros para a função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura deles). Se houver dois objetos com o mesmo nome na saída final, o último objeto com esse nome aparecerá no objeto final."
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "Nenhum"
     }
   ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Retorna o dia do componente de mês de um carimbo de data/hora de cadeia de caracteres"
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "Abreviação de trigger().outputs.body"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor com o qual a cadeia de caracteres pode começar."
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
       "value": "Esta operação já foi excluída."
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Necessário. O número a ser dividido pelo Divisor."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número da ocorrência da substring a ser localizada."
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Necessário. O número de objetos a serem removidos da frente da Coleção. Deve ser um inteiro positivo."
     }
   ],
   "bH5LtI": [
@@ -665,10 +1607,22 @@
       "value": " já está registrada"
     }
   ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto para verificar se é maior ou igual ao valor de comparação."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Carregar mais"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "Retorna o valor máximo na matriz de entrada de números"
     }
   ],
   "bgfjqS": [
@@ -677,10 +1631,28 @@
       "value": "Configuração do rótulo"
     }
   ],
+  "bzF/qn": [
+    {
+      "type": 0,
+      "value": "Necessário. A coleção de onde obter os primeiros objetos de Contagem."
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Retorna um objeto com uma propriedade definida com o valor fornecido"
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "painel"
+    }
+  ],
+  "cJm+ah": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor com o índice a ser pesquisado."
     }
   ],
   "ci6ex1": [
@@ -707,6 +1679,12 @@
       "value": "Hora de início"
     }
   ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Necessário. A coleção da qual ignorar os primeiros objetos de Contagem."
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -719,16 +1697,82 @@
       "value": "Saiba mais"
     }
   ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Retorna uma representação de cadeia de caracteres codificada em base 64"
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "Converter o parâmetro em um Booliano"
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Retorna uma matriz de valores que corresponde ao nome da chave da saída da ação de dados do formulário ou codificada no formulário"
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Divide a cadeia de caracteres usando um separador"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Não especificado"
     }
   ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da variável cujo valor você deseja."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
       "value": "Hora de início"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Necessário. O número pelo qual dividir o Dividendo."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Necessário. O índice de onde a subcadeia de caracteres começa no parâmetro 1."
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Necessário. Os objetos para verificar se são nulos."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "Opcional. O índice de onde interromper a extração da substring."
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Retornará true se o primeiro argumento for maior ou igual ao segundo"
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Funções lógicas"
     }
   ],
   "ftwXvc": [
@@ -743,10 +1787,46 @@
       "value": "URI"
     }
   ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Retorna um carimbo de data/hora que é a hora atual mais o intervalo especificado."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "Retorna o resultado da divisão de dois números"
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Necessário. Um valor booliano que determina qual valor a expressão deve retornar."
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "Anterior com falha"
+    }
+  ],
+  "gMhc5o": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres para ser combinada em uma única cadeia de caracteres."
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Funções de conversão"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "Quando usada dentro do loop, esta função retorna o índice de iteração atual do loop especificado."
     }
   ],
   "hN7iBP": [
@@ -781,6 +1861,12 @@
       "value": "seconds"
     }
   ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "Retorna o resultado da subtração de dois números"
+    }
+  ],
   "hdnZ9Y": [
     {
       "type": 0,
@@ -799,10 +1885,22 @@
       "value": "Comentar"
     }
   ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Converte uma cadeia de caracteres em maiúsculas usando as regras de uso de maiúsculas da cultura invariável"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
       "value": "Próximo"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Necessário. O URI a ser analisado."
     }
   ],
   "iRjBf4": [
@@ -815,6 +1913,12 @@
     {
       "type": 0,
       "value": "Expandir"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Manipulation functions"
     }
   ],
   "iUs7pv": [
@@ -833,16 +1937,70 @@
       "value": "s"
     }
   ],
+  "j2MU0b": [
+    {
+      "type": 0,
+      "value": "Retorna um objeto com uma propriedade removida"
+    }
+  ],
+  "j39557": [
+    {
+      "type": 0,
+      "value": "Retorna o valor da variável especificada."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Retorna um inteiro aleatório de um intervalo especificado, inclusivo somente na extremidade inicial."
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Necessário. A expressão que será negada."
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor que é convertido em uma cadeia de caracteres."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Necessário. Uma cadeia de caracteres de entrada em base64."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da chave dos valores de dados do formulário a retornar."
+    }
+  ],
   "jfInxm": [
     {
       "type": 0,
       "value": "Editar no JSON"
     }
   ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres codificada em base64."
+    }
+  ],
   "k41+13": [
     {
       "type": 0,
       "value": "Ignorado"
+    }
+  ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Sim"
     }
   ],
   "kHcCxH": [
@@ -863,10 +2021,34 @@
       "value": "s"
     }
   ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Retorna uma representação de cadeia de caracteres de uma cadeia de caracteres de base 64 de entrada"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
       "value": "Download (Alt/Option + clique)"
+    }
+  ],
+  "kZuYgD": [
+    {
+      "type": 0,
+      "value": "Retornará true se o primeiro argumento for menor que o segundo"
+    }
+  ],
+  "keb4r1": [
+    {
+      "type": 0,
+      "value": "Retornará true se dois valores forem iguais"
+    }
+  ],
+  "knylNW": [
+    {
+      "type": 0,
+      "value": "Necessário. Este valor é o próximo inteiro após o número inteiro mais alto que poderia ser retornado."
     }
   ],
   "l36V56": [
@@ -905,6 +2087,12 @@
       "value": "Modo de execução sem estado:"
     }
   ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "Abreviação de actions('actionName').outputs.body"
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -923,6 +2111,78 @@
       "value": "Nome"
     }
   ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Retorna um carimbo de data/hora que é a hora atual menos o intervalo especificado."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Retorna uma representação de cadeia de caracteres de um URI de dados"
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "A URL codifica a cadeia de caracteres de entrada"
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres a ser convertida em letras minúsculas. Se um caractere na cadeia de caracteres não tiver um equivalente em letras minúsculas, o caractere será incluído inalterado na cadeia de caracteres retornada."
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor que é convertido em um número de ponto flutuante."
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto para verificar se é menor ou igual ao valor de comparação."
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Necessário. O número de unidades de tempo que o horário desejado tem no futuro."
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da propriedade a ser removida."
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto para verificar se é menor que o objeto de comparação."
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Adiciona um número inteiro de minutos em um carimbo de data/hora de cadeia de caracteres passado"
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Retorna o último elemento na matriz ou na cadeia de caracteres passada"
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Necessário. O XML no qual avaliar a expressão XPath."
+    }
+  ],
   "o1HOyf": [
     {
       "type": 1,
@@ -937,10 +2197,22 @@
       "value": "max_page"
     }
   ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Necessário. O URI de dados para ser decodificado em uma representação binária."
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Insira o identificador de execução para abrir a execução"
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da chave do valor de dados do formulário a retornar."
     }
   ],
   "p16/4S": [
@@ -955,10 +2227,40 @@
       "value": "Hora de término"
     }
   ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Necessário. Os valores a serem combinados em uma matriz."
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Parâmetros"
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "Converter a entrada em um valor do tipo Xml"
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Necessário. O número pelo qual dividir o Dividendo. Após a divisão, o resto é obtido."
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Retorna uma única matriz ou um único objeto que tem elementos comuns entre as matrizes ou os objetos passados. Os parâmetros para a função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura deles). Se houver dois objetos com o mesmo nome, o último objeto com esse nome aparecerá no objeto final."
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "Corta o espaço em branco à esquerda e à direita de uma cadeia de caracteres"
     }
   ],
   "pr9GwA": [
@@ -967,10 +2269,46 @@
       "value": "Atualizar"
     }
   ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Retorna um nó XML, um conjunto de nós ou um valor como JSON da expressão XPath fornecida"
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor a ser atribuído à propriedade."
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "Converter o parâmetro em uma cadeia de caracteres"
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Adiciona um número inteiro de segundos em um carimbo de data/hora de cadeia de caracteres passado"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Identidade gerenciada"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Verifica se a cadeia de caracteres termina com um valor (não diferencia maiúsculas de minúsculas, cultura invariável)"
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Retornará true se o primeiro argumento for menor ou igual ao segundo"
     }
   ],
   "qSt0Sb": [
@@ -1011,10 +2349,34 @@
       "value": "days"
     }
   ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Retorna o número de elementos em uma matriz ou cadeia de caracteres"
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor que é convertido em um inteiro."
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Permite que uma expressão derive seu valor de outros pares nome-valor JSON ou da saída da ação de runtime"
+    }
+  ],
   "r9SVE4": [
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "Não"
     }
   ],
   "rCl53e": [
@@ -1023,16 +2385,76 @@
       "value": "Título do Cartão"
     }
   ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Necessário. Ou uma matriz de valores para encontrar o valor máximo ou o primeiro valor de um conjunto."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Retorna uma representação codificada no URI de um valor"
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Retorna o dia do componente de ano de um carimbo de data/hora de cadeia de caracteres"
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Retorna uma matriz de valores que corresponde ao nome da chave da saída do gatilho de dados do formulário ou codificado no formulário"
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Necessário. Uma cadeia de caracteres contendo a unidade de tempo especificada no intervalo para adicionar."
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Necessário. A coleção para verificar se está vazia."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Necessário. O número a ser removido do Diminuendo."
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
       "value": "Chave"
     }
   ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Retornará true se um dos parâmetros for true"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Novo parâmetro"
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Necessário. Uma cadeia de caracteres que contém o nome do fuso horário de destino. Consulte https://msdn.microsoft.com/en-us/library/gg154758.aspx para obter detalhes."
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "Retorna a URL para invocar o gatilho ou a ação"
     }
   ],
   "tImHz/": [
@@ -1053,10 +2475,34 @@
       "value": "h"
     }
   ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Necessário. O índice da parte a recuperar."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Essa função fornece detalhes do próprio fluxo de trabalho em runtime"
+    }
+  ],
   "tNoZx2": [
     {
       "type": 0,
       "value": "Tipo"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Retornará true se o primeiro argumento for maior que o segundo"
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Necessário. O número de horas a adicionar. Pode ser negativo para subtrair horas."
     }
   ],
   "uN4zFU": [
@@ -1065,16 +2511,70 @@
       "value": "OK"
     }
   ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Necessário. As coleções a serem avaliadas. Um objeto que aparece em qualquer uma das coleções também aparece no resultado."
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Adiciona um número inteiro de horas em um carimbo de data/hora de cadeia de caracteres passado"
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Necessário. O número de unidades de tempo que o horário desejado tem no passado."
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres que pode conter o valor."
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
       "value": "Valor Padrão"
     }
   ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Cria uma matriz usando os parâmetros"
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Gera uma GUID (Cadeia de Caracteres Globalmente Exclusiva)"
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Retorna o último índice de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável)"
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor com o qual a cadeia de caracteres pode terminar."
+    }
+  ],
   "vSlNPe": [
     {
       "type": 0,
       "value": "Excluir"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da ação cujas saídas você deseja."
     }
   ],
   "vwH/XV": [
@@ -1089,16 +2589,82 @@
       "value": "Propriedades do Fluxo de Trabalho"
     }
   ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Subtrai um número inteiro de uma unidade de tempo especificada de uma cadeia de caracteres passada pelo carimbo de data/hora"
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Necessário. Ou uma matriz de valores para encontrar o valor mínimo ou o primeiro valor de um conjunto."
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Tempo Limite Expirado"
     }
   ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres que será pesquisada para o parâmetro 2 e atualizada com o parâmetro 3, quando o parâmetro 2 for encontrado no parâmetro 1."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Necessário. O comprimento da subcadeia de caracteres."
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "Retorna um valor especificado considerando se a expressão resultou em true ou false"
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Converte uma cadeia de caracteres que o carimbo de data/hora passou de um fuso horário de origem para UTC"
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Retorna uma única matriz ou um único objeto com todos os elementos que estejam na matriz ou no objeto passado para essa função"
+    }
+  ],
   "woJQhv": [
     {
       "type": 0,
       "value": "URL de Retorno de Chamada:"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Necessário. A coleção para a qual obter o comprimento."
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "Retorna uma representação de cadeia de caracteres codificada no URI"
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da propriedade nova ou existente."
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Retorna o caminho de um URI. Se o caminho não for especificado, retornará '/'"
     }
   ],
   "xt5TeT": [
@@ -1113,10 +2679,52 @@
       "value": "Valor"
     }
   ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Required. The object to compare equality."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres da qual escapar caracteres não seguros da URL."
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor que é convertido em uma matriz."
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Date and time functions"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "Insira um valor padrão para o parâmetro."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor que é convertido em um número decimal."
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia de caracteres que é convertida em um valor de tipo nativo."
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Converte uma cadeia de caracteres, opcionalmente com uma localidade e um formato para uma data"
     }
   ],
   "ziYCiA": [
@@ -1129,6 +2737,18 @@
     {
       "type": 0,
       "value": "Flutuante"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Adiciona um número inteiro de uma unidade de tempo especificada a uma cadeia de caracteres passada pelo carimbo de data/hora"
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Necessário. O número de minutos a adicionar. Pode ser negativo para subtrair minutos."
     }
   ]
 }

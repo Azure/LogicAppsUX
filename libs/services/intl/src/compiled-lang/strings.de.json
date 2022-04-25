@@ -5,6 +5,18 @@
       "value": "Bezeichnung festlegen"
     }
   ],
+  "+g+mch": [
+    {
+      "type": 0,
+      "value": "Gibt den Text für einen Teil in einer mehrteiligen Ausgabe einer Aktion zurück."
+    }
+  ],
+  "+lpuMl": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der zurückzugebende Wert, falls der Ausdruck \"falsch\" ist."
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -17,10 +29,64 @@
       "value": "Wartet"
     }
   ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "Gibt die Elemente im Array beginnend bei Index \"Anzahl\" zurück."
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "Eingabe in Array konvertieren"
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, aus der Elemente verknüpft werden sollen."
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Gibt die ersten Count Elemente aus dem übergebenen Array oder aus der übergebenen Zeichenfolge zurück."
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Gibt den Anfang der Stunde an einen übergebenen Zeichenfolgen-Zeitstempel zurück."
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "Gibt die URL zum Auslösen eines Triggers oder einer Aktion zurück. Hinweis: Diese Funktion kann nur in einem httpWebhook und einem apiConnectionWebhook verwendet werden, nicht jedoch in manual, recurrence, http oder apiConnection."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Base64-codierte Zeichenfolge."
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "URL decodiert die Eingabezeichenfolge."
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
       "value": "Ausführungsmenü anzeigen"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "Gibt eine Binärdarstellung einer URI-codierten Zeichenfolge zurück."
     }
   ],
   "0ZlNtf": [
@@ -29,16 +95,70 @@
       "value": "Erfolgreich mit Wiederholungen"
     }
   ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die in Großbuchstaben konvertiert werden soll. Wenn für ein Zeichen in der Zeichenfolge keine Entsprechung in Großbuchstaben vorhanden ist, wird das Zeichen unverändert in die zurückgegebene Zeichenfolge übernommen."
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "Gibt den Rest nach der Division der beiden Zahlen zurück (Modulo)."
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Gibt eine Binärdarstellung einer Eingabedaten-URI-Zeichenfolge zurück."
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
       "value": "Weitere Befehle"
     }
   ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Daten-URI, der in die Zeichenfolgendarstellung konvertiert werden soll."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "Gibt den Port aus einem URI zurück. Falls der Port nicht angegeben ist, wird der Standardport für das Protokoll zurückgegeben."
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
       "value": "Kommentar"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in XML konvertiert werden soll."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die URI-codierte Zeichenfolge."
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "Parameterargument in Gleitkommazahl konvertieren"
     }
   ],
   "1R6Vaa": [
@@ -81,16 +201,52 @@
       "value": "count"
     }
   ],
+  "1TE0e8": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, dessen Index durchsucht werden soll."
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es kleiner als der Vergleichswert ist."
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Schließen"
     }
   ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Gibt eine Binärdarstellung einer Base64-codierten Zeichenfolge zurück."
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in einen Daten-URI konvertiert werden soll."
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
       "value": "Endzeit"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Gibt einen einzelnen Wert zurück, der dem Schlüsselnamen aus der form-data- oder form-encoded-Aktionsausgabe entspricht."
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion mit einer form-data- oder form-encoded-Antwort."
     }
   ],
   "2mnU/w": [
@@ -105,10 +261,52 @@
       "value": "Bezeichner"
     }
   ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. die Trennlinie."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Fehlerhaft"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, aus dem die Eigenschaft entfernt werden soll."
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird der Zahlenwert einer festgelegten Zeiteinheit angegeben, die abgezogen werden soll."
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die niedrigste ganze Zahl, die zurückgegeben werden kann."
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl der zu addierenden Tage. Kann negativ sein, um Tage zu subtrahieren."
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird die im Intervall festgelegte Zeiteinheit angegeben."
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name des Parameters, dessen Werte Sie erhalten möchten."
     }
   ],
   "4cVuMw": [
@@ -117,10 +315,40 @@
       "value": "Kommentare können nur beim Bearbeiten der Eingaben für einen Schritt hinzugefügt werden."
     }
   ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "Gibt den Mindestwert im Eingabearray von Zahlen zurück."
+    }
+  ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "Dienstanforderungs-ID"
+    }
+  ],
+  "5J7j9k": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der XPath-Ausdruck, der ausgewertet werden soll."
+    }
+  ],
+  "5aa76N": [
+    {
+      "type": 0,
+      "value": "Gibt das erste Element im übergebenen Array oder in der übergebenen Zeichenfolge zurück."
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn ein Objekt, ein Array oder eine Zeichenfolge leer ist."
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Schleife, deren Element Sie abrufen möchten."
     }
   ],
   "5qzZMo": [
@@ -135,10 +363,28 @@
       "value": "Parameter löschen"
     }
   ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer als der Vergleichswert ist."
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
       "value": "Ausführung anzeigen"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, in der gesucht werden soll."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion mit einer mehrteiligen Antwort."
     }
   ],
   "6oqk+A": [
@@ -147,16 +393,40 @@
       "value": "Zurück"
     }
   ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, mit der Multiplikand 2 multipliziert werden soll."
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
       "value": "OK"
     }
   ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, aus der die Teilzeichenfolge entnommen wird."
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "Optional. Das Gebietsschema, das bei der Formatierung verwendet werden soll (standardmäßig \"en-US\")."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Statuscode"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Gibt die Anzahl von Zeiteinheiten (Intervall von 100 Nanosekunden) seit dem 1. Januar 0001 00:00:00 UT eines Zeichenfolgen-Zeitstempels zurück."
     }
   ],
   "7yEdSt": [
@@ -171,10 +441,52 @@
       "value": "URL kopieren"
     }
   ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der zurückzugebende Wert, falls der Ausdruck \"wahr\" ist."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Gibt eine formatierte Zahlenzeichenfolge zurück."
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer oder gleich dem Vergleichsobjekt ist."
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
       "value": "Der Designer kann aufgrund mehrerer Trigger in der Definition nicht gerendert werden."
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die als URI zu codierende Zeichenfolge."
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Tagen hinzu."
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Gibt ein einzelnes Array oder Objekt zurück, das gemeinsame Elemente zwischen übergebenen Arrays oder Objekten aufweist."
     }
   ],
   "99vsJy": [
@@ -183,10 +495,76 @@
       "value": "Connector"
     }
   ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Gibt einen Daten-URI eines Werts zurück."
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Gibt ein Objekt mit einem zusätzlichen Eigenschaft-Wert-Paar zurück."
+    }
+  ],
+  "9b4xDa": [
+    {
+      "type": 0,
+      "value": "Bereich"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "Gibt das Ergebnis aus der Addition der beiden Zahlen zurück."
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn beide Parameter TRUE sind."
+    }
+  ],
+  "ANbEeQ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion, deren Werte Sie erhalten möchten."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die als Base64-Darstellung codiert werden soll."
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Index des abzurufenden Teils."
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Hiermit wird entweder ein einzelnes Zeichen als Formatbezeichner oder ein benutzerdefiniertes Formatmuster angegeben, das festlegt, wie der Wert dieses Zeitstempels formatiert werden soll. Wenn kein Format angegeben wird, wird das ISO 8601-Format (\"o\") verwendet."
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die URI-codierte Zeichenfolge."
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
       "value": "Startzeit"
+    }
+  ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, aus der die URL-unsicheren Zeichen decodiert werden sollen."
     }
   ],
   "Bn8iTS": [
@@ -195,10 +573,34 @@
       "value": "Zustandstyp:"
     }
   ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "Ein einzelner Formatspezifizierer, der angibt, wie der Wert dieser GUID formatiert werden soll."
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer als das Vergleichsobjekt ist."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Verbindung erforderlich"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Gibt Pfad und Abfrage aus einem URI zurück."
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, aus der führende und nachstehende Leerzeichen entfernt werden sollen."
     }
   ],
   "DFo+mo": [
@@ -213,10 +615,52 @@
       "value": "Dauer"
     }
   ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Konvertiert den Parameter in eine Dezimalzahl"
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
       "value": "Antwort"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Index, an dem mit dem Extrahieren des Substrings begonnen werden soll."
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird der Zahlenwert einer festgelegten Zeiteinheit angegeben, die hinzugefügt werden soll."
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Gibt einen Parameterwert zurück, der in der Definition definiert ist."
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Gibt einen Abschnitt einer Zeichenfolge zurück, die durch den Startindex und den Endindex definiert wird."
+    }
+  ],
+  "FS+/Tb": [
+    {
+      "type": 0,
+      "value": "Gibt den Text für einen Teil in einer mehrteiligen Ausgabe des Triggers zurück."
+    }
+  ],
+  "FVavKy": [
+    {
+      "type": 0,
+      "value": "Gibt den Anfang des Tags an einen übergebenen Zeichenfolgen-Zeitstempel zurück."
     }
   ],
   "FXLR5M": [
@@ -251,10 +695,52 @@
       "value": "hours"
     }
   ],
+  "Fgq3Db": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, aus der das letzte Objekt entnommen werden soll."
+    }
+  ],
+  "Fh2HDb": [
+    {
+      "type": 0,
+      "value": "Gibt den ersten Index eines Werts innerhalb einer Zeichenfolge zurück (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
       "value": "Status"
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "Gibt die Abfrage aus einem URI zurück."
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, das in der Within-Sammlung gesucht werden soll."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Referenzierende Funktionen"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn die Parameter FALSE sind."
     }
   ],
   "Gmya+V": [
@@ -275,6 +761,30 @@
       "value": "Array"
     }
   ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "URI-Analysefunktionen"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die zu segmentierende Zeichenfolge."
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, von der der Subtrahend abgezogen wird."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Schlüsselname des zurückzugebenden Formulardatenwerts."
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -287,16 +797,118 @@
       "value": "Einstellungswert"
     }
   ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein aus einem UTC-Wert übergebener Zeichenfolgen-Zeitstempel in eine Zielzeitzone konvertiert."
+    }
+  ],
+  "Ip7Iax": [
+    {
+      "type": 0,
+      "value": "Gibt den Index des n-ten Vorkommens eines Werts innerhalb einer Zeichenfolge zurück (keine Unterscheidung nach Groß-/Kleinschreibung, invariante Kultur)"
+    }
+  ],
+  "IpVwYT": [
+    {
+      "type": 0,
+      "value": "Gibt das erste Objekt in den übergebenen Argumenten zurück, das nicht NULL lautet."
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Konvertiert eine Zeichenfolge anhand der Groß-/Kleinschreibregeln der invarianten Kultur in Kleinbuchstaben."
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine Zeichenfolge, die die Zeit enthält."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in einen booleschen Wert konvertiert wird."
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein aus einer Quellzeitzone übergebener Zeichenfolgen-Zeitstempel in eine Zielzeitzone konvertiert."
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
       "value": "Methode"
     }
   ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn ein Wörterbuch einen Schlüssel enthält, wenn ein Array einen Wert enthält oder wenn eine Zeichenfolge eine Unterzeichenfolge enthält."
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die formatiert werden soll."
+    }
+  ],
   "JnlcZQ": [
     {
       "type": 0,
       "value": "Name:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die numerische Formatzeichenfolge."
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, dem eine neue Eigenschaft hinzugefügt werden soll."
+    }
+  ],
+  "K90YEU": [
+    {
+      "type": 0,
+      "value": "Gibt eine Teilmenge von Zeichen aus einer Zeichenfolge zurück."
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl von Objekten, die aus der Sammlung entnommen werden sollen. Muss eine positive ganze Zahl sein."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Gibt die Wochentagkomponente eines Zeichenfolgen-Zeitstempels zurück."
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "Gibt das Schema aus einem URI zurück."
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "Bei Verwendung innerhalb einer for-each-Schleife gibt diese Funktion das aktuelle Element der angegebenen Schleife zurück."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Ausdrücke, die TRUE sein können."
     }
   ],
   "M0HMjE": [
@@ -309,6 +921,36 @@
     {
       "type": 0,
       "value": "Die Parameter werden gespeichert, wenn der Workflow gespeichert wird. Sie können sie hier bearbeiten, bevor Sie sie speichern oder nach dem Speichern auf der Parameterseite bearbeiten."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "(Optional) Der Name der bereichsbezogenen Aktion, in der die Eingaben und Ausgaben der Aktionen der obersten Ebene in diesem Bereich verwendet werden sollen."
+    }
+  ],
+  "M9mzP6": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die mit Summand 2 addiert werden soll."
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die auszuwertenden Sammlungen. Ein Objekt muss sich in allen übergebenen Sammlungen befinden, um im Ergebnis angezeigt zu werden."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Daten-URI, der in die Binärdarstellung konvertiert werden soll."
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Gibt den aktuellen Zeitstempel als Zeichenfolge zurück."
     }
   ],
   "Mb+Eaq": [
@@ -329,16 +971,34 @@
       "value": "Unerwarteter Fehler"
     }
   ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Schlüsselname der zurückzugebenden Formulardatenwerte."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
       "value": "Status"
     }
   ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Gibt eine Binärdarstellung eines Werts zurück."
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
       "value": "Parameter bearbeiten"
+    }
+  ],
+  "OD8igU": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird eine Zeichenfolge angegeben, die den Namen der Quellzeitzone enthält. Weitere Informationen finden Sie unter https://msdn.microsoft.com/de-de/library/gg154758.aspx."
     }
   ],
   "OFKZzQ": [
@@ -351,6 +1011,12 @@
     {
       "type": 0,
       "value": "Kommentar"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "Hiermit werden die Ergebnisse der Aktionen der obersten Ebene in der angegebenen bereichsbezogenen Aktion zurückgegeben, z. B. eine for_each-, Until- oder Scope-Aktion."
     }
   ],
   "Oib1mL": [
@@ -371,16 +1037,52 @@
       "value": "m"
     }
   ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "Optional. Das Gebietsschema, das beim Analysieren der Datums-/Uhrzeitzeichenfolge verwendet werden soll."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Gibt den Host aus einem URI zurück."
+    }
+  ],
   "OnrO5/": [
     {
       "type": 0,
       "value": "Verwaltete Identität auswählen"
     }
   ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Dieser Wert entspricht der Anzahl von ganzen Zahlen im Array."
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Sammlungsfunktionen"
+    }
+  ],
+  "P8ZBF9": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, aus der das erste Objekt entnommen werden soll."
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
       "value": "Erfolgreich"
+    }
+  ],
+  "PKMkb/": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die mit Summand 1 addiert werden soll."
     }
   ],
   "PP63jY": [
@@ -395,16 +1097,46 @@
       "value": "Reduzieren"
     }
   ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl der zu addierenden Sekunden. Kann negativ sein, um Sekunden zu subtrahieren."
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
       "value": "Abgebrochen"
     }
   ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "Workflowfunktionen"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "Gibt die Base64-Darstellung der Eingabezeichenfolge zurück."
+    }
+  ],
   "Q/7unA": [
     {
       "type": 0,
       "value": "Objekt"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es kleiner oder gleich dem Vergleichsobjekt ist."
+    }
+  ],
+  "QEp3C8": [
+    {
+      "type": 0,
+      "value": "Eingabe in Wert vom Typ JSON konvertieren"
     }
   ],
   "QQYzHC": [
@@ -421,10 +1153,52 @@
       "value": "\""
     }
   ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Gibt einen einzelnen Wert zurück, der dem Schlüsselnamen aus der form-data- oder form-encoded-Triggerausgabe entspricht."
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Zeichenfolgenfunktionen"
+    }
+  ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Element"
+    }
+  ],
+  "QeE0k/": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in einen Binärwert konvertiert wird."
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
       "value": "Wird geladen..."
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolge im Datumsformat zurück."
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, mit der Elemente getrennt werden sollen."
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine Zeichenfolge mit der im Intervall festgelegten Zeiteinheit zum subtrahieren."
     }
   ],
   "Qu1HkA": [
@@ -435,6 +1209,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die geteilte Zeichenfolge."
     }
   ],
   "RhH4pF": [
@@ -469,6 +1249,18 @@
       "value": "minutes"
     }
   ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "Parameter in ganze Zahl konvertieren"
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Prüft, ob die Zeichenfolge mit einem Wert beginnt (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
+    }
+  ],
   "SXb47U": [
     {
       "type": 1,
@@ -479,10 +1271,34 @@
       "value": "m"
     }
   ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion mit einer form-data- oder form-encoded-Antwort."
+    }
+  ],
+  "T7zcR6": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Ausdrücke, die TRUE sein müssen."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
       "value": "Fehlgeschlagen"
+    }
+  ],
+  "TI44R1": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolge zurück, in der die einzelnen Elemente eines Arrays durch Trennzeichen verknüpft sind."
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Gibt den Anfang des Monats eines Zeichenfolgen-Zeitstempels zurück."
     }
   ],
   "TZv5JE": [
@@ -503,16 +1319,34 @@
       "value": "Tags"
     }
   ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, mit der Multiplikand 1 multipliziert werden soll."
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
       "value": "Reduzieren/Erweitern"
     }
   ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Generiert ein Array von ganzen Zahlen ab einer bestimmten Zahl."
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
       "value": "Verwenden Sie die Liste dynamischer Inhalte, um auf einen Parameter zu verweisen."
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Ersetzt eine Zeichenfolge durch eine angegebene Zeichenfolge."
     }
   ],
   "USVffu": [
@@ -531,6 +1365,12 @@
     {
       "type": 0,
       "value": "Der angegebene Name der Workflowausführung ist ungültig."
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die durch den Divisor zu teilen ist."
     }
   ],
   "VXBWrq": [
@@ -561,6 +1401,30 @@
       "value": "max"
     }
   ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der neuen Eigenschaft."
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die erste ganze Zahl im Array."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "Kompakteigenschaft für trigger().outputs"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "Gibt das Ergebnis aus der Multiplikation der beiden Zahlen zurück."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -577,6 +1441,18 @@
     {
       "type": 0,
       "value": " Stunden"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "Kompakteigenschaft für actions(\"Aktionsname\").outputs"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Kombiniert eine beliebige Anzahl von Zeichenfolgen."
     }
   ],
   "XFFpu/": [
@@ -615,10 +1491,28 @@
       "value": "Anfordern"
     }
   ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Mathematische Funktionen"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion, deren Textausgaben Sie erhalten möchten."
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Weitere Informationen"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Gibt eine Binärdarstellung eines Daten-URI zurück."
     }
   ],
   "YHsAKl": [
@@ -643,16 +1537,64 @@
       "value": "Zeichenfolge"
     }
   ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Ermöglicht einem Ausdruck das Ableiten seines Werts aus anderen JSON-Name/Wert-Paaren oder aus der Ausgabe des Laufzeittriggers."
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Gibt ein einzelnes Array oder Objekt mit allen Elementen zurück, die sich entweder in einem Array oder in einem Objekt befinden, das an diese Funktion übergeben wurde. Bei den Parametern für die Funktion kann es sich entweder um einen Satz Objekte oder um einen Satz Arrays handeln (keine Mischung aus beidem). Wenn in der finalen Ausgabe zwei Objekte mit dem gleichen Namen vorhanden sind, wird das letzte Objekt mit diesem Namen in das endgültige Objekt aufgenommen."
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "Keine"
     }
   ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Gibt die Monatstagkomponente eines Zeichenfolgen-Zeitstempels zurück."
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "Kompakteigenschaft für trigger().outputs.body"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, mit dem die Zeichenfolge möglicherweise beginnt."
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
       "value": "Dieser Vorgang wurde bereits gelöscht."
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die durch den Divisor zu teilen ist."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl des Vorkommens des zu suchenden Substrings."
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl von Objekten, die vom Anfang der Sammlung entfernt werden sollen. Muss eine positive ganze Zahl sein."
     }
   ],
   "bH5LtI": [
@@ -669,10 +1611,22 @@
       "value": "-Name ist bereits registriert."
     }
   ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer oder gleich dem Vergleichswert ist."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Weitere laden"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "Gibt den Höchstwert im Eingabearray von Zahlen zurück."
     }
   ],
   "bgfjqS": [
@@ -681,10 +1635,28 @@
       "value": "Bezeichnungseinstellung"
     }
   ],
+  "bzF/qn": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, aus der die ersten Count-Objekte entnommen werden sollen."
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Gibt ein Objekt zurück, für das eine Eigenschaft auf den angegebenen Wert festgelegt wurde."
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "Bereich"
+    }
+  ],
+  "cJm+ah": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, dessen Index durchsucht werden soll."
     }
   ],
   "ci6ex1": [
@@ -711,6 +1683,12 @@
       "value": "Startzeit"
     }
   ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, in der die ersten Count-Objekte übersprungen werden sollen."
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -723,16 +1701,82 @@
       "value": "Weitere Informationen"
     }
   ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolgendarstellung einer Base64-codierten Zeichenfolge zurück."
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "Parameter in booleschen Wert konvertieren"
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Gibt ein Array von Werten zurück, das dem Schlüsselnamen aus der form-data- oder form-encoded-Aktionsausgabe entspricht."
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Unterteilt die Zeichenfolge durch ein Trennzeichen."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Nicht angegeben"
     }
   ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Variable, deren Wert Sie abrufen möchten."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
       "value": "Startzeit"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, durch die der Dividend zu teilen ist."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Index, bei dem die Teilzeichenfolge in Parameter 1 beginnt."
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Objekte, die auf NULL geprüft werden."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "Optional. Der Index, an dem das Extrahieren des Substrings beendet werden soll."
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn das erste Argument größer als das zweite oder gleich ist."
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Logische Funktionen"
     }
   ],
   "ftwXvc": [
@@ -747,10 +1791,46 @@
       "value": "URI"
     }
   ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein Zeitstempel zurückgegeben, der der aktuellen Uhrzeit zuzüglich des angegebenen Zeitintervalls entspricht."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "Gibt das Ergebnis aus der Division der beiden Zahlen zurück."
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Ein boolescher Wert, der bestimmt, welchen Wert der Ausdruck zurückgeben soll."
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "Vorheriger Fehler"
+    }
+  ],
+  "gMhc5o": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die in eine einzelne Zeichenfolge kombiniert werden soll."
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Konvertierungsfunktionen"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "Bei Verwendung innerhalb einer until-Schleife gibt diese Funktion den aktuellen Iterationsindex der angegebenen Schleife zurück."
     }
   ],
   "hN7iBP": [
@@ -785,6 +1865,12 @@
       "value": "seconds"
     }
   ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "Gibt das Ergebnis aus der Subtraktion von zwei Zahlen zurück."
+    }
+  ],
   "hdnZ9Y": [
     {
       "type": 0,
@@ -803,10 +1889,22 @@
       "value": "Kommentar"
     }
   ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Konvertiert eine Zeichenfolge anhand der Groß-/Kleinschreibregeln der invarianten Kultur in Großbuchstaben."
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
       "value": "Weiter"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der zu analysierende URI."
     }
   ],
   "iRjBf4": [
@@ -819,6 +1917,12 @@
     {
       "type": 0,
       "value": "Erweitern"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Manipulationsfunktionen"
     }
   ],
   "iUs7pv": [
@@ -837,16 +1941,70 @@
       "value": "s"
     }
   ],
+  "j2MU0b": [
+    {
+      "type": 0,
+      "value": "Gibt ein Objekt mit einer entfernten Eigenschaft zurück."
+    }
+  ],
+  "j39557": [
+    {
+      "type": 0,
+      "value": "Gibt den Wert der angegebenen Variablen zurück."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Hiermit wird eine zufällige ganze Zahl aus einem angegebenen Bereich zurückgegeben. Nur die Untergrenze des Bereichs wird eingeschlossen."
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Ausdruck, der negiert wird."
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in eine Zeichenfolge konvertiert wird."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine Base64-Eingabezeichenfolge."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Schlüsselname der zurückzugebenden Formulardatenwerte."
+    }
+  ],
   "jfInxm": [
     {
       "type": 0,
       "value": "In JSON bearbeiten"
     }
   ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Base64-codierte Zeichenfolge."
+    }
+  ],
   "k41+13": [
     {
       "type": 0,
       "value": "Übersprungen"
+    }
+  ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Ja"
     }
   ],
   "kHcCxH": [
@@ -867,10 +2025,34 @@
       "value": "s"
     }
   ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolgendarstellung einer Base64-Eingabezeichenfolge zurück."
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
       "value": "Herunterladen (ALT/WAHLTASTE + klicken)"
+    }
+  ],
+  "kZuYgD": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn das erste Argument kleiner als das zweite ist."
+    }
+  ],
+  "keb4r1": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn zwei Werte gleich sind."
+    }
+  ],
+  "knylNW": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Dieser Wert ist die nächste ganze Zahl nach der höchsten ganzen Zahl, die zurückgegeben werden konnte."
     }
   ],
   "l36V56": [
@@ -909,6 +2091,12 @@
       "value": "Zustandsloser Ausführungsmodus:"
     }
   ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "Kompakteigenschaft für actions(\"Aktionsname\").outputs.body"
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -927,6 +2115,78 @@
       "value": "Name"
     }
   ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein Zeitstempel zurückgegeben, der der aktuellen Uhrzeit abzüglich des angegebenen Zeitintervalls entspricht."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolgendarstellung eines Daten-URI zurück."
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "URL codiert die Eingabezeichenfolge."
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die in Kleinbuchstaben konvertiert werden soll. Wenn für ein Zeichen in der Zeichenfolge keine Entsprechung in Kleinbuchstaben vorhanden ist, wird das Zeichen unverändert in die zurückgegebene Zeichenfolge übernommen."
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in eine Gleitkommazahl konvertiert wird."
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es kleiner oder gleich dem Vergleichswert ist."
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird angegeben, um wie viele Zeiteinheiten die gewünschte Uhrzeit in der Zukunft liegt."
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der zu entfernenden Eigenschaft."
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es kleiner als das Vergleichsobjekt ist."
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Minuten hinzu."
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Gibt das letzte Element im übergebenen Array oder in der übergebenen Zeichenfolge zurück."
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der XML-Code, in dem der XPath-Ausdruck ausgewertet werden soll."
+    }
+  ],
   "o1HOyf": [
     {
       "type": 1,
@@ -941,10 +2201,22 @@
       "value": "max_page"
     }
   ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der dataURI, der in die Binärdarstellung decodiert werden soll."
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Geben Sie den Ausführungsbezeichner ein, um die Ausführung zu öffnen."
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Schlüsselname des zurückzugebenden Formulardatenwerts."
     }
   ],
   "p16/4S": [
@@ -959,10 +2231,40 @@
       "value": "Endzeit"
     }
   ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Werte, die zu einem Array gruppiert werden sollen."
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Parameter"
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "Eingabe in einen XML-Wert konvertieren"
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, durch die der Dividend zu teilen ist. Nach der Division wird der Rest verwendet."
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Gibt ein einzelnes Array oder Objekt zurück, das gemeinsame Elemente zwischen übergebenen Arrays oder Objekten aufweist. Bei den Parametern für die Funktion kann es sich entweder um einen Satz von Objekten oder um einen Satz von Arrays handeln (keine Mischung aus beidem). Wenn zwei Objekte mit dem gleichen Namen vorhanden sind, wird das letzte Objekt mit diesem Namen in das endgültige Objekt aufgenommen."
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "Entfernt führende und nachfolgende Leerzeichen aus einer Zeichenfolge."
     }
   ],
   "pr9GwA": [
@@ -971,10 +2273,46 @@
       "value": "Aktualisieren"
     }
   ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Gibt einen XML-Knoten, einen Knotensatz oder Wert in JSON-Schreibweise aus dem angegebenen XPath-Ausdruck zurück."
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der der Eigenschaft zugewiesen werden soll."
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "Parameter in Zeichenfolge konvertieren"
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Sekunden hinzu."
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Verwaltete Identität"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Prüft, ob die Zeichenfolge mit einem Wert endet (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn das erste Argument kleiner als das zweite oder gleich ist."
     }
   ],
   "qSt0Sb": [
@@ -1015,10 +2353,34 @@
       "value": "days"
     }
   ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Gibt die Anzahl von Elementen in einem Array oder einer Zeichenfolge zurück."
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in eine ganze Zahl konvertiert wird."
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Ermöglicht einem Ausdruck das Ableiten seines Werts aus anderen JSON-Name/Wert-Paaren oder aus der Ausgabe der Laufzeitaktion."
+    }
+  ],
   "r9SVE4": [
     {
       "type": 0,
       "value": "Int."
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "Nein"
     }
   ],
   "rCl53e": [
@@ -1027,16 +2389,76 @@
       "value": "Kartentitel"
     }
   ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Entweder ein Array von Werten zum Auffinden des höchsten Werts oder der erste Wert aus einem Satz."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Gibt eine URI-codierte Darstellung eines Werts zurück."
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Gibt die Jahrestagkomponente eines Zeichenfolgen-Zeitstempels zurück."
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Gibt ein Array von Werten zurück, das dem Schlüsselnamen aus der form-data- oder form-encoded-Triggerausgabe entspricht."
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird eine Zeichenfolge mit der im Intervall festgelegten Zeiteinheit angegeben, die hinzugefügt werden soll."
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, bei der geprüft werden soll, ob sie leer ist."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die vom Minuenden abgezogen werden soll."
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
       "value": "Schlüssel"
     }
   ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn einer der Parameter TRUE ist."
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Neuer Parameter"
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird eine Zeichenfolge angegeben, die den Namen der Zielzeitzone enthält. Weitere Informationen finden Sie unter https://msdn.microsoft.com/de-de/library/gg154758.aspx."
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "Gibt die URL zum Aufrufen des Triggers oder der Aktion zurück."
     }
   ],
   "tImHz/": [
@@ -1057,10 +2479,34 @@
       "value": "h"
     }
   ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Index des abzurufenden Teils."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Diese Funktion stellt Ihnen Details für den Workflow selbst zur Laufzeit bereit."
+    }
+  ],
   "tNoZx2": [
     {
       "type": 0,
       "value": "Typ"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn das erste Argument größer als das zweite ist."
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl der zu addierenden Stunden. Kann negativ sein, um Stunden zu subtrahieren."
     }
   ],
   "uN4zFU": [
@@ -1069,16 +2515,70 @@
       "value": "OK"
     }
   ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die auszuwertenden Sammlungen. Ein Objekt, das sich in einer Sammlung befindet, wird auch im Ergebnis angezeigt."
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Stunden hinzu."
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird angegeben, um wie viele Zeiteinheiten die gewünschte Uhrzeit in der Vergangenheit liegt."
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
       "value": "Standardwert"
     }
   ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Erstellt ein Array aus den Parametern."
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Generiert eine global eindeutige Zeichenfolge (GUID)."
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Gibt den letzten Index eines Werts innerhalb einer Zeichenfolge zurück (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, mit dem die Zeichenfolge möglicherweise endet."
+    }
+  ],
   "vSlNPe": [
     {
       "type": 0,
       "value": "Löschen"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion, deren Ausgaben Sie erhalten möchten."
     }
   ],
   "vwH/XV": [
@@ -1093,16 +2593,82 @@
       "value": "Workfloweigenschaften"
     }
   ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein Ganzzahlwert einer angegebenen Zeiteinheit von einem übergebenen Zeichenfolgen-Zeitstempel abgezogen."
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Entweder ein Array von Werten zum Auffinden des niedrigsten Werts oder der erste Wert aus einem Satz."
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Timeout"
     }
   ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die nach Parameter 2 durchsucht und mit Parameter 3 aktualisiert wird, wenn Parameter 2 in Parameter 1 gefunden wird."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Länge der Teilzeichenfolge."
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "Gibt einen angegebenen Wert basierend darauf zurück, ob der Ausdruck in TRUE oder FALSE ausgewertet wurde."
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein aus einer Quellzeitzone übergebener Zeichenfolgen-Zeitstempel in einen UTC-Wert konvertiert."
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Gibt ein einzelnes Array oder ein Objekt mit allen Elementen zurück, die entweder in dem Array oder in dem Objekt enthalten sind, das an diese Funktion übergeben wurde."
+    }
+  ],
   "woJQhv": [
     {
       "type": 0,
       "value": "Rückruf-URL:"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, für die die Länge abgerufen werden soll."
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolgendarstellung einer URI-codierten Zeichenfolge zurück."
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der neuen oder vorhandenen Eigenschaft."
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Gibt den Pfad aus einem URI zurück. Falls der Pfad nicht angegeben ist, wird \"/\" zurückgegeben."
     }
   ],
   "xt5TeT": [
@@ -1117,10 +2683,52 @@
       "value": "Wert"
     }
   ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, das für Gleichheit verglichen werden soll."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, in der die URL-unsicheren Zeichen mit Escapezeichen versehen werden sollen."
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in ein Array konvertiert wird."
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Datums- und Uhrzeitfunktionen"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "Geben Sie einen Standardwert für den Parameter ein."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in eine Dezimalzahl konvertiert wird."
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in einen nativen Typwert konvertiert wird."
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Konvertiert eine Zeichenfolge in ein Datum, mit optional einem Gebietsschema und einem Format."
     }
   ],
   "ziYCiA": [
@@ -1133,6 +2741,18 @@
     {
       "type": 0,
       "value": "Gleitkomma"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein Ganzzahlwert einer angegebenen Zeiteinheit zu einem übergebenen Zeichenfolgen-Zeitstempel hinzugefügt."
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl der zu addierenden Minuten. Kann negativ sein, um Minuten zu subtrahieren."
     }
   ]
 }

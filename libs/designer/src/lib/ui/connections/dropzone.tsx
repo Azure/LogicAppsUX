@@ -1,3 +1,4 @@
+import { expandDiscoveryPanel } from '../../core/state/panelSlice';
 import { addNode } from '../../core/state/workflowSlice';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
@@ -18,6 +19,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) =>
   const onEdgeEndClick = (evt: any, parent?: string, child?: string) => {
     evt.stopPropagation();
     const newId = guid();
+    dispatch(expandDiscoveryPanel());
     dispatch(
       addNode({
         id: newId,

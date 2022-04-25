@@ -5,6 +5,18 @@
       "value": "Etichetta impostazione"
     }
   ],
+  "+g+mch": [
+    {
+      "type": 0,
+      "value": "Restituisce il corpo per una parte nell'output multiparte di un'azione"
+    }
+  ],
+  "+lpuMl": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore da restituire se l'espressione è 'false'."
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -17,10 +29,64 @@
       "value": "In attesa"
     }
   ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "Restituisce gli elementi nella matrice a partire dal numero di indice"
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "Converte l'input in una matrice"
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da cui unire gli elementi."
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Restituisce i primi elementi Count dalla matrice o dalla stringa passata"
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Restituisce l'inizio dell'ora del timestamp in formato stringa passato"
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "Restituisce l'URL per richiamare il trigger o l'azione. Nota: questa funzione può essere usata solo nei trigger httpWebhook e apiConnectionWebhook e non nei trigger di tipo Manual, Recurrence, HTTP o apiConnection."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa con codifica Base64."
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "L'URL decodifica la stringa di input"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
       "value": "Mostra menu Esegui"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione binaria di una stringa con codifica URI"
     }
   ],
   "0ZlNtf": [
@@ -29,16 +95,70 @@
       "value": "Operazione riuscita in più tentativi"
     }
   ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da convertire in lettere maiuscole. Se un carattere nella stringa non ha un equivalente in lettere maiuscole, il carattere verrà riportato invariato nella stringa restituita."
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "Restituisce il resto dopo la divisione dei due numeri (modulo)"
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa che può contenere il valore."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione binaria di una stringa di input dell'URI di dati"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
       "value": "Altri comandi"
     }
   ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. URI di dati da convertire nella rappresentazione stringa."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "Restituisce la porta da un URI. Se la porta non è specificata, restituisce la porta predefinita per il protocollo"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
       "value": "Commento"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore da convertire in XML."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa con codifica URI."
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "Converte l'argomento del parametro in un numero a virgola mobile"
     }
   ],
   "1R6Vaa": [
@@ -81,16 +201,52 @@
       "value": "count"
     }
   ],
+  "1TE0e8": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore di cui cercare l'indice."
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è minore del valore con cui è confrontato."
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Ignora"
     }
   ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione binaria di una stringa con codifica Base 64"
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore da convertire in URI di dati."
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
       "value": "Ora di fine"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Restituisce un singolo valore corrispondente al nome della chiave dall'output dell'azione dei dati del modulo o con codifica per il modulo"
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione con una risposta con dati del modulo o codifica per il modulo."
     }
   ],
   "2mnU/w": [
@@ -105,10 +261,52 @@
       "value": "Identificatore"
     }
   ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Separatore."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Con errori"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da cui rimuovere la proprietà."
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di un'unità di tempo specificata da sottrarre."
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Integer più basso che può essere restituito."
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di giorni da aggiungere. Può essere negativo per sottrarre i giorni."
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Unità di tempo specificata nell'intervallo."
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome del parametro di cui si desidera ottenere i valori."
     }
   ],
   "4cVuMw": [
@@ -117,10 +315,40 @@
       "value": "È possibile aggiungere i commenti solo durante la modifica degli input di un passaggio."
     }
   ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "Restituisce il valore minimo nella matrice di input di numeri"
+    }
+  ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "ID richiesta servizio"
+    }
+  ],
+  "5J7j9k": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Espressione XPath da valutare."
+    }
+  ],
+  "5aa76N": [
+    {
+      "type": 0,
+      "value": "Restituisce il primo elemento nella matrice o nella stringa passata"
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Restituisce true se un oggetto, una matrice o una stringa è vuota"
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome del ciclo di cui si desidera ottenere l'elemento."
     }
   ],
   "5qzZMo": [
@@ -135,10 +363,28 @@
       "value": "Elimina parametro"
     }
   ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore del valore con cui è confrontato."
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
       "value": "Mostra esecuzione"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta in cui eseguire la ricerca."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione con una risposta a più parti."
     }
   ],
   "6oqk+A": [
@@ -147,16 +393,40 @@
       "value": "Indietro"
     }
   ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero in base a cui moltiplicare il moltiplicando 2."
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
       "value": "OK"
     }
   ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da cui viene recuperata la sottostringa."
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "Facoltativo. Impostazioni locali da usare per la formattazione (valore predefinito 'en-us')."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Codice stato"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Restituisce il numero di tick (intervallo di 100 nanosecondi) dal 1° gennaio 0001 00:00:00 UT di un timestamp in formato stringa"
     }
   ],
   "7yEdSt": [
@@ -171,10 +441,52 @@
       "value": "Copia URL"
     }
   ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa che può contenere il valore."
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore da restituire se l'espressione è 'true'."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Restituisce una stringa numerica formattata"
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore o uguale al valore con cui è confrontato."
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
       "value": "Non è possibile eseguire il rendering dell'area di progettazione a causa della presenza di più trigger nella definizione."
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da codificare in URI."
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Aggiunge un numero intero di giorni al timestamp in formato stringa passato"
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Restituisce una singola matrice o oggetto contenente elementi comuni tra le matrici o gli oggetti passati"
     }
   ],
   "99vsJy": [
@@ -183,10 +495,76 @@
       "value": "Connettore"
     }
   ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Restituisce un URI di dati di un valore"
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Restituisce un oggetto con una coppia proprietà-valore aggiuntiva"
+    }
+  ],
+  "9b4xDa": [
+    {
+      "type": 0,
+      "value": "pannello"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "Restituisce il risultato dell'aggiunta dei due numeri"
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "Restituisce true se entrambi i parametri sono true"
+    }
+  ],
+  "ANbEeQ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione di cui si desidera ottenere i valori."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da codificare nella rappresentazione Base64."
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Indice della parte da recuperare."
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Singolo carattere identificatore del formato o modello di formato personalizzato che indica come formattare il valore di questo timestamp. Se il formato non viene specificato, verrà usato il formato ISO 8601 ('o')."
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa con codifica URI."
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
       "value": "Ora di inizio"
+    }
+  ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da cui decodificare caratteri non sicuri per gli URL."
     }
   ],
   "Bn8iTS": [
@@ -195,10 +573,34 @@
       "value": "Tipo di stato:"
     }
   ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "Identificatore di formato singolo che indica come formattare il valore di questo GUID."
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore del valore con cui è confrontato."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Connessione richiesta"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Restituisce il percorso e la query da un URI"
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da cui rimuovere lo spazio vuoto iniziale e finale."
     }
   ],
   "DFo+mo": [
@@ -213,10 +615,52 @@
       "value": "Durata"
     }
   ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Converte il parametro in un numero decimale"
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
       "value": "Risposta"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Indice della posizione in cui avviare l'estrazione della sottostringa."
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di un'unità di tempo specificata da aggiungere."
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Restituisce un valore di parametro specificato nella definizione"
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Restituisce una sezione di una stringa definita dall'indice iniziale e dall'indice finale"
+    }
+  ],
+  "FS+/Tb": [
+    {
+      "type": 0,
+      "value": "Restituisce il corpo per una parte nell'output multiparte del trigger"
+    }
+  ],
+  "FVavKy": [
+    {
+      "type": 0,
+      "value": "Restituisce l'inizio del giorno del timestamp in formato stringa passato"
     }
   ],
   "FXLR5M": [
@@ -251,10 +695,52 @@
       "value": "hours"
     }
   ],
+  "Fgq3Db": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da cui recuperare l'ultimo oggetto."
+    }
+  ],
+  "Fh2HDb": [
+    {
+      "type": 0,
+      "value": "Restituisce il primo indice di un valore all'interno di una stringa (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
       "value": "Stato"
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa che può contenere il valore."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "Restituisce la query da un URI"
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da trovare all'interno della raccolta."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Funzioni di riferimento"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Restituisce true se i parametri sono false"
     }
   ],
   "Gmya+V": [
@@ -275,6 +761,30 @@
       "value": "Array"
     }
   ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "Funzioni di analisi dell'URI"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa in sezione."
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da cui viene sottratto il sottraendo."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della chiave del valore dei dati del modulo da restituire."
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -287,16 +797,118 @@
       "value": "Valore impostazione"
     }
   ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Converte il timestamp in formato stringa passato da UTIC al fuso orario di destinazione"
+    }
+  ],
+  "Ip7Iax": [
+    {
+      "type": 0,
+      "value": "Restituisce l'indice dell'occorrenza n volte di un valore all'interno di una stringa (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
+  "IpVwYT": [
+    {
+      "type": 0,
+      "value": "Restituisce il primo oggetto non Null negli argomenti passati"
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Converte una stringa in lettere minuscole usando le regole per l'utilizzo di maiuscole e minuscole delle impostazioni cultura inglese non dipendenti da paese/area geografica"
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente l'ora."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in un valore booleano."
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Converte un timestamp stringa passato dal fuso orario di origine al fuso orario di destinazione"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
       "value": "Metodo"
     }
   ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Restituisce true se un dizionario contiene una chiave, se una matrice contiene un valore o se una stringa contiene una sottostringa"
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da formattare."
+    }
+  ],
   "JnlcZQ": [
     {
       "type": 0,
       "value": "Nome:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Necessario. Stringa di formato numerico."
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto a cui aggiungere una nuova proprietà."
+    }
+  ],
+  "K90YEU": [
+    {
+      "type": 0,
+      "value": "Restituisce un subset di caratteri da una stringa"
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di oggetti da recuperare dalla raccolta. Deve essere un intero positivo."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Restituisce il componente giorno della settimana di un timestamp in formato stringa"
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "Restituisce lo schema da un URI"
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "Quando usata all'interno di un ciclo for-each, questa funzione restituisce l'elemento corrente del ciclo specificato."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Le espressioni che possono essere true."
     }
   ],
   "M0HMjE": [
@@ -309,6 +921,36 @@
     {
       "type": 0,
       "value": "I parametri verranno salvati quando viene salvato il flusso di lavoro. È possibile modificarlo qui prima di salvarlo o modificarlo nella pagina dei parametri dopo il salvataggio."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "Facoltativo. Nome dell'azione con ambito che dovrà contenere gli input e gli output delle azioni di primo livello all'interno di tale ambito."
+    }
+  ],
+  "M9mzP6": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da aggiungere all'addendo 2."
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolte da valutare. Un oggetto deve essere presente in tutte le raccolte passate per essere visualizzato nei risultati."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. URI di dati da convertire nella rappresentazione binaria."
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Restituisce il timestamp corrente in formato stringa"
     }
   ],
   "Mb+Eaq": [
@@ -329,16 +971,34 @@
       "value": "Errore imprevisto"
     }
   ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della chiave dei valori dei dati del modulo da restituire."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
       "value": "Stato"
     }
   ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione binaria di un valore"
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
       "value": "Modifica parametro"
+    }
+  ],
+  "OD8igU": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente il nome del fuso orario del fuso orario di origine. Per informazioni dettagliate, vedere https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
   "OFKZzQ": [
@@ -351,6 +1011,12 @@
     {
       "type": 0,
       "value": "Commento"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "Restituisce i risultati delle azioni di primo livello nell'azione con ambito specificata, ad esempio un'azione For_each, Until o Scope."
     }
   ],
   "Oib1mL": [
@@ -379,16 +1045,52 @@
       "value": "s"
     }
   ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "Facoltativo. Impostazioni locali da usare per l'analisi della stringa data e ora."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Restituisce l'host da un URI"
+    }
+  ],
   "OnrO5/": [
     {
       "type": 0,
       "value": "Selezionare un'identità gestita"
     }
   ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore corrispondene al numero di integer nella matrice."
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Funzioni di raccolta"
+    }
+  ],
+  "P8ZBF9": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da cui recuperare il primo oggetto."
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
       "value": "Operazione riuscita"
+    }
+  ],
+  "PKMkb/": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da aggiungere all'addendo 1."
     }
   ],
   "PP63jY": [
@@ -403,16 +1105,46 @@
       "value": "Comprimi"
     }
   ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di secondi da aggiungere. Può essere negativo per sottrarre i secondi."
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
       "value": "Operazione interrotta"
     }
   ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "Funzioni del flusso di lavoro"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "Restituisce la rappresentazione Base 64 della stringa di input"
+    }
+  ],
   "Q/7unA": [
     {
       "type": 0,
       "value": "Oggetto"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è minore o uguale al valore con cui è confrontato."
+    }
+  ],
+  "QEp3C8": [
+    {
+      "type": 0,
+      "value": "Converte l'input in un valore di tipo JSON"
     }
   ],
   "QQYzHC": [
@@ -425,10 +1157,52 @@
       "value": "title"
     }
   ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Restituisce un singolo valore corrispondente al nome della chiave dall'output del trigger dei dati del modulo o con codifica per il modulo"
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Funzioni stringa"
+    }
+  ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Elemento"
+    }
+  ],
+  "QeE0k/": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in un valore binario."
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
       "value": "Caricamento..."
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Restituisce una stringa in formato data"
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa con cui delimitare gli elementi."
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente l'unità di tempo specificata nell'intervallo da sottrarre."
     }
   ],
   "Qu1HkA": [
@@ -439,6 +1213,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa che viene divisa."
     }
   ],
   "RhH4pF": [
@@ -473,6 +1253,18 @@
       "value": "minutes"
     }
   ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "Converte il parametro nel tipo integer"
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Verifica se la stringa inizia con un valore (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
   "SXb47U": [
     {
       "type": 1,
@@ -483,10 +1275,34 @@
       "value": " m"
     }
   ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione con una risposta con dati del modulo o codifica per il modulo."
+    }
+  ],
+  "T7zcR6": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Le espressioni che devono essere true."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
       "value": "Operazione non riuscita"
+    }
+  ],
+  "TI44R1": [
+    {
+      "type": 0,
+      "value": "Restituisce una stringa con ogni elemento di una matrice unito da un delimitatore"
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Restituisce l'inizio del mese di un timestamp in formato stringa"
     }
   ],
   "TZv5JE": [
@@ -507,16 +1323,34 @@
       "value": "Tag"
     }
   ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero in base a cui moltiplicare il moltiplicando 1."
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
       "value": "Comprimere/espandere"
     }
   ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Genera una matrice di interi a partire da un numero specifico"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
       "value": "Per fare riferimento a un parametro, usare l'elenco contenuto dinamico."
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Sostituisce una stringa con una stringa specifica"
     }
   ],
   "USVffu": [
@@ -535,6 +1369,12 @@
     {
       "type": 0,
       "value": "Il nome dell'esecuzione del flusso di lavoro specificato non è valido."
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da dividere per il divisore."
     }
   ],
   "VXBWrq": [
@@ -565,6 +1405,30 @@
       "value": "max"
     }
   ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della nuova proprietà."
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Primo integer nella matrice."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "Abbreviazione per trigger().outputs"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "Restituisce il risultato della moltiplicazione dei due numeri"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -581,6 +1445,18 @@
     {
       "type": 0,
       "value": " ore"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "Abbreviazione per actions('actionName').outputs"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Combina un qualsiasi numero di stringhe"
     }
   ],
   "XFFpu/": [
@@ -619,10 +1495,28 @@
       "value": "Richiesta"
     }
   ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Funzioni matematiche"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione di cui si desidera ottenere gli output del corpo."
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Altre informazioni"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione binaria di un URI di dati"
     }
   ],
   "YHsAKl": [
@@ -647,16 +1541,64 @@
       "value": "Stringa"
     }
   ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Consente a un'espressione di derivare il proprio valore da altre coppie nome-valore JSON o dall'output del trigger di runtime"
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Restituisce un singolo oggetto o matrice con tutti gli elementi inclusi nella matrice o nell'oggetto passato a questa funzione. I parametri per la funzione possono essere costituiti da un set di oggetti o un set di matrici, ma non da una combinazione di entrambi. Se nell'output finale sono presenti due oggetti con lo stesso nome, nell'oggetto finale sarà visualizzato l'ultimo oggetto con tale nome."
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "Nessuno"
     }
   ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Restituisce il componente giorno del mese di un timestamp in formato stringa"
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "Abbreviazione per trigger().outputs.body"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore con cui può iniziare la stringa."
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
       "value": "Questa operazione è già stata eliminata."
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da dividere per il divisore."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di occorrenze della sottostringa da trovare."
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di oggetti da rimuovere dalla parte iniziale della raccolta. Deve essere un intero positivo."
     }
   ],
   "bH5LtI": [
@@ -673,10 +1615,22 @@
       "value": " è già registrata"
     }
   ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore o uguale al valore con cui è confrontato."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Carica altro"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "Restituisce il valore massimo nella matrice di input di numeri"
     }
   ],
   "bgfjqS": [
@@ -685,10 +1639,28 @@
       "value": "Impostazione etichetta"
     }
   ],
+  "bzF/qn": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da cui recuperare i primi oggetti Count."
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Restituisce un oggetto con una proprietà impostata sul valore specificato"
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "pannello"
+    }
+  ],
+  "cJm+ah": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore di cui cercare l'indice."
     }
   ],
   "ci6ex1": [
@@ -715,6 +1687,12 @@
       "value": "Ora di avvio"
     }
   ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta in cui ignorare i primi oggetti Count."
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -727,16 +1705,82 @@
       "value": "Altre informazioni"
     }
   ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione stringa di una stringa con codifica Base 64"
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "Converte il parametro nel tipo booleano"
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Restituisce una matrice di valori corrispondenti al nome della chiave dall'output dell'azione dei dati del modulo o con codifica per il modulo"
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Divide la stringa usando un separatore"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Non specificato"
     }
   ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della variabile di cui si desidera ottenere il valore."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
       "value": "Ora di avvio"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero in base a cui dividere il dividendo."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Indice della posizione di inizio della sottostringa nel parametro 1."
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetti da controllare per verificare se sono Null."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "Facoltativo. Indice della posizione in cui interrompere l'estrazione della sottostringa."
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Restituisce true se il primo argomento è maggiore o uguale al secondo"
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Funzioni logiche"
     }
   ],
   "ftwXvc": [
@@ -751,10 +1795,46 @@
       "value": "URI"
     }
   ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Restituisce un timestamp corrispondente all'ora corrente più l'intervallo di tempo specificato."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "Restituisce il risultato della divisione dei due numeri"
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore booleano che determina il valore che deve essere restituito dall'espressione."
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "Operazione precedente non riuscita"
+    }
+  ],
+  "gMhc5o": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da combinare in una singola stringa."
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Funzioni di conversione"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "Quando usata all'interno di un ciclo until, questa funzione restituisce l'indice dell'iterazione corrente del ciclo specificato."
     }
   ],
   "hN7iBP": [
@@ -789,6 +1869,12 @@
       "value": "seconds"
     }
   ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "Restituisce il risultato della sottrazione di due numeri"
+    }
+  ],
   "hdnZ9Y": [
     {
       "type": 0,
@@ -807,10 +1893,22 @@
       "value": "Commento"
     }
   ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Converte una stringa in lettere maiuscole usando le regole per l'utilizzo di maiuscole e minuscole delle impostazioni cultura inglese non dipendenti da paese/area geografica"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
       "value": "Avanti"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. URI da analizzare."
     }
   ],
   "iRjBf4": [
@@ -823,6 +1921,12 @@
     {
       "type": 0,
       "value": "Espandi"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Funzioni di manipolazione"
     }
   ],
   "iUs7pv": [
@@ -841,16 +1945,70 @@
       "value": " s"
     }
   ],
+  "j2MU0b": [
+    {
+      "type": 0,
+      "value": "Restituisce un oggetto con una proprietà rimossa"
+    }
+  ],
+  "j39557": [
+    {
+      "type": 0,
+      "value": "Restituisce il valore della variabile specificata."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Restituisce un numero intero casuale da un intervallo specificato, che include solo l'estremità iniziale."
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Espressione che verrà negata."
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in una stringa."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa di input Base64."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della chiave dei valori dei dati del modulo da restituire."
+    }
+  ],
   "jfInxm": [
     {
       "type": 0,
       "value": "Modificare in JSON"
     }
   ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa con codifica Base64."
+    }
+  ],
   "k41+13": [
     {
       "type": 0,
       "value": "Ignorato"
+    }
+  ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Sì"
     }
   ],
   "kHcCxH": [
@@ -871,10 +2029,34 @@
       "value": "s"
     }
   ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione stringa di una stringa di input con codifica Base 64"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
       "value": "Download (Alt/Opzione + clic)"
+    }
+  ],
+  "kZuYgD": [
+    {
+      "type": 0,
+      "value": "Restituisce true se il primo argomento è minore del secondo"
+    }
+  ],
+  "keb4r1": [
+    {
+      "type": 0,
+      "value": "Restituisce true se due valori sono uguali"
+    }
+  ],
+  "knylNW": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore corrispondente all'integer successivo dopo il numero integer più elevato che è stato restituito."
     }
   ],
   "l36V56": [
@@ -913,6 +2095,12 @@
       "value": "Modalità di esecuzione senza stato:"
     }
   ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "Abbreviazione per actions('actionName').outputs.body"
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -931,6 +2119,78 @@
       "value": "Nome"
     }
   ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Restituisce un timestamp corrispondente all'ora corrente meno l'intervallo di tempo specificato."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione stringa di un URI di dati"
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "L'URL codifica la stringa di input"
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da convertire in lettere minuscole. Se un carattere nella stringa non ha un equivalente in lettere minuscole, il carattere verrà riportato invariato nella stringa restituita."
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in un numero a virgola mobile."
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è minore o uguale al valore con cui è confrontato."
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di unità di tempo dell'ora desiderata nel futuro."
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della proprietà da rimuovere."
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è minore del valore con cui è confrontato."
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Aggiunge un numero intero di minuti al timestamp in formato stringa passato"
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Restituisce l'ultimo elemento nella matrice o nella stringa passata"
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. XML per cui valutare l'espressione XPath."
+    }
+  ],
   "o1HOyf": [
     {
       "type": 1,
@@ -945,10 +2205,22 @@
       "value": "max_page"
     }
   ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. URI di dati da codificare in una rappresentazione binaria."
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Immettere l'identificatore di esecuzione per aprire l'esecuzione"
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della chiave del valore dei dati del modulo da restituire."
     }
   ],
   "p16/4S": [
@@ -963,10 +2235,40 @@
       "value": "Ora di fine"
     }
   ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valori da combinare in una matrice."
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Parametri"
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "Converte l'input in un valore di tipo XML"
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero in base a cui dividere il dividendo. Dopo la divisione, viene preso il resto."
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Restituisce una singola matrice o oggetto contenente elementi comuni tra le matrici o gli oggetti passati. I parametri per la funzione possono essere costituiti da un set di oggetti o un set di matrici, ma non da una combinazione di entrambi. Se sono presenti due oggetti con lo stesso nome, nell'oggetto finale sarà visualizzato l'ultimo oggetto con tale nome."
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "Elimina lo spazio vuoto iniziale e finale da una stringa"
     }
   ],
   "pr9GwA": [
@@ -975,10 +2277,46 @@
       "value": "Aggiorna"
     }
   ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Restituisce un valore, un set di nodi o un nodo XML come JSON dall'espressione XPath specificata"
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore da assegnare alla proprietà."
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "Converte il parametro in una stringa"
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Aggiunge un numero intero di secondi al timestamp in formato stringa passato"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Identità gestita"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Verifica se la stringa termina con un valore (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Restituisce true se il primo argomento è minore o uguale al secondo"
     }
   ],
   "qSt0Sb": [
@@ -1019,10 +2357,34 @@
       "value": "days"
     }
   ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Restituisce il numero di elementi in una matrice o in una stringa"
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in un valore integer."
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Consente a un'espressione di derivare il proprio valore da altre coppie nome-valore JSON o dall'output dell'azione di runtime"
+    }
+  ],
   "r9SVE4": [
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "No"
     }
   ],
   "rCl53e": [
@@ -1031,16 +2393,76 @@
       "value": "Titolo scheda"
     }
   ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Matrice di valori in cui trovare il valore massimo o il primo valore di un set."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione con codifica URI di un valore"
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Restituisce il componente giorno dell'anno di un timestamp in formato stringa"
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Restituisce una matrice di valori corrispondenti al nome della chiave dall'output del trigger dei dati del modulo o con codifica per il modulo"
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente l'unità di tempo specificata nell'intervallo da aggiungere."
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da controllare per verificare se è vuota."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da sottrarre dal minuendo."
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
       "value": "Chiave"
     }
   ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Restituisce true se uno dei parametri è true"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Nuovo parametro"
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente il nome del fuso orario del fuso orario di destinazione. Per informazioni dettagliate, vedere https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "Restituisce l'URL per richiamare il trigger o l'azione"
     }
   ],
   "tImHz/": [
@@ -1061,10 +2483,34 @@
       "value": "h"
     }
   ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Indice della parte da recuperare."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Questa funzione fornisce i dettagli per il flusso di lavoro stesso in fase di runtime"
+    }
+  ],
   "tNoZx2": [
     {
       "type": 0,
       "value": "Tipo"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Restituisce true se il primo argomento è maggiore del secondo"
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di ore da aggiungere. Può essere negativo per sottrarre le ore."
     }
   ],
   "uN4zFU": [
@@ -1073,16 +2519,70 @@
       "value": "OK"
     }
   ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolte da valutare. Un oggetto presente in qualsiasi raccolta verrà visualizzato anche nel risultato."
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Aggiunge un numero intero di ore al timestamp in formato stringa passato"
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di unità di tempo dell'ora desiderata nel passato."
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa che può contenere il valore."
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
       "value": "Valore predefinito"
     }
   ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Crea una matrice dai parametri"
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Genera una stringa univoca globale (GUID)"
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Restituisce l'ultimo indice di un valore all'interno di una stringa (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore con cui può terminare la stringa."
+    }
+  ],
   "vSlNPe": [
     {
       "type": 0,
       "value": "Eliminare"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione di cui si desidera ottenere gli output."
     }
   ],
   "vwH/XV": [
@@ -1097,16 +2597,82 @@
       "value": "Proprietà flusso di lavoro"
     }
   ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Sottrae un numero intero di un'unità di tempo specificata dal timestamp in formato stringa passato"
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Matrice di valori in cui trovare il valore minimo o il primo valore di un set."
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Timeout"
     }
   ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa in cui viene cercato il parametro 2 e aggiornata con il parametro 3 quando il parametro 2 viene trovato nel parametro 1."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Lunghezza della sottostringa."
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "Restituisce un valore specificato a seconda del fatto che l'espressione abbia restituito true o false"
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Converte un timestamp in formato stringa passato dal fuso orario di origine a UTC"
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Restituisce una singola matrice o oggetto con tutti gli elementi presenti nella matrice o nell'oggetto passato a questa funzione"
+    }
+  ],
   "woJQhv": [
     {
       "type": 0,
       "value": "URL callback:"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta per cui recuperare la lunghezza."
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione stringa di una stringa con codifica URI"
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della proprietà nuova o esistente."
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Restituisce il percorso da un URI. Se il percorso non è specificato, restituisce '/'"
     }
   ],
   "xt5TeT": [
@@ -1121,10 +2687,52 @@
       "value": "Valore"
     }
   ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. L'oggetto di cui confrontare l'uguaglianza."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa in cui applicare la sequenza di escape per i caratteri non sicuri per gli URL."
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in una matrice."
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Funzioni di data e ora"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "Immettere il valore predefinito per il parametro."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in un numero decimale."
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa convertita in un valore di tipo nativo."
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Converte una stringa, facoltativamente con impostazioni locali e un formato in una data"
     }
   ],
   "ziYCiA": [
@@ -1137,6 +2745,18 @@
     {
       "type": 0,
       "value": "Float"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Aggiunge un numero intero di un'unità di tempo specificata al timestamp in formato stringa passato"
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di minuti da aggiungere. Può essere negativo per sottrarre i minuti."
     }
   ]
 }

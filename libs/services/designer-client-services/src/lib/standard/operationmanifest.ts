@@ -1,8 +1,6 @@
-import { UnsupportedException } from '../common/exceptions/unsupported';
-import { SettingScope } from '../common/models/operationmanifest';
-import type { OperationInfo, OperationManifest } from '../common/models/operationmanifest';
 import type { IOperationManifestService } from '../operationmanifest';
-import { equals } from '@microsoft-logic-apps/utils';
+import { equals, SettingScope, UnsupportedException } from '@microsoft-logic-apps/utils';
+import type { OperationInfo, OperationManifest } from '@microsoft-logic-apps/utils';
 
 const invokefunction = 'invokefunction';
 const javascriptcode = 'javascriptcode';
@@ -48,7 +46,7 @@ const supportedManifestTypes = [
 export class StandardOperationManifestService implements IOperationManifestService {
   constructor(private readonly options: unknown) {}
 
-  isSupported(operationType: string, operationKind?: string): boolean {
+  isSupported(operationType: string, _operationKind?: string): boolean {
     const normalizedOperationType = operationType.toLowerCase();
     return supportedManifestTypes.indexOf(normalizedOperationType) > -1;
   }

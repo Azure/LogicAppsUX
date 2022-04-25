@@ -5,6 +5,18 @@
       "value": "Etykieta ustawienia"
     }
   ],
+  "+g+mch": [
+    {
+      "type": 0,
+      "value": "Zwraca treść dla części w wieloczęściowych danych wyjściowych akcji"
+    }
+  ],
+  "+lpuMl": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość do zwrócenia, jeśli wyrażenie ma wartość „fałsz”."
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -17,10 +29,64 @@
       "value": "Oczekiwanie"
     }
   ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "Zwraca elementy w tablicy, zaczynając od indeksu Liczba"
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "Konwertuj dane wejściowe na tablicę"
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Kolekcja, z której należy dołączyć elementy."
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Zwraca liczbę Count pierwszych elementów z przekazanej tablicy lub ciągu"
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Zwraca początek godziny z sygnatury czasowej przekazanego ciągu"
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "Zwraca adres URL do wywołania wyzwalacza lub akcji. Uwaga: tej funkcji można używać tylko w elementach httpWebhook i apiConnectionWebhook, nie w elementach ręcznych, cyklicznych http lub apiConnection."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg zakodowany w formacie base64."
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "Adres URL dekoduje ciąg wejściowy"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
       "value": "Pokaż menu uruchamiania"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "Zwraca binarną reprezentację ciągu zakodowanego jako identyfikator URI"
     }
   ],
   "0ZlNtf": [
@@ -29,16 +95,70 @@
       "value": "Powodzenie dzięki ponownym próbom"
     }
   ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Ciąg do przekonwertowania na wielkie litery. Jeśli znak w ciągu nie ma odpowiadającej wielkiej litery, w zwróconym ciągu zostanie on uwzględniony jako niezmieniony."
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "Zwraca resztę z dzielenia dwóch liczb (modulo)"
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Ciąg, który może zawierać wartość."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Zwraca binarną reprezentację ciągu identyfikatora URI danych wejściowych"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
       "value": "Więcej poleceń"
     }
   ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Wymagane. Identyfikator URI danych do przekonwertowania na reprezentację w formie ciągu."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "Zwraca port z identyfikatora URI. Jeśli port nie jest określony, zwraca domyślny port dla protokołu"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
       "value": "Komentarz"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość do przekonwertowania na dane XML."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg zakodowany jako identyfikator URI."
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "Konwertuj argument parametru na liczbę zmiennoprzecinkową"
     }
   ],
   "1R6Vaa": [
@@ -119,16 +239,52 @@
       "value": "count"
     }
   ],
+  "1TE0e8": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość, której indeks jest wyszukiwany."
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on mniejszy niż wartość, z którą jest porównywany."
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Odrzuć"
     }
   ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Zwraca binarną reprezentację ciągu z kodowaniem base 64"
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Wymagane. Wartość do przekonwertowania na dane identyfikatora URI."
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
       "value": "Godzina zakończenia"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Zwraca pojedynczą wartość odpowiadającą nazwie klucza z danych wyjściowych akcji form-data lub form-encoded"
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa akcji z odpowiedzią w postaci danych formularza lub odpowiedzią zakodowaną w formularzu."
     }
   ],
   "2mnU/w": [
@@ -143,10 +299,52 @@
       "value": "Identyfikator"
     }
   ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Separator."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Błędne"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Wymagane. Obiekt, z którego ma zostać usunięta właściwość."
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba określonych jednostek czasu do odjęcia."
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Wymagane. Najmniejsza liczba całkowita, która może zostać zwrócona."
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba dni do dodania. Może być ujemna na potrzeby odejmowania dni."
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Wymagane. Jednostka czasu określona w interwale."
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa parametru z żądanymi wartościami."
     }
   ],
   "4cVuMw": [
@@ -155,10 +353,40 @@
       "value": "Komentarze można dodawać tylko podczas edytowania danych wejściowych kroku."
     }
   ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "Zwraca minimalną wartość w tablicy wejściowej liczb"
+    }
+  ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "Identyfikator żądania usługi"
+    }
+  ],
+  "5J7j9k": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wyrażenie XPath do wyznaczenia wartości."
+    }
+  ],
+  "5aa76N": [
+    {
+      "type": 0,
+      "value": "Zwraca pierwszy element przekazanej tablicy lub ciągu"
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość true, jeśli obiekt, tablica lub ciąg jest pusty"
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa pętli z żądanymi elementami."
     }
   ],
   "5qzZMo": [
@@ -173,10 +401,28 @@
       "value": "Usuń parametr"
     }
   ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on większy niż wartość, z którą jest porównywany."
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
       "value": "Pokaż uruchomienie"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Kolekcja, w której ma odbywać się wyszukiwanie."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa akcji z odpowiedzią wieloczęściową."
     }
   ],
   "6oqk+A": [
@@ -185,16 +431,40 @@
       "value": "Poprzednia"
     }
   ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba, przez którą mnożona jest mnożna 2."
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
       "value": "OK"
     }
   ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Ciąg, z którego został pobrany podciąg."
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "Opcjonalne. Ustawienia regionalne, które mają być używane podczas formatowania (domyślnie: „en-us”)."
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Kod stanu"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Zwraca liczbę tyknięć (interwał: 100 nanosekund) od 1 stycznia 0001, godz. 00:00:00 czasu uniwersalnego, dla sygnatury czasowej ciągu"
     }
   ],
   "7yEdSt": [
@@ -209,10 +479,52 @@
       "value": "Kopiuj adres URL"
     }
   ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Ciąg, który może zawierać wartość."
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość do zwrócenia, jeśli wyrażenie ma wartość „prawda”."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Zwraca sformatowany ciąg liczbowy"
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on większy lub równy porównywanemu obiektowi."
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
       "value": "Nie można renderować projektanta z powodu wielu wyzwalaczy w definicji."
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg do zakodowania jako identyfikator URI."
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Dodaje liczbę całkowitą dni do przekazanej sygnatury czasowej ciągu"
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Zwraca pojedynczą tablicę lub obiekt, który ma wspólne elementy między przekazanymi tablicami i obiektami"
     }
   ],
   "99vsJy": [
@@ -221,10 +533,76 @@
       "value": "Łącznik"
     }
   ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Zwraca identyfikator URI danych wartości"
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Zwraca obiekt z parą dodatkowych wartości właściwości"
+    }
+  ],
+  "9b4xDa": [
+    {
+      "type": 0,
+      "value": "panel"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "Zwraca wynik dodawania dwóch liczb"
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość true, jeśli oba parametry mają wartość true"
+    }
+  ],
+  "ANbEeQ": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa akcji z żądanymi wartościami."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg do zakodowania do reprezentacji base64."
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Wymagane. Indeks części do pobrania."
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Może to być pojedynczy znak specyfikatora formatu lub niestandardowy wzorzec formatu, który określa sposób formatowania wartości tej sygnatury czasowej. Jeśli format nie zostanie podany, zostanie użyty format ISO 8601 („o”)."
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg zakodowany jako identyfikator URI."
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
       "value": "Godzina rozpoczęcia"
+    }
+  ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg, w którym zostaną zdekodowane znaki niebezpieczne w adresie URL."
     }
   ],
   "Bn8iTS": [
@@ -233,10 +611,34 @@
       "value": "Typ stanu: "
     }
   ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "Pojedynczy specyfikator formatu, który wskazuje sposób formatowania wartości tego identyfikatora GUID."
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on większy od porównywanego obiektu."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Wymagane połączenie"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Zwraca ścieżkę i zapytanie z identyfikatora URI"
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg, z którego ma zostać usunięty odstęp wiodący i końcowy."
     }
   ],
   "DFo+mo": [
@@ -251,10 +653,52 @@
       "value": "Czas trwania"
     }
   ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Konwertuje parametr na liczbę dziesiętną"
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
       "value": "Odpowiedź"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Indeks miejsca, w którym należy rozpocząć wyodrębnianie podciągu."
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba określonych jednostek czasu do dodania."
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość parametru zdefiniowanego w definicji"
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Zwraca sekcję ciągu zdefiniowaną przez indeks początkowy i indeks końcowy"
+    }
+  ],
+  "FS+/Tb": [
+    {
+      "type": 0,
+      "value": "Zwraca treść dla części w wieloczęściowych danych wyjściowych wyzwalacza"
+    }
+  ],
+  "FVavKy": [
+    {
+      "type": 0,
+      "value": "Zwraca początek dnia z sygnatury czasowej przekazanego ciągu"
     }
   ],
   "FXLR5M": [
@@ -311,10 +755,52 @@
       "value": "hours"
     }
   ],
+  "Fgq3Db": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Kolekcja, z której należy pobrać ostatni obiekt."
+    }
+  ],
+  "Fh2HDb": [
+    {
+      "type": 0,
+      "value": "Zwraca pierwszy indeks wartości w ciągu (bez uwzględniania wielkości liter, kultura niezmienna)"
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
       "value": "Stan"
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Ciąg, który może zawierać wartość."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "Zwraca zapytanie z identyfikatora URI"
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Obiekt do wyszukiwania wewnątrz kolekcji typu W zakresie."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Funkcje odwołań"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość true, jeśli parametry mają wartość false"
     }
   ],
   "Gmya+V": [
@@ -335,6 +821,30 @@
       "value": "Tablica"
     }
   ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "Funkcje analizy identyfikatora URI"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg do wycięcia."
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba, od której odejmowany jest odjemnik."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa klucza zwracanej wartości danych formularza."
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -347,16 +857,118 @@
       "value": "Wartość ustawienia"
     }
   ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Konwertuje przekazaną sygnaturę czasową ciągu z formatu UTC na docelową strefę czasową"
+    }
+  ],
+  "Ip7Iax": [
+    {
+      "type": 0,
+      "value": "Zwraca indeks n-tego wystąpienia wartości w ciągu (bez uwzględniania wielkości liter, kultura niezmienna)"
+    }
+  ],
+  "IpVwYT": [
+    {
+      "type": 0,
+      "value": "Zwraca pierwszy obiekt o wartości innej niż null w przekazanych argumentach"
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Konwertuje ciąg na małe litery, używając reguł stosowania wielkości liter kultury niezmiennej"
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg zawierający godzinę."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość konwertowana na wartość logiczną."
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
       "value": "Metoda"
     }
   ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość true, jeśli słownik zawiera klucz, tablica zawiera wartość lub ciąg zawiera podciąg"
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba do sformatowania."
+    }
+  ],
   "JnlcZQ": [
     {
       "type": 0,
       "value": "Nazwa:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg formatu liczbowego."
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Wymagane. Obiekt, do którego ma zostać dodana nowa właściwość."
+    }
+  ],
+  "K90YEU": [
+    {
+      "type": 0,
+      "value": "Zwraca podciąg znaków z ciągu"
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Liczba obiektów do usunięcia z kolekcji. Musi być dodatnią liczbą całkowitą."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Zwraca składnik dnia tygodnia z sygnatury czasowej ciągu"
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "Zwraca schemat z identyfikatora URI"
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "W przypadku użycia wewnątrz pętli for-each ta funkcja zwraca bieżący element określonej pętli."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that may be true."
     }
   ],
   "M0HMjE": [
@@ -369,6 +981,36 @@
     {
       "type": 0,
       "value": "Parametry zostaną zapisane, gdy przepływ pracy zostanie zapisany. Możesz edytować go tutaj przed zapisaniem lub edytować na stronie parametrów po zapisaniu."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "Opcjonalnie. Nazwa akcji o określonym zakresie, w którym mają być umieszczane dane wejściowe i wyjściowe akcji najwyższego poziomu."
+    }
+  ],
+  "M9mzP6": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba dodawana do składnika 2."
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Kolekcje do wyliczenia wartości. Obiekt musi znajdować się we wszystkich przekazanych kolekcjach, aby pojawił się w wyniku."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Wymagane. Identyfikator URI danych do przekonwertowania na reprezentację binarną."
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Zwraca bieżącą sygnaturę czasową jako ciąg"
     }
   ],
   "Mb+Eaq": [
@@ -389,16 +1031,34 @@
       "value": "Nieoczekiwany błąd"
     }
   ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa klucza zwracanych wartości danych formularza."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
       "value": "Stan"
     }
   ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Zwraca binarną reprezentację wartości"
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
       "value": "Edytuj parametr"
+    }
+  ],
+  "OD8igU": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg zawierający nazwę źródłowej strefy czasowej. Szczegółowe informacje można znaleźć na stronie https://msdn.microsoft.com/pl-pl/library/gg154758.aspx."
     }
   ],
   "OFKZzQ": [
@@ -411,6 +1071,12 @@
     {
       "type": 0,
       "value": "Komentarz"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "Zwraca wyniki z akcji najwyższego poziomu w podanej akcji o określonym zakresie takiej jak For_each, Until lub Scope."
     }
   ],
   "Oib1mL": [
@@ -431,16 +1097,52 @@
       "value": " min"
     }
   ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "Opcjonalne. Ustawienia regionalne, które zostaną użyte podczas analizowania ciągu daty i godziny."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Zwraca hosta z identyfikatora URI"
+    }
+  ],
   "OnrO5/": [
     {
       "type": 0,
       "value": "Wybierz tożsamość zarządzaną"
     }
   ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ta wartość określa ilość liczb całkowitych w tablicy."
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Collection functions"
+    }
+  ],
+  "P8ZBF9": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Kolekcja, z której należy pobrać pierwszy obiekt."
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
       "value": "Zakończono pomyślnie"
+    }
+  ],
+  "PKMkb/": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba dodawana do składnika 1."
     }
   ],
   "PP63jY": [
@@ -455,16 +1157,46 @@
       "value": "Zwiń"
     }
   ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba sekund do dodania. Może być ujemna na potrzeby odejmowania sekund."
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
       "value": "Przerwano"
     }
   ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "Funkcje przepływów pracy"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "Zwraca reprezentację base 64 ciągu wejściowego"
+    }
+  ],
   "Q/7unA": [
     {
       "type": 0,
       "value": "Obiekt"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on mniejszy lub równy porównywanemu obiektowi."
+    }
+  ],
+  "QEp3C8": [
+    {
+      "type": 0,
+      "value": "Konwertuj dane wejściowe na wartość typu JSON"
     }
   ],
   "QQYzHC": [
@@ -477,10 +1209,52 @@
       "value": "title"
     }
   ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Zwraca pojedynczą wartość odpowiadającą nazwie klucza w danych wyjściowych wyzwalacza form-data lub form-encoded"
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Funkcje ciągów"
+    }
+  ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Element"
+    }
+  ],
+  "QeE0k/": [
+    {
+      "type": 0,
+      "value": "Wymagane. Wartość konwertowana na wartość binarną."
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
       "value": "Trwa ładowanie..."
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Zwraca ciąg w formacie daty"
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Ciąg do użycia w celu rozgraniczania elementów."
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Required. A string containing the unit of time specified in the interval to subtract."
     }
   ],
   "Qu1HkA": [
@@ -491,6 +1265,12 @@
     {
       "type": 0,
       "value": " godz."
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Podzielony ciąg."
     }
   ],
   "RhH4pF": [
@@ -547,6 +1327,18 @@
       "value": "minutes"
     }
   ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "Konwertuj parametr na liczbę całkowitą"
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Sprawdza, czy ciąg zaczyna się od wartości (bez uwzględniania wielkości liter, kultura niezmienna)"
+    }
+  ],
   "SXb47U": [
     {
       "type": 1,
@@ -557,10 +1349,34 @@
       "value": " min"
     }
   ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa akcji z odpowiedzią w postaci danych formularza lub odpowiedzią zakodowaną w formularzu."
+    }
+  ],
+  "T7zcR6": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that must be true."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
       "value": "Niepowodzenie"
+    }
+  ],
+  "TI44R1": [
+    {
+      "type": 0,
+      "value": "Zwraca ciąg z wszystkimi elementami tablicy połączonymi ogranicznikami"
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Zwraca początek miesiąca z sygnatury czasowej przekazanego ciągu"
     }
   ],
   "TZv5JE": [
@@ -581,16 +1397,34 @@
       "value": "Tagi"
     }
   ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba, przez którą mnożona jest mnożna 1."
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
       "value": "Zwiń/rozwiń"
     }
   ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Generuje tablicę wartości całkowitych, zaczynając od konkretnej liczby"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
       "value": "Aby odwołać się do parametru, użyj listy zawartości dynamicznej."
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Zastępuje ciąg podanym ciągiem"
     }
   ],
   "USVffu": [
@@ -609,6 +1443,12 @@
     {
       "type": 0,
       "value": "Podana nazwa przebiegu przepływu pracy jest nieprawidłowa."
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba do podzielenia przez dzielnik."
     }
   ],
   "VXBWrq": [
@@ -639,6 +1479,30 @@
       "value": "max"
     }
   ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa nowej właściwości."
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Wymagane. Pierwsza liczba całkowita w tablicy."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "Skrót dla trigger().outputs"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "Zwraca wynik mnożenia dwóch liczb"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -655,6 +1519,18 @@
     {
       "type": 0,
       "value": " godz."
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "Skrót dla actions('actionName').outputs"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Łączy ze sobą dowolną liczbę ciągów"
     }
   ],
   "XFFpu/": [
@@ -693,10 +1569,28 @@
       "value": "Żądanie"
     }
   ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Funkcje matematyczne"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa akcji z żądanymi danymi wyjściowymi treści."
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Więcej informacji"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Zwraca binarną reprezentację identyfikatora URI danych"
     }
   ],
   "YHsAKl": [
@@ -721,16 +1615,64 @@
       "value": "Ciąg"
     }
   ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Umożliwia wyprowadzanie wartości wyrażenia z innych par nazw i wartości JSON lub danych wyjściowych wyzwalacza czasu wykonywania"
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Zwraca pojedynczą tablicę lub obiekt ze wszystkimi elementami z dowolnej tablicy lub obiektu przekazanego do tej funkcji. Parametry funkcji mogą być zestawem obiektów lub zestawem tablic (nie ich kombinacją). Jeśli w końcowych danych wyjściowych istnieją dwa obiekty o tej samej nazwie, ostatni obiekt o danej nazwie jest wyświetlany w obiekcie końcowym."
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "Brak"
     }
   ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Zwraca składnik dnia miesiąca z sygnatury czasowej ciągu"
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "Skrót dla trigger().outputs.body"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość, którą ciąg może się zaczynać."
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
       "value": "Ta operacja została już usunięta."
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba do podzielenia przez dzielnik."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba wystąpień podciągu do znalezienia."
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Liczba obiektów do usunięcia z początku kolekcji. Musi być dodatnią liczbą całkowitą."
     }
   ],
   "bH5LtI": [
@@ -747,10 +1689,22 @@
       "value": " jest już zarejestrowana"
     }
   ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on większy lub równy wartości, z którą jest porównywany."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Załaduj więcej"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "Zwraca maksymalną wartość w tablicy wejściowej liczb"
     }
   ],
   "bgfjqS": [
@@ -759,10 +1713,28 @@
       "value": "Ustawienie etykiety"
     }
   ],
+  "bzF/qn": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Kolekcja, z której należy pobrać pierwsze obiekty (liczba)."
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Zwraca obiekt z właściwością ustawioną na podaną wartość"
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "cJm+ah": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość, której indeks jest wyszukiwany."
     }
   ],
   "ci6ex1": [
@@ -789,6 +1761,12 @@
       "value": "Godzina rozpoczęcia"
     }
   ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Kolekcja, w której należy pominąć pierwsze obiekty (liczba)."
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -801,16 +1779,82 @@
       "value": "Dowiedz się więcej"
     }
   ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Zwraca ciągową reprezentację ciągu z kodowaniem base 64"
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "Konwertuj parametr na wartość logiczną"
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Zwraca tablicę wartości odpowiadających nazwie klucza z danych wyjściowych akcji form-data lub form-encoded"
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Dzieli ciąg, używając separatora"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Nie określono"
     }
   ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa zmiennej z żądanymi wartościami."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
       "value": "Godzina rozpoczęcia"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba, przez którą dzielona jest dzielna."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Indeks, w którym podciąg rozpoczyna się w parametrze 1."
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Wymagane. Obiekty do sprawdzenia pod kątem wartości null."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "Opcjonalne. Indeks miejsca, w którym należy zakończyć wyodrębnianie podciągu."
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość true, jeśli pierwszy argument jest większy od drugiego lub jemu równy"
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Funkcje logiczne"
     }
   ],
   "ftwXvc": [
@@ -825,10 +1869,46 @@
       "value": "Identyfikator URI"
     }
   ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Zwraca sygnaturę czasową mającą wartość bieżącej godziny powiększoną o określony przedział czasu."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "Zwraca wynik dzielenia dwóch liczb"
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość logiczna, która określa, którą wartość powinno zwracać wyrażenie."
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "Poprzednie z niepowodzeniem"
+    }
+  ],
+  "gMhc5o": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Ciąg do połączenia w pojedynczy ciąg."
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Funkcje konwersji"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "W przypadku użycia wewnątrz pętli until ta funkcja zwraca bieżący indeks iteracji określonej pętli."
     }
   ],
   "hN7iBP": [
@@ -885,6 +1965,12 @@
       "value": "seconds"
     }
   ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "Zwraca wynik odejmowania dwóch liczb"
+    }
+  ],
   "hdnZ9Y": [
     {
       "type": 0,
@@ -911,10 +1997,22 @@
       "value": "Komentarz"
     }
   ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Konwertuje ciąg na wielkie litery, używając reguł stosowania wielkości liter kultury niezmiennej"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
       "value": "Następna"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Wymagane. Identyfikator URI do analizy."
     }
   ],
   "iRjBf4": [
@@ -927,6 +2025,12 @@
     {
       "type": 0,
       "value": "Rozwiń"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Manipulation functions"
     }
   ],
   "iUs7pv": [
@@ -945,16 +2049,70 @@
       "value": " s"
     }
   ],
+  "j2MU0b": [
+    {
+      "type": 0,
+      "value": "Zwraca obiekt z usuniętą właściwością"
+    }
+  ],
+  "j39557": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość określonej zmiennej."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Zwraca losową liczbę całkowitą z określonego zakresu, który jest lewostronnie domknięty."
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wyrażenie do zanegowania."
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość konwertowana na ciąg."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg wejściowy w formacie base64."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa klucza zwracanych wartości danych formularza."
+    }
+  ],
   "jfInxm": [
     {
       "type": 0,
       "value": "Edytuj w pliku JSON"
     }
   ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg zakodowany w formacie base64."
+    }
+  ],
   "k41+13": [
     {
       "type": 0,
       "value": "Pominięte"
+    }
+  ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Tak"
     }
   ],
   "kHcCxH": [
@@ -975,10 +2133,34 @@
       "value": " s"
     }
   ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Zwraca ciągową reprezentację wejściowego ciągu based64"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
       "value": "Pobierz (Alt/Option + kliknięcie)"
+    }
+  ],
+  "kZuYgD": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość true, jeśli pierwszy argument jest mniejszy od drugiego"
+    }
+  ],
+  "keb4r1": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość true, jeśli dwie wartości są równe"
+    }
+  ],
+  "knylNW": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ta wartość jest następną liczbą całkowitą po największej liczbie całkowitej możliwej do zwrócenia."
     }
   ],
   "l36V56": [
@@ -1017,6 +2199,12 @@
       "value": "Tryb uruchamiania bezstanowego:"
     }
   ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "Skrót dla actions('actionName').outputs.body"
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -1035,6 +2223,78 @@
       "value": "Nazwa"
     }
   ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Zwraca sygnaturę czasową mającą wartość bieżącej godziny pomniejszoną o określony przedział czasu."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Zwraca ciągową reprezentację identyfikatora URI danych"
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "Adres URL koduje ciąg wejściowy"
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Ciąg do przekonwertowania na małe litery. Jeśli znak w ciągu nie ma odpowiadającej małej litery, w zwróconym ciągu zostanie on uwzględniony jako niezmieniony."
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość konwertowana na liczbę zmiennoprzecinkową."
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on mniejszy lub równy niż wartość, z którą jest porównywany."
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba jednostek czasu określająca żądany czas w przyszłości."
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa właściwości do usunięcia."
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on mniejszy od porównywanego obiektu."
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Dodaje liczbę całkowitą minut do przekazanej sygnatury czasowej ciągu"
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Zwraca ostatni element przekazanej tablicy lub ciągu"
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Dane XML służące do wyznaczenia wartości XPath."
+    }
+  ],
   "o1HOyf": [
     {
       "type": 1,
@@ -1049,10 +2309,22 @@
       "value": "max_page"
     }
   ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Wymagane. Identyfikator URI do zdekodowania do reprezentacji binarnej."
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Wprowadź identyfikator uruchomienia, aby je otworzyć"
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa klucza zwracanej wartości danych formularza."
     }
   ],
   "p16/4S": [
@@ -1067,10 +2339,40 @@
       "value": "Godzina zakończenia"
     }
   ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Wymagane. Wartości do połączenia jako tablica."
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Parametry"
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "Konwertuj dane wejściowe jako wartość typu XML"
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba, przez którą dzielona jest dzielna. Po wykonaniu dzielenia reszta zostanie usunięta."
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Zwraca pojedynczą tablicę lub obiekt z elementami wspólnymi między przekazanymi tablicami lub obiektami. Parametry funkcji mogą być zestawem obiektów lub zestawem tablic (nie ich kombinacją). Jeśli istnieją dwa obiekty o tej samej nazwie, ostatni obiekt o danej nazwie jest wyświetlany w obiekcie końcowym."
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "Usuwa z ciągu odstęp wiodący i końcowy"
     }
   ],
   "pr9GwA": [
@@ -1079,10 +2381,46 @@
       "value": "Odśwież"
     }
   ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Zwraca węzeł, zestaw węzłów lub wartość XML jako kod JSON na podstawie podanego wyrażenia XPath"
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Wymagane. Wartość do przypisania do właściwości."
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "Konwertuj parametr na ciąg"
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Dodaje liczbę całkowitą sekund do przekazanej sygnatury czasowej ciągu"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Tożsamość zarządzana"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Sprawdza, czy ciąg kończy się wartością (bez uwzględniania wielkości liter, kultura niezmienna)"
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość true, jeśli pierwszy argument jest mniejszy od drugiego lub jemu równy"
     }
   ],
   "qSt0Sb": [
@@ -1145,10 +2483,34 @@
       "value": "days"
     }
   ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Zwraca liczbę elementów w tablicy lub ciągu"
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość konwertowana na liczbę całkowitą."
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Umożliwia wyprowadzanie wartości wyrażenia z innych par nazw i wartości JSON lub danych wyjściowych akcji czasu wykonywania"
+    }
+  ],
   "r9SVE4": [
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "Nie"
     }
   ],
   "rCl53e": [
@@ -1157,16 +2519,76 @@
       "value": "Tytuł karty"
     }
   ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Wymagane. Tablica wartości służąca do odnalezienia wartości maksymalnej lub pierwsza wartość zestawu."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Zwraca reprezentację wartości zakodowaną jako identyfikator URI"
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Zwraca składnik dnia roku z sygnatury czasowej ciągu"
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Zwraca tablicę wartości odpowiadających nazwie klucza w danych wyjściowych wyzwalacza form-data lub form-encoded"
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg zawierający jednostkę czasu określoną w interwale do dodania."
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Kolekcja do sprawdzenia, czy jest pusta."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba odejmowana od odjemnej."
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
       "value": "Klucz"
     }
   ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość true, jeśli jeden z parametrów ma wartość true"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Nowy parametr"
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg zawierający nazwę docelowej strefy czasowej. Szczegółowe informacje można znaleźć na stronie https://msdn.microsoft.com/pl-pl/library/gg154758.aspx."
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "Zwraca adres URL do wywoływania wyzwalacza lub akcji"
     }
   ],
   "tImHz/": [
@@ -1187,10 +2609,34 @@
       "value": " godz."
     }
   ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Wymagane. Indeks części do pobrania."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Ta funkcja udostępnia szczegóły samego przepływu pracy w czasie wykonywania"
+    }
+  ],
   "tNoZx2": [
     {
       "type": 0,
       "value": "Typ"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Zwraca wartość true, jeśli pierwszy argument jest większy od drugiego"
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba godzin do dodania. Może być ujemna na potrzeby odejmowania godzin."
     }
   ],
   "uN4zFU": [
@@ -1199,16 +2645,70 @@
       "value": "OK"
     }
   ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Kolekcje do wyliczenia wartości. Obiekt, który pojawia się w dowolnej kolekcji, pojawia się również w wyniku."
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Dodaje liczbę całkowitą godzin do przekazanej sygnatury czasowej ciągu"
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba jednostek czasu określająca żądany czasu w przeszłości."
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Ciąg, który może zawierać wartość."
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
       "value": "Wartość domyślna"
     }
   ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Tworzy tablicę z parametrów"
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Generuje globalnie unikatowy ciąg (identyfikator GUID)"
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Zwraca ostatni indeks wartości w ciągu (bez uwzględniania wielkości liter, kultura niezmienna)"
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Wartość, którą ciąg może się kończyć."
+    }
+  ],
   "vSlNPe": [
     {
       "type": 0,
       "value": "Usuń"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa akcji z żądanymi danymi wyjściowymi."
     }
   ],
   "vwH/XV": [
@@ -1223,16 +2723,82 @@
       "value": "Właściwości przepływu pracy"
     }
   ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Odejmuje liczbę całkowitą określonych jednostek czasu od przekazanej sygnatury czasowej ciągu"
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Wymagane. Tablica wartości służąca do odnalezienia wartości minimalnej lub pierwsza wartość zestawu."
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Przekroczono limit czasu"
     }
   ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Ciąg wyszukiwany dla parametru 2 i aktualizowany przy użyciu parametru 3, jeśli parametr 2 zostanie znaleziony w parametrze 1."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Długość podciągu."
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "Zwraca określoną wartość zależnie od tego, czy wynikiem wyrażenia jest wartość true lub false"
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Konwertuje przekazaną sygnaturę czasową ciągu ze źródłowej strefy czasowej na format UTC"
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Zwraca pojedynczą tablicę lub obiekt z wszystkimi elementami zawartymi w tablicy lub obiekcie przekazanym do tej funkcji"
+    }
+  ],
   "woJQhv": [
     {
       "type": 0,
       "value": "Adres URL wywołania zwrotnego:"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Kolekcja, której długość należy uzyskać."
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "Zwraca ciągową reprezentację ciągu zakodowanego jako identyfikator URI"
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Wymagane. Nazwa nowej lub istniejącej właściwości."
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Zwraca ścieżkę z identyfikatora URI. Jeśli ścieżka nie jest określona, zwraca „/”"
     }
   ],
   "xt5TeT": [
@@ -1247,10 +2813,52 @@
       "value": "Wartość"
     }
   ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Required. The object to compare equality."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Wymagane. Ciąg, w którym względem znaków niebezpiecznych w adresie URL zostaną użyte znaki ucieczki."
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Wymagane. Wartość konwertowana na tablicę."
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Date and time functions"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "Wprowadź wartość domyślną dla parametru."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Wymagane. Wartość konwertowana na liczbę dziesiętną."
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Parametr wymagany. Ciąg przekonwertowany na wartość typu natywnego."
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Konwertuje ciąg z opcjonalnym określeniem ustawień regionalnych i formatu na datę."
     }
   ],
   "ziYCiA": [
@@ -1263,6 +2871,18 @@
     {
       "type": 0,
       "value": "Liczba zmiennoprzecinkowa"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Dodaje liczbę całkowitą określonych jednostek czasu do przekazanej sygnatury czasowej ciągu"
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Wymagane. Liczba minut do dodania. Może być ujemna na potrzeby odejmowania minut."
     }
   ]
 }

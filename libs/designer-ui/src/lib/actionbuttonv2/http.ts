@@ -103,7 +103,7 @@ export function addHeaderIfNotExists<TRequestBody>(request: HttpRequest<TRequest
 }
 
 export function loadHttpExtraHeaders(headers: Record<string, string>) {
-    HttpExtraHeaders = headers;
+  HttpExtraHeaders = headers;
 }
 
 type QueryRecord = Record<string, any>;
@@ -143,277 +143,287 @@ usage:
     });
  */
 export class HttpClient {
-    private _accessTokenHelper: AccessTokenHelper | undefined;
-    // private _analytics: Analytics;
-    private _baseUrl: string | undefined;
-    private _beforeRequestHandler: BeforeRequestHandler;
-    private _locale: string | undefined;
+  private _accessTokenHelper: AccessTokenHelper | undefined;
+  // private _analytics: Analytics;
+  private _baseUrl: string | undefined;
+  private _beforeRequestHandler: BeforeRequestHandler;
+  private _locale: string | undefined;
 
-    public static createInstance(options: HttpOptions): HttpClient {
-        return new HttpClient(options);
-    }
+  public static createInstance(options: HttpOptions): HttpClient {
+    return new HttpClient(options);
+  }
 
-    private static _defaultRequestHandler(request: HttpRequest<any>): Promise<HttpRequest<any>> {
-        return Promise.resolve(request);
-    }
+  private static _defaultRequestHandler(request: HttpRequest<any>): Promise<HttpRequest<any>> {
+    return Promise.resolve(request);
+  }
 
-    constructor(options: HttpOptions) {
-        // if (!options.analytics) {
-        //     throw new Error('analytics service required');
-        // }
+  constructor(options: HttpOptions) {
+    // if (!options.analytics) {
+    //     throw new Error('analytics service required');
+    // }
 
-        //this._analytics = options.analytics;
-        this._baseUrl = options.baseUrl;
-        this._beforeRequestHandler = HttpClient._defaultRequestHandler;
+    //this._analytics = options.analytics;
+    this._baseUrl = options.baseUrl;
+    this._beforeRequestHandler = HttpClient._defaultRequestHandler;
 
-        if (options.getAccessToken) {
-            this._accessTokenHelper = new AccessTokenHelper(options.getAccessToken);
-            this.setBeforeRequestHandler(async request => {
-                if (!request.dontAddAccessToken) {
-                    // eslint-disable-next-line no-useless-catch
-                    try {
-                        const accessToken = await this._accessTokenHelper!.getAccessToken();
-                        addHeaderIfNotExists(request, 'authorization', accessToken);
-                    } catch (exception) {
-                        //this._analytics.logError(MSLA_REQUEST_ACCESS_TOKEN, exception);
-                        throw exception;
-                    }
-                }
-                return request;
-            });
+    if (options.getAccessToken) {
+      this._accessTokenHelper = new AccessTokenHelper(options.getAccessToken);
+      this.setBeforeRequestHandler(async (request) => {
+        if (!request.dontAddAccessToken) {
+          // eslint-disable-next-line no-useless-catch
+          try {
+            const accessToken = await this._accessTokenHelper!.getAccessToken();
+            addHeaderIfNotExists(request, 'authorization', accessToken);
+          } catch (exception) {
+            //this._analytics.logError(MSLA_REQUEST_ACCESS_TOKEN, exception);
+            throw exception;
+          }
         }
-
-        this._locale = options.locale;
+        return request;
+      });
     }
 
-    setBeforeRequestHandler(beforeRequestHandler: BeforeRequestHandler) {
-        this._beforeRequestHandler = beforeRequestHandler || HttpClient._defaultRequestHandler;
+    this._locale = options.locale;
+  }
+
+  setBeforeRequestHandler(beforeRequestHandler: BeforeRequestHandler) {
+    this._beforeRequestHandler = beforeRequestHandler || HttpClient._defaultRequestHandler;
+  }
+
+  pathCombine(url: string, path: string): string {
+    let pathUrl: string;
+
+    if (!url || !path) {
+      pathUrl = url || path;
+      return pathUrl;
     }
 
-    pathCombine(url: string, path: string): string {
-        let pathUrl: string;
+    url = this._trimUrl(url);
+    path = this._trimUrl(path);
 
-        if (!url || !path) {
-            pathUrl = url || path;
-            return pathUrl;
+    pathUrl = `${url}/${path}`;
+
+    return pathUrl;
+  }
+
+  execute<TRequestBody, TResponseBody>(
+    httpMethod: string,
+    request: HttpRequest<TRequestBody>
+  ): Promise<HttpResponse<TResponseBody> | null> {
+    return this._do(httpMethod, request);
+  }
+
+  delete<TResponseBody>(request: HttpRequest<any>): Promise<HttpResponse<TResponseBody> | null> {
+    return this._do(HTTP_DELETE, request);
+  }
+
+  get<TResponseBody>(request: HttpRequest<any>): Promise<HttpResponse<TResponseBody>> {
+    return this._do(HTTP_GET, request);
+  }
+
+  patch<TRequestBody, TResponseBody>(request: HttpRequest<TRequestBody>): Promise<HttpResponse<TResponseBody> | null> {
+    return this._do(HTTP_PATCH, request);
+  }
+
+  post<TRequestBody, TResponseBody>(request: HttpRequest<TRequestBody>): Promise<HttpResponse<TResponseBody> | null> {
+    return this._do(HTTP_POST, request);
+  }
+
+  put<TRequestBody, TResponseBody>(request: HttpRequest<TRequestBody>): Promise<HttpResponse<TResponseBody> | null> {
+    return this._do(HTTP_PUT, request);
+  }
+
+  private async _do<TRequestBody, TResponseBody>(
+    httpMethod: string,
+    request: HttpRequest<TRequestBody>
+  ): Promise<HttpResponse<TResponseBody>> {
+    // Danielle removed batch
+
+    const parsedRequest = await this._parseRequest(httpMethod, await this._beforeRequestHandler(request));
+
+    const clientRequestId = this._getHeaderValue(
+      parsedRequest.init.headers as Headers | Record<string, string>,
+      X_MS_CLIENT_REQUEST_ID,
+      Guid.raw
+    );
+    //const startDuration = this._analytics.performanceNow();
+
+    let rawResponse: Response | undefined;
+    try {
+      //this._analytics.logHttpRequestStart(MSLA_REQUEST, httpMethod, parsedRequest.url, clientRequestId);
+
+      const response = await window.fetch(parsedRequest.url, parsedRequest.init);
+      rawResponse = response;
+
+      const body = await this._getResponseBody<TRequestBody>(request, response);
+      const { headers, ok, status, url } = rawResponse;
+      const httpResponse: HttpResponse<any> = {
+        body,
+        headers: this._setClientRequestIdInResponse(headers, clientRequestId),
+        ok,
+        status,
+        url,
+      };
+
+      // this._analytics.logHttpRequestEnd(
+      //     MSLA_REQUEST,
+      //     httpMethod,
+      //     parsedRequest.url,
+      //     this._extractResponseData(rawResponse),
+      //     this._analytics.performanceNow() - startDuration,
+      //     clientRequestId
+      // );
+
+      return httpResponse;
+    } catch (error) {
+      // this._analytics.logHttpRequestEnd(
+      //     MSLA_REQUEST,
+      //     httpMethod,
+      //     parsedRequest.url,
+      //     this._extractResponseData(rawResponse),
+      //     this._analytics.performanceNow() - startDuration,
+      //     clientRequestId,
+      //     {
+      //         error: error.stack ? error.stack : error.toString(),
+      //     }
+      // );
+
+      throw error;
+    }
+  }
+
+  private _getHeaderValue(headers: Headers | Record<string, string>, name: string, defaultValue: () => string): string {
+    if (!headers) {
+      return defaultValue();
+    }
+
+    if (headers instanceof Headers) {
+      if (headers.has(name)) {
+        return headers.get(name)!;
+      } else {
+        return defaultValue();
+      }
+    } else if (Object.prototype.hasOwnProperty.call(headers, name)) {
+      return (headers as Record<string, string>)[name];
+    } else {
+      return defaultValue();
+    }
+  }
+
+  private _extractResponseData(response: Response | undefined): ResponseData {
+    if (!response) {
+      return {
+        status: -1,
+      } as ResponseData;
+    }
+
+    const headers = response.headers || new Headers(),
+      responseData = {
+        status: response.status,
+      } as ResponseData;
+
+    if (headers.has(CONTENT_LENGTH)) {
+      responseData.contentLength = parseInt(headers.get(CONTENT_LENGTH)!, 10);
+    }
+
+    if (headers.has(X_MS_REQUEST_ID)) {
+      responseData.serviceRequestId = headers.get(X_MS_REQUEST_ID)!;
+    }
+
+    return responseData;
+  }
+
+  private _parseRequest<TRequestBody>(httpMethod: string, request: HttpRequest<TRequestBody>): ParsedRequest {
+    let url: string = this._baseUrl || '',
+      headers: Headers | Record<string, string>;
+    const init: RequestInit = {
+      method: httpMethod,
+    };
+
+    if (Object.prototype.hasOwnProperty.call(request, 'url')) {
+      // url required for nextLink
+      url = request.url!;
+    }
+
+    if (request.path) {
+      url = this.pathCombine(url, request.path);
+    }
+
+    url = this._getFullPathUrl({ path: url, query: request.query });
+    // eslint-disable-next-line prefer-const
+    headers = request.headers || new Headers();
+
+    if (!Object.prototype.hasOwnProperty.call(request, 'json')) {
+      request.json = true;
+    }
+
+    if (request.json) {
+      if (headers instanceof Headers) {
+        if (!headers.has('ACCEPT_HEADER')) {
+          // Danielle messing with this
+          headers.set(ACCEPT_HEADER, MIME_APPLICATION_JSON);
         }
-
-        url = this._trimUrl(url);
-        path = this._trimUrl(path);
-
-        pathUrl = `${url}/${path}`;
-
-        return pathUrl;
-    }
-
-    execute<TRequestBody, TResponseBody>(httpMethod: string, request: HttpRequest<TRequestBody>): Promise<HttpResponse<TResponseBody> | null> {
-        return this._do(httpMethod, request);
-    }
-
-    delete<TResponseBody>(request: HttpRequest<any>): Promise<HttpResponse<TResponseBody> | null> {
-        return this._do(HTTP_DELETE, request);
-    }
-
-    get<TResponseBody>(request: HttpRequest<any>): Promise<HttpResponse<TResponseBody>> {
-        return this._do(HTTP_GET, request);
-    }
-
-    patch<TRequestBody, TResponseBody>(request: HttpRequest<TRequestBody>): Promise<HttpResponse<TResponseBody> | null> {
-        return this._do(HTTP_PATCH, request);
-    }
-
-    post<TRequestBody, TResponseBody>(request: HttpRequest<TRequestBody>): Promise<HttpResponse<TResponseBody> | null> {
-        return this._do(HTTP_POST, request);
-    }
-
-    put<TRequestBody, TResponseBody>(request: HttpRequest<TRequestBody>): Promise<HttpResponse<TResponseBody> | null> {
-        return this._do(HTTP_PUT, request);
-    }
-
-    private async _do<TRequestBody, TResponseBody>(httpMethod: string, request: HttpRequest<TRequestBody>): Promise<HttpResponse<TResponseBody>> {
-        // Danielle removed batch
-
-        const parsedRequest = await this._parseRequest(httpMethod, await this._beforeRequestHandler(request));
-
-        const clientRequestId = this._getHeaderValue(parsedRequest.init.headers as Headers | Record<string, string>, X_MS_CLIENT_REQUEST_ID, Guid.raw);
-        //const startDuration = this._analytics.performanceNow();
-
-        let rawResponse: Response | undefined;
-        try {
-            //this._analytics.logHttpRequestStart(MSLA_REQUEST, httpMethod, parsedRequest.url, clientRequestId);
-
-            const response = await window.fetch(parsedRequest.url, parsedRequest.init);
-            rawResponse = response;
-
-            const body = await this._getResponseBody<TRequestBody>(request, response);
-            const { headers, ok, status, url } = rawResponse;
-            const httpResponse: HttpResponse<any> = {
-                body,
-                headers: this._setClientRequestIdInResponse(headers, clientRequestId),
-                ok,
-                status,
-                url,
-            };
-
-
-            // this._analytics.logHttpRequestEnd(
-            //     MSLA_REQUEST,
-            //     httpMethod,
-            //     parsedRequest.url,
-            //     this._extractResponseData(rawResponse),
-            //     this._analytics.performanceNow() - startDuration,
-            //     clientRequestId
-            // );
-
-            return httpResponse;
-        } catch (error) {
-            // this._analytics.logHttpRequestEnd(
-            //     MSLA_REQUEST,
-            //     httpMethod,
-            //     parsedRequest.url,
-            //     this._extractResponseData(rawResponse),
-            //     this._analytics.performanceNow() - startDuration,
-            //     clientRequestId,
-            //     {
-            //         error: error.stack ? error.stack : error.toString(),
-            //     }
-            // );
-
-            throw error;
+        headers.set(CONTENT_TYPE, MIME_APPLICATION_JSON);
+        headers.set(X_MS_CLIENT_REQUEST_ID, Guid.raw());
+        if (this._locale) {
+          headers.set(ACCEPT_LANGUAGE, this._locale);
         }
+      } else {
+        const recordHeaders = headers as Record<string, string>;
+        if (!headers['ACCEPT_HEADER']) {
+          // Danielle messing with this
+          recordHeaders[ACCEPT_HEADER] = MIME_APPLICATION_JSON;
+        }
+        recordHeaders[CONTENT_TYPE] = MIME_APPLICATION_JSON;
+        recordHeaders[X_MS_CLIENT_REQUEST_ID] = Guid.raw();
+        if (this._locale) {
+          recordHeaders[ACCEPT_LANGUAGE] = this._locale;
+        }
+      }
+    } else if (request.shouldIncludeClientRequestId) {
+      if (headers instanceof Headers) {
+        headers.set(X_MS_CLIENT_REQUEST_ID, Guid.raw());
+      } else {
+        (headers as Record<string, string>)[X_MS_CLIENT_REQUEST_ID] = Guid.raw();
+      }
     }
 
-    private _getHeaderValue(headers: Headers | Record<string, string>, name: string, defaultValue: () => string): string {
-        if (!headers) {
-            return defaultValue();
-        }
-
+    for (const key in HttpExtraHeaders) {
+      if (HttpExtraHeaders[key]) {
         if (headers instanceof Headers) {
-            if (headers.has(name)) {
-                return headers.get(name)!;
-            } else {
-                return defaultValue();
-            }
-        } else if (Object.prototype.hasOwnProperty.call(headers, name)) {
-            return (headers as Record<string, string>)[name];
+          headers.set(key, HttpExtraHeaders[key]);
         } else {
-            return defaultValue();
+          (headers as Record<string, string>)[key] = HttpExtraHeaders[key];
         }
+      }
     }
 
-    private _extractResponseData(response: Response | undefined): ResponseData {
-        if (!response) {
-            return {
-                status: -1,
-            } as ResponseData;
-        }
+    init.headers = headers;
 
-        const headers = response.headers || new Headers(),
-            responseData = {
-                status: response.status,
-            } as ResponseData;
-
-        if (headers.has(CONTENT_LENGTH)) {
-            responseData.contentLength = parseInt(headers.get(CONTENT_LENGTH)!, 10);
-        }
-
-        if (headers.has(X_MS_REQUEST_ID)) {
-            responseData.serviceRequestId = headers.get(X_MS_REQUEST_ID)!;
-        }
-
-        return responseData;
+    if (Object.prototype.hasOwnProperty.call(request, 'body')) {
+      if (request.json) {
+        init.body = JSON.stringify(request.body);
+      } else {
+        init.body = request.body as any;
+      }
     }
 
-    private _parseRequest<TRequestBody>(httpMethod: string, request: HttpRequest<TRequestBody>): ParsedRequest {
-        let url: string = this._baseUrl || '',
-            headers: Headers | Record<string, string>;
-        const init: RequestInit = {
-            method: httpMethod,
-        };
+    const parsedRequest = { init, url } as ParsedRequest;
 
-        if (Object.prototype.hasOwnProperty.call(request, 'url')) {
-            // url required for nextLink
-            url = request.url!;
-        }
+    return parsedRequest;
+  }
 
-        if (request.path) {
-            url = this.pathCombine(url, request.path);
-        }
+  private _getFullPathUrl(path: string, query: QueryRecord): string {
+    let relativeUrl = path;
 
-        url = this._getFullPathUrl({ path: url, query: request.query });
-        // eslint-disable-next-line prefer-const
-        headers = request.headers || new Headers();
-
-        if (!Object.prototype.hasOwnProperty.call(request,'json')) {
-            request.json = true;
-        }
-
-        if (request.json) {
-            if (headers instanceof Headers) {
-                if (!headers.has('ACCEPT_HEADER')) {  // Danielle messing with this
-                    headers.set(ACCEPT_HEADER, MIME_APPLICATION_JSON);
-                }
-                headers.set(CONTENT_TYPE, MIME_APPLICATION_JSON);
-                headers.set(X_MS_CLIENT_REQUEST_ID, Guid.raw());
-                if (this._locale) {
-                    headers.set(ACCEPT_LANGUAGE, this._locale);
-                }
-            } else {
-                const recordHeaders = headers as Record<string, string>;
-                if (!headers['ACCEPT_HEADER']) {  // Danielle messing with this
-                    (recordHeaders)[ACCEPT_HEADER] = MIME_APPLICATION_JSON;
-                }
-                (recordHeaders)[CONTENT_TYPE] = MIME_APPLICATION_JSON;
-                (recordHeaders)[X_MS_CLIENT_REQUEST_ID] = Guid.raw();
-                if (this._locale) {
-                    (recordHeaders)[ACCEPT_LANGUAGE] = this._locale;
-                }
-            }
-        } else if (request.shouldIncludeClientRequestId) {
-            if (headers instanceof Headers) {
-                headers.set(X_MS_CLIENT_REQUEST_ID, Guid.raw());
-            } else {
-                (headers as Record<string, string>)[X_MS_CLIENT_REQUEST_ID] = Guid.raw();
-            }
-        }
-
-        for (const key in HttpExtraHeaders) {
-            if (HttpExtraHeaders[key]) {
-                if (headers instanceof Headers) {
-                    headers.set(key, HttpExtraHeaders[key]);
-                } else {
-                    (headers as Record<string, string>)[key] = HttpExtraHeaders[key];
-                }
-            }
-        }
-
-        init.headers = headers;
-
-        if (Object.prototype.hasOwnProperty.call(request, 'body')) {
-            if (request.json) {
-                init.body = JSON.stringify(request.body);
-            } else {
-                init.body = <any>request.body;
-            }
-        }
- 
-        const parsedRequest = { init, url} as ParsedRequest;
-
-        return parsedRequest; 
+    if (query) {
+      relativeUrl += '?';
+      Object.keys(query).forEach((queryKey) => {
+        relativeUrl += `${encodeURIComponent(queryKey)}=${encodeURIComponent(query[queryKey])}&`;
+      });
+      relativeUrl = relativeUrl.substr(0, relativeUrl.length - 1);
     }
 
-    
-    private _getFullPathUrl( path: string, query: QueryRecord): string {
-        let relativeUrl = path;
-
-        if (query) {
-            relativeUrl += '?';
-            Object.keys(query).forEach(queryKey => {
-                relativeUrl += `${encodeURIComponent(queryKey)}=${encodeURIComponent(query[queryKey])}&`;
-            });
-            relativeUrl = relativeUrl.substr(0, relativeUrl.length - 1);
-        }
-
-        return relativeUrl;
-    }
+    return relativeUrl;
+  }
 }

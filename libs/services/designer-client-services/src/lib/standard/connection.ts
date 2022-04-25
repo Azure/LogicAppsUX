@@ -1,6 +1,7 @@
 import type { HttpOptions } from '../common/http/http';
 import { HttpClient } from '../common/http/http';
-import type { Connector } from '../common/models/connector';
+import type { IConnectionService } from '../connection';
+import type { Connector } from '@microsoft-logic-apps/utils';
 
 interface StandardConnectionServiceArgs {
   apiVersion: string;
@@ -21,7 +22,7 @@ export class StandardConnectionService {
   }
 
   dispose(): void {
-    console.log('dispose');
+    return;
   }
 
   async getConnector(connectorId: string): Promise<Connector> {

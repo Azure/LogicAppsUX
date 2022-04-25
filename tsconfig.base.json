@@ -20,6 +20,7 @@
     "paths": {
       "@microsoft-logic-apps/designer-client-services": ["libs/services/designer-client-services/src/index.ts"],
       "@microsoft-logic-apps/intl": ["libs/services/intl/src/index.ts"],
+      "@microsoft-logic-apps/parsers": ["libs/parsers/src/index.ts"],
       "@microsoft-logic-apps/resolution-service": ["libs/services/resolution-service/src/index.ts"],
       "@microsoft-logic-apps/utils": ["libs/utils/src/index.ts"],
       "@microsoft/designer-ui": ["libs/designer-ui/src/index.ts"],

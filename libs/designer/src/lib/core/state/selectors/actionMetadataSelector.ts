@@ -1,7 +1,7 @@
 import type { RootState } from '../../store';
 import type { OperationIds } from '../operationMetadataSlice';
-import type { OperationManifestProperties } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import type { OperationManifestProperties } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 

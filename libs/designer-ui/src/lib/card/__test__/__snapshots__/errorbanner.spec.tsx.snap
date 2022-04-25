@@ -19,6 +19,24 @@ exports[`lib/card/errorbanner should render 1`] = `
     role="none"
   >
     errorMessage
+    <div
+      hidden={true}
+      id="tooltip0"
+      style={
+        Object {
+          "border": 0,
+          "height": 1,
+          "margin": -1,
+          "overflow": "hidden",
+          "padding": 0,
+          "position": "absolute",
+          "whiteSpace": "nowrap",
+          "width": 1,
+        }
+      }
+    >
+      errorMessage
+    </div>
   </div>
 </div>
 `;

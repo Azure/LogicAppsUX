@@ -2,6 +2,7 @@ import constants from '../../common/constants';
 import { AboutTab } from './panelTabs/aboutTab';
 import { RequestPanelTab } from './panelTabs/requestTab';
 import { RetryPanelTab } from './panelTabs/retryTab';
+import { SettingsTab } from './panelTabs/settingsTab';
 import type { PanelTab } from './panelUtil';
 import * as React from 'react';
 
@@ -33,4 +34,13 @@ export const aboutTab: PanelTab = {
   content: <AboutTab />,
   order: 0,
   icon: 'Info',
+};
+
+export const settingsTab: PanelTab = {
+  title: 'Settings',
+  name: constants.PANEL_TAB_NAMES.SETTINGS,
+  description: 'Request Settings',
+  enabled: true,
+  content: <SettingsTab />,
+  order: 0,
 };

@@ -57,9 +57,9 @@ const DND_OPTIONS = {
 };
 
 export const Designer = () => {
-  const { collapsed, selectedNode } = useSelector((state: RootState) => {
-    const { collapsed, selectedNode } = state.panel;
-    return { collapsed, selectedNode };
+  const { collapsed, selectedNode, isDiscovery } = useSelector((state: RootState) => {
+    const { collapsed, selectedNode, isDiscovery } = state.panel;
+    return { collapsed, selectedNode, isDiscovery };
   });
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch();

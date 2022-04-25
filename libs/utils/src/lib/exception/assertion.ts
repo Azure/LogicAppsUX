@@ -1,4 +1,4 @@
-import { BaseException } from '@microsoft-logic-apps/utils';
+import { BaseException } from './baseexception';
 
 export const AssertionExceptionName = 'Core.AssertionException';
 
@@ -48,12 +48,7 @@ export enum AssertionErrorCode {
 }
 
 export class AssertionException extends BaseException {
-  constructor(
-    code: AssertionErrorCode,
-    message: string,
-    data?: Record<string, any>,
-    innerException?: any
-  ) {
+  constructor(code: AssertionErrorCode, message: string, data?: Record<string, any>, innerException?: any) {
     super(AssertionExceptionName, message, code, data, innerException);
   }
 }
