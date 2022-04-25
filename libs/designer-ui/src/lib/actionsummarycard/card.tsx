@@ -17,12 +17,15 @@ export interface CommonCardProps {
 
 export const OperationCard = (props: OperationCardProps) => {
   const intl = getIntl();
-  const logoAltDescriptor: MessageDescriptor = {
-    id: 'logo-description',
-    defaultMessage: 'logo for ' + props.connectorName,
-    description: 'Alternate text for accessibility, describes logo for corresponding connector',
-  };
-  const logoAltText = intl.formatMessage(logoAltDescriptor);
+  const logoAltText = intl.formatMessage(
+    {
+      defaultMessage: 'logo for {connectorName}',
+      description: 'Alternate text for accessibility, describes logo for corresponding connector',
+    },
+    {
+      connectorName: props.connectorName,
+    }
+  );
 
   return (
     <div className="msla-operation-card">
