@@ -1,7 +1,5 @@
 import { ExpressionException, ExpressionExceptionCode } from '../common/exceptions/expression';
 import {
-  ExpressionFunctionNames,
-  ExpressionType,
   isFunction,
   isLiteralExpression,
   isStringInterpolation,
@@ -16,6 +14,7 @@ import type {
   ExpressionLiteral,
   ExpressionStringInterpolation,
 } from '../models/expression';
+import { ExpressionFunctionNames, ExpressionType } from '../models/expression';
 import { isParametersObject } from '../models/parameters';
 import { copy, equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 

@@ -1,19 +1,6 @@
 import type { Expression, ExpressionFunction, ExpressionLiteral, ExpressionStringInterpolation } from '../../models/expression';
+import { ExpressionFunctionNames, ExpressionType } from '../../models/expression';
 import { equals, isNullOrEmpty } from '@microsoft-logic-apps/utils';
-
-export enum ExpressionType {
-  NullLiteral = 'NullLiteral',
-  BooleanLiteral = 'BooleanLiteral',
-  NumberLiteral = 'NumberLiteral',
-  StringLiteral = 'StringLiteral',
-  Function = 'Function',
-  StringInterpolation = 'StringInterpolation',
-}
-
-export enum ExpressionFunctionNames {
-  PARAMETERS = 'PARAMETERS',
-  APPSETTING = 'APPSETTING',
-}
 
 export function isNumeric(ch: string) {
   return /[0-9]/g.test(ch);

@@ -1,24 +1,10 @@
+import { ExpressionConstants } from '../common/constants';
 import { ExpressionExceptionCode } from '../common/exceptions/expression';
 import { ScannerException } from '../common/exceptions/scanner';
-import type { ExpressionToken } from '../models/expression';
-import { equals } from '@microsoft-logic-apps/utils';
-import { ExpressionConstants } from '../common/constants';
 import { isNumeric, isWhitespace } from '../common/helpers/expression';
-
-export enum ExpressionTokenType {
-  Dot = 'Dot',
-  Comma = 'Comma',
-  LeftParenthesis = 'LeftParenthesis',
-  RightParenthesis = 'RightParenthesis',
-  LeftSquareBracket = 'LeftSquareBracket',
-  RightSquareBracket = 'RightSquareBracket',
-  QuestionMark = 'QuestionMark',
-  StringLiteral = 'StringLiteral',
-  IntegerLiteral = 'IntegerLiteral',
-  FloatLiteral = 'FloatLiteral',
-  Identifier = 'Identifier',
-  EndOfData = 'EndOfData',
-}
+import type { ExpressionToken } from '../models/expression';
+import { ExpressionTokenType } from '../models/expression';
+import { equals } from '@microsoft-logic-apps/utils';
 
 export class ExpressionScanner {
   private _expression: string;
