@@ -1,4 +1,3 @@
-
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import * as SwaggerConstants from './constants';

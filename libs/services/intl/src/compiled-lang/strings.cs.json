@@ -5,6 +5,18 @@
       "value": "Popisek nastavení"
     }
   ],
+  "+g+mch": [
+    {
+      "type": 0,
+      "value": "Vrátí text pro určitou část ve výstupu akce s několika částmi."
+    }
+  ],
+  "+lpuMl": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Hodnota, která se má vrátit, pokud má výraz hodnotu false."
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -17,10 +29,64 @@
       "value": "Čekající"
     }
   ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "Vrátí prvek pole, který začíná na indexu Počet."
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "Převede vstup na pole."
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Kolekce, ze které se mají připojit položky."
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Vrátí prvních Count prvků z předaného pole nebo řetězce."
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Vrátí začátek hodiny do předaného řetězcového časového razítka."
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "Vrátí adresu URL k volání aktivační události nebo akce. Poznámka: Tuto funkci je možné použít jenom v httpWebhook a apiConnectionWebhook, ne v akcích typu manual, recurrence, http a apiConnection."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec kódovaný ve formátu base64."
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "Dekóduje vstupní řetězec jako adresu URL."
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
       "value": "Zobrazit nabídku spuštění"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "Vrátí binární reprezentaci řetězce zakódovaného jako identifikátor URI."
     }
   ],
   "0ZlNtf": [
@@ -29,16 +95,70 @@
       "value": "Proběhlo úspěšně s opakováním pokusů"
     }
   ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Řetězec, který se má převést na velká písmena. Pokud některý znak v řetězci nemá odpovídající znak velké abecedy, zůstane ve vráceném řetězci beze změny."
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "Vrátí zbytek po dělení daných dvou čísel (modulo)."
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Řetězec, který může obsahovat hodnotu."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Vrátí binární reprezentaci vstupního řetězce identifikátoru URI dat."
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
       "value": "Další příkazy"
     }
   ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Identifikátor URI dat, který se má převést do formátu řetězce."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "Vrátí port z identifikátoru URI. Pokud se port nezadá, vrátí výchozí port protokolu."
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
       "value": "Komentář"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Hodnota, která se má převést na XML."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec kódovaný jako identifikátor URI."
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "Převede argument parametru na číslo s plovoucí desetinnou čárkou."
     }
   ],
   "1R6Vaa": [
@@ -115,16 +235,52 @@
       "value": "count"
     }
   ],
+  "1TE0e8": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Hodnota, jejíž index se má hledat."
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není menší než porovnávaná hodnota."
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Zavřít"
     }
   ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Vrátí binární reprezentaci řetězce s kódováním Base 64."
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Hodnota, která se má převést na identifikátor URI dat."
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
       "value": "Koncový čas"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Vrátí jednu hodnotu, která odpovídá názvu klíče z výstupu akce form-data nebo form-encoded."
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název akce s odpovědí form-data nebo form-encoded."
     }
   ],
   "2mnU/w": [
@@ -139,10 +295,52 @@
       "value": "Identifikátor"
     }
   ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Oddělovač."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "S chybou"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Povinné. Objekt, ze kterého se odebere vlastnost"
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Počet zadaných jednotek času, které se mají odečíst"
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Nejnižší celé číslo, které se může vrátit."
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Počet dnů, které se mají přičíst. Může to být i záporná hodnota, při které se dny odečtou."
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Jednotka času zadaného v intervalu"
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název parametru, jehož hodnoty požadujete."
     }
   ],
   "4cVuMw": [
@@ -151,10 +349,40 @@
       "value": "Komentáře je možné přidávat jenom při úpravách vstupů kroku."
     }
   ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "Vrátí minimální hodnotu vstupního pole čísel."
+    }
+  ],
   "4vmGh0": [
     {
       "type": 0,
       "value": "ID žádosti o služby"
+    }
+  ],
+  "5J7j9k": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Výraz jazyka XPath, který se má vyhodnotit."
+    }
+  ],
+  "5aa76N": [
+    {
+      "type": 0,
+      "value": "Vrátí první prvek v předaném poli nebo řetězci."
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Vrátí true, pokud objekt, pole nebo řetězec jsou prázdné."
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název smyčky, jejíž položku chcete získat."
     }
   ],
   "5qzZMo": [
@@ -169,10 +397,28 @@
       "value": "Odstranit parametr"
     }
   ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší než porovnávaná hodnota."
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
       "value": "Zobrazit spuštění"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Kolekce, ve které se má hledat."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název akce s odpovědí s více částmi."
     }
   ],
   "6oqk+A": [
@@ -181,16 +427,40 @@
       "value": "Předchozí"
     }
   ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Číslo, kterým se má vynásobit násobenec 2."
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
       "value": "OK"
     }
   ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Řetězec, ze kterého se má získat podřetězec."
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "Nepovinné. Národní prostředí, které se má použít při formátování (výchozí možnost je en-us)"
+    }
+  ],
   "7k9jXx": [
     {
       "type": 0,
       "value": "Stavový kód"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Vrátí počet taktů (v intervalu 100 nanosekund) řetězcového časového razítka od 1. ledna 0001 00:00:00 UT."
     }
   ],
   "7yEdSt": [
@@ -205,10 +475,52 @@
       "value": "Kopírovat adresu URL"
     }
   ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Řetězec, který může obsahovat hodnotu."
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Hodnota, která se má vrátit, pokud má výraz hodnotu true."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Vrátí řetězec formátovaného čísla."
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší nebo rovný porovnávanému objektu."
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
       "value": "Návrhář se nedá vykreslit, protože v definici je více než jeden trigger."
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec, který se má kódovat jako identifikátor URI."
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Přidá celočíselný počet dní do předaného řetězcového časového razítka."
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Vrátí jedno pole nebo objekt, který má prvky společné pro předaná pole nebo objekty."
     }
   ],
   "99vsJy": [
@@ -217,10 +529,76 @@
       "value": "Konektor"
     }
   ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Vrátí identifikátor URI určité hodnoty."
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Vrátí objekt s jedním párem vlastnost-hodnota navíc."
+    }
+  ],
+  "9b4xDa": [
+    {
+      "type": 0,
+      "value": "panel"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "Vrátí výsledek součtu daných dvou čísel."
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "Vrátí true, pokud jsou oba parametry true."
+    }
+  ],
+  "ANbEeQ": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název akce, jejíž hodnoty požadujete."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec, který se má kódovat do formátu base64."
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Index části, která se má načíst."
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Jednoznakový specifikátor formátu nebo vlastní formátovací vzor, který určuje, jak formátovat hodnotu tohoto časového razítka. Pokud není formát zadaný, použije se formát ISO 8601 (o)."
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec kódovaný jako identifikátor URI."
+    }
+  ],
   "BKL0ZG": [
     {
       "type": 0,
       "value": "Čas zahájení"
+    }
+  ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec, ze kterého se mají dekódovat znaky, které nejsou pro adresu URL bezpečné."
     }
   ],
   "Bn8iTS": [
@@ -229,10 +607,34 @@
       "value": "Typ stavu:"
     }
   ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "Jeden specifikátor formátu, který označuje, jak formátovat hodnotu tohoto GUID"
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší než porovnávaný objekt."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
       "value": "Připojení je povinné"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Vrátí cestu a dotaz z identifikátoru URI."
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Povinné. Řetězec, z jehož začátku a konce se odeberou prázdné znaky."
     }
   ],
   "DFo+mo": [
@@ -247,10 +649,52 @@
       "value": "Doba trvání"
     }
   ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Převede parametr na desetinné číslo."
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
       "value": "Odpověď"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Povinné. Index, kde se má podřetězec začít extrahovat"
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Počet zadaných jednotek času, které se mají přičíst"
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Vrátí hodnotu parametru definovanou v definici."
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Vrátí část řetězce definovanou počátečním a koncovým indexem."
+    }
+  ],
+  "FS+/Tb": [
+    {
+      "type": 0,
+      "value": "Vrátí text pro určitou část ve výstupu triggeru s několika částmi."
+    }
+  ],
+  "FVavKy": [
+    {
+      "type": 0,
+      "value": "Vrátí začátek dne do předaného řetězcového časového razítka."
     }
   ],
   "FXLR5M": [
@@ -307,10 +751,52 @@
       "value": "hours"
     }
   ],
+  "Fgq3Db": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Kolekce, ze které se má získat poslední objekt."
+    }
+  ],
+  "Fh2HDb": [
+    {
+      "type": 0,
+      "value": "Vrátí první index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
       "value": "Stav"
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Řetězec, který může obsahovat hodnotu."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "Vrátí dotaz z identifikátoru URI."
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Objekt, který se má najít v kolekci Within."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Funkce odkazů"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Vrátí true, pokud jsou parametry false."
     }
   ],
   "Gmya+V": [
@@ -331,6 +817,30 @@
       "value": "Pole"
     }
   ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "Funkce parsování identifikátorů URI"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Povinné. Řetězec, který se má rozdělit"
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Číslo, od kterého se odečte menšitel."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název klíče datové hodnoty ve formuláři, která se má vrátit."
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -343,16 +853,118 @@
       "value": "Hodnota nastavení"
     }
   ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Převede předané řetězcové časové razítko z formátu UTC na cílové časové pásmo."
+    }
+  ],
+  "Ip7Iax": [
+    {
+      "type": 0,
+      "value": "Vrátí index n-tého výskytu hodnoty v řetězci (rozlišuje velká a malá písmena, invariantní jazyková verze)"
+    }
+  ],
+  "IpVwYT": [
+    {
+      "type": 0,
+      "value": "Vrátí první objekt v předaných argumentech, který není null."
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Převede řetězec na malá písmena pomocí pravidel pro používání velkých a malých písmen v invariantní jazykové verzi."
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec, který obsahuje časový údaj."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Hodnota, která se má převést na logickou hodnotu."
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+    }
+  ],
   "JbgTET": [
     {
       "type": 0,
       "value": "Metoda"
     }
   ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Vrátí true, pokud slovník obsahuje daný klíč, pokud pole obsahuje danou hodnotu nebo pokud řetězec obsahuje daný podřetězec."
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Povinné. Číslo, které se má formátovat"
+    }
+  ],
   "JnlcZQ": [
     {
       "type": 0,
       "value": "Název:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Povinné. Číselný řetězec formátu"
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Povinné. Objekt, do kterého se přidá nová vlastnost"
+    }
+  ],
+  "K90YEU": [
+    {
+      "type": 0,
+      "value": "Vrátí podmnožinu znaků z řetězce."
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Počet objektů, které se mají získat z kolekce. Musí to být kladné celé číslo."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Vrátí část řetězcového časového razítka, která představuje den v týdnu."
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "Vrátí schéma z identifikátoru URI."
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "Když se tato funkce použije v rámci smyčky for-each, vrátí aktuální položku zadané smyčky."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that may be true."
     }
   ],
   "M0HMjE": [
@@ -365,6 +977,36 @@
     {
       "type": 0,
       "value": "Parametry budou uloženy při uložení pracovního postupu. Tady je můžete před uložením upravit, případně je můžete po uložení upravit na stránce parametrů."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "Nepovinné. Název akce s určeným rozsahem, u níž požadujete vstupy a výstupy z akcí na nejvyšší úrovni v rámci daného rozsahu."
+    }
+  ],
+  "M9mzP6": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Číslo, které se má přičíst ke sčítanci 2."
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Kolekce k vyhodnocení. Objekt musí být ve všech kolekcích, které se předávají do výsledku."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Identifikátor URI dat, který se má převést do binárního formátu."
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Vrátí aktuální časové razítko jako řetězec."
     }
   ],
   "Mb+Eaq": [
@@ -385,16 +1027,34 @@
       "value": "Neočekávaná chyba"
     }
   ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název klíče datových hodnot ve formuláři, které se mají vrátit."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
       "value": "Stav"
     }
   ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Vrátí binární reprezentaci hodnoty."
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
       "value": "Upravit parametr"
+    }
+  ],
+  "OD8igU": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec, který obsahuje název zdrojového časového pásma. Podrobnosti najdete tady: https://msdn.microsoft.com/en-us/library/gg154758.aspx"
     }
   ],
   "OFKZzQ": [
@@ -407,6 +1067,12 @@
     {
       "type": 0,
       "value": "Komentář"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "Vrátí výsledky z akcí na nejvyšší úrovni s určeným rozsahem, například z akcí For_each, Until nebo Scope."
     }
   ],
   "Oib1mL": [
@@ -427,16 +1093,52 @@
       "value": " m"
     }
   ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "Nepovinné. Národní prostředí, které se má použít při parsování řetězce s datem a časem."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Vrátí hostitele z identifikátoru URI."
+    }
+  ],
   "OnrO5/": [
     {
       "type": 0,
       "value": "Vyberte spravovanou identitu"
     }
   ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Tato hodnota představuje počet celých čísel v poli."
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Collection functions"
+    }
+  ],
+  "P8ZBF9": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Kolekce, ze které se má získat první objekt."
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
       "value": "Podařilo se"
+    }
+  ],
+  "PKMkb/": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Číslo, které se má přičíst ke sčítanci 1."
     }
   ],
   "PP63jY": [
@@ -451,16 +1153,46 @@
       "value": "Sbalit"
     }
   ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Počet sekund, které se mají přičíst. Může to být i záporná hodnota, při které se sekundy odečtou."
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
       "value": "Přerušeno"
     }
   ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "Funkce pracovních postupů"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "Vrátí reprezentaci Base 64 vstupního řetězce."
+    }
+  ],
   "Q/7unA": [
     {
       "type": 0,
       "value": "Objekt"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není menší nebo rovný porovnávanému objektu."
+    }
+  ],
+  "QEp3C8": [
+    {
+      "type": 0,
+      "value": "Převede vstup na hodnotu typu JSON."
     }
   ],
   "QQYzHC": [
@@ -473,16 +1205,52 @@
       "value": "title"
     }
   ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Vrátí jednu hodnotu, která odpovídá názvu klíče z výstupu triggeru form-data nebo form-encoded."
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Řetězcové funkce"
+    }
+  ],
   "QbJDi7": [
     {
       "type": 0,
-      "value": "Item"
+      "value": "Položka"
+    }
+  ],
+  "QeE0k/": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Hodnota, která se převádí do binárního formátu."
     }
   ],
   "QknZQ1": [
     {
       "type": 0,
       "value": "Načítání…"
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Vrátí řetězec ve formátu data."
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Řetězec, jímž se mají položky oddělit."
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Required. A string containing the unit of time specified in the interval to subtract."
     }
   ],
   "Qu1HkA": [
@@ -493,6 +1261,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Rozdělený řetězec."
     }
   ],
   "RhH4pF": [
@@ -549,6 +1323,18 @@
       "value": "minutes"
     }
   ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "Převede parametr na celé číslo."
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Zkontrolujte, jestli řetězec začíná určitou hodnotou (nerozlišuje velikost písmen, invariantní jazyková verze)."
+    }
+  ],
   "SXb47U": [
     {
       "type": 1,
@@ -559,10 +1345,34 @@
       "value": " m"
     }
   ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název akce s odpovědí form-data nebo form-encoded."
+    }
+  ],
+  "T7zcR6": [
+    {
+      "type": 0,
+      "value": "Required. The expressions that must be true."
+    }
+  ],
   "T8Xqt9": [
     {
       "type": 0,
       "value": "Selhání"
+    }
+  ],
+  "TI44R1": [
+    {
+      "type": 0,
+      "value": "Vrátí řetězec s jednotlivými položkami pole spojenými oddělovači."
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Vrátí začátek měsíce řetězcového časového razítka."
     }
   ],
   "TZv5JE": [
@@ -583,16 +1393,34 @@
       "value": "Značky"
     }
   ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Číslo, kterým se má vynásobit násobenec 1."
+    }
+  ],
   "Tz5jTR": [
     {
       "type": 0,
       "value": "Sbalit nebo rozbalit"
     }
   ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Vygeneruje pole celých čísel, které začíná určitým číslem."
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
       "value": "Pokud chcete odkazovat na parametr, použijte seznam dynamického obsahu."
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Nahradí řetězec daným řetězcem."
     }
   ],
   "USVffu": [
@@ -611,6 +1439,12 @@
     {
       "type": 0,
       "value": "Název běhu pracovního postupu není platný."
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Číslo, které se má dělit dělitelem."
     }
   ],
   "VXBWrq": [
@@ -641,6 +1475,30 @@
       "value": "max"
     }
   ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Povinné. Název nové vlastnosti"
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. První celé číslo v poli."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "Zkratka pro trigger().outputs"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "Vrátí výsledek vynásobení daných dvou čísel."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -657,6 +1515,18 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "Zkratka pro actions('actionName').outputs"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Spojí dohromady libovolný počet řetězců."
     }
   ],
   "XFFpu/": [
@@ -695,10 +1565,28 @@
       "value": "Žádost"
     }
   ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Matematické funkce"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název akce, jejíž textové výstupy požadujete."
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Další informace"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Vrátí binární reprezentaci identifikátoru URI dat."
     }
   ],
   "YHsAKl": [
@@ -723,16 +1611,64 @@
       "value": "Řetězec"
     }
   ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Umožní výrazu odvodit svoji hodnotu z jiných párů názvu a hodnoty JSON nebo výstupu triggeru modulu runtime."
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Vrátí jedno pole nebo objekt, kde všechny prvky jsou buď v poli, nebo objektu předávaném této funkci. Parametry pro tuto funkci můžou být buď sada objektů, nebo sada polí (ne kombinace obou). Pokud jsou v konečném výstupu dva objekty se stejným názvem, zahrne se do konečného objektu poslední objekt s tímto názvem."
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "Žádné"
     }
   ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Vrátí část řetězcového časového razítka, která představuje den v měsíci."
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "Zkratka pro trigger().outputs.body"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Hodnota, kterou může řetězec začínat."
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
       "value": "Tato operace už byla odstraněna."
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Číslo, které se má dělit dělitelem."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Povinné. Počet výskytů podřetězce, které se mají najít"
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Počet objektů, které se mají odebrat ze začátku kolekce. Musí to být kladné celé číslo."
     }
   ],
   "bH5LtI": [
@@ -749,10 +1685,22 @@
       "value": " se už zaregistrovala."
     }
   ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší nebo rovný porovnávané hodnotě."
+    }
+  ],
   "ba9yGJ": [
     {
       "type": 0,
       "value": "Načíst další"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "Vrátí maximální hodnotu vstupního pole čísel."
     }
   ],
   "bgfjqS": [
@@ -761,10 +1709,28 @@
       "value": "Nastavení popisku"
     }
   ],
+  "bzF/qn": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Kolekce, ze které se mají získat první objekty Count."
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Vrátí objekt, ve kterém se určitá vlastnost nastavila na poskytnutou hodnotu."
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "cJm+ah": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Hodnota, jejíž index se má hledat."
     }
   ],
   "ci6ex1": [
@@ -791,6 +1757,12 @@
       "value": "Čas zahájení"
     }
   ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Kolekce, ze které se mají přeskočit první objekty Count."
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -803,16 +1775,82 @@
       "value": "Další informace"
     }
   ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Vrátí řetězcovou reprezentaci řetězce s kódováním Base 64."
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "Převede parametr na logickou hodnotu."
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Vrátí pole hodnot, které odpovídají názvu klíče z výstupu akce form-data nebo form-encoded."
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Rozdělí řetězec pomocí oddělovače."
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Neuvedeno"
     }
   ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název proměnné, jejíž hodnotu chcete získat."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
       "value": "Čas zahájení"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Číslo, kterým se má dělit dělenec."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Index určující, kde začíná v parametru 1 podřetězec."
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Objekty, ve kterých se zajišťuje hodnota null."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "Nepovinné. Index, kde se má podřetězec přestat extrahovat"
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Vrátí true, pokud je první argument větší nebo roven druhému."
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Logické funkce"
     }
   ],
   "ftwXvc": [
@@ -827,10 +1865,46 @@
       "value": "Identifikátor URI"
     }
   ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Vrátí časové razítko, které představuje aktuální čas prodloužený o zadaný časový interval."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "Vrátí výsledek podílu daných dvou čísel."
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Logická hodnota určující, kterou hodnotu má výraz vracet."
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
       "value": "Předchozí neúspěšné"
+    }
+  ],
+  "gMhc5o": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Řetězec, který se má zkombinovat do jednoho řetězce."
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Převodní funkce"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "Když se tato funkce použije v rámci smyčky until, vrátí aktuální index iterace zadané smyčky."
     }
   ],
   "hN7iBP": [
@@ -887,6 +1961,12 @@
       "value": "seconds"
     }
   ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "Vrátí výsledek rozdílu daných dvou čísel."
+    }
+  ],
   "hdnZ9Y": [
     {
       "type": 0,
@@ -909,10 +1989,22 @@
       "value": "Komentář"
     }
   ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Převede řetězec na velká písmena pomocí pravidel pro používání velkých a malých písmen v invariantní jazykové verzi."
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
       "value": "Další"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Povinné. Identifikátor URI, který se bude parsovat."
     }
   ],
   "iRjBf4": [
@@ -925,6 +2017,12 @@
     {
       "type": 0,
       "value": "Rozbalit"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Manipulation functions"
     }
   ],
   "iUs7pv": [
@@ -943,10 +2041,58 @@
       "value": " s"
     }
   ],
+  "j2MU0b": [
+    {
+      "type": 0,
+      "value": "Vrátí objekt, ze kterého se odebrala vlastnost."
+    }
+  ],
+  "j39557": [
+    {
+      "type": 0,
+      "value": "Vrátí hodnotu zadané proměnné."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Vrátí náhodné celé číslo ze zadaného rozsahu, do kterého patří jeho první, ale ne poslední hodnota."
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Výraz, který se bude negovat."
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Hodnota, která se má převést na řetězec."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Vstupní řetězec ve formátu base64."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název klíče datových hodnot ve formuláři, které se mají vrátit."
+    }
+  ],
   "jfInxm": [
     {
       "type": 0,
       "value": "Upravit ve formátu JSON"
+    }
+  ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec kódovaný ve formátu base64."
     }
   ],
   "k41+13": [
@@ -958,7 +2104,7 @@
   "k5tGEr": [
     {
       "type": 0,
-      "value": "Yes"
+      "value": "Ano"
     }
   ],
   "kHcCxH": [
@@ -979,10 +2125,34 @@
       "value": " s"
     }
   ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Vrátí řetězcovou reprezentaci vstupního řetězce Base 64."
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
       "value": "Stáhnout (Alt/Option + kliknutí)"
+    }
+  ],
+  "kZuYgD": [
+    {
+      "type": 0,
+      "value": "Vrátí true, pokud je první argument menší než druhý."
+    }
+  ],
+  "keb4r1": [
+    {
+      "type": 0,
+      "value": "Vrátí true, pokud se dvě hodnoty rovnají."
+    }
+  ],
+  "knylNW": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Tato hodnota představuje další celé číslo po nejvyšším celém číslu, které se mohlo vrátit."
     }
   ],
   "l36V56": [
@@ -1021,6 +2191,12 @@
       "value": "Bezstavový režim spuštění:"
     }
   ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "Zkratka pro actions('actionName').outputs.body"
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -1039,6 +2215,78 @@
       "value": "Název"
     }
   ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Vrátí časové razítko, které představuje aktuální čas zkrácený o zadaný časový interval."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Vrátí řetězcovou reprezentaci identifikátoru URI dat."
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "Zakóduje vstupní řetězec jako adresu URL."
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Řetězec, který se má převést na malá písmena. Pokud některý znak v řetězci nemá odpovídající znak malé abecedy, zůstane ve vráceném řetězci beze změny."
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Hodnota, která se má převést na číslo s plovoucí desetinnou čárkou."
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není menší nebo rovný porovnávané hodnotě."
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Počet časových jednotek, o který je požadovaný čas v budoucnosti"
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Povinné. Název vlastnosti, která se odebere"
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není menší než porovnávaný objekt."
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Přidá celočíselný počet minut do předaného řetězcového časového razítka."
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Vrátí poslední prvek v předaném poli nebo řetězci."
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Kód XML, na kterém se má vyhodnotit výraz jazyka XPath."
+    }
+  ],
   "o1HOyf": [
     {
       "type": 1,
@@ -1053,10 +2301,22 @@
       "value": "max_page"
     }
   ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Identifikátor URI dat, který se má dekódovat do binárního formátu."
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Zadejte identifikátor spuštění a spuštění otevřete."
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název klíče datové hodnoty ve formuláři, která se má vrátit."
     }
   ],
   "p16/4S": [
@@ -1071,10 +2331,40 @@
       "value": "Koncový čas"
     }
   ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Hodnoty, které se mají sloučit do pole."
+    }
+  ],
   "pRUJff": [
     {
       "type": 0,
       "value": "Parametry"
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "Převede vstup na hodnotu typu XML."
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Číslo, kterým se má dělit dělenec. Po dělení se zbytek odebere."
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Vrátí jedno pole nebo objekt, který má mezi předávanými poli nebo objekty společné prvky. Parametry pro tuto funkci můžou být buď sada objektů, nebo sada polí (ne kombinace obou). Pokud se vyskytnou dva objekty se stejným názvem, zahrne se do konečného objektu poslední objekt s tímto názvem."
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "Odstraní ze začátku a konce řetězce prázdné znaky."
     }
   ],
   "pr9GwA": [
@@ -1083,10 +2373,46 @@
       "value": "Aktualizovat"
     }
   ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Vrátí ze zadaného výrazu XPath uzel XML, sadu uzlů nebo hodnotu jako JSON."
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Povinné. Hodnota, která se přiřadí dané vlastnosti"
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "Převede parametr na řetězec."
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Přidá celočíselný počet sekund do předaného řetězcového časového razítka."
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
       "value": "Spravovaná identita"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Zkontrolujte, jestli řetězec končí určitou hodnotou (nerozlišuje velikost písmen, invariantní jazyková verze)."
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Vrátí true, pokud je první argument menší nebo roven druhému."
     }
   ],
   "qSt0Sb": [
@@ -1149,6 +2475,24 @@
       "value": "days"
     }
   ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Vrátí počet prvků v poli nebo řetězci."
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Hodnota, která se má převést na celé číslo."
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Umožní výrazu odvodit svoji hodnotu z jiných párů názvu a hodnoty JSON nebo výstupu akce modulu runtime."
+    }
+  ],
   "r9SVE4": [
     {
       "type": 0,
@@ -1158,7 +2502,7 @@
   "rAyuzv": [
     {
       "type": 0,
-      "value": "No"
+      "value": "Ne"
     }
   ],
   "rCl53e": [
@@ -1167,16 +2511,76 @@
       "value": "Název karty"
     }
   ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Pole hodnot, ve kterém se má najít maximální hodnota, nebo první hodnota sady."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Vrátí reprezentaci určité hodnoty zakódovanou jako identifikátor URI."
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Vrátí část řetězcového časového razítka, která představuje den v roce."
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Vrátí pole hodnot, které odpovídají názvu klíče z výstupu triggeru form-data nebo form-encoded."
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec obsahující jednotku času zadaného v intervalu, který se má přičíst"
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Kolekce, u které se má zkontrolovat, zda není prázdná."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Číslo, které se má odečíst od menšence."
+    }
+  ],
   "shF9tZ": [
     {
       "type": 0,
       "value": "Klíč"
     }
   ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Vrátí true, pokud je kterýkoli z parametrů true."
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Nový parametr"
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec, který obsahuje název cílového časového pásma. Podrobnosti najdete tady: https://msdn.microsoft.com/en-us/library/gg154758.aspx"
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "Vrátí adresu URL pro zavolání triggeru nebo akce."
     }
   ],
   "tImHz/": [
@@ -1197,10 +2601,34 @@
       "value": " h"
     }
   ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Index části, která se má načíst."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Tato funkce poskytuje podrobnosti samotného pracovního postupu za běhu."
+    }
+  ],
   "tNoZx2": [
     {
       "type": 0,
       "value": "Typ"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Vrátí true, pokud je první argument větší než druhý."
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Počet hodin, které se mají přičíst. Může to být i záporná hodnota, při které se hodiny odečtou."
     }
   ],
   "uN4zFU": [
@@ -1209,16 +2637,70 @@
       "value": "OK"
     }
   ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Kolekce k vyhodnocení. Objekt, který se zobrazí v libovolné kolekci, se také zobrazí ve výsledku."
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Přidá celočíselný počet hodin do předaného řetězcového časového razítka."
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Počet časových jednotek, o který je požadovaný čas v minulosti"
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Řetězec, který může obsahovat hodnotu."
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
       "value": "Výchozí hodnota"
     }
   ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Vytvoří z parametrů pole."
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Vygeneruje globálně jedinečný řetězec (GUID)."
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Vrátí poslední index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Hodnota, kterou může řetězec končit."
+    }
+  ],
   "vSlNPe": [
     {
       "type": 0,
       "value": "Odstranit"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Název akce, jejíž výstupy požadujete."
     }
   ],
   "vwH/XV": [
@@ -1233,16 +2715,82 @@
       "value": "Vlastnosti pracovního postupu"
     }
   ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Odečte od předaného řetězcového časového razítka celočíselný počet zadaných jednotek času."
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Pole hodnot, ve kterém se má najít minimální hodnota, nebo první hodnota sady."
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
       "value": "Vypršel časový limit."
     }
   ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Řetězec, ve kterém se hledá parametr 2, který se aktualizuje na parametr 3, pokud se parametr 2 najde v parametru 1."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Délka podřetězce."
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "Vrátí zadanou hodnotu podle toho, jestli se daný výraz vyhodnotil jako true, nebo false."
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Převede předané řetězcové časové razítko ze zdrojového časového pásma na formát UTC."
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Vrátí jedno pole nebo objekt se všemi prvky, které se nachází buď v poli, nebo v objektu předaném do této funkce."
+    }
+  ],
   "woJQhv": [
     {
       "type": 0,
       "value": "Adresa URL pro zpětné volání:"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Kolekce, pro kterou se má získat délka."
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "Vrátí řetězcovou reprezentaci řetězce zakódovaného jako identifikátor URI."
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Povinné. Název nové nebo stávající vlastnosti"
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Vrátí cestu z identifikátoru URI. Pokud se cesta nezadá, vrátí /."
     }
   ],
   "xt5TeT": [
@@ -1257,10 +2805,52 @@
       "value": "Hodnota"
     }
   ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Required. The object to compare equality."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Řetězec, ze kterého se mají vyjmout znaky, které nejsou pro adresu URL bezpečné."
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Hodnota, která se převádí na pole."
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Date and time functions"
+    }
+  ],
   "z4YYlQ": [
     {
       "type": 0,
       "value": "Zadejte výchozí hodnotu parametru."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Povinné. Hodnota převedená na desetinné číslo."
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Vyžadováno. Řetězec, který se převede na hodnotu nativního typu."
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Převede řetězec, nepovinně i s národním prostředím a formátem data."
     }
   ],
   "ziYCiA": [
@@ -1273,6 +2863,18 @@
     {
       "type": 0,
       "value": "Plovoucí desetinná čárka"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Přičte k předanému řetězcovému časovému razítku celočíselný počet zadaných jednotek času."
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Povinný parametr. Počet minut, které se mají přičíst. Může to být i záporná hodnota, při které se minuty odečtou."
     }
   ]
 }

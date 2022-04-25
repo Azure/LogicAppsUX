@@ -1,8 +1,7 @@
 import constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
-import { Separator, useTheme } from '@fluentui/azure-themes/node_modules/@fluentui/react';
+import { Separator, useTheme, IconButton } from '@fluentui/react';
 import type { IIconProps } from '@fluentui/react';
-import { IconButton } from '@fluentui/react';
 import type { FormEvent } from 'react';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';

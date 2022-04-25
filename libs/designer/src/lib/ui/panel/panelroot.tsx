@@ -1,6 +1,7 @@
 import type { PanelTab } from './panelUtil';
 import { registerTab, getTabs } from './panelUtil';
-import { aboutTab, monitorRetryTab, monitorRequestTab } from './registeredtabs';
+import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
+import { aboutTab, monitorRetryTab, monitorRequestTab, settingsTab } from './registeredtabs';
 import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { MenuItemType, PanelContainer, PanelHeaderControlType } from '@microsoft/designer-ui';
 import React, { useEffect, useState } from 'react';
@@ -41,7 +42,9 @@ export const PanelRoot = ({
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
 
   useEffect(() => {
-    setRegisteredTabs((currentTabs) => registerTab(aboutTab, registerTab(monitorRetryTab, registerTab(monitorRequestTab, currentTabs))));
+    setRegisteredTabs((currentTabs) =>
+      registerTab(aboutTab, registerTab(monitorRetryTab, registerTab(monitorRequestTab, registerTab(settingsTab, currentTabs))))
+    );
   }, []);
 
   useEffect(() => {
@@ -143,7 +146,9 @@ export const PanelRoot = ({
     }
   };
 
-  return (
+  return isRecommendation ? (
+    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width}></RecommendationPanelContext>
+  ) : (
     <PanelContainer
       cardIcon={cardIcon}
       comment={currentComment}

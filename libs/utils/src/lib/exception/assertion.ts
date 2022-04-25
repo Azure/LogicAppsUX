@@ -48,12 +48,7 @@ export enum AssertionErrorCode {
 }
 
 export class AssertionException extends BaseException {
-  constructor(
-    code: AssertionErrorCode,
-    message: string,
-    data?: Record<string, any>,
-    innerException?: any
-  ) {
+  constructor(code: AssertionErrorCode, message: string, data?: Record<string, any>, innerException?: any) {
     super(AssertionExceptionName, message, code, data, innerException);
   }
 }

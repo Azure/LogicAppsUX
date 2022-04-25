@@ -1,3 +1,12 @@
+import Constants from '../constants';
+import {
+  createCompletionItemProviderForFunctions,
+  createCompletionItemProviderForValues,
+  createSignatureHelpProvider,
+  createLanguageDefinition,
+  getTemplateFunctions,
+} from '../workflow/languageservice/workflowlanguageservice';
+import { map } from '@microsoft-logic-apps/utils';
 import Editor, { loader } from '@monaco-editor/react';
 import { useEffect } from 'react';
 
@@ -22,7 +31,7 @@ export interface EditorProps {
   value?: string;
 }
 
-const CustomEditor: React.FC<EditorProps> = (props) => {
+export const CustomEditor: React.FC<EditorProps> = (props) => {
   const {
     folding = true,
     height = '100%',
@@ -36,8 +45,36 @@ const CustomEditor: React.FC<EditorProps> = (props) => {
   } = props;
 
   const initEditor = () => {
+    const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
+    const templateFunctions = getTemplateFunctions();
+
     loader.init().then((monaco) => {
-      // TODO: init monaco and add custom lang
+      if (!monaco.languages.getLanguages().some(({ id }) => id === languageName)) {
+        // Register a new language
+        monaco.languages.register({ id: languageName });
+
+        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
+        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
+        monaco.languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
+        // Register a tokens provider for the language
+        monaco.languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
+        monaco.languages.setLanguageConfiguration(languageName, {
+          autoClosingPairs: [
+            {
+              open: '(',
+              close: ')',
+            },
+            {
+              open: '[',
+              close: ']',
+            },
+            {
+              open: `'`,
+              close: `'`,
+            },
+          ],
+        });
+      }
     });
   };
 
