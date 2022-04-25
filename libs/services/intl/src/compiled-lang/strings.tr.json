@@ -8,13 +8,13 @@
   "+g+mch": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of an action"
+      "value": "Bir eylemin çok parçalı çıkışında, bir parçanın gövdesini döndürür"
     }
   ],
   "+lpuMl": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'false'."
+      "value": "Gerekli. İfadenin 'false' olması durumunda döndürülecek değer."
     }
   ],
   "/I/U8L": [
@@ -32,49 +32,49 @@
   "/QqADs": [
     {
       "type": 0,
-      "value": "Returns the elements in the array starting at index Count"
+      "value": "Dizideki öğeleri Sayı dizininden başlayarak döndürür"
     }
   ],
   "/doURb": [
     {
       "type": 0,
-      "value": "Convert the input to an array"
+      "value": "Bir diziye yönelik girişi dönüştürür"
     }
   ],
   "/qchXQ": [
     {
       "type": 0,
-      "value": "Required. The collection to join items from."
+      "value": "Gerekli. Birleştirilecek öğelerin ait olduğu koleksiyon."
     }
   ],
   "/ut0u7": [
     {
       "type": 0,
-      "value": "Returns the first Count elements from the array or string passed in"
+      "value": "Geçirilen dizi veya dizeden ilk Count öğelerini döndürür"
     }
   ],
   "07ZsoY": [
     {
       "type": 0,
-      "value": "Returns the start of the hour to a string timestamp passed in"
+      "value": "Geçirilen bir dize zaman damgası için saatin başlangıcını döndürür"
     }
   ],
   "09B9CU": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action. Note: This function can only be used in an httpWebhook and apiConnectionWebhook, not in a manual, recurrence, http, or apiConnection."
+      "value": "Tetikleyici veya eylemi çağırmaya yönelik URL döndürülür. Not: Yalnızca bir httpWebhook ve apiConnectionWebhook'ta kullanılabilen bu işlev bir el ile, yinelenme, http veya apiConnection'da kullanılamaz."
     }
   ],
   "0FzNJV": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Gerekli. Base64 kodlamalı dize."
     }
   ],
   "0GqNGo": [
     {
       "type": 0,
-      "value": "Url decodes the input string"
+      "value": "URL, giriş dizesinin kodunu çözer"
     }
   ],
   "0JTHTZ": [
@@ -86,7 +86,7 @@
   "0R2D5l": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a URI encoded string"
+      "value": "URI ile kodlanmış bir dizenin ikili gösterimini döndürür"
     }
   ],
   "0ZlNtf": [
@@ -98,25 +98,25 @@
   "0i/6TR": [
     {
       "type": 0,
-      "value": "Required. The string to convert to upper casing. If a character in the string does not have an uppercase equivalent, the character is included unchanged in the returned string."
+      "value": "Gerekli. Büyük harfe dönüştürülecek dize. Dizedeki bir karakterin büyük harf eşdeğeri yoksa, karakter, döndürülen dizeye değiştirilmeden eklenir."
     }
   ],
   "0p+pJq": [
     {
       "type": 0,
-      "value": "Returns the remainder after dividing the two numbers (modulo)"
+      "value": "İki sayı arasındaki bölme işleminden kalanı döndürür (mod)"
     }
   ],
   "0qV0Qe": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Gerekli. Değeri içeriyor olabilecek dize."
     }
   ],
   "0uj1Li": [
     {
       "type": 0,
-      "value": "Returns a binary representation of an input data URI string"
+      "value": "Bir giriş verisi URI dizesinin ikili gösterimini döndürür"
     }
   ],
   "0y5eia": [
@@ -128,13 +128,13 @@
   "1+Z8n9": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to String representation."
+      "value": "Gerekli. Dize gösterimine dönüştürülecek veri URI'si."
     }
   ],
   "109OPL": [
     {
       "type": 0,
-      "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
+      "value": "Bir URI'den bağlantı noktasını döndürür. Bağlantı noktası belirtilmezse, iletişim kuralı için varsayılan bağlantı noktasını döndürür"
     }
   ],
   "1A1P5b": [
@@ -146,19 +146,19 @@
   "1D047X": [
     {
       "type": 0,
-      "value": "Required. The value to convert to XML."
+      "value": "Gerekli. XML'ye dönüştürülecek değer."
     }
   ],
   "1Fn5n+": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Gerekli. URI kodlamalı dize."
     }
   ],
   "1NBvKu": [
     {
       "type": 0,
-      "value": "Convert the parameter argument to a floating-point number"
+      "value": "Parametre bağımsız değişkenini bir kayan noktalı sayıya dönüştürür"
     }
   ],
   "1R6Vaa": [
@@ -204,13 +204,13 @@
   "1TE0e8": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Gerekli. Dizini aranacak değer."
     }
   ],
   "1jhzOM": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than value being compared to."
+      "value": "Gerekli. Karşılaştırılan değerden küçük olup olmadığı denetlenecek nesne."
     }
   ],
   "1zgFh1": [
@@ -222,13 +222,13 @@
   "23fENy": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a base 64 encoded string"
+      "value": "Base 64 ile kodlanmış bir dizenin ikili gösterimini döndürür"
     }
   ],
   "23szE+": [
     {
       "type": 0,
-      "value": "Required. The value to convert to data URI."
+      "value": "Gerekli. Veri URI'sine dönüştürülecek değer."
     }
   ],
   "2K2fAj": [
@@ -240,13 +240,13 @@
   "2cVEMV": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded action output"
+      "value": "Form-data veya form-encoded eylem çıkışındaki anahtar adı ile eşleşen tek bir değer döndürür"
     }
   ],
   "2gzGrJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Gerekli. Form-data veya form-encoded yanıtı içeren eylemin adı."
     }
   ],
   "2mnU/w": [
@@ -264,7 +264,7 @@
   "3NhwIJ": [
     {
       "type": 0,
-      "value": "Required. The separator."
+      "value": "Gerekli. Ayırıcı."
     }
   ],
   "3kI7xF": [
@@ -276,37 +276,37 @@
   "3rzrWf": [
     {
       "type": 0,
-      "value": "Required. The object to remove the property from."
+      "value": "Gerekli. Özelliğin kaldırılacağı nesne."
     }
   ],
   "3vCCY7": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to subtract."
+      "value": "Zorunlu. Çıkarmak için belirtilen zaman birimi sayısı."
     }
   ],
   "47kOXr": [
     {
       "type": 0,
-      "value": "Required. The lowest integer that can be returned."
+      "value": "Gerekli. Döndürülebilecek en düşük tamsayı."
     }
   ],
   "4BrA0z": [
     {
       "type": 0,
-      "value": "Required. The number of days to add. Can be negative to subtract days."
+      "value": "Gerekli. Eklenecek gün sayısı. Gün sayısının çıkarılması için negatif olabilir."
     }
   ],
   "4YKQAF": [
     {
       "type": 0,
-      "value": "Required. The unit of time specified in the interval."
+      "value": "Zorunlu. Aralıkta belirtilen zaman birimi."
     }
   ],
   "4c0uPQ": [
     {
       "type": 0,
-      "value": "Required. The name of the parameter whose values you want."
+      "value": "Gerekli. Değerlerini istediğiniz parametrenin adı."
     }
   ],
   "4cVuMw": [
@@ -318,7 +318,7 @@
   "4vcnOA": [
     {
       "type": 0,
-      "value": "Returns the minimum value in the input array of numbers"
+      "value": "Sayılardan oluşan giriş dizisinin en küçük değerini döndürür"
     }
   ],
   "4vmGh0": [
@@ -330,25 +330,25 @@
   "5J7j9k": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Gerekli. Değerlendirilecek XPath ifadesi."
     }
   ],
   "5aa76N": [
     {
       "type": 0,
-      "value": "Returns the first element in the array or string passed in"
+      "value": "Geçirilen dizi veya dizedeki ilk öğeyi döndürür"
     }
   ],
   "5b0sKi": [
     {
       "type": 0,
-      "value": "Returns true if an object, array, or string is empty"
+      "value": "Bir nesne, dizi veya dize boşsa true döndürür"
     }
   ],
   "5cPiWA": [
     {
       "type": 0,
-      "value": "Required. The name of the loop whose item you want."
+      "value": "Gerekli. Öğesini istediğiniz döngünün adı."
     }
   ],
   "5qzZMo": [
@@ -366,7 +366,7 @@
   "63/zYN": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than value being compared to."
+      "value": "Gerekli. Karşılaştırılan değerden büyük olup olmadığı denetlenecek nesne."
     }
   ],
   "6jiO7t": [
@@ -378,13 +378,13 @@
   "6jsWn/": [
     {
       "type": 0,
-      "value": "Required. The collection to search within."
+      "value": "Gerekli. İçinde arama yapılacak koleksiyon."
     }
   ],
   "6kSpHL": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a multipart response."
+      "value": "Gerekli. Çok bölümlü bir yanıt içeren eylemin adı."
     }
   ],
   "6oqk+A": [
@@ -396,7 +396,7 @@
   "6qkBwz": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 2 with."
+      "value": "Gerekli. Çarpan 2'nin çarpılacağı sayı."
     }
   ],
   "7GSk99": [
@@ -408,13 +408,13 @@
   "7QymrD": [
     {
       "type": 0,
-      "value": "Required. The string from which the substring is taken."
+      "value": "Gerekli. Alt dizenin alındığı dize."
     }
   ],
   "7aJqIH": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when formatting (defaults to 'en-us')."
+      "value": "İsteğe bağlı. Biçimlendirme sırasında kullanılacak yerel ayar (varsayılan olarak 'tr-tr' kullanılır)."
     }
   ],
   "7k9jXx": [
@@ -426,7 +426,7 @@
   "7lnElz": [
     {
       "type": 0,
-      "value": "Returns the number of ticks (100 nanoseconds interval) since 1 January 0001 00:00:00 UT of a string timestamp"
+      "value": "Dize zaman damgasında 1 Ocak 0001 00:00:00 UTC tarihinden sonraki zaman aralığı sayısını (100 nanosaniyelik aralık) döndürür"
     }
   ],
   "7yEdSt": [
@@ -444,25 +444,25 @@
   "7zzPsK": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Gerekli. Değeri içeriyor olabilecek dize."
     }
   ],
   "8CWFEh": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'true'."
+      "value": "Gerekli. İfadenin 'true' olması durumunda döndürülecek değer."
     }
   ],
   "8DFwxH": [
     {
       "type": 0,
-      "value": "Returns a formatted number string"
+      "value": "Biçimlendirilmiş bir sayı dizesi döndürür"
     }
   ],
   "8FjOSh": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater or equal to the comparing object."
+      "value": "Gerekli. Karşılaştırma nesnesinden büyük veya bu nesneye eşit olup olmadığı denetlenecek nesne."
     }
   ],
   "8L+oIz": [
@@ -474,19 +474,19 @@
   "8U0KPg": [
     {
       "type": 0,
-      "value": "Required. The string to be URI encoded."
+      "value": "Gerekli. URI ile kodlanacak dize."
     }
   ],
   "8wr0zO": [
     {
       "type": 0,
-      "value": "Adds an integer number of days to a string timestamp passed in"
+      "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir gün sayısı ekler"
     }
   ],
   "9/UeTh": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in"
+      "value": "Geçirilen diziler veya nesneler arasında ortak öğeleri olan tek bir dizi veya nesne döndürür"
     }
   ],
   "99vsJy": [
@@ -498,13 +498,13 @@
   "9JuvQ4": [
     {
       "type": 0,
-      "value": "Returns a data URI of a value"
+      "value": "Bir değerin veri URI'sini döndürür"
     }
   ],
   "9Jv3+1": [
     {
       "type": 0,
-      "value": "Returns an object with an additional property value pair"
+      "value": "Ek özellik-değer çifti içeren bir nesneyi döndürür"
     }
   ],
   "9b4xDa": [
@@ -516,43 +516,43 @@
   "9djnqI": [
     {
       "type": 0,
-      "value": "Returns the result from adding the two numbers"
+      "value": "İki sayı arasındaki toplama işleminin sonucunu döndürür"
     }
   ],
   "9u/Ae3": [
     {
       "type": 0,
-      "value": "Returns true if both parameters are true"
+      "value": "İki parametre de true ise true döndürür"
     }
   ],
   "ANbEeQ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose values you want."
+      "value": "Gerekli. Değerlerini istediğiniz eylemin adı."
     }
   ],
   "ArTh0/": [
     {
       "type": 0,
-      "value": "Required. The string to encode into base64 representation."
+      "value": "Gerekli. Base64 gösterimine kodlanacak dize."
     }
   ],
   "B2s0iG": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Gerekli. Alınacak bölümün dizini."
     }
   ],
   "BCAnZP": [
     {
       "type": 0,
-      "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
+      "value": "Bu zaman damgasının değerinin nasıl biçimlendirileceğini gösteren tek bir biçim tanımlayıcı karakteri veya özel biçim deseni. Biçim belirtilmezse ISO 8601 biçimi ('o') kullanılır."
     }
   ],
   "BHe7qY": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Gerekli. URI kodlamalı dize."
     }
   ],
   "BKL0ZG": [
@@ -564,7 +564,7 @@
   "BQCPY7": [
     {
       "type": 0,
-      "value": "Required. The string to decode the URL-unsafe characters from."
+      "value": "Gerekli. URL güvenli olmayan karakterlerin kodunun çözülmesi için kullanılacak dize."
     }
   ],
   "Bn8iTS": [
@@ -576,13 +576,13 @@
   "BuYrD3": [
     {
       "type": 0,
-      "value": "A single format specifier that indicates how to format the value of this Guid."
+      "value": "Bu Guid değerinin nasıl biçimlendirileceğini gösteren tek bir biçim belirtici."
     }
   ],
   "BxITRH": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than comparing object."
+      "value": "Gerekli. Karşılaştırma nesnesinden büyük olup olmadığı denetlenecek nesne."
     }
   ],
   "CG772M": [
@@ -594,13 +594,13 @@
   "D+Ptnq": [
     {
       "type": 0,
-      "value": "Returns the path and query from a URI"
+      "value": "Bir URI'den yolu ve sorguyu döndürür"
     }
   ],
   "D1lgsT": [
     {
       "type": 0,
-      "value": "Required. The string from which to remove leading and trailing whitespace."
+      "value": "Gerekli. Baştaki ve sondaki boşluğun kaldırılacağı dize."
     }
   ],
   "DFo+mo": [
@@ -618,7 +618,7 @@
   "ECZC6Y": [
     {
       "type": 0,
-      "value": "Converts the parameter to a decimal number"
+      "value": "Parametreyi ondalık sayıya dönüştürür"
     }
   ],
   "ERAWZA": [
@@ -630,37 +630,37 @@
   "EZz5q7": [
     {
       "type": 0,
-      "value": "Required. The index of where to start extracting the substring."
+      "value": "Gerekli. Alt dizeyi ayıklama işleminin başlatılacağı yeri belirten dizin."
     }
   ],
   "F3IDl8": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to add."
+      "value": "Zorunlu. Eklemek için belirtilen zaman birimi sayısı."
     }
   ],
   "FDF4Qb": [
     {
       "type": 0,
-      "value": "Returns a parameter value that is defined in the definition"
+      "value": "Tanım içinde tanımlanan bir parametre değeri döndürür"
     }
   ],
   "FN5zHQ": [
     {
       "type": 0,
-      "value": "Returns a section of a string defined by the start index and the end index"
+      "value": "Başlangıç dizini ve bitiş dizini tarafından tanımlanan bir dize bölümü döndürür"
     }
   ],
   "FS+/Tb": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Tetikleyicinin çok parçalı çıkışında, bir parçanın gövdesini döndürür"
     }
   ],
   "FVavKy": [
     {
       "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
+      "value": "Geçirilen bir dize zaman damgası için günün başlangıcını döndürür"
     }
   ],
   "FXLR5M": [
@@ -698,13 +698,13 @@
   "Fgq3Db": [
     {
       "type": 0,
-      "value": "Required. The collection to take the last object from."
+      "value": "Gerekli. Son nesnenin alınacağı koleksiyon."
     }
   ],
   "Fh2HDb": [
     {
       "type": 0,
-      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Bir dize içindeki bir değerin ilk dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)"
     }
   ],
   "FslNgF": [
@@ -716,31 +716,31 @@
   "G0XYrd": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Gerekli. Değeri içeriyor olabilecek dize."
     }
   ],
   "GAY7b8": [
     {
       "type": 0,
-      "value": "Returns the query from a URI"
+      "value": "Bir URI'den sorguyu döndürür"
     }
   ],
   "GLd3MU": [
     {
       "type": 0,
-      "value": "Required. The object to find inside the Within collection."
+      "value": "Gerekli. Koleksiyon içinde bulunacak nesne."
     }
   ],
   "GYvF54": [
     {
       "type": 0,
-      "value": "Referencing functions"
+      "value": "Başvuru işlevleri"
     }
   ],
   "GcG0qf": [
     {
       "type": 0,
-      "value": "Returns true if the parameters are false"
+      "value": "Parametreler false ise true döndürür"
     }
   ],
   "Gmya+V": [
@@ -764,25 +764,25 @@
   "H17jEE": [
     {
       "type": 0,
-      "value": "URI parsing functions"
+      "value": "URI ayrıştırma işlevleri"
     }
   ],
   "H1wnHr": [
     {
       "type": 0,
-      "value": "Required. The string to slice."
+      "value": "Gerekli. Dilim dizesi."
     }
   ],
   "H8bEUn": [
     {
       "type": 0,
-      "value": "Required. The number that Subtrahend is removed from."
+      "value": "Gerekli. Çıkanın çıkarıldığı sayı."
     }
   ],
   "HDqP2g": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Gerekli. Döndürülecek form verileri değerinin anahtar adı."
     }
   ],
   "HfrUId": [
@@ -800,37 +800,37 @@
   "IW2MjQ": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+      "value": "Geçirilen bir dize zaman damgasını UTC'den hedef saat dilimine dönüştürür"
     }
   ],
   "Ip7Iax": [
     {
       "type": 0,
-      "value": "Returns the index of the n-th occurrence of a value within a string (case-insensitive, invariant culture)"
+      "value": "Bir dize içindeki bir değerin n. tekrarının dizinini döndürür (büyük/küçük harfe duyarlı değil, sabit kültür)"
     }
   ],
   "IpVwYT": [
     {
       "type": 0,
-      "value": "Returns the first non-null object in the arguments passed in"
+      "value": "Geçirilen bağımsız değişkenlerdeki null olmayan ilk nesneyi döndürür"
     }
   ],
   "J5/7vN": [
     {
       "type": 0,
-      "value": "Converts a string to lowercase using the casing rules of the invariant culture"
+      "value": "Sabit kültürün büyük-küçük harf kurallarını kullanarak bir dizeyi küçük harfe dönüştürür"
     }
   ],
   "JNQHws": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time."
+      "value": "Gerekli. Zamanı içeren bir dize."
     }
   ],
   "JSfWJ0": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a boolean."
+      "value": "Gerekli. Boole'ye dönüştürülen değer."
     }
   ],
   "Jaz3EC": [
@@ -848,13 +848,13 @@
   "Ji6663": [
     {
       "type": 0,
-      "value": "Returns true if a dictionary contains a key, if an array contains a value, or if a string contains a substring"
+      "value": "Bir sözlüğün anahtar içermesi, bir dizinin değer içermesi veya bir dizenin alt dize içermesi durumunda true döndürür"
     }
   ],
   "JjTfC7": [
     {
       "type": 0,
-      "value": "Required. The number to be formatted."
+      "value": "Gerekli. Biçimlendirilecek sayı."
     }
   ],
   "JnlcZQ": [
@@ -866,43 +866,43 @@
   "Jq2Y/o": [
     {
       "type": 0,
-      "value": "Required. The numeric format string."
+      "value": "Gerekli. Sayısal biçim dizesi."
     }
   ],
   "K50znc": [
     {
       "type": 0,
-      "value": "Required. The object to add a new property to."
+      "value": "Gerekli. Yeni özelliğin ekleneceği nesne."
     }
   ],
   "K90YEU": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string"
+      "value": "Bir dizedeki karakterlerin bir alt kümesini döndürür"
     }
   ],
   "L+PY+j": [
     {
       "type": 0,
-      "value": "Required. The number of objects to take from the Collection. Must be a positive integer."
+      "value": "Gerekli. Koleksiyondan alınacak nesne sayısı. Pozitif bir tamsayı olmalıdır."
     }
   ],
   "L0UAzs": [
     {
       "type": 0,
-      "value": "Returns the day of week component of a string timestamp"
+      "value": "Bir dize zaman damgası için haftanın günü bileşenini döndürür"
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
-      "value": "Returns the scheme from a URI"
+      "value": "Bir URI'den düzeni döndürür"
     }
   ],
   "LoGUT3": [
     {
       "type": 0,
-      "value": "When used inside for-each loop, this function returns the current item of the specified loop."
+      "value": "Bir for-each döngüsünde kullanıldığında bu işlev belirtilen döngünün geçerli öğesini döndürür."
     }
   ],
   "Lub7NN": [
@@ -926,31 +926,31 @@
   "M8Aqm4": [
     {
       "type": 0,
-      "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
+      "value": "İsteğe bağlı. Bu kapsamdaki en üst düzey eylemlerden giriş ve çıkışları istediğiniz kapsamlı eylemin adı."
     }
   ],
   "M9mzP6": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Gerekli. Toplanan 2'ye eklenecek sayı."
     }
   ],
   "MDbmMw": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object must be in all collections passed in to appear in the result."
+      "value": "Gerekli. Değerlendirilecek koleksiyonlar. Bir nesne, sonuçta görüntülenmek üzere geçirilen tüm koleksiyonlarda olmalıdır."
     }
   ],
   "MKTdNk": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to binary representation."
+      "value": "Gerekli. İkili gösterime dönüştürülecek veri URI'si."
     }
   ],
   "MTR4Vg": [
     {
       "type": 0,
-      "value": "Returns the current timestamp as a string"
+      "value": "Geçerli zaman damgasını dize olarak döndürür"
     }
   ],
   "Mb+Eaq": [
@@ -974,7 +974,7 @@
   "N2CF0J": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Gerekli. Döndürülecek form verileri değerlerinin anahtar adı."
     }
   ],
   "NPUFgH": [
@@ -986,7 +986,7 @@
   "O+8vRv": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a value"
+      "value": "Bir değerin ikili gösterimini döndürür"
     }
   ],
   "O36+wl": [
@@ -998,7 +998,7 @@
   "OD8igU": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Zorunlu. Kaynak saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
   "OFKZzQ": [
@@ -1016,7 +1016,7 @@
   "OVvieE": [
     {
       "type": 0,
-      "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
+      "value": "Bir For_each, Until veya Scope eylemi gibi, belirtilen kapsamlı eylemdeki en üst düzey eylemlerden sonuçları döndürür."
     }
   ],
   "Oib1mL": [
@@ -1040,13 +1040,13 @@
   "OihxQE": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when parsing the date time string."
+      "value": "İsteğe bağlı. Tarih saat dizesi ayrıştırılırken kullanılacak yerel ayar."
     }
   ],
   "OjGJ8Y": [
     {
       "type": 0,
-      "value": "Returns the host from a URI"
+      "value": "Bir URI'den ana bilgisayarı döndürür"
     }
   ],
   "OnrO5/": [
@@ -1058,7 +1058,7 @@
   "P2A5dB": [
     {
       "type": 0,
-      "value": "Required. This value is the number of integers that is in the array."
+      "value": "Gerekli. Bu değer, dizideki tamsayıların sayısıdır."
     }
   ],
   "P4rEwD": [
@@ -1070,7 +1070,7 @@
   "P8ZBF9": [
     {
       "type": 0,
-      "value": "Required. The collection to take the first object from."
+      "value": "Gerekli. İlk nesnenin alınacağı koleksiyon."
     }
   ],
   "PF87Ew": [
@@ -1082,7 +1082,7 @@
   "PKMkb/": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Gerekli. Toplanan 1'e eklenecek sayı."
     }
   ],
   "PP63jY": [
@@ -1100,7 +1100,7 @@
   "PRnqYA": [
     {
       "type": 0,
-      "value": "Required. The number of seconds to add. Can be negative to subtract seconds."
+      "value": "Gerekli. Eklenecek saniye sayısı. Saniye sayısının çıkarılması için negatif olabilir."
     }
   ],
   "PaPPLr": [
@@ -1112,13 +1112,13 @@
   "PfCJlN": [
     {
       "type": 0,
-      "value": "Workflow functions"
+      "value": "İş akışı işlevleri"
     }
   ],
   "Pvm0xB": [
     {
       "type": 0,
-      "value": "Returns the base 64 representation of the input string"
+      "value": "Giriş dizesinin base 64 gösterimini döndürür"
     }
   ],
   "Q/7unA": [
@@ -1130,13 +1130,13 @@
   "Q0xpPQ": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less or equal to the comparing object."
+      "value": "Gerekli. Karşılaştırma nesnesinden küçük veya bu nesneye eşit olup olmadığı denetlenecek nesne."
     }
   ],
   "QEp3C8": [
     {
       "type": 0,
-      "value": "Convert the input to a JSON type value"
+      "value": "Girişi JSON türü değere dönüştürür"
     }
   ],
   "QQYzHC": [
@@ -1152,13 +1152,13 @@
   "QZBPUx": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded trigger output"
+      "value": "Form-data veya form-encoded tetikleyici çıkışındaki anahtar adı ile eşleşen tek bir değer döndürür"
     }
   ],
   "QZrxUk": [
     {
       "type": 0,
-      "value": "String functions"
+      "value": "Dize işlevleri"
     }
   ],
   "QbJDi7": [
@@ -1170,7 +1170,7 @@
   "QeE0k/": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Gerekli. İkiliye dönüştürülen değer."
     }
   ],
   "QknZQ1": [
@@ -1182,13 +1182,13 @@
   "Qn8qxn": [
     {
       "type": 0,
-      "value": "Returns a string in date format"
+      "value": "Tarih biçiminde bir dize döndürür"
     }
   ],
   "QpRRt3": [
     {
       "type": 0,
-      "value": "Required. The string to delimit items with."
+      "value": "Gerekli. Öğeleri sınırlamak için kullanılacak dize."
     }
   ],
   "QrQDdp": [
@@ -1210,7 +1210,7 @@
   "RX2Shm": [
     {
       "type": 0,
-      "value": "Required. The string that is split."
+      "value": "Gerekli. Bölünen dize."
     }
   ],
   "RhH4pF": [
@@ -1248,13 +1248,13 @@
   "SKXopi": [
     {
       "type": 0,
-      "value": "Convert the parameter to an integer"
+      "value": "Parametreyi bir tamsayıya dönüştürür"
     }
   ],
   "SLZ0n4": [
     {
       "type": 0,
-      "value": "Checks if the string starts with a value (case-insensitive, invariant culture)"
+      "value": "Dizenin bir değer ile başlayıp başlamadığını kontrol eder (büyük-küçük harf duyarsız, sabit kültür)"
     }
   ],
   "SXb47U": [
@@ -1270,7 +1270,7 @@
   "SY04wn": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Gerekli. Form-data veya form-encoded yanıtı içeren eylemin adı."
     }
   ],
   "T7zcR6": [
@@ -1288,13 +1288,13 @@
   "TI44R1": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Bir dizinin her öğesinin bir sınırlandırıcı ile birleştirildiği bir dize döndürür"
     }
   ],
   "TO7qos": [
     {
       "type": 0,
-      "value": "Returns the start of the month of a string timestamp"
+      "value": "Bir dize zaman damgası için ayın başlangıcını döndürür"
     }
   ],
   "TZv5JE": [
@@ -1318,7 +1318,7 @@
   "Twfck/": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 1 with."
+      "value": "Gerekli. Çarpan 1'in çarpılacağı sayı."
     }
   ],
   "Tz5jTR": [
@@ -1330,7 +1330,7 @@
   "U3iWVd": [
     {
       "type": 0,
-      "value": "Generates an array of integers starting from a certain number"
+      "value": "Belirli bir sayıdan başlayan bir tamsayı dizisi üretir"
     }
   ],
   "UCNM4L": [
@@ -1342,7 +1342,7 @@
   "UHCVNK": [
     {
       "type": 0,
-      "value": "Replaces a string with a given string"
+      "value": "Bir dizeyi belirli bir dize ile değiştirir"
     }
   ],
   "USVffu": [
@@ -1366,7 +1366,7 @@
   "VVfYvq": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Gerekli. Bölen tarafından bölünecek sayı."
     }
   ],
   "VXBWrq": [
@@ -1400,25 +1400,25 @@
   "W6FdMh": [
     {
       "type": 0,
-      "value": "Required. The name of the new property."
+      "value": "Gerekli. Yeni özelliğin adı."
     }
   ],
   "WS9kXD": [
     {
       "type": 0,
-      "value": "Required. The first integer in the array."
+      "value": "Gerekli. Dizideki ilk tamsayı."
     }
   ],
   "WUe3DY": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs"
+      "value": "trigger().outputs için kısayol"
     }
   ],
   "WgoP7R": [
     {
       "type": 0,
-      "value": "Returns the result from multiplying the two numbers"
+      "value": "İki sayı arasındaki çarpma işleminin sonucunu döndürür"
     }
   ],
   "X8JjjT": [
@@ -1442,13 +1442,13 @@
   "XCunbR": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs"
+      "value": "actions('eylemAdı').outputs için kısayol"
     }
   ],
   "XEuptL": [
     {
       "type": 0,
-      "value": "Combines any number of strings together"
+      "value": "Herhangi bir sayıda dizeyi birleştirir"
     }
   ],
   "XFFpu/": [
@@ -1490,13 +1490,13 @@
   "XtuP5e": [
     {
       "type": 0,
-      "value": "Math functions"
+      "value": "Matematiksel işlevler"
     }
   ],
   "Xx/naD": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose body outputs you want."
+      "value": "Gerekli. Gövde çıkışlarını istediğiniz eylemin adı."
     }
   ],
   "Y0H9aX": [
@@ -1508,7 +1508,7 @@
   "Y9kBz5": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a data URI"
+      "value": "Bir veri URI'sinin ikili gösterimini döndürür"
     }
   ],
   "YHsAKl": [
@@ -1536,13 +1536,13 @@
   "YKXmKD": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime trigger"
+      "value": "Bir ifadenin, değerini diğer JSON ad ve değer çiftlerinden veya çalışma zamanı tetikleyicisinin çıkışından alabilmesine olanak sağlar"
     }
   ],
   "YaFjJQ": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
+      "value": "Bu işleve geçirilen dizi veya nesneden herhangi birindeki tüm öğeleri içeren tek bir dizi veya nesne döndürür. İşlevin parametreleri bir nesne kümesi ya da bir dizi kümesi olabilir (ikisinin karışımı olamaz). Son çıkışta aynı ada sahip iki nesne varsa, son nesnede bu ada sahip son nesne görünür."
     }
   ],
   "YoQara": [
@@ -1554,19 +1554,19 @@
   "ZME5hh": [
     {
       "type": 0,
-      "value": "Returns the day of month component of a string timestamp"
+      "value": "Bir dize zaman damgası için ayın günü bileşenini döndürür"
     }
   ],
   "ZUaz3Y": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs.body"
+      "value": "trigger().outputs.body için kısayol"
     }
   ],
   "ZaIeDG": [
     {
       "type": 0,
-      "value": "Required. The value the string may start with."
+      "value": "Gerekli. Dizenin başlangıcı olabilecek değer."
     }
   ],
   "ZbX8xq": [
@@ -1578,19 +1578,19 @@
   "a7j3gS": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Gerekli. Bölen tarafından bölünecek sayı."
     }
   ],
   "aAXnqw": [
     {
       "type": 0,
-      "value": "Required. The number of the occurrence of the substring to find."
+      "value": "Gerekli. Bulunacak alt dizenin tekrar sayısı."
     }
   ],
   "aGyVJT": [
     {
       "type": 0,
-      "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
+      "value": "Gerekli. Koleksiyonun önünden kaldırılacak nesne sayısı. Pozitif bir tamsayı olmalıdır."
     }
   ],
   "bH5LtI": [
@@ -1606,7 +1606,7 @@
   "bTrk+S": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than or equal to value being compared to."
+      "value": "Gerekli. Karşılaştırılan değerden büyük veya bu değere eşit olup olmadığı denetlenecek nesne."
     }
   ],
   "ba9yGJ": [
@@ -1618,7 +1618,7 @@
   "bf7078": [
     {
       "type": 0,
-      "value": "Returns the maximum value in the input array of numbers"
+      "value": "Sayılardan oluşan giriş dizisinin en büyük değerini döndürür"
     }
   ],
   "bgfjqS": [
@@ -1630,13 +1630,13 @@
   "bzF/qn": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Gerekli. İlk Count nesnenin alınacağı koleksiyon."
     }
   ],
   "c3G/zq": [
     {
       "type": 0,
-      "value": "Returns an object with a property set to the provided value"
+      "value": "Bir özelliğin sağlanan değere ayarlandığı nesneyi döndürür"
     }
   ],
   "c6XbVI": [
@@ -1648,7 +1648,7 @@
   "cJm+ah": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Gerekli. Dizini aranacak değer."
     }
   ],
   "ci6ex1": [
@@ -1678,7 +1678,7 @@
   "cscezV": [
     {
       "type": 0,
-      "value": "Required. The collection to skip the first Count objects from."
+      "value": "Gerekli. İlk Count nesnenin atlanacağı koleksiyon."
     }
   ],
   "d3bSQA": [
@@ -1696,25 +1696,25 @@
   "dhvk0u": [
     {
       "type": 0,
-      "value": "Returns a string representation of a base 64 encoded string"
+      "value": "Base 64 ile kodlanmış bir dizenin dize gösterimini döndürür"
     }
   ],
   "dqgt9y": [
     {
       "type": 0,
-      "value": "Convert the parameter to a Boolean"
+      "value": "Parametreyi bir Boole değerine dönüştürür"
     }
   ],
   "drM9Sl": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded action output"
+      "value": "Form-data veya form-encoded eylem çıkışındaki anahtar adı ile eşleşen değerlerin dizisini döndürür"
     }
   ],
   "dsz+Ae": [
     {
       "type": 0,
-      "value": "Splits the string using a separator"
+      "value": "Ayırıcı kullanarak dizeyi böler"
     }
   ],
   "e4Onhn": [
@@ -1726,7 +1726,7 @@
   "eHgi14": [
     {
       "type": 0,
-      "value": "Required. The name of the variable whose value you want."
+      "value": "Gerekli. Değerini istediğiniz değişkenin adı."
     }
   ],
   "eRvRWs": [
@@ -1738,37 +1738,37 @@
   "eT+b9W": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by."
+      "value": "Gerekli. Bölünenin bölüneceği sayı."
     }
   ],
   "egLI8P": [
     {
       "type": 0,
-      "value": "Required. The index of where the substring begins in parameter 1."
+      "value": "Gerekli. Parametre 1'de alt dizenin başladığı konumun dizini."
     }
   ],
   "f/lWTW": [
     {
       "type": 0,
-      "value": "Required. The objects to check for null."
+      "value": "Gerekli. Null denetimi yapılacak nesneler."
     }
   ],
   "f1j0to": [
     {
       "type": 0,
-      "value": "Optional. The index of where to stop extracting the substring."
+      "value": "İsteğe bağlı. Alt dizeyi ayıklama işleminin durdurulacağı yeri belirten dizin."
     }
   ],
   "fBQBw/": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than or equal to the second"
+      "value": "Birinci bağımsız değişken ikinciden büyük veya ikinciye eşitse true döndürür"
     }
   ],
   "fg/34o": [
     {
       "type": 0,
-      "value": "Logical functions"
+      "value": "Mantıksal işlevler"
     }
   ],
   "ftwXvc": [
@@ -1786,19 +1786,19 @@
   "gDDfek": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time plus the specified time interval."
+      "value": "Geçerli saatle belirtilen zaman aralığının toplanması sonucunda elde edilen zaman damgasını döndürür."
     }
   ],
   "gDY9xk": [
     {
       "type": 0,
-      "value": "Returns the result from dividing the two numbers"
+      "value": "İki sayı arasındaki bölme işleminin sonucunu döndürür"
     }
   ],
   "gIK0WG": [
     {
       "type": 0,
-      "value": "Required. A boolean value that determines which value the expression should return."
+      "value": "Gerekli. İfadenin hangi değeri döndürmesi gerektiğini belirleyen bir boole değer."
     }
   ],
   "gKq3Jv": [
@@ -1810,19 +1810,19 @@
   "gMhc5o": [
     {
       "type": 0,
-      "value": "Required. The string to combine into a single string."
+      "value": "Gerekli. Tek bir dize olarak birleştirilecek dize."
     }
   ],
   "gQt/0f": [
     {
       "type": 0,
-      "value": "Conversion functions"
+      "value": "Dönüşüm işlevleri"
     }
   ],
   "gu9o9z": [
     {
       "type": 0,
-      "value": "When used inside until loop, this function returns the current iteration index of the specified loop."
+      "value": "Bir until döngüsünde kullanıldığında bu işlev belirtilen döngünün geçerli yineleme dizinini döndürür."
     }
   ],
   "hN7iBP": [
@@ -1860,7 +1860,7 @@
   "hPM6iC": [
     {
       "type": 0,
-      "value": "Returns the result from subtracting two numbers"
+      "value": "İki sayı arasındaki çıkarma işleminin sonucunu döndürür"
     }
   ],
   "hdnZ9Y": [
@@ -1884,7 +1884,7 @@
   "iCSHJG": [
     {
       "type": 0,
-      "value": "Converts a string to uppercase using the casing rules of the invariant culture"
+      "value": "Sabit kültürün büyük-küçük harf kurallarını kullanarak bir dizeyi büyük harfe dönüştürür"
     }
   ],
   "iJOIca": [
@@ -1896,7 +1896,7 @@
   "iMicOQ": [
     {
       "type": 0,
-      "value": "Required. The URI to parse."
+      "value": "Gerekli. Ayrıştırılacak URI."
     }
   ],
   "iRjBf4": [
@@ -1936,43 +1936,43 @@
   "j2MU0b": [
     {
       "type": 0,
-      "value": "Returns an object with a property removed"
+      "value": "Bir özelliğin kaldırıldığı nesneyi döndürür"
     }
   ],
   "j39557": [
     {
       "type": 0,
-      "value": "Returns the value of the variable specified."
+      "value": "Belirtilen değişkenin değerini döndürür."
     }
   ],
   "jHHF/u": [
     {
       "type": 0,
-      "value": "Returns a random integer from a specified range, which is inclusive only at the starting end."
+      "value": "Yalnızca başlangıç ucunda kapsayıcı olan belirtilen aralıktan rastgele bir tamsayı döndürür."
     }
   ],
   "jKsMS6": [
     {
       "type": 0,
-      "value": "Required. The expression that will be negated."
+      "value": "Gerekli. Negatif yapılacak ifade."
     }
   ],
   "jQ0Aqj": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a string."
+      "value": "Gerekli. Dizeye dönüştürülen değer."
     }
   ],
   "jVpanH": [
     {
       "type": 0,
-      "value": "Required. A base64 input string."
+      "value": "Gerekli. Base64 giriş dizesi."
     }
   ],
   "jcA3Ig": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Gerekli. Döndürülecek form verileri değerlerinin anahtar adı."
     }
   ],
   "jfInxm": [
@@ -1984,7 +1984,7 @@
   "k/oqFL": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Gerekli. Base64 kodlamalı dize."
     }
   ],
   "k41+13": [
@@ -2020,7 +2020,7 @@
   "kN6kce": [
     {
       "type": 0,
-      "value": "Returns a string representation of an input based64 string"
+      "value": "Giriş base 64 ile kodlanmış bir dizenin dize gösterimini döndürür"
     }
   ],
   "kYivbS": [
@@ -2032,19 +2032,19 @@
   "kZuYgD": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second"
+      "value": "Birinci bağımsız değişken ikinciden küçükse true döndürür"
     }
   ],
   "keb4r1": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal"
+      "value": "İki değer eşitse true döndürür"
     }
   ],
   "knylNW": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that could be returned."
+      "value": "Gerekli. Bu değer, döndürülebilecek en yüksek tamsayıdan bir sonraki tamsayıdır."
     }
   ],
   "l36V56": [
@@ -2086,7 +2086,7 @@
   "ljAOR6": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs.body"
+      "value": "actions('eylemAdı').outputs.body için kısayol"
     }
   ],
   "lztiwS": [
@@ -2110,73 +2110,73 @@
   "mGUdCO": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time minus the specified time interval."
+      "value": "Geçerli saatten belirtilen zaman aralığının çıkarılması sonucunda elde edilen zaman damgasını döndürür."
     }
   ],
   "mGpKsl": [
     {
       "type": 0,
-      "value": "Returns a string representation of a data URI"
+      "value": "Bir veri URI'sinin dize gösterimini döndürür"
     }
   ],
   "mPakaD": [
     {
       "type": 0,
-      "value": "Url encodes the input string"
+      "value": "URL, giriş dizesini kodlar"
     }
   ],
   "mZRMD9": [
     {
       "type": 0,
-      "value": "Required. The string to convert to lower casing. If a character in the string does not have a lowercase equivalent, the character is included unchanged in the returned string."
+      "value": "Gerekli. Küçük harfe dönüştürülecek dize. Dizedeki bir karakterin küçük harf eşdeğeri yoksa, karakter, döndürülen dizeye değiştirilmeden eklenir."
     }
   ],
   "n35O/+": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a floating-point number."
+      "value": "Gerekli. Kayan noktalı sayıya dönüştürülen değer."
     }
   ],
   "nGds/r": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than or equal to value being compared to."
+      "value": "Gerekli. Karşılaştırılan değerden küçük veya bu değere eşit olup olmadığı denetlenecek nesne."
     }
   ],
   "nHseED": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the future."
+      "value": "Zorunlu. İstenen saatin gelecekteki zaman birimlerinin sayısı."
     }
   ],
   "nTA155": [
     {
       "type": 0,
-      "value": "Required. The name of the property to remove."
+      "value": "Gerekli. Kaldırılacak özelliğin adı."
     }
   ],
   "ngsC44": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than comparing object."
+      "value": "Gerekli. Karşılaştırma nesnesinden küçük olup olmadığı denetlenecek nesne."
     }
   ],
   "nkk1mu": [
     {
       "type": 0,
-      "value": "Adds an integer number of minutes to a string timestamp passed in"
+      "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir dakika sayısı ekler"
     }
   ],
   "o/0SEj": [
     {
       "type": 0,
-      "value": "Returns the last element in the array or string passed in"
+      "value": "Geçirilen dizi veya dizedeki son öğeyi döndürür"
     }
   ],
   "o14STH": [
     {
       "type": 0,
-      "value": "Required. The XML on which to evaluate the XPath expression."
+      "value": "Gerekli. XPath ifadesinin üzerinde değerlendirileceği XML."
     }
   ],
   "o1HOyf": [
@@ -2196,7 +2196,7 @@
   "oAFcW6": [
     {
       "type": 0,
-      "value": "Required. The dataURI to decode into a binary representation."
+      "value": "Gerekli. İkili gösterim olarak kodu çözülecek dataURI."
     }
   ],
   "oV0xQ9": [
@@ -2208,7 +2208,7 @@
   "p/0r2N": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Gerekli. Döndürülecek form verileri değerinin anahtar adı."
     }
   ],
   "p16/4S": [
@@ -2226,7 +2226,7 @@
   "pOTcUO": [
     {
       "type": 0,
-      "value": "Required. The values to combine into an array."
+      "value": "Gerekli. Bir dizi olarak birleştirilecek değerler."
     }
   ],
   "pRUJff": [
@@ -2238,25 +2238,25 @@
   "pXmFGf": [
     {
       "type": 0,
-      "value": "Covert the input to an Xml type value"
+      "value": "Girişi XML türü değere dönüştürür"
     }
   ],
   "pYtSyE": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by. After the division, the remainder is taken."
+      "value": "Gerekli. Bölünenin bölüneceği sayı. Bölme işleminden sonra kalan alınır."
     }
   ],
   "pcuZKB": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in. The parameters for the function can either be a set of objects or a set of arrays (not a mixture of both). If there are two objects with the same name, the last object with that name appears in the final object."
+      "value": "Geçirilen dizi veya nesneler arasında ortak öğeleri olan tek bir dizi veya nesneyi döndürür. İşlevin parametreleri bir nesne kümesi ya da bir dizi kümesi olabilir (ikisinin karışımı olamaz). Aynı ada sahip iki nesne varsa, son nesnede bu ada sahip son nesne görünür."
     }
   ],
   "pozypE": [
     {
       "type": 0,
-      "value": "Trims leading and trailing whitespace from a string"
+      "value": "Bir dizenin başındaki ve sonundaki boşlukları kırpar"
     }
   ],
   "pr9GwA": [
@@ -2268,25 +2268,25 @@
   "q/+Uex": [
     {
       "type": 0,
-      "value": "Returns an XML node, nodeset or value as JSON from the provided XPath expression"
+      "value": "Bir XML düğümünü, düğüm kümesini veya değeri, sağlanan XPath ifadesinden JSON olarak döndürür"
     }
   ],
   "q2OCEx": [
     {
       "type": 0,
-      "value": "Required. The value to assign to the property."
+      "value": "Gerekli. Özelliğe atanacak değer."
     }
   ],
   "q2w8Sk": [
     {
       "type": 0,
-      "value": "Convert the parameter to a string"
+      "value": "Parametreyi bir dizeye dönüştürür"
     }
   ],
   "q87X20": [
     {
       "type": 0,
-      "value": "Adds an integer number of seconds to a string timestamp passed in"
+      "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir saniye sayısı ekler"
     }
   ],
   "qGfwxW": [
@@ -2298,13 +2298,13 @@
   "qJpnIL": [
     {
       "type": 0,
-      "value": "Checks if the string ends with a value (case-insensitive, invariant culture)"
+      "value": "Dizenin bir değer ile bitip bitmediğini kontrol eder (büyük-küçük harf duyarsız, sabit kültür)"
     }
   ],
   "qSejoi": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than or equal to the second"
+      "value": "Birinci bağımsız değişken ikinciden küçük veya ikinciye eşitse true döndürür"
     }
   ],
   "qSt0Sb": [
@@ -2348,19 +2348,19 @@
   "qc5S69": [
     {
       "type": 0,
-      "value": "Returns the number of elements in an array or string"
+      "value": "Bir dizi veya dizedeki öğelerin sayısını döndürür"
     }
   ],
   "qnI4Y1": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an integer."
+      "value": "Gerekli. Tamsayıya dönüştürülen değer."
     }
   ],
   "r8aZXs": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime action"
+      "value": "Bir ifadenin, değerini diğer JSON ad ve değer çiftlerinden veya çalışma zamanı eyleminin çıkışından alabilmesine olanak sağlar"
     }
   ],
   "r9SVE4": [
@@ -2384,43 +2384,43 @@
   "raBiud": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the maximum value, or the first value of a set."
+      "value": "Gerekli. En büyük değeri bulunacak değerler dizisi veya bir kümenin ilk değeri."
     }
   ],
   "rcz4w4": [
     {
       "type": 0,
-      "value": "Returns a URI encoded representation of a value"
+      "value": "Bir değerin URI ile kodlanmış gösterimini döndürür"
     }
   ],
   "s5RV9B": [
     {
       "type": 0,
-      "value": "Returns the day of year component of a string timestamp"
+      "value": "Bir dize zaman damgası için yılın günü bileşenini döndürür"
     }
   ],
   "sDkAVZ": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded trigger output"
+      "value": "Form-data veya form-encoded tetikleyici çıkışındaki anahtar adı ile eşleşen değerlerin dizisini döndürür"
     }
   ],
   "sZ0G/Z": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to add."
+      "value": "Zorunlu. Eklemek için zaman aralığında belirtilen zaman birimini içeren bir dize."
     }
   ],
   "sbPZ9S": [
     {
       "type": 0,
-      "value": "Required. The collection to check if it is empty."
+      "value": "Gerekli. Boş olup olmadığı denetlenecek koleksiyon."
     }
   ],
   "sfJTHV": [
     {
       "type": 0,
-      "value": "Required. The number to remove from the Minuend."
+      "value": "Gerekli. Çıkarılandan çıkarılacak sayı."
     }
   ],
   "shF9tZ": [
@@ -2432,7 +2432,7 @@
   "soqP+Z": [
     {
       "type": 0,
-      "value": "Returns true if either parameter is true"
+      "value": "Herhangi bir parametre true ise true döndürür"
     }
   ],
   "ss5JPH": [
@@ -2444,13 +2444,13 @@
   "t+XCkg": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the destination time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Zorunlu. Hedef saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
   "tE7Zam": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action"
+      "value": "Tetikleyici veya eylemi çağırmaya yönelik URL'yi döndürür"
     }
   ],
   "tImHz/": [
@@ -2474,13 +2474,13 @@
   "tLZ9Sh": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Gerekli. Alınacak bölümün dizini."
     }
   ],
   "tMRPnG": [
     {
       "type": 0,
-      "value": "This function provides you details for the workflow itself at runtime"
+      "value": "Bu işlev, çalışma zamanındaki iş akışı hakkında ayrıntılar sağlar"
     }
   ],
   "tNoZx2": [
@@ -2492,13 +2492,13 @@
   "tZj2Xn": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than the second"
+      "value": "Birinci bağımsız değişken ikinciden büyükse true döndürür"
     }
   ],
   "taPCmY": [
     {
       "type": 0,
-      "value": "Required. The number of hours to add. Can be negative to subtract hours."
+      "value": "Gerekli. Eklenecek saat sayısı. Saat sayısının çıkarılması için negatif olabilir."
     }
   ],
   "uN4zFU": [
@@ -2510,25 +2510,25 @@
   "uR9WuI": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object that appears in any of the collections also appears in the result."
+      "value": "Gerekli. Değerlendirilecek koleksiyonlar. Koleksiyonların herhangi birinde görünen bir nesne sonuçta da görüntülenir."
     }
   ],
   "uUlBZ8": [
     {
       "type": 0,
-      "value": "Adds an integer number of hours to a string timestamp passed in"
+      "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir saat sayısı ekler"
     }
   ],
   "uc/PoD": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the past."
+      "value": "Zorunlu. İstenen saatin geçmişteki zaman birimlerinin sayısı."
     }
   ],
   "uczA5c": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Gerekli. Değeri içeriyor olabilecek dize."
     }
   ],
   "ut5Med": [
@@ -2540,25 +2540,25 @@
   "uzsleE": [
     {
       "type": 0,
-      "value": "Creates an array from the parameters"
+      "value": "Parametrelerden bir dizi oluşturur"
     }
   ],
   "v39HKj": [
     {
       "type": 0,
-      "value": "Generates a globally unique string (GUID)"
+      "value": "Genel benzersiz dize (GUID) oluşturur"
     }
   ],
   "vEBhDX": [
     {
       "type": 0,
-      "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Bir dize içindeki bir değerin son dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)"
     }
   ],
   "vQcQkU": [
     {
       "type": 0,
-      "value": "Required. The value the string may end with."
+      "value": "Gerekli. Dizenin sonu olabilecek değer."
     }
   ],
   "vSlNPe": [
@@ -2570,7 +2570,7 @@
   "va40BJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose outputs you want."
+      "value": "Gerekli. Çıkışlarını istediğiniz eylemin adı."
     }
   ],
   "vwH/XV": [
@@ -2588,13 +2588,13 @@
   "wEaGWn": [
     {
       "type": 0,
-      "value": "Subtracts an integer number of a specified unit of time from a string timestamp passed in"
+      "value": "Geçirilen bir dize zaman damgasından belirtilen bir zaman biriminin tam sayı değerini çıkarır"
     }
   ],
   "wFCkpM": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the minimum value, or the first value of a set."
+      "value": "Gerekli. En küçük değeri bulunacak değerler dizisi veya bir kümenin ilk değeri."
     }
   ],
   "wHYQyg": [
@@ -2606,31 +2606,31 @@
   "wQcEXt": [
     {
       "type": 0,
-      "value": "Required. The string that is searched for parameter 2 and updated with parameter 3, when parameter 2 is found in parameter 1."
+      "value": "Gerekli. İçinde parametre 2'nin arandığı ve parametre 1'de parametre 2 bulunduğunda, parametre 3 ile güncelleştirilen dize."
     }
   ],
   "wQsEwc": [
     {
       "type": 0,
-      "value": "Required. The length of the substring."
+      "value": "Gerekli. Alt dizenin uzunluğu."
     }
   ],
   "wWVQuK": [
     {
       "type": 0,
-      "value": "Returns a specified value based on whether the expression resulted in true or false"
+      "value": "İfadenin true veya false ile sonuçlanmasına bağlı olarak belirli bir değer döndürür"
     }
   ],
   "wmDUGV": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to UTC"
+      "value": "Geçirilen bir dize zaman damgasını kaynak saat diliminden UTC'ye dönüştürür"
     }
   ],
   "wmw/ai": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either the array or object passed to this function"
+      "value": "Tüm öğeleri, bu işleve geçirilen dizi veya nesnede olan tek bir dizi veya nesne döndürür"
     }
   ],
   "woJQhv": [
@@ -2642,25 +2642,25 @@
   "x0or2o": [
     {
       "type": 0,
-      "value": "Required. The collection for which to get the length."
+      "value": "Gerekli. Uzunluğun alınacağı koleksiyon."
     }
   ],
   "xJ6vjn": [
     {
       "type": 0,
-      "value": "Returns a string representation of a URI encoded string"
+      "value": "URI ile kodlanmış bir dizenin dize gösterimini döndürür"
     }
   ],
   "xV/oyK": [
     {
       "type": 0,
-      "value": "Required. The name of the new or existing property."
+      "value": "Gerekli. Yeni veya mevcut özelliğin adı."
     }
   ],
   "xYyPR8": [
     {
       "type": 0,
-      "value": "Returns the path from a URI. If path is not specified, returns '/'"
+      "value": "Bir URI'den yolu döndürür. Yol belirtilmezse, '/' döndürür"
     }
   ],
   "xt5TeT": [
@@ -2684,13 +2684,13 @@
   "y6BcVN": [
     {
       "type": 0,
-      "value": "Required. The string to escape URL-unsafe characters from."
+      "value": "Gerekli. URL güvenli olmayan karakterlerin kaçırılacağı dize."
     }
   ],
   "yBrsFJ": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an array."
+      "value": "Gerekli. Diziye dönüştürülen değer."
     }
   ],
   "yqRrQ/": [
@@ -2708,19 +2708,19 @@
   "zBMVKg": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a decimal number."
+      "value": "Gerekli. Ondalık sayıya dönüştürülen değer."
     }
   ],
   "zIDVd9": [
     {
       "type": 0,
-      "value": "Required. The string that is converted to a native type value."
+      "value": "Gerekli. Yerel tür değerine dönüştürülen değer."
     }
   ],
   "zcZpHT": [
     {
       "type": 0,
-      "value": "Converts a string, with optionally a locale and a format to a date"
+      "value": "Bir dizeyi dönüştürür, isteğe bağlı olarak bir yerel ayar ve bir tarih biçimi içerir"
     }
   ],
   "ziYCiA": [
@@ -2738,13 +2738,13 @@
   "znGyyU": [
     {
       "type": 0,
-      "value": "Adds an integer number of a specified unit of time to a string timestamp passed in"
+      "value": "Geçirilen bir dize zaman damgasına belirtilen bir zaman biriminin tam sayı değerini ekler"
     }
   ],
   "zxe9hh": [
     {
       "type": 0,
-      "value": "Required. The number of minutes to add. Can be negative to subtract minutes."
+      "value": "Gerekli. Eklenecek dakika sayısı. Dakika sayısının çıkarılması için negatif olabilir."
     }
   ]
 }

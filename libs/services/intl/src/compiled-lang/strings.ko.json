@@ -8,13 +8,13 @@
   "+g+mch": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of an action"
+      "value": "작업의 다중 부분 출력에서 한 부분의 본문을 반환합니다."
     }
   ],
   "+lpuMl": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'false'."
+      "value": "필수 항목으로, 식이 'false'인 경우 반환할 값입니다."
     }
   ],
   "/I/U8L": [
@@ -32,49 +32,49 @@
   "/QqADs": [
     {
       "type": 0,
-      "value": "Returns the elements in the array starting at index Count"
+      "value": "개수 인덱스부터 시작하여 배열의 요소를 반환합니다."
     }
   ],
   "/doURb": [
     {
       "type": 0,
-      "value": "Convert the input to an array"
+      "value": "입력을 배열로 변환합니다."
     }
   ],
   "/qchXQ": [
     {
       "type": 0,
-      "value": "Required. The collection to join items from."
+      "value": "필수 항목으로, 항목을 가입할 원본 컬렉션입니다."
     }
   ],
   "/ut0u7": [
     {
       "type": 0,
-      "value": "Returns the first Count elements from the array or string passed in"
+      "value": "전달된 배열 또는 문자열의 첫 번째 Count 요소를 반환합니다."
     }
   ],
   "07ZsoY": [
     {
       "type": 0,
-      "value": "Returns the start of the hour to a string timestamp passed in"
+      "value": "전달된 문자열 타임스탬프에 시간 단위의 시작을 반환합니다."
     }
   ],
   "09B9CU": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action. Note: This function can only be used in an httpWebhook and apiConnectionWebhook, not in a manual, recurrence, http, or apiConnection."
+      "value": "트리거 또는 작업을 호출할 URL을 반환합니다. 참고: 이 함수는 httpWebhook 및 apiConnectionWebhook에서만 사용할 수 있고 수동, 되풀이, http 또는 apiConnection에는 사용할 수 없습니다."
     }
   ],
   "0FzNJV": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "필수 사항으로, base64로 인코딩된 문자열입니다."
     }
   ],
   "0GqNGo": [
     {
       "type": 0,
-      "value": "Url decodes the input string"
+      "value": "URL로 입력 문자열을 디코딩합니다."
     }
   ],
   "0JTHTZ": [
@@ -86,7 +86,7 @@
   "0R2D5l": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a URI encoded string"
+      "value": "URI로 인코딩된 문자열의 이진 표현을 반환합니다."
     }
   ],
   "0ZlNtf": [
@@ -98,25 +98,25 @@
   "0i/6TR": [
     {
       "type": 0,
-      "value": "Required. The string to convert to upper casing. If a character in the string does not have an uppercase equivalent, the character is included unchanged in the returned string."
+      "value": "필수 항목으로, 대문자로 변환할 문자열입니다. 문자열의 문자에 해당하는 대문자가 없는 경우 해당 문자는 변경되지 않은 상태로 반환된 문자열에 포함됩니다."
     }
   ],
   "0p+pJq": [
     {
       "type": 0,
-      "value": "Returns the remainder after dividing the two numbers (modulo)"
+      "value": "두 숫자를 나눈 후의 나머지를 반환합니다(모듈로)."
     }
   ],
   "0qV0Qe": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "필수 항목으로, 값을 포함할 수 있는 문자열입니다."
     }
   ],
   "0uj1Li": [
     {
       "type": 0,
-      "value": "Returns a binary representation of an input data URI string"
+      "value": "입력 데이터 URI 문자열의 이진 표현을 반환합니다."
     }
   ],
   "0y5eia": [
@@ -128,13 +128,13 @@
   "1+Z8n9": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to String representation."
+      "value": "필수 사항으로, 문자열 표현으로 변환할 데이터 URI입니다."
     }
   ],
   "109OPL": [
     {
       "type": 0,
-      "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
+      "value": "URI에서 포트를 반환합니다. 포트를 지정하지 않으면 프로토콜의 기본 포트가 반환됩니다."
     }
   ],
   "1A1P5b": [
@@ -146,19 +146,19 @@
   "1D047X": [
     {
       "type": 0,
-      "value": "Required. The value to convert to XML."
+      "value": "필수 항목으로, XML로 변환할 값입니다."
     }
   ],
   "1Fn5n+": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "필수 사항으로, URI로 인코딩된 문자열입니다."
     }
   ],
   "1NBvKu": [
     {
       "type": 0,
-      "value": "Convert the parameter argument to a floating-point number"
+      "value": "매개 변수 인수를 부동 소수점 숫자로 변환합니다."
     }
   ],
   "1R6Vaa": [
@@ -193,13 +193,13 @@
   "1TE0e8": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "필수 항목으로, 인덱스를 검색할 값입니다."
     }
   ],
   "1jhzOM": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than value being compared to."
+      "value": "필수 항목으로, 비교되는 값보다 작은지 확인할 개체입니다."
     }
   ],
   "1zgFh1": [
@@ -211,13 +211,13 @@
   "23fENy": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a base 64 encoded string"
+      "value": "base 64로 인코딩된 문자열의 이진 표현을 반환합니다."
     }
   ],
   "23szE+": [
     {
       "type": 0,
-      "value": "Required. The value to convert to data URI."
+      "value": "필수 사항으로, 데이터 URI를 변환할 값입니다."
     }
   ],
   "2K2fAj": [
@@ -229,13 +229,13 @@
   "2cVEMV": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded action output"
+      "value": "양식 데이터 또는 양식 인코딩 작업 출력의 키 이름과 일치하는 단일 값을 반환합니다."
     }
   ],
   "2gzGrJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "필수 사항으로, 양식 데이터 또는 양식 인코딩 응답이 있는 작업의 이름입니다."
     }
   ],
   "2mnU/w": [
@@ -253,7 +253,7 @@
   "3NhwIJ": [
     {
       "type": 0,
-      "value": "Required. The separator."
+      "value": "필수 항목으로, 구분 기호입니다."
     }
   ],
   "3kI7xF": [
@@ -265,37 +265,37 @@
   "3rzrWf": [
     {
       "type": 0,
-      "value": "Required. The object to remove the property from."
+      "value": "필수 항목으로, 속성을 제거하는 개체입니다."
     }
   ],
   "3vCCY7": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to subtract."
+      "value": "필수 사항으로, 빼려는 지정된 시간 단위의 수입니다."
     }
   ],
   "47kOXr": [
     {
       "type": 0,
-      "value": "Required. The lowest integer that can be returned."
+      "value": "필수 사항으로, 반환할 수 있는 최하 정수입니다."
     }
   ],
   "4BrA0z": [
     {
       "type": 0,
-      "value": "Required. The number of days to add. Can be negative to subtract days."
+      "value": "필수 사항으로, 추가할 일 수입니다. 일을 빼려는 경우 음수일 수 있습니다."
     }
   ],
   "4YKQAF": [
     {
       "type": 0,
-      "value": "Required. The unit of time specified in the interval."
+      "value": "필수 사항으로, 간격에 지정된 시간 단위입니다."
     }
   ],
   "4c0uPQ": [
     {
       "type": 0,
-      "value": "Required. The name of the parameter whose values you want."
+      "value": "필수 사항으로, 값을 원하는 매개 변수의 이름입니다."
     }
   ],
   "4cVuMw": [
@@ -307,7 +307,7 @@
   "4vcnOA": [
     {
       "type": 0,
-      "value": "Returns the minimum value in the input array of numbers"
+      "value": "숫자의 입력 배열에서 최소값을 반환합니다."
     }
   ],
   "4vmGh0": [
@@ -319,25 +319,25 @@
   "5J7j9k": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "필수 항목으로, 평가할 XPath 식입니다."
     }
   ],
   "5aa76N": [
     {
       "type": 0,
-      "value": "Returns the first element in the array or string passed in"
+      "value": "전달된 배열 또는 문자열의 첫 번째 요소를 반환합니다."
     }
   ],
   "5b0sKi": [
     {
       "type": 0,
-      "value": "Returns true if an object, array, or string is empty"
+      "value": "개체, 배열 또는 문자열이 비어 있는 경우 true를 반환합니다."
     }
   ],
   "5cPiWA": [
     {
       "type": 0,
-      "value": "Required. The name of the loop whose item you want."
+      "value": "필수 사항으로, 원하는 항목의 루프 이름입니다."
     }
   ],
   "5qzZMo": [
@@ -355,7 +355,7 @@
   "63/zYN": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than value being compared to."
+      "value": "필수 항목으로, 비교 중인 값보다 큰지 확인할 개체입니다."
     }
   ],
   "6jiO7t": [
@@ -367,13 +367,13 @@
   "6jsWn/": [
     {
       "type": 0,
-      "value": "Required. The collection to search within."
+      "value": "필수 항목으로, 검색을 수행할 컬렉션입니다."
     }
   ],
   "6kSpHL": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a multipart response."
+      "value": "필수 사항으로, 여러 부분으로 된 응답이 있는 작업의 이름입니다."
     }
   ],
   "6oqk+A": [
@@ -385,7 +385,7 @@
   "6qkBwz": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 2 with."
+      "value": "필수 사항으로, 피승수 2를 곱할 숫자입니다."
     }
   ],
   "7GSk99": [
@@ -397,13 +397,13 @@
   "7QymrD": [
     {
       "type": 0,
-      "value": "Required. The string from which the substring is taken."
+      "value": "필수 항목으로, 하위 문자열을 가져온 문자열입니다."
     }
   ],
   "7aJqIH": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when formatting (defaults to 'en-us')."
+      "value": "선택 사항. 형식을 지정할 때 사용할 로캘(기본값 'en-us')입니다."
     }
   ],
   "7k9jXx": [
@@ -415,7 +415,7 @@
   "7lnElz": [
     {
       "type": 0,
-      "value": "Returns the number of ticks (100 nanoseconds interval) since 1 January 0001 00:00:00 UT of a string timestamp"
+      "value": "문자열 타임스탬프에서 0001년 1월 1일 00:00:00 UT 이후의 틱 수(100나노초 간격)를 반환합니다."
     }
   ],
   "7yEdSt": [
@@ -433,25 +433,25 @@
   "7zzPsK": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "필수 항목으로, 값을 포함할 수 있는 문자열입니다."
     }
   ],
   "8CWFEh": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'true'."
+      "value": "필수 항목으로, 식이 'true'인 경우 반환할 값입니다."
     }
   ],
   "8DFwxH": [
     {
       "type": 0,
-      "value": "Returns a formatted number string"
+      "value": "형식이 지정된 숫자 문자열을 반환합니다."
     }
   ],
   "8FjOSh": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater or equal to the comparing object."
+      "value": "필수 항목으로, 비교하는 개체보다 크거나 같은지 확인할 개체입니다."
     }
   ],
   "8L+oIz": [
@@ -463,19 +463,19 @@
   "8U0KPg": [
     {
       "type": 0,
-      "value": "Required. The string to be URI encoded."
+      "value": "필수 사항으로, URI로 인코딩할 문자열입니다."
     }
   ],
   "8wr0zO": [
     {
       "type": 0,
-      "value": "Adds an integer number of days to a string timestamp passed in"
+      "value": "전달된 문자열 타임스탬프에 정수 일 수를 더합니다."
     }
   ],
   "9/UeTh": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in"
+      "value": "전달된 배열 또는 개체의 공통 요소가 포함된 단일 배열 또는 개체를 반환합니다."
     }
   ],
   "99vsJy": [
@@ -487,13 +487,13 @@
   "9JuvQ4": [
     {
       "type": 0,
-      "value": "Returns a data URI of a value"
+      "value": "값의 데이터 URI를 반환합니다."
     }
   ],
   "9Jv3+1": [
     {
       "type": 0,
-      "value": "Returns an object with an additional property value pair"
+      "value": "추가적인 속성 값 쌍을 사용하여 개체 반환"
     }
   ],
   "9b4xDa": [
@@ -505,43 +505,43 @@
   "9djnqI": [
     {
       "type": 0,
-      "value": "Returns the result from adding the two numbers"
+      "value": "두 숫자를 더한 결과를 반환합니다."
     }
   ],
   "9u/Ae3": [
     {
       "type": 0,
-      "value": "Returns true if both parameters are true"
+      "value": "두 매개 변수가 모두 true인 경우 true를 반환합니다."
     }
   ],
   "ANbEeQ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose values you want."
+      "value": "필수 사항으로, 값을 원하는 작업의 이름입니다."
     }
   ],
   "ArTh0/": [
     {
       "type": 0,
-      "value": "Required. The string to encode into base64 representation."
+      "value": "필수 사항으로, base64 표현으로 인코딩할 문자열입니다."
     }
   ],
   "B2s0iG": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "필수 사항으로, 검색할 부분의 인덱스입니다."
     }
   ],
   "BCAnZP": [
     {
       "type": 0,
-      "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
+      "value": "이 타임스탬프 값의 형식을 지정하는 방법을 나타내는 단일 형식 지정자 문자 또는 사용자 지정 형식 패턴입니다. 형식을 제공하지 않으면 ISO 8601 형식('o')이 사용됩니다."
     }
   ],
   "BHe7qY": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "필수 사항으로, URI로 인코딩된 문자열입니다."
     }
   ],
   "BKL0ZG": [
@@ -553,7 +553,7 @@
   "BQCPY7": [
     {
       "type": 0,
-      "value": "Required. The string to decode the URL-unsafe characters from."
+      "value": "필수 사항으로, URL이 안전하지 않은 문자를 디코딩할 문자열입니다."
     }
   ],
   "Bn8iTS": [
@@ -565,13 +565,13 @@
   "BuYrD3": [
     {
       "type": 0,
-      "value": "A single format specifier that indicates how to format the value of this Guid."
+      "value": "이 GUID 값의 서식을 지정하는 방법을 나타내는 단일 형식 지정자입니다."
     }
   ],
   "BxITRH": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than comparing object."
+      "value": "필수 항목으로, 비교하는 개체보다 큰지 확인할 개체입니다."
     }
   ],
   "CG772M": [
@@ -583,13 +583,13 @@
   "D+Ptnq": [
     {
       "type": 0,
-      "value": "Returns the path and query from a URI"
+      "value": "URI에서 경로 및 쿼리 반환"
     }
   ],
   "D1lgsT": [
     {
       "type": 0,
-      "value": "Required. The string from which to remove leading and trailing whitespace."
+      "value": "필수 항목으로, 선행 및 후행 공백을 제거하는 문자열입니다."
     }
   ],
   "DFo+mo": [
@@ -607,7 +607,7 @@
   "ECZC6Y": [
     {
       "type": 0,
-      "value": "Converts the parameter to a decimal number"
+      "value": "매개 변수를 10진수로 변환"
     }
   ],
   "ERAWZA": [
@@ -619,37 +619,37 @@
   "EZz5q7": [
     {
       "type": 0,
-      "value": "Required. The index of where to start extracting the substring."
+      "value": "선택 과목. substring 추출을 시작할 위치의 인덱스입니다."
     }
   ],
   "F3IDl8": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to add."
+      "value": "필수 사항으로, 더할 지정된 시간 단위의 수입니다."
     }
   ],
   "FDF4Qb": [
     {
       "type": 0,
-      "value": "Returns a parameter value that is defined in the definition"
+      "value": "정의에 정의된 매개 변수 값을 반환합니다."
     }
   ],
   "FN5zHQ": [
     {
       "type": 0,
-      "value": "Returns a section of a string defined by the start index and the end index"
+      "value": "시작 인덱스와 끝 인덱스로 정의된 문자열의 섹션을 반환합니다."
     }
   ],
   "FS+/Tb": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "트리거의 다중 부분 출력에서 한 부분의 본문을 반환합니다."
     }
   ],
   "FVavKy": [
     {
       "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
+      "value": "전달된 문자열 타임스탬프에 하루 시작을 반환합니다."
     }
   ],
   "FXLR5M": [
@@ -676,13 +676,13 @@
   "Fgq3Db": [
     {
       "type": 0,
-      "value": "Required. The collection to take the last object from."
+      "value": "필수 항목으로, 마지막 개체를 가져올 원본 컬렉션입니다."
     }
   ],
   "Fh2HDb": [
     {
       "type": 0,
-      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+      "value": "문자열 내에서 값의 첫 번째 인덱스를 반환합니다(대/소문자 구분 안 함, 고정 문화권)."
     }
   ],
   "FslNgF": [
@@ -694,31 +694,31 @@
   "G0XYrd": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "필수 항목으로, 값을 포함할 수 있는 문자열입니다."
     }
   ],
   "GAY7b8": [
     {
       "type": 0,
-      "value": "Returns the query from a URI"
+      "value": "URI에서 쿼리 반환"
     }
   ],
   "GLd3MU": [
     {
       "type": 0,
-      "value": "Required. The object to find inside the Within collection."
+      "value": "필수 항목으로, Within 컬렉션 내에서 찾을 개체입니다."
     }
   ],
   "GYvF54": [
     {
       "type": 0,
-      "value": "Referencing functions"
+      "value": "참조 함수"
     }
   ],
   "GcG0qf": [
     {
       "type": 0,
-      "value": "Returns true if the parameters are false"
+      "value": "매개 변수가 false인 경우 true를 반환합니다."
     }
   ],
   "Gmya+V": [
@@ -742,25 +742,25 @@
   "H17jEE": [
     {
       "type": 0,
-      "value": "URI parsing functions"
+      "value": "URI 구문 분석 기능"
     }
   ],
   "H1wnHr": [
     {
       "type": 0,
-      "value": "Required. The string to slice."
+      "value": "필수 항목. 슬라이스할 문자열입니다."
     }
   ],
   "H8bEUn": [
     {
       "type": 0,
-      "value": "Required. The number that Subtrahend is removed from."
+      "value": "필수 사항으로, 감수가 제거될 숫자입니다."
     }
   ],
   "HDqP2g": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "필수 사항으로, 반환할 양식 데이터 값의 키 이름입니다."
     }
   ],
   "HfrUId": [
@@ -778,37 +778,37 @@
   "IW2MjQ": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+      "value": "전달된 문자열 타임스탬프를 UTC에서 대상 표준 시간대로 변환합니다."
     }
   ],
   "Ip7Iax": [
     {
       "type": 0,
-      "value": "Returns the index of the n-th occurrence of a value within a string (case-insensitive, invariant culture)"
+      "value": "문자열 내에서 n번째로 나타나는 값의 인덱스를 반환합니다(대소문자를 구분하지 않는 고정 문화권)."
     }
   ],
   "IpVwYT": [
     {
       "type": 0,
-      "value": "Returns the first non-null object in the arguments passed in"
+      "value": "전달된 인수에서 Null이 아닌 첫 번째 개체를 반환합니다."
     }
   ],
   "J5/7vN": [
     {
       "type": 0,
-      "value": "Converts a string to lowercase using the casing rules of the invariant culture"
+      "value": "고정 문화권의 대/소문자 규칙을 사용하여 문자열을 소문자로 변환합니다."
     }
   ],
   "JNQHws": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time."
+      "value": "필수 사항으로, 시간을 포함하는 문자열입니다."
     }
   ],
   "JSfWJ0": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a boolean."
+      "value": "필수 항목으로, 부울로 변환되는 값입니다."
     }
   ],
   "Jaz3EC": [
@@ -826,13 +826,13 @@
   "Ji6663": [
     {
       "type": 0,
-      "value": "Returns true if a dictionary contains a key, if an array contains a value, or if a string contains a substring"
+      "value": "사전에 키가 포함되어 있거나, 배열에 값이 포함되어 있거나, 문자열에 부분 문자열이 포함되어 있는 경우 true를 반환합니다."
     }
   ],
   "JjTfC7": [
     {
       "type": 0,
-      "value": "Required. The number to be formatted."
+      "value": "필수. 형식을 지정할 숫자입니다."
     }
   ],
   "JnlcZQ": [
@@ -844,43 +844,43 @@
   "Jq2Y/o": [
     {
       "type": 0,
-      "value": "Required. The numeric format string."
+      "value": "숫자 형식 문자열입니다."
     }
   ],
   "K50znc": [
     {
       "type": 0,
-      "value": "Required. The object to add a new property to."
+      "value": "필수 항목으로, 새 속성을 추가할 개체입니다."
     }
   ],
   "K90YEU": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string"
+      "value": "문자열에서 문자의 하위 집합을 반환합니다."
     }
   ],
   "L+PY+j": [
     {
       "type": 0,
-      "value": "Required. The number of objects to take from the Collection. Must be a positive integer."
+      "value": "필수 항목으로, 컬렉션에서 가져올 개체 수입니다. 양의 정수여야 합니다."
     }
   ],
   "L0UAzs": [
     {
       "type": 0,
-      "value": "Returns the day of week component of a string timestamp"
+      "value": "문자열 타임스탬프의 주 구성 요소를 반환합니다."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
-      "value": "Returns the scheme from a URI"
+      "value": "URI에서 체계 반환"
     }
   ],
   "LoGUT3": [
     {
       "type": 0,
-      "value": "When used inside for-each loop, this function returns the current item of the specified loop."
+      "value": "for each 루프 내에서 사용하는 경우 이 함수는 지정된 루프의 현재 항목을 반환합니다."
     }
   ],
   "Lub7NN": [
@@ -904,31 +904,31 @@
   "M8Aqm4": [
     {
       "type": 0,
-      "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
+      "value": "선택 사항. 해당 범위 내 최상위 작업의 입력 및 출력을 원하는 범위 작업의 이름입니다."
     }
   ],
   "M9mzP6": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "필수 사항으로, 피가수 2에 추가할 숫자입니다."
     }
   ],
   "MDbmMw": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object must be in all collections passed in to appear in the result."
+      "value": "필수 항목으로, 평가할 컬렉션입니다. 개체는 결과에 표시되기 위해 전달된 모든 컬렉션에 있어야 합니다."
     }
   ],
   "MKTdNk": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to binary representation."
+      "value": "필수 사항으로, 이진 표현으로 변환할 데이터 URI입니다."
     }
   ],
   "MTR4Vg": [
     {
       "type": 0,
-      "value": "Returns the current timestamp as a string"
+      "value": "현재 타임스탬프를 문자열로 반환합니다."
     }
   ],
   "Mb+Eaq": [
@@ -952,7 +952,7 @@
   "N2CF0J": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "필수 사항으로, 반환할 양식 데이터 값의 키 이름입니다."
     }
   ],
   "NPUFgH": [
@@ -964,7 +964,7 @@
   "O+8vRv": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a value"
+      "value": "값의 이진 표현을 반환합니다."
     }
   ],
   "O36+wl": [
@@ -976,7 +976,7 @@
   "OD8igU": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "필수 사항으로, 원본 표준 시간대의 표준 시간대 이름을 포함하는 문자열입니다. 자세한 내용은 https://msdn.microsoft.com/ko-kr/library/gg154758.aspx를 참조하세요."
     }
   ],
   "OFKZzQ": [
@@ -994,7 +994,7 @@
   "OVvieE": [
     {
       "type": 0,
-      "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
+      "value": "지정된 범위 작업(예: For_each, Until 또는 Scope 작업)에서 최상위 작업의 결과를 반환합니다."
     }
   ],
   "Oib1mL": [
@@ -1018,13 +1018,13 @@
   "OihxQE": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when parsing the date time string."
+      "value": "선택 항목. 날짜 시간 문자열을 구문 분석할 때 사용할 로캘입니다."
     }
   ],
   "OjGJ8Y": [
     {
       "type": 0,
-      "value": "Returns the host from a URI"
+      "value": "URI에서 호스트 반환"
     }
   ],
   "OnrO5/": [
@@ -1036,7 +1036,7 @@
   "P2A5dB": [
     {
       "type": 0,
-      "value": "Required. This value is the number of integers that is in the array."
+      "value": "필수 사항으로, 이 값은 배열에 있는 정수의 개수입니다."
     }
   ],
   "P4rEwD": [
@@ -1048,7 +1048,7 @@
   "P8ZBF9": [
     {
       "type": 0,
-      "value": "Required. The collection to take the first object from."
+      "value": "필수 항목으로, 첫 번째 개체를 가져올 원본 컬렉션입니다."
     }
   ],
   "PF87Ew": [
@@ -1060,7 +1060,7 @@
   "PKMkb/": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "필수 사항으로, 피가수 1에 추가할 숫자입니다."
     }
   ],
   "PP63jY": [
@@ -1078,7 +1078,7 @@
   "PRnqYA": [
     {
       "type": 0,
-      "value": "Required. The number of seconds to add. Can be negative to subtract seconds."
+      "value": "필수 사항으로, 추가할 초 값입니다. 초를 빼려는 경우 음수일 수 있습니다."
     }
   ],
   "PaPPLr": [
@@ -1090,13 +1090,13 @@
   "PfCJlN": [
     {
       "type": 0,
-      "value": "Workflow functions"
+      "value": "워크플로 함수"
     }
   ],
   "Pvm0xB": [
     {
       "type": 0,
-      "value": "Returns the base 64 representation of the input string"
+      "value": "입력 문자열의 base 64 표현을 반환합니다."
     }
   ],
   "Q/7unA": [
@@ -1108,13 +1108,13 @@
   "Q0xpPQ": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less or equal to the comparing object."
+      "value": "필수 항목으로, 비교하는 개체보다 작거나 같은지 확인할 개체입니다."
     }
   ],
   "QEp3C8": [
     {
       "type": 0,
-      "value": "Convert the input to a JSON type value"
+      "value": "입력을 JSON 형식 값으로 변환합니다."
     }
   ],
   "QQYzHC": [
@@ -1130,13 +1130,13 @@
   "QZBPUx": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded trigger output"
+      "value": "양식 데이터 또는 양식 인코딩 트리거 출력의 키 이름과 일치하는 단일 값을 반환합니다."
     }
   ],
   "QZrxUk": [
     {
       "type": 0,
-      "value": "String functions"
+      "value": "문자열 함수"
     }
   ],
   "QbJDi7": [
@@ -1148,7 +1148,7 @@
   "QeE0k/": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "필수 사항으로, 이진으로 변환되는 값입니다."
     }
   ],
   "QknZQ1": [
@@ -1160,13 +1160,13 @@
   "Qn8qxn": [
     {
       "type": 0,
-      "value": "Returns a string in date format"
+      "value": "날짜 형식에서 문자열을 반환합니다."
     }
   ],
   "QpRRt3": [
     {
       "type": 0,
-      "value": "Required. The string to delimit items with."
+      "value": "필수 항목으로, 항목을 구분할 문자열입니다."
     }
   ],
   "QrQDdp": [
@@ -1188,7 +1188,7 @@
   "RX2Shm": [
     {
       "type": 0,
-      "value": "Required. The string that is split."
+      "value": "필수 항목으로, 분할된 문자열입니다."
     }
   ],
   "RhH4pF": [
@@ -1215,13 +1215,13 @@
   "SKXopi": [
     {
       "type": 0,
-      "value": "Convert the parameter to an integer"
+      "value": "매개 변수를 정수로 변환합니다."
     }
   ],
   "SLZ0n4": [
     {
       "type": 0,
-      "value": "Checks if the string starts with a value (case-insensitive, invariant culture)"
+      "value": "문자열이 값으로 시작하는지 여부를 확인합니다(대/소문자 구분 안 함, 고정 문화권)."
     }
   ],
   "SXb47U": [
@@ -1237,7 +1237,7 @@
   "SY04wn": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "필수 사항으로, 양식 데이터 또는 양식 인코딩 응답이 있는 작업의 이름입니다."
     }
   ],
   "T7zcR6": [
@@ -1255,13 +1255,13 @@
   "TI44R1": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "구분 기호로 결합된 배열의 각 항목이 포함된 문자열을 반환합니다."
     }
   ],
   "TO7qos": [
     {
       "type": 0,
-      "value": "Returns the start of the month of a string timestamp"
+      "value": "문자열 타임스탬프의 월초를 반환합니다."
     }
   ],
   "TZv5JE": [
@@ -1285,7 +1285,7 @@
   "Twfck/": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 1 with."
+      "value": "필수 사항으로, 피승수 1을 곱할 숫자입니다."
     }
   ],
   "Tz5jTR": [
@@ -1297,7 +1297,7 @@
   "U3iWVd": [
     {
       "type": 0,
-      "value": "Generates an array of integers starting from a certain number"
+      "value": "특정 숫자부터 시작하는 정수 배열을 생성합니다."
     }
   ],
   "UCNM4L": [
@@ -1309,7 +1309,7 @@
   "UHCVNK": [
     {
       "type": 0,
-      "value": "Replaces a string with a given string"
+      "value": "문자열을 지정된 문자열로 바꿉니다."
     }
   ],
   "USVffu": [
@@ -1333,7 +1333,7 @@
   "VVfYvq": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "필수 사항으로, 제수로 나눌 숫자입니다."
     }
   ],
   "VXBWrq": [
@@ -1367,25 +1367,25 @@
   "W6FdMh": [
     {
       "type": 0,
-      "value": "Required. The name of the new property."
+      "value": "필수 항목으로, 새 속성의 이름입니다."
     }
   ],
   "WS9kXD": [
     {
       "type": 0,
-      "value": "Required. The first integer in the array."
+      "value": "필수 사항으로, 배열의 첫 번째 정수입니다."
     }
   ],
   "WUe3DY": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs"
+      "value": "trigger().outputs의 축약형"
     }
   ],
   "WgoP7R": [
     {
       "type": 0,
-      "value": "Returns the result from multiplying the two numbers"
+      "value": "두 숫자를 곱한 결과를 반환합니다."
     }
   ],
   "X8JjjT": [
@@ -1409,13 +1409,13 @@
   "XCunbR": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs"
+      "value": "actions('actionName').outputs의 축약형"
     }
   ],
   "XEuptL": [
     {
       "type": 0,
-      "value": "Combines any number of strings together"
+      "value": "임의 개수의 문자열을 결합합니다."
     }
   ],
   "XFFpu/": [
@@ -1457,13 +1457,13 @@
   "XtuP5e": [
     {
       "type": 0,
-      "value": "Math functions"
+      "value": "수식 함수"
     }
   ],
   "Xx/naD": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose body outputs you want."
+      "value": "필수 사항으로, 본문 출력을 원하는 작업의 이름입니다."
     }
   ],
   "Y0H9aX": [
@@ -1475,7 +1475,7 @@
   "Y9kBz5": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a data URI"
+      "value": "데이터 URI의 이진 표현을 반환합니다."
     }
   ],
   "YHsAKl": [
@@ -1503,13 +1503,13 @@
   "YKXmKD": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime trigger"
+      "value": "식이 다른 JSON 이름 및 값 쌍이나 런타임 트리거의 출력에서 해당 값을 파생시킬 수 있게 합니다."
     }
   ],
   "YaFjJQ": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
+      "value": "이 함수에 전달되는 배열 또는 개체에 포함된 모든 요소를 사용해서 단일 배열 또는 개체를 반환합니다. 이 함수에 대한 매개 변수는 개체 집합 또는 배열 집합(둘 중 하나만 포함)일 수 있습니다. 이름이 같은 두 개체가 최종 출력에 있는 경우 해당 이름의 마지막 개체가 최종 개체로 나타납니다."
     }
   ],
   "YoQara": [
@@ -1521,19 +1521,19 @@
   "ZME5hh": [
     {
       "type": 0,
-      "value": "Returns the day of month component of a string timestamp"
+      "value": "문자열 타임스탬프의 월간 일자 구성 요소를 반환합니다."
     }
   ],
   "ZUaz3Y": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs.body"
+      "value": "trigger().outputs.body의 축약형"
     }
   ],
   "ZaIeDG": [
     {
       "type": 0,
-      "value": "Required. The value the string may start with."
+      "value": "필수 항목으로, 문자열이 시작될 수 있는 값입니다."
     }
   ],
   "ZbX8xq": [
@@ -1545,19 +1545,19 @@
   "a7j3gS": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "필수 사항으로, 제수로 나눌 숫자입니다."
     }
   ],
   "aAXnqw": [
     {
       "type": 0,
-      "value": "Required. The number of the occurrence of the substring to find."
+      "value": "필수 항목. 찾으려는 substring의 발생 횟수입니다."
     }
   ],
   "aGyVJT": [
     {
       "type": 0,
-      "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
+      "value": "필수 항목으로, 컬렉션 맨 앞부터 제거할 개체의 수입니다. 양의 정수여야 합니다."
     }
   ],
   "bH5LtI": [
@@ -1577,7 +1577,7 @@
   "bTrk+S": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than or equal to value being compared to."
+      "value": "필수 항목으로, 비교 중인 값보다 크거나 같은지 확인할 개체입니다."
     }
   ],
   "ba9yGJ": [
@@ -1589,7 +1589,7 @@
   "bf7078": [
     {
       "type": 0,
-      "value": "Returns the maximum value in the input array of numbers"
+      "value": "숫자의 입력 배열에서 최대값을 반환합니다."
     }
   ],
   "bgfjqS": [
@@ -1601,13 +1601,13 @@
   "bzF/qn": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "필수 항목으로, 첫 번째 Count 개체를 가져올 컬렉션입니다."
     }
   ],
   "c3G/zq": [
     {
       "type": 0,
-      "value": "Returns an object with a property set to the provided value"
+      "value": "제공된 값으로 설정된 속성을 사용하여 개체 반환"
     }
   ],
   "c6XbVI": [
@@ -1619,7 +1619,7 @@
   "cJm+ah": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "필수 항목으로, 인덱스를 검색할 값입니다."
     }
   ],
   "ci6ex1": [
@@ -1649,7 +1649,7 @@
   "cscezV": [
     {
       "type": 0,
-      "value": "Required. The collection to skip the first Count objects from."
+      "value": "필수 항목으로, 첫 번째 Count 개체를 건너뛸 컬렉션입니다."
     }
   ],
   "d3bSQA": [
@@ -1667,25 +1667,25 @@
   "dhvk0u": [
     {
       "type": 0,
-      "value": "Returns a string representation of a base 64 encoded string"
+      "value": "base 64로 인코딩된 문자열의 문자열 표현을 반환합니다."
     }
   ],
   "dqgt9y": [
     {
       "type": 0,
-      "value": "Convert the parameter to a Boolean"
+      "value": "매개 변수를 부울로 변환합니다."
     }
   ],
   "drM9Sl": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded action output"
+      "value": "양식 데이터 또는 양식 인코딩 작업 출력의 키 이름과 일치하는 값의 배열을 반환합니다."
     }
   ],
   "dsz+Ae": [
     {
       "type": 0,
-      "value": "Splits the string using a separator"
+      "value": "구분 기호를 사용하여 문자열을 분할합니다."
     }
   ],
   "e4Onhn": [
@@ -1697,7 +1697,7 @@
   "eHgi14": [
     {
       "type": 0,
-      "value": "Required. The name of the variable whose value you want."
+      "value": "필수 사항으로, 원하는 값의 변수 이름입니다."
     }
   ],
   "eRvRWs": [
@@ -1709,37 +1709,37 @@
   "eT+b9W": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by."
+      "value": "필수 사항으로, 피제수를 나눌 숫자입니다."
     }
   ],
   "egLI8P": [
     {
       "type": 0,
-      "value": "Required. The index of where the substring begins in parameter 1."
+      "value": "필수 항목으로, 하위 문자열이 매개 변수 1에서 시작하는 인덱스입니다."
     }
   ],
   "f/lWTW": [
     {
       "type": 0,
-      "value": "Required. The objects to check for null."
+      "value": "필수 사항으로, null인지 확인할 개체입니다."
     }
   ],
   "f1j0to": [
     {
       "type": 0,
-      "value": "Optional. The index of where to stop extracting the substring."
+      "value": "선택 과목. substring 추출을 중지할 위치의 인덱스입니다."
     }
   ],
   "fBQBw/": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than or equal to the second"
+      "value": "첫 번째 인수가 두 번째 인수보다 크거나 같은 경우 true를 반환합니다."
     }
   ],
   "fg/34o": [
     {
       "type": 0,
-      "value": "Logical functions"
+      "value": "논리 함수"
     }
   ],
   "ftwXvc": [
@@ -1757,19 +1757,19 @@
   "gDDfek": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time plus the specified time interval."
+      "value": "현재 시간 더하기 지정된 시간 간격인 타임스탬프를 반환합니다."
     }
   ],
   "gDY9xk": [
     {
       "type": 0,
-      "value": "Returns the result from dividing the two numbers"
+      "value": "두 숫자를 나눈 결과를 반환합니다."
     }
   ],
   "gIK0WG": [
     {
       "type": 0,
-      "value": "Required. A boolean value that determines which value the expression should return."
+      "value": "필수 항목으로, 식이 반환해야 하는 값을 결정하는 부울 값입니다."
     }
   ],
   "gKq3Jv": [
@@ -1781,19 +1781,19 @@
   "gMhc5o": [
     {
       "type": 0,
-      "value": "Required. The string to combine into a single string."
+      "value": "필수 항목으로, 단일 문자열에 결합할 문자열입니다."
     }
   ],
   "gQt/0f": [
     {
       "type": 0,
-      "value": "Conversion functions"
+      "value": "변환 함수"
     }
   ],
   "gu9o9z": [
     {
       "type": 0,
-      "value": "When used inside until loop, this function returns the current iteration index of the specified loop."
+      "value": "Until 루트 내에서 사용되는 경우, 이 함수는 지정된 루프의 현재 반복 인덱스를 반환합니다."
     }
   ],
   "hN7iBP": [
@@ -1820,7 +1820,7 @@
   "hPM6iC": [
     {
       "type": 0,
-      "value": "Returns the result from subtracting two numbers"
+      "value": "두 숫자를 뺀 결과를 반환합니다."
     }
   ],
   "hdnZ9Y": [
@@ -1844,7 +1844,7 @@
   "iCSHJG": [
     {
       "type": 0,
-      "value": "Converts a string to uppercase using the casing rules of the invariant culture"
+      "value": "고정 문화권의 대/소문자 규칙을 사용하여 문자열을 대문자로 변환합니다."
     }
   ],
   "iJOIca": [
@@ -1856,7 +1856,7 @@
   "iMicOQ": [
     {
       "type": 0,
-      "value": "Required. The URI to parse."
+      "value": "필수 항목으로, 구문 분석할 URI입니다."
     }
   ],
   "iRjBf4": [
@@ -1896,43 +1896,43 @@
   "j2MU0b": [
     {
       "type": 0,
-      "value": "Returns an object with a property removed"
+      "value": "제거할 속성을 사용하여 개체 반환"
     }
   ],
   "j39557": [
     {
       "type": 0,
-      "value": "Returns the value of the variable specified."
+      "value": "지정된 변수의 값을 반환합니다."
     }
   ],
   "jHHF/u": [
     {
       "type": 0,
-      "value": "Returns a random integer from a specified range, which is inclusive only at the starting end."
+      "value": "지정된 범위(시작 지점만 포함)에서 임의의 정수를 반환합니다."
     }
   ],
   "jKsMS6": [
     {
       "type": 0,
-      "value": "Required. The expression that will be negated."
+      "value": "필수 항목으로, 부정할 식입니다."
     }
   ],
   "jQ0Aqj": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a string."
+      "value": "필수 항목으로, 문자열로 변환되는 값입니다."
     }
   ],
   "jVpanH": [
     {
       "type": 0,
-      "value": "Required. A base64 input string."
+      "value": "필수 사항으로, base64 입력 문자열입니다."
     }
   ],
   "jcA3Ig": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "필수 사항으로, 반환할 양식 데이터 값의 키 이름입니다."
     }
   ],
   "jfInxm": [
@@ -1944,7 +1944,7 @@
   "k/oqFL": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "필수 사항으로, base64로 인코딩된 문자열입니다."
     }
   ],
   "k41+13": [
@@ -1980,7 +1980,7 @@
   "kN6kce": [
     {
       "type": 0,
-      "value": "Returns a string representation of an input based64 string"
+      "value": "입력 based64 문자열의 문자열 표현을 반환합니다."
     }
   ],
   "kYivbS": [
@@ -1992,19 +1992,19 @@
   "kZuYgD": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second"
+      "value": "첫 번째 인수가 두 번째 인수보다 작은 경우 true를 반환합니다."
     }
   ],
   "keb4r1": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal"
+      "value": "두 값이 같은 경우 true를 반환합니다."
     }
   ],
   "knylNW": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that could be returned."
+      "value": "필수 사항으로, 이 값은 반환할 수 있는 가장 큰 정수 다음의 정수입니다."
     }
   ],
   "l36V56": [
@@ -2046,7 +2046,7 @@
   "ljAOR6": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs.body"
+      "value": "actions('actionName').outputs.body의 축약형"
     }
   ],
   "lztiwS": [
@@ -2070,73 +2070,73 @@
   "mGUdCO": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time minus the specified time interval."
+      "value": "현재 시간 빼기 지정된 시간 간격인 타임스탬프를 반환합니다."
     }
   ],
   "mGpKsl": [
     {
       "type": 0,
-      "value": "Returns a string representation of a data URI"
+      "value": "데이터 URI의 문자열 표현을 반환합니다."
     }
   ],
   "mPakaD": [
     {
       "type": 0,
-      "value": "Url encodes the input string"
+      "value": "URL로 입력 문자열을 인코딩합니다."
     }
   ],
   "mZRMD9": [
     {
       "type": 0,
-      "value": "Required. The string to convert to lower casing. If a character in the string does not have a lowercase equivalent, the character is included unchanged in the returned string."
+      "value": "필수 항목으로, 소문자로 변환할 문자열입니다. 문자열의 문자에 해당하는 소문자가 없는 경우 해당 문자는 변경되지 않은 상태로 반환된 문자열에 포함됩니다."
     }
   ],
   "n35O/+": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a floating-point number."
+      "value": "필수 항목으로, 부동 소수점 숫자로 변환되는 값입니다."
     }
   ],
   "nGds/r": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than or equal to value being compared to."
+      "value": "필수 항목으로, 비교되는 값보다 작거나 같은지 확인할 개체입니다."
     }
   ],
   "nHseED": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the future."
+      "value": "필수 사항으로, 미래의 원하는 시간에 대한 시간 단위 수입니다."
     }
   ],
   "nTA155": [
     {
       "type": 0,
-      "value": "Required. The name of the property to remove."
+      "value": "필수 항목으로, 제거할 속성의 이름입니다."
     }
   ],
   "ngsC44": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than comparing object."
+      "value": "필수 항목으로, 비교하는 개체보다 작은지 확인할 개체입니다."
     }
   ],
   "nkk1mu": [
     {
       "type": 0,
-      "value": "Adds an integer number of minutes to a string timestamp passed in"
+      "value": "전달된 문자열 타임스탬프에 정수 분 수를 더합니다."
     }
   ],
   "o/0SEj": [
     {
       "type": 0,
-      "value": "Returns the last element in the array or string passed in"
+      "value": "전달된 배열 또는 문자열의 마지막 요소를 반환합니다."
     }
   ],
   "o14STH": [
     {
       "type": 0,
-      "value": "Required. The XML on which to evaluate the XPath expression."
+      "value": "필수 항목으로, XPath 식을 평가할 XML입니다."
     }
   ],
   "o1HOyf": [
@@ -2156,7 +2156,7 @@
   "oAFcW6": [
     {
       "type": 0,
-      "value": "Required. The dataURI to decode into a binary representation."
+      "value": "필수 사항으로, 이진 표현으로 디코딩할 데이터 URI입니다."
     }
   ],
   "oV0xQ9": [
@@ -2168,7 +2168,7 @@
   "p/0r2N": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "필수 사항으로, 반환할 양식 데이터 값의 키 이름입니다."
     }
   ],
   "p16/4S": [
@@ -2186,7 +2186,7 @@
   "pOTcUO": [
     {
       "type": 0,
-      "value": "Required. The values to combine into an array."
+      "value": "필수 사항으로, 배열로 결합할 값입니다."
     }
   ],
   "pRUJff": [
@@ -2198,25 +2198,25 @@
   "pXmFGf": [
     {
       "type": 0,
-      "value": "Covert the input to an Xml type value"
+      "value": "입력을 XML 형식 값으로 변환합니다."
     }
   ],
   "pYtSyE": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by. After the division, the remainder is taken."
+      "value": "필수 사항으로, 피제수로 나눌 숫자입니다. 나눈 후에 나머지를 사용합니다."
     }
   ],
   "pcuZKB": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in. The parameters for the function can either be a set of objects or a set of arrays (not a mixture of both). If there are two objects with the same name, the last object with that name appears in the final object."
+      "value": "전달되는 배열 또는 개체 간에 공통된 요소가 있는 단일 배열 또는 개체를 반환합니다. 이 함수에 대한 매개 변수는 개체 집합 또는 배열 집합(둘 중 하나만 포함)일 수 있습니다. 이름이 같은 두 개체가 있는 경우 해당 이름의 마지막 개체가 최종 개체로 나타납니다."
     }
   ],
   "pozypE": [
     {
       "type": 0,
-      "value": "Trims leading and trailing whitespace from a string"
+      "value": "문자열에서 선행 및 후행 공백 제거"
     }
   ],
   "pr9GwA": [
@@ -2228,25 +2228,25 @@
   "q/+Uex": [
     {
       "type": 0,
-      "value": "Returns an XML node, nodeset or value as JSON from the provided XPath expression"
+      "value": "XML 노드, 노드 집합 또는 값을 제공된 XPath 식의 JSON으로 반환합니다."
     }
   ],
   "q2OCEx": [
     {
       "type": 0,
-      "value": "Required. The value to assign to the property."
+      "value": "필수 항목으로, 속성에 할당할 값입니다."
     }
   ],
   "q2w8Sk": [
     {
       "type": 0,
-      "value": "Convert the parameter to a string"
+      "value": "매개 변수를 문자열로 변환합니다."
     }
   ],
   "q87X20": [
     {
       "type": 0,
-      "value": "Adds an integer number of seconds to a string timestamp passed in"
+      "value": "전달된 문자열 타임스탬프에 정수 초 수를 더합니다."
     }
   ],
   "qGfwxW": [
@@ -2258,13 +2258,13 @@
   "qJpnIL": [
     {
       "type": 0,
-      "value": "Checks if the string ends with a value (case-insensitive, invariant culture)"
+      "value": "문자열이 값으로 끝나는지 여부를 확인합니다(대/소문자 구분 안 함, 고정 문화권)."
     }
   ],
   "qSejoi": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than or equal to the second"
+      "value": "첫 번째 인수가 두 번째 인수보다 작거나 같은 경우 true를 반환합니다."
     }
   ],
   "qSt0Sb": [
@@ -2297,19 +2297,19 @@
   "qc5S69": [
     {
       "type": 0,
-      "value": "Returns the number of elements in an array or string"
+      "value": "배열 또는 문자열의 요소 수를 반환합니다."
     }
   ],
   "qnI4Y1": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an integer."
+      "value": "필수 항목으로, 정수로 변환되는 값입니다."
     }
   ],
   "r8aZXs": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime action"
+      "value": "식이 다른 JSON 이름 및 값 쌍이나 런타임 작업의 출력에서 해당 값을 파생시킬 수 있게 합니다."
     }
   ],
   "r9SVE4": [
@@ -2333,43 +2333,43 @@
   "raBiud": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the maximum value, or the first value of a set."
+      "value": "필수 사항으로, 최대값을 찾을 값의 배열 또는 집합의 첫 번째 값입니다."
     }
   ],
   "rcz4w4": [
     {
       "type": 0,
-      "value": "Returns a URI encoded representation of a value"
+      "value": "값의 URI로 인코딩된 표현을 반환합니다."
     }
   ],
   "s5RV9B": [
     {
       "type": 0,
-      "value": "Returns the day of year component of a string timestamp"
+      "value": "문자열 타임스탬프의 연간 일자 구성 요소를 반환합니다."
     }
   ],
   "sDkAVZ": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded trigger output"
+      "value": "양식 데이터 또는 양식 인코딩 트리거 출력의 키 이름과 일치하는 값의 배열을 반환합니다."
     }
   ],
   "sZ0G/Z": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to add."
+      "value": "필수 사항으로, 더할 간격에 지정된 시간 단위를 포함하는 문자열입니다."
     }
   ],
   "sbPZ9S": [
     {
       "type": 0,
-      "value": "Required. The collection to check if it is empty."
+      "value": "필수 항목으로, 비어 있는지 여부를 확인할 컬렉션입니다."
     }
   ],
   "sfJTHV": [
     {
       "type": 0,
-      "value": "Required. The number to remove from the Minuend."
+      "value": "필수 사항으로, 피감수에서 제거할 숫자입니다."
     }
   ],
   "shF9tZ": [
@@ -2381,7 +2381,7 @@
   "soqP+Z": [
     {
       "type": 0,
-      "value": "Returns true if either parameter is true"
+      "value": "매개 변수 중 하나가 true인 경우 true를 반환합니다."
     }
   ],
   "ss5JPH": [
@@ -2393,13 +2393,13 @@
   "t+XCkg": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the destination time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "필수 사항으로, 대상 표준 시간대의 표준 시간대 이름을 포함하는 문자열입니다. 자세한 내용은 https://msdn.microsoft.com/ko-kr/library/gg154758.aspx를 참조하세요."
     }
   ],
   "tE7Zam": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action"
+      "value": "트리거 또는 작업을 호출하는 URL을 반환합니다."
     }
   ],
   "tImHz/": [
@@ -2423,13 +2423,13 @@
   "tLZ9Sh": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "필수 사항으로, 검색할 부분의 인덱스입니다."
     }
   ],
   "tMRPnG": [
     {
       "type": 0,
-      "value": "This function provides you details for the workflow itself at runtime"
+      "value": "이 함수는 런타임에 워크플로 자체에 대한 정보를 제공합니다."
     }
   ],
   "tNoZx2": [
@@ -2441,13 +2441,13 @@
   "tZj2Xn": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than the second"
+      "value": "첫 번째 인수가 두 번째 인수보다 큰 경우 true를 반환합니다."
     }
   ],
   "taPCmY": [
     {
       "type": 0,
-      "value": "Required. The number of hours to add. Can be negative to subtract hours."
+      "value": "필수 사항으로, 추가할 시간 값입니다. 시간을 빼려는 경우 음수일 수 있습니다."
     }
   ],
   "uN4zFU": [
@@ -2459,25 +2459,25 @@
   "uR9WuI": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object that appears in any of the collections also appears in the result."
+      "value": "필수 항목으로, 평가할 컬렉션입니다. 컬렉션에 나타나는 개체는 결과에도 나타납니다."
     }
   ],
   "uUlBZ8": [
     {
       "type": 0,
-      "value": "Adds an integer number of hours to a string timestamp passed in"
+      "value": "전달된 문자열 타임스탬프에 정수 시간 수를 더합니다."
     }
   ],
   "uc/PoD": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the past."
+      "value": "필수 사항으로, 과거의 원하는 시간에 대한 시간 단위 수입니다."
     }
   ],
   "uczA5c": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "필수 항목으로, 값을 포함할 수 있는 문자열입니다."
     }
   ],
   "ut5Med": [
@@ -2489,25 +2489,25 @@
   "uzsleE": [
     {
       "type": 0,
-      "value": "Creates an array from the parameters"
+      "value": "매개 변수에서 배열을 만듭니다."
     }
   ],
   "v39HKj": [
     {
       "type": 0,
-      "value": "Generates a globally unique string (GUID)"
+      "value": "전역적으로 고유한 문자열(GUID)을 생성합니다."
     }
   ],
   "vEBhDX": [
     {
       "type": 0,
-      "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
+      "value": "문자열 내에서 값의 마지막 인덱스를 반환합니다(대/소문자 구분 안 함, 고정 문화권)."
     }
   ],
   "vQcQkU": [
     {
       "type": 0,
-      "value": "Required. The value the string may end with."
+      "value": "필수 항목으로, 문자열이 끝날 수 있는 값입니다."
     }
   ],
   "vSlNPe": [
@@ -2519,7 +2519,7 @@
   "va40BJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose outputs you want."
+      "value": "필수 사항으로, 출력을 원하는 작업의 이름입니다."
     }
   ],
   "vwH/XV": [
@@ -2537,13 +2537,13 @@
   "wEaGWn": [
     {
       "type": 0,
-      "value": "Subtracts an integer number of a specified unit of time from a string timestamp passed in"
+      "value": "전달된 문자열 타임스탬프에서 지정된 시간 단위의 정수를 뺍니다."
     }
   ],
   "wFCkpM": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the minimum value, or the first value of a set."
+      "value": "필수 사항으로, 최소값을 찾을 값의 배열 또는 집합의 첫 번째 값입니다."
     }
   ],
   "wHYQyg": [
@@ -2555,31 +2555,31 @@
   "wQcEXt": [
     {
       "type": 0,
-      "value": "Required. The string that is searched for parameter 2 and updated with parameter 3, when parameter 2 is found in parameter 1."
+      "value": "필수 항목으로, 매개 변수 2가 매개 변수 1에 있을 때 매개 변수 2가 검색되고 매개 변수 3으로 업데이트된 문자열입니다."
     }
   ],
   "wQsEwc": [
     {
       "type": 0,
-      "value": "Required. The length of the substring."
+      "value": "필수 항목으로, 하위 문자열의 길이입니다."
     }
   ],
   "wWVQuK": [
     {
       "type": 0,
-      "value": "Returns a specified value based on whether the expression resulted in true or false"
+      "value": "식의 결과가 true인지, 아니면 false인지 여부에 따라 지정된 값을 반환합니다."
     }
   ],
   "wmDUGV": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to UTC"
+      "value": "전달된 문자열 타임스탬프를 원본 표준 시간대에서 UTC로 변환합니다."
     }
   ],
   "wmw/ai": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either the array or object passed to this function"
+      "value": "이 함수에 전달된 배열 또는 개체에 있는 모든 요소가 포함된 단일 배열 또는 개체를 반환합니다."
     }
   ],
   "woJQhv": [
@@ -2591,25 +2591,25 @@
   "x0or2o": [
     {
       "type": 0,
-      "value": "Required. The collection for which to get the length."
+      "value": "필수 항목으로, 길이를 가져올 컬렉션입니다."
     }
   ],
   "xJ6vjn": [
     {
       "type": 0,
-      "value": "Returns a string representation of a URI encoded string"
+      "value": "URI로 인코딩된 문자열의 문자열 표현을 반환합니다."
     }
   ],
   "xV/oyK": [
     {
       "type": 0,
-      "value": "Required. The name of the new or existing property."
+      "value": "필수 항목으로, 기존 또는 새 속성의 이름입니다."
     }
   ],
   "xYyPR8": [
     {
       "type": 0,
-      "value": "Returns the path from a URI. If path is not specified, returns '/'"
+      "value": "URI에서 경로를 반환합니다. 경로를 지정하지 않으면 '/'가 반환됩니다."
     }
   ],
   "xt5TeT": [
@@ -2633,13 +2633,13 @@
   "y6BcVN": [
     {
       "type": 0,
-      "value": "Required. The string to escape URL-unsafe characters from."
+      "value": "필수 사항으로, URL이 안전하지 않은 문자를 이스케이프할 문자열입니다."
     }
   ],
   "yBrsFJ": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an array."
+      "value": "필수 사항으로, 배열로 변환되는 값입니다."
     }
   ],
   "yqRrQ/": [
@@ -2657,19 +2657,19 @@
   "zBMVKg": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a decimal number."
+      "value": "필수입니다. 10진수로 변환되는 값입니다."
     }
   ],
   "zIDVd9": [
     {
       "type": 0,
-      "value": "Required. The string that is converted to a native type value."
+      "value": "필수 항목으로, 네이티브 형식 값으로 변환되는 문자열입니다."
     }
   ],
   "zcZpHT": [
     {
       "type": 0,
-      "value": "Converts a string, with optionally a locale and a format to a date"
+      "value": "선택적으로 로캘과 형식을 사용하여 문자열을 날짜로 변환합니다."
     }
   ],
   "ziYCiA": [
@@ -2687,13 +2687,13 @@
   "znGyyU": [
     {
       "type": 0,
-      "value": "Adds an integer number of a specified unit of time to a string timestamp passed in"
+      "value": "전달된 문자열 타임스탬프에 지정된 시간 단위의 정수를 더합니다."
     }
   ],
   "zxe9hh": [
     {
       "type": 0,
-      "value": "Required. The number of minutes to add. Can be negative to subtract minutes."
+      "value": "필수 사항으로, 추가할 분 값입니다. 분을 빼려는 경우 음수일 수 있습니다."
     }
   ]
 }

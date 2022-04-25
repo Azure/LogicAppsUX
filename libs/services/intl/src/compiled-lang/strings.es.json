@@ -8,13 +8,13 @@
   "+g+mch": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of an action"
+      "value": "Devuelve el cuerpo de una parte en una salida de varias partes de una acción."
     }
   ],
   "+lpuMl": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'false'."
+      "value": "Obligatorio. El valor que debe devolverse si la expresión es \"false\"."
     }
   ],
   "/I/U8L": [
@@ -32,49 +32,49 @@
   "/QqADs": [
     {
       "type": 0,
-      "value": "Returns the elements in the array starting at index Count"
+      "value": "Devuelve los elementos de la matriz empezando por el número de índices."
     }
   ],
   "/doURb": [
     {
       "type": 0,
-      "value": "Convert the input to an array"
+      "value": "Convertir la entrada en una matriz"
     }
   ],
   "/qchXQ": [
     {
       "type": 0,
-      "value": "Required. The collection to join items from."
+      "value": "Obligatorio. La colección desde la que se unirán elementos."
     }
   ],
   "/ut0u7": [
     {
       "type": 0,
-      "value": "Returns the first Count elements from the array or string passed in"
+      "value": "Devuelve los primeros elementos de recuento de la matriz o la cadena pasada."
     }
   ],
   "07ZsoY": [
     {
       "type": 0,
-      "value": "Returns the start of the hour to a string timestamp passed in"
+      "value": "Devuelve el inicio de la hora en la marca de tiempo de una cadena pasada."
     }
   ],
   "09B9CU": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action. Note: This function can only be used in an httpWebhook and apiConnectionWebhook, not in a manual, recurrence, http, or apiConnection."
+      "value": "Devuelve la dirección URL para invocar el desencadenador o la acción. Nota: Esta función solo puede usarse en \"httpWebhook\" y \"apiConnectionWebhook\" y no en \"manual\", \"recurrence\", \"http\" o \"apiConnection\"."
     }
   ],
   "0FzNJV": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Obligatorio. La cadena codificada en Base64."
     }
   ],
   "0GqNGo": [
     {
       "type": 0,
-      "value": "Url decodes the input string"
+      "value": "La dirección URL descodifica la cadena de entrada."
     }
   ],
   "0JTHTZ": [
@@ -86,7 +86,7 @@
   "0R2D5l": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a URI encoded string"
+      "value": "Devuelve una representación binaria de una cadena codificada de URI."
     }
   ],
   "0ZlNtf": [
@@ -98,25 +98,25 @@
   "0i/6TR": [
     {
       "type": 0,
-      "value": "Required. The string to convert to upper casing. If a character in the string does not have an uppercase equivalent, the character is included unchanged in the returned string."
+      "value": "Obligatorio. La cadena que se convertirá en mayúsculas. Si un carácter de la cadena no tiene un equivalente en mayúsculas, este carácter se incluye sin cambios en la cadena que se devuelve."
     }
   ],
   "0p+pJq": [
     {
       "type": 0,
-      "value": "Returns the remainder after dividing the two numbers (modulo)"
+      "value": "Devuelve el resto después de dividir los dos números (módulo)."
     }
   ],
   "0qV0Qe": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Obligatorio. La cadena que debería contener el valor."
     }
   ],
   "0uj1Li": [
     {
       "type": 0,
-      "value": "Returns a binary representation of an input data URI string"
+      "value": "Devuelve una representación binaria de una cadena de URI de datos de entrada."
     }
   ],
   "0y5eia": [
@@ -128,13 +128,13 @@
   "1+Z8n9": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to String representation."
+      "value": "Obligatorio. El URI de datos que se convertirá a una representación de cadena."
     }
   ],
   "109OPL": [
     {
       "type": 0,
-      "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
+      "value": "Devuelve el puerto de un URI. Si no se especifica, devuelve el puerto predeterminado para el protocolo."
     }
   ],
   "1A1P5b": [
@@ -146,19 +146,19 @@
   "1D047X": [
     {
       "type": 0,
-      "value": "Required. The value to convert to XML."
+      "value": "Obligatorio. El valor que se convertirá a XML."
     }
   ],
   "1Fn5n+": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Obligatorio. La cadena codificada de URI."
     }
   ],
   "1NBvKu": [
     {
       "type": 0,
-      "value": "Convert the parameter argument to a floating-point number"
+      "value": "Convertir el argumento del parámetro en un número de punto flotante"
     }
   ],
   "1R6Vaa": [
@@ -204,13 +204,13 @@
   "1TE0e8": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Obligatorio. El valor del cual se buscará el índice."
     }
   ],
   "1jhzOM": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than value being compared to."
+      "value": "Obligatorio. El objeto que se comprobará si es menor que el valor con el que se está comparando."
     }
   ],
   "1zgFh1": [
@@ -222,13 +222,13 @@
   "23fENy": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a base 64 encoded string"
+      "value": "Devuelve una representación binaria de una cadena codificada en base 64."
     }
   ],
   "23szE+": [
     {
       "type": 0,
-      "value": "Required. The value to convert to data URI."
+      "value": "Obligatorio. El valor que se convertirá a un URI de datos."
     }
   ],
   "2K2fAj": [
@@ -240,13 +240,13 @@
   "2cVEMV": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded action output"
+      "value": "Devuelve un valor único que coincide con el nombre de clave de la salida de la acción form-data o form-encoded."
     }
   ],
   "2gzGrJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Obligatorio. El nombre de la acción con una respuesta form-data o form-encoded."
     }
   ],
   "2mnU/w": [
@@ -264,7 +264,7 @@
   "3NhwIJ": [
     {
       "type": 0,
-      "value": "Required. The separator."
+      "value": "Obligatorio. El separador."
     }
   ],
   "3kI7xF": [
@@ -276,37 +276,37 @@
   "3rzrWf": [
     {
       "type": 0,
-      "value": "Required. The object to remove the property from."
+      "value": "Obligatorio. Objeto del que se quitará la propiedad."
     }
   ],
   "3vCCY7": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to subtract."
+      "value": "Obligatorio. Número de una unidad de tiempo especificada que se restará."
     }
   ],
   "47kOXr": [
     {
       "type": 0,
-      "value": "Required. The lowest integer that can be returned."
+      "value": "Obligatorio. El entero menor que pudo devolverse."
     }
   ],
   "4BrA0z": [
     {
       "type": 0,
-      "value": "Required. The number of days to add. Can be negative to subtract days."
+      "value": "Obligatorio. El número de días que se agregarán. Puede ser negativo para restar días."
     }
   ],
   "4YKQAF": [
     {
       "type": 0,
-      "value": "Required. The unit of time specified in the interval."
+      "value": "Obligatorio. Unidad de tiempo especificada en el intervalo."
     }
   ],
   "4c0uPQ": [
     {
       "type": 0,
-      "value": "Required. The name of the parameter whose values you want."
+      "value": "Obligatorio. El nombre del parámetro cuyos valores quiere."
     }
   ],
   "4cVuMw": [
@@ -318,7 +318,7 @@
   "4vcnOA": [
     {
       "type": 0,
-      "value": "Returns the minimum value in the input array of numbers"
+      "value": "Devuelve el valor mínimo de la matriz de entrada de números."
     }
   ],
   "4vmGh0": [
@@ -330,25 +330,25 @@
   "5J7j9k": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Obligatorio. La expresión XPath que se evaluará."
     }
   ],
   "5aa76N": [
     {
       "type": 0,
-      "value": "Returns the first element in the array or string passed in"
+      "value": "Devuelve el primer elemento de la matriz o la cadena pasada."
     }
   ],
   "5b0sKi": [
     {
       "type": 0,
-      "value": "Returns true if an object, array, or string is empty"
+      "value": "Devuelve true si un objeto, una matriz o una cadena están vacíos."
     }
   ],
   "5cPiWA": [
     {
       "type": 0,
-      "value": "Required. The name of the loop whose item you want."
+      "value": "Obligatorio. El nombre del bucle del que quiere el elemento."
     }
   ],
   "5qzZMo": [
@@ -366,7 +366,7 @@
   "63/zYN": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than value being compared to."
+      "value": "Obligatorio. El objeto que se comprobará si es mayor que el valor con el que se está comparando."
     }
   ],
   "6jiO7t": [
@@ -378,13 +378,13 @@
   "6jsWn/": [
     {
       "type": 0,
-      "value": "Required. The collection to search within."
+      "value": "Obligatorio. La colección en la que se debe buscar."
     }
   ],
   "6kSpHL": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a multipart response."
+      "value": "Obligatorio. El nombre de la acción con una respuesta de varias partes."
     }
   ],
   "6oqk+A": [
@@ -396,7 +396,7 @@
   "6qkBwz": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 2 with."
+      "value": "Obligatorio. El número con el que se multiplicará el multiplicando 2."
     }
   ],
   "7GSk99": [
@@ -408,13 +408,13 @@
   "7QymrD": [
     {
       "type": 0,
-      "value": "Required. The string from which the substring is taken."
+      "value": "Obligatorio. La cadena de la que se toma la subcadena."
     }
   ],
   "7aJqIH": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when formatting (defaults to 'en-us')."
+      "value": "Opcional. Configuración regional que se usará para el formato (el valor predeterminado es \"en-us\")."
     }
   ],
   "7k9jXx": [
@@ -426,7 +426,7 @@
   "7lnElz": [
     {
       "type": 0,
-      "value": "Returns the number of ticks (100 nanoseconds interval) since 1 January 0001 00:00:00 UT of a string timestamp"
+      "value": "Devuelve el número de tics (intervalo de 100 nanosegundos) desde el 1 de enero 0001 00:00:00 UT de una marca de tiempo de cadena."
     }
   ],
   "7yEdSt": [
@@ -444,25 +444,25 @@
   "7zzPsK": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Obligatorio. La cadena que debería contener el valor."
     }
   ],
   "8CWFEh": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'true'."
+      "value": "Obligatorio. El valor que debe devolverse si la expresión es \"true\"."
     }
   ],
   "8DFwxH": [
     {
       "type": 0,
-      "value": "Returns a formatted number string"
+      "value": "Devuelve una cadena de número con formato."
     }
   ],
   "8FjOSh": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater or equal to the comparing object."
+      "value": "Obligatorio. El objeto que se comprobará si es mayor o igual que el objeto con el que se está comparando."
     }
   ],
   "8L+oIz": [
@@ -474,19 +474,19 @@
   "8U0KPg": [
     {
       "type": 0,
-      "value": "Required. The string to be URI encoded."
+      "value": "Obligatorio. La cadena que deberá codificarse en URI."
     }
   ],
   "8wr0zO": [
     {
       "type": 0,
-      "value": "Adds an integer number of days to a string timestamp passed in"
+      "value": "Agrega un número entero de días a la marca de tiempo de una cadena pasada."
     }
   ],
   "9/UeTh": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in"
+      "value": "Devuelve una matriz o un objeto únicos con elementos comunes entre las matrices o los objetos pasados."
     }
   ],
   "99vsJy": [
@@ -498,13 +498,13 @@
   "9JuvQ4": [
     {
       "type": 0,
-      "value": "Returns a data URI of a value"
+      "value": "Devuelve un URI de datos de un valor."
     }
   ],
   "9Jv3+1": [
     {
       "type": 0,
-      "value": "Returns an object with an additional property value pair"
+      "value": "Devuelve un objeto con un par de valor y propiedad adicional."
     }
   ],
   "9b4xDa": [
@@ -516,43 +516,43 @@
   "9djnqI": [
     {
       "type": 0,
-      "value": "Returns the result from adding the two numbers"
+      "value": "Devuelve el resultado de sumar los dos números."
     }
   ],
   "9u/Ae3": [
     {
       "type": 0,
-      "value": "Returns true if both parameters are true"
+      "value": "Devuelve true si ambos parámetros son verdaderos."
     }
   ],
   "ANbEeQ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose values you want."
+      "value": "Obligatorio. El nombre de la acción de la que quiere los valores."
     }
   ],
   "ArTh0/": [
     {
       "type": 0,
-      "value": "Required. The string to encode into base64 representation."
+      "value": "Obligatorio. La cadena que se codificará como representación en Base64."
     }
   ],
   "B2s0iG": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Obligatorio. El índice del elemento que se recuperará."
     }
   ],
   "BCAnZP": [
     {
       "type": 0,
-      "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
+      "value": "Un carácter especificador de formato único o un patrón de formato personalizado que indica cómo debe ser el formato del valor de esta marca de tiempo. Si no se proporciona ningún formato, se usará el formato ISO 8601 (\"o\")."
     }
   ],
   "BHe7qY": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Obligatorio. La cadena codificada de URI."
     }
   ],
   "BKL0ZG": [
@@ -564,7 +564,7 @@
   "BQCPY7": [
     {
       "type": 0,
-      "value": "Required. The string to decode the URL-unsafe characters from."
+      "value": "Obligatorio. La cadena desde la cual se decodificarán los caracteres de dirección URL no seguros."
     }
   ],
   "Bn8iTS": [
@@ -576,13 +576,13 @@
   "BuYrD3": [
     {
       "type": 0,
-      "value": "A single format specifier that indicates how to format the value of this Guid."
+      "value": "Un especificador de formato único que indica cómo dar formato al valor de este GUID."
     }
   ],
   "BxITRH": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than comparing object."
+      "value": "Obligatorio. El objeto que se comprobará si es mayor que el objeto con el que se está comparando."
     }
   ],
   "CG772M": [
@@ -594,13 +594,13 @@
   "D+Ptnq": [
     {
       "type": 0,
-      "value": "Returns the path and query from a URI"
+      "value": "Devuelve la ruta de acceso y la consulta de un URI."
     }
   ],
   "D1lgsT": [
     {
       "type": 0,
-      "value": "Required. The string from which to remove leading and trailing whitespace."
+      "value": "Obligatorio. Cadena de la que se quitará el espacio en blanco inicial y final."
     }
   ],
   "DFo+mo": [
@@ -618,7 +618,7 @@
   "ECZC6Y": [
     {
       "type": 0,
-      "value": "Converts the parameter to a decimal number"
+      "value": "Convierte el parámetro en un número decimal."
     }
   ],
   "ERAWZA": [
@@ -630,37 +630,37 @@
   "EZz5q7": [
     {
       "type": 0,
-      "value": "Required. The index of where to start extracting the substring."
+      "value": "Obligatorio. Índice de dónde empezar a extraer la subcadena."
     }
   ],
   "F3IDl8": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to add."
+      "value": "Obligatorio. Número de una unidad de tiempo especificada que se sumará."
     }
   ],
   "FDF4Qb": [
     {
       "type": 0,
-      "value": "Returns a parameter value that is defined in the definition"
+      "value": "Devuelve un valor de parámetro que está definido en la definición."
     }
   ],
   "FN5zHQ": [
     {
       "type": 0,
-      "value": "Returns a section of a string defined by the start index and the end index"
+      "value": "Devuelve una sección de una cadena definida por el índice inicial y el índice final."
     }
   ],
   "FS+/Tb": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Devuelve el cuerpo de una parte en una salida de varias partes del desencadenador."
     }
   ],
   "FVavKy": [
     {
       "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
+      "value": "Devuelve el inicio del día en la marca de tiempo de una cadena pasada."
     }
   ],
   "FXLR5M": [
@@ -698,13 +698,13 @@
   "Fgq3Db": [
     {
       "type": 0,
-      "value": "Required. The collection to take the last object from."
+      "value": "Obligatorio. La colección de la que se tomará el último objeto."
     }
   ],
   "Fh2HDb": [
     {
       "type": 0,
-      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Devuelve el primer índice de un valor de una cadena (no distingue entre mayúsculas y minúsculas; referencia cultural invariable)."
     }
   ],
   "FslNgF": [
@@ -716,31 +716,31 @@
   "G0XYrd": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Obligatorio. La cadena que debería contener el valor."
     }
   ],
   "GAY7b8": [
     {
       "type": 0,
-      "value": "Returns the query from a URI"
+      "value": "Devuelve la consulta de un URI."
     }
   ],
   "GLd3MU": [
     {
       "type": 0,
-      "value": "Required. The object to find inside the Within collection."
+      "value": "Obligatorio. El objeto que se buscará dentro de la colección."
     }
   ],
   "GYvF54": [
     {
       "type": 0,
-      "value": "Referencing functions"
+      "value": "Funciones de referencia"
     }
   ],
   "GcG0qf": [
     {
       "type": 0,
-      "value": "Returns true if the parameters are false"
+      "value": "Devuelve true si los parámetros son falsos."
     }
   ],
   "Gmya+V": [
@@ -764,25 +764,25 @@
   "H17jEE": [
     {
       "type": 0,
-      "value": "URI parsing functions"
+      "value": "Funciones de análisis de URI"
     }
   ],
   "H1wnHr": [
     {
       "type": 0,
-      "value": "Required. The string to slice."
+      "value": "Obligatorio. Cadena que se va a segmentar."
     }
   ],
   "H8bEUn": [
     {
       "type": 0,
-      "value": "Required. The number that Subtrahend is removed from."
+      "value": "Obligatorio. El número del cual se restará el sustraendo."
     }
   ],
   "HDqP2g": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Obligatorio. El nombre de clave del valor de los datos de formulario que se devolverá."
     }
   ],
   "HfrUId": [
@@ -800,43 +800,43 @@
   "IW2MjQ": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+      "value": "Convierte una marca de tiempo de una cadena pasada de una hora UTC a una zona horaria de destino."
     }
   ],
   "Ip7Iax": [
     {
       "type": 0,
-      "value": "Returns the index of the n-th occurrence of a value within a string (case-insensitive, invariant culture)"
+      "value": "Devuelve el índice de la n-ª aparición de un valor dentro de una cadena (sin distinción entre mayúsculas y minúsculas, referencia cultural invariable)"
     }
   ],
   "IpVwYT": [
     {
       "type": 0,
-      "value": "Returns the first non-null object in the arguments passed in"
+      "value": "Devuelve el primer objeto no nulo en los argumentos pasados."
     }
   ],
   "J5/7vN": [
     {
       "type": 0,
-      "value": "Converts a string to lowercase using the casing rules of the invariant culture"
+      "value": "Convierte una cadena a minúsculas mediante las reglas de mayúsculas y minúsculas de la referencia cultural invariable."
     }
   ],
   "JNQHws": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time."
+      "value": "Obligatorio. Una cadena que contiene la hora."
     }
   ],
   "JSfWJ0": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a boolean."
+      "value": "Obligatorio. El valor que se convierte a booleano."
     }
   ],
   "Jaz3EC": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+      "value": "Convierte una marca de tiempo de una cadena pasada de una zona horaria de origen a una de destino."
     }
   ],
   "JbgTET": [
@@ -848,13 +848,13 @@
   "Ji6663": [
     {
       "type": 0,
-      "value": "Returns true if a dictionary contains a key, if an array contains a value, or if a string contains a substring"
+      "value": "Devuelve true si un diccionario contiene una clave, una matriz contiene un valor o una cadena contiene una subcadena."
     }
   ],
   "JjTfC7": [
     {
       "type": 0,
-      "value": "Required. The number to be formatted."
+      "value": "Obligatorio. Número al que se dará formato."
     }
   ],
   "JnlcZQ": [
@@ -866,49 +866,49 @@
   "Jq2Y/o": [
     {
       "type": 0,
-      "value": "Required. The numeric format string."
+      "value": "Obligatoria. Cadena de formato numérico."
     }
   ],
   "K50znc": [
     {
       "type": 0,
-      "value": "Required. The object to add a new property to."
+      "value": "Obligatorio. Objeto al que se agregará una propiedad nueva."
     }
   ],
   "K90YEU": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string"
+      "value": "Devuelve un subconjunto de caracteres de una cadena."
     }
   ],
   "L+PY+j": [
     {
       "type": 0,
-      "value": "Required. The number of objects to take from the Collection. Must be a positive integer."
+      "value": "Obligatorio. El número de objetos que se tomarán de la colección. Debe ser un entero positivo."
     }
   ],
   "L0UAzs": [
     {
       "type": 0,
-      "value": "Returns the day of week component of a string timestamp"
+      "value": "Devuelve el componente de día de la semana de la marca de tiempo de una cadena."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
-      "value": "Returns the scheme from a URI"
+      "value": "Devuelve el esquema de un URI."
     }
   ],
   "LoGUT3": [
     {
       "type": 0,
-      "value": "When used inside for-each loop, this function returns the current item of the specified loop."
+      "value": "Cuando se utiliza dentro de un bucle para cada uno, esta función devuelve el elemento actual del bucle especificado."
     }
   ],
   "Lub7NN": [
     {
       "type": 0,
-      "value": "Required. The expressions that may be true."
+      "value": "Obligatorio. Las expresiones que pueden ser ciertas."
     }
   ],
   "M0HMjE": [
@@ -926,31 +926,31 @@
   "M8Aqm4": [
     {
       "type": 0,
-      "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
+      "value": "Opcional. Nombre de la acción con ámbito donde desea que se muestren las entradas y salidas de las acciones de nivel superior dentro de ese ámbito."
     }
   ],
   "M9mzP6": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Obligatorio. El número que se agregará al sumando 2."
     }
   ],
   "MDbmMw": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object must be in all collections passed in to appear in the result."
+      "value": "Obligatorio. Las colecciones que se evaluarán. Un objeto debe pasarse a todas las colecciones para aparecer en el resultado."
     }
   ],
   "MKTdNk": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to binary representation."
+      "value": "Obligatorio. El URI de datos que se convertirá a una representación binaria."
     }
   ],
   "MTR4Vg": [
     {
       "type": 0,
-      "value": "Returns the current timestamp as a string"
+      "value": "Devuelve la marca de tiempo actual como una cadena."
     }
   ],
   "Mb+Eaq": [
@@ -974,7 +974,7 @@
   "N2CF0J": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Obligatorio. El nombre de clave de los valores de los datos de formulario que se devolverán."
     }
   ],
   "NPUFgH": [
@@ -986,7 +986,7 @@
   "O+8vRv": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a value"
+      "value": "Devuelve una representación binaria de un valor."
     }
   ],
   "O36+wl": [
@@ -998,7 +998,7 @@
   "OD8igU": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Obligatorio. Cadena que contiene el nombre de la zona horaria de origen. Para obtener más detalles, vea https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
   "OFKZzQ": [
@@ -1016,7 +1016,7 @@
   "OVvieE": [
     {
       "type": 0,
-      "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
+      "value": "Devuelve los resultados de las acciones de nivel superior en la acción con ámbito especificada, como una acción For_each, Until o Scope."
     }
   ],
   "Oib1mL": [
@@ -1040,13 +1040,13 @@
   "OihxQE": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when parsing the date time string."
+      "value": "Opcional. Configuración regional que se va a usar al analizar la cadena de fecha y hora."
     }
   ],
   "OjGJ8Y": [
     {
       "type": 0,
-      "value": "Returns the host from a URI"
+      "value": "Devuelve el host de un URI."
     }
   ],
   "OnrO5/": [
@@ -1058,19 +1058,19 @@
   "P2A5dB": [
     {
       "type": 0,
-      "value": "Required. This value is the number of integers that is in the array."
+      "value": "Obligatorio. Este valor es el número de enteros que se encuentran en esta matriz."
     }
   ],
   "P4rEwD": [
     {
       "type": 0,
-      "value": "Collection functions"
+      "value": "Funciones de recopilación"
     }
   ],
   "P8ZBF9": [
     {
       "type": 0,
-      "value": "Required. The collection to take the first object from."
+      "value": "Obligatorio. La colección de la que se tomará el primer objeto."
     }
   ],
   "PF87Ew": [
@@ -1082,7 +1082,7 @@
   "PKMkb/": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Obligatorio. El número que se agregará al sumando 1."
     }
   ],
   "PP63jY": [
@@ -1100,7 +1100,7 @@
   "PRnqYA": [
     {
       "type": 0,
-      "value": "Required. The number of seconds to add. Can be negative to subtract seconds."
+      "value": "Obligatorio. El número de segundos que se agregarán. Puede ser negativo para restar segundos."
     }
   ],
   "PaPPLr": [
@@ -1112,13 +1112,13 @@
   "PfCJlN": [
     {
       "type": 0,
-      "value": "Workflow functions"
+      "value": "Funciones de flujo de trabajo"
     }
   ],
   "Pvm0xB": [
     {
       "type": 0,
-      "value": "Returns the base 64 representation of the input string"
+      "value": "Devuelve la representación de base 64 de la cadena de entrada."
     }
   ],
   "Q/7unA": [
@@ -1130,13 +1130,13 @@
   "Q0xpPQ": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less or equal to the comparing object."
+      "value": "Obligatorio. El objeto que se comprobará si es menor o igual que el objeto con el que se está comparando."
     }
   ],
   "QEp3C8": [
     {
       "type": 0,
-      "value": "Convert the input to a JSON type value"
+      "value": "Convertir la entrada en un valor de tipo JSON"
     }
   ],
   "QQYzHC": [
@@ -1152,13 +1152,13 @@
   "QZBPUx": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded trigger output"
+      "value": "Devuelve un valor único que coincide con el nombre de clave de la salida del desencadenador form-data o form-encoded."
     }
   ],
   "QZrxUk": [
     {
       "type": 0,
-      "value": "String functions"
+      "value": "Funciones de cadena"
     }
   ],
   "QbJDi7": [
@@ -1170,7 +1170,7 @@
   "QeE0k/": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Obligatorio. El valor que se convierte a binario."
     }
   ],
   "QknZQ1": [
@@ -1182,19 +1182,19 @@
   "Qn8qxn": [
     {
       "type": 0,
-      "value": "Returns a string in date format"
+      "value": "Devuelve una cadena con formato de fecha."
     }
   ],
   "QpRRt3": [
     {
       "type": 0,
-      "value": "Required. The string to delimit items with."
+      "value": "Obligatorio. La cadena con la que se delimitarán los elementos."
     }
   ],
   "QrQDdp": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to subtract."
+      "value": "Obligatorio. Cadena que contiene la unidad de tiempo especificada en el intervalo que se restará."
     }
   ],
   "Qu1HkA": [
@@ -1210,7 +1210,7 @@
   "RX2Shm": [
     {
       "type": 0,
-      "value": "Required. The string that is split."
+      "value": "Obligatorio. La cadena que se separará."
     }
   ],
   "RhH4pF": [
@@ -1248,13 +1248,13 @@
   "SKXopi": [
     {
       "type": 0,
-      "value": "Convert the parameter to an integer"
+      "value": "Convertir el parámetro en un entero"
     }
   ],
   "SLZ0n4": [
     {
       "type": 0,
-      "value": "Checks if the string starts with a value (case-insensitive, invariant culture)"
+      "value": "Comprueba si la cadena comienza con un valor (no distingue entre mayúsculas y minúsculas; referencia cultural invariable)."
     }
   ],
   "SXb47U": [
@@ -1270,13 +1270,13 @@
   "SY04wn": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Obligatorio. El nombre de la acción con una respuesta form-data o form-encoded."
     }
   ],
   "T7zcR6": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Obligatorio. Las expresiones que deben ser ciertas."
     }
   ],
   "T8Xqt9": [
@@ -1288,13 +1288,13 @@
   "TI44R1": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Devuelve una cadena con cada elemento de una matriz unida por un delimitador."
     }
   ],
   "TO7qos": [
     {
       "type": 0,
-      "value": "Returns the start of the month of a string timestamp"
+      "value": "Devuelve el inicio del mes de la marca de tiempo de una cadena."
     }
   ],
   "TZv5JE": [
@@ -1318,7 +1318,7 @@
   "Twfck/": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 1 with."
+      "value": "Obligatorio. El número con el que se multiplicará el multiplicando 1."
     }
   ],
   "Tz5jTR": [
@@ -1330,7 +1330,7 @@
   "U3iWVd": [
     {
       "type": 0,
-      "value": "Generates an array of integers starting from a certain number"
+      "value": "Genera una matriz de enteros a partir de un número determinado."
     }
   ],
   "UCNM4L": [
@@ -1342,7 +1342,7 @@
   "UHCVNK": [
     {
       "type": 0,
-      "value": "Replaces a string with a given string"
+      "value": "Reemplaza una cadena por otra cadena determinada."
     }
   ],
   "USVffu": [
@@ -1366,7 +1366,7 @@
   "VVfYvq": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Obligatorio. El número que se dividirá por el divisor."
     }
   ],
   "VXBWrq": [
@@ -1400,25 +1400,25 @@
   "W6FdMh": [
     {
       "type": 0,
-      "value": "Required. The name of the new property."
+      "value": "Obligatorio. Nombre de la propiedad nueva."
     }
   ],
   "WS9kXD": [
     {
       "type": 0,
-      "value": "Required. The first integer in the array."
+      "value": "Obligatorio. El primer entero de la matriz."
     }
   ],
   "WUe3DY": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs"
+      "value": "Forma abreviada de trigger().outputs"
     }
   ],
   "WgoP7R": [
     {
       "type": 0,
-      "value": "Returns the result from multiplying the two numbers"
+      "value": "Devuelve el resultado de multiplicar los dos números."
     }
   ],
   "X8JjjT": [
@@ -1442,13 +1442,13 @@
   "XCunbR": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs"
+      "value": "Forma abreviada de actions('actionName').outputs"
     }
   ],
   "XEuptL": [
     {
       "type": 0,
-      "value": "Combines any number of strings together"
+      "value": "Combina entre sí cualquier número de cadenas."
     }
   ],
   "XFFpu/": [
@@ -1490,13 +1490,13 @@
   "XtuP5e": [
     {
       "type": 0,
-      "value": "Math functions"
+      "value": "Funciones matemáticas"
     }
   ],
   "Xx/naD": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose body outputs you want."
+      "value": "Necesario. Nombre de la acción cuyo cuerpo contiene las salidas que desea."
     }
   ],
   "Y0H9aX": [
@@ -1508,7 +1508,7 @@
   "Y9kBz5": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a data URI"
+      "value": "Devuelve una representación binaria de un URI de datos."
     }
   ],
   "YHsAKl": [
@@ -1536,13 +1536,13 @@
   "YKXmKD": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime trigger"
+      "value": "Permite que una expresión derive su valor de otros pares de nombre y valor JSON o la salida del desencadenador en tiempo de ejecución."
     }
   ],
   "YaFjJQ": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
+      "value": "Devuelve una matriz o un objeto simple con todos los elementos que hay en dicha matriz u objeto pasados a esta función. Los parámetros de la función pueden ser un conjunto de objetos o un conjunto de matrices (y no una combinación de ellos). Si hay dos objetos con el mismo nombre en la salida final, el último objeto con ese nombre es el que aparecerá en el objeto final."
     }
   ],
   "YoQara": [
@@ -1554,19 +1554,19 @@
   "ZME5hh": [
     {
       "type": 0,
-      "value": "Returns the day of month component of a string timestamp"
+      "value": "Devuelve el componente de día del mes de la marca de tiempo de una cadena."
     }
   ],
   "ZUaz3Y": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs.body"
+      "value": "Forma abreviada de trigger().outputs.body"
     }
   ],
   "ZaIeDG": [
     {
       "type": 0,
-      "value": "Required. The value the string may start with."
+      "value": "Obligatorio. El valor con el cual podría empezar la cadena."
     }
   ],
   "ZbX8xq": [
@@ -1578,19 +1578,19 @@
   "a7j3gS": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Obligatorio. El número que se dividirá por el divisor."
     }
   ],
   "aAXnqw": [
     {
       "type": 0,
-      "value": "Required. The number of the occurrence of the substring to find."
+      "value": "Obligatorio. Número de la aparición de la subcadena que se va a buscar."
     }
   ],
   "aGyVJT": [
     {
       "type": 0,
-      "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
+      "value": "Obligatorio. El número de objetos que se eliminarán de la parte frontal de la colección. Tiene que ser un entero positivo."
     }
   ],
   "bH5LtI": [
@@ -1610,7 +1610,7 @@
   "bTrk+S": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than or equal to value being compared to."
+      "value": "Obligatorio. El objeto que se comprobará si es mayor o igual que el valor con el que se está comparando."
     }
   ],
   "ba9yGJ": [
@@ -1622,7 +1622,7 @@
   "bf7078": [
     {
       "type": 0,
-      "value": "Returns the maximum value in the input array of numbers"
+      "value": "Devuelve el valor máximo de la matriz de entrada de números."
     }
   ],
   "bgfjqS": [
@@ -1634,13 +1634,13 @@
   "bzF/qn": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Obligatorio. La colección de la que se tomarán los primeros objetos de recuento."
     }
   ],
   "c3G/zq": [
     {
       "type": 0,
-      "value": "Returns an object with a property set to the provided value"
+      "value": "Devuelve un objeto con una propiedad establecida en el valor proporcionado."
     }
   ],
   "c6XbVI": [
@@ -1652,7 +1652,7 @@
   "cJm+ah": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Obligatorio. El valor del cual se buscará el índice."
     }
   ],
   "ci6ex1": [
@@ -1682,7 +1682,7 @@
   "cscezV": [
     {
       "type": 0,
-      "value": "Required. The collection to skip the first Count objects from."
+      "value": "Obligatorio. La colección desde la cual se omiten los primeros objetos de recuento."
     }
   ],
   "d3bSQA": [
@@ -1700,25 +1700,25 @@
   "dhvk0u": [
     {
       "type": 0,
-      "value": "Returns a string representation of a base 64 encoded string"
+      "value": "Devuelve una representación de cadena de una cadena codificada en base 64."
     }
   ],
   "dqgt9y": [
     {
       "type": 0,
-      "value": "Convert the parameter to a Boolean"
+      "value": "Convertir el parámetro en un booleano"
     }
   ],
   "drM9Sl": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded action output"
+      "value": "Devuelve una matriz de valores que coinciden con el nombre de clave de la salida de la acción form-data o form-encoded."
     }
   ],
   "dsz+Ae": [
     {
       "type": 0,
-      "value": "Splits the string using a separator"
+      "value": "Divide la cadena mediante un separador."
     }
   ],
   "e4Onhn": [
@@ -1730,7 +1730,7 @@
   "eHgi14": [
     {
       "type": 0,
-      "value": "Required. The name of the variable whose value you want."
+      "value": "Obligatorio. El nombre de la variable de la que quiere el valor."
     }
   ],
   "eRvRWs": [
@@ -1742,37 +1742,37 @@
   "eT+b9W": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by."
+      "value": "Obligatorio. El número por el cual se dividirá el dividendo."
     }
   ],
   "egLI8P": [
     {
       "type": 0,
-      "value": "Required. The index of where the substring begins in parameter 1."
+      "value": "Obligatorio. El índice a partir del cual empieza la subcadena en el parámetro 1."
     }
   ],
   "f/lWTW": [
     {
       "type": 0,
-      "value": "Required. The objects to check for null."
+      "value": "Obligatorio. Los objetos que se comprobará para valor nulo."
     }
   ],
   "f1j0to": [
     {
       "type": 0,
-      "value": "Optional. The index of where to stop extracting the substring."
+      "value": "Opcional. Índice de dónde se va a detener la extracción de la subcadena."
     }
   ],
   "fBQBw/": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than or equal to the second"
+      "value": "Devuelve true si el primer argumento es mayor o igual que el segundo."
     }
   ],
   "fg/34o": [
     {
       "type": 0,
-      "value": "Logical functions"
+      "value": "Funciones lógicas"
     }
   ],
   "ftwXvc": [
@@ -1790,19 +1790,19 @@
   "gDDfek": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time plus the specified time interval."
+      "value": "Devuelve una marca de tiempo que es la hora actual más el intervalo de tiempo especificado."
     }
   ],
   "gDY9xk": [
     {
       "type": 0,
-      "value": "Returns the result from dividing the two numbers"
+      "value": "Devuelve el resultado de dividir los dos números."
     }
   ],
   "gIK0WG": [
     {
       "type": 0,
-      "value": "Required. A boolean value that determines which value the expression should return."
+      "value": "Obligatorio. Un valor booleano que determina el valor que debería devolver la expresión."
     }
   ],
   "gKq3Jv": [
@@ -1814,19 +1814,19 @@
   "gMhc5o": [
     {
       "type": 0,
-      "value": "Required. The string to combine into a single string."
+      "value": "Obligatorio. La cadena que se combinará como una cadena única."
     }
   ],
   "gQt/0f": [
     {
       "type": 0,
-      "value": "Conversion functions"
+      "value": "Funciones de conversión"
     }
   ],
   "gu9o9z": [
     {
       "type": 0,
-      "value": "When used inside until loop, this function returns the current iteration index of the specified loop."
+      "value": "Cuando se utiliza dentro de un bucle Hasta, esta función devuelve el índice de iteraciones del bucle especificado."
     }
   ],
   "hN7iBP": [
@@ -1864,7 +1864,7 @@
   "hPM6iC": [
     {
       "type": 0,
-      "value": "Returns the result from subtracting two numbers"
+      "value": "Devuelve el resultado de restar dos números."
     }
   ],
   "hdnZ9Y": [
@@ -1896,7 +1896,7 @@
   "iCSHJG": [
     {
       "type": 0,
-      "value": "Converts a string to uppercase using the casing rules of the invariant culture"
+      "value": "Convierte una cadena a mayúsculas mediante las reglas de mayúsculas y minúsculas de la referencia cultural invariable."
     }
   ],
   "iJOIca": [
@@ -1908,7 +1908,7 @@
   "iMicOQ": [
     {
       "type": 0,
-      "value": "Required. The URI to parse."
+      "value": "Obligatorio. URI que se analizará."
     }
   ],
   "iRjBf4": [
@@ -1926,7 +1926,7 @@
   "iU5Fdh": [
     {
       "type": 0,
-      "value": "Manipulation functions"
+      "value": "Funciones de manipulación"
     }
   ],
   "iUs7pv": [
@@ -1948,43 +1948,43 @@
   "j2MU0b": [
     {
       "type": 0,
-      "value": "Returns an object with a property removed"
+      "value": "Devuelve un objeto con una propiedad quitada."
     }
   ],
   "j39557": [
     {
       "type": 0,
-      "value": "Returns the value of the variable specified."
+      "value": "Devuelve el valor de la variable especificada."
     }
   ],
   "jHHF/u": [
     {
       "type": 0,
-      "value": "Returns a random integer from a specified range, which is inclusive only at the starting end."
+      "value": "Devuelve un entero aleatorio de un intervalo especificado, que solo es inclusivo en el extremo inicial."
     }
   ],
   "jKsMS6": [
     {
       "type": 0,
-      "value": "Required. The expression that will be negated."
+      "value": "Obligatorio. La expresión que va a negarse."
     }
   ],
   "jQ0Aqj": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a string."
+      "value": "Obligatorio. El valor que se convierte a una cadena."
     }
   ],
   "jVpanH": [
     {
       "type": 0,
-      "value": "Required. A base64 input string."
+      "value": "Obligatorio. Una cadena de entrada en Base64."
     }
   ],
   "jcA3Ig": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Obligatorio. El nombre de clave de los valores de los datos de formulario que se devolverán."
     }
   ],
   "jfInxm": [
@@ -1996,7 +1996,7 @@
   "k/oqFL": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Obligatorio. La cadena codificada en Base64."
     }
   ],
   "k41+13": [
@@ -2032,7 +2032,7 @@
   "kN6kce": [
     {
       "type": 0,
-      "value": "Returns a string representation of an input based64 string"
+      "value": "Devuelve una representación de cadena de una cadena de base 64 de entrada."
     }
   ],
   "kYivbS": [
@@ -2044,19 +2044,19 @@
   "kZuYgD": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second"
+      "value": "Devuelve true si el primer argumento es menor que el segundo."
     }
   ],
   "keb4r1": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal"
+      "value": "Devuelve true si dos valores son iguales."
     }
   ],
   "knylNW": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that could be returned."
+      "value": "Obligatorio. Este valor es el entero siguiente al entero más alto que se pudo devolver."
     }
   ],
   "l36V56": [
@@ -2098,7 +2098,7 @@
   "ljAOR6": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs.body"
+      "value": "Forma abreviada de actions('actionName').outputs.body"
     }
   ],
   "lztiwS": [
@@ -2122,73 +2122,73 @@
   "mGUdCO": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time minus the specified time interval."
+      "value": "Devuelve una marca de tiempo que es la hora actual menos el intervalo de tiempo especificado."
     }
   ],
   "mGpKsl": [
     {
       "type": 0,
-      "value": "Returns a string representation of a data URI"
+      "value": "Devuelve una representación de cadena de un URI de datos."
     }
   ],
   "mPakaD": [
     {
       "type": 0,
-      "value": "Url encodes the input string"
+      "value": "La dirección URL codifica la cadena de entrada."
     }
   ],
   "mZRMD9": [
     {
       "type": 0,
-      "value": "Required. The string to convert to lower casing. If a character in the string does not have a lowercase equivalent, the character is included unchanged in the returned string."
+      "value": "Obligatorio. La cadena que se convertirá en minúsculas. Si un carácter de la cadena no tiene un equivalente en minúsculas, este carácter se incluye sin cambios en la cadena que se devuelve."
     }
   ],
   "n35O/+": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a floating-point number."
+      "value": "Obligatorio. El valor que se convertirá a un número de punto flotante."
     }
   ],
   "nGds/r": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than or equal to value being compared to."
+      "value": "Obligatorio. El objeto que se comprobará si es menor o igual que el valor con el que se está comparando."
     }
   ],
   "nHseED": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the future."
+      "value": "Obligatorio. Número de unidades de tiempo cuya hora deseada es futura."
     }
   ],
   "nTA155": [
     {
       "type": 0,
-      "value": "Required. The name of the property to remove."
+      "value": "Obligatorio. Nombre de la propiedad que se quitará."
     }
   ],
   "ngsC44": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than comparing object."
+      "value": "Obligatorio. El objeto que se comprobará si es menor que el objeto con el que se está comparando."
     }
   ],
   "nkk1mu": [
     {
       "type": 0,
-      "value": "Adds an integer number of minutes to a string timestamp passed in"
+      "value": "Agrega un número entero de minutos a la marca de tiempo de una cadena pasada."
     }
   ],
   "o/0SEj": [
     {
       "type": 0,
-      "value": "Returns the last element in the array or string passed in"
+      "value": "Devuelve el último elemento de la matriz o la cadena pasada."
     }
   ],
   "o14STH": [
     {
       "type": 0,
-      "value": "Required. The XML on which to evaluate the XPath expression."
+      "value": "Obligatorio. El XML en el cual se evaluará la expresión XPath."
     }
   ],
   "o1HOyf": [
@@ -2208,7 +2208,7 @@
   "oAFcW6": [
     {
       "type": 0,
-      "value": "Required. The dataURI to decode into a binary representation."
+      "value": "Obligatorio. El URI de datos que se decodificará en una representación binaria."
     }
   ],
   "oV0xQ9": [
@@ -2220,7 +2220,7 @@
   "p/0r2N": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Obligatorio. El nombre de clave del valor de los datos de formulario que se devolverá."
     }
   ],
   "p16/4S": [
@@ -2238,7 +2238,7 @@
   "pOTcUO": [
     {
       "type": 0,
-      "value": "Required. The values to combine into an array."
+      "value": "Obligatorio. Los valores que se combinarán en una matriz."
     }
   ],
   "pRUJff": [
@@ -2250,25 +2250,25 @@
   "pXmFGf": [
     {
       "type": 0,
-      "value": "Covert the input to an Xml type value"
+      "value": "Convertir la entrada en un valor de tipo XML"
     }
   ],
   "pYtSyE": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by. After the division, the remainder is taken."
+      "value": "Obligatorio. El número por el cual se dividirá el dividendo. Después de la división, se tomará el resto."
     }
   ],
   "pcuZKB": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in. The parameters for the function can either be a set of objects or a set of arrays (not a mixture of both). If there are two objects with the same name, the last object with that name appears in the final object."
+      "value": "Devuelve una matriz o un objeto simple que tiene elementos comunes entre matrices u objetos pasados. Los parámetros de la función pueden ser un conjunto de objetos o un conjunto de matrices (y no una combinación de ambos). Si hay dos objetos con el mismo nombre, el último objeto con ese nombre es el que aparecerá en el objeto final."
     }
   ],
   "pozypE": [
     {
       "type": 0,
-      "value": "Trims leading and trailing whitespace from a string"
+      "value": "Recorta el espacio en blanco inicial y final de una cadena."
     }
   ],
   "pr9GwA": [
@@ -2280,25 +2280,25 @@
   "q/+Uex": [
     {
       "type": 0,
-      "value": "Returns an XML node, nodeset or value as JSON from the provided XPath expression"
+      "value": "Devuelve un nodo, un conjunto de nodos o un valor XML como JSON desde la expresión XPath proporcionada."
     }
   ],
   "q2OCEx": [
     {
       "type": 0,
-      "value": "Required. The value to assign to the property."
+      "value": "Obligatorio. Valor que se asignará a la propiedad."
     }
   ],
   "q2w8Sk": [
     {
       "type": 0,
-      "value": "Convert the parameter to a string"
+      "value": "Convertir el parámetro en una cadena"
     }
   ],
   "q87X20": [
     {
       "type": 0,
-      "value": "Adds an integer number of seconds to a string timestamp passed in"
+      "value": "Agrega un número entero de segundos a la marca de tiempo de una cadena pasada."
     }
   ],
   "qGfwxW": [
@@ -2310,13 +2310,13 @@
   "qJpnIL": [
     {
       "type": 0,
-      "value": "Checks if the string ends with a value (case-insensitive, invariant culture)"
+      "value": "Comprueba si la cadena termina con un valor (no distingue entre mayúsculas y minúsculas; referencia cultural invariable)."
     }
   ],
   "qSejoi": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than or equal to the second"
+      "value": "Devuelve true si el primer argumento es menor o igual que el segundo."
     }
   ],
   "qSt0Sb": [
@@ -2360,19 +2360,19 @@
   "qc5S69": [
     {
       "type": 0,
-      "value": "Returns the number of elements in an array or string"
+      "value": "Devuelve el número de elementos de una matriz o cadena."
     }
   ],
   "qnI4Y1": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an integer."
+      "value": "Obligatorio. El valor que se convierte a un entero."
     }
   ],
   "r8aZXs": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime action"
+      "value": "Permite que una expresión derive su valor de otros pares de nombre y valor JSON o la salida de la acción en tiempo de ejecución."
     }
   ],
   "r9SVE4": [
@@ -2396,43 +2396,43 @@
   "raBiud": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the maximum value, or the first value of a set."
+      "value": "Obligatorio. Una matriz de valores de la que encontrar el valor máximo o el primer valor de un conjunto."
     }
   ],
   "rcz4w4": [
     {
       "type": 0,
-      "value": "Returns a URI encoded representation of a value"
+      "value": "Devuelve una representación codificada de URI de un valor."
     }
   ],
   "s5RV9B": [
     {
       "type": 0,
-      "value": "Returns the day of year component of a string timestamp"
+      "value": "Devuelve el componente de día del año de la marca de tiempo de una cadena."
     }
   ],
   "sDkAVZ": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded trigger output"
+      "value": "Devuelve una matriz de valores que coinciden con el nombre de clave de la salida del desencadenador form-data o form-encoded."
     }
   ],
   "sZ0G/Z": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to add."
+      "value": "Obligatorio. Cadena que contiene la unidad de tiempo especificada en el intervalo que se sumará."
     }
   ],
   "sbPZ9S": [
     {
       "type": 0,
-      "value": "Required. The collection to check if it is empty."
+      "value": "Obligatorio. La colección que se comprobará si está vacía."
     }
   ],
   "sfJTHV": [
     {
       "type": 0,
-      "value": "Required. The number to remove from the Minuend."
+      "value": "Obligatorio. El número que se restará del minuendo."
     }
   ],
   "shF9tZ": [
@@ -2444,7 +2444,7 @@
   "soqP+Z": [
     {
       "type": 0,
-      "value": "Returns true if either parameter is true"
+      "value": "Devuelve true si alguno de los parámetros es verdadero."
     }
   ],
   "ss5JPH": [
@@ -2456,13 +2456,13 @@
   "t+XCkg": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the destination time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Obligatorio. Cadena que contiene el nombre de la zona horaria de destino. Para obtener más detalles, consulte https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
   "tE7Zam": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action"
+      "value": "Devuelve la dirección URL para invocar el desencadenador o la acción."
     }
   ],
   "tImHz/": [
@@ -2486,13 +2486,13 @@
   "tLZ9Sh": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Obligatorio. El índice del elemento que se recuperará."
     }
   ],
   "tMRPnG": [
     {
       "type": 0,
-      "value": "This function provides you details for the workflow itself at runtime"
+      "value": "Esta función le proporciona detalles del propio flujo de trabajo en tiempo de ejecución."
     }
   ],
   "tNoZx2": [
@@ -2504,13 +2504,13 @@
   "tZj2Xn": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than the second"
+      "value": "Devuelve true si el primer argumento es mayor que el segundo."
     }
   ],
   "taPCmY": [
     {
       "type": 0,
-      "value": "Required. The number of hours to add. Can be negative to subtract hours."
+      "value": "Obligatorio. El número de horas que se agregarán. Puede ser negativo para restar horas."
     }
   ],
   "uN4zFU": [
@@ -2522,25 +2522,25 @@
   "uR9WuI": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object that appears in any of the collections also appears in the result."
+      "value": "Obligatorio. Las colecciones que se evaluarán. Un objeto que aparezca en cualquiera de las colecciones también aparecerá en el resultado."
     }
   ],
   "uUlBZ8": [
     {
       "type": 0,
-      "value": "Adds an integer number of hours to a string timestamp passed in"
+      "value": "Agrega un número entero de horas a la marca de tiempo de una cadena pasada."
     }
   ],
   "uc/PoD": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the past."
+      "value": "Obligatorio. Número de unidades de tiempo cuya hora deseada es pasada."
     }
   ],
   "uczA5c": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Obligatorio. La cadena que debería contener el valor."
     }
   ],
   "ut5Med": [
@@ -2552,25 +2552,25 @@
   "uzsleE": [
     {
       "type": 0,
-      "value": "Creates an array from the parameters"
+      "value": "Crea una matriz a partir de los parámetros."
     }
   ],
   "v39HKj": [
     {
       "type": 0,
-      "value": "Generates a globally unique string (GUID)"
+      "value": "Genera una cadena única global (GUID)."
     }
   ],
   "vEBhDX": [
     {
       "type": 0,
-      "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Devuelve el último índice de un valor de una cadena (no distingue entre mayúsculas y minúsculas; referencia cultural invariable)."
     }
   ],
   "vQcQkU": [
     {
       "type": 0,
-      "value": "Required. The value the string may end with."
+      "value": "Obligatorio. El valor con el cual podría acabar la cadena."
     }
   ],
   "vSlNPe": [
@@ -2582,7 +2582,7 @@
   "va40BJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose outputs you want."
+      "value": "Necesario. Nombre de la acción cuya salida desea."
     }
   ],
   "vwH/XV": [
@@ -2600,13 +2600,13 @@
   "wEaGWn": [
     {
       "type": 0,
-      "value": "Subtracts an integer number of a specified unit of time from a string timestamp passed in"
+      "value": "Resta un número entero de una unidad de tiempo especificada a una marca de tiempo de una cadena pasada."
     }
   ],
   "wFCkpM": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the minimum value, or the first value of a set."
+      "value": "Obligatorio. Una matriz de valores de la que encontrar el valor mínimo o el primer valor de un conjunto."
     }
   ],
   "wHYQyg": [
@@ -2618,31 +2618,31 @@
   "wQcEXt": [
     {
       "type": 0,
-      "value": "Required. The string that is searched for parameter 2 and updated with parameter 3, when parameter 2 is found in parameter 1."
+      "value": "Obligatorio. La cadena que se buscará en el parámetro 2 y se actualizará con el parámetro 3 cuando se encuentre el parámetro 2 en el parámetro 1."
     }
   ],
   "wQsEwc": [
     {
       "type": 0,
-      "value": "Required. The length of the substring."
+      "value": "Obligatorio. La longitud de la subcadena."
     }
   ],
   "wWVQuK": [
     {
       "type": 0,
-      "value": "Returns a specified value based on whether the expression resulted in true or false"
+      "value": "Devuelve un valor especificado según si el resultado de la expresión es verdadero o falso."
     }
   ],
   "wmDUGV": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to UTC"
+      "value": "Convierte una marca de tiempo de una cadena pasada de una zona horaria de origen a una hora UTC."
     }
   ],
   "wmw/ai": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either the array or object passed to this function"
+      "value": "Devuelve una matriz o un objeto únicos con todos los elementos que se encuentran en la matriz o el objeto pasados a esta función."
     }
   ],
   "woJQhv": [
@@ -2654,25 +2654,25 @@
   "x0or2o": [
     {
       "type": 0,
-      "value": "Required. The collection for which to get the length."
+      "value": "Obligatorio. La colección de la cual se obtendrá la longitud."
     }
   ],
   "xJ6vjn": [
     {
       "type": 0,
-      "value": "Returns a string representation of a URI encoded string"
+      "value": "Devuelve una representación de cadena de una cadena codificada de URI."
     }
   ],
   "xV/oyK": [
     {
       "type": 0,
-      "value": "Required. The name of the new or existing property."
+      "value": "Obligatorio. Nombre de la propiedad nueva o existente."
     }
   ],
   "xYyPR8": [
     {
       "type": 0,
-      "value": "Returns the path from a URI. If path is not specified, returns '/'"
+      "value": "Devuelve la ruta de acceso de un URI. Si no se especifica la ruta de acceso, devuelve \"/\"."
     }
   ],
   "xt5TeT": [
@@ -2690,25 +2690,25 @@
   "y3AZQB": [
     {
       "type": 0,
-      "value": "Required. The object to compare equality."
+      "value": "Obligatorio. Objeto para comparar la igualdad."
     }
   ],
   "y6BcVN": [
     {
       "type": 0,
-      "value": "Required. The string to escape URL-unsafe characters from."
+      "value": "Obligatorio. La cadena desde la que se usará el escape de caracteres de dirección URL no seguros."
     }
   ],
   "yBrsFJ": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an array."
+      "value": "Obligatorio. El valor que se convierte en una matriz."
     }
   ],
   "yqRrQ/": [
     {
       "type": 0,
-      "value": "Date and time functions"
+      "value": "Funciones de fecha y hora"
     }
   ],
   "z4YYlQ": [
@@ -2720,19 +2720,19 @@
   "zBMVKg": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a decimal number."
+      "value": "Obligatorio. El valor que se convierte a un número decimal."
     }
   ],
   "zIDVd9": [
     {
       "type": 0,
-      "value": "Required. The string that is converted to a native type value."
+      "value": "Obligatorio. La cadena que se convierte a un valor de tipo nativo."
     }
   ],
   "zcZpHT": [
     {
       "type": 0,
-      "value": "Converts a string, with optionally a locale and a format to a date"
+      "value": "Convierte una cadena, con una configuración regional y un formato a una fecha de manera opcional"
     }
   ],
   "ziYCiA": [
@@ -2750,13 +2750,13 @@
   "znGyyU": [
     {
       "type": 0,
-      "value": "Adds an integer number of a specified unit of time to a string timestamp passed in"
+      "value": "Suma un número entero de una unidad de tiempo especificada a una marca de tiempo de una cadena pasada."
     }
   ],
   "zxe9hh": [
     {
       "type": 0,
-      "value": "Required. The number of minutes to add. Can be negative to subtract minutes."
+      "value": "Obligatorio. El número de minutos que se agregarán. Puede ser negativo para restar minutos."
     }
   ]
 }

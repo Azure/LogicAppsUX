@@ -8,13 +8,13 @@
   "+g+mch": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of an action"
+      "value": "De hoofdtekst wordt gedeeltelijk geretourneerd in een uitvoer van meerdere delen van een actie"
     }
   ],
   "+lpuMl": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'false'."
+      "value": "Vereist. De waarde die moet worden opgehaald als de expressie onwaar is."
     }
   ],
   "/I/U8L": [
@@ -32,49 +32,49 @@
   "/QqADs": [
     {
       "type": 0,
-      "value": "Returns the elements in the array starting at index Count"
+      "value": "De elementen in de matrix die beginnen bij de index Aantal worden geretourneerd"
     }
   ],
   "/doURb": [
     {
       "type": 0,
-      "value": "Convert the input to an array"
+      "value": "De invoer naar een matrix converteren"
     }
   ],
   "/qchXQ": [
     {
       "type": 0,
-      "value": "Required. The collection to join items from."
+      "value": "Vereist. De verzameling waaruit items moeten worden samengevoegd."
     }
   ],
   "/ut0u7": [
     {
       "type": 0,
-      "value": "Returns the first Count elements from the array or string passed in"
+      "value": "De eerste Count-elementen van de ingevoerde matrix of tekenreeks worden geretourneerd"
     }
   ],
   "07ZsoY": [
     {
       "type": 0,
-      "value": "Returns the start of the hour to a string timestamp passed in"
+      "value": "Het begin van het uur van een ingevoerd tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
   "09B9CU": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action. Note: This function can only be used in an httpWebhook and apiConnectionWebhook, not in a manual, recurrence, http, or apiConnection."
+      "value": "Hiermee wordt de URL geretourneerd om de trigger of actie aan te roepen. Opmerking: deze functie kan alleen worden gebruikt in een httpWebhook en een apiConnectionWebhook en niet in een handmatige apiConnection, een apiConnection met een terugkeerpatroon of een apiConnection met http."
     }
   ],
   "0FzNJV": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Vereist. De tekenreeks met Base 64-codering."
     }
   ],
   "0GqNGo": [
     {
       "type": 0,
-      "value": "Url decodes the input string"
+      "value": "De invoertekenreeks wordt door URL gedecodeerd"
     }
   ],
   "0JTHTZ": [
@@ -86,7 +86,7 @@
   "0R2D5l": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a URI encoded string"
+      "value": "Er wordt een binaire weergave van een tekenreeks met URI-codering geretourneerd"
     }
   ],
   "0ZlNtf": [
@@ -98,25 +98,25 @@
   "0i/6TR": [
     {
       "type": 0,
-      "value": "Required. The string to convert to upper casing. If a character in the string does not have an uppercase equivalent, the character is included unchanged in the returned string."
+      "value": "Vereist. De tekenreeks die moet worden geconverteerd naar hoofdletters. Als een teken in de tekenreeks geen equivalent voor kleine letters heeft, wordt het teken ongewijzigd opgenomen in de geretourneerde tekenreeks."
     }
   ],
   "0p+pJq": [
     {
       "type": 0,
-      "value": "Returns the remainder after dividing the two numbers (modulo)"
+      "value": "Het restgetal na het delen van de twee getallen wordt geretourneerd (modulo)"
     }
   ],
   "0qV0Qe": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Vereist. De tekenreeks die de waarde mag bevatten."
     }
   ],
   "0uj1Li": [
     {
       "type": 0,
-      "value": "Returns a binary representation of an input data URI string"
+      "value": "Er wordt een binaire weergave van een ingevoerde gegevens-URI-tekenreeks geretourneerd"
     }
   ],
   "0y5eia": [
@@ -128,13 +128,13 @@
   "1+Z8n9": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to String representation."
+      "value": "Vereist. De gegevens-URI die moet worden geconverteerd naar een tekenreeksindeling."
     }
   ],
   "109OPL": [
     {
       "type": 0,
-      "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
+      "value": "Hiermee wordt de poort van een URI geretourneerd. Als de poort niet is opgegeven, wordt de standaardpoort voor het protocol geretourneerd"
     }
   ],
   "1A1P5b": [
@@ -146,19 +146,19 @@
   "1D047X": [
     {
       "type": 0,
-      "value": "Required. The value to convert to XML."
+      "value": "Vereist. De waarde die moet worden geconverteerd naar XML."
     }
   ],
   "1Fn5n+": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Vereist. De tekenreeks met URI-codering."
     }
   ],
   "1NBvKu": [
     {
       "type": 0,
-      "value": "Convert the parameter argument to a floating-point number"
+      "value": "Het parameterargument naar een drijvend-kommagetal converteren"
     }
   ],
   "1R6Vaa": [
@@ -204,13 +204,13 @@
   "1TE0e8": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Vereist. De waarde waarvan de index moet worden doorzocht."
     }
   ],
   "1jhzOM": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than value being compared to."
+      "value": "Vereist. Het object dat moet worden gecontroleerd als dit kleiner is dan de vergelijkingswaarde."
     }
   ],
   "1zgFh1": [
@@ -222,13 +222,13 @@
   "23fENy": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a base 64 encoded string"
+      "value": "Er wordt een binaire weergave van een tekenreeks met base 64-codering geretourneerd"
     }
   ],
   "23szE+": [
     {
       "type": 0,
-      "value": "Required. The value to convert to data URI."
+      "value": "Vereist. De waarde die moet worden geconverteerd naar een gegevens-URI."
     }
   ],
   "2K2fAj": [
@@ -240,13 +240,13 @@
   "2cVEMV": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded action output"
+      "value": "Er wordt een enkelvoudige waarde geretourneerd die overeenkomt met de sleutelnaam van de actie-uitvoer van formuliergegevens of formuliercodes"
     }
   ],
   "2gzGrJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Vereist. De naam van de actie met een antwoord met formuliergegevens of -codes."
     }
   ],
   "2mnU/w": [
@@ -264,7 +264,7 @@
   "3NhwIJ": [
     {
       "type": 0,
-      "value": "Required. The separator."
+      "value": "Vereist. Het scheidingsteken."
     }
   ],
   "3kI7xF": [
@@ -276,37 +276,37 @@
   "3rzrWf": [
     {
       "type": 0,
-      "value": "Required. The object to remove the property from."
+      "value": "Vereist. Het object waaruit de eigenschap die moet worden verwijderd."
     }
   ],
   "3vCCY7": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to subtract."
+      "value": "Vereist. Het aantal van een opgegeven tijdseenheid dat moet worden afgetrokken."
     }
   ],
   "47kOXr": [
     {
       "type": 0,
-      "value": "Required. The lowest integer that can be returned."
+      "value": "Vereist. Het laagste gehele getal dat kan worden geretourneerd."
     }
   ],
   "4BrA0z": [
     {
       "type": 0,
-      "value": "Required. The number of days to add. Can be negative to subtract days."
+      "value": "Vereist. Het aantal dagen dat moet worden opgeteld. Kan negatief zijn om dagen af te trekken."
     }
   ],
   "4YKQAF": [
     {
       "type": 0,
-      "value": "Required. The unit of time specified in the interval."
+      "value": "Vereist. De tijdseenheid waarin het interval is opgegeven."
     }
   ],
   "4c0uPQ": [
     {
       "type": 0,
-      "value": "Required. The name of the parameter whose values you want."
+      "value": "Vereist. De naam van de parameter met de gewenste waarden."
     }
   ],
   "4cVuMw": [
@@ -318,7 +318,7 @@
   "4vcnOA": [
     {
       "type": 0,
-      "value": "Returns the minimum value in the input array of numbers"
+      "value": "De minimumwaarde in de invoermatrix van getallen wordt geretourneerd"
     }
   ],
   "4vmGh0": [
@@ -330,25 +330,25 @@
   "5J7j9k": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Vereist. De XPath-expressie die moet worden geëvalueerd."
     }
   ],
   "5aa76N": [
     {
       "type": 0,
-      "value": "Returns the first element in the array or string passed in"
+      "value": "Het eerste element in de ingevoerde matrix of tekenreeks wordt geretourneerd"
     }
   ],
   "5b0sKi": [
     {
       "type": 0,
-      "value": "Returns true if an object, array, or string is empty"
+      "value": "Indien een object, matrix of tekenreeks leeg is, wordt Waar geretourneerd"
     }
   ],
   "5cPiWA": [
     {
       "type": 0,
-      "value": "Required. The name of the loop whose item you want."
+      "value": "Vereist. De naam van de lus met het gewenste item."
     }
   ],
   "5qzZMo": [
@@ -366,7 +366,7 @@
   "63/zYN": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than value being compared to."
+      "value": "Vereist. Het object dat moet worden gecontroleerd als dit groter is dan de vergelijkingswaarde."
     }
   ],
   "6jiO7t": [
@@ -378,13 +378,13 @@
   "6jsWn/": [
     {
       "type": 0,
-      "value": "Required. The collection to search within."
+      "value": "Vereist. De verzameling waarbinnen moet worden gezocht."
     }
   ],
   "6kSpHL": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a multipart response."
+      "value": "Vereist. De naam van de actie met een antwoord met meerdere onderdelen."
     }
   ],
   "6oqk+A": [
@@ -396,7 +396,7 @@
   "6qkBwz": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 2 with."
+      "value": "Vereist. Het getal waarmee vermenigvuldigtal 2 moet worden vermenigvuldigd."
     }
   ],
   "7GSk99": [
@@ -408,13 +408,13 @@
   "7QymrD": [
     {
       "type": 0,
-      "value": "Required. The string from which the substring is taken."
+      "value": "Vereist. De tekenreeks waarvan de subtekenreeks wordt gebruikt."
     }
   ],
   "7aJqIH": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when formatting (defaults to 'en-us')."
+      "value": "Optioneel. De landsinstellingen die moeten worden gebruikt wanneer u iets opmaakt (standaard ingesteld op en-us)."
     }
   ],
   "7k9jXx": [
@@ -426,7 +426,7 @@
   "7lnElz": [
     {
       "type": 0,
-      "value": "Returns the number of ticks (100 nanoseconds interval) since 1 January 0001 00:00:00 UT of a string timestamp"
+      "value": "Hiermee wordt het aantal tikken (met een interval van 100 nanoseconden) sinds 1 januari 0001 00:00:00 UT geretourneerd van een tijdstempel voor een tekenreeks"
     }
   ],
   "7yEdSt": [
@@ -444,25 +444,25 @@
   "7zzPsK": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Vereist. De tekenreeks die de waarde mag bevatten."
     }
   ],
   "8CWFEh": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'true'."
+      "value": "Vereist. De waarde die moet worden opgehaald indien de expressie waar is."
     }
   ],
   "8DFwxH": [
     {
       "type": 0,
-      "value": "Returns a formatted number string"
+      "value": "Hiermee wordt een opgemaakte getaltekenreeks geretourneerd"
     }
   ],
   "8FjOSh": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater or equal to the comparing object."
+      "value": "Vereist. Het object dat moet worden gecontroleerd als dit groter dan of gelijk is aan de waarde van het vergelijkingsobject."
     }
   ],
   "8L+oIz": [
@@ -474,19 +474,19 @@
   "8U0KPg": [
     {
       "type": 0,
-      "value": "Required. The string to be URI encoded."
+      "value": "Vereist. De tekenreeks die van URI-codering moeten worden voorzien."
     }
   ],
   "8wr0zO": [
     {
       "type": 0,
-      "value": "Adds an integer number of days to a string timestamp passed in"
+      "value": "Er wordt een geheel getal in dagen aan een ingevoerd tijdstempel als tekenreeks toegevoegd"
     }
   ],
   "9/UeTh": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in"
+      "value": "Er wordt een enkelvoudige matrix of enkelvoudig object geretourneerd waarvoor gemeenschappelijke elementen in matrixen of objecten zijn ingevoerd"
     }
   ],
   "99vsJy": [
@@ -498,13 +498,13 @@
   "9JuvQ4": [
     {
       "type": 0,
-      "value": "Returns a data URI of a value"
+      "value": "Er wordt een gegevens-URI van een waarde geretourneerd"
     }
   ],
   "9Jv3+1": [
     {
       "type": 0,
-      "value": "Returns an object with an additional property value pair"
+      "value": "Geeft als resultaat een object met een extra eigenschapwaardepaar"
     }
   ],
   "9b4xDa": [
@@ -516,43 +516,43 @@
   "9djnqI": [
     {
       "type": 0,
-      "value": "Returns the result from adding the two numbers"
+      "value": "Het resultaat van het bij elkaar optellen van de twee getallen wordt geretourneerd"
     }
   ],
   "9u/Ae3": [
     {
       "type": 0,
-      "value": "Returns true if both parameters are true"
+      "value": "Indien beide parameters waar zijn, wordt Waar geretourneerd"
     }
   ],
   "ANbEeQ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose values you want."
+      "value": "Vereist. De naam van de actie met de gewenste waarden."
     }
   ],
   "ArTh0/": [
     {
       "type": 0,
-      "value": "Required. The string to encode into base64 representation."
+      "value": "Vereist. De tekenreeks die moet worden gecodeerd naar de Base 64-indeling."
     }
   ],
   "B2s0iG": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Vereist. De index van het onderdeel dat moet worden opgehaald."
     }
   ],
   "BCAnZP": [
     {
       "type": 0,
-      "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
+      "value": "Eén teken voor aanduiding van de indeling of een aangepast indelingspatroon waarmee de indeling van de waarde voor dit tijdstempel wordt aangegeven. Als de indeling niet is opgegeven, wordt de ISO 8601-indeling ('o') gebruikt."
     }
   ],
   "BHe7qY": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Vereist. De tekenreeks met URI-codering."
     }
   ],
   "BKL0ZG": [
@@ -564,7 +564,7 @@
   "BQCPY7": [
     {
       "type": 0,
-      "value": "Required. The string to decode the URL-unsafe characters from."
+      "value": "Vereist. De tekenreeks waaruit de onveilige tekens voor URL's moeten worden gedecodeerd."
     }
   ],
   "Bn8iTS": [
@@ -576,13 +576,13 @@
   "BuYrD3": [
     {
       "type": 0,
-      "value": "A single format specifier that indicates how to format the value of this Guid."
+      "value": "Eén teken voor aanduiding van de indeling waarmee de indeling van de waarde van deze GUID wordt aangegeven."
     }
   ],
   "BxITRH": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than comparing object."
+      "value": "Vereist. Het object dat moet worden gecontroleerd als dit groter is dan de waarde van het vergelijkingsobject."
     }
   ],
   "CG772M": [
@@ -594,13 +594,13 @@
   "D+Ptnq": [
     {
       "type": 0,
-      "value": "Returns the path and query from a URI"
+      "value": "Hiermee worden het pad en de query uit een URI geretourneerd"
     }
   ],
   "D1lgsT": [
     {
       "type": 0,
-      "value": "Required. The string from which to remove leading and trailing whitespace."
+      "value": "Vereist. De tekenreeks waaruit u voorloopspaties en volgspaties wilt verwijderen."
     }
   ],
   "DFo+mo": [
@@ -618,7 +618,7 @@
   "ECZC6Y": [
     {
       "type": 0,
-      "value": "Converts the parameter to a decimal number"
+      "value": "Converteert de parameter naar een decimaal getal"
     }
   ],
   "ERAWZA": [
@@ -630,37 +630,37 @@
   "EZz5q7": [
     {
       "type": 0,
-      "value": "Required. The index of where to start extracting the substring."
+      "value": "Vereist. De index van waar de subtekenreeks moet worden geëxtraheerd."
     }
   ],
   "F3IDl8": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to add."
+      "value": "Vereist. Het aantal van een opgegeven tijdseenheid dat moet worden opgeteld."
     }
   ],
   "FDF4Qb": [
     {
       "type": 0,
-      "value": "Returns a parameter value that is defined in the definition"
+      "value": "Er wordt een parameterwaarde geretourneerd die in de definitie is gedefinieerd"
     }
   ],
   "FN5zHQ": [
     {
       "type": 0,
-      "value": "Returns a section of a string defined by the start index and the end index"
+      "value": "Retourneert een sectie van een tekenreeks die wordt gedefinieerd door de beginindex en de eindindex"
     }
   ],
   "FS+/Tb": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "De hoofdtekst wordt gedeeltelijk geretourneerd in een uitvoer van meerdere delen van de trigger"
     }
   ],
   "FVavKy": [
     {
       "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
+      "value": "Het begin van de dag van een ingevoerd tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
   "FXLR5M": [
@@ -698,13 +698,13 @@
   "Fgq3Db": [
     {
       "type": 0,
-      "value": "Required. The collection to take the last object from."
+      "value": "Vereist. De verzameling waaruit het laatste object moet worden gehaald."
     }
   ],
   "Fh2HDb": [
     {
       "type": 0,
-      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+      "value": "De eerste index van een waarde van een tekenreeks wordt geretourneerd (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
     }
   ],
   "FslNgF": [
@@ -716,31 +716,31 @@
   "G0XYrd": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Vereist. De tekenreeks die de waarde mag bevatten."
     }
   ],
   "GAY7b8": [
     {
       "type": 0,
-      "value": "Returns the query from a URI"
+      "value": "Hiermee worden de query van een URI geretourneerd"
     }
   ],
   "GLd3MU": [
     {
       "type": 0,
-      "value": "Required. The object to find inside the Within collection."
+      "value": "Vereist. Het object dat in de verzameling Binnen moet worden gevonden."
     }
   ],
   "GYvF54": [
     {
       "type": 0,
-      "value": "Referencing functions"
+      "value": "Verwijzingsfuncties"
     }
   ],
   "GcG0qf": [
     {
       "type": 0,
-      "value": "Returns true if the parameters are false"
+      "value": "Indien de parameters onwaar zijn, wordt Waar geretourneerd"
     }
   ],
   "Gmya+V": [
@@ -764,25 +764,25 @@
   "H17jEE": [
     {
       "type": 0,
-      "value": "URI parsing functions"
+      "value": "Functies voor URI parseren"
     }
   ],
   "H1wnHr": [
     {
       "type": 0,
-      "value": "Required. The string to slice."
+      "value": "Vereist. De tekenreeks die moet worden gesegmenteerd."
     }
   ],
   "H8bEUn": [
     {
       "type": 0,
-      "value": "Required. The number that Subtrahend is removed from."
+      "value": "Vereist. Het getal waarvan de aftrekker wordt afgetrokken."
     }
   ],
   "HDqP2g": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Vereist. De sleutelnaam van de formuliergegevenswaarde die moeten worden geretourneerd."
     }
   ],
   "HfrUId": [
@@ -800,37 +800,37 @@
   "IW2MjQ": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+      "value": "Hiermee wordt een tekenreekstijdstempel die is ingevoerd vanuit een UTC-tijdzone geconverteerd naar een doeltijdzone"
     }
   ],
   "Ip7Iax": [
     {
       "type": 0,
-      "value": "Returns the index of the n-th occurrence of a value within a string (case-insensitive, invariant culture)"
+      "value": "Retourneert de index van het n-e exemplaar van een waarde binnen een tekenreeks (niet hoofdlettergevoelig, niet-cultuurgebonden)"
     }
   ],
   "IpVwYT": [
     {
       "type": 0,
-      "value": "Returns the first non-null object in the arguments passed in"
+      "value": "Het eerste object dat niet null is in de ingevoerde argumenten wordt geretourneerd"
     }
   ],
   "J5/7vN": [
     {
       "type": 0,
-      "value": "Converts a string to lowercase using the casing rules of the invariant culture"
+      "value": "Een tekenreeks wordt aan de hand van de regels voor hoofdlettergebruik van de cultuur geconverteerd naar kleine letters"
     }
   ],
   "JNQHws": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time."
+      "value": "Vereist. Een tekenreeks die de tijd bevat."
     }
   ],
   "JSfWJ0": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a boolean."
+      "value": "Vereist. De waarde die wordt geconverteerd naar een booleaanse waarde."
     }
   ],
   "Jaz3EC": [
@@ -848,13 +848,13 @@
   "Ji6663": [
     {
       "type": 0,
-      "value": "Returns true if a dictionary contains a key, if an array contains a value, or if a string contains a substring"
+      "value": "Indien een woordenlijst een sleutel bevat, een matrix een waarde of een tekenreeks een subtekenreeks, wordt Waar geretourneerd"
     }
   ],
   "JjTfC7": [
     {
       "type": 0,
-      "value": "Required. The number to be formatted."
+      "value": "Vereist. Het getal dat moet worden opgemaakt."
     }
   ],
   "JnlcZQ": [
@@ -866,43 +866,43 @@
   "Jq2Y/o": [
     {
       "type": 0,
-      "value": "Required. The numeric format string."
+      "value": "Vereist. De tekenreeks met een numerieke notatie."
     }
   ],
   "K50znc": [
     {
       "type": 0,
-      "value": "Required. The object to add a new property to."
+      "value": "Vereist. Het object waaraan een nieuwe eigenschap moet worden toegevoegd."
     }
   ],
   "K90YEU": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string"
+      "value": "Er wordt een tekensubset van een tekenreeks geretourneerd"
     }
   ],
   "L+PY+j": [
     {
       "type": 0,
-      "value": "Required. The number of objects to take from the Collection. Must be a positive integer."
+      "value": "Vereist. Het aantal objecten dat uit de verzameling moet worden gehaald. Dit aantal moet een geheel getal zijn."
     }
   ],
   "L0UAzs": [
     {
       "type": 0,
-      "value": "Returns the day of week component of a string timestamp"
+      "value": "Het onderdeel dag van de week van een tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
-      "value": "Returns the scheme from a URI"
+      "value": "Hiermee wordt het schema van een URI geretourneerd"
     }
   ],
   "LoGUT3": [
     {
       "type": 0,
-      "value": "When used inside for-each loop, this function returns the current item of the specified loop."
+      "value": "Bij gebruik binnen de For-Each-lus retourneert deze functie het huidige item van de opgegeven lus."
     }
   ],
   "Lub7NN": [
@@ -926,31 +926,31 @@
   "M8Aqm4": [
     {
       "type": 0,
-      "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
+      "value": "Optioneel. De naam van de actie met bereik waarvoor u de invoer en uitvoer van de acties op het hoogste niveau binnen dat bereik wilt."
     }
   ],
   "M9mzP6": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Vereist. Het getal dat moet worden opgeteld bij opteltal 2."
     }
   ],
   "MDbmMw": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object must be in all collections passed in to appear in the result."
+      "value": "Vereist. De verzamelingen die moeten worden geëvalueerd. Een object moet zich in alle ingevoerde verzamelingen bevinden om in het resultaat te worden weergegeven."
     }
   ],
   "MKTdNk": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to binary representation."
+      "value": "Vereist. De gegevens-URI die moet worden geconverteerd naar een binaire indeling."
     }
   ],
   "MTR4Vg": [
     {
       "type": 0,
-      "value": "Returns the current timestamp as a string"
+      "value": "Het huidige tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
   "Mb+Eaq": [
@@ -974,7 +974,7 @@
   "N2CF0J": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Vereist. De sleutelnaam van de formuliergegevenswaarden die moeten worden geretourneerd."
     }
   ],
   "NPUFgH": [
@@ -986,7 +986,7 @@
   "O+8vRv": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a value"
+      "value": "Er wordt een binaire weergave van een waarde geretourneerd"
     }
   ],
   "O36+wl": [
@@ -998,7 +998,7 @@
   "OD8igU": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Vereist. Een tekenreeks die de tijdzonenaam van de brontijdzone bevat. Zie https://msdn.microsoft.com/en-us/library/gg154758.aspx voor meer informatie."
     }
   ],
   "OFKZzQ": [
@@ -1016,7 +1016,7 @@
   "OVvieE": [
     {
       "type": 0,
-      "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
+      "value": "Hiermee worden de resultaten geretourneerd van de acties op het hoogste niveau in de opgegeven actie met bereik, zoals een For_each-, Until- of Scope-actie."
     }
   ],
   "Oib1mL": [
@@ -1040,13 +1040,13 @@
   "OihxQE": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when parsing the date time string."
+      "value": "Optioneel. De landinstelling die moet worden gebruikt bij het parseren van de datum/tijd-tekenreeks."
     }
   ],
   "OjGJ8Y": [
     {
       "type": 0,
-      "value": "Returns the host from a URI"
+      "value": "Hiermee wordt de host van een URI geretourneerd"
     }
   ],
   "OnrO5/": [
@@ -1058,7 +1058,7 @@
   "P2A5dB": [
     {
       "type": 0,
-      "value": "Required. This value is the number of integers that is in the array."
+      "value": "Vereist. Deze waarde is het aantal gehele getallen in de matrix."
     }
   ],
   "P4rEwD": [
@@ -1070,7 +1070,7 @@
   "P8ZBF9": [
     {
       "type": 0,
-      "value": "Required. The collection to take the first object from."
+      "value": "Vereist. De verzameling waaruit het eerste object moet worden gehaald."
     }
   ],
   "PF87Ew": [
@@ -1082,7 +1082,7 @@
   "PKMkb/": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Vereist. Het getal dat moet worden opgeteld bij opteltal 1."
     }
   ],
   "PP63jY": [
@@ -1100,7 +1100,7 @@
   "PRnqYA": [
     {
       "type": 0,
-      "value": "Required. The number of seconds to add. Can be negative to subtract seconds."
+      "value": "Vereist. Het aantal seconden dat moet worden opgeteld. Kan negatief zijn om seconden af te trekken."
     }
   ],
   "PaPPLr": [
@@ -1112,13 +1112,13 @@
   "PfCJlN": [
     {
       "type": 0,
-      "value": "Workflow functions"
+      "value": "Werkstroomfuncties"
     }
   ],
   "Pvm0xB": [
     {
       "type": 0,
-      "value": "Returns the base 64 representation of the input string"
+      "value": "Er wordt een base 64-weergave van de ingevoerde tekenreeks geretourneerd"
     }
   ],
   "Q/7unA": [
@@ -1130,13 +1130,13 @@
   "Q0xpPQ": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less or equal to the comparing object."
+      "value": "Vereist. Het object dat moet worden gecontroleerd als dit kleiner dan of gelijk is aan de waarde van het vergelijkingsobject."
     }
   ],
   "QEp3C8": [
     {
       "type": 0,
-      "value": "Convert the input to a JSON type value"
+      "value": "De invoer naar het waardetype JSON converteren"
     }
   ],
   "QQYzHC": [
@@ -1156,13 +1156,13 @@
   "QZBPUx": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded trigger output"
+      "value": "Er wordt een enkelvoudige waarde geretourneerd die overeenkomt met de sleutelnaam van de triggeruitvoer van formuliergegevens of formuliercodes"
     }
   ],
   "QZrxUk": [
     {
       "type": 0,
-      "value": "String functions"
+      "value": "Tekenreeksfuncties"
     }
   ],
   "QbJDi7": [
@@ -1174,7 +1174,7 @@
   "QeE0k/": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Vereist. De waarde die wordt geconverteerd naar een binaire waarde."
     }
   ],
   "QknZQ1": [
@@ -1186,13 +1186,13 @@
   "Qn8qxn": [
     {
       "type": 0,
-      "value": "Returns a string in date format"
+      "value": "Er wordt een tekenreeks in datumindeling geretourneerd"
     }
   ],
   "QpRRt3": [
     {
       "type": 0,
-      "value": "Required. The string to delimit items with."
+      "value": "Vereist. De tekenreeks die moet worden gebruikt om items te scheiden."
     }
   ],
   "QrQDdp": [
@@ -1214,7 +1214,7 @@
   "RX2Shm": [
     {
       "type": 0,
-      "value": "Required. The string that is split."
+      "value": "Vereist. De tekenreeks die wordt gesplitst."
     }
   ],
   "RhH4pF": [
@@ -1252,13 +1252,13 @@
   "SKXopi": [
     {
       "type": 0,
-      "value": "Convert the parameter to an integer"
+      "value": "De parameter naar een geheel getal converteren"
     }
   ],
   "SLZ0n4": [
     {
       "type": 0,
-      "value": "Checks if the string starts with a value (case-insensitive, invariant culture)"
+      "value": "Er wordt gecontroleerd of de tekenreeks met een waarde begint (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
     }
   ],
   "SXb47U": [
@@ -1274,7 +1274,7 @@
   "SY04wn": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Vereist. De naam van de actie met een antwoord met formuliergegevens of -codes."
     }
   ],
   "T7zcR6": [
@@ -1292,13 +1292,13 @@
   "TI44R1": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Er wordt een tekenreeks voor elk item van een matrix geretourneerd, gekoppeld door een scheidingsteken"
     }
   ],
   "TO7qos": [
     {
       "type": 0,
-      "value": "Returns the start of the month of a string timestamp"
+      "value": "Het begin van de maand van een ingevoerd tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
   "TZv5JE": [
@@ -1322,7 +1322,7 @@
   "Twfck/": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 1 with."
+      "value": "Vereist. Het getal waarmee vermenigvuldigtal 1 moet worden vermenigvuldigd."
     }
   ],
   "Tz5jTR": [
@@ -1334,7 +1334,7 @@
   "U3iWVd": [
     {
       "type": 0,
-      "value": "Generates an array of integers starting from a certain number"
+      "value": "Er wordt een matrix van gehele getallen gegenereerd dat begint bij een bepaald getal"
     }
   ],
   "UCNM4L": [
@@ -1346,7 +1346,7 @@
   "UHCVNK": [
     {
       "type": 0,
-      "value": "Replaces a string with a given string"
+      "value": "Er wordt een tekenreeks vervangen door een opgegeven tekenreeks"
     }
   ],
   "USVffu": [
@@ -1370,7 +1370,7 @@
   "VVfYvq": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Vereist. Het getal dat moet worden gedeeld door de deler."
     }
   ],
   "VXBWrq": [
@@ -1404,25 +1404,25 @@
   "W6FdMh": [
     {
       "type": 0,
-      "value": "Required. The name of the new property."
+      "value": "Vereist. De naam van de nieuwe eigenschap."
     }
   ],
   "WS9kXD": [
     {
       "type": 0,
-      "value": "Required. The first integer in the array."
+      "value": "Vereist. Het eerste gehele getal in de matrix."
     }
   ],
   "WUe3DY": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs"
+      "value": "Verkorte versie van trigger().outputs"
     }
   ],
   "WgoP7R": [
     {
       "type": 0,
-      "value": "Returns the result from multiplying the two numbers"
+      "value": "Het resultaat van het vermenigvuldigen van de twee getallen wordt geretourneerd"
     }
   ],
   "X8JjjT": [
@@ -1446,13 +1446,13 @@
   "XCunbR": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs"
+      "value": "Verkorte versie van acties('actionName').outputs"
     }
   ],
   "XEuptL": [
     {
       "type": 0,
-      "value": "Combines any number of strings together"
+      "value": "Willekeurige aantallen tekenreeksen worden gecombineerd"
     }
   ],
   "XFFpu/": [
@@ -1494,13 +1494,13 @@
   "XtuP5e": [
     {
       "type": 0,
-      "value": "Math functions"
+      "value": "Wiskundige functies"
     }
   ],
   "Xx/naD": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose body outputs you want."
+      "value": "Vereist. De naam van de actie met de gewenste hoofdtekstuitvoer."
     }
   ],
   "Y0H9aX": [
@@ -1512,7 +1512,7 @@
   "Y9kBz5": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a data URI"
+      "value": "Er wordt een binaire weergave van een gegevens-URI geretourneerd"
     }
   ],
   "YHsAKl": [
@@ -1540,13 +1540,13 @@
   "YKXmKD": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime trigger"
+      "value": "Er wordt een expressie geactiveerd voor het genereren van een waarde op basis van andere paren van JSON-namen en -waarden of de uitvoer van de runtime-trigger"
     }
   ],
   "YaFjJQ": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
+      "value": "Hiermee wordt één matrix of één object opgehaald met alle elementen die in beide matrices of beide objecten voorkomen die voor deze functie zijn ingevoerd. De parameters voor de functie kunnen een set objecten zijn of een set matrices (niet een combinatie). Als er twee objecten met dezelfde naam zijn, wordt het laatste object met de betreffende naam weergegeven in het uiteindelijke object."
     }
   ],
   "YoQara": [
@@ -1558,19 +1558,19 @@
   "ZME5hh": [
     {
       "type": 0,
-      "value": "Returns the day of month component of a string timestamp"
+      "value": "Het onderdeel dag van de maand van een tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
   "ZUaz3Y": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs.body"
+      "value": "Verkorte versie van trigger().outputs.body"
     }
   ],
   "ZaIeDG": [
     {
       "type": 0,
-      "value": "Required. The value the string may start with."
+      "value": "Vereist. De waarde waarmee de tekenreeks mag beginnen."
     }
   ],
   "ZbX8xq": [
@@ -1582,19 +1582,19 @@
   "a7j3gS": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Vereist. Het getal dat moet worden gedeeld door de deler."
     }
   ],
   "aAXnqw": [
     {
       "type": 0,
-      "value": "Required. The number of the occurrence of the substring to find."
+      "value": "Vereist. Het aantal exemplaren van de subtekenreeks dat moet worden gevonden."
     }
   ],
   "aGyVJT": [
     {
       "type": 0,
-      "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
+      "value": "Vereist. Het aantal objecten dat moet worden verwijderd uit het voorste deel van de verzameling. Dit aantal moet een geheel getal zijn."
     }
   ],
   "bH5LtI": [
@@ -1614,7 +1614,7 @@
   "bTrk+S": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than or equal to value being compared to."
+      "value": "Vereist. Het object dat moet worden gecontroleerd als dit groter dan of gelijk is aan de vergelijkingswaarde."
     }
   ],
   "ba9yGJ": [
@@ -1626,7 +1626,7 @@
   "bf7078": [
     {
       "type": 0,
-      "value": "Returns the maximum value in the input array of numbers"
+      "value": "De maximumwaarde in de invoermatrix van getallen wordt geretourneerd"
     }
   ],
   "bgfjqS": [
@@ -1638,13 +1638,13 @@
   "bzF/qn": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Vereist. De verzameling waaruit de objecten van de eerste telling moeten worden gehaald."
     }
   ],
   "c3G/zq": [
     {
       "type": 0,
-      "value": "Returns an object with a property set to the provided value"
+      "value": "Geeft als resultaat een object met een eigenschap ingesteld op de opgegeven waarde"
     }
   ],
   "c6XbVI": [
@@ -1656,7 +1656,7 @@
   "cJm+ah": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Vereist. De waarde waarvan de index moet worden doorzocht."
     }
   ],
   "ci6ex1": [
@@ -1686,7 +1686,7 @@
   "cscezV": [
     {
       "type": 0,
-      "value": "Required. The collection to skip the first Count objects from."
+      "value": "Vereist. De verzameling waarin de objecten van de eerste telling moeten worden overgeslagen."
     }
   ],
   "d3bSQA": [
@@ -1704,25 +1704,25 @@
   "dhvk0u": [
     {
       "type": 0,
-      "value": "Returns a string representation of a base 64 encoded string"
+      "value": "Er wordt een tekenreeksweergave van een tekenreeks met base 64-codering geretourneerd"
     }
   ],
   "dqgt9y": [
     {
       "type": 0,
-      "value": "Convert the parameter to a Boolean"
+      "value": "De parameter naar een booleaanse waarde converteren"
     }
   ],
   "drM9Sl": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded action output"
+      "value": "Er wordt een matrix van waarden geretourneerd die overeenkomen met de sleutelnaam van de actie-uitvoer van formuliergegevens of formuliercodes"
     }
   ],
   "dsz+Ae": [
     {
       "type": 0,
-      "value": "Splits the string using a separator"
+      "value": "De tekenreeks wordt met een scheidingsteken gesplitst"
     }
   ],
   "e4Onhn": [
@@ -1734,7 +1734,7 @@
   "eHgi14": [
     {
       "type": 0,
-      "value": "Required. The name of the variable whose value you want."
+      "value": "Vereist. De naam van de variabele met de gewenste waarde."
     }
   ],
   "eRvRWs": [
@@ -1746,37 +1746,37 @@
   "eT+b9W": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by."
+      "value": "Vereist. Het getal waardoor het deeltal moet worden gedeeld."
     }
   ],
   "egLI8P": [
     {
       "type": 0,
-      "value": "Required. The index of where the substring begins in parameter 1."
+      "value": "Vereist. De index van waar de subtekenreeks begint in parameter 1."
     }
   ],
   "f/lWTW": [
     {
       "type": 0,
-      "value": "Required. The objects to check for null."
+      "value": "Vereist. De object die moeten worden gecontroleerd op null-waarden."
     }
   ],
   "f1j0to": [
     {
       "type": 0,
-      "value": "Optional. The index of where to stop extracting the substring."
+      "value": "Optioneel. De index van waar de subtekenreeks niet meer moet worden geëxtraheerd."
     }
   ],
   "fBQBw/": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than or equal to the second"
+      "value": "Indien het eerste argument groter dan of gelijk aan het tweede is, wordt Waar geretourneerd"
     }
   ],
   "fg/34o": [
     {
       "type": 0,
-      "value": "Logical functions"
+      "value": "Logische functies"
     }
   ],
   "ftwXvc": [
@@ -1794,19 +1794,19 @@
   "gDDfek": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time plus the specified time interval."
+      "value": "Retourneert een timestamp die bestaat uit de huidige tijd plus het opgegeven tijdsinterval."
     }
   ],
   "gDY9xk": [
     {
       "type": 0,
-      "value": "Returns the result from dividing the two numbers"
+      "value": "Het resultaat van het delen van de twee getallen wordt geretourneerd"
     }
   ],
   "gIK0WG": [
     {
       "type": 0,
-      "value": "Required. A boolean value that determines which value the expression should return."
+      "value": "Vereist. Een booleaanse waarde waarmee wordt bepaald welke waarde door de expressie moet worden opgehaald."
     }
   ],
   "gKq3Jv": [
@@ -1818,19 +1818,19 @@
   "gMhc5o": [
     {
       "type": 0,
-      "value": "Required. The string to combine into a single string."
+      "value": "Vereist. De tekenreeks die moet worden gecombineerd tot een enkele tekenreeks."
     }
   ],
   "gQt/0f": [
     {
       "type": 0,
-      "value": "Conversion functions"
+      "value": "Conversiefuncties"
     }
   ],
   "gu9o9z": [
     {
       "type": 0,
-      "value": "When used inside until loop, this function returns the current iteration index of the specified loop."
+      "value": "Bij gebruik in de Until-lus retourneert deze functie de huidige iteratie-index van de opgegeven lus."
     }
   ],
   "hN7iBP": [
@@ -1868,7 +1868,7 @@
   "hPM6iC": [
     {
       "type": 0,
-      "value": "Returns the result from subtracting two numbers"
+      "value": "Het resultaat na aftrek van het ene van het andere getal wordt geretourneerd"
     }
   ],
   "hdnZ9Y": [
@@ -1900,7 +1900,7 @@
   "iCSHJG": [
     {
       "type": 0,
-      "value": "Converts a string to uppercase using the casing rules of the invariant culture"
+      "value": "Een tekenreeks wordt aan de hand van de regels voor hoofdlettergebruik van de cultuur geconverteerd naar hoofdletters"
     }
   ],
   "iJOIca": [
@@ -1912,7 +1912,7 @@
   "iMicOQ": [
     {
       "type": 0,
-      "value": "Required. The URI to parse."
+      "value": "Vereist. De URI die moet worden geparseerd."
     }
   ],
   "iRjBf4": [
@@ -1952,43 +1952,43 @@
   "j2MU0b": [
     {
       "type": 0,
-      "value": "Returns an object with a property removed"
+      "value": "Geeft als resultaat een object met een verwijderde eigenschap"
     }
   ],
   "j39557": [
     {
       "type": 0,
-      "value": "Returns the value of the variable specified."
+      "value": "Retourneert de waarde van de opgegeven variabele."
     }
   ],
   "jHHF/u": [
     {
       "type": 0,
-      "value": "Returns a random integer from a specified range, which is inclusive only at the starting end."
+      "value": "Hiermee wordt een willekeurig geheel getal geretourneerd uit een opgegeven bereik dat alleen aan het begin van de reeks is inbegrepen."
     }
   ],
   "jKsMS6": [
     {
       "type": 0,
-      "value": "Required. The expression that will be negated."
+      "value": "Vereist. De expressie die negatief wordt gemaakt."
     }
   ],
   "jQ0Aqj": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a string."
+      "value": "Vereist. De waarde die wordt geconverteerd naar een tekenreeks."
     }
   ],
   "jVpanH": [
     {
       "type": 0,
-      "value": "Required. A base64 input string."
+      "value": "Vereist. Een invoertekenreeks met Base 64-codering."
     }
   ],
   "jcA3Ig": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Vereist. De sleutelnaam van de formuliergegevenswaarden die moeten worden geretourneerd."
     }
   ],
   "jfInxm": [
@@ -2000,7 +2000,7 @@
   "k/oqFL": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Vereist. De tekenreeks met Base 64-codering."
     }
   ],
   "k41+13": [
@@ -2036,7 +2036,7 @@
   "kN6kce": [
     {
       "type": 0,
-      "value": "Returns a string representation of an input based64 string"
+      "value": "Er wordt een tekenreeksweergave van een ingevoerde base 64-tekenreeks geretourneerd"
     }
   ],
   "kYivbS": [
@@ -2048,19 +2048,19 @@
   "kZuYgD": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second"
+      "value": "Indien het eerste argument kleiner dan het tweede is, wordt Waar geretourneerd"
     }
   ],
   "keb4r1": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal"
+      "value": "Indien twee waarden gelijk zijn, wordt Waar geretourneerd"
     }
   ],
   "knylNW": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that could be returned."
+      "value": "Vereist. Deze waarde is het volgende gehele getal na het hoogste gehele getal dat kan worden geretourneerd."
     }
   ],
   "l36V56": [
@@ -2102,7 +2102,7 @@
   "ljAOR6": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs.body"
+      "value": "Verkorte versie van acties('actionName').outputs.body"
     }
   ],
   "lztiwS": [
@@ -2126,73 +2126,73 @@
   "mGUdCO": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time minus the specified time interval."
+      "value": "Retourneert een timestamp die bestaat uit de huidige tijd minus het opgegeven tijdsinterval."
     }
   ],
   "mGpKsl": [
     {
       "type": 0,
-      "value": "Returns a string representation of a data URI"
+      "value": "Er wordt een tekenreeksweergave van een gegevens-URI geretourneerd"
     }
   ],
   "mPakaD": [
     {
       "type": 0,
-      "value": "Url encodes the input string"
+      "value": "De invoertekensreeks wordt door URL gecodeerd"
     }
   ],
   "mZRMD9": [
     {
       "type": 0,
-      "value": "Required. The string to convert to lower casing. If a character in the string does not have a lowercase equivalent, the character is included unchanged in the returned string."
+      "value": "Vereist. De tekenreeks die moet worden geconverteerd naar kleine letters. Als een teken in de tekenreeks geen equivalent voor kleine letters heeft, wordt het teken ongewijzigd opgenomen in de geretourneerde tekenreeks."
     }
   ],
   "n35O/+": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a floating-point number."
+      "value": "Vereist. De waarde die wordt geconverteerd naar een drijvend-kommagetal."
     }
   ],
   "nGds/r": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than or equal to value being compared to."
+      "value": "Vereist. Het object dat moet worden gecontroleerd als dit kleiner dan of gelijk is aan de vergelijkingswaarde."
     }
   ],
   "nHseED": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the future."
+      "value": "Vereist. Het aantal tijdseenheden waarmee de gewenste tijd in de toekomst wordt opgegeven."
     }
   ],
   "nTA155": [
     {
       "type": 0,
-      "value": "Required. The name of the property to remove."
+      "value": "Vereist. De naam van de eigenschap die moet worden verwijderd."
     }
   ],
   "ngsC44": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than comparing object."
+      "value": "Vereist. Het object dat moet worden gecontroleerd als dit kleiner is dan de waarde van het vergelijkingsobject."
     }
   ],
   "nkk1mu": [
     {
       "type": 0,
-      "value": "Adds an integer number of minutes to a string timestamp passed in"
+      "value": "Er wordt een geheel getal in minuten aan een ingevoerd tijdstempel voor een tekenreeks toegevoegd"
     }
   ],
   "o/0SEj": [
     {
       "type": 0,
-      "value": "Returns the last element in the array or string passed in"
+      "value": "Het laatste element in de ingevoerde matrix of tekenreeks wordt geretourneerd"
     }
   ],
   "o14STH": [
     {
       "type": 0,
-      "value": "Required. The XML on which to evaluate the XPath expression."
+      "value": "Vereist. De XML waarvoor de XPath-expressie moet worden geëvalueerd."
     }
   ],
   "o1HOyf": [
@@ -2212,7 +2212,7 @@
   "oAFcW6": [
     {
       "type": 0,
-      "value": "Required. The dataURI to decode into a binary representation."
+      "value": "Vereist. De gegevens-URI die moet worden gedecodeerd naar een binaire indeling."
     }
   ],
   "oV0xQ9": [
@@ -2224,7 +2224,7 @@
   "p/0r2N": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Vereist. De sleutelnaam van de formuliergegevenswaarde die moeten worden geretourneerd."
     }
   ],
   "p16/4S": [
@@ -2242,7 +2242,7 @@
   "pOTcUO": [
     {
       "type": 0,
-      "value": "Required. The values to combine into an array."
+      "value": "Vereist. De waarden die moeten worden gecombineerd tot een matrix."
     }
   ],
   "pRUJff": [
@@ -2254,25 +2254,25 @@
   "pXmFGf": [
     {
       "type": 0,
-      "value": "Covert the input to an Xml type value"
+      "value": "De invoer naar het waardetype XML converteren"
     }
   ],
   "pYtSyE": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by. After the division, the remainder is taken."
+      "value": "Vereist. Het getal waardoor het deeltal moet worden gedeeld. Na de deling wordt het restant gebruikt."
     }
   ],
   "pcuZKB": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in. The parameters for the function can either be a set of objects or a set of arrays (not a mixture of both). If there are two objects with the same name, the last object with that name appears in the final object."
+      "value": "Hiermee wordt één matrix of één object opgehaald dat gemeenschappelijke elementen bevat met matrices of objecten die zijn ingevoerd. De parameters voor de functie kunnen een set objecten zijn of een set matrices (niet een combinatie). Als er twee objecten met dezelfde naam zijn, wordt het laatste object met de betreffende naam weergegeven in het uiteindelijke object."
     }
   ],
   "pozypE": [
     {
       "type": 0,
-      "value": "Trims leading and trailing whitespace from a string"
+      "value": "Hiermee worden voorloopspaties en volgspaties uit een tekenreeks verwijderd"
     }
   ],
   "pr9GwA": [
@@ -2284,25 +2284,25 @@
   "q/+Uex": [
     {
       "type": 0,
-      "value": "Returns an XML node, nodeset or value as JSON from the provided XPath expression"
+      "value": "Hiermee wordt een XML-knooppunt, knooppuntenset of waarde als JSON geretourneerd uit de opgegeven XPath-expressie"
     }
   ],
   "q2OCEx": [
     {
       "type": 0,
-      "value": "Required. The value to assign to the property."
+      "value": "Vereist. De waarde die moet worden toegewezen aan de eigenschap."
     }
   ],
   "q2w8Sk": [
     {
       "type": 0,
-      "value": "Convert the parameter to a string"
+      "value": "De parameter naar een tekenreeks converteren"
     }
   ],
   "q87X20": [
     {
       "type": 0,
-      "value": "Adds an integer number of seconds to a string timestamp passed in"
+      "value": "Er wordt een geheel getal in seconden aan een ingevoerd tijdstempel als tekenreeks toegevoegd"
     }
   ],
   "qGfwxW": [
@@ -2314,13 +2314,13 @@
   "qJpnIL": [
     {
       "type": 0,
-      "value": "Checks if the string ends with a value (case-insensitive, invariant culture)"
+      "value": "Er wordt gecontroleerd of de tekenreeks eindigt op een waarde (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
     }
   ],
   "qSejoi": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than or equal to the second"
+      "value": "Indien het eerste argument kleiner dan of gelijk aan het tweede is, wordt Waar geretourneerd"
     }
   ],
   "qSt0Sb": [
@@ -2364,19 +2364,19 @@
   "qc5S69": [
     {
       "type": 0,
-      "value": "Returns the number of elements in an array or string"
+      "value": "Het aantal elementen in een matrix of tekenreeks wordt geretourneerd"
     }
   ],
   "qnI4Y1": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an integer."
+      "value": "Vereist. De waarde die wordt geconverteerd naar een geheel getal."
     }
   ],
   "r8aZXs": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime action"
+      "value": "Er wordt een expressie geactiveerd voor het genereren van een waarde op basis van andere paren van JSON-namen en -waarden of de uitvoer van de runtime-actie"
     }
   ],
   "r9SVE4": [
@@ -2400,43 +2400,43 @@
   "raBiud": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the maximum value, or the first value of a set."
+      "value": "Vereist. Een matrix met waarden om te zoeken naar de maximumwaarde of de eerste waarde van een set."
     }
   ],
   "rcz4w4": [
     {
       "type": 0,
-      "value": "Returns a URI encoded representation of a value"
+      "value": "Er wordt een weergave met URI-codering van een waarde geretourneerd"
     }
   ],
   "s5RV9B": [
     {
       "type": 0,
-      "value": "Returns the day of year component of a string timestamp"
+      "value": "Het onderdeel dag van het jaar van een tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
   "sDkAVZ": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded trigger output"
+      "value": "Er wordt een matrix van waarden geretourneerd die overeenkomen met de sleutelnaam van de triggeruitvoer van formuliergegevens of formuliercodes"
     }
   ],
   "sZ0G/Z": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to add."
+      "value": "Vereist. Een tekenreeks die de tijdseenheid bevat van het interval dat moet worden opgeteld."
     }
   ],
   "sbPZ9S": [
     {
       "type": 0,
-      "value": "Required. The collection to check if it is empty."
+      "value": "Vereist. De verzameling waarvoor moet worden gecontroleerd of deze leeg is."
     }
   ],
   "sfJTHV": [
     {
       "type": 0,
-      "value": "Required. The number to remove from the Minuend."
+      "value": "Vereist. Het getal dat wordt afgetrokken van het aftrektal."
     }
   ],
   "shF9tZ": [
@@ -2448,7 +2448,7 @@
   "soqP+Z": [
     {
       "type": 0,
-      "value": "Returns true if either parameter is true"
+      "value": "Indien een van beide parameters waar is, wordt Waar geretourneerd"
     }
   ],
   "ss5JPH": [
@@ -2460,13 +2460,13 @@
   "t+XCkg": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the destination time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Vereist. Een tekenreeks die de tijdzonenaam van de doeltijdzone bevat. Zie https://msdn.microsoft.com/en-us/library/gg154758.aspx voor meer informatie."
     }
   ],
   "tE7Zam": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action"
+      "value": "De URL wordt geretourneerd om de trigger of actie aan te roepen"
     }
   ],
   "tImHz/": [
@@ -2490,13 +2490,13 @@
   "tLZ9Sh": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Vereist. De index van het onderdeel dat moet worden opgehaald."
     }
   ],
   "tMRPnG": [
     {
       "type": 0,
-      "value": "This function provides you details for the workflow itself at runtime"
+      "value": "Deze functie geeft details weer van de werkstroom zelf op het moment van de runtime"
     }
   ],
   "tNoZx2": [
@@ -2508,13 +2508,13 @@
   "tZj2Xn": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than the second"
+      "value": "Indien het eerste argument groter dan het tweede is, wordt Waar geretourneerd"
     }
   ],
   "taPCmY": [
     {
       "type": 0,
-      "value": "Required. The number of hours to add. Can be negative to subtract hours."
+      "value": "Vereist. Het aantal uren dat moet worden opgeteld. Kan negatief zijn om uren af te trekken."
     }
   ],
   "uN4zFU": [
@@ -2526,25 +2526,25 @@
   "uR9WuI": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object that appears in any of the collections also appears in the result."
+      "value": "Vereist. De verzamelingen die moeten worden geëvalueerd. Een object dat in een van de verzamelingen wordt weergegeven, wordt ook in het resultaat weergegeven."
     }
   ],
   "uUlBZ8": [
     {
       "type": 0,
-      "value": "Adds an integer number of hours to a string timestamp passed in"
+      "value": "Er wordt een geheel getal in uren aan een ingevoerd tijdstempel als tekenreeks toegevoegd"
     }
   ],
   "uc/PoD": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the past."
+      "value": "Vereist. Het aantal tijdseenheden waarmee de gewenste tijd in het verleden is opgegeven."
     }
   ],
   "uczA5c": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Vereist. De tekenreeks die de waarde mag bevatten."
     }
   ],
   "ut5Med": [
@@ -2556,25 +2556,25 @@
   "uzsleE": [
     {
       "type": 0,
-      "value": "Creates an array from the parameters"
+      "value": "Er wordt een matrix van de parameters gemaakt"
     }
   ],
   "v39HKj": [
     {
       "type": 0,
-      "value": "Generates a globally unique string (GUID)"
+      "value": "Er wordt een wereldwijd unieke tekenreeks gegenereerd (GUID)"
     }
   ],
   "vEBhDX": [
     {
       "type": 0,
-      "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
+      "value": "De laatste index van een waarde van een tekenreeks wordt geretourneerd (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
     }
   ],
   "vQcQkU": [
     {
       "type": 0,
-      "value": "Required. The value the string may end with."
+      "value": "Vereist. De waarde waarop de tekenreeks mag eindigen."
     }
   ],
   "vSlNPe": [
@@ -2586,7 +2586,7 @@
   "va40BJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose outputs you want."
+      "value": "Vereist. De naam van de actie met de gewenste uitvoer."
     }
   ],
   "vwH/XV": [
@@ -2604,13 +2604,13 @@
   "wEaGWn": [
     {
       "type": 0,
-      "value": "Subtracts an integer number of a specified unit of time from a string timestamp passed in"
+      "value": "Hiermee wordt een geheel getal van een opgegeven tijdseenheid afgetrokken van een ingevoerd tijdstempel"
     }
   ],
   "wFCkpM": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the minimum value, or the first value of a set."
+      "value": "Vereist. Een matrix met waarden om te zoeken naar de minimumwaarde of de eerste waarde van een set."
     }
   ],
   "wHYQyg": [
@@ -2622,31 +2622,31 @@
   "wQcEXt": [
     {
       "type": 0,
-      "value": "Required. The string that is searched for parameter 2 and updated with parameter 3, when parameter 2 is found in parameter 1."
+      "value": "Vereist. De tekenreeks die wordt gezocht voor parameter 2 en wordt bijgewerkt door parameter 3 wanneer parameter 2 wordt gevonden in parameter 1."
     }
   ],
   "wQsEwc": [
     {
       "type": 0,
-      "value": "Required. The length of the substring."
+      "value": "Vereist. De lengte van de subtekenreeks."
     }
   ],
   "wWVQuK": [
     {
       "type": 0,
-      "value": "Returns a specified value based on whether the expression resulted in true or false"
+      "value": "Afhankelijk of de expressie resulteert in Waar of Onwaar wordt een opgegeven waarde geretourneerd"
     }
   ],
   "wmDUGV": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to UTC"
+      "value": "Hiermee wordt een tekenreekstijdstempel die is ingevoerd vanuit een brontijdzone geconverteerd naar UTC"
     }
   ],
   "wmw/ai": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either the array or object passed to this function"
+      "value": "Er wordt een enkelvoudige matrix of enkelvoudige object geretourneerd met alle elementen die zich in de matrix of het object bevinden die zijn doorgegeven aan deze functie"
     }
   ],
   "woJQhv": [
@@ -2658,25 +2658,25 @@
   "x0or2o": [
     {
       "type": 0,
-      "value": "Required. The collection for which to get the length."
+      "value": "Vereist. De verzameling waarvoor de lengte moet worden opgehaald."
     }
   ],
   "xJ6vjn": [
     {
       "type": 0,
-      "value": "Returns a string representation of a URI encoded string"
+      "value": "Er wordt een weergave van een tekenreeks met URI-codering geretourneerd"
     }
   ],
   "xV/oyK": [
     {
       "type": 0,
-      "value": "Required. The name of the new or existing property."
+      "value": "Vereist. De naam van de nieuwe of bestaande eigenschap."
     }
   ],
   "xYyPR8": [
     {
       "type": 0,
-      "value": "Returns the path from a URI. If path is not specified, returns '/'"
+      "value": "Hiermee wordt het pad van een URI geretourneerd. Als het pad niet is opgegeven, wordt / geretourneerd"
     }
   ],
   "xt5TeT": [
@@ -2700,13 +2700,13 @@
   "y6BcVN": [
     {
       "type": 0,
-      "value": "Required. The string to escape URL-unsafe characters from."
+      "value": "Vereist. De tekenreeks waaruit de onveilige tekens voor URL's moeten worden voorzien van escaptekens."
     }
   ],
   "yBrsFJ": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an array."
+      "value": "Vereist. De waarde die wordt geconverteerd naar een matrix."
     }
   ],
   "yqRrQ/": [
@@ -2724,19 +2724,19 @@
   "zBMVKg": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a decimal number."
+      "value": "Vereist. De waarde die wordt geconverteerd naar een decimaal getal."
     }
   ],
   "zIDVd9": [
     {
       "type": 0,
-      "value": "Required. The string that is converted to a native type value."
+      "value": "Vereist. De tekenreeks die wordt geconverteerd naar een systeemeigen waarde."
     }
   ],
   "zcZpHT": [
     {
       "type": 0,
-      "value": "Converts a string, with optionally a locale and a format to a date"
+      "value": "Converteert een tekenreeks, met optioneel een landinstelling en een notatie naar een datum"
     }
   ],
   "ziYCiA": [
@@ -2754,13 +2754,13 @@
   "znGyyU": [
     {
       "type": 0,
-      "value": "Adds an integer number of a specified unit of time to a string timestamp passed in"
+      "value": "Hiermee wordt een geheel getal van een opgegeven tijdseenheid opgeteld bij een ingevoerd tijdstempel"
     }
   ],
   "zxe9hh": [
     {
       "type": 0,
-      "value": "Required. The number of minutes to add. Can be negative to subtract minutes."
+      "value": "Vereist. Het aantal minuten dat moet worden opgeteld. Kan negatief zijn om minuten af te trekken."
     }
   ]
 }

@@ -8,13 +8,13 @@
   "+g+mch": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of an action"
+      "value": "Menampilkan isi dari sebagian output beberapa bagian terkait tindakan"
     }
   ],
   "+lpuMl": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'false'."
+      "value": "Harus diisi. Nilai untuk dikembalikan jika ekspresi adalah 'false'."
     }
   ],
   "/I/U8L": [
@@ -32,49 +32,49 @@
   "/QqADs": [
     {
       "type": 0,
-      "value": "Returns the elements in the array starting at index Count"
+      "value": "Menampilkan elemen dalam array yang dimulai dari indeks Count"
     }
   ],
   "/doURb": [
     {
       "type": 0,
-      "value": "Convert the input to an array"
+      "value": "Konversikan input menjadi array"
     }
   ],
   "/qchXQ": [
     {
       "type": 0,
-      "value": "Required. The collection to join items from."
+      "value": "Harus diisi. Koleksi untuk menggabungkan item."
     }
   ],
   "/ut0u7": [
     {
       "type": 0,
-      "value": "Returns the first Count elements from the array or string passed in"
+      "value": "Menampilkan elemen Count pertama dari array atau string yang diberikan"
     }
   ],
   "07ZsoY": [
     {
       "type": 0,
-      "value": "Returns the start of the hour to a string timestamp passed in"
+      "value": "Menampilkan permulaan jam ke tanda waktu string yang diberikan"
     }
   ],
   "09B9CU": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action. Note: This function can only be used in an httpWebhook and apiConnectionWebhook, not in a manual, recurrence, http, or apiConnection."
+      "value": "Mengembalikan URL untuk memanggil pemicu atau tindakan. Catatan: Fungsi ini hanya bisa digunakan di httpWebhook dan apiConnectionWebhook, bukan di manual, perulangan, http, atau apiConnection."
     }
   ],
   "0FzNJV": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Wajib. String dengtan pengodean base64."
     }
   ],
   "0GqNGo": [
     {
       "type": 0,
-      "value": "Url decodes the input string"
+      "value": "Url mendekodekan string input"
     }
   ],
   "0JTHTZ": [
@@ -86,7 +86,7 @@
   "0R2D5l": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a URI encoded string"
+      "value": "Menampilkan representasi biner dari string dengan pengodean URI"
     }
   ],
   "0ZlNtf": [
@@ -98,25 +98,25 @@
   "0i/6TR": [
     {
       "type": 0,
-      "value": "Required. The string to convert to upper casing. If a character in the string does not have an uppercase equivalent, the character is included unchanged in the returned string."
+      "value": "Harus diisi. String untuk dikonversi ke huruf besar. Jika karakter dalam string tidak memiliki huruf besar yang ekuivalen, karakter meliputi string yang tidak berubah dalam string yang belum dikembalikan."
     }
   ],
   "0p+pJq": [
     {
       "type": 0,
-      "value": "Returns the remainder after dividing the two numbers (modulo)"
+      "value": "Menampilkan sisa setelah membagi dua angka tersebut (modulo)"
     }
   ],
   "0qV0Qe": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Harus diisi. String yang dapat berisi nilai."
     }
   ],
   "0uj1Li": [
     {
       "type": 0,
-      "value": "Returns a binary representation of an input data URI string"
+      "value": "Menampilkan representasi biner dari string input URI data"
     }
   ],
   "0y5eia": [
@@ -128,13 +128,13 @@
   "1+Z8n9": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to String representation."
+      "value": "Wajib. URI data yang dikonversi menjadi representasi String."
     }
   ],
   "109OPL": [
     {
       "type": 0,
-      "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
+      "value": "Menghasilkan port dari URI. Jika port tidak ditentukan, akan menghasilkan port default untuk protokol"
     }
   ],
   "1A1P5b": [
@@ -146,19 +146,19 @@
   "1D047X": [
     {
       "type": 0,
-      "value": "Required. The value to convert to XML."
+      "value": "Harus diisi. Nilai untuk dikonversi ke XML."
     }
   ],
   "1Fn5n+": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Wajib. String dengan pengodean URI."
     }
   ],
   "1NBvKu": [
     {
       "type": 0,
-      "value": "Convert the parameter argument to a floating-point number"
+      "value": "Konversikan argumen parameter menjadi angka titik mengambang"
     }
   ],
   "1R6Vaa": [
@@ -193,13 +193,13 @@
   "1TE0e8": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Harus diisi. Nilai untuk mencari indeks."
     }
   ],
   "1jhzOM": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than value being compared to."
+      "value": "Harus diisi. Objek untuk diperiksa kurang dari nilai yang dibandingkan."
     }
   ],
   "1zgFh1": [
@@ -211,13 +211,13 @@
   "23fENy": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a base 64 encoded string"
+      "value": "Menampilkan representasi biner dari string dengan pengodean base 64"
     }
   ],
   "23szE+": [
     {
       "type": 0,
-      "value": "Required. The value to convert to data URI."
+      "value": "Wajib. Nilai yang dikonversi menjadi URI data."
     }
   ],
   "2K2fAj": [
@@ -229,13 +229,13 @@
   "2cVEMV": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded action output"
+      "value": "Menampilkan nilai tunggal yang cocok dengan nama kunci dari data formulir atau output tindakan dengan pengodean formulir"
     }
   ],
   "2gzGrJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Wajib. Nama tindakan dengan data formulir atau respons dengan pengodean formulir."
     }
   ],
   "2mnU/w": [
@@ -253,7 +253,7 @@
   "3NhwIJ": [
     {
       "type": 0,
-      "value": "Required. The separator."
+      "value": "Diperlukan. Pemisah."
     }
   ],
   "3kI7xF": [
@@ -265,37 +265,37 @@
   "3rzrWf": [
     {
       "type": 0,
-      "value": "Required. The object to remove the property from."
+      "value": "Diperlukan. Objek yang propertinya akan dihapus."
     }
   ],
   "3vCCY7": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to subtract."
+      "value": "Wajib. Jumlah unit waktu yang ditentukan untuk mengurangi."
     }
   ],
   "47kOXr": [
     {
       "type": 0,
-      "value": "Required. The lowest integer that can be returned."
+      "value": "Wajib. Bilangan bulat terendah yang dapat ditampilkan."
     }
   ],
   "4BrA0z": [
     {
       "type": 0,
-      "value": "Required. The number of days to add. Can be negative to subtract days."
+      "value": "Wajib. Jumlah hari yang akan ditambahkan. Dapat berupa nilai negatif untuk mengurangi hari."
     }
   ],
   "4YKQAF": [
     {
       "type": 0,
-      "value": "Required. The unit of time specified in the interval."
+      "value": "Wajib. Unit waktu yang ditentukan dalam interval."
     }
   ],
   "4c0uPQ": [
     {
       "type": 0,
-      "value": "Required. The name of the parameter whose values you want."
+      "value": "Wajib. Nama parameter yang nilainya Anda inginkan."
     }
   ],
   "4cVuMw": [
@@ -307,7 +307,7 @@
   "4vcnOA": [
     {
       "type": 0,
-      "value": "Returns the minimum value in the input array of numbers"
+      "value": "Menampilkan nilai minimum dalam array input angka"
     }
   ],
   "4vmGh0": [
@@ -319,25 +319,25 @@
   "5J7j9k": [
     {
       "type": 0,
-      "value": "Required. The XPath expression to evaluate."
+      "value": "Harus diisi. Ekspresi Xpath untuk dievaluasi."
     }
   ],
   "5aa76N": [
     {
       "type": 0,
-      "value": "Returns the first element in the array or string passed in"
+      "value": "Menampilkan elemen pertama pada array atau string yang diberikan"
     }
   ],
   "5b0sKi": [
     {
       "type": 0,
-      "value": "Returns true if an object, array, or string is empty"
+      "value": "Menampilkan true jika objek, array, atau string kosong"
     }
   ],
   "5cPiWA": [
     {
       "type": 0,
-      "value": "Required. The name of the loop whose item you want."
+      "value": "Diperlukan. Nama perulangan yang itemnya Anda inginkan."
     }
   ],
   "5qzZMo": [
@@ -355,7 +355,7 @@
   "63/zYN": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than value being compared to."
+      "value": "Harus diisi. Objek untuk diperiksa jika lebih besar dari nilai yang dibandingkan."
     }
   ],
   "6jiO7t": [
@@ -367,13 +367,13 @@
   "6jsWn/": [
     {
       "type": 0,
-      "value": "Required. The collection to search within."
+      "value": "Harus diisi. Koleksi untuk mencari objek di dalamnya."
     }
   ],
   "6kSpHL": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a multipart response."
+      "value": "Wajib. Nama tindakan dengan respons beberapa bagian."
     }
   ],
   "6oqk+A": [
@@ -385,7 +385,7 @@
   "6qkBwz": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 2 with."
+      "value": "Wajib. Nomor untuk mengalikan Multiplicand 2."
     }
   ],
   "7GSk99": [
@@ -397,13 +397,13 @@
   "7QymrD": [
     {
       "type": 0,
-      "value": "Required. The string from which the substring is taken."
+      "value": "Harus diisi. String dari substring yang diambil."
     }
   ],
   "7aJqIH": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when formatting (defaults to 'en-us')."
+      "value": "Opsional. Lokal yang akan digunakan saat pemformatan (default ke 'id-id')."
     }
   ],
   "7k9jXx": [
@@ -415,7 +415,7 @@
   "7lnElz": [
     {
       "type": 0,
-      "value": "Returns the number of ticks (100 nanoseconds interval) since 1 January 0001 00:00:00 UT of a string timestamp"
+      "value": "Menampilkan jumlah tanda (interval 100 nanodetik) mulai tanggal 1 Januari 0001 00:00:00 UT dari tanda waktu string"
     }
   ],
   "7yEdSt": [
@@ -433,25 +433,25 @@
   "7zzPsK": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Harus diisi. String yang dapat berisi nilai."
     }
   ],
   "8CWFEh": [
     {
       "type": 0,
-      "value": "Required. The value to return if the expression is 'true'."
+      "value": "Harus diisi. Nilai untuk dikembalikan jika ekspresi adalah 'true'."
     }
   ],
   "8DFwxH": [
     {
       "type": 0,
-      "value": "Returns a formatted number string"
+      "value": "Menghasilkan string angka yang diformat"
     }
   ],
   "8FjOSh": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater or equal to the comparing object."
+      "value": "Harus diisi. Objek untuk diperiksa jika lebih dari atau sama dengan objek yang sedang dibandingkan."
     }
   ],
   "8L+oIz": [
@@ -463,19 +463,19 @@
   "8U0KPg": [
     {
       "type": 0,
-      "value": "Required. The string to be URI encoded."
+      "value": "Wajib. String dengan pengodean URI."
     }
   ],
   "8wr0zO": [
     {
       "type": 0,
-      "value": "Adds an integer number of days to a string timestamp passed in"
+      "value": "Menambahkan jumlah bilangan bulat hari ke tanda waktu string yang diberikan"
     }
   ],
   "9/UeTh": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in"
+      "value": "Menampilkan array atau objek tunggal yang memiliki elemen umum antara array atau objek yang diberikan"
     }
   ],
   "99vsJy": [
@@ -487,13 +487,13 @@
   "9JuvQ4": [
     {
       "type": 0,
-      "value": "Returns a data URI of a value"
+      "value": "Menampilkan URI data nilai"
     }
   ],
   "9Jv3+1": [
     {
       "type": 0,
-      "value": "Returns an object with an additional property value pair"
+      "value": "Menghasilkan objek dengan pasangan nilai properti tambahan"
     }
   ],
   "9b4xDa": [
@@ -505,43 +505,43 @@
   "9djnqI": [
     {
       "type": 0,
-      "value": "Returns the result from adding the two numbers"
+      "value": "Menampilkan hasil penambahan dua angka tersebut"
     }
   ],
   "9u/Ae3": [
     {
       "type": 0,
-      "value": "Returns true if both parameters are true"
+      "value": "Menampilkan true jika kedua parameter benar"
     }
   ],
   "ANbEeQ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose values you want."
+      "value": "Wajib. Nama tindakan yang isinya Anda inginkan."
     }
   ],
   "ArTh0/": [
     {
       "type": 0,
-      "value": "Required. The string to encode into base64 representation."
+      "value": "Wajib. String yang dikodekan menjadi representasi base64."
     }
   ],
   "B2s0iG": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Wajib. Indeks bagian yang akan diambil."
     }
   ],
   "BCAnZP": [
     {
       "type": 0,
-      "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
+      "value": "Karakter penentu pemformatan tunggal atau pola format khusus yang menunjukkan cara memformat nilai tanda waktu ini. Jika format tidak diberikan, format ISO 8601 ('o') digunakan."
     }
   ],
   "BHe7qY": [
     {
       "type": 0,
-      "value": "Required. The URI encoded string."
+      "value": "Wajib. String dengan pengodean URI."
     }
   ],
   "BKL0ZG": [
@@ -553,7 +553,7 @@
   "BQCPY7": [
     {
       "type": 0,
-      "value": "Required. The string to decode the URL-unsafe characters from."
+      "value": "Wajib. String untuk mengodekan karakter URL yang dapat berubah."
     }
   ],
   "Bn8iTS": [
@@ -565,13 +565,13 @@
   "BuYrD3": [
     {
       "type": 0,
-      "value": "A single format specifier that indicates how to format the value of this Guid."
+      "value": "Format tunggal penentu yang menunjukkan cara memformat nilai dari Guid ini."
     }
   ],
   "BxITRH": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than comparing object."
+      "value": "Harus diisi. Objek untuk diperiksa jika lebih besar dari objek yang dibandingkan."
     }
   ],
   "CG772M": [
@@ -583,13 +583,13 @@
   "D+Ptnq": [
     {
       "type": 0,
-      "value": "Returns the path and query from a URI"
+      "value": "Menghasilkan jalur dan kueri dari URI"
     }
   ],
   "D1lgsT": [
     {
       "type": 0,
-      "value": "Required. The string from which to remove leading and trailing whitespace."
+      "value": "Diperlukan. String untuk menghapus spasi awal dan akhir."
     }
   ],
   "DFo+mo": [
@@ -607,7 +607,7 @@
   "ECZC6Y": [
     {
       "type": 0,
-      "value": "Converts the parameter to a decimal number"
+      "value": "Mengonversi parameter menjadi angka desimal"
     }
   ],
   "ERAWZA": [
@@ -619,37 +619,37 @@
   "EZz5q7": [
     {
       "type": 0,
-      "value": "Required. The index of where to start extracting the substring."
+      "value": "Wajib. Indeks tempat untuk mulai mengekstrak substring."
     }
   ],
   "F3IDl8": [
     {
       "type": 0,
-      "value": "Required. The number of a specified time unit to add."
+      "value": "Wajib. Jumlah unit waktu tertentu yang akan ditambahkan."
     }
   ],
   "FDF4Qb": [
     {
       "type": 0,
-      "value": "Returns a parameter value that is defined in the definition"
+      "value": "Menampilkan nilai parameter yang ditetapkan dalam definisi"
     }
   ],
   "FN5zHQ": [
     {
       "type": 0,
-      "value": "Returns a section of a string defined by the start index and the end index"
+      "value": "Menghasilkan bagian string yang ditentukan oleh indeks awal dan indeks akhir"
     }
   ],
   "FS+/Tb": [
     {
       "type": 0,
-      "value": "Returns the body for a part in a multipart output of the trigger"
+      "value": "Menampilkan isi dari sebagian output beberapa bagian terkait pemicu"
     }
   ],
   "FVavKy": [
     {
       "type": 0,
-      "value": "Returns the start of the day to a string timestamp passed in"
+      "value": "Menampilkan permulaan hari ke tanda waktu string yang diberikan"
     }
   ],
   "FXLR5M": [
@@ -676,13 +676,13 @@
   "Fgq3Db": [
     {
       "type": 0,
-      "value": "Required. The collection to take the last object from."
+      "value": "Harus diisi. Koleksi untuk mengambil objek terakhir."
     }
   ],
   "Fh2HDb": [
     {
       "type": 0,
-      "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Menghasilkan indeks pertama dari nilai dalam string (tidak peka huruf besar/kecil, kultur invarian)"
     }
   ],
   "FslNgF": [
@@ -694,31 +694,31 @@
   "G0XYrd": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Harus diisi. String yang dapat berisi nilai."
     }
   ],
   "GAY7b8": [
     {
       "type": 0,
-      "value": "Returns the query from a URI"
+      "value": "Menghasilkan permintaan dari URI"
     }
   ],
   "GLd3MU": [
     {
       "type": 0,
-      "value": "Required. The object to find inside the Within collection."
+      "value": "Harus diisi. Objek untuk dicari Di dalam koleksi."
     }
   ],
   "GYvF54": [
     {
       "type": 0,
-      "value": "Referencing functions"
+      "value": "Fungsi referensi"
     }
   ],
   "GcG0qf": [
     {
       "type": 0,
-      "value": "Returns true if the parameters are false"
+      "value": "Menampilkan true jika parameter salah"
     }
   ],
   "Gmya+V": [
@@ -742,25 +742,25 @@
   "H17jEE": [
     {
       "type": 0,
-      "value": "URI parsing functions"
+      "value": "Fungsi penguraian URI"
     }
   ],
   "H1wnHr": [
     {
       "type": 0,
-      "value": "Required. The string to slice."
+      "value": "Wajib. String yang akan diiris."
     }
   ],
   "H8bEUn": [
     {
       "type": 0,
-      "value": "Required. The number that Subtrahend is removed from."
+      "value": "Wajib. Nomor yang akan dihapus dari Subtrahend."
     }
   ],
   "HDqP2g": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Wajib. Nama kunci nilai data formulir yang akan ditampilkan."
     }
   ],
   "HfrUId": [
@@ -778,43 +778,43 @@
   "IW2MjQ": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+      "value": "Mengonversi tanda waktu string yang diberikan dari UTC ke zona waktu target"
     }
   ],
   "Ip7Iax": [
     {
       "type": 0,
-      "value": "Returns the index of the n-th occurrence of a value within a string (case-insensitive, invariant culture)"
+      "value": "Menghasilkan indeks kejadian ke-n dari nilai dalam string (tidak peka huruf besar/kecil, kultur invarian)"
     }
   ],
   "IpVwYT": [
     {
       "type": 0,
-      "value": "Returns the first non-null object in the arguments passed in"
+      "value": "Menampilkan objek non-null pertama pada argumen yang diberikan"
     }
   ],
   "J5/7vN": [
     {
       "type": 0,
-      "value": "Converts a string to lowercase using the casing rules of the invariant culture"
+      "value": "Mengonversi string ke huruf kecil menggunakan aturan huruf besar/kecil kultur invarian"
     }
   ],
   "JNQHws": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time."
+      "value": "Wajib. String yang berisi waktu."
     }
   ],
   "JSfWJ0": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a boolean."
+      "value": "Harus diisi. Nilai dikonversi ke boolean."
     }
   ],
   "Jaz3EC": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+      "value": "Mengonversi stempel waktu string yang diberikan dari zona waktu sumber ke zona waktu target"
     }
   ],
   "JbgTET": [
@@ -826,13 +826,13 @@
   "Ji6663": [
     {
       "type": 0,
-      "value": "Returns true if a dictionary contains a key, if an array contains a value, or if a string contains a substring"
+      "value": "Menampilkan true jika kamus berisi kunci, jika array berisi nilai, atau jika string berisi substring"
     }
   ],
   "JjTfC7": [
     {
       "type": 0,
-      "value": "Required. The number to be formatted."
+      "value": "Wajib. Angka yang akan diformat."
     }
   ],
   "JnlcZQ": [
@@ -844,49 +844,49 @@
   "Jq2Y/o": [
     {
       "type": 0,
-      "value": "Required. The numeric format string."
+      "value": "Wajib. String format numerik."
     }
   ],
   "K50znc": [
     {
       "type": 0,
-      "value": "Required. The object to add a new property to."
+      "value": "Diperlukan. Objek untuk ditambahi properti baru."
     }
   ],
   "K90YEU": [
     {
       "type": 0,
-      "value": "Returns a subset of characters from a string"
+      "value": "Menampilkan subset karakter dari string"
     }
   ],
   "L+PY+j": [
     {
       "type": 0,
-      "value": "Required. The number of objects to take from the Collection. Must be a positive integer."
+      "value": "Harus diisi. Jumlah objek untuk diambil dari Koleksi. Harus bilangan bulat positif."
     }
   ],
   "L0UAzs": [
     {
       "type": 0,
-      "value": "Returns the day of week component of a string timestamp"
+      "value": "Menampilkan komponen jumlah hari dalam seminggu dari tanda waktu string"
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
-      "value": "Returns the scheme from a URI"
+      "value": "Menghasilkan skema dari URI"
     }
   ],
   "LoGUT3": [
     {
       "type": 0,
-      "value": "When used inside for-each loop, this function returns the current item of the specified loop."
+      "value": "Ketika digunakan di dalam loop for-each, fungsi ini menghasilkan item saat ini dari loop yang ditentukan."
     }
   ],
   "Lub7NN": [
     {
       "type": 0,
-      "value": "Required. The expressions that may be true."
+      "value": "Diperlukan. Ekspresi pertama yang mungkin true."
     }
   ],
   "M0HMjE": [
@@ -904,31 +904,31 @@
   "M8Aqm4": [
     {
       "type": 0,
-      "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
+      "value": "Opsional. Nama tindakan tercakup tempat Anda menginginkan input dan output dari tindakan tingkat atas dalam cakupan tersebut."
     }
   ],
   "M9mzP6": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 2."
+      "value": "Wajib. Nomor yang akan ditambahkan ke Summand 2."
     }
   ],
   "MDbmMw": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object must be in all collections passed in to appear in the result."
+      "value": "Harus diisi. Koleksi untuk evaluasi. Sebuah objek harus ada dalam semua koleksi yang dilewati agar muncul dalam hasil."
     }
   ],
   "MKTdNk": [
     {
       "type": 0,
-      "value": "Required. The data URI to convert to binary representation."
+      "value": "Wajib. URI data yang dikonversi menjadi representasi biner."
     }
   ],
   "MTR4Vg": [
     {
       "type": 0,
-      "value": "Returns the current timestamp as a string"
+      "value": "Menampilkan tanda waktu saat ini sebagai string"
     }
   ],
   "Mb+Eaq": [
@@ -952,7 +952,7 @@
   "N2CF0J": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Wajib. Nama kunci nilai data formulir yang akan ditampilkan."
     }
   ],
   "NPUFgH": [
@@ -964,7 +964,7 @@
   "O+8vRv": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a value"
+      "value": "Menampilkan representasi biner dari nilai"
     }
   ],
   "O36+wl": [
@@ -976,7 +976,7 @@
   "OD8igU": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Wajib. String berisi nama zona waktu dari zona waktu tujuan. Lihat https://msdn.microsoft.com/en-us/library/gg154758.aspx untuk rinciannya."
     }
   ],
   "OFKZzQ": [
@@ -994,7 +994,7 @@
   "OVvieE": [
     {
       "type": 0,
-      "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
+      "value": "Menghasilkan hasil dari tindakan tingkat atas dalam tindakan tercakup yang ditentukan, seperti tindakan For_each, Until, atau Scope."
     }
   ],
   "Oib1mL": [
@@ -1018,13 +1018,13 @@
   "OihxQE": [
     {
       "type": 0,
-      "value": "Optional. The locale to be used when parsing the date time string."
+      "value": "Opsional. Lokal yang akan digunakan saat mengurai string tanggal waktu."
     }
   ],
   "OjGJ8Y": [
     {
       "type": 0,
-      "value": "Returns the host from a URI"
+      "value": "Menghasilkan host dari URI"
     }
   ],
   "OnrO5/": [
@@ -1036,19 +1036,19 @@
   "P2A5dB": [
     {
       "type": 0,
-      "value": "Required. This value is the number of integers that is in the array."
+      "value": "Wajib. Nilai ini adalah nomor bilangan bulat yang ada dalam array."
     }
   ],
   "P4rEwD": [
     {
       "type": 0,
-      "value": "Collection functions"
+      "value": "Fungsi pengumpulan"
     }
   ],
   "P8ZBF9": [
     {
       "type": 0,
-      "value": "Required. The collection to take the first object from."
+      "value": "Harus diisi. Koleksi untuk mengambil objek pertama."
     }
   ],
   "PF87Ew": [
@@ -1060,7 +1060,7 @@
   "PKMkb/": [
     {
       "type": 0,
-      "value": "Required. The number to add to Summand 1."
+      "value": "Wajib. Nomor yang akan ditambahkan ke Summand 1."
     }
   ],
   "PP63jY": [
@@ -1078,7 +1078,7 @@
   "PRnqYA": [
     {
       "type": 0,
-      "value": "Required. The number of seconds to add. Can be negative to subtract seconds."
+      "value": "Wajib. Jumlah detik yang akan ditambahkan. Dapat berupa nilai negatif untuk mengurangi detik."
     }
   ],
   "PaPPLr": [
@@ -1090,13 +1090,13 @@
   "PfCJlN": [
     {
       "type": 0,
-      "value": "Workflow functions"
+      "value": "Fungsi alur kerja"
     }
   ],
   "Pvm0xB": [
     {
       "type": 0,
-      "value": "Returns the base 64 representation of the input string"
+      "value": "Menampilkan representasi base 64 dari string input"
     }
   ],
   "Q/7unA": [
@@ -1108,13 +1108,13 @@
   "Q0xpPQ": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less or equal to the comparing object."
+      "value": "Harus diisi. Objek untuk diperiksa jika kurang dari dari atau sama dengan objek yang dibandingkan."
     }
   ],
   "QEp3C8": [
     {
       "type": 0,
-      "value": "Convert the input to a JSON type value"
+      "value": "Konversikan input menjadi nilai jenis JSON"
     }
   ],
   "QQYzHC": [
@@ -1130,13 +1130,13 @@
   "QZBPUx": [
     {
       "type": 0,
-      "value": "Returns a single value matching the key name from form-data or form-encoded trigger output"
+      "value": "Menampilkan nilai tunggal yang cocok dengan nama kunci dari data formulir atau output pemicu dengan pengodean formulir"
     }
   ],
   "QZrxUk": [
     {
       "type": 0,
-      "value": "String functions"
+      "value": "Fungsi string"
     }
   ],
   "QbJDi7": [
@@ -1148,7 +1148,7 @@
   "QeE0k/": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to binary."
+      "value": "Wajib. Nilai yang dikonversi menjadi biner."
     }
   ],
   "QknZQ1": [
@@ -1160,19 +1160,19 @@
   "Qn8qxn": [
     {
       "type": 0,
-      "value": "Returns a string in date format"
+      "value": "Menampilkan string dalam format tanggal"
     }
   ],
   "QpRRt3": [
     {
       "type": 0,
-      "value": "Required. The string to delimit items with."
+      "value": "Harus diisi. String untuk membatasi item."
     }
   ],
   "QrQDdp": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to subtract."
+      "value": "Diperlukan. String berisi unit waktu yang ditentukan dalam interval yang akan dikurangi."
     }
   ],
   "Qu1HkA": [
@@ -1188,7 +1188,7 @@
   "RX2Shm": [
     {
       "type": 0,
-      "value": "Required. The string that is split."
+      "value": "Harus diisi. String yang dipisahkan."
     }
   ],
   "RhH4pF": [
@@ -1215,13 +1215,13 @@
   "SKXopi": [
     {
       "type": 0,
-      "value": "Convert the parameter to an integer"
+      "value": "Konversikan parameter menjadi bilangan bulat"
     }
   ],
   "SLZ0n4": [
     {
       "type": 0,
-      "value": "Checks if the string starts with a value (case-insensitive, invariant culture)"
+      "value": "Memeriksa apakah string dimulai dengan nilai (tidak peka huruf besar/kecil, kultur invarian)"
     }
   ],
   "SXb47U": [
@@ -1237,13 +1237,13 @@
   "SY04wn": [
     {
       "type": 0,
-      "value": "Required. The name of the action with a form-data or form-encoded response."
+      "value": "Wajib. Nama tindakan dengan data formulir atau respons dengan pengodean formulir."
     }
   ],
   "T7zcR6": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Diperlukan. Ekspresi yang harus true."
     }
   ],
   "T8Xqt9": [
@@ -1255,13 +1255,13 @@
   "TI44R1": [
     {
       "type": 0,
-      "value": "Returns a string with each item of an array joined by a delimiter"
+      "value": "Menampilkan string dengan setiap item dari array yang bergabung dengan pemisah"
     }
   ],
   "TO7qos": [
     {
       "type": 0,
-      "value": "Returns the start of the month of a string timestamp"
+      "value": "Menampilkan permulaan bulan pada tanda waktu string"
     }
   ],
   "TZv5JE": [
@@ -1285,7 +1285,7 @@
   "Twfck/": [
     {
       "type": 0,
-      "value": "Required. The number to multiply Multiplicand 1 with."
+      "value": "Wajib. Nomor untuk mengalikan Multiplicand 1."
     }
   ],
   "Tz5jTR": [
@@ -1297,7 +1297,7 @@
   "U3iWVd": [
     {
       "type": 0,
-      "value": "Generates an array of integers starting from a certain number"
+      "value": "Menghasilkan array bilangan bulat yang dimulai dari angka tertentu"
     }
   ],
   "UCNM4L": [
@@ -1309,7 +1309,7 @@
   "UHCVNK": [
     {
       "type": 0,
-      "value": "Replaces a string with a given string"
+      "value": "Mengganti string dengan string yang diberikan"
     }
   ],
   "USVffu": [
@@ -1333,7 +1333,7 @@
   "VVfYvq": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Wajib. Nomor yang akan dibagi Divisor."
     }
   ],
   "VXBWrq": [
@@ -1367,25 +1367,25 @@
   "W6FdMh": [
     {
       "type": 0,
-      "value": "Required. The name of the new property."
+      "value": "Diperlukan. Nama properti baru."
     }
   ],
   "WS9kXD": [
     {
       "type": 0,
-      "value": "Required. The first integer in the array."
+      "value": "Wajib. Bilangan bulat pertama dalam array."
     }
   ],
   "WUe3DY": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs"
+      "value": "Pintasan untuk pemicu().outputs"
     }
   ],
   "WgoP7R": [
     {
       "type": 0,
-      "value": "Returns the result from multiplying the two numbers"
+      "value": "Menampilkan hasil perkalian dua angka tersebut"
     }
   ],
   "X8JjjT": [
@@ -1409,13 +1409,13 @@
   "XCunbR": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs"
+      "value": "Pintasan untuk tindakan('actionName').outputs"
     }
   ],
   "XEuptL": [
     {
       "type": 0,
-      "value": "Combines any number of strings together"
+      "value": "Menggabungkan sejumlah string"
     }
   ],
   "XFFpu/": [
@@ -1457,13 +1457,13 @@
   "XtuP5e": [
     {
       "type": 0,
-      "value": "Math functions"
+      "value": "Fungsi matematika"
     }
   ],
   "Xx/naD": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose body outputs you want."
+      "value": "Wajib. Nama tindakan yang tubuh output isinya Anda inginkan."
     }
   ],
   "Y0H9aX": [
@@ -1475,7 +1475,7 @@
   "Y9kBz5": [
     {
       "type": 0,
-      "value": "Returns a binary representation of a data URI"
+      "value": "Menampilkan representasi biner dari URI data"
     }
   ],
   "YHsAKl": [
@@ -1503,13 +1503,13 @@
   "YKXmKD": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime trigger"
+      "value": "Memungkinkan ekspresi untuk memperoleh nilai dari nama JSON lain dan nilai pasangan atau output pemicu runtime"
     }
   ],
   "YaFjJQ": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
+      "value": "Mengembalikan array tunggal atau objek tunggal dengan semua elemen yang ada dalam array atau objek yang dilewati. Parameter untuk fungsi dapat berupa sekumpulan objek atau sekumpulan susunan (bukan gabungan keduanya). Jika ada dua objek dengan nama yang sama, objek terakhir dengan nama tersebut muncul di objek akhir."
     }
   ],
   "YoQara": [
@@ -1521,19 +1521,19 @@
   "ZME5hh": [
     {
       "type": 0,
-      "value": "Returns the day of month component of a string timestamp"
+      "value": "Menampilkan komponen jumlah hari dalam sebulan dari tanda waktu string"
     }
   ],
   "ZUaz3Y": [
     {
       "type": 0,
-      "value": "Shorthand for trigger().outputs.body"
+      "value": "Pintasan untuk pemicu().outputs.body"
     }
   ],
   "ZaIeDG": [
     {
       "type": 0,
-      "value": "Required. The value the string may start with."
+      "value": "Harus diisi. Kemungkinan nilai awal string."
     }
   ],
   "ZbX8xq": [
@@ -1545,19 +1545,19 @@
   "a7j3gS": [
     {
       "type": 0,
-      "value": "Required. The number to divide by the Divisor."
+      "value": "Wajib. Nomor yang akan dibagi Divisor."
     }
   ],
   "aAXnqw": [
     {
       "type": 0,
-      "value": "Required. The number of the occurrence of the substring to find."
+      "value": "Wajib. Jumlah kejadian substring yang akan ditemukan."
     }
   ],
   "aGyVJT": [
     {
       "type": 0,
-      "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
+      "value": "Harus diisi. Jumlah objek untuk dihapus dari bagian depan Koleksi. Harus bilangan bulat positif."
     }
   ],
   "bH5LtI": [
@@ -1577,7 +1577,7 @@
   "bTrk+S": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is greater than or equal to value being compared to."
+      "value": "Harus diisi. Objek untuk diperiksa jika lebih besar dari atau sama dengan nilai yang dibandingkan."
     }
   ],
   "ba9yGJ": [
@@ -1589,7 +1589,7 @@
   "bf7078": [
     {
       "type": 0,
-      "value": "Returns the maximum value in the input array of numbers"
+      "value": "Menampilkan nilai maksimal dalam array input angka"
     }
   ],
   "bgfjqS": [
@@ -1601,13 +1601,13 @@
   "bzF/qn": [
     {
       "type": 0,
-      "value": "Required. The collection from where to take the first Count objects."
+      "value": "Harus diisi. Koleksi untuk mengambil objek hitungan pertama."
     }
   ],
   "c3G/zq": [
     {
       "type": 0,
-      "value": "Returns an object with a property set to the provided value"
+      "value": "Menghasilkan objek dengan properti yang diatur ke nilai yang disediakan"
     }
   ],
   "c6XbVI": [
@@ -1619,7 +1619,7 @@
   "cJm+ah": [
     {
       "type": 0,
-      "value": "Required. The value to search the index of."
+      "value": "Harus diisi. Nilai untuk mencari indeks."
     }
   ],
   "ci6ex1": [
@@ -1649,7 +1649,7 @@
   "cscezV": [
     {
       "type": 0,
-      "value": "Required. The collection to skip the first Count objects from."
+      "value": "Harus diisi. Koleksi untuk melompati objek Hitungan pertama."
     }
   ],
   "d3bSQA": [
@@ -1667,25 +1667,25 @@
   "dhvk0u": [
     {
       "type": 0,
-      "value": "Returns a string representation of a base 64 encoded string"
+      "value": "Menampilkan representasi string dari string dengan pengodean base 64"
     }
   ],
   "dqgt9y": [
     {
       "type": 0,
-      "value": "Convert the parameter to a Boolean"
+      "value": "Konversikan parameter menjadi Boolean"
     }
   ],
   "drM9Sl": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded action output"
+      "value": "Menampilkan array nilai yang cocok dengan nama kunci dari data formulir atau output tindakan dengan pengodean formulir"
     }
   ],
   "dsz+Ae": [
     {
       "type": 0,
-      "value": "Splits the string using a separator"
+      "value": "Membagi string menggunakan pemisah"
     }
   ],
   "e4Onhn": [
@@ -1697,7 +1697,7 @@
   "eHgi14": [
     {
       "type": 0,
-      "value": "Required. The name of the variable whose value you want."
+      "value": "Diperlukan. Nama variabel yang nilainya Anda inginkan."
     }
   ],
   "eRvRWs": [
@@ -1709,37 +1709,37 @@
   "eT+b9W": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by."
+      "value": "Wajib. Nomor untuk membagi Dividend."
     }
   ],
   "egLI8P": [
     {
       "type": 0,
-      "value": "Required. The index of where the substring begins in parameter 1."
+      "value": "Harus diisi. Indeks substring awal dalam parameter 1."
     }
   ],
   "f/lWTW": [
     {
       "type": 0,
-      "value": "Required. The objects to check for null."
+      "value": "Wajib. Objek untuk memeriksa null."
     }
   ],
   "f1j0to": [
     {
       "type": 0,
-      "value": "Optional. The index of where to stop extracting the substring."
+      "value": "Opsional. Indeks tempat untuk berhenti mengekstrak substring."
     }
   ],
   "fBQBw/": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than or equal to the second"
+      "value": "Menampilkan true jika argumen pertama lebih besar atau sama dengan yang kedua"
     }
   ],
   "fg/34o": [
     {
       "type": 0,
-      "value": "Logical functions"
+      "value": "Fungsi logis"
     }
   ],
   "ftwXvc": [
@@ -1757,19 +1757,19 @@
   "gDDfek": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time plus the specified time interval."
+      "value": "Mengembalikan tanda waktu yang merupakan waktu saat ini ditambah interval waktu tertentu."
     }
   ],
   "gDY9xk": [
     {
       "type": 0,
-      "value": "Returns the result from dividing the two numbers"
+      "value": "Menampilkan hasil pembagian dua angka tersebut"
     }
   ],
   "gIK0WG": [
     {
       "type": 0,
-      "value": "Required. A boolean value that determines which value the expression should return."
+      "value": "Harus diisi. Nilai boolean yang menentukan nilai ekspresi yang harus dikembalikan."
     }
   ],
   "gKq3Jv": [
@@ -1781,19 +1781,19 @@
   "gMhc5o": [
     {
       "type": 0,
-      "value": "Required. The string to combine into a single string."
+      "value": "Harus diisi. String untuk dikombinasikan ke dalam string tunggal."
     }
   ],
   "gQt/0f": [
     {
       "type": 0,
-      "value": "Conversion functions"
+      "value": "Fungsi konversi"
     }
   ],
   "gu9o9z": [
     {
       "type": 0,
-      "value": "When used inside until loop, this function returns the current iteration index of the specified loop."
+      "value": "Ketika digunakan di dalam until loop, fungsi ini menghasilkan indeks perulangan saat ini dari perulangan yang ditentukan."
     }
   ],
   "hN7iBP": [
@@ -1820,7 +1820,7 @@
   "hPM6iC": [
     {
       "type": 0,
-      "value": "Returns the result from subtracting two numbers"
+      "value": "Menampilkan hasil pengurangan dua angka tersebut"
     }
   ],
   "hdnZ9Y": [
@@ -1844,7 +1844,7 @@
   "iCSHJG": [
     {
       "type": 0,
-      "value": "Converts a string to uppercase using the casing rules of the invariant culture"
+      "value": "Mengonversi string ke huruf besar menggunakan aturan huruf besar/kecil kultur invarian"
     }
   ],
   "iJOIca": [
@@ -1856,7 +1856,7 @@
   "iMicOQ": [
     {
       "type": 0,
-      "value": "Required. The URI to parse."
+      "value": "Diperlukan. URI untuk mengurai."
     }
   ],
   "iRjBf4": [
@@ -1874,7 +1874,7 @@
   "iU5Fdh": [
     {
       "type": 0,
-      "value": "Manipulation functions"
+      "value": "Fungsi manipulasi"
     }
   ],
   "iUs7pv": [
@@ -1896,43 +1896,43 @@
   "j2MU0b": [
     {
       "type": 0,
-      "value": "Returns an object with a property removed"
+      "value": "Menghasilkan objek dengan properti yang dihapus"
     }
   ],
   "j39557": [
     {
       "type": 0,
-      "value": "Returns the value of the variable specified."
+      "value": "Menghasilkan nilai variabel yang ditetapkan."
     }
   ],
   "jHHF/u": [
     {
       "type": 0,
-      "value": "Returns a random integer from a specified range, which is inclusive only at the starting end."
+      "value": "Menghasilkan bilangan bulat acak dari rentang yang ditentukan, yang inklusif hanya pada akhir awal."
     }
   ],
   "jKsMS6": [
     {
       "type": 0,
-      "value": "Required. The expression that will be negated."
+      "value": "Harus diisi. Ekspresi yang akan ditiadakan."
     }
   ],
   "jQ0Aqj": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a string."
+      "value": "Harus diisi. Nilai yang dikonversi ke string."
     }
   ],
   "jVpanH": [
     {
       "type": 0,
-      "value": "Required. A base64 input string."
+      "value": "Wajib. String input base64."
     }
   ],
   "jcA3Ig": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data values to return."
+      "value": "Wajib. Nama kunci nilai data formulir yang akan ditampilkan."
     }
   ],
   "jfInxm": [
@@ -1944,7 +1944,7 @@
   "k/oqFL": [
     {
       "type": 0,
-      "value": "Required. The base64 encoded string."
+      "value": "Wajib. String dengtan pengodean base64."
     }
   ],
   "k41+13": [
@@ -1980,7 +1980,7 @@
   "kN6kce": [
     {
       "type": 0,
-      "value": "Returns a string representation of an input based64 string"
+      "value": "Menampilkan representasi string dari string input base 64"
     }
   ],
   "kYivbS": [
@@ -1992,19 +1992,19 @@
   "kZuYgD": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than the second"
+      "value": "Menampilkan true jika argumen pertama kurang dari yang kedua"
     }
   ],
   "keb4r1": [
     {
       "type": 0,
-      "value": "Returns true if two values are equal"
+      "value": "Menampilkan true jika kedua nilai sama"
     }
   ],
   "knylNW": [
     {
       "type": 0,
-      "value": "Required. This value is the next integer after the highest integer that could be returned."
+      "value": "Wajib. Nilai ini adalah bilangan bulat berikutnya setelah bilangan bulat tertinggi yang dapat ditampilkan."
     }
   ],
   "l36V56": [
@@ -2046,7 +2046,7 @@
   "ljAOR6": [
     {
       "type": 0,
-      "value": "Shorthand for actions('actionName').outputs.body"
+      "value": "Pintasan untuk tindakan('actionName').outputs.body"
     }
   ],
   "lztiwS": [
@@ -2070,73 +2070,73 @@
   "mGUdCO": [
     {
       "type": 0,
-      "value": "Returns a timestamp that is the current time minus the specified time interval."
+      "value": "Mengembalikan tanda waktu yang merupakan waktu saat ini dikurangi interval waktu tertentu."
     }
   ],
   "mGpKsl": [
     {
       "type": 0,
-      "value": "Returns a string representation of a data URI"
+      "value": "Menampilkan representasi string dari URI data"
     }
   ],
   "mPakaD": [
     {
       "type": 0,
-      "value": "Url encodes the input string"
+      "value": "Url mengkodekan string input"
     }
   ],
   "mZRMD9": [
     {
       "type": 0,
-      "value": "Required. The string to convert to lower casing. If a character in the string does not have a lowercase equivalent, the character is included unchanged in the returned string."
+      "value": "Harus diisi. String untuk dikonversi ke huruf kecil. Jika karakter dalam string tidak memiliki huruf kecil yang ekuivalen, karakter meliputi string yang tidak berubah dalam string yang belum dikembalikan."
     }
   ],
   "n35O/+": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a floating-point number."
+      "value": "Harus diisi. Nilai yang dikonversi ke angka titik mengambang."
     }
   ],
   "nGds/r": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than or equal to value being compared to."
+      "value": "Harus diisi. Objek untuk diperiksa jika kurang dari atau sama dengan nilai yang sedang dibandingkan."
     }
   ],
   "nHseED": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the future."
+      "value": "Wajib. Jumlah unit waktu yang diinginkan adalah di masa depan."
     }
   ],
   "nTA155": [
     {
       "type": 0,
-      "value": "Required. The name of the property to remove."
+      "value": "Diperlukan. Nama properti yang akan dihapus."
     }
   ],
   "ngsC44": [
     {
       "type": 0,
-      "value": "Required. The object to check if it is less than comparing object."
+      "value": "Harus diisi. Objek untuk diperiksa jika kurang dari objek yang dibandingkan."
     }
   ],
   "nkk1mu": [
     {
       "type": 0,
-      "value": "Adds an integer number of minutes to a string timestamp passed in"
+      "value": "Menambahkan jumlah bilangan bulat menit ke tanda waktu string yang diberikan"
     }
   ],
   "o/0SEj": [
     {
       "type": 0,
-      "value": "Returns the last element in the array or string passed in"
+      "value": "Menampilkan elemen terakhir dalam array atau string yang diberikan"
     }
   ],
   "o14STH": [
     {
       "type": 0,
-      "value": "Required. The XML on which to evaluate the XPath expression."
+      "value": "Harus diisi. XML untuk mengevaluasi ekspresi Xpath."
     }
   ],
   "o1HOyf": [
@@ -2156,7 +2156,7 @@
   "oAFcW6": [
     {
       "type": 0,
-      "value": "Required. The dataURI to decode into a binary representation."
+      "value": "Wajib. Ini adalah dataURI yang dikodekan menjadi representasi biner."
     }
   ],
   "oV0xQ9": [
@@ -2168,7 +2168,7 @@
   "p/0r2N": [
     {
       "type": 0,
-      "value": "Required. The key name of the form data value to return."
+      "value": "Wajib. Nama kunci nilai data formulir yang akan ditampilkan."
     }
   ],
   "p16/4S": [
@@ -2186,7 +2186,7 @@
   "pOTcUO": [
     {
       "type": 0,
-      "value": "Required. The values to combine into an array."
+      "value": "Wajib. Nilai yang dikombinasikan menjadi array."
     }
   ],
   "pRUJff": [
@@ -2198,25 +2198,25 @@
   "pXmFGf": [
     {
       "type": 0,
-      "value": "Covert the input to an Xml type value"
+      "value": "Konversikan input menjadi nilai jenis Xml"
     }
   ],
   "pYtSyE": [
     {
       "type": 0,
-      "value": "Required. The number to divide the Dividend by. After the division, the remainder is taken."
+      "value": "Wajib. Nomor untuk membagi Dividen. Setelah dibagi, sisanya diambil."
     }
   ],
   "pcuZKB": [
     {
       "type": 0,
-      "value": "Returns a single array or object that has common elements between arrays or objects passed in. The parameters for the function can either be a set of objects or a set of arrays (not a mixture of both). If there are two objects with the same name, the last object with that name appears in the final object."
+      "value": "Mengembalikan array tunggal atau objek tunggal yang memiliki elemen umum di antara array atau objek yang dilewati. Parameter untuk fungsi dapat berupa sekumpulan objek atau sekumpulan susunan (bukan gabungan keduanya). Jika ada dua objek dengan nama yang sama, objek terakhir dengan nama tersebut muncul di objek akhir."
     }
   ],
   "pozypE": [
     {
       "type": 0,
-      "value": "Trims leading and trailing whitespace from a string"
+      "value": "Menghapus spasi awal dan akhir dari string"
     }
   ],
   "pr9GwA": [
@@ -2228,25 +2228,25 @@
   "q/+Uex": [
     {
       "type": 0,
-      "value": "Returns an XML node, nodeset or value as JSON from the provided XPath expression"
+      "value": "Menghasilkan node XML, kumpulan node atau nilai sebagai JSON dari ekspresi JalurX yang disediakan"
     }
   ],
   "q2OCEx": [
     {
       "type": 0,
-      "value": "Required. The value to assign to the property."
+      "value": "Diperlukan. Nilai yang akan ditetapkan ke properti."
     }
   ],
   "q2w8Sk": [
     {
       "type": 0,
-      "value": "Convert the parameter to a string"
+      "value": "Konversikan parameter menjadi string"
     }
   ],
   "q87X20": [
     {
       "type": 0,
-      "value": "Adds an integer number of seconds to a string timestamp passed in"
+      "value": "Menambahkan jumlah bilangan bulat detik ke tanda waktu string yang diberikan"
     }
   ],
   "qGfwxW": [
@@ -2258,13 +2258,13 @@
   "qJpnIL": [
     {
       "type": 0,
-      "value": "Checks if the string ends with a value (case-insensitive, invariant culture)"
+      "value": "Memeriksa apakah string berakhir dengan nilai (tidak peka huruf besar/kecil, kultur invarian)"
     }
   ],
   "qSejoi": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is less than or equal to the second"
+      "value": "Menampilkan true jika argumen pertama kurang dari atau sama dengan yang kedua"
     }
   ],
   "qSt0Sb": [
@@ -2297,19 +2297,19 @@
   "qc5S69": [
     {
       "type": 0,
-      "value": "Returns the number of elements in an array or string"
+      "value": "Menampilkan jumlah elemen dalam array atau string"
     }
   ],
   "qnI4Y1": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an integer."
+      "value": "Harus diisi. Nilai yang dikonversi ke bilangan bulat."
     }
   ],
   "r8aZXs": [
     {
       "type": 0,
-      "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime action"
+      "value": "Memungkinkan ekspresi untuk memperoleh nilai dari nama JSON lain dan nilai pasangan atau output tindakan runtime"
     }
   ],
   "r9SVE4": [
@@ -2333,43 +2333,43 @@
   "raBiud": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the maximum value, or the first value of a set."
+      "value": "Wajib. Array nilai untuk mencari nilai maksimum atau nilai pertama kumpulan."
     }
   ],
   "rcz4w4": [
     {
       "type": 0,
-      "value": "Returns a URI encoded representation of a value"
+      "value": "Menampilkan representasi dengan pengodean URI dari nilai"
     }
   ],
   "s5RV9B": [
     {
       "type": 0,
-      "value": "Returns the day of year component of a string timestamp"
+      "value": "Menampilkan komponen jumlah hari dalam setahun dari tanda waktu string"
     }
   ],
   "sDkAVZ": [
     {
       "type": 0,
-      "value": "Returns an array of values matching the key name from form-data or form-encoded trigger output"
+      "value": "Menampilkan array nilai yang cocok dengan nama kunci dari data formulir atau output pemicu dengan pengodean formulir"
     }
   ],
   "sZ0G/Z": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to add."
+      "value": "Wajib. String berisi unit waktu tertentu dalam interval yang akan ditambahkan."
     }
   ],
   "sbPZ9S": [
     {
       "type": 0,
-      "value": "Required. The collection to check if it is empty."
+      "value": "Harus diisi. Koleksi untuk diperiksa jika kosong."
     }
   ],
   "sfJTHV": [
     {
       "type": 0,
-      "value": "Required. The number to remove from the Minuend."
+      "value": "Wajib. Nomor yang akan dihapus dari Minuend."
     }
   ],
   "shF9tZ": [
@@ -2381,7 +2381,7 @@
   "soqP+Z": [
     {
       "type": 0,
-      "value": "Returns true if either parameter is true"
+      "value": "Menampilkan true jika salah satu parameter benar"
     }
   ],
   "ss5JPH": [
@@ -2393,13 +2393,13 @@
   "t+XCkg": [
     {
       "type": 0,
-      "value": "Required. A string that contains the time zone name of the destination time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+      "value": "Wajib. String berisi nama zona waktu dari zona waktu tempat tujuan. Lihat https://msdn.microsoft.com/en-us/library/gg154758.aspx untuk rinciannya."
     }
   ],
   "tE7Zam": [
     {
       "type": 0,
-      "value": "Returns the URL to invoke the trigger or action"
+      "value": "Menampilkan URL untuk memanggil pemicu atau tindakan"
     }
   ],
   "tImHz/": [
@@ -2423,13 +2423,13 @@
   "tLZ9Sh": [
     {
       "type": 0,
-      "value": "Required. The index of the part to retrieve."
+      "value": "Wajib. Indeks bagian yang akan diambil."
     }
   ],
   "tMRPnG": [
     {
       "type": 0,
-      "value": "This function provides you details for the workflow itself at runtime"
+      "value": "Fungsi ini menyediakan detail untuk alur kerja itu sendiri pada runtime"
     }
   ],
   "tNoZx2": [
@@ -2441,13 +2441,13 @@
   "tZj2Xn": [
     {
       "type": 0,
-      "value": "Returns true if the first argument is greater than the second"
+      "value": "Menampilkan true jika argumen pertama lebih besar dari yang kedua"
     }
   ],
   "taPCmY": [
     {
       "type": 0,
-      "value": "Required. The number of hours to add. Can be negative to subtract hours."
+      "value": "Wajib. Jumlah jam yang akan ditambahkan. Dapat berupa nilai negatif untuk mengurangi jam."
     }
   ],
   "uN4zFU": [
@@ -2459,25 +2459,25 @@
   "uR9WuI": [
     {
       "type": 0,
-      "value": "Required. The collections to evaluate. An object that appears in any of the collections also appears in the result."
+      "value": "Harus diisi. Koleksi untuk dievaluasi. Sebuah objek yang muncul di koleksi juga muncul dalam hasil."
     }
   ],
   "uUlBZ8": [
     {
       "type": 0,
-      "value": "Adds an integer number of hours to a string timestamp passed in"
+      "value": "Menambahkan jumlah bilangan bulat jam ke tanda waktu string yang diberikan"
     }
   ],
   "uc/PoD": [
     {
       "type": 0,
-      "value": "Required. The number of time units the desired time is in the past."
+      "value": "Wajib. Jumlah unit waktu yang diinginkan adalah di masa lalu."
     }
   ],
   "uczA5c": [
     {
       "type": 0,
-      "value": "Required. The string that may contain the value."
+      "value": "Harus diisi. String yang dapat berisi nilai."
     }
   ],
   "ut5Med": [
@@ -2489,25 +2489,25 @@
   "uzsleE": [
     {
       "type": 0,
-      "value": "Creates an array from the parameters"
+      "value": "Membuat array dari parameter"
     }
   ],
   "v39HKj": [
     {
       "type": 0,
-      "value": "Generates a globally unique string (GUID)"
+      "value": "Menghasilkan string unik global (GUID)"
     }
   ],
   "vEBhDX": [
     {
       "type": 0,
-      "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
+      "value": "Menghasilkan indeks terakhir dari nilai dalam string (tidak peka huruf besar/kecil, kultur invarian)"
     }
   ],
   "vQcQkU": [
     {
       "type": 0,
-      "value": "Required. The value the string may end with."
+      "value": "Harus diisi. Nilai string yang dapat diakhiri."
     }
   ],
   "vSlNPe": [
@@ -2519,7 +2519,7 @@
   "va40BJ": [
     {
       "type": 0,
-      "value": "Required. The name of the action whose outputs you want."
+      "value": "Wajib. Nama tindakan yang output isinya Anda inginkan."
     }
   ],
   "vwH/XV": [
@@ -2537,13 +2537,13 @@
   "wEaGWn": [
     {
       "type": 0,
-      "value": "Subtracts an integer number of a specified unit of time from a string timestamp passed in"
+      "value": "Mengurangi bilangan bulat unit waktu yang ditentukan dari tanda waktu string yang diberikan"
     }
   ],
   "wFCkpM": [
     {
       "type": 0,
-      "value": "Required. Either an array of values to find the minimum value, or the first value of a set."
+      "value": "Wajib. Array nilai untuk mencari nilai Minimal atau nilai pertama kumpulan."
     }
   ],
   "wHYQyg": [
@@ -2555,31 +2555,31 @@
   "wQcEXt": [
     {
       "type": 0,
-      "value": "Required. The string that is searched for parameter 2 and updated with parameter 3, when parameter 2 is found in parameter 1."
+      "value": "Harus diisi. String yang dicari untuk parameter 2, dan diperbarui dengan parameter 3, ketika parameter 2 ditemukan dalam parameter 1."
     }
   ],
   "wQsEwc": [
     {
       "type": 0,
-      "value": "Required. The length of the substring."
+      "value": "Harus diisi. Panjang substring."
     }
   ],
   "wWVQuK": [
     {
       "type": 0,
-      "value": "Returns a specified value based on whether the expression resulted in true or false"
+      "value": "Menampilkan nilai yang ditentukan berdasarkan apakah ekspresi menghasilkan true atau false"
     }
   ],
   "wmDUGV": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to UTC"
+      "value": "Mengonversi tanda waktu string yang diberikan dari zona waktu sumber daya ke UTC"
     }
   ],
   "wmw/ai": [
     {
       "type": 0,
-      "value": "Returns a single array or object with all the elements that are in either the array or object passed to this function"
+      "value": "Menampilkan array atau objek tunggal dengan semua elemen pada array atau objek yang melewati fungsi ini"
     }
   ],
   "woJQhv": [
@@ -2591,25 +2591,25 @@
   "x0or2o": [
     {
       "type": 0,
-      "value": "Required. The collection for which to get the length."
+      "value": "Harus diisi. Koleksi untuk mendapatkan panjang."
     }
   ],
   "xJ6vjn": [
     {
       "type": 0,
-      "value": "Returns a string representation of a URI encoded string"
+      "value": "Menampilkan representasi string dari string dengan pengodean URI"
     }
   ],
   "xV/oyK": [
     {
       "type": 0,
-      "value": "Required. The name of the new or existing property."
+      "value": "Diperlukan. Nama properti baru atau yang sudah ada."
     }
   ],
   "xYyPR8": [
     {
       "type": 0,
-      "value": "Returns the path from a URI. If path is not specified, returns '/'"
+      "value": "Menghasilkan jalur dari URI. Jika jalur tidak ditentukan, akan menghasilkan '/'"
     }
   ],
   "xt5TeT": [
@@ -2627,25 +2627,25 @@
   "y3AZQB": [
     {
       "type": 0,
-      "value": "Required. The object to compare equality."
+      "value": "Diperlukan. Objek untuk membandingkan persamaan."
     }
   ],
   "y6BcVN": [
     {
       "type": 0,
-      "value": "Required. The string to escape URL-unsafe characters from."
+      "value": "Wajib. String untuk melepas karakter URL yang dapat berubah."
     }
   ],
   "yBrsFJ": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to an array."
+      "value": "Wajib. Nilai yang dikonversi menjadi array."
     }
   ],
   "yqRrQ/": [
     {
       "type": 0,
-      "value": "Date and time functions"
+      "value": "Fungsi tanggal dan waktu"
     }
   ],
   "z4YYlQ": [
@@ -2657,19 +2657,19 @@
   "zBMVKg": [
     {
       "type": 0,
-      "value": "Required. The value that is converted to a decimal number."
+      "value": "Wajib. Nilai yang dikonversi menjadi angka desimal."
     }
   ],
   "zIDVd9": [
     {
       "type": 0,
-      "value": "Required. The string that is converted to a native type value."
+      "value": "Harus diisi. String yang dikonversi ke nilai jenis asli."
     }
   ],
   "zcZpHT": [
     {
       "type": 0,
-      "value": "Converts a string, with optionally a locale and a format to a date"
+      "value": "Mengonversi string, dengan secara opsional lokal dan format menjadi tanggal"
     }
   ],
   "ziYCiA": [
@@ -2687,13 +2687,13 @@
   "znGyyU": [
     {
       "type": 0,
-      "value": "Adds an integer number of a specified unit of time to a string timestamp passed in"
+      "value": "Menambahkan bilangan bulat unit waktu yang ditentukan ke tanda waktu string yang diberikan"
     }
   ],
   "zxe9hh": [
     {
       "type": 0,
-      "value": "Required. The number of minutes to add. Can be negative to subtract minutes."
+      "value": "Wajib. Jumlah menit yang akan ditambahkan. Dapat berupa nilai negatif untuk mengurangi menit."
     }
   ]
 }
