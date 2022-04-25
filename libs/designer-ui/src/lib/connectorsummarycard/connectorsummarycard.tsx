@@ -2,21 +2,20 @@ import { Text, Image, ImageFit } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { MessageDescriptor } from 'react-intl';
 
-export type OperationCardProps = {
-  title: string;
-  subtitle?: string;
+export type ConnectorSummaryCardProps = {
+  connectorName: string;
+  description?: string;
   id: string;
   iconUrl: string;
-  connectorName: string;
-  category: 'Built-in' | 'Azure' | '';
 } & CommonCardProps;
 
 export interface CommonCardProps {
   brandColor?: string;
 }
 
-export const OperationCard = (props: OperationCardProps) => {
+export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   const intl = getIntl();
+
   const logoAltText = intl.formatMessage(
     {
       defaultMessage: 'logo for {connectorName}',
@@ -28,21 +27,16 @@ export const OperationCard = (props: OperationCardProps) => {
   );
 
   return (
-    <div className="msla-operation-card">
+    <div className="msla-connector-card">
       <div>
         <div className="msla-card-title-container">
           <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={logoAltText}></Image>
         </div>
         <div className="msla-card-title-container">
-          <Text className="msla-card-title">{props.title}</Text>
+          <Text className="msla-card-title">{props.connectorName}</Text>
         </div>
       </div>
-      <Text className="msla-card-description">{props.subtitle}</Text>
-      <div className="msla-tag-container">
-        <Text className="msla-tag">{props.connectorName}</Text>
-        <Text className="msla-tag">Trigger</Text>
-        <Text className="msla-tag">{props.category}</Text>
-      </div>
+      <Text className="msla-card-description">{props.description}</Text>
     </div>
   );
 };
