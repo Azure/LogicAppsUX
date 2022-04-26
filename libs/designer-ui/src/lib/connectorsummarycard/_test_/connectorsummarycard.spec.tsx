@@ -1,10 +1,10 @@
 import type { ConnectorSummaryCardProps } from '../connectorsummarycard';
 import { ConnectorSummaryCard } from '../connectorsummarycard';
 import { ConnectorsMock } from '@microsoft-logic-apps/utils';
-import renderer from 'react-test-renderer';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 describe('recommendation panel', () => {
-  // Danielle, do we need shallow or regular renderer here?
+  let renderer: ShallowRenderer.ShallowRenderer;
   const connector = ConnectorsMock[0];
   const { properties } = connector;
 
@@ -16,8 +16,12 @@ describe('recommendation panel', () => {
     brandColor: properties.brandColor,
   };
 
+  beforeAll(() => {
+    renderer = ShallowRenderer.createRenderer();
+  });
+
   it('renders connector card', () => {
-    const component = renderer.create(<ConnectorSummaryCard {...props}></ConnectorSummaryCard>).toJSON();
+    const component = renderer.render(<ConnectorSummaryCard {...props}></ConnectorSummaryCard>);
     expect(component).toMatchSnapshot();
   });
 });

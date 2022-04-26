@@ -1,12 +1,17 @@
 import type { OperationCardProps } from '../card';
 import { OperationCard } from '../card';
 import { MockSearchOperations } from '@microsoft-logic-apps/utils';
-import renderer from 'react-test-renderer';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 describe('recommendation panel', () => {
   // Danielle, do we need shallow or regular renderer here?
+  let renderer: ShallowRenderer.ShallowRenderer;
   const operation = MockSearchOperations[0];
   const { properties } = operation;
+
+  beforeAll(() => {
+    renderer = ShallowRenderer.createRenderer();
+  });
 
   const props: OperationCardProps = {
     title: properties.summary,
@@ -18,7 +23,7 @@ describe('recommendation panel', () => {
   };
 
   it('renders operation card', () => {
-    const component = renderer.create(<OperationCard {...props}></OperationCard>).toJSON();
+    const component = renderer.render(<OperationCard {...props}></OperationCard>);
     expect(component).toMatchSnapshot();
   });
 });

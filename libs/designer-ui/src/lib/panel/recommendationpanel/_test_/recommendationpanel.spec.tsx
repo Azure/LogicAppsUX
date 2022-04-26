@@ -35,7 +35,7 @@ describe('recommendation panel', () => {
   });
 
   it('matches snapshot in browse view', () => {
-    const component = renderer.create(<RecommendationPanel {...props}></RecommendationPanel>);
+    const component = renderer.create(<RecommendationPanel {...props}></RecommendationPanel>).toJSON();
     expect(component).toMatchSnapshot();
   });
 

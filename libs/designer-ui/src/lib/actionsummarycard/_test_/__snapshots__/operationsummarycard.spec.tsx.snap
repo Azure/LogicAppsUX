@@ -8,57 +8,46 @@ exports[`recommendation panel renders operation card 1`] = `
     <div
       className="msla-card-title-container"
     >
-      <div
-        className="ms-Image msla-card-logo root-109"
-        style={
-          Object {
-            "height": undefined,
-            "width": undefined,
-          }
-        }
-      >
-        <img
-          alt="logo for Azure Blob Storage"
-          className="ms-Image-image ms-Image-image--contain ms-Image-image--portrait is-notLoaded is-fadeIn image-110"
-          onError={[Function]}
-          onLoad={[Function]}
-          src="https://connectoricons-prod.azureedge.net/releases/v1.0.1563/1.0.1563.2732/azureblob/icon.png"
-        />
-      </div>
+      <Memo(Image)
+        alt="logo for Azure Blob Storage"
+        className="msla-card-logo"
+        imageFit={1}
+        src="https://connectoricons-prod.azureedge.net/releases/v1.0.1563/1.0.1563.2732/azureblob/icon.png"
+      />
     </div>
     <div
       className="msla-card-title-container"
     >
-      <span
-        className="msla-card-title css-111"
+      <Text
+        className="msla-card-title"
       >
         When a blob is added or modified (properties only) (V2)
-      </span>
+      </Text>
     </div>
   </div>
-  <span
-    className="msla-card-description css-111"
+  <Text
+    className="msla-card-description"
   >
     This operation triggers a flow when one or more blobs are added or modified in a container. This trigger will only fetch the file metadata. To get the file content, you can use the \\"Get file content\\" operation. The trigger does not fire if a file is added/updated in a subfolder. If it is required to trigger on subfolders, multiple triggers should be created.
-  </span>
+  </Text>
   <div
     className="msla-tag-container"
   >
-    <span
-      className="msla-tag css-111"
+    <Text
+      className="msla-tag"
     >
       Azure Blob Storage
-    </span>
-    <span
-      className="msla-tag css-111"
+    </Text>
+    <Text
+      className="msla-tag"
     >
       Trigger
-    </span>
-    <span
-      className="msla-tag css-111"
+    </Text>
+    <Text
+      className="msla-tag"
     >
       Azure
-    </span>
+    </Text>
   </div>
 </div>
 `;
