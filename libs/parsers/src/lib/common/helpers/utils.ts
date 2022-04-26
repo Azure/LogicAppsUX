@@ -162,7 +162,7 @@ const EmptyRefs = Object.freeze({
  * Deference cyclical schema by replacing the uninlined $ref schema with an object schema with no known properties
  * @arg {string} $ref - A string with the possibly cyclical JSON reference to dereference
  * @arg {Record<string, any>} metadata - A hash mapping cyclical JSON references to their raw schema.  A schema is raw if none of its $ref schema have been inlined
- * @return {Swagger.Schema}
+ * @return {SchemaObject}
  */
 export function dereferenceRefSchema($ref: string, metadata: Record<string, any>): SchemaObject {
   if (!$ref) {
