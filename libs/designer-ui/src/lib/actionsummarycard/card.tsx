@@ -26,6 +26,10 @@ export const OperationCard = (props: OperationCardProps) => {
       connectorName: props.connectorName,
     }
   );
+  const triggerFilterText = intl.formatMessage({
+    defaultMessage: 'Trigger',
+    description: 'Filter that selects only Trigger Operations',
+  });
 
   return (
     <div className="msla-operation-card">
@@ -40,7 +44,7 @@ export const OperationCard = (props: OperationCardProps) => {
       <Text className="msla-card-description">{props.subtitle}</Text>
       <div className="msla-tag-container">
         <Text className="msla-tag">{props.connectorName}</Text>
-        <Text className="msla-tag">Trigger</Text>
+        <Text className="msla-tag">{triggerFilterText}</Text>
         <Text className="msla-tag">{props.category}</Text>
       </div>
     </div>
