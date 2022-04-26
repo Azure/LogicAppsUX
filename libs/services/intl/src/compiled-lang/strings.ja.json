@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filters"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -814,7 +820,7 @@
   "Jaz3EC": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+      "value": "渡される文字列タイムスタンプを変換元のタイム ゾーンからターゲット タイム ゾーンに変換します"
     }
   ],
   "JbgTET": [
@@ -886,7 +892,7 @@
   "Lub7NN": [
     {
       "type": 0,
-      "value": "Required. The expressions that may be true."
+      "value": "必須。true となる可能性のある式です。"
     }
   ],
   "M0HMjE": [
@@ -1042,7 +1048,7 @@
   "P4rEwD": [
     {
       "type": 0,
-      "value": "Collection functions"
+      "value": "コレクション関数"
     }
   ],
   "P8ZBF9": [
@@ -1172,7 +1178,7 @@
   "QrQDdp": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to subtract."
+      "value": "必須。減算する、間隔で指定される時間単位を含む文字列です。"
     }
   ],
   "Qu1HkA": [
@@ -1243,7 +1249,7 @@
   "T7zcR6": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "必須。true となる必要がある式です。"
     }
   ],
   "T8Xqt9": [
@@ -1600,6 +1606,12 @@
       "value": "必須。最初の Count 個のオブジェクトを取得するコレクション。"
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -1870,7 +1882,7 @@
   "iU5Fdh": [
     {
       "type": 0,
-      "value": "Manipulation functions"
+      "value": "操作関数"
     }
   ],
   "iUs7pv": [
@@ -2434,6 +2446,12 @@
       "value": "タイプ"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2444,6 +2462,12 @@
     {
       "type": 0,
       "value": "必須。追加する時間数。負の値を指定すると、時間数を減算できます。"
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Operations"
     }
   ],
   "uN4zFU": [
@@ -2623,7 +2647,7 @@
   "y3AZQB": [
     {
       "type": 0,
-      "value": "Required. The object to compare equality."
+      "value": "必須。等値性を比較するオブジェクトです。"
     }
   ],
   "y6BcVN": [
@@ -2638,10 +2662,20 @@
       "value": "必須。アレイに変換される値。"
     }
   ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "logo for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
-      "value": "Date and time functions"
+      "value": "日付と時刻関数"
     }
   ],
   "z4YYlQ": [
