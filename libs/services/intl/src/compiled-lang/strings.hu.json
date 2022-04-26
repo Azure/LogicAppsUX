@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filters"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -264,7 +270,7 @@
   "3NhwIJ": [
     {
       "type": 0,
-      "value": "Kötelező megadni. Az elválasztó."
+      "value": "Az elválasztó. Kötelező megadni."
     }
   ],
   "3kI7xF": [
@@ -836,7 +842,7 @@
   "Jaz3EC": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+      "value": "Egy forrásidőzónából átadott sztring típusú időbélyeg konvertálása egy célidőzónára"
     }
   ],
   "JbgTET": [
@@ -908,7 +914,7 @@
   "Lub7NN": [
     {
       "type": 0,
-      "value": "Required. The expressions that may be true."
+      "value": "Kötelező megadni. A második kifejezés, amely igaz lehet."
     }
   ],
   "M0HMjE": [
@@ -1064,7 +1070,7 @@
   "P4rEwD": [
     {
       "type": 0,
-      "value": "Collection functions"
+      "value": "Gyűjteményfüggvények"
     }
   ],
   "P8ZBF9": [
@@ -1198,7 +1204,7 @@
   "QrQDdp": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to subtract."
+      "value": "Kötelező megadni. A kivonandó intervallumban megadott időegységet tartalmazó sztring."
     }
   ],
   "Qu1HkA": [
@@ -1280,7 +1286,7 @@
   "T7zcR6": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Kötelező megadni. A második kifejezés, amelynek igaznak kell lennie."
     }
   ],
   "T8Xqt9": [
@@ -1641,6 +1647,12 @@
       "value": "Kötelező megadni. A gyűjtemény, melyből be kell olvasni az első Count objektumokat."
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -1930,7 +1942,7 @@
   "iU5Fdh": [
     {
       "type": 0,
-      "value": "Manipulation functions"
+      "value": "Kezelési függvények"
     }
   ],
   "iUs7pv": [
@@ -2505,6 +2517,12 @@
       "value": "Típus"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2515,6 +2533,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A hozzáadni kívánt órák száma. Lehet negatív érték is órák kivonása céljából."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Operations"
     }
   ],
   "uN4zFU": [
@@ -2694,7 +2718,7 @@
   "y3AZQB": [
     {
       "type": 0,
-      "value": "Required. The object to compare equality."
+      "value": "Kötelező megadni. Az egyenlőség összehasonlítására használt objektum."
     }
   ],
   "y6BcVN": [
@@ -2709,10 +2733,20 @@
       "value": "Kötelező megadni. A tömbbé alakítandó érték."
     }
   ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "logo for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
-      "value": "Date and time functions"
+      "value": "Dátum- és időfüggvények"
     }
   ],
   "z4YYlQ": [
