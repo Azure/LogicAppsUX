@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filters"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -2501,6 +2507,12 @@
     {
       "type": 0,
       "value": "Type"
+    }
+  ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "tZj2Xn": [
