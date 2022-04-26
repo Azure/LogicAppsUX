@@ -60,7 +60,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     return (
       <ConnectorSummaryCard
         connectorName={properties.displayName}
-        description={properties['description'] ? properties['description'] : ''}
+        description={properties['description'] || ''}
         id={connector.id}
         iconUrl={properties.iconUri}
         brandColor={properties.brandColor}

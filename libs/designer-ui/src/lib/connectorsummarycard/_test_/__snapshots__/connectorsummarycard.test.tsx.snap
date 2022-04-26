@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`recommendation panel renders connector card 1`] = `
+<div
+  className="msla-connector-card"
+>
+  <div>
+    <div
+      className="msla-card-title-container"
+    >
+      <div
+        className="ms-Image msla-card-logo root-109"
+        style={
+          Object {
+            "height": undefined,
+            "width": undefined,
+          }
+        }
+      >
+        <img
+          alt="logo for Dropbox"
+          className="ms-Image-image ms-Image-image--contain ms-Image-image--portrait is-notLoaded is-fadeIn image-110"
+          onError={[Function]}
+          onLoad={[Function]}
+          src="https://tip1icons.azureedge.net/dropbox.png"
+        />
+      </div>
+    </div>
+    <div
+      className="msla-card-title-container"
+    >
+      <span
+        className="msla-card-title css-111"
+      >
+        Dropbox
+      </span>
+    </div>
+  </div>
+  <span
+    className="msla-card-description css-111"
+  >
+    DropboxT is a service that keeps your files safe, synced, and easy to share. Connect to Dropbox to manage your files.
+                        You can perform various actions such as upload, update, get, and delete files in Dropbox.
+  </span>
+</div>
+`;
