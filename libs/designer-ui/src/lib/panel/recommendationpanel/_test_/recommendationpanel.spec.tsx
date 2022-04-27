@@ -7,9 +7,9 @@ import { connectorsSearchResultsMock } from '@microsoft-logic-apps/utils';
 import type { ReactPortal } from 'react';
 import ReactDOM from 'react-dom';
 import renderer from 'react-test-renderer';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 describe('recommendation panel', () => {
-  // let shallow: ReactShallowRenderer.ShallowRenderer;
   const selectedConnector = connectorsSearchResultsMock[0];
 
   const searchMock = jest.fn();
@@ -32,6 +32,14 @@ describe('recommendation panel', () => {
   afterEach(() => {
     const mockPortal = ReactDOM.createPortal as jest.Mock;
     mockPortal.mockClear();
+  });
+
+  it('matches snapshot shallow in browse view', () => {
+    const shallowRenderer = ShallowRenderer.createRenderer();
+    shallowRenderer.render(<RecommendationPanel {...props}></RecommendationPanel>);
+    const component = shallowRenderer.getRenderOutput();
+    const children = component.props.children;
+    const list = children.expect(component).toMatchSnapshot();
   });
 
   it('matches snapshot in browse view', () => {
