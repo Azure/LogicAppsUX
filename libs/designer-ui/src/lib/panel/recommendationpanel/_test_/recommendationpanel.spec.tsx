@@ -13,15 +13,19 @@ describe('recommendation panel', () => {
   const selectedConnector = connectorsSearchResultsMock[0];
 
   const searchMock = jest.fn();
-  const props: RecommendationPanelProps = {
-    placeholder: 'search',
-    onSearch: searchMock,
-    toggleCollapse: jest.fn(),
-    operationSearchResults: [],
-    connectorBrowse: [selectedConnector],
-    isCollapsed: false,
-    width: '500px',
-  };
+  let props: RecommendationPanelProps;
+
+  beforeEach(() => {
+    props = {
+      placeholder: 'search',
+      onSearch: searchMock,
+      toggleCollapse: jest.fn(),
+      operationSearchResults: [],
+      connectorBrowse: [selectedConnector],
+      isCollapsed: false,
+      width: '500px',
+    };
+  });
 
   beforeAll(() => {
     ReactDOM.createPortal = jest.fn((element, node) => {
@@ -34,16 +38,16 @@ describe('recommendation panel', () => {
     mockPortal.mockClear();
   });
 
-  it('matches snapshot shallow in browse view', () => {
+  it('matches snapshot in browse view', () => {
     const shallowRenderer = ShallowRenderer.createRenderer();
-    shallowRenderer.render(<RecommendationPanel {...props}></RecommendationPanel>);
-    const component = shallowRenderer.getRenderOutput();
-    const children = component.props.children;
-    const list = children.expect(component).toMatchSnapshot();
+    const component = shallowRenderer.render(<RecommendationPanel {...props}></RecommendationPanel>);
+    expect(component).toMatchSnapshot();
   });
 
-  it('matches snapshot in browse view', () => {
-    const component = renderer.create(<RecommendationPanel {...props}></RecommendationPanel>).toJSON();
+  it('matches snapshot in search view', () => {
+    props.operationSearchResults = MockSearchOperations;
+    const shallowRenderer = ShallowRenderer.createRenderer();
+    const component = shallowRenderer.render(<RecommendationPanel {...props}></RecommendationPanel>);
     expect(component).toMatchSnapshot();
   });
 
@@ -60,5 +64,31 @@ describe('recommendation panel', () => {
     const list = component?.root?.findByType(List);
     const firstListitem = list.props['items'][0] as OperationSearchResult;
     expect(firstListitem.name).toEqual(MockSearchOperations[0].name);
+  });
+
+  it('filters search view when a filter is selected', () => {
+    props.operationSearchResults = MockSearchOperations;
+    const component = renderer.create(<RecommendationPanel {...props}></RecommendationPanel>);
+    const azureName = 'Azure';
+
+    const buttons = component?.root?.findAllByType('button');
+    const azureFilter = buttons.find((button) => {
+      const spans = button.findAllByType('span');
+      const azure = spans.find((span) => {
+        if (span.props['children'] === azureName) {
+          return span;
+        }
+        return false;
+      });
+      return azure !== undefined;
+    });
+
+    azureFilter?.props['onClick'](azureName);
+
+    const list = component?.root?.findByType(List);
+    const listItems = list.props['items'] as Array<OperationSearchResult>;
+    const listLength = listItems.length;
+    const expectedListLength = MockSearchOperations.filter((op) => op.properties.category === azureName).length;
+    expect(listLength).toEqual(expectedListLength);
   });
 });

@@ -72,7 +72,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     setFilter(term);
     const filteredResult = props.operationSearchResults.filter((op) => {
       const category = op.properties.category;
-      if (filter && category !== filter) {
+      if (term && category !== term) {
         return false;
       }
       return true;
