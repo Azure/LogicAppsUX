@@ -47,7 +47,7 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
     const templateFunctions = getTemplateFunctions();
 
     loader.init().then((monaco) => {
-      if (!monaco.languages.getLanguages().some(({ id }) => id === languageName)) {
+      if (!monaco.languages.getLanguages().some((lang: any) => lang.id === languageName)) {
         // Register a new language
         monaco.languages.register({ id: languageName });
 

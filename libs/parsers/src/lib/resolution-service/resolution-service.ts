@@ -1,22 +1,21 @@
-import { ExpressionException, ExpressionExceptionCode } from './common/exceptions/expression';
+import { ExpressionException, ExpressionExceptionCode } from '../common/exceptions/expression';
 import {
-  ExpressionFunctionNames,
-  ExpressionType,
   isFunction,
   isLiteralExpression,
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from './common/helpers/expression';
-import ExpressionParser from './common/helpers/parser';
+} from '../common/helpers/expression';
+import ExpressionParser from '../expression/parser';
 import type {
   Expression,
   ExpressionEvaluationContext,
   ExpressionFunction,
   ExpressionLiteral,
   ExpressionStringInterpolation,
-} from './common/models/expression';
-import { isParametersObject } from './common/models/parameters';
+} from '../models/expression';
+import { ExpressionFunctionNames, ExpressionType } from '../models/expression';
+import { isParametersObject } from '../models/parameters';
 import { copy, equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
 export class ResolutionService {

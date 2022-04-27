@@ -1,5 +1,31 @@
-import type { ExpressionType } from '../helpers/expression';
-import type { ExpressionTokenType } from '../helpers/scanner';
+export enum ExpressionType {
+  NullLiteral = 'NullLiteral',
+  BooleanLiteral = 'BooleanLiteral',
+  NumberLiteral = 'NumberLiteral',
+  StringLiteral = 'StringLiteral',
+  Function = 'Function',
+  StringInterpolation = 'StringInterpolation',
+}
+
+export enum ExpressionFunctionNames {
+  PARAMETERS = 'PARAMETERS',
+  APPSETTING = 'APPSETTING',
+}
+
+export enum ExpressionTokenType {
+  Dot = 'Dot',
+  Comma = 'Comma',
+  LeftParenthesis = 'LeftParenthesis',
+  RightParenthesis = 'RightParenthesis',
+  LeftSquareBracket = 'LeftSquareBracket',
+  RightSquareBracket = 'RightSquareBracket',
+  QuestionMark = 'QuestionMark',
+  StringLiteral = 'StringLiteral',
+  IntegerLiteral = 'IntegerLiteral',
+  FloatLiteral = 'FloatLiteral',
+  Identifier = 'Identifier',
+  EndOfData = 'EndOfData',
+}
 
 export interface Dereference {
   isSafe: boolean;
