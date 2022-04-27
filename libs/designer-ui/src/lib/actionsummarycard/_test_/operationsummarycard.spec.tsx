@@ -4,7 +4,6 @@ import { MockSearchOperations } from '@microsoft-logic-apps/utils';
 import ShallowRenderer from 'react-test-renderer/shallow';
 
 describe('recommendation panel', () => {
-  // Danielle, do we need shallow or regular renderer here?
   let renderer: ShallowRenderer.ShallowRenderer;
   const operation = MockSearchOperations[0];
   const { properties } = operation;
