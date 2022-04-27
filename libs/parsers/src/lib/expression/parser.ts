@@ -1,8 +1,9 @@
-import { ExpressionExceptionCode } from '../exceptions/expression';
-import { ParserException } from '../exceptions/parser';
+import { ExpressionExceptionCode } from '../common/exceptions/expression';
+import { ParserException } from '../common/exceptions/parser';
+import { isTemplateExpression } from '../common/helpers/expression';
 import type { Dereference, Expression, ExpressionFunction, ExpressionStringInterpolation, ExpressionToken } from '../models/expression';
-import { ExpressionType, isTemplateExpression } from './expression';
-import { ExpressionScanner, ExpressionTokenType } from './scanner';
+import { ExpressionType, ExpressionTokenType } from '../models/expression';
+import { ExpressionScanner } from './scanner';
 import { equals } from '@microsoft-logic-apps/utils';
 
 interface TokenToParse {

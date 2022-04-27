@@ -1,10 +1,12 @@
-import type { EnumObject, OutputMetadata, ParameterDynamicSchema, ParameterDynamicValues } from '../models/operation';
-import { DynamicSchemaType, DynamicValuesType } from '../models/operation';
-import * as Constants from './constants';
+import type { EnumObject, OutputMetadata, ParameterDynamicSchema, ParameterDynamicValues } from '../../models/operation';
+import { DynamicSchemaType, DynamicValuesType } from '../../models/operation';
+import * as Constants from '../constants';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
-export function getEnum(parameter: Swagger.NonBodyParameter | Swagger.Schema, required: boolean | undefined): EnumObject[] | undefined {
+type SchemaObject = OpenAPIV2.SchemaObject;
+
+export function getEnum(parameter: SchemaObject, required: boolean | undefined): EnumObject[] | undefined {
   if (parameter.enum) {
     const customEnum: EnumObject[] = parameter[Constants.ExtensionProperties.CustomEnum];
     if (customEnum) {
@@ -60,7 +62,7 @@ export function getEnum(parameter: Swagger.NonBodyParameter | Swagger.Schema, re
   return undefined;
 }
 
-export function getParameterDynamicValues(parameter: Swagger.ParameterBase | Swagger.Schema): ParameterDynamicValues | undefined {
+export function getParameterDynamicValues(parameter: SchemaObject): ParameterDynamicValues | undefined {
   const parameterDynamicListExtension = parameter[Constants.ExtensionProperties.DynamicList];
   const parameterDynamicValuesExtension = parameter[Constants.ExtensionProperties.DynamicValues];
   const parameterDynamicTreeExtension = parameter[Constants.ExtensionProperties.DynamicTree];
@@ -89,7 +91,7 @@ export function getParameterDynamicValues(parameter: Swagger.ParameterBase | Swa
   return undefined;
 }
 
-export function getParameterDynamicSchema(parameter: Swagger.Schema): ParameterDynamicSchema | undefined {
+export function getParameterDynamicSchema(parameter: SchemaObject): ParameterDynamicSchema | undefined {
   const dynamicSchemaExtension = parameter[Constants.ExtensionProperties.DynamicSchema];
   if (dynamicSchemaExtension) {
     return {
@@ -110,7 +112,7 @@ export function getParameterDynamicSchema(parameter: Swagger.Schema): ParameterD
 }
 
 export function getArrayOutputMetadata(
-  schema: Swagger.Schema,
+  schema: SchemaObject,
   required: boolean,
   excludeInternal: boolean,
   prefix?: string
@@ -160,9 +162,9 @@ const EmptyRefs = Object.freeze({
  * Deference cyclical schema by replacing the uninlined $ref schema with an object schema with no known properties
  * @arg {string} $ref - A string with the possibly cyclical JSON reference to dereference
  * @arg {Record<string, any>} metadata - A hash mapping cyclical JSON references to their raw schema.  A schema is raw if none of its $ref schema have been inlined
- * @return {Swagger.Schema}
+ * @return {SchemaObject}
  */
-export function dereferenceRefSchema($ref: string, metadata: Record<string, any>): Swagger.Schema {
+export function dereferenceRefSchema($ref: string, metadata: Record<string, any>): SchemaObject {
   if (!$ref) {
     return {};
   }

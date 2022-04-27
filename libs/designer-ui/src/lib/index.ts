@@ -17,7 +17,7 @@ export * from './dialogs';
 // export * from './dictionary';
 export * from './documentationlinkitem';
 // export * from './dropdown';
-// export * from './editor';
+export * from './editor/models/parameter';
 export * from './errorboundary';
 // export * from './featurefeedback';
 // export * from './floatingactionmenu';

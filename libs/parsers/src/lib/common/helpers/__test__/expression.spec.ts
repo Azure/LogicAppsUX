@@ -1,5 +1,5 @@
+import { ExpressionType } from '../../../models/expression';
 import {
-  ExpressionType,
   isStringLiteral,
   isLiteralExpression,
   isTemplateExpression,

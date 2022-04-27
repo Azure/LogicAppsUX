@@ -7,7 +7,7 @@ import { useRef } from 'react';
 
 export interface Flyout2Props {
   ariaLabel?: string;
-  documentationLink?: Swagger.ExternalDocumentation;
+  documentationLink?: OpenAPIV2.ExternalDocumentationObject;
   flyoutExpanded: boolean;
   flyoutKey: string;
   tabIndex?: number;

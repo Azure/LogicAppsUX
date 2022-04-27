@@ -1,7 +1,7 @@
 import type { FunctionDefinition, SignatureInfo } from './templatefunctions';
 import { FunctionGroupDefinitions } from './templatefunctions';
-import { ExpressionScanner, ExpressionTokenType } from '@microsoft-logic-apps/resolution-service';
-import type { ExpressionToken } from '@microsoft-logic-apps/resolution-service';
+import { ExpressionScanner, ExpressionTokenType } from '@microsoft-logic-apps/parsers';
+import type { ExpressionToken } from '@microsoft-logic-apps/parsers';
 import { first, getPropertyValue } from '@microsoft-logic-apps/utils';
 import * as monaco from 'monaco-editor';
 

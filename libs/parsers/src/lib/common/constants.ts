@@ -136,3 +136,20 @@ export const ReservedParameterNames = {
 
 export const OutputMapKey = 'key';
 export const FormatByte = 'byte';
+
+export class ExpressionConstants {
+  public static Expression = {
+    maxExpressionLimit: 8192,
+  };
+
+  public static TokenValue = {
+    dot: '.',
+    comma: ',',
+    leftParenthesis: '(',
+    rightParenthesis: ')',
+    leftSquareBracket: '[',
+    rightSquareBracket: ']',
+    questionMark: '?',
+    singleQuote: "'",
+  };
+}

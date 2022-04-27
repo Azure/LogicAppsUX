@@ -14,7 +14,7 @@ const labelStyles: Partial<ILabelStyles> = {
 export interface AboutProps {
   connectorDisplayName?: string;
   description?: string;
-  descriptionDocumentation?: Swagger.ExternalDocumentation;
+  descriptionDocumentation?: OpenAPIV2.ExternalDocumentationObject;
   headerIcons?: BadgeProps[];
 }
 

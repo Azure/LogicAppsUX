@@ -1,4 +1,4 @@
-export interface DocumentationLinkItemProps extends Swagger.ExternalDocumentation {
+export interface DocumentationLinkItemProps extends OpenAPIV2.ExternalDocumentationObject {
   onClick?(): void;
 }
 

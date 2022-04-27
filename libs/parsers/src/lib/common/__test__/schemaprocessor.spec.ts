@@ -1,5 +1,7 @@
 import { SchemaProcessor } from '../schemaprocessor';
 
+type SchemaObject = OpenAPIV2.SchemaObject;
+
 describe('SchemaProcessor Tests', () => {
   for (const type of ['boolean', 'integer', 'null', 'number', 'string', 'object']) {
     it(`should return $ as the key for type ${type}.`, () => {
@@ -17,33 +19,31 @@ describe('SchemaProcessor Tests', () => {
     });
   }
 
-  const mockSwaggerSchemaOneOf: Swagger.Schema = {
-    oneOf: [
-      {
-        'x-ms-oneof-title': 'address',
-        'x-ms-oneof-unique-properties': ['address'],
-        type: 'object',
-        properties: {
-          address: {
-            type: 'string',
-          },
-        },
-      },
-      {
-        'x-ms-oneof-title': 'people',
-        'x-ms-oneof-unique-properties': ['people'],
-        type: 'object',
-        properties: {
-          people: {
-            type: 'string',
-          },
-        },
-      },
-    ],
-  };
-
   it('should expand oneof properties properly.', () => {
-    const schema = mockSwaggerSchemaOneOf;
+    const schema = {
+      oneOf: [
+        {
+          'x-ms-oneof-title': 'address',
+          'x-ms-oneof-unique-properties': ['address'],
+          type: 'object',
+          properties: {
+            address: {
+              type: 'string',
+            },
+          },
+        },
+        {
+          'x-ms-oneof-title': 'people',
+          'x-ms-oneof-unique-properties': ['people'],
+          type: 'object',
+          properties: {
+            people: {
+              type: 'string',
+            },
+          },
+        },
+      ],
+    } as SchemaObject;
 
     const schemaProperties = new SchemaProcessor({ expandOneOf: true }).getSchemaProperties(schema);
 
@@ -55,7 +55,30 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should not expand oneof properties by default.', () => {
-    const schema = mockSwaggerSchemaOneOf;
+    const schema = {
+      oneOf: [
+        {
+          'x-ms-oneof-title': 'address',
+          'x-ms-oneof-unique-properties': ['address'],
+          type: 'object',
+          properties: {
+            address: {
+              type: 'string',
+            },
+          },
+        },
+        {
+          'x-ms-oneof-title': 'people',
+          'x-ms-oneof-unique-properties': ['people'],
+          type: 'object',
+          properties: {
+            people: {
+              type: 'string',
+            },
+          },
+        },
+      ],
+    } as SchemaObject;
 
     const schemaProperties = new SchemaProcessor().getSchemaProperties(schema);
 
@@ -67,7 +90,7 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should return key correctly for type array when expanding array outputs.', () => {
-    const schema: Swagger.Schema = {
+    const schema = {
       type: 'array',
       items: {
         type: 'object',
@@ -77,7 +100,7 @@ describe('SchemaProcessor Tests', () => {
           },
         },
       },
-    };
+    } as SchemaObject;
 
     const parameters = new SchemaProcessor().getSchemaProperties(schema);
 
@@ -106,7 +129,7 @@ describe('SchemaProcessor Tests', () => {
         },
       },
       title: 'Some array',
-    } as Swagger.Schema;
+    } as SchemaObject;
 
     const parameters = new SchemaProcessor({
       expandArrayOutputs: true,
@@ -132,9 +155,9 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should return key correctly for type array when items not specified.', () => {
-    const schema: Swagger.Schema = {
+    const schema = {
       type: 'array',
-    };
+    } as SchemaObject;
 
     const parameters = new SchemaProcessor().getSchemaProperties(schema);
 
@@ -150,9 +173,9 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should return key correctly for empty schema with only desciption.', () => {
-    const schema: Swagger.Schema = {
+    const schema = {
       description: 'foo',
-    };
+    } as SchemaObject;
 
     const parameters = new SchemaProcessor().getSchemaProperties(schema);
 
@@ -164,12 +187,12 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should return key correctly for empty schema with object property schema missing type.', () => {
-    const schema: Swagger.Schema = {
+    const schema = {
       type: 'object',
       properties: {
         body: {},
       },
-    };
+    } as SchemaObject;
 
     const parameters = new SchemaProcessor().getSchemaProperties(schema);
 
@@ -201,7 +224,7 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should return key correctly for nested object when includeParentObject is true.', () => {
-    const schema: Swagger.Schema = {
+    const schema: SchemaObject = {
       type: 'object',
       properties: {
         foo: {
@@ -235,7 +258,7 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should return key correctly for nested array when includeParentObject is true.', () => {
-    const schema: Swagger.Schema = {
+    const schema: SchemaObject = {
       type: 'array',
       items: {
         properties: {
@@ -283,7 +306,7 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should return key correctly for nested object when includeParentObject is false.', () => {
-    const schema: Swagger.Schema = {
+    const schema: SchemaObject = {
       type: 'object',
       properties: {
         foo: {
@@ -313,7 +336,7 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should return correctly encoded key.', () => {
-    const schema: Swagger.Schema = {
+    const schema: SchemaObject = {
       type: 'object',
       properties: {
         '~0.[*': {
@@ -332,7 +355,7 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should return correct title summary for object', () => {
-    const schemaWithNestObject: Swagger.Schema = {
+    const schemaWithNestObject: SchemaObject = {
       type: 'object',
       properties: {
         Row: {
@@ -350,7 +373,7 @@ describe('SchemaProcessor Tests', () => {
       },
     };
 
-    const schemaWithNestObjectSummary: Swagger.Schema = {
+    const schemaWithNestObjectSummary: SchemaObject = {
       type: 'object',
       properties: {
         Row: {
@@ -369,7 +392,7 @@ describe('SchemaProcessor Tests', () => {
       },
     };
 
-    const schemaWithGrandLevelObjectSummary: Swagger.Schema = {
+    const schemaWithGrandLevelObjectSummary: SchemaObject = {
       type: 'object',
       'x-ms-summary': 'Parent',
       properties: {
@@ -388,7 +411,7 @@ describe('SchemaProcessor Tests', () => {
       },
     };
 
-    const schemaWithGrandLevelArrayWithSummary: Swagger.Schema = {
+    const schemaWithGrandLevelArrayWithSummary: SchemaObject = {
       type: 'object',
       'x-ms-summary': 'Parent',
       properties: {
@@ -411,7 +434,7 @@ describe('SchemaProcessor Tests', () => {
       },
     };
 
-    const schemaWithNestArray: Swagger.Schema = {
+    const schemaWithNestArray: SchemaObject = {
       type: 'object',
       properties: {
         Row: {
@@ -433,7 +456,7 @@ describe('SchemaProcessor Tests', () => {
       },
     };
 
-    const schemaWithNestArrayTitle: Swagger.Schema = {
+    const schemaWithNestArrayTitle: SchemaObject = {
       type: 'object',
       title: 'Object',
       properties: {
@@ -456,7 +479,7 @@ describe('SchemaProcessor Tests', () => {
       },
     };
 
-    const schemaWithNestArrayItemTitle: Swagger.Schema = {
+    const schemaWithNestArrayItemTitle: SchemaObject = {
       type: 'object',
       title: 'Object',
       properties: {
@@ -479,7 +502,7 @@ describe('SchemaProcessor Tests', () => {
       },
     };
 
-    const schemaWithNestArrayBothTitle: Swagger.Schema = {
+    const schemaWithNestArrayBothTitle: SchemaObject = {
       type: 'object',
       title: 'Object',
       properties: {
@@ -692,7 +715,7 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should not process complex internal array and object parameters further.', () => {
-    const schema: Swagger.Schema = {
+    const schema: SchemaObject = {
       type: 'object',
       properties: {
         array: {
@@ -801,7 +824,7 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should not process complex array parameters which are read only', () => {
-    const schema: Swagger.Schema = {
+    const schema: SchemaObject = {
       type: 'object',
       properties: {
         array: {
@@ -884,7 +907,7 @@ describe('SchemaProcessor Tests', () => {
   });
 
   it('should populate output details correctly when processing complex array parameter.', () => {
-    const schema: Swagger.Schema = {
+    const schema: SchemaObject = {
       type: 'array',
       items: {
         type: 'object',
