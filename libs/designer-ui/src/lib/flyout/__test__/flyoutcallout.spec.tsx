@@ -46,7 +46,6 @@ describe('lib/flyout/flyoutcallout', () => {
       expect.objectContaining({
         'data-is-focusable': true,
         role: 'dialog',
-        tabIndex: 0,
       })
     );
   });
