@@ -2398,7 +2398,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Search]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Szukaj]]></Val>
+            <Val><![CDATA[Wyszukaj]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3954,6 +3954,9 @@
       <Item ItemId=";yOkPGx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[logo for {connectorName}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[logo dla łącznika {connectorName}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
