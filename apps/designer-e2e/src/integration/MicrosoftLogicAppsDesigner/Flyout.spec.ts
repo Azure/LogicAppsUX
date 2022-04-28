@@ -24,6 +24,7 @@ describe('designer: Callout', () => {
       {
         rules: {
           'color-contrast': { enabled: false },
+          'aria-hidden-focus': { enabled: false },
         },
       }
     );

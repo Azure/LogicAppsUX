@@ -31,7 +31,6 @@ exports[`lib/flyout/flyoutcallout should render 1`] = `
         "color": "#323130",
       }
     }
-    tabIndex={0}
   >
     text
   </div>
