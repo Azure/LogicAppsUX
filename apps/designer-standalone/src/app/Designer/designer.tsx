@@ -11,7 +11,7 @@ export const DesignerWrapper = () => {
   return (
     <>
       <SettingsBox />
-      <DesignerProvider locale="en-US" options={{}}>
+      <DesignerProvider locale="en-US" options={{ getToken }}>
         {workflow ? (
           <BJSWorkflowProvider workflow={workflow} getToken={getToken}>
             <Designer></Designer>

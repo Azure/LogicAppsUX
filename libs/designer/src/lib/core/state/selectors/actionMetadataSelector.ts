@@ -1,5 +1,5 @@
 import type { RootState } from '../../store';
-import type { OperationIds } from '../operationMetadataSlice';
+import type { OperationInfo } from '../operationMetadataSlice';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { OperationManifestProperties } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
@@ -76,7 +76,7 @@ export const useIconUri = (nodeId: string) => {
 export const useOperationIds = (nodeId: string) => {
   const operationManifestService = OperationManifestService();
 
-  const operationInfo = useQuery<OperationIds>(['operationIds', { nodeId }], () => operationManifestService.getOperationInfo(null), {
+  const operationInfo = useQuery<OperationInfo>(['operationIds', { nodeId }], () => operationManifestService.getOperationInfo(null), {
     enabled: !!nodeId,
   });
   return operationInfo;
