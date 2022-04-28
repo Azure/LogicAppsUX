@@ -2,7 +2,7 @@
   "+GSexV": [
     {
       "type": 0,
-      "value": "Filters"
+      "value": "筛选器"
     }
   ],
   "+UirjI": [
@@ -1621,7 +1621,7 @@
   "c2XklE": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "搜索"
     }
   ],
   "c3G/zq": [
@@ -2477,7 +2477,7 @@
   "tVmUCd": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "触发器"
     }
   ],
   "tZj2Xn": [
@@ -2495,7 +2495,7 @@
   "tu8I7j": [
     {
       "type": 0,
-      "value": "Operations"
+      "value": "操作"
     }
   ],
   "uN4zFU": [
@@ -2692,12 +2692,12 @@
   ],
   "yOkPGx": [
     {
-      "type": 0,
-      "value": "logo for "
-    },
-    {
       "type": 1,
       "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 徽标"
     }
   ],
   "yqRrQ/": [

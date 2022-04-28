@@ -2,7 +2,7 @@
   "+GSexV": [
     {
       "type": 0,
-      "value": "Filters"
+      "value": "필터"
     }
   ],
   "+UirjI": [
@@ -1613,7 +1613,7 @@
   "c2XklE": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "검색"
     }
   ],
   "c3G/zq": [
@@ -2453,7 +2453,7 @@
   "tVmUCd": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "트리거"
     }
   ],
   "tZj2Xn": [
@@ -2471,7 +2471,7 @@
   "tu8I7j": [
     {
       "type": 0,
-      "value": "Operations"
+      "value": "작업"
     }
   ],
   "uN4zFU": [
@@ -2668,12 +2668,12 @@
   ],
   "yOkPGx": [
     {
-      "type": 0,
-      "value": "logo for "
-    },
-    {
       "type": 1,
       "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "의 로고"
     }
   ],
   "yqRrQ/": [
