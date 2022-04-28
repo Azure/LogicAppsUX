@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [
+    "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
+    "../../node_modules/@nrwl/react/typings/image.d.ts",
+    "../../types/LogicApps.d.ts",
+    "../../types/LogicAppsV2.d.ts",
+    "../../types/Svg.d.ts",
+    "../../types/Swagger.d.ts"
+  ],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}
