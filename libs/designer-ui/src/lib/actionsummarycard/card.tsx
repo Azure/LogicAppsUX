@@ -1,6 +1,5 @@
 import { Text, Image, ImageFit } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import type { MessageDescriptor } from 'react-intl';
 
 export type OperationCardProps = {
   title: string;
@@ -26,6 +25,7 @@ export const OperationCard = (props: OperationCardProps) => {
       connectorName: props.connectorName,
     }
   );
+
   const triggerFilterText = intl.formatMessage({
     defaultMessage: 'Trigger',
     description: 'Filter that selects only Trigger Operations',
