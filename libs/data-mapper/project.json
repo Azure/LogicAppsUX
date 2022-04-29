@@ -1,0 +1,48 @@
+{
+  "root": "libs/data-mapper",
+  "sourceRoot": "libs/data-mapper/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/web:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/data-mapper",
+        "tsConfig": "libs/data-mapper/tsconfig.lib.json",
+        "project": "libs/data-mapper/package.json",
+        "entryFile": "libs/data-mapper/src/index.ts",
+        "external": ["react/jsx-runtime"],
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "extractCss": true,
+        "format": ["cjs", "esm"],
+        "assets": [
+          {
+            "glob": "libs/data-mapper/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
+      },
+      "configurations": {
+        "vscode": {
+          "outputPath": "dist/apps/vs-code-data-mapper/data-mapper"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/data-mapper/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/data-mapper"],
+      "options": {
+        "jestConfig": "libs/data-mapper/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

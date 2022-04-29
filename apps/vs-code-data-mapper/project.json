@@ -1,0 +1,54 @@
+{
+  "root": "apps/vs-code-data-mapper",
+  "sourceRoot": "apps/vs-code-data-mapper/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/vs-code-data-mapper",
+        "main": "apps/vs-code-data-mapper/src/main.ts",
+        "tsConfig": "apps/vs-code-data-mapper/tsconfig.app.json",
+        "assets": ["apps/vs-code-data-mapper/src/assets", "apps/vs-code-data-mapper/src/package.json"],
+        "externalDependencies": ["vscode", "commonjs"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/vs-code-data-mapper/src/environments/environment.ts",
+              "with": "apps/vs-code-data-mapper/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "vs-code-data-mapper:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/vs-code-data-mapper/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/vs-code-data-mapper"],
+      "options": {
+        "jestConfig": "apps/vs-code-data-mapper/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["vs-code-data-mapper-react"]
+}

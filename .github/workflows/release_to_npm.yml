@@ -34,6 +34,7 @@ jobs:
       matrix:
         lib:
           [
+            { dist: './dist/libs/data-mapper', package: 'data-mapper' },
             { dist: './dist/libs/designer', package: 'designer' },
             { dist: './dist/libs/utils', package: 'utils' },
             { dist: './dist/libs/designer-ui', package: 'designer-ui' },
