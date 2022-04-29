@@ -411,7 +411,7 @@
   "y3AZQB": "必須。等値性を比較するオブジェクトです。",
   "y6BcVN": "必須。URL の安全でない文字をエスケープする文字列。",
   "yBrsFJ": "必須。アレイに変換される値。",
-  "yOkPGx": "logo for {connectorName}",
+  "yOkPGx": "{connectorName} のロゴ",
   "yqRrQ/": "日付と時刻関数",
   "z4YYlQ": "パラメーターの既定値を入力してください。",
   "zBMVKg": "必須。10 進数に変換される値。",
