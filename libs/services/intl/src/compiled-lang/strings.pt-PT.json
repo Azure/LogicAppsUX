@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filtros"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -836,7 +842,7 @@
   "Jaz3EC": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+      "value": "Converte um carimbo de data/hora de cadeia transmitido a partir de um fuso horário de origem para um de destino"
     }
   ],
   "JbgTET": [
@@ -908,7 +914,7 @@
   "Lub7NN": [
     {
       "type": 0,
-      "value": "Required. The expressions that may be true."
+      "value": "Necessário. As expressões que podem ser verdadeiras."
     }
   ],
   "M0HMjE": [
@@ -1064,7 +1070,7 @@
   "P4rEwD": [
     {
       "type": 0,
-      "value": "Collection functions"
+      "value": "Funções de coleção"
     }
   ],
   "P8ZBF9": [
@@ -1194,7 +1200,7 @@
   "QrQDdp": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to subtract."
+      "value": "Obrigatório. Uma cadeia com a unidade de tempo especificada no intervalo para subtrair."
     }
   ],
   "Qu1HkA": [
@@ -1276,7 +1282,7 @@
   "T7zcR6": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Necessário. As expressões que têm de ser verdadeiras."
     }
   ],
   "T8Xqt9": [
@@ -1633,6 +1639,12 @@
       "value": "Obrigatório. A cadeia da qual se deve retirar os primeiros objetos de Contagem."
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Pesquisar"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -1922,7 +1934,7 @@
   "iU5Fdh": [
     {
       "type": 0,
-      "value": "Manipulation functions"
+      "value": "Funções de manipulação"
     }
   ],
   "iUs7pv": [
@@ -2497,6 +2509,12 @@
       "value": "Tipo"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Acionar"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2507,6 +2525,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O número de horas a adicionar. Pode ser negativo para subtrair horas."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Operações"
     }
   ],
   "uN4zFU": [
@@ -2686,7 +2710,7 @@
   "y3AZQB": [
     {
       "type": 0,
-      "value": "Required. The object to compare equality."
+      "value": "Necessário. O objeto para comparar a igualdade."
     }
   ],
   "y6BcVN": [
@@ -2701,10 +2725,20 @@
       "value": "Obrigatório. O valor que é convertido numa matriz."
     }
   ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "logótipo do "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
-      "value": "Date and time functions"
+      "value": "Funções de data e hora"
     }
   ],
   "z4YYlQ": [

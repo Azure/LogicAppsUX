@@ -1,0 +1,68 @@
+{
+  "root": "apps/data-mapper-standalone",
+  "sourceRoot": "apps/data-mapper-standalone/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/data-mapper-standalone",
+        "index": "apps/data-mapper-standalone/src/index.html",
+        "main": "apps/data-mapper-standalone/src/main.tsx",
+        "polyfills": "apps/data-mapper-standalone/src/polyfills.ts",
+        "tsConfig": "apps/data-mapper-standalone/tsconfig.app.json",
+        "assets": ["apps/data-mapper-standalone/src/favicon.ico", "apps/data-mapper-standalone/src/assets"],
+        "styles": ["apps/data-mapper-standalone/src/styles.less"],
+        "scripts": [],
+        "statsJson": true,
+        "webpackConfig": "@nrwl/react/plugins/webpack"
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/data-mapper-standalone/src/environments/environment.ts",
+              "with": "apps/data-mapper-standalone/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "data-mapper-standalone:build",
+        "hmr": true
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "data-mapper-standalone:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/data-mapper-standalone/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/data-mapper-standalone"],
+      "options": {
+        "jestConfig": "apps/data-mapper-standalone/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

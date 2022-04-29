@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "필터"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -814,7 +820,7 @@
   "Jaz3EC": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+      "value": "전달된 문자열 타임스탬프를 원본 표준 시간대에서 대상 표준 시간대로 변환합니다."
     }
   ],
   "JbgTET": [
@@ -886,7 +892,7 @@
   "Lub7NN": [
     {
       "type": 0,
-      "value": "Required. The expressions that may be true."
+      "value": "필수. true일 수 있는 식입니다."
     }
   ],
   "M0HMjE": [
@@ -1042,7 +1048,7 @@
   "P4rEwD": [
     {
       "type": 0,
-      "value": "Collection functions"
+      "value": "컬렉션 함수"
     }
   ],
   "P8ZBF9": [
@@ -1172,7 +1178,7 @@
   "QrQDdp": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to subtract."
+      "value": "필수 사항으로, 차감할 간격에 지정된 시간 단위를 포함하는 문자열입니다."
     }
   ],
   "Qu1HkA": [
@@ -1243,7 +1249,7 @@
   "T7zcR6": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "필수. true여야 하는 식입니다."
     }
   ],
   "T8Xqt9": [
@@ -1604,6 +1610,12 @@
       "value": "필수 항목으로, 첫 번째 Count 개체를 가져올 컬렉션입니다."
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "검색"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -1874,7 +1886,7 @@
   "iU5Fdh": [
     {
       "type": 0,
-      "value": "Manipulation functions"
+      "value": "조작 함수"
     }
   ],
   "iUs7pv": [
@@ -2438,6 +2450,12 @@
       "value": "종류"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "트리거"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2448,6 +2466,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 추가할 시간 값입니다. 시간을 빼려는 경우 음수일 수 있습니다."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "작업"
     }
   ],
   "uN4zFU": [
@@ -2627,7 +2651,7 @@
   "y3AZQB": [
     {
       "type": 0,
-      "value": "Required. The object to compare equality."
+      "value": "필수. 같음 비교를 위한 개체입니다."
     }
   ],
   "y6BcVN": [
@@ -2642,10 +2666,20 @@
       "value": "필수 사항으로, 배열로 변환되는 값입니다."
     }
   ],
+  "yOkPGx": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "의 로고"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
-      "value": "Date and time functions"
+      "value": "날짜 및 시간 함수"
     }
   ],
   "z4YYlQ": [

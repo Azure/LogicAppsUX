@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filtros"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -1637,6 +1643,12 @@
       "value": "Obligatorio. La colección de la que se tomarán los primeros objetos de recuento."
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Buscar"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -2501,6 +2513,12 @@
       "value": "Tipo"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Desencadenador"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2511,6 +2529,12 @@
     {
       "type": 0,
       "value": "Obligatorio. El número de horas que se agregarán. Puede ser negativo para restar horas."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Operaciones"
     }
   ],
   "uN4zFU": [
@@ -2703,6 +2727,16 @@
     {
       "type": 0,
       "value": "Obligatorio. El valor que se convierte en una matriz."
+    }
+  ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "logotipo de "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "yqRrQ/": [

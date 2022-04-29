@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "筛选器"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -818,7 +824,7 @@
   "Jaz3EC": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+      "value": "将传入的字符串时间戳从源时区转换为目标时区"
     }
   ],
   "JbgTET": [
@@ -890,7 +896,7 @@
   "Lub7NN": [
     {
       "type": 0,
-      "value": "Required. The expressions that may be true."
+      "value": "必填。可能为 true 的表达式。"
     }
   ],
   "M0HMjE": [
@@ -1046,7 +1052,7 @@
   "P4rEwD": [
     {
       "type": 0,
-      "value": "Collection functions"
+      "value": "集合函数"
     }
   ],
   "P8ZBF9": [
@@ -1176,7 +1182,7 @@
   "QrQDdp": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to subtract."
+      "value": "必需。一个字符串，包含时间间隔中指定的要减去的时间单位。"
     }
   ],
   "Qu1HkA": [
@@ -1247,7 +1253,7 @@
   "T7zcR6": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "必填。必须为 true 的表达式。"
     }
   ],
   "T8Xqt9": [
@@ -1612,6 +1618,12 @@
       "value": "必需。要从中获取第一批计数对象的集合。"
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "搜索"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -1890,7 +1902,7 @@
   "iU5Fdh": [
     {
       "type": 0,
-      "value": "Manipulation functions"
+      "value": "操作函数"
     }
   ],
   "iUs7pv": [
@@ -2462,6 +2474,12 @@
       "value": "类型"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "触发器"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2472,6 +2490,12 @@
     {
       "type": 0,
       "value": "必需。要添加的小时数。可以为负数以减去相应的小时数。"
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "操作"
     }
   ],
   "uN4zFU": [
@@ -2651,7 +2675,7 @@
   "y3AZQB": [
     {
       "type": 0,
-      "value": "Required. The object to compare equality."
+      "value": "必填。要比较相等性的对象。"
     }
   ],
   "y6BcVN": [
@@ -2666,10 +2690,20 @@
       "value": "必需。要转换为数组的值。"
     }
   ],
+  "yOkPGx": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 徽标"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
-      "value": "Date and time functions"
+      "value": "日期和时间函数"
     }
   ],
   "z4YYlQ": [

@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filter"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -1641,6 +1647,12 @@
       "value": "Obligatoriskt. Den samling som från vilken de första Count-objekten ska hämtas."
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Sök"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -2501,6 +2513,12 @@
       "value": "Typ"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Utlös"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2511,6 +2529,12 @@
     {
       "type": 0,
       "value": "Krävs. Antalet timmar att lägga till. Kan vara negativt för att subtrahera timmar."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Åtgärder"
     }
   ],
   "uN4zFU": [
@@ -2703,6 +2727,16 @@
     {
       "type": 0,
       "value": "Krävs. Värdet som konverteras till en matris."
+    }
+  ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "logotyp för "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "yqRrQ/": [

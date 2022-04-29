@@ -32,8 +32,8 @@ const initializeOperationDetailsForManifest = async (
   const state = getState();
   const service = OperationManifestService();
   const { connectorId, operationId } = await service.getOperationInfo(definition);
-  const cachedOperationManifest = getOperationManifest(state, connectorId, operationId);
   const cachedConnector = getConnector(state, connectorId);
+  let cachedOperationManifest = getOperationManifest(state, connectorId, operationId);
 
   if (!cachedConnector) {
     const connector = await ConnectionService().getConnector(connectorId);
@@ -45,6 +45,7 @@ const initializeOperationDetailsForManifest = async (
 
     // TODO(psamband): Remove the 'if check' once manifest service is completed
     if (manifest) {
+      cachedOperationManifest = manifest;
       dispatch(addOperationManifest({ connectorId, operationId, manifest }));
     }
   }

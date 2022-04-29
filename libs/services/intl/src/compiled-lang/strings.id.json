@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filter"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -1604,6 +1610,12 @@
       "value": "Harus diisi. Koleksi untuk mengambil objek hitungan pertama."
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Cari"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -2438,6 +2450,12 @@
       "value": "Tipe"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Pemicu"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2448,6 +2466,12 @@
     {
       "type": 0,
       "value": "Wajib. Jumlah jam yang akan ditambahkan. Dapat berupa nilai negatif untuk mengurangi jam."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Operasi"
     }
   ],
   "uN4zFU": [
@@ -2640,6 +2664,16 @@
     {
       "type": 0,
       "value": "Wajib. Nilai yang dikonversi menjadi array."
+    }
+  ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "logo untuk "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "yqRrQ/": [

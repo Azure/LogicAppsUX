@@ -4,13 +4,13 @@ export interface Operation {
   connectorKind?: string;
   description: string;
 
-  //documentation?: Swagger.ExternalDocumentation;
+  //documentation?: OpenAPIV2.ExternalDocumentationObject;
 
   environmentBadge?: {
     name: string;
     description: string;
   };
-  //externalDocs?: Swagger.ExternalDocumentation;
+  //externalDocs?: OpenAPIV2.ExternalDocumentationObject;
   iconUri: string;
   id: string;
   important?: boolean;

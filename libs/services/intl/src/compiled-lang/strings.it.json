@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filtri"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -1645,6 +1651,12 @@
       "value": "Obbligatorio. Raccolta da cui recuperare i primi oggetti Count."
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Cerca"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -2501,6 +2513,12 @@
       "value": "Tipo"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2511,6 +2529,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero di ore da aggiungere. Può essere negativo per sottrarre le ore."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Operazioni"
     }
   ],
   "uN4zFU": [
@@ -2703,6 +2727,16 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore convertito in una matrice."
+    }
+  ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "logo per "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "yqRrQ/": [

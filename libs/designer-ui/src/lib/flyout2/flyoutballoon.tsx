@@ -5,7 +5,7 @@ import type { Target } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
 
 export interface FlyoutBalloonProps {
-  documentationLink?: Swagger.ExternalDocumentation;
+  documentationLink?: OpenAPIV2.ExternalDocumentationObject;
   flyoutExpanded: boolean;
   target: Target | undefined;
   text: string;
