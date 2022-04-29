@@ -118,7 +118,7 @@ export function createCompletionItemProviderForFunctions(templateFunctions: Func
     provideCompletionItems: (model: monaco.editor.ITextModel, position: monaco.Position): ProviderResult<CompletionList> => {
       const suggestions = templateFunctions.map((templateFunction) => {
         const { name: label, description: documentation, signatures } = templateFunction;
-        const shouldAutoComplete = signatures.every((signature: { parameters: string | any[] }) => signature.parameters.length === 0);
+        const shouldAutoComplete = signatures.every((signature) => signature.parameters.length === 0);
         const word = model.getWordUntilPosition(position);
         return {
           label,
@@ -167,6 +167,7 @@ export function createCompletionItemProviderForValues(): CompletionItemProvider 
 }
 
 export function createSignatureHelpProvider(functions: Record<string, FunctionDefinition>): SignatureHelpProvider {
+  console.log('test2');
   return {
     signatureHelpTriggerCharacters: [',', '('],
     provideSignatureHelp(document: IReadOnlyModel, position: Position): ProviderResult<monaco.languages.SignatureHelpResult> {

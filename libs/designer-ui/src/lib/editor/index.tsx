@@ -52,17 +52,22 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
       if (!monaco.languages.getLanguages().some((lang: any) => lang.id === languageName)) {
         // Register a new language
         monaco.languages.register({ id: languageName });
+        // Register a tokens provider for the language
+        monaco.languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
 
         monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
         monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
         monaco.languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
-        // Register a tokens provider for the language
-        monaco.languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
+
         monaco.languages.setLanguageConfiguration(languageName, {
           autoClosingPairs: [
             {
               open: '(',
               close: ')',
+            },
+            {
+              open: '{',
+              close: '}',
             },
             {
               open: '[',
@@ -74,6 +79,7 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
             },
           ],
         });
+        // Define a new theme that contains only rules that match this language
         monaco.editor.defineTheme(languageName, createThemeData());
       }
     });
@@ -91,6 +97,7 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
       value={value}
       defaultValue={defaultValue}
       defaultLanguage={language ? language.toString() : undefined}
+      theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : 'light'}
     />
   );
 };

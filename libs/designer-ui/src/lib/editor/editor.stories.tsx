@@ -10,5 +10,5 @@ export const Standard: ComponentStory<typeof CustomEditor> = (args: EditorProps)
 
 Standard.args = {
   language: EditorLanguage.templateExpressionLanguage,
-  value: "// First line\nfunction hello() {\n\talert('Hello world!');\n}\n// Last line",
+  value: 'startOfDay()',
 };
