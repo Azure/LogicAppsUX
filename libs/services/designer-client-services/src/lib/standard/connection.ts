@@ -1,13 +1,12 @@
 import type { HttpOptions } from '../common/http/http';
 import { HttpClient } from '../common/http/http';
-import type { IConnectionService } from '../connection';
 import type { Connector } from '@microsoft-logic-apps/utils';
 
 interface StandardConnectionServiceArgs {
   apiVersion: string;
   baseUrl: string;
   locale?: string;
-  getToken: () => string;
+  getToken?: () => string;
 }
 
 export class StandardConnectionService {

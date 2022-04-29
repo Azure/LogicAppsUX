@@ -7,7 +7,7 @@ import {
   StandardSearchService,
 } from '@microsoft-logic-apps/designer-client-services';
 
-export const InitializeServices = (getToken: () => string) => {
+export const InitializeServices = (getToken?: () => string) => {
   InitConnectionService(
     new StandardConnectionService({
       baseUrl: '',
