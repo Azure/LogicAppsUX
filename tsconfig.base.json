@@ -23,6 +23,7 @@
       "@microsoft-logic-apps/parsers": ["libs/parsers/src/index.ts"],
       "@microsoft-logic-apps/utils": ["libs/utils/src/index.ts"],
       "@microsoft/designer-ui": ["libs/designer-ui/src/index.ts"],
+      "@microsoft/logic-apps-data-mapper": ["libs/data-mapper/src/index.ts"],
       "@microsoft/logic-apps-designer": ["libs/designer/src/index.ts"]
     }
   },
