@@ -168,7 +168,6 @@ export function createCompletionItemProviderForValues(): CompletionItemProvider 
 }
 
 export function createSignatureHelpProvider(functions: Record<string, FunctionDefinition>): SignatureHelpProvider {
-  console.log('test2');
   return {
     signatureHelpTriggerCharacters: [',', '('],
     provideSignatureHelp(document: IReadOnlyModel, position: Position): ProviderResult<monaco.languages.SignatureHelpResult> {
