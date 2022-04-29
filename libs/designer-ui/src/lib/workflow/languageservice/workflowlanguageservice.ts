@@ -81,7 +81,6 @@ export function createLanguageDefinition(templateFunctions: FunctionDefinition[]
     };
   });
   functionNameRules.sort((a, b) => b.regex.length - a.regex.length);
-  console.log(functionNameRules);
 
   const stringLiteralRule = {
     regex: /'[^']*'/g,
