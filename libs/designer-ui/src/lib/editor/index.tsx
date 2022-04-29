@@ -4,6 +4,7 @@ import {
   createCompletionItemProviderForValues,
   createSignatureHelpProvider,
   createLanguageDefinition,
+  createThemeData,
   getTemplateFunctions,
 } from '../workflow/languageservice/workflowlanguageservice';
 import { map } from '@microsoft-logic-apps/utils';
@@ -15,6 +16,7 @@ export enum EditorLanguage {
   javascript = 'javascript',
   json = 'json',
   xml = 'xml',
+  templateExpressionLanguage = 'TemplateExpressionLanguage',
 }
 
 export interface EditorProps {
@@ -32,8 +34,8 @@ export interface EditorProps {
 export const CustomEditor: React.FC<EditorProps> = (props) => {
   const {
     folding = true,
-    height = '100%',
-    width = '100%',
+    height = '100vh',
+    width = '100vw',
     lineNumbers = 'on',
     minimapEnabled = true,
     readOnly = false,
@@ -72,6 +74,7 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
             },
           ],
         });
+        monaco.editor.defineTheme(languageName, createThemeData());
       }
     });
   };
