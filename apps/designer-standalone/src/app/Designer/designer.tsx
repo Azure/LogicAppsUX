@@ -5,7 +5,7 @@ import { ProviderWrappedContext } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 
-const useGetToken = () => useSelector((state: RootState) => state.workflowLoader.armToken ?? '');
+const useGetToken = () => useSelector((state: RootState) => state.workflowLoader?.armToken ?? '');
 
 export const DesignerWrapper = () => {
   const workflow = useSelector((state: RootState) => state.workflowLoader.workflowDefinition);
