@@ -1,9 +1,7 @@
 import { getReactQueryClient } from './ReactQueryProvider';
-import type { DeserializedWorkflow } from './parsers/BJSWorkflow/BJSDeserializer';
-import { Deserialize } from './parsers/BJSWorkflow/BJSDeserializer';
 import type { Actions } from './state/workflowSlice';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { Connector, Operation, OperationInfo, OperationManifest } from '@microsoft-logic-apps/utils';
+import type { Connector, OperationInfo, OperationManifest } from '@microsoft-logic-apps/utils';
 
 export const createWorkflow = async (actions: Actions): Promise<(Connector | OperationManifest)[]> => {
   const operationPromises: Promise<OperationManifest>[] = [];
@@ -30,19 +28,21 @@ const initializeOperationDetailsForManifest = async (
 ): Promise<void> => {
   const queryClient = getReactQueryClient();
   const operationManifestService = OperationManifestService();
-  nodeId = nodeId.toLowerCase();
-  const operationInfo = await queryClient.fetchQuery<OperationInfo>(['operationIds', { nodeId }], () =>
-    // this is sync
-    operationManifestService.getOperationInfo(operation)
-  );
-  if (operationInfo) {
-    const operationManifest = fetchOperationManifest(operationInfo.connectorId, operationInfo.operationId);
-    if (operationManifest) {
-      operationPromises.push(operationManifest);
-    }
-    const connector = fetchConnector(operationInfo.connectorId);
-    if (connector) {
-      connectionPromises.push(connector);
+  if (OperationManifestService().isSupported(operation.type)) {
+    nodeId = nodeId.toLowerCase();
+    const operationInfo = await queryClient.fetchQuery<OperationInfo>(['operationIds', { nodeId }], () =>
+      // this is sync
+      operationManifestService.getOperationInfo(operation)
+    );
+    if (operationInfo) {
+      const operationManifest = fetchOperationManifest(operationInfo.connectorId, operationInfo.operationId);
+      if (operationManifest) {
+        operationPromises.push(operationManifest);
+      }
+      const connector = fetchConnector(operationInfo.connectorId);
+      if (connector) {
+        connectionPromises.push(connector);
+      }
     }
   }
 };
