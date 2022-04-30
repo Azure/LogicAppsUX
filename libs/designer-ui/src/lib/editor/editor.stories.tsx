@@ -10,5 +10,5 @@ export const Standard: ComponentStory<typeof CustomEditor> = (args: EditorProps)
 
 Standard.args = {
   language: EditorLanguage.templateExpressionLanguage,
-  value: 'startOfDay()',
+  value: 'test startOfDay() addMinutes()',
 };

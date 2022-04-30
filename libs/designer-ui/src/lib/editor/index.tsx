@@ -5,6 +5,7 @@ import {
   createSignatureHelpProvider,
   createLanguageDefinition,
   createThemeData,
+  createLanguageConfig,
   getTemplateFunctions,
 } from '../workflow/languageservice/workflowlanguageservice';
 import { map } from '@microsoft-logic-apps/utils';
@@ -55,30 +56,14 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
         // Register a tokens provider for the language
         monaco.languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
 
+        // Register Suggestion text for the language
         monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
         monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
+
+        // Register Help Provider Text Field for the language
         monaco.languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
 
-        monaco.languages.setLanguageConfiguration(languageName, {
-          autoClosingPairs: [
-            {
-              open: '(',
-              close: ')',
-            },
-            {
-              open: '{',
-              close: '}',
-            },
-            {
-              open: '[',
-              close: ']',
-            },
-            {
-              open: `'`,
-              close: `'`,
-            },
-          ],
-        });
+        monaco.languages.setLanguageConfiguration(languageName, createLanguageConfig());
         // Define a new theme that contains only rules that match this language
         monaco.editor.defineTheme(languageName, createThemeData());
       }

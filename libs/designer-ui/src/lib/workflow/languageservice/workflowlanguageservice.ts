@@ -16,6 +16,7 @@ type ProviderResult<T> = monaco.languages.ProviderResult<T>;
 export type SignatureHelpProvider = monaco.languages.SignatureHelpProvider;
 type SignatureInformation = monaco.languages.SignatureInformation;
 type SignatureHelpResult = monaco.languages.SignatureHelpResult;
+type LanguageConfiguration = monaco.languages.LanguageConfiguration;
 
 const enum tokenNames {
   FUNCTION = 'function-name',
@@ -35,6 +36,29 @@ export interface ExpressionInfo {
 interface IdentifierTokenInfo {
   name: string;
   argumentsCovered: number;
+}
+
+export function createLanguageConfig(): LanguageConfiguration {
+  return {
+    autoClosingPairs: [
+      {
+        open: '(',
+        close: ')',
+      },
+      {
+        open: '{',
+        close: '}',
+      },
+      {
+        open: '[',
+        close: ']',
+      },
+      {
+        open: `'`,
+        close: `'`,
+      },
+    ],
+  };
 }
 
 export function createThemeData(): IStandaloneThemeData {
