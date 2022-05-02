@@ -7,8 +7,9 @@ export const parameters = {
     config: {
       rules: [
         {
+          // https://github.com/microsoft/monaco-editor/issues/2448
           id: 'landmark-unique',
-          selector: '*:([class="monaco-status"])',
+          selector: '.monaco-status[role="complementary"]',
         },
         {
           id: 'landmark-unique',
