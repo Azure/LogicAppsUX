@@ -3,6 +3,20 @@ import '../src/lib/ui/logicapps.less';
 import { initializeIcons } from '@fluentui/react';
 
 export const parameters = {
+  a11y: {
+    config: {
+      rules: [
+        {
+          id: 'landmark-unique',
+          selector: '*:([class="monaco-status"])',
+        },
+        {
+          id: 'landmark-unique',
+          enabled: false,
+        },
+      ],
+    },
+  },
   actions: { argTypesRegex: '^on[A-Z].*' },
   storySort: {
     order: ['Docs', 'Designer', 'Components'],
