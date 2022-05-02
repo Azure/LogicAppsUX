@@ -71,7 +71,7 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
   };
 
   useEffect(() => {
-    // initEditor();
+    initEditor();
   }, []);
 
   return (
