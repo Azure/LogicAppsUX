@@ -911,6 +911,12 @@
       "value": "When used inside for-each loop, this function returns the current item of the specified loop."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1373,6 +1379,12 @@
       "value": "The provided workflow run name is not valid."
     }
   ],
+  "VRwgOo": [
+    {
+      "type": 0,
+      "value": "Enter a condition"
+    }
+  ],
   "VVfYvq": [
     {
       "type": 0,
@@ -1583,6 +1595,12 @@
     {
       "type": 0,
       "value": "This operation has already been deleted."
+    }
+  ],
+  "ZcTA+B": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "a7j3gS": [

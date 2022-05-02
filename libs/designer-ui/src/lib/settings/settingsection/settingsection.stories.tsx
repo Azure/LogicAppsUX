@@ -1,5 +1,6 @@
 import type { SettingSectionComponentProps } from '..';
 import { SettingsSection } from '..';
+import { TriggerConditionsSetting } from './settingexpressioneditor';
 import { ReactiveToggle } from './settingreactiveinput';
 import { SettingTextField } from './settingtextfield';
 import { RenderToggleSetting } from './settingtoggle';
@@ -35,4 +36,12 @@ reactiveToggleWithText.args = {
   expanded: false,
   textFieldValue: '',
   renderContent: ReactiveToggle,
+};
+
+export const addMultipleConditions = Template.bind({});
+addMultipleConditions.args = {
+  id: 'addOrDeleteConditions',
+  title: 'Dynamic Condition Settings',
+  expanded: false,
+  renderContent: TriggerConditionsSetting,
 };
