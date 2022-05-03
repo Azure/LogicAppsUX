@@ -4,6 +4,8 @@ import {
   createCompletionItemProviderForValues,
   createSignatureHelpProvider,
   createLanguageDefinition,
+  createThemeData,
+  createLanguageConfig,
   getTemplateFunctions,
 } from '../workflow/languageservice/workflowlanguageservice';
 import { map } from '@microsoft-logic-apps/utils';
@@ -15,6 +17,7 @@ export enum EditorLanguage {
   javascript = 'javascript',
   json = 'json',
   xml = 'xml',
+  templateExpressionLanguage = 'TemplateExpressionLanguage',
 }
 
 export interface EditorProps {
@@ -31,9 +34,9 @@ export interface EditorProps {
 
 export const CustomEditor: React.FC<EditorProps> = (props) => {
   const {
+    height,
+    width,
     folding = true,
-    height = '100%',
-    width = '100%',
     lineNumbers = 'on',
     minimapEnabled = true,
     readOnly = false,
@@ -50,28 +53,19 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
       if (!monaco.languages.getLanguages().some((lang: any) => lang.id === languageName)) {
         // Register a new language
         monaco.languages.register({ id: languageName });
-
-        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
-        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
-        monaco.languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
         // Register a tokens provider for the language
         monaco.languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
-        monaco.languages.setLanguageConfiguration(languageName, {
-          autoClosingPairs: [
-            {
-              open: '(',
-              close: ')',
-            },
-            {
-              open: '[',
-              close: ']',
-            },
-            {
-              open: `'`,
-              close: `'`,
-            },
-          ],
-        });
+
+        // Register Suggestion text for the language
+        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
+        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
+
+        // Register Help Provider Text Field for the language
+        monaco.languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
+
+        monaco.languages.setLanguageConfiguration(languageName, createLanguageConfig());
+        // Define a new theme that contains only rules that match this language
+        monaco.editor.defineTheme(languageName, createThemeData());
       }
     });
   };
@@ -82,12 +76,21 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
 
   return (
     <Editor
+      className="msla-monaco"
       height={height}
       width={width}
-      options={{ folding, lineNumbers, minimap: { enabled: minimapEnabled }, readOnly }}
+      options={{
+        folding,
+        lineNumbers,
+        scrollBeyondLastLine: false,
+        minimap: { enabled: minimapEnabled },
+        readOnly,
+        fontSize: 12,
+      }}
       value={value}
       defaultValue={defaultValue}
       defaultLanguage={language ? language.toString() : undefined}
+      theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : 'light'}
     />
   );
 };

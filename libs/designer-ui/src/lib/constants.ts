@@ -269,6 +269,7 @@ export default {
   WORKFLOW_PARAMETER_TYPE,
   LANGUAGE_NAMES: {
     WORKFLOW: 'TemplateExpressionLanguage',
+    THEME: 'TemplateExpressionLanguageTheme',
   },
 
   PANEL: {
