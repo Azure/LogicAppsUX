@@ -2,6 +2,7 @@ import type { SettingSectionComponentProps } from '..';
 import { SettingsSection } from '..';
 import { TriggerConditionsSetting } from './settingexpressioneditor';
 import { ReactiveToggle } from './settingreactiveinput';
+import { CustomConcurrencyInputs } from './settingslider';
 import { SettingTextField } from './settingtextfield';
 import { RenderToggleSetting } from './settingtoggle';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -44,4 +45,12 @@ addMultipleConditions.args = {
   title: 'Dynamic Condition Settings',
   expanded: false,
   renderContent: TriggerConditionsSetting,
+};
+
+export const sliderSetting = Template.bind({});
+sliderSetting.args = {
+  id: 'sliderSetting',
+  title: 'Setting Slider',
+  expanded: false,
+  renderContent: CustomConcurrencyInputs,
 };

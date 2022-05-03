@@ -1,5 +1,3 @@
-// type FocusableComponent = ui.utils.FocusableComponent;
-// export type SetElementHandler = (componentOrElement: FocusableComponent) => void;
 import { ActionButton, IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { TextField } from '@fluentui/react/lib/TextField';
@@ -11,27 +9,38 @@ import { useIntl } from 'react-intl';
 export interface TriggerConditionsSettingProps {
   initialExpressions?: string[];
   readOnly?: boolean;
-  // setElementToFocus: SetElementHandler;
   visible?: boolean;
   onExpressionsChange(updatedExpressions: string[]): void;
 }
 
-export function TriggerConditionsSetting({
+export const TriggerConditionsSetting = ({
   initialExpressions,
   readOnly,
   visible,
   onExpressionsChange,
-}: TriggerConditionsSettingProps): JSX.Element | null {
-  if (!visible) {
-    return null;
+}: TriggerConditionsSettingProps): JSX.Element | null => {
+  // manually declaring initial props
+  const [expressions, setExpressions] = useState(initialExpressions);
+  onExpressionsChange = (updatedExpressions: string[]): void => {
+    setExpressions(updatedExpressions);
+  };
+  readOnly = false;
+  visible = true;
+  if (!initialExpressions) {
+    initialExpressions = [];
   }
+
+  //   if (!visible) {
+  //     return null;
+  //   }
+  // leaving as always visible for stories until we can grab this data from the store programatically
 
   return (
     <>
       <ExpressionsEditor initialExpressions={initialExpressions || []} readOnly={readOnly || false} onChange={onExpressionsChange} />
     </>
   );
-}
+};
 
 TriggerConditionsSetting.defaultProps = {
   initialExpressions: [],
@@ -53,7 +62,6 @@ interface ExpressionsEditorProps {
   initialExpressions: string[];
   maximumExpressions?: number;
   readOnly: boolean;
-  // setElementToFocus: SetElementHandler;
   onChange(updatedExpressions: string[]): void;
 }
 
@@ -111,14 +119,7 @@ export const ExpressionsEditor = ({ initialExpressions, maximumExpressions, read
 
   return (
     <>
-      <Expressions
-        ref={expressionRef}
-        expressions={expressions}
-        readOnly={readOnly}
-        // setElementToFocus={setElementToFocus}
-        onChange={handleChange}
-        onDelete={handleDelete}
-      />
+      <Expressions ref={expressionRef} expressions={expressions} readOnly={readOnly} onChange={handleChange} onDelete={handleDelete} />
       {expressions.length < defaultProps.maximumExpressions ? (
         <ActionButton disabled={readOnly} iconProps={addIconProps} text={addCondition} onClick={handleAddClick} />
       ) : null}
@@ -169,7 +170,6 @@ interface ExpressionProps {
   expression: string;
   index: number;
   readOnly: boolean;
-  // setElementToFocus?: SetElementHandler;
   onChange(index: number, newExpression: string | undefined): void;
   onDelete(index: number): void;
 }
@@ -191,13 +191,6 @@ const Expression = ({ expression, index, readOnly, onChange, onDelete }: Express
   const deleteIconButtonProps: IIconProps = {
     iconName: 'Clear',
   };
-
-  // componentDidMount(): void {
-  //     const { setElementToFocus } = this.props;
-  //     if (setElementToFocus) {
-  //         setElementToFocus(this._inputRef);
-  //     }
-  // }
 
   const focus = (): void => {
     if (inputRef) {
@@ -221,7 +214,6 @@ const Expression = ({ expression, index, readOnly, onChange, onDelete }: Express
     <div className="msla-trigger-condition-expression">
       <TextField
         autoComplete="off"
-        // componentRef={input => (inputRef = input)}
         disabled={readOnly}
         required={true}
         spellCheck={false}
