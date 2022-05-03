@@ -131,7 +131,6 @@ interface ExpressionsProps {
   ref?: React.RefObject<any>;
   expressions: string[];
   readOnly: boolean;
-  // setElementToFocus: SetElementHandler;
   onChange(index: number, newExpression: string): void;
   onDelete(index: number): void;
 }
@@ -148,12 +147,10 @@ const Expressions = ({ expressions, readOnly, onChange, onDelete }: ExpressionsP
     <>
       {expressions.map((expression, index, array) => {
         const ref = index === array.length - 1 ? { ref: expressionRef } : undefined;
-        // const setElementHandler = index === 0 ? { setElementToFocus } : undefined;
         return (
           <Expression
             key={index}
             {...ref}
-            // {...setElementHandler}
             expression={expression}
             index={index}
             readOnly={readOnly}
