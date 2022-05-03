@@ -34,9 +34,9 @@ export interface EditorProps {
 
 export const CustomEditor: React.FC<EditorProps> = (props) => {
   const {
+    height,
+    width,
     folding = true,
-    height = '100vh',
-    width = '100vw',
     lineNumbers = 'on',
     minimapEnabled = true,
     readOnly = false,
@@ -76,9 +76,17 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
 
   return (
     <Editor
+      className="msla-monaco"
       height={height}
       width={width}
-      options={{ folding, lineNumbers, minimap: { enabled: minimapEnabled }, readOnly }}
+      options={{
+        folding,
+        lineNumbers,
+        scrollBeyondLastLine: false,
+        minimap: { enabled: minimapEnabled },
+        readOnly,
+        fontSize: 12,
+      }}
       value={value}
       defaultValue={defaultValue}
       defaultLanguage={language ? language.toString() : undefined}
