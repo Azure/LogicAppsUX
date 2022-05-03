@@ -3,17 +3,6 @@ import '../src/lib/ui/logicapps.less';
 import { initializeIcons } from '@fluentui/react';
 
 export const parameters = {
-  a11y: {
-    config: {
-      rules: [
-        {
-          // https://github.com/microsoft/monaco-editor/issues/2448
-          id: 'landmark-unique',
-          enabled: false,
-        },
-      ],
-    },
-  },
   actions: { argTypesRegex: '^on[A-Z].*' },
   storySort: {
     order: ['Docs', 'Designer', 'Components'],

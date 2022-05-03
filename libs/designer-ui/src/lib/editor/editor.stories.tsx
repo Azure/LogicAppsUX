@@ -13,6 +13,11 @@ templateExpressionLanguage.args = {
   language: EditorLanguage.templateExpressionLanguage,
   value: "true false\naddMinutes()\n12345\n'string'",
 };
+templateExpressionLanguage.parameters = {
+  axe: {
+    disabledRules: ['landmark-unique'],
+  },
+};
 
 export const javascript = Template.bind({});
 javascript.args = {
