@@ -6,13 +6,13 @@ import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface TriggerConditionsSettingProps {
+export interface MultiAddExpressionEditorProps {
   initialExpressions?: string[];
   readOnly?: boolean;
   visible?: boolean;
 }
 
-export const TriggerConditionsSetting = ({ initialExpressions, readOnly, visible }: TriggerConditionsSettingProps): JSX.Element | null => {
+export const MultiAddExpressionEditor = ({ initialExpressions, readOnly, visible }: MultiAddExpressionEditorProps): JSX.Element | null => {
   const defaultProps = {
     initialExpressions: [],
     readOnly: false,

@@ -1,6 +1,6 @@
 import type { SettingSectionComponentProps } from '..';
 import { SettingsSection } from '..';
-import { TriggerConditionsSetting } from './settingexpressioneditor';
+import { MultiAddExpressionEditor } from './settingexpressioneditor';
 import { ReactiveToggle } from './settingreactiveinput';
 import { CustomConcurrencyInputs } from './settingslider';
 import { SettingTextField } from './settingtextfield';
@@ -44,7 +44,7 @@ addMultipleConditions.args = {
   id: 'addOrDeleteConditions',
   title: 'Dynamic Condition Settings',
   expanded: false,
-  renderContent: TriggerConditionsSetting,
+  renderContent: MultiAddExpressionEditor,
 };
 
 export const sliderSetting = Template.bind({});
