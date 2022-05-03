@@ -10,42 +10,29 @@ export interface TriggerConditionsSettingProps {
   initialExpressions?: string[];
   readOnly?: boolean;
   visible?: boolean;
-  onExpressionsChange(updatedExpressions: string[]): void;
 }
 
-export const TriggerConditionsSetting = ({
-  initialExpressions,
-  readOnly,
-  visible,
-  onExpressionsChange,
-}: TriggerConditionsSettingProps): JSX.Element | null => {
-  // manually declaring initial props
+export const TriggerConditionsSetting = ({ initialExpressions, readOnly, visible }: TriggerConditionsSettingProps): JSX.Element | null => {
+  const defaultProps = {
+    initialExpressions: [],
+    readOnly: false,
+    visible: true,
+  };
+  if (!initialExpressions || readOnly === undefined || visible === undefined) {
+    initialExpressions = defaultProps.initialExpressions;
+    readOnly = defaultProps.readOnly;
+    visible = defaultProps.visible;
+  }
   const [expressions, setExpressions] = useState(initialExpressions);
-  onExpressionsChange = (updatedExpressions: string[]): void => {
+  const onExpressionsChange = (updatedExpressions: string[]): void => {
     setExpressions(updatedExpressions);
   };
-  readOnly = false;
-  visible = true;
-  if (!initialExpressions) {
-    initialExpressions = [];
-  }
-
-  //   if (!visible) {
-  //     return null;
-  //   }
-  // leaving as always visible for stories until we can grab this data from the store programatically
 
   return (
     <>
-      <ExpressionsEditor initialExpressions={initialExpressions || []} readOnly={readOnly || false} onChange={onExpressionsChange} />
+      <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly ?? false} onChange={onExpressionsChange} />
     </>
   );
-};
-
-TriggerConditionsSetting.defaultProps = {
-  initialExpressions: [],
-  readOnly: false,
-  visible: true,
 };
 
 const styles: Partial<ITextFieldStyles> = {
@@ -83,7 +70,7 @@ export const ExpressionsEditor = ({ initialExpressions, maximumExpressions, read
     iconName: 'Add',
   };
 
-  const expressionRef = useRef<typeof Expression & { focus: any }>(); //implement focus
+  const expressionRef = useRef<typeof Expression & { focus: any }>(); //TODO(andrewfowose): implement focus
   const [expressions, setExpressions] = useState(initialExpressions);
 
   const focus = (): void => {
