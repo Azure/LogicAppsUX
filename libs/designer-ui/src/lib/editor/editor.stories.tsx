@@ -13,6 +13,8 @@ templateExpressionLanguage.args = {
   language: EditorLanguage.templateExpressionLanguage,
   value: "true false\naddMinutes()\n12345\n'string'",
 };
+
+// https://github.com/microsoft/monaco-editor/issues/2448
 templateExpressionLanguage.parameters = {
   axe: {
     disabledRules: ['landmark-unique'],
