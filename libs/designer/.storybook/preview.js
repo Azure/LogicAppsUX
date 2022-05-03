@@ -10,9 +10,6 @@ export const parameters = {
           // https://github.com/microsoft/monaco-editor/issues/2448
           id: 'landmark-unique',
           selector: '.monaco-status[role="complementary"]',
-        },
-        {
-          id: 'landmark-unique',
           enabled: false,
         },
       ],
