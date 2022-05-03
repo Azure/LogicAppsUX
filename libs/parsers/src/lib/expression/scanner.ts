@@ -51,7 +51,7 @@ export class ExpressionScanner {
    * @return {ExpressionToken}
    */
   public getNextToken(): ExpressionToken {
-    this._readNextToken();
+    this._currentToken = this._readNextToken();
     return this._currentToken;
   }
 
@@ -81,7 +81,7 @@ export class ExpressionScanner {
         }
       }
     } else {
-      this._startPosition = currentPos;
+      this._startPosition = currentPos + 1;
       token = this._createToken('', ExpressionTokenType.EndOfData, initialStartPos, this._startPosition);
     }
 
@@ -110,11 +110,20 @@ export class ExpressionScanner {
     let isFloat = false;
     currentPos = this._scanForwardUsingPredicate(currentPos, (c) => isNumeric(c));
 
+    if (currentPos < expression.length && equals(expression.charAt(currentPos), ExpressionConstants.TokenValue.dot)) {
+      isFloat = true;
+      currentPos = this._scanForwardUsingPredicate(currentPos + 1, (c) => isNumeric(c));
+    }
+
     if (currentPos < expression.length && equals(expression.charAt(currentPos), 'e')) {
       isFloat = true;
       ch = expression.charAt(currentPos + 1);
       currentPos = equals(ch, '+') || equals(ch, '-') ? currentPos + 2 : currentPos + 1;
       currentPos = this._scanForwardUsingPredicate(currentPos, (c) => isNumeric(c));
+    }
+
+    if (currentPos < expression.length && this._isSupportedIdentifierCharacter(expression.charAt(currentPos))) {
+      throw new ScannerException(ExpressionExceptionCode.UNEXPECTED_CHARACTER, ExpressionExceptionCode.UNEXPECTED_CHARACTER);
     }
 
     this._startPosition = currentPos;

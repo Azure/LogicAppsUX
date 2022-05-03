@@ -16,6 +16,7 @@ type ProviderResult<T> = monaco.languages.ProviderResult<T>;
 export type SignatureHelpProvider = monaco.languages.SignatureHelpProvider;
 type SignatureInformation = monaco.languages.SignatureInformation;
 type SignatureHelpResult = monaco.languages.SignatureHelpResult;
+type LanguageConfiguration = monaco.languages.LanguageConfiguration;
 
 const enum tokenNames {
   FUNCTION = 'function-name',
@@ -37,6 +38,56 @@ interface IdentifierTokenInfo {
   argumentsCovered: number;
 }
 
+export function createLanguageConfig(): LanguageConfiguration {
+  return {
+    autoClosingPairs: [
+      {
+        open: '(',
+        close: ')',
+      },
+      {
+        open: '{',
+        close: '}',
+      },
+      {
+        open: '[',
+        close: ']',
+      },
+      {
+        open: `'`,
+        close: `'`,
+      },
+    ],
+  };
+}
+
+export function createThemeData(): IStandaloneThemeData {
+  return {
+    base: 'vs',
+    inherit: true,
+    rules: [
+      {
+        token: tokenNames.FUNCTION,
+        foreground: '110188',
+        fontStyle: 'bold',
+      },
+      {
+        token: tokenNames.STRING,
+        foreground: 'a31515',
+      },
+      {
+        token: tokenNames.NUMBER,
+        foreground: '09885a',
+      },
+      {
+        token: tokenNames.KEYWORD,
+        foreground: '0000ff',
+      },
+    ],
+    colors: {},
+  };
+}
+
 export function createLanguageDefinition(templateFunctions: FunctionDefinition[]): IMonarchLanguage {
   const keywordRules = keywords.map((keyword) => ({
     regex: keyword,
@@ -53,6 +104,7 @@ export function createLanguageDefinition(templateFunctions: FunctionDefinition[]
       },
     };
   });
+  functionNameRules.sort((a, b) => b.regex.length - a.regex.length);
 
   const stringLiteralRule = {
     regex: /'[^']*'/g,
@@ -91,7 +143,7 @@ export function createCompletionItemProviderForFunctions(templateFunctions: Func
     provideCompletionItems: (model: monaco.editor.ITextModel, position: monaco.Position): ProviderResult<CompletionList> => {
       const suggestions = templateFunctions.map((templateFunction) => {
         const { name: label, description: documentation, signatures } = templateFunction;
-        const shouldAutoComplete = signatures.every((signature: { parameters: string | any[] }) => signature.parameters.length === 0);
+        const shouldAutoComplete = signatures.every((signature) => signature.parameters.length === 0);
         const word = model.getWordUntilPosition(position);
         return {
           label,
@@ -144,8 +196,7 @@ export function createSignatureHelpProvider(functions: Record<string, FunctionDe
     signatureHelpTriggerCharacters: [',', '('],
     provideSignatureHelp(document: IReadOnlyModel, position: Position): ProviderResult<monaco.languages.SignatureHelpResult> {
       const currentValue = document.getValue();
-      const currentCursorPosition = position.column - 1;
-      const expressionInfo = parseExpression(currentValue, currentCursorPosition, functions);
+      const expressionInfo = parseExpression(currentValue, position, functions);
 
       if (expressionInfo) {
         return getSignaturesInfo(expressionInfo);
@@ -269,11 +320,13 @@ function generateSignaturesForVariableParameters(
 
 // TODO(psamband): The parse function currently does not handle wrongly entered syntax,
 // Need to update for invalid functions like guid()))).
-function parseExpression(
-  value: string,
-  caretPosition: number,
-  templateFunctions: Record<string, FunctionDefinition>
-): ExpressionInfo | null {
+function parseExpression(value: string, position: Position, templateFunctions: Record<string, FunctionDefinition>): ExpressionInfo | null {
+  // parsing multi-line values
+  if (position.lineNumber > 1) {
+    value = value.split('\n')[position.lineNumber - 1];
+  }
+  const caretPosition = position.column - 1;
+
   const scanner = new ExpressionScanner(value, /*prefetch*/ false);
 
   let previousToken: ExpressionToken | undefined;
