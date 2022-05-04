@@ -63,7 +63,7 @@ export const ExpressionsEditor = ({ initialExpressions, maximumExpressions, read
     initialExpressions,
     readOnly,
     onChange,
-    maximumExpressions: maximumExpressions || 10,
+    maximumExpressions: maximumExpressions ?? 10,
   };
 
   const addIconProps: IIconProps = {
