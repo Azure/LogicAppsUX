@@ -18,7 +18,7 @@ export const CustomValueSlider = ({
   isReadOnly: readOnly,
   maxVal = 100,
   minVal = 0,
-  defaultValue = 100,
+  defaultValue = 50,
 }: CustomValueSliderProps): JSX.Element => {
   const [checked, toggleChecked] = useBoolean(false);
   const onToggleInputChange = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => {

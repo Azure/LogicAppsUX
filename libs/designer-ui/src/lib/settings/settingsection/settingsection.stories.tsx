@@ -42,7 +42,7 @@ reactiveToggleWithText.args = {
 export const addMultipleConditions = Template.bind({});
 addMultipleConditions.args = {
   id: 'addOrDeleteConditions',
-  title: 'Dynamic Condition Settings',
+  title: 'Multi-Add Expression Settings',
   expanded: false,
   renderContent: MultiAddExpressionEditor,
 };
