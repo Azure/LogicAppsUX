@@ -2,7 +2,7 @@ import type { SettingSectionComponentProps } from '..';
 import { SettingsSection } from '..';
 import { MultiAddExpressionEditor } from './settingexpressioneditor';
 import { ReactiveToggle } from './settingreactiveinput';
-import { CustomConcurrencyInputs } from './settingslider';
+import { CustomValueSlider } from './settingslider';
 import { SettingTextField } from './settingtextfield';
 import { RenderToggleSetting } from './settingtoggle';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -52,5 +52,5 @@ sliderSetting.args = {
   id: 'sliderSetting',
   title: 'Setting Slider',
   expanded: false,
-  renderContent: CustomConcurrencyInputs,
+  renderContent: CustomValueSlider,
 };

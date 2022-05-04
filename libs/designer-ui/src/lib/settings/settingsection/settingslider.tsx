@@ -5,13 +5,12 @@ import { useBoolean } from '@fluentui/react-hooks';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-interface ConcurrencyProps {
+interface CustomValueSliderProps {
   value: number;
   isReadOnly: boolean;
-  isTrigger?: boolean;
 }
 
-export const CustomConcurrencyInputs = ({ value, isReadOnly: readOnly }: ConcurrencyProps): JSX.Element => {
+export const CustomValueSlider = ({ value, isReadOnly: readOnly }: CustomValueSliderProps): JSX.Element => {
   const [checked, toggleChecked] = useBoolean(false);
   const onToggleInputChange = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => {
     toggleChecked.toggle();
@@ -19,8 +18,8 @@ export const CustomConcurrencyInputs = ({ value, isReadOnly: readOnly }: Concurr
   const min = 0;
   const max = 100;
   const defaultValue = 50;
-  const [concurrencyCount, setCount] = useState(value || defaultValue);
-  const onConcurrencyCountChanged = (value: number): void => {
+  const [sliderCount, setCount] = useState(value || defaultValue);
+  const onSliderValueChanged = (value: number): void => {
     setCount(value);
   };
   const intl = useIntl();
@@ -50,8 +49,8 @@ export const CustomConcurrencyInputs = ({ value, isReadOnly: readOnly }: Concurr
                 max={max}
                 min={min}
                 showValue={true}
-                value={concurrencyCount}
-                onChange={onConcurrencyCountChanged}
+                value={sliderCount}
+                onChange={onSliderValueChanged}
               />
             </div>
           </div>

@@ -162,14 +162,14 @@ const Expression = ({ expression, index, readOnly, onChange, onDelete }: Express
   let inputRef: ITextField;
   const intl = useIntl();
 
-  const enterConditionError = intl.formatMessage({
-    defaultMessage: 'Enter a condition',
-    description: 'error displayed when no condition is entered',
+  const enterValueError = intl.formatMessage({
+    defaultMessage: 'Enter a value',
+    description: 'error displayed when no value is entered',
   });
 
-  const deleteCondition = intl.formatMessage({
+  const deleteValue = intl.formatMessage({
     defaultMessage: 'Delete',
-    description: 'type and label to delete a condition',
+    description: 'type and label to delete a value',
   });
 
   const deleteIconButtonProps: IIconProps = {
@@ -191,7 +191,7 @@ const Expression = ({ expression, index, readOnly, onChange, onDelete }: Express
   };
 
   const handleGetErrorMessage = (value: string): string | undefined => {
-    return !value ? enterConditionError : undefined;
+    return !value ? enterValueError : undefined;
   };
 
   return (
@@ -206,8 +206,8 @@ const Expression = ({ expression, index, readOnly, onChange, onDelete }: Express
         onChange={handleChange}
         onGetErrorMessage={handleGetErrorMessage}
       />
-      <TooltipHost content={deleteCondition}>
-        <IconButton ariaLabel={deleteCondition} disabled={readOnly} iconProps={deleteIconButtonProps} onClick={handleDeleteClick} />
+      <TooltipHost content={deleteValue}>
+        <IconButton ariaLabel={deleteValue} disabled={readOnly} iconProps={deleteIconButtonProps} onClick={handleDeleteClick} />
       </TooltipHost>
     </div>
   );

@@ -1273,6 +1273,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1323,6 +1329,12 @@
     {
       "type": 0,
       "value": "Returns the start of the month of a string timestamp"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [
@@ -1389,12 +1401,6 @@
     {
       "type": 0,
       "value": "The provided workflow run name is not valid."
-    }
-  ],
-  "VRwgOo": [
-    {
-      "type": 0,
-      "value": "Enter a condition"
     }
   ],
   "VVfYvq": [
@@ -1607,12 +1613,6 @@
     {
       "type": 0,
       "value": "This operation has already been deleted."
-    }
-  ],
-  "ZcTA+B": [
-    {
-      "type": 0,
-      "value": "Delete"
     }
   ],
   "a7j3gS": [
