@@ -8,6 +8,7 @@ export type OperationCardProps = {
   iconUrl: string;
   connectorName: string;
   category: 'Built-in' | 'Azure' | '';
+  onClick: (id: string) => void;
 } & CommonCardProps;
 
 export interface CommonCardProps {
@@ -39,6 +40,7 @@ export const OperationCard = (props: OperationCardProps) => {
         </div>
         <div className="msla-card-title-container">
           <Text className="msla-card-title">{props.title}</Text>
+          <button onClick={() => props.onClick(props.id)}>{'Select'}</button> {/*  danielle localize */}
         </div>
       </div>
       <Text className="msla-card-description">{props.subtitle}</Text>

@@ -13,6 +13,7 @@ export type RecommendationPanelProps = {
   toggleCollapse: () => void;
   operationSearchResults: OperationSearchResult[];
   connectorBrowse: Connector[];
+  onOperationClick: (id: string) => void;
 } & CommonPanelProps;
 
 export const RecommendationPanel = (props: RecommendationPanelProps) => {
@@ -42,6 +43,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
 
     return (
       <OperationCard
+        onClick={props.onOperationClick}
         category={properties.category}
         iconUrl={properties.api.iconUri}
         title={properties.summary}

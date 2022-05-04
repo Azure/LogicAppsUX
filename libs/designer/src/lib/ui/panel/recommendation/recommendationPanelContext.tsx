@@ -1,9 +1,12 @@
+import type { AddNodePayload } from '../../../core/state/workflowSlice';
+import { addNode } from '../../../core/state/workflowSlice';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
 import { connectorsSearchResultsMock } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel } from '@microsoft/designer-ui';
 import React from 'react';
 import { useQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
 
 const getSearchResult = (term: string) => {
   const searchService = SearchService();
@@ -17,6 +20,7 @@ const getBrowseResult = () => {
 };
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
+  const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = React.useState('');
   const search = (term: string) => {
     setSearchTerm(term);
@@ -35,8 +39,19 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const searchResults = searchResponse.data;
   const browseResults = browseResponse.data;
 
+  const onOperationClick = (id: string) => {
+    const addPayload: AddNodePayload = {
+      id,
+      parentId: '123', // Danielle fix
+      graphId: 'root',
+    };
+    dispatch(addNode(addPayload));
+    return;
+  };
+
   return (
     <RecommendationPanel
+      onOperationClick={onOperationClick}
       placeholder={''}
       operationSearchResults={searchResults?.searchOperations || []}
       connectorBrowse={browseResults || []}

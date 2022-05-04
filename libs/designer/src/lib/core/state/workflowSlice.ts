@@ -29,7 +29,7 @@ const initialState: WorkflowState = {
   nodesMetadata: {},
 };
 
-interface AddNodePayload {
+export interface AddNodePayload {
   id: string;
   parentId?: string;
   childId?: string;
@@ -44,6 +44,10 @@ export const workflowSlice = createSlice({
       state.workflowSpec = action.payload;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
+      if (action.payload.parentId) {
+        const workflowNode: WorkflowNode = { id: action.payload.id, height: 100, width: 100 }; // Danielle how do we determine dimensions
+        state.graph?.children.push(workflowNode);
+      }
       // TODO: Add node addition
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
