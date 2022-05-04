@@ -80,7 +80,7 @@ export const ExpressionsEditor = ({ initialExpressions, maximumExpressions, read
   };
 
   const handleAddClick = (): void => {
-    const updatedExpressions = expressions.slice();
+    const updatedExpressions = [...expressions];
     updatedExpressions.push('');
 
     onChange(updatedExpressions);
@@ -89,7 +89,7 @@ export const ExpressionsEditor = ({ initialExpressions, maximumExpressions, read
   };
 
   const handleChange = (index: number, newExpression: string): void => {
-    const updatedExpressions = expressions.slice();
+    const updatedExpressions = [...expressions];
     updatedExpressions[index] = newExpression;
 
     onChange(updatedExpressions);
@@ -97,7 +97,7 @@ export const ExpressionsEditor = ({ initialExpressions, maximumExpressions, read
   };
 
   const handleDelete = (index: number): void => {
-    const updatedExpressions = expressions.slice();
+    const updatedExpressions = [...expressions];
     updatedExpressions.splice(index, 1);
 
     onChange(updatedExpressions);

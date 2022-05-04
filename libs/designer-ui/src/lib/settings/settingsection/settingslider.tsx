@@ -8,17 +8,23 @@ import { useIntl } from 'react-intl';
 interface CustomValueSliderProps {
   value: number;
   isReadOnly: boolean;
+  maxVal?: number;
+  minVal?: number;
+  defaultValue?: number;
 }
 
-export const CustomValueSlider = ({ value, isReadOnly: readOnly }: CustomValueSliderProps): JSX.Element => {
+export const CustomValueSlider = ({
+  value,
+  isReadOnly: readOnly,
+  maxVal = 100,
+  minVal = 0,
+  defaultValue = 100,
+}: CustomValueSliderProps): JSX.Element => {
   const [checked, toggleChecked] = useBoolean(false);
   const onToggleInputChange = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => {
     toggleChecked.toggle();
   };
-  const min = 0;
-  const max = 100;
-  const defaultValue = 50;
-  const [sliderCount, setCount] = useState(value || defaultValue);
+  const [sliderCount, setCount] = useState(value ?? defaultValue);
   const onSliderValueChanged = (value: number): void => {
     setCount(value);
   };
