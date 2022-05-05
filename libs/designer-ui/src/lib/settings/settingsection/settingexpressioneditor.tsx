@@ -23,16 +23,12 @@ export const MultiAddExpressionEditor = ({ initialExpressions, readOnly, visible
     readOnly = defaultProps.readOnly;
     visible = defaultProps.visible;
   }
-  const [expressions, setExpressions] = useState(initialExpressions);
+  const [, setExpressions] = useState(initialExpressions);
   const onExpressionsChange = (updatedExpressions: string[]): void => {
     setExpressions(updatedExpressions);
   };
 
-  return (
-    <>
-      <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly ?? false} onChange={onExpressionsChange} />
-    </>
-  );
+  return <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly ?? false} onChange={onExpressionsChange} />;
 };
 
 const styles: Partial<ITextFieldStyles> = {
@@ -124,12 +120,6 @@ interface ExpressionsProps {
 
 const Expressions = ({ expressions, readOnly, onChange, onDelete }: ExpressionsProps): JSX.Element => {
   const expressionRef = useRef<typeof Expressions & { focus: any }>();
-
-  const focus = (): void => {
-    if (expressionRef.current) {
-      expressionRef.current.focus();
-    }
-  };
   return (
     <>
       {expressions.map((expression, index, array) => {
@@ -174,12 +164,6 @@ const Expression = ({ expression, index, readOnly, onChange, onDelete }: Express
 
   const deleteIconButtonProps: IIconProps = {
     iconName: 'Clear',
-  };
-
-  const focus = (): void => {
-    if (inputRef) {
-      inputRef.focus();
-    }
   };
 
   const handleChange = (_: React.FormEvent<HTMLElement>, newExpression: string | undefined): void => {

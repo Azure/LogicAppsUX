@@ -1,6 +1,5 @@
 import { Text, Image, ImageFit } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import type { MessageDescriptor } from 'react-intl';
 
 export type ConnectorSummaryCardProps = {
   connectorName: string;
