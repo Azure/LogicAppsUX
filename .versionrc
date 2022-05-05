@@ -39,6 +39,22 @@
     {
       "filename": "apps/vs-code-designer/src/package.json",
       "type": "json"
+    },
+    {
+      "filename": "apps/vs-code-data-mapper/src/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/data-mapper/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/parsers/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/services/designer-client-services/package.json",
+      "type": "json"
     }
   ]
 }
