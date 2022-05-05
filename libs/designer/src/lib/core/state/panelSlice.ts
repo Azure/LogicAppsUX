@@ -5,6 +5,8 @@ export interface PanelState {
   collapsed: boolean;
   selectedNode: string;
   isDiscovery: boolean;
+  parentId?: string;
+  childId?: string;
 }
 
 const initialState: PanelState = {
@@ -28,9 +30,11 @@ export const panelSlice = createSlice({
       state.selectedNode = action.payload;
       state.isDiscovery = false;
     },
-    expandDiscoveryPanel: (state) => {
+    expandDiscoveryPanel: (state, action: PayloadAction<{ childId?: string; parentId?: string }>) => {
       state.collapsed = false;
       state.isDiscovery = true;
+      state.parentId = action.payload.parentId;
+      state.childId = action.payload.childId;
     },
   },
 });

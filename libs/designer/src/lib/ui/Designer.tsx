@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useLayout } from '../core/graphlayout';
-import { collapsePanel, expandPanel } from '../core/state/panelSlice';
 import { updateNodeSizes } from '../core/state/workflowSlice';
 import type { RootState } from '../core/store';
 import CustomTestNode from './CustomNodes/CustomTestNode';
@@ -60,10 +59,6 @@ const DND_OPTIONS = {
 
 const queryClient = new QueryClient();
 export const Designer = () => {
-  const { collapsed, selectedNode, isDiscovery } = useSelector((state: RootState) => {
-    const { collapsed, selectedNode, isDiscovery } = state.panel;
-    return { collapsed, selectedNode, isDiscovery };
-  });
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch();
 
@@ -73,14 +68,6 @@ export const Designer = () => {
     },
     [dispatch]
   );
-
-  const collapse = useCallback(() => {
-    dispatch(collapsePanel());
-  }, [dispatch]);
-
-  const expand = useCallback(() => {
-    dispatch(expandPanel());
-  }, [dispatch]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -102,14 +89,7 @@ export const Designer = () => {
                 hideAttribution: true,
               }}
             >
-              <PanelRoot
-                collapsePanel={collapse}
-                expandPanel={expand}
-                collapsed={collapsed}
-                isRecommendation={isDiscovery}
-                noNodeSelected={!selectedNode}
-                title={selectedNode}
-              />
+              <PanelRoot />
             </ReactFlow>
           </ReactFlowProvider>
         </div>

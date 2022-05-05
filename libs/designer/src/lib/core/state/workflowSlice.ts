@@ -1,5 +1,5 @@
 import { initializeGraphState } from '../parsers/ParseReduxAction';
-import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
+import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -47,8 +47,15 @@ export const workflowSlice = createSlice({
       if (action.payload.parentId) {
         const workflowNode: WorkflowNode = { id: action.payload.id, height: 100, width: 100 }; // Danielle how do we determine dimensions
         state.graph?.children.push(workflowNode);
+
+        const workflowEdge: WorkflowEdge = {
+          id: `${action.payload.id}-${action.payload.id}`,
+          source: action.payload.parentId,
+          target: action.payload.id,
+        };
+        state.graph?.edges.push(workflowEdge);
       }
-      // TODO: Add node addition
+      // danielle: then add to actions[] ? this might happen in RQ now
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
       const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');

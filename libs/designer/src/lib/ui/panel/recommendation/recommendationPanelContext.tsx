@@ -19,7 +19,12 @@ const getBrowseResult = () => {
   return data;
 };
 
-export const RecommendationPanelContext = (props: CommonPanelProps) => {
+export type RecommendationPanelContextProps = {
+  parentId?: string;
+  childId?: string;
+} & CommonPanelProps;
+
+export const RecommendationPanelContext = (props: RecommendationPanelContextProps) => {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = React.useState('');
   const search = (term: string) => {
@@ -42,7 +47,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const onOperationClick = (id: string) => {
     const addPayload: AddNodePayload = {
       id,
-      parentId: '123', // Danielle fix
+      parentId: 'Initialize_variable', // Danielle fix
       graphId: 'root',
     };
     dispatch(addNode(addPayload));
