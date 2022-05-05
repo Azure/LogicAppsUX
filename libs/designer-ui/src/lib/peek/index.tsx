@@ -1,15 +1,15 @@
-import { CustomEditor as Editor } from '../editor';
+import { CustomEditor as Editor, EditorLanguage } from '../editor';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import type * as monaco from 'monaco-editor';
 import React, { useRef, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface PeekCardProps {
+export interface PeekProps {
   input: string;
   onOKClick(): void;
 }
 
-export function PeekCard({ input, onOKClick, ...cardProps }: PeekCardProps): JSX.Element {
+export function Peek({ input, onOKClick, ...cardProps }: PeekProps): JSX.Element {
   const [editorStyle, setEditorStyle] = useState(getEditorStyle(input));
   const intl = useIntl();
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
@@ -38,7 +38,13 @@ export function PeekCard({ input, onOKClick, ...cardProps }: PeekCardProps): JSX
   return (
     <div className="msla-card-inner-body msla-peek">
       <div className="msla-peek-json" style={editorStyle}>
-        <Editor editorRef={editorRef} defaultValue={input} fontSize={options.fontSize} readOnly={options.readOnly} />
+        <Editor
+          editorRef={editorRef}
+          defaultValue={input}
+          fontSize={options.fontSize}
+          readOnly={options.readOnly}
+          language={EditorLanguage.json}
+        />
       </div>
       <div className="msla-card-config-button-container msla-code-view-done-button">
         <PrimaryButton className="msla-card-button-primary" onClick={onOKClick}>
