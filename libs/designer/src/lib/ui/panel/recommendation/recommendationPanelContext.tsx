@@ -1,3 +1,4 @@
+import { switchToOperationPanel } from '../../../core/state/panelSlice';
 import type { AddNodePayload } from '../../../core/state/workflowSlice';
 import { addNode } from '../../../core/state/workflowSlice';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
@@ -47,10 +48,12 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
   const onOperationClick = (id: string) => {
     const addPayload: AddNodePayload = {
       id,
-      parentId: 'Initialize_variable', // Danielle fix
+      parentId: props.parentId,
+      childId: props.childId,
       graphId: 'root',
     };
     dispatch(addNode(addPayload));
+    dispatch(switchToOperationPanel(id));
     return;
   };
 

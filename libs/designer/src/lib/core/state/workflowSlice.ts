@@ -45,15 +45,27 @@ export const workflowSlice = createSlice({
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
       if (action.payload.parentId) {
-        const workflowNode: WorkflowNode = { id: action.payload.id, height: 100, width: 100 }; // Danielle how do we determine dimensions
+        const newNodeId = action.payload.id;
+        const childId = action.payload.childId;
+        const parentId = action.payload.parentId;
+        const workflowNode: WorkflowNode = { id: newNodeId, height: 100, width: 100 }; // Danielle how do we determine dimensions
         state.graph?.children.push(workflowNode);
 
         const workflowEdge: WorkflowEdge = {
-          id: `${action.payload.id}-${action.payload.id}`,
+          id: `${parentId}-${newNodeId}`,
           source: action.payload.parentId,
-          target: action.payload.id,
+          target: newNodeId,
         };
         state.graph?.edges.push(workflowEdge);
+
+        if (childId) {
+          const childWorkflowEdge: WorkflowEdge = {
+            id: `${newNodeId}-${childId}`,
+            source: newNodeId,
+            target: childId,
+          };
+          state.graph?.edges.push(childWorkflowEdge);
+        }
       }
       // danielle: then add to actions[] ? this might happen in RQ now
     },

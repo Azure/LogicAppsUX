@@ -20,14 +20,6 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) =>
     evt.stopPropagation();
     const newId = guid();
     dispatch(expandDiscoveryPanel({ childId: child, parentId: parent }));
-    dispatch(
-      addNode({
-        id: newId,
-        graphId,
-        parentId: parent,
-        childId: child,
-      })
-    );
   };
 
   const [{ isOver, canDrop }, drop] = useDrop(() => ({

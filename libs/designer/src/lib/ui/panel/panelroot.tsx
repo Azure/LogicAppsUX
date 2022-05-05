@@ -21,9 +21,8 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: Pa
   const intl = useIntl();
   const dispatch = useDispatch();
 
-  const { collapsed, selectedNode, isDiscovery } = useSelector((state: RootState) => {
-    const { collapsed, selectedNode, isDiscovery } = state.panel;
-    return { collapsed, selectedNode, isDiscovery };
+  const { collapsed, selectedNode, isDiscovery, parentId, childId } = useSelector((state: RootState) => {
+    return state.panel;
   });
 
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
@@ -151,8 +150,8 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: Pa
       isCollapsed={collapsed}
       toggleCollapse={togglePanel}
       width={width}
-      childId={'123'}
-      parentId={'123'}
+      childId={childId}
+      parentId={parentId}
     ></RecommendationPanelContext>
   ) : (
     <PanelContainer

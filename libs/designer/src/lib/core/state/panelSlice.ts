@@ -36,10 +36,14 @@ export const panelSlice = createSlice({
       state.parentId = action.payload.parentId;
       state.childId = action.payload.childId;
     },
+    switchToOperationPanel: (state, action: PayloadAction<string>) => {
+      state.selectedNode = action.payload;
+      state.isDiscovery = false;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { expandPanel, collapsePanel, changePanelNode, expandDiscoveryPanel } = panelSlice.actions;
+export const { expandPanel, collapsePanel, changePanelNode, expandDiscoveryPanel, switchToOperationPanel } = panelSlice.actions;
 
 export default panelSlice.reducer;
