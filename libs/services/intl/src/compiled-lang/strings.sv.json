@@ -279,6 +279,12 @@
       "value": "Fel"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -911,6 +917,12 @@
       "value": "När den används inuti en for-each-loop, returnerar den här funktionen det aktuella objektet för den angivna loopen."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1023,6 +1035,12 @@
     {
       "type": 0,
       "value": "Returnerar resultaten från åtgärderna på toppnivå i den angivna omfångsdefinierade åtgärden, till exempel en For_each, Until eller Scope."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
     }
   ],
   "Oib1mL": [
@@ -1255,6 +1273,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1305,6 +1329,12 @@
     {
       "type": 0,
       "value": "Returnerar månadens start för en strängtidsstämpel"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [

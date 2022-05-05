@@ -279,6 +279,12 @@
       "value": "Con errores"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -911,6 +917,12 @@
       "value": "Cuando se utiliza dentro de un bucle para cada uno, esta función devuelve el elemento actual del bucle especificado."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1023,6 +1035,12 @@
     {
       "type": 0,
       "value": "Devuelve los resultados de las acciones de nivel superior en la acción con ámbito especificada, como una acción For_each, Until o Scope."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
     }
   ],
   "Oib1mL": [
@@ -1251,6 +1269,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1301,6 +1325,12 @@
     {
       "type": 0,
       "value": "Devuelve el inicio del mes de la marca de tiempo de una cadena."
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [

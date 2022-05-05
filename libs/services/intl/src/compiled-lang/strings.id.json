@@ -268,6 +268,12 @@
       "value": "Bermasalah"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -889,6 +895,12 @@
       "value": "Ketika digunakan di dalam loop for-each, fungsi ini menghasilkan item saat ini dari loop yang ditentukan."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1001,6 +1013,12 @@
     {
       "type": 0,
       "value": "Menghasilkan hasil dari tindakan tingkat atas dalam tindakan tercakup yang ditentukan, seperti tindakan For_each, Until, atau Scope."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
     }
   ],
   "Oib1mL": [
@@ -1218,6 +1236,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1268,6 +1292,12 @@
     {
       "type": 0,
       "value": "Menampilkan permulaan bulan pada tanda waktu string"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [

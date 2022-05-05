@@ -268,6 +268,12 @@
       "value": "エラー"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -889,6 +895,12 @@
       "value": "for-each ループ内で使用すると、この関数は指定されたループの現在の項目を返します。"
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1001,6 +1013,12 @@
     {
       "type": 0,
       "value": "指定されたスコープ アクション内のトップレベルのアクション (For_each、Until、Scope のアクションなど) の結果を返します。"
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
     }
   ],
   "Oib1mL": [
@@ -1218,6 +1236,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1268,6 +1292,12 @@
     {
       "type": 0,
       "value": "文字列のタイムスタンプの月の開始を返します"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [

@@ -268,6 +268,12 @@
       "value": "已故障"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -889,6 +895,12 @@
       "value": "當在 for-each 迴圈內使用時，此函式會傳回指定迴圈目前的項目。"
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1001,6 +1013,12 @@
     {
       "type": 0,
       "value": "傳回指定範圍動作內的最上層動作結果，例如 For_each、Until 或 Scope 動作。"
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
     }
   ],
   "Oib1mL": [
@@ -1218,6 +1236,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1268,6 +1292,12 @@
     {
       "type": 0,
       "value": "傳回字串時間戳記的每月開始時間"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [

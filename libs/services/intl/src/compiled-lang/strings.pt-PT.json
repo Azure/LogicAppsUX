@@ -279,6 +279,12 @@
       "value": "Com falhas"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -911,6 +917,12 @@
       "value": "Quando utilizada em cada ciclo, esta função devolve o item atual do ciclo especificado."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1023,6 +1035,12 @@
     {
       "type": 0,
       "value": "Devolve os resultados das ações de nível superior na ação com âmbito especificada, como uma ação For_each, Até ou Âmbito."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
     }
   ],
   "Oib1mL": [
@@ -1251,6 +1269,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1301,6 +1325,12 @@
     {
       "type": 0,
       "value": "Devolve o início do mês de um carimbo de data/hora de cadeia"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [
