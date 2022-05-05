@@ -10,6 +10,8 @@ import {
 } from '../workflow/languageservice/workflowlanguageservice';
 import { map } from '@microsoft-logic-apps/utils';
 import Editor, { loader } from '@monaco-editor/react';
+import type * as monaco from 'monaco-editor';
+import type { MutableRefObject } from 'react';
 import { useEffect } from 'react';
 
 // TODO: Add more languages
@@ -20,31 +22,35 @@ export enum EditorLanguage {
   templateExpressionLanguage = 'TemplateExpressionLanguage',
 }
 
-export interface EditorProps {
+export interface EditorProps extends EditorOptions {
+  editorRef?: MutableRefObject<monaco.editor.IStandaloneCodeEditor | null>;
   defaultValue?: string;
-  folding?: boolean;
   height?: number | string;
   language?: EditorLanguage;
-  lineNumbers?: 'on' | 'off' | 'relative' | 'interval' | ((lineNumber: number) => string);
-  minimapEnabled?: boolean;
-  readOnly?: boolean;
   width?: number | string;
   value?: string;
 }
 
-export const CustomEditor: React.FC<EditorProps> = (props) => {
-  const {
-    height,
-    width,
-    folding = true,
-    lineNumbers = 'on',
-    minimapEnabled = true,
-    readOnly = false,
-    value,
-    language,
-    defaultValue,
-  } = props;
+export interface EditorOptions {
+  folding?: boolean;
+  fontSize?: number;
+  readOnly?: boolean;
+  lineNumbers?: 'on' | 'off' | 'relative' | 'interval' | ((lineNumber: number) => string);
+  minimapEnabled?: boolean;
+  scrollBeyondLastLine?: boolean;
+  wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
+}
 
+export const CustomEditor: React.FC<EditorProps> = ({
+  editorRef,
+  height,
+  width,
+  minimapEnabled = true,
+  value,
+  language,
+  defaultValue,
+  ...options
+}): JSX.Element => {
   const initEditor = () => {
     const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
     const templateFunctions = getTemplateFunctions();
@@ -74,23 +80,23 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
     initEditor();
   }, []);
 
+  function handleEditorDidMount(editor: monaco.editor.IStandaloneCodeEditor) {
+    if (editorRef) {
+      editorRef.current = editor;
+    }
+  }
+
   return (
     <Editor
       className="msla-monaco"
       height={height}
       width={width}
-      options={{
-        folding,
-        lineNumbers,
-        scrollBeyondLastLine: false,
-        minimap: { enabled: minimapEnabled },
-        readOnly,
-        fontSize: 12,
-      }}
+      options={{ ...options, minimap: { enabled: minimapEnabled } }}
       value={value}
       defaultValue={defaultValue}
       defaultLanguage={language ? language.toString() : undefined}
       theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : 'light'}
+      onMount={handleEditorDidMount}
     />
   );
 };
