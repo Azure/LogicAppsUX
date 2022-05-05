@@ -38,8 +38,8 @@ jobs:
             { dist: './dist/libs/designer', package: 'designer' },
             { dist: './dist/libs/utils', package: 'utils' },
             { dist: './dist/libs/designer-ui', package: 'designer-ui' },
-            { dist: './dist/libs/services/designer-client-services', package: 'designer-client-services' },
-            { dist: './dist/libs/services/parsers', package: 'parsers' },
+            { dist: './dist/libs/services/designer-client-services', package: 'services-designer-client-services' },
+            { dist: './dist/libs/parsers', package: 'parsers' },
             { dist: './dist/libs/services/intl', package: 'services-intl' },
           ]
     steps:
