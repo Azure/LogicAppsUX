@@ -12,11 +12,7 @@ describe('ui/settings/settingsection', () => {
       expanded: false,
       isInverted: false,
       isReadOnly: false,
-      renderContent: () => (
-        <>
-          <p className="sample-class-name">Sample JSX</p>
-        </>
-      ),
+      renderContent: () => <p className="sample-class-name">Sample JSX</p>,
     };
     renderer = ReactShallowRenderer.createRenderer();
   });
