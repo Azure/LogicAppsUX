@@ -5,7 +5,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface PeekCardProps {
-  // collapsed?: boolean;
   input: string;
   onOKClick(): void;
 }
