@@ -268,6 +268,12 @@
       "value": "오류"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -889,6 +895,12 @@
       "value": "for each 루프 내에서 사용하는 경우 이 함수는 지정된 루프의 현재 항목을 반환합니다."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1001,6 +1013,12 @@
     {
       "type": 0,
       "value": "지정된 범위 작업(예: For_each, Until 또는 Scope 작업)에서 최상위 작업의 결과를 반환합니다."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
     }
   ],
   "Oib1mL": [
@@ -1218,6 +1236,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1268,6 +1292,12 @@
     {
       "type": 0,
       "value": "문자열 타임스탬프의 월초를 반환합니다."
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [

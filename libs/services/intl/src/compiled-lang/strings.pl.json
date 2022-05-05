@@ -317,6 +317,12 @@
       "value": "Błędne"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -971,6 +977,12 @@
       "value": "W przypadku użycia wewnątrz pętli for-each ta funkcja zwraca bieżący element określonej pętli."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1083,6 +1095,12 @@
     {
       "type": 0,
       "value": "Zwraca wyniki z akcji najwyższego poziomu w podanej akcji o określonym zakresie takiej jak For_each, Until lub Scope."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
     }
   ],
   "Oib1mL": [
@@ -1333,6 +1351,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1383,6 +1407,12 @@
     {
       "type": 0,
       "value": "Zwraca początek miesiąca z sygnatury czasowej przekazanego ciągu"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [

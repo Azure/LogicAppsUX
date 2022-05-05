@@ -279,6 +279,12 @@
       "value": "Hibás"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -911,6 +917,12 @@
       "value": "For-each ciklusban való használat esetén ez a függvény a megadott ciklus aktuális elemét adja vissza."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1023,6 +1035,12 @@
     {
       "type": 0,
       "value": "A legfelső szintű hatóköri műveletek eredményeit adja vissza a megadott hatóköri műveletben, például „For_each”, „Until” vagy „Scope action”."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
     }
   ],
   "Oib1mL": [
@@ -1255,6 +1273,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1305,6 +1329,12 @@
     {
       "type": 0,
       "value": "Egy átadott sztring típusú időbélyegből a hónap kezdetét adja vissza."
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [
