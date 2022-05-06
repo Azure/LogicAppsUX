@@ -84,6 +84,7 @@
   "9djnqI": "Het resultaat van het bij elkaar optellen van de twee getallen wordt geretourneerd",
   "9u/Ae3": "Indien beide parameters waar zijn, wordt Waar geretourneerd",
   "ANbEeQ": "Vereist. De naam van de actie met de gewenste waarden.",
+  "AO6T9u": "Done",
   "ArTh0/": "Vereist. De tekenreeks die moet worden gecodeerd naar de Base 64-indeling.",
   "B2s0iG": "Vereist. De index van het onderdeel dat moet worden opgehaald.",
   "BCAnZP": "Eén teken voor aanduiding van de indeling of een aangepast indelingspatroon waarmee de indeling van de waarde voor dit tijdstempel wordt aangegeven. Als de indeling niet is opgegeven, wordt de ISO 8601-indeling ('o') gebruikt.",

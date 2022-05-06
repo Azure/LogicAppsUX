@@ -84,6 +84,7 @@
   "9djnqI": "Két szám összeadásának eredményét adja vissza.",
   "9u/Ae3": "Igaz értéket ad vissza, ha mindkét paraméter igaz.",
   "ANbEeQ": "Kötelező megadni. Azon művelet neve, melynek értékei szükségesek.",
+  "AO6T9u": "Done",
   "ArTh0/": "Kötelező megadni. A Base64-ábrázolással kódolandó sztring.",
   "B2s0iG": "Kötelező megadni. A beolvasandó rész indexe.",
   "BCAnZP": "Egyetlen formátummegadó karakter, vagy pedig egy egyéni formátumminta, mely az időbélyeg értékének formátumát határozza meg. Ha nincs megadva formátum, a rendszer az ISO 8601 formátumot („o”) használja.",

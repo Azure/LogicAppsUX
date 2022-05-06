@@ -84,6 +84,7 @@
   "9djnqI": "Devuelve el resultado de sumar los dos números.",
   "9u/Ae3": "Devuelve true si ambos parámetros son verdaderos.",
   "ANbEeQ": "Obligatorio. El nombre de la acción de la que quiere los valores.",
+  "AO6T9u": "Done",
   "ArTh0/": "Obligatorio. La cadena que se codificará como representación en Base64.",
   "B2s0iG": "Obligatorio. El índice del elemento que se recuperará.",
   "BCAnZP": "Un carácter especificador de formato único o un patrón de formato personalizado que indica cómo debe ser el formato del valor de esta marca de tiempo. Si no se proporciona ningún formato, se usará el formato ISO 8601 (\"o\").",

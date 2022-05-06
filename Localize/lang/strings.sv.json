@@ -84,6 +84,7 @@
   "9djnqI": "Returnerar resultatet av att lägga till de två talen",
   "9u/Ae3": "Returnerar sant om båda parametrarna är sanna",
   "ANbEeQ": "Krävs. Namnet på åtgärden vars värden du vill ha.",
+  "AO6T9u": "Done",
   "ArTh0/": "Krävs. Strängen som ska kodas till base64-representation.",
   "B2s0iG": "Krävs. Index för delen att hämta.",
   "BCAnZP": "Antingen ett enskilt formatspecificerartecken eller ett anpassat formatmönster som indikerar hur värdet för den här tidsstämpeln ska formateras. Om formatet inte anges så används ISO 8601-formatet (o).",
