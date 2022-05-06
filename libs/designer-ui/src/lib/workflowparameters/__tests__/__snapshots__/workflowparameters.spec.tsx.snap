@@ -7,17 +7,7 @@ exports[`ui/workflowparameters/workflowparameters should construct. 1`] = `
   <h3
     className="msla-workflow-parameters-create"
   >
-    <Memo(MemoizedFormattedMessage)
-      defaultMessage={
-        Array [
-          Object {
-            "type": 0,
-            "value": "Parameters",
-          },
-        ]
-      }
-      id="pRUJff"
-    />
+    Parameters
   </h3>
   <InfoBar
     isInverted={false}

@@ -1,6 +1,6 @@
 import type { IDialogContentProps, IModalProps } from '@fluentui/react';
 import { Dialog, DialogFooter, PrimaryButton } from '@fluentui/react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 export interface AlertProps {
   hidden: boolean;
@@ -15,6 +15,7 @@ const modalProps: IModalProps = {
 };
 
 export const Alert: React.FC<AlertProps> = ({ hidden, message, title, onDismiss }) => {
+  const intl = useIntl();
   if (hidden) {
     return null;
   }
@@ -23,12 +24,16 @@ export const Alert: React.FC<AlertProps> = ({ hidden, message, title, onDismiss 
     title,
   };
 
+  const okMessage = intl.formatMessage({
+    defaultMessage: 'OK',
+    description: 'OK message appearing on a alert message modal.',
+  });
   return (
     <Dialog dialogContentProps={dialogContentProps} hidden={hidden} modalProps={modalProps} onDismiss={onDismiss}>
       {message}
       <DialogFooter>
         <PrimaryButton className="dialog-ok-button" onClick={onDismiss}>
-          <FormattedMessage defaultMessage="OK" description="OK message appearing on a alert message modal." />
+          {okMessage}
         </PrimaryButton>
       </DialogFooter>
     </Dialog>

@@ -22,17 +22,7 @@ exports[`ui/dialogs/_alert should render 1`] = `
       className="dialog-ok-button"
       onClick={[MockFunction]}
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "OK",
-            },
-          ]
-        }
-        id="uN4zFU"
-      />
+      OK
     </CustomizedPrimaryButton>
   </StyledDialogFooterBase>
 </Dialog>
