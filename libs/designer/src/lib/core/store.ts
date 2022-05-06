@@ -1,20 +1,14 @@
-import { operationDeserializer } from './actions/operationdeserializer';
-import connectorsReducer from './state/connectorSlice';
 import operationMetadataReducer from './state/operationMetadataSlice';
 import panelReducer from './state/panelSlice';
 import workflowReducer from './state/workflowSlice';
 import { configureStore } from '@reduxjs/toolkit';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { AnyObject } from 'immer/dist/internal';
 
 export const store = configureStore({
   reducer: {
     workflow: workflowReducer,
     operations: operationMetadataReducer,
-    connectors: connectorsReducer,
     panel: panelReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(operationDeserializer.middleware),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

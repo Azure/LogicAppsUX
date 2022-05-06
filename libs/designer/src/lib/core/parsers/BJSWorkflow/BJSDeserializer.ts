@@ -9,9 +9,13 @@ const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolea
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
 };
 
-export const Deserialize = (
-  definition: LogicAppsV2.WorkflowDefinition
-): { graph: WorkflowGraph; actionData: Actions; nodesMetadata: NodesMetadata } => {
+export type DeserializedWorkflow = {
+  graph: WorkflowGraph;
+  actionData: Actions;
+  nodesMetadata: NodesMetadata;
+};
+
+export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): DeserializedWorkflow => {
   throwIfMultipleTriggers(definition);
 
   //process Trigger

@@ -1,6 +1,6 @@
+import type { ParameterInfo } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { ParameterInfo } from '@microsoft/designer-ui';
 
 export interface OperationInfo {
   connectorId: string;
