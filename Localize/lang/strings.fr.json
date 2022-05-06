@@ -84,6 +84,7 @@
   "9djnqI": "Retourne le résultat de l'ajout de deux nombres",
   "9u/Ae3": "Retourne true si les deux paramètres ont la valeur true",
   "ANbEeQ": "Obligatoire. Nom de l'action dont vous voulez obtenir les valeurs.",
+  "AO6T9u": "Done",
   "ArTh0/": "Obligatoire. Chaîne à encoder dans une représentation en base64.",
   "B2s0iG": "Obligatoire. Index de la partie à récupérer.",
   "BCAnZP": "Caractère de spécificateur de format unique ou modèle de format personnalisé qui indique comment mettre en forme la valeur de cet horodateur. Si aucun format n'est fourni, le format ISO 8601 (« o ») est utilisé.",

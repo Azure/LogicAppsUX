@@ -84,6 +84,7 @@
   "9djnqI": "Devolve o resultado da adição dos dois números",
   "9u/Ae3": "Devolve verdadeiro se ambos os parâmetros forem verdadeiros",
   "ANbEeQ": "Obrigatório. O nome da ação cujos valores quer.",
+  "AO6T9u": "Done",
   "ArTh0/": "Obrigatório. A cadeia a codificar numa representação base64.",
   "B2s0iG": "Obrigatório. O índice da parte a obter.",
   "BCAnZP": "Um caráter especificador de formato único ou um padrão de formato personalizado que indica como formatar o valor deste carimbo de data/hora. Se não fornecer o formato, é utilizado o formato ISO 8601 (\"o\").",
