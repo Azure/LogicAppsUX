@@ -1,13 +1,14 @@
 import { switchToOperationPanel } from '../../../core/state/panelSlice';
 import type { AddNodePayload } from '../../../core/state/workflowSlice';
 import { addNode } from '../../../core/state/workflowSlice';
+import type { RootState } from '../../../core/store';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
 import { connectorsSearchResultsMock } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel } from '@microsoft/designer-ui';
 import React from 'react';
 import { useQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const getSearchResult = (term: string) => {
   const searchService = SearchService();
@@ -20,13 +21,13 @@ const getBrowseResult = () => {
   return data;
 };
 
-export type RecommendationPanelContextProps = {
-  parentId?: string;
-  childId?: string;
-} & CommonPanelProps;
-
-export const RecommendationPanelContext = (props: RecommendationPanelContextProps) => {
+export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
+
+  const { childId, parentId } = useSelector((state: RootState) => {
+    return state.panel;
+  });
+
   const [searchTerm, setSearchTerm] = React.useState('');
   const search = (term: string) => {
     setSearchTerm(term);
@@ -48,8 +49,8 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
   const onOperationClick = (id: string) => {
     const addPayload: AddNodePayload = {
       id,
-      parentId: props.parentId,
-      childId: props.childId,
+      parentId: parentId,
+      childId: childId,
       graphId: 'root',
     };
     dispatch(addNode(addPayload));
