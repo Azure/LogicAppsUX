@@ -1,9 +1,18 @@
+import type { ParameterInfo } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface OperationInfo {
   connectorId: string;
   operationId: string;
+}
+
+export interface ParameterGroup {
+  id: string;
+  description?: string;
+  parameters: ParameterInfo[];
+  showAdvancedParameters?: boolean;
+  hasAdvancedParameters?: boolean;
 }
 
 export interface OperationMetadataState {

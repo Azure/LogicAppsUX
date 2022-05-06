@@ -22,32 +22,12 @@ exports[`ui/dialogs/_confirm should render 1`] = `
       className="dialog-ok-button"
       onClick={[MockFunction]}
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "OK",
-            },
-          ]
-        }
-        id="7GSk99"
-      />
+      OK
     </CustomizedPrimaryButton>
     <CustomizedDefaultButton
       onClick={[MockFunction]}
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "Cancel",
-            },
-          ]
-        }
-        id="iUs7pv"
-      />
+      Cancel
     </CustomizedDefaultButton>
   </StyledDialogFooterBase>
 </Dialog>

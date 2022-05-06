@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filtros"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
       "value": "Com falha"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -529,6 +541,12 @@
     {
       "type": 0,
       "value": "Necessário. O nome da ação cujos valores você deseja."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Done"
     }
   ],
   "ArTh0/": [
@@ -836,7 +854,7 @@
   "Jaz3EC": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+      "value": "Converte uma cadeia de caracteres que o carimbo de data/hora passou de um fuso horário de origem para um fuso horário de destino"
     }
   ],
   "JbgTET": [
@@ -905,10 +923,16 @@
       "value": "Quando usada dentro do loop for-each, esta função retorna o item atual do loop especificado."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
-      "value": "Required. The expressions that may be true."
+      "value": "Necessário. A expressão que pode ser verdadeira."
     }
   ],
   "M0HMjE": [
@@ -1019,6 +1043,12 @@
       "value": "Retorna os resultados das ações de nível superior na ação com escopo especificada, como uma ação For_each, Until ou Scope."
     }
   ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -1064,7 +1094,7 @@
   "P4rEwD": [
     {
       "type": 0,
-      "value": "Collection functions"
+      "value": "Funções de coleção"
     }
   ],
   "P8ZBF9": [
@@ -1194,7 +1224,7 @@
   "QrQDdp": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to subtract."
+      "value": "Necessário. Uma cadeia de caracteres contendo a unidade de tempo especificada no intervalo para subtrair."
     }
   ],
   "Qu1HkA": [
@@ -1245,6 +1275,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1276,7 +1312,7 @@
   "T7zcR6": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Necessário. A expressão que deve ser verdadeira."
     }
   ],
   "T8Xqt9": [
@@ -1295,6 +1331,12 @@
     {
       "type": 0,
       "value": "Retorna o início do mês de um carimbo de data/hora de cadeia de caracteres"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [
@@ -1637,6 +1679,12 @@
       "value": "Necessário. A coleção de onde obter os primeiros objetos de Contagem."
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Pesquisar"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -1918,7 +1966,7 @@
   "iU5Fdh": [
     {
       "type": 0,
-      "value": "Manipulation functions"
+      "value": "Funções de manipulação"
     }
   ],
   "iUs7pv": [
@@ -2493,6 +2541,12 @@
       "value": "Tipo"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Disparar"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2503,6 +2557,12 @@
     {
       "type": 0,
       "value": "Necessário. O número de horas a adicionar. Pode ser negativo para subtrair horas."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Operações"
     }
   ],
   "uN4zFU": [
@@ -2682,7 +2742,7 @@
   "y3AZQB": [
     {
       "type": 0,
-      "value": "Required. The object to compare equality."
+      "value": "Necessário. O objeto para comparar a igualdade."
     }
   ],
   "y6BcVN": [
@@ -2697,10 +2757,20 @@
       "value": "Necessário. O valor que é convertido em uma matriz."
     }
   ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "logotipo do "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
-      "value": "Date and time functions"
+      "value": "Funções de data e hora"
     }
   ],
   "z4YYlQ": [

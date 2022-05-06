@@ -35,7 +35,7 @@ export interface Operation {
   annotation?: Annotation;
   operationHeadersExtension?: HeadersExtension;
   supportsPaging?: boolean;
-  externalDocs?: Swagger.ExternalDocumentation;
+  externalDocs?: OpenAPIV2.ExternalDocumentationObject;
   uploadChunkMetadata?: UploadChunkMetadata;
   downloadChunkMetadata?: DownloadChunkMetadata;
 }
@@ -181,7 +181,7 @@ export interface ParameterBase {
 export interface SchemaProperty extends ParameterBase {
   isInsideArray?: boolean;
   parentArray?: string;
-  schema?: Swagger.Schema;
+  schema?: OpenAPIV2.SchemaObject;
   source?: string;
   contentHint?: string;
   dynamicallyAdded?: boolean;

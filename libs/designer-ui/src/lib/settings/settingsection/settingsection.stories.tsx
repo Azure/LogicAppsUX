@@ -1,6 +1,8 @@
 import type { SettingSectionComponentProps } from '..';
 import { SettingsSection } from '..';
+import { MultiAddExpressionEditor } from './settingexpressioneditor';
 import { ReactiveToggle } from './settingreactiveinput';
+import { CustomValueSlider } from './settingslider';
 import { SettingTextField } from './settingtextfield';
 import { RenderToggleSetting } from './settingtoggle';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -35,4 +37,20 @@ reactiveToggleWithText.args = {
   expanded: false,
   textFieldValue: '',
   renderContent: ReactiveToggle,
+};
+
+export const addMultipleConditions = Template.bind({});
+addMultipleConditions.args = {
+  id: 'addOrDeleteConditions',
+  title: 'Multi-Add Expression Settings',
+  expanded: false,
+  renderContent: MultiAddExpressionEditor,
+};
+
+export const sliderSetting = Template.bind({});
+sliderSetting.args = {
+  id: 'sliderSetting',
+  title: 'Setting Slider',
+  expanded: false,
+  renderContent: CustomValueSlider,
 };

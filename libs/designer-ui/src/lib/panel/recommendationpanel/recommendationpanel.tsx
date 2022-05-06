@@ -60,7 +60,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     return (
       <ConnectorSummaryCard
         connectorName={properties.displayName}
-        description={properties['description'] ? properties['description'] : ''}
+        description={properties['description'] || ''}
         id={connector.id}
         iconUrl={properties.iconUri}
         brandColor={properties.brandColor}
@@ -72,7 +72,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     setFilter(term);
     const filteredResult = props.operationSearchResults.filter((op) => {
       const category = op.properties.category;
-      if (filter && category !== filter) {
+      if (term && category !== term) {
         return false;
       }
       return true;
@@ -88,6 +88,11 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     );
   };
 
+  const filterHeader = intl.formatMessage({
+    defaultMessage: 'Filters',
+    description: 'Header to show that users can select below filters to narrow down results',
+  });
+
   return (
     <Panel
       headerText={header}
@@ -101,7 +106,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
       <div className="msla-result-list">
         <div>
           <div className="msla-filter-container">
-            <Text className="msla-block">Filters</Text>
+            <Text className="msla-block">{filterHeader}</Text>
             <div className="msla-block">
               {filterButton('Built-in')}
               {filterButton('Azure')}

@@ -17,17 +17,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
         }
       }
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "Connector",
-            },
-          ]
-        }
-        id="99vsJy"
-      />
+      Connector
     </StyledLabelBase>
     <StyledLabelBase
       className="msla-panel-connector-name"
@@ -48,17 +38,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
         }
       }
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "Operation note",
-            },
-          ]
-        }
-        id="YHsAKl"
-      />
+      Operation note
     </StyledLabelBase>
     <div
       className="msla-panel-description"
@@ -79,17 +59,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
         }
       }
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "Tags",
-            },
-          ]
-        }
-        id="TgcgXE"
-      />
+      Tags
     </StyledLabelBase>
     <div
       className="msla-panel-tags"
@@ -117,17 +87,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         }
       }
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "Connector",
-            },
-          ]
-        }
-        id="99vsJy"
-      />
+      Connector
     </StyledLabelBase>
     <StyledLabelBase
       className="msla-panel-connector-name"
@@ -148,17 +108,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         }
       }
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "Operation note",
-            },
-          ]
-        }
-        id="YHsAKl"
-      />
+      Operation note
     </StyledLabelBase>
     <div
       className="msla-panel-description"
@@ -181,17 +131,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         }
       }
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "Tags",
-            },
-          ]
-        }
-        id="TgcgXE"
-      />
+      Tags
     </StyledLabelBase>
     <div
       className="msla-panel-tags"
@@ -234,17 +174,7 @@ exports[`lib/monitoring/requestpanel/request should render a description with ex
         }
       }
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "Connector",
-            },
-          ]
-        }
-        id="99vsJy"
-      />
+      Connector
     </StyledLabelBase>
     <StyledLabelBase
       className="msla-panel-connector-name"
@@ -265,17 +195,7 @@ exports[`lib/monitoring/requestpanel/request should render a description with ex
         }
       }
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "Operation note",
-            },
-          ]
-        }
-        id="YHsAKl"
-      />
+      Operation note
     </StyledLabelBase>
     <div
       className="msla-panel-description"
@@ -304,17 +224,7 @@ exports[`lib/monitoring/requestpanel/request should render a description with ex
         }
       }
     >
-      <Memo(MemoizedFormattedMessage)
-        defaultMessage={
-          Array [
-            Object {
-              "type": 0,
-              "value": "Tags",
-            },
-          ]
-        }
-        id="TgcgXE"
-      />
+      Tags
     </StyledLabelBase>
     <div
       className="msla-panel-tags"

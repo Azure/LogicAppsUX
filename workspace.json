@@ -1,6 +1,8 @@
 {
   "version": 2,
   "projects": {
+    "data-mapper": "libs/data-mapper",
+    "data-mapper-standalone": "apps/data-mapper-standalone",
     "designer": "libs/designer",
     "designer-e2e": "apps/designer-e2e",
     "designer-standalone": "apps/designer-standalone",
@@ -8,8 +10,9 @@
     "parsers": "libs/parsers",
     "services-designer-client-services": "libs/services/designer-client-services",
     "services-intl": "libs/services/intl",
-    "services-resolution-service": "libs/services/resolution-service",
     "utils": "libs/utils",
+    "vs-code-data-mapper": "apps/vs-code-data-mapper",
+    "vs-code-data-mapper-react": "apps/vs-code-data-mapper-react",
     "vs-code-designer": "apps/vs-code-designer",
     "vs-code-designer-react": "apps/vs-code-designer-react",
     "vs-code-overview-react": "apps/vs-code-overview-react"

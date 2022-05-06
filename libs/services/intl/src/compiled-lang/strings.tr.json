@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filtreler"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
       "value": "Hatalı"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -529,6 +541,12 @@
     {
       "type": 0,
       "value": "Gerekli. Değerlerini istediğiniz eylemin adı."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Done"
     }
   ],
   "ArTh0/": [
@@ -836,7 +854,7 @@
   "Jaz3EC": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+      "value": "Geçirilen bir dize zaman damgasını kaynak saat diliminden hedef saat dilimine dönüştürür"
     }
   ],
   "JbgTET": [
@@ -905,10 +923,16 @@
       "value": "Bir for-each döngüsünde kullanıldığında bu işlev belirtilen döngünün geçerli öğesini döndürür."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
-      "value": "Required. The expressions that may be true."
+      "value": "Gerekli. Doğru olabilecek ifadeler."
     }
   ],
   "M0HMjE": [
@@ -1019,6 +1043,12 @@
       "value": "Bir For_each, Until veya Scope eylemi gibi, belirtilen kapsamlı eylemdeki en üst düzey eylemlerden sonuçları döndürür."
     }
   ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -1064,7 +1094,7 @@
   "P4rEwD": [
     {
       "type": 0,
-      "value": "Collection functions"
+      "value": "Koleksiyon işlevleri"
     }
   ],
   "P8ZBF9": [
@@ -1194,7 +1224,7 @@
   "QrQDdp": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to subtract."
+      "value": "Gerekli. Çıkarmak için zaman aralığında belirtilen zaman birimini içeren bir dize."
     }
   ],
   "Qu1HkA": [
@@ -1245,6 +1275,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1276,7 +1312,7 @@
   "T7zcR6": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Gerekli. Doğru olması gereken ifadeler."
     }
   ],
   "T8Xqt9": [
@@ -1295,6 +1331,12 @@
     {
       "type": 0,
       "value": "Bir dize zaman damgası için ayın başlangıcını döndürür"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [
@@ -1633,6 +1675,12 @@
       "value": "Gerekli. İlk Count nesnenin alınacağı koleksiyon."
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Ara"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -1914,7 +1962,7 @@
   "iU5Fdh": [
     {
       "type": 0,
-      "value": "Manipulation functions"
+      "value": "İşleme işlevleri"
     }
   ],
   "iUs7pv": [
@@ -2489,6 +2537,12 @@
       "value": "Tür"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Tetikleyici"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2499,6 +2553,12 @@
     {
       "type": 0,
       "value": "Gerekli. Eklenecek saat sayısı. Saat sayısının çıkarılması için negatif olabilir."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "İşlemler"
     }
   ],
   "uN4zFU": [
@@ -2678,7 +2738,7 @@
   "y3AZQB": [
     {
       "type": 0,
-      "value": "Required. The object to compare equality."
+      "value": "Gerekli. Eşitlik karşılaştırılacak nesne."
     }
   ],
   "y6BcVN": [
@@ -2693,10 +2753,20 @@
       "value": "Gerekli. Diziye dönüştürülen değer."
     }
   ],
+  "yOkPGx": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " logosu"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
-      "value": "Date and time functions"
+      "value": "Tarih ve saat işlevleri"
     }
   ],
   "z4YYlQ": [

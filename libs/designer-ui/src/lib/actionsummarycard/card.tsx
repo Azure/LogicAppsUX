@@ -1,6 +1,5 @@
 import { Text, Image, ImageFit } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import type { MessageDescriptor } from 'react-intl';
 
 export type OperationCardProps = {
   title: string;
@@ -27,6 +26,11 @@ export const OperationCard = (props: OperationCardProps) => {
     }
   );
 
+  const triggerFilterText = intl.formatMessage({
+    defaultMessage: 'Trigger',
+    description: 'Filter that selects only Trigger Operations',
+  });
+
   return (
     <div className="msla-operation-card">
       <div>
@@ -40,7 +44,7 @@ export const OperationCard = (props: OperationCardProps) => {
       <Text className="msla-card-description">{props.subtitle}</Text>
       <div className="msla-tag-container">
         <Text className="msla-tag">{props.connectorName}</Text>
-        <Text className="msla-tag">Trigger</Text>
+        <Text className="msla-tag">{triggerFilterText}</Text>
         <Text className="msla-tag">{props.category}</Text>
       </div>
     </div>

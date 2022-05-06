@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filters"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
       "value": "Faulted"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -529,6 +541,12 @@
     {
       "type": 0,
       "value": "Required. The name of the action whose values you want."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Done"
     }
   ],
   "ArTh0/": [
@@ -905,6 +923,12 @@
       "value": "When used inside for-each loop, this function returns the current item of the specified loop."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1017,6 +1041,12 @@
     {
       "type": 0,
       "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Label Text"
     }
   ],
   "Oib1mL": [
@@ -1249,6 +1279,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1299,6 +1335,12 @@
     {
       "type": 0,
       "value": "Returns the start of the month of a string timestamp"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "TZv5JE": [
@@ -2501,6 +2543,12 @@
     {
       "type": 0,
       "value": "Type"
+    }
+  ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "tZj2Xn": [
