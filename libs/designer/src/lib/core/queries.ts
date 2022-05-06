@@ -3,7 +3,7 @@ import type { Actions } from './state/workflowSlice';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connector, OperationInfo, OperationManifest } from '@microsoft-logic-apps/utils';
 
-export const createWorkflow = async (actions: Actions): Promise<(Connector | OperationManifest)[]> => {
+export const initializeOperationMetadata = async (actions: Actions): Promise<(Connector | OperationManifest)[]> => {
   const operationPromises: Promise<OperationManifest>[] = [];
   const connectionPromises: Promise<Connector>[] = [];
   const operationDetailsPromises: Promise<void>[] = [];

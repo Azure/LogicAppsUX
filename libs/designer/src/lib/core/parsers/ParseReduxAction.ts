@@ -1,4 +1,4 @@
-import { createWorkflow } from '../queries';
+import { initializeOperationMetadata } from '../queries';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -14,7 +14,7 @@ export const initializeGraphState = createAsyncThunk(
     }
     if (spec === 'BJS') {
       const deserialized = BJSDeserialize(graph);
-      createWorkflow(deserialized.actionData);
+      initializeOperationMetadata(deserialized.actionData);
       return deserialized;
     } else if (spec === 'CNCF') {
       throw new Error('Spec not implemented.');
