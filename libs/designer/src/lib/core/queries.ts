@@ -8,14 +8,20 @@ export const createWorkflow = async (actions: Actions): Promise<(Connector | Ope
   const connectionPromises: Promise<Connector>[] = [];
   const operationDetailsPromises: Promise<void>[] = [];
   const operationEntries = Object.entries(actions ? actions : {});
+  const operationManifestService = OperationManifestService();
   for (let i = 0; i < operationEntries.length; i++) {
-    const operationDetails = initializeOperationDetailsForManifest(
-      operationEntries[i][0],
-      operationEntries[i][1],
-      operationPromises,
-      connectionPromises
-    );
-    operationDetailsPromises.push(operationDetails);
+    const operation = operationEntries[i][1];
+    if (operationManifestService.isSupported(operation.type)) {
+      const operationDetails = initializeOperationDetailsForManifest(
+        operationEntries[i][0],
+        operationEntries[i][1],
+        operationPromises,
+        connectionPromises
+      );
+      operationDetailsPromises.push(operationDetails);
+    } else {
+      // swagger case here
+    }
   }
   return Promise.all([...operationPromises, ...connectionPromises]);
 };

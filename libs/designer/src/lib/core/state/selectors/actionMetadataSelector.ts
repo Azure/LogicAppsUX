@@ -81,20 +81,3 @@ export const useOperationIds = (nodeId: string) => {
   });
   return operationInfo;
 };
-
-// export const fetchOperationInfo = async (connectorId: string, operationId: string) => {
-//   const queryClient = getReactQueryClient();
-//   const operationManifestService = OperationManifestService();
-
-//   const operationInfo = await queryClient.fetchQuery<OperationInfo>('deserialized', () =>
-//     operationManifestService.getOperationInfo(operation)
-//   );
-//   if (!connectorId || !operationId) {
-//     return undefined;
-//   }
-//   const manifestQuery = queryClient.fetchQuery(['manifest', { connectorId }, { operationId }], () => // Danielle .tolowercase?
-//       operationManifestService.getOperationManifest(connectorId, operationId )
-//     )
-
-//   return manifestQuery;
-// };

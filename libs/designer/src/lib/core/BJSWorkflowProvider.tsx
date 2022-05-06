@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
   workflow: LogicAppsV2.WorkflowDefinition;
-  getToken?: () => string;
 }
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children }) => {
@@ -22,14 +21,13 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
 
 export const BJSWorkflowProvider: React.FC<BJSWorkflowProviderProps> = (props) => {
   const wrapped = useContext(ProviderWrappedContext);
-  const getToken = ProviderWrappedContext;
   if (!wrapped) {
     throw new Error('BJSWorkflowProvider must be used inside of a DesignerProvider');
   }
 
   if (!wrapped.servicesInitialized) {
     // NOTE(psamband): If services are not initialized by host, we will initialize LA standard services.
-    InitializeServices(props.getToken);
+    InitializeServices(wrapped.getToken);
   }
 
   return <DataProviderInner {...props} />;
