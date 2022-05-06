@@ -84,6 +84,7 @@
   "9djnqI": "Vrátí výsledek součtu daných dvou čísel.",
   "9u/Ae3": "Vrátí true, pokud jsou oba parametry true.",
   "ANbEeQ": "Povinný parametr. Název akce, jejíž hodnoty požadujete.",
+  "AO6T9u": "Done",
   "ArTh0/": "Povinný parametr. Řetězec, který se má kódovat do formátu base64.",
   "B2s0iG": "Povinný parametr. Index části, která se má načíst.",
   "BCAnZP": "Jednoznakový specifikátor formátu nebo vlastní formátovací vzor, který určuje, jak formátovat hodnotu tohoto časového razítka. Pokud není formát zadaný, použije se formát ISO 8601 (o).",

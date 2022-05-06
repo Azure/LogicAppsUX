@@ -84,6 +84,7 @@
   "9djnqI": "Zwraca wynik dodawania dwóch liczb",
   "9u/Ae3": "Zwraca wartość true, jeśli oba parametry mają wartość true",
   "ANbEeQ": "Wymagane. Nazwa akcji z żądanymi wartościami.",
+  "AO6T9u": "Done",
   "ArTh0/": "Wymagane. Ciąg do zakodowania do reprezentacji base64.",
   "B2s0iG": "Wymagane. Indeks części do pobrania.",
   "BCAnZP": "Może to być pojedynczy znak specyfikatora formatu lub niestandardowy wzorzec formatu, który określa sposób formatowania wartości tej sygnatury czasowej. Jeśli format nie zostanie podany, zostanie użyty format ISO 8601 („o”).",

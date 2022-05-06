@@ -84,6 +84,7 @@
   "9djnqI": "İki sayı arasındaki toplama işleminin sonucunu döndürür",
   "9u/Ae3": "İki parametre de true ise true döndürür",
   "ANbEeQ": "Gerekli. Değerlerini istediğiniz eylemin adı.",
+  "AO6T9u": "Done",
   "ArTh0/": "Gerekli. Base64 gösterimine kodlanacak dize.",
   "B2s0iG": "Gerekli. Alınacak bölümün dizini.",
   "BCAnZP": "Bu zaman damgasının değerinin nasıl biçimlendirileceğini gösteren tek bir biçim tanımlayıcı karakteri veya özel biçim deseni. Biçim belirtilmezse ISO 8601 biçimi ('o') kullanılır.",

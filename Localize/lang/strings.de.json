@@ -84,6 +84,7 @@
   "9djnqI": "Gibt das Ergebnis aus der Addition der beiden Zahlen zurück.",
   "9u/Ae3": "Gibt TRUE zurück, wenn beide Parameter TRUE sind.",
   "ANbEeQ": "Erforderlich. Der Name der Aktion, deren Werte Sie erhalten möchten.",
+  "AO6T9u": "Done",
   "ArTh0/": "Erforderlich. Die Zeichenfolge, die als Base64-Darstellung codiert werden soll.",
   "B2s0iG": "Erforderlich. Der Index des abzurufenden Teils.",
   "BCAnZP": "Hiermit wird entweder ein einzelnes Zeichen als Formatbezeichner oder ein benutzerdefiniertes Formatmuster angegeben, das festlegt, wie der Wert dieses Zeitstempels formatiert werden soll. Wenn kein Format angegeben wird, wird das ISO 8601-Format (\"o\") verwendet.",

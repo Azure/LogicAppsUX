@@ -84,6 +84,7 @@
   "9djnqI": "Restituisce il risultato dell'aggiunta dei due numeri",
   "9u/Ae3": "Restituisce true se entrambi i parametri sono true",
   "ANbEeQ": "Obbligatorio. Nome dell'azione di cui si desidera ottenere i valori.",
+  "AO6T9u": "Done",
   "ArTh0/": "Obbligatorio. Stringa da codificare nella rappresentazione Base64.",
   "B2s0iG": "Obbligatorio. Indice della parte da recuperare.",
   "BCAnZP": "Singolo carattere identificatore del formato o modello di formato personalizzato che indica come formattare il valore di questo timestamp. Se il formato non viene specificato, verrà usato il formato ISO 8601 ('o').",
