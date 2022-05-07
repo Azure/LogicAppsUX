@@ -426,6 +426,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";3rtRpE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[draggable slider bar]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[끌기 가능한 슬라이더 막대]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";3rzrWf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The object to remove the property from.]]></Val>
@@ -809,6 +818,15 @@
           <Val><![CDATA[Required. The name of the action whose values you want.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[필수 사항으로, 값을 원하는 작업의 이름입니다.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AO6T9u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Done]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[완료]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1374,6 +1392,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";LpPNAD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[추가]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Lub7NN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The expressions that may be true.]]></Val>
@@ -1541,6 +1568,15 @@
           <Val><![CDATA[Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[지정된 범위 작업(예: For_each, Until 또는 Scope 작업)에서 최상위 작업의 결과를 반환합니다.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OfvxaB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Label Text]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[레이블 텍스트]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1854,6 +1890,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";S8P4N5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Delete]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[삭제]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";SKXopi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Convert the parameter to an integer]]></Val>
@@ -1922,6 +1967,15 @@
           <Val><![CDATA[Returns the start of the month of a string timestamp]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[문자열 타임스탬프의 월초를 반환합니다.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TUaunO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[값을 입력하세요]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
