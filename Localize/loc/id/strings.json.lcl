@@ -429,6 +429,9 @@
       <Item ItemId=";3rtRpE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[draggable slider bar]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[bilah penggeser yang dapat diseret]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
