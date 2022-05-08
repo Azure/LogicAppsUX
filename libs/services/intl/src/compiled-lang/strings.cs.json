@@ -313,6 +313,12 @@
       "value": "S chybou"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "přetahovatelný posuvník"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -569,6 +575,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název akce, jejíž hodnoty požadujete."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Hotovo"
     }
   ],
   "ArTh0/": [
@@ -967,6 +979,12 @@
       "value": "Když se tato funkce použije v rámci smyčky for-each, vrátí aktuální položku zadané smyčky."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Přidat"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1079,6 +1097,12 @@
     {
       "type": 0,
       "value": "Vrátí výsledky z akcí na nejvyšší úrovni s určeným rozsahem, například z akcí For_each, Until nebo Scope."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Text popisku"
     }
   ],
   "Oib1mL": [
@@ -1329,6 +1353,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Odstranit"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1379,6 +1409,12 @@
     {
       "type": 0,
       "value": "Vrátí začátek měsíce řetězcového časového razítka."
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Zadejte hodnotu."
     }
   ],
   "TZv5JE": [

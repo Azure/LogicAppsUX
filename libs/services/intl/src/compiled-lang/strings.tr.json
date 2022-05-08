@@ -279,6 +279,12 @@
       "value": "Hatalı"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -535,6 +541,12 @@
     {
       "type": 0,
       "value": "Gerekli. Değerlerini istediğiniz eylemin adı."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Bitti"
     }
   ],
   "ArTh0/": [
@@ -911,6 +923,12 @@
       "value": "Bir for-each döngüsünde kullanıldığında bu işlev belirtilen döngünün geçerli öğesini döndürür."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Ekle"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1023,6 +1041,12 @@
     {
       "type": 0,
       "value": "Bir For_each, Until veya Scope eylemi gibi, belirtilen kapsamlı eylemdeki en üst düzey eylemlerden sonuçları döndürür."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Etiket Metni"
     }
   ],
   "Oib1mL": [
@@ -1251,6 +1275,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Sil"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1301,6 +1331,12 @@
     {
       "type": 0,
       "value": "Bir dize zaman damgası için ayın başlangıcını döndürür"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Bir değer girin"
     }
   ],
   "TZv5JE": [

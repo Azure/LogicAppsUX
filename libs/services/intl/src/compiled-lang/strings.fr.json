@@ -279,6 +279,12 @@
       "value": "En échec"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "barre de curseur déplaçable"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -535,6 +541,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de l'action dont vous voulez obtenir les valeurs."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Terminé"
     }
   ],
   "ArTh0/": [
@@ -911,6 +923,12 @@
       "value": "Utilisée dans une boucle for-each, cette fonction retourne l'élément actuel de la boucle spécifiée."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Ajouter"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1023,6 +1041,12 @@
     {
       "type": 0,
       "value": "Retourne les résultats des actions de niveau supérieur dans l'action délimitée spécifiée, par exemple, une action For_each, Until ou Scope."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Texte de l'étiquette"
     }
   ],
   "Oib1mL": [
@@ -1251,6 +1275,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Supprimer"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1301,6 +1331,12 @@
     {
       "type": 0,
       "value": "Retourne le début du mois en horodateur de chaîne"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Entrer une valeur"
     }
   ],
   "TZv5JE": [

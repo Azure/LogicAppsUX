@@ -279,6 +279,12 @@
       "value": "Hibás"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "húzható csúszkasáv"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -535,6 +541,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Azon művelet neve, melynek értékei szükségesek."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Kész"
     }
   ],
   "ArTh0/": [
@@ -911,6 +923,12 @@
       "value": "For-each ciklusban való használat esetén ez a függvény a megadott ciklus aktuális elemét adja vissza."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Hozzáadás"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1023,6 +1041,12 @@
     {
       "type": 0,
       "value": "A legfelső szintű hatóköri műveletek eredményeit adja vissza a megadott hatóköri műveletben, például „For_each”, „Until” vagy „Scope action”."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Címkeszöveg"
     }
   ],
   "Oib1mL": [
@@ -1255,6 +1279,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Törlés"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1305,6 +1335,12 @@
     {
       "type": 0,
       "value": "Egy átadott sztring típusú időbélyegből a hónap kezdetét adja vissza."
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy értéket"
     }
   ],
   "TZv5JE": [

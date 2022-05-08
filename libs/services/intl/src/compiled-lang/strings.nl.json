@@ -279,6 +279,12 @@
       "value": "Mislukt"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "versleepbare schuifregelaar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -535,6 +541,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de actie met de gewenste waarden."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Gereed"
     }
   ],
   "ArTh0/": [
@@ -911,6 +923,12 @@
       "value": "Bij gebruik binnen de For-Each-lus retourneert deze functie het huidige item van de opgegeven lus."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Toevoegen"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1023,6 +1041,12 @@
     {
       "type": 0,
       "value": "Hiermee worden de resultaten geretourneerd van de acties op het hoogste niveau in de opgegeven actie met bereik, zoals een For_each-, Until- of Scope-actie."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Tekst label"
     }
   ],
   "Oib1mL": [
@@ -1255,6 +1279,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Verwijderen"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1305,6 +1335,12 @@
     {
       "type": 0,
       "value": "Het begin van de maand van een ingevoerd tijdstempel wordt als tekenreeks geretourneerd"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Een waarde invoeren"
     }
   ],
   "TZv5JE": [

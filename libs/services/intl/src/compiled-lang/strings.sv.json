@@ -279,6 +279,12 @@
       "value": "Fel"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -535,6 +541,12 @@
     {
       "type": 0,
       "value": "Krävs. Namnet på åtgärden vars värden du vill ha."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Klart"
     }
   ],
   "ArTh0/": [
@@ -911,6 +923,12 @@
       "value": "När den används inuti en for-each-loop, returnerar den här funktionen det aktuella objektet för den angivna loopen."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Lägg till"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1023,6 +1041,12 @@
     {
       "type": 0,
       "value": "Returnerar resultaten från åtgärderna på toppnivå i den angivna omfångsdefinierade åtgärden, till exempel en For_each, Until eller Scope."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Etikettext"
     }
   ],
   "Oib1mL": [
@@ -1255,6 +1279,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Ta bort"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1305,6 +1335,12 @@
     {
       "type": 0,
       "value": "Returnerar månadens start för en strängtidsstämpel"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Ange ett värde"
     }
   ],
   "TZv5JE": [

@@ -1,5 +1,6 @@
 import type { DesignerOptionsContext } from './ProviderWrappedContext';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
+import { ReactQueryProvider } from './ReactQueryProvider';
 import { store } from './store';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import type { Theme } from '@fluentui/react';
@@ -20,18 +21,20 @@ export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', optio
     <ReduxProvider store={store}>
       <ProviderWrappedContext.Provider value={options}>
         <ThemeProvider theme={theme} className="msla-theme-provider">
-          <IntlProvider
-            locale={locale}
-            defaultLocale={locale}
-            onError={(err) => {
-              if (err.code === 'MISSING_TRANSLATION') {
-                return;
-              }
-              throw err;
-            }}
-          >
-            {children}
-          </IntlProvider>
+          <ReactQueryProvider>
+            <IntlProvider
+              locale={locale}
+              defaultLocale={locale}
+              onError={(err) => {
+                if (err.code === 'MISSING_TRANSLATION') {
+                  return;
+                }
+                throw err;
+              }}
+            >
+              {children}
+            </IntlProvider>
+          </ReactQueryProvider>
         </ThemeProvider>
       </ProviderWrappedContext.Provider>
     </ReduxProvider>

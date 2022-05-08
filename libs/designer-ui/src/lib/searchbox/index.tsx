@@ -7,7 +7,7 @@ export interface SearchBoxProps {
 }
 
 export const DesignerSearchBox: React.FC<SearchBoxProps> = (props) => {
-  const [searchTerm, setSearchTerm] = React.useState('');
+  const [, setSearchTerm] = React.useState('');
   const intl = getIntl();
   const placeholder = intl.formatMessage({
     defaultMessage: 'Search',

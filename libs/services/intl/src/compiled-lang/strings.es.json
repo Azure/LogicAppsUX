@@ -279,6 +279,12 @@
       "value": "Con errores"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "barra de control deslizante arrastrable"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -535,6 +541,12 @@
     {
       "type": 0,
       "value": "Obligatorio. El nombre de la acción de la que quiere los valores."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Listo"
     }
   ],
   "ArTh0/": [
@@ -911,6 +923,12 @@
       "value": "Cuando se utiliza dentro de un bucle para cada uno, esta función devuelve el elemento actual del bucle especificado."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Agregar"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1023,6 +1041,12 @@
     {
       "type": 0,
       "value": "Devuelve los resultados de las acciones de nivel superior en la acción con ámbito especificada, como una acción For_each, Until o Scope."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Texto de etiqueta"
     }
   ],
   "Oib1mL": [
@@ -1251,6 +1275,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Eliminar"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1301,6 +1331,12 @@
     {
       "type": 0,
       "value": "Devuelve el inicio del mes de la marca de tiempo de una cadena."
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Escriba un valor"
     }
   ],
   "TZv5JE": [

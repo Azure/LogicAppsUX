@@ -1,6 +1,6 @@
 import { initializeGraphState } from '../parsers/ParseReduxAction';
-import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
-import { isWorkflowNode } from '../parsers/models/workflowNode';
+import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
+import { isWorkflowNode, setWorkflowEdge } from '../parsers/models/workflowNode';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
@@ -51,20 +51,10 @@ export const workflowSlice = createSlice({
         const workflowNode: WorkflowNode = { id: newNodeId, height: 100, width: 100 }; // Danielle how do we determine dimensions
         state.graph?.children.push(workflowNode);
 
-        const workflowEdge: WorkflowEdge = {
-          id: `${parentId}-${newNodeId}`,
-          source: action.payload.parentId,
-          target: newNodeId,
-        };
-        state.graph?.edges.push(workflowEdge);
+        setWorkflowEdge(parentId, newNodeId, state.graph);
 
         if (childId) {
-          const childWorkflowEdge: WorkflowEdge = {
-            id: `${newNodeId}-${childId}`,
-            source: newNodeId,
-            target: childId,
-          };
-          state.graph?.edges.push(childWorkflowEdge);
+          setWorkflowEdge(newNodeId, childId, state.graph);
         }
       }
       // danielle: then add to actions[] ? this might happen in RQ now

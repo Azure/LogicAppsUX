@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useLayout } from '../core/graphlayout';
 import { updateNodeSizes } from '../core/state/workflowSlice';
-import type { RootState } from '../core/store';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import GraphNode from './CustomNodes/GraphNode';
 import { CustomEdge } from './connections/edge';
@@ -12,8 +11,6 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { createTransition, DndProvider } from 'react-dnd-multi-backend';
 import type { NodeChange } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
 import { useDispatch } from 'react-redux';
 
 export interface DesignerProps {
@@ -57,7 +54,6 @@ const DND_OPTIONS = {
   ],
 };
 
-const queryClient = new QueryClient();
 export const Designer = () => {
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch();
@@ -70,30 +66,27 @@ export const Designer = () => {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <DndProvider options={DND_OPTIONS as any}>
-        <div className="msla-designer-canvas msla-panel-mode">
-          <ReactFlowProvider>
-            <ReactFlow
-              nodeTypes={nodeTypes}
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onConnect={() => {}}
-              minZoom={0}
-              nodesDraggable={false}
-              edgeTypes={edgeTypes}
-              proOptions={{
-                account: 'paid-sponsor',
-                hideAttribution: true,
-              }}
-            >
-              <PanelRoot />
-            </ReactFlow>
-          </ReactFlowProvider>
-        </div>
-      </DndProvider>
-    </QueryClientProvider>
+    <DndProvider options={DND_OPTIONS as any}>
+      <div className="msla-designer-canvas msla-panel-mode">
+        <ReactFlowProvider>
+          <ReactFlow
+            nodeTypes={nodeTypes}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onConnect={() => {}}
+            minZoom={0}
+            nodesDraggable={false}
+            edgeTypes={edgeTypes}
+            proOptions={{
+              account: 'paid-sponsor',
+              hideAttribution: true,
+            }}
+          >
+            <PanelRoot />
+          </ReactFlow>
+        </ReactFlowProvider>
+      </div>
+    </DndProvider>
   );
 };

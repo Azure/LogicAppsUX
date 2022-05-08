@@ -279,6 +279,12 @@
       "value": "Con errori"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "draggable slider bar"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -535,6 +541,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome dell'azione di cui si desidera ottenere i valori."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Fine"
     }
   ],
   "ArTh0/": [
@@ -911,6 +923,12 @@
       "value": "Quando usata all'interno di un ciclo for-each, questa funzione restituisce l'elemento corrente del ciclo specificato."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Aggiungi"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1023,6 +1041,12 @@
     {
       "type": 0,
       "value": "Restituisce i risultati delle azioni di primo livello nell'azione con ambito specificata, ad esempio un'azione For_each, Until o Scope."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Testo etichetta"
     }
   ],
   "Oib1mL": [
@@ -1259,6 +1283,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Eliminare"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1309,6 +1339,12 @@
     {
       "type": 0,
       "value": "Restituisce l'inizio del mese di un timestamp in formato stringa"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Immettere un valore"
     }
   ],
   "TZv5JE": [
