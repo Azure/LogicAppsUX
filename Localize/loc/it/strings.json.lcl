@@ -429,6 +429,9 @@
       <Item ItemId=";3rtRpE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[draggable slider bar]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[barra del dispositivo di scorrimento trascinabile]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1891,7 +1894,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Delete]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Eliminare]]></Val>
+            <Val><![CDATA[Elimina]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
