@@ -25,9 +25,11 @@ exports[`lib/checkbox should display correct text 1`] = `
       >
         <i
           aria-hidden={true}
-          className="ms-Checkbox-checkmark checkmark-121"
+          className="ms-Checkbox-checkmark checkmark-123"
           data-icon-name="CheckMark"
-        />
+        >
+          
+        </i>
       </div>
       <span
         className="ms-Checkbox-text text-120"
@@ -64,9 +66,11 @@ exports[`lib/checkbox should render 1`] = `
       >
         <i
           aria-hidden={true}
-          className="ms-Checkbox-checkmark checkmark-121"
+          className="ms-Checkbox-checkmark checkmark-123"
           data-icon-name="CheckMark"
-        />
+        >
+          
+        </i>
       </div>
     </label>
   </div>
@@ -98,9 +102,11 @@ exports[`lib/checkbox should render an additional CSS class 1`] = `
       >
         <i
           aria-hidden={true}
-          className="ms-Checkbox-checkmark checkmark-121"
+          className="ms-Checkbox-checkmark checkmark-123"
           data-icon-name="CheckMark"
-        />
+        >
+          
+        </i>
       </div>
     </label>
   </div>
@@ -132,9 +138,11 @@ exports[`lib/checkbox should render an info button if description text is set 1`
       >
         <i
           aria-hidden={true}
-          className="ms-Checkbox-checkmark checkmark-121"
+          className="ms-Checkbox-checkmark checkmark-123"
           data-icon-name="CheckMark"
-        />
+        >
+          
+        </i>
       </div>
     </label>
   </div>
@@ -146,9 +154,11 @@ exports[`lib/checkbox should render an info button if description text is set 1`
   >
     <i
       aria-hidden={true}
-      className="msla-checkbox-description-icon root-105"
+      className="msla-checkbox-description-icon root-128"
       data-icon-name="Info"
-    />
+    >
+      
+    </i>
   </button>
 </div>
 `;
@@ -158,7 +168,7 @@ exports[`lib/checkbox should render with initial checked state set to true 1`] =
   className="additional-class msla-checkbox"
 >
   <div
-    className="ms-Checkbox is-checked is-enabled msla-checkbox-label root-122"
+    className="ms-Checkbox is-checked is-enabled msla-checkbox-label root-124"
   >
     <input
       checked={true}
@@ -173,14 +183,16 @@ exports[`lib/checkbox should render with initial checked state set to true 1`] =
       htmlFor="checkbox-3"
     >
       <div
-        className="ms-Checkbox-checkbox checkbox-123"
+        className="ms-Checkbox-checkbox checkbox-125"
         data-ktp-target={true}
       >
         <i
           aria-hidden={true}
-          className="ms-Checkbox-checkmark checkmark-125"
+          className="ms-Checkbox-checkmark checkmark-127"
           data-icon-name="CheckMark"
-        />
+        >
+          
+        </i>
       </div>
     </label>
   </div>

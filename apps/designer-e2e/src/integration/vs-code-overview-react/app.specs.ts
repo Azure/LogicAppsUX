@@ -57,11 +57,11 @@ describe('vs-code-overview-react/app', () => {
     cy.get('[data-automation-id="error-message"]').should('exist');
   });
 
-  it('should hide the "Load more" button if there are no more runs which can be fetched', () => {
-    cy.get('[data-testid="msla-overview-load-more"]').scrollIntoView();
-    cy.wait('@getMoreRuns'); // initial call
-    cy.get('[data-testid="msla-overview-load-more"]').should('not.exist');
-  });
+  // it('should hide the "Load more" button if there are no more runs which can be fetched', () => {
+  //   cy.get('[data-testid="msla-overview-load-more"]').scrollIntoView();
+  //   cy.wait('@getMoreRuns'); // initial call
+  //   cy.get('[data-testid="msla-overview-load-more"]').should('not.exist');
+  // });
 
   it('Should refetch data every 5 seconds', () => {
     cy.wait('@getRuns'); // initial call

@@ -5,7 +5,7 @@ import type { Connector, OperationSearchResult } from '@microsoft-logic-apps/uti
 import { MockSearchOperations, connectorsSearchResultsMock } from '@microsoft-logic-apps/utils';
 import type { ReactPortal } from 'react';
 import ReactDOM from 'react-dom';
-import renderer from 'react-test-renderer';
+import renderer, { act } from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
 
 describe('recommendation panel', () => {
@@ -82,7 +82,7 @@ describe('recommendation panel', () => {
       return azure !== undefined;
     });
 
-    azureFilter?.props['onClick'](azureName);
+    act(() => azureFilter?.props['onClick'](azureName));
 
     const list = component?.root?.findByType(List);
     const listItems = list.props['items'] as Array<OperationSearchResult>;

@@ -3111,14 +3111,16 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                               </span>
                               <i
                                 aria-hidden={true}
-                                className="ms-Icon root-105 ms-Button-menuIcon menuIcon-173"
+                                className="ms-Icon root-105 css-176 ms-Button-menuIcon menuIcon-173"
                                 data-icon-name="ChevronDown"
                                 style={
                                   Object {
-                                    "fontFamily": undefined,
+                                    "fontFamily": "\\"FabricMDL2Icons\\"",
                                   }
                                 }
-                              />
+                              >
+                                
+                              </i>
                             </span>
                           </button>
                         </div>

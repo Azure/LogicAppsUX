@@ -43,9 +43,11 @@ exports[`lib/identitydropdown should render 1`] = `
       >
         <i
           aria-hidden={true}
-          className="ms-Dropdown-caretDown caretDown-128"
+          className="ms-Dropdown-caretDown caretDown-130"
           data-icon-name="ChevronDown"
-        />
+        >
+          
+        </i>
       </span>
     </div>
   </div>

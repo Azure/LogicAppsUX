@@ -6,9 +6,11 @@ exports[`lib/errorboundary should render a default experience if an error occurs
 >
   <i
     aria-hidden={true}
-    className="msla-card-title-button-icon root-109"
+    className="msla-card-title-button-icon root-111"
     data-icon-name="Error"
-  />
+  >
+    
+  </i>
   <span
     style={
       Object {

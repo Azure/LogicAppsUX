@@ -41,14 +41,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronLeft"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -78,7 +80,7 @@ Array [
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-118"
+          className="css-120"
         >
           1 of 1
         </span>
@@ -115,14 +117,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronRight"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -504,14 +508,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronLeft"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -541,7 +547,7 @@ Array [
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-118"
+          className="css-120"
         >
           1 of 1
         </span>
@@ -578,14 +584,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronRight"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -1013,14 +1021,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronLeft"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -1050,7 +1060,7 @@ Array [
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-118"
+          className="css-120"
         >
           1 of 1
         </span>
@@ -1087,14 +1097,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronRight"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -1637,14 +1649,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronLeft"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -1674,7 +1688,7 @@ Array [
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-118"
+          className="css-120"
         >
           1 of 1
         </span>
@@ -1711,14 +1725,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronRight"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -1750,29 +1766,31 @@ Array [
     className="msla-panel-callout-content"
   >
     <div
-      className="ms-MessageBar ms-MessageBar--severeWarning ms-MessageBar-multiline msla-request-history-panel-error root-119"
+      className="ms-MessageBar ms-MessageBar--severeWarning ms-MessageBar-multiline msla-request-history-panel-error root-121"
     >
       <div
-        className="ms-MessageBar-content content-120"
+        className="ms-MessageBar-content content-122"
       >
         <div
           aria-hidden={true}
-          className="ms-MessageBar-icon iconContainer-121"
+          className="ms-MessageBar-icon iconContainer-123"
         >
           <i
             aria-hidden={true}
-            className="icon-128"
+            className="icon-132"
             data-icon-name="Warning"
-          />
+          >
+            
+          </i>
         </div>
         <div
           aria-live="assertive"
-          className="ms-MessageBar-text text-123"
+          className="ms-MessageBar-text text-125"
           id="MessageBar32"
           role="alert"
         >
           <span
-            className="ms-MessageBar-innerText innerText-124"
+            className="ms-MessageBar-innerText innerText-126"
           />
         </div>
       </div>

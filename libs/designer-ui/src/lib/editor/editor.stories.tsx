@@ -26,6 +26,11 @@ javascript.args = {
   language: EditorLanguage.javascript,
   value: "// First line\nfunction hello() {\n\talert('Hello world!');\n}\n// Last line",
 };
+javascript.parameters = {
+  axe: {
+    disabledRules: ['landmark-unique'],
+  },
+};
 
 export const JSON = Template.bind({});
 JSON.args = {
@@ -33,8 +38,20 @@ JSON.args = {
   value: '{\n"test": true,\n"test2" : \n\t{\n\t\t"object" : "value"\n\t}\n}',
 };
 
+JSON.parameters = {
+  axe: {
+    disabledRules: ['landmark-unique'],
+  },
+};
+
 export const XML = Template.bind({});
 XML.args = {
   language: EditorLanguage.xml,
   value: "<note> \n\t<to>\n\t\t<from>\n\t\t\t<body> Don't Forget To Bring the Shampoo </body>\n\t\t</from>\n\t</to>\n</note>",
+};
+
+XML.parameters = {
+  axe: {
+    disabledRules: ['landmark-unique'],
+  },
 };

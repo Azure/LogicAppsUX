@@ -28,11 +28,13 @@ exports[`lib/card/cardfooter should render with a comment icon 1`] = `
     >
       <i
         aria-label="Comment: comment"
-        className="panel-card-v2-badge active root-105"
+        className="panel-card-v2-badge active root-112"
         data-icon-name="Comment"
         role="img"
         tabIndex={0}
-      />
+      >
+        
+      </i>
       <div
         hidden={true}
         id="tooltip0"
@@ -74,11 +76,13 @@ exports[`lib/card/cardfooter should render with a connection icon 1`] = `
     >
       <i
         aria-label="Connection name: joechung@microsoft.com"
-        className="panel-card-v2-badge active root-105"
+        className="panel-card-v2-badge active root-115"
         data-icon-name="Link"
         role="img"
         tabIndex={0}
-      />
+      >
+        
+      </i>
       <div
         hidden={true}
         id="tooltip1"
@@ -120,11 +124,13 @@ exports[`lib/card/cardfooter should render with a testing icon 1`] = `
     >
       <i
         aria-label="Testing: This Action has testing configured."
-        className="panel-card-v2-badge active root-105"
+        className="panel-card-v2-badge active root-118"
         data-icon-name="TestBeaker"
         role="img"
         tabIndex={0}
-      />
+      >
+        
+      </i>
       <div
         hidden={true}
         id="tooltip2"
@@ -157,11 +163,13 @@ exports[`lib/card/cardfooter should render with an inactive connection icon 1`] 
   >
     <i
       aria-label="Connection required"
-      className="panel-card-v2-badge inactive root-105"
+      className="panel-card-v2-badge inactive root-115"
       data-icon-name="Link"
       role="img"
       tabIndex={0}
-    />
+    >
+      
+    </i>
   </div>
 </div>
 `;

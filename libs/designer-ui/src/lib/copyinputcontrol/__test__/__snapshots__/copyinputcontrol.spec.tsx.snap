@@ -58,14 +58,16 @@ exports[`lib/copyinputcontrol should construct the copyinputcontrol correctly 1`
       >
         <i
           aria-hidden={true}
-          className="ms-Icon root-105 ms-Button-icon icon-125"
+          className="ms-Icon root-105 css-131 ms-Button-icon icon-125"
           data-icon-name="Copy"
           style={
             Object {
-              "fontFamily": undefined,
+              "fontFamily": "\\"FabricMDL2Icons-2\\"",
             }
           }
-        />
+        >
+          
+        </i>
       </span>
     </button>
     <div
@@ -149,14 +151,16 @@ exports[`lib/copyinputcontrol should set the aria-labelledby attribute 1`] = `
       >
         <i
           aria-hidden={true}
-          className="ms-Icon root-105 ms-Button-icon icon-125"
+          className="ms-Icon root-105 css-131 ms-Button-icon icon-125"
           data-icon-name="Copy"
           style={
             Object {
-              "fontFamily": undefined,
+              "fontFamily": "\\"FabricMDL2Icons-2\\"",
             }
           }
-        />
+        >
+          
+        </i>
       </span>
     </button>
     <div
