@@ -1,6 +1,7 @@
 import { initializeGraphState } from '../parsers/ParseReduxAction';
+import { addWorkflowNode, createNodeWithDefaultSize, insertMiddleWorkflowEdge, setWorkflowEdge } from '../parsers/addNodeToWorkflow';
 import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
-import { isWorkflowNode, setWorkflowEdge } from '../parsers/models/workflowNode';
+import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
@@ -17,7 +18,7 @@ export interface NodesMetadata {
 export type Actions = Record<string, LogicAppsV2.ActionDefinition>;
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
-  graph?: WorkflowGraph | null;
+  graph: WorkflowGraph | null;
   actions: Actions;
   nodesMetadata: NodesMetadata;
 }
@@ -44,17 +45,20 @@ export const workflowSlice = createSlice({
       state.workflowSpec = action.payload;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
+      if (!state.graph) {
+        return;
+      }
       if (action.payload.parentId) {
         const newNodeId = action.payload.id;
         const childId = action.payload.childId;
         const parentId = action.payload.parentId;
-        const workflowNode: WorkflowNode = { id: newNodeId, height: 100, width: 100 }; // Danielle how do we determine dimensions
-        state.graph?.children.push(workflowNode);
+        const workflowNode: WorkflowNode = createNodeWithDefaultSize(newNodeId);
 
+        addWorkflowNode(workflowNode, state.graph);
         setWorkflowEdge(parentId, newNodeId, state.graph);
 
         if (childId) {
-          setWorkflowEdge(newNodeId, childId, state.graph);
+          insertMiddleWorkflowEdge(parentId, newNodeId, childId, state.graph);
         }
       }
       // danielle: then add to actions[] ? this might happen in RQ now

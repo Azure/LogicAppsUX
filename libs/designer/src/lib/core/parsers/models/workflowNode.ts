@@ -19,16 +19,6 @@ export interface WorkflowEdge {
   target: string;
 }
 
-export const setWorkflowEdge = (child: string, parent: string, graph: WorkflowGraph | null | undefined) => {
-  // Danielle can I shorten this
-  const workflowEdge: WorkflowEdge = {
-    id: `${parent}-${child}`,
-    source: parent,
-    target: child,
-  };
-  graph?.edges.push(workflowEdge);
-};
-
 export const isWorkflowNode = (node: any): node is WorkflowNode => {
   return isObject(node) && typeof node.id === 'string' && typeof node.height === 'number' && typeof node.width === 'number';
 };
