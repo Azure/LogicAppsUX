@@ -1,5 +1,6 @@
 import type { SettingSectionComponentProps } from '..';
 import { SettingsSection } from '..';
+import { ConfigurableMultiSelectItemSection } from './configurableactionitemsetting';
 import { MultiAddExpressionEditor } from './settingexpressioneditor';
 import { ReactiveToggle } from './settingreactiveinput';
 import { CustomValueSlider } from './settingslider';
@@ -53,4 +54,12 @@ sliderSetting.args = {
   title: 'Setting Slider',
   expanded: false,
   renderContent: CustomValueSlider,
+};
+
+export const configurableactionitemsetting = Template.bind({});
+configurableactionitemsetting.args = {
+  id: 'multiSelectSetting',
+  title: 'Configurable Multi-Select Item Setting',
+  expanded: false,
+  renderContent: ConfigurableMultiSelectItemSection,
 };
