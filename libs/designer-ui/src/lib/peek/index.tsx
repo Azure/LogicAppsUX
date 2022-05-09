@@ -1,7 +1,6 @@
 import { CustomEditor as Editor, EditorLanguage } from '../editor';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
-import type * as monaco from 'monaco-editor';
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface PeekProps {
@@ -9,10 +8,13 @@ export interface PeekProps {
   onOKClick(): void;
 }
 
-export function Peek({ input, onOKClick, ...cardProps }: PeekProps): JSX.Element {
-  const [editorStyle, setEditorStyle] = useState(getEditorStyle(input));
+export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
   const intl = useIntl();
-  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const [editorStyle, setEditorStyle] = useState(getEditorStyle(input));
+
+  useEffect(() => {
+    setEditorStyle(getEditorStyle(input));
+  }, [input]);
 
   const options = {
     fontSize: 13,
@@ -23,27 +25,15 @@ export function Peek({ input, onOKClick, ...cardProps }: PeekProps): JSX.Element
 
   const doneLabel = intl.formatMessage({ defaultMessage: 'Done', description: 'Done Label for button' });
 
-  useEffect(() => {
-    if (editorRef.current) {
-      setEditorStyle(getEditorStyle(input));
-      editorRef.current.setValue(input);
-      setTimeout(() => {
-        if (editorRef.current) {
-          editorRef.current.layout();
-        }
-      });
-    }
-  }, [input]);
-
   return (
     <div className="msla-card-inner-body msla-peek">
-      <div className="msla-peek-json" style={editorStyle}>
+      <div className="msla-peek-json">
         <Editor
-          editorRef={editorRef}
           defaultValue={input}
           fontSize={options.fontSize}
           readOnly={options.readOnly}
           language={EditorLanguage.json}
+          height={editorStyle}
         />
       </div>
       <div className="msla-card-config-button-container msla-code-view-done-button">
@@ -56,9 +46,6 @@ export function Peek({ input, onOKClick, ...cardProps }: PeekProps): JSX.Element
 }
 
 // Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
-function getEditorStyle(input = ''): React.CSSProperties {
-  const height = Math.min(Math.max(input.split('\n').length * 19, 57), 380);
-  return {
-    height,
-  };
+function getEditorStyle(input = ''): number {
+  return Math.min(Math.max(input.split('\n').length * 19, 57), 380);
 }

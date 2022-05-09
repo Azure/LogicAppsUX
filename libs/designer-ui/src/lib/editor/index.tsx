@@ -11,8 +11,7 @@ import {
 import { map } from '@microsoft-logic-apps/utils';
 import Editor, { loader } from '@monaco-editor/react';
 import type * as monaco from 'monaco-editor';
-import type { MutableRefObject } from 'react';
-import { useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 
 // TODO: Add more languages
 export enum EditorLanguage {
@@ -23,7 +22,6 @@ export enum EditorLanguage {
 }
 
 export interface EditorProps extends EditorOptions {
-  editorRef?: MutableRefObject<monaco.editor.IStandaloneCodeEditor | null>;
   defaultValue?: string;
   height?: number | string;
   language?: EditorLanguage;
@@ -36,21 +34,24 @@ export interface EditorOptions {
   fontSize?: number;
   readOnly?: boolean;
   lineNumbers?: 'on' | 'off' | 'relative' | 'interval' | ((lineNumber: number) => string);
+  lineHeight?: number;
   minimapEnabled?: boolean;
   scrollBeyondLastLine?: boolean;
   wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
 }
 
 export const CustomEditor: React.FC<EditorProps> = ({
-  editorRef,
   height,
   width,
-  minimapEnabled = true,
+  minimapEnabled,
   value,
   language,
   defaultValue,
+  scrollBeyondLastLine = false,
   ...options
 }): JSX.Element => {
+  const ref = useRef<monaco.editor.IStandaloneCodeEditor>();
+
   const initEditor = () => {
     const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
     const templateFunctions = getTemplateFunctions();
@@ -80,24 +81,22 @@ export const CustomEditor: React.FC<EditorProps> = ({
     initEditor();
   }, []);
 
-  function handleEditorDidMount(editor: monaco.editor.IStandaloneCodeEditor) {
-    if (editorRef) {
-      editorRef.current = editor;
-    }
-  }
+  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
+    ref.current = editor;
+  };
 
   return (
-    <Editor
-      className="msla-monaco"
-      height={height}
-      width={width}
-      options={{ ...options, minimap: { enabled: minimapEnabled } }}
-      value={value}
-      defaultValue={defaultValue}
-      defaultLanguage={language ? language.toString() : undefined}
-      theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : 'light'}
-      onMount={handleEditorDidMount}
-    />
+    <div className="msla-monaco-container" style={{ height: height ?? 380, width }}>
+      <Editor
+        className="msla-monaco"
+        options={{ ...options, minimap: { enabled: minimapEnabled }, scrollBeyondLastLine: scrollBeyondLastLine }}
+        value={value}
+        defaultValue={defaultValue}
+        defaultLanguage={language ? language.toString() : undefined}
+        theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : 'light'}
+        onMount={handleEditorDidMount}
+      />
+    </div>
   );
 };
 
