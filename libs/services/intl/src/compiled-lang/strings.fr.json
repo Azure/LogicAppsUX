@@ -282,7 +282,7 @@
   "3rtRpE": [
     {
       "type": 0,
-      "value": "draggable slider bar"
+      "value": "barre de curseur déplaçable"
     }
   ],
   "3rzrWf": [
@@ -541,6 +541,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de l'action dont vous voulez obtenir les valeurs."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Terminé"
     }
   ],
   "ArTh0/": [
@@ -920,7 +926,7 @@
   "LpPNAD": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Ajouter"
     }
   ],
   "Lub7NN": [
@@ -1040,7 +1046,7 @@
   "OfvxaB": [
     {
       "type": 0,
-      "value": "Label Text"
+      "value": "Texte de l'étiquette"
     }
   ],
   "Oib1mL": [
@@ -1272,7 +1278,7 @@
   "S8P4N5": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Supprimer"
     }
   ],
   "SKXopi": [
@@ -1330,7 +1336,7 @@
   "TUaunO": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Entrer une valeur"
     }
   ],
   "TZv5JE": [

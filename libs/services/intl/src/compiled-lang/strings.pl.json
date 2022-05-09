@@ -320,7 +320,7 @@
   "3rtRpE": [
     {
       "type": 0,
-      "value": "draggable slider bar"
+      "value": "pasek suwaka z możliwością przeciągania"
     }
   ],
   "3rzrWf": [
@@ -579,6 +579,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa akcji z żądanymi wartościami."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Gotowe"
     }
   ],
   "ArTh0/": [
@@ -980,7 +986,7 @@
   "LpPNAD": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Dodaj"
     }
   ],
   "Lub7NN": [
@@ -1100,7 +1106,7 @@
   "OfvxaB": [
     {
       "type": 0,
-      "value": "Label Text"
+      "value": "Tekst etykiety"
     }
   ],
   "Oib1mL": [
@@ -1354,7 +1360,7 @@
   "S8P4N5": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Usuń"
     }
   ],
   "SKXopi": [
@@ -1412,7 +1418,7 @@
   "TUaunO": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Wprowadź wartość"
     }
   ],
   "TZv5JE": [

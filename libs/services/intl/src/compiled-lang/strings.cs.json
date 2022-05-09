@@ -316,7 +316,7 @@
   "3rtRpE": [
     {
       "type": 0,
-      "value": "draggable slider bar"
+      "value": "přetahovatelný posuvník"
     }
   ],
   "3rzrWf": [
@@ -575,6 +575,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název akce, jejíž hodnoty požadujete."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Hotovo"
     }
   ],
   "ArTh0/": [
@@ -976,7 +982,7 @@
   "LpPNAD": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Přidat"
     }
   ],
   "Lub7NN": [
@@ -1096,7 +1102,7 @@
   "OfvxaB": [
     {
       "type": 0,
-      "value": "Label Text"
+      "value": "Text popisku"
     }
   ],
   "Oib1mL": [
@@ -1350,7 +1356,7 @@
   "S8P4N5": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Odstranit"
     }
   ],
   "SKXopi": [
@@ -1408,7 +1414,7 @@
   "TUaunO": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Zadejte hodnotu."
     }
   ],
   "TZv5JE": [

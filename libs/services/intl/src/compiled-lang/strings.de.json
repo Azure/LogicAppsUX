@@ -543,6 +543,12 @@
       "value": "Erforderlich. Der Name der Aktion, deren Werte Sie erhalten möchten."
     }
   ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Fertig"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -920,7 +926,7 @@
   "LpPNAD": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Hinzufügen"
     }
   ],
   "Lub7NN": [
@@ -1040,7 +1046,7 @@
   "OfvxaB": [
     {
       "type": 0,
-      "value": "Label Text"
+      "value": "Bezeichnung Text"
     }
   ],
   "Oib1mL": [
@@ -1276,7 +1282,7 @@
   "S8P4N5": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Löschen"
     }
   ],
   "SKXopi": [
@@ -1334,7 +1340,7 @@
   "TUaunO": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Geben Sie einen Wert ein."
     }
   ],
   "TZv5JE": [

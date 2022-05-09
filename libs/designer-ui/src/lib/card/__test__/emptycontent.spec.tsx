@@ -1,7 +1,6 @@
-import React from 'react';
-import { FormattedMessage } from 'react-intl';
-import ShallowRenderer from 'react-test-renderer/shallow';
 import { EmptyContent } from '../emptycontent';
+import React from 'react';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 describe('lib/card/emptycontent', () => {
   let renderer: ShallowRenderer.ShallowRenderer;
@@ -29,9 +28,6 @@ describe('lib/card/emptycontent', () => {
     );
     expect(text.props.className).toBe('msla-panel-empty-text');
 
-    const message = React.Children.only(text.props.children);
-    expect(message).toEqual(
-      <FormattedMessage defaultMessage="Please select a card to see the content" description="Empty Panel Content Message" />
-    );
+    expect(text.props.children).toEqual('Please select a card to see the content');
   });
 });

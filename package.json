@@ -1,6 +1,6 @@
 {
   "name": "microsoft-logic-apps",
-  "version": "0.0.30",
+  "version": "0.0.32",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -9,6 +9,7 @@
     "storybook:files-axe": "axe-storybook --build-dir dist/storybook/designer/",
     "build": "nx run designer:build",
     "build:all": "nx run-many --all --target=build",
+    "yalcpush:all": "nx run-many --all --target=yalcpush",
     "test": "nx affected --target=test",
     "test:all": "nx run-many --all --target=test",
     "test:e2e": "nx run designer-e2e:e2e",
@@ -41,12 +42,15 @@
     "@monaco-editor/react": "^4.4.2",
     "@reduxjs/toolkit": "1.8.1",
     "@use-it/event-listener": "^0.1.7",
+    "axios": "^0.26.1",
     "core-js": "^3.21.1",
     "d3-shape": "^3.1.0",
     "elkjs": "0.7.3-dev",
     "github-markdown-css": "^5.1.0",
+    "guid-typescript": "^1.0.9",
     "immer": "9.0.12",
     "json-schema-generator": "^2.0.6",
+    "jwt-decode": "^3.1.2",
     "monaco-editor": "^0.33.0",
     "prism-react-renderer": "1.3.1",
     "react": "17.0.2",
@@ -141,6 +145,7 @@
     "typescript": "^4.5.5",
     "url-loader": "^4.1.1",
     "webpack-cli": "^4.9.2",
-    "worker-loader": "^3.0.8"
+    "worker-loader": "^3.0.8",
+    "yalc": "^1.0.0-pre.53"
   }
 }

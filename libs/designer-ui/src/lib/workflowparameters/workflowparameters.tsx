@@ -5,7 +5,7 @@ import type { WorkflowParameterDefinition, WorkflowParameterDeleteHandler, Workf
 import { WorkflowParameter } from './workflowparameter';
 import type { IIconProps, IIconStyles, IMessageBarStyles } from '@fluentui/react';
 import { CommandBarButton, Icon, Link, List, MessageBar, useTheme } from '@fluentui/react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 const navigateIconStyle: IIconStyles = {
   root: {
@@ -38,13 +38,16 @@ const darkMessageBarStyles: IMessageBarStyles = {
 };
 
 const InfoBar = ({ isInverted }: { isInverted: boolean }) => {
+  const intl = useIntl();
+  const text = intl.formatMessage({
+    defaultMessage:
+      'The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save.',
+    description: 'Text for Info Bar',
+  });
   return (
     <div className="msla-workflow-parameters-message-bar">
       <MessageBar isMultiline={true} styles={isInverted ? darkMessageBarStyles : lightMessageBarStyles}>
-        <FormattedMessage
-          defaultMessage="The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save."
-          description="Text for Info Bar"
-        />
+        {text}
       </MessageBar>
     </div>
   );
@@ -113,11 +116,17 @@ export function WorkflowParameters({
     );
   };
 
-  const renderManageParametersLink = (): JSX.Element => {
+  const ManageParametersLink = (): JSX.Element => {
+    const intl = useIntl();
+
+    const jsonText = intl.formatMessage({
+      defaultMessage: 'Edit in JSON',
+      description: 'Parameter Link Text',
+    });
     return (
       <footer className="msla-workflow-parameters-link">
         <Link className="msla-workflow-parameters-link-text" onClick={onManageParameters}>
-          <FormattedMessage defaultMessage="Edit in JSON" description="Parameter Link Text" />
+          {jsonText}
         </Link>
         <Icon iconName="NavigateExternalInline" styles={navigateIconStyle} className="msla-workflow-parameters-link-icon" />
       </footer>
@@ -145,11 +154,13 @@ export function WorkflowParameters({
     defaultMessage: 'Create parameter',
     description: 'Create Parameter Text',
   });
+  const createTitleText = intl.formatMessage({
+    defaultMessage: 'Parameters',
+    description: 'Create Title',
+  });
   return (
     <div className="msla-workflow-parameters">
-      <h3 className="msla-workflow-parameters-create">
-        <FormattedMessage defaultMessage="Parameters" description="Create Title" />
-      </h3>
+      <h3 className="msla-workflow-parameters-create">{createTitleText}</h3>
       {parameters.length ? <InfoBar isInverted={isInverted} /> : null}
       <div className="msla-workflow-parameters-add">
         <CommandBarButton
@@ -162,7 +173,7 @@ export function WorkflowParameters({
       </div>
       {parameters.length ? null : renderTitleAndDescription()}
       {parameters.length ? <List items={parameters} onRenderCell={renderParameter} /> : null}
-      {onManageParameters ? renderManageParametersLink() : null}
+      {onManageParameters ? <ManageParametersLink /> : null}
     </div>
   );
 }
