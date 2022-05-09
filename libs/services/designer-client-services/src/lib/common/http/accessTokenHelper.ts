@@ -7,7 +7,7 @@ export class AccessTokenHelper {
 
   constructor(private _doNotAddBearer = false) {
     // todo: add getAccessToken to the constructor
-    this._getAccessToken = () => new Promise<string>((resolve, reject) => resolve(''));
+    this._getAccessToken = () => new Promise<string>((resolve) => resolve(''));
   }
 
   getCurrentAccessToken = async (): Promise<string> => {

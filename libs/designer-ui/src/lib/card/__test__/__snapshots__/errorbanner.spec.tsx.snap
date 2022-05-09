@@ -6,11 +6,13 @@ exports[`lib/card/errorbanner should render 1`] = `
 >
   <i
     aria-hidden={true}
-    className="panel-card-error-icon root-109"
+    className="panel-card-error-icon root-111"
     data-icon-name="Warning"
-  />
+  >
+    
+  </i>
   <div
-    className="ms-TooltipHost root-110"
+    className="ms-TooltipHost root-112"
     onBlurCapture={[Function]}
     onFocusCapture={[Function]}
     onKeyDown={[Function]}

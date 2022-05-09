@@ -56,14 +56,16 @@ exports[`lib/overview/overviewcommandbar renders 1`] = `
               >
                 <i
                   aria-hidden={true}
-                  className="ms-Icon root-105 ms-Button-icon icon-119"
+                  className="ms-Icon root-105 css-125 ms-Button-icon icon-119"
                   data-icon-name="Refresh"
                   style={
                     Object {
-                      "fontFamily": undefined,
+                      "fontFamily": "\\"FabricMDL2Icons-0\\"",
                     }
                   }
-                />
+                >
+                  
+                </i>
                 <span
                   className="ms-Button-textContainer textContainer-118"
                 >
@@ -140,14 +142,16 @@ exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
               >
                 <i
                   aria-hidden={true}
-                  className="ms-Icon root-105 ms-Button-icon icon-119"
+                  className="ms-Icon root-105 css-125 ms-Button-icon icon-119"
                   data-icon-name="Refresh"
                   style={
                     Object {
-                      "fontFamily": undefined,
+                      "fontFamily": "\\"FabricMDL2Icons-0\\"",
                     }
                   }
-                />
+                >
+                  
+                </i>
                 <span
                   className="ms-Button-textContainer textContainer-118"
                 >
@@ -185,14 +189,16 @@ exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
               >
                 <i
                   aria-hidden={true}
-                  className="ms-Icon root-105 ms-Button-icon icon-119"
+                  className="ms-Icon root-105 css-125 ms-Button-icon icon-119"
                   data-icon-name="Play"
                   style={
                     Object {
-                      "fontFamily": undefined,
+                      "fontFamily": "\\"FabricMDL2Icons-0\\"",
                     }
                   }
-                />
+                >
+                  
+                </i>
                 <span
                   className="ms-Button-textContainer textContainer-118"
                 >
