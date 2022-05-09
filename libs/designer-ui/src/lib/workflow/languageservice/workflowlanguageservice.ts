@@ -61,9 +61,9 @@ export function createLanguageConfig(): LanguageConfiguration {
   };
 }
 
-export function createThemeData(): IStandaloneThemeData {
+export function createThemeData(isInverted: boolean): IStandaloneThemeData {
   return {
-    base: 'vs',
+    base: isInverted ? 'vs-dark' : 'vs',
     inherit: true,
     rules: [
       {

@@ -1,4 +1,5 @@
 import Constants from '../constants';
+import { isHighContrastBlack } from '../utils/theme';
 import {
   createCompletionItemProviderForFunctions,
   createCompletionItemProviderForValues,
@@ -43,7 +44,8 @@ export interface EditorOptions {
 export const CustomEditor: React.FC<EditorProps> = ({
   height,
   width,
-  minimapEnabled,
+  folding = false,
+  minimapEnabled = false,
   value,
   language,
   defaultValue,
@@ -72,7 +74,7 @@ export const CustomEditor: React.FC<EditorProps> = ({
 
         monaco.languages.setLanguageConfiguration(languageName, createLanguageConfig());
         // Define a new theme that contains only rules that match this language
-        monaco.editor.defineTheme(languageName, createThemeData());
+        monaco.editor.defineTheme(languageName, createThemeData(isHighContrastBlack()));
       }
     });
   };
@@ -89,11 +91,16 @@ export const CustomEditor: React.FC<EditorProps> = ({
     <div className="msla-monaco-container" style={{ height: height ?? 380, width }}>
       <Editor
         className="msla-monaco"
-        options={{ ...options, minimap: { enabled: minimapEnabled }, scrollBeyondLastLine: scrollBeyondLastLine }}
+        options={{
+          ...options,
+          minimap: { enabled: minimapEnabled },
+          scrollBeyondLastLine: scrollBeyondLastLine,
+          folding: folding,
+        }}
         value={value}
         defaultValue={defaultValue}
         defaultLanguage={language ? language.toString() : undefined}
-        theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : 'light'}
+        theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : isHighContrastBlack() ? 'vs-dark' : 'vs'}
         onMount={handleEditorDidMount}
       />
     </div>
