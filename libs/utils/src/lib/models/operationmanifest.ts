@@ -116,50 +116,52 @@ export interface Documentation {
 
 type SwaggerSchema = any;
 export interface OperationManifest {
-  properties: {
-    iconUri: string;
-    brandColor: string;
-    description?: string;
-    summary?: string;
+  properties: OperationManifestProperties;
+}
 
-    allowChildOperations?: boolean;
+export interface OperationManifestProperties {
+  iconUri: string;
+  brandColor: string;
+  description?: string;
+  summary?: string;
 
-    statusBadge?: Badge;
-    environmentBadge?: Badge;
+  allowChildOperations?: boolean;
 
-    recurrence?: RecurrenceSetting;
+  statusBadge?: Badge;
+  environmentBadge?: Badge;
 
-    inputs?: SwaggerSchema;
-    inputsLocation?: string[]; // NOTE(tonytang): If not specified, default value is [ 'inputs' ]
-    isInputsOptional?: boolean;
+  recurrence?: RecurrenceSetting;
 
-    outputs?: SwaggerSchema;
-    /*
-     * NOTE(trbaratc): Output resolution takes place as follows. If no payload outputs are present, then use outputs.
-     * If payload outputs are present then walk the path defined by alternativeOutputs.keyPath to find the outputsKey. If the outputsKey is not defined, use outputs.
-     * If outputsKey is defined and specifically present inside of alternativeOutputs.schemas, use the corresponding schema from alternativeOutputs.schemas.
-     * Else, if outputsKey is defined but not specifically considered, use alternativeOutputs.defaultSchema.
-     */
-    alternativeOutputs?: {
-      keyPath: string[];
-      defaultSchema: SwaggerSchema;
-      schemas: Record<string, SwaggerSchema>;
-    };
-    isOutputsOptional?: boolean;
+  inputs?: SwaggerSchema;
+  inputsLocation?: string[]; // NOTE(tonytang): If not specified, default value is [ 'inputs' ]
+  isInputsOptional?: boolean;
 
-    settings?: OperationManifestSettings;
-
-    trigger?: string;
-    triggerHint?: string;
-    connector?: Connector;
-    autoCast?: boolean;
-    includeRootOutputs?: boolean;
-
-    actions?: ActionSetting[];
-
-    connection?: ConnectionMetadata;
-    connectionReference?: ConnectionReference;
-
-    externalDocs?: Documentation;
+  outputs?: SwaggerSchema;
+  /*
+   * NOTE(trbaratc): Output resolution takes place as follows. If no payload outputs are present, then use outputs.
+   * If payload outputs are present then walk the path defined by alternativeOutputs.keyPath to find the outputsKey. If the outputsKey is not defined, use outputs.
+   * If outputsKey is defined and specifically present inside of alternativeOutputs.schemas, use the corresponding schema from alternativeOutputs.schemas.
+   * Else, if outputsKey is defined but not specifically considered, use alternativeOutputs.defaultSchema.
+   */
+  alternativeOutputs?: {
+    keyPath: string[];
+    defaultSchema: SwaggerSchema;
+    schemas: Record<string, SwaggerSchema>;
   };
+  isOutputsOptional?: boolean;
+
+  settings?: OperationManifestSettings;
+
+  trigger?: string;
+  triggerHint?: string;
+  connector?: Connector;
+  autoCast?: boolean;
+  includeRootOutputs?: boolean;
+
+  actions?: ActionSetting[];
+
+  connection?: ConnectionMetadata;
+  connectionReference?: ConnectionReference;
+
+  externalDocs?: Documentation;
 }
