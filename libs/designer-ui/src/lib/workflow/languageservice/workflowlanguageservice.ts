@@ -145,7 +145,6 @@ export function createCompletionItemProviderForFunctions(templateFunctions: Func
         const { name: label, description: documentation, signatures } = templateFunction;
         const shouldAutoComplete = signatures.every((signature) => signature.parameters.length === 0);
         const word = model.getWordUntilPosition(position);
-        console.log(word);
         return {
           label,
           kind: monaco.languages.CompletionItemKind.Function,
