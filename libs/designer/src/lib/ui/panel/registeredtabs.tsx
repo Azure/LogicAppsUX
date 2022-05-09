@@ -13,7 +13,7 @@ export const monitorRetryTab: PanelTab = {
   description: 'Retry History',
   enabled: true,
   content: <RetryPanelTab />,
-  order: 2,
+  order: 0,
   icon: 'Rerun',
 };
 
@@ -23,7 +23,7 @@ export const monitorRequestTab: PanelTab = {
   description: 'Request History',
   enabled: true,
   content: <RequestPanelTab />,
-  order: 2,
+  order: 0,
   icon: 'Rerun',
 };
 
