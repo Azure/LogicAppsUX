@@ -25,9 +25,9 @@ export const BJSWorkflowProvider: React.FC<BJSWorkflowProviderProps> = (props) =
     throw new Error('BJSWorkflowProvider must be used inside of a DesignerProvider');
   }
 
-  useEffect(() => {
+  if (!wrapped.servicesInitialized) {
     InitializeServices(wrapped.services);
-  }, [wrapped.services]);
+  }
 
   return <DataProviderInner {...props} />;
 };
