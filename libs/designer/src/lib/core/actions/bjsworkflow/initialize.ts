@@ -1,3 +1,9 @@
+import type {
+  IConnectionService,
+  IHttpClient,
+  IOperationManifestService,
+  ISearchService,
+} from '@microsoft-logic-apps/designer-client-services';
 import {
   InitConnectionService,
   InitOperationManifestService,
@@ -5,16 +11,24 @@ import {
   StandardConnectionService,
   StandardOperationManifestService,
   StandardSearchService,
+  InitHttpClient,
 } from '@microsoft-logic-apps/designer-client-services';
 
-export const InitializeServices = (getToken?: () => string) => {
+export interface ServiceOptions {
+  httpClient: IHttpClient;
+  connectionService?: IConnectionService;
+  operationManifestService?: IOperationManifestService;
+  searchService?: ISearchService;
+}
+export const InitializeServices = ({ httpClient, connectionService, operationManifestService, searchService }: ServiceOptions) => {
   InitConnectionService(
-    new StandardConnectionService({
-      baseUrl: '',
-      apiVersion: '2018-11-01',
-      getToken,
-    })
+    connectionService ??
+      new StandardConnectionService({
+        baseUrl: '',
+        apiVersion: '2018-11-01',
+      })
   );
-  InitOperationManifestService(new StandardOperationManifestService({}));
-  InitSearchService(new StandardSearchService());
+  InitOperationManifestService(operationManifestService ?? new StandardOperationManifestService({}));
+  InitSearchService(searchService ?? new StandardSearchService());
+  InitHttpClient(httpClient);
 };

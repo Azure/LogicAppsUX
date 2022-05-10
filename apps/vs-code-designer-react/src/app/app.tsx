@@ -1,13 +1,16 @@
 import workflow from '../../../../__mocks__/workflows/Conditionals.json';
+import { HttpClient } from './httpClient';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 
+const httpClient = new HttpClient();
 export const App = () => {
-  const getToken = () => '';
   return (
     <DesignerProvider
       locale="en-US"
       options={{
-        getToken,
+        services: {
+          httpClient,
+        },
       }}
     >
       {workflow ? (
