@@ -1,9 +1,27 @@
+import type { NodesMetadata } from '../state/workflowSlice';
 import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from './models/workflowNode';
 
 const getEdgeId = (parent: string, child: string) => `${parent}-${child}`;
 
+export interface AddNodePayload {
+  id: string;
+  parentId?: string;
+  childId?: string;
+  graphId: string;
+}
+
 export const createNodeWithDefaultSize = (id: string): WorkflowNode => {
   return { id, height: 67, width: 200 };
+};
+
+export const addNode = (payload: AddNodePayload, workflowGraph: WorkflowGraph, nodesMetadata: NodesMetadata) => {
+  addNodeMetadata(nodesMetadata, payload);
+  const workflowNode: WorkflowNode = createNodeWithDefaultSize(payload.id);
+  addWorkflowNode(workflowNode, workflowGraph);
+};
+
+const addNodeMetadata = (nodesMetadata: NodesMetadata, payload: AddNodePayload) => {
+  nodesMetadata[payload.id] = { graphId: payload.graphId };
 };
 
 export const insertMiddleWorkflowEdge = (parent: string, current: string, child: string, graph: WorkflowGraph): void => {

@@ -19,8 +19,11 @@ describe('edit workflow', () => {
     setWorkflowEdge(parentNode, nodeToAdd.id, graph);
 
     insertMiddleWorkflowEdge(parentNode, nodeToAdd.id, childNode, graph);
+
     expect(graph.edges.find((edge) => edge.source === parentNode && edge.target === nodeToAdd.id)).toBeDefined();
     expect(graph.edges.find((edge) => edge.source === nodeToAdd.id && edge.target === childNode)).toBeDefined();
+    // edge from parent to original child should be undefined
+    expect(graph.edges.find((edge) => edge.source === parentNode && edge.target === childNode)).toBeUndefined();
   });
 
   it('adds workflow edge to insert node as last', () => {

@@ -1,5 +1,6 @@
 import { initializeGraphState } from '../parsers/ParseReduxAction';
-import { addWorkflowNode, createNodeWithDefaultSize, insertMiddleWorkflowEdge, setWorkflowEdge } from '../parsers/addNodeToWorkflow';
+import type { AddNodePayload } from '../parsers/addNodeToWorkflow';
+import { insertMiddleWorkflowEdge, setWorkflowEdge } from '../parsers/addNodeToWorkflow';
 import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { createSlice } from '@reduxjs/toolkit';
@@ -30,13 +31,6 @@ const initialState: WorkflowState = {
   nodesMetadata: {},
 };
 
-export interface AddNodePayload {
-  id: string;
-  parentId?: string;
-  childId?: string;
-  graphId: string;
-}
-
 export const workflowSlice = createSlice({
   name: 'workflow',
   initialState,
@@ -48,13 +42,12 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return;
       }
+
       if (action.payload.parentId) {
-        const newNodeId = action.payload.id;
+        const newNodeId = action.payload.id; // danielle when do we generate this?
         const childId = action.payload.childId;
         const parentId = action.payload.parentId;
-        const workflowNode: WorkflowNode = createNodeWithDefaultSize(newNodeId);
 
-        addWorkflowNode(workflowNode, state.graph);
         setWorkflowEdge(parentId, newNodeId, state.graph);
 
         if (childId) {
