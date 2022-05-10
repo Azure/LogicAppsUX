@@ -1,24 +1,14 @@
-import type { HttpOptions } from '../common/http/http';
-import { HttpClient } from '../common/http/http';
+import { HttpClient } from '../httpClient';
 import type { Connector } from '@microsoft-logic-apps/utils';
 
 interface StandardConnectionServiceArgs {
   apiVersion: string;
   baseUrl: string;
   locale?: string;
-  getToken?: () => string;
 }
 
 export class StandardConnectionService {
-  private _httpClient: HttpClient;
-  private httpOptions: HttpOptions = {
-    baseUrl: '',
-    locale: 'en-US',
-  };
-
-  constructor(public readonly options: StandardConnectionServiceArgs) {
-    this._httpClient = new HttpClient({ ...this.httpOptions, baseUrl: options.baseUrl, getToken: options.getToken });
-  }
+  constructor(public readonly options: StandardConnectionServiceArgs) {}
 
   dispose(): void {
     return;
@@ -26,8 +16,9 @@ export class StandardConnectionService {
 
   async getConnector(connectorId: string): Promise<Connector> {
     const { apiVersion, baseUrl } = this.options;
-    const url = `/operationGroups/${connectorId.split('/').slice(-1)[0]}?api-version=${apiVersion}`;
-    //const response = await this._httpClient.get<Connector>(url);
+    const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}?api-version=${apiVersion}`;
+    const response = await HttpClient().get<Connector>({ uri, type: 'GET' });
+    console.log(response);
     //return response;
     return {} as any;
   }
