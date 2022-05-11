@@ -19,7 +19,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) =>
   const onEdgeEndClick = (evt: any, parent?: string, child?: string) => {
     evt.stopPropagation();
     const newId = guid();
-    dispatch(expandDiscoveryPanel({ childId: child, parentId: parent }));
+    dispatch(expandDiscoveryPanel({ childId: child, parentId: parent, nodeId: newId }));
   };
 
   const [{ isOver, canDrop }, drop] = useDrop(() => ({

@@ -24,7 +24,7 @@ const getBrowseResult = () => {
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
 
-  const { childId, parentId } = useSelector((state: RootState) => {
+  const { childId, parentId, selectedNode } = useSelector((state: RootState) => {
     return state.panel;
   });
 
@@ -46,15 +46,15 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const searchResults = searchResponse.data;
   const browseResults = browseResponse.data;
 
-  const onOperationClick = (id: string) => {
+  const onOperationClick = (typeId: string) => {
     const addPayload: AddNodePayload = {
-      id,
+      id: selectedNode,
       parentId: parentId,
       childId: childId,
       graphId: 'root',
     };
     dispatch(addNode(addPayload));
-    dispatch(switchToOperationPanel(id));
+    dispatch(switchToOperationPanel(selectedNode));
     return;
   };
 

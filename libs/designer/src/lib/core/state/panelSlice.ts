@@ -30,11 +30,12 @@ export const panelSlice = createSlice({
       state.selectedNode = action.payload;
       state.isDiscovery = false;
     },
-    expandDiscoveryPanel: (state, action: PayloadAction<{ childId?: string; parentId?: string }>) => {
+    expandDiscoveryPanel: (state, action: PayloadAction<{ childId?: string; parentId?: string; nodeId: string }>) => {
       state.collapsed = false;
       state.isDiscovery = true;
       state.parentId = action.payload.parentId;
       state.childId = action.payload.childId;
+      state.selectedNode = action.payload.nodeId;
     },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
       state.selectedNode = action.payload;
