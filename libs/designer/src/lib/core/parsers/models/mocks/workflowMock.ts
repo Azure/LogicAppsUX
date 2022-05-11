@@ -1,4 +1,15 @@
+import type { WorkflowState } from '../../../state/workflowSlice';
 import type { WorkflowGraph } from '../workflowNode';
+
+export const initialState: WorkflowState = {
+  graph: {
+    id: 'root',
+    children: [],
+    edges: [],
+  },
+  actions: {},
+  nodesMetadata: {},
+};
 
 export const mockGraph: WorkflowGraph = {
   id: 'root',

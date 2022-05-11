@@ -14,7 +14,7 @@ export const createNodeWithDefaultSize = (id: string): WorkflowNode => {
   return { id, height: 67, width: 200 };
 };
 
-export const addNode = (payload: AddNodePayload, workflowGraph: WorkflowGraph, nodesMetadata: NodesMetadata) => {
+export const addNodeToWorkflow = (payload: AddNodePayload, workflowGraph: WorkflowGraph, nodesMetadata: NodesMetadata) => {
   addNodeMetadata(nodesMetadata, payload);
   const workflowNode: WorkflowNode = createNodeWithDefaultSize(payload.id);
   addWorkflowNode(workflowNode, workflowGraph);

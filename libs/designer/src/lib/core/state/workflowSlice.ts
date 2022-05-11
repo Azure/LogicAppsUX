@@ -1,6 +1,6 @@
 import { initializeGraphState } from '../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../parsers/addNodeToWorkflow';
-import { insertMiddleWorkflowEdge, setWorkflowEdge } from '../parsers/addNodeToWorkflow';
+import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../parsers/addNodeToWorkflow';
 import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { createSlice } from '@reduxjs/toolkit';
@@ -24,7 +24,7 @@ export interface WorkflowState {
   nodesMetadata: NodesMetadata;
 }
 
-const initialState: WorkflowState = {
+export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
   graph: null,
   actions: {},
@@ -33,7 +33,7 @@ const initialState: WorkflowState = {
 
 export const workflowSlice = createSlice({
   name: 'workflow',
-  initialState,
+  initialState: initialWorkflowState,
   reducers: {
     initWorkflowSpec: (state, action: PayloadAction<SpecTypes>) => {
       state.workflowSpec = action.payload;
@@ -42,6 +42,8 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return;
       }
+
+      addNodeToWorkflow(action.payload, state.graph, state.nodesMetadata);
 
       if (action.payload.parentId) {
         const newNodeId = action.payload.id; // danielle when do we generate this?
