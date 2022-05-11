@@ -2,7 +2,7 @@ import { Checkbox, FontSizes, IconButton } from '@fluentui/react';
 import type { IButtonStyles, IIconProps } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface ConfigurableMultiSelectItemSectionProps {
@@ -42,16 +42,6 @@ export const ConfigurableMultiSelectItemSection: React.FC<ConfigurableMultiSelec
     itemsCopy.splice(itemIndex, 1, modifiedItem);
     setItems(itemsCopy);
   };
-  // const handleActionAddition = (id: string): void => {
-  //   // construct action object via id -> add new action to state items object
-  //   let newAction: ConfigurableAction = {
-  //     id,
-  //     title: 'Random Action',
-  //     icon: '',
-  //     statuses: defaultStatuses,
-  //   };
-  //   setItems([...items, newAction]);
-  // };
   const handleActionDelete = (id: string): void => {
     const indexOfItemToDelete = items.indexOf(items.filter((item) => item.id === id)[0]);
     const itemsCopy = [...items];
@@ -72,13 +62,6 @@ export const ConfigurableMultiSelectItemSection: React.FC<ConfigurableMultiSelec
           />
         );
       })}
-      <div className="'msla-run-after-action-add">
-        {/* <AddActionItem>
-            configurableItems={configurableActionItems}
-            preconfiguredItems={configuredActionItems}
-            onActionAdd={handleActionAddition}
-        </AddActionItem> */}
-      </div>
     </>
   );
 };
