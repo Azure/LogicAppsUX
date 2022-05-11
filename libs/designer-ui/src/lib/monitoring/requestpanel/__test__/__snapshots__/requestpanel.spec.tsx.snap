@@ -41,14 +41,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronLeft"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -78,7 +80,7 @@ Array [
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-118"
+          className="css-120"
         >
           1 of 1
         </span>
@@ -115,14 +117,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronRight"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -573,14 +577,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronLeft"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -610,7 +616,7 @@ Array [
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-118"
+          className="css-120"
         >
           1 of 1
         </span>
@@ -647,14 +653,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronRight"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -1209,7 +1217,7 @@ Array [
             >
               <div
                 aria-label="Headers"
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-119"
+                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -1226,7 +1234,7 @@ Array [
                   >
                     <div
                       aria-label="Headers"
-                      className="ms-FocusZone css-137 ms-DetailsHeader root-121"
+                      className="ms-FocusZone css-139 ms-DetailsHeader root-123"
                       data-automationid="DetailsHeader"
                       data-focuszone-id="FocusZone18"
                       onFocus={[Function]}
@@ -1238,7 +1246,7 @@ Array [
                       <div
                         aria-label="Key"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-138"
+                        className="ms-DetailsHeader-cell is-actionable root-140"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -1252,16 +1260,16 @@ Array [
                         }
                       >
                         <span
-                          className="cellTooltip-146"
+                          className="cellTooltip-148"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-144"
+                            className="ms-DetailsHeader-cellTitle cellTitle-146"
                             id="header17-$key"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-145"
+                              className="ms-DetailsHeader-cellName cellName-147"
                               id="header17-$key-name"
                             >
                               Key
@@ -1271,7 +1279,7 @@ Array [
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerStart-129"
+                        className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerStart-131"
                         data-is-focusable={false}
                         data-sizer-index={0}
                         onBlur={[Function]}
@@ -1282,7 +1290,7 @@ Array [
                       <div
                         aria-label="Value"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-138"
+                        className="ms-DetailsHeader-cell is-actionable root-140"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -1296,16 +1304,16 @@ Array [
                         }
                       >
                         <span
-                          className="cellTooltip-146"
+                          className="cellTooltip-148"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-144"
+                            className="ms-DetailsHeader-cellTitle cellTitle-146"
                             id="header17-$value"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-145"
+                              className="ms-DetailsHeader-cellName cellName-147"
                               id="header17-$value-name"
                             >
                               Value
@@ -1315,7 +1323,7 @@ Array [
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerEnd-130"
+                        className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerEnd-132"
                         data-is-focusable={false}
                         data-sizer-index={1}
                         onBlur={[Function]}
@@ -1343,7 +1351,7 @@ Array [
                       role="presentation"
                     >
                       <div
-                        className="ms-FocusZone css-137 focusZone-120"
+                        className="ms-FocusZone css-139 focusZone-122"
                         data-focuszone-id="FocusZone19"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -1413,14 +1421,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronLeft"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -1450,7 +1460,7 @@ Array [
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-118"
+          className="css-120"
         >
           1 of 1
         </span>
@@ -1487,14 +1497,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronRight"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -1988,7 +2000,7 @@ Array [
             >
               <div
                 aria-label="Headers"
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-119"
+                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -2005,7 +2017,7 @@ Array [
                   >
                     <div
                       aria-label="Headers"
-                      className="ms-FocusZone css-137 ms-DetailsHeader root-121"
+                      className="ms-FocusZone css-139 ms-DetailsHeader root-123"
                       data-automationid="DetailsHeader"
                       data-focuszone-id="FocusZone38"
                       onFocus={[Function]}
@@ -2017,7 +2029,7 @@ Array [
                       <div
                         aria-label="Key"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-138"
+                        className="ms-DetailsHeader-cell is-actionable root-140"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -2031,16 +2043,16 @@ Array [
                         }
                       >
                         <span
-                          className="cellTooltip-146"
+                          className="cellTooltip-148"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-144"
+                            className="ms-DetailsHeader-cellTitle cellTitle-146"
                             id="header37-$key"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-145"
+                              className="ms-DetailsHeader-cellName cellName-147"
                               id="header37-$key-name"
                             >
                               Key
@@ -2050,7 +2062,7 @@ Array [
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerStart-129"
+                        className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerStart-131"
                         data-is-focusable={false}
                         data-sizer-index={0}
                         onBlur={[Function]}
@@ -2061,7 +2073,7 @@ Array [
                       <div
                         aria-label="Value"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-138"
+                        className="ms-DetailsHeader-cell is-actionable root-140"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -2075,16 +2087,16 @@ Array [
                         }
                       >
                         <span
-                          className="cellTooltip-146"
+                          className="cellTooltip-148"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-144"
+                            className="ms-DetailsHeader-cellTitle cellTitle-146"
                             id="header37-$value"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-145"
+                              className="ms-DetailsHeader-cellName cellName-147"
                               id="header37-$value-name"
                             >
                               Value
@@ -2094,7 +2106,7 @@ Array [
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-128 cellSizerEnd-130"
+                        className="ms-DetailsHeader-cellSizer cellSizer-130 cellSizerEnd-132"
                         data-is-focusable={false}
                         data-sizer-index={1}
                         onBlur={[Function]}
@@ -2122,7 +2134,7 @@ Array [
                       role="presentation"
                     >
                       <div
-                        className="ms-FocusZone css-137 focusZone-120"
+                        className="ms-FocusZone css-139 focusZone-122"
                         data-focuszone-id="FocusZone39"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -2253,14 +2265,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronLeft"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -2290,7 +2304,7 @@ Array [
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-118"
+          className="css-120"
         >
           1 of 1
         </span>
@@ -2327,14 +2341,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronRight"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -2816,14 +2832,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronLeft"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
@@ -2853,7 +2871,7 @@ Array [
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-118"
+          className="css-120"
         >
           1 of 1
         </span>
@@ -2890,14 +2908,16 @@ Array [
             >
               <i
                 aria-hidden={true}
-                className="ms-Icon root-105 ms-Button-icon icon-113"
+                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
                 data-icon-name="ChevronRight"
                 style={
                   Object {
-                    "fontFamily": undefined,
+                    "fontFamily": "\\"FabricMDL2Icons\\"",
                   }
                 }
-              />
+              >
+                
+              </i>
               <span
                 className="ms-Button-textContainer textContainer-112"
               />
