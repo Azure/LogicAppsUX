@@ -1,6 +1,7 @@
 import type { SettingSectionComponentProps } from '..';
 import { SettingsSection } from '..';
 import { ConfigurableMultiSelectItemSection } from './configurableactionitemsetting';
+import type { ConfigurableMultiSelectItemSectionProps } from './configurableactionitemsetting';
 import { MultiAddExpressionEditor } from './settingexpressioneditor';
 import { ReactiveToggle } from './settingreactiveinput';
 import { CustomValueSlider } from './settingslider';
@@ -56,10 +57,36 @@ sliderSetting.args = {
   renderContent: CustomValueSlider,
 };
 
-export const configurableactionitemsetting = Template.bind({});
-configurableactionitemsetting.args = {
+export const configurableActionItemSetting = Template.bind({});
+const sampleProps: ConfigurableMultiSelectItemSectionProps = {
+  configurableActionItems: [],
+  configuredActionItems: [
+    {
+      id: 'sampleActionId',
+      title: 'Sample Action',
+      statuses: {
+        'Option 1': true,
+        'Option 2': false,
+        'Option 3': false,
+        'Option 4': false,
+      },
+    },
+    {
+      id: 'sampleActionId2',
+      title: 'Sample Action',
+      statuses: {
+        'Option 1': true,
+        'Option 2': false,
+        'Option 3': false,
+        'Option 4': false,
+      },
+    },
+  ],
+  isReadOnly: false,
+};
+configurableActionItemSetting.args = {
   id: 'multiSelectSetting',
   title: 'Configurable Multi-Select Item Setting',
   expanded: false,
-  renderContent: ConfigurableMultiSelectItemSection,
+  renderContent: () => <ConfigurableMultiSelectItemSection {...sampleProps} />,
 };

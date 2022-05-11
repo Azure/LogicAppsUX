@@ -2,7 +2,7 @@ import { Checkbox, FontSizes, IconButton } from '@fluentui/react';
 import type { IButtonStyles, IIconProps } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface ConfigurableMultiSelectItemSectionProps {
@@ -30,6 +30,7 @@ export const ConfigurableMultiSelectItemSection: React.FC<ConfigurableMultiSelec
     'Option 4': false,
   };
   const [items, setItems] = useState(configuredActionItems);
+
   const onStatusChange = (itemId: string, statusKey: string, checked?: boolean): void => {
     if (isNullOrUndefined(checked)) {
       return;
@@ -59,19 +60,18 @@ export const ConfigurableMultiSelectItemSection: React.FC<ConfigurableMultiSelec
   };
   return (
     <>
-      {configuredActionItems.map((configuredAction) => {
+      {items.map((configuredAction) => {
         return (
           <ActionItemConfiguration
             key={configuredAction.id}
             onDelete={handleActionDelete}
             action={configuredAction}
-            canDelete={canDelete(configuredAction, configuredActionItems)}
+            canDelete={canDelete(configuredAction, items)}
             onStatusChange={(statusKey: string, checked?: boolean) => onStatusChange(configuredAction.id, statusKey, checked)}
             isReadOnly={isReadOnly}
           />
         );
       })}
-      {/* styling? */}
       <div className="'msla-run-after-action-add">
         {/* <AddActionItem>
             configurableItems={configurableActionItems}
