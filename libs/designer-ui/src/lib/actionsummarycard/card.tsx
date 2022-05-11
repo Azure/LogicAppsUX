@@ -32,6 +32,11 @@ export const OperationCard = (props: OperationCardProps) => {
     description: 'Filter that selects only Trigger Operations',
   });
 
+  const selectText = intl.formatMessage({
+    defaultMessage: 'Select',
+    description: 'Select the Operation to add to workflow',
+  });
+
   return (
     <div className="msla-operation-card">
       <div>
@@ -40,7 +45,7 @@ export const OperationCard = (props: OperationCardProps) => {
         </div>
         <div className="msla-card-title-container">
           <Text className="msla-card-title">{props.title}</Text>
-          <button onClick={() => props.onClick(props.id)}>{'Select'}</button> {/*  danielle localize */}
+          <button onClick={() => props.onClick(props.id)}>{selectText}</button>
         </div>
       </div>
       <Text className="msla-card-description">{props.subtitle}</Text>

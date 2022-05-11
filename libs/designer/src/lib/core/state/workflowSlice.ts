@@ -46,7 +46,7 @@ export const workflowSlice = createSlice({
       addNodeToWorkflow(action.payload, state.graph, state.nodesMetadata);
 
       if (action.payload.parentId) {
-        const newNodeId = action.payload.id; // danielle when do we generate this?
+        const newNodeId = action.payload.id;
         const childId = action.payload.childId;
         const parentId = action.payload.parentId;
 
@@ -56,7 +56,7 @@ export const workflowSlice = createSlice({
           insertMiddleWorkflowEdge(parentId, newNodeId, childId, state.graph);
         }
       }
-      // danielle: then add to actions[] ? this might happen in RQ now
+      // Danielle still need to add to Actions, will complete later in S10! https://msazure.visualstudio.com/DefaultCollection/One/_workitems/edit/14429900
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
       const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');
