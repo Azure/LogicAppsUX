@@ -73,7 +73,7 @@ const sampleProps: ConfigurableMultiSelectItemSectionProps = {
     },
     {
       id: 'sampleActionId2',
-      title: 'Sample Action',
+      title: 'Sample Action 2',
       statuses: {
         'Option 1': true,
         'Option 2': false,

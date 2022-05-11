@@ -188,7 +188,7 @@ export interface ActionStatusesProps {
   id: string;
   statuses: Record<string, boolean>;
   onStatusChange: StatusChangeHandler;
-  onRenderLabel?: (status: string, label: string) => JSX.Element | null;
+  onRenderLabel?(status: string, label: string): JSX.Element | null;
 }
 
 const ActionStatuses: React.FC<ActionStatusesProps> = (props): JSX.Element => {
@@ -217,7 +217,6 @@ const ActionStatuses: React.FC<ActionStatusesProps> = (props): JSX.Element => {
           checked={statuses[option1Label]}
           label={option1Label}
           onChange={(_, checked) => onStatusChange?.(option1Label, checked)}
-          onRenderLabel={() => onRenderLabel?.(option1Label, option1Label) ?? null}
         />
       </div>
       <div className="msla-run-after-status-checkbox">
@@ -225,7 +224,6 @@ const ActionStatuses: React.FC<ActionStatusesProps> = (props): JSX.Element => {
           checked={statuses[option2Label]}
           label={option2Label}
           onChange={(_, checked) => onStatusChange?.(option2Label, checked)}
-          onRenderLabel={() => onRenderLabel?.(option2Label, option2Label) ?? null}
         />
       </div>
       <div className="msla-run-after-status-checkbox">
@@ -233,7 +231,6 @@ const ActionStatuses: React.FC<ActionStatusesProps> = (props): JSX.Element => {
           checked={statuses[option3Label]}
           label={option3Label}
           onChange={(_, checked) => onStatusChange?.(option3Label, checked)}
-          onRenderLabel={() => onRenderLabel?.(option3Label, option4Label) ?? null}
         />
       </div>
       <div className="msla-run-after-status-checkbox">
@@ -241,7 +238,6 @@ const ActionStatuses: React.FC<ActionStatusesProps> = (props): JSX.Element => {
           checked={statuses[option4Label]}
           label={option4Label}
           onChange={(_, checked) => onStatusChange?.(option4Label, checked)}
-          onRenderLabel={() => onRenderLabel?.(option4Label, option4Label) ?? null}
         />
       </div>
     </div>
