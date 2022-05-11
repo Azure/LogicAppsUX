@@ -83,6 +83,13 @@ export const ConfigurableMultiSelectItemSection: React.FC<ConfigurableMultiSelec
   );
 };
 
+interface ActionHeaderProps {
+  id: string;
+  icon?: string;
+  title: string;
+  customRender?(): JSX.Element | null;
+}
+
 interface ActionItemConfigurationProps {
   action: ConfigurableAction;
   canDelete: boolean;
@@ -103,43 +110,52 @@ const ActionItemConfiguration: React.FC<ActionItemConfigurationProps> = (props):
   const toggleActionExpand = (_: React.MouseEvent<HTMLElement>): void => {
     toggleExpand.toggle();
   };
-  const iconProps: IIconProps = {
-    iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed',
-  };
-  const chevronStyles: IButtonStyles = {
-    icon: {
-      color: '#8a8886',
-      fontSize: FontSizes.small,
-    },
-    // root: {
-    //     ...(!collapsible && { display: 'none' }),
-    // },
-  };
-  const intl = useIntl();
-  const expandOrCollapse = intl.formatMessage({
-    defaultMessage: 'Expand or Collapse',
-    description: 'description to toggle expansion of section',
-  });
-  return (
-    <>
+  const ActionHeader: React.FC<ActionHeaderProps> = (props): JSX.Element => {
+    const { customRender } = props;
+    const iconProps: IIconProps = { iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed' };
+    const chevronStyles: IButtonStyles = {
+      icon: {
+        color: '#8a8886',
+        fontSize: FontSizes.small,
+      },
+    };
+    const intl = useIntl();
+    const expandOrCollapse = intl.formatMessage({
+      defaultMessage: 'Expand or Collapse',
+      description: 'description to toggle expansion of section',
+    });
+    return (
       <div className="msla-run-after-edge-header">
         <div className="msla-run-after-edge-header-contents-container" onClick={toggleActionExpand}>
           <div>
             <div className="msla-run-after-edge-header-contents">
               <IconButton ariaLabel={expandOrCollapse} className="msla-run-after-icon" iconProps={iconProps} styles={chevronStyles} />
               <div className="msla-run-after-edge-header-logo">
-                <img alt="" className="msla-run-after-logo-image" role="presentation" src={icon} />
+                <img
+                  alt=""
+                  className="msla-run-after-logo-image"
+                  role="presentation"
+                  src={icon ?? 'https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png'}
+                />
               </div>
               <div className="msla-run-after-edge-header-text">{title}</div>
             </div>
-            {/* <RunAfterTrafficLights
-              isInverted={isInverted}
-              statuses={statuses}
-            /> */}
+            {customRender}
             <DeleteButton id={id} visible={canDelete && !isReadOnly} onDelete={onDelete} />
           </div>
         </div>
       </div>
+    );
+  };
+  const actionHeaderProps: ActionHeaderProps = {
+    id,
+    title,
+    icon,
+  };
+
+  return (
+    <>
+      <ActionHeader {...actionHeaderProps} />
       {expanded ? <ActionStatuses id={id} statuses={statuses} onStatusChange={onStatusChange} /> : null}
     </>
   );
