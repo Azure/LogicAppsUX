@@ -1,4 +1,6 @@
 import { initializeGraphState } from '../parsers/ParseReduxAction';
+import type { AddNodePayload } from '../parsers/addNodeToWorkflow';
+import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../parsers/addNodeToWorkflow';
 import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { createSlice } from '@reduxjs/toolkit';
@@ -17,34 +19,44 @@ export interface NodesMetadata {
 export type Actions = Record<string, LogicAppsV2.ActionDefinition>;
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
-  graph?: WorkflowGraph | null;
+  graph: WorkflowGraph | null;
   actions: Actions;
   nodesMetadata: NodesMetadata;
 }
 
-const initialState: WorkflowState = {
+export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
   graph: null,
   actions: {},
   nodesMetadata: {},
 };
 
-interface AddNodePayload {
-  id: string;
-  parentId?: string;
-  childId?: string;
-  graphId: string;
-}
-
 export const workflowSlice = createSlice({
   name: 'workflow',
-  initialState,
+  initialState: initialWorkflowState,
   reducers: {
     initWorkflowSpec: (state, action: PayloadAction<SpecTypes>) => {
       state.workflowSpec = action.payload;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
-      // TODO: Add node addition
+      if (!state.graph) {
+        return;
+      }
+
+      addNodeToWorkflow(action.payload, state.graph, state.nodesMetadata);
+
+      if (action.payload.parentId) {
+        const newNodeId = action.payload.id;
+        const childId = action.payload.childId;
+        const parentId = action.payload.parentId;
+
+        setWorkflowEdge(parentId, newNodeId, state.graph);
+
+        if (childId) {
+          insertMiddleWorkflowEdge(parentId, newNodeId, childId, state.graph);
+        }
+      }
+      // Danielle still need to add to Actions, will complete later in S10! https://msazure.visualstudio.com/DefaultCollection/One/_workitems/edit/14429900
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
       const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');

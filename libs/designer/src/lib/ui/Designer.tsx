@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useLayout } from '../core/graphlayout';
-import { collapsePanel, expandPanel } from '../core/state/panelSlice';
 import { updateNodeSizes } from '../core/state/workflowSlice';
-import type { RootState } from '../core/store';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import GraphNode from './CustomNodes/GraphNode';
 import { CustomEdge } from './connections/edge';
@@ -13,7 +11,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { createTransition, DndProvider } from 'react-dnd-multi-backend';
 import type { NodeChange } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export interface DesignerProps {
   graphId?: string;
@@ -57,10 +55,6 @@ const DND_OPTIONS = {
 };
 
 export const Designer = () => {
-  const { collapsed, selectedNode, isDiscovery } = useSelector((state: RootState) => {
-    const { collapsed, selectedNode, isDiscovery } = state.panel;
-    return { collapsed, selectedNode, isDiscovery };
-  });
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch();
 
@@ -70,14 +64,6 @@ export const Designer = () => {
     },
     [dispatch]
   );
-
-  const collapse = useCallback(() => {
-    dispatch(collapsePanel());
-  }, [dispatch]);
-
-  const expand = useCallback(() => {
-    dispatch(expandPanel());
-  }, [dispatch]);
 
   return (
     <DndProvider options={DND_OPTIONS as any}>
@@ -97,14 +83,7 @@ export const Designer = () => {
               hideAttribution: true,
             }}
           >
-            <PanelRoot
-              collapsePanel={collapse}
-              expandPanel={expand}
-              collapsed={collapsed}
-              isRecommendation={false}
-              noNodeSelected={!selectedNode}
-              title={selectedNode}
-            />
+            <PanelRoot />
           </ReactFlow>
         </ReactFlowProvider>
       </div>

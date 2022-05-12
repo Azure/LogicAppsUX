@@ -1,9 +1,14 @@
+import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
+import { switchToOperationPanel } from '../../../core/state/panelSlice';
+import { addNode } from '../../../core/state/workflowSlice';
+import type { RootState } from '../../../core/store';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
 import { connectorsSearchResultsMock } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel } from '@microsoft/designer-ui';
 import React from 'react';
 import { useQuery } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
 
 const getSearchResult = (term: string) => {
   const searchService = SearchService();
@@ -17,6 +22,12 @@ const getBrowseResult = () => {
 };
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
+  const dispatch = useDispatch();
+
+  const { childId, parentId, selectedNode } = useSelector((state: RootState) => {
+    return state.panel;
+  });
+
   const [searchTerm, setSearchTerm] = React.useState('');
   const search = (term: string) => {
     setSearchTerm(term);
@@ -35,8 +46,21 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const searchResults = searchResponse.data;
   const browseResults = browseResponse.data;
 
+  const onOperationClick = (typeId: string) => {
+    const addPayload: AddNodePayload = {
+      id: selectedNode,
+      parentId: parentId,
+      childId: childId,
+      graphId: 'root',
+    };
+    dispatch(addNode(addPayload));
+    dispatch(switchToOperationPanel(selectedNode));
+    return;
+  };
+
   return (
     <RecommendationPanel
+      onOperationClick={onOperationClick}
       placeholder={''}
       operationSearchResults={searchResults?.searchOperations || []}
       connectorBrowse={browseResults || []}

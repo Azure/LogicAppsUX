@@ -1,4 +1,4 @@
-import { initializeOperationMetadata } from '../queries';
+import { initializeOperationMetadata } from '../queries/queries';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import { createAsyncThunk } from '@reduxjs/toolkit';
