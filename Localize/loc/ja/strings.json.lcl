@@ -429,6 +429,9 @@
       <Item ItemId=";3rtRpE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[draggable slider bar]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[ドラッグ可能なスライダー バー]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1972,7 +1975,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter a value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[値を入力します]]></Val>
+            <Val><![CDATA[値を入力してください]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

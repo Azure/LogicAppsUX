@@ -1,38 +1,29 @@
+import { collapsePanel, expandPanel } from '../../core/state/panelSlice';
+import type { RootState } from '../../core/store';
 import type { PanelTab } from './panelUtil';
 import { registerTab, getTabs } from './panelUtil';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { aboutTab, settingsTab, codeViewTab } from './registeredtabs';
 import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { MenuItemType, PanelContainer, PanelHeaderControlType } from '@microsoft/designer-ui';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
 
 export interface PanelRootProps {
   cardIcon?: string;
   comment?: string;
-  collapsed: boolean;
-  isRecommendation: boolean;
-  noNodeSelected: boolean;
   selectedTabId?: string;
   readOnlyMode?: boolean;
-  title: string;
-  collapsePanel?: () => void;
-  expandPanel?: () => void;
 }
 
-export const PanelRoot = ({
-  cardIcon,
-  comment,
-  isRecommendation,
-  collapsed,
-  noNodeSelected,
-  selectedTabId,
-  readOnlyMode,
-  title,
-  collapsePanel,
-  expandPanel,
-}: PanelRootProps): JSX.Element => {
+export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: PanelRootProps): JSX.Element => {
   const intl = useIntl();
+  const dispatch = useDispatch();
+
+  const { collapsed, selectedNode, isDiscovery } = useSelector((state: RootState) => {
+    return state.panel;
+  });
 
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
   const [currentComment, setCurrentComment] = useState(comment);
@@ -53,9 +44,17 @@ export const PanelRoot = ({
     collapsed ? setWidth('auto') : setWidth('630px');
   }, [collapsed]);
 
+  const collapse = useCallback(() => {
+    dispatch(collapsePanel());
+  }, [dispatch]);
+
+  const expand = useCallback(() => {
+    dispatch(expandPanel());
+  }, [dispatch]);
+
   const getPanelHeaderControlType = (): boolean => {
     // TODO: 13067650
-    return isRecommendation;
+    return isDiscovery;
   };
 
   const getPanelHeaderMenu = (): MenuItemOption[] => {
@@ -138,13 +137,13 @@ export const PanelRoot = ({
 
   const togglePanel = (): void => {
     if (!collapsed) {
-      collapsePanel && collapsePanel();
+      collapse();
     } else {
-      expandPanel && expandPanel();
+      expand();
     }
   };
 
-  return isRecommendation ? (
+  return isDiscovery ? (
     <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width}></RecommendationPanelContext>
   ) : (
     <PanelContainer
@@ -152,7 +151,7 @@ export const PanelRoot = ({
       comment={currentComment}
       isRight
       isCollapsed={collapsed}
-      noNodeSelected={noNodeSelected}
+      noNodeSelected={!selectedNode}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}
       selectedTab={selectedTab}
@@ -163,7 +162,7 @@ export const PanelRoot = ({
       setSelectedTab={setSelectedTab}
       toggleCollapse={togglePanel}
       trackEvent={handleTrackEvent}
-      title={title}
+      title={selectedNode}
     />
   );
 };

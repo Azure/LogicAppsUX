@@ -1,5 +1,5 @@
-import { getReactQueryClient } from './ReactQueryProvider';
-import type { Actions } from './state/workflowSlice';
+import { getReactQueryClient } from '../ReactQueryProvider';
+import type { Actions } from '../state/workflowSlice';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connector, OperationInfo, OperationManifest } from '@microsoft-logic-apps/utils';
 

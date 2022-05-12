@@ -26,8 +26,7 @@ export const BJSWorkflowProvider: React.FC<BJSWorkflowProviderProps> = (props) =
   }
 
   if (!wrapped.servicesInitialized) {
-    // NOTE(psamband): If services are not initialized by host, we will initialize LA standard services.
-    InitializeServices(wrapped.getToken);
+    InitializeServices(wrapped.services);
   }
 
   return <DataProviderInner {...props} />;

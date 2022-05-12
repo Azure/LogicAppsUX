@@ -23,6 +23,11 @@ exports[`recommendation panel renders operation card 1`] = `
       >
         When a blob is added or modified (properties only) (V2)
       </Text>
+      <button
+        onClick={[Function]}
+      >
+        Select
+      </button>
     </div>
   </div>
   <Text
