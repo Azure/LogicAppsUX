@@ -60,8 +60,24 @@ sliderSetting.args = {
 export const multiSelectSetting = Template.bind({});
 const sampleProps: MultiSelectSettingProps = {
   id: 'runAfter',
-  selections: {},
-  checkboxLabels: ['Label 1', 'Label 2', 'Label 3'],
+  selections: [
+    {
+      isSelected: true,
+      label: 'Label 1',
+    },
+    {
+      isSelected: false,
+      label: 'Label 2',
+    },
+    {
+      isSelected: false,
+      label: 'Label 3',
+    },
+    {
+      isSelected: false,
+      label: 'Label 4',
+    },
+  ],
 };
 multiSelectSetting.args = {
   id: 'multiSelectSetting',
