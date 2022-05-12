@@ -27,7 +27,8 @@
     "build:utils": "nx run utils:build",
     "bump": "standard-version --no-verify",
     "postinstall": "tsc -p ./tools/executors/web/tsconfig.json",
-    "vscode:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package"
+    "vscode:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package",
+    "fixLineEndings": "prettier --write \"**/*.json\""
   },
   "engines": {
     "node": "16",
