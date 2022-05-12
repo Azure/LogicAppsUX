@@ -30,6 +30,15 @@ export const useConnector = (connectorId: string) => {
   });
 };
 
+export const useNodeDescription = (nodeId: string) => {
+  return useSelector((state: RootState) => {
+    if (!nodeId) {
+      return undefined;
+    }
+    return state.workflow.actions[nodeId]?.description;
+  });
+};
+
 export const useOperationManifest = (connectorId: string, operationId: string) => {
   const operationManifestService = OperationManifestService();
   connectorId = connectorId.toLowerCase();
