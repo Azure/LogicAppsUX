@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "configurations": [
     {
-      "name": "Run Extension In Dev Mode",
+      "name": "Run Designer Extension In Dev Mode",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
@@ -11,6 +11,16 @@
       "internalConsoleOptions": "openOnFirstSessionStart",
       "outFiles": ["${workspaceFolder}/dist/apps/vs-code-designer"],
       "preLaunchTask": "${defaultBuildTask}"
+    },
+    {
+      "name": "Run Data Mapper Extension In Dev Mode",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}/dist/apps/vs-code-data-mapper"],
+      "trace": false,
+      "internalConsoleOptions": "openOnFirstSessionStart",
+      "outFiles": ["${workspaceFolder}/dist/apps/vs-code-data-mapper"]
     }
   ]
 }

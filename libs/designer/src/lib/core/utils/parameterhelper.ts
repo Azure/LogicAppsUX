@@ -40,7 +40,7 @@ export interface RepetitionContext {
         let repetitionContext: RepetitionContext | null;
         if (nodeId) {
             const includeSelf = shouldIncludeSelfForRepetitionReference(nodeType, inputParameter.name);
-            repetitionContext = // TODO(psamband): Get repetition context from redux for this node
+            repetitionContext = null;// TODO(psamband): Get repetition context from redux for this node
         } else {
             repetitionContext = null;
         }

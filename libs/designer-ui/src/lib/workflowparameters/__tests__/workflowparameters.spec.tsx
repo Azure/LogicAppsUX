@@ -52,7 +52,7 @@ describe('ui/workflowparameters/workflowparameters', () => {
     });
     expect(header.props.className).toBe('msla-workflow-parameters-create');
     const headerText = header.props.children;
-    expect(headerText.props.defaultMessage[0].value).toBe(headerTitle);
+    expect(headerText).toBe(headerTitle);
 
     expect(messageBar).toBeDefined();
 

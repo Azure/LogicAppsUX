@@ -1,0 +1,56 @@
+@med-logo-dimension: 60px;
+@grey-card-border: #bdbdbd;
+@card-title-color: #323130;
+@grey-card-description: #333333;
+
+.msla-action-header {
+  display: inline-block;
+}
+
+.msla-connector-card {
+  padding: 13px;
+  max-width: 400px;
+  height: 111px;
+  border: 1px solid @grey-card-border;
+
+  .msla-card-title-container {
+    display: inline-block;
+  }
+
+  .msla-card-logo {
+    height: @med-logo-dimension;
+    width: @med-logo-dimension;
+    border-radius: 4px;
+  }
+
+  .msla-card-title {
+    font-size: 14px;
+    color: @card-title-color;
+    font-weight: 600;
+    margin-left: 13px;
+  }
+
+  .msla-card-description {
+    display: block;
+    font-size: 12px;
+    padding-top: 11px;
+    color: @grey-card-description;
+    line-height: 16px;
+  }
+
+  .msla-tag-container {
+    margin-top: 7px;
+
+    .msla-tag {
+      display: inline-block;
+      font-size: 12px;
+      line-height: 16px;
+      color: white;
+      // background-color: #949494; Danielle will fix after designs are updated, right now getting color contrast error
+      background-color: black;
+      border-radius: 12px;
+      padding: 1px 9px 1px;
+      margin-right: 4px;
+    }
+  }
+}

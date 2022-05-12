@@ -26,6 +26,9 @@ jobs:
       - name: Update source code
         run: npm run compile:loc
 
+      - name: Run Prettier On JSON
+        run: npm run fixLineEndings
+
       - name: Commit changes
         uses: EndBug/add-and-commit@v7
         with:

@@ -1,6 +1,5 @@
 import { Text, Image, ImageFit } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import type { MessageDescriptor } from 'react-intl';
 
 export type OperationCardProps = {
   title: string;
@@ -8,6 +7,7 @@ export type OperationCardProps = {
   id: string;
   iconUrl: string;
   connectorName: string;
+  category: 'Built-in' | 'Azure' | '';
 } & CommonCardProps;
 
 export interface CommonCardProps {
@@ -16,12 +16,20 @@ export interface CommonCardProps {
 
 export const OperationCard = (props: OperationCardProps) => {
   const intl = getIntl();
-  const logoAltDescriptor: MessageDescriptor = {
-    id: 'logo-description',
-    defaultMessage: 'logo for ' + props.connectorName,
-    description: 'Alternate text for accessibility, describes logo for corresponding connector',
-  };
-  const logoAltText = intl.formatMessage(logoAltDescriptor);
+  const logoAltText = intl.formatMessage(
+    {
+      defaultMessage: 'logo for {connectorName}',
+      description: 'Alternate text for accessibility, describes logo for corresponding connector',
+    },
+    {
+      connectorName: props.connectorName,
+    }
+  );
+
+  const triggerFilterText = intl.formatMessage({
+    defaultMessage: 'Trigger',
+    description: 'Filter that selects only Trigger Operations',
+  });
 
   return (
     <div className="msla-operation-card">
@@ -36,6 +44,8 @@ export const OperationCard = (props: OperationCardProps) => {
       <Text className="msla-card-description">{props.subtitle}</Text>
       <div className="msla-tag-container">
         <Text className="msla-tag">{props.connectorName}</Text>
+        <Text className="msla-tag">{triggerFilterText}</Text>
+        <Text className="msla-tag">{props.category}</Text>
       </div>
     </div>
   );

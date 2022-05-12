@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filter"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -262,6 +268,12 @@
       "value": "Bermasalah"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "bilah penggeser yang dapat diseret"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -518,6 +530,12 @@
     {
       "type": 0,
       "value": "Wajib. Nama tindakan yang isinya Anda inginkan."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Selesai"
     }
   ],
   "ArTh0/": [
@@ -883,6 +901,12 @@
       "value": "Ketika digunakan di dalam loop for-each, fungsi ini menghasilkan item saat ini dari loop yang ditentukan."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Tambahkan"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -995,6 +1019,12 @@
     {
       "type": 0,
       "value": "Menghasilkan hasil dari tindakan tingkat atas dalam tindakan tercakup yang ditentukan, seperti tindakan For_each, Until, atau Scope."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Teks Label"
     }
   ],
   "Oib1mL": [
@@ -1212,6 +1242,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Hapus"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1262,6 +1298,12 @@
     {
       "type": 0,
       "value": "Menampilkan permulaan bulan pada tanda waktu string"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Masukkan nilai"
     }
   ],
   "TZv5JE": [
@@ -1602,6 +1644,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Koleksi untuk mengambil objek hitungan pertama."
+    }
+  ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Cari"
     }
   ],
   "c3G/zq": [
@@ -2438,6 +2486,12 @@
       "value": "Tipe"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Pemicu"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2448,6 +2502,12 @@
     {
       "type": 0,
       "value": "Wajib. Jumlah jam yang akan ditambahkan. Dapat berupa nilai negatif untuk mengurangi jam."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Operasi"
     }
   ],
   "uN4zFU": [
@@ -2640,6 +2700,16 @@
     {
       "type": 0,
       "value": "Wajib. Nilai yang dikonversi menjadi array."
+    }
+  ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "logo untuk "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "yqRrQ/": [

@@ -4,11 +4,14 @@ import {
   createCompletionItemProviderForValues,
   createSignatureHelpProvider,
   createLanguageDefinition,
+  createThemeData,
+  createLanguageConfig,
   getTemplateFunctions,
 } from '../workflow/languageservice/workflowlanguageservice';
 import { map } from '@microsoft-logic-apps/utils';
 import Editor, { loader } from '@monaco-editor/react';
-import { useEffect } from 'react';
+import type * as monaco from 'monaco-editor';
+import { useRef, useEffect } from 'react';
 
 export * from './models/parameter';
 
@@ -17,32 +20,39 @@ export enum EditorLanguage {
   javascript = 'javascript',
   json = 'json',
   xml = 'xml',
+  templateExpressionLanguage = 'TemplateExpressionLanguage',
 }
 
-export interface EditorProps {
+export interface EditorProps extends EditorOptions {
   defaultValue?: string;
-  folding?: boolean;
   height?: number | string;
   language?: EditorLanguage;
-  lineNumbers?: 'on' | 'off' | 'relative' | 'interval' | ((lineNumber: number) => string);
-  minimapEnabled?: boolean;
-  readOnly?: boolean;
   width?: number | string;
   value?: string;
 }
 
-export const CustomEditor: React.FC<EditorProps> = (props) => {
-  const {
-    folding = true,
-    height = '100%',
-    width = '100%',
-    lineNumbers = 'on',
-    minimapEnabled = true,
-    readOnly = false,
-    value,
-    language,
-    defaultValue,
-  } = props;
+export interface EditorOptions {
+  folding?: boolean;
+  fontSize?: number;
+  readOnly?: boolean;
+  lineNumbers?: 'on' | 'off' | 'relative' | 'interval' | ((lineNumber: number) => string);
+  lineHeight?: number;
+  minimapEnabled?: boolean;
+  scrollBeyondLastLine?: boolean;
+  wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
+}
+
+export const CustomEditor: React.FC<EditorProps> = ({
+  height,
+  width,
+  minimapEnabled,
+  value,
+  language,
+  defaultValue,
+  scrollBeyondLastLine = false,
+  ...options
+}): JSX.Element => {
+  const ref = useRef<monaco.editor.IStandaloneCodeEditor>();
 
   const initEditor = () => {
     const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
@@ -52,28 +62,19 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
       if (!monaco.languages.getLanguages().some((lang: any) => lang.id === languageName)) {
         // Register a new language
         monaco.languages.register({ id: languageName });
-
-        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
-        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
-        monaco.languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
         // Register a tokens provider for the language
         monaco.languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
-        monaco.languages.setLanguageConfiguration(languageName, {
-          autoClosingPairs: [
-            {
-              open: '(',
-              close: ')',
-            },
-            {
-              open: '[',
-              close: ']',
-            },
-            {
-              open: `'`,
-              close: `'`,
-            },
-          ],
-        });
+
+        // Register Suggestion text for the language
+        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
+        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
+
+        // Register Help Provider Text Field for the language
+        monaco.languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
+
+        monaco.languages.setLanguageConfiguration(languageName, createLanguageConfig());
+        // Define a new theme that contains only rules that match this language
+        monaco.editor.defineTheme(languageName, createThemeData());
       }
     });
   };
@@ -82,15 +83,22 @@ export const CustomEditor: React.FC<EditorProps> = (props) => {
     initEditor();
   }, []);
 
+  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
+    ref.current = editor;
+  };
+
   return (
-    <Editor
-      height={height}
-      width={width}
-      options={{ folding, lineNumbers, minimap: { enabled: minimapEnabled }, readOnly }}
-      value={value}
-      defaultValue={defaultValue}
-      defaultLanguage={language ? language.toString() : undefined}
-    />
+    <div className="msla-monaco-container" style={{ height: height ?? 380, width }}>
+      <Editor
+        className="msla-monaco"
+        options={{ ...options, minimap: { enabled: minimapEnabled }, scrollBeyondLastLine: scrollBeyondLastLine }}
+        value={value}
+        defaultValue={defaultValue}
+        defaultLanguage={language ? language.toString() : undefined}
+        theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : 'light'}
+        onMount={handleEditorDidMount}
+      />
+    </div>
   );
 };
 

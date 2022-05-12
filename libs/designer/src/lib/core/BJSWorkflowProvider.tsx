@@ -15,6 +15,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
     dispatch(initWorkflowSpec('BJS'));
     dispatch(initializeGraphState(workflow));
   }, [dispatch, workflow]);
+
   return <>{children}</>;
 };
 
@@ -25,8 +26,7 @@ export const BJSWorkflowProvider: React.FC<BJSWorkflowProviderProps> = (props) =
   }
 
   if (!wrapped.servicesInitialized) {
-    // NOTE(psamband): If services are not initialized by host, we will initialize LA standard services.
-    InitializeServices();
+    InitializeServices(wrapped.services);
   }
 
   return <DataProviderInner {...props} />;

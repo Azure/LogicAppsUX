@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filter"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
       "value": "Fehlerhaft"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "Ziehbare Schiebereglerleiste"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -529,6 +541,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der Aktion, deren Werte Sie erhalten möchten."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Fertig"
     }
   ],
   "ArTh0/": [
@@ -905,6 +923,12 @@
       "value": "Bei Verwendung innerhalb einer for-each-Schleife gibt diese Funktion das aktuelle Element der angegebenen Schleife zurück."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Hinzufügen"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1017,6 +1041,12 @@
     {
       "type": 0,
       "value": "Hiermit werden die Ergebnisse der Aktionen der obersten Ebene in der angegebenen bereichsbezogenen Aktion zurückgegeben, z. B. eine for_each-, Until- oder Scope-Aktion."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Bezeichnung Text"
     }
   ],
   "Oib1mL": [
@@ -1249,6 +1279,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Löschen"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1299,6 +1335,12 @@
     {
       "type": 0,
       "value": "Gibt den Anfang des Monats eines Zeichenfolgen-Zeitstempels zurück."
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen Wert ein."
     }
   ],
   "TZv5JE": [
@@ -1639,6 +1681,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Sammlung, aus der die ersten Count-Objekte entnommen werden sollen."
+    }
+  ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Suchen"
     }
   ],
   "c3G/zq": [
@@ -2497,6 +2545,12 @@
       "value": "Typ"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2507,6 +2561,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Anzahl der zu addierenden Stunden. Kann negativ sein, um Stunden zu subtrahieren."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Vorgänge"
     }
   ],
   "uN4zFU": [
@@ -2699,6 +2759,16 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Wert, der in ein Array konvertiert wird."
+    }
+  ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "Logo für "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "yqRrQ/": [

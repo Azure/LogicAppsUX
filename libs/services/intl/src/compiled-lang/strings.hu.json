@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Szűrők"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -264,13 +270,19 @@
   "3NhwIJ": [
     {
       "type": 0,
-      "value": "Kötelező megadni. Az elválasztó."
+      "value": "Az elválasztó. Kötelező megadni."
     }
   ],
   "3kI7xF": [
     {
       "type": 0,
       "value": "Hibás"
+    }
+  ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "húzható csúszkasáv"
     }
   ],
   "3rzrWf": [
@@ -529,6 +541,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Azon művelet neve, melynek értékei szükségesek."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Kész"
     }
   ],
   "ArTh0/": [
@@ -836,7 +854,7 @@
   "Jaz3EC": [
     {
       "type": 0,
-      "value": "Converts a string timestamp passed in from a source time zone to a target time zone"
+      "value": "Egy forrásidőzónából átadott sztring típusú időbélyeg konvertálása egy célidőzónára"
     }
   ],
   "JbgTET": [
@@ -905,10 +923,16 @@
       "value": "For-each ciklusban való használat esetén ez a függvény a megadott ciklus aktuális elemét adja vissza."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Hozzáadás"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
-      "value": "Required. The expressions that may be true."
+      "value": "Kötelező megadni. A második kifejezés, amely igaz lehet."
     }
   ],
   "M0HMjE": [
@@ -1019,6 +1043,12 @@
       "value": "A legfelső szintű hatóköri műveletek eredményeit adja vissza a megadott hatóköri műveletben, például „For_each”, „Until” vagy „Scope action”."
     }
   ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Címkeszöveg"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -1064,7 +1094,7 @@
   "P4rEwD": [
     {
       "type": 0,
-      "value": "Collection functions"
+      "value": "Gyűjteményfüggvények"
     }
   ],
   "P8ZBF9": [
@@ -1198,7 +1228,7 @@
   "QrQDdp": [
     {
       "type": 0,
-      "value": "Required. A string containing the unit of time specified in the interval to subtract."
+      "value": "Kötelező megadni. A kivonandó intervallumban megadott időegységet tartalmazó sztring."
     }
   ],
   "Qu1HkA": [
@@ -1249,6 +1279,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Törlés"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1280,7 +1316,7 @@
   "T7zcR6": [
     {
       "type": 0,
-      "value": "Required. The expressions that must be true."
+      "value": "Kötelező megadni. A második kifejezés, amelynek igaznak kell lennie."
     }
   ],
   "T8Xqt9": [
@@ -1299,6 +1335,12 @@
     {
       "type": 0,
       "value": "Egy átadott sztring típusú időbélyegből a hónap kezdetét adja vissza."
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy értéket"
     }
   ],
   "TZv5JE": [
@@ -1641,6 +1683,12 @@
       "value": "Kötelező megadni. A gyűjtemény, melyből be kell olvasni az első Count objektumokat."
     }
   ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Keresés"
+    }
+  ],
   "c3G/zq": [
     {
       "type": 0,
@@ -1930,7 +1978,7 @@
   "iU5Fdh": [
     {
       "type": 0,
-      "value": "Manipulation functions"
+      "value": "Kezelési függvények"
     }
   ],
   "iUs7pv": [
@@ -2505,6 +2553,12 @@
       "value": "Típus"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Aktiválás"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2515,6 +2569,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A hozzáadni kívánt órák száma. Lehet negatív érték is órák kivonása céljából."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Műveletek"
     }
   ],
   "uN4zFU": [
@@ -2694,7 +2754,7 @@
   "y3AZQB": [
     {
       "type": 0,
-      "value": "Required. The object to compare equality."
+      "value": "Kötelező megadni. Az egyenlőség összehasonlítására használt objektum."
     }
   ],
   "y6BcVN": [
@@ -2709,10 +2769,20 @@
       "value": "Kötelező megadni. A tömbbé alakítandó érték."
     }
   ],
+  "yOkPGx": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " emblémája"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
-      "value": "Date and time functions"
+      "value": "Dátum- és időfüggvények"
     }
   ],
   "z4YYlQ": [

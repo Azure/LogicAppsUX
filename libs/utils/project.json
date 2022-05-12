@@ -23,6 +23,19 @@
         ]
       }
     },
+    "yalcpush": {
+      "executor": "@nrwl/workspace:run-script",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": "self"
+        }
+      ],
+      "options": {
+        "script": "yalcpush"
+      }
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],

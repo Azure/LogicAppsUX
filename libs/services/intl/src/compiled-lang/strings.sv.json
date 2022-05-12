@@ -1,4 +1,10 @@
 {
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filter"
+    }
+  ],
   "+UirjI": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
       "value": "Fel"
     }
   ],
+  "3rtRpE": [
+    {
+      "type": 0,
+      "value": "skjutreglage som kan dras"
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -529,6 +541,12 @@
     {
       "type": 0,
       "value": "Krävs. Namnet på åtgärden vars värden du vill ha."
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Klart"
     }
   ],
   "ArTh0/": [
@@ -905,6 +923,12 @@
       "value": "När den används inuti en for-each-loop, returnerar den här funktionen det aktuella objektet för den angivna loopen."
     }
   ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Lägg till"
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -1017,6 +1041,12 @@
     {
       "type": 0,
       "value": "Returnerar resultaten från åtgärderna på toppnivå i den angivna omfångsdefinierade åtgärden, till exempel en For_each, Until eller Scope."
+    }
+  ],
+  "OfvxaB": [
+    {
+      "type": 0,
+      "value": "Etikettext"
     }
   ],
   "Oib1mL": [
@@ -1249,6 +1279,12 @@
       "value": "minutes"
     }
   ],
+  "S8P4N5": [
+    {
+      "type": 0,
+      "value": "Ta bort"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -1299,6 +1335,12 @@
     {
       "type": 0,
       "value": "Returnerar månadens start för en strängtidsstämpel"
+    }
+  ],
+  "TUaunO": [
+    {
+      "type": 0,
+      "value": "Ange ett värde"
     }
   ],
   "TZv5JE": [
@@ -1639,6 +1681,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den samling som från vilken de första Count-objekten ska hämtas."
+    }
+  ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Sök"
     }
   ],
   "c3G/zq": [
@@ -2501,6 +2549,12 @@
       "value": "Typ"
     }
   ],
+  "tVmUCd": [
+    {
+      "type": 0,
+      "value": "Utlös"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -2511,6 +2565,12 @@
     {
       "type": 0,
       "value": "Krävs. Antalet timmar att lägga till. Kan vara negativt för att subtrahera timmar."
+    }
+  ],
+  "tu8I7j": [
+    {
+      "type": 0,
+      "value": "Åtgärder"
     }
   ],
   "uN4zFU": [
@@ -2703,6 +2763,16 @@
     {
       "type": 0,
       "value": "Krävs. Värdet som konverteras till en matris."
+    }
+  ],
+  "yOkPGx": [
+    {
+      "type": 0,
+      "value": "logotyp för "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "yqRrQ/": [

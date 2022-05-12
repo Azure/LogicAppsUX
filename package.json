@@ -1,6 +1,6 @@
 {
   "name": "microsoft-logic-apps",
-  "version": "0.0.29",
+  "version": "0.0.34",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -9,6 +9,7 @@
     "storybook:files-axe": "axe-storybook --build-dir dist/storybook/designer/",
     "build": "nx run designer:build",
     "build:all": "nx run-many --all --target=build",
+    "yalcpush:all": "nx run-many --all --target=yalcpush",
     "test": "nx affected --target=test",
     "test:all": "nx run-many --all --target=test",
     "test:e2e": "nx run designer-e2e:e2e",
@@ -26,7 +27,8 @@
     "build:utils": "nx run utils:build",
     "bump": "standard-version --no-verify",
     "postinstall": "tsc -p ./tools/executors/web/tsconfig.json",
-    "vscode:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package"
+    "vscode:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package",
+    "fixLineEndings": "prettier --write \"**/*.json\""
   },
   "engines": {
     "node": "16",
@@ -45,6 +47,7 @@
     "d3-shape": "^3.1.0",
     "elkjs": "0.7.3-dev",
     "github-markdown-css": "^5.1.0",
+    "guid-typescript": "^1.0.9",
     "immer": "9.0.12",
     "json-schema-generator": "^2.0.6",
     "monaco-editor": "^0.33.0",
@@ -141,6 +144,7 @@
     "typescript": "^4.5.5",
     "url-loader": "^4.1.1",
     "webpack-cli": "^4.9.2",
-    "worker-loader": "^3.0.8"
+    "worker-loader": "^3.0.8",
+    "yalc": "^1.0.0-pre.53"
   }
 }
