@@ -381,12 +381,6 @@
       "value": "Required. The object to check if it is greater than value being compared to."
     }
   ],
-  "6WoUnj": [
-    {
-      "type": 0,
-      "value": "Option 2"
-    }
-  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -463,12 +457,6 @@
     {
       "type": 0,
       "value": "Required. The string that may contain the value."
-    }
-  ],
-  "843lsn": [
-    {
-      "type": 0,
-      "value": "Expand or Collapse"
     }
   ],
   "8CWFEh": [
@@ -661,12 +649,6 @@
     {
       "type": 0,
       "value": "Required. The index of where to start extracting the substring."
-    }
-  ],
-  "Es0zHI": [
-    {
-      "type": 0,
-      "value": "Option 3"
     }
   ],
   "F3IDl8": [
@@ -1803,12 +1785,6 @@
       "value": "Required. The name of the variable whose value you want."
     }
   ],
-  "eJMN3J": [
-    {
-      "type": 0,
-      "value": "Option 1"
-    }
-  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -2043,12 +2019,6 @@
       "value": "Required. The value that is converted to a string."
     }
   ],
-  "jRGVRE": [
-    {
-      "type": 0,
-      "value": "Option 4"
-    }
-  ],
   "jVpanH": [
     {
       "type": 0,
@@ -2233,12 +2203,6 @@
     {
       "type": 0,
       "value": "Required. The number of time units the desired time is in the future."
-    }
-  ],
-  "nRXvMw": [
-    {
-      "type": 0,
-      "value": "Delete"
     }
   ],
   "nTA155": [

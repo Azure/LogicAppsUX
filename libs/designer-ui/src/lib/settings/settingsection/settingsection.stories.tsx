@@ -1,8 +1,8 @@
 import type { SettingSectionComponentProps } from '..';
 import { SettingsSection } from '..';
-import { ConfigurableMultiSelectItemSection } from './configurableactionitemsetting';
-import type { ConfigurableMultiSelectItemSectionProps } from './configurableactionitemsetting';
 import { MultiAddExpressionEditor } from './settingexpressioneditor';
+import { MultiSelectSetting } from './settingmultiselect';
+import type { MultiSelectSettingProps } from './settingmultiselect';
 import { ReactiveToggle } from './settingreactiveinput';
 import { CustomValueSlider } from './settingslider';
 import { SettingTextField } from './settingtextfield';
@@ -57,36 +57,15 @@ sliderSetting.args = {
   renderContent: CustomValueSlider,
 };
 
-export const configurableActionItemSetting = Template.bind({});
-const sampleProps: ConfigurableMultiSelectItemSectionProps = {
-  configurableActionItems: [],
-  configuredActionItems: [
-    {
-      id: 'sampleActionId',
-      title: 'Sample Action',
-      statuses: {
-        'Option 1': true,
-        'Option 2': false,
-        'Option 3': false,
-        'Option 4': false,
-      },
-    },
-    {
-      id: 'sampleActionId2',
-      title: 'Sample Action 2',
-      statuses: {
-        'Option 1': true,
-        'Option 2': false,
-        'Option 3': false,
-        'Option 4': false,
-      },
-    },
-  ],
-  isReadOnly: false,
+export const multiSelectSetting = Template.bind({});
+const sampleProps: MultiSelectSettingProps = {
+  id: 'runAfter',
+  selections: {},
+  checkboxLabels: ['Label 1', 'Label 2', 'Label 3'],
 };
-configurableActionItemSetting.args = {
+multiSelectSetting.args = {
   id: 'multiSelectSetting',
-  title: 'Configurable Multi-Select Item Setting',
+  title: 'Multi-Select Item Setting',
   expanded: false,
-  renderContent: () => <ConfigurableMultiSelectItemSection {...sampleProps} />,
+  renderContent: () => <MultiSelectSetting {...sampleProps} />,
 };
