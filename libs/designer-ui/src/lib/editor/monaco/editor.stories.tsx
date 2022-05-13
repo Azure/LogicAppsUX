@@ -1,12 +1,12 @@
 import { CustomEditor, EditorLanguage } from './';
-import type { EditorProps } from './';
+import type { MonacoProps } from './';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: CustomEditor,
   title: 'Components/Editor/Monaco',
 } as ComponentMeta<typeof CustomEditor>;
-const Template: ComponentStory<typeof CustomEditor> = (args: EditorProps) => <CustomEditor {...args} />;
+const Template: ComponentStory<typeof CustomEditor> = (args: MonacoProps) => <CustomEditor {...args} />;
 
 export const templateExpressionLanguage = Template.bind({});
 templateExpressionLanguage.args = {

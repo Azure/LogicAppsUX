@@ -1,4 +1,4 @@
-import { CustomEditor as Editor, EditorLanguage } from '../editor/monaco';
+import { MonacoEditor, EditorLanguage } from '../editor/monaco';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -28,7 +28,7 @@ export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
   return (
     <div className="msla-card-inner-body msla-peek">
       <div className="msla-peek-json">
-        <Editor
+        <MonacoEditor
           defaultValue={input}
           fontSize={options.fontSize}
           readOnly={options.readOnly}

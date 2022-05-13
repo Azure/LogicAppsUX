@@ -8,6 +8,10 @@ import LexicalRichTextPlugin from '@lexical/react/LexicalRichTextPlugin';
 import { $getRoot, $getSelection } from 'lexical';
 import { useIntl } from 'react-intl';
 
+export interface StringProps {
+  defaultValue?: string;
+}
+
 const defaultTheme = {
   ltr: 'ltr',
   rtl: 'rtl',
@@ -40,7 +44,7 @@ export const StringEditor = () => {
     <LexicalComposer initialConfig={initialConfig}>
       <div className="msla-string-editor-container">
         <LexicalRichTextPlugin
-          contentEditable={<ContentEditable />}
+          contentEditable={<ContentEditable className="editor-input" />}
           placeholder={<div className="editor-placeholder">{textPlaceholder}</div>}
         />
         <LexicalOnChangePlugin onChange={onChange} />
