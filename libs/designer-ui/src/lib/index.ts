@@ -35,6 +35,7 @@ export * from './label';
 export * from './monitoring';
 export * from './overview';
 export * from './pager';
+export * from './peek';
 export * from './panel/panelcontainer';
 export * from './panel/panelUtil';
 export * from './panel/panelheader/panelheader';

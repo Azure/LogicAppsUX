@@ -3,7 +3,7 @@ import type { RootState } from '../../core/store';
 import type { PanelTab } from './panelUtil';
 import { registerTab, getTabs } from './panelUtil';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
-import { aboutTab, monitorRetryTab, monitorRequestTab, settingsTab } from './registeredtabs';
+import { aboutTab, settingsTab, codeViewTab } from './registeredtabs';
 import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { MenuItemType, PanelContainer, PanelHeaderControlType } from '@microsoft/designer-ui';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -33,9 +33,7 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: Pa
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
 
   useEffect(() => {
-    setRegisteredTabs((currentTabs) =>
-      registerTab(aboutTab, registerTab(monitorRetryTab, registerTab(monitorRequestTab, registerTab(settingsTab, currentTabs))))
-    );
+    setRegisteredTabs((currentTabs) => registerTab(aboutTab, registerTab(codeViewTab, registerTab(settingsTab, currentTabs))));
   }, []);
 
   useEffect(() => {

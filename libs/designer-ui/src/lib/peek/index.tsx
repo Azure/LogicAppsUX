@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 
 export interface PeekProps {
   input: string;
-  onOKClick(): void;
+  onOKClick?(): void;
 }
 
 export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
