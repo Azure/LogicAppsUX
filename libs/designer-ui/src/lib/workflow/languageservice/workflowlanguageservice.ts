@@ -3,20 +3,19 @@ import { FunctionGroupDefinitions } from './templatefunctions';
 import { ExpressionScanner, ExpressionTokenType } from '@microsoft-logic-apps/parsers';
 import type { ExpressionToken } from '@microsoft-logic-apps/parsers';
 import { first, getPropertyValue } from '@microsoft-logic-apps/utils';
-import * as monaco from 'monaco-editor';
+import type { languages, editor, Position } from 'monaco-editor';
 
-type CompletionList = monaco.languages.CompletionList;
-export type CompletionItemProvider = monaco.languages.CompletionItemProvider;
-type IMonarchLanguage = monaco.languages.IMonarchLanguage;
-type IReadOnlyModel = monaco.editor.IReadOnlyModel;
-export type IStandaloneThemeData = monaco.editor.IStandaloneThemeData;
-type ParameterInformation = monaco.languages.ParameterInformation;
-type Position = monaco.Position;
-type ProviderResult<T> = monaco.languages.ProviderResult<T>;
-export type SignatureHelpProvider = monaco.languages.SignatureHelpProvider;
-type SignatureInformation = monaco.languages.SignatureInformation;
-type SignatureHelpResult = monaco.languages.SignatureHelpResult;
-type LanguageConfiguration = monaco.languages.LanguageConfiguration;
+type CompletionList = languages.CompletionList;
+export type CompletionItemProvider = languages.CompletionItemProvider;
+type IMonarchLanguage = languages.IMonarchLanguage;
+type IReadOnlyModel = editor.IReadOnlyModel;
+export type IStandaloneThemeData = editor.IStandaloneThemeData;
+type ParameterInformation = languages.ParameterInformation;
+type ProviderResult<T> = languages.ProviderResult<T>;
+export type SignatureHelpProvider = languages.SignatureHelpProvider;
+type SignatureInformation = languages.SignatureInformation;
+type SignatureHelpResult = languages.SignatureHelpResult;
+type LanguageConfiguration = languages.LanguageConfiguration;
 
 const enum tokenNames {
   FUNCTION = 'function-name',
@@ -24,6 +23,37 @@ const enum tokenNames {
   NUMBER = 'number-literal',
   STRING = 'string-literal',
 }
+
+export const CompletionItemKind = {
+  Method: 0,
+  Function: 1,
+  Constructor: 2,
+  Field: 3,
+  Variable: 4,
+  Class: 5,
+  Struct: 6,
+  Interface: 7,
+  Module: 8,
+  Property: 9,
+  Event: 10,
+  Operator: 11,
+  Unit: 12,
+  Value: 13,
+  Constant: 14,
+  Enum: 15,
+  EnumMember: 16,
+  Keyword: 17,
+  Text: 18,
+  Color: 19,
+  File: 20,
+  Reference: 21,
+  Customcolor: 22,
+  Folder: 23,
+  TypeParameter: 24,
+  User: 25,
+  Issue: 26,
+  Snippet: 27,
+};
 
 const keywords: string[] = ['null', 'true', 'false'];
 
@@ -140,14 +170,14 @@ export function createLanguageDefinition(templateFunctions: FunctionDefinition[]
 export function createCompletionItemProviderForFunctions(templateFunctions: FunctionDefinition[]): CompletionItemProvider {
   return {
     triggerCharacters: ['.'],
-    provideCompletionItems: (model: monaco.editor.ITextModel, position: monaco.Position): ProviderResult<CompletionList> => {
+    provideCompletionItems: (model: editor.ITextModel, position: Position): ProviderResult<CompletionList> => {
       const suggestions = templateFunctions.map((templateFunction) => {
         const { name: label, description: documentation, signatures } = templateFunction;
         const shouldAutoComplete = signatures.every((signature) => signature.parameters.length === 0);
         const word = model.getWordUntilPosition(position);
         return {
           label,
-          kind: monaco.languages.CompletionItemKind.Function,
+          kind: CompletionItemKind.Function,
           insertText: shouldAutoComplete ? `${label}()` : label,
           documentation,
           range: {
@@ -168,12 +198,12 @@ export function createCompletionItemProviderForFunctions(templateFunctions: Func
 
 export function createCompletionItemProviderForValues(): CompletionItemProvider {
   return {
-    provideCompletionItems: (model: monaco.editor.ITextModel, position: monaco.Position): ProviderResult<CompletionList> => {
+    provideCompletionItems: (model: editor.ITextModel, position: Position): ProviderResult<CompletionList> => {
       const suggestions = keywords.map((value) => {
         const word = model.getWordUntilPosition(position);
         return {
           label: value,
-          kind: monaco.languages.CompletionItemKind.Value,
+          kind: CompletionItemKind.Value,
           insertText: value,
           range: {
             startLineNumber: position.lineNumber,
@@ -194,7 +224,7 @@ export function createCompletionItemProviderForValues(): CompletionItemProvider 
 export function createSignatureHelpProvider(functions: Record<string, FunctionDefinition>): SignatureHelpProvider {
   return {
     signatureHelpTriggerCharacters: [',', '('],
-    provideSignatureHelp(document: IReadOnlyModel, position: Position): ProviderResult<monaco.languages.SignatureHelpResult> {
+    provideSignatureHelp(document: IReadOnlyModel, position: Position): ProviderResult<languages.SignatureHelpResult> {
       const currentValue = document.getValue();
       const expressionInfo = parseExpression(currentValue, position, functions);
 
@@ -268,7 +298,7 @@ function getSignaturesInfo(expressionInfo: ExpressionInfo): SignatureHelpResult 
     };
   }
 
-  return null as unknown as monaco.languages.SignatureHelpResult;
+  return null as unknown as languages.SignatureHelpResult;
 }
 
 /**
