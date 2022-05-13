@@ -1,5 +1,6 @@
 import { About } from '../about';
 import { MenuItemType } from '../card/types';
+import { Peek } from '../peek';
 import type { PanelContainerProps } from './panelcontainer';
 import { PanelContainer } from './panelcontainer';
 import { PanelHeaderControlType } from './panelheader/panelheader';
@@ -20,6 +21,10 @@ const aboutProps = {
     { title: 'Tag1', badgeText: 'test' },
     { title: 'Tag2', badgeText: 'more' },
   ],
+};
+
+const peekProps = {
+  input: '{\n"test": true,\n"test2" : \n\t{\n\t\t"object" : "value"\n\t}\n}',
 };
 const panelHeaderMenu = [
   {
@@ -50,7 +55,10 @@ Container.args = {
   panelHeaderMenu: panelHeaderMenu,
   showCommentBox: true,
   selectedTab: 'About',
-  tabs: { About: { name: 'About', title: 'About', order: 0, content: <About {...aboutProps} /> } },
+  tabs: {
+    About: { name: 'About', title: 'About', order: 0, content: <About {...aboutProps} /> },
+    CodeView: { name: 'Code View', title: 'Code View', order: 0, content: <Peek {...peekProps} /> },
+  },
   width: '630px',
   title: 'Panel',
 };

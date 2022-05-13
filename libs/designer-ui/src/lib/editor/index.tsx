@@ -1,4 +1,5 @@
 import Constants from '../constants';
+import { isHighContrastBlack } from '../utils/theme';
 import {
   createCompletionItemProviderForFunctions,
   createCompletionItemProviderForValues,
@@ -10,7 +11,7 @@ import {
 } from '../workflow/languageservice/workflowlanguageservice';
 import { map } from '@microsoft-logic-apps/utils';
 import Editor, { loader } from '@monaco-editor/react';
-import type * as monaco from 'monaco-editor';
+import type { editor } from 'monaco-editor';
 import { useRef, useEffect } from 'react';
 
 // TODO: Add more languages
@@ -43,45 +44,44 @@ export interface EditorOptions {
 export const CustomEditor: React.FC<EditorProps> = ({
   height,
   width,
-  minimapEnabled,
+  folding = false,
+  minimapEnabled = false,
   value,
   language,
   defaultValue,
   scrollBeyondLastLine = false,
   ...options
 }): JSX.Element => {
-  const ref = useRef<monaco.editor.IStandaloneCodeEditor>();
+  const ref = useRef<editor.IStandaloneCodeEditor>();
 
-  const initEditor = () => {
+  const initEditor = async () => {
     const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
     const templateFunctions = getTemplateFunctions();
+    const { languages, editor } = await loader.init();
+    if (!languages.getLanguages().some((lang: any) => lang.id === languageName)) {
+      // Register a new language
+      languages.register({ id: languageName });
+      // Register a tokens provider for the language
+      languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
 
-    loader.init().then((monaco) => {
-      if (!monaco.languages.getLanguages().some((lang: any) => lang.id === languageName)) {
-        // Register a new language
-        monaco.languages.register({ id: languageName });
-        // Register a tokens provider for the language
-        monaco.languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
+      // Register Suggestion text for the language
+      languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
+      languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
 
-        // Register Suggestion text for the language
-        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
-        monaco.languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
+      // Register Help Provider Text Field for the language
+      languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
 
-        // Register Help Provider Text Field for the language
-        monaco.languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
-
-        monaco.languages.setLanguageConfiguration(languageName, createLanguageConfig());
-        // Define a new theme that contains only rules that match this language
-        monaco.editor.defineTheme(languageName, createThemeData());
-      }
-    });
+      languages.setLanguageConfiguration(languageName, createLanguageConfig());
+      // Define a new theme that contains only rules that match this language
+      editor.defineTheme(languageName, createThemeData(isHighContrastBlack()));
+    }
   };
 
   useEffect(() => {
     initEditor();
   }, []);
 
-  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
+  const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor) => {
     ref.current = editor;
   };
 
@@ -89,11 +89,16 @@ export const CustomEditor: React.FC<EditorProps> = ({
     <div className="msla-monaco-container" style={{ height: height ?? 380, width }}>
       <Editor
         className="msla-monaco"
-        options={{ ...options, minimap: { enabled: minimapEnabled }, scrollBeyondLastLine: scrollBeyondLastLine }}
+        options={{
+          ...options,
+          minimap: { enabled: minimapEnabled },
+          scrollBeyondLastLine: scrollBeyondLastLine,
+          folding: folding,
+        }}
         value={value}
         defaultValue={defaultValue}
         defaultLanguage={language ? language.toString() : undefined}
-        theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : 'light'}
+        theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : isHighContrastBlack() ? 'vs-dark' : 'vs'}
         onMount={handleEditorDidMount}
       />
     </div>
