@@ -4,7 +4,7 @@ import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: CustomEditor,
-  title: 'Components/Editor',
+  title: 'Components/Editor/Monaco',
 } as ComponentMeta<typeof CustomEditor>;
 const Template: ComponentStory<typeof CustomEditor> = (args: EditorProps) => <CustomEditor {...args} />;
 

@@ -1,5 +1,5 @@
-import Constants from '../constants';
-import { isHighContrastBlack } from '../utils/theme';
+import Constants from '../../constants';
+import { isHighContrastBlack } from '../../utils/theme';
 import {
   createCompletionItemProviderForFunctions,
   createCompletionItemProviderForValues,
@@ -8,7 +8,7 @@ import {
   createThemeData,
   createLanguageConfig,
   getTemplateFunctions,
-} from '../workflow/languageservice/workflowlanguageservice';
+} from '../../workflow/languageservice/workflowlanguageservice';
 import { map } from '@microsoft-logic-apps/utils';
 import Editor, { loader } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';

@@ -1,4 +1,4 @@
-import { CustomEditor as Editor, EditorLanguage } from '../editor';
+import { CustomEditor as Editor, EditorLanguage } from '../editor/monaco';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
