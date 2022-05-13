@@ -6,10 +6,10 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import LexicalOnChangePlugin from '@lexical/react/LexicalOnChangePlugin';
 import LexicalRichTextPlugin from '@lexical/react/LexicalRichTextPlugin';
 import { $getRoot, $getSelection } from 'lexical';
-import { useIntl } from 'react-intl';
 
-export interface StringProps {
-  defaultValue?: string;
+export interface StringEditorProps {
+  placeholder?: string;
+  pluginsEnabled?: boolean;
 }
 
 const defaultTheme = {
@@ -21,7 +21,6 @@ const defaultTheme = {
 
 const onChange = (editorState: { read: (arg0: () => void) => void }) => {
   editorState.read(() => {
-    // Read the contents of the EditorState here.
     const root = $getRoot();
     const selection = $getSelection();
     console.log(root, selection);
@@ -30,25 +29,21 @@ const onChange = (editorState: { read: (arg0: () => void) => void }) => {
 const onError = (error: any) => {
   console.error(error);
 };
-export const StringEditor = () => {
+export const StringEditor = ({ placeholder, pluginsEnabled }: StringEditorProps) => {
   const initialConfig = {
     defaultTheme,
     onError,
   };
-  const intl = useIntl();
-  const textPlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter Some Text...',
-    description: 'Label for placeholder',
-  });
+
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className="msla-string-editor-container">
         <LexicalRichTextPlugin
-          contentEditable={<ContentEditable className="editor-input" />}
-          placeholder={<div className="editor-placeholder">{textPlaceholder}</div>}
+          contentEditable={<ContentEditable className="editor-input" arialabel="hello" />}
+          placeholder={<div className="editor-placeholder"> {placeholder} </div>}
         />
         <LexicalOnChangePlugin onChange={onChange} />
-        <TreeViewPlugin />
+        {pluginsEnabled ? <TreeViewPlugin /> : null}
         <AutoFocusPlugin />
         <HistoryPlugin />
       </div>
