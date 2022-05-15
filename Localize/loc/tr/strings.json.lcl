@@ -2533,7 +2533,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Seçin]]></Val>
+            <Val><![CDATA[Seç]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
