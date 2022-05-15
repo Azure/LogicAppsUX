@@ -13,7 +13,6 @@ export default function ClearEditorPlugin() {
     <button
       title={'test'}
       onClick={() => {
-        // editor.getEditorState()._nodeMap.clear();
         editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
         editor.focus();
       }}

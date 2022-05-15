@@ -47,7 +47,7 @@ export const StringEditor = ({ placeholder, pluginsEnabled, singleLine, hasClear
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className="msla-string-editor-container">
+      <div className={pluginsEnabled ? 'msla-string-editor-container-plugin' : 'msla-string-editor-container'}>
         <LexicalRichTextPlugin
           contentEditable={<ContentEditable className="editor-input" />}
           placeholder={<div className="editor-placeholder"> {placeholder} </div>}

@@ -9,11 +9,6 @@ export default function SingleLinePlugin() {
       KEY_ENTER_COMMAND,
       (payload: any) => {
         const event: KeyboardEvent = payload;
-        // if (event.shiftKey) {
-        //   return true;
-        // } else {
-        //   event.preventDefault();
-        // }
         event.preventDefault();
         return true;
       },
