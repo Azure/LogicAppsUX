@@ -1,5 +1,6 @@
 import AutoFocusPlugin from './plugins/AutoFocusPlugin';
 import AutoLinkPlugin from './plugins/AutoLinkPlugin';
+import ClearEditorPlugin from './plugins/ClearEditorPlugin';
 import SingleLinePlugin from './plugins/SingleLinePlugin';
 import TreeViewPlugin from './plugins/TreeViewPlugin';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
@@ -16,6 +17,8 @@ import { $getRoot, $getSelection } from 'lexical';
 export interface StringEditorProps {
   placeholder?: string;
   pluginsEnabled?: boolean;
+  singleLine?: boolean;
+  hasClear?: boolean;
 }
 
 const defaultTheme = {
@@ -29,13 +32,13 @@ const onChange = (editorState: EditorState) => {
   editorState.read(() => {
     const root = $getRoot();
     const selection = $getSelection();
-    // console.log(root, selection);
+    console.log(root, selection);
   });
 };
 const onError = (error: Error) => {
   console.error(error);
 };
-export const StringEditor = ({ placeholder, pluginsEnabled }: StringEditorProps) => {
+export const StringEditor = ({ placeholder, pluginsEnabled, singleLine, hasClear }: StringEditorProps) => {
   const initialConfig = {
     defaultTheme,
     onError,
@@ -55,7 +58,8 @@ export const StringEditor = ({ placeholder, pluginsEnabled }: StringEditorProps)
         <HistoryPlugin />
         <AutoLinkPlugin />
         <LexicalClearEditorPlugin />
-        <SingleLinePlugin />
+        {singleLine ? <SingleLinePlugin /> : null}
+        {hasClear ? <ClearEditorPlugin /> : null}
       </div>
     </LexicalComposer>
   );

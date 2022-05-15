@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { CLEAR_EDITOR_COMMAND, KEY_ENTER_COMMAND } from 'lexical';
+import { KEY_ENTER_COMMAND } from 'lexical';
 import { useEffect } from 'react';
 
 export default function SingleLinePlugin() {

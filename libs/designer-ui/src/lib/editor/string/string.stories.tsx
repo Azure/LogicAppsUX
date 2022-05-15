@@ -13,8 +13,15 @@ standard.args = {
   placeholder: 'Enter Text Here...',
 };
 
+export const singleLine = Template.bind({});
+singleLine.args = {
+  placeholder: 'Enter Text Here...',
+  singleLine: true,
+};
+
 export const plugins = Template.bind({});
 plugins.args = {
   placeholder: 'Play around with some cool plugins here...',
   pluginsEnabled: true,
+  hasClear: true,
 };
