@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
-import { useBrandColor, useIconUri, useNodeDescription, useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
+import { useBrandColor, useIconUri, useNodeDescription, useNodeMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
@@ -38,8 +38,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const hasNestedParent = metadata?.graphId !== 'root';
   const dispatch = useDispatch();
   const style = hasNestedParent && !parentEdges.length ? { marginTop: 40 } : undefined;
-  const brandColor = useBrandColor(id) ?? '';
-  const iconURI = useIconUri(id) ?? '';
+  const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id) ?? '';
 
   const nodeClick = useCallback(() => {
@@ -48,6 +47,9 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     }
     dispatch(changePanelNode(id));
   }, [dispatch, id, isCollapsed]);
+
+  const brandColor = useBrandColor(operationInfo) ?? '';
+  const iconUri = useIconUri(operationInfo) ?? '';
 
   if (metadata?.isPlaceholderNode) {
     return (
@@ -72,7 +74,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
         />
         <Card
           title={data.label}
-          icon={iconURI}
+          icon={iconUri}
           draggable={true}
           brandColor={brandColor}
           id={id}

@@ -231,6 +231,7 @@ const foreachManifest: OperationManifest = {
       type: 'array',
       title: 'Select an output from previous steps',
     },
+    inputsLocation: ['foreach'],
     isInputsOptional: false,
 
     outputs: {},
@@ -252,9 +253,6 @@ const scopeManifest: OperationManifest = {
     description: 'Encapsulate a block of actions and inherit the last terminal status (Succeeded, Failed, Cancelled) of actions inside.',
 
     allowChildOperations: true,
-
-    inputs: {},
-    outputs: {},
 
     settings: {
       trackedProperties: {

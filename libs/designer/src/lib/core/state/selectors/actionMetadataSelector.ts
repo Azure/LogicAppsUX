@@ -23,13 +23,6 @@ export const useNodeMetadata = (nodeId?: string) => {
   });
 };
 
-export const useConnector = (connectorId: string) => {
-  const connectionService = ConnectionService();
-  return useQuery(['connector', { connectorId }], () => connectionService.getConnector(connectorId), {
-    enabled: !!connectorId,
-  });
-};
-
 export const useNodeDescription = (nodeId: string) => {
   return useSelector((state: RootState) => {
     if (!nodeId) {
@@ -39,10 +32,26 @@ export const useNodeDescription = (nodeId: string) => {
   });
 };
 
-export const useOperationManifest = (connectorId: string, operationId: string) => {
+export const useOperationInfo = (nodeId: string) => {
+  return useSelector((state: RootState) => {
+    if (!nodeId) {
+      return undefined;
+    }
+    return state.operations.operationInfo[nodeId];
+  });
+};
+
+export const useConnector = (connectorId: string) => {
+  const connectionService = ConnectionService();
+  return useQuery(['connector', { connectorId }], () => connectionService.getConnector(connectorId), {
+    enabled: !!connectorId,
+  });
+};
+
+export const useOperationManifest = (operationInfo: OperationInfo) => {
   const operationManifestService = OperationManifestService();
-  connectorId = connectorId.toLowerCase();
-  operationId = operationId.toLowerCase();
+  const connectorId = operationInfo.connectorId.toLowerCase();
+  const operationId = operationInfo.operationId.toLowerCase();
   const manifestQuery = useQuery(
     ['manifest', { connectorId }, { operationId }],
     () => operationManifestService.getOperationManifest(connectorId, operationId),
@@ -54,39 +63,27 @@ export const useOperationManifest = (connectorId: string, operationId: string) =
   return manifestQuery;
 };
 
-const useNodeAttribute = (nodeId: string, attributeName: keyof OperationManifestProperties): string => {
-  const { data: operationIds } = useOperationIds(nodeId);
+const useNodeAttribute = (operationInfo: OperationInfo | undefined, attributeName: keyof OperationManifestProperties): string => {
+  if (operationInfo) {
+    const { data: manifest } = useOperationManifest(operationInfo);
 
-  const { connectorId, operationId } = operationIds ? operationIds : { connectorId: '', operationId: '' };
+    if (manifest) {
+      return manifest.properties[attributeName];
+    }
 
-  const { data: manifest } = useOperationManifest(connectorId, operationId);
-
-  const { data: connector } = useConnector(connectorId);
-
-  if (connector) {
-    return connector.properties[attributeName];
-  }
-
-  if (manifest) {
-    return manifest.properties[attributeName];
+    const { data: connector } = useConnector(operationInfo.connectorId);
+    if (connector) {
+      return connector.properties[attributeName];
+    }
   }
 
   return '';
 };
 
-export const useBrandColor = (nodeId: string) => {
-  return useNodeAttribute(nodeId, 'brandColor');
+export const useBrandColor = (operationInfo: OperationInfo | undefined) => {
+  return useNodeAttribute(operationInfo, 'brandColor');
 };
 
-export const useIconUri = (nodeId: string) => {
-  return useNodeAttribute(nodeId, 'iconUri');
-};
-
-export const useOperationIds = (nodeId: string) => {
-  const operationManifestService = OperationManifestService();
-
-  const operationInfo = useQuery<OperationInfo>(['operationIds', { nodeId }], () => operationManifestService.getOperationInfo(null), {
-    enabled: !!nodeId,
-  });
-  return operationInfo;
+export const useIconUri = (operationInfo: OperationInfo | undefined) => {
+  return useNodeAttribute(operationInfo, 'iconUri');
 };

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { WorkflowGraph } from '../../core/parsers/models/workflowNode';
-import { useBrandColor, useIconUri, useActionMetadata } from '../../core/state/selectors/actionMetadataSelector';
+import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useWorkflowNode } from '../../core/state/selectors/workflowNodeSelector';
 import { DropZone } from '../connections/dropzone';
 import { ScopeCard } from '@microsoft/designer-ui';
@@ -31,8 +31,9 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   }));
 
   const graph = useWorkflowNode(id) as WorkflowGraph;
-  const brandColor = useBrandColor(id) ?? '';
-  const iconUri = useIconUri(id) ?? '';
+  const operationInfo = useOperationInfo(id);
+  const brandColor = useBrandColor(operationInfo) ?? '';
+  const iconUri = useIconUri(operationInfo) ?? '';
 
   if (!node) {
     return null;

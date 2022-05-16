@@ -1,24 +1,29 @@
-import { addConnector, addOperationManifest } from '../../state/connectorSlice';
-import { initializeOperationInfo, NodeParameters } from '../../state/operationMetadataSlice';
-import { getConnector, getOperationManifest } from '../../state/selectors/actionMetadataSelector';
+import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
+import type { NodeParameters } from '../../state/operationMetadataSlice';
+import { initializeInputParameters, initializeOperationInfo } from '../../state/operationMetadataSlice';
 import type { Actions } from '../../state/workflowSlice';
-import type { RootState } from '../../store';
-import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import {
+  loadParameterValuesFromDefault,
+  ParameterGroupKeys,
+  toParameterInfoMap,
+  updateParameterWithValues,
+} from '../../utils/parameterhelper';
+import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
+import type { OperationManifest } from '@microsoft-logic-apps/utils';
+import { ConnectionReferenceKeyFormat, equals, getObjectPropertyValue, unmap } from '@microsoft-logic-apps/utils';
+import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
-import { ManifestParser } from '@microsoft-logic-apps/parsers';
-import { OperationManifest, unmap } from '@microsoft-logic-apps/utils';
 
-export const InitializeOperationDetails = async (
-  operations: Actions,
-  getState: () => RootState,
-  dispatch: Dispatch<any>
-): Promise<void> => {
-  const promises: Promise<any>[] = [];
+export const initializeOperationMetadata = async (operations: Actions, dispatch: Dispatch): Promise<void> => {
+  const promises: Promise<void>[] = [];
+  const operationManifestService = OperationManifestService();
+
   for (const [operationId, operation] of Object.entries(operations)) {
-    const { type } = operation;
-
-    if (OperationManifestService().isSupported(type)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, getState, dispatch));
+    if (operationManifestService.isSupported(operation.type)) {
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, dispatch));
+    } else {
+      // swagger case here
     }
   }
 
@@ -27,136 +32,108 @@ export const InitializeOperationDetails = async (
 
 const initializeOperationDetailsForManifest = async (
   nodeId: string,
-  definition: any,
-  getState: () => RootState,
-  dispatch: Dispatch<any>
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  dispatch: Dispatch
 ): Promise<void> => {
-  const state = getState();
-  const service = OperationManifestService();
-  const { connectorId, operationId } = await service.getOperationInfo(definition);
-  const cachedConnector = getConnector(state, connectorId);
-  let cachedOperationManifest = getOperationManifest(state, connectorId, operationId);
+  const operationInfo = await getOperationInfo(nodeId, operation);
 
-  if (!cachedConnector) {
-    const connector = await ConnectionService().getConnector(connectorId);
-    dispatch(addConnector({ ...connector, id: connectorId }));
+  if (operationInfo) {
+    const manifest = await getOperationManifest(operationInfo);
+    const connector = await getConnector(operationInfo.connectorId);
+
+    dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
+
+    const nodeParameters = getInputParametersFromManifest(nodeId, manifest, operation);
+    dispatch(initializeInputParameters({ id: nodeId, ...nodeParameters }));
   }
-
-  if (!cachedOperationManifest) {
-    const manifest = await service.getOperationManifest(connectorId, operationId);
-
-    // TODO(psamband): Remove the 'if check' once manifest service is completed
-    if (manifest) {
-      cachedOperationManifest = manifest;
-      dispatch(addOperationManifest({ connectorId, operationId, manifest }));
-    }
-  }
-
-  dispatch(initializeOperationInfo({ id: nodeId, connectorId, operationId }));
 };
 
-
-const getInputParametersFromManifest = (manifest: OperationManifest, stepDefinition: any): NodeParameters => {
-  const primaryInputParameters = new ManifestParser(manifest).getInputParameters(/* includeParentObject */ false, /* expandArrayPropertiesDepth */ 0);
-
+const getInputParametersFromManifest = (nodeId: string, manifest: OperationManifest, stepDefinition: any): NodeParameters => {
+  const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
+    /* includeParentObject */ false,
+    /* expandArrayPropertiesDepth */ 0
+  );
+  let nodeType = '';
   let primaryInputParametersInArray = unmap(primaryInputParameters);
 
   if (stepDefinition) {
-      const nodeType = stepDefinition.type;
-      const { inputsLocation } = manifest.properties;
+    nodeType = stepDefinition.type;
+    const { inputsLocation } = manifest.properties;
 
-          // In the case of retry policy, it is treated as an input
-          // avoid pushing a parameter for it as it is already being
-          // handled in the settings store.
-          // TODO: this could be expanded to more settings that are treated as inputs.
-          if (
-              manifest.properties.settings &&
-              manifest.properties.settings.retryPolicy &&
-              stepDefinition.inputs &&
-              stepDefinition.inputs.hasOwnProperty(PropertyName.RETRYPOLICY)
-          ) {
-              delete stepDefinition.inputs.retryPolicy;
-          }
+    // In the case of retry policy, it is treated as an input
+    // avoid pushing a parameter for it as it is already being
+    // handled in the settings store.
+    // TODO: this could be expanded to more settings that are treated as inputs.
+    if (
+      manifest.properties.settings &&
+      manifest.properties.settings.retryPolicy &&
+      stepDefinition.inputs &&
+      stepDefinition.inputs[PropertyName.RETRYPOLICY]
+    ) {
+      delete stepDefinition.inputs.retryPolicy;
+    }
 
-          if (
-              manifest.properties.connectionReference &&
-              manifest.properties.connectionReference.referenceKeyFormat === ConnectionReferenceKeyFormat.Function
-          ) {
-              delete stepDefinition.inputs.function;
-          }
+    if (
+      manifest.properties.connectionReference &&
+      manifest.properties.connectionReference.referenceKeyFormat === ConnectionReferenceKeyFormat.Function
+    ) {
+      delete stepDefinition.inputs.function;
+    }
 
-          primaryInputParametersInArray = updateParameterWithValues(
-              'inputs.$',
-              inputsLocation ? getObjectPropertyValue(stepDefinition, inputsLocation) : stepDefinition.inputs,
-              '',
-              primaryInputParametersInArray,
-              /* createInvisibleParameter */ true,
-              /* useDefault */ false
-          );
-  } else {
-      ParametersHelper.loadParameterValuesFromDefault(primaryInputParameters);
-  }
-
-  const pickerHelper = new PickerHelper(this.Context, nodeId);
-  const allParametersAsArray = ParametersHelper.toParameterInfoMap(
-      this.Context,
+    primaryInputParametersInArray = updateParameterWithValues(
+      'inputs.$',
+      inputsLocation ? getObjectPropertyValue(stepDefinition, inputsLocation) : stepDefinition.inputs,
+      '',
       primaryInputParametersInArray,
-      pickerHelper,
-      stepDefinition,
-      nodeId,
-      this.Context.Features.isEnabled(AvailableFeatures.RAW_MODE),
-      this.Context.Features.isEnabled(AvailableFeatures.INTELLISENSE_COMBOBOX),
-      this.Context.Features.isEnabled(AvailableFeatures.FX_TOKEN)
-  );
-
-  this._initializeEditorViewModelForParameters(nodeId, allParametersAsArray);
-
-  const parameterGroups = this._createDefaultParameterGroup(allParametersAsArray);
-
-  const isWebhook = equals(this.Context.GraphStore.getNodeType(nodeId), Constants.NODE.TYPE.OPEN_API_CONNECTION_WEBHOOK);
-
-  const expandedInputParameters = new OperationManifestParser(operationManifest).getInputParameters(
-      /* includeParentObject */ true,
-      /* expandArrayPropertiesDepth */ Constants.MAX_EXPAND_ARRAY_DEPTH
-  );
-
-  const enumParameters = this._getEnumParameters(nodeId, expandedInputParameters, /* parsedSwagger */ undefined);
-
-  if (this.Context.Features.isEnabled(AvailableFeatures.SHOW_TRIGGER_RECURRENCE) && isTrigger && !isWebhook) {
-      this._addRecurrenceParameterGroup(nodeId, stepDefinition, operationManifest.properties.recurrence, enumParameters, parameterGroups);
+      /* createInvisibleParameter */ true,
+      /* useDefault */ false
+    );
+  } else {
+    loadParameterValuesFromDefault(primaryInputParameters);
   }
 
-  const defaultParameterGroup = parameterGroups[ParameterGroupKeys.DEFAULT];
-  defaultParameterGroup.parameters = this._getParametersSortedByVisibility(defaultParameterGroup.parameters);
+  const allParametersAsArray = toParameterInfoMap(nodeType, primaryInputParametersInArray, stepDefinition, nodeId);
 
-  this.dispatch<OperationParametersPayload>({
-      payload: {
-          enumParameters,
-          graphNodeId: nodeId,
-          parameterGroups,
-          parametersSchema: expandedInputParameters,
-          operationId,
-      },
-      type: ActionTypes.PARSE_PARAMETERS_SUCCESS,
+  // TODO (M2)- Initialize editor view models
+
+  const defaultParameterGroup = {
+    id: ParameterGroupKeys.DEFAULT,
+    description: '',
+    parameters: allParametersAsArray,
+  };
+  const parameterGroups = {
+    [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,
+  };
+
+  // TODO (M1)- Add enum parameters
+  // TODO (M1)- Add recurrence parameters
+  // TODO (M3)- Initialize dynamic inputs.
+
+  defaultParameterGroup.parameters = _getParametersSortedByVisibility(defaultParameterGroup.parameters);
+
+  return { parameterGroups };
+};
+
+const _getParametersSortedByVisibility = (parameters: ParameterInfo[]): ParameterInfo[] => {
+  const sortedParameters: ParameterInfo[] = parameters.filter((parameter) => parameter.required);
+
+  for (const parameter of parameters) {
+    if (!parameter.required && equals(parameter.visibility, Visibility.Important)) {
+      sortedParameters.push(parameter);
+    }
+  }
+
+  parameters.forEach((parameter) => {
+    if (!parameter.required && !equals(parameter.visibility, Visibility.Important) && !equals(parameter.visibility, Visibility.Advanced)) {
+      sortedParameters.push(parameter);
+    }
   });
 
-  const inputWithDynamicProperties = this._getInputWithDynamicSchema(expandedInputParameters);
+  parameters.forEach((parameter) => {
+    if (!parameter.required && equals(parameter.visibility, Visibility.Advanced)) {
+      sortedParameters.push(parameter);
+    }
+  });
 
-  if (inputWithDynamicProperties) {
-      this.dispatch<DynamicInputsPayload>({
-          payload: {
-              graphNodeId: nodeId,
-              dynamicParameter: inputWithDynamicProperties,
-              schemaInfo: DynamicParamHelper.getDynamicSchemaInfoForManifestBasedOperation(
-                  operationId,
-                  <DynamicPropertiesExtension>inputWithDynamicProperties.dynamicSchema.extension
-              ),
-              parameterInfo: {
-                  in: inputWithDynamicProperties.in,
-                  required: inputWithDynamicProperties.required,
-              },
-          },
-          type: ActionTypes.NODE_ADD_DYNAMIC_INPUTS_INFO,
-      });
-  }
-}
+  return sortedParameters;
+};
