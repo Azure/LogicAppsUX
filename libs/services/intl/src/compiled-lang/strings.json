@@ -1449,6 +1449,12 @@
       "value": "Required. The name of the new property."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2723,6 +2729,12 @@
     {
       "type": 0,
       "value": "Returns a string representation of a URI encoded string"
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editor Input"
     }
   ],
   "xV/oyK": [
