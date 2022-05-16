@@ -51,6 +51,7 @@ export const StringEditor = ({ placeholder, pluginsEnabled, singleLine, hasClear
     defaultMessage: 'Editor Input',
     description: 'Label for input Field for String Editor',
   });
+
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className={pluginsEnabled ? 'msla-string-editor-container-plugin' : 'msla-string-editor-container'}>
