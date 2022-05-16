@@ -1,5 +1,5 @@
-import Constants from '../constants';
-import { isHighContrastBlack } from '../utils/theme';
+import Constants from '../../constants';
+import { isHighContrastBlack } from '../../utils/theme';
 import {
   createCompletionItemProviderForFunctions,
   createCompletionItemProviderForValues,
@@ -8,7 +8,7 @@ import {
   createThemeData,
   createLanguageConfig,
   getTemplateFunctions,
-} from '../workflow/languageservice/workflowlanguageservice';
+} from '../../workflow/languageservice/workflowlanguageservice';
 import { map } from '@microsoft-logic-apps/utils';
 import Editor, { loader } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
@@ -22,7 +22,7 @@ export enum EditorLanguage {
   templateExpressionLanguage = 'TemplateExpressionLanguage',
 }
 
-export interface EditorProps extends EditorOptions {
+export interface MonacoProps extends MonacoOptions {
   defaultValue?: string;
   height?: number | string;
   language?: EditorLanguage;
@@ -30,7 +30,7 @@ export interface EditorProps extends EditorOptions {
   value?: string;
 }
 
-export interface EditorOptions {
+export interface MonacoOptions {
   folding?: boolean;
   fontSize?: number;
   readOnly?: boolean;
@@ -41,7 +41,7 @@ export interface EditorOptions {
   wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
 }
 
-export const CustomEditor: React.FC<EditorProps> = ({
+export const MonacoEditor: React.FC<MonacoProps> = ({
   height,
   width,
   folding = false,
@@ -105,4 +105,4 @@ export const CustomEditor: React.FC<EditorProps> = ({
   );
 };
 
-export default CustomEditor;
+export default MonacoEditor;
