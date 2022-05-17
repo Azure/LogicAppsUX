@@ -1449,6 +1449,12 @@
       "value": "Vereist. De naam van de nieuwe eigenschap."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1752,7 +1758,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Selecteren"
     }
   ],
   "dhvk0u": [
@@ -2731,6 +2737,12 @@
     {
       "type": 0,
       "value": "Er wordt een weergave van een tekenreeks met URI-codering geretourneerd"
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editor Input"
     }
   ],
   "xV/oyK": [
