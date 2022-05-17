@@ -1453,6 +1453,12 @@
       "value": "Obbligatorio. Nome della nuova proprietà."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1756,7 +1762,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Seleziona"
     }
   ],
   "dhvk0u": [
@@ -2727,6 +2733,12 @@
     {
       "type": 0,
       "value": "Restituisce una rappresentazione stringa di una stringa con codifica URI"
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editor Input"
     }
   ],
   "xV/oyK": [

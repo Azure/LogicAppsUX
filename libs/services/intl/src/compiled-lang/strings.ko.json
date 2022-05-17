@@ -1412,6 +1412,12 @@
       "value": "필수 항목으로, 새 속성의 이름입니다."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1715,7 +1721,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "선택"
     }
   ],
   "dhvk0u": [
@@ -2664,6 +2670,12 @@
     {
       "type": 0,
       "value": "URI로 인코딩된 문자열의 문자열 표현을 반환합니다."
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editor Input"
     }
   ],
   "xV/oyK": [
