@@ -1,40 +1,37 @@
 import { Checkbox } from '@fluentui/react';
 import React, { useState } from 'react';
 
-type StatusChangeHandler = (statusKey: string, checked?: boolean) => void;
+type StatusChangeHandler = (selections: MultiSelectOption[]) => void;
 
-interface MultiSelectOption {
-  isSelected: boolean;
+export interface MultiSelectOption {
   label: string;
+  value: string;
 }
 
 export interface MultiSelectSettingProps {
-  id: string;
+  options: MultiSelectOption[];
   selections: MultiSelectOption[];
   onSelectionChange?: StatusChangeHandler;
   onRenderLabel?(props?: MultiSelectSettingProps): JSX.Element | null;
 }
 
 export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = (props): JSX.Element => {
-  const { selections, onSelectionChange, onRenderLabel } = props;
+  const { options, selections, onSelectionChange, onRenderLabel } = props;
   const [userSelections, setUserSelections] = useState(selections);
-  const handleSelectionChange = (label: string, checked: boolean): void => {
-    const newUserSelections = userSelections.reduce((acc, current) => {
-      return current.label === label ? [...acc, { ...current, isSelected: checked }] : [...acc, current];
-    }, [] as MultiSelectOption[]);
-    setUserSelections(newUserSelections);
-    onSelectionChange?.(label, checked);
+  const handleSelectionChange = (selection: MultiSelectOption, checked: boolean): void => {
+    setUserSelections(checked ? [...userSelections, selection] : userSelections.filter((item) => item !== selection));
+    onSelectionChange?.(userSelections); //this is where caller handles any side effects i.e. store update based on component state
   };
   return (
     <div className="msla-run-after-statuses">
-      {userSelections.map(({ isSelected, label }, index) => {
+      {options.map((option, index) => {
         return (
           <div className="msla-run-after-status-checkbox" key={index}>
             <Checkbox
-              checked={isSelected}
-              label={label}
+              checked={userSelections.includes(option)}
+              label={option.label}
               onRenderLabel={onRenderLabel ? () => onRenderLabel?.(props) : undefined}
-              onChange={(_, checked) => handleSelectionChange(label, !!checked)}
+              onChange={(_, checked) => handleSelectionChange(option, !!checked)}
             />
           </div>
         );
