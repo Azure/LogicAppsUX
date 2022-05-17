@@ -1412,6 +1412,12 @@
       "value": "Diperlukan. Nama properti baru."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1715,7 +1721,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Pilih"
     }
   ],
   "dhvk0u": [
@@ -2664,6 +2670,12 @@
     {
       "type": 0,
       "value": "Menampilkan representasi string dari string dengan pengodean URI"
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editor Input"
     }
   ],
   "xV/oyK": [
