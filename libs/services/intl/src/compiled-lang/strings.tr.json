@@ -1445,6 +1445,12 @@
       "value": "Gerekli. Yeni özelliğin adı."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1744,7 +1750,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Seç"
     }
   ],
   "dhvk0u": [
@@ -2715,6 +2721,12 @@
     {
       "type": 0,
       "value": "URI ile kodlanmış bir dizenin dize gösterimini döndürür"
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editor Input"
     }
   ],
   "xV/oyK": [

@@ -32,8 +32,8 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
 
   const graph = useWorkflowNode(id) as WorkflowGraph;
   const operationInfo = useOperationInfo(id);
-  const brandColor = useBrandColor(operationInfo) ?? '';
-  const iconUri = useIconUri(operationInfo) ?? '';
+  const brandColor = useBrandColor(operationInfo);
+  const iconUri = useIconUri(operationInfo);
 
   if (!node) {
     return null;

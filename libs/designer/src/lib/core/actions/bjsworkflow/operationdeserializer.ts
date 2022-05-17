@@ -1,7 +1,8 @@
-import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
-import type { NodeParameters } from '../../state/operationMetadataSlice';
-import { initializeInputParameters, initializeOperationInfo } from '../../state/operationMetadataSlice';
-import type { Actions } from '../../state/workflowSlice';
+import Constants from '../../../common/constants';
+import { getOperationInfo, getOperationManifest } from '../../queries/operation';
+import type { NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
+import { initializeInputParameters, initializeOperationInfo, initializeOutputParameters } from '../../state/operationMetadataSlice';
+import type { Operations } from '../../state/workflowSlice';
 import {
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
@@ -15,7 +16,7 @@ import { ConnectionReferenceKeyFormat, equals, getObjectPropertyValue, unmap } f
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
-export const initializeOperationMetadata = async (operations: Actions, dispatch: Dispatch): Promise<void> => {
+export const initializeOperationMetadata = async (operations: Operations, dispatch: Dispatch): Promise<void> => {
   const promises: Promise<void>[] = [];
   const operationManifestService = OperationManifestService();
 
@@ -39,16 +40,18 @@ const initializeOperationDetailsForManifest = async (
 
   if (operationInfo) {
     const manifest = await getOperationManifest(operationInfo);
-    const connector = await getConnector(operationInfo.connectorId);
 
     dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
 
     const nodeParameters = getInputParametersFromManifest(nodeId, manifest, operation);
     dispatch(initializeInputParameters({ id: nodeId, ...nodeParameters }));
+
+    const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);
+    dispatch(initializeOutputParameters({ id: nodeId, ...nodeOutputs }));
   }
 };
 
-const getInputParametersFromManifest = (nodeId: string, manifest: OperationManifest, stepDefinition: any): NodeParameters => {
+const getInputParametersFromManifest = (nodeId: string, manifest: OperationManifest, stepDefinition: any): NodeInputs => {
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
     /* includeParentObject */ false,
     /* expandArrayPropertiesDepth */ 0
@@ -112,6 +115,57 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
   defaultParameterGroup.parameters = _getParametersSortedByVisibility(defaultParameterGroup.parameters);
 
   return { parameterGroups };
+};
+
+const getOutputParametersFromManifest = (nodeId: string, manifest: OperationManifest): NodeOutputs => {
+  // TODO (M1) - Update operation manifest for triggers with split on.
+
+  const operationOutputs = new ManifestParser(manifest).getOutputParameters(
+    /* includeParentObject */ true,
+    /* expandArrayOutputsDepth */ Constants.MAX_INTEGER_NUMBER,
+    /* expandOneOf */ false,
+    /* data */ undefined,
+    /* selectAllOneOfSchemas */ true
+  );
+
+  // TODO (M3) - Get dynamic schema output
+
+  const nodeOutputs: Record<string, OutputInfo> = {};
+  for (const [key, output] of Object.entries(operationOutputs)) {
+    const {
+      format,
+      type,
+      isDynamic,
+      isInsideArray,
+      name,
+      itemSchema,
+      parentArray,
+      title,
+      summary,
+      description,
+      source,
+      required,
+      visibility,
+    } = output;
+
+    nodeOutputs[key] = {
+      key,
+      type,
+      format,
+      isAdvanced: equals(visibility, Constants.VISIBILITY.ADVANCED),
+      name,
+      isDynamic,
+      isInsideArray,
+      itemSchema,
+      parentArray,
+      title: title ?? summary ?? description ?? name,
+      source,
+      required,
+      description,
+    };
+  }
+
+  return { outputs: nodeOutputs };
 };
 
 const _getParametersSortedByVisibility = (parameters: ParameterInfo[]): ParameterInfo[] => {

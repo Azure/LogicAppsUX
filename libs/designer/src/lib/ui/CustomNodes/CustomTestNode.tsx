@@ -39,7 +39,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const dispatch = useDispatch();
   const style = hasNestedParent && !parentEdges.length ? { marginTop: 40 } : undefined;
   const operationInfo = useOperationInfo(id);
-  const nodeComment = useNodeDescription(id) ?? '';
+  const nodeComment = useNodeDescription(id);
 
   const nodeClick = useCallback(() => {
     if (isCollapsed) {
@@ -48,8 +48,8 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     dispatch(changePanelNode(id));
   }, [dispatch, id, isCollapsed]);
 
-  const brandColor = useBrandColor(operationInfo) ?? '';
-  const iconUri = useIconUri(operationInfo) ?? '';
+  const brandColor = useBrandColor(operationInfo);
+  const iconUri = useIconUri(operationInfo);
 
   if (metadata?.isPlaceholderNode) {
     return (
@@ -58,6 +58,15 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
       </div>
     );
   }
+
+  const comment = nodeComment
+    ? {
+      brandColor: brandColor,
+      comment: nodeComment,
+      isDismissed: false,
+      isEditing: false,
+    } : undefined;
+
   return (
     <div style={style}>
       {hasNestedParent && !parentEdges.length && (
@@ -80,12 +89,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           id={id}
           connectionRequired={true}
           connectionDisplayName="ttha222@outlook.com"
-          commentBox={{
-            brandColor: brandColor,
-            comment: nodeComment,
-            isDismissed: false,
-            isEditing: false,
-          }}
+          commentBox={comment}
           drag={drag}
           dragPreview={dragPreview}
           onClick={nodeClick}

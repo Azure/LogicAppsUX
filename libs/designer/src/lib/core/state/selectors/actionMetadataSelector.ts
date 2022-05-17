@@ -10,7 +10,7 @@ export const useActionMetadata = (actionId?: string) => {
     if (!actionId) {
       return undefined;
     }
-    return state.workflow.actions[actionId];
+    return state.workflow.operations[actionId];
   });
 };
 
@@ -28,15 +28,12 @@ export const useNodeDescription = (nodeId: string) => {
     if (!nodeId) {
       return undefined;
     }
-    return state.workflow.actions[nodeId]?.description;
+    return state.workflow.operations[nodeId]?.description;
   });
 };
 
 export const useOperationInfo = (nodeId: string) => {
   return useSelector((state: RootState) => {
-    if (!nodeId) {
-      return undefined;
-    }
     return state.operations.operationInfo[nodeId];
   });
 };
@@ -50,8 +47,8 @@ export const useConnector = (connectorId: string) => {
 
 export const useOperationManifest = (operationInfo: OperationInfo) => {
   const operationManifestService = OperationManifestService();
-  const connectorId = operationInfo.connectorId.toLowerCase();
-  const operationId = operationInfo.operationId.toLowerCase();
+  const connectorId = operationInfo?.connectorId?.toLowerCase();
+  const operationId = operationInfo?.operationId?.toLowerCase();
   const manifestQuery = useQuery(
     ['manifest', { connectorId }, { operationId }],
     () => operationManifestService.getOperationManifest(connectorId, operationId),
@@ -63,27 +60,25 @@ export const useOperationManifest = (operationInfo: OperationInfo) => {
   return manifestQuery;
 };
 
-const useNodeAttribute = (operationInfo: OperationInfo | undefined, attributeName: keyof OperationManifestProperties): string => {
-  if (operationInfo) {
-    const { data: manifest } = useOperationManifest(operationInfo);
+const useNodeAttribute = (operationInfo: OperationInfo, attributeName: keyof OperationManifestProperties): string => {
+  const { data: manifest } = useOperationManifest(operationInfo);
+  const { data: connector } = useConnector(operationInfo?.connectorId);
 
-    if (manifest) {
-      return manifest.properties[attributeName];
-    }
+  if (manifest) {
+    return manifest.properties[attributeName];
+  }
 
-    const { data: connector } = useConnector(operationInfo.connectorId);
-    if (connector) {
-      return connector.properties[attributeName];
-    }
+  if (connector) {
+    return connector.properties[attributeName];
   }
 
   return '';
 };
 
-export const useBrandColor = (operationInfo: OperationInfo | undefined) => {
+export const useBrandColor = (operationInfo: OperationInfo) => {
   return useNodeAttribute(operationInfo, 'brandColor');
 };
 
-export const useIconUri = (operationInfo: OperationInfo | undefined) => {
+export const useIconUri = (operationInfo: OperationInfo) => {
   return useNodeAttribute(operationInfo, 'iconUri');
 };
