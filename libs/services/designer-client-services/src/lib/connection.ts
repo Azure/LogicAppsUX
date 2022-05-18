@@ -4,7 +4,7 @@ import type { Connector, Connection } from '@microsoft-logic-apps/utils';
 export interface IConnectionService {
   dispose(): void;
   getConnector(connectorId: string): Promise<Connector>;
-  getConnections(connectorId?: string /*batchable?: boolean  danielle to do */): Promise<Connection[]>;
+  getConnections(connectorId?: string): Promise<Connection[]>; // batching can be used in old designer for this
 }
 
 let service: IConnectionService;
