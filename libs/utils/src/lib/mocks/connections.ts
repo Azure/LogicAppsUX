@@ -1,6 +1,6 @@
 import type { Connection } from '../models/connection';
 
-export const connectiosnMock: Connection[] = [
+export const connectionsMock: Connection[] = [
   {
     kind: 'V2',
     properties: {

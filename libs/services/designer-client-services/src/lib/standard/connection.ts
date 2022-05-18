@@ -1,10 +1,13 @@
 import { HttpClient } from '../httpClient';
-import type { Connector } from '@microsoft-logic-apps/utils';
+import type { UrlService } from '../urlService';
+import type { Connection, Connector } from '@microsoft-logic-apps/utils';
+import { connectionsMock } from '@microsoft-logic-apps/utils';
 
 interface StandardConnectionServiceArgs {
   apiVersion: string;
   baseUrl: string;
   locale?: string;
+  urlService: UrlService;
 }
 
 export class StandardConnectionService {
@@ -25,5 +28,17 @@ export class StandardConnectionService {
 
   async getConnectors(): Promise<Connector[]> {
     return [];
+  }
+
+  async getConnections(connectorId?: string /*batchable?: boolean  danielle to do */): Promise<Connection[]> {
+    let uri: string;
+
+    if (connectorId) {
+      uri = this.options.urlService.getListConnectionsUri(connectorId);
+    } else {
+      uri = this.options.urlService.getConnectionsUri();
+    }
+    const response = await HttpClient().get<Connector>({ uri, type: 'GET' });
+    return connectionsMock; // danielle still need to make API type and convert
   }
 }

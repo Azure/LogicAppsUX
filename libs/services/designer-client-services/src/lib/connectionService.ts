@@ -1,9 +1,11 @@
 import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
-import type { Connector } from '@microsoft-logic-apps/utils';
+import type { Connector , Connection } from '@microsoft-logic-apps/utils';
 
 export interface IConnectionService {
   dispose(): void;
   getConnector(connectorId: string): Promise<Connector>;
+  getConnections(connectorId?: string, /*batchable?: boolean  danielle to do */): Promise<Connection[]>;
+  getListConnectionsUri(input: string): string;
 }
 
 let service: IConnectionService;
