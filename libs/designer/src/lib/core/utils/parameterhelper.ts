@@ -30,9 +30,9 @@ export interface RepetitionContext {
 export interface RepetitionReference {
   actionName: string;
   actionType: string;
-  repetitionValue: any; // NOTE(johnwa): the expression for foreach, and its type could be string or array.
-  repetitionStep?: string; // NOTE(johnwa): the output original step
-  repetitionPath?: string; // NOTE(johnwa): the full output path for repetition value if it coming from output
+  repetitionValue: any; // NOTE: the expression for foreach, and its type could be string or array.
+  repetitionStep?: string; // NOTE: the output original step
+  repetitionPath?: string; // NOTE: the full output path for repetition value if it coming from output
 }
 
 /**
@@ -55,7 +55,7 @@ export function toParameterInfoMap(
     let repetitionContext: RepetitionContext | null;
     if (nodeId) {
       const includeSelf = shouldIncludeSelfForRepetitionReference(nodeType, inputParameter.name);
-      repetitionContext = null; // TODO(psamband): Get repetition context from redux for this node
+      repetitionContext = null; // TODO: Get repetition context from redux for this node
     } else {
       repetitionContext = null;
     }
@@ -277,7 +277,7 @@ export function updateParameterWithValues(
               }
             }
           } else {
-            // NOTE(johnwa): the value is not expandable, we should create a raw input for the specified parameterKey
+            // NOTE: the value is not expandable, we should create a raw input for the specified parameterKey
             // if the input parameter is not exist, then create the corresponding input parameter with specified key
             if (inputParameter) {
               parameters.push(transformInputParameter(inputParameter, clonedParameterValue, /* invisible */ false));
@@ -416,7 +416,7 @@ function deletePropertyValueWithSpecifiedPathSegment(value: any, segments: Segme
 }
 
 export function getAndEscapeSegment(segment: Segment): string | number {
-  // NOTE(johnwa): for property segment, return the property name as key; for index segment, return the index value or 0
+  // NOTE: for property segment, return the property name as key; for index segment, return the index value or 0
   switch (segment.type) {
     case SegmentType.Property:
       return tryConvertStringToExpression(decodePropertySegment(segment.value as string));
@@ -498,7 +498,7 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
   } else if (typeof value !== 'object') {
     return false;
   } else if (!isArray && !Array.isArray(value) && schema.type === Constants.SWAGGER.TYPE.OBJECT && schema.properties === undefined) {
-    // NOTE(johnwa): for schema.additionalProperties as boolean value case, it just ignore the checking and return true.
+    // NOTE: for schema.additionalProperties as boolean value case, it just ignore the checking and return true.
     if (schema.additionalProperties && schema.additionalProperties.type) {
       return Object.keys(value).every(
         (key) =>
@@ -541,7 +541,7 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
   }
 
   if (isArray) {
-    // NOTE(johnwa): for simple primitive array, check whether the value type is same as the designated type or string type (expression)
+    // NOTE: for simple primitive array, check whether the value type is same as the designated type or string type (expression)
     if ((value as any[]).every((item) => typeof item !== 'object')) {
       return inputs.length === 1 && (value as any[]).every((item) => typeof item === inputs[0].type || isTemplateExpression(item));
     }
@@ -581,7 +581,7 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
         const propertyValue = itemValue[valueKey];
         const propertySchema =
           schema.type === Constants.SWAGGER.TYPE.ARRAY ? schema.items : schema['properties'] && schema['properties'][valueKey];
-        // NOTE(johnwa): if the property value is array or object, check the value/schema compatibility recursively
+        // NOTE: if the property value is array or object, check the value/schema compatibility recursively
         if (Array.isArray(propertyValue) && !shallowArrayCheck) {
           if (
             !isArrayOrObjectValueCompatibleWithSchema(

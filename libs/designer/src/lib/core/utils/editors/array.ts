@@ -106,8 +106,8 @@ export interface ArrayPropertyMetadata extends BasePropertyMetadata {
 }
 
 export function initializeArrayViewModel(inputParameter: InputParameter, shouldIgnoreDefaultValue = false): ArrayViewModel {
-  const descendantInputParameters = _expandArrayParameters(inputParameter);
-  return _convertArrayInputParameterToArrayViewModel(
+  const descendantInputParameters = expandArrayParameters(inputParameter);
+  return convertArrayInputParameterToArrayViewModel(
     inputParameter,
     inputParameter.value,
     descendantInputParameters,
@@ -116,7 +116,7 @@ export function initializeArrayViewModel(inputParameter: InputParameter, shouldI
   );
 }
 
-function _expandArrayParameters(parameter: InputParameter): InputParameter[] {
+function expandArrayParameters(parameter: InputParameter): InputParameter[] {
   const required = parameter.required;
   const visibility = parameter.visibility;
   const prefix = parameter.name;
@@ -154,7 +154,7 @@ function _expandArrayParameters(parameter: InputParameter): InputParameter[] {
   return inputs.map((item) => ({ ...item, in: parameter.in, isDynamic: parameter.isDynamic }));
 }
 
-function _convertArrayInputParameterToArrayViewModel(
+function convertArrayInputParameterToArrayViewModel(
   inputParameter: InputParameter,
   parameterValue: any,
   descendantInputParameters: InputParameter[],
@@ -165,7 +165,7 @@ function _convertArrayInputParameterToArrayViewModel(
   const itemInputParameter = children[0];
 
   const viewModel: ArrayViewModel = {
-    key: _getKeyWithSpecifiedIndexes(inputParameter.key, indexes),
+    key: getKeyWithSpecifiedIndexes(inputParameter.key, indexes),
     name: inputParameter.title || inputParameter.summary || inputParameter.name,
     inputParameter,
     itemInputParameter,
@@ -181,12 +181,12 @@ function _convertArrayInputParameterToArrayViewModel(
   );
 
   viewModel.expanded = isExpandable;
-  _allocateArrayViewModelValue(parameterValue, viewModel, descendantInputParameters, indexes, ignoreDefaultValue);
+  allocateArrayViewModelValue(parameterValue, viewModel, descendantInputParameters, indexes, ignoreDefaultValue);
 
   return viewModel;
 }
 
-function _allocateArrayViewModelValue(
+function allocateArrayViewModelValue(
   parameterValue: any,
   viewModel: ArrayViewModel,
   descendantInputParameters: InputParameter[],
@@ -201,7 +201,7 @@ function _allocateArrayViewModelValue(
     if (parameterValue !== null && viewModel.expanded) {
       const itemProperties = parameterValue.map((itemValue: any, i: number): ItemPropertyViewModel => {
         const cloneIndexes = [...indexes, i];
-        const key = _getKeyWithSpecifiedIndexes(itemInputParameter.key, cloneIndexes);
+        const key = getKeyWithSpecifiedIndexes(itemInputParameter.key, cloneIndexes);
         if (itemInputParameter.type !== Constants.SWAGGER.TYPE.OBJECT && itemInputParameter.type !== Constants.SWAGGER.TYPE.ARRAY) {
           // for primitive item
           const primitiveItemProperty: NonArrayPropertyMetadata = {
@@ -234,7 +234,7 @@ function _allocateArrayViewModelValue(
           if (isExpandable) {
             if (itemInputParameter.type === Constants.SWAGGER.TYPE.OBJECT) {
               // for item is complex object
-              const nestedProperties = _addObjectPropertiesToPropertyMetadata(
+              const nestedProperties = addObjectPropertiesToPropertyMetadata(
                 itemInputParameter,
                 descendantInputParameters,
                 itemValue,
@@ -245,7 +245,7 @@ function _allocateArrayViewModelValue(
             } else {
               // for item is nested array
               itemProperty.properties?.push(
-                _convertParameterToPropertyMetadata(
+                convertParameterToPropertyMetadata(
                   itemInputParameter,
                   descendantInputParameters,
                   itemValue,
@@ -276,7 +276,7 @@ function _createNewItemProperty(
   indexes: number[],
   ignoreDefaultValue = false
 ): ItemPropertyViewModel {
-  const key = _getKeyWithSpecifiedIndexes(itemInputParameter.key, indexes);
+  const key = getKeyWithSpecifiedIndexes(itemInputParameter.key, indexes);
   const newItem: ItemPropertyViewModel = {
     key,
     expanded: true,
@@ -286,7 +286,7 @@ function _createNewItemProperty(
   if (itemInputParameter.type === Constants.SWAGGER.TYPE.ARRAY) {
     // for the case item is nested array
     newItem.properties?.push(
-      _convertParameterToPropertyMetadata(
+      convertParameterToPropertyMetadata(
         itemInputParameter,
         descendantInputParameters,
         /* serializedValue */ undefined,
@@ -295,7 +295,7 @@ function _createNewItemProperty(
       )
     );
   } else if (itemInputParameter.type === Constants.SWAGGER.TYPE.OBJECT) {
-    const nestedProperties = _addObjectPropertiesToPropertyMetadata(
+    const nestedProperties = addObjectPropertiesToPropertyMetadata(
       itemInputParameter,
       descendantInputParameters,
       /* serializedValue */ undefined,
@@ -316,7 +316,7 @@ function _createNewItemProperty(
   return newItem;
 }
 
-function _convertParameterToPropertyMetadata(
+function convertParameterToPropertyMetadata(
   inputParameter: InputParameter,
   descendantInputParameters: InputParameter[],
   serializedValue: any,
@@ -328,7 +328,7 @@ function _convertParameterToPropertyMetadata(
     serializedValue = inputParameter.default;
   }
 
-  const key = _getKeyWithSpecifiedIndexes(inputParameter.key, indexes);
+  const key = getKeyWithSpecifiedIndexes(inputParameter.key, indexes);
   if (inputParameter.type !== Constants.SWAGGER.TYPE.ARRAY) {
     const nonArrayPropertyMetadata: NonArrayPropertyMetadata = {
       key,
@@ -340,7 +340,7 @@ function _convertParameterToPropertyMetadata(
     const arrayPropertyMetadata: ArrayPropertyMetadata = {
       key,
       inputParameter,
-      viewModel: _convertArrayInputParameterToArrayViewModel(
+      viewModel: convertArrayInputParameterToArrayViewModel(
         inputParameter,
         serializedValue,
         descendantInputParameters,
@@ -354,7 +354,7 @@ function _convertParameterToPropertyMetadata(
   return property;
 }
 
-function _addObjectPropertiesToPropertyMetadata(
+function addObjectPropertiesToPropertyMetadata(
   inputParameter: InputParameter,
   descendantInputParameters: InputParameter[],
   serializedValue: any,
@@ -375,27 +375,25 @@ function _addObjectPropertiesToPropertyMetadata(
         const grandChildInputParameters = descendantInputParameters.filter((item) => isChildKey(childItem.key, item.key));
         if (grandChildInputParameters.length > 0) {
           result = result.concat(
-            _addObjectPropertiesToPropertyMetadata(childItem, descendantInputParameters, propertyValue, indexes, ignoreDefaultValue)
+            addObjectPropertiesToPropertyMetadata(childItem, descendantInputParameters, propertyValue, indexes, ignoreDefaultValue)
           );
         } else {
-          result.push(
-            _convertParameterToPropertyMetadata(childItem, descendantInputParameters, propertyValue, indexes, ignoreDefaultValue)
-          );
+          result.push(convertParameterToPropertyMetadata(childItem, descendantInputParameters, propertyValue, indexes, ignoreDefaultValue));
         }
       } else {
-        result.push(_convertParameterToPropertyMetadata(childItem, descendantInputParameters, propertyValue, indexes, ignoreDefaultValue));
+        result.push(convertParameterToPropertyMetadata(childItem, descendantInputParameters, propertyValue, indexes, ignoreDefaultValue));
       }
     }
   } else {
     result.push(
-      _convertParameterToPropertyMetadata(inputParameter, descendantInputParameters, serializedValue, indexes, ignoreDefaultValue)
+      convertParameterToPropertyMetadata(inputParameter, descendantInputParameters, serializedValue, indexes, ignoreDefaultValue)
     );
   }
 
   return result;
 }
 
-function _getKeyWithSpecifiedIndexes(itemTemplateKey: string, indexes: number[]): string {
+function getKeyWithSpecifiedIndexes(itemTemplateKey: string, indexes: number[]): string {
   const cloneIndexes = [...indexes];
   const segments = parseEx(itemTemplateKey);
 
@@ -435,7 +433,7 @@ export function getArrayViewModelByIndexedKey(viewModel: ArrayViewModel, indexed
   throw new Error('Array view model not found');
 }
 
-function _iterateArrayViewModel(
+function iterateArrayViewModel(
   viewModel: ArrayViewModel,
   collapsedArrayCallback?: (viewModel: ArrayViewModel) => void,
   collapsedItemCallback?: (item: ItemPropertyViewModel, inputParameter: InputParameter) => void,
@@ -447,7 +445,7 @@ function _iterateArrayViewModel(
         for (const property of item.properties ?? []) {
           if (property.inputParameter.type === Constants.SWAGGER.TYPE.ARRAY) {
             const arrayProperty = property as ArrayPropertyMetadata;
-            _iterateArrayViewModel(arrayProperty.viewModel, collapsedArrayCallback, collapsedItemCallback, collapsedPropertyCallback);
+            iterateArrayViewModel(arrayProperty.viewModel, collapsedArrayCallback, collapsedItemCallback, collapsedPropertyCallback);
           } else if (collapsedPropertyCallback) {
             collapsedPropertyCallback(property as NonArrayPropertyMetadata);
           }

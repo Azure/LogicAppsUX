@@ -53,8 +53,8 @@ const initializeOperationDetailsForManifest = async (
 
 const getInputParametersFromManifest = (nodeId: string, manifest: OperationManifest, stepDefinition: any): NodeInputs => {
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
-    /* includeParentObject */ false,
-    /* expandArrayPropertiesDepth */ 0
+    false /* includeParentObject */,
+    0 /* expandArrayPropertiesDepth */
   );
   let nodeType = '';
   let primaryInputParametersInArray = unmap(primaryInputParameters);
@@ -66,7 +66,7 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
     // In the case of retry policy, it is treated as an input
     // avoid pushing a parameter for it as it is already being
     // handled in the settings store.
-    // TODO: this could be expanded to more settings that are treated as inputs.
+    // NOTE: this could be expanded to more settings that are treated as inputs.
     if (
       manifest.properties.settings &&
       manifest.properties.settings.retryPolicy &&
@@ -88,8 +88,8 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
       inputsLocation ? getObjectPropertyValue(stepDefinition, inputsLocation) : stepDefinition.inputs,
       '',
       primaryInputParametersInArray,
-      /* createInvisibleParameter */ true,
-      /* useDefault */ false
+      true /* createInvisibleParameter */,
+      false /* useDefault */
     );
   } else {
     loadParameterValuesFromDefault(primaryInputParameters);
@@ -97,7 +97,7 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
 
   const allParametersAsArray = toParameterInfoMap(nodeType, primaryInputParametersInArray, stepDefinition, nodeId);
 
-  // TODO (M2)- Initialize editor view models
+  // TODO(14490585)- Initialize editor view models
 
   const defaultParameterGroup = {
     id: ParameterGroupKeys.DEFAULT,
@@ -108,9 +108,9 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
     [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,
   };
 
-  // TODO (M1)- Add enum parameters
-  // TODO (M1)- Add recurrence parameters
-  // TODO (M3)- Initialize dynamic inputs.
+  // TODO(14490585)- Add enum parameters
+  // TODO(14490747)- Add recurrence parameters
+  // TODO(14490691)- Initialize dynamic inputs.
 
   defaultParameterGroup.parameters = _getParametersSortedByVisibility(defaultParameterGroup.parameters);
 
@@ -118,17 +118,17 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
 };
 
 const getOutputParametersFromManifest = (nodeId: string, manifest: OperationManifest): NodeOutputs => {
-  // TODO (M1) - Update operation manifest for triggers with split on.
+  // TODO(14490747) - Update operation manifest for triggers with split on.
 
   const operationOutputs = new ManifestParser(manifest).getOutputParameters(
-    /* includeParentObject */ true,
-    /* expandArrayOutputsDepth */ Constants.MAX_INTEGER_NUMBER,
-    /* expandOneOf */ false,
-    /* data */ undefined,
-    /* selectAllOneOfSchemas */ true
+    true /* includeParentObject */,
+    Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
+    false /* expandOneOf */,
+    undefined /* data */,
+    true /* selectAllOneOfSchemas */
   );
 
-  // TODO (M3) - Get dynamic schema output
+  // TODO(14490691) - Get dynamic schema output
 
   const nodeOutputs: Record<string, OutputInfo> = {};
   for (const [key, output] of Object.entries(operationOutputs)) {
