@@ -1,4 +1,4 @@
-export * from './lib/connectionService';
+export * from './lib/connection';
 export * from './lib/operationmanifest';
 export * from './lib/search';
 export * from './lib/urlService';

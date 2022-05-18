@@ -30,7 +30,7 @@ export class StandardConnectionService {
     return [];
   }
 
-  async getConnections(connectorId?: string /*batchable?: boolean  danielle to do */): Promise<Connection[]> {
+  async getConnections(connectorId?: string): Promise<Connection[]> {
     let uri: string;
 
     if (connectorId) {
@@ -39,6 +39,6 @@ export class StandardConnectionService {
       uri = this.options.urlService.getConnectionsUri();
     }
     const response = await HttpClient().get<Connector>({ uri, type: 'GET' });
-    return connectionsMock; // danielle still need to make API type and convert
+    return connectionsMock;
   }
 }
