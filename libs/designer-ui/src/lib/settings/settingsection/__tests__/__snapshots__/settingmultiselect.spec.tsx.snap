@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/settings/multiselectsettings should construct 1`] = `
+<div
+  className="msla-run-after-statuses"
+>
+  <div
+    className="msla-run-after-status-checkbox"
+  >
+    <StyledCheckboxBase
+      checked={false}
+      label="Sample Option 1"
+      onChange={[Function]}
+    />
+  </div>
+  <div
+    className="msla-run-after-status-checkbox"
+  >
+    <StyledCheckboxBase
+      checked={false}
+      label="Sample Option 2"
+      onChange={[Function]}
+    />
+  </div>
+  <div
+    className="msla-run-after-status-checkbox"
+  >
+    <StyledCheckboxBase
+      checked={false}
+      label="Sample Option 3"
+      onChange={[Function]}
+    />
+  </div>
+  <div
+    className="msla-run-after-status-checkbox"
+  >
+    <StyledCheckboxBase
+      checked={false}
+      label="Sample Option 4"
+      onChange={[Function]}
+    />
+  </div>
+</div>
+`;
