@@ -14,7 +14,7 @@ export class StandardUrlService implements IUrlService {
 
   private _getCleanConnectionsPath(): string {
     // remove any possible starting and ending '/' Priti do we need to keep this?
-    return this.options.config.connectionsPath.replace(/(^\/+)|(\/+$)/g, '');
+    return this.options.config.connectionsPath; // .replace(/(^\/+)|(\/+$)/g, '');
   }
 
   public getConnectionsUri(): string {
