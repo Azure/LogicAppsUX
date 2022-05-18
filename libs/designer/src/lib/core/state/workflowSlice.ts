@@ -16,18 +16,18 @@ export interface NodesMetadata {
   };
 }
 
-export type Actions = Record<string, LogicAppsV2.ActionDefinition>;
+export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
   graph: WorkflowGraph | null;
-  actions: Actions;
+  operations: Operations;
   nodesMetadata: NodesMetadata;
 }
 
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
   graph: null,
-  actions: {},
+  operations: {},
   nodesMetadata: {},
 };
 
@@ -89,7 +89,7 @@ export const workflowSlice = createSlice({
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
       state.graph = action.payload.graph;
-      state.actions = action.payload.actionData;
+      state.operations = action.payload.actionData;
       state.nodesMetadata = action.payload.nodesMetadata;
     });
   },

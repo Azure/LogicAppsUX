@@ -111,7 +111,12 @@ export function getParameterDynamicSchema(parameter: SchemaObject): ParameterDyn
   return undefined;
 }
 
-export function getArrayOutputMetadata(schema: SchemaObject, required: boolean, excludeInternal: boolean, prefix?: string): OutputMetadata {
+export function getArrayOutputMetadata(
+  schema: SchemaObject,
+  required: boolean,
+  excludeInternal: boolean,
+  prefix?: string
+): OutputMetadata {
   if (schema.type === 'array' && prefix !== undefined) {
     return {
       array: {

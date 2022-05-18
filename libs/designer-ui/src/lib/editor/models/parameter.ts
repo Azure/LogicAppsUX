@@ -1,6 +1,7 @@
 import type { Exception } from '@microsoft-logic-apps/utils';
 
 export interface ParameterInfo {
+  alternativeKey?: string;
   dynamicData?: {
     error?: Exception;
     status: DynamicCallStatus;
@@ -19,7 +20,6 @@ export interface ParameterInfo {
   required: boolean;
   schema?: any;
   showErrors?: boolean;
-  showFullScreen?: boolean;
   showTokens?: boolean;
   suppressCasting?: boolean;
   type: string;
