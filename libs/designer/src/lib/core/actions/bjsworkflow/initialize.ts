@@ -15,6 +15,7 @@ import {
   StandardConnectionService,
   StandardOperationManifestService,
   StandardSearchService,
+  UrlService,
   InitHttpClient,
 } from '@microsoft-logic-apps/designer-client-services';
 
@@ -49,7 +50,7 @@ export const InitializeServices = ({
       new StandardConnectionService({
         baseUrl: '',
         apiVersion: '2018-11-01',
-        urlService: urlService as IUrlService,
+        urlService: urlService ?? UrlService(),
       })
   );
   InitOperationManifestService(operationManifestService ?? new StandardOperationManifestService({}));
