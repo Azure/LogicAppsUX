@@ -7,7 +7,7 @@ export const initialState: WorkflowState = {
     children: [],
     edges: [],
   },
-  actions: {},
+  operations: {},
   nodesMetadata: {},
 };
 
