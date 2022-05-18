@@ -6,5 +6,5 @@ export * from './lib/httpClient';
 
 export { StandardConnectionService } from './lib/standard/connection';
 export { StandardOperationManifestService } from './lib/standard/operationmanifest';
-export { StandardUrlService } from './lib/standard/url';
+export { StandardUrlService, StandardUrlServiceOptions } from './lib/standard/url';
 export { StandardSearchService } from './lib/standard/search';

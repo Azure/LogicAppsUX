@@ -4,8 +4,6 @@ export const connectionsMock: Connection[] = [
   {
     kind: 'V2',
     properties: {
-      apiId: 'danielletomock',
-      iconUri: 'danielletomock',
       displayName: '5',
       authenticatedUser: {},
       overallStatus: 'Connected',
@@ -37,8 +35,6 @@ export const connectionsMock: Connection[] = [
   {
     kind: 'V2',
     properties: {
-      apiId: 'danielletomock',
-      iconUri: 'danielletomock',
       displayName: '4',
       authenticatedUser: {},
       overallStatus: 'Connected',
@@ -70,8 +66,6 @@ export const connectionsMock: Connection[] = [
   {
     kind: 'V2',
     properties: {
-      apiId: 'danielletomock',
-      iconUri: 'danielletomock',
       displayName: 'Carbon Intensity (Independent Publisher)',
       authenticatedUser: {},
       overallStatus: 'Connected',
@@ -104,8 +98,6 @@ export const connectionsMock: Connection[] = [
   {
     kind: 'V2',
     properties: {
-      apiId: 'danielletomock',
-      iconUri: 'danielletomock',
       displayName: '3',
       authenticatedUser: {},
       overallStatus: 'Connected',
@@ -138,8 +130,6 @@ export const connectionsMock: Connection[] = [
   {
     kind: 'V2',
     properties: {
-      apiId: 'danielletomock',
-      iconUri: 'danielletomock',
       displayName: 'dacogbur@microsoft.com',
       authenticatedUser: { name: 'dacogbur@microsoft.com' },
       overallStatus: 'Connected',
@@ -174,8 +164,6 @@ export const connectionsMock: Connection[] = [
   {
     kind: 'V2',
     properties: {
-      apiId: 'danielletomock',
-      iconUri: 'danielletomock',
       displayName: 'dacogbur@microsoft.com',
       authenticatedUser: {},
       overallStatus: 'Connected',

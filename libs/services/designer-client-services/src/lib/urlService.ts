@@ -9,18 +9,18 @@ export interface EnvironmentConfig {
   flowsPath?: string;
 }
 
-export interface UrlService {
+export interface IUrlService {
   getListConnectionsUri(connectorId: string): string;
   getConnectionsUri(): string;
 }
 
-let service: UrlService;
+let service: IUrlService;
 
-export const InitUrlService = (urlService: UrlService): void => {
+export const InitUrlService = (urlService: IUrlService): void => {
   service = urlService;
 };
 
-export const UrlService = (): UrlService => {
+export const UrlService = (): IUrlService => {
   // Danielle: we need this for every service, how do we extract?
   if (!service) {
     throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'ConectionService need to be initialized before using');

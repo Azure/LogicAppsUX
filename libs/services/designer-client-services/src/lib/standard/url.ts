@@ -1,4 +1,4 @@
-import type { EnvironmentConfig } from '../urlService';
+import type { EnvironmentConfig, IUrlService } from '../urlService';
 
 export interface StandardUrlServiceOptions {
   baseUrl: string;
@@ -9,7 +9,7 @@ export interface StandardUrlServiceOptions {
   enableDynamicInvokeApi?: boolean;
   integrationAccountId?: string;
 }
-export class StandardUrlService {
+export class StandardUrlService implements IUrlService {
   constructor(public readonly options: StandardUrlServiceOptions) {}
 
   private _getCleanConnectionsPath(): string {
@@ -17,7 +17,7 @@ export class StandardUrlService {
     return this.options.config.connectionsPath.replace(/(^\/+)|(\/+$)/g, '');
   }
 
-  public getConnectionUri(): string {
+  public getConnectionsUri(): string {
     const connectionsPath = this._getCleanConnectionsPath();
     return `/subscriptions/${this.options.subscriptionId}/resourceGroups/${this.options.resourceGroup}/${connectionsPath}`;
   }

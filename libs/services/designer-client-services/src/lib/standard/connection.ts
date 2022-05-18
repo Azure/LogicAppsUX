@@ -1,5 +1,5 @@
 import { HttpClient } from '../httpClient';
-import type { UrlService } from '../urlService';
+import type { IUrlService } from '../urlService';
 import type { Connection, Connector } from '@microsoft-logic-apps/utils';
 import { connectionsMock } from '@microsoft-logic-apps/utils';
 
@@ -7,7 +7,7 @@ interface StandardConnectionServiceArgs {
   apiVersion: string;
   baseUrl: string;
   locale?: string;
-  urlService: UrlService;
+  urlService: IUrlService;
 }
 
 export class StandardConnectionService {
