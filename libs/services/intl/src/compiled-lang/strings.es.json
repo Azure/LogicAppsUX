@@ -1445,6 +1445,12 @@
       "value": "Obligatorio. Nombre de la propiedad nueva."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Borrar"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1748,7 +1754,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Seleccionar"
     }
   ],
   "dhvk0u": [
@@ -2727,6 +2733,12 @@
     {
       "type": 0,
       "value": "Devuelve una representación de cadena de una cadena codificada de URI."
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editor Input"
     }
   ],
   "xV/oyK": [

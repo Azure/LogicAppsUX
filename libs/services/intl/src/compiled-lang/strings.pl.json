@@ -1527,6 +1527,12 @@
       "value": "Wymagane. Nazwa nowej właściwości."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Wyczyść"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1830,7 +1836,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Wybierz"
     }
   ],
   "dhvk0u": [
@@ -2853,6 +2859,12 @@
     {
       "type": 0,
       "value": "Zwraca ciągową reprezentację ciągu zakodowanego jako identyfikator URI"
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editor Input"
     }
   ],
   "xV/oyK": [

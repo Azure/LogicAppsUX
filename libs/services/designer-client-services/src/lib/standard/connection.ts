@@ -23,7 +23,7 @@ export class StandardConnectionService {
     const response = await HttpClient().get<Connector>({ uri, type: 'GET' });
     console.log(response);
     //return response;
-    return {} as any;
+    return { properties: {} } as any;
   }
 
   async getConnectors(): Promise<Connector[]> {

@@ -1,9 +1,9 @@
 import type { OutputMetadata, OutputParameter, SchemaProperty } from '../models/operation';
 import { OutputSource, ParameterLocations, ResponseCodes } from './constants';
 import * as ParameterKeyUtility from './helpers/keysutility';
-import { getArrayOutputMetadata } from './helpers/utils';
 import type { SchemaProcessorOptions, Schema } from './schemaprocessor';
 import { SchemaProcessor } from './schemaprocessor';
+import { getArrayOutputMetadata } from './helpers/utils';
 import { equals, startsWith } from '@microsoft-logic-apps/utils';
 
 export type Responses = OpenAPIV2.ResponsesObject;

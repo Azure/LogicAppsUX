@@ -1,5 +1,4 @@
 {
-  "root": "libs/designer-ui",
   "sourceRoot": "libs/designer-ui/src",
   "projectType": "library",
   "tags": [],
@@ -25,7 +24,7 @@
       }
     },
     "yalcpush": {
-      "executor": "@nrwl/workspace:run-script",
+      "executor": "nx:run-script",
       "outputs": ["{options.outputPath}"],
       "dependsOn": [
         {
@@ -48,7 +47,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/designer-ui"],
       "options": {
-        "jestConfig": "libs/designer-ui/jest.config.js",
+        "jestConfig": "libs/designer-ui/jest.config.ts",
         "passWithNoTests": true
       }
     }

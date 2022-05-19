@@ -1,4 +1,5 @@
-module.exports = {
+/* eslint-disable */
+export default {
   displayName: 'vs-code-data-mapper',
   preset: '../../jest.preset.js',
   globals: {
