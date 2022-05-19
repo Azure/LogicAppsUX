@@ -29,9 +29,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - run: npm ci
-      - run: npx nx affected --target=lint --parallel --max-parallel=3
-      - run: npx nx affected --target=build --parallel --max-parallel=3
-      - run: npx nx affected --target=test --parallel --max-parallel=2
+      - run: npx nx affected --target=lint --parallel
+      - run: npx nx affected --target=build --parallel
+      - run: npx nx affected --target=test --parallel
       - run: npm run test:e2e:ci
       - run: npm run build-storybook
       - run: npm run storybook:files-axe
