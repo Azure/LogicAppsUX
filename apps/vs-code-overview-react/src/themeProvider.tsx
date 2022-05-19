@@ -1,6 +1,6 @@
+import { useEffect, useMemo, useState } from 'react';
 import { AzureThemeDark, AzureThemeLight } from '@fluentui/azure-themes';
 import { ThemeProvider as FluentThemeProvider } from '@fluentui/react';
-import { useEffect, useMemo, useState } from 'react';
 
 const getTheme = (element: HTMLElement): 'light' | 'dark' => {
   const { classList } = element;
