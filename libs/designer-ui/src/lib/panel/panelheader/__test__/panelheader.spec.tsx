@@ -92,7 +92,7 @@ describe('lib/panel/panelHeader/main', () => {
 
     const icon = collapseExpand.props.children;
 
-    expect(icon.props.className).toBe('collapse-toggle-left');
+    expect(icon.props.className).toBe('collapse-toggle-right');
     expect(icon.props.ariaLabel).toBe('Collapse/Expand');
     expect(icon.props.disabled).toBeFalsy();
     expect(icon.props.iconProps).toEqual({ iconName: 'DoubleChevronRight8' });
