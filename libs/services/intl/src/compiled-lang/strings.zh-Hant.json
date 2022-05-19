@@ -1412,6 +1412,12 @@
       "value": "必要。新屬性的名稱。"
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1715,7 +1721,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "選取"
     }
   ],
   "dhvk0u": [
@@ -2664,6 +2670,12 @@
     {
       "type": 0,
       "value": "傳回 URI 編碼字串的字串表示法"
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editor Input"
     }
   ],
   "xV/oyK": [

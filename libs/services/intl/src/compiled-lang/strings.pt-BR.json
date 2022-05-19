@@ -1445,6 +1445,12 @@
       "value": "Necessário. O nome da nova propriedade."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1748,7 +1754,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Selecionar"
     }
   ],
   "dhvk0u": [
@@ -2719,6 +2725,12 @@
     {
       "type": 0,
       "value": "Retorna uma representação de cadeia de caracteres codificada no URI"
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editor Input"
     }
   ],
   "xV/oyK": [

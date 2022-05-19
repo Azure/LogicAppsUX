@@ -1523,6 +1523,12 @@
       "value": "Povinné. Název nové vlastnosti"
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1826,7 +1832,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Vybrat"
     }
   ],
   "dhvk0u": [
@@ -2845,6 +2851,12 @@
     {
       "type": 0,
       "value": "Vrátí řetězcovou reprezentaci řetězce zakódovaného jako identifikátor URI."
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editor Input"
     }
   ],
   "xV/oyK": [
