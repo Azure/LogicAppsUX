@@ -1,11 +1,8 @@
+import type { Settings } from '../actions/bjsworkflow/settings';
+import type { OperationInfo } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-
-export interface OperationInfo {
-  connectorId: string;
-  operationId: string;
-}
 
 export interface ParameterGroup {
   id: string;
@@ -45,12 +42,14 @@ export interface OperationMetadataState {
   operationInfo: Record<string, OperationInfo>;
   inputParameters: Record<string, NodeInputs>;
   outputParameters: Record<string, NodeOutputs>;
+  settings: Record<string, Settings>;
 }
 
 const initialState: OperationMetadataState = {
   operationInfo: {},
   inputParameters: {},
   outputParameters: {},
+  settings: {},
 };
 
 interface AddOperationInfoPayload extends OperationInfo {
@@ -63,6 +62,11 @@ interface AddInputsPayload extends NodeInputs {
 
 interface AddOutputsPayload extends NodeOutputs {
   id: string;
+}
+
+interface AddSettingsPayload {
+  id: string;
+  settings: Settings;
 }
 
 export const operationMetadataSlice = createSlice({
@@ -81,10 +85,19 @@ export const operationMetadataSlice = createSlice({
       const { id, isLoading, outputs } = action.payload;
       state.outputParameters[id] = { isLoading, outputs };
     },
+    updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
+      const { id, settings } = action.payload;
+      if (!state.settings[id]) {
+        state.settings[id] = {};
+      }
+
+      state.settings[id] = { ...state.settings[id], ...settings };
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeInputParameters, initializeOperationInfo, initializeOutputParameters } = operationMetadataSlice.actions;
+export const { initializeInputParameters, initializeOperationInfo, initializeOutputParameters, updateNodeSettings } =
+  operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;
