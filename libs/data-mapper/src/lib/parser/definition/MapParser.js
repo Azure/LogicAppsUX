@@ -1,6 +1,7 @@
 // Generated from MapParser.g4 by ANTLR 4.10.1
 // jshint ignore: start
 import MapParserListener from './MapParserListener.js';
+import MapParserVisitor from './MapParserVisitor.js';
 import antlr4 from 'antlr4';
 
 const serializedATN = [
@@ -1165,6 +1166,14 @@ class MainContext extends antlr4.ParserRuleContext {
       listener.exitMain(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitMain(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class ExpContext extends antlr4.ParserRuleContext {
@@ -1206,6 +1215,14 @@ class FunctionCallExpContext extends ExpContext {
       listener.exitFunctionCallExp(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitFunctionCallExp(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 MapParser.FunctionCallExpContext = FunctionCallExpContext;
@@ -1231,6 +1248,14 @@ class OprExpContext extends ExpContext {
       listener.exitOprExp(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitOprExp(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 MapParser.OprExpContext = OprExpContext;
@@ -1254,6 +1279,14 @@ class VarExpContext extends ExpContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitVarExp(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitVarExp(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
@@ -1289,6 +1322,14 @@ class BracketExpContext extends ExpContext {
       listener.exitBracketExp(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitBracketExp(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 MapParser.BracketExpContext = BracketExpContext;
@@ -1314,6 +1355,14 @@ class ConstExpContext extends ExpContext {
       listener.exitConstExp(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitConstExp(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 MapParser.ConstExpContext = ConstExpContext;
@@ -1337,6 +1386,14 @@ class SelectorExpContext extends ExpContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitSelectorExp(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitSelectorExp(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
@@ -1377,6 +1434,14 @@ class ConstantContext extends antlr4.ParserRuleContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitConstant(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitConstant(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
@@ -1444,6 +1509,14 @@ class SelectorContext extends antlr4.ParserRuleContext {
       listener.exitSelector(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitSelector(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class SelectorFragmentContext extends antlr4.ParserRuleContext {
@@ -1494,6 +1567,14 @@ class SelectorFragmentContext extends antlr4.ParserRuleContext {
       listener.exitSelectorFragment(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitSelectorFragment(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class NodeNameContext extends antlr4.ParserRuleContext {
@@ -1536,6 +1617,14 @@ class NodeNameContext extends antlr4.ParserRuleContext {
       listener.exitNodeName(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitNodeName(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class NsPrefixContext extends antlr4.ParserRuleContext {
@@ -1566,6 +1655,14 @@ class NsPrefixContext extends antlr4.ParserRuleContext {
       listener.exitNsPrefix(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitNsPrefix(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class NdNameContext extends antlr4.ParserRuleContext {
@@ -1594,6 +1691,14 @@ class NdNameContext extends antlr4.ParserRuleContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitNdName(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitNdName(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
@@ -1642,6 +1747,14 @@ class FilterContext extends antlr4.ParserRuleContext {
       listener.exitFilter(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitFilter(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class IndexContext extends antlr4.ParserRuleContext {
@@ -1680,6 +1793,14 @@ class IndexContext extends antlr4.ParserRuleContext {
       listener.exitIndex(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitIndex(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class VariableRefContext extends antlr4.ParserRuleContext {
@@ -1714,6 +1835,14 @@ class VariableRefContext extends antlr4.ParserRuleContext {
       listener.exitVariableRef(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitVariableRef(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class VarNameContext extends antlr4.ParserRuleContext {
@@ -1742,6 +1871,14 @@ class VarNameContext extends antlr4.ParserRuleContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitVarName(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitVarName(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
@@ -1804,6 +1941,14 @@ class FunctionCallContext extends antlr4.ParserRuleContext {
       listener.exitFunctionCall(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitFunctionCall(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class ParameterContext extends antlr4.ParserRuleContext {
@@ -1832,6 +1977,14 @@ class ParameterContext extends antlr4.ParserRuleContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitParameter(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitParameter(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
@@ -1868,6 +2021,14 @@ class FunctionNameContext extends antlr4.ParserRuleContext {
       listener.exitFunctionName(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitFunctionName(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class OperatorExpContext extends antlr4.ParserRuleContext {
@@ -1900,6 +2061,14 @@ class OperatorExpContext extends antlr4.ParserRuleContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitOperatorExp(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitOperatorExp(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
@@ -1950,6 +2119,14 @@ class OrExpContext extends antlr4.ParserRuleContext {
       listener.exitOrExp(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitOrExp(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class AndExpContext extends antlr4.ParserRuleContext {
@@ -1996,6 +2173,14 @@ class AndExpContext extends antlr4.ParserRuleContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitAndExp(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitAndExp(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
@@ -2059,6 +2244,14 @@ class RelationalExpContext extends antlr4.ParserRuleContext {
       listener.exitRelationalExp(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitRelationalExp(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class AdditiveExpContext extends antlr4.ParserRuleContext {
@@ -2116,6 +2309,14 @@ class AdditiveExpContext extends antlr4.ParserRuleContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitAdditiveExp(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitAdditiveExp(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
@@ -2188,6 +2389,14 @@ class MultiplicativeExpContext extends antlr4.ParserRuleContext {
       listener.exitMultiplicativeExp(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitMultiplicativeExp(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 class OperandContext extends antlr4.ParserRuleContext {
@@ -2229,6 +2438,14 @@ class VarOpContext extends OperandContext {
       listener.exitVarOp(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitVarOp(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 MapParser.VarOpContext = VarOpContext;
@@ -2252,6 +2469,14 @@ class FunctionCallOpContext extends OperandContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitFunctionCallOp(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitFunctionCallOp(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
@@ -2287,6 +2512,14 @@ class BracketOpContext extends OperandContext {
       listener.exitBracketOp(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitBracketOp(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 MapParser.BracketOpContext = BracketOpContext;
@@ -2312,6 +2545,14 @@ class SelectorOpContext extends OperandContext {
       listener.exitSelectorOp(this);
     }
   }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitSelectorOp(this);
+    } else {
+      return visitor.visitChildren(this);
+    }
+  }
 }
 
 MapParser.SelectorOpContext = SelectorOpContext;
@@ -2335,6 +2576,14 @@ class ConstOpContext extends OperandContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitConstOp(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitConstOp(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
@@ -2385,6 +2634,14 @@ class UnionExpContext extends antlr4.ParserRuleContext {
   exitRule(listener) {
     if (listener instanceof MapParserListener) {
       listener.exitUnionExp(this);
+    }
+  }
+
+  accept(visitor) {
+    if (visitor instanceof MapParserVisitor) {
+      return visitor.visitUnionExp(this);
+    } else {
+      return visitor.visitChildren(this);
     }
   }
 }
