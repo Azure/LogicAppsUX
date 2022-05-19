@@ -5,7 +5,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const initializeGraphState = createAsyncThunk(
   'parser/deserialize',
-  async (graph: LogicAppsV2.WorkflowDefinition, thunkAPI): Promise<DeserializedWorkflow> => {
+  async (workflow: LogicAppsV2.WorkflowDefinition, thunkAPI): Promise<DeserializedWorkflow> => {
     const currentState: any = thunkAPI.getState() as any;
     const spec = currentState.workflow.workflowSpec;
 
@@ -13,9 +13,9 @@ export const initializeGraphState = createAsyncThunk(
       throw new Error('Trying to import workflow without specifying the workflow type');
     }
     if (spec === 'BJS') {
-      const deserialized = BJSDeserialize(graph);
-      initializeOperationMetadata(deserialized.actionData, thunkAPI.dispatch);
-      return deserialized;
+      const deserializedWorkflow = BJSDeserialize(workflow);
+      initializeOperationMetadata(deserializedWorkflow, thunkAPI.dispatch);
+      return deserializedWorkflow;
     } else if (spec === 'CNCF') {
       throw new Error('Spec not implemented.');
     }

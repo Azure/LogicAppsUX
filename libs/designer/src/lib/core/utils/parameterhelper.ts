@@ -13,9 +13,19 @@ import {
   SegmentType,
   Visibility,
 } from '@microsoft-logic-apps/parsers';
-import { clone, equals, first, format, getPropertyValue, guid, isNullOrUndefined, isObject } from '@microsoft-logic-apps/utils';
+import {
+  clone,
+  equals,
+  first,
+  format,
+  getPropertyValue,
+  guid,
+  isNullOrUndefined,
+  isObject,
+  ValidationErrorCode,
+  ValidationException,
+} from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import { ValidationErrorCode, ValidationException } from '@microsoft/designer-ui';
 
 export const ParameterGroupKeys = {
   DEFAULT: 'default',
