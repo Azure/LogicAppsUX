@@ -3933,6 +3933,9 @@
       <Item ItemId=";xOAOHM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Editor Input]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Editor-invoer]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
