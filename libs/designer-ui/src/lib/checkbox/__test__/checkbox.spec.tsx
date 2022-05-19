@@ -1,6 +1,6 @@
+import { Checkbox } from '../index';
 import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
-import { Checkbox } from '../index';
 
 describe('lib/checkbox', () => {
   beforeAll(() => {

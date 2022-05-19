@@ -1,7 +1,7 @@
-import { useBoolean } from '@fluentui/react-hooks';
-import { css } from '@fluentui/utilities';
 import { Login } from '../app/Login/login';
 import styles from './settings_box.module.less';
+import { useBoolean } from '@fluentui/react-hooks';
+import { css } from '@fluentui/utilities';
 
 export const SettingsBox = () => {
   const [active, toggleActive] = useBoolean(false);

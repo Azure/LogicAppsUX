@@ -1,7 +1,7 @@
+import overviewSlice from './overviewSlice';
 import { configureStore } from '@reduxjs/toolkit';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { AnyObject } from 'immer/dist/internal';
-import overviewSlice from './overviewSlice';
 
 export const store = configureStore({
   reducer: {
