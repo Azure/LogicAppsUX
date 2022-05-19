@@ -5,12 +5,11 @@ import { ThemeProvider } from './themeProvider';
 import { WebViewCommunication } from './webviewCommunication';
 import { initializeIcons } from '@fluentui/react';
 import { StrictMode } from 'react';
-import * as ReactDOM from 'react-dom/client';
+import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 initializeIcons();
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-root.render(
+ReactDOM.render(
   <StrictMode>
     <ThemeProvider>
       <Provider store={store}>
@@ -19,5 +18,6 @@ root.render(
         </WebViewCommunication>
       </Provider>
     </ThemeProvider>
-  </StrictMode>
+  </StrictMode>,
+  document.getElementById('root')
 );
