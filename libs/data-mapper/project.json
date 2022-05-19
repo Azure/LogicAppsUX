@@ -1,5 +1,4 @@
 {
-  "root": "libs/data-mapper",
   "sourceRoot": "libs/data-mapper/src",
   "projectType": "library",
   "targets": {
@@ -30,7 +29,7 @@
       }
     },
     "yalcpush": {
-      "executor": "@nrwl/workspace:run-script",
+      "executor": "nx:run-script",
       "outputs": ["{options.outputPath}"],
       "dependsOn": [
         {
@@ -53,7 +52,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/data-mapper"],
       "options": {
-        "jestConfig": "libs/data-mapper/jest.config.js",
+        "jestConfig": "libs/data-mapper/jest.config.ts",
         "passWithNoTests": true
       }
     }

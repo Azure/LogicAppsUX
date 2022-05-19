@@ -1,5 +1,4 @@
 {
-  "root": "apps/designer-standalone",
   "sourceRoot": "apps/designer-standalone/src",
   "projectType": "application",
   "targets": {
@@ -33,8 +32,15 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false
+        },
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
         }
-      }
+      },
+      "defaultConfiguration": "production"
     },
     "serve": {
       "executor": "@nrwl/web:dev-server",
@@ -46,8 +52,12 @@
         "production": {
           "buildTarget": "designer-standalone:build:production",
           "hmr": false
+        },
+        "development": {
+          "buildTarget": "designer-standalone:build:development"
         }
-      }
+      },
+      "defaultConfiguration": "development"
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -60,7 +70,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/apps/designer-standalone"],
       "options": {
-        "jestConfig": "apps/designer-standalone/jest.config.js",
+        "jestConfig": "apps/designer-standalone/jest.config.ts",
         "passWithNoTests": true
       }
     }

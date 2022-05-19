@@ -1,4 +1,5 @@
-module.exports = {
+/* eslint-disable */
+export default {
   displayName: 'parsers',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./jest.setup.js'],
