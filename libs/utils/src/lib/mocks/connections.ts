@@ -5,13 +5,13 @@ export const connectionsMock: Connection[] = [
     kind: 'V2',
     properties: {
       displayName: '5',
-      authenticatedUser: {},
+      // authenticatedUser: {},  received but not used
       overallStatus: 'Connected',
       statuses: [{ status: 'Connected' }],
-      parameterValues: {},
-      customParameterValues: {},
+      // parameterValues: {}, received but not used
+      // customParameterValues: {}, received but not used
       createdTime: '2022-03-21T19:27:17.1375273Z',
-      changedTime: '2022-03-21T19:27:17.1842602Z',
+      // changedTime: '2022-03-21T19:27:17.1842602Z', received but not used
       api: {
         name: 'accuweatherip',
         displayName: 'AccuWeather (Independent Publisher)',
@@ -23,9 +23,9 @@ export const connectionsMock: Connection[] = [
         type: 'Microsoft.Web/locations/managedApis',
       },
       testLinks: [],
-      testRequests: [],
-      connectionRuntimeUrl:
-        'https://a9ab15f5a12185bf.07.common.logic-westus.azure-apihub.net/apim/accuweatherip/d6fef326e77a4f74a34345af6d618e30',
+      // testRequests: [], received but not used
+      //connectionRuntimeUrl:
+      //  'https://a9ab15f5a12185bf.07.common.logic-westus.azure-apihub.net/apim/accuweatherip/d6fef326e77a4f74a34345af6d618e30', received but not used
     },
     id: '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/dacogbur/providers/Microsoft.Web/connections/accuweatherip',
     name: 'accuweatherip',
@@ -36,13 +36,9 @@ export const connectionsMock: Connection[] = [
     kind: 'V2',
     properties: {
       displayName: '4',
-      authenticatedUser: {},
       overallStatus: 'Connected',
       statuses: [{ status: 'Connected' }],
-      parameterValues: {},
-      customParameterValues: {},
       createdTime: '2022-02-28T23:44:55.4474753Z',
-      changedTime: '2022-02-28T23:44:55.5724582Z',
       api: {
         name: 'bingmaps',
         displayName: 'Bing Maps',
@@ -54,9 +50,6 @@ export const connectionsMock: Connection[] = [
         type: 'Microsoft.Web/locations/managedApis',
       },
       testLinks: [],
-      testRequests: [],
-      connectionRuntimeUrl:
-        'https://a9ab15f5a12185bf.07.common.logic-westus.azure-apihub.net/apim/bingmaps/5f56a1879e1741f09e6bbcf9882161e6',
     },
     id: '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/dacogbur/providers/Microsoft.Web/connections/bingmaps',
     name: 'bingmaps',
@@ -67,13 +60,9 @@ export const connectionsMock: Connection[] = [
     kind: 'V2',
     properties: {
       displayName: 'Carbon Intensity (Independent Publisher)',
-      authenticatedUser: {},
       overallStatus: 'Connected',
       statuses: [{ status: 'Connected' }],
-      parameterValues: {},
-      customParameterValues: {},
       createdTime: '2022-03-01T23:04:12.4499514Z',
-      changedTime: '2022-03-01T23:04:13.8470202Z',
       api: {
         name: 'carbonintensityip',
         displayName: 'Carbon Intensity (Independent Publisher)',
@@ -86,9 +75,6 @@ export const connectionsMock: Connection[] = [
         type: 'Microsoft.Web/locations/managedApis',
       },
       testLinks: [],
-      testRequests: [],
-      connectionRuntimeUrl:
-        'https://a9ab15f5a12185bf.07.common.logic-westus.azure-apihub.net/apim/carbonintensityip/e7dc7302699843f8a83ffb0d80eefa17',
     },
     id: '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/dacogbur/providers/Microsoft.Web/connections/carbonintensityip',
     name: 'carbonintensityip',
@@ -99,13 +85,9 @@ export const connectionsMock: Connection[] = [
     kind: 'V2',
     properties: {
       displayName: '3',
-      authenticatedUser: {},
       overallStatus: 'Connected',
       statuses: [{ status: 'Connected' }],
-      parameterValues: {},
-      customParameterValues: {},
       createdTime: '2022-03-01T23:07:44.2785334Z',
-      changedTime: '2022-03-01T23:07:44.3410817Z',
       api: {
         name: 'clicksendpostcards',
         displayName: 'ClickSend Postcards',
@@ -118,9 +100,6 @@ export const connectionsMock: Connection[] = [
         type: 'Microsoft.Web/locations/managedApis',
       },
       testLinks: [],
-      testRequests: [],
-      connectionRuntimeUrl:
-        'https://a9ab15f5a12185bf.07.common.logic-westus.azure-apihub.net/apim/clicksendpostcards/b7c04bfaac2547b284e37cf0697fdff6',
     },
     id: '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/dacogbur/providers/Microsoft.Web/connections/clicksendpostcards',
     name: 'clicksendpostcards',
@@ -131,16 +110,16 @@ export const connectionsMock: Connection[] = [
     kind: 'V2',
     properties: {
       displayName: 'dacogbur@microsoft.com',
-      authenticatedUser: { name: 'dacogbur@microsoft.com' },
+      //authenticatedUser: { name: 'dacogbur@microsoft.com' },
       overallStatus: 'Connected',
       statuses: [{ status: 'Connected' }],
-      parameterValues: {
-        'token:TenantId': '72f988bf-86f1-41af-91ab-2d7cd011db47',
-        'token:grantType': 'code',
-      },
-      customParameterValues: {},
+      // parameterValues: {
+      //   'token:TenantId': '72f988bf-86f1-41af-91ab-2d7cd011db47',
+      //   'token:grantType': 'code',
+      // },
+      // customParameterValues: {},
       createdTime: '2022-02-28T23:02:18.6684645Z',
-      changedTime: '2022-05-17T14:49:53.1402656Z',
+      // changedTime: '2022-05-17T14:49:53.1402656Z',
       api: {
         name: 'kusto',
         displayName: 'Azure Data Explorer',
@@ -153,8 +132,6 @@ export const connectionsMock: Connection[] = [
         type: 'Microsoft.Web/locations/managedApis',
       },
       testLinks: [],
-      testRequests: [],
-      connectionRuntimeUrl: 'https://a9ab15f5a12185bf.07.common.logic-westus.azure-apihub.net/apim/kusto/78bf5b8332b34c44a632e2712c71f8b8',
     },
     id: '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/dacogbur/providers/Microsoft.Web/connections/kusto',
     name: 'kusto',
@@ -165,13 +142,9 @@ export const connectionsMock: Connection[] = [
     kind: 'V2',
     properties: {
       displayName: 'dacogbur@microsoft.com',
-      authenticatedUser: {},
       overallStatus: 'Connected',
       statuses: [{ status: 'Connected' }],
-      parameterValues: {},
-      customParameterValues: {},
       createdTime: '2022-02-24T21:34:58.7465397Z',
-      changedTime: '2022-02-28T21:15:37.5341152Z',
       api: {
         name: 'visualstudioteamservices',
         displayName: 'Azure DevOps',
@@ -190,18 +163,16 @@ export const connectionsMock: Connection[] = [
           method: 'get',
         },
       ],
-      testRequests: [
-        {
-          body: {
-            request: { method: 'get', path: '_apis/Accounts' },
-          },
-          requestUri:
-            'https://management.azure.com:443/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/dacogbur/providers/Microsoft.Web/connections/visualstudioteamservices/dynamicInvoke?api-version=2018-07-01-preview',
-          method: 'POST',
-        },
-      ],
-      connectionRuntimeUrl:
-        'https://a9ab15f5a12185bf.07.common.logic-westus.azure-apihub.net/apim/visualstudioteamservices/e134da24bb47413ea74657810e9ed13f',
+      // testRequests: [
+      //   {
+      //     body: {
+      //       request: { method: 'get', path: '_apis/Accounts' },
+      //     },
+      //     requestUri:
+      //       'https://management.azure.com:443/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/dacogbur/providers/Microsoft.Web/connections/visualstudioteamservices/dynamicInvoke?api-version=2018-07-01-preview',
+      //     method: 'POST',
+      //   },
+      // ],
     },
     id: '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/dacogbur/providers/Microsoft.Web/connections/visualstudioteamservices',
     name: 'visualstudioteamservices',

@@ -30,7 +30,7 @@ interface Api {
   type: string;
 }
 
-export interface ConnectionProperties extends Record<string, any> {
+export interface ConnectionProperties {
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParametersSet?: ConnectionParameterSet;
   createdBy?: Principal;

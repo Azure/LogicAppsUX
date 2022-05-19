@@ -1,14 +1,24 @@
 import { HttpClient } from '../httpClient';
-import type { IUrlService } from '../urlService';
-import type { Connection, Connector } from '@microsoft-logic-apps/utils';
-import { connectionsMock } from '@microsoft-logic-apps/utils';
+import type { ArmResources, Connection, Connector } from '@microsoft-logic-apps/utils';
+import { equals, connectionsMock } from '@microsoft-logic-apps/utils';
 
 interface StandardConnectionServiceArgs {
   apiVersion: string;
   baseUrl: string;
   locale?: string;
-  urlService: IUrlService;
+  filterByLocation?: boolean;
+  apiHubServiceDetails?: {
+    apiVersion: string;
+    baseUrl: string;
+    subscriptionId: string;
+    resourceGroup: string;
+    locale?: string;
+    location: string;
+    getAccessToken: getAccessTokenType;
+  };
 }
+
+export type getAccessTokenType = () => Promise<string>;
 
 export class StandardConnectionService {
   constructor(public readonly options: StandardConnectionServiceArgs) {}
@@ -30,15 +40,83 @@ export class StandardConnectionService {
     return [];
   }
 
-  async getConnections(connectorId?: string): Promise<Connection[]> {
-    let uri: string;
+  async getConnection(connectionId: string): Promise<Connection> {
+    const connection: Connection = await this._getConnectionInApiHub(connectionId);
+    //if (isArmResourceId(connectionId)) {
+    // connection = await this._getConnectionInApiHub(connectionId);
+    // } else { // why would we need this? is this for "local connection"
+    //   const connection = await this.getConnections();
+    // }
+    // return await this.getConnections();
+    return connection;
+  }
 
-    if (connectorId) {
-      uri = this.options.urlService.getListConnectionsUri(connectorId);
-    } else {
-      uri = this.options.urlService.getConnectionsUri();
-    }
-    const response = await HttpClient().get<Connector>({ uri, type: 'GET' });
+  private async _getConnectionInApiHub(connectionId: string): Promise<Connection> {
+    const connection = await HttpClient().get<Connection>({
+      uri: `${connectionId}/api-version=${this.options.apiHubServiceDetails?.apiVersion}`,
+      type: 'GET',
+    });
+
+    return connection;
+  }
+
+  async getConnections(): Promise<Connection[]> {
+    const response = await this._getConnectionsInApiHub();
     return connectionsMock;
   }
+
+  private async _getConnectionsInApiHub(): Promise<Connection[]> {
+    const { apiHubServiceDetails, filterByLocation } = this.options;
+    if (!apiHubServiceDetails) {
+      return [];
+    }
+
+    const { subscriptionId, resourceGroup, location, apiVersion } = apiHubServiceDetails;
+
+    const uri = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`;
+
+    // const request = {
+    //   query: {
+    //     'api-version': apiVersion,
+    //     $filter: `properties/integrationServiceEnvironmentResourceId eq null and Kind eq 'V2'`,
+    //     $top: 400,
+    //   },
+    // };
+    const response = await HttpClient().get<ArmResources<Connection>>({ uri, type: 'GET' });
+
+    try {
+      // throwWhenNotOK(response);
+      const allConnections = await this._followContinuationTokens<Connection>(response);
+      return allConnections.filter((connection: Connection) => {
+        return filterByLocation ? equals(connection.location, location) : true;
+      });
+    } catch {
+      return [];
+    }
+  }
+
+  private async _followContinuationTokens<T>(response: ArmResources<T>): Promise<T[]> {
+    let { nextLink, value } = response;
+
+    while (nextLink) {
+      let connectors: T[];
+      try {
+        ({ nextLink, value: connectors } = await this._followContinuationToken<T>(nextLink));
+        value = [...value, ...connectors];
+      } catch {
+        nextLink = undefined;
+      }
+    }
+    return value;
+  }
+
+  private async _followContinuationToken<T>(continuationToken: string): Promise<ArmResources<T>> {
+    const response = await HttpClient().get<ArmResources<T>>({ uri: continuationToken, type: 'GET' });
+
+    return response;
+  }
+}
+
+export function isArmResourceId(resourceId: string): boolean {
+  return resourceId ? resourceId.startsWith('/subscriptions/') : false;
 }

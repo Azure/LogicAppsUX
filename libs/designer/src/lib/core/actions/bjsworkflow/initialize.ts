@@ -3,19 +3,14 @@ import type {
   IHttpClient,
   IOperationManifestService,
   ISearchService,
-  StandardUrlServiceOptions,
-  IUrlService,
 } from '@microsoft-logic-apps/designer-client-services';
 import {
-  InitUrlService,
-  StandardUrlService,
   InitConnectionService,
   InitOperationManifestService,
   InitSearchService,
   StandardConnectionService,
   StandardOperationManifestService,
   StandardSearchService,
-  UrlService,
   InitHttpClient,
 } from '@microsoft-logic-apps/designer-client-services';
 
@@ -24,33 +19,13 @@ export interface ServiceOptions {
   connectionService?: IConnectionService;
   operationManifestService?: IOperationManifestService;
   searchService?: ISearchService;
-  urlService?: IUrlService;
 }
-export const InitializeServices = ({
-  httpClient,
-  connectionService,
-  operationManifestService,
-  searchService,
-  urlService,
-}: ServiceOptions) => {
-  const standardUrlServiceOptions: StandardUrlServiceOptions = {
-    baseUrl: '',
-    config: {
-      apiOperationsPath: '',
-      connectionProvidersPath: '',
-      connectionsPath: '',
-    },
-    location: '',
-    resourceGroup: '',
-    subscriptionId: '',
-  };
-  InitUrlService(urlService ?? new StandardUrlService(standardUrlServiceOptions));
+export const InitializeServices = ({ httpClient, connectionService, operationManifestService, searchService }: ServiceOptions) => {
   InitConnectionService(
     connectionService ??
       new StandardConnectionService({
         baseUrl: '',
         apiVersion: '2018-11-01',
-        urlService: urlService ?? UrlService(),
       })
   );
   InitOperationManifestService(operationManifestService ?? new StandardOperationManifestService({}));
