@@ -1,12 +1,13 @@
 import { MenuItemType } from '../../../card/types';
+import { PanelLocation, PanelScope } from '../../panelUtil';
 import type { PanelHeaderProps } from '../panelheader';
-import { PanelHeaderControlType, PanelHeader } from '../panelheader';
+import { PanelHeader, PanelHeaderControlType } from '../panelheader';
 import { initializeIcons } from '@fluentui/react';
 import React from 'react';
 import renderer from 'react-test-renderer';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
-describe('lib/panel/panelheader/main', () => {
+describe('lib/panel/panelHeader/main', () => {
   let minimal: PanelHeaderProps;
   let minimalWithHeader: PanelHeaderProps;
   let shallow: ReactShallowRenderer.ShallowRenderer;
@@ -15,6 +16,9 @@ describe('lib/panel/panelheader/main', () => {
     minimal = {
       isCollapsed: false,
       panelHeaderMenu: [],
+      headerLocation: PanelLocation.Right,
+      panelScope: PanelScope.CardLevel,
+      includeTitle: true,
       toggleCollapse: jest.fn(),
     };
     minimalWithHeader = {
@@ -39,6 +43,9 @@ describe('lib/panel/panelheader/main', () => {
           onClick: jest.fn(),
         },
       ],
+      headerLocation: PanelLocation.Right,
+      panelScope: PanelScope.CardLevel,
+      includeTitle: true,
       toggleCollapse: jest.fn(),
     };
     shallow = ReactShallowRenderer.createRenderer();
@@ -50,8 +57,8 @@ describe('lib/panel/panelheader/main', () => {
   });
 
   it('should render', () => {
-    const panelheader = renderer.create(<PanelHeader {...minimal} />).toJSON();
-    expect(panelheader).toMatchSnapshot();
+    const panelHeader = renderer.create(<PanelHeader {...minimal} />).toJSON();
+    expect(panelHeader).toMatchSnapshot();
   });
 
   it('should render with panel header menu', () => {
@@ -59,8 +66,8 @@ describe('lib/panel/panelheader/main', () => {
       ...minimalWithHeader,
     };
 
-    const panelheader = renderer.create(<PanelHeader {...props} />).toJSON();
-    expect(panelheader).toMatchSnapshot();
+    const panelHeader = renderer.create(<PanelHeader {...props} />).toJSON();
+    expect(panelHeader).toMatchSnapshot();
   });
 
   it('should have display header content with Menu', () => {
