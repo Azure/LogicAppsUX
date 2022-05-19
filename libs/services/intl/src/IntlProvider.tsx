@@ -10,6 +10,7 @@ export interface IntlProviderProps {
   locale: string;
   defaultLocale: string;
   onError: OnErrorFn;
+  children?: React.ReactNode;
 }
 
 const loadLocaleData = async (locale: string): Promise<Record<string, string> | Record<string, MessageFormatElement[]>> => {

@@ -18,7 +18,9 @@ const swiftencode = 'swiftencode';
 const scope = 'scope';
 const foreach = 'foreach';
 const initializevariable = 'initializevariable';
+const incrementvariable = 'incrementvariable';
 const request = 'request';
+const response = 'response';
 
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 
@@ -28,10 +30,12 @@ const supportedManifestTypes = [
   foreach,
   function_,
   initializevariable,
+  incrementvariable,
   invokefunction,
   javascriptcode,
   liquid,
   request,
+  response,
   serviceprovider,
   workflow,
   xmlvalidation,
@@ -90,10 +94,12 @@ function isInBuiltOperation(definition: any): boolean {
     case foreach:
     case function_:
     case initializevariable:
+    case incrementvariable:
     case invokefunction:
     case javascriptcode:
     case liquid:
     case request:
+    case response:
     case workflow:
     case xslt:
     case xmlvalidation:
@@ -152,7 +158,17 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
             operationId: 'request',
           };
         default:
-          throw new UnsupportedException(`Unsupported operation kind ${kind}`);
+          throw new UnsupportedException(`Unsupported operation kind ${kind} for request type`);
+      }
+    case response:
+      switch (kind) {
+        case 'http':
+          return {
+            connectorId: 'connectionProviders/request',
+            operationId: 'response',
+          };
+        default:
+          throw new UnsupportedException(`Unsupported operation kind ${kind} for response type`);
       }
     default:
       throw new UnsupportedException(`Unsupported built in operation type ${normalizedOperationType}`);
@@ -175,6 +191,10 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   [initializevariable]: {
     connectorId: 'connectionProviders/variable',
     operationId: 'initializevariable',
+  },
+  [incrementvariable]: {
+    connectorId: 'connectionProviders/variable',
+    operationId: 'incrementvariable',
   },
   [invokefunction]: {
     connectorId: 'connectionProviders/localFunctionOperation',
@@ -231,6 +251,7 @@ const foreachManifest: OperationManifest = {
       type: 'array',
       title: 'Select an output from previous steps',
     },
+    inputsLocation: ['foreach'],
     isInputsOptional: false,
 
     outputs: {},
@@ -252,9 +273,6 @@ const scopeManifest: OperationManifest = {
     description: 'Encapsulate a block of actions and inherit the last terminal status (Succeeded, Failed, Cancelled) of actions inside.',
 
     allowChildOperations: true,
-
-    inputs: {},
-    outputs: {},
 
     settings: {
       trackedProperties: {

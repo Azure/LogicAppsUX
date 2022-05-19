@@ -1,5 +1,4 @@
 {
-  "root": "apps/vs-code-data-mapper-react",
   "sourceRoot": "apps/vs-code-data-mapper-react/src",
   "projectType": "application",
   "targets": {
@@ -34,6 +33,12 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false
+        },
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
         }
       }
     },
@@ -47,8 +52,12 @@
         "production": {
           "buildTarget": "vs-code-data-mapper-react:build:production",
           "hmr": false
+        },
+        "development": {
+          "buildTarget": "vs-code-data-mapper-react:build:development"
         }
-      }
+      },
+      "defaultConfiguration": "development"
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -61,7 +70,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/apps/vs-code-data-mapper-react"],
       "options": {
-        "jestConfig": "apps/vs-code-data-mapper-react/jest.config.js",
+        "jestConfig": "apps/vs-code-data-mapper-react/jest.config.ts",
         "passWithNoTests": true
       }
     }
