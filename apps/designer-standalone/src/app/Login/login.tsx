@@ -1,4 +1,4 @@
-import type { RootState } from '../../state/store';
+import type { AppDispatch, RootState } from '../../state/store';
 import { changeArmToken, changeResourcePath, changeLoadingMethod, loadWorkflow } from '../../state/workflowLoadingSlice';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, TextField } from '@fluentui/react';
@@ -31,7 +31,7 @@ export const Login: React.FC = () => {
     const { resourcePath, armToken, loadingMethod } = state.workflowLoader;
     return { resourcePath, armToken, loadingMethod };
   });
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const changeResourcePathCB = useCallback(
     (_: unknown, newValue?: string) => {
       dispatch(changeResourcePath(newValue ?? ''));

@@ -10,6 +10,7 @@ export interface ErrorBoundaryProps {
   className?: string;
   fallback?: JSX.Element;
   onError?: ErrorHandler;
+  children?: React.ReactNode;
 }
 
 interface ErrorBoundaryState {

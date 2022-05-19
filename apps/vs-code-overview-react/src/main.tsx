@@ -1,16 +1,16 @@
-import { initializeIcons } from '@fluentui/react';
-import { StrictMode } from 'react';
-import * as ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import '../../../libs/designer/src/lib/ui/styles.less';
 import { store } from './state/store';
 import { StateWrapper } from './stateWrapper';
-import { WebViewCommunication } from './webviewCommunication';
 import { ThemeProvider } from './themeProvider';
-
-import '../../../libs/designer/src/lib/ui/styles.less';
+import { WebViewCommunication } from './webviewCommunication';
+import { initializeIcons } from '@fluentui/react';
+import { StrictMode } from 'react';
+import * as ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
 
 initializeIcons();
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+root.render(
   <StrictMode>
     <ThemeProvider>
       <Provider store={store}>
@@ -19,6 +19,5 @@ ReactDOM.render(
         </WebViewCommunication>
       </Provider>
     </ThemeProvider>
-  </StrictMode>,
-  document.getElementById('root')
+  </StrictMode>
 );
