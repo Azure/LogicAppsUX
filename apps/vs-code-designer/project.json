@@ -1,5 +1,4 @@
 {
-  "root": "apps/vs-code-designer",
   "sourceRoot": "apps/vs-code-designer/src",
   "projectType": "application",
   "targets": {
@@ -44,7 +43,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/apps/vs-code-designer"],
       "options": {
-        "jestConfig": "apps/vs-code-designer/jest.config.js",
+        "jestConfig": "apps/vs-code-designer/jest.config.ts",
         "passWithNoTests": true
       }
     }

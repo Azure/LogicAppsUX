@@ -1,5 +1,4 @@
 {
-  "root": "libs/parsers",
   "sourceRoot": "libs/parsers/src",
   "projectType": "library",
   "targets": {
@@ -24,7 +23,7 @@
       }
     },
     "yalcpush": {
-      "executor": "@nrwl/workspace:run-script",
+      "executor": "nx:run-script",
       "outputs": ["{options.outputPath}"],
       "dependsOn": [
         {
@@ -47,7 +46,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/parsers"],
       "options": {
-        "jestConfig": "libs/parsers/jest.config.js",
+        "jestConfig": "libs/parsers/jest.config.ts",
         "passWithNoTests": true
       }
     }
