@@ -1,14 +1,21 @@
 import Constants from '../../../common/constants';
+import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
+import { isRootNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
-import { initializeInputParameters, initializeOperationInfo, initializeOutputParameters } from '../../state/operationMetadataSlice';
-import type { Operations } from '../../state/workflowSlice';
+import {
+  initializeInputParameters,
+  initializeOperationInfo,
+  initializeOutputParameters,
+  updateNodeSettings,
+} from '../../state/operationMetadataSlice';
 import {
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
   toParameterInfoMap,
   updateParameterWithValues,
 } from '../../utils/parameterhelper';
+import { getOperationSettings } from './settings';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
@@ -16,13 +23,15 @@ import { ConnectionReferenceKeyFormat, equals, getObjectPropertyValue, unmap } f
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
-export const initializeOperationMetadata = async (operations: Operations, dispatch: Dispatch): Promise<void> => {
+export const initializeOperationMetadata = async (deserializedWorkflow: DeserializedWorkflow, dispatch: Dispatch): Promise<void> => {
   const promises: Promise<void>[] = [];
+  const { actionData: operations, graph } = deserializedWorkflow;
   const operationManifestService = OperationManifestService();
 
   for (const [operationId, operation] of Object.entries(operations)) {
+    const isTrigger = isRootNode(graph, operationId);
     if (operationManifestService.isSupported(operation.type)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, dispatch));
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, isTrigger, dispatch));
     } else {
       // swagger case here
     }
@@ -34,6 +43,7 @@ export const initializeOperationMetadata = async (operations: Operations, dispat
 const initializeOperationDetailsForManifest = async (
   nodeId: string,
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  isTrigger: boolean,
   dispatch: Dispatch
 ): Promise<void> => {
   const operationInfo = await getOperationInfo(nodeId, operation);
@@ -48,6 +58,9 @@ const initializeOperationDetailsForManifest = async (
 
     const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);
     dispatch(initializeOutputParameters({ id: nodeId, ...nodeOutputs }));
+
+    const settings = getOperationSettings(operation, isTrigger, operation.type, manifest);
+    dispatch(updateNodeSettings({ id: nodeId, settings }));
   }
 };
 

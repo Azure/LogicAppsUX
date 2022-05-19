@@ -1,6 +1,5 @@
 import { getIntl } from '@microsoft-logic-apps/intl';
-import { format, getPropertyValue } from '@microsoft-logic-apps/utils';
-import { ValidationErrorCode, ValidationException } from '@microsoft/designer-ui';
+import { format, getPropertyValue, ValidationErrorCode, ValidationException } from '@microsoft-logic-apps/utils';
 
 export enum PanelLocation {
   Right = 'RIGHT',

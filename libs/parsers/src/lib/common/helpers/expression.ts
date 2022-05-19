@@ -69,6 +69,15 @@ export function isParameterOrAppSettingExpression(functionName: string): boolean
   return isParameterExpression(functionName) || isAppSettingExpression(functionName);
 }
 
+/**
+ * Converts the value to a string literal.
+ * @arg {string} value - The value of the string literal.
+ * @return {string} - The string literal.
+ */
+export function convertToStringLiteral(value: string): string {
+  return `'${value.replace(/'/g, `''`)}'`;
+}
+
 function isParameterExpression(functionName: string) {
   return equals(functionName, ExpressionFunctionNames.PARAMETERS);
 }
