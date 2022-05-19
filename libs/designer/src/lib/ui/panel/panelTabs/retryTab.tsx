@@ -1,5 +1,6 @@
+import constants from '../../../common/constants';
+import type { PanelTab } from '@microsoft/designer-ui';
 import { RetryPanel } from '@microsoft/designer-ui';
-import React from 'react';
 
 export const RetryPanelTab = () => {
   // TODO: Retrieve logic from a redux store?
@@ -24,4 +25,14 @@ export const RetryPanelTab = () => {
     },
   ];
   return <RetryPanel retryHistories={histories} />;
+};
+
+export const monitorRetryTab: PanelTab = {
+  title: 'Retry',
+  name: constants.PANEL_TAB_NAMES.RETRY_HISTORY,
+  description: 'Retry History',
+  enabled: true,
+  content: <RetryPanelTab />,
+  order: 0,
+  icon: 'Rerun',
 };

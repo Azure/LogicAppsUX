@@ -3,12 +3,19 @@ import { getIntl } from '@microsoft-logic-apps/intl';
 import { format, getPropertyValue } from '@microsoft-logic-apps/utils';
 
 export enum PanelLocation {
+  Left = 'LEFT',
   Right = 'RIGHT',
 }
 
-export enum PanelTabScope {
+export enum PanelScope {
   AppLevel = 'APP_LEVEL',
   CardLevel = 'CARD_LEVEL',
+}
+
+export enum PanelSize {
+  Auto = 'auto',
+  Small = '300px',
+  Medium = '630px',
 }
 
 export interface PanelTab {
@@ -26,6 +33,14 @@ export interface CommonPanelProps {
   isCollapsed: boolean;
   toggleCollapse: () => void;
   width: string;
+}
+
+export function registerTabs(tabsInfo: PanelTab[], registeredTabs: Record<string, PanelTab>): Record<string, PanelTab> {
+  tabsInfo.forEach((tabInfo) => {
+    registerTab(tabInfo, registeredTabs);
+  });
+
+  return registeredTabs;
 }
 
 export function registerTab(tabInfo: PanelTab, registeredTabs: Record<string, PanelTab>): Record<string, PanelTab> {
