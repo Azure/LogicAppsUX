@@ -1216,13 +1216,13 @@ Array [
               }
             >
               <div
-                aria-label="Headers"
                 className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
                 <div
                   aria-colcount={2}
+                  aria-label="Headers"
                   aria-readonly="true"
                   aria-rowcount={1}
                   role="grid"
@@ -1999,13 +1999,13 @@ Array [
               }
             >
               <div
-                aria-label="Headers"
                 className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
                 <div
                   aria-colcount={2}
+                  aria-label="Headers"
                   aria-readonly="true"
                   aria-rowcount={1}
                   role="grid"
