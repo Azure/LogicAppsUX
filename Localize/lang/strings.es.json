@@ -412,7 +412,7 @@
   "woJQhv": "URL de devolución de llamadas:",
   "x0or2o": "Obligatorio. La colección de la cual se obtendrá la longitud.",
   "xJ6vjn": "Devuelve una representación de cadena de una cadena codificada de URI.",
-  "xOAOHM": "Editor Input",
+  "xOAOHM": "Entrada del editor",
   "xV/oyK": "Obligatorio. Nombre de la propiedad nueva o existente.",
   "xYyPR8": "Devuelve la ruta de acceso de un URI. Si no se especifica la ruta de acceso, devuelve \"/\".",
   "xt5TeT": "Los parámetros se comparten entre los flujos de trabajo de una Logic App.",

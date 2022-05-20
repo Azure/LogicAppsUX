@@ -412,7 +412,7 @@
   "woJQhv": "URL de rappel :",
   "x0or2o": "Obligatoire. Collection pour laquelle obtenir la longueur.",
   "xJ6vjn": "Retourne la représentation sous forme de chaîne d'une chaîne encodée sous forme d'URI",
-  "xOAOHM": "Editor Input",
+  "xOAOHM": "Entrée de l’éditeur",
   "xV/oyK": "Obligatoire. Nom de la propriété nouvelle ou existante.",
   "xYyPR8": "Renvoie le chemin d’accès d’un URI. Si le chemin d’accès n’est pas spécifié, renvoie « / »",
   "xt5TeT": "Les paramètres sont partagés entre les flux de travail d’une Application Logique.",
