@@ -1,5 +1,6 @@
+import constants from '../../../common/constants';
+import type { PanelTab } from '@microsoft/designer-ui';
 import { RequestPanel } from '@microsoft/designer-ui';
-import React from 'react';
 
 export const RequestPanelTab = () => {
   // TODO: Retrieve logic from a redux store?
@@ -232,4 +233,14 @@ export const RequestPanelTab = () => {
     },
   ];
   return <RequestPanel requestHistory={requestHistory} />;
+};
+
+export const monitorRequestTab: PanelTab = {
+  title: 'Request',
+  name: constants.PANEL_TAB_NAMES.REQUEST_HISTORY,
+  description: 'Request History',
+  enabled: true,
+  content: <RequestPanelTab />,
+  order: 0,
+  icon: 'Rerun',
 };
