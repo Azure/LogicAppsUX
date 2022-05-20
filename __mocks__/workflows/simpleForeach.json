@@ -75,7 +75,7 @@
             },
             "runtimeConfiguration": {
               "concurrency": {
-                  "repetitions": 2
+                "repetitions": 2
               }
             },
             "type": "Foreach"
@@ -86,12 +86,12 @@
           "Initialize_variable": ["Succeeded"]
         },
         "runtimeConfiguration": {
-            "concurrency": {
-                "repetitions": 20
-            }
+          "concurrency": {
+            "repetitions": 20
+          }
         },
         "trackedProperties": {
-            "fsdfs": "sdfsdf"
+          "fsdfs": "sdfsdf"
         },
         "type": "Foreach"
       },
