@@ -1,5 +1,6 @@
+import constants from '../../../common/constants';
+import type { PanelTab } from '@microsoft/designer-ui';
 import { About } from '@microsoft/designer-ui';
-import React from 'react';
 
 export const AboutTab = () => {
   // TODO: Retrieve logic from a redux store?
@@ -16,4 +17,14 @@ export const AboutTab = () => {
       headerIcons={headerIcons}
     />
   );
+};
+
+export const aboutTab: PanelTab = {
+  title: 'About',
+  name: constants.PANEL_TAB_NAMES.ABOUT,
+  description: 'Request History',
+  enabled: true,
+  content: <AboutTab />,
+  order: 0,
+  icon: 'Info',
 };

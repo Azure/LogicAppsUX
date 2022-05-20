@@ -16,7 +16,7 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
       "content": false,
     }
   }
-  type={8}
+  type={7}
 >
   <div
     className="msla-panel-content-container"

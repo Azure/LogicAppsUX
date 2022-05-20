@@ -3,6 +3,7 @@ import type { MenuItemOption } from '../card/types';
 import constants from '../constants';
 import type { PageActionTelemetryData } from '../telemetry/models';
 import type { CommonPanelProps, PanelTab } from './panelUtil';
+import { PanelScope, PanelLocation } from './panelUtil';
 import { PanelContent } from './panelcontent';
 import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
@@ -15,8 +16,9 @@ import { useIntl } from 'react-intl';
 export type PanelContainerProps = {
   cardIcon?: string;
   comment?: string;
-  isRight?: boolean;
+  panelLocation: PanelLocation;
   noNodeSelected: boolean;
+  panelScope: PanelScope;
   pivotDisabled?: boolean;
   panelHeaderControlType?: PanelHeaderControlType;
   panelHeaderMenu: MenuItemOption[];
@@ -24,19 +26,21 @@ export type PanelContainerProps = {
   showCommentBox: boolean;
   readOnlyMode?: boolean;
   tabs: Record<string, PanelTab>;
-  title: string;
+  title?: string;
   onDismissButtonClicked?(): void;
   trackEvent(data: PageActionTelemetryData): void;
   setSelectedTab: React.Dispatch<React.SetStateAction<string | undefined>>;
   toggleCollapse: () => void;
+  renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
   cardIcon,
   comment,
   isCollapsed,
-  isRight,
+  panelLocation,
   noNodeSelected,
+  panelScope,
   panelHeaderControlType,
   panelHeaderMenu,
   selectedTab,
@@ -49,27 +53,30 @@ export const PanelContainer = ({
   setSelectedTab,
   toggleCollapse,
   trackEvent,
+  renderHeader,
 }: PanelContainerProps) => {
   const intl = useIntl();
   const onTabChange = (itemKey: string): void => {
     setSelectedTab && setSelectedTab(itemKey);
   };
 
-  const renderHeader = useCallback(
+  const defaultRenderHeader = useCallback(
     (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string): JSX.Element => {
       return (
         <PanelHeader
           cardIcon={cardIcon ?? constants.PANEL.DEFAULT_ICON}
           isCollapsed={isCollapsed}
-          isRight={isRight}
+          headerLocation={panelLocation}
           showCommentBox={showCommentBox}
           noNodeSelected={noNodeSelected}
+          panelScope={panelScope}
           onDismissButtonClicked={onDismissButtonClicked}
           panelHeaderMenu={panelHeaderMenu}
           panelHeaderControlType={panelHeaderControlType}
           readOnlyMode={readOnlyMode}
           titleId={headerTextId}
           title={title}
+          includeTitle={true}
           comment={comment}
           toggleCollapse={toggleCollapse}
         />
@@ -78,9 +85,10 @@ export const PanelContainer = ({
     [
       cardIcon,
       isCollapsed,
-      isRight,
+      panelLocation,
       showCommentBox,
       noNodeSelected,
+      panelScope,
       onDismissButtonClicked,
       panelHeaderMenu,
       panelHeaderControlType,
@@ -103,10 +111,10 @@ export const PanelContainer = ({
       headerClassName="msla-panel-header"
       headerText={title || panelLabel}
       isOpen
-      onRenderHeader={renderHeader}
+      onRenderHeader={renderHeader ?? defaultRenderHeader}
       isBlocking={false}
       hasCloseButton={false}
-      type={isRight ? PanelType.custom : PanelType.customNear}
+      type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
       customWidth={width}
       styles={{
         content: isCollapsed && { padding: 0 },
@@ -114,7 +122,7 @@ export const PanelContainer = ({
     >
       {!isCollapsed && (
         <div className="msla-panel-content-container">
-          {noNodeSelected ? (
+          {noNodeSelected && panelScope === PanelScope.CardLevel ? (
             <EmptyContent />
           ) : (
             <div className="msla-panel-content">

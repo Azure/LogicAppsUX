@@ -1,11 +1,20 @@
 import { collapsePanel, expandPanel } from '../../core/state/panelSlice';
 import type { RootState } from '../../core/store';
-import type { PanelTab } from './panelUtil';
-import { registerTab, getTabs } from './panelUtil';
+import { aboutTab } from './panelTabs/aboutTab';
+import { codeViewTab } from './panelTabs/codeViewTab';
+import { settingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
-import { aboutTab, settingsTab, codeViewTab } from './registeredtabs';
-import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { MenuItemType, PanelContainer, PanelHeaderControlType } from '@microsoft/designer-ui';
+import type { MenuItemOption, PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
+import {
+  getTabs,
+  MenuItemType,
+  PanelContainer,
+  PanelHeaderControlType,
+  PanelLocation,
+  PanelScope,
+  PanelSize,
+  registerTab,
+} from '@microsoft/designer-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,7 +37,7 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: Pa
   const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
   const [currentComment, setCurrentComment] = useState(comment);
   const [selectedTab, setSelectedTab] = useState(selectedTabId);
-  const [width, setWidth] = useState('auto');
+  const [width, setWidth] = useState(PanelSize.Auto);
 
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
 
@@ -41,7 +50,7 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: Pa
   }, [registeredTabs]);
 
   useEffect(() => {
-    collapsed ? setWidth('auto') : setWidth('630px');
+    collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
   }, [collapsed]);
 
   const collapse = useCallback(() => {
@@ -149,9 +158,10 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: Pa
     <PanelContainer
       cardIcon={cardIcon}
       comment={currentComment}
-      isRight
+      panelLocation={PanelLocation.Right}
       isCollapsed={collapsed}
       noNodeSelected={!selectedNode}
+      panelScope={PanelScope.CardLevel}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}
       selectedTab={selectedTab}
