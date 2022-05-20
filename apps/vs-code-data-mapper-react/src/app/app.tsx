@@ -1,5 +1,5 @@
-import { HelloWorld } from '@microsoft/logic-apps-data-mapper';
+import { DataMapperWrapper } from './designer/DataMapperDesignerWrapper';
 
 export const App = () => {
-  return <HelloWorld name="Data Mapper VSCode Extension" />;
+  return <DataMapperWrapper />;
 };

@@ -5,5 +5,5 @@
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx", "jest.config.ts"],
-  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
+  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "../../libs/data-mapper/src/lib/core/DataMapperDesignerProvider.tsx", "../../libs/data-mapper/src/lib/core/DataMapperDesignerWrapper.tsx"]
 }
