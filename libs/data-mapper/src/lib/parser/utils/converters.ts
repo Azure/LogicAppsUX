@@ -1,6 +1,7 @@
-import MapLexer from '../definition/MapLexer';
-import MapParser from '../definition/MapParser';
-import MapParserVisitor from '../definition/MapParserVisitor';
+// import { InputStream, CommonTokenStream } from 'antlr4'; // works for jest, but doesn't compile
+import MapLexer from '../runtime/mapOM/mapOmAntlrParser/Antlr4Def/MapLexer';
+import MapParser from '../runtime/mapOM/mapOmAntlrParser/Antlr4Def/MapParser';
+import MapParserVisitor from '../runtime/mapOM/mapOmAntlrParser/Antlr4Def/MapParserVisitor';
 import antlr from 'antlr4';
 
 export function convertJsonToMapCode(json: string): string {

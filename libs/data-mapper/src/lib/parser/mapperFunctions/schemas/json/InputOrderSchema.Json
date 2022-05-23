@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "Buyer": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "ContactPerson": {
+          "type": "object",
+          "properties": {
+            "Name": {
+              "type": "string"
+            },
+            "Phone": {
+              "type": "string"
+            },
+            "Email": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "Name",
+            "Phone",
+            "Email"
+          ]
+        }
+      },
+      "required": [
+        "Id",
+        "Name",
+        "ContactPerson"
+      ]
+    },
+    "Seller": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Saleman": {
+          "type": "object",
+          "properties": {
+            "Name": {
+              "type": "string"
+            },
+            "Phone": {
+              "type": "string"
+            },
+            "Email": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "Name",
+            "Phone",
+            "Email"
+          ]
+        }
+      },
+      "required": [
+        "Id",
+        "Name",
+        "Saleman"
+      ]
+    },
+    "Summary": {
+      "type": "object",
+      "properties": {
+        "TotalPrice": {
+          "type": "string"
+        },
+        "Tax": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "TotalPrice",
+        "Tax"
+      ]
+    },
+    "Items": {
+      "type": "object",
+      "properties": {
+        "Item": {
+          "type": "array",
+          "items": {
+              "type": "object",
+              "properties": {
+                "ModelNumber": {
+                  "type": "string"
+                },
+                "Unit": {
+                  "type": "string"
+                },
+                "Quantity": {
+                  "type": "integer"
+                },
+                "Price": {
+                  "type": "string"
+                },
+                "Discount": {
+                  "type": "number"
+                },
+                "Tax": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ModelNumber",
+                "Unit",
+                "Quantity",
+                "Price",
+                "Discount",
+                "Tax"
+              ]
+            }
+        }
+      },
+      "required": [
+        "Item"
+      ]
+    }
+  },
+  "required": [
+    "Buyer",
+    "Seller",
+    "Summary",
+    "Items"
+  ]
+}
