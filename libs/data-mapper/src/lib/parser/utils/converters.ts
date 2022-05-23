@@ -1,24 +1,7 @@
-// import { InputStream, CommonTokenStream } from 'antlr4'; // works for jest, but doesn't compile
 import MapLexer from '../runtime/mapOM/mapOmAntlrParser/Antlr4Def/MapLexer';
 import MapParser from '../runtime/mapOM/mapOmAntlrParser/Antlr4Def/MapParser';
 import MapParserVisitor from '../runtime/mapOM/mapOmAntlrParser/Antlr4Def/MapParserVisitor';
 import antlr from 'antlr4';
-
-export function tokenize(text: string) {
-  const input = new antlr.InputStream(text);
-  const lexer = new MapLexer(input);
-  const tokens = new antlr.CommonTokenStream(lexer);
-  const parser = new MapParser(tokens);
-
-  // const tokenStream = new TokenRewriteStream(lexer);
-
-  const mainContext = parser.main();
-
-  const visitor = new MapParserVisitor();
-  visitor.visitMain(mainContext);
-
-  return parser;
-}
 
 export interface inputStyle {
   srcSchemaName: string;
@@ -46,7 +29,7 @@ export function nodeToMapcode(node: Node, indent: string, parentNodeKey: string,
   let mapcode = '';
 
   if (node.loopSource) {
-    mapcode = mapcode.concat(indent + 'for(' + removeNodeKey(node.loopSource.loopSource, parentNodeKey, parentLoopSource) + ')\n');
+    mapcode = mapcode.concat(indent + 'for(' + removeNodeKey(node.loopSource.loopSource, parentNodeKey, parentLoopSource) + '):\n');
     indent += '   ';
   }
 
@@ -73,14 +56,22 @@ export function nodeToMapcode(node: Node, indent: string, parentNodeKey: string,
   return mapcode;
 }
 
-export function addColon(str: string) {
-  return str.concat(':');
+export function removeNodeKey(str: string, nodeKey: string, loopSource: string) {
+  return str?.replaceAll(nodeKey + '/', '')?.replaceAll(loopSource + '/', '');
 }
 
-export function removeNodeKey(str: string, nodeKey: string, parentLoopSource: string) {
-  // console.log("str: ", str);
-  // console.log("nodeKey: ", nodeKey);
-  // console.log("parentLoopSource: ", parentLoopSource);
-  // console.log("***replaced: ", str.replaceAll(nodeKey + '/', '').replaceAll(parentLoopSource + '/', ''));
-  return str?.replaceAll(nodeKey + '/', '')?.replaceAll(parentLoopSource + '/', '');
+export function tokenize(text: string) {
+  const input = new antlr.InputStream(text);
+  const lexer = new MapLexer(input);
+  const tokens = new antlr.CommonTokenStream(lexer);
+  const parser = new MapParser(tokens);
+
+  // const tokenStream = new TokenRewriteStream(lexer);
+
+  const mainContext = parser.main();
+
+  const visitor = new MapParserVisitor();
+  visitor.visitMain(mainContext);
+
+  return parser;
 }

@@ -1,4 +1,4 @@
-import { convertJsonToMapCode } from '../utils/converters';
+import { jsonToMapcode } from '../utils/converters';
 
 describe('utils/converters', () => {
   describe('convertJsonToMapCode', () => {
@@ -15,7 +15,7 @@ describe('utils/converters', () => {
       const input = '';
       const output = '';
 
-      expect(convertJsonToMapCode(input)).toEqual(output);
+      expect(jsonToMapcode(input)).toEqual(output);
     });
   });
 });

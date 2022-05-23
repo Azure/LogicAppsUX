@@ -4,10 +4,11 @@ export const ParserViewInApp = () => {
   // return <ParserView input={'{\n"test0": true,\n"test2" : \n\t{\n\t\t"object" : "value"\n\t}\n}'} />;
   return (
     <ParserView
-      input={JSON.stringify({
-        srcSchemaName: 'SrcOrders.xsd',
-        dstSchemaName: 'CustomerOrders.xsd',
-        mappings: {
+      input={JSON.stringify(
+        {
+          // srcSchemaName: 'SrcOrders.xsd',
+          // dstSchemaName: 'CustomerOrders.xsd',
+          // mappings: {
           targetNodeKey: '/ns0:CustomerOrders',
           children: [
             {
@@ -63,8 +64,9 @@ export const ParserViewInApp = () => {
               ],
             },
           ],
-        },
-      })}
+        }
+        // }
+      )}
     />
   );
 };
