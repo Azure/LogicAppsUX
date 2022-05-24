@@ -56,7 +56,7 @@ export const BaseEditor = ({ className, placeholder, BasePlugins = {}, children 
     nodes: [TableCellNode, TableNode, TableRowNode, AutoLinkNode, LinkNode],
   };
 
-  const { autoFocus, autoLink, clearEditor, history, treeView } = BasePlugins;
+  const { autoFocus = true, autoLink, clearEditor, history = true, treeView } = BasePlugins;
 
   const editorInputLabel = intl.formatMessage({
     defaultMessage: 'Editor Input',
