@@ -1449,6 +1449,12 @@
       "value": "Erforderlich. Der Name der neuen Eigenschaft."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Löschen"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1752,7 +1758,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Auswählen"
     }
   ],
   "dhvk0u": [
@@ -2723,6 +2729,12 @@
     {
       "type": 0,
       "value": "Gibt eine Zeichenfolgendarstellung einer URI-codierten Zeichenfolge zurück."
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Editoreingabe"
     }
   ],
   "xV/oyK": [

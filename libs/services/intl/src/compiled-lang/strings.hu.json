@@ -1449,6 +1449,12 @@
       "value": "Kötelező megadni. Az új tulajdonság neve."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Törlés"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1752,7 +1758,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Kijelölés"
     }
   ],
   "dhvk0u": [
@@ -2731,6 +2737,12 @@
     {
       "type": 0,
       "value": "Egy URI-ként kódolt sztringet sztringként ad vissza."
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Szerkesztőbe bevitt szöveg"
     }
   ],
   "xV/oyK": [

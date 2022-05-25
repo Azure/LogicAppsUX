@@ -1420,6 +1420,12 @@
       "value": "必填。新属性的名称。"
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "清除"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1723,7 +1729,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "选择"
     }
   ],
   "dhvk0u": [
@@ -2688,6 +2694,12 @@
     {
       "type": 0,
       "value": "返回 URI 编码字符串的字符串表示形式"
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "编辑器输入"
     }
   ],
   "xV/oyK": [

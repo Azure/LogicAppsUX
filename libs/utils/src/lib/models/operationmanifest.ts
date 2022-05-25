@@ -67,11 +67,11 @@ export interface ActionSetting {
 export type SplitOn = string | any[] | undefined;
 
 export interface OperationManifestSetting<T> {
-  scopes?: SettingScope[]; // NOTE(yuxyao): If the scopes set to undefined, then the options apply to all scopes.
+  scopes?: SettingScope[]; // NOTE: If the scopes set to undefined, then the options apply to all scopes.
   options?: T;
 }
 
-// TODO (vikanand): Combine chunking and download chunking.
+// TODO: Combine chunking and download chunking.
 export interface OperationManifestSettings {
   chunking?: OperationManifestSetting<UploadChunkMetadata>;
   concurrency?: OperationManifestSetting<void>;

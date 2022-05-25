@@ -1,11 +1,14 @@
 import type { SettingSectionComponentProps } from '..';
 import { SettingsSection } from '..';
 import { MultiAddExpressionEditor } from './settingexpressioneditor';
+import { MultiSelectOption, MultiSelectSetting } from './settingmultiselect';
+import type { MultiSelectSettingProps } from './settingmultiselect';
 import { ReactiveToggle } from './settingreactiveinput';
 import { CustomValueSlider } from './settingslider';
 import { SettingTextField } from './settingtextfield';
 import { RenderToggleSetting } from './settingtoggle';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import { useState } from 'react';
 
 export default {
   component: SettingsSection,
@@ -53,4 +56,33 @@ sliderSetting.args = {
   title: 'Setting Slider',
   expanded: false,
   renderContent: CustomValueSlider,
+};
+
+export const multiSelectSetting = Template.bind({});
+const sampleProps: MultiSelectSettingProps = {
+  options: [
+    {
+      label: 'Label 1',
+      value: 'Label 1 Value',
+    },
+    {
+      label: 'Label 2',
+      value: 'Label 2 Value',
+    },
+    {
+      label: 'Label 3',
+      value: 'Label 3 Value',
+    },
+    {
+      label: 'Label 4',
+      value: 'Label 4 Value',
+    },
+  ],
+  selections: [],
+};
+multiSelectSetting.args = {
+  id: 'multiSelectSetting',
+  title: 'Multi-Select Item Setting',
+  expanded: false,
+  renderContent: () => <MultiSelectSetting {...sampleProps} />,
 };

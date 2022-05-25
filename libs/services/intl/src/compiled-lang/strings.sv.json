@@ -1449,6 +1449,12 @@
       "value": "Obligatoriskt. Den nya egenskapens namn."
     }
   ],
+  "W8cbO8": [
+    {
+      "type": 0,
+      "value": "Rensa"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -1752,7 +1758,7 @@
   "dFInXP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Välj"
     }
   ],
   "dhvk0u": [
@@ -2727,6 +2733,12 @@
     {
       "type": 0,
       "value": "Returnerar en strängrepresentation av en URI-kodad sträng"
+    }
+  ],
+  "xOAOHM": [
+    {
+      "type": 0,
+      "value": "Redigerarens indata"
     }
   ],
   "xV/oyK": [

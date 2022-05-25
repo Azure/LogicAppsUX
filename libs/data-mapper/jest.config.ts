@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'microsoft-logic-apps-designer',
+/* eslint-disable */
+export default {
+  displayName: 'microsoft-logic-apps-data-mapper',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./jest.setup.js'],
   transform: {
@@ -10,5 +11,5 @@ module.exports = {
     '@fluentui/react/lib/(.*)$': '@fluentui/react/lib-commonjs/$1',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/libs/microsoft-logic-apps-designer',
+  coverageDirectory: '../../coverage/libs/microsoft-logic-apps-data-mapper',
 };
