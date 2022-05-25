@@ -1,6 +1,6 @@
-import type { JsonInputStyle } from '../jsonToMapcodeParser';
+import type { JsonInputStyle } from '../../jsonToMapcodeParser';
 
-export const designdoc_test_input: JsonInputStyle = {
+export const customerOrdersJsonMock: JsonInputStyle = {
   srcSchemaName: 'SrcOrders.xsd',
   dstSchemaName: 'CustomerOrders.xsd',
   mappings: {
@@ -61,6 +61,3 @@ export const designdoc_test_input: JsonInputStyle = {
     ],
   },
 };
-
-export const designdoc_test_output =
-  "sourceSchema: SrcOrders.xsd\ntargetSchema: CustomerOrders.xsd\nns0:CustomerOrders:\n\t@OrderedItem: ns0:Orders@Item\n\tfor(ns0:OrdersWebOrders):\n\t\tCustomer:\n\t\t\tif(not_equal(CustomerName, '')):\n\t\t\t\t@Name: CustomerName\n\t\t\t@OrderNumber: OrderNumber\n\t\t\t@OrderValue: OrderValue\n\t\t\tShippingAddress:\n\t\t\t\tLine1: concat(CustomerName , ‘ ’, Address/Addr1)\n\t\t\t\tLine2: Address/Addr2\n";

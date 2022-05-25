@@ -1,5 +1,4 @@
-import { CodeInputBox } from './components/CodeInputBox';
-import { CodeOutputBox } from './components/CodeOutputBox';
+import { SampleDataDisplayer } from './components/SampleDataDisplayer';
 import { jsonToMapcode } from './jsonToMapcodeParser';
 import { useEffect, useState } from 'react';
 
@@ -15,8 +14,8 @@ export const ParserView = ({ input }: ParserViewProps) => {
 
   return (
     <div>
-      <CodeInputBox input={input} />
-      <CodeOutputBox output={convertedOutput} />
+      <SampleDataDisplayer data={input} />
+      <SampleDataDisplayer data={convertedOutput} />
     </div>
   );
 };

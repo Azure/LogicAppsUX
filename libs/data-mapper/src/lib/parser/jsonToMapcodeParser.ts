@@ -56,5 +56,5 @@ export function nodeToMapcode(node: Node, indent: string, parentNodeKey: string,
 }
 
 export function removeNodeKey(str: string, nodeKey: string, loopSource: string) {
-  return str?.replaceAll(nodeKey + '/', '')?.replaceAll(loopSource + '/', '');
+  return str?.replaceAll(`${nodeKey}/`, '')?.replaceAll(`${loopSource}`, '');
 }

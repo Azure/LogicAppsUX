@@ -1,11 +1,31 @@
-import type { JsonInputStyle } from '../utils/converters';
-import { jsonToMapcode } from '../utils/converters';
-import { designdoc_test_input, designdoc_test_output } from './sample_tests';
+import {
+  missingDstSchemaJsonMock,
+  missingSrcSchemaJsonMock,
+  missingSrcSchemaNameMapcodeMock,
+  missingDstSchemaNameMapcodeMock,
+  CBRInputRecordJsonMock,
+  CBRInputRecordMapcodeMock,
+} from '../__mocks__';
+import { customerOrdersJsonMock } from '../__mocks__/json/customerOrders';
+import { customerOrdersMapcodeMock } from '../__mocks__/mapcode/customerOrders';
+import { jsonToMapcode } from '../jsonToMapcodeParser';
 
-describe('utils/converters', () => {
+describe('jsonToMapcodeParser', () => {
   describe('convertJsonToMapCode', () => {
-    it('Test in design doc', () => {
-      expect(jsonToMapcode(designdoc_test_input)).toEqual(designdoc_test_output);
+    it('Test customer orders (in design doc)', () => {
+      expect(jsonToMapcode(customerOrdersJsonMock)).toEqual(customerOrdersMapcodeMock);
+    });
+
+    it('Test src schema name missing input', () => {
+      expect(jsonToMapcode(missingSrcSchemaJsonMock)).toEqual(missingSrcSchemaNameMapcodeMock);
+    });
+
+    it('Test dst schema name missing input', () => {
+      expect(jsonToMapcode(missingDstSchemaJsonMock)).toEqual(missingDstSchemaNameMapcodeMock);
+    });
+
+    it('Test CBR Input', () => {
+      expect(jsonToMapcode(CBRInputRecordJsonMock)).toEqual(CBRInputRecordMapcodeMock);
     });
   });
 });
