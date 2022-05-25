@@ -1,21 +1,11 @@
+import type { JsonInputStyle } from '../utils/converters';
 import { jsonToMapcode } from '../utils/converters';
+import { designdoc_test_input, designdoc_test_output } from './sample_tests';
 
 describe('utils/converters', () => {
   describe('convertJsonToMapCode', () => {
-    it('Most basic json to mapcode', () => {
-      // const input = "";
-      // const output = "";
-
-      // expect(convertJsonToMapCode(input)).toEqual(output);
-
-      expect(1).toEqual(1);
-    });
-
-    it('Most basic json to mapcode2', () => {
-      const input = '';
-      const output = '';
-
-      expect(jsonToMapcode(input)).toEqual(output);
+    it('Test in design doc', () => {
+      expect(jsonToMapcode(designdoc_test_input)).toEqual(designdoc_test_output);
     });
   });
 });
