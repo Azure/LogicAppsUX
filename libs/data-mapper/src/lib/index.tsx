@@ -1,2 +1,2 @@
-export * from './core';
-export * from './ui';
+export * from './ui/index';
+export * from './core/index';

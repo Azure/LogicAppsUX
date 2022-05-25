@@ -1,10 +1,12 @@
+import { useGetMapQuery } from '../state/DataMapApi';
 import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
 
-// TODO - Load data map
-export const App = () => {
+export const DataMapperStandaloneDesigner = () => {
+  const dataMap = useGetMapQuery('').data;
+
   return (
     <DataMapperDesignerProvider locale="en-US" options={{}}>
-      <DataMapDataProvider dataMap={''}>
+      <DataMapDataProvider dataMap={dataMap || ''}>
         <DataMapperDesigner></DataMapperDesigner>
       </DataMapDataProvider>
     </DataMapperDesignerProvider>
