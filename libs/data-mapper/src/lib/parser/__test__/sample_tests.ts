@@ -1,4 +1,4 @@
-import type { JsonInputStyle } from '../utils/converters';
+import type { JsonInputStyle } from '../jsonToMapcodeParser';
 
 export const designdoc_test_input: JsonInputStyle = {
   srcSchemaName: 'SrcOrders.xsd',

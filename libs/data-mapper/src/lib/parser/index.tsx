@@ -1,6 +1,6 @@
 import { CodeInputBox } from './components/CodeInputBox';
 import { CodeOutputBox } from './components/CodeOutputBox';
-import { jsonToMapcode } from './utils/converters';
+import { jsonToMapcode } from './jsonToMapcodeParser';
 import { useEffect, useState } from 'react';
 
 export interface ParserViewProps {
