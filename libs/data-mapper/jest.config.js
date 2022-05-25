@@ -6,7 +6,6 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'babel-jest',
     '^.+\\.svg$': '../../__mocks__/svgTransform.js',
   },
-  transformIgnorePatterns: ['/node_modules/(?!antlr4)'],
   moduleNameMapper: {
     '@fluentui/react/lib/(.*)$': '@fluentui/react/lib-commonjs/$1',
   },
