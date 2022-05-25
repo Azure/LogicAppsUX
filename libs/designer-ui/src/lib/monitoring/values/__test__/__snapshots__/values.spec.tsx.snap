@@ -130,13 +130,13 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
       }
     >
       <div
-        aria-label="Headers"
         className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-110"
         data-automationid="DetailsList"
         data-is-scrollable="false"
       >
         <div
           aria-colcount={2}
+          aria-label="Headers"
           aria-readonly="true"
           aria-rowcount={4}
           role="grid"

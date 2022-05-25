@@ -4,6 +4,7 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
 <Context.Provider
   value={
     Object {
+      "getServerState": undefined,
       "store": Object {
         "@@observable": [Function],
         "dispatch": [Function],

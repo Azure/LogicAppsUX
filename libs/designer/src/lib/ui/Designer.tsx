@@ -6,9 +6,8 @@ import GraphNode from './CustomNodes/GraphNode';
 import { CustomEdge } from './connections/edge';
 import { PanelRoot } from './panel/panelroot';
 import { useCallback } from 'react';
-import { KeyboardBackend, isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
+import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { createTransition, DndProvider } from 'react-dnd-multi-backend';
 import type { NodeChange } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
@@ -26,34 +25,6 @@ const edgeTypes = {
   buttonedge: CustomEdge,
 };
 
-const KeyboardTransition = createTransition('keydown', (event) => {
-  if (!isKeyboardDragTrigger(event as KeyboardEvent)) return false;
-  event.preventDefault();
-  return true;
-});
-
-const MouseTransition = createTransition('mousedown', (event) => {
-  if (event.type.indexOf('touch') !== -1 || event.type.indexOf('mouse') === -1) return false;
-  return true;
-});
-
-const DND_OPTIONS = {
-  backends: [
-    {
-      id: 'html5',
-      backend: HTML5Backend,
-      transition: MouseTransition,
-    },
-    {
-      id: 'keyboard',
-      backend: KeyboardBackend,
-      context: { window, document },
-      preview: true,
-      transition: KeyboardTransition,
-    },
-  ],
-};
-
 export const Designer = () => {
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch();
@@ -66,7 +37,7 @@ export const Designer = () => {
   );
 
   return (
-    <DndProvider options={DND_OPTIONS as any}>
+    <DndProvider backend={HTML5Backend}>
       <div className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow

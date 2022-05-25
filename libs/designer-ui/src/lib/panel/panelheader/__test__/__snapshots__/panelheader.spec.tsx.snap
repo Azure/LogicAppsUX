@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`lib/panel/panelheader/main should render 1`] = `
+exports[`lib/panel/panelHeader/main should render 1`] = `
 <div
   className="msla-panel-header"
 >
@@ -15,7 +15,7 @@ exports[`lib/panel/panelheader/main should render 1`] = `
   >
     <button
       aria-label="Collapse/Expand"
-      className="ms-Button ms-Button--icon collapse-toggle-left root-110"
+      className="ms-Button ms-Button--icon collapse-toggle-right root-110"
       data-is-focusable={true}
       onClick={[Function]}
       onKeyDown={[Function]}
@@ -104,7 +104,7 @@ exports[`lib/panel/panelheader/main should render 1`] = `
 </div>
 `;
 
-exports[`lib/panel/panelheader/main should render with panel header menu 1`] = `
+exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
 <div
   className="msla-panel-header"
 >
@@ -119,7 +119,7 @@ exports[`lib/panel/panelheader/main should render with panel header menu 1`] = `
   >
     <button
       aria-label="Collapse/Expand"
-      className="ms-Button ms-Button--icon collapse-toggle-left root-110"
+      className="ms-Button ms-Button--icon collapse-toggle-right root-110"
       data-is-focusable={true}
       onClick={[Function]}
       onKeyDown={[Function]}

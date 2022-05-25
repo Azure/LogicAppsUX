@@ -1,4 +1,5 @@
 import type { MenuItemOption } from '../../card/types';
+import { PanelLocation, PanelScope } from '../panelUtil';
 import { PanelHeaderComment } from './panelheadercomment';
 import { PanelHeaderTitle } from './panelheadertitle';
 import type { IButton, IButtonStyles } from '@fluentui/react/lib/Button';
@@ -22,17 +23,19 @@ export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTM
 };
 export interface PanelHeaderProps {
   isCollapsed: boolean;
-  isRight?: boolean;
+  headerLocation: PanelLocation;
   cardIcon?: string;
   comment?: string;
   titleId?: string;
   panelHeaderControlType?: PanelHeaderControlType;
   panelHeaderMenu: MenuItemOption[];
   noNodeSelected?: boolean;
+  panelScope: PanelScope;
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
   showCommentBox?: boolean;
   title?: string;
+  includeTitle: boolean;
   commentChange?(panelCommentChangeEvent?: string): void;
   onDismissButtonClicked?(): void;
   onRenderWarningMessage?(): JSX.Element;
@@ -77,10 +80,11 @@ const tooltipStyles: ITooltipHostStyles = {
 
 export const PanelHeader = ({
   isCollapsed,
-  isRight,
+  headerLocation,
   cardIcon,
   comment,
   noNodeSelected,
+  panelScope,
   titleId,
   panelHeaderControlType,
   panelHeaderMenu,
@@ -88,6 +92,7 @@ export const PanelHeader = ({
   renameTitleDisabled,
   showCommentBox,
   title,
+  includeTitle,
   commentChange,
   onDismissButtonClicked,
   onRenderWarningMessage,
@@ -102,9 +107,13 @@ export const PanelHeader = ({
     description: 'Text of Tooltip to collapse and expand',
   });
 
+  const isRight = headerLocation === PanelLocation.Right;
+
   const getIconClassName: string = css(isRight ? 'collapse-toggle-right' : 'collapse-toggle-left', isCollapsed && 'collapsed');
 
-  const getCollapseIconName: string = isRight && isCollapsed ? 'DoubleChevronLeft8' : 'DoubleChevronRight8';
+  const getCollapseIconName: string = (isRight && isCollapsed) || (!isRight && !isCollapsed) ? 'DoubleChevronLeft8' : 'DoubleChevronRight8';
+
+  const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
 
   const getPanelHeaderMenu = (): JSX.Element => {
     const panelHeaderMenuItems = panelHeaderMenu.map((item) => ({
@@ -117,6 +126,7 @@ export const PanelHeader = ({
       iconOnly: true,
       disabled: item.disabled,
     }));
+
     return (
       <OverflowSet
         styles={overflowStyle}
@@ -164,8 +174,9 @@ export const PanelHeader = ({
       </TooltipHost>
     );
   };
+
   return (
-    <div className="msla-panel-header" id={noNodeSelected ? titleId : title}>
+    <div className="msla-panel-header" id={noNodeOnCardLevel ? titleId : title}>
       <TooltipHost calloutProps={calloutProps} content={panelCollapseTitle} styles={tooltipStyles}>
         <IconButton
           ariaLabel={panelCollapseTitle}
@@ -176,12 +187,20 @@ export const PanelHeader = ({
           onClick={toggleCollapse}
         />
       </TooltipHost>
-      {!noNodeSelected ? (
+      {!noNodeOnCardLevel ? (
         <div className="msla-panel-card-header">
           {cardIcon ? <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" /> : null}
-          <div className="msla-title-container" hidden={isCollapsed}>
-            <PanelHeaderTitle titleId={titleId} readOnlyMode={readOnlyMode} renameTitleDisabled={renameTitleDisabled} savedTitle={title} />
-          </div>
+          {includeTitle ? (
+            <div className="msla-title-container" hidden={isCollapsed}>
+              <PanelHeaderTitle
+                titleId={titleId}
+                readOnlyMode={readOnlyMode}
+                renameTitleDisabled={renameTitleDisabled}
+                savedTitle={title}
+              />
+            </div>
+          ) : null}
+
           <div className="msla-panel-header-controls" hidden={isCollapsed}>
             {panelHeaderControlType === PanelHeaderControlType.MENU ? getPanelHeaderMenu() : null}
             {panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON ? getDismissButton() : null}
@@ -191,7 +210,7 @@ export const PanelHeader = ({
             <PanelHeaderComment
               comment={comment}
               isCollapsed={isCollapsed}
-              noNodeSelected={noNodeSelected}
+              noNodeSelected={noNodeOnCardLevel}
               readOnlyMode={readOnlyMode}
               commentChange={commentChange}
             />

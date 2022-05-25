@@ -1,5 +1,4 @@
 {
-  "root": "libs/services/designer-client-services",
   "sourceRoot": "libs/services/designer-client-services/src",
   "projectType": "library",
   "targets": {
@@ -24,7 +23,7 @@
       }
     },
     "yalcpush": {
-      "executor": "@nrwl/workspace:run-script",
+      "executor": "nx:run-script",
       "outputs": ["{options.outputPath}"],
       "dependsOn": [
         {
@@ -47,7 +46,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/services/designer-client-services"],
       "options": {
-        "jestConfig": "libs/services/designer-client-services/jest.config.js",
+        "jestConfig": "libs/services/designer-client-services/jest.config.ts",
         "passWithNoTests": true
       }
     }

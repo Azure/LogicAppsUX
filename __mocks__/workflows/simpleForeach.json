@@ -12,6 +12,9 @@
           ]
         },
         "runAfter": {},
+        "trackedProperties": {
+          "aa": "aa"
+        },
         "type": "InitializeVariable"
       },
       "Response": {
@@ -70,12 +73,25 @@
             "runAfter": {
               "Increment_variable_3": ["Succeeded"]
             },
+            "runtimeConfiguration": {
+              "concurrency": {
+                "repetitions": 2
+              }
+            },
             "type": "Foreach"
           }
         },
         "foreach": "@triggerBody()",
         "runAfter": {
           "Initialize_variable": ["Succeeded"]
+        },
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 20
+          }
+        },
+        "trackedProperties": {
+          "fsdfs": "sdfsdf"
         },
         "type": "Foreach"
       },

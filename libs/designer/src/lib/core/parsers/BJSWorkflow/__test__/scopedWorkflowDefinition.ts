@@ -1,4 +1,4 @@
-import type { Actions, NodesMetadata } from '../../../state/workflowSlice';
+import type { Operations, NodesMetadata } from '../../../state/workflowSlice';
 import type { WorkflowGraph } from '../../models/workflowNode';
 
 export const scopedWorkflowDefinitionInput = {
@@ -92,7 +92,7 @@ export const scopedWorkflowDefinitionInput = {
   },
 };
 
-export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; actionData: Actions; nodesMetadata: NodesMetadata } = {
+export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; actionData: Operations; nodesMetadata: NodesMetadata } = {
   graph: {
     id: 'root',
     children: [

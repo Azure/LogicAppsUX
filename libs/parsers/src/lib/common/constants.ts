@@ -58,6 +58,25 @@ export const Capabilities = {
   MaximumDownloadChunkSize: 'maximumDownloadChunkSizeInMB',
 };
 
+export const PropertyName = {
+  API: 'api',
+  METHOD: 'method',
+  RETRYPOLICY: 'retryPolicy',
+  AUTHENTICATION: 'authentication',
+  HEADERS: 'headers',
+  BODY: 'body',
+  QUERY: 'query',
+  QUERIES: 'queries',
+  PATH: 'path',
+  PATHTEMPLATE: 'pathTemplate',
+  PATHTEMPLATE_PARAMETERS: 'parameters',
+  PATHTEMPLATE_TEMPLATE: 'template',
+  HOST: 'host',
+  URI: 'uri',
+  PARAMETERS: 'parameters',
+  CONTENT_DISPOSITION: 'Content-Disposition',
+};
+
 export const FILE_PARAMETER_KEYS = {
   CONTENT: 'contentBytes',
   FILENAME: 'name',
