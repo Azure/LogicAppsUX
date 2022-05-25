@@ -1,10 +1,11 @@
-module.exports = {
-  displayName: 'vs-code-designer-react',
+/* eslint-disable */
+export default {
+  displayName: 'data-mapper-standalone',
   preset: '../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nrwl/react/plugins/jest',
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/apps/vs-code-designer-react',
+  coverageDirectory: '../../coverage/apps/data-mapper-standalone',
 };

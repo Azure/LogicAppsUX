@@ -21,5 +21,5 @@ export default function SingleLinePlugin() {
       unregisterListener();
     };
   }, [editor]);
-  return <> </>;
+  return null;
 }

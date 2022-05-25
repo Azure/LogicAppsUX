@@ -1,3 +1,4 @@
+import { PanelLocation, PanelScope } from '../panelUtil';
 import type { PanelContainerProps } from '../panelcontainer';
 import { PanelContainer } from '../panelcontainer';
 import * as React from 'react';
@@ -8,7 +9,9 @@ describe('ui/workflowparameters/workflowparameter', () => {
   beforeEach(() => {
     minimal = {
       isCollapsed: false,
+      panelLocation: PanelLocation.Right,
       noNodeSelected: false,
+      panelScope: PanelScope.CardLevel,
       panelHeaderMenu: [],
       showCommentBox: true,
       tabs: {},
@@ -16,7 +19,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
       width: '630px',
       trackEvent: jest.fn(),
       setSelectedTab: jest.fn(),
-      setIsCollapsed: jest.fn(),
+      toggleCollapse: jest.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

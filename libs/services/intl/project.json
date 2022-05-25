@@ -1,5 +1,4 @@
 {
-  "root": "libs/services/intl",
   "sourceRoot": "libs/services/intl/src",
   "projectType": "library",
   "tags": [],
@@ -25,7 +24,7 @@
       }
     },
     "yalcpush": {
-      "executor": "@nrwl/workspace:run-script",
+      "executor": "nx:run-script",
       "outputs": ["{options.outputPath}"],
       "dependsOn": [
         {
@@ -48,7 +47,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/services/intl"],
       "options": {
-        "jestConfig": "libs/services/intl/jest.config.js",
+        "jestConfig": "libs/services/intl/jest.config.ts",
         "passWithNoTests": true
       }
     }
