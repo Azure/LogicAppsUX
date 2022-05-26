@@ -1,31 +1,31 @@
 import {
   missingDstSchemaJsonMock,
   missingSrcSchemaJsonMock,
-  missingSrcSchemaNameMapcodeMock,
-  missingDstSchemaNameMapcodeMock,
+  missingSrcSchemaNameMapDefinitionMock,
+  missingDstSchemaNameMapDefinitionMock,
   CBRInputRecordJsonMock,
-  CBRInputRecordMapcodeMock,
+  CBRInputRecordMapDefinitionMock,
 } from '../__mocks__';
 import { customerOrdersJsonMock } from '../__mocks__/json/customerOrders';
-import { customerOrdersMapcodeMock } from '../__mocks__/mapcode/customerOrders';
-import { jsonToMapcode, removeNodeKey } from '../jsonToMapcodeParser';
+import { customerOrdersMapDefinitionMock } from '../__mocks__/mapDefinition/customerOrders';
+import { jsonToMapDefinition, removeNodeKey } from '../jsonToMapDefinitionParser';
 
-describe('jsonToMapcodeParser', () => {
-  describe('convertJsonToMapCode', () => {
+describe('jsonToMapDefinitionParser', () => {
+  describe('convertJsonToMapDefinition', () => {
     it('Test customer orders (in design doc)', () => {
-      expect(jsonToMapcode(customerOrdersJsonMock)).toEqual(customerOrdersMapcodeMock);
+      expect(jsonToMapDefinition(customerOrdersJsonMock)).toEqual(customerOrdersMapDefinitionMock);
     });
 
     it('Test src schema name missing input', () => {
-      expect(jsonToMapcode(missingSrcSchemaJsonMock)).toEqual(missingSrcSchemaNameMapcodeMock);
+      expect(jsonToMapDefinition(missingSrcSchemaJsonMock)).toEqual(missingSrcSchemaNameMapDefinitionMock);
     });
 
     it('Test dst schema name missing input', () => {
-      expect(jsonToMapcode(missingDstSchemaJsonMock)).toEqual(missingDstSchemaNameMapcodeMock);
+      expect(jsonToMapDefinition(missingDstSchemaJsonMock)).toEqual(missingDstSchemaNameMapDefinitionMock);
     });
 
     it('Test CBR Input', () => {
-      expect(jsonToMapcode(CBRInputRecordJsonMock)).toEqual(CBRInputRecordMapcodeMock);
+      expect(jsonToMapDefinition(CBRInputRecordJsonMock)).toEqual(CBRInputRecordMapDefinitionMock);
     });
   });
 

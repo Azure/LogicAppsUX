@@ -6,14 +6,14 @@ export interface JsonInputStyle {
   mappings: Node;
 }
 
-export function jsonToMapcode(inputInJson: JsonInputStyle): string {
+export function jsonToMapDefinition(inputInJson: JsonInputStyle): string {
   const codeDetails = `sourceSchema: ${inputInJson?.srcSchemaName ?? ''}\ntargetSchema: ${inputInJson?.dstSchemaName ?? ''}\n`;
 
   if (!inputInJson.mappings) {
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
   }
 
-  return `${codeDetails}${nodeToMapcode(inputInJson.mappings, '', '', '')}`;
+  return `${codeDetails}${nodeToMapDefinition(inputInJson.mappings, '', '', '')}`;
 }
 
 export interface Node {
@@ -24,35 +24,40 @@ export interface Node {
   condition?: { condition: string };
 }
 
-export function nodeToMapcode(node: Node, indent: string, parentNodeKey: string, parentLoopSource: string): string {
-  let mapcode = '';
+export function nodeToMapDefinition(node: Node, indent: string, parentNodeKey: string, parentLoopSource: string): string {
+  let mapDefinition = '';
 
   if (node.loopSource) {
-    mapcode = `${mapcode}${indent}for(${removeNodeKey(node.loopSource.loopSource, parentNodeKey, parentLoopSource)}):\n`;
+    mapDefinition = `${mapDefinition}${indent}for(${removeNodeKey(node.loopSource.loopSource, parentNodeKey, parentLoopSource)}):\n`;
     indent += '\t';
   }
 
   if (node.condition) {
-    mapcode = `${mapcode}${indent}if(${removeNodeKey(node.condition.condition, parentNodeKey, parentLoopSource)}):\n`;
+    mapDefinition = `${mapDefinition}${indent}if(${removeNodeKey(node.condition.condition, parentNodeKey, parentLoopSource)}):\n`;
     indent += '\t';
   }
 
-  mapcode = `${mapcode}${indent}${removeNodeKey(node.targetNodeKey, parentNodeKey, parentLoopSource)}:`;
+  mapDefinition = `${mapDefinition}${indent}${removeNodeKey(node.targetNodeKey, parentNodeKey, parentLoopSource)}:`;
 
   if (node.targetValue) {
-    mapcode = `${mapcode} ${removeNodeKey(node.targetValue.value, parentNodeKey, parentLoopSource)}`;
+    mapDefinition = `${mapDefinition} ${removeNodeKey(node.targetValue.value, parentNodeKey, parentLoopSource)}`;
   }
 
-  mapcode = mapcode.concat('\n');
+  mapDefinition = mapDefinition.concat('\n');
 
   if (node.children) {
     indent += '\t';
     for (const childNode of node.children) {
-      mapcode = `${mapcode}${nodeToMapcode(childNode, indent, node.targetNodeKey, node?.loopSource?.loopSource ?? parentLoopSource)}`;
+      mapDefinition = `${mapDefinition}${nodeToMapDefinition(
+        childNode,
+        indent,
+        node.targetNodeKey,
+        node?.loopSource?.loopSource ?? parentLoopSource
+      )}`;
     }
   }
 
-  return mapcode;
+  return mapDefinition;
 }
 
 export function removeNodeKey(str: string, nodeKey: string, loopSource: string) {

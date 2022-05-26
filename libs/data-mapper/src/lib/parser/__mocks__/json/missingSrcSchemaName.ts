@@ -1,4 +1,4 @@
-import type { JsonInputStyle } from '../../jsonToMapcodeParser';
+import type { JsonInputStyle } from '../../jsonToMapDefinitionParser';
 
 export const missingSrcSchemaJsonMock: JsonInputStyle = {
   dstSchemaName: 'CustomerOrders.xsd',

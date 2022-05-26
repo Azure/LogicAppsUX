@@ -1,15 +1,15 @@
 import { SampleDataDisplayer } from './components/SampleDataDisplayer';
-import { jsonToMapcode } from './jsonToMapcodeParser';
+import { jsonToMapDefinition } from './jsonToMapDefinitionParser';
 import { useEffect, useState } from 'react';
 
 export interface ParserViewProps {
   input: string;
 }
 export const ParserView = ({ input }: ParserViewProps) => {
-  const [convertedOutput, setConvertedOutput] = useState(jsonToMapcode(JSON.parse(input)));
+  const [convertedOutput, setConvertedOutput] = useState(jsonToMapDefinition(JSON.parse(input)));
 
   useEffect(() => {
-    setConvertedOutput(jsonToMapcode(JSON.parse(input)));
+    setConvertedOutput(jsonToMapDefinition(JSON.parse(input)));
   }, [input]);
 
   return (
