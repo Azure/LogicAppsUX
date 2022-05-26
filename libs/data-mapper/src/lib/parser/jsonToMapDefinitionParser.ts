@@ -1,30 +1,17 @@
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
+import type { JsonInputStyle, Node } from './types';
 
-export interface JsonInputStyle {
-  srcSchemaName?: string;
-  dstSchemaName?: string;
-  mappings: Node;
-}
+export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
+  const codeDetails = `sourceSchema: ${inputJson?.srcSchemaName ?? ''}\ntargetSchema: ${inputJson?.dstSchemaName ?? ''}\n`;
 
-export function jsonToMapDefinition(inputInJson: JsonInputStyle): string {
-  const codeDetails = `sourceSchema: ${inputInJson?.srcSchemaName ?? ''}\ntargetSchema: ${inputInJson?.dstSchemaName ?? ''}\n`;
-
-  if (!inputInJson.mappings) {
+  if (!inputJson.mappings) {
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
   }
 
-  return `${codeDetails}${nodeToMapDefinition(inputInJson.mappings, '', '', '')}`;
+  return `${codeDetails}${nodeToMapDefinition(inputJson.mappings, '', '', '')}`;
 }
 
-export interface Node {
-  targetNodeKey: string;
-  children?: Node[];
-  targetValue?: { value: string };
-  loopSource?: { loopSource: string };
-  condition?: { condition: string };
-}
-
-export function nodeToMapDefinition(node: Node, indent: string, parentNodeKey: string, parentLoopSource: string): string {
+function nodeToMapDefinition(node: Node, indent: string, parentNodeKey: string, parentLoopSource: string): string {
   let mapDefinition = '';
 
   if (node.loopSource) {

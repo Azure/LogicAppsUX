@@ -1,12 +1,12 @@
 import {
-  missingDstSchemaJsonMock,
+  customerOrdersJsonMock,
   missingSrcSchemaJsonMock,
+  missingDstSchemaJsonMock,
+  cbrInputRecordJsonMock,
   missingSrcSchemaNameMapDefinitionMock,
   missingDstSchemaNameMapDefinitionMock,
-  CBRInputRecordJsonMock,
-  CBRInputRecordMapDefinitionMock,
+  cbrInputRecordMapDefinitionMock,
 } from '../__mocks__';
-import { customerOrdersJsonMock } from '../__mocks__/json/customerOrders';
 import { customerOrdersMapDefinitionMock } from '../__mocks__/mapDefinition/customerOrders';
 import { jsonToMapDefinition, removeNodeKey } from '../jsonToMapDefinitionParser';
 
@@ -25,7 +25,7 @@ describe('jsonToMapDefinitionParser', () => {
     });
 
     it('Test CBR Input', () => {
-      expect(jsonToMapDefinition(CBRInputRecordJsonMock)).toEqual(CBRInputRecordMapDefinitionMock);
+      expect(jsonToMapDefinition(cbrInputRecordJsonMock)).toEqual(cbrInputRecordMapDefinitionMock);
     });
   });
 
