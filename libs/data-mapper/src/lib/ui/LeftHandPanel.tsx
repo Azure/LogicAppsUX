@@ -6,12 +6,14 @@ import { getTabs, PanelContainer, PanelHeader, PanelLocation, PanelScope, PanelS
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+import type { ILayerProps } from '@fluentui/react';
 
 export interface LeftHandPanelProps {
   selectedTabId?: string;
+  layerProps?: ILayerProps;
 }
 
-export const LeftHandPanel = ({ selectedTabId }: LeftHandPanelProps): JSX.Element => {
+export const LeftHandPanel = ({ selectedTabId, layerProps }: LeftHandPanelProps): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch();
 
@@ -79,6 +81,7 @@ export const LeftHandPanel = ({ selectedTabId }: LeftHandPanelProps): JSX.Elemen
       panelHeaderMenu={[]}
       showCommentBox={false}
       renderHeader={renderHeader}
+      layerProps={layerProps}
     />
   );
 };
