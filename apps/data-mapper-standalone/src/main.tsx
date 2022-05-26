@@ -1,5 +1,6 @@
 import '../../../libs/data-mapper/src/lib/styles.less';
 import { DataMapperStandaloneDesigner } from './app/DataMapperStandaloneDesigner';
+import { ParserViewInApp } from './app/parserView';
 import { store } from './state/Store';
 import { initializeIcons } from '@fluentui/react';
 import { StrictMode } from 'react';
@@ -11,7 +12,8 @@ initializeIcons();
 ReactDOM.render(
   <StrictMode>
     <Provider store={store}>
-      <DataMapperStandaloneDesigner />
+      {/* <DataMapperStandaloneDesigner /> */}
+      <ParserViewInApp />
     </Provider>
   </StrictMode>,
   document.getElementById('root')

@@ -1,5 +1,6 @@
 import { SampleDataDisplayer } from './components/SampleDataDisplayer';
 import { jsonToMapDefinition } from './jsonToMapDefinitionParser';
+import { mapDefinitionToJson } from './mapDefinitionToJsonParser';
 import { useEffect, useState } from 'react';
 
 export interface ParserViewProps {
@@ -10,6 +11,8 @@ export const ParserView = ({ input }: ParserViewProps) => {
 
   useEffect(() => {
     setConvertedOutput(jsonToMapDefinition(JSON.parse(input)));
+
+    mapDefinitionToJson(convertedOutput);
   }, [input]);
 
   return (

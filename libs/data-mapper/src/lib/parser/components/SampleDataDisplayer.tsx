@@ -36,5 +36,5 @@ export const SampleDataDisplayer = ({ data, onOKClick }: SampleDataDisplayerProp
 
 // Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
 function getEditorStyle(input = ''): number {
-  return Math.min(Math.max(input.split('\n').length * 19, 57), 380);
+  return Math.min(Math.max(input.split('\n').length * 19, 57), 700);
 }
