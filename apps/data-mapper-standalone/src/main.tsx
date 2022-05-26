@@ -1,15 +1,18 @@
 import '../../../libs/data-mapper/src/lib/styles.less';
-// import { HelloWorldInApp } from './app/helloWorld';
-import { ParserViewInApp } from './app/parserView';
+import { DataMapperStandaloneDesigner } from './app/DataMapperStandaloneDesigner';
+import { store } from './state/Store';
 import { initializeIcons } from '@fluentui/react';
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 
 initializeIcons();
+
 ReactDOM.render(
   <StrictMode>
-    {/* <HelloWorldInApp /> */}
-    <ParserViewInApp />
+    <Provider store={store}>
+      <DataMapperStandaloneDesigner />
+    </Provider>
   </StrictMode>,
   document.getElementById('root')
 );
