@@ -75,6 +75,7 @@ const overflowStyle: Partial<IOverflowSetStyles> = {
 const tooltipStyles: ITooltipHostStyles = {
   root: {
     display: 'block',
+    height: '32px',
   },
 };
 
