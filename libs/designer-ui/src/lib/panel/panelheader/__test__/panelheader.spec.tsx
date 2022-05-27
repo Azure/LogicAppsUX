@@ -100,7 +100,7 @@ describe('lib/panel/panelHeader/main', () => {
     expect(cardHeader.props.className).toBe('msla-panel-card-header');
     const [titleContainer, panelControls, comment]: any[] = React.Children.toArray(cardHeader.props.children);
 
-    expect(titleContainer.props.className).toBe('msla-title-container');
+    expect(titleContainer.props.className).toBe('msla-panel-card-title-container');
 
     const title = titleContainer.props.children;
     expect(title.props.titleId).toBe(props.titleId);

@@ -19,82 +19,83 @@
   }
 
   .msla-panel-header {
-    width: 100%;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 12px;
+    margin-bottom: 12px;
 
     .msla-panel-card-header {
-      overflow: visible;
-      width: auto;
-      .msla-panel-card-icon {
-        height: 30px;
-        width: 30px;
-        border-radius: 2px;
-        margin: 5px;
-        float: left;
-      }
-      .msla-title-container {
-        float: left;
-        text-align: center;
-        width: 80%;
-        .msla-card-title {
-          &:hover {
-            outline: 0.75px solid @panel-mode-panel-border-color;
-          }
-        }
-        .msla-card-title-focused {
-          outline: 0.75px solid @panel-mode-panel-border-color;
-        }
-      }
-      .msla-panel-comment-container-wrapper {
-        background-color: @panel-mode-comment-field-color_light;
-        width: 100%;
-        overflow: auto;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
 
-        .msla-panel-comment-container {
-          margin-left: 35px;
-          margin-right: 10px;
-          padding: 5px;
-          width: auto;
-          height: auto;
-          overflow: hidden;
-          .msla-card-comment {
-            .ms-TextField-fieldGroup {
-              outline: 0.75px solid @panel-mode-panel-border-color;
-              &:hover,
-              &:focus {
-                outline: 1.25px solid @panel-mode-panel-border-color-dark;
-              }
-            }
-          }
-          .msla-card-comment-focused {
-            .ms-TextField-fieldGroup {
-              outline: 1.25px solid @panel-mode-panel-border-color-dark;
-            }
-          }
-          .msla-comment-icon {
-            float: left;
-            margin: 18px 13px 0 5px;
-            font-size: @card-header-font-size;
+      .msla-panel-card-icon {
+        height: 32px;
+        width: 32px;
+        border-radius: 2px;
+        margin-right: 4px;
+      }
+
+      .msla-panel-card-title-container {
+        flex-grow: 1;
+        * input {
+          line-height: 24px;
+        }
+
+        .msla-card-title {
+          margin: 0px;
+          border: 1px solid #00000000;
+          border-radius: 2px;
+          &:hover {
+            border: 1px solid @panel-mode-panel-border-color;
           }
         }
+
+        .msla-card-title-focused {
+          margin: 0px;
+          border-radius: 2px;
+          border: 1px solid @panel-mode-panel-border-color;
+        }
+      }
+    }
+
+    .msla-panel-comment-container {
+      padding: 12px 32px;
+      background-color: @panel-mode-comment-field-color_light;
+      .msla-card-comment {
+        .ms-TextField-fieldGroup {
+          outline: 0.75px solid @panel-mode-panel-border-color;
+          &:hover,
+          &:focus {
+            outline: 1.25px solid @panel-mode-panel-border-color-dark;
+          }
+        }
+      }
+      .msla-card-comment-focused {
+        .ms-TextField-fieldGroup {
+          outline: 1.25px solid @panel-mode-panel-border-color-dark;
+        }
+      }
+      .msla-comment-icon {
+        float: left;
+        font-size: @card-header-icon-size;
+        height: 32px;
+        width: 32px;
+        line-height: 32px;
+        margin-right: 4px;
+        text-align: center;
       }
     }
 
     .msla-panel-header-controls {
-      float: right;
       height: 32px;
+      width: 32px;
     }
 
     .collapse-toggle-left {
-      right: 0px;
-      top: 0px;
       float: right;
     }
 
     .collapse-toggle-right {
-      right: 0px;
-      top: 0px;
       float: left;
     }
   }

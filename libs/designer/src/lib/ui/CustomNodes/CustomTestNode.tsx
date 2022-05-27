@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
-import { useBrandColor, useIconUri, useNodeDescription, useNodeMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import {
+  useBrandColor,
+  useIconUri,
+  useNodeDescription,
+  useNodeMetadata,
+  useOperationInfo,
+} from '../../core/state/selectors/actionMetadataSelector';
 import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
@@ -13,7 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
-  const [, drag, dragPreview] = useDrag(() => ({
+  const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
     // "type" is required. It is used by the "accept" specification of drop targets.
     type: 'BOX',
     // The collect function utilizes a "monitor" instance (see the Overview for what this is)
@@ -61,11 +67,12 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
 
   const comment = nodeComment
     ? {
-      brandColor: brandColor,
-      comment: nodeComment,
-      isDismissed: false,
-      isEditing: false,
-    } : undefined;
+        brandColor: brandColor,
+        comment: nodeComment,
+        isDismissed: false,
+        isEditing: false,
+      }
+    : undefined;
 
   return (
     <div style={style}>
@@ -92,6 +99,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           commentBox={comment}
           drag={drag}
           dragPreview={dragPreview}
+          isDragging={isDragging}
           onClick={nodeClick}
         />
         <Handle

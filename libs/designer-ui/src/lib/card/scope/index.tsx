@@ -16,6 +16,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   drag,
   draggable,
   dragPreview,
+  isDragging,
   icon,
   errorLevel,
   errorMessage,
@@ -49,7 +50,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
       <div
         ref={drag}
         aria-describedby={describedBy}
-        className="msla-content-fit"
+        className={css('msla-content-fit', isDragging && 'dragging')}
         aria-label={title}
         role="button"
         onClick={handleClick}
