@@ -87,20 +87,22 @@ describe('lib/panel/panelHeader/main', () => {
     const panelHeader = shallow.getRenderOutput();
     expect(panelHeader.props.className).toBe('msla-panel-header');
 
-    const [collapseExpand, cardHeader]: any[] = React.Children.toArray(panelHeader.props.children);
-    expect(collapseExpand.props.content).toBe('Collapse/Expand');
+    const [collapseExpandWrapper, content]: any[] = React.Children.toArray(panelHeader.props.children);
+    const [cardHeader, comment]: any[] = React.Children.toArray(content.props.children);
+    expect(collapseExpandWrapper.props.className).toBe('collapse-toggle-right');
 
-    const icon = collapseExpand.props.children;
+    const collapseExpandTooltip = collapseExpandWrapper.props.children;
+    expect(collapseExpandTooltip.props.content).toBe('Collapse/Expand');
 
-    expect(icon.props.className).toBe('collapse-toggle-right');
-    expect(icon.props.ariaLabel).toBe('Collapse/Expand');
-    expect(icon.props.disabled).toBeFalsy();
-    expect(icon.props.iconProps).toEqual({ iconName: 'DoubleChevronRight8' });
+    const collapseExpandButton = collapseExpandTooltip.props.children;
+    expect(collapseExpandButton.props.ariaLabel).toBe('Collapse/Expand');
+    expect(collapseExpandButton.props.disabled).toBeFalsy();
+    expect(collapseExpandButton.props.iconProps).toEqual({ iconName: 'DoubleChevronRight8' });
 
     expect(cardHeader.props.className).toBe('msla-panel-card-header');
-    const [titleContainer, panelControls, comment]: any[] = React.Children.toArray(cardHeader.props.children);
+    const [titleContainer, panelControls]: any[] = React.Children.toArray(cardHeader.props.children);
 
-    expect(titleContainer.props.className).toBe('msla-title-container');
+    expect(titleContainer.props.className).toBe('msla-panel-card-title-container');
 
     const title = titleContainer.props.children;
     expect(title.props.titleId).toBe(props.titleId);
@@ -114,7 +116,6 @@ describe('lib/panel/panelHeader/main', () => {
     // Using an empty overflow set to render menu items
     expect(menu.props.items).toHaveLength(0);
     expect(menu.props.overflowItems).toHaveLength(minimalWithHeader.panelHeaderMenu.length);
-
     expect(comment.props.comment).toBe(props.comment);
     expect(comment.props.isCollapsed).toBe(props.isCollapsed);
     expect(comment.props.noNodeSelected).toBe(props.noNodeSelected);
@@ -136,7 +137,8 @@ describe('lib/panel/panelHeader/main', () => {
     };
     shallow.render(<PanelHeader {...props} />);
     const panelHeader = shallow.getRenderOutput();
-    const [, cardHeader]: any[] = React.Children.toArray(panelHeader.props.children);
+    const [, content]: any[] = React.Children.toArray(panelHeader.props.children);
+    const [cardHeader]: any[] = React.Children.toArray(content.props.children);
     const [, panelControls]: any[] = React.Children.toArray(cardHeader.props.children);
     expect(panelControls.props.className).toBe('msla-panel-header-controls');
 

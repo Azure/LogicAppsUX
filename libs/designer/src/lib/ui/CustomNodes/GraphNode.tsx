@@ -11,7 +11,7 @@ import type { NodeProps } from 'react-flow-renderer';
 
 const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const node = useActionMetadata(id);
-  const [, drag, dragPreview] = useDrag(() => ({
+  const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
     // "type" is required. It is used by the "accept" specification of drop targets.
     type: 'BOX',
     // The collect function utilizes a "monitor" instance (see the Overview for what this is)
@@ -58,6 +58,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           drag={drag}
           draggable={true}
           dragPreview={dragPreview}
+          isDragging={isDragging}
           id={id}
           title={data.label}
         />

@@ -72,10 +72,10 @@ const overflowStyle: Partial<IOverflowSetStyles> = {
   },
 };
 
-const tooltipStyles: ITooltipHostStyles = {
+const tooltipStyles: Partial<ITooltipHostStyles> = {
   root: {
-    display: 'block',
-    height: '32px'
+    height: '32px',
+    width: '32px',
   },
 };
 
@@ -178,33 +178,36 @@ export const PanelHeader = ({
 
   return (
     <div className="msla-panel-header" id={noNodeOnCardLevel ? titleId : title}>
-      <TooltipHost calloutProps={calloutProps} content={panelCollapseTitle} styles={tooltipStyles}>
-        <IconButton
-          ariaLabel={panelCollapseTitle}
-          className={getIconClassName}
-          disabled={false}
-          iconProps={{ iconName: getCollapseIconName }}
-          styles={collapseIconStyle}
-          onClick={toggleCollapse}
-        />
-      </TooltipHost>
+      <div className={getIconClassName}>
+        <TooltipHost className={getIconClassName} calloutProps={calloutProps} content={panelCollapseTitle} styles={tooltipStyles}>
+          <IconButton
+            ariaLabel={panelCollapseTitle}
+            disabled={false}
+            iconProps={{ iconName: getCollapseIconName }}
+            styles={collapseIconStyle}
+            onClick={toggleCollapse}
+          />
+        </TooltipHost>
+      </div>
       {!noNodeOnCardLevel ? (
-        <div className="msla-panel-card-header">
-          {cardIcon ? <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" /> : null}
-          {includeTitle ? (
-            <div className="msla-title-container" hidden={isCollapsed}>
-              <PanelHeaderTitle
-                titleId={titleId}
-                readOnlyMode={readOnlyMode}
-                renameTitleDisabled={renameTitleDisabled}
-                savedTitle={title}
-              />
-            </div>
-          ) : null}
+        <>
+          <div className="msla-panel-card-header">
+            {cardIcon ? <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" /> : null}
+            {includeTitle ? (
+              <div className="msla-panel-card-title-container" hidden={isCollapsed}>
+                <PanelHeaderTitle
+                  titleId={titleId}
+                  readOnlyMode={readOnlyMode}
+                  renameTitleDisabled={renameTitleDisabled}
+                  savedTitle={title}
+                />
+              </div>
+            ) : null}
 
-          <div className="msla-panel-header-controls" hidden={isCollapsed}>
-            {panelHeaderControlType === PanelHeaderControlType.MENU ? getPanelHeaderMenu() : null}
-            {panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON ? getDismissButton() : null}
+            <div className="msla-panel-header-controls" hidden={isCollapsed}>
+              {panelHeaderControlType === PanelHeaderControlType.MENU ? getPanelHeaderMenu() : null}
+              {panelHeaderControlType === PanelHeaderControlType.DISMISS_BUTTON ? getDismissButton() : null}
+            </div>
           </div>
           {onRenderWarningMessage ? onRenderWarningMessage() : null}
           {showCommentBox ? (
@@ -216,7 +219,7 @@ export const PanelHeader = ({
               commentChange={commentChange}
             />
           ) : null}
-        </div>
+        </>
       ) : null}
     </div>
   );
