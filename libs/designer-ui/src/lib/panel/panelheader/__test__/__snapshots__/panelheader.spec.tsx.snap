@@ -5,68 +5,72 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
   className="msla-panel-header"
 >
   <div
-    className="ms-TooltipHost root-109"
-    onBlurCapture={[Function]}
-    onFocusCapture={[Function]}
-    onKeyDown={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    role="none"
+    className="collapse-toggle-right"
   >
-    <button
-      aria-label="Collapse/Expand"
-      className="ms-Button ms-Button--icon collapse-toggle-right root-110"
-      data-is-focusable={true}
-      onClick={[Function]}
-      onKeyDown={[Function]}
-      onKeyPress={[Function]}
-      onKeyUp={[Function]}
-      onMouseDown={[Function]}
-      onMouseUp={[Function]}
-      type="button"
-    >
-      <span
-        className="ms-Button-flexContainer flexContainer-111"
-        data-automationid="splitbuttonprimary"
-      >
-        <i
-          aria-hidden={true}
-          className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-          data-icon-name="DoubleChevronRight8"
-          style={
-            Object {
-              "fontFamily": "\\"FabricMDL2Icons-12\\"",
-            }
-          }
-        >
-          
-        </i>
-      </span>
-    </button>
     <div
-      hidden={true}
-      id="tooltip0"
-      style={
-        Object {
-          "border": 0,
-          "height": 1,
-          "margin": -1,
-          "overflow": "hidden",
-          "padding": 0,
-          "position": "absolute",
-          "whiteSpace": "nowrap",
-          "width": 1,
-        }
-      }
+      className="ms-TooltipHost root-109"
+      onBlurCapture={[Function]}
+      onFocusCapture={[Function]}
+      onKeyDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      role="none"
     >
-      Collapse/Expand
+      <button
+        aria-label="Collapse/Expand"
+        className="ms-Button ms-Button--icon root-110"
+        data-is-focusable={true}
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onKeyPress={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseUp={[Function]}
+        type="button"
+      >
+        <span
+          className="ms-Button-flexContainer flexContainer-111"
+          data-automationid="splitbuttonprimary"
+        >
+          <i
+            aria-hidden={true}
+            className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
+            data-icon-name="DoubleChevronRight8"
+            style={
+              Object {
+                "fontFamily": "\\"FabricMDL2Icons-12\\"",
+              }
+            }
+          >
+            
+          </i>
+        </span>
+      </button>
+      <div
+        hidden={true}
+        id="tooltip0"
+        style={
+          Object {
+            "border": 0,
+            "height": 1,
+            "margin": -1,
+            "overflow": "hidden",
+            "padding": 0,
+            "position": "absolute",
+            "whiteSpace": "nowrap",
+            "width": 1,
+          }
+        }
+      >
+        Collapse/Expand
+      </div>
     </div>
   </div>
   <div
     className="msla-panel-card-header"
   >
     <div
-      className="msla-title-container"
+      className="msla-panel-card-title-container"
       hidden={false}
     >
       <div
@@ -109,68 +113,72 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
   className="msla-panel-header"
 >
   <div
-    className="ms-TooltipHost root-109"
-    onBlurCapture={[Function]}
-    onFocusCapture={[Function]}
-    onKeyDown={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    role="none"
+    className="collapse-toggle-right"
   >
-    <button
-      aria-label="Collapse/Expand"
-      className="ms-Button ms-Button--icon collapse-toggle-right root-110"
-      data-is-focusable={true}
-      onClick={[Function]}
-      onKeyDown={[Function]}
-      onKeyPress={[Function]}
-      onKeyUp={[Function]}
-      onMouseDown={[Function]}
-      onMouseUp={[Function]}
-      type="button"
-    >
-      <span
-        className="ms-Button-flexContainer flexContainer-111"
-        data-automationid="splitbuttonprimary"
-      >
-        <i
-          aria-hidden={true}
-          className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-          data-icon-name="DoubleChevronRight8"
-          style={
-            Object {
-              "fontFamily": "\\"FabricMDL2Icons-12\\"",
-            }
-          }
-        >
-          
-        </i>
-      </span>
-    </button>
     <div
-      hidden={true}
-      id="tooltip9"
-      style={
-        Object {
-          "border": 0,
-          "height": 1,
-          "margin": -1,
-          "overflow": "hidden",
-          "padding": 0,
-          "position": "absolute",
-          "whiteSpace": "nowrap",
-          "width": 1,
-        }
-      }
+      className="ms-TooltipHost root-109"
+      onBlurCapture={[Function]}
+      onFocusCapture={[Function]}
+      onKeyDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      role="none"
     >
-      Collapse/Expand
+      <button
+        aria-label="Collapse/Expand"
+        className="ms-Button ms-Button--icon root-110"
+        data-is-focusable={true}
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onKeyPress={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseUp={[Function]}
+        type="button"
+      >
+        <span
+          className="ms-Button-flexContainer flexContainer-111"
+          data-automationid="splitbuttonprimary"
+        >
+          <i
+            aria-hidden={true}
+            className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
+            data-icon-name="DoubleChevronRight8"
+            style={
+              Object {
+                "fontFamily": "\\"FabricMDL2Icons-12\\"",
+              }
+            }
+          >
+            
+          </i>
+        </span>
+      </button>
+      <div
+        hidden={true}
+        id="tooltip9"
+        style={
+          Object {
+            "border": 0,
+            "height": 1,
+            "margin": -1,
+            "overflow": "hidden",
+            "padding": 0,
+            "position": "absolute",
+            "whiteSpace": "nowrap",
+            "width": 1,
+          }
+        }
+      >
+        Collapse/Expand
+      </div>
     </div>
   </div>
   <div
     className="msla-panel-card-header"
   >
     <div
-      className="msla-title-container"
+      className="msla-panel-card-title-container"
       hidden={false}
     >
       <div
