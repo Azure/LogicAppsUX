@@ -100,11 +100,9 @@ export const PanelHeaderComment = ({
     );
   };
   return (
-    <div className="msla-panel-comment-container-wrapper" hidden={isCollapsed}>
-      <div className="msla-panel-comment-container">
-        {!noNodeSelected ? getCommentIcon() : null}
-        {!noNodeSelected ? getCommentEditor() : null}
-      </div>
+    <div className="msla-panel-comment-container" hidden={isCollapsed}>
+      {!noNodeSelected ? getCommentIcon() : null}
+      {!noNodeSelected ? getCommentEditor() : null}
     </div>
   );
 };
