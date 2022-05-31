@@ -1,12 +1,12 @@
 import { collapsePanel, expandPanel } from '../core/state/PanelSlice';
 import type { RootState } from '../core/state/Store';
+import { toolboxTab } from './tabs/ToolboxTab';
 import type { ILayerProps } from '@fluentui/react';
 import type { PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
 import { getTabs, PanelContainer, PanelHeader, PanelLocation, PanelScope, PanelSize, registerTabs } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { toolboxTab } from './tabs/ToolboxTab';
 
 export interface LeftHandPanelProps {
   selectedTabId?: string;
