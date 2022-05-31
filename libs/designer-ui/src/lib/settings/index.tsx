@@ -1,7 +1,6 @@
 import constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
-import { Separator, useTheme, IconButton, Icon } from '@fluentui/react';
-import type { IIconProps } from '@fluentui/react';
+import { Separator, useTheme, Icon } from '@fluentui/react';
 import type { FormEvent } from 'react';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
