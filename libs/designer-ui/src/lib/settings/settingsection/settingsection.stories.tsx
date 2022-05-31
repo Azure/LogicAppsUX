@@ -1,14 +1,13 @@
 import type { SettingSectionComponentProps } from '..';
 import { SettingsSection } from '..';
 import { MultiAddExpressionEditor } from './settingexpressioneditor';
-import { MultiSelectOption, MultiSelectSetting } from './settingmultiselect';
+import { MultiSelectSetting } from './settingmultiselect';
 import type { MultiSelectSettingProps } from './settingmultiselect';
 import { ReactiveToggle } from './settingreactiveinput';
 import { CustomValueSlider } from './settingslider';
 import { SettingTextField } from './settingtextfield';
 import { RenderToggleSetting } from './settingtoggle';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import { useState } from 'react';
 
 export default {
   component: SettingsSection,

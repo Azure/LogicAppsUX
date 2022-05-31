@@ -1,7 +1,7 @@
 import { ActionButton, IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { TextField } from '@fluentui/react/lib/TextField';
-import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
+import type { ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -149,7 +149,6 @@ interface ExpressionProps {
 }
 
 const Expression = ({ expression, index, readOnly, onChange, onDelete }: ExpressionProps): JSX.Element => {
-  let inputRef: ITextField;
   const intl = useIntl();
 
   const enterValueError = intl.formatMessage({

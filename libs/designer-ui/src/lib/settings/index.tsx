@@ -1,6 +1,6 @@
 import constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
-import { Separator, useTheme, IconButton } from '@fluentui/react';
+import { Separator, useTheme, IconButton, Icon } from '@fluentui/react';
 import type { IIconProps } from '@fluentui/react';
 import type { FormEvent } from 'react';
 import { useCallback, useState } from 'react';
@@ -36,16 +36,6 @@ export function SettingsSection({ title, expanded, renderContent, textFieldValue
     setExpanded(!expandedState);
   }, [expandedState]);
 
-  const iconProps: IIconProps = {
-    iconName: expandedState ? 'ChevronDownMed' : 'ChevronRightMed',
-    styles: {
-      root: {
-        fontSize: 14,
-        color: isInverted ? 'white' : constants.CHEVRON_ROOT_COLOR_LIGHT,
-      },
-    },
-  };
-  const chevronStyles = { icon: { color: constants.CHEVRON_COLOR, fontSize: 12 } };
   const separatorStyles = {
     root: { color: isInverted ? constants.SETTING_SEPARATOR_COLOR_DARK : constants.SETTING_SEPARATOR_COLOR_LIGHT },
   };
@@ -68,15 +58,15 @@ export function SettingsSection({ title, expanded, renderContent, textFieldValue
   return (
     <div className="msla-setting-section">
       <div className="msla-setting-section-content">
-        <div className="msla-setting-section-header" onClick={handleClick}>
-          <IconButton
+        <button className="msla-setting-section-header" onClick={handleClick}>
+          <Icon
             className="msla-setting-section-header-icon"
             ariaLabel={expandedState ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
-            iconProps={iconProps}
-            styles={chevronStyles}
+            iconName={expandedState ? 'ChevronDownMed' : 'ChevronRightMed'}
+            styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
           />
-          <button className={headerTextClassName}>{title}</button>
-        </div>
+          <div className={headerTextClassName}>{title}</div>
+        </button>
         {children}
         <Separator className="msla-setting-section-separator" styles={separatorStyles} />
       </div>
