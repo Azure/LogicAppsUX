@@ -34,7 +34,7 @@ export const Token: React.FC<TokenProps> = ({ description, brandColor, icon, tit
 
   return (
     <button className="msla-token" onClick={handleClick} style={tokenStyle}>
-      <img className="msla-token-icon" src={icon} style={imageStyle} role="presentation" alt={iconAltText} />
+      <img className="msla-token-icon" src={icon} style={imageStyle} alt={iconAltText} />
       <div className="msla-token-title" title={description}>
         {title}
       </div>
