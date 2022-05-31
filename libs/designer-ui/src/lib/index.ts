@@ -18,6 +18,7 @@ export * from './dialogs';
 export * from './documentationlinkitem';
 // export * from './dropdown';
 export * from './editor/models/parameter';
+export * from './editor/monaco';
 export * from './errorboundary';
 // export * from './featurefeedback';
 // export * from './floatingactionmenu';
