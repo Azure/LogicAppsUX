@@ -7,28 +7,28 @@
   line-height: @token-height;
   white-space: nowrap;
   padding-left: 0;
+}
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
+.msla-input-token {
+  background-repeat: no-repeat;
+  background-size: 24px 24px;
+  padding-left: 34px;
+  margin: 0 2px 0 0;
+  vertical-align: sub;
+  display: inline-flex;
+  padding-right: 4px;
+  position: relative;
 
-  .msla-token-icon {
-    box-sizing: content-box;
-    display: inline-block;
-    height: (@token-height - 4px); /* remove the top bottom padding */
-    padding: 2px;
-    width: (@token-height - 4px); /* remove the left right padding */
-    position: relative;
-    bottom: 1px;
-  }
-
-  .msla-token-title {
-    color: @card-text-color;
-    display: inline-block;
-    margin-left: 8px;
-    max-width: @token-title-max-length;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .msla-token-delete {
+    align-self: center;
+    font-size: @token-font-size;
+    vertical-align: top;
+    padding-left: 5px;
+    padding-right: 0;
+    color: #000;
     line-height: @token-height;
+    &:focus {
+      color: rgba(51, 51, 51, 0.5);
+    }
   }
 }
