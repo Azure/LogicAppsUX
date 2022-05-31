@@ -3,7 +3,7 @@ import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, TextField } from '@fluentui/react';
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const fileOptions = ['SimpleCustomerOrder.json'];
 
@@ -50,7 +50,7 @@ export const DevToolbox: React.FC = () => {
   const fileOptionsMap = fileOptions.map((x) => ({ key: x, text: x }));
 
   return (
-    <div>
+    <div style={{ width: '400px' }}>
       <div style={{ paddingBottom: '10px' }}>
         <Checkbox label="Load From Arm" checked={loadingMethod === 'arm'} onChange={changeLoadingMethodCB} />
       </div>
