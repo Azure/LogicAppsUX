@@ -23,6 +23,7 @@ export interface CardProps {
   drag: ConnectDragSource;
   draggable: boolean;
   dragPreview: ConnectDragPreview;
+  isDragging?: boolean;
   errorLevel?: MessageBarType;
   errorMessage?: string;
   icon?: string;
@@ -58,6 +59,7 @@ export const Card: React.FC<CardProps> = ({
   drag,
   draggable,
   dragPreview,
+  isDragging,
   errorLevel,
   errorMessage,
   icon,
@@ -118,7 +120,8 @@ export const Card: React.FC<CardProps> = ({
           'msla-panel-card-container',
           selected && 'msla-panel-card-container-selected',
           !active && 'inactive',
-          cloned && 'msla-card-ghost-image'
+          cloned && 'msla-card-ghost-image',
+          isDragging && 'dragging'
         )}
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}

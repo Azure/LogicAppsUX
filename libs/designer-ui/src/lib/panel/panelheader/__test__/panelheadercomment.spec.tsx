@@ -23,11 +23,8 @@ describe('ui/panel/panelheadercomment', () => {
   it('should render panelheadercomment when passed a comment.', () => {
     const props = { ...minimal, noNodeSelected: false, readOnlyMode: false, comment: 'Panel comment' };
     renderer.render(<PanelHeaderComment {...props} />);
-    const commentWrapper = renderer.getRenderOutput();
+    const commentContainer = renderer.getRenderOutput();
 
-    expect(commentWrapper.props.className).toBe('msla-panel-comment-container-wrapper');
-
-    const commentContainer = commentWrapper.props.children;
     expect(commentContainer.props.className).toBe('msla-panel-comment-container');
 
     const [icon, comment]: any[] = React.Children.toArray(commentContainer.props.children);

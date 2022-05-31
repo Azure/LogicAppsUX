@@ -1,5 +1,12 @@
-import { HelloWorld } from '@microsoft/logic-apps-data-mapper';
+import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
 
+// TODO - Load data map
 export const App = () => {
-  return <HelloWorld name="Data Mapper VSCode Extension" />;
+  return (
+    <DataMapperDesignerProvider locale="en-US" options={{}}>
+      <DataMapDataProvider dataMap={''}>
+        <DataMapperDesigner></DataMapperDesigner>
+      </DataMapDataProvider>
+    </DataMapperDesignerProvider>
+  );
 };
