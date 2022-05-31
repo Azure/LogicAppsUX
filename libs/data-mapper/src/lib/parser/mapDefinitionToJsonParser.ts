@@ -31,82 +31,67 @@ function _lineToNode(lines: string[], parentNode: Node, parentNodeLevel: number,
   while (curIndex < lines?.length) {
     let curLine = lines[curIndex];
     let curNodeLevel = getCurNodeLevel(curLine);
-    if (isDirectChild(curNodeLevel, parentNodeLevel)) {
-      if (hasTargetValue(curLine)) {
-        const node: Node = {
-          targetNodeKey: getTargetNodeKey(curLine),
-          targetValue: {
-            value: getTargetNodeValue(curLine),
-          },
-        };
 
-        if (parentNode.children) {
-          parentNode.children.push(node);
-        } else {
-          parentNode.children = [node];
-        }
-
-        curIndex++;
-        return curIndex;
-      } else {
-        let node: Node = {
-          targetNodeKey: '',
-        };
-        // FOR LOOPSOURCE OR CONDITION
-        if (getTargetNodeKey(curLine).startsWith('for')) {
-          //TODO: forloop - fix placeholder below
-          const updatingLine = lines[curIndex + 1];
-          node = {
-            targetNodeKey: getTargetNodeKey(updatingLine),
-            loopSource: {
-              loopSource: removeConditionLoop(getTargetNodeKey(curLine)),
-            },
-            // children: []
-          };
-
-          curLine = updatingLine;
-          curNodeLevel = getCurNodeLevel(curLine);
-
-          curIndex++; // => revise
-        } else if (getTargetNodeKey(curLine).startsWith('if')) {
-          const updatingLine = lines[curIndex + 1];
-          node = {
-            targetNodeKey: getTargetNodeKey(updatingLine),
-            condition: {
-              condition: removeConditionLoop(getTargetNodeKey(curLine)),
-            },
-            targetValue: {
-              value: getTargetNodeValue(updatingLine),
-            },
-          };
-          curIndex++;
-        } else {
-          node = {
-            targetNodeKey: getTargetNodeKey(curLine),
-            // children: []
-          };
-        }
-
-        if (parentNode.children) {
-          parentNode.children.push(node);
-        } else {
-          parentNode.children = [node];
-        }
-
-        curIndex++;
-
-        let updatingNodeLevel = getCurNodeLevel(lines[curIndex]);
-
-        while (curIndex < lines?.length && isDirectChild(updatingNodeLevel, curNodeLevel)) {
-          const nextIndex = _lineToNode(lines, node, curNodeLevel, curIndex);
-          curIndex = nextIndex;
-          updatingNodeLevel = getCurNodeLevel(lines[curIndex]);
-        }
-        return curIndex;
-      }
-    } else {
+    if (!isDirectChild(curNodeLevel, parentNodeLevel)) {
       return curIndex;
     }
+
+    if (hasTargetValue(curLine)) {
+      const node: Node = {
+        targetNodeKey: getTargetNodeKey(curLine),
+        targetValue: {
+          value: getTargetNodeValue(curLine),
+        },
+      };
+
+      if (parentNode.children) {
+        parentNode.children.push(node);
+      } else {
+        parentNode.children = [node];
+      }
+
+      curIndex++;
+    } else {
+      let loopSource = undefined;
+      let condition = undefined;
+
+      if (getTargetNodeKey(curLine).startsWith('for') || getTargetNodeKey(curLine).startsWith('if')) {
+        if (getTargetNodeKey(curLine).startsWith('for')) {
+          loopSource = { loopSource: removeConditionLoop(curLine) };
+        } else if (getTargetNodeKey(curLine).startsWith('if')) {
+          condition = { condition: removeConditionLoop(curLine) };
+        }
+        curIndex++;
+        curLine = lines[curIndex];
+        curNodeLevel = getCurNodeLevel(curLine);
+      }
+
+      const targetValue = getTargetNodeValue(curLine) === '' ? undefined : { value: getTargetNodeValue(curLine) };
+
+      const node: Node = {
+        targetNodeKey: getTargetNodeKey(curLine),
+        loopSource: loopSource,
+        condition: condition,
+        targetValue: targetValue,
+      };
+
+      if (parentNode.children) {
+        parentNode.children.push(node);
+      } else {
+        parentNode.children = [node];
+      }
+
+      curIndex++;
+
+      let updatingNodeLevel = getCurNodeLevel(lines[curIndex]);
+
+      while (curIndex < lines?.length && isDirectChild(updatingNodeLevel, curNodeLevel)) {
+        const nextIndex = _lineToNode(lines, node, curNodeLevel, curIndex);
+        curIndex = nextIndex;
+        updatingNodeLevel = getCurNodeLevel(lines[curIndex]);
+      }
+    }
+    return curIndex;
   }
 
   // out of range
@@ -119,16 +104,14 @@ function hasTargetValue(line: string): boolean {
 
 function getTargetNodeKey(line: string): string {
   //TODO: split line with ":" (be careful) and get the first - fix the way of filtering out \t
-  return line?.split(':')?.[0]?.replaceAll('\t', '');
+  return line?.split(':')?.[0]?.trim();
 }
 
 function getTargetNodeValue(line: string): string {
-  //TODO: split line with ":" (be careful) and get the second
-  return line.substring(line.indexOf(':') + 1);
+  return line.substring(line.indexOf(':') + 1).trim();
 }
 
 function getCurNodeLevel(line: string): number {
-  //TODO: split line with "\t" and find how many there are
   return (line?.split('\t')?.length ?? 0) - 1;
 }
 
@@ -138,5 +121,5 @@ function isDirectChild(curNodeLevel: number, parentNodeLevel: number): boolean {
 
 function removeConditionLoop(line: string): string {
   //TODO: get rid of "for()" for "if()"
-  return line;
+  return line.trim();
 }
