@@ -1,6 +1,7 @@
 import AutoFocusPlugin from './plugins/AutoFocusPlugin';
 import AutoLinkPlugin from './plugins/AutoLinkPlugin';
 import ClearEditorPlugin from './plugins/ClearEditorPlugin';
+import TokenPlugin from './plugins/TokenPlugin';
 import TreeViewPlugin from './plugins/TreeViewPlugin';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import LexicalClearEditorPlugin from '@lexical/react/LexicalClearEditorPlugin';
@@ -26,6 +27,7 @@ export interface BasePlugins {
   autoLink?: boolean;
   clearEditor?: boolean;
   history?: boolean;
+  tokens?: boolean;
   treeView?: boolean;
 }
 
@@ -56,7 +58,7 @@ export const BaseEditor = ({ className, placeholder, BasePlugins = {}, children 
     nodes: [TableCellNode, TableNode, TableRowNode, AutoLinkNode, LinkNode],
   };
 
-  const { autoFocus = true, autoLink, clearEditor, history = true, treeView } = BasePlugins;
+  const { autoFocus = true, autoLink, clearEditor, history = true, tokens, treeView } = BasePlugins;
 
   const editorInputLabel = intl.formatMessage({
     defaultMessage: 'Editor Input',
@@ -75,6 +77,7 @@ export const BaseEditor = ({ className, placeholder, BasePlugins = {}, children 
         {autoFocus ? <AutoFocusPlugin /> : null}
         {history ? <HistoryPlugin /> : null}
         {autoLink ? <AutoLinkPlugin /> : null}
+        {tokens ? <TokenPlugin /> : null}
         {clearEditor ? <ClearEditorPlugin /> : null}
         {children}
         <LexicalClearEditorPlugin />

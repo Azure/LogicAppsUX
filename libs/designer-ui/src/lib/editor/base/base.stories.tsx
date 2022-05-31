@@ -14,3 +14,10 @@ plugins.args = {
   placeholder: 'Play around with some cool plugins here...',
   BasePlugins: { autoFocus: true, autoLink: true, clearEditor: true, history: true, treeView: true },
 };
+// TODO 14556566: Adding Tokens to Base Editor
+// export const token = Template.bind({});
+// token.args = {
+//   className: 'msla-string-editor-container',
+//   placeholder: 'Play around with tokenizing',
+//   BasePlugins: { tokens: true },
+// };
