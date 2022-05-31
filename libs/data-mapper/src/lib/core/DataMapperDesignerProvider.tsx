@@ -1,12 +1,12 @@
+import type { DataMapperDesignerContext } from './DataMapperDesignerContext';
+import { DataMapperWrappedContext } from './DataMapperDesignerContext';
+import { store } from './state/Store';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import type { Theme } from '@fluentui/react';
 import { ThemeProvider } from '@fluentui/react';
 import { IntlProvider } from '@microsoft-logic-apps/intl';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import type { DataMapperDesignerContext } from './DataMapperDesignerContext';
-import { DataMapperWrappedContext } from './DataMapperDesignerContext';
-import { store } from './state/Store';
 
 export interface DataMapperDesignerProviderProps {
   theme?: Theme;

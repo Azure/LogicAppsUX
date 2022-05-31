@@ -78,7 +78,10 @@ const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAp
   return equals(action.type, 'switch');
 };
 
-const buildGraphFromActions = (actions: Record<string, LogicAppsV2.ActionDefinition>, graphId: string): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
+const buildGraphFromActions = (
+  actions: Record<string, LogicAppsV2.ActionDefinition>,
+  graphId: string
+): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
   const nodes: WorkflowNode[] = [];
   const edges: WorkflowEdge[] = [];
   let allActions: Operations = {};
