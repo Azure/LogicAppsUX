@@ -1,8 +1,9 @@
+import { ProviderWrappedContext } from '../../core';
 import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
 import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import { DropZone } from './dropzone';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { getEdgeCenter, getSmoothStepPath } from 'react-flow-renderer';
 import type { EdgeProps } from 'react-flow-renderer';
 
@@ -26,6 +27,8 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   targetPosition,
   style = {},
 }) => {
+  const { readOnly } = useContext(ProviderWrappedContext) ?? {};
+
   const allChildrenEdges = useEdgesByParent(source);
   const nodeMetadata = useNodeMetadata(source);
   const [edgeCenterX, edgeCenterY] = getEdgeCenter({
@@ -49,32 +52,36 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   return (
     <>
       <path id={id} style={style} className="react-flow__edge-path" d={d} />
-      {firstChild && (allChildrenEdges.length ?? 0) > 1 && (
-        <foreignObject
-          width={foreignObjectWidth}
-          height={foreignObjectHeight}
-          x={sourceX - foreignObjectWidth / 2}
-          y={sourceY + 20 - foreignObjectHeight / 2}
-          className="edgebutton-foreignobject"
-          requiredExtensions="http://www.w3.org/1999/xhtml"
-        >
-          <div style={{ padding: '4px' }}>
-            <DropZone parent={source} graphId={nodeMetadata?.graphId ?? ''} />
-          </div>
-        </foreignObject>
-      )}
-      <foreignObject
-        width={foreignObjectWidth}
-        height={foreignObjectHeight}
-        x={allChildrenEdges.length === 1 ? edgeCenterX - foreignObjectWidth / 2 : targetX - foreignObjectWidth / 2}
-        y={allChildrenEdges.length === 1 ? edgeCenterY - foreignObjectHeight / 2 : targetY - 20 - foreignObjectHeight / 2}
-        className="edgebutton-foreignobject"
-        requiredExtensions="http://www.w3.org/1999/xhtml"
-      >
-        <div style={{ padding: '4px' }}>
-          <DropZone parent={source} child={target} graphId={nodeMetadata?.graphId ?? ''} />
-        </div>
-      </foreignObject>
+      {!readOnly ? (
+        <>
+          {firstChild && (allChildrenEdges.length ?? 0) > 1 && (
+            <foreignObject
+              width={foreignObjectWidth}
+              height={foreignObjectHeight}
+              x={sourceX - foreignObjectWidth / 2}
+              y={sourceY + 20 - foreignObjectHeight / 2}
+              className="edgebutton-foreignobject"
+              requiredExtensions="http://www.w3.org/1999/xhtml"
+            >
+              <div style={{ padding: '4px' }}>
+                <DropZone parent={source} graphId={nodeMetadata?.graphId ?? ''} />
+              </div>
+            </foreignObject>
+          )}
+          <foreignObject
+            width={foreignObjectWidth}
+            height={foreignObjectHeight}
+            x={allChildrenEdges.length === 1 ? edgeCenterX - foreignObjectWidth / 2 : targetX - foreignObjectWidth / 2}
+            y={allChildrenEdges.length === 1 ? edgeCenterY - foreignObjectHeight / 2 : targetY - 20 - foreignObjectHeight / 2}
+            className="edgebutton-foreignobject"
+            requiredExtensions="http://www.w3.org/1999/xhtml"
+          >
+            <div style={{ padding: '4px' }}>
+              <DropZone parent={source} child={target} graphId={nodeMetadata?.graphId ?? ''} />
+            </div>
+          </foreignObject>
+        </>
+      ) : null}
     </>
   );
 };

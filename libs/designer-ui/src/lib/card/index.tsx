@@ -1,3 +1,4 @@
+import { StatusPill } from '../monitoring';
 import { isDeleteKey, isEnterKey, isSpaceKey } from '../utils/keyboardUtils';
 import { CardContextMenu } from './cardcontextmenu';
 import { CardFooter } from './cardfooter';
@@ -23,11 +24,13 @@ export interface CardProps {
   drag: ConnectDragSource;
   draggable: boolean;
   dragPreview: ConnectDragPreview;
-  isDragging?: boolean;
   errorLevel?: MessageBarType;
   errorMessage?: string;
   icon?: string;
   id: string;
+  isDragging?: boolean;
+  isMonitoringView?: boolean;
+  readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
   selected?: boolean;
   staticResultsEnabled?: boolean;
@@ -59,10 +62,12 @@ export const Card: React.FC<CardProps> = ({
   drag,
   draggable,
   dragPreview,
-  isDragging,
   errorLevel,
   errorMessage,
   icon,
+  isDragging,
+  isMonitoringView,
+  readOnly,
   selected,
   staticResultsEnabled,
   title,
@@ -127,6 +132,7 @@ export const Card: React.FC<CardProps> = ({
         data-testid={`card-${title}`}
         onClick={handleClick}
       >
+        {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
         <div className="panel-card-main">
           <div
             className="panel-card-header"
