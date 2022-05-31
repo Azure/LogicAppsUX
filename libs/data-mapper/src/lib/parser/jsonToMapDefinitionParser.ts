@@ -7,7 +7,7 @@ export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
   if (!inputJson.mappings) {
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
   }
-  const d = `${nodeToMapDefinition(inputJson.mappings, '', '', '')}`;
+
   return `${codeDetails}${nodeToMapDefinition(inputJson.mappings, '', '', '')}`;
 }
 

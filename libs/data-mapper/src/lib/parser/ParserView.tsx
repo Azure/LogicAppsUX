@@ -1,4 +1,4 @@
-import { simpleJsonExample, simpleMapDefExample } from './__mocks__';
+import { customerOrdersMapDefinitionMock, simpleJsonExample, simpleMapDefExample } from './__mocks__';
 import { SampleDataDisplayer } from './components/SampleDataDisplayer';
 import { jsonToMapDefinition } from './jsonToMapDefinitionParser';
 import { linesToNode, mapDefinitionToJson } from './mapDefinitionToJsonParser';
@@ -42,17 +42,17 @@ export interface ParserViewProps {
 // };
 
 export const ParserView = ({ input }: ParserViewProps) => {
-  const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(linesToNode(simpleMapDefExample), null, '\t'));
+  const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(mapDefinitionToJson(customerOrdersMapDefinitionMock), null, '\t'));
 
   useEffect(() => {
-    setConvertedOutput(JSON.stringify(linesToNode(simpleMapDefExample), null, '\t'));
+    setConvertedOutput(JSON.stringify(mapDefinitionToJson(customerOrdersMapDefinitionMock), null, '\t'));
 
-    linesToNode(convertedOutput);
+    // linesToNode(convertedOutput?.split('\n'), 0);
   }, [input]);
 
   return (
     <div>
-      <SampleDataDisplayer data={simpleMapDefExample} />
+      <SampleDataDisplayer data={customerOrdersMapDefinitionMock} />
       <SampleDataDisplayer data={convertedOutput} />
     </div>
   );
