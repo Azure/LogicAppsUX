@@ -3,6 +3,9 @@ import { createContext } from 'react';
 
 export interface DesignerOptionsContext {
   readOnly?: boolean;
+  toggleReadOnly?: () => void;
+  isMonitoringView?: boolean;
+  toggleMonitoringView?: () => void;
   servicesInitialized?: boolean;
   services: ServiceOptions;
 }

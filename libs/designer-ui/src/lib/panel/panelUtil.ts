@@ -39,7 +39,7 @@ export function registerTabs(tabsInfo: PanelTab[], registeredTabs: Record<string
     registerTab(tabInfo, registeredTabs);
   });
 
-  return registeredTabs;
+  return { ...registeredTabs };
 }
 
 export function registerTab(tabInfo: PanelTab, registeredTabs: Record<string, PanelTab>): Record<string, PanelTab> {
@@ -52,7 +52,7 @@ export function registerTab(tabInfo: PanelTab, registeredTabs: Record<string, Pa
     { tabname: tabInfo.name }
   );
   if (getTab(tabInfo.name, registeredTabs)) {
-    throw new ValidationException(ValidationErrorCode.UNSPECIFIED, format(tabAlreadyRegistered, tabInfo.name));
+    // throw new ValidationException(ValidationErrorCode.UNSPECIFIED, format(tabAlreadyRegistered, tabInfo.name));
   }
   registeredTabs[tabInfo.name.toLowerCase()] = tabInfo;
   return registeredTabs;
@@ -69,13 +69,8 @@ export function deleteAllTabs(registeredTabs: Record<string, PanelTab>): void {
 }
 
 export function getTabs(sort: boolean, registeredTabs: Record<string, PanelTab>): PanelTab[] {
-  if (sort) {
-    const tabsSorted = Object.keys(registeredTabs).map((name) => registeredTabs[name]);
-    tabsSorted.sort((a, b) => a.order - b.order);
-    return tabsSorted;
-  } else {
-    return Object.keys(registeredTabs).map((name) => registeredTabs[name]);
-  }
+  const enabledTabs = Object.values(registeredTabs).filter((tab) => tab.enabled);
+  return sort ? enabledTabs.sort((a, b) => a.order - b.order) : enabledTabs;
 }
 
 export function getTab(name: string, registeredTabs: Record<string, PanelTab>): PanelTab {

@@ -46,7 +46,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   ];
   const bgStyle = { backgroundColor: brandColor };
   return (
-    <div ref={dragPreview} className="msla-content-fit">
+    <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div
         ref={drag}
         aria-describedby={describedBy}
