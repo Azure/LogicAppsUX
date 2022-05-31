@@ -21,6 +21,7 @@ export function mapDefinitionToJson(inputMapDefinition: string): JsonInputStyle 
 
 export function linesToNode(mapDefinitionLines: string[], startIndex: number): Node {
   const node: Node = { targetNodeKey: mapDefinitionLines?.[startIndex]?.replaceAll(':', '') };
+  // _lineToNode(mapDefinitionLines, node, -1, startIndex);
   _lineToNode(mapDefinitionLines, node, 0, startIndex + 1);
   return node;
 }
@@ -49,6 +50,7 @@ function _lineToNode(lines: string[], parentNode: Node, parentNodeLevel: number,
         }
         // TODO - check if the below is correct - logic: moving to next line (in the possible same or upper level)
         curIndex++;
+        return curIndex;
       } else {
         // FOR LOOPSOURCE OR CONDITION
         if (curLine.startsWith('for')) {
@@ -70,12 +72,22 @@ function _lineToNode(lines: string[], parentNode: Node, parentNodeLevel: number,
         // ======
 
         curIndex++;
-        const nextIndex = _lineToNode(lines, node, curNodeLevel, curIndex);
-        curIndex = nextIndex;
+
+        let updatingNodeLevel = getCurNodeLevel(lines[curIndex]);
+
+        while (curIndex < lines?.length && updatingNodeLevel === curNodeLevel + 1) {
+          const nextIndex = _lineToNode(lines, node, curNodeLevel, curIndex);
+          curIndex = nextIndex;
+          updatingNodeLevel = getCurNodeLevel(lines[curIndex]);
+        }
+        return curIndex;
       }
-    } else {
+    } else if (curNodeLevel > parentNodeLevel + 1) {
       // TODO: check and fix this
-      curIndex++;
+      // const nextIndex = _lineToNode(lines, parentNode?.children?.[parentNode?.children?.length] ?? { targetNodeKey: "NA" }, curNodeLevel, curIndex);
+      // curIndex = nextIndex;
+      // // curIndex++;
+      return curIndex;
     }
   }
 
@@ -99,7 +111,7 @@ function getTargetNodeValue(line: string): string {
 
 function getCurNodeLevel(line: string): number {
   //TODO: split line with "\t" and find how many there are
-  return line?.split('\t')?.length - 1;
+  return (line?.split('\t')?.length ?? 0) - 1;
 }
 
 function removeConditionLoop(line: string): string {
