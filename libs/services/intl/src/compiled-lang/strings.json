@@ -1539,6 +1539,12 @@
       "value": "Request"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -2131,12 +2137,6 @@
     {
       "type": 0,
       "value": " minutes"
-    }
-  ],
-  "lMV/69": [
-    {
-      "type": 0,
-      "value": "Token Icon"
     }
   ],
   "lPTdSf": [
