@@ -20,35 +20,38 @@ export function mapDefinitionToJson(inputMapDefinition: string): JsonInputStyle 
 }
 
 export function linesToNode(mapDefinitionLines: string[], startIndex: number): Node {
-  const node: Node = { targetNodeKey: mapDefinitionLines?.[startIndex]?.replaceAll(':', '') };
-  // _lineToNode(mapDefinitionLines, node, -1, startIndex);
-  _lineToNode(mapDefinitionLines, node, 0, startIndex + 1);
-  return node;
+  const dummy: Node = { targetNodeKey: '' };
+  _lineToNode(mapDefinitionLines, dummy, -1, startIndex);
+  return dummy?.children?.[0] ?? dummy;
 }
 
 function _lineToNode(lines: string[], parentNode: Node, parentNodeLevel: number, index: number): number {
   let curIndex = index;
 
   while (curIndex < lines?.length) {
-    // while still in range
     const curLine = lines[curIndex];
     const curNodeLevel = getCurNodeLevel(curLine);
-    if (curNodeLevel === parentNodeLevel + 1) {
-      //TODO: check - check if the curNodeLevel is parent's direct child
+    if (isDirectChild(curNodeLevel, parentNodeLevel)) {
+      const node: Node = {
+        targetNodeKey: getTargetNodeKey(curLine),
+      };
       if (hasTargetValue(curLine)) {
-        const node: Node = {
-          targetNodeKey: getTargetNodeKey(curLine),
-          targetValue: {
-            value: getTargetNodeValue(curLine),
-          },
+        node.targetValue = {
+          value: getTargetNodeValue(curLine),
         };
+        // const node: Node = {
+        //   targetNodeKey: getTargetNodeKey(curLine),
+        //   targetValue: {
+        //     value: getTargetNodeValue(curLine),
+        //   },
+        // };
 
         if (parentNode.children) {
           parentNode.children.push(node);
         } else {
           parentNode.children = [node];
         }
-        // TODO - check if the below is correct - logic: moving to next line (in the possible same or upper level)
+
         curIndex++;
         return curIndex;
       } else {
@@ -63,30 +66,24 @@ function _lineToNode(lines: string[], parentNode: Node, parentNodeLevel: number,
           // children: []
         };
 
-        // === need to double check
         if (parentNode.children) {
           parentNode.children.push(node);
         } else {
           parentNode.children = [node];
         }
-        // ======
 
         curIndex++;
 
         let updatingNodeLevel = getCurNodeLevel(lines[curIndex]);
 
-        while (curIndex < lines?.length && updatingNodeLevel === curNodeLevel + 1) {
+        while (curIndex < lines?.length && isDirectChild(updatingNodeLevel, curNodeLevel)) {
           const nextIndex = _lineToNode(lines, node, curNodeLevel, curIndex);
           curIndex = nextIndex;
           updatingNodeLevel = getCurNodeLevel(lines[curIndex]);
         }
         return curIndex;
       }
-    } else if (curNodeLevel > parentNodeLevel + 1) {
-      // TODO: check and fix this
-      // const nextIndex = _lineToNode(lines, parentNode?.children?.[parentNode?.children?.length] ?? { targetNodeKey: "NA" }, curNodeLevel, curIndex);
-      // curIndex = nextIndex;
-      // // curIndex++;
+    } else {
       return curIndex;
     }
   }
@@ -112,6 +109,10 @@ function getTargetNodeValue(line: string): string {
 function getCurNodeLevel(line: string): number {
   //TODO: split line with "\t" and find how many there are
   return (line?.split('\t')?.length ?? 0) - 1;
+}
+
+function isDirectChild(curNodeLevel: number, parentNodeLevel: number): boolean {
+  return curNodeLevel === parentNodeLevel + 1;
 }
 
 function removeConditionLoop(line: string): string {
