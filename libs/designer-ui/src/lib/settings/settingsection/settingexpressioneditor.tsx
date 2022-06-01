@@ -12,23 +12,19 @@ export interface MultiAddExpressionEditorProps {
   visible?: boolean;
 }
 
-export const MultiAddExpressionEditor = ({ initialExpressions, readOnly, visible }: MultiAddExpressionEditorProps): JSX.Element | null => {
-  const defaultProps = {
-    initialExpressions: [],
-    readOnly: false,
-    visible: true,
-  };
-  if (!initialExpressions || readOnly === undefined || visible === undefined) {
-    initialExpressions = defaultProps.initialExpressions;
-    readOnly = defaultProps.readOnly;
-    visible = defaultProps.visible;
-  }
+export const MultiAddExpressionEditor = ({
+  initialExpressions = [],
+  readOnly = false,
+  visible = true,
+}: MultiAddExpressionEditorProps): JSX.Element | null => {
   const [, setExpressions] = useState(initialExpressions);
   const onExpressionsChange = (updatedExpressions: string[]): void => {
     setExpressions(updatedExpressions);
   };
 
-  return <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly ?? false} onChange={onExpressionsChange} />;
+  return visible ? (
+    <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />
+  ) : null;
 };
 
 const styles: Partial<ITextFieldStyles> = {
@@ -41,14 +37,19 @@ const styles: Partial<ITextFieldStyles> = {
   },
 };
 
-interface ExpressionsEditorProps {
+export interface ExpressionsEditorProps {
   initialExpressions: string[];
   maximumExpressions?: number;
-  readOnly: boolean;
+  readOnly?: boolean;
   onChange(updatedExpressions: string[]): void;
 }
 
-export const ExpressionsEditor = ({ initialExpressions, maximumExpressions, readOnly, onChange }: ExpressionsEditorProps): JSX.Element => {
+export const ExpressionsEditor = ({
+  initialExpressions,
+  maximumExpressions,
+  readOnly = false,
+  onChange,
+}: ExpressionsEditorProps): JSX.Element => {
   const intl = useIntl();
   const addCondition = intl.formatMessage({
     defaultMessage: 'Add',
@@ -57,7 +58,7 @@ export const ExpressionsEditor = ({ initialExpressions, maximumExpressions, read
 
   const defaultProps: Required<ExpressionsEditorProps> = {
     initialExpressions,
-    readOnly,
+    readOnly: false,
     onChange,
     maximumExpressions: maximumExpressions ?? 10,
   };
@@ -110,15 +111,15 @@ export const ExpressionsEditor = ({ initialExpressions, maximumExpressions, read
   );
 };
 
-interface ExpressionsProps {
+export interface ExpressionsProps {
   ref?: React.RefObject<any>;
   expressions: string[];
-  readOnly: boolean;
+  readOnly?: boolean;
   onChange(index: number, newExpression: string): void;
   onDelete(index: number): void;
 }
 
-const Expressions = ({ expressions, readOnly, onChange, onDelete }: ExpressionsProps): JSX.Element => {
+export const Expressions = ({ expressions, readOnly = false, onChange, onDelete }: ExpressionsProps): JSX.Element => {
   const expressionRef = useRef<typeof Expressions & { focus: any }>();
   return (
     <>
@@ -140,15 +141,15 @@ const Expressions = ({ expressions, readOnly, onChange, onDelete }: ExpressionsP
   );
 };
 
-interface ExpressionProps {
+export interface ExpressionProps {
   expression: string;
   index: number;
-  readOnly: boolean;
+  readOnly?: boolean;
   onChange(index: number, newExpression: string | undefined): void;
   onDelete(index: number): void;
 }
 
-const Expression = ({ expression, index, readOnly, onChange, onDelete }: ExpressionProps): JSX.Element => {
+export const Expression = ({ expression, index, readOnly = false, onChange, onDelete }: ExpressionProps): JSX.Element => {
   const intl = useIntl();
 
   const enterValueError = intl.formatMessage({
