@@ -13,7 +13,7 @@ import type { NodeProps } from 'react-flow-renderer';
 const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const node = useActionMetadata(id);
 
-  const { readOnly } = useContext(ProviderWrappedContext) ?? {};
+  const { readOnly, isMonitoringView } = useContext(ProviderWrappedContext) ?? {};
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -68,6 +68,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           dragPreview={dragPreview}
           isDragging={isDragging}
           id={id}
+          isMonitoringView={isMonitoringView}
           title={data.label}
         />
         <Handle

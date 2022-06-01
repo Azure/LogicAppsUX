@@ -1645,20 +1645,6 @@
       "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Tab with : "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " name is already registered"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
