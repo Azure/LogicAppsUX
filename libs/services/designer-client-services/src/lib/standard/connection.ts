@@ -1,3 +1,4 @@
+import type { QueryParameters } from '../httpClient';
 import { HttpClient } from '../httpClient';
 import type { ArmResources, Connection, Connector } from '@microsoft-logic-apps/utils';
 import { equals, connectionsMock } from '@microsoft-logic-apps/utils';
@@ -33,7 +34,7 @@ export class StandardConnectionService {
     const response = await HttpClient().get<Connector>({ uri, type: 'GET' });
     console.log(response);
     //return response;
-    return { properties: {} } as any;
+    return {} as any;
   }
 
   async getConnectors(): Promise<Connector[]> {
@@ -75,17 +76,14 @@ export class StandardConnectionService {
 
     const uri = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`;
 
-    // const request = {
-    //   query: {
-    //     'api-version': apiVersion,
-    //     $filter: `properties/integrationServiceEnvironmentResourceId eq null and Kind eq 'V2'`,
-    //     $top: 400,
-    //   },
-    // };
-    const response = await HttpClient().get<ArmResources<Connection>>({ uri, type: 'GET' });
+    const queryParameters: QueryParameters = {
+      'api-version': apiVersion,
+      $filter: `properties/integrationServiceEnvironmentResourceId eq null and Kind eq 'V2'`,
+      $top: 400,
+    };
+    const response = await HttpClient().get<ArmResources<Connection>>({ uri, type: 'GET', queryParameters });
 
     try {
-      // throwWhenNotOK(response);
       const allConnections = await this._followContinuationTokens<Connection>(response);
       return allConnections.filter((connection: Connection) => {
         return filterByLocation ? equals(connection.location, location) : true;
@@ -95,6 +93,7 @@ export class StandardConnectionService {
     }
   }
 
+  // this is used if there are more connections than the API can return
   private async _followContinuationTokens<T>(response: ArmResources<T>): Promise<T[]> {
     let { nextLink, value } = response;
 
