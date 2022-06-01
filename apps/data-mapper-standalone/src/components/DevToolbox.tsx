@@ -47,7 +47,7 @@ export const DevToolbox: React.FC = () => {
     },
     [dispatch]
   );
-  const fileOptionsMap = fileOptions.map((x) => ({ key: x, text: x }));
+  const dataMapDropdownOptions = fileOptions.map((x) => ({ key: x, text: x }));
 
   return (
     <div style={{ width: '400px' }}>
@@ -71,7 +71,7 @@ export const DevToolbox: React.FC = () => {
             selectedKey={resourcePath}
             onChange={changeResourcePathDropdownCB}
             placeholder="Select an option"
-            options={fileOptionsMap}
+            options={dataMapDropdownOptions}
           />
         </div>
       ) : null}
