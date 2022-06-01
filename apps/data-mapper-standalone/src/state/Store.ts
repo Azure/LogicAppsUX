@@ -1,11 +1,10 @@
-import { dataMapApi } from './DataMapApi';
+import { dataMapDataLoaderSlice } from './DataMapDataLoader';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
-    dataMapApi: dataMapApi.reducer,
+    dataMapDataLoader: dataMapDataLoaderSlice.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(dataMapApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

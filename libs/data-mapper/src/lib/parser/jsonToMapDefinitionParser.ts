@@ -1,5 +1,5 @@
+import type { JsonInputStyle, MapNode } from '../models/DataMap';
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
-import type { JsonInputStyle, Node } from './types';
 
 export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
   const codeDetails = `sourceSchema: ${inputJson?.srcSchemaName ?? ''}\ntargetSchema: ${inputJson?.dstSchemaName ?? ''}\n`;
@@ -11,7 +11,7 @@ export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
   return `${codeDetails}${nodeToMapDefinition(inputJson.mappings, '', '', '')}`;
 }
 
-function nodeToMapDefinition(node: Node, indent: string, parentNodeKey: string, parentLoopSource: string): string {
+function nodeToMapDefinition(node: MapNode, indent: string, parentNodeKey: string, parentLoopSource: string): string {
   let mapDefinition = '';
 
   if (node.loopSource) {

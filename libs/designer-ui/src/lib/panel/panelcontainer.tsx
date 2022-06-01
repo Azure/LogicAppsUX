@@ -12,6 +12,7 @@ import type { IPanelHeaderRenderer, IPanelProps } from '@fluentui/react/lib/Pane
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
+import type { ILayerProps } from '@fluentui/react';
 
 export type PanelContainerProps = {
   cardIcon?: string;
@@ -27,6 +28,7 @@ export type PanelContainerProps = {
   readOnlyMode?: boolean;
   tabs: Record<string, PanelTab>;
   title?: string;
+  layerProps?: ILayerProps;
   onDismissButtonClicked?(): void;
   trackEvent(data: PageActionTelemetryData): void;
   setSelectedTab: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -49,6 +51,7 @@ export const PanelContainer = ({
   tabs,
   title,
   width,
+  layerProps,
   onDismissButtonClicked,
   setSelectedTab,
   toggleCollapse,
@@ -119,6 +122,7 @@ export const PanelContainer = ({
       styles={{
         content: isCollapsed && { padding: 0 },
       }}
+      layerProps={layerProps}
     >
       {!isCollapsed && (
         <div className="msla-panel-content-container">
