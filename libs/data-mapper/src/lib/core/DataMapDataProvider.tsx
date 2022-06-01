@@ -1,13 +1,17 @@
+import type { JsonInputStyle } from '../models';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import React, { useContext } from 'react';
 
 export interface DataMapDataProviderProps {
-  dataMap: string; // TODO Strongly type dataMap
+  dataMap?: JsonInputStyle;
   children?: React.ReactNode;
 }
 
 const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ dataMap, children }) => {
-  // TODO Deserialize designer graph
+  if (dataMap) {
+    // TODO Deserialize designer graph
+  }
+
   return <>{children}</>;
 };
 
