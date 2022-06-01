@@ -829,7 +829,9 @@ body.dark {
 
     .panel-card-content-gripper-section {
       visibility: visible;
-      cursor: grab;
+      &.draggable {
+        cursor: grab;
+      }
     }
   }
 

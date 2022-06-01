@@ -1,5 +1,4 @@
-import { getIntl } from '@microsoft-logic-apps/intl';
-import { format, getPropertyValue, ValidationErrorCode, ValidationException } from '@microsoft-logic-apps/utils';
+import { getPropertyValue } from '@microsoft-logic-apps/utils';
 
 export enum PanelLocation {
   Left = 'LEFT',
@@ -43,17 +42,21 @@ export function registerTabs(tabsInfo: PanelTab[], registeredTabs: Record<string
 }
 
 export function registerTab(tabInfo: PanelTab, registeredTabs: Record<string, PanelTab>): Record<string, PanelTab> {
-  const intl = getIntl();
-  const tabAlreadyRegistered = intl.formatMessage(
-    {
-      defaultMessage: 'Tab with : {tabname} name is already registered',
-      description: 'This is the  message shown in case of an error of a tab already existing with the name.',
-    },
-    { tabname: tabInfo.name }
-  );
-  if (getTab(tabInfo.name, registeredTabs)) {
-    // throw new ValidationException(ValidationErrorCode.UNSPECIFIED, format(tabAlreadyRegistered, tabInfo.name));
-  }
+  // Commenting this out, if the tab is already registered, we might want to update it instead of error out
+  // We could possibly have a separate update method, but I think this is the simplest way to do it - Riley
+  /*
+    const intl = getIntl();
+    const tabAlreadyRegistered = intl.formatMessage(
+      {
+        defaultMessage: 'Tab with : {tabname} name is already registered',
+        description: 'This is the  message shown in case of an error of a tab already existing with the name.',
+      },
+      { tabname: tabInfo.name }
+    );
+    if (getTab(tabInfo.name, registeredTabs)) {
+      throw new ValidationException(ValidationErrorCode.UNSPECIFIED, format(tabAlreadyRegistered, tabInfo.name));
+    }
+  */
   registeredTabs[tabInfo.name.toLowerCase()] = tabInfo;
   return registeredTabs;
 }

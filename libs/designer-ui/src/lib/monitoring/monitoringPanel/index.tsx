@@ -1,12 +1,18 @@
 import { ValuesPanel } from '../valuespanel';
-import { useIntl } from 'react-intl';
 
+// import { useIntl } from 'react-intl';
+
+// Dummy props for now, unsure of the data structure at the moment
 export interface MonitoringPanelProps {
-  test?: boolean;
+  inputData?: any;
+  outputData?: any;
+  propertiesData?: any;
 }
 
 export const MonitoringPanel: React.FC<MonitoringPanelProps> = () => {
   // const intl = useIntl();
+
+  // This is all dummy data, but these are the components that will be conditionally rendered
 
   return (
     <div>

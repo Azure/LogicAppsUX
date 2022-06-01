@@ -143,7 +143,7 @@ export const Card: React.FC<CardProps> = ({
             onKeyUp={handleKeyUp}
           >
             <div className="panel-card-content-container">
-              <div className="panel-card-content-gripper-section">{draggable ? <Gripper /> : null}</div>
+              <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
               {icon ? (
                 <div className="panel-card-content-icon-section">
                   <img className="panel-card-icon" src={icon} alt="" />
