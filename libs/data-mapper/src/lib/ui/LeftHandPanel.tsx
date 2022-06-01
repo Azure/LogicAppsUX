@@ -1,6 +1,6 @@
 import { collapsePanel, expandPanel } from '../core/state/PanelSlice';
 import type { RootState } from '../core/state/Store';
-import { toolboxTab } from './tabs/ToolboxTabTemp';
+import { toolboxTab } from './tabs/ToolboxTab';
 import type { ILayerProps } from '@fluentui/react';
 import type { PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
 import { getTabs, PanelContainer, PanelHeader, PanelLocation, PanelScope, PanelSize, registerTabs } from '@microsoft/designer-ui';
