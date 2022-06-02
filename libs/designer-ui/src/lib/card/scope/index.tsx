@@ -50,28 +50,32 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div
-        ref={drag}
         aria-describedby={describedBy}
-        className={css('msla-content-fit', isDragging && 'dragging')}
+        className={'msla-content-fit'}
         aria-label={title}
         role="button"
         onClick={handleClick}
         tabIndex={0}
       >
-        <div className="msla-scope-v2--header msla-scope-header-style" style={{ borderColor: brandColor }}>
+        <div
+          ref={drag}
+          className="msla-scope-v2--header msla-scope-header-wrapper"
+          style={{ borderColor: brandColor }}
+          draggable={draggable}
+        >
           {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
-          <button className="msla-inner msla-scope-header-inner" style={bgStyle}>
-            <button className="msla-selector" draggable={true} tabIndex={-1}>
-              <div className="panel-card-content-gripper-section">{draggable ? <Gripper fill={'#FFFFF'} /> : null}</div>
-              {icon ? <img alt="" role="presentation" src={icon} width="24" height="24" /> : null}
-              <span>{title}</span>
-            </button>
+          <div className="msla-scope-header-content" style={bgStyle}>
+            <div className="msla-scope-header-title-box">
+              <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
+              {icon ? <img className="scope-icon" alt="" role="presentation" src={icon} /> : null}
+              <div className="msla-scope-title">{title}</div>
+            </div>
             <TooltipHost content={toggleText} directionalHint={DirectionalHint.rightCenter}>
-              <button aria-label={toggleText} className="msla-toggle" onClick={handleCollapse}>
+              <button aria-label={toggleText} className="collapse-toggle" onClick={handleCollapse}>
                 <Icon iconName={iconName} />
               </button>
             </TooltipHost>
-          </button>
+          </div>
           <div>
             <div className="msla-badges" style={bgStyle}>
               {badges.map(({ title, content, darkBackground, iconProps }) => (
