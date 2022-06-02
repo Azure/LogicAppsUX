@@ -4,7 +4,8 @@ import yaml from 'js-yaml';
 
 export async function mapDefinitionToJson(inputMapDefinition: string): Promise<JsonInputStyle> {
   try {
-    const parsedYaml: any = yaml.load(inputMapDefinition);
+    const formattedInputMapDefinition = inputMapDefinition.replace('\t', '  ');
+    const parsedYaml: any = yaml.load(formattedInputMapDefinition);
     const parsedYamlKeys: string[] = Object.keys(parsedYaml);
 
     if (parsedYamlKeys[0] !== 'sourceSchema' || parsedYamlKeys[1] !== 'targetSchema') {
@@ -27,6 +28,7 @@ export async function mapDefinitionToJson(inputMapDefinition: string): Promise<J
       mappings: mappings,
     };
   } catch (e) {
+    console.log(e);
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
   }
 }
@@ -40,7 +42,7 @@ function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string
       },
     };
   } else {
-    let curTargetNodeKey = targetNodeKey,
+    const curTargetNodeKey = targetNodeKey,
       curTargetNodeObject = targetNodeObject;
     const startsWithFor = targetNodeKey.startsWith('$for'),
       startsWithIf = targetNodeKey.startsWith('$if');
@@ -53,13 +55,19 @@ function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string
           InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM
         );
       }
-      curTargetNodeKey = childrenKeys[0];
-      curTargetNodeObject = targetNodeObject[childrenKeys[0]];
+
+      if (startsWithFor) {
+        const parsedNode = parseMappingsJsonToNode(`${childrenKeys[0]}`, curTargetNodeObject[childrenKeys[0]]);
+        parsedNode.loopSource = parseLoopMapping(targetNodeKey);
+        return parsedNode;
+      } else {
+        const parsedNode = parseMappingsJsonToNode(`${childrenKeys[0]}`, curTargetNodeObject[childrenKeys[0]]);
+        parsedNode.condition = parseConditionalMapping(targetNodeKey);
+        return parsedNode;
+      }
     }
 
-    const curTargetValue = curTargetNodeObject.$value ? { value: curTargetNodeObject.$value } : undefined;
-    const loopSource = startsWithFor ? parseLoopMapping(targetNodeKey) : undefined;
-    const condition = startsWithIf ? parseConditionalMapping(targetNodeKey) : undefined;
+    const curTargetValue = curTargetNodeObject?.$value ? { value: curTargetNodeObject.$value } : undefined;
 
     const childrenNode: Node[] = [];
     for (const childKey in curTargetNodeObject) {
@@ -72,8 +80,6 @@ function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string
       targetNodeKey: curTargetNodeKey,
       children: childrenNode,
       targetValue: curTargetValue,
-      loopSource: loopSource,
-      condition: condition,
     };
   }
 }

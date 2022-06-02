@@ -50,7 +50,7 @@ export interface ParserViewProps {
 // };
 
 export const ParserView = ({ input }: ParserViewProps) => {
-  const theInput = IfWithChildrenAndValueMapDefinitionMock;
+  const theInput = customerOrdersMapDefinitionMock;
   // const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(mapDefinitionToJson(theInput), null, '\t'));
   const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(mapDefinitionToJson(theInput), null, '\t'));
 
