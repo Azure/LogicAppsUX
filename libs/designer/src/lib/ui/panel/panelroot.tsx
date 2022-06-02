@@ -1,4 +1,4 @@
-import { ProviderWrappedContext } from '../../core';
+import { ProviderWrappedContext } from '../../core/ProviderWrappedContext';
 import { collapsePanel, expandPanel } from '../../core/state/panelSlice';
 import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
