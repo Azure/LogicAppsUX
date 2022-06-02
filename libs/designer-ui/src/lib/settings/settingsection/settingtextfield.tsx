@@ -1,11 +1,20 @@
-import type { SettingTextFieldProps } from '..';
 import type { ITextFieldStyles } from '@fluentui/react';
 import { TextField } from '@fluentui/react';
 import React, { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
 
-export const SettingTextField: React.FC<SettingTextFieldProps> = ({ value, id, isReadOnly }): JSX.Element => {
+export type TextInputChangeHandler = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => void;
+
+export interface SettingTextFieldProps {
+  id?: string;
+  value?: string;
+  label?: string;
+  readOnly?: boolean;
+  onValueChange?: TextInputChangeHandler;
+}
+
+export const SettingTextField: React.FC<SettingTextFieldProps> = ({ value, id, readOnly, label }): JSX.Element => {
   const [textVal, setVal] = useState(value ?? '');
   const handleTextInputChange = (e: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined): void => {
     e.stopPropagation();
@@ -35,13 +44,13 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({ value, id, i
     <TextField
       className="msla-setting-section-textField"
       id={id}
-      label={textFieldLabel}
+      label={label ?? textFieldLabel}
       // onRenderLabel={} //custom render fn
-      ariaLabel={textFieldAriaLabel}
+      ariaLabel={label ?? textFieldAriaLabel}
       value={textVal}
       placeholder={settingPlaceholder}
       styles={textFieldStyles}
-      disabled={isReadOnly}
+      disabled={readOnly}
       onChange={handleTextInputChange}
     />
   );
