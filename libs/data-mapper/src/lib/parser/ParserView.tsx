@@ -9,7 +9,7 @@ import {
 } from './__mocks__';
 import { SampleDataDisplayer } from './components/SampleDataDisplayer';
 import { jsonToMapDefinition } from './jsonToMapDefinitionParser';
-import { mapDefinitionToJson, parseYamlToJson } from './mapDefinitionToJsonParser';
+import { parseYamlToJson } from './mapDefinitionToJsonParser';
 import { useEffect, useState } from 'react';
 
 export interface ParserViewProps {
