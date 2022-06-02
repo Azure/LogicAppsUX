@@ -163,22 +163,6 @@
     opacity: 100%;
     z-index: 12;
     box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0px 12px 40px rgba(0, 0, 0, 0.24);
-
-    .panel-card-content-gripper-section {
-      visibility: visible;
-    }
-  }
-
-  &:hover {
-    .panel-card-content-gripper-section {
-      visibility: visible;
-    }
-
-    &.dragging {
-      .panel-card-content-gripper-section {
-        visibility: hidden;
-      }
-    }
   }
 
   &:not(.msla-small).msla-selected {
@@ -186,20 +170,12 @@
     box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
 
     &.dragging {
-      .panel-card-content-gripper-section {
-        visibility: hidden;
-      }
-
       &.msla-card-ghost-image {
         position: fixed;
         pointer-events: none;
         opacity: 100%;
         z-index: 12;
         box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0px 12px 40px rgba(0, 0, 0, 0.24);
-
-        .panel-card-content-gripper-section {
-          visibility: visible;
-        }
       }
     }
   }
@@ -310,10 +286,6 @@
   }
 }
 
-.panel-card-content-gripper-section {
-  visibility: hidden;
-}
-
 .msla-scope-v2--footer {
   cursor: pointer;
   top: -40px;
@@ -419,13 +391,65 @@ body.dark {
 .msla-scope-card {
   width: 100%;
   height: calc(100% + 8px);
+  cursor: pointer;
 
-  .msla-scope-header-style {
+  .msla-scope-header-wrapper {
     border: 2px solid;
+    border-radius: 2px;
+
+    &:hover {
+      .gripper-section {
+        visibility: visible;
+        &.draggable {
+          cursor: grab;
+        }
+      }
+    }
   }
 
-  .msla-scope-header-inner {
-    width: 100%;
-    height: 50px;
+  .msla-scope-header-content {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+    border: 1px solid white;
+  }
+
+  .msla-scope-header-title-box {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .gripper-section {
+    padding: 13px 4px 11px; // This should be '12px 4px' but our svg is rendering too high
+    text-align: center;
+    visibility: hidden;
+    filter: brightness(0) invert(1); // This sets it to white
+  }
+
+  .scope-icon {
+    height: 24px;
+    width: 24px;
+    margin-left: -6px;
+    z-index: 0;
+  }
+
+  .msla-scope-title {
+    flex-grow: 1;
+    align-self: center;
+    display: inline-block;
+    font: 14px/20px normal @semibold-font-family;
+    margin: 10px 8px 10px 0;
+    text-align: left;
+    word-break: break-word;
+  }
+
+  .collapse-toggle {
+    background: none;
+    height: 100%;
+    border: none;
+    color: white;
+    cursor: pointer;
   }
 }
