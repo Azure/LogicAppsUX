@@ -5,11 +5,11 @@ import { useIntl } from 'react-intl';
 type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
 
 export interface SettingToggleProps extends IToggleProps {
-  isReadOnly: boolean;
+  readOnly?: boolean;
   onToggleInputChange?: ToggleChangeHandler;
 }
 
-export const RenderToggleSetting: React.FC<SettingToggleProps> = ({ isReadOnly, onToggleInputChange, checked }): JSX.Element => {
+export const SettingToggle = ({ readOnly, onToggleInputChange, checked }: SettingToggleProps): JSX.Element => {
   const intl = useIntl();
 
   const formattedOnText = intl.formatMessage({
@@ -25,7 +25,7 @@ export const RenderToggleSetting: React.FC<SettingToggleProps> = ({ isReadOnly, 
     <Toggle
       className="msla-setting-section-toggle"
       checked={checked}
-      disabled={isReadOnly}
+      disabled={readOnly}
       onText={formattedOnText}
       offText={formattedOffText}
       onChange={onToggleInputChange}

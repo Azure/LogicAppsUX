@@ -1,6 +1,7 @@
 import { About } from '../about';
 import { MenuItemType } from '../card/types';
 import { Peek } from '../peek';
+import { PanelLocation } from './panelUtil';
 import type { PanelContainerProps } from './panelcontainer';
 import { PanelContainer } from './panelcontainer';
 import { PanelHeaderControlType } from './panelheader/panelheader';
@@ -48,7 +49,7 @@ const panelHeaderMenu = [
 Container.args = {
   cardIcon: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1550/1.0.1550.2686/azureblob/icon.png',
   comment: 'This is a test commment',
-  isRight: true,
+  panelLocation: PanelLocation.Right,
   isCollapsed: false,
   noNodeSelected: false,
   panelHeaderControlType: PanelHeaderControlType.MENU,

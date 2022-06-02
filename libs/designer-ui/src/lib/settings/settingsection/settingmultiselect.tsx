@@ -11,12 +11,18 @@ export interface MultiSelectOption {
 export interface MultiSelectSettingProps {
   options: MultiSelectOption[];
   selections: MultiSelectOption[];
+  readOnly?: boolean;
   onSelectionChange?: StatusChangeHandler;
-  onRenderLabel?(props?: MultiSelectSettingProps): JSX.Element | null;
+  onRenderLabel?: JSX.Element | null;
 }
 
-export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = (props): JSX.Element => {
-  const { options, selections, onSelectionChange, onRenderLabel } = props;
+export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
+  readOnly,
+  options,
+  selections,
+  onSelectionChange,
+  onRenderLabel,
+}: MultiSelectSettingProps): JSX.Element => {
   const [userSelections, setUserSelections] = useState(selections);
   const handleSelectionChange = (selection: MultiSelectOption, checked: boolean): void => {
     setUserSelections(checked ? [...userSelections, selection] : userSelections.filter((item) => item !== selection));
@@ -28,9 +34,10 @@ export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = (props): JS
         return (
           <div className="msla-run-after-status-checkbox" key={index}>
             <Checkbox
+              disabled={readOnly}
               checked={userSelections.includes(option)}
               label={option.label}
-              onRenderLabel={onRenderLabel ? () => onRenderLabel?.(props) : undefined}
+              onRenderLabel={onRenderLabel ? () => onRenderLabel : undefined}
               onChange={(_, checked) => handleSelectionChange(option, !!checked)}
             />
           </div>

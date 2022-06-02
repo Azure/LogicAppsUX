@@ -1,33 +1,81 @@
 import constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
-import { Separator, useTheme, IconButton } from '@fluentui/react';
-import type { IIconProps } from '@fluentui/react';
-import type { FormEvent } from 'react';
+import {
+  MultiSelectSetting,
+  MultiAddExpressionEditor,
+  ExpressionsEditor,
+  Expressions,
+  Expression,
+  ReactiveToggle,
+  CustomValueSlider,
+  SettingTextField,
+  SettingToggle,
+} from './settingsection';
+import type {
+  MultiSelectSettingProps,
+  MultiAddExpressionEditorProps,
+  ExpressionsEditorProps,
+  ExpressionsProps,
+  ExpressionProps,
+  ReactiveToggleProps,
+  CustomValueSliderProps,
+  SettingTextFieldProps,
+  SettingToggleProps,
+} from './settingsection';
+import { Separator, useTheme, Icon } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export type TextInputChangeHandler = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => void;
+// Using discriminated union to create a dependency of SettingType and SettingProp
+export type Settings =
+  | {
+      settingType: 'MultiSelectSetting';
+      settingProp: MultiSelectSettingProps;
+    }
+  | {
+      settingType: 'MultiAddExpressionEditor';
+      settingProp: MultiAddExpressionEditorProps;
+    }
+  | {
+      settingType: 'ExpressionsEditor';
+      settingProp: ExpressionsEditorProps;
+    }
+  | {
+      settingType: 'Expressions';
+      settingProp: ExpressionsProps;
+    }
+  | {
+      settingType: 'Expression';
+      settingProp: ExpressionProps;
+    }
+  | {
+      settingType: 'ReactiveToggle';
+      settingProp: ReactiveToggleProps;
+    }
+  | {
+      settingType: 'CustomValueSlider';
+      settingProp: CustomValueSliderProps;
+    }
+  | {
+      settingType: 'SettingTextField';
+      settingProp: SettingTextFieldProps;
+    }
+  | {
+      settingType: 'SettingToggle';
+      settingProp: SettingToggleProps;
+    };
 
-export interface SettingTextFieldProps {
-  id: string;
-  value: string;
-  label: string;
-  isReadOnly: boolean;
-  onValueChange?: TextInputChangeHandler;
-}
-
-export interface SettingSectionComponentProps extends Record<string, any> {
-  id: string;
-  title: string;
-  expanded: boolean;
-  renderContent: React.FC<any>;
-  isInverted: boolean;
-  isReadOnly: boolean;
+export interface SettingSectionProps {
+  id?: string;
+  title?: string;
+  expanded?: boolean;
+  settings: Settings[];
+  isReadOnly?: boolean;
 }
 
 // TODO (andrewfowose #13363298): create component with dynamic addition of setting keys and values, (dictionary)
 
-export function SettingsSection({ title, expanded, renderContent, textFieldValue }: SettingSectionComponentProps): JSX.Element {
+export function SettingsSection({ title = 'Settings', expanded, isReadOnly, settings }: SettingSectionProps): JSX.Element {
   const [expandedState, setExpanded] = useState(!!expanded);
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
@@ -36,24 +84,9 @@ export function SettingsSection({ title, expanded, renderContent, textFieldValue
     setExpanded(!expandedState);
   }, [expandedState]);
 
-  const iconProps: IIconProps = {
-    iconName: expandedState ? 'ChevronDownMed' : 'ChevronRightMed',
-    styles: {
-      root: {
-        fontSize: 14,
-        color: isInverted ? 'white' : constants.CHEVRON_ROOT_COLOR_LIGHT,
-      },
-    },
-  };
-  const chevronStyles = { icon: { color: constants.CHEVRON_COLOR, fontSize: 12 } };
   const separatorStyles = {
     root: { color: isInverted ? constants.SETTING_SEPARATOR_COLOR_DARK : constants.SETTING_SEPARATOR_COLOR_LIGHT },
   };
-  const RenderContent = ({ value }: Partial<SettingTextFieldProps>): JSX.Element => {
-    return <>{renderContent(value)}</>;
-  };
-  const children = expandedState && <RenderContent value={textFieldValue ?? ''} />;
-
   const intl = useIntl();
   const expandAriaLabel = intl.formatMessage({
     defaultMessage: 'Expand',
@@ -68,18 +101,60 @@ export function SettingsSection({ title, expanded, renderContent, textFieldValue
   return (
     <div className="msla-setting-section">
       <div className="msla-setting-section-content">
-        <div className="msla-setting-section-header" onClick={handleClick}>
-          <IconButton
+        <button className="msla-setting-section-header" onClick={handleClick}>
+          <Icon
             className="msla-setting-section-header-icon"
             ariaLabel={expandedState ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
-            iconProps={iconProps}
-            styles={chevronStyles}
+            iconName={expandedState ? 'ChevronDownMed' : 'ChevronRightMed'}
+            styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
           />
-          <button className={headerTextClassName}>{title}</button>
-        </div>
-        {children}
+          <div className={headerTextClassName}>{title}</div>
+        </button>
+        {expandedState ? renderSettings(settings, isReadOnly) : null}
         <Separator className="msla-setting-section-separator" styles={separatorStyles} />
       </div>
     </div>
   );
 }
+
+const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element => {
+  return (
+    <div className="msla-settings-container">
+      {settings?.map((setting, i) => {
+        const { settingType, settingProp } = setting;
+        if (!settingProp.readOnly) {
+          settingProp.readOnly = isReadOnly;
+        }
+        const renderSetting = (): JSX.Element | null => {
+          switch (settingType) {
+            case 'MultiSelectSetting':
+              return <MultiSelectSetting {...settingProp} />;
+            case 'MultiAddExpressionEditor':
+              return <MultiAddExpressionEditor {...settingProp} />;
+            case 'ExpressionsEditor':
+              return <ExpressionsEditor {...settingProp} />;
+            case 'Expressions':
+              return <Expressions {...settingProp} />;
+            case 'Expression':
+              return <Expression {...settingProp} />;
+            case 'ReactiveToggle':
+              return <ReactiveToggle {...settingProp} />;
+            case 'CustomValueSlider':
+              return <CustomValueSlider {...settingProp} />;
+            case 'SettingTextField':
+              return <SettingTextField {...settingProp} />;
+            case 'SettingToggle':
+              return <SettingToggle {...settingProp} />;
+            default:
+              return null;
+          }
+        };
+        return (
+          <div key={i} className="msla-setting-content">
+            {renderSetting()}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
