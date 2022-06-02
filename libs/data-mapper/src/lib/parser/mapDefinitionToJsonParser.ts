@@ -1,5 +1,5 @@
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
-import type { JsonInputStyle, Node } from './types';
+import type { ConditionalMapping, JsonInputStyle, LoopMapping, Node } from './types';
 import yaml from 'js-yaml';
 
 export async function parseYamlToJson(inputMapDefinition: string): Promise<JsonInputStyle> {
@@ -21,17 +21,14 @@ export async function parseYamlToJson(inputMapDefinition: string): Promise<JsonI
 
     const mappings: Node = parsedMappingsToNodeFormat(targetNodeKey, parsedYaml[targetNodeKey]);
 
-    const inputJsonInputStyle: JsonInputStyle = {
+    return {
       srcSchemaName: sourceSchema,
       dstSchemaName: targetSchema,
       mappings: mappings,
     };
-
-    return inputJsonInputStyle;
   } catch (e) {
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
   }
-  // return '';
 }
 
 export function parsedMappingsToNodeFormat(targetNodeKey: string, targetNodeObject: string | object | any): Node {
@@ -47,6 +44,7 @@ export function parsedMappingsToNodeFormat(targetNodeKey: string, targetNodeObje
       curTargetNodeObject = targetNodeObject;
     const startsWithFor = targetNodeKey.startsWith('$for'),
       startsWithIf = targetNodeKey.startsWith('$if');
+
     if (startsWithFor || startsWithIf) {
       const childrenKeys = Object.keys(targetNodeObject);
       if (childrenKeys.length !== 1) {
@@ -60,8 +58,8 @@ export function parsedMappingsToNodeFormat(targetNodeKey: string, targetNodeObje
     }
 
     const curTargetValue = curTargetNodeObject.$value ? { value: curTargetNodeObject.$value } : undefined;
-    const loopSource = startsWithFor ? { loopSource: targetNodeKey } : undefined;
-    const condition = startsWithIf ? { condition: targetNodeKey } : undefined;
+    const loopSource = startsWithFor ? parseLoopMapping(targetNodeKey) : undefined;
+    const condition = startsWithIf ? parseConditionalMapping(targetNodeKey) : undefined;
 
     const childrenNode: Node[] = [];
     for (const childKey in curTargetNodeObject) {
@@ -80,32 +78,16 @@ export function parsedMappingsToNodeFormat(targetNodeKey: string, targetNodeObje
   }
 }
 
-function hasTargetValue(line: string): boolean {
-  return line?.split(': ')?.length === 2;
+function parseLoopMapping(line: string): LoopMapping {
+  const formttedLine = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
+  return {
+    loopSource: formttedLine.split(',')?.[0]?.trim(),
+    loopIndex: formttedLine.split(',')?.[1]?.trim(),
+  };
 }
 
-function getTargetNodeKey(line: string): string {
-  //TODO: split line with ":" (be careful) and get the first - fix the way of filtering out \t
-  return line?.split(':')?.[0]?.trim();
-}
-
-function getTargetNodeValue(line: string): string {
-  return line.substring(line.indexOf(':') + 1).trim();
-}
-
-function getCurNodeLevel(line: string): number {
-  return (line?.split('\t')?.length ?? 0) - 1;
-}
-
-function isDirectChild(curNodeLevel: number, parentNodeLevel: number): boolean {
-  return curNodeLevel === parentNodeLevel + 1;
-}
-
-function removeConditionLoop(line: string): string {
-  //TODO: get rid of "for()" for "if()"
-  return line.trim();
-}
-
-function isCurrentIndexInRange(curIndex: number, linesLength: number): boolean {
-  return curIndex < linesLength;
+function parseConditionalMapping(line: string): ConditionalMapping {
+  return {
+    condition: line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim(),
+  };
 }
