@@ -72,7 +72,8 @@ export function deleteAllTabs(registeredTabs: Record<string, PanelTab>): void {
 }
 
 export function getTabs(sort: boolean, registeredTabs: Record<string, PanelTab>): PanelTab[] {
-  const enabledTabs = Object.values(registeredTabs).filter((tab) => tab.enabled);
+  // Get all tabs not specifically defined as not enabled
+  const enabledTabs = Object.values(registeredTabs).filter((tab) => tab.enabled !== false);
   return sort ? enabledTabs.sort((a, b) => a.order - b.order) : enabledTabs;
 }
 
