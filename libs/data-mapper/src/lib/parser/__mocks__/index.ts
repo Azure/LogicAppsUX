@@ -9,3 +9,4 @@ export * from './mapDefinition/missingSrcSchemaName';
 export * from './mapDefinition/missingDstSchemaName';
 export * from './mapDefinition/cbrInputRecord';
 export * from './mapDefinition/simpleMapDefExample';
+export * from './mapDefinition/ifWithChildrenAndValue';

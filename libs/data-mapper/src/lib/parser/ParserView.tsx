@@ -1,7 +1,15 @@
-import { customerOrdersMapDefinitionMock, simpleJsonExample, simpleMapDefExample } from './__mocks__';
+import {
+  cbrInputRecordMapDefinitionMock,
+  customerOrdersMapDefinitionMock,
+  IfWithChildrenAndValueMapDefinitionMock,
+  missingDstSchemaNameMapDefinitionMock,
+  missingSrcSchemaNameMapDefinitionMock,
+  simpleJsonExample,
+  simpleMapDefExample,
+} from './__mocks__';
 import { SampleDataDisplayer } from './components/SampleDataDisplayer';
 import { jsonToMapDefinition } from './jsonToMapDefinitionParser';
-import { linesToNode, mapDefinitionToJson } from './mapDefinitionToJsonParser';
+import { mapDefinitionToJson, parseYamlToJson } from './mapDefinitionToJsonParser';
 import { useEffect, useState } from 'react';
 
 export interface ParserViewProps {
@@ -42,17 +50,27 @@ export interface ParserViewProps {
 // };
 
 export const ParserView = ({ input }: ParserViewProps) => {
-  const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(mapDefinitionToJson(customerOrdersMapDefinitionMock), null, '\t'));
+  const theInput = IfWithChildrenAndValueMapDefinitionMock;
+  // const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(mapDefinitionToJson(theInput), null, '\t'));
+  const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(parseYamlToJson(theInput), null, '\t'));
 
   useEffect(() => {
-    setConvertedOutput(JSON.stringify(mapDefinitionToJson(customerOrdersMapDefinitionMock), null, '\t'));
+    async function fetchData() {
+      // You can await here
+      const parsedYaml = await parseYamlToJson(theInput);
+      setConvertedOutput(JSON.stringify(parsedYaml, null, '\t'));
+      // ...
+    }
+    fetchData();
+    // setConvertedOutput(JSON.stringify(mapDefinitionToJson(theInput), null, '\t'));
 
     // linesToNode(convertedOutput?.split('\n'), 0);
-  }, [input]);
+    parseYamlToJson(theInput);
+  }, []);
 
   return (
     <div>
-      <SampleDataDisplayer data={customerOrdersMapDefinitionMock} />
+      <SampleDataDisplayer data={theInput} />
       <SampleDataDisplayer data={convertedOutput} />
     </div>
   );

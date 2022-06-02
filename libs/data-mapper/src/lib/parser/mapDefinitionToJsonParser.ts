@@ -1,4 +1,77 @@
+import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
 import type { JsonInputStyle, Node } from './types';
+import yaml from 'js-yaml';
+
+export async function parseYamlToJson(inputMapDefinition: string): Promise<JsonInputStyle> {
+  try {
+    const parsedYaml: any = yaml.load(inputMapDefinition);
+    const parsedYamlKeys: string[] = Object.keys(parsedYaml);
+
+    if (parsedYamlKeys[0] !== 'sourceSchema' || parsedYamlKeys[1] !== 'targetSchema') {
+      throw new InvalidFormatException(
+        InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM,
+        InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM
+      );
+    }
+
+    const targetNodeKey: string = parsedYamlKeys[2];
+
+    const sourceSchema: string = parsedYaml.sourceSchema;
+    const targetSchema: string = parsedYaml.targetSchema;
+
+    const mappings: Node = parsedMappingsToNodeFormat(targetNodeKey, parsedYaml[targetNodeKey]);
+
+    console.log(parsedYaml[targetNodeKey]);
+
+    const inputJsonInputStyle: JsonInputStyle = {
+      srcSchemaName: sourceSchema,
+      dstSchemaName: targetSchema,
+      mappings: mappings,
+    };
+
+    return inputJsonInputStyle;
+  } catch (e) {
+    throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
+  }
+  // return '';
+}
+
+export function parsedMappingsToNodeFormat(targetNodeKey: string, targetNodeObject: string | object): Node {
+  // console.log(targetNodeKey, " : ", inputMappingsObject);
+
+  if (typeof targetNodeObject === 'string') {
+    return {
+      targetNodeKey: targetNodeKey,
+      targetValue: {
+        value: targetNodeObject,
+      },
+    };
+  } else {
+    //TODO
+    if (targetNodeKey.startsWith('$for')) {
+      const childrenKeys = Object.keys(targetNodeObject);
+      if (childrenKeys.length !== 1) {
+        throw new InvalidFormatException(
+          InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM,
+          InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM
+        );
+      } else {
+        // const targetNodeKeyN: string = inputMappingsObject[childrenKeys[0]];
+        // TODO
+      }
+    } else if (targetNodeKey.startsWith('$if')) {
+      // TODO similar to for
+    } else {
+      for (const childObject in targetNodeObject) {
+        console.log(childObject);
+      }
+    }
+  }
+
+  return {
+    targetNodeKey: '',
+  };
+}
 
 export function mapDefinitionToJson(inputMapDefinition: string): JsonInputStyle {
   const mapDefinitionLines = inputMapDefinition?.split('\n');
@@ -42,64 +115,65 @@ function _lineToNode(parentNode: Node, parentNodeLevel: number, startingIndex: n
       return curIndex;
     }
 
-    if (hasTargetValue(curLine)) {
-      const node: Node = {
-        targetNodeKey: getTargetNodeKey(curLine),
-        targetValue: {
-          value: getTargetNodeValue(curLine),
-        },
-      };
+    // if (hasTargetValue(curLine)) {
+    //   const node: Node = {
+    //     targetNodeKey: getTargetNodeKey(curLine),
+    //     targetValue: {
+    //       value: getTargetNodeValue(curLine),
+    //     },
+    //   };
 
-      if (parentNode.children) {
-        parentNode.children.push(node);
-      } else {
-        parentNode.children = [node];
-      }
+    //   if (parentNode.children) {
+    //     parentNode.children.push(node);
+    //   } else {
+    //     parentNode.children = [node];
+    //   }
 
-      curIndex++;
-    } else {
-      const startsWithFor = getTargetNodeKey(curLine).startsWith('for');
-      const startsWithIf = getTargetNodeKey(curLine).startsWith('if');
+    //   curIndex++;
+    // } else {
+    const startsWithFor = getTargetNodeKey(curLine).startsWith('for');
+    const startsWithIf = getTargetNodeKey(curLine).startsWith('if');
 
-      let loopSource = undefined;
-      let condition = undefined;
+    let loopSource = undefined;
+    let condition = undefined;
 
-      if (startsWithFor || startsWithIf) {
-        if (startsWithFor) {
-          loopSource = { loopSource: removeConditionLoop(curLine) };
-        } else {
-          condition = { condition: removeConditionLoop(curLine) };
-        }
+    if (startsWithFor || startsWithIf) {
+      if (startsWithFor) {
+        loopSource = { loopSource: removeConditionLoop(curLine) };
+
         curIndex++;
         curLine = _lines[curIndex];
         curNodeLevel = getCurNodeLevel(curLine);
-      }
-
-      const targetValue = getTargetNodeValue(curLine) === '' ? undefined : { value: getTargetNodeValue(curLine) };
-
-      const node: Node = {
-        targetNodeKey: getTargetNodeKey(curLine),
-        loopSource: loopSource,
-        condition: condition,
-        targetValue: targetValue,
-      };
-
-      if (parentNode.children) {
-        parentNode.children.push(node);
       } else {
-        parentNode.children = [node];
-      }
-
-      curIndex++;
-
-      let nextNodeLevel = getCurNodeLevel(_lines[curIndex]);
-
-      while (isCurrentIndexInRange(curIndex, _linesLength) && isDirectChild(nextNodeLevel, curNodeLevel)) {
-        const nextIndex = _lineToNode(node, curNodeLevel, curIndex);
-        curIndex = nextIndex;
-        nextNodeLevel = getCurNodeLevel(_lines[curIndex]);
+        condition = { condition: removeConditionLoop(curLine) };
       }
     }
+
+    const targetValue = getTargetNodeValue(curLine) === '' ? undefined : { value: getTargetNodeValue(curLine) };
+
+    const node: Node = {
+      targetNodeKey: getTargetNodeKey(curLine),
+      loopSource: loopSource,
+      condition: condition,
+      targetValue: targetValue,
+    };
+
+    if (parentNode.children) {
+      parentNode.children.push(node);
+    } else {
+      parentNode.children = [node];
+    }
+
+    curIndex++;
+
+    let nextNodeLevel = getCurNodeLevel(_lines[curIndex]);
+
+    while (isCurrentIndexInRange(curIndex, _linesLength) && isDirectChild(nextNodeLevel, curNodeLevel)) {
+      const nextIndex = _lineToNode(node, curNodeLevel, curIndex);
+      curIndex = nextIndex;
+      nextNodeLevel = getCurNodeLevel(_lines[curIndex]);
+    }
+    // }
     return curIndex;
   }
 
