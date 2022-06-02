@@ -1,5 +1,5 @@
-import type { SettingSectionProps } from '..';
-import { SettingsSection } from '..';
+import type { SettingSectionProps } from '../';
+import { SettingsSection } from '../';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
@@ -76,7 +76,6 @@ settingSection.args = {
           },
         ],
         selections: [],
-        readOnly: true,
       },
     },
   ],
