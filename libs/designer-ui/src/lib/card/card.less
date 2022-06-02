@@ -817,6 +817,7 @@ body.dark {
   -webkit-user-select: none;
   user-select: none;
   background-color: #fff;
+  cursor: default;
 
   &:focus {
     outline: 2px solid #605e5c;
@@ -828,7 +829,9 @@ body.dark {
 
     .panel-card-content-gripper-section {
       visibility: visible;
-      cursor: grab;
+      &.draggable {
+        cursor: grab;
+      }
     }
   }
 
@@ -886,8 +889,8 @@ body.dark {
         }
 
         .panel-card-content-icon-section {
-          flex: 0 0;
-          margin: 8px 8px 0 5px;
+          display: flex;
+          margin-right: 8px;
 
           .panel-card-icon {
             height: 24px;
