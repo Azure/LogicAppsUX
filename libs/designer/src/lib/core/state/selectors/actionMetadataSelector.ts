@@ -22,6 +22,16 @@ export const useNodeMetadata = (nodeId?: string) => {
   });
 };
 
+export const useNodeConnectionId = (nodeId: string) => {
+  return useSelector((state: RootState) => {
+    if (!nodeId) {
+      return undefined;
+    }
+    const operation = state.workflow.operations[nodeId];
+    return operation?.description;
+  });
+};
+
 export const useNodeDescription = (nodeId: string) => {
   return useSelector((state: RootState) => {
     if (!nodeId) {

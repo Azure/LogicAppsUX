@@ -10,6 +10,7 @@ export * from './lib/helpers/guid';
 export * from './lib/models/armresource';
 export * from './lib/models/connector';
 export * from './lib/models/connection';
+export * from './lib/models/connectionReference';
 export * from './lib/models/operationmanifest';
 export * from './lib/models/operation';
 

@@ -3,6 +3,7 @@ import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
 import {
   useBrandColor,
   useIconUri,
+  useNodeConnectionId,
   useNodeDescription,
   useNodeMetadata,
   useOperationInfo,
@@ -17,7 +18,9 @@ import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
+// Danielle need to pass ID or something to get connection
 const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+  // danielle can we add type for data
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
   const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
     // "type" is required. It is used by the "accept" specification of drop targets.
@@ -46,6 +49,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const style = hasNestedParent && !parentEdges.length ? { marginTop: 40 } : undefined;
   const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
+  const connectionId = useNodeConnectionId(id);
 
   const nodeClick = useCallback(() => {
     if (isCollapsed) {
@@ -56,6 +60,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
 
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
+  // const connection = useConnection()
 
   if (metadata?.isPlaceholderNode) {
     return (
