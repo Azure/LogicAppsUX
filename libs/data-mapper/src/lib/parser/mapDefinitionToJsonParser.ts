@@ -2,7 +2,7 @@ import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions
 import type { ConditionalMapping, JsonInputStyle, LoopMapping, Node } from './types';
 import yaml from 'js-yaml';
 
-export async function parseYamlToJson(inputMapDefinition: string): Promise<JsonInputStyle> {
+export async function mapDefinitionToJson(inputMapDefinition: string): Promise<JsonInputStyle> {
   try {
     const parsedYaml: any = yaml.load(inputMapDefinition);
     const parsedYamlKeys: string[] = Object.keys(parsedYaml);
@@ -19,7 +19,7 @@ export async function parseYamlToJson(inputMapDefinition: string): Promise<JsonI
     const sourceSchema: string = parsedYaml.sourceSchema;
     const targetSchema: string = parsedYaml.targetSchema;
 
-    const mappings: Node = parsedMappingsToNodeFormat(targetNodeKey, parsedYaml[targetNodeKey]);
+    const mappings: Node = parseMappingsJsonToNode(targetNodeKey, parsedYaml[targetNodeKey]);
 
     return {
       srcSchemaName: sourceSchema,
@@ -31,7 +31,7 @@ export async function parseYamlToJson(inputMapDefinition: string): Promise<JsonI
   }
 }
 
-export function parsedMappingsToNodeFormat(targetNodeKey: string, targetNodeObject: string | object | any): Node {
+function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string | object | any): Node {
   if (typeof targetNodeObject === 'string') {
     return {
       targetNodeKey: targetNodeKey,
@@ -64,7 +64,7 @@ export function parsedMappingsToNodeFormat(targetNodeKey: string, targetNodeObje
     const childrenNode: Node[] = [];
     for (const childKey in curTargetNodeObject) {
       if (childKey !== '$value') {
-        childrenNode.push(parsedMappingsToNodeFormat(childKey, curTargetNodeObject[childKey]));
+        childrenNode.push(parseMappingsJsonToNode(childKey, curTargetNodeObject[childKey]));
       }
     }
 
@@ -78,7 +78,7 @@ export function parsedMappingsToNodeFormat(targetNodeKey: string, targetNodeObje
   }
 }
 
-function parseLoopMapping(line: string): LoopMapping {
+export function parseLoopMapping(line: string): LoopMapping {
   const formttedLine = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
   return {
     loopSource: formttedLine.split(',')?.[0]?.trim(),
@@ -86,7 +86,7 @@ function parseLoopMapping(line: string): LoopMapping {
   };
 }
 
-function parseConditionalMapping(line: string): ConditionalMapping {
+export function parseConditionalMapping(line: string): ConditionalMapping {
   return {
     condition: line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim(),
   };

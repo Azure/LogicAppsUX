@@ -9,7 +9,7 @@ import {
 } from './__mocks__';
 import { SampleDataDisplayer } from './components/SampleDataDisplayer';
 import { jsonToMapDefinition } from './jsonToMapDefinitionParser';
-import { parseYamlToJson } from './mapDefinitionToJsonParser';
+import { mapDefinitionToJson } from './mapDefinitionToJsonParser';
 import { useEffect, useState } from 'react';
 
 export interface ParserViewProps {
@@ -52,12 +52,12 @@ export interface ParserViewProps {
 export const ParserView = ({ input }: ParserViewProps) => {
   const theInput = IfWithChildrenAndValueMapDefinitionMock;
   // const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(mapDefinitionToJson(theInput), null, '\t'));
-  const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(parseYamlToJson(theInput), null, '\t'));
+  const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(mapDefinitionToJson(theInput), null, '\t'));
 
   useEffect(() => {
     async function fetchData() {
       // You can await here
-      const parsedYaml = await parseYamlToJson(theInput);
+      const parsedYaml = await mapDefinitionToJson(theInput);
       setConvertedOutput(JSON.stringify(parsedYaml, null, '\t'));
       // ...
     }
@@ -65,7 +65,7 @@ export const ParserView = ({ input }: ParserViewProps) => {
     // setConvertedOutput(JSON.stringify(mapDefinitionToJson(theInput), null, '\t'));
 
     // linesToNode(convertedOutput?.split('\n'), 0);
-    parseYamlToJson(theInput);
+    mapDefinitionToJson(theInput);
   }, []);
 
   return (
