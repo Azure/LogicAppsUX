@@ -1,5 +1,5 @@
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
-import type { JsonInputStyle, Node } from './types';
+import type { JsonInputStyle, LoopMapping, Node } from './types';
 import yaml from 'js-yaml';
 
 export async function parseYamlToJson(inputMapDefinition: string): Promise<JsonInputStyle> {
@@ -36,7 +36,7 @@ export async function parseYamlToJson(inputMapDefinition: string): Promise<JsonI
   // return '';
 }
 
-export function parsedMappingsToNodeFormat(targetNodeKey: string, targetNodeObject: string | object): Node {
+export function parsedMappingsToNodeFormat(targetNodeKey: string, targetNodeObject: string | object | any): Node {
   // console.log(targetNodeKey, " : ", inputMappingsObject);
 
   if (typeof targetNodeObject === 'string') {
@@ -56,15 +56,73 @@ export function parsedMappingsToNodeFormat(targetNodeKey: string, targetNodeObje
           InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM
         );
       } else {
-        // const targetNodeKeyN: string = inputMappingsObject[childrenKeys[0]];
-        // TODO
+        const loopSource = targetNodeKey;
+        const newTargetNodeKey = childrenKeys[0];
+        const newTargetNodeObject = targetNodeObject[childrenKeys[0]];
+        const targetValue = newTargetNodeObject.$value
+          ? {
+              value: newTargetNodeObject.$value,
+            }
+          : undefined;
+
+        const childrenNode: Node[] = [];
+        for (const childKey in newTargetNodeObject) {
+          if (childKey !== '$value') {
+            childrenNode.push(parsedMappingsToNodeFormat(childKey, newTargetNodeObject[childKey]));
+          }
+        }
+        return {
+          loopSource: {
+            loopSource: loopSource,
+          },
+          targetNodeKey: newTargetNodeKey,
+          children: childrenNode,
+          targetValue: targetValue,
+        };
       }
     } else if (targetNodeKey.startsWith('$if')) {
-      // TODO similar to for
-    } else {
-      for (const childObject in targetNodeObject) {
-        console.log(childObject);
+      const childrenKeys = Object.keys(targetNodeObject);
+      if (childrenKeys.length !== 1) {
+        throw new InvalidFormatException(
+          InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM,
+          InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM
+        );
+      } else {
+        const condition = targetNodeKey;
+        const newTargetNodeKey = childrenKeys[0];
+        const newTargetNodeObject = targetNodeObject[childrenKeys[0]];
+        const targetValue = newTargetNodeObject.$value
+          ? {
+              value: newTargetNodeObject.$value,
+            }
+          : undefined;
+
+        const childrenNode: Node[] = [];
+        for (const childKey in newTargetNodeObject) {
+          if (childKey !== '$value') {
+            childrenNode.push(parsedMappingsToNodeFormat(childKey, newTargetNodeObject[childKey]));
+          }
+        }
+        return {
+          condition: {
+            condition: condition,
+          },
+          targetNodeKey: newTargetNodeKey,
+          children: childrenNode,
+          targetValue: targetValue,
+        };
       }
+    } else {
+      const childrenNode: Node[] = [];
+      for (const childKey in targetNodeObject) {
+        if (childKey !== '$value') {
+          childrenNode.push(parsedMappingsToNodeFormat(childKey, targetNodeObject[childKey]));
+        }
+      }
+      return {
+        targetNodeKey: targetNodeKey,
+        children: childrenNode,
+      };
     }
   }
 
