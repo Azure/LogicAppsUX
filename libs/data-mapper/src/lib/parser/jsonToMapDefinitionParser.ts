@@ -15,7 +15,9 @@ function nodeToMapDefinition(node: MapNode, indent: string): string {
   let mapDefinition = '';
 
   if (node.loopSource) {
-    mapDefinition = `${mapDefinition}${indent}$for(${node.loopSource.loopSource}):\n`;
+    mapDefinition = `${mapDefinition}${indent}$for(${node.loopSource.loopSource}${
+      node.loopSource.loopIndex ? `, ${node.loopSource.loopIndex}` : ''
+    }):\n`;
     indent += '  ';
   }
 

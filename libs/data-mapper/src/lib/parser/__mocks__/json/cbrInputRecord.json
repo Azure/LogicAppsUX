@@ -16,37 +16,32 @@
           {
             "targetNodeKey": "$@UserID",
             "targetValue": {
-              "value": "/ns0:SrcInputRecord/SrcInputRecord/ID"
+              "value": "/ID"
             }
           },
           {
             "targetNodeKey": "$@FirstName",
             "targetValue": {
-              "value": "/ns0:SrcInputRecord/SrcInputRecord/FirstName"
+              "value": "/FirstName"
             }
           },
           {
             "targetNodeKey": "$@LastName",
             "targetValue": {
-              "value": "/ns0:SrcInputRecord/SrcInputRecord/LastName"
+              "value": "/LastName"
             }
           },
           {
             "targetNodeKey": "$@Initial",
             "targetValue": {
-              "value": "/ns0:SrcInputRecord/SrcInputRecord/Initial"
+              "value": "/Initial"
             }
           },
           {
             "targetNodeKey": "Address",
-            "children": [
-              {
-                "targetNodeKey": "/ns0:CBRInputRecord/Customer/Address/AddressLine1",
-                "targetValue": {
-                  "value": "concat(/ns0:SrcInputRecord/SrcInputRecord/Address/AddressLine1 , ‘ ’, /ns0:SrcInputRecord/SrcInputRecord/Address/AddressLine2)"
-                }
-              }
-            ]
+            "targetValue": {
+              "value": "concat(/Address/AddressLine1 , ‘ ’, /Address/AddressLine2)"
+            }
           }
         ]
       }
