@@ -1,10 +1,10 @@
-export const ForWithChildrenAndValueMapDefinitionMock = `sourceSchema: SrcOrders.xsd
-targetSchema: CustomerOrders.xsd
+export const ForWithChildrenAndValueMapDefinitionMock = `$sourceSchema: SrcOrders.xsd
+$targetSchema: CustomerOrders.xsd
 ns0:CustomerOrders:
   $@OrderedItem: /ns0:Orders/@Item
   $for(/ns0:Orders/WebOrders):
-    $value: CustomberORder
     Customer:
+      $value: CustomerOrder
       $if(not_equal(/CustomerName, '')):
         Name:
           $@FirstName: CustomerFirstName

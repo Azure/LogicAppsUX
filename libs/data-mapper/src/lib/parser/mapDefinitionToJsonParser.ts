@@ -1,17 +1,18 @@
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
+import { MissingSchemaNameException, MissingSchemaNameExceptionCode } from './exceptions/missingSchemaName';
 import type { ConditionalMapping, JsonInputStyle, LoopMapping, Node } from './types';
 import yaml from 'js-yaml';
 
 export async function mapDefinitionToJson(inputMapDefinition: string): Promise<JsonInputStyle> {
   try {
-    const formattedInputMapDefinition = inputMapDefinition.replace('\t', '  ');
+    const formattedInputMapDefinition = inputMapDefinition.replaceAll('\t', '  ');
     const parsedYaml: any = yaml.load(formattedInputMapDefinition);
     const parsedYamlKeys: string[] = Object.keys(parsedYaml);
 
     if (parsedYamlKeys[0] !== '$sourceSchema' || parsedYamlKeys[1] !== '$targetSchema') {
-      throw new InvalidFormatException(
-        InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM,
-        InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM
+      throw new MissingSchemaNameException(
+        MissingSchemaNameExceptionCode.MISSING_SCHEMA_NAME,
+        MissingSchemaNameExceptionCode.MISSING_SCHEMA_NAME
       );
     }
 
@@ -27,7 +28,11 @@ export async function mapDefinitionToJson(inputMapDefinition: string): Promise<J
       dstSchemaName: targetSchema,
       mappings: mappings,
     };
-  } catch (e) {
+  } catch (e: any) {
+    if (e?.name === 'YAMLException') {
+      console.log(e.message);
+      throw new InvalidFormatException(InvalidFormatExceptionCode.INVALID_YAML_FORMAT, InvalidFormatExceptionCode.INVALID_YAML_FORMAT);
+    }
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
   }
 }

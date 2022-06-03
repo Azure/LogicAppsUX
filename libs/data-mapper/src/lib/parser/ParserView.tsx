@@ -1,12 +1,14 @@
 import {
   cbrInputRecordMapDefinitionMock,
   customerOrdersMapDefinitionMock,
+  forWithIndexAndValueMapDefinitionMock,
   IfWithChildrenAndValueMapDefinitionMock,
   missingDstSchemaNameMapDefinitionMock,
   missingSrcSchemaNameMapDefinitionMock,
   simpleJsonExample,
   simpleMapDefExample,
 } from './__mocks__';
+import { ForWithChildrenAndValueMapDefinitionMock } from './__mocks__/mapDefinition/ForWithChildrenAndValue';
 import { SampleDataDisplayer } from './components/SampleDataDisplayer';
 import { jsonToMapDefinition } from './jsonToMapDefinitionParser';
 import { mapDefinitionToJson } from './mapDefinitionToJsonParser';
@@ -50,7 +52,7 @@ export interface ParserViewProps {
 // };
 
 export const ParserView = ({ input }: ParserViewProps) => {
-  const theInput = customerOrdersMapDefinitionMock;
+  const theInput = cbrInputRecordMapDefinitionMock;
   // const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(mapDefinitionToJson(theInput), null, '\t'));
   const [convertedOutput, setConvertedOutput] = useState(JSON.stringify(mapDefinitionToJson(theInput), null, '\t'));
 

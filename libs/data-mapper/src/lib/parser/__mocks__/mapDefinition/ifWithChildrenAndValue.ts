@@ -1,5 +1,5 @@
-export const IfWithChildrenAndValueMapDefinitionMock = `sourceSchema: SrcOrders.xsd
-targetSchema: CustomerOrders.xsd
+export const IfWithChildrenAndValueMapDefinitionMock = `$sourceSchema: SrcOrders.xsd
+$targetSchema: CustomerOrders.xsd
 ns0:CustomerOrders:
   $@OrderedItem: /ns0:Orders/@Item
   $for(/ns0:Orders/WebOrders):

@@ -1,5 +1,5 @@
-export const forWithIndexAndValueMapDefinitionMock = `sourceSchema: SrcOrders.xsd
-targetSchema: CustomerOrders.xsd
+export const forWithIndexAndValueMapDefinitionMock = `$sourceSchema: SrcOrders.xsd
+$targetSchema: CustomerOrders.xsd
 ns0:CustomerOrders:
   $@OrderedItem: /ns0:Orders/@Item
   $for(/ns0:Orders/WebOrders, index1):
