@@ -5,7 +5,6 @@ import type { ILayerProps } from '@fluentui/react';
 import type { PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
 import { getTabs, PanelContainer, PanelHeader, PanelLocation, PanelScope, PanelSize, registerTabs } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface LeftHandPanelProps {
@@ -14,7 +13,6 @@ export interface LeftHandPanelProps {
 }
 
 export const LeftHandPanel = ({ selectedTabId, layerProps }: LeftHandPanelProps): JSX.Element => {
-  const intl = useIntl();
   const dispatch = useDispatch();
 
   const { collapsed } = useSelector((state: RootState) => {

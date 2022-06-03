@@ -37,23 +37,26 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     description: 'Operations in search panel',
   });
 
-  const onRenderOperationCell = React.useCallback((operation: OperationSearchResult | undefined, index: number | undefined) => {
-    if (!operation) return;
-    const properties = operation.properties;
+  const onRenderOperationCell = React.useCallback(
+    (operation: OperationSearchResult | undefined, index: number | undefined) => {
+      if (!operation) return;
+      const properties = operation.properties;
 
-    return (
-      <OperationCard
-        onClick={props.onOperationClick}
-        category={properties.category}
-        iconUrl={properties.api.iconUri}
-        title={properties.summary}
-        key={operation.id}
-        id={operation.id}
-        connectorName={properties.api.displayName}
-        subtitle={properties.description}
-      ></OperationCard>
-    );
-  }, []);
+      return (
+        <OperationCard
+          onClick={props.onOperationClick}
+          category={properties.category}
+          iconUrl={properties.api.iconUri}
+          title={properties.summary}
+          key={operation.id}
+          id={operation.id}
+          connectorName={properties.api.displayName}
+          subtitle={properties.description}
+        ></OperationCard>
+      );
+    },
+    [props.onOperationClick]
+  );
 
   const onRenderConnectorCell = React.useCallback((connector: Connector | undefined, index: number | undefined) => {
     if (!connector) return;

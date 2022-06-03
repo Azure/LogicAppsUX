@@ -30,8 +30,6 @@ export const Designer = () => {
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch();
 
-  const { readOnly } = useContext(ProviderWrappedContext) ?? {};
-
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
       dispatch(updateNodeSizes(changes));
