@@ -1,3 +1,5 @@
+// import { InputToken } from '../../token/inputToken';
+import { TokenNode } from './nodes/tokenNode';
 import AutoFocusPlugin from './plugins/AutoFocusPlugin';
 import AutoLinkPlugin from './plugins/AutoLinkPlugin';
 import ClearEditorPlugin from './plugins/ClearEditorPlugin';
@@ -12,7 +14,7 @@ import LexicalOnChangePlugin from '@lexical/react/LexicalOnChangePlugin';
 import LexicalRichTextPlugin from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import type { EditorState } from 'lexical';
-import { $getRoot, $getSelection } from 'lexical';
+// import { $getRoot, $getSelection } from 'lexical';
 import { useIntl } from 'react-intl';
 
 export interface BaseEditorProps {
@@ -40,9 +42,9 @@ const defaultTheme = {
 
 const onChange = (editorState: EditorState) => {
   editorState.read(() => {
-    const root = $getRoot();
-    const selection = $getSelection();
-    console.log(root, selection);
+    // const root = $getRoot();
+    // const selection = $getSelection();
+    // console.log(root, selection);
   });
 };
 
@@ -55,7 +57,7 @@ export const BaseEditor = ({ className, placeholder, BasePlugins = {}, children 
   const initialConfig = {
     defaultTheme,
     onError,
-    nodes: [TableCellNode, TableNode, TableRowNode, AutoLinkNode, LinkNode],
+    nodes: [TableCellNode, TableNode, TableRowNode, AutoLinkNode, LinkNode, TokenNode],
   };
 
   const { autoFocus = true, autoLink, clearEditor, history = true, tokens, treeView } = BasePlugins;

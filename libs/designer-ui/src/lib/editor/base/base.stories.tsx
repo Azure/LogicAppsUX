@@ -12,12 +12,12 @@ export const plugins = Template.bind({});
 plugins.args = {
   className: 'msla-string-editor-container-plugin',
   placeholder: 'Play around with some cool plugins here...',
-  BasePlugins: { autoFocus: true, autoLink: true, clearEditor: true, history: true, treeView: true },
+  BasePlugins: { autoFocus: true, autoLink: true, clearEditor: true, history: true, treeView: true, tokens: true },
 };
 // TODO 14556566: Adding Tokens to Base Editor
-// export const token = Template.bind({});
-// token.args = {
-//   className: 'msla-string-editor-container',
-//   placeholder: 'Play around with tokenizing',
-//   BasePlugins: { tokens: true },
-// };
+export const token = Template.bind({});
+token.args = {
+  className: 'msla-string-editor-container',
+  placeholder: 'Play around with tokenizing',
+  BasePlugins: { tokens: true },
+};

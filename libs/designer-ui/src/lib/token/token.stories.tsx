@@ -1,12 +1,12 @@
-import { Token } from './inputToken';
+import { InputToken } from './inputToken';
 import type { TokenProps } from './inputToken';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
-  component: Token,
+  component: InputToken,
   title: 'Components/Token',
-} as ComponentMeta<typeof Token>;
-const Template: ComponentStory<typeof Token> = (args: TokenProps) => <Token {...args} />;
+} as ComponentMeta<typeof InputToken>;
+const Template: ComponentStory<typeof InputToken> = (args: TokenProps) => <InputToken {...args} />;
 
 export const standard = Template.bind({});
 standard.args = {

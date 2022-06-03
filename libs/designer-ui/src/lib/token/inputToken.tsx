@@ -16,7 +16,7 @@ export interface TokenProps {
 }
 
 export const DELETE = '\u00D7';
-export const Token: React.FC<TokenProps> = ({ description, brandColor, icon, readOnly, title, handleTokenDeleteClicked }) => {
+export const InputToken: React.FC<TokenProps> = ({ description, brandColor, icon, readOnly, title, handleTokenDeleteClicked }) => {
   const intl = useIntl();
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
