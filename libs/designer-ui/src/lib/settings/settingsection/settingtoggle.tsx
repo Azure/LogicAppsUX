@@ -1,33 +1,23 @@
 import type { IToggleProps } from '@fluentui/react';
 import { Toggle } from '@fluentui/react';
-import { useIntl } from 'react-intl';
 
 type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
 
 export interface SettingToggleProps extends IToggleProps {
   readOnly?: boolean;
+  onLabel: string;
+  offLabel: string;
   onToggleInputChange?: ToggleChangeHandler;
 }
 
-export const SettingToggle = ({ readOnly, onToggleInputChange, checked }: SettingToggleProps): JSX.Element => {
-  const intl = useIntl();
-
-  const formattedOnText = intl.formatMessage({
-    defaultMessage: 'On',
-    description: 'Label text when toggle is on',
-  });
-  const formattedOffText = intl.formatMessage({
-    defaultMessage: 'Off',
-    description: 'Label text when toggle is off',
-  });
-
+export const SettingToggle = ({ readOnly, onToggleInputChange, checked, onLabel, offLabel }: SettingToggleProps): JSX.Element => {
   return (
     <Toggle
       className="msla-setting-section-toggle"
       checked={checked}
       disabled={readOnly}
-      onText={formattedOnText}
-      offText={formattedOffText}
+      onText={onLabel}
+      offText={offLabel}
       onChange={onToggleInputChange}
     />
   );

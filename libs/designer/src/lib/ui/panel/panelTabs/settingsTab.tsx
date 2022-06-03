@@ -34,11 +34,14 @@ export const SettingsTab = () => {
       },
       {
         settingType: 'SettingTextField',
-        settingProp: {},
+        settingProp: {
+          label: 'Test Label',
+          value: 'Test Value',
+        },
       },
       {
         settingType: 'ReactiveToggle',
-        settingProp: { textFieldValue: 'This is a test value', textFieldLabel: 'Test Label' },
+        settingProp: { textFieldValue: 'This is a test value', textFieldLabel: 'Test Label', onToggleLabel: 'On', offToggleLabel: 'Off' },
       },
       {
         settingType: 'MultiAddExpressionEditor',
@@ -46,7 +49,7 @@ export const SettingsTab = () => {
       },
       {
         settingType: 'CustomValueSlider',
-        settingProp: { minVal: 10, maxVal: 300, value: 200 },
+        settingProp: { minVal: 10, maxVal: 300, value: 200, onToggleLabel: 'On', offToggleLabel: 'Off', sliderLabel: 'Slider' },
       },
       {
         settingType: 'MultiSelectSetting',

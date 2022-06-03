@@ -3,11 +3,13 @@ import { SettingToggle } from './settingtoggle';
 import { useState } from 'react';
 
 export interface ReactiveToggleProps {
-  textFieldLabel?: string;
+  textFieldLabel: string;
   readOnly?: boolean;
   textFieldId?: string;
-  textFieldValue?: string;
+  textFieldValue: string;
   defaultChecked?: boolean;
+  onToggleLabel: string;
+  offToggleLabel: string;
 }
 
 export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
@@ -16,8 +18,10 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
   textFieldId,
   readOnly = false,
   defaultChecked,
+  onToggleLabel,
+  offToggleLabel,
 }: ReactiveToggleProps): JSX.Element => {
-  const [checkedState, setChecked] = useState(!!defaultChecked);
+  const [checkedState, setChecked] = useState(defaultChecked ?? false);
   const onToggleInputChange = (e: React.MouseEvent<HTMLElement>, checked?: boolean): void => {
     e.stopPropagation();
     e.preventDefault();
@@ -26,7 +30,13 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
 
   return (
     <>
-      <SettingToggle checked={checkedState} readOnly={readOnly} onToggleInputChange={onToggleInputChange} />
+      <SettingToggle
+        checked={checkedState}
+        readOnly={readOnly}
+        onToggleInputChange={onToggleInputChange}
+        onLabel={onToggleLabel}
+        offLabel={offToggleLabel}
+      />
       {checkedState ? <SettingTextField id={textFieldId} value={textFieldValue} label={textFieldLabel} readOnly={readOnly} /> : null}
     </>
   );
