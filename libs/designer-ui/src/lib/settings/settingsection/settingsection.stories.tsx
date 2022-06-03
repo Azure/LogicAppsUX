@@ -40,11 +40,14 @@ settingSection.args = {
     },
     {
       settingType: 'SettingTextField',
-      settingProp: {},
+      settingProp: {
+        label: 'test label',
+        value: 'test value',
+      },
     },
     {
       settingType: 'ReactiveToggle',
-      settingProp: { textFieldValue: 'This is a test value', textFieldLabel: 'Test Label' },
+      settingProp: { textFieldValue: 'This is a test value', textFieldLabel: 'Test Label', onToggleLabel: 'On', offToggleLabel: 'Off' },
     },
     {
       settingType: 'MultiAddExpressionEditor',
@@ -52,7 +55,7 @@ settingSection.args = {
     },
     {
       settingType: 'CustomValueSlider',
-      settingProp: { minVal: 10, maxVal: 300, value: 200 },
+      settingProp: { minVal: 10, maxVal: 300, value: 200, onToggleLabel: 'on', offToggleLabel: 'off', sliderLabel: 'Slider' },
     },
     {
       settingType: 'MultiSelectSetting',
