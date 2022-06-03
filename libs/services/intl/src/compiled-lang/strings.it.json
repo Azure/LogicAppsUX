@@ -1543,6 +1543,12 @@
       "value": "Richiesta"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1647,20 +1653,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero di oggetti da rimuovere dalla parte iniziale della raccolta. Deve essere un intero positivo."
-    }
-  ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "La scheda con il nome "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " è già registrata"
     }
   ],
   "bTrk+S": [

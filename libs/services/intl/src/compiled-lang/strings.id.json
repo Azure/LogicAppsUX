@@ -1502,6 +1502,12 @@
       "value": "Permintaan"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1606,20 +1612,6 @@
     {
       "type": 0,
       "value": "Harus diisi. Jumlah objek untuk dihapus dari bagian depan Koleksi. Harus bilangan bulat positif."
-    }
-  ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Tab dengan : nama "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " telah terdaftar"
     }
   ],
   "bTrk+S": [

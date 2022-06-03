@@ -1535,6 +1535,12 @@
       "value": "Pedido"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1639,16 +1645,6 @@
     {
       "type": 0,
       "value": "Obrigatório. O número de objetos a remover da frente da Coleção. Tem de ser um número inteiro positivo."
-    }
-  ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Já foi registado um separador com o nome "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
     }
   ],
   "bTrk+S": [

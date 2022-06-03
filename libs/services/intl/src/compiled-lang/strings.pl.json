@@ -1617,6 +1617,12 @@
       "value": "Żądanie"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1721,20 +1727,6 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Liczba obiektów do usunięcia z początku kolekcji. Musi być dodatnią liczbą całkowitą."
-    }
-  ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Karta z: nazwą "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " jest już zarejestrowana"
     }
   ],
   "bTrk+S": [

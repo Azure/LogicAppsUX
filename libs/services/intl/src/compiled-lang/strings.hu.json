@@ -1539,6 +1539,12 @@
       "value": "Kérelem"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1643,20 +1649,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A gyűjtemény elejéről eltávolítandó objektumok száma. Pozitív egész számnak kell lennie."
-    }
-  ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Már regisztrálva van egy "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " nevű lap"
     }
   ],
   "bTrk+S": [

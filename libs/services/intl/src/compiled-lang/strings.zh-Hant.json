@@ -1502,6 +1502,12 @@
       "value": "要求"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1606,20 +1612,6 @@
     {
       "type": 0,
       "value": "必要。要從集合開頭開始移除的物件數。必須為正整數。"
-    }
-  ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "已註冊過名為 "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " 的索引標籤"
     }
   ],
   "bTrk+S": [

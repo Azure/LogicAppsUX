@@ -1,0 +1,58 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Get_rows": {
+        "inputs": {
+          "host": {
+            "connection": {
+              "referenceName": "googlesheet"
+            }
+          },
+          "method": "get",
+          "path": "/datasets/@{encodeURIComponent(encodeURIComponent('1FMEmoAsFhVD_gyDJ7eOQYU0Ly_gCqGAfleVtdhvZp3A'))}/tables/@{encodeURIComponent(encodeURIComponent('170475114'))}/items"
+        },
+        "metadata": {
+          "1FMEmoAsFhVD_gyDJ7eOQYU0Ly_gCqGAfleVtdhvZp3A": "/BETA2 - Zenith Community Master Balance Sheet"
+        },
+        "runAfter": {},
+        "type": "ApiConnection"
+      },
+      "Initialize_variable": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "t",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        },
+        "runAfter": {
+          "Response": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Response": {
+        "inputs": {
+          "statusCode": 200
+        },
+        "kind": "http",
+        "runAfter": {
+          "Get_rows": ["Succeeded"]
+        },
+        "type": "Response"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "manual": {
+        "inputs": {},
+        "kind": "Http",
+        "type": "Request"
+      }
+    }
+  },
+  "kind": "Stateful"
+}

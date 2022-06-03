@@ -1,7 +1,9 @@
+import { ProviderWrappedContext } from '../../core/ProviderWrappedContext';
 import { collapsePanel, expandPanel } from '../../core/state/panelSlice';
 import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
+import { monitoringTab } from './panelTabs/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { settingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
@@ -14,9 +16,9 @@ import {
   PanelLocation,
   PanelScope,
   PanelSize,
-  registerTab,
+  registerTabs,
 } from '@microsoft/designer-ui';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -24,12 +26,13 @@ export interface PanelRootProps {
   cardIcon?: string;
   comment?: string;
   selectedTabId?: string;
-  readOnlyMode?: boolean;
 }
 
-export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: PanelRootProps): JSX.Element => {
+export const PanelRoot = ({ cardIcon, comment, selectedTabId }: PanelRootProps): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch();
+
+  const { readOnly, isMonitoringView } = useContext(ProviderWrappedContext) ?? {};
 
   const { collapsed, selectedNode, isDiscovery } = useSelector((state: RootState) => {
     return state.panel;
@@ -43,13 +46,9 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: Pa
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
   const [inited, setInited] = useState(false);
   useEffect(() => {
-    if (!inited) {
-      setRegisteredTabs((currentTabs) =>
-        registerTab(aboutTab, registerTab(codeViewTab, registerTab(settingsTab, registerTab(parametersTab, currentTabs))))
-      );
-    }
-    setInited(true);
-  }, [inited]);
+    monitoringTab.enabled = isMonitoringView;
+    setRegisteredTabs((currentTabs) => registerTabs([parametersTab, monitoringTab, aboutTab, codeViewTab, settingsTab], currentTabs));
+  }, [readOnly, isMonitoringView]);
 
   useEffect(() => {
     setSelectedTab(getTabs(true, registeredTabs)[0]?.name.toLowerCase());
@@ -99,7 +98,7 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: Pa
     });
 
     options.push({
-      disabled: readOnlyMode,
+      disabled: readOnly,
       type: MenuItemType.Advanced,
       disabledReason: disabledCommentAction,
       iconName: 'Comment',
@@ -124,7 +123,7 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: Pa
 
     options.push({
       key: deleteDescription,
-      disabled: readOnlyMode || !canDelete,
+      disabled: readOnly || !canDelete,
       disabledReason: disabledDeleteAction,
       iconName: 'Delete',
       title: deleteDescription,
@@ -175,6 +174,7 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: Pa
       tabs={registeredTabs}
       width={width}
       onDismissButtonClicked={handleDelete}
+      readOnlyMode={readOnly}
       setSelectedTab={setSelectedTab}
       toggleCollapse={togglePanel}
       trackEvent={handleTrackEvent}

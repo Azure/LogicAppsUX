@@ -1,13 +1,13 @@
 import { Label } from '../../label';
-import { RenderToggleSetting } from './settingtoggle';
+import { SettingToggle } from './settingtoggle';
 import { Slider } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-interface CustomValueSliderProps {
-  value: number;
-  isReadOnly: boolean;
+export interface CustomValueSliderProps {
+  value?: number;
+  readOnly?: boolean;
   maxVal?: number;
   minVal?: number;
   defaultValue?: number;
@@ -15,10 +15,10 @@ interface CustomValueSliderProps {
 
 export const CustomValueSlider = ({
   value,
-  isReadOnly: readOnly,
+  readOnly = false,
   maxVal = 100,
   minVal = 0,
-  defaultValue = 50,
+  defaultValue = (minVal + maxVal) / 2,
 }: CustomValueSliderProps): JSX.Element => {
   const [checked, toggleChecked] = useBoolean(false);
   const onToggleInputChange = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => {
@@ -40,7 +40,7 @@ export const CustomValueSlider = ({
 
   return (
     <>
-      <RenderToggleSetting isReadOnly={false} onToggleInputChange={onToggleInputChange} />
+      <SettingToggle readOnly={readOnly} onToggleInputChange={onToggleInputChange} />
       {checked ? (
         <div>
           <div className="msla-operation-setting">
