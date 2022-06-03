@@ -1,6 +1,6 @@
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { initialState } from '../../parsers/models/mocks/workflowMock';
-import reducer, { addNode, WorkflowState } from '../workflowSlice';
+import reducer, { addNode } from '../workflowSlice';
 
 describe('workflow slice reducers', () => {
   it('should add initial node to the workflow', () => {
@@ -17,9 +17,9 @@ describe('workflow slice reducers', () => {
       },
     ]);
     expect(state.nodesMetadata).toEqual({
-        '123': {
-            graphId: "root"
-        }
+      '123': {
+        graphId: 'root',
+      },
     });
   });
 });

@@ -1725,20 +1725,6 @@
       "value": "Vyžadováno. Počet objektů, které se mají odebrat ze začátku kolekce. Musí to být kladné celé číslo."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Karta s názvem "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " se už zaregistrovala."
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
