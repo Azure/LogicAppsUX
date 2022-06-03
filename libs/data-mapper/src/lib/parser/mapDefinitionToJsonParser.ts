@@ -8,7 +8,7 @@ export async function mapDefinitionToJson(inputMapDefinition: string): Promise<J
     const parsedYaml: any = yaml.load(formattedInputMapDefinition);
     const parsedYamlKeys: string[] = Object.keys(parsedYaml);
 
-    if (parsedYamlKeys[0] !== 'sourceSchema' || parsedYamlKeys[1] !== 'targetSchema') {
+    if (parsedYamlKeys[0] !== '$sourceSchema' || parsedYamlKeys[1] !== '$targetSchema') {
       throw new InvalidFormatException(
         InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM,
         InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM
@@ -17,8 +17,8 @@ export async function mapDefinitionToJson(inputMapDefinition: string): Promise<J
 
     const targetNodeKey: string = parsedYamlKeys[2];
 
-    const sourceSchema: string = parsedYaml.sourceSchema;
-    const targetSchema: string = parsedYaml.targetSchema;
+    const sourceSchema: string = parsedYaml.$sourceSchema;
+    const targetSchema: string = parsedYaml.$targetSchema;
 
     const mappings: Node = parseMappingsJsonToNode(targetNodeKey, parsedYaml[targetNodeKey]);
 
@@ -28,7 +28,6 @@ export async function mapDefinitionToJson(inputMapDefinition: string): Promise<J
       mappings: mappings,
     };
   } catch (e) {
-    console.log(e);
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
   }
 }
@@ -41,47 +40,42 @@ function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string
         value: targetNodeObject,
       },
     };
-  } else {
-    const curTargetNodeKey = targetNodeKey,
-      curTargetNodeObject = targetNodeObject;
-    const startsWithFor = targetNodeKey.startsWith('$for'),
-      startsWithIf = targetNodeKey.startsWith('$if');
-
-    if (startsWithFor || startsWithIf) {
-      const childrenKeys = Object.keys(targetNodeObject);
-      if (childrenKeys.length !== 1) {
-        throw new InvalidFormatException(
-          InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM,
-          InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM
-        );
-      }
-
-      if (startsWithFor) {
-        const parsedNode = parseMappingsJsonToNode(`${childrenKeys[0]}`, curTargetNodeObject[childrenKeys[0]]);
-        parsedNode.loopSource = parseLoopMapping(targetNodeKey);
-        return parsedNode;
-      } else {
-        const parsedNode = parseMappingsJsonToNode(`${childrenKeys[0]}`, curTargetNodeObject[childrenKeys[0]]);
-        parsedNode.condition = parseConditionalMapping(targetNodeKey);
-        return parsedNode;
-      }
-    }
-
-    const curTargetValue = curTargetNodeObject?.$value ? { value: curTargetNodeObject.$value } : undefined;
-
-    const childrenNode: Node[] = [];
-    for (const childKey in curTargetNodeObject) {
-      if (childKey !== '$value') {
-        childrenNode.push(parseMappingsJsonToNode(childKey, curTargetNodeObject[childKey]));
-      }
-    }
-
-    return {
-      targetNodeKey: curTargetNodeKey,
-      children: childrenNode,
-      targetValue: curTargetValue,
-    };
   }
+
+  const startsWithFor = targetNodeKey.startsWith('$for'),
+    startsWithIf = targetNodeKey.startsWith('$if');
+
+  if (startsWithFor || startsWithIf) {
+    const childrenKeys = Object.keys(targetNodeObject);
+    if (childrenKeys.length !== 1) {
+      throw new InvalidFormatException(
+        InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM,
+        InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM
+      );
+    }
+
+    const parsedNode = parseMappingsJsonToNode(`${childrenKeys[0]}`, targetNodeObject[childrenKeys[0]]);
+
+    parsedNode.loopSource = startsWithFor ? parseLoopMapping(targetNodeKey) : undefined;
+    parsedNode.condition = startsWithIf ? parseConditionalMapping(targetNodeKey) : undefined;
+
+    return parsedNode;
+  }
+
+  const targetValue = targetNodeObject?.$value ? { value: targetNodeObject.$value } : undefined;
+
+  const childrenNode: Node[] = [];
+  for (const childKey in targetNodeObject) {
+    if (childKey !== '$value') {
+      childrenNode.push(parseMappingsJsonToNode(childKey, targetNodeObject[childKey]));
+    }
+  }
+
+  return {
+    targetNodeKey: targetNodeKey,
+    children: childrenNode,
+    targetValue: targetValue,
+  };
 }
 
 export function parseLoopMapping(line: string): LoopMapping {
