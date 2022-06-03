@@ -2,6 +2,7 @@ import { collapsePanel, expandPanel } from '../../core/state/panelSlice';
 import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
+import { parametersTab } from './panelTabs/parametersTab';
 import { settingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import type { MenuItemOption, PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
@@ -40,10 +41,15 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId, readOnlyMode }: Pa
   const [width, setWidth] = useState(PanelSize.Auto);
 
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
-
+  const [inited, setInited] = useState(false);
   useEffect(() => {
-    setRegisteredTabs((currentTabs) => registerTab(aboutTab, registerTab(codeViewTab, registerTab(settingsTab, currentTabs))));
-  }, []);
+    if (!inited) {
+      setRegisteredTabs((currentTabs) =>
+        registerTab(aboutTab, registerTab(codeViewTab, registerTab(settingsTab, registerTab(parametersTab, currentTabs))))
+      );
+    }
+    setInited(true);
+  }, [inited]);
 
   useEffect(() => {
     setSelectedTab(getTabs(true, registeredTabs)[0]?.name.toLowerCase());
