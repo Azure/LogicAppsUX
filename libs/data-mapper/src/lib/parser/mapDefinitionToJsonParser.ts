@@ -6,7 +6,6 @@ import yaml from 'js-yaml';
 export function mapDefinitionToJson(inputMapDefinition: string): JsonInputStyle {
   try {
     const formattedInputMapDefinition = inputMapDefinition.replaceAll('\t', '  ');
-    // const formattedInputMapDefinition = inputMapDefinition;
     const parsedYaml: any = yaml.load(formattedInputMapDefinition);
     const parsedYamlKeys: string[] = Object.keys(parsedYaml);
 
@@ -86,9 +85,10 @@ function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string
 
 export function parseLoopMapping(line: string): LoopMapping {
   const formttedLine = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
+  const expressionSplittedOnComma = formttedLine?.split(',');
   return {
-    loopSource: formttedLine.split(',')?.[0]?.trim(),
-    loopIndex: formttedLine.split(',')?.[1]?.trim(),
+    loopSource: expressionSplittedOnComma?.[0]?.trim(),
+    loopIndex: expressionSplittedOnComma?.[1]?.trim(),
   };
 }
 
