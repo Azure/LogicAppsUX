@@ -10,5 +10,4 @@ ns0:CustomerOrders:
           $@FirstName: CustomerFirstName
           $@LastName: CustomerLastName
       $@OrderNumber: /OrderNumber
-  $@OrderValue: /OrderValue
-`;
+  $@OrderValue: /OrderValue`;

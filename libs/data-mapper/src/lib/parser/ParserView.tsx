@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 export interface ParserViewProps {
   input: string;
 }
+
 export const JsonToMapParserView = ({ input }: ParserViewProps) => {
   const convertedOutput = jsonToMapDefinition(JSON.parse(input));
 
@@ -18,15 +19,29 @@ export const JsonToMapParserView = ({ input }: ParserViewProps) => {
 };
 
 export const MapToJsonParserView = ({ input }: ParserViewProps) => {
-  const [convertedOutput, setConvertedOutput] = useState('');
+  const convertedOutput = JSON.stringify(mapDefinitionToJson(input), null, '\t');
 
-  useEffect(() => {
-    async function fetchData() {
-      const parsedYaml = await mapDefinitionToJson(input);
-      setConvertedOutput(JSON.stringify(parsedYaml, null, '\t'));
-    }
-    fetchData();
-  });
+  return (
+    <div>
+      <SampleDataDisplayer data={input} />
+      <SampleDataDisplayer data={convertedOutput} />
+    </div>
+  );
+};
+
+export const CompareMapDefinitionParserView = ({ input }: ParserViewProps) => {
+  const convertedOutput = JSON.stringify(mapDefinitionToJson(jsonToMapDefinition(JSON.parse(input))), null, '\t');
+
+  return (
+    <div>
+      <SampleDataDisplayer data={input} />
+      <SampleDataDisplayer data={convertedOutput} />
+    </div>
+  );
+};
+
+export const CompareJsonParserView = ({ input }: ParserViewProps) => {
+  const convertedOutput = jsonToMapDefinition(mapDefinitionToJson(input));
 
   return (
     <div>

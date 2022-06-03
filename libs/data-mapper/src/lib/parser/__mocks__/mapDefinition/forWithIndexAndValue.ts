@@ -7,7 +7,7 @@ ns0:CustomerOrders:
       $value: SampleCustomer
       $@OrderNumber: /OrderNumber
       Name:
-          $value: SampleName
-          $@FirstName: CustomerFirstName
-          $@LastName: CustomerLastName
+        $value: SampleName
+        $@FirstName: CustomerFirstName
+        $@LastName: CustomerLastName
   $@OrderValue: /OrderValue`;

@@ -10,5 +10,4 @@ ns0:CustomerOrders:
       $@OrderValue: OrderValue
       ShippingAddress:
         Line1: concat(upper-case(CustomerName), ' ', Address/Addr1)
-        Line2: Address/Addr2
-`;
+        Line2: Address/Addr2`;

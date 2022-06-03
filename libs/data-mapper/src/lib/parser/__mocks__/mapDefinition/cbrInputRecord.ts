@@ -7,5 +7,4 @@ ns0:CBRInputRecord:
     $@FirstName: /FirstName
     $@LastName: /LastName
     $@Initial: /Initial
-    Address: concat(/Address/AddressLine1 , ‘ ’, /Address/AddressLine2)
-`;
+    Address: concat(/Address/AddressLine1 , ‘ ’, /Address/AddressLine2)`;

@@ -3,9 +3,10 @@ import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions
 import { MissingSchemaNameException, MissingSchemaNameExceptionCode } from './exceptions/missingSchemaName';
 import yaml from 'js-yaml';
 
-export async function mapDefinitionToJson(inputMapDefinition: string): Promise<JsonInputStyle> {
+export function mapDefinitionToJson(inputMapDefinition: string): JsonInputStyle {
   try {
     const formattedInputMapDefinition = inputMapDefinition.replaceAll('\t', '  ');
+    // const formattedInputMapDefinition = inputMapDefinition;
     const parsedYaml: any = yaml.load(formattedInputMapDefinition);
     const parsedYamlKeys: string[] = Object.keys(parsedYaml);
 

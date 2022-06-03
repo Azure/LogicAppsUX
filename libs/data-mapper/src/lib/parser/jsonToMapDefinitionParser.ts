@@ -2,13 +2,13 @@ import type { JsonInputStyle, MapNode } from '../models/DataMap';
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
 
 export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
-  const codeDetails = `$sourceSchema: ${inputJson?.srcSchemaName ?? ''}\n$targetSchema: ${inputJson?.dstSchemaName ?? ''}\n`;
-
-  if (!inputJson.mappings) {
+  if (!inputJson?.srcSchemaName || !inputJson?.dstSchemaName || !inputJson?.mappings) {
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
   }
 
-  return `${codeDetails}${nodeToMapDefinition(inputJson.mappings, '')}`;
+  const codeDetails = `$sourceSchema: ${inputJson?.srcSchemaName ?? ''}\n$targetSchema: ${inputJson?.dstSchemaName ?? ''}\n`;
+
+  return `${codeDetails}${nodeToMapDefinition(inputJson.mappings, '').trim()}`;
 }
 
 function nodeToMapDefinition(node: MapNode, indent: string): string {
