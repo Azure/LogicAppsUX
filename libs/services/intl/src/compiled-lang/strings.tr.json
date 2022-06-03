@@ -1535,6 +1535,12 @@
       "value": "İstek"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1639,16 +1645,6 @@
     {
       "type": 0,
       "value": "Gerekli. Koleksiyonun önünden kaldırılacak nesne sayısı. Pozitif bir tamsayı olmalıdır."
-    }
-  ],
-  "bH5LtI": [
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " adlı sekme zaten kayıtlı"
     }
   ],
   "bTrk+S": [

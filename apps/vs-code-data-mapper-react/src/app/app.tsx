@@ -4,7 +4,7 @@ import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } f
 export const App = () => {
   return (
     <DataMapperDesignerProvider locale="en-US" options={{}}>
-      <DataMapDataProvider dataMap={''}>
+      <DataMapDataProvider dataMap={undefined}>
         <DataMapperDesigner></DataMapperDesigner>
       </DataMapDataProvider>
     </DataMapperDesignerProvider>

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { ProviderWrappedContext } from '../../core';
 import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
 import {
   useBrandColor,
@@ -11,32 +12,38 @@ import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/wo
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
 import { Card } from '@microsoft/designer-ui';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useContext } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
 const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+  const { readOnly, isMonitoringView } = useContext(ProviderWrappedContext) ?? {};
+
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
-  const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
-    // "type" is required. It is used by the "accept" specification of drop targets.
-    type: 'BOX',
-    // The collect function utilizes a "monitor" instance (see the Overview for what this is)
-    // to pull important pieces of state from the DnD system.
-    end: (item, monitor) => {
-      const dropResult = monitor.getDropResult<{ parent: string; child: string }>();
-      if (item && dropResult) {
-        alert(`You dropped ${id} between ${dropResult.parent} and  ${dropResult.child}!`);
-      }
-    },
-    item: {
-      id: id,
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
+  const [{ isDragging }, drag, dragPreview] = useDrag(
+    () => ({
+      // "type" is required. It is used by the "accept" specification of drop targets.
+      type: 'BOX',
+      // The collect function utilizes a "monitor" instance (see the Overview for what this is)
+      // to pull important pieces of state from the DnD system.
+      end: (item, monitor) => {
+        const dropResult = monitor.getDropResult<{ parent: string; child: string }>();
+        if (item && dropResult) {
+          alert(`You dropped ${id} between ${dropResult.parent} and  ${dropResult.child}!`);
+        }
+      },
+      item: {
+        id: id,
+      },
+      canDrag: !readOnly,
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
     }),
-  }));
+    [readOnly]
+  );
 
   const childEdges = useEdgesByParent(id);
   const parentEdges = useEdgesByChild(id);
@@ -58,6 +65,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const iconUri = useIconUri(operationInfo);
 
   if (metadata?.isPlaceholderNode) {
+    if (readOnly) return null;
     return (
       <div style={{ ...{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }, ...style }}>
         <DropZone graphId={metadata?.graphId ?? ''} />
@@ -78,7 +86,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     <div style={style}>
       {hasNestedParent && !parentEdges.length && (
         <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px', marginBottom: 5, marginLeft: 2 }}>
-          <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
+          {!readOnly ? <DropZone graphId={metadata?.graphId ?? ''} parent={id} /> : null}
         </div>
       )}
       <div>
@@ -91,7 +99,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
         <Card
           title={data.label}
           icon={iconUri}
-          draggable={true}
+          draggable={!readOnly}
           brandColor={brandColor}
           id={id}
           connectionRequired={true}
@@ -100,6 +108,8 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           drag={drag}
           dragPreview={dragPreview}
           isDragging={isDragging}
+          isMonitoringView={isMonitoringView}
+          readOnly={readOnly}
           onClick={nodeClick}
         />
         <Handle
@@ -109,7 +119,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
         />
       </div>
-      {childEdges.length === 0 && (
+      {!readOnly && childEdges.length === 0 && (
         <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>

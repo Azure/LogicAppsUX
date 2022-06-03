@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { ProviderWrappedContext } from '..';
 import { useLayout } from '../core/graphlayout';
 import { updateNodeSizes } from '../core/state/workflowSlice';
 import CustomTestNode from './CustomNodes/CustomTestNode';
 import GraphNode from './CustomNodes/GraphNode';
 import { CustomEdge } from './connections/edge';
 import { PanelRoot } from './panel/panelroot';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { NodeChange } from 'react-flow-renderer';

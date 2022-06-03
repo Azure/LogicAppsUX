@@ -1510,6 +1510,12 @@
       "value": "请求"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1614,20 +1620,6 @@
     {
       "type": 0,
       "value": "必需。要从集合前面删除的对象数。必须是一个正整数。"
-    }
-  ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "名为 "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " 的选项卡名称已注册"
     }
   ],
   "bTrk+S": [
