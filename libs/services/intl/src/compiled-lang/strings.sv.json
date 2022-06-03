@@ -1651,20 +1651,6 @@
       "value": "Obligatoriskt. Det antal objekt som ska tas bort från samlingens framsida. Det måste vara ett positivt heltal."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "En flik med namnet "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " har redan registrerats"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,

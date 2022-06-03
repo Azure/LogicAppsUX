@@ -1647,20 +1647,6 @@
       "value": "Obligatoire. Nombre d'objets à supprimer de l'avant de la collection. Doit être un entier positif."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "L'onglet avec le nom "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " est déjà inscrit"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,

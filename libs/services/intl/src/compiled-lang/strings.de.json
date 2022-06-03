@@ -1651,20 +1651,6 @@
       "value": "Erforderlich. Die Anzahl von Objekten, die vom Anfang der Sammlung entfernt werden sollen. Muss eine positive ganze Zahl sein."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Die Registerkarte mit : "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": "-Name ist bereits registriert."
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
