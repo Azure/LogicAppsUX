@@ -1,4 +1,5 @@
 import constants from '../../../common/constants';
+import { SettingsPanel } from '../../settings';
 import type { PanelTab, SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
 
@@ -83,6 +84,6 @@ export const settingsTab: PanelTab = {
   name: constants.PANEL_TAB_NAMES.SETTINGS,
   description: 'Request Settings',
   enabled: true,
-  content: <SettingsTab />,
+  content: <SettingsPanel />,
   order: 0,
 };

@@ -1,3 +1,4 @@
+import type { SettingProps } from './settingtoggle';
 import { Checkbox } from '@fluentui/react';
 import React, { useState } from 'react';
 
@@ -8,12 +9,11 @@ export interface MultiSelectOption {
   value: string;
 }
 
-export interface MultiSelectSettingProps {
+export interface MultiSelectSettingProps extends SettingProps {
   options: MultiSelectOption[];
   selections: MultiSelectOption[];
   readOnly?: boolean;
   onSelectionChange?: StatusChangeHandler;
-  onRenderLabel?: JSX.Element | null;
 }
 
 export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
@@ -21,7 +21,7 @@ export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
   options,
   selections,
   onSelectionChange,
-  onRenderLabel,
+  customLabel,
 }: MultiSelectSettingProps): JSX.Element => {
   const [userSelections, setUserSelections] = useState(selections);
   const handleSelectionChange = (selection: MultiSelectOption, checked: boolean): void => {
@@ -37,7 +37,7 @@ export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
               disabled={readOnly}
               checked={userSelections.includes(option)}
               label={option.label}
-              onRenderLabel={onRenderLabel ? () => onRenderLabel : undefined}
+              onRenderLabel={customLabel}
               onChange={(_, checked) => handleSelectionChange(option, !!checked)}
             />
           </div>

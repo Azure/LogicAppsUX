@@ -4,12 +4,16 @@ import { useIntl } from 'react-intl';
 
 type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
 
-export interface SettingToggleProps extends IToggleProps {
+export interface SettingProps {
   readOnly?: boolean;
+  customLabel?: () => JSX.Element;
+}
+
+export interface SettingToggleProps extends IToggleProps, SettingProps {
   onToggleInputChange?: ToggleChangeHandler;
 }
 
-export const SettingToggle = ({ readOnly, onToggleInputChange, checked }: SettingToggleProps): JSX.Element => {
+export const SettingToggle = ({ readOnly, onToggleInputChange, checked, label }: SettingToggleProps): JSX.Element => {
   const intl = useIntl();
 
   const formattedOnText = intl.formatMessage({
@@ -29,6 +33,7 @@ export const SettingToggle = ({ readOnly, onToggleInputChange, checked }: Settin
       onText={formattedOnText}
       offText={formattedOffText}
       onChange={onToggleInputChange}
+      label={label}
     />
   );
 };

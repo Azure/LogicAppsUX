@@ -1,3 +1,4 @@
+import type { SettingProps } from './settingtoggle';
 import { ActionButton, IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { TextField } from '@fluentui/react/lib/TextField';
@@ -6,9 +7,8 @@ import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface MultiAddExpressionEditorProps {
+export interface MultiAddExpressionEditorProps extends SettingProps {
   initialExpressions?: string[];
-  readOnly?: boolean;
   visible?: boolean;
 }
 
@@ -16,15 +16,23 @@ export const MultiAddExpressionEditor = ({
   initialExpressions = [],
   readOnly = false,
   visible = true,
+  customLabel,
 }: MultiAddExpressionEditorProps): JSX.Element | null => {
   const [, setExpressions] = useState(initialExpressions);
   const onExpressionsChange = (updatedExpressions: string[]): void => {
     setExpressions(updatedExpressions);
   };
 
-  return visible ? (
-    <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />
-  ) : null;
+  if (visible && customLabel) {
+    return (
+      <>
+        {customLabel()}
+        <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />
+      </>
+    );
+  } else if (visible) {
+    return <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />;
+  } else return null;
 };
 
 const styles: Partial<ITextFieldStyles> = {
