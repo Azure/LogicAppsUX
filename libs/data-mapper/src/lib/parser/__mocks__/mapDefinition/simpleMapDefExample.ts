@@ -1,4 +1,4 @@
-export const simpleMapDefExample = `$sourceSchema: SrcOrders.xsd
+export const simpleMapDefExampleMapDefinitionMock = `$sourceSchema: SrcOrders.xsd
 $targetSchema: CustomerOrders.xsd
 ns0:CustomerOrders:
   $@OrderedItem: /ns0:Orders/@Item

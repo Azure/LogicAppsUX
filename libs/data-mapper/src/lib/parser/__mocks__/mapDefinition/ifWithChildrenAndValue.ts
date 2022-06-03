@@ -6,8 +6,8 @@ ns0:CustomerOrders:
     Customer:
       $if(not_equal(/CustomerName, '')):
         Name:
+          $value: SampleName
           $@FirstName: CustomerFirstName
           $@LastName: CustomerLastName
-          $value: SampleName
       $@OrderNumber: /OrderNumber
   $@OrderValue: /OrderValue`;

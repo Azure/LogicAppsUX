@@ -4,10 +4,10 @@ ns0:CustomerOrders:
   $@OrderedItem: /ns0:Orders/@Item
   $for(/ns0:Orders/WebOrders, index1):
     Customer:
-      $@OrderNumber: /OrderNumber
       $value: SampleCustomer
+      $@OrderNumber: /OrderNumber
       Name:
+          $value: SampleName
           $@FirstName: CustomerFirstName
           $@LastName: CustomerLastName
-          $value: SampleName
   $@OrderValue: /OrderValue`;
