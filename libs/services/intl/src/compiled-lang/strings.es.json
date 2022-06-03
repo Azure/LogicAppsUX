@@ -1647,20 +1647,6 @@
       "value": "Obligatorio. El número de objetos que se eliminarán de la parte frontal de la colección. Tiene que ser un entero positivo."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "La pestaña con el nombre "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " ya está registrada"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
