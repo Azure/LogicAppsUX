@@ -1,3 +1,4 @@
+import { StatusPill } from '../monitoring';
 import { isDeleteKey, isEnterKey, isSpaceKey } from '../utils/keyboardUtils';
 import { CardContextMenu } from './cardcontextmenu';
 import { CardFooter } from './cardfooter';
@@ -27,6 +28,9 @@ export interface CardProps {
   errorMessage?: string;
   icon?: string;
   id: string;
+  isDragging?: boolean;
+  isMonitoringView?: boolean;
+  readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
   selected?: boolean;
   staticResultsEnabled?: boolean;
@@ -61,6 +65,9 @@ export const Card: React.FC<CardProps> = ({
   errorLevel,
   errorMessage,
   icon,
+  isDragging,
+  isMonitoringView,
+  readOnly,
   selected,
   staticResultsEnabled,
   title,
@@ -118,12 +125,14 @@ export const Card: React.FC<CardProps> = ({
           'msla-panel-card-container',
           selected && 'msla-panel-card-container-selected',
           !active && 'inactive',
-          cloned && 'msla-card-ghost-image'
+          cloned && 'msla-card-ghost-image',
+          isDragging && 'dragging'
         )}
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
         onClick={handleClick}
       >
+        {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
         <div className="panel-card-main">
           <div
             className="panel-card-header"
@@ -134,7 +143,7 @@ export const Card: React.FC<CardProps> = ({
             onKeyUp={handleKeyUp}
           >
             <div className="panel-card-content-container">
-              <div className="panel-card-content-gripper-section">{draggable ? <Gripper /> : null}</div>
+              <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
               {icon ? (
                 <div className="panel-card-content-icon-section">
                   <img className="panel-card-icon" src={icon} alt="" />

@@ -1,6 +1,6 @@
+import type { MapNode, ConditionalMapping, JsonInputStyle, LoopMapping } from '../models';
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
 import { MissingSchemaNameException, MissingSchemaNameExceptionCode } from './exceptions/missingSchemaName';
-import type { ConditionalMapping, JsonInputStyle, LoopMapping, Node } from './types';
 import yaml from 'js-yaml';
 
 export async function mapDefinitionToJson(inputMapDefinition: string): Promise<JsonInputStyle> {
@@ -21,7 +21,7 @@ export async function mapDefinitionToJson(inputMapDefinition: string): Promise<J
     const sourceSchema: string = parsedYaml.$sourceSchema;
     const targetSchema: string = parsedYaml.$targetSchema;
 
-    const mappings: Node = parseMappingsJsonToNode(targetNodeKey, parsedYaml[targetNodeKey]);
+    const mappings: MapNode = parseMappingsJsonToNode(targetNodeKey, parsedYaml[targetNodeKey]);
 
     return {
       srcSchemaName: sourceSchema,
@@ -37,7 +37,7 @@ export async function mapDefinitionToJson(inputMapDefinition: string): Promise<J
   }
 }
 
-function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string | object | any): Node {
+function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string | object | any): MapNode {
   if (typeof targetNodeObject === 'string') {
     return {
       targetNodeKey: targetNodeKey,
@@ -69,7 +69,7 @@ function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string
 
   const targetValue = targetNodeObject?.$value ? { value: targetNodeObject.$value } : undefined;
 
-  const childrenNode: Node[] = [];
+  const childrenNode: MapNode[] = [];
   for (const childKey in targetNodeObject) {
     if (childKey !== '$value') {
       childrenNode.push(parseMappingsJsonToNode(childKey, targetNodeObject[childKey]));

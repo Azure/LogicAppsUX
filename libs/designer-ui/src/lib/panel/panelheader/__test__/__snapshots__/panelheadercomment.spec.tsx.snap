@@ -2,43 +2,39 @@
 
 exports[`ui/panel/panelheadercomment should construct. 1`] = `
 <div
-  className="msla-panel-comment-container-wrapper"
+  className="msla-panel-comment-container"
   hidden={false}
 >
-  <div
-    className="msla-panel-comment-container"
-  >
-    <Memo(Icon)
-      ariaLabel="Comment"
-      className="msla-comment-icon"
-      iconName="Comment"
-    />
-    <StyledTextFieldBase
-      ariaLabel="Comment"
-      autoAdjustHeight={true}
-      borderless={true}
-      className="msla-card-comment"
-      componentRef={
-        Object {
-          "current": null,
-        }
+  <Memo(Icon)
+    ariaLabel="Comment"
+    className="msla-comment-icon"
+    iconName="Comment"
+  />
+  <StyledTextFieldBase
+    ariaLabel="Comment"
+    autoAdjustHeight={true}
+    borderless={true}
+    className="msla-card-comment"
+    componentRef={
+      Object {
+        "current": null,
       }
-      maxLength={256}
-      multiline={true}
-      onBlur={[Function]}
-      onChange={[Function]}
-      onFocus={[Function]}
-      onKeyDown={[Function]}
-      onKeyUp={[Function]}
-      resizable={false}
-      styles={
-        Object {
-          "field": Object {
-            "backgroundColor": "#faf9f8",
-          },
-        }
+    }
+    maxLength={256}
+    multiline={true}
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    resizable={false}
+    styles={
+      Object {
+        "field": Object {
+          "backgroundColor": "#faf9f8",
+        },
       }
-    />
-  </div>
+    }
+  />
 </div>
 `;

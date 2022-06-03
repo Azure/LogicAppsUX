@@ -816,6 +816,8 @@ body.dark {
   width: @panel-mode-card-width;
   -webkit-user-select: none;
   user-select: none;
+  background-color: #fff;
+  cursor: default;
 
   &:focus {
     outline: 2px solid #605e5c;
@@ -827,7 +829,9 @@ body.dark {
 
     .panel-card-content-gripper-section {
       visibility: visible;
-      cursor: grab;
+      &.draggable {
+        cursor: grab;
+      }
     }
   }
 
@@ -838,7 +842,7 @@ body.dark {
 
   &.dragging {
     cursor: grabbing;
-    opacity: 0.7;
+    opacity: 0.6;
     outline: none;
     box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
 
@@ -863,7 +867,6 @@ body.dark {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    background-color: #fff;
 
     .panel-card-header {
       cursor: pointer;
@@ -872,6 +875,7 @@ body.dark {
         display: flex;
         flex-direction: row;
         min-height: 32px;
+        align-items: center;
 
         .panel-card-right-controls {
           display: flex;
@@ -885,8 +889,8 @@ body.dark {
         }
 
         .panel-card-content-icon-section {
-          flex: 0 0;
-          margin: 8px 8px 0 5px;
+          display: flex;
+          margin-right: 8px;
 
           .panel-card-icon {
             height: 24px;
@@ -960,7 +964,8 @@ body.dark {
   }
 
   .panel-card-content-gripper-section {
-    margin: 12px 0 0 5px;
+    padding: 13px 4px 11px; // This should be '12px 4px' but our svg is rendering too high
+    text-align: center;
     visibility: hidden;
   }
 

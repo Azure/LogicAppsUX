@@ -4,10 +4,11 @@ export { default as missingDstSchemaJsonMock } from './json/missingDstSchemaName
 export { default as cbrInputRecordJsonMock } from './json/cbrInputRecord.json';
 export { default as simpleJsonExample } from './json/simpleJsonExample.json';
 
-export * from './mapDefinition/customerOrders';
-export * from './mapDefinition/missingSrcSchemaName';
-export * from './mapDefinition/missingDstSchemaName';
 export * from './mapDefinition/cbrInputRecord';
-export * from './mapDefinition/simpleMapDefExample';
-export * from './mapDefinition/ifWithChildrenAndValue';
+export * from './mapDefinition/customerOrders';
+export * from './mapDefinition/forWithChildrenAndValue';
 export * from './mapDefinition/forWithIndexAndValue';
+export * from './mapDefinition/ifWithChildrenAndValue';
+export * from './mapDefinition/missingDstSchemaName';
+export * from './mapDefinition/missingSrcSchemaName';
+export * from './mapDefinition/simpleMapDefExample';

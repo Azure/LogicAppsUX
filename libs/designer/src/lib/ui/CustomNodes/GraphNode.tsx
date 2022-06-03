@@ -1,34 +1,42 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { ProviderWrappedContext } from '../../core';
 import type { WorkflowGraph } from '../../core/parsers/models/workflowNode';
 import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useWorkflowNode } from '../../core/state/selectors/workflowNodeSelector';
 import { DropZone } from '../connections/dropzone';
 import { ScopeCard } from '@microsoft/designer-ui';
-import { memo } from 'react';
+import { memo, useContext } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
 
 const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const node = useActionMetadata(id);
-  const [, drag, dragPreview] = useDrag(() => ({
-    // "type" is required. It is used by the "accept" specification of drop targets.
-    type: 'BOX',
-    // The collect function utilizes a "monitor" instance (see the Overview for what this is)
-    // to pull important pieces of state from the DnD system.
-    end: (item, monitor) => {
-      const dropResult = monitor.getDropResult<{ parent: string; child: string }>();
-      if (item && dropResult) {
-        alert(`You dropped ${id} between ${dropResult.parent} and  ${dropResult.child}!`);
-      }
-    },
-    item: {
-      id: id,
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
+
+  const { readOnly, isMonitoringView } = useContext(ProviderWrappedContext) ?? {};
+
+  const [{ isDragging }, drag, dragPreview] = useDrag(
+    () => ({
+      // "type" is required. It is used by the "accept" specification of drop targets.
+      type: 'BOX',
+      // The collect function utilizes a "monitor" instance (see the Overview for what this is)
+      // to pull important pieces of state from the DnD system.
+      end: (item, monitor) => {
+        const dropResult = monitor.getDropResult<{ parent: string; child: string }>();
+        if (item && dropResult) {
+          alert(`You dropped ${id} between ${dropResult.parent} and  ${dropResult.child}!`);
+        }
+      },
+      item: {
+        id: id,
+      },
+      canDrag: !readOnly,
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
     }),
-  }));
+    [readOnly]
+  );
 
   const graph = useWorkflowNode(id) as WorkflowGraph;
   const operationInfo = useOperationInfo(id);
@@ -56,9 +64,11 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           icon={iconUri}
           collapsed={false}
           drag={drag}
-          draggable={true}
+          draggable={!readOnly}
           dragPreview={dragPreview}
+          isDragging={isDragging}
           id={id}
+          isMonitoringView={isMonitoringView}
           title={data.label}
         />
         <Handle
@@ -70,11 +80,17 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
       </div>
     );
   } else {
-    return renderGenericGraph(id, targetPosition, sourcePosition, isEmptyGraph);
+    return renderGenericGraph(id, targetPosition, sourcePosition, isEmptyGraph, readOnly);
   }
 };
 
-function renderGenericGraph(nodeId: string, targetPosition: Position, sourcePosition: Position, isEmptyGraph: boolean): JSX.Element {
+function renderGenericGraph(
+  nodeId: string,
+  targetPosition: Position,
+  sourcePosition: Position,
+  isEmptyGraph: boolean,
+  readOnly?: boolean
+): JSX.Element {
   return (
     <div className="msla-actions-container">
       <div>
@@ -91,7 +107,7 @@ function renderGenericGraph(nodeId: string, targetPosition: Position, sourcePosi
           style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
         />
       </div>
-      {isEmptyGraph && (
+      {!readOnly && isEmptyGraph && (
         <div style={{ display: 'grid', placeItems: 'center', width: '200', height: '30', marginTop: '10px' }}>
           <DropZone graphId={nodeId} />
         </div>

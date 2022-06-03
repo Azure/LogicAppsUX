@@ -35,7 +35,10 @@ export function getHeaderStyle(brandColor?: string): React.CSSProperties | undef
   return brandColor ? { backgroundColor: getBrandColorRgbA(brandColor, /* opacity */ 1) } : undefined;
 }
 
-function getBrandColorRgbA(brandColor = Constants.DEFAULT_BRAND_COLOR, opacity = Constants.HEADER_AND_TOKEN_OPACITY): string {
+export function getBrandColorRgbA(
+  brandColor = Constants.DEFAULT_BRAND_COLOR,
+  opacity = Constants.DEFAULT_HEADER_AND_TOKEN_OPACITY
+): string {
   try {
     return hexToRgbA(brandColor, opacity);
   } catch {

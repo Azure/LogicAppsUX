@@ -9,7 +9,7 @@ describe('ui/settings/settingreactiveinput', () => {
   beforeEach(() => {
     minimal = {
       textFieldId: 'id1',
-      isReadOnly: false,
+      readOnly: false,
       textFieldLabel: 'text field label',
       textFieldValue: 'test',
       defaultChecked: false,
