@@ -5,12 +5,6 @@
       "value": "Filter"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Bezeichnung festlegen"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -255,12 +249,6 @@
       "value": "Erforderlich. Der Name der Aktion mit einer form-data- oder form-encoded-Antwort."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Aus"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,12 +265,6 @@
     {
       "type": 0,
       "value": "Fehlerhaft"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "Ziehbare Schiebereglerleiste"
     }
   ],
   "3rzrWf": [
@@ -621,12 +603,6 @@
       "value": "Erforderlich. Die Zeichenfolge, aus der führende und nachstehende Leerzeichen entfernt werden sollen."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Ein"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -807,12 +783,6 @@
     {
       "type": 0,
       "value": "Wählen Sie eine Karte aus, um den Inhalt anzuzeigen."
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Einstellungswert"
     }
   ],
   "IW2MjQ": [
@@ -1041,12 +1011,6 @@
     {
       "type": 0,
       "value": "Hiermit werden die Ergebnisse der Aktionen der obersten Ebene in der angegebenen bereichsbezogenen Aktion zurückgegeben, z. B. eine for_each-, Until- oder Scope-Aktion."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Bezeichnung Text"
     }
   ],
   "Oib1mL": [
@@ -1667,12 +1631,6 @@
     {
       "type": 0,
       "value": "Gibt den Höchstwert im Eingabearray von Zahlen zurück."
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Bezeichnungseinstellung"
     }
   ],
   "bzF/qn": [

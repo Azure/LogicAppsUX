@@ -5,12 +5,6 @@
       "value": "Filtri"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Etichetta impostazione"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -255,12 +249,6 @@
       "value": "Obbligatorio. Nome dell'azione con una risposta con dati del modulo o codifica per il modulo."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "No"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,12 +265,6 @@
     {
       "type": 0,
       "value": "Con errori"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "barra del dispositivo di scorrimento trascinabile"
     }
   ],
   "3rzrWf": [
@@ -621,12 +603,6 @@
       "value": "Obbligatorio. Stringa da cui rimuovere lo spazio vuoto iniziale e finale."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Sì"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -807,12 +783,6 @@
     {
       "type": 0,
       "value": "Selezionare una scheda per visualizzare il contenuto"
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Valore impostazione"
     }
   ],
   "IW2MjQ": [
@@ -1041,12 +1011,6 @@
     {
       "type": 0,
       "value": "Restituisce i risultati delle azioni di primo livello nell'azione con ambito specificata, ad esempio un'azione For_each, Until o Scope."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Testo etichetta"
     }
   ],
   "Oib1mL": [
@@ -1671,12 +1635,6 @@
     {
       "type": 0,
       "value": "Restituisce il valore massimo nella matrice di input di numeri"
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Impostazione etichetta"
     }
   ],
   "bzF/qn": [
