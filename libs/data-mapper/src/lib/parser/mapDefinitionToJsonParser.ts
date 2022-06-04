@@ -1,40 +1,28 @@
 import type { MapNode, ConditionalMapping, JsonInputStyle, LoopMapping } from '../models';
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
-import { MissingSchemaNameException, MissingSchemaNameExceptionCode } from './exceptions/missingSchemaName';
 import yaml from 'js-yaml';
 
 export function mapDefinitionToJson(inputMapDefinition: string): JsonInputStyle {
-  try {
-    const formattedInputMapDefinition = inputMapDefinition.replaceAll('\t', '  ');
-    const parsedYaml: any = yaml.load(formattedInputMapDefinition);
-    const parsedYamlKeys: string[] = Object.keys(parsedYaml);
+  const formattedInputMapDefinition = inputMapDefinition.replaceAll('\t', '  ');
+  const parsedYaml: any = yaml.load(formattedInputMapDefinition);
+  const parsedYamlKeys: string[] = Object.keys(parsedYaml);
 
-    if (parsedYamlKeys[0] !== '$sourceSchema' || parsedYamlKeys[1] !== '$targetSchema') {
-      throw new MissingSchemaNameException(
-        MissingSchemaNameExceptionCode.MISSING_SCHEMA_NAME,
-        MissingSchemaNameExceptionCode.MISSING_SCHEMA_NAME
-      );
-    }
-
-    const targetNodeKey: string = parsedYamlKeys[2];
-
-    const sourceSchema: string = parsedYaml.$sourceSchema;
-    const targetSchema: string = parsedYaml.$targetSchema;
-
-    const mappings: MapNode = parseMappingsJsonToNode(targetNodeKey, parsedYaml[targetNodeKey]);
-
-    return {
-      srcSchemaName: sourceSchema,
-      dstSchemaName: targetSchema,
-      mappings: mappings,
-    };
-  } catch (e: any) {
-    if (e?.name === 'YAMLException') {
-      console.log(e.message);
-      throw new InvalidFormatException(InvalidFormatExceptionCode.INVALID_YAML_FORMAT, InvalidFormatExceptionCode.INVALID_YAML_FORMAT);
-    }
-    throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
+  if (parsedYamlKeys[0] !== '$sourceSchema' || parsedYamlKeys[1] !== '$targetSchema') {
+    throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME, InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
   }
+
+  const targetNodeKey: string = parsedYamlKeys[2];
+
+  const sourceSchema: string = parsedYaml.$sourceSchema;
+  const targetSchema: string = parsedYaml.$targetSchema;
+
+  const mappings: MapNode = parseMappingsJsonToNode(targetNodeKey, parsedYaml[targetNodeKey]);
+
+  return {
+    srcSchemaName: sourceSchema,
+    dstSchemaName: targetSchema,
+    mappings: mappings,
+  };
 }
 
 function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string | object | any): MapNode {

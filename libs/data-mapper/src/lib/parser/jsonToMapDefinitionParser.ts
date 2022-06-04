@@ -2,7 +2,9 @@ import type { JsonInputStyle, MapNode } from '../models/DataMap';
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
 
 export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
-  if (!inputJson?.srcSchemaName || !inputJson?.dstSchemaName || !inputJson?.mappings) {
+  if (!inputJson?.srcSchemaName || !inputJson?.dstSchemaName) {
+    throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME, InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
+  } else if (!inputJson?.mappings) {
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
   }
 

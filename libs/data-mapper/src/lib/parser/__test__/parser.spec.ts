@@ -45,13 +45,13 @@ describe('jsonToMapDefinitionParser', () => {
     it('Test src schema name missing input', () => {
       expect(() => {
         jsonToMapDefinition(missingSrcSchemaJsonMock);
-      }).toThrow(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
+      }).toThrow(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
     });
 
     it('Test dst schema name missing input', () => {
       expect(() => {
         jsonToMapDefinition(missingDstSchemaJsonMock);
-      }).toThrow(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
+      }).toThrow(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
     });
 
     it('Test simple json example', () => {
@@ -83,13 +83,13 @@ describe('jsonToMapDefinitionParser', () => {
     it('Test src schema name missing input', () => {
       expect(() => {
         mapDefinitionToJson(missingSrcSchemaNameMapDefinitionMock);
-      }).toThrow(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
+      }).toThrow(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
     });
 
     it('Test dst schema name missing input', () => {
       expect(() => {
         mapDefinitionToJson(missingDstSchemaNameMapDefinitionMock);
-      }).toThrow(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
+      }).toThrow(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
     });
 
     it('Test simple json example', () => {

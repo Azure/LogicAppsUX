@@ -2,6 +2,7 @@ import { BaseException } from '@microsoft-logic-apps/utils';
 
 export enum InvalidFormatExceptionCode {
   MISSING_MAPPINGS_PARAM = 'MissingMappingParam',
+  MISSING_SCHEMA_NAME = 'MissingSchemaName',
   INVALID_YAML_FORMAT = 'InvalidYamlFormat',
 }
 
