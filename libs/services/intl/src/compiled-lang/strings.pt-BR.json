@@ -5,12 +5,6 @@
       "value": "Filtros"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Rótulo da Configuração"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -255,12 +249,6 @@
       "value": "Necessário. O nome da ação com uma resposta de dados do formulário ou codificada no formulário."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Desligar"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,12 +265,6 @@
     {
       "type": 0,
       "value": "Com falha"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "barra deslizante arrastável"
     }
   ],
   "3rzrWf": [
@@ -621,12 +603,6 @@
       "value": "Necessário. A cadeia de caracteres da qual deseja remover os espaços em branco à esquerda e à direita."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Ligar"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -807,12 +783,6 @@
     {
       "type": 0,
       "value": "Selecione um cartão para ver o conteúdo"
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Valor da Configuração"
     }
   ],
   "IW2MjQ": [
@@ -1041,12 +1011,6 @@
     {
       "type": 0,
       "value": "Retorna os resultados das ações de nível superior na ação com escopo especificada, como uma ação For_each, Until ou Scope."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Texto da Etiqueta"
     }
   ],
   "Oib1mL": [
@@ -1663,12 +1627,6 @@
     {
       "type": 0,
       "value": "Retorna o valor máximo na matriz de entrada de números"
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Configuração do rótulo"
     }
   ],
   "bzF/qn": [

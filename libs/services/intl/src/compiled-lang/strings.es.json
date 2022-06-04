@@ -5,12 +5,6 @@
       "value": "Filtros"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Etiqueta de configuración"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -255,12 +249,6 @@
       "value": "Obligatorio. El nombre de la acción con una respuesta form-data o form-encoded."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Desactivado"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,12 +265,6 @@
     {
       "type": 0,
       "value": "Con errores"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "barra de control deslizante arrastrable"
     }
   ],
   "3rzrWf": [
@@ -621,12 +603,6 @@
       "value": "Obligatorio. Cadena de la que se quitará el espacio en blanco inicial y final."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Activado"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -807,12 +783,6 @@
     {
       "type": 0,
       "value": "Seleccione una tarjeta para ver el contenido."
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Valor de configuración"
     }
   ],
   "IW2MjQ": [
@@ -1041,12 +1011,6 @@
     {
       "type": 0,
       "value": "Devuelve los resultados de las acciones de nivel superior en la acción con ámbito especificada, como una acción For_each, Until o Scope."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Texto de etiqueta"
     }
   ],
   "Oib1mL": [
@@ -1663,12 +1627,6 @@
     {
       "type": 0,
       "value": "Devuelve el valor máximo de la matriz de entrada de números."
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Configuración de etiqueta"
     }
   ],
   "bzF/qn": [
