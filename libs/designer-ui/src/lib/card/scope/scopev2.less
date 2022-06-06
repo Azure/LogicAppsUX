@@ -44,13 +44,12 @@
   border: 2px solid #979593;
   border-radius: 8px;
   box-sizing: border-box;
-  display: inline-block;
   min-width: @scope-v2-width;
-  padding: 20px 8px 15px 8px;
+  padding: 20px 8px 15px;
   position: relative;
-  top: -20px;
+  margin-top: -16px;
   width: 100%;
-  height: calc(100% - 40px);
+  height: calc(100% - 32px);
 
   &.msla-expanded {
     min-height: 72px;
@@ -390,7 +389,7 @@ body.dark {
 
 .msla-scope-card {
   width: 100%;
-  height: calc(100% + 8px);
+  height: 100%;
   cursor: pointer;
 
   .msla-scope-header-wrapper {

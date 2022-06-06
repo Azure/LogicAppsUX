@@ -12,7 +12,7 @@ import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/wo
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
 import { Card } from '@microsoft/designer-ui';
-import { memo, useCallback, useContext } from 'react';
+import { memo, useCallback, useContext, useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
@@ -20,6 +20,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const { readOnly, isMonitoringView } = useContext(ProviderWrappedContext) ?? {};
+
+  const dispatch = useDispatch();
 
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
   const [{ isDragging }, drag, dragPreview] = useDrag(
@@ -48,11 +50,13 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const childEdges = useEdgesByParent(id);
   const parentEdges = useEdgesByChild(id);
   const metadata = useNodeMetadata(id);
-  const hasNestedParent = metadata?.graphId !== 'root';
-  const dispatch = useDispatch();
-  const style = hasNestedParent && !parentEdges.length ? { marginTop: 40 } : undefined;
   const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
+
+  const [isFirstChild, setIsFirstChild] = useState(false);
+  useEffect(() => {
+    setIsFirstChild(metadata?.graphId !== 'root' && !parentEdges.length);
+  }, [metadata, parentEdges, setIsFirstChild]);
 
   const nodeClick = useCallback(() => {
     if (isCollapsed) {
@@ -67,7 +71,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   if (metadata?.isPlaceholderNode) {
     if (readOnly) return null;
     return (
-      <div style={{ ...{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }, ...style }}>
+      <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
         <DropZone graphId={metadata?.graphId ?? ''} />
       </div>
     );
@@ -83,12 +87,12 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     : undefined;
 
   return (
-    <div style={style}>
-      {hasNestedParent && !parentEdges.length && (
-        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px', marginBottom: 5, marginLeft: 2 }}>
+    <div>
+      {isFirstChild && !readOnly ? (
+        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px', marginBottom: 5 }}>
           {!readOnly ? <DropZone graphId={metadata?.graphId ?? ''} parent={id} /> : null}
         </div>
-      )}
+      ) : null}
       <div>
         <Handle
           type="target"

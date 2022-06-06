@@ -8,11 +8,13 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
 
 type SpecTypes = 'BJS' | 'CNCF';
+type SubgraphType = 'CONDITIONAL-TRUE' | 'CONDITIONAL-FALSE' | 'SWITCH-CASE';
 
 export interface NodesMetadata {
   [nodeId: string]: {
     graphId: string;
     isPlaceholderNode?: boolean;
+    subgraphType?: SubgraphType;
   };
 }
 
