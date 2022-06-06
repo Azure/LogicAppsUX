@@ -1,3 +1,4 @@
+import { StandardConnectionService, StandardOperationManifestService, StandardSearchService } from '@microsoft-logic-apps/designer-client-services';
 import type { DesignerOptionsContext } from '../index';
 import { BJSWorkflowProvider, Designer, DesignerProvider } from '../index';
 import BigWorkflow from './simpleBigworkflow.json';
@@ -14,6 +15,11 @@ interface ComponentProps {
   options?: Partial<DesignerOptionsContext>;
 }
 
+const httpClient = {
+  dispose: () => Promise.resolve({} as any),
+  get: () => Promise.resolve({} as any),
+  post: () => Promise.resolve({} as any),
+};
 const RenderedComponent = (props: ComponentProps) => (
   <div style={{ height: '100vh' }}>
     <DesignerProvider
@@ -21,11 +27,17 @@ const RenderedComponent = (props: ComponentProps) => (
       options={{
         ...props.options,
         services: {
-          httpClient: {
-            dispose: () => Promise.resolve({} as any),
-            get: () => Promise.resolve({} as any),
-            post: () => Promise.resolve({} as any),
-          },
+          connectionService: new StandardConnectionService({
+            baseUrl: '',
+            apiVersion: '2018-11-01',
+          }),
+          httpClient,
+          operationManifestService: new StandardOperationManifestService({
+            apiVersion: '',
+            baseUrl: '',
+            httpClient
+          }),
+          searchService: new StandardSearchService()
         },
       }}
     >
