@@ -1,6 +1,7 @@
-import { forWithIndexAndValueJsonMock, JsonToMapParserView } from '@microsoft/logic-apps-data-mapper';
+import { customerOrdersJsonMock, ParserInputFormat, ParserView } from '@microsoft/logic-apps-data-mapper';
 
 export const ParserViewInApp = () => {
-  return <JsonToMapParserView input={JSON.stringify(forWithIndexAndValueJsonMock, null, '\t')} />;
-  // return <MapToJsonParserView input={simpleMapDefExampleMapDefinitionMock} />; // replaced with this line to see mapcode -> json
+  const parserInput = JSON.stringify(customerOrdersJsonMock, null, '\t');
+
+  return <ParserView input={parserInput} inputFormat={ParserInputFormat.JSON_FORMAT} />;
 };

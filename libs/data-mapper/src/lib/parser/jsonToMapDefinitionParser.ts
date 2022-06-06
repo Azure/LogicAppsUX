@@ -1,5 +1,6 @@
 import type { JsonInputStyle, MapNode } from '../models/DataMap';
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
+import { MapDefinitionProperties, MapNodeParams, YamlFormats } from './utils/constants';
 
 export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
   if (!inputJson?.srcSchemaName || !inputJson?.dstSchemaName) {
@@ -8,7 +9,9 @@ export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
   }
 
-  const codeDetails = `$sourceSchema: ${inputJson?.srcSchemaName ?? ''}\n$targetSchema: ${inputJson?.dstSchemaName ?? ''}\n`;
+  const codeDetails = `${MapDefinitionProperties.SourceSchema}: ${inputJson?.srcSchemaName ?? ''}${YamlFormats.newLine}${
+    MapDefinitionProperties.TargetSchema
+  }: ${inputJson?.dstSchemaName ?? ''}${YamlFormats.newLine}`;
 
   return `${codeDetails}${nodeToMapDefinition(inputJson.mappings, '').trim()}`;
 }
@@ -17,26 +20,26 @@ function nodeToMapDefinition(node: MapNode, indent: string): string {
   let mapDefinition = '';
 
   if (node.loopSource) {
-    mapDefinition = `${mapDefinition}${indent}$for(${node.loopSource.loopSource}${
+    mapDefinition = `${mapDefinition}${indent}${MapNodeParams.For}(${node.loopSource.loopSource}${
       node.loopSource.loopIndex ? `, ${node.loopSource.loopIndex}` : ''
-    }):\n`;
-    indent += '  ';
+    }):${YamlFormats.newLine}`;
+    indent += YamlFormats.indentGap;
   }
 
   if (node.condition) {
-    mapDefinition = `${mapDefinition}${indent}$if(${node.condition.condition}):\n`;
-    indent += '  ';
+    mapDefinition = `${mapDefinition}${indent}${MapNodeParams.If}(${node.condition.condition}):${YamlFormats.newLine}`;
+    indent += YamlFormats.indentGap;
   }
 
   mapDefinition = `${mapDefinition}${indent}${node.targetNodeKey}:`;
 
   if (node.children) {
-    indent += '  ';
+    indent += YamlFormats.indentGap;
 
-    mapDefinition = `${mapDefinition}\n`;
+    mapDefinition = `${mapDefinition}${YamlFormats.newLine}`;
 
     if (node.targetValue) {
-      mapDefinition = `${mapDefinition}${indent}$value: ${node.targetValue.value}\n`;
+      mapDefinition = `${mapDefinition}${indent}${MapNodeParams.Value}: ${node.targetValue.value}${YamlFormats.newLine}`;
     }
 
     for (const childNode of node.children) {
@@ -47,7 +50,7 @@ function nodeToMapDefinition(node: MapNode, indent: string): string {
       mapDefinition = `${mapDefinition} ${node.targetValue.value}`;
     }
 
-    mapDefinition = `${mapDefinition}\n`;
+    mapDefinition = `${mapDefinition}${YamlFormats.newLine}`;
   }
 
   return mapDefinition;

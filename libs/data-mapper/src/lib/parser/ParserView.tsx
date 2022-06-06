@@ -4,21 +4,19 @@ import { mapDefinitionToJson } from './mapDefinitionToJsonParser';
 
 export interface ParserViewProps {
   input: string;
+  inputFormat: ParserInputFormat;
 }
 
-export const JsonToMapParserView = ({ input }: ParserViewProps) => {
-  const convertedOutput = jsonToMapDefinition(JSON.parse(input));
+export enum ParserInputFormat {
+  JSON_FORMAT = 'JsonFormat',
+  YAML_FORMAT = 'YamlFormat',
+}
 
-  return (
-    <div>
-      <SampleDataDisplayer data={input} />
-      <SampleDataDisplayer data={convertedOutput} />
-    </div>
-  );
-};
-
-export const MapToJsonParserView = ({ input }: ParserViewProps) => {
-  const convertedOutput = JSON.stringify(mapDefinitionToJson(input), null, '\t');
+export const ParserView = ({ input, inputFormat }: ParserViewProps) => {
+  const convertedOutput =
+    inputFormat === ParserInputFormat.JSON_FORMAT
+      ? jsonToMapDefinition(JSON.parse(input))
+      : JSON.stringify(mapDefinitionToJson(input), null, '\t');
 
   return (
     <div>

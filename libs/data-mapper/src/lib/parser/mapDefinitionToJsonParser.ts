@@ -1,20 +1,21 @@
 import type { MapNode, ConditionalMapping, JsonInputStyle, LoopMapping } from '../models';
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
+import { MapDefinitionProperties, MapNodeParams, YamlFormats } from './utils/constants';
 import yaml from 'js-yaml';
 
 export function mapDefinitionToJson(inputMapDefinition: string): JsonInputStyle {
-  const formattedInputMapDefinition = inputMapDefinition.replaceAll('\t', '  ');
+  const formattedInputMapDefinition = inputMapDefinition.replaceAll('\t', YamlFormats.indentGap);
   const parsedYaml: any = yaml.load(formattedInputMapDefinition);
   const parsedYamlKeys: string[] = Object.keys(parsedYaml);
 
-  if (parsedYamlKeys[0] !== '$sourceSchema' || parsedYamlKeys[1] !== '$targetSchema') {
+  if (parsedYamlKeys[0] !== MapDefinitionProperties.SourceSchema || parsedYamlKeys[1] !== MapDefinitionProperties.TargetSchema) {
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME, InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
   }
 
   const targetNodeKey: string = parsedYamlKeys[2];
 
-  const sourceSchema: string = parsedYaml.$sourceSchema;
-  const targetSchema: string = parsedYaml.$targetSchema;
+  const sourceSchema: string = parsedYaml[MapDefinitionProperties.SourceSchema];
+  const targetSchema: string = parsedYaml[MapDefinitionProperties.TargetSchema];
 
   const mappings: MapNode = parseMappingsJsonToNode(targetNodeKey, parsedYaml[targetNodeKey]);
 
@@ -35,8 +36,8 @@ function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string
     };
   }
 
-  const startsWithFor = targetNodeKey.startsWith('$for'),
-    startsWithIf = targetNodeKey.startsWith('$if');
+  const startsWithFor = targetNodeKey.startsWith(MapNodeParams.For),
+    startsWithIf = targetNodeKey.startsWith(MapNodeParams.If);
 
   if (startsWithFor || startsWithIf) {
     const childrenKeys = Object.keys(targetNodeObject);
@@ -55,11 +56,11 @@ function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string
     return parsedNode;
   }
 
-  const targetValue = targetNodeObject?.$value ? { value: targetNodeObject.$value } : undefined;
+  const targetValue = targetNodeObject?.[MapNodeParams.Value] ? { value: targetNodeObject[MapNodeParams.Value] } : undefined;
 
   const childrenNode: MapNode[] = [];
   for (const childKey in targetNodeObject) {
-    if (childKey !== '$value') {
+    if (childKey !== MapNodeParams.Value) {
       childrenNode.push(parseMappingsJsonToNode(childKey, targetNodeObject[childKey]));
     }
   }
