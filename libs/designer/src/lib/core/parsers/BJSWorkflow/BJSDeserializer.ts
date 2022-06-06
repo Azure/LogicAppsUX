@@ -128,10 +128,35 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
     subgraphType?: 'CONDITIONAL-TRUE' | 'CONDITIONAL-FALSE' | 'SWITCH-CASE'
   ) => {
     const [graph, operations, metadata] = processNestedActions(graphId, actions);
+
     actionGraphs.push(graph);
     allActions = { ...allActions, ...operations };
     nodesMetadata = { ...nodesMetadata, ...metadata };
     addEmptyPlaceholderNodeIfNeeded(graph, nodesMetadata);
+
+    if (subgraphType) {
+      const scopeRootId = `${graphId}-${subgraphType}`;
+      const prevRootId = graph.children[0].id;
+      graph.children.unshift({
+        id: scopeRootId,
+        height: 0,
+        width: 0,
+      } as WorkflowNode);
+      graph.edges.push({
+        id: `${scopeRootId}-${prevRootId}`,
+        source: scopeRootId,
+        target: prevRootId,
+      });
+      nodesMetadata = {
+        ...nodesMetadata,
+        ...{
+          [scopeRootId]: {
+            graphId,
+            subgraphType,
+          },
+        },
+      };
+    }
   };
 
   if (isSwitchAction(action)) {
