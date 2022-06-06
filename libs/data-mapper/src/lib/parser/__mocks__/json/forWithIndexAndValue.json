@@ -1,0 +1,59 @@
+{
+  "srcSchemaName": "SrcOrders.xsd",
+  "dstSchemaName": "CustomerOrders.xsd",
+  "mappings": {
+    "targetNodeKey": "ns0:CustomerOrders",
+    "children": [
+      {
+        "targetNodeKey": "$@OrderedItem",
+        "targetValue": {
+          "value": "/ns0:Orders/@Item"
+        }
+      },
+      {
+        "targetNodeKey": "Customer",
+        "children": [
+          {
+            "targetNodeKey": "$@OrderNumber",
+            "targetValue": {
+              "value": "/OrderNumber"
+            }
+          },
+          {
+            "targetNodeKey": "Name",
+            "children": [
+              {
+                "targetNodeKey": "$@FirstName",
+                "targetValue": {
+                  "value": "CustomerFirstName"
+                }
+              },
+              {
+                "targetNodeKey": "$@LastName",
+                "targetValue": {
+                  "value": "CustomerLastName"
+                }
+              }
+            ],
+            "targetValue": {
+              "value": "SampleName"
+            }
+          }
+        ],
+        "targetValue": {
+          "value": "SampleCustomer"
+        },
+        "loopSource": {
+          "loopSource": "/ns0:Orders/WebOrders",
+          "loopIndex": "index1"
+        }
+      },
+      {
+        "targetNodeKey": "$@OrderValue",
+        "targetValue": {
+          "value": "/OrderValue"
+        }
+      }
+    ]
+  }
+}

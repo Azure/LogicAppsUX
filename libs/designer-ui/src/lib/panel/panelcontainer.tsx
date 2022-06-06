@@ -8,11 +8,11 @@ import { PanelContent } from './panelcontent';
 import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
 import { PanelPivot } from './panelpivot';
+import type { ILayerProps } from '@fluentui/react';
 import type { IPanelHeaderRenderer, IPanelProps } from '@fluentui/react/lib/Panel';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import type { ILayerProps } from '@fluentui/react';
 
 export type PanelContainerProps = {
   cardIcon?: string;

@@ -1,16 +1,22 @@
 import { SampleDataDisplayer } from './components/SampleDataDisplayer';
 import { jsonToMapDefinition } from './jsonToMapDefinitionParser';
-import { useEffect, useState } from 'react';
+import { mapDefinitionToJson } from './mapDefinitionToJsonParser';
 
 export interface ParserViewProps {
   input: string;
+  inputFormat: ParserInputFormat;
 }
-export const ParserView = ({ input }: ParserViewProps) => {
-  const [convertedOutput, setConvertedOutput] = useState(jsonToMapDefinition(JSON.parse(input)));
 
-  useEffect(() => {
-    setConvertedOutput(jsonToMapDefinition(JSON.parse(input)));
-  }, [input]);
+export enum ParserInputFormat {
+  JSON_FORMAT = 'JsonFormat',
+  YAML_FORMAT = 'YamlFormat',
+}
+
+export const ParserView = ({ input, inputFormat }: ParserViewProps) => {
+  const convertedOutput =
+    inputFormat === ParserInputFormat.JSON_FORMAT
+      ? jsonToMapDefinition(JSON.parse(input))
+      : JSON.stringify(mapDefinitionToJson(input), null, '\t');
 
   return (
     <div>
