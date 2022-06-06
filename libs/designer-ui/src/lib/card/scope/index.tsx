@@ -46,7 +46,9 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
       ? [{ title: 'Comment', content: commentBox.comment, darkBackground: true, iconProps: { iconName: 'Comment' }, active }]
       : []),
   ];
-  const bgStyle = { backgroundColor: brandColor };
+
+  const colorVars = { ['--brand-color' as any]: brandColor };
+
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div
@@ -57,14 +59,9 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
         onClick={handleClick}
         tabIndex={0}
       >
-        <div
-          ref={drag}
-          className="msla-scope-v2--header msla-scope-header-wrapper"
-          style={{ borderColor: brandColor }}
-          draggable={draggable}
-        >
+        <div ref={drag} className="msla-scope-v2--header msla-scope-header-wrapper" draggable={draggable} style={colorVars}>
           {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
-          <div className="msla-scope-header-content" style={bgStyle}>
+          <div className="msla-scope-header-content">
             <div className="msla-scope-header-title-box">
               <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
               {icon ? <img className="scope-icon" alt="" role="presentation" src={icon} /> : null}
@@ -77,7 +74,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             </TooltipHost>
           </div>
           <div>
-            <div className="msla-badges" style={bgStyle}>
+            <div className="msla-badges">
               {badges.map(({ title, content, darkBackground, iconProps }) => (
                 <TooltipHost key={title} content={content}>
                   <Icon
