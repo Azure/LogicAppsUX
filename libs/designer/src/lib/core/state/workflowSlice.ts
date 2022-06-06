@@ -16,7 +16,7 @@ export interface NodesMetadata {
   };
 }
 
-export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
+export type Operations = Record<string, LogicAppsV2.OperationDefinition>; // danielle operations is declared twice
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
   graph: WorkflowGraph | null;
