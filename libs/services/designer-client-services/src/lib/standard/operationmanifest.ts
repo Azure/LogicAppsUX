@@ -17,6 +17,7 @@ const swiftdecode = 'swiftdecode';
 const swiftencode = 'swiftencode';
 const scope = 'scope';
 const foreach = 'foreach';
+const condition = 'if';
 const initializevariable = 'initializevariable';
 const incrementvariable = 'incrementvariable';
 const request = 'request';
@@ -27,6 +28,7 @@ export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOpera
 // TODO(psamband): Need to figure out how to identify without hard coding.
 const supportedManifestTypes = [
   compose,
+  condition,
   foreach,
   function_,
   initializevariable,
@@ -73,14 +75,7 @@ export class StandardOperationManifestService implements IOperationManifestServi
   }
 
   async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
-    if (operationId === foreach) {
-      return foreachManifest;
-    }
-    if (operationId === scope) {
-      return scopeManifest;
-    }
-
-    return { properties: {} } as any;
+    return supportedManifestObjects.get(operationId) ?? ({ properties: {} } as any);
   }
 }
 
@@ -89,30 +84,7 @@ function isServiceProviderOperation(definition: any): boolean {
 }
 
 function isInBuiltOperation(definition: any): boolean {
-  switch (definition.type.toLowerCase()) {
-    case compose:
-    case foreach:
-    case function_:
-    case initializevariable:
-    case incrementvariable:
-    case invokefunction:
-    case javascriptcode:
-    case liquid:
-    case request:
-    case response:
-    case workflow:
-    case xslt:
-    case xmlvalidation:
-    case flatfiledecoding:
-    case flatfileencoding:
-    case scope:
-    case swiftdecode:
-    case swiftencode:
-      return true;
-
-    default:
-      return false;
-  }
+  return supportedManifestTypes.includes(definition.type.toLowerCase());
 }
 
 function getBuiltInOperationInfo(definition: any): OperationInfo {
@@ -180,9 +152,13 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: 'connectionProviders/dataOperationNew',
     operationId: 'composeNew',
   },
+  [condition]: {
+    connectorId: 'connectionProviders/control',
+    operationId: condition,
+  },
   [foreach]: {
     connectorId: 'connectionProviders/control',
-    operationId: 'foreach',
+    operationId: foreach,
   },
   [function_]: {
     connectorId: azureFunctionConnectorId,
@@ -226,7 +202,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   },
   [scope]: {
     connectorId: 'connectionProviders/control',
-    operationId: 'scope',
+    operationId: scope,
   },
   [swiftdecode]: {
     connectorId: 'connectionProviders/swiftOperations',
@@ -281,3 +257,26 @@ const scopeManifest: OperationManifest = {
     },
   },
 };
+
+const conditionManifest: OperationManifest = {
+  properties: {
+    iconUri:
+      'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iLTQgLTQgNjAgNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+DQogPHBhdGggZD0ibS00LTRoNjB2NjBoLTYweiIgZmlsbD0iIzQ4NEY1OCIvPg0KIDxwYXRoIGQ9Ik00MSAxOC41di03LjVoLTMwdjcuNWg1LjY0djEzLjgzbC0zLjI4NS0zLjI4NS0xLjA2NSAxLjA2NSA0LjAzNSA0LjA1Ljg3Ljg0aC02LjE5NXY2aDEzLjV2LTZoLTYuOWwuODU1LS44NTUgNC4wMzUtNC4wNS0xLjA2NS0xLjA2NS0zLjI4NSAzLjI4NXYtMTMuODE1aDE1djEzLjgzbC0zLjI4NS0zLjI4NS0xLjA2NSAxLjA2NSA0LjAzNSA0LjA1Ljg3Ljg0aC02LjE5NXY2aDEzLjV2LTZoLTYuOWwuODU1LS44NTUgNC4wMzUtNC4wNS0xLjA2NS0xLjA2NS0zLjI4NSAzLjI4NXYtMTMuODE1em0tMjguNS02aDI3djQuNWgtMjd6IiBmaWxsPSIjZmZmIi8+DQo8L3N2Zz4NCg==',
+    brandColor: '#484F58',
+    description: 'Conditionally execute a block of actions.',
+
+    allowChildOperations: true,
+
+    settings: {
+      trackedProperties: {
+        scopes: [SettingScope.Action],
+      },
+    },
+  },
+};
+
+const supportedManifestObjects = new Map<string, OperationManifest>([
+  [foreach, foreachManifest],
+  [scope, scopeManifest],
+  [condition, conditionManifest],
+]);

@@ -50,38 +50,38 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   const isEmptyGraph = !graph?.edges && (graph?.children[0] as any).children.length === 0;
   const normalizedType = node.type.toLowerCase();
 
-  if (normalizedType === 'scope' || normalizedType === 'foreach') {
-    return (
-      <div className="msla-scope-v2 msla-scope-card">
-        <Handle
-          type="target"
-          position={targetPosition}
-          isConnectable={false}
-          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
-        />
-        <ScopeCard
-          brandColor={brandColor}
-          icon={iconUri}
-          collapsed={false}
-          drag={drag}
-          draggable={!readOnly}
-          dragPreview={dragPreview}
-          isDragging={isDragging}
-          id={id}
-          isMonitoringView={isMonitoringView}
-          title={data.label}
-        />
-        <Handle
-          type="source"
-          position={sourcePosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
-        />
-      </div>
-    );
-  } else {
-    return renderGenericGraph(id, targetPosition, sourcePosition, isEmptyGraph, readOnly);
-  }
+  // if (normalizedType === 'scope' || normalizedType === 'foreach') {
+  return (
+    <div className="msla-scope-v2 msla-scope-card">
+      <Handle
+        type="target"
+        position={targetPosition}
+        isConnectable={false}
+        style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
+      />
+      <ScopeCard
+        brandColor={brandColor}
+        icon={iconUri}
+        collapsed={false}
+        drag={drag}
+        draggable={!readOnly}
+        dragPreview={dragPreview}
+        isDragging={isDragging}
+        id={id}
+        isMonitoringView={isMonitoringView}
+        title={data.label}
+      />
+      <Handle
+        type="source"
+        position={sourcePosition}
+        isConnectable={false}
+        style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
+      />
+    </div>
+  );
+  // } else {
+  //   return renderGenericGraph(id, targetPosition, sourcePosition, isEmptyGraph, readOnly);
+  // }
 };
 
 function renderGenericGraph(
