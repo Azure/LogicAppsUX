@@ -11,7 +11,7 @@ import {
 import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
-import { Card } from '@microsoft/designer-ui';
+import { Card, SubgraphHeader } from '@microsoft/designer-ui';
 import { memo, useCallback, useContext, useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
@@ -88,7 +88,8 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
 
   return (
     <div>
-      {isFirstChild && !readOnly ? (
+      {isFirstChild ? <div style={{ visibility: 'hidden', height: '32px' }} /> : null}
+      {isFirstChild && !metadata?.subgraphType && !readOnly ? (
         <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px', marginBottom: 5 }}>
           {!readOnly ? <DropZone graphId={metadata?.graphId ?? ''} parent={id} /> : null}
         </div>
@@ -100,22 +101,26 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           isConnectable={false}
           style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
         />
-        <Card
-          title={data.label}
-          icon={iconUri}
-          draggable={!readOnly}
-          brandColor={brandColor}
-          id={id}
-          connectionRequired={true}
-          connectionDisplayName="ttha222@outlook.com"
-          commentBox={comment}
-          drag={drag}
-          dragPreview={dragPreview}
-          isDragging={isDragging}
-          isMonitoringView={isMonitoringView}
-          readOnly={readOnly}
-          onClick={nodeClick}
-        />
+        {metadata?.subgraphType ? (
+          <SubgraphHeader subgraphType={metadata?.subgraphType} />
+        ) : (
+          <Card
+            title={data.label}
+            icon={iconUri}
+            draggable={!readOnly}
+            brandColor={brandColor}
+            id={id}
+            connectionRequired={true}
+            connectionDisplayName="ttha222@outlook.com"
+            commentBox={comment}
+            drag={drag}
+            dragPreview={dragPreview}
+            isDragging={isDragging}
+            isMonitoringView={isMonitoringView}
+            readOnly={readOnly}
+            onClick={nodeClick}
+          />
+        )}
         <Handle
           type="source"
           position={sourcePosition}
