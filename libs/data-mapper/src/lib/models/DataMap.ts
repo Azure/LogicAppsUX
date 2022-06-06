@@ -1,13 +1,26 @@
 export interface JsonInputStyle {
-  srcSchemaName?: string;
-  dstSchemaName?: string;
+  srcSchemaName: string;
+  dstSchemaName: string;
   mappings: MapNode;
 }
 
 export interface MapNode {
   targetNodeKey: string;
   children?: MapNode[];
-  targetValue?: { value: string };
-  loopSource?: { loopSource: string };
-  condition?: { condition: string };
+  targetValue?: ValueMapping;
+  loopSource?: LoopMapping;
+  condition?: ConditionalMapping;
+}
+
+export interface ValueMapping {
+  value: string;
+}
+
+export interface LoopMapping {
+  loopSource: string;
+  loopIndex?: string;
+}
+
+export interface ConditionalMapping {
+  condition: string;
 }
