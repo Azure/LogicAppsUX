@@ -2,13 +2,8 @@ import Constants from '../../../common/constants';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { isRootNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
-import type { NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
-import {
-  initializeInputParameters,
-  initializeOperationInfo,
-  initializeOutputParameters,
-  updateNodeSettings,
-} from '../../state/operationMetadataSlice';
+import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
+import { initializeNodes } from '../../state/operationMetadataSlice';
 import {
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
@@ -24,44 +19,37 @@ import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export const initializeOperationMetadata = async (deserializedWorkflow: DeserializedWorkflow, dispatch: Dispatch): Promise<void> => {
-  const promises: Promise<void>[] = [];
+  const promises: Promise<NodeData | undefined>[] = [];
   const { actionData: operations, graph } = deserializedWorkflow;
   const operationManifestService = OperationManifestService();
 
   for (const [operationId, operation] of Object.entries(operations)) {
     const isTrigger = isRootNode(graph, operationId);
     if (operationManifestService.isSupported(operation.type)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, isTrigger, dispatch));
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, isTrigger));
     } else {
       // swagger case here
     }
   }
 
-  await Promise.all(promises);
+  dispatch(initializeNodes(await Promise.all(promises)));
 };
 
 const initializeOperationDetailsForManifest = async (
   nodeId: string,
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
-  isTrigger: boolean,
-  dispatch: Dispatch
-): Promise<void> => {
+  isTrigger: boolean
+): Promise<NodeData | undefined> => {
   const operationInfo = await getOperationInfo(nodeId, operation);
 
   if (operationInfo) {
     const manifest = await getOperationManifest(operationInfo);
-
-    dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
-
-    const nodeParameters = getInputParametersFromManifest(nodeId, manifest, operation);
-    dispatch(initializeInputParameters({ id: nodeId, ...nodeParameters }));
-
+    const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
     const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);
-    dispatch(initializeOutputParameters({ id: nodeId, ...nodeOutputs }));
-
     const settings = getOperationSettings(operation, isTrigger, operation.type, manifest);
-    dispatch(updateNodeSettings({ id: nodeId, settings }));
+    return { id: nodeId, operationInfo, nodeInputs, nodeOutputs, settings };
   }
+  return;
 };
 
 const getInputParametersFromManifest = (nodeId: string, manifest: OperationManifest, stepDefinition: any): NodeInputs => {
