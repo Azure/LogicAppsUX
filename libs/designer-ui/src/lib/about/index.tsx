@@ -1,4 +1,5 @@
 import type { BadgeProps } from '../card';
+import { BaseEditor } from '../editor/base';
 import { DocumentationItem } from '../recommendation/documentationItem';
 import type { ILabelStyles } from '@fluentui/react/lib/Label';
 import { Label } from '@fluentui/react/lib/Label';
@@ -88,6 +89,11 @@ export const About = ({ connectorDisplayName, description, descriptionDocumentat
         </Label>
         <div className="msla-panel-tags">{headerIcons && headerIcons.length > 0 ? badgeHeaderIcons(headerIcons) : noTags}</div>
       </div>
+      <BaseEditor
+        className="msla-string-editor-container-plugin"
+        placeholder="Play around with some cool plugins here"
+        BasePlugins={{ autoFocus: true, autoLink: true, clearEditor: true, history: true, treeView: true, tokens: true }}
+      />
     </div>
   );
 };
