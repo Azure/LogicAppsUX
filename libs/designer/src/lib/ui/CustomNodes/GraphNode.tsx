@@ -44,11 +44,12 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   const iconUri = useIconUri(operationInfo);
 
   if (!node) {
+    console.log('NODE IS NULL');
     return null;
   }
 
-  const isEmptyGraph = !graph?.edges && (graph?.children[0] as any).children.length === 0;
-  const normalizedType = node.type.toLowerCase();
+  // const isEmptyGraph = !graph?.edges && (graph?.children[0] as any).children.length === 0;
+  // const normalizedType = node.type.toLowerCase();
 
   // if (normalizedType === 'scope' || normalizedType === 'foreach') {
   return (
@@ -84,37 +85,37 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   // }
 };
 
-function renderGenericGraph(
-  nodeId: string,
-  targetPosition: Position,
-  sourcePosition: Position,
-  isEmptyGraph: boolean,
-  readOnly?: boolean
-): JSX.Element {
-  return (
-    <div className="msla-actions-container">
-      <div>
-        <Handle
-          type="target"
-          position={targetPosition}
-          isConnectable={false}
-          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
-        />
-        <Handle
-          type="source"
-          position={sourcePosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
-        />
-      </div>
-      {!readOnly && isEmptyGraph && (
-        <div style={{ display: 'grid', placeItems: 'center', width: '200', height: '30', marginTop: '10px' }}>
-          <DropZone graphId={nodeId} />
-        </div>
-      )}
-    </div>
-  );
-}
+// function renderGenericGraph(
+//   nodeId: string,
+//   targetPosition: Position,
+//   sourcePosition: Position,
+//   isEmptyGraph: boolean,
+//   readOnly?: boolean
+// ): JSX.Element {
+//   return (
+//     <div className="msla-actions-container">
+//       <div>
+//         <Handle
+//           type="target"
+//           position={targetPosition}
+//           isConnectable={false}
+//           style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
+//         />
+//         <Handle
+//           type="source"
+//           position={sourcePosition}
+//           isConnectable={false}
+//           style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
+//         />
+//       </div>
+//       {!readOnly && isEmptyGraph && (
+//         <div style={{ display: 'grid', placeItems: 'center', width: '200', height: '30', marginTop: '10px' }}>
+//           <DropZone graphId={nodeId} />
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
 GraphNode.displayName = 'GraphNode';
 
 export default memo(GraphNode);
