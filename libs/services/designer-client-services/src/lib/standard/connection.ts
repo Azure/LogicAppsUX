@@ -34,22 +34,11 @@ export class StandardConnectionService {
     const response = await HttpClient().get<Connector>({ uri, type: 'GET' });
     console.log(response);
     //return response;
-    return {} as any;
+    return { properties: {} } as any;
   }
 
   async getConnectors(): Promise<Connector[]> {
     return [];
-  }
-
-  async getConnection(connectionId: string): Promise<Connection> {
-    const connection: Connection = await this._getConnectionInApiHub(connectionId);
-    //if (isArmResourceId(connectionId)) {
-    // connection = await this._getConnectionInApiHub(connectionId);
-    // } else { // why would we need this? is this for "local connection"
-    //   const connection = await this.getConnections();
-    // }
-    // return await this.getConnections();
-    return connection;
   }
 
   private async _getConnectionInApiHub(connectionId: string): Promise<Connection> {
@@ -81,9 +70,9 @@ export class StandardConnectionService {
       $filter: `properties/integrationServiceEnvironmentResourceId eq null and Kind eq 'V2'`,
       $top: 400,
     };
-    const response = await HttpClient().get<ArmResources<Connection>>({ uri, type: 'GET', queryParameters });
 
     try {
+      const response = await HttpClient().get<ArmResources<Connection>>({ uri, type: 'GET', queryParameters });
       const allConnections = await this._followContinuationTokens<Connection>(response);
       return allConnections.filter((connection: Connection) => {
         return filterByLocation ? equals(connection.location, location) : true;
