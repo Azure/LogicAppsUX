@@ -41,6 +41,17 @@ export class StandardConnectionService {
     return [];
   }
 
+  async getConnection(connectionId: string): Promise<Connection | undefined> {
+    throw new Error('Function not implemented.');
+    // let connection: Connection | undefined;
+    // if (isArmResourceId(connectionId)) {
+    //   connection = await this._getConnectionInApiHub(connectionId);
+    // } else {
+    //   connection = await (await this.getConnections()).find(conn => conn.id === connectionId);
+    // }
+    // return connection;
+  }
+
   private async _getConnectionInApiHub(connectionId: string): Promise<Connection> {
     const connection = await HttpClient().get<Connection>({
       uri: `${connectionId}/api-version=${this.options.apiHubServiceDetails?.apiVersion}`,
