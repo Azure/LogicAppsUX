@@ -30,24 +30,25 @@ export const SettingsTab = () => {
               value: 'Label 4 Value',
             },
           ],
+          visible: true,
           selections: [],
         },
       },
       {
         settingType: 'SettingTextField',
-        settingProp: {},
+        settingProp: { visible: true },
       },
       {
         settingType: 'ReactiveToggle',
-        settingProp: { textFieldValue: 'This is a test value', textFieldLabel: 'Test Label' },
+        settingProp: { textFieldValue: 'This is a test value', textFieldLabel: 'Test Label', visible: true },
       },
       {
         settingType: 'MultiAddExpressionEditor',
-        settingProp: {},
+        settingProp: { visible: true },
       },
       {
         settingType: 'CustomValueSlider',
-        settingProp: { minVal: 10, maxVal: 300, value: 200 },
+        settingProp: { minVal: 10, maxVal: 300, value: 200, visible: true },
       },
       {
         settingType: 'MultiSelectSetting',
@@ -72,6 +73,7 @@ export const SettingsTab = () => {
           ],
           selections: [],
           readOnly: true,
+          visible: true,
         },
       },
     ],

@@ -9,13 +9,12 @@ import { useIntl } from 'react-intl';
 
 export interface MultiAddExpressionEditorProps extends SettingProps {
   initialExpressions?: string[];
-  visible?: boolean;
 }
 
 export const MultiAddExpressionEditor = ({
   initialExpressions = [],
   readOnly = false,
-  visible = true,
+  visible,
   customLabel,
 }: MultiAddExpressionEditorProps): JSX.Element | null => {
   const [, setExpressions] = useState(initialExpressions);

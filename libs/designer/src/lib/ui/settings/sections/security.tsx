@@ -54,19 +54,21 @@ export const Security = (): JSX.Element => {
       {
         settingType: 'SettingToggle',
         settingProp: {
+          visible: true,
           readOnly: false, //pull from context
           defaultChecked: false, // pull from context
           onToggleInputChange: () => console.log('checked!'),
-          label: secureInputsLabel,
+          customLabel: () => secureInputsLabel,
         },
       },
       {
         settingType: 'SettingToggle',
         settingProp: {
+          visible: true,
           readOnly: false,
           defaultChecked: false,
           onToggleInputChange: () => console.log('checked!'),
-          label: secureOutputsLabel,
+          customLabel: () => secureOutputsLabel,
         },
       },
     ],

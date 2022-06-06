@@ -17,7 +17,8 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
   readOnly = false,
   defaultChecked,
   customLabel,
-}: ReactiveToggleProps): JSX.Element => {
+  visible,
+}: ReactiveToggleProps): JSX.Element | null => {
   const [checkedState, setChecked] = useState(!!defaultChecked);
   const onToggleInputChange = (e: React.MouseEvent<HTMLElement>, checked?: boolean): void => {
     e.stopPropagation();
@@ -25,11 +26,21 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
     setChecked(!!checked);
   };
 
+  if (!visible) {
+    return null;
+  }
   return (
     <>
-      <SettingToggle checked={checkedState} readOnly={readOnly} onToggleInputChange={onToggleInputChange} />
+      <SettingToggle checked={checkedState} readOnly={readOnly} onToggleInputChange={onToggleInputChange} visible={visible} />
       {checkedState ? (
-        <SettingTextField id={textFieldId} value={textFieldValue} label={textFieldLabel} customLabel={customLabel} readOnly={readOnly} />
+        <SettingTextField
+          id={textFieldId}
+          value={textFieldValue}
+          label={textFieldLabel}
+          customLabel={customLabel}
+          readOnly={readOnly}
+          visible={visible}
+        />
       ) : null}
     </>
   );

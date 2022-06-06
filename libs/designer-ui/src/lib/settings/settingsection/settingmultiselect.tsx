@@ -22,12 +22,18 @@ export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
   selections,
   onSelectionChange,
   customLabel,
-}: MultiSelectSettingProps): JSX.Element => {
+  visible,
+}: MultiSelectSettingProps): JSX.Element | null => {
   const [userSelections, setUserSelections] = useState(selections);
   const handleSelectionChange = (selection: MultiSelectOption, checked: boolean): void => {
     setUserSelections(checked ? [...userSelections, selection] : userSelections.filter((item) => item !== selection));
     onSelectionChange?.(userSelections); //this is where caller handles any side effects i.e. store update based on component state
   };
+
+  if (!visible) {
+    return null;
+  }
+
   return (
     <div className="msla-run-after-statuses">
       {options.map((option, index) => {

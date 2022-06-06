@@ -26,6 +26,7 @@ export const DataHandling = (): JSX.Element => {
           defaultChecked: false,
           onToggleInputChange: () => console.log('Automatic Decompression Clicked'),
           label: automaticDecompressionLabel,
+          visible: true,
         },
       },
       {
@@ -35,6 +36,7 @@ export const DataHandling = (): JSX.Element => {
           defaultChecked: false,
           onToggleInputChange: () => console.log(`Schema Validation Clicked`),
           label: requestSchemaValidationLabel,
+          visible: true,
         },
       },
     ],

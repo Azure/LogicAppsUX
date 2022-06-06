@@ -1,9 +1,18 @@
+import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import { SettingLabel } from './security';
-import type { Settings, SettingSectionProps } from '@microsoft/designer-ui';
+import type { Settings as SettingsType, SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
+import { useState } from 'react';
 
 export const General = (): JSX.Element => {
-  const splitOnLabel = <SettingLabel labelText="Split On" infoTooltipText="" isChild={false} />;
+  const [concurrency, toggleConcurrency] = useState(true);
+  const splitOnLabel = (
+    <SettingLabel
+      labelText="Split On"
+      infoTooltipText="Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+      isChild={false}
+    />
+  );
   const timeoutLabel = (
     <SettingLabel
       labelText="Action Timeout"
@@ -42,6 +51,7 @@ export const General = (): JSX.Element => {
           defaultChecked: false,
           onToggleInputChange: () => console.log('toggled'),
           label: splitOnLabel,
+          visible: true,
         },
       },
       {
@@ -52,6 +62,7 @@ export const General = (): JSX.Element => {
           customLabel: () => timeoutLabel,
           readOnly: false,
           onValueChange: (_, newValue) => console.log(newValue),
+          visible: true,
         },
       },
       {
@@ -63,7 +74,26 @@ export const General = (): JSX.Element => {
           customLabel: () => triggerConditionsLabel,
         },
       },
+      {
+        settingType: 'SettingToggle',
+        settingProp: {
+          visible: true, //isConcurrencyEnabled?
+          readOnly: false,
+          checked: concurrency,
+          onToggleInputChange: (_, checked) => toggleConcurrency(!!checked),
+        },
+      },
+      {
+        settingType: 'CustomValueSlider',
+        settingProp: {
+          visible: concurrency === true,
+          maxVal: 100,
+          minVal: 0,
+          customLabel: () => concurrencyLabel,
+          label: 'Degree of Parallelism',
+        },
+      },
     ],
-  };
+  }; // render sectionProps conditionally based on which settings are enabled for given operation
   return <SettingsSection {...generalSectionProps} />;
 };

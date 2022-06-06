@@ -21,7 +21,8 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
   label,
   customLabel,
   onValueChange,
-}): JSX.Element => {
+  visible,
+}): JSX.Element | null => {
   const [textVal, setVal] = useState(value ?? '');
   const handleTextInputChange = (_: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined): void => {
     setVal(newValue ?? '');
@@ -29,10 +30,6 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
   };
 
   const intl = useIntl();
-  const textFieldLabel = intl.formatMessage({
-    defaultMessage: 'Setting Label',
-    description: 'Label for text field input',
-  });
   const textFieldAriaLabel = intl.formatMessage({
     defaultMessage: `Label setting`,
     description: 'Accessibility Label for text input field',
@@ -45,6 +42,10 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
     fieldGroup: { height: 24, width: '100%', display: 'inline', marginRight: 8 },
     wrapper: { display: 'inline-flex', width: '100%', maxHeight: 40, alignItems: 'center', paddingLeft: 35 },
   };
+
+  if (!visible) {
+    return null;
+  }
 
   return (
     <TextField
