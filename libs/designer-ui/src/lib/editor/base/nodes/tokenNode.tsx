@@ -13,10 +13,10 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 
   static clone(node: TokenNode) {
-    return new TokenNode(node.__icon, node.__title, node.__key, node.__description);
+    return new TokenNode(node.__icon, node.__title, node.__description, node.__key);
   }
 
-  constructor(icon: string, title: string, key?: string, description?: string) {
+  constructor(icon: string, title: string, description?: string, key?: string) {
     super(key);
     this.__description = description;
     this.__icon = icon;

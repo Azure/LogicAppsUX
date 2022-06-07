@@ -13,7 +13,6 @@ export const prepopulatedRichText = (initialValue: Segment[], tokensEnabled?: bo
         tokensEnabled && paragraph.append($createTokenNode(icon, title, description));
       } else {
         const splitSegment = segment.value.split('\n');
-        console.log(splitSegment);
         paragraph.append($createTextNode(splitSegment[0]));
         for (let i = 1; i < splitSegment.length; i++) {
           root.append(paragraph);
