@@ -1,12 +1,12 @@
 import { getBrandColorRgbA } from '../card/utils';
 import { useIntl } from 'react-intl';
 
-export interface TokenProps {
+export interface InputTokenProps {
   brandColor?: string;
   description?: string;
   disableFiltering?: boolean;
   icon: string;
-  isAdvanced: boolean;
+  isAdvanced?: boolean;
   isSecure?: boolean;
   key?: string;
   readOnly?: boolean;
@@ -16,7 +16,7 @@ export interface TokenProps {
 }
 
 export const DELETE = '\u00D7';
-export const InputToken: React.FC<TokenProps> = ({ description, brandColor, icon, readOnly, title, handleTokenDeleteClicked }) => {
+export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor, icon, readOnly, title, handleTokenDeleteClicked }) => {
   const intl = useIntl();
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
