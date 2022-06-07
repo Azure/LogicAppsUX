@@ -13,6 +13,9 @@ describe('ui/settings/settingreactiveinput', () => {
       textFieldLabel: 'text field label',
       textFieldValue: 'test',
       defaultChecked: false,
+      visible: true,
+      onToggleLabel: 'On',
+      offToggleLabel: 'Off',
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

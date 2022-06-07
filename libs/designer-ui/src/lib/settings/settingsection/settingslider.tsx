@@ -1,16 +1,17 @@
 import type { SettingProps } from './settingtoggle';
 import { Slider } from '@fluentui/react';
 import React, { useState } from 'react';
-import { useIntl } from 'react-intl';
 
 type ValueChangeHandler = (value: number) => void;
 export interface CustomValueSliderProps extends SettingProps {
-  value?: number;
+  value: number;
   maxVal?: number;
   minVal?: number;
   defaultValue?: number;
-  label?: string;
-  onValueChange?: ValueChangeHandler;
+  sliderLabel: string;
+  onToggleLabel: string;
+  offToggleLabel: string;
+  onValueChange: ValueChangeHandler;
 }
 
 export const CustomValueSlider = ({
@@ -20,7 +21,7 @@ export const CustomValueSlider = ({
   minVal = 0,
   defaultValue = (minVal + maxVal) / 2,
   customLabel,
-  label,
+  sliderLabel,
   visible,
   onValueChange,
 }: CustomValueSliderProps): JSX.Element | null => {
@@ -29,11 +30,6 @@ export const CustomValueSlider = ({
     setCount(value);
     onValueChange?.(value);
   };
-  const intl = useIntl();
-  const sliderAriaLabel = intl.formatMessage({
-    defaultMessage: 'draggable slider bar',
-    description: 'aria label for slider',
-  });
 
   if (!visible) {
     return null;
@@ -45,8 +41,8 @@ export const CustomValueSlider = ({
         {customLabel()}
         <div className="msla-setting-input">
           <Slider
-            label={label}
-            ariaLabel={sliderAriaLabel}
+            label={sliderLabel}
+            ariaLabel={sliderLabel}
             disabled={readOnly}
             max={maxVal}
             min={minVal}
@@ -62,8 +58,8 @@ export const CustomValueSlider = ({
   return (
     <div className="msla-setting-input">
       <Slider
-        label={label}
-        ariaLabel={sliderAriaLabel}
+        label={sliderLabel}
+        ariaLabel={sliderLabel}
         defaultValue={defaultValue}
         disabled={readOnly}
         max={maxVal}

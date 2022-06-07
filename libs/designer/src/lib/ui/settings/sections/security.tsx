@@ -3,7 +3,6 @@ import { IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconProps, IIconStyles } from '@fluentui/react';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
-import { useIntl } from 'react-intl';
 
 export interface SettingLabelProps {
   labelText: string;

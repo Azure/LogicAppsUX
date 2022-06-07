@@ -64,7 +64,6 @@ export function toParameterInfoMap(
   for (const inputParameter of inputParameters) {
     let repetitionContext: RepetitionContext | null;
     if (nodeId) {
-      const includeSelf = shouldIncludeSelfForRepetitionReference(nodeType, inputParameter.name);
       repetitionContext = null; // TODO: Get repetition context from redux for this node
     } else {
       repetitionContext = null;

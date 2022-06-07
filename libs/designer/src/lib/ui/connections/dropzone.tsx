@@ -1,5 +1,4 @@
 import { expandDiscoveryPanel } from '../../core/state/panelSlice';
-import { addNode } from '../../core/state/workflowSlice';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { css } from '@fluentui/utilities';

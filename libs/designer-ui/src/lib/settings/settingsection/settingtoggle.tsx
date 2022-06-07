@@ -1,6 +1,5 @@
 import type { IToggleProps } from '@fluentui/react';
 import { Toggle } from '@fluentui/react';
-import { useIntl } from 'react-intl';
 
 type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
 
@@ -21,18 +20,9 @@ export const SettingToggle = ({
   label,
   visible,
   customLabel,
+  onText,
+  offText,
 }: SettingToggleProps): JSX.Element | null => {
-  const intl = useIntl();
-
-  const formattedOnText = intl.formatMessage({
-    defaultMessage: 'On',
-    description: 'Label text when toggle is on',
-  });
-  const formattedOffText = intl.formatMessage({
-    defaultMessage: 'Off',
-    description: 'Label text when toggle is off',
-  });
-
   if (!visible) {
     return null;
   }
@@ -45,8 +35,8 @@ export const SettingToggle = ({
           className="msla-setting-section-toggle"
           checked={checked}
           disabled={readOnly}
-          onText={formattedOnText}
-          offText={formattedOffText}
+          onText={onText}
+          offText={offText}
           onChange={onToggleInputChange}
           label={label}
         />
@@ -59,8 +49,8 @@ export const SettingToggle = ({
       className="msla-setting-section-toggle"
       checked={checked}
       disabled={readOnly}
-      onText={formattedOnText}
-      offText={formattedOffText}
+      onText={onText}
+      offText={offText}
       onChange={onToggleInputChange}
       label={label}
     />

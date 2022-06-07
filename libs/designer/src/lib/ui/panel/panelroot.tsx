@@ -4,7 +4,7 @@ import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
-import { settingsTab } from './panelTabs/settingsTab';
+import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import type { MenuItemOption, PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
 import {
@@ -46,7 +46,7 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId }: PanelRootProps):
 
   useEffect(() => {
     monitoringTab.enabled = isMonitoringView;
-    setRegisteredTabs((currentTabs) => registerTabs([monitoringTab, aboutTab, codeViewTab, settingsTab], currentTabs));
+    setRegisteredTabs((currentTabs) => registerTabs([monitoringTab, aboutTab, codeViewTab, SettingsTab], currentTabs));
   }, [readOnly, isMonitoringView]);
 
   useEffect(() => {
