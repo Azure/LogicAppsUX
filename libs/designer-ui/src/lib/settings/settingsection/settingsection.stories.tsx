@@ -36,6 +36,7 @@ settingSection.args = {
           },
         ],
         selections: [],
+        visible: true,
       },
     },
     {
@@ -43,19 +44,26 @@ settingSection.args = {
       settingProp: {
         label: 'test label',
         value: 'test value',
+        visible: true,
       },
     },
     {
       settingType: 'ReactiveToggle',
-      settingProp: { textFieldValue: 'This is a test value', textFieldLabel: 'Test Label', onToggleLabel: 'On', offToggleLabel: 'Off' },
+      settingProp: {
+        textFieldValue: 'This is a test value',
+        textFieldLabel: 'Test Label',
+        onToggleLabel: 'On',
+        offToggleLabel: 'Off',
+        visible: true,
+      },
     },
     {
       settingType: 'MultiAddExpressionEditor',
-      settingProp: {},
+      settingProp: { visible: true },
     },
     {
       settingType: 'CustomValueSlider',
-      settingProp: { minVal: 10, maxVal: 300, value: 200, onToggleLabel: 'on', offToggleLabel: 'off', sliderLabel: 'Slider' },
+      settingProp: { minVal: 10, maxVal: 300, value: 200, sliderLabel: 'Slider', visible: true, onValueChange: () => null },
     },
     {
       settingType: 'MultiSelectSetting',
@@ -79,6 +87,7 @@ settingSection.args = {
           },
         ],
         selections: [],
+        visible: true,
       },
     },
   ],

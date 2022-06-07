@@ -1,5 +1,5 @@
 import type { SectionProps } from '..';
-import { updateNodeSettings } from '../../../core/state/operationMetadataSlice';
+// import { updateNodeSettings } from '../../../core/state/operationMetadataSlice';
 import { SettingLabel } from './security';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
@@ -53,17 +53,17 @@ export const General = ({
   const onConcurrencyChange = (checked: boolean | undefined): void => {
     setConcurrency.toggle();
     // write to store w/ paylaod {concurrency: {enabled: !!checked, value: settings.concurrency.value}}
-    dispatch(updateNodeSettings({ id: nodeId, settings: { concurrency: { enabled: true, value: concurrencyValues?.value } } }));
+    // dispatch(updateNodeSettings({ id: nodeId, settings: { concurrency: { enabled: true, value: concurrencyValues?.value } } }));
   };
 
   const onConcurrencyValueChange = (value: number): void => {
     // write to store with payload: concurrency: {enabled: !!checked, value}
-    dispatch(updateNodeSettings({ id: nodeId, settings: { concurrency: { enabled: concurrency, value } } }));
+    // dispatch(updateNodeSettings({ id: nodeId, settings: { concurrency: { enabled: concurrency, value } } }));
   };
 
   const onSplitOnToggle = (checked: boolean): void => {
     //  validation?
-    dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { enabled: !!checked, value: splitOn?.value } } }));
+    // dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { enabled: !!checked, value: splitOn?.value } } }));
   };
 
   const generalSectionProps: SettingSectionProps = {
@@ -104,7 +104,7 @@ export const General = ({
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: concurrencyValues !== undefined, //isConcurrencyEnabled?
+          visible: concurrencyValues !== undefined && concurrencyValues.value !== undefined, //isConcurrencyEnabled?
           readOnly,
           checked: concurrency,
           onToggleInputChange: (_, checked) => onConcurrencyChange(!!checked),
@@ -117,10 +117,10 @@ export const General = ({
           visible: concurrency === true,
           maxVal: 100,
           minVal: 0,
-          value: concurrencyValues?.value,
+          value: concurrencyValues?.value ?? 0,
           customLabel: () => concurrencyLabel,
-          label: 'Degree of Parallelism',
           onValueChange: onConcurrencyValueChange,
+          sliderLabel: 'Degree of Parallelism',
           readOnly,
         },
       },

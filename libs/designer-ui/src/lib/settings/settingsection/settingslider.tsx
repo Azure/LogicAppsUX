@@ -9,8 +9,6 @@ export interface CustomValueSliderProps extends SettingProps {
   minVal?: number;
   defaultValue?: number;
   sliderLabel: string;
-  onToggleLabel: string;
-  offToggleLabel: string;
   onValueChange: ValueChangeHandler;
 }
 
