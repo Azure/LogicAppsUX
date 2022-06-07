@@ -5,12 +5,6 @@
       "value": "Filter"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Label Pengaturan"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -244,12 +238,6 @@
       "value": "Wajib. Nama tindakan dengan data formulir atau respons dengan pengodean formulir."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Tidak Aktif"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -266,12 +254,6 @@
     {
       "type": 0,
       "value": "Bermasalah"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "bilah penggeser yang dapat diseret"
     }
   ],
   "3rzrWf": [
@@ -610,12 +592,6 @@
       "value": "Diperlukan. String untuk menghapus spasi awal dan akhir."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Aktif"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -785,12 +761,6 @@
     {
       "type": 0,
       "value": "Pilih kartu untuk melihat konten"
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Nilai Pengaturan"
     }
   ],
   "IW2MjQ": [
@@ -1019,12 +989,6 @@
     {
       "type": 0,
       "value": "Menghasilkan hasil dari tindakan tingkat atas dalam tindakan tercakup yang ditentukan, seperti tindakan For_each, Until, atau Scope."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Teks Label"
     }
   ],
   "Oib1mL": [
@@ -1614,20 +1578,6 @@
       "value": "Harus diisi. Jumlah objek untuk dihapus dari bagian depan Koleksi. Harus bilangan bulat positif."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Tab dengan : nama "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " telah terdaftar"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1644,12 +1594,6 @@
     {
       "type": 0,
       "value": "Menampilkan nilai maksimal dalam array input angka"
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Pengaturan label"
     }
   ],
   "bzF/qn": [

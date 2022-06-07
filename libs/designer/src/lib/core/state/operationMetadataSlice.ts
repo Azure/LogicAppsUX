@@ -52,20 +52,11 @@ const initialState: OperationMetadataState = {
   settings: {},
 };
 
-interface AddOperationInfoPayload extends OperationInfo {
+export interface NodeData {
   id: string;
-}
-
-interface AddInputsPayload extends NodeInputs {
-  id: string;
-}
-
-interface AddOutputsPayload extends NodeOutputs {
-  id: string;
-}
-
-interface AddSettingsPayload {
-  id: string;
+  operationInfo: OperationInfo;
+  nodeInputs: NodeInputs;
+  nodeOutputs: NodeOutputs;
   settings: Settings;
 }
 
@@ -73,31 +64,20 @@ export const operationMetadataSlice = createSlice({
   name: 'operationMetadata',
   initialState,
   reducers: {
-    initializeOperationInfo: (state, action: PayloadAction<AddOperationInfoPayload>) => {
-      const { id, connectorId, operationId } = action.payload;
-      state.operationInfo[id] = { connectorId, operationId };
-    },
-    initializeInputParameters: (state, action: PayloadAction<AddInputsPayload>) => {
-      const { id, isLoading, parameterGroups } = action.payload;
-      state.inputParameters[id] = { isLoading, parameterGroups };
-    },
-    initializeOutputParameters: (state, action: PayloadAction<AddOutputsPayload>) => {
-      const { id, isLoading, outputs } = action.payload;
-      state.outputParameters[id] = { isLoading, outputs };
-    },
-    updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
-      const { id, settings } = action.payload;
-      if (!state.settings[id]) {
-        state.settings[id] = {};
-      }
-
-      state.settings[id] = { ...state.settings[id], ...settings };
+    initializeNodes: (state: any, action: PayloadAction<(NodeData | undefined)[]>) => {
+      action.payload.forEach((node) => {
+        if (!node) return;
+        const { id, operationInfo, nodeInputs, nodeOutputs, settings } = node;
+        state.operationInfo[id] = operationInfo;
+        state.inputParameters[id] = nodeInputs;
+        state.outputParameters[id] = nodeOutputs;
+        state.settings[id] = settings;
+      });
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeInputParameters, initializeOperationInfo, initializeOutputParameters, updateNodeSettings } =
-  operationMetadataSlice.actions;
+export const { initializeNodes } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

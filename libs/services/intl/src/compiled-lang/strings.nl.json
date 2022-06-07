@@ -5,12 +5,6 @@
       "value": "Filters"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Label voor instelling"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -255,12 +249,6 @@
       "value": "Vereist. De naam van de actie met een antwoord met formuliergegevens of -codes."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Uit"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,12 +265,6 @@
     {
       "type": 0,
       "value": "Mislukt"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "versleepbare schuifregelaar"
     }
   ],
   "3rzrWf": [
@@ -621,12 +603,6 @@
       "value": "Vereist. De tekenreeks waaruit u voorloopspaties en volgspaties wilt verwijderen."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Aan"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -807,12 +783,6 @@
     {
       "type": 0,
       "value": "Selecteer een kaart om de inhoud weer te geven"
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Instellingswaarde"
     }
   ],
   "IW2MjQ": [
@@ -1041,12 +1011,6 @@
     {
       "type": 0,
       "value": "Hiermee worden de resultaten geretourneerd van de acties op het hoogste niveau in de opgegeven actie met bereik, zoals een For_each-, Until- of Scope-actie."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Tekst label"
     }
   ],
   "Oib1mL": [
@@ -1651,20 +1615,6 @@
       "value": "Vereist. Het aantal objecten dat moet worden verwijderd uit het voorste deel van de verzameling. Dit aantal moet een geheel getal zijn."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Tabblad met de naam "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " is al geregistreerd"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1681,12 +1631,6 @@
     {
       "type": 0,
       "value": "De maximumwaarde in de invoermatrix van getallen wordt geretourneerd"
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Labelinstelling"
     }
   ],
   "bzF/qn": [

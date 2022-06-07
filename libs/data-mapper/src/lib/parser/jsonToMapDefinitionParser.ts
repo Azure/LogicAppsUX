@@ -1,52 +1,57 @@
 import type { JsonInputStyle, MapNode } from '../models/DataMap';
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
+import { MapDefinitionProperties, MapNodeParams, YamlFormats } from './utils/constants';
 
 export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
-  const codeDetails = `sourceSchema: ${inputJson?.srcSchemaName ?? ''}\ntargetSchema: ${inputJson?.dstSchemaName ?? ''}\n`;
-
-  if (!inputJson.mappings) {
+  if (!inputJson?.srcSchemaName || !inputJson?.dstSchemaName) {
+    throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME, InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
+  } else if (!inputJson?.mappings) {
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM, InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM);
   }
 
-  return `${codeDetails}${nodeToMapDefinition(inputJson.mappings, '', '', '')}`;
+  const codeDetails = `${MapDefinitionProperties.SourceSchema}: ${inputJson?.srcSchemaName ?? ''}${YamlFormats.newLine}${
+    MapDefinitionProperties.TargetSchema
+  }: ${inputJson?.dstSchemaName ?? ''}${YamlFormats.newLine}`;
+
+  return `${codeDetails}${nodeToMapDefinition(inputJson.mappings, '').trim()}`;
 }
 
-function nodeToMapDefinition(node: MapNode, indent: string, parentNodeKey: string, parentLoopSource: string): string {
+function nodeToMapDefinition(node: MapNode, indent: string): string {
   let mapDefinition = '';
 
   if (node.loopSource) {
-    mapDefinition = `${mapDefinition}${indent}for(${removeNodeKey(node.loopSource.loopSource, parentNodeKey, parentLoopSource)}):\n`;
-    indent += '\t';
+    mapDefinition = `${mapDefinition}${indent}${MapNodeParams.For}(${node.loopSource.loopSource}${
+      node.loopSource.loopIndex ? `, ${node.loopSource.loopIndex}` : ''
+    }):${YamlFormats.newLine}`;
+    indent += YamlFormats.indentGap;
   }
 
   if (node.condition) {
-    mapDefinition = `${mapDefinition}${indent}if(${removeNodeKey(node.condition.condition, parentNodeKey, parentLoopSource)}):\n`;
-    indent += '\t';
+    mapDefinition = `${mapDefinition}${indent}${MapNodeParams.If}(${node.condition.condition}):${YamlFormats.newLine}`;
+    indent += YamlFormats.indentGap;
   }
 
-  mapDefinition = `${mapDefinition}${indent}${removeNodeKey(node.targetNodeKey, parentNodeKey, parentLoopSource)}:`;
-
-  if (node.targetValue) {
-    mapDefinition = `${mapDefinition} ${removeNodeKey(node.targetValue.value, parentNodeKey, parentLoopSource)}`;
-  }
-
-  mapDefinition = mapDefinition.concat('\n');
+  mapDefinition = `${mapDefinition}${indent}${node.targetNodeKey}:`;
 
   if (node.children) {
-    indent += '\t';
-    for (const childNode of node.children) {
-      mapDefinition = `${mapDefinition}${nodeToMapDefinition(
-        childNode,
-        indent,
-        node.targetNodeKey,
-        node?.loopSource?.loopSource ?? parentLoopSource
-      )}`;
+    indent += YamlFormats.indentGap;
+
+    mapDefinition = `${mapDefinition}${YamlFormats.newLine}`;
+
+    if (node.targetValue) {
+      mapDefinition = `${mapDefinition}${indent}${MapNodeParams.Value}: ${node.targetValue.value}${YamlFormats.newLine}`;
     }
+
+    for (const childNode of node.children) {
+      mapDefinition = `${mapDefinition}${nodeToMapDefinition(childNode, indent)}`;
+    }
+  } else {
+    if (node.targetValue) {
+      mapDefinition = `${mapDefinition} ${node.targetValue.value}`;
+    }
+
+    mapDefinition = `${mapDefinition}${YamlFormats.newLine}`;
   }
 
   return mapDefinition;
-}
-
-export function removeNodeKey(str: string, nodeKey: string, loopSource: string) {
-  return str?.replaceAll(`${nodeKey}/`, '')?.replaceAll(`${loopSource}`, '');
 }

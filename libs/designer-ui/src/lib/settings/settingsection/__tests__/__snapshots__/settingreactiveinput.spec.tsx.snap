@@ -2,10 +2,10 @@
 
 exports[`ui/settings/settingreactiveinput should construct 1`] = `
 <React.Fragment>
-  <RenderToggleSetting
+  <SettingToggle
     checked={false}
-    isReadOnly={false}
     onToggleInputChange={[Function]}
+    readOnly={false}
   />
 </React.Fragment>
 `;

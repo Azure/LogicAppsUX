@@ -5,12 +5,6 @@
       "value": "Szűrők"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Beállításcímke"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -255,12 +249,6 @@
       "value": "Kötelező megadni. Az űrlapadatokat tartalmazó vagy űrlapként formázott választ adó művelet neve."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Kikapcsolva"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,12 +265,6 @@
     {
       "type": 0,
       "value": "Hibás"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "húzható csúszkasáv"
     }
   ],
   "3rzrWf": [
@@ -621,12 +603,6 @@
       "value": "Kötelező megadni. Az a sztring, amelyből el kell távolítani a kezdő és záró szóközöket."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Bekapcsolva"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -807,12 +783,6 @@
     {
       "type": 0,
       "value": "Válasszon ki egy kártyát a tartalom megtekintéséhez"
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Beállításérték"
     }
   ],
   "IW2MjQ": [
@@ -1041,12 +1011,6 @@
     {
       "type": 0,
       "value": "A legfelső szintű hatóköri műveletek eredményeit adja vissza a megadott hatóköri műveletben, például „For_each”, „Until” vagy „Scope action”."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Címkeszöveg"
     }
   ],
   "Oib1mL": [
@@ -1651,20 +1615,6 @@
       "value": "Kötelező megadni. A gyűjtemény elejéről eltávolítandó objektumok száma. Pozitív egész számnak kell lennie."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Már regisztrálva van egy "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " nevű lap"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1681,12 +1631,6 @@
     {
       "type": 0,
       "value": "A legnagyobb értéket adja vissza a bemeneti számtömbből."
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Címke beállítása"
     }
   ],
   "bzF/qn": [

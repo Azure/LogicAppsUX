@@ -17,6 +17,11 @@ export interface HttpRequestOptions<ContentType> {
   uri: string;
   type: BatchHttpMethod;
   content?: ContentType;
+  queryParameters?: QueryParameters;
+}
+
+export interface QueryParameters {
+  [paramName: string]: string | number;
 }
 
 export interface IHttpClient {

@@ -10,17 +10,17 @@
     height: auto;
 
     .msla-setting-section-header {
-      display: inline-block;
+      display: flex;
       width: 100%;
       vertical-align: middle;
+      background-color: white;
+      border: none;
 
       .msla-setting-section-header-icon {
-        vertical-align: middle;
         padding-left: 10px;
         padding-top: 12px;
         padding-bottom: 12px;
-        width: 34px;
-        height: 40px;
+        width: 20px;
       }
 
       .msla-setting-section-header-text {
@@ -28,10 +28,11 @@
         border: none;
         text-align: left;
         font-size: 14px;
-        vertical-align: middle;
         font-weight: 600;
         font-family: @font-family;
         min-width: 80%;
+        line-height: 40px;
+        padding-left: 10px;
       }
 
       .msla-setting-section-header-text-dark {
@@ -44,12 +45,14 @@
         font-weight: 600;
         font-family: @font-family;
         min-width: 80%;
+        line-height: 40px;
+        padding-left: 10px;
       }
     }
 
     .msla-setting-section-header:hover {
       background-color: #f3f3f3;
-
+      cursor: pointer;
       .msla-setting-section-header-text {
         background-color: #f3f3f3;
       }
@@ -61,6 +64,10 @@
       .msla-setting-section-header-text {
         background-color: #e9e9e9;
       }
+    }
+
+    .msla-setting-content {
+      padding-bottom: 16px;
     }
 
     .msla-setting-section-row {

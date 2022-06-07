@@ -2,59 +2,59 @@
   "srcSchemaName": "SrcOrders.xsd",
   "dstSchemaName": "CustomerOrders.xsd",
   "mappings": {
-    "targetNodeKey": "/ns0:CustomerOrders",
+    "targetNodeKey": "ns0:CustomerOrders",
     "children": [
       {
-        "targetNodeKey": "/ns0:CustomerOrders/@OrderedItem",
+        "targetNodeKey": "$@OrderedItem",
         "targetValue": {
           "value": "/ns0:Orders/@Item"
         }
       },
       {
-        "targetNodeKey": "/ns0:CustomerOrders/Customer",
-        "loopSource": {
-          "loopSource": "/ns0:Orders/WebOrders"
-        },
+        "targetNodeKey": "Customer",
         "children": [
           {
-            "targetNodeKey": "/ns0:CustomerOrders/Customer/@Name",
-            "condition": {
-              "condition": "not_equal(/ns0:Orders/WebOrders/CustomerName, '')"
+            "targetNodeKey": "$@Name",
+            "targetValue": {
+              "value": "upper-case(CustomerName)"
             },
-            "targetValue": {
-              "value": "/ns0:Orders/WebOrders/CustomerName"
+            "condition": {
+              "condition": "not_equals(CustomerName, '')"
             }
           },
           {
-            "targetNodeKey": "/ns0:CustomerOrders/Customer/@OrderNumber",
+            "targetNodeKey": "$@OrderNumber",
             "targetValue": {
-              "value": "/ns0:Orders/WebOrders/OrderNumber"
+              "value": "OrderNumber"
             }
           },
           {
-            "targetNodeKey": "/ns0:CustomerOrders/Customer/@OrderValue",
+            "targetNodeKey": "$@OrderValue",
             "targetValue": {
-              "value": "/ns0:Orders/WebOrders/OrderValue"
+              "value": "OrderValue"
             }
           },
           {
-            "targetNodeKey": "/ns0:CustomerOrders/Customer/ShippingAddress",
+            "targetNodeKey": "ShippingAddress",
             "children": [
               {
-                "targetNodeKey": "/ns0:CustomerOrders/Customer/ShippingAddress/Line1",
+                "targetNodeKey": "Line1",
                 "targetValue": {
-                  "value": "concat(/ns0:Orders/WebOrders/CustomerName , ' ', /ns0:Orders/WebOrders/Address/Addr1)"
+                  "value": "concat(upper-case(CustomerName), ' ', Address/Addr1)"
                 }
               },
               {
-                "targetNodeKey": "/ns0:CustomerOrders/Customer/ShippingAddress/Line2",
+                "targetNodeKey": "Line2",
                 "targetValue": {
-                  "value": "/ns0:Orders/WebOrders/Address/Addr2"
+                  "value": "Address/Addr2"
                 }
               }
             ]
           }
-        ]
+        ],
+        "loopSource": {
+          "loopSource": "/ns0:Orders/WebOrders"
+        }
       }
     ]
   }
