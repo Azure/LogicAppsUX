@@ -5,12 +5,6 @@
       "value": "Filters"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Setting Label"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -255,12 +249,6 @@
       "value": "Required. The name of the action with a form-data or form-encoded response."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Off"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,12 +265,6 @@
     {
       "type": 0,
       "value": "Faulted"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "draggable slider bar"
     }
   ],
   "3rzrWf": [
@@ -621,12 +603,6 @@
       "value": "Required. The string from which to remove leading and trailing whitespace."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "On"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -807,12 +783,6 @@
     {
       "type": 0,
       "value": "Please select a card to see the content"
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Setting Value"
     }
   ],
   "IW2MjQ": [
@@ -1041,12 +1011,6 @@
     {
       "type": 0,
       "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Label Text"
     }
   ],
   "Oib1mL": [
@@ -1539,6 +1503,12 @@
       "value": "Request"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1645,20 +1615,6 @@
       "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Tab with : "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " name is already registered"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1675,12 +1631,6 @@
     {
       "type": 0,
       "value": "Returns the maximum value in the input array of numbers"
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Label setting"
     }
   ],
   "bzF/qn": [

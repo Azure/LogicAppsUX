@@ -5,12 +5,6 @@
       "value": "Filtry"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Popisek nastavení"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -289,12 +283,6 @@
       "value": "Povinný parametr. Název akce s odpovědí form-data nebo form-encoded."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Vypnuto"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -311,12 +299,6 @@
     {
       "type": 0,
       "value": "S chybou"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "přetahovatelný posuvník"
     }
   ],
   "3rzrWf": [
@@ -655,12 +637,6 @@
       "value": "Povinné. Řetězec, z jehož začátku a konce se odeberou prázdné znaky."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Zapnuto"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -863,12 +839,6 @@
     {
       "type": 0,
       "value": "Pokud si chcete zobrazit obsah, vyberte prosím kartu."
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Hodnota nastavení"
     }
   ],
   "IW2MjQ": [
@@ -1097,12 +1067,6 @@
     {
       "type": 0,
       "value": "Vrátí výsledky z akcí na nejvyšší úrovni s určeným rozsahem, například z akcí For_each, Until nebo Scope."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Text popisku"
     }
   ],
   "Oib1mL": [
@@ -1613,6 +1577,12 @@
       "value": "Žádost"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1719,20 +1689,6 @@
       "value": "Vyžadováno. Počet objektů, které se mají odebrat ze začátku kolekce. Musí to být kladné celé číslo."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Karta s názvem "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " se už zaregistrovala."
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1749,12 +1705,6 @@
     {
       "type": 0,
       "value": "Vrátí maximální hodnotu vstupního pole čísel."
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Nastavení popisku"
     }
   ],
   "bzF/qn": [

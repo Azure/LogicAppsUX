@@ -1,3 +1,4 @@
+import { StatusPill } from '../../monitoring';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
 import { css, DirectionalHint, Icon, TooltipHost } from '@fluentui/react';
@@ -16,10 +17,11 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   drag,
   draggable,
   dragPreview,
-  isDragging,
-  icon,
   errorLevel,
   errorMessage,
+  icon,
+  isDragging,
+  isMonitoringView,
   selected,
   title,
   onClick,
@@ -46,7 +48,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   ];
   const bgStyle = { backgroundColor: brandColor };
   return (
-    <div ref={dragPreview} className="msla-content-fit">
+    <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div
         ref={drag}
         aria-describedby={describedBy}
@@ -57,6 +59,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
         tabIndex={0}
       >
         <div className="msla-scope-v2--header msla-scope-header-style" style={{ borderColor: brandColor }}>
+          {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
           <button className="msla-inner msla-scope-header-inner" style={bgStyle}>
             <button className="msla-selector" draggable={true} tabIndex={-1}>
               <div className="panel-card-content-gripper-section">{draggable ? <Gripper fill={'#FFFFF'} /> : null}</div>

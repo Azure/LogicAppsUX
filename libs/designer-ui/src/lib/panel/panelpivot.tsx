@@ -51,8 +51,8 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackE
         overflowBehavior="menu"
         overflowAriaLabel={overflowLabel}
       >
-        {Object.entries(tabs).map(([name, PanelTab]) => {
-          return <PivotItem key={name} itemKey={name} headerText={PanelTab.title} />;
+        {Object.entries(tabs).map(([name, panelTab]) => {
+          return panelTab.enabled ? <PivotItem key={name} itemKey={name} headerText={panelTab.title} /> : null;
         })}
       </Pivot>
     </div>

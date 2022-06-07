@@ -5,12 +5,6 @@
       "value": "Filtreler"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Ayar Etiketi"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -255,12 +249,6 @@
       "value": "Gerekli. Form-data veya form-encoded yanıtı içeren eylemin adı."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Kapalı"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,12 +265,6 @@
     {
       "type": 0,
       "value": "Hatalı"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "sürüklenebilir kaydırıcı çubuğu"
     }
   ],
   "3rzrWf": [
@@ -621,12 +603,6 @@
       "value": "Gerekli. Baştaki ve sondaki boşluğun kaldırılacağı dize."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Açık"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -807,12 +783,6 @@
     {
       "type": 0,
       "value": "İçeriği görmek için lütfen bir kart seçin"
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Ayar Değeri"
     }
   ],
   "IW2MjQ": [
@@ -1041,12 +1011,6 @@
     {
       "type": 0,
       "value": "Bir For_each, Until veya Scope eylemi gibi, belirtilen kapsamlı eylemdeki en üst düzey eylemlerden sonuçları döndürür."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Etiket Metni"
     }
   ],
   "Oib1mL": [
@@ -1535,6 +1499,12 @@
       "value": "İstek"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1641,16 +1611,6 @@
       "value": "Gerekli. Koleksiyonun önünden kaldırılacak nesne sayısı. Pozitif bir tamsayı olmalıdır."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " adlı sekme zaten kayıtlı"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1667,12 +1627,6 @@
     {
       "type": 0,
       "value": "Sayılardan oluşan giriş dizisinin en büyük değerini döndürür"
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Etiket ayarı"
     }
   ],
   "bzF/qn": [

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { useLayout } from '../core/graphlayout';
 import { updateNodeSizes } from '../core/state/workflowSlice';
 import CustomTestNode from './CustomNodes/CustomTestNode';
@@ -45,7 +44,6 @@ export const Designer = () => {
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
-            onConnect={() => {}}
             minZoom={0}
             nodesDraggable={false}
             edgeTypes={edgeTypes}

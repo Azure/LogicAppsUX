@@ -5,12 +5,6 @@
       "value": "Filtry"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Etykieta ustawienia"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -293,12 +287,6 @@
       "value": "Wymagane. Nazwa akcji z odpowiedzią w postaci danych formularza lub odpowiedzią zakodowaną w formularzu."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Wyłączone"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -315,12 +303,6 @@
     {
       "type": 0,
       "value": "Błędne"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "pasek suwaka z możliwością przeciągania"
     }
   ],
   "3rzrWf": [
@@ -659,12 +641,6 @@
       "value": "Wymagane. Ciąg, z którego ma zostać usunięty odstęp wiodący i końcowy."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Włączone"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -867,12 +843,6 @@
     {
       "type": 0,
       "value": "Wybierz kartę, aby zobaczyć zawartość"
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Wartość ustawienia"
     }
   ],
   "IW2MjQ": [
@@ -1101,12 +1071,6 @@
     {
       "type": 0,
       "value": "Zwraca wyniki z akcji najwyższego poziomu w podanej akcji o określonym zakresie takiej jak For_each, Until lub Scope."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Tekst etykiety"
     }
   ],
   "Oib1mL": [
@@ -1617,6 +1581,12 @@
       "value": "Żądanie"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1723,20 +1693,6 @@
       "value": "Parametr wymagany. Liczba obiektów do usunięcia z początku kolekcji. Musi być dodatnią liczbą całkowitą."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Karta z: nazwą "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " jest już zarejestrowana"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1753,12 +1709,6 @@
     {
       "type": 0,
       "value": "Zwraca maksymalną wartość w tablicy wejściowej liczb"
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Ustawienie etykiety"
     }
   ],
   "bzF/qn": [

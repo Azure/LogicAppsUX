@@ -432,29 +432,3 @@ export function getArrayViewModelByIndexedKey(viewModel: ArrayViewModel, indexed
 
   throw new Error('Array view model not found');
 }
-
-function iterateArrayViewModel(
-  viewModel: ArrayViewModel,
-  collapsedArrayCallback?: (viewModel: ArrayViewModel) => void,
-  collapsedItemCallback?: (item: ItemPropertyViewModel, inputParameter: InputParameter) => void,
-  collapsedPropertyCallback?: (property: NonArrayPropertyMetadata) => void
-): void {
-  if (viewModel.expanded) {
-    for (const item of viewModel.items ?? []) {
-      if (item.expanded) {
-        for (const property of item.properties ?? []) {
-          if (property.inputParameter.type === Constants.SWAGGER.TYPE.ARRAY) {
-            const arrayProperty = property as ArrayPropertyMetadata;
-            iterateArrayViewModel(arrayProperty.viewModel, collapsedArrayCallback, collapsedItemCallback, collapsedPropertyCallback);
-          } else if (collapsedPropertyCallback) {
-            collapsedPropertyCallback(property as NonArrayPropertyMetadata);
-          }
-        }
-      } else if (collapsedItemCallback) {
-        collapsedItemCallback(item, viewModel.itemInputParameter);
-      }
-    }
-  } else if (collapsedArrayCallback) {
-    collapsedArrayCallback(viewModel);
-  }
-}

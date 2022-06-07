@@ -5,12 +5,6 @@
       "value": "Filtros"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Etiqueta de Definição"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -255,12 +249,6 @@
       "value": "Obrigatório. O nome da ação com uma resposta de dados de formulário ou de formulário codificado."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Desativado"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,12 +265,6 @@
     {
       "type": 0,
       "value": "Com falhas"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "barra de deslize arrastável"
     }
   ],
   "3rzrWf": [
@@ -621,12 +603,6 @@
       "value": "Necessário. A cadeia a partir da qual pretende remover os espaços em branco à esquerda e à direita."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Ativado"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -807,12 +783,6 @@
     {
       "type": 0,
       "value": "Selecione um cartão para ver o conteúdo"
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Valor da Definição"
     }
   ],
   "IW2MjQ": [
@@ -1041,12 +1011,6 @@
     {
       "type": 0,
       "value": "Devolve os resultados das ações de nível superior na ação com âmbito especificada, como uma ação For_each, Até ou Âmbito."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Texto da Etiqueta"
     }
   ],
   "Oib1mL": [
@@ -1535,6 +1499,12 @@
       "value": "Pedido"
     }
   ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1641,16 +1611,6 @@
       "value": "Obrigatório. O número de objetos a remover da frente da Coleção. Tem de ser um número inteiro positivo."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "Já foi registado um separador com o nome "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1667,12 +1627,6 @@
     {
       "type": 0,
       "value": "Devolve o valor máximo na matriz de entrada de números"
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Definição da etiqueta"
     }
   ],
   "bzF/qn": [

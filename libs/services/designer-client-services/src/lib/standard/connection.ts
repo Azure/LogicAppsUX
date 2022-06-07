@@ -41,15 +41,15 @@ export class StandardConnectionService {
     return [];
   }
 
-  async getConnection(connectionId: string): Promise<Connection> {
-    const connection: Connection = await this._getConnectionInApiHub(connectionId);
-    //if (isArmResourceId(connectionId)) {
-    // connection = await this._getConnectionInApiHub(connectionId);
-    // } else { // why would we need this? is this for "local connection"
-    //   const connection = await this.getConnections();
+  async getConnection(connectionId: string): Promise<Connection | undefined> {
+    throw new Error('Function not implemented.');
+    // let connection: Connection | undefined;
+    // if (isArmResourceId(connectionId)) {
+    //   connection = await this._getConnectionInApiHub(connectionId);
+    // } else {
+    //   connection = await (await this.getConnections()).find(conn => conn.id === connectionId);
     // }
-    // return await this.getConnections();
-    return connection;
+    // return connection;
   }
 
   private async _getConnectionInApiHub(connectionId: string): Promise<Connection> {
@@ -81,9 +81,9 @@ export class StandardConnectionService {
       $filter: `properties/integrationServiceEnvironmentResourceId eq null and Kind eq 'V2'`,
       $top: 400,
     };
-    const response = await HttpClient().get<ArmResources<Connection>>({ uri, type: 'GET', queryParameters });
 
     try {
+      const response = await HttpClient().get<ArmResources<Connection>>({ uri, type: 'GET', queryParameters });
       const allConnections = await this._followContinuationTokens<Connection>(response);
       return allConnections.filter((connection: Connection) => {
         return filterByLocation ? equals(connection.location, location) : true;
