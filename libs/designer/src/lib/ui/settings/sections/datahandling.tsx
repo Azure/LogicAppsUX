@@ -1,9 +1,12 @@
-import type { Settings } from '../../../core/actions/bjsworkflow/settings';
+import type { SectionProps } from '..';
 import { SettingLabel } from './security';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
+import { useState } from 'react';
 
-export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompression }: Settings): JSX.Element => {
+export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompression, readOnly, nodeId }: SectionProps): JSX.Element => {
+  const [automaticDecompression, setAutomaticDecompression] = useState(disableAutomaticDecompression);
+  const [schemaValidation, setSchemaValidation] = useState(requestSchemaValidation);
   const requestSchemaValidationLabel = (
     <SettingLabel
       labelText="Schema Validation"
@@ -15,6 +18,15 @@ export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompre
     <SettingLabel labelText="Automatic Decompression" infoTooltipText="Automatically decompress gzip response." isChild={false} />
   );
 
+  const onAutomaticDecompressionChange = (checked: boolean): void => {
+    setAutomaticDecompression(checked);
+    // write to store
+  };
+  const onSchemaValidationChange = (checked: boolean): void => {
+    setSchemaValidation(checked);
+    // write to store
+  };
+
   const dataHandlingSectionProps: SettingSectionProps = {
     id: 'dataHandling',
     title: 'Data Handling',
@@ -23,21 +35,21 @@ export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompre
       {
         settingType: 'SettingToggle',
         settingProp: {
-          readOnly: false,
-          checked: disableAutomaticDecompression,
-          onToggleInputChange: () => console.log('Automatic Decompression Clicked'), //createHandler
+          readOnly,
+          checked: automaticDecompression,
+          onToggleInputChange: (_, checked) => onAutomaticDecompressionChange(!!checked), //createHandler
           label: automaticDecompressionLabel,
-          visible: true,
+          visible: disableAutomaticDecompression !== undefined,
         },
       },
       {
         settingType: 'SettingToggle',
         settingProp: {
-          readOnly: false,
-          checked: requestSchemaValidation,
-          onToggleInputChange: () => console.log(`Schema Validation Clicked`),
+          readOnly,
+          checked: schemaValidation,
+          onToggleInputChange: (_, checked) => onSchemaValidationChange(!!checked),
           label: requestSchemaValidationLabel,
-          visible: true,
+          visible: requestSchemaValidation !== undefined,
         },
       },
     ],

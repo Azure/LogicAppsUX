@@ -40,7 +40,8 @@ export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLab
 }
 
 // TODO (andrewfowose): replace hard-set settingProps in Security to data from operationMetadataSlice
-export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: SectionProps): JSX.Element => {
+export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: SectionProps): JSX.Element | null => {
+  if (secureInputs === undefined && secureOutputs === undefined) return null;
   const secureInputsLabel = <SettingLabel labelText="Secure Inputs" infoTooltipText="Secure inputs of the operation." isChild={false} />;
   const secureOutputsLabel = (
     <SettingLabel
@@ -50,13 +51,12 @@ export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: Sect
     />
   );
 
-  const onSecureInputsChange = (checked: boolean | undefined): void => {
-    if (checked === undefined) return;
+  const onSecureInputsChange = (checked: boolean): void => {
     // write to store
     console.log('secure inputs changed');
   };
 
-  const onSecureOutputsChange = (checked: boolean | undefined): void => {
+  const onSecureOutputsChange = (checked: boolean): void => {
     if (checked === undefined) return;
     // write to store
     console.log('secure outputs changed');
@@ -73,7 +73,7 @@ export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: Sect
           visible: secureInputs !== undefined,
           readOnly,
           checked: secureInputs,
-          onToggleInputChange: (_, checked) => onSecureInputsChange(checked),
+          onToggleInputChange: (_, checked) => onSecureInputsChange(!!checked),
           customLabel: () => secureInputsLabel,
         },
       },
@@ -83,7 +83,7 @@ export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: Sect
           visible: secureOutputs !== undefined,
           readOnly,
           checked: secureOutputs,
-          onToggleInputChange: (_, checked) => onSecureOutputsChange(checked),
+          onToggleInputChange: (_, checked) => onSecureOutputsChange(!!checked),
           customLabel: () => secureOutputsLabel,
         },
       },
