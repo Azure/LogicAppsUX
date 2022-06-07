@@ -9,9 +9,11 @@ export * from './lib/helpers/guid';
 
 export * from './lib/models/armresource';
 export * from './lib/models/connector';
+export * from './lib/models/connection';
 export * from './lib/models/operationmanifest';
 export * from './lib/models/operation';
 
 export * from './lib/mocks/connectors';
+export * from './lib/mocks/connections';
 export * from './lib/mocks/operations';
 export * from './lib/mocks/connectorsSearchResultsMock';
