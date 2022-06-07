@@ -15,8 +15,7 @@ export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
 
   return `${codeDetails}${nodeToMapDefinition(inputJson.mappings, '').trim()}`;
 }
-function nodeToMapDefinition(node: MapNode, indent: string): string {
-
+function nodeToMapDefinition(node: MapNode, initIndent: string): string {
   let mapDefinition = '';
   let indent = initIndent;
   if (node.loopSource) {

@@ -41,7 +41,7 @@ export class StandardConnectionService {
     return [];
   }
 
-  async getConnection(connectionId: string): Promise<Connection | undefined> {
+  async getConnection(_connectionId: string): Promise<Connection | undefined> {
     throw new Error('Function not implemented.');
     // let connection: Connection | undefined;
     // if (isArmResourceId(connectionId)) {
@@ -63,6 +63,7 @@ export class StandardConnectionService {
 
   async getConnections(): Promise<Connection[]> {
     const response = await this._getConnectionsInApiHub();
+    console.log(response);
     return connectionsMock;
   }
 
