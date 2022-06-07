@@ -353,6 +353,7 @@ function generateSignaturesForVariableParameters(
 function parseExpression(value: string, position: Position, templateFunctions: Record<string, FunctionDefinition>): ExpressionInfo | null {
   // parsing multi-line values
   if (position.lineNumber > 1) {
+    // eslint-disable-next-line no-param-reassign
     value = value.split('\n')[position.lineNumber - 1];
   }
   const caretPosition = position.column - 1;

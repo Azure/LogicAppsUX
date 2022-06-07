@@ -51,7 +51,7 @@ export const dataMapDataLoaderSlice = createSlice({
       state.dataMap = action.payload;
     });
 
-    builder.addCase(loadDataMap.rejected, (state, action) => {
+    builder.addCase(loadDataMap.rejected, (state) => {
       // TODO change to null for error handling case
       state.dataMap = undefined;
     });

@@ -4,10 +4,10 @@ import type { HttpRequestOptions, IHttpClient } from '@microsoft-logic-apps/desi
 export class HttpClient implements IHttpClient {
   dispose(): void {}
 
-  async get<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType> {
+  async get<ReturnType>(_options: HttpRequestOptions<unknown>): Promise<ReturnType> {
     return {} as any;
   }
-  async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
+  async post<ReturnType, BodyType>(_options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
     return {} as any;
   }
 }

@@ -1,9 +1,18 @@
-import type { IOperationManifestService } from '../operationmanifest';
-import { ArgumentException, AssertionErrorCode, AssertionException, clone, equals, format, SettingScope, UnsupportedException } from '@microsoft-logic-apps/utils';
-import type { OperationInfo, OperationManifest, SplitOn } from '@microsoft-logic-apps/utils';
 import type { IHttpClient } from '../httpClient';
+import type { IOperationManifestService } from '../operationmanifest';
 import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft-logic-apps/parsers';
 import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
+import {
+  ArgumentException,
+  AssertionErrorCode,
+  AssertionException,
+  clone,
+  equals,
+  format,
+  SettingScope,
+  UnsupportedException,
+} from '@microsoft-logic-apps/utils';
+import type { OperationInfo, OperationManifest, SplitOn } from '@microsoft-logic-apps/utils';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
 
@@ -62,92 +71,95 @@ interface StandardOperationManifestServiceOptions {
 
 export class StandardOperationManifestService implements IOperationManifestService {
   constructor(private readonly options: StandardOperationManifestServiceOptions) {
-      const { apiVersion, baseUrl, httpClient } = options;
-      if (!apiVersion) {
-          throw new ArgumentException('apiVersion required');
-      } else if (!baseUrl) {
-        throw new ArgumentException('baseUrl required');
-      } else if (!httpClient) {
-        throw new ArgumentException('httpClient required');
-      }
+    const { apiVersion, baseUrl, httpClient } = options;
+    if (!apiVersion) {
+      throw new ArgumentException('apiVersion required');
+    } else if (!baseUrl) {
+      throw new ArgumentException('baseUrl required');
+    } else if (!httpClient) {
+      throw new ArgumentException('httpClient required');
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isSupported(operationType: string, _operationKind?: string): boolean {
-      const { supportedTypes } = this.options;
-      const normalizedOperationType = operationType.toLowerCase();
-      return supportedTypes ? supportedTypes.indexOf(normalizedOperationType) > -1 : supportedManifestTypes.indexOf(normalizedOperationType) > -1;
+    const { supportedTypes } = this.options;
+    const normalizedOperationType = operationType.toLowerCase();
+    return supportedTypes
+      ? supportedTypes.indexOf(normalizedOperationType) > -1
+      : supportedManifestTypes.indexOf(normalizedOperationType) > -1;
   }
 
   async getOperationInfo(definition: any): Promise<OperationInfo> {
-      if (isInBuiltOperation(definition)) {
-          return getBuiltInOperationInfo(definition);
-      } else if (isServiceProviderOperation(definition)) {
-          return {
-            connectorId: definition.inputs.serviceProviderConfiguration.serviceProviderId,
-            operationId: definition.inputs.serviceProviderConfiguration.operationId,
-          };
-      }
-
+    if (isInBuiltOperation(definition)) {
+      return getBuiltInOperationInfo(definition);
+    } else if (isServiceProviderOperation(definition)) {
       return {
-          connectorId: 'Unknown',
-          operationId: 'Unknown',
+        connectorId: definition.inputs.serviceProviderConfiguration.serviceProviderId,
+        operationId: definition.inputs.serviceProviderConfiguration.operationId,
       };
+    }
 
-      //throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
+    return {
+      connectorId: 'Unknown',
+      operationId: 'Unknown',
+    };
+
+    //throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
   }
 
   async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
-      if (operationId === foreach) {
-        return foreachManifest;
-      }
-      if (operationId === scope) {
-        return scopeManifest;
-      }
+    if (operationId === foreach) {
+      return foreachManifest;
+    }
+    if (operationId === scope) {
+      return scopeManifest;
+    }
 
-      // NOTE: HACK to get operation manifest of dataOperation connector's action,
-      // should be removed when all manifests are created inside dataoperation.
-      if (equals(connectorId, 'connectionProviders/dataOperation')) {
-          connectorId = 'connectionProviders/dataOperationNew';
-      }
+    // NOTE: HACK to get operation manifest of dataOperation connector's action,
+    // should be removed when all manifests are created inside dataoperation.
+    if (equals(connectorId, 'connectionProviders/dataOperation')) {
+      // eslint-disable-next-line no-param-reassign
+      connectorId = 'connectionProviders/dataOperationNew';
+    }
 
-      const { apiVersion, baseUrl, httpClient } = this.options;
-      const connectorName = connectorId.split('/').slice(-1)[0];
-      const operationName = operationId.split('/').slice(-1)[0];
-      const queryParameters = {
-          'api-version': apiVersion,
-          'expand': 'properties/manifest'
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const connectorName = connectorId.split('/').slice(-1)[0];
+    const operationName = operationId.split('/').slice(-1)[0];
+    const queryParameters = {
+      'api-version': apiVersion,
+      expand: 'properties/manifest',
+    };
+
+    try {
+      const response = await httpClient.get<any>({
+        uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}`,
+        queryParameters,
+      });
+
+      const {
+        properties: { brandColor, description, iconUri, manifest },
+      } = response;
+
+      const operationManifest = {
+        properties: { brandColor, description, iconUri, ...manifest },
       };
 
-      try {
-        const response = await httpClient.get<any>({
-            uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}`,
-            queryParameters
-        });
-
-        const {
-            properties: { brandColor, description, iconUri, manifest },
-        } = response;
-
-        const operationManifest = {
-            properties: { brandColor, description, iconUri, ...manifest },
-        };
-
-        return operationManifest;
-      } catch (error) {
-        return { properties: {} } as any;
-      }
+      return operationManifest;
+    } catch (error) {
+      return { properties: {} } as any;
+    }
   }
 
   getSplitOnOutputs(manifest: OperationManifest, splitOn: SplitOn): SchemaObject {
     if (splitOn === undefined) {
-        return manifest.properties.outputs;
+      return manifest.properties.outputs;
     } else if (typeof splitOn === 'string') {
-        return this._convertOutputsForSplitOn(manifest.properties.outputs, splitOn);
+      return this._convertOutputsForSplitOn(manifest.properties.outputs, splitOn);
     }
 
     throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, format("Invalid split on format in '{0}'.", splitOn));
-}
+  }
 
   /**
    * Gets the outputs from manifest outputs after applying split on.
@@ -156,62 +168,68 @@ export class StandardOperationManifestService implements IOperationManifestServi
    * @return {Swagger.Schema}
    */
   private _convertOutputsForSplitOn(originalOutputs: SchemaObject, splitOnValue: string): SchemaObject {
-      if (!isTemplateExpression(splitOnValue)) {
-          throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, format("Invalid split on format in '{0}'.", splitOnValue));
+    if (!isTemplateExpression(splitOnValue)) {
+      throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, format("Invalid split on format in '{0}'.", splitOnValue));
+    }
+
+    const parsedValue = ExpressionParser.parseExpression(splitOnValue);
+    const properties: string[] = [];
+    let manifestSection = originalOutputs;
+    if (isSupportedSplitOnExpression(parsedValue)) {
+      const { dereferences, name } = parsedValue as ExpressionFunction;
+      if (equals(name, 'triggerBody')) {
+        properties.push('body');
       }
 
-      const parsedValue = ExpressionParser.parseExpression(splitOnValue);
-      const properties: string[] = [];
-      let manifestSection = originalOutputs;
-      if (isSupportedSplitOnExpression(parsedValue)) {
-          const { dereferences, name } = parsedValue as ExpressionFunction;
-          if (equals(name, 'triggerBody')) {
-              properties.push('body');
-          }
+      if (dereferences.length) {
+        properties.push(...dereferences.map((dereference) => (dereference.expression as ExpressionLiteral).value));
+      }
+    } else {
+      throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, format("Invalid split on format in '{0}'.", splitOnValue));
+    }
 
-          if (dereferences.length) {
-              properties.push(...dereferences.map(dereference => (dereference.expression as ExpressionLiteral).value));
-          }
-      } else {
-          throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, format("Invalid split on format in '{0}'.", splitOnValue));
+    for (const property of properties) {
+      if (!manifestSection.properties) {
+        throw new AssertionException(
+          AssertionErrorCode.INVALID_SPLITON,
+          format("Invalid split on value '{0}', cannot find in outputs.", splitOnValue)
+        );
       }
 
-      for (const property of properties) {
-          if (!manifestSection.properties) {
-              throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, format("Invalid split on value '{0}', cannot find in outputs.", splitOnValue));
-          }
+      manifestSection = manifestSection.properties[property];
+    }
 
-          manifestSection = manifestSection.properties[property];
-      }
+    if (manifestSection.type !== 'array') {
+      throw new AssertionException(
+        AssertionErrorCode.INVALID_SPLITON,
+        format("Invalid type on split on value '{0}', split on not in array.", splitOnValue)
+      );
+    }
 
-      if (manifestSection.type !== 'array') {
-          throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, format("Invalid type on split on value '{0}', split on not in array.", splitOnValue));
-      }
-
-      return {
-          properties: {
-              body: clone(manifestSection.items) as SchemaObject,
-          },
-          type: 'object',
-      };
+    return {
+      properties: {
+        body: clone(manifestSection.items) as SchemaObject,
+      },
+      type: 'object',
+    };
   }
 }
 
 function isSupportedSplitOnExpression(expression: Expression): boolean {
   if (!isFunction(expression)) {
-      return false;
+    return false;
   }
 
   if (!equals(expression.name, 'triggerBody') && !equals(expression.name, 'triggerOutputs')) {
-      return false;
+    return false;
   }
 
   if (expression.arguments.length > 0) {
-      return false;
+    return false;
   }
 
-  if (expression.dereferences.some(dereference => !isStringLiteral(dereference.expression))) {
-      return false;
+  if (expression.dereferences.some((dereference) => !isStringLiteral(dereference.expression))) {
+    return false;
   }
 
   return true;

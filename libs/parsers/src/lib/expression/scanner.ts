@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { ExpressionConstants } from '../common/constants';
 import { ExpressionExceptionCode } from '../common/exceptions/expression';
 import { ScannerException } from '../common/exceptions/scanner';

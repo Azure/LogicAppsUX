@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
 const _separator = '.';

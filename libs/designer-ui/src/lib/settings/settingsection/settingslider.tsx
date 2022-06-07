@@ -26,7 +26,7 @@ export const CustomValueSlider = ({
   sliderLabel,
 }: CustomValueSliderProps): JSX.Element => {
   const [checked, toggleChecked] = useBoolean(false);
-  const onToggleInputChange = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => {
+  const onToggleInputChange = () => {
     toggleChecked.toggle();
   };
   const [sliderCount, setCount] = useState(value ?? defaultValue);

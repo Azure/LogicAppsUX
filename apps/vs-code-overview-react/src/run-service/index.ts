@@ -71,7 +71,7 @@ export class RunService implements IRunService {
     return response.json();
   }
 
-  async getRuns(workflowId: string): Promise<Runs> {
+  async getRuns(): Promise<Runs> {
     const { apiVersion, baseUrl, workflowName } = this.options;
     const headers = this.getAccessTokenHeaders();
 

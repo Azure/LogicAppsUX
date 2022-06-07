@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import type { NodesMetadata } from '../state/workflowSlice';
 import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from './models/workflowNode';
 

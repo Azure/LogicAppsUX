@@ -93,6 +93,7 @@ export function createParameterInfo(
   shouldIgnoreDefaultValue = false
 ): ParameterInfo {
   if (!repetitionContext) {
+    // eslint-disable-next-line no-param-reassign
     repetitionContext = {
       repetitionReferences: [],
     };

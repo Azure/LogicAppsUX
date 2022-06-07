@@ -27,7 +27,7 @@ describe('recommendation panel', () => {
   });
 
   beforeAll(() => {
-    ReactDOM.createPortal = jest.fn((element, node) => {
+    ReactDOM.createPortal = jest.fn((element, _node) => {
       return element as ReactPortal;
     });
   });
