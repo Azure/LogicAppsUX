@@ -15,6 +15,7 @@ const httpClient = new HttpClient();
 const connectionService = new StandardConnectionService({
   baseUrl: '',
   apiVersion: '2018-11-01',
+  httpClient,
 });
 const operationManifestService = new StandardOperationManifestService({
   apiVersion: '',
@@ -29,7 +30,7 @@ export const DesignerWrapper = () => {
 
   const workflow = useSelector((state: RootState) => state.workflowLoader.workflowDefinition);
   const designerProviderProps: DesignerOptionsContext = {
-    services: { connectionService, httpClient, operationManifestService, searchService },
+    services: { connectionService, operationManifestService, searchService },
     readOnly,
     toggleReadOnly: () => {
       setReadOnly(!readOnly);
