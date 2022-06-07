@@ -1,7 +1,6 @@
 import type { MultiSelectSettingProps, MultiSelectOption } from '../settingmultiselect';
 import { MultiSelectSetting } from '../settingmultiselect';
 import * as React from 'react';
-import { render } from 'react-dom';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('ui/settings/multiselectsettings', () => {

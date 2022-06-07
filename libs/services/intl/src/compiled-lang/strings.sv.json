@@ -5,12 +5,6 @@
       "value": "Filter"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Inställningsetikett"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -255,12 +249,6 @@
       "value": "Krävs. Namnet på åtgärden med ett formulärdata- eller formulärkodat svar."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Av"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,12 +265,6 @@
     {
       "type": 0,
       "value": "Fel"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "skjutreglage som kan dras"
     }
   ],
   "3rzrWf": [
@@ -621,12 +603,6 @@
       "value": "Krävs. Den sträng som du vill ta bort inledande och efterföljande blanksteg från."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "På"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -807,12 +783,6 @@
     {
       "type": 0,
       "value": "Välj ett kort för att visa innehållet"
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Inställningsvärde"
     }
   ],
   "IW2MjQ": [
@@ -1041,12 +1011,6 @@
     {
       "type": 0,
       "value": "Returnerar resultaten från åtgärderna på toppnivå i den angivna omfångsdefinierade åtgärden, till exempel en For_each, Until eller Scope."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Etikettext"
     }
   ],
   "Oib1mL": [
@@ -1651,20 +1615,6 @@
       "value": "Obligatoriskt. Det antal objekt som ska tas bort från samlingens framsida. Det måste vara ett positivt heltal."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "En flik med namnet "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " har redan registrerats"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1681,12 +1631,6 @@
     {
       "type": 0,
       "value": "Returnerar maxvärdet i indatamatrisen med tal"
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Etikettinställning"
     }
   ],
   "bzF/qn": [

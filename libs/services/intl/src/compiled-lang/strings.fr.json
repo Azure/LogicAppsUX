@@ -5,12 +5,6 @@
       "value": "Filtres"
     }
   ],
-  "+UirjI": [
-    {
-      "type": 0,
-      "value": "Étiquette de paramètre"
-    }
-  ],
   "+g+mch": [
     {
       "type": 0,
@@ -255,12 +249,6 @@
       "value": "Obligatoire. Nom de l'action avec une réponse encodée dans le formulaire ou avec des données de formulaire."
     }
   ],
-  "2mnU/w": [
-    {
-      "type": 0,
-      "value": "Inactif"
-    }
-  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,12 +265,6 @@
     {
       "type": 0,
       "value": "En échec"
-    }
-  ],
-  "3rtRpE": [
-    {
-      "type": 0,
-      "value": "barre de curseur déplaçable"
     }
   ],
   "3rzrWf": [
@@ -621,12 +603,6 @@
       "value": "Obligatoire. Chaîne de laquelle supprimer les espaces à gauche et à droite."
     }
   ],
-  "DFo+mo": [
-    {
-      "type": 0,
-      "value": "Actif"
-    }
-  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -807,12 +783,6 @@
     {
       "type": 0,
       "value": "Sélectionnez une carte pour voir le contenu"
-    }
-  ],
-  "HymOpF": [
-    {
-      "type": 0,
-      "value": "Valeur de paramètre"
     }
   ],
   "IW2MjQ": [
@@ -1041,12 +1011,6 @@
     {
       "type": 0,
       "value": "Retourne les résultats des actions de niveau supérieur dans l'action délimitée spécifiée, par exemple, une action For_each, Until ou Scope."
-    }
-  ],
-  "OfvxaB": [
-    {
-      "type": 0,
-      "value": "Texte de l'étiquette"
     }
   ],
   "Oib1mL": [
@@ -1647,20 +1611,6 @@
       "value": "Obligatoire. Nombre d'objets à supprimer de l'avant de la collection. Doit être un entier positif."
     }
   ],
-  "bH5LtI": [
-    {
-      "type": 0,
-      "value": "L'onglet avec le nom "
-    },
-    {
-      "type": 1,
-      "value": "tabname"
-    },
-    {
-      "type": 0,
-      "value": " est déjà inscrit"
-    }
-  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1677,12 +1627,6 @@
     {
       "type": 0,
       "value": "Retourne la valeur maximale dans le tableau d'entrée de nombres"
-    }
-  ],
-  "bgfjqS": [
-    {
-      "type": 0,
-      "value": "Paramètre d’étiquette"
     }
   ],
   "bzF/qn": [
