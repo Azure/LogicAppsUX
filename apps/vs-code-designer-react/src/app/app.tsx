@@ -9,13 +9,13 @@ import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logi
 
 const httpClient = new HttpClient();
 const connectionService = new StandardConnectionService({
-  baseUrl: '',
+  baseUrl: '/url',
   apiVersion: '2018-11-01',
   httpClient,
 });
 const operationManifestService = new StandardOperationManifestService({
-  apiVersion: '',
-  baseUrl: '',
+  apiVersion: '2018-11-01',
+  baseUrl: 'url',
   httpClient,
 });
 const searchService = new StandardSearchService();

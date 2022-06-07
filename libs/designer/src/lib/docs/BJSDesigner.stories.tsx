@@ -32,13 +32,13 @@ const RenderedComponent = (props: ComponentProps) => (
         ...props.options,
         services: {
           connectionService: new StandardConnectionService({
-            baseUrl: '',
+            baseUrl: '/url',
             apiVersion: '2018-11-01',
             httpClient,
           }),
           operationManifestService: new StandardOperationManifestService({
-            apiVersion: '',
-            baseUrl: '',
+            apiVersion: '2018-11-01',
+            baseUrl: '/url',
             httpClient,
           }),
           searchService: new StandardSearchService(),
