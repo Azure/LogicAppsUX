@@ -11,9 +11,9 @@ export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
   return `${codeDetails}${nodeToMapDefinition(inputJson.mappings, '', '', '')}`;
 }
 
-function nodeToMapDefinition(node: MapNode, indent: string, parentNodeKey: string, parentLoopSource: string): string {
+function nodeToMapDefinition(node: MapNode, initIndent: string, parentNodeKey: string, parentLoopSource: string): string {
   let mapDefinition = '';
-
+  let indent = initIndent;
   if (node.loopSource) {
     mapDefinition = `${mapDefinition}${indent}for(${removeNodeKey(node.loopSource.loopSource, parentNodeKey, parentLoopSource)}):\n`;
     indent += '\t';
