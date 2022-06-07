@@ -1,8 +1,12 @@
-import { StandardConnectionService, StandardOperationManifestService, StandardSearchService } from '@microsoft-logic-apps/designer-client-services';
 import type { DesignerOptionsContext } from '../index';
 import { BJSWorkflowProvider, Designer, DesignerProvider } from '../index';
 import BigWorkflow from './simpleBigworkflow.json';
 import SimpleWorkflow from './simpleSmallWorkflow.json';
+import {
+  StandardConnectionService,
+  StandardOperationManifestService,
+  StandardSearchService,
+} from '@microsoft-logic-apps/designer-client-services';
 
 export default {
   component: DesignerProvider,
@@ -30,14 +34,14 @@ const RenderedComponent = (props: ComponentProps) => (
           connectionService: new StandardConnectionService({
             baseUrl: '',
             apiVersion: '2018-11-01',
+            httpClient,
           }),
-          httpClient,
           operationManifestService: new StandardOperationManifestService({
             apiVersion: '',
             baseUrl: '',
-            httpClient
+            httpClient,
           }),
-          searchService: new StandardSearchService()
+          searchService: new StandardSearchService(),
         },
       }}
     >

@@ -1,15 +1,33 @@
 import workflow from '../../../../__mocks__/workflows/Conditionals.json';
 import { HttpClient } from './httpClient';
+import {
+  StandardConnectionService,
+  StandardOperationManifestService,
+  StandardSearchService,
+} from '@microsoft-logic-apps/designer-client-services';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 
 const httpClient = new HttpClient();
+const connectionService = new StandardConnectionService({
+  baseUrl: '',
+  apiVersion: '2018-11-01',
+  httpClient,
+});
+const operationManifestService = new StandardOperationManifestService({
+  apiVersion: '',
+  baseUrl: '',
+  httpClient,
+});
+const searchService = new StandardSearchService();
 export const App = () => {
   return (
     <DesignerProvider
       locale="en-US"
       options={{
         services: {
-          httpClient,
+          connectionService,
+          operationManifestService,
+          searchService,
         },
       }}
     >
