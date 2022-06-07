@@ -67,9 +67,6 @@ export function unregisterTab(name: string, registeredTabs: Record<string, Panel
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-export function deleteAllTabs(_registeredTabs: Record<string, PanelTab>): void {}
-
 export function getTabs(sort: boolean, registeredTabs: Record<string, PanelTab>): PanelTab[] {
   // Get all tabs not specifically defined as not enabled
   const enabledTabs = Object.values(registeredTabs).filter((tab) => tab.enabled !== false);
