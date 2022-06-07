@@ -48,7 +48,7 @@ export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompre
           readOnly,
           checked: schemaValidation,
           onToggleInputChange: (_, checked) => onSchemaValidationChange(!!checked),
-          label: requestSchemaValidationLabel,
+          customLabel: () => requestSchemaValidationLabel,
           visible: requestSchemaValidation !== undefined,
         },
       },

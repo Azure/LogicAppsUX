@@ -1,13 +1,11 @@
 import type { SectionProps } from '..';
-import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import { updateNodeSettings } from '../../../core/state/operationMetadataSlice';
-import type { RootState } from '../../../core/store';
 import { SettingLabel } from './security';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export const General = ({
   splitOn,
@@ -80,7 +78,7 @@ export const General = ({
           readOnly,
           checked: splitOn?.enabled,
           onToggleInputChange: (_, checked) => onSplitOnToggle(!!checked), // build onSplitOnChange handler
-          label: splitOnLabel,
+          customLabel: () => splitOnLabel,
         },
       },
       {
@@ -110,6 +108,7 @@ export const General = ({
           readOnly,
           checked: concurrency,
           onToggleInputChange: (_, checked) => onConcurrencyChange(!!checked),
+          customLabel: () => concurrencyLabel,
         },
       },
       {

@@ -50,32 +50,54 @@ export const SettingsPanel = (): JSX.Element => {
   } = useSelector((state: RootState) => {
     return state.operations.settings[nodeId];
   });
-  const securitySectionProps: SectionProps = {
-    secureInputs,
-    secureOutputs,
-    readOnly,
-    nodeId,
-  };
-  const generalSectionProps: SectionProps = {
-    splitOn,
-    timeout,
-    concurrency,
-    conditionExpressions,
-    readOnly,
-    nodeId,
-  };
-  const dataHandlingProps: SectionProps = {
-    requestSchemaValidation,
-    disableAutomaticDecompression,
-    readOnly,
-    nodeId,
+
+  const renderGeneral = (): JSX.Element | null => {
+    const generalSectionProps: SectionProps = {
+      splitOn,
+      timeout,
+      concurrency,
+      conditionExpressions,
+      readOnly,
+      nodeId,
+    };
+    if (splitOn !== undefined || timeout !== undefined || concurrency !== undefined || conditionExpressions !== undefined) {
+      return <General {...generalSectionProps} />;
+    } else return null;
   };
 
-  return (
-    <>
-      <DataHandling {...dataHandlingProps} />
-      <General {...generalSectionProps} />
-      <Security {...securitySectionProps} />
-    </>
-  );
+  const renderSecurity = (): JSX.Element | null => {
+    const securitySectionProps: SectionProps = {
+      secureInputs,
+      secureOutputs,
+      readOnly,
+      nodeId,
+    };
+    if (secureInputs !== undefined || secureOutputs !== undefined) {
+      return <Security {...securitySectionProps} />;
+    } else return null;
+  };
+
+  const renderDataHandling = (): JSX.Element | null => {
+    const dataHandlingProps: SectionProps = {
+      requestSchemaValidation,
+      disableAutomaticDecompression,
+      readOnly,
+      nodeId,
+    };
+    if (requestSchemaValidation !== undefined || disableAutomaticDecompression !== undefined) {
+      return <DataHandling {...dataHandlingProps} />;
+    } else return null;
+  };
+
+  const renderAllSettingsSections = (): JSX.Element => {
+    return (
+      <>
+        {renderDataHandling()}
+        {renderGeneral()}
+        {renderSecurity()}
+      </>
+    );
+  };
+
+  return renderAllSettingsSections();
 };

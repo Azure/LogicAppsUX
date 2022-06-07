@@ -26,11 +26,23 @@ export const MultiAddExpressionEditor = ({
     return (
       <>
         {customLabel()}
-        <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />
+        <ExpressionsEditor
+          initialExpressions={initialExpressions ?? []}
+          readOnly={readOnly}
+          onChange={onExpressionsChange}
+          visible={visible}
+        />
       </>
     );
   } else if (visible) {
-    return <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />;
+    return (
+      <ExpressionsEditor
+        initialExpressions={initialExpressions ?? []}
+        readOnly={readOnly}
+        onChange={onExpressionsChange}
+        visible={visible}
+      />
+    );
   } else return null;
 };
 
@@ -44,10 +56,9 @@ const styles: Partial<ITextFieldStyles> = {
   },
 };
 
-export interface ExpressionsEditorProps {
+export interface ExpressionsEditorProps extends SettingProps {
   initialExpressions: string[];
   maximumExpressions?: number;
-  readOnly?: boolean;
   onChange(updatedExpressions: string[]): void;
 }
 
@@ -56,6 +67,7 @@ export const ExpressionsEditor = ({
   maximumExpressions,
   readOnly = false,
   onChange,
+  visible,
 }: ExpressionsEditorProps): JSX.Element => {
   const intl = useIntl();
   const addCondition = intl.formatMessage({
@@ -68,6 +80,8 @@ export const ExpressionsEditor = ({
     readOnly: false,
     onChange,
     maximumExpressions: maximumExpressions ?? 10,
+    visible: true,
+    customLabel: () => <div>{'Expression Editor'}</div>,
   };
 
   const addIconProps: IIconProps = {
@@ -110,7 +124,14 @@ export const ExpressionsEditor = ({
 
   return (
     <>
-      <Expressions ref={expressionRef} expressions={expressions} readOnly={readOnly} onChange={handleChange} onDelete={handleDelete} />
+      <Expressions
+        ref={expressionRef}
+        expressions={expressions}
+        readOnly={readOnly}
+        onChange={handleChange}
+        onDelete={handleDelete}
+        visible={visible}
+      />
       {expressions.length < defaultProps.maximumExpressions ? (
         <ActionButton disabled={readOnly} iconProps={addIconProps} text={addCondition} onClick={handleAddClick} />
       ) : null}
@@ -118,40 +139,41 @@ export const ExpressionsEditor = ({
   );
 };
 
-export interface ExpressionsProps {
+export interface ExpressionsProps extends SettingProps {
   ref?: React.RefObject<any>;
   expressions: string[];
-  readOnly?: boolean;
   onChange(index: number, newExpression: string): void;
   onDelete(index: number): void;
 }
 
-export const Expressions = ({ expressions, readOnly = false, onChange, onDelete }: ExpressionsProps): JSX.Element => {
+export const Expressions = ({ expressions, readOnly = false, onChange, onDelete, visible }: ExpressionsProps): JSX.Element => {
   const expressionRef = useRef<typeof Expressions & { focus: any }>();
   return (
     <>
-      {expressions.map((expression, index, array) => {
-        const ref = index === array.length - 1 ? { ref: expressionRef } : undefined;
-        return (
-          <Expression
-            key={index}
-            {...ref}
-            expression={expression}
-            index={index}
-            readOnly={readOnly}
-            onChange={onChange}
-            onDelete={onDelete}
-          />
-        );
-      })}
+      {visible
+        ? expressions.map((expression, index, array) => {
+            const ref = index === array.length - 1 ? { ref: expressionRef } : undefined;
+            return (
+              <Expression
+                key={index}
+                {...ref}
+                expression={expression}
+                index={index}
+                readOnly={readOnly}
+                onChange={onChange}
+                onDelete={onDelete}
+                visible={visible}
+              />
+            );
+          })
+        : null}
     </>
   );
 };
 
-export interface ExpressionProps {
+export interface ExpressionProps extends SettingProps {
   expression: string;
   index: number;
-  readOnly?: boolean;
   onChange(index: number, newExpression: string | undefined): void;
   onDelete(index: number): void;
 }

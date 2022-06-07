@@ -1,8 +1,5 @@
-import { Label } from '../../label';
-import { SettingToggle } from './settingtoggle';
 import type { SettingProps } from './settingtoggle';
 import { Slider } from '@fluentui/react';
-import { useBoolean } from '@fluentui/react-hooks';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 

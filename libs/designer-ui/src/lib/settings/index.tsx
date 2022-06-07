@@ -119,38 +119,42 @@ export function SettingsSection({ title = 'Settings', expanded, isReadOnly, sett
 
 const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element => {
   return (
-    <div className="msla-settings-container">
+    <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
         const { settingType, settingProp } = setting;
+        const { visible } = settingProp;
         if (!settingProp.readOnly) {
           settingProp.readOnly = isReadOnly;
+        }
+        if (!visible) {
+          return;
         }
         const renderSetting = (): JSX.Element | null => {
           switch (settingType) {
             case 'MultiSelectSetting':
-              return <MultiSelectSetting {...settingProp} />;
+              return settingProp.visible ? <MultiSelectSetting {...settingProp} /> : null;
             case 'MultiAddExpressionEditor':
-              return <MultiAddExpressionEditor {...settingProp} />;
+              return settingProp.visible ? <MultiAddExpressionEditor {...settingProp} /> : null;
             case 'ExpressionsEditor':
-              return <ExpressionsEditor {...settingProp} />;
+              return settingProp.visible ? <ExpressionsEditor {...settingProp} /> : null;
             case 'Expressions':
-              return <Expressions {...settingProp} />;
+              return settingProp.visible ? <Expressions {...settingProp} /> : null;
             case 'Expression':
-              return <Expression {...settingProp} />;
+              return settingProp.visible ? <Expression {...settingProp} /> : null;
             case 'ReactiveToggle':
-              return <ReactiveToggle {...settingProp} />;
+              return settingProp.visible ? <ReactiveToggle {...settingProp} /> : null;
             case 'CustomValueSlider':
-              return <CustomValueSlider {...settingProp} />;
+              return settingProp.visible ? <CustomValueSlider {...settingProp} /> : null;
             case 'SettingTextField':
-              return <SettingTextField {...settingProp} />;
+              return settingProp.visible ? <SettingTextField {...settingProp} /> : null;
             case 'SettingToggle':
-              return <SettingToggle {...settingProp} />;
+              return settingProp.visible ? <SettingToggle {...settingProp} /> : null;
             default:
               return null;
           }
         };
         return (
-          <div key={i} className="msla-setting-content">
+          <div key={i} className="msla-setting-section-setting">
             {renderSetting()}
           </div>
         );

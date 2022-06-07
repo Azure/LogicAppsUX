@@ -1,11 +1,8 @@
 import type { SectionProps } from '..';
-import { ProviderWrappedContext } from '../../../core';
-import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import { IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconProps, IIconStyles } from '@fluentui/react';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
-import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SettingLabelProps {
