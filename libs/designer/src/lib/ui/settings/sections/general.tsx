@@ -1,3 +1,4 @@
+import type { SectionProps } from '..';
 import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import { updateNodeSettings } from '../../../core/state/operationMetadataSlice';
 import type { RootState } from '../../../core/store';
@@ -8,11 +9,15 @@ import { SettingsSection } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const General = ({ splitOn, timeout, concurrency: concurrencyValues, conditionExpressions }: Settings): JSX.Element => {
+export const General = ({
+  splitOn,
+  timeout,
+  concurrency: concurrencyValues,
+  conditionExpressions,
+  readOnly,
+  nodeId,
+}: SectionProps): JSX.Element => {
   const [concurrency, setConcurrency] = useBoolean(concurrencyValues?.enabled ?? false);
-  const nodeId = useSelector((state: RootState) => {
-    return state.panel.selectedNode;
-  });
   const dispatch = useDispatch();
   const splitOnLabel = (
     <SettingLabel
@@ -50,15 +55,17 @@ export const General = ({ splitOn, timeout, concurrency: concurrencyValues, cond
   const onConcurrencyChange = (checked: boolean | undefined): void => {
     setConcurrency.toggle();
     // write to store w/ paylaod {concurrency: {enabled: !!checked, value: settings.concurrency.value}}
+    dispatch(updateNodeSettings({ id: nodeId, settings: { concurrency: { enabled: true, value: concurrencyValues?.value } } }));
   };
 
   const onConcurrencyValueChange = (value: number): void => {
     // write to store with payload: concurrency: {enabled: !!checked, value}
+    dispatch(updateNodeSettings({ id: nodeId, settings: { concurrency: { enabled: concurrency, value } } }));
   };
 
   const onSplitOnToggle = (checked: boolean): void => {
     //  validation?
-    dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { enabled: !!checked } } }));
+    dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { enabled: !!checked, value: splitOn?.value } } }));
   };
 
   const generalSectionProps: SettingSectionProps = {
@@ -70,7 +77,7 @@ export const General = ({ splitOn, timeout, concurrency: concurrencyValues, cond
         settingType: 'SettingToggle',
         settingProp: {
           visible: splitOn !== undefined,
-          readOnly: false,
+          readOnly,
           checked: splitOn?.enabled,
           onToggleInputChange: (_, checked) => onSplitOnToggle(!!checked), // build onSplitOnChange handler
           label: splitOnLabel,
@@ -83,7 +90,7 @@ export const General = ({ splitOn, timeout, concurrency: concurrencyValues, cond
           id: 'timeoutDuration',
           value: '',
           customLabel: () => timeoutLabel,
-          readOnly: false,
+          readOnly,
           onValueChange: (_, newValue) => console.log(newValue),
         },
       },
@@ -92,7 +99,7 @@ export const General = ({ splitOn, timeout, concurrency: concurrencyValues, cond
         settingProp: {
           visible: conditionExpressions !== undefined,
           initialExpressions: conditionExpressions,
-          readOnly: false,
+          readOnly,
           customLabel: () => triggerConditionsLabel,
         },
       },
@@ -100,7 +107,7 @@ export const General = ({ splitOn, timeout, concurrency: concurrencyValues, cond
         settingType: 'SettingToggle',
         settingProp: {
           visible: concurrencyValues !== undefined, //isConcurrencyEnabled?
-          readOnly: false,
+          readOnly,
           checked: concurrency,
           onToggleInputChange: (_, checked) => onConcurrencyChange(!!checked),
         },
@@ -115,6 +122,7 @@ export const General = ({ splitOn, timeout, concurrency: concurrencyValues, cond
           customLabel: () => concurrencyLabel,
           label: 'Degree of Parallelism',
           onValueChange: onConcurrencyValueChange,
+          readOnly,
         },
       },
     ],

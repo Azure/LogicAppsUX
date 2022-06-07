@@ -1,3 +1,4 @@
+import type { SectionProps } from '..';
 import { ProviderWrappedContext } from '../../../core';
 import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import { IconButton, TooltipHost } from '@fluentui/react';
@@ -39,8 +40,7 @@ export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLab
 }
 
 // TODO (andrewfowose): replace hard-set settingProps in Security to data from operationMetadataSlice
-export const Security = ({ secureInputs, secureOutputs }: Settings): JSX.Element => {
-  const { readOnly } = useContext(ProviderWrappedContext) ?? {};
+export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: SectionProps): JSX.Element => {
   const secureInputsLabel = <SettingLabel labelText="Secure Inputs" infoTooltipText="Secure inputs of the operation." isChild={false} />;
   const secureOutputsLabel = (
     <SettingLabel
@@ -71,7 +71,7 @@ export const Security = ({ secureInputs, secureOutputs }: Settings): JSX.Element
         settingType: 'SettingToggle',
         settingProp: {
           visible: secureInputs !== undefined,
-          readOnly, //pull from context
+          readOnly,
           checked: secureInputs,
           onToggleInputChange: (_, checked) => onSecureInputsChange(checked),
           customLabel: () => secureInputsLabel,

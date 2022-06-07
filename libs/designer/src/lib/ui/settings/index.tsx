@@ -7,17 +7,25 @@
 // <Data Handling>
 // <Security>
 // <Tracking>
+import { ProviderWrappedContext } from '../../core';
+import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { RootState } from '../../core/store';
 import { DataHandling } from './sections/datahandling';
 import { General } from './sections/general';
 import { Security } from './sections/security';
-import { stat } from 'fs/promises';
+import { useContext } from 'react';
 import { useSelector } from 'react-redux';
+
+export interface SectionProps extends Settings {
+  readOnly: boolean | undefined;
+  nodeId: string;
+}
 
 export const SettingsPanel = (): JSX.Element => {
   const nodeId = useSelector((state: RootState) => {
     return state.panel.selectedNode;
   });
+  const { readOnly } = useContext(ProviderWrappedContext) ?? {};
   const {
     secureInputs,
     secureOutputs,
@@ -42,19 +50,25 @@ export const SettingsPanel = (): JSX.Element => {
   } = useSelector((state: RootState) => {
     return state.operations.settings[nodeId];
   });
-  const securitySectionProps = {
+  const securitySectionProps: SectionProps = {
     secureInputs,
     secureOutputs,
+    readOnly,
+    nodeId,
   };
-  const generalSectionProps = {
+  const generalSectionProps: SectionProps = {
     splitOn,
     timeout,
     concurrency,
     conditionExpressions,
+    readOnly,
+    nodeId,
   };
-  const dataHandlingProps = {
+  const dataHandlingProps: SectionProps = {
     requestSchemaValidation,
     disableAutomaticDecompression,
+    readOnly,
+    nodeId,
   };
 
   return (
