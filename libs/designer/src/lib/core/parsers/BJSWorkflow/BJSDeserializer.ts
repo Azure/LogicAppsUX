@@ -173,7 +173,7 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
       applyActions(`${actionName}-${caseName}Actions`, caseAction.actions, 'SWITCH-CASE');
     }
   } else if (isIfAction(action)) {
-    applyActions(`${actionName}-ifActions`, action.actions, 'CONDITIONAL-TRUE');
+    applyActions(`${actionName}-actions`, action.actions, 'CONDITIONAL-TRUE');
     applyActions(`${actionName}-elseActions`, action.else?.actions, 'CONDITIONAL-FALSE');
   } else {
     applyActions(`${actionName}-actions`, action.actions);
