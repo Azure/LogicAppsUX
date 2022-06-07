@@ -40,22 +40,6 @@ export const connectionSlice = createSlice({
     initializeConnectionReferences: (state, action: PayloadAction<ConnectionReferencesPayload>) => {
       state = action.payload;
     },
-    // initializeInputParameters: (state, action: PayloadAction<AddInputsPayload>) => {
-    //   const { id, isLoading, parameterGroups } = action.payload;
-    //   state.inputParameters[id] = { isLoading, parameterGroups };
-    // },
-    // initializeOutputParameters: (state, action: PayloadAction<AddOutputsPayload>) => {
-    //   const { id, isLoading, outputs } = action.payload;
-    //   state.outputParameters[id] = { isLoading, outputs };
-    // },
-    // updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
-    //   const { id, settings } = action.payload;
-    //   if (!state.settings[id]) {
-    //     state.settings[id] = {};
-    //   }
-
-    //   state.settings[id] = { ...state.settings[id], ...settings };
-    // },
   },
 });
 
@@ -124,17 +108,17 @@ const isOpenApiConnectionType = (type: string): boolean => {
 export async function getConnectionsApiAndMapping(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
   const connectionService = ConnectionService();
   await connectionService.getConnections();
+  await getConnectionsMappingForNodes(operations, getState);
   return Promise.resolve({});
 }
 
-// tslint:disable-next-line: no-any
-async function _getManifestBasedConnectionMapping(
+export async function _getManifestBasedConnectionMapping(
   getState: () => RootState,
   nodeId: string,
   operationDefinition: LogicAppsV2.OperationDefinition
 ): Promise<Record<string, string> | undefined> {
   try {
-    const { operations } = getState() as { operations: OperationMetadataState };
+    const { operations } = getState();
     const { connectorId, operationId } = operations.operationInfo[nodeId];
     const operationManifest = await getOperationManifest({ connectorId, operationId });
     const connectionReferenceKeyFormat =

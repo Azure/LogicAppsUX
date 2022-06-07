@@ -6,7 +6,7 @@ import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-export const initializeGraphState = createAsyncThunk(
+export const initializeGraphState = createAsyncThunk<Promise<DeserializedWorkflow>, LogicAppsV2.WorkflowDefinition, { state: RootState }>(
   'parser/deserialize',
   async (workflowDefinition: LogicAppsV2.WorkflowDefinition, thunkAPI): Promise<DeserializedWorkflow> => {
     const { workflow } = thunkAPI.getState() as { workflow: WorkflowState };
@@ -20,7 +20,7 @@ export const initializeGraphState = createAsyncThunk(
       initializeOperationMetadata(deserializedWorkflow, thunkAPI.dispatch);
       const actionsAndTriggers = deserializedWorkflow.actionData;
       console.log(actionsAndTriggers);
-      getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState as () => RootState);
+      getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState);
       return deserializedWorkflow;
     } else if (spec === 'CNCF') {
       throw new Error('Spec not implemented.');
