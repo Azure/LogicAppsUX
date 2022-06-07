@@ -69,7 +69,7 @@ export const General = ({
   const generalSectionProps: SettingSectionProps = {
     id: 'general',
     title: 'General',
-    expanded: true,
+    expanded: false,
     settings: [
       {
         settingType: 'SettingToggle',
