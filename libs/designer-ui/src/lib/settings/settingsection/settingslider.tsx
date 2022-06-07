@@ -6,12 +6,14 @@ import { useBoolean } from '@fluentui/react-hooks';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
+type ValueChangeHandler = (value: number) => void;
 export interface CustomValueSliderProps extends SettingProps {
   value?: number;
   maxVal?: number;
   minVal?: number;
   defaultValue?: number;
   label?: string;
+  onValueChange?: ValueChangeHandler;
 }
 
 export const CustomValueSlider = ({
@@ -23,10 +25,12 @@ export const CustomValueSlider = ({
   customLabel,
   label,
   visible,
+  onValueChange,
 }: CustomValueSliderProps): JSX.Element | null => {
   const [sliderCount, setCount] = useState(value ?? defaultValue);
   const onSliderValueChanged = (value: number): void => {
     setCount(value);
+    onValueChange?.(value);
   };
   const intl = useIntl();
   const sliderAriaLabel = intl.formatMessage({
@@ -46,7 +50,6 @@ export const CustomValueSlider = ({
           <Slider
             label={label}
             ariaLabel={sliderAriaLabel}
-            defaultValue={defaultValue}
             disabled={readOnly}
             max={maxVal}
             min={minVal}

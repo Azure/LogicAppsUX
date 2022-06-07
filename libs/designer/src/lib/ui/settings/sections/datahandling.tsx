@@ -1,8 +1,9 @@
+import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import { SettingLabel } from './security';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
 
-export const DataHandling = (): JSX.Element => {
+export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompression }: Settings): JSX.Element => {
   const requestSchemaValidationLabel = (
     <SettingLabel
       labelText="Schema Validation"
@@ -23,8 +24,8 @@ export const DataHandling = (): JSX.Element => {
         settingType: 'SettingToggle',
         settingProp: {
           readOnly: false,
-          defaultChecked: false,
-          onToggleInputChange: () => console.log('Automatic Decompression Clicked'),
+          checked: disableAutomaticDecompression,
+          onToggleInputChange: () => console.log('Automatic Decompression Clicked'), //createHandler
           label: automaticDecompressionLabel,
           visible: true,
         },
@@ -33,7 +34,7 @@ export const DataHandling = (): JSX.Element => {
         settingType: 'SettingToggle',
         settingProp: {
           readOnly: false,
-          defaultChecked: false,
+          checked: requestSchemaValidation,
           onToggleInputChange: () => console.log(`Schema Validation Clicked`),
           label: requestSchemaValidationLabel,
           visible: true,

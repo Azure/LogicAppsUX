@@ -1,7 +1,10 @@
+import { ProviderWrappedContext } from '../../../core';
+import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import { IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconProps, IIconStyles } from '@fluentui/react';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
+import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SettingLabelProps {
@@ -36,7 +39,8 @@ export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLab
 }
 
 // TODO (andrewfowose): replace hard-set settingProps in Security to data from operationMetadataSlice
-export const Security = (): JSX.Element => {
+export const Security = ({ secureInputs, secureOutputs }: Settings): JSX.Element => {
+  const { readOnly } = useContext(ProviderWrappedContext) ?? {};
   const secureInputsLabel = <SettingLabel labelText="Secure Inputs" infoTooltipText="Secure inputs of the operation." isChild={false} />;
   const secureOutputsLabel = (
     <SettingLabel
@@ -46,6 +50,18 @@ export const Security = (): JSX.Element => {
     />
   );
 
+  const onSecureInputsChange = (checked: boolean | undefined): void => {
+    if (checked === undefined) return;
+    // write to store
+    console.log('secure inputs changed');
+  };
+
+  const onSecureOutputsChange = (checked: boolean | undefined): void => {
+    if (checked === undefined) return;
+    // write to store
+    console.log('secure outputs changed');
+  };
+
   const securitySectionProps: SettingSectionProps = {
     id: 'security',
     title: 'Security',
@@ -54,20 +70,20 @@ export const Security = (): JSX.Element => {
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: true,
-          readOnly: false, //pull from context
-          defaultChecked: false, // pull from context
-          onToggleInputChange: () => console.log('checked!'),
+          visible: secureInputs !== undefined,
+          readOnly, //pull from context
+          checked: secureInputs,
+          onToggleInputChange: (_, checked) => onSecureInputsChange(checked),
           customLabel: () => secureInputsLabel,
         },
       },
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: true,
-          readOnly: false,
-          defaultChecked: false,
-          onToggleInputChange: () => console.log('checked!'),
+          visible: secureOutputs !== undefined,
+          readOnly,
+          checked: secureOutputs,
+          onToggleInputChange: (_, checked) => onSecureOutputsChange(checked),
           customLabel: () => secureOutputsLabel,
         },
       },

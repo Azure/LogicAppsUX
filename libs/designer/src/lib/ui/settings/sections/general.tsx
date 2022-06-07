@@ -1,11 +1,19 @@
 import type { Settings } from '../../../core/actions/bjsworkflow/settings';
+import { updateNodeSettings } from '../../../core/state/operationMetadataSlice';
+import type { RootState } from '../../../core/store';
 import { SettingLabel } from './security';
-import type { Settings as SettingsType, SettingSectionProps } from '@microsoft/designer-ui';
+import { useBoolean } from '@fluentui/react-hooks';
+import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-export const General = (): JSX.Element => {
-  const [concurrency, toggleConcurrency] = useState(true);
+export const General = ({ splitOn, timeout, concurrency: concurrencyValues, conditionExpressions }: Settings): JSX.Element => {
+  const [concurrency, setConcurrency] = useBoolean(concurrencyValues?.enabled ?? false);
+  const nodeId = useSelector((state: RootState) => {
+    return state.panel.selectedNode;
+  });
+  const dispatch = useDispatch();
   const splitOnLabel = (
     <SettingLabel
       labelText="Split On"
@@ -39,6 +47,20 @@ export const General = (): JSX.Element => {
     />
   );
 
+  const onConcurrencyChange = (checked: boolean | undefined): void => {
+    setConcurrency.toggle();
+    // write to store w/ paylaod {concurrency: {enabled: !!checked, value: settings.concurrency.value}}
+  };
+
+  const onConcurrencyValueChange = (value: number): void => {
+    // write to store with payload: concurrency: {enabled: !!checked, value}
+  };
+
+  const onSplitOnToggle = (checked: boolean): void => {
+    //  validation?
+    dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { enabled: !!checked } } }));
+  };
+
   const generalSectionProps: SettingSectionProps = {
     id: 'general',
     title: 'General',
@@ -47,40 +69,40 @@ export const General = (): JSX.Element => {
       {
         settingType: 'SettingToggle',
         settingProp: {
+          visible: splitOn !== undefined,
           readOnly: false,
-          defaultChecked: false,
-          onToggleInputChange: () => console.log('toggled'),
+          checked: splitOn?.enabled,
+          onToggleInputChange: (_, checked) => onSplitOnToggle(!!checked), // build onSplitOnChange handler
           label: splitOnLabel,
-          visible: true,
         },
       },
       {
         settingType: 'SettingTextField',
         settingProp: {
+          visible: timeout !== undefined,
           id: 'timeoutDuration',
           value: '',
           customLabel: () => timeoutLabel,
           readOnly: false,
           onValueChange: (_, newValue) => console.log(newValue),
-          visible: true,
         },
       },
       {
         settingType: 'MultiAddExpressionEditor',
         settingProp: {
-          initialExpressions: ['Hello', 'Friends'],
+          visible: conditionExpressions !== undefined,
+          initialExpressions: conditionExpressions,
           readOnly: false,
-          visible: true,
           customLabel: () => triggerConditionsLabel,
         },
       },
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: true, //isConcurrencyEnabled?
+          visible: concurrencyValues !== undefined, //isConcurrencyEnabled?
           readOnly: false,
           checked: concurrency,
-          onToggleInputChange: (_, checked) => toggleConcurrency(!!checked),
+          onToggleInputChange: (_, checked) => onConcurrencyChange(!!checked),
         },
       },
       {
@@ -89,8 +111,10 @@ export const General = (): JSX.Element => {
           visible: concurrency === true,
           maxVal: 100,
           minVal: 0,
+          value: concurrencyValues?.value,
           customLabel: () => concurrencyLabel,
           label: 'Degree of Parallelism',
+          onValueChange: onConcurrencyValueChange,
         },
       },
     ],
