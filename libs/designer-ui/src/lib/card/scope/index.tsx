@@ -2,6 +2,7 @@ import { StatusPill } from '../../monitoring';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
 import { css, DirectionalHint, Icon, TooltipHost } from '@fluentui/react';
+import { Handle, Position } from 'react-flow-renderer';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
