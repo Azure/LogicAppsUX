@@ -13,7 +13,7 @@ export interface DropZoneProps {
   parent?: string;
   child?: string;
 }
-export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) => {
+export const DropZone: React.FC<DropZoneProps> = ({ parent, child }) => {
   const dispatch = useDispatch();
   const onEdgeEndClick = (evt: any, parent?: string, child?: string) => {
     evt.stopPropagation();

@@ -52,7 +52,7 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
     if (pageParam) {
       return runService.getMoreRuns(pageParam);
     }
-    return runService.getRuns(`workflows/${workflowProperties.name}`);
+    return runService.getRuns();
   };
 
   const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>('runsData', loadRuns, {
@@ -64,8 +64,7 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
   const runItems = useMemo(
     () =>
       data?.pages?.reduce<RunDisplayItem[]>((acc, val) => {
-        acc = [...acc, ...val.runs.map(mapToRunItem)];
-        return acc;
+        return [...acc, ...val.runs.map(mapToRunItem)];
       }, []),
     [data?.pages]
   );
