@@ -67,9 +67,8 @@ export function unregisterTab(name: string, registeredTabs: Record<string, Panel
   }
 }
 
-export function deleteAllTabs(registeredTabs: Record<string, PanelTab>): void {
-  registeredTabs = {};
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export function deleteAllTabs(_registeredTabs: Record<string, PanelTab>): void {}
 
 export function getTabs(sort: boolean, registeredTabs: Record<string, PanelTab>): PanelTab[] {
   // Get all tabs not specifically defined as not enabled

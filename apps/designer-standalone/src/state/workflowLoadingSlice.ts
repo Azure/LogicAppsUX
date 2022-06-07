@@ -58,7 +58,7 @@ export const workflowLoadingSlice = createSlice({
     builder.addCase(loadWorkflow.fulfilled, (state, action) => {
       state.workflowDefinition = action.payload;
     });
-    builder.addCase(loadWorkflow.rejected, (state, action) => {
+    builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
     });
   },
