@@ -1,5 +1,3 @@
-import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
-
 interface BatchHttpMethods {
   GET: void;
   HEAD: void;
@@ -15,7 +13,7 @@ type BatchHttpMethod = keyof BatchHttpMethods;
 
 export interface HttpRequestOptions<ContentType> {
   uri: string;
-  type: BatchHttpMethod;
+  type?: BatchHttpMethod;
   content?: ContentType;
   queryParameters?: QueryParameters;
 }
@@ -29,17 +27,3 @@ export interface IHttpClient {
   get<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType>;
   post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType>;
 }
-
-let client: IHttpClient;
-
-export const InitHttpClient = (httpClient: IHttpClient): void => {
-  client = httpClient;
-};
-
-export const HttpClient = (): IHttpClient => {
-  if (!client) {
-    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'HttpClient need to be initialized before using');
-  }
-
-  return client;
-};
