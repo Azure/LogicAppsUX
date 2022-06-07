@@ -50,6 +50,7 @@ const supportedManifestTypes = [
 export class StandardOperationManifestService implements IOperationManifestService {
   constructor(private readonly options: unknown) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isSupported(operationType: string, _operationKind?: string): boolean {
     const normalizedOperationType = operationType.toLowerCase();
     return supportedManifestTypes.indexOf(normalizedOperationType) > -1;
