@@ -6,7 +6,7 @@ import {
   isStringLiteral,
   isTemplateExpression,
 } from '../common/helpers/expression';
-import ExpressionParser from '../expression/parser';
+import { ExpressionParser } from '../expression/parser';
 import type {
   Expression,
   ExpressionEvaluationContext,

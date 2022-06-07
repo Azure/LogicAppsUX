@@ -9,7 +9,7 @@
     "noFallthroughCasesInSwitch": true,
     "jsx": "react"
   },
-  "files": [],
+  "files": ["../../../types/Swagger.d.ts"],
   "include": [],
   "references": [
     {
