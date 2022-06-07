@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-designer",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "scripts": {
     "yalcpush": "yalc push ../../dist/libs/designer"
   }
