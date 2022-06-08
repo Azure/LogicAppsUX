@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import type { SchemaProperty } from '../models/operation';
 import * as SwaggerConstants from './constants';
 import * as ParameterKeyUtility from './helpers/keysutility';
