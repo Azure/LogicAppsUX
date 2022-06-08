@@ -10,7 +10,7 @@ export const prepopulatedRichText = (initialValue: Segment[], tokensEnabled?: bo
     initialValue.forEach((segment) => {
       if (segment.type === ValueSegmentType.TOKEN) {
         const { brandColor, description, icon, title } = segment.token;
-        tokensEnabled && paragraph.append($createTokenNode(icon, title, description));
+        tokensEnabled && paragraph.append($createTokenNode(icon, title, description, brandColor));
       } else {
         const splitSegment = segment.value.split('\n');
         paragraph.append($createTextNode(splitSegment[0]));

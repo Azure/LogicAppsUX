@@ -4,6 +4,7 @@ import { DecoratorNode } from 'lexical';
 import React from 'react';
 
 export class TokenNode extends DecoratorNode<JSX.Element> {
+  __brandColor?: string;
   __description?: string;
   __icon: string;
   __title: string;
@@ -13,11 +14,12 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 
   static clone(node: TokenNode) {
-    return new TokenNode(node.__icon, node.__title, node.__description, node.__key);
+    return new TokenNode(node.__icon, node.__title, node.__description, node.__brandColor, node.__key);
   }
 
-  constructor(icon: string, title: string, description?: string, key?: string) {
+  constructor(icon: string, title: string, description?: string, brandColor?: string, key?: string) {
     super(key);
+    this.__brandColor = brandColor;
     this.__description = description;
     this.__icon = icon;
     this.__title = title;
@@ -33,12 +35,12 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 
   decorate() {
-    return <InputToken description={this.__description} icon={this.__icon} title={this.__title} />;
+    return <InputToken description={this.__description} icon={this.__icon} title={this.__title} brandColor={this.__brandColor} />;
   }
 }
 
-export function $createTokenNode(icon: string, title: string, description?: string) {
-  return new TokenNode(icon, title, description);
+export function $createTokenNode(icon: string, title: string, description?: string, brandColor?: string) {
+  return new TokenNode(icon, title, description, brandColor);
 }
 
 export function $isTokenNode(node: LexicalNode) {
