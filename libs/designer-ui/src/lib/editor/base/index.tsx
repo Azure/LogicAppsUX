@@ -107,7 +107,7 @@ export const BaseEditor = ({ className, placeholder, BasePlugins = {}, initialVa
         {history ? <HistoryPlugin /> : null}
         {autoLink ? <AutoLinkPlugin /> : null}
         {/* 
-          NOTE(eric): Commenting out TokenPlugin because has a few issues
+          NOTE 14672766: Commenting out TokenPlugin because has a few issues
           and is not needed for read only. Will revisit later.
         */}
         {/* {tokens ? <TokenPlugin data={[]} /> : null} */}

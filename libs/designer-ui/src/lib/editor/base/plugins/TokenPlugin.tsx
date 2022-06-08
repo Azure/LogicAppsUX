@@ -24,7 +24,7 @@ export default function TokenPlugin() {
   }, []);
 
   useEffect(() => {
-    /* NOTE(eric): Eventually we'd want to support replacing nodes */
+    /* NOTE 14672766: Eventually we'd want to support replacing nodes */
     return editor.registerNodeTransform(TextNode, (textNode: TextNode) => {
       let match = getTokenMatch(textNode);
       let currentNode = textNode;
