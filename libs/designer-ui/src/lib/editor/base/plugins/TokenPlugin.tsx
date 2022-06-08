@@ -39,7 +39,6 @@ export default function TokenPlugin() {
         nodeToReplace.replace(replacementNode);
         if (!currentNode) {
           replacementNode.selectNext();
-          console.log(replacementNode);
           return;
         }
         match = getTokenMatch(currentNode);

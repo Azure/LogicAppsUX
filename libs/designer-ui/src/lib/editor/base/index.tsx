@@ -4,7 +4,6 @@ import { TokenNode } from './nodes/tokenNode';
 import AutoFocusPlugin from './plugins/AutoFocusPlugin';
 import AutoLinkPlugin from './plugins/AutoLinkPlugin';
 import ClearEditorPlugin from './plugins/ClearEditorPlugin';
-// import TokenPlugin from './plugins/TokenPlugin';
 import TreeViewPlugin from './plugins/TreeViewPlugin';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import LexicalClearEditorPlugin from '@lexical/react/LexicalClearEditorPlugin';
