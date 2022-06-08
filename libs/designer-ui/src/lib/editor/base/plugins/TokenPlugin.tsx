@@ -13,7 +13,6 @@ export default function TokenPlugin() {
 
   const getTokenMatch = useCallback((node: TextNode) => {
     const text = node.getTextContent();
-    console.log(text);
     if (text === 'token') {
       return {
         start: 0,
