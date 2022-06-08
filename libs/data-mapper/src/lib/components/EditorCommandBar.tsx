@@ -102,8 +102,29 @@ const IndividualCommandBarButtonAsExample: FunctionComponent<IIndividualCommandB
         },
         iconOnly: true,
         disabled: true,
+        buttonStyles: {
+          root: {
+            width: 10,
+            minWidth: 'unset',
+          },
+        },
       },
       { key: 'test', text: 'Test', split: true, iconProps: { iconName: 'Play' }, onClick: () => console.log('Test button clicked') },
+      {
+        key: 'divider',
+        itemType: ContextualMenuItemType.Divider,
+        iconProps: {
+          iconName: 'Separator',
+        },
+        iconOnly: true,
+        disabled: true,
+        buttonStyles: {
+          root: {
+            width: 10,
+            minWidth: 'unset',
+          },
+        },
+      },
       {
         key: 'configuration',
         text: 'Configuration',
@@ -143,6 +164,12 @@ const IndividualCommandBarButtonAsExample: FunctionComponent<IIndividualCommandB
       },
       iconOnly: true,
       disabled: true,
+      buttonStyles: {
+        root: {
+          width: 10,
+          minWidth: 'unset',
+        },
+      },
     },
 
     {
