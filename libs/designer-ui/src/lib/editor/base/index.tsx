@@ -93,7 +93,7 @@ export const BaseEditor = ({ className, placeholder, BasePlugins = {}, initialVa
       <div className={className ?? 'msla-base-editor'}>
         <LexicalRichTextPlugin
           contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
-          placeholder={<div className="editor-placeholder"> {placeholder} </div>}
+          placeholder={<span className="editor-placeholder"> {placeholder} </span>}
           initialEditorState={
             initialValue &&
             (() => {

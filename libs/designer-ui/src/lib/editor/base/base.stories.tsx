@@ -10,7 +10,7 @@ const Template: ComponentStory<typeof BaseEditor> = (args: BaseEditorProps) => <
 
 export const plugins = Template.bind({});
 plugins.args = {
-  className: 'msla-string-editor-container-plugin',
+  className: 'msla-editor-container-plugin',
   placeholder: 'Play around with some cool plugins here...',
   BasePlugins: { autoFocus: true, autoLink: true, clearEditor: true, history: true, treeView: true, tokens: true },
   initialValue: [
@@ -30,7 +30,7 @@ plugins.args = {
 // TODO 14556566: Adding Tokens to Base Editor
 export const token = Template.bind({});
 token.args = {
-  className: 'msla-string-editor-container',
+  className: 'msla-editor-container',
   placeholder: 'Play around with tokenizing',
   BasePlugins: { tokens: true },
 };
