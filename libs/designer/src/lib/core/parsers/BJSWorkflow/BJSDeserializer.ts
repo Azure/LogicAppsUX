@@ -203,6 +203,7 @@ const addEmptyPlaceholderNodeIfNeeded = (graph: WorkflowGraph, nodesMetadata: No
       height: 0,
       width: 0,
     });
+    // eslint-disable-next-line no-param-reassign
     nodesMetadata[nodeId] = { graphId: graph.id, isPlaceholderNode: true };
   }
 };
