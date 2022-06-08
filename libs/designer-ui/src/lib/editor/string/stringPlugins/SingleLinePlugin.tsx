@@ -14,7 +14,7 @@ export default function SingleLinePlugin() {
       },
       3
     );
-    const unregisterListener = editor.registerUpdateListener(({ editorState }) => {
+    const unregisterListener = editor.registerUpdateListener(() => {
       // An update has occurred!
     });
     return () => {

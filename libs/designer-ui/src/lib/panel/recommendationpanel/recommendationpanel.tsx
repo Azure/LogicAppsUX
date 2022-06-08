@@ -38,7 +38,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
   });
 
   const onRenderOperationCell = React.useCallback(
-    (operation: OperationSearchResult | undefined, index: number | undefined) => {
+    (operation: OperationSearchResult | undefined, _index: number | undefined) => {
       if (!operation) return;
       const properties = operation.properties;
 
@@ -58,7 +58,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     [props.onOperationClick]
   );
 
-  const onRenderConnectorCell = React.useCallback((connector: Connector | undefined, index: number | undefined) => {
+  const onRenderConnectorCell = React.useCallback((connector: Connector | undefined, _index: number | undefined) => {
     if (!connector) return;
     const properties = connector.properties;
 
@@ -87,7 +87,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
 
   const filterButton = (text: Filter) => {
     return (
-      <DefaultButton onClick={(e) => callSetFilter(text)} className={`msla-filter-btn ${filter === text ? 'msla-filter-selected' : ''}`}>
+      <DefaultButton onClick={() => callSetFilter(text)} className={`msla-filter-btn ${filter === text ? 'msla-filter-selected' : ''}`}>
         {text}
       </DefaultButton>
     );

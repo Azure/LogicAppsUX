@@ -6,7 +6,7 @@ export interface SampleDataDisplayerProps {
   onOKClick?(): void;
 }
 
-export const SampleDataDisplayer = ({ data, onOKClick }: SampleDataDisplayerProps, { locale = 'en' }) => {
+export const SampleDataDisplayer = ({ data }: SampleDataDisplayerProps, { locale = 'en' }) => {
   return (
     <IntlProvider
       locale={locale}

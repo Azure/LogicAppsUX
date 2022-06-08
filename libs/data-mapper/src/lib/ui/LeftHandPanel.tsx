@@ -85,6 +85,6 @@ export const LeftHandPanel = ({ selectedTabId, layerProps }: LeftHandPanelProps)
 };
 
 // TODO: 12798935 Analytics (event logging)
-const handleTrackEvent = (data: PageActionTelemetryData): void => {
+const handleTrackEvent = (_data: PageActionTelemetryData): void => {
   console.log('Track Event');
 };

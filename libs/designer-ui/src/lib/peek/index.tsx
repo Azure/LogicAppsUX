@@ -29,7 +29,7 @@ export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
     <div className="msla-card-inner-body msla-peek">
       <div className="msla-peek-json">
         <MonacoEditor
-          defaultValue={input}
+          value={input}
           fontSize={options.fontSize}
           readOnly={options.readOnly}
           language={EditorLanguage.json}

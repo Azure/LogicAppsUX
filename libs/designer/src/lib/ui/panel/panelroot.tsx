@@ -4,6 +4,7 @@ import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
+import { scratchTab } from './panelTabs/scratchTab';
 import { settingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import type { MenuItemOption, PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
@@ -46,7 +47,7 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId }: PanelRootProps):
 
   useEffect(() => {
     monitoringTab.enabled = isMonitoringView;
-    setRegisteredTabs((currentTabs) => registerTabs([monitoringTab, aboutTab, codeViewTab, settingsTab], currentTabs));
+    setRegisteredTabs((currentTabs) => registerTabs([monitoringTab, aboutTab, codeViewTab, settingsTab, scratchTab], currentTabs));
   }, [readOnly, isMonitoringView]);
 
   useEffect(() => {
@@ -183,6 +184,6 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId }: PanelRootProps):
 };
 
 // TODO: 12798935 Analytics (event logging)
-const handleTrackEvent = (data: PageActionTelemetryData): void => {
+const handleTrackEvent = (_data: PageActionTelemetryData): void => {
   console.log('Track Event');
 };

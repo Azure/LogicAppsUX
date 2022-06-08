@@ -6,7 +6,8 @@
   text-align: right;
 }
 
-.msla-string-editor-container {
+.msla-editor-container {
+  width: 100%;
   margin: 20px auto 20px auto;
   border-radius: 2px;
   .editor-input {
@@ -23,8 +24,8 @@
     overflow: hidden;
     position: absolute;
     text-overflow: ellipsis;
-    top: 40px;
-    left: 20px;
+    margin-top: -40px;
+    margin-left: 5px;
     font-size: 15px;
     user-select: none;
     display: inline-block;
@@ -32,11 +33,11 @@
   }
 }
 
-.msla-string-editor-container-plugin {
+.msla-editor-container-plugin {
   background: #fff;
   margin: 20px auto 20px auto;
   border-radius: 2px;
-  max-width: 600px;
+  width: 100%;
   color: #000;
   position: relative;
   line-height: 20px;

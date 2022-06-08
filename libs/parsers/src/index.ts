@@ -1,6 +1,8 @@
 export * from './lib/common/helpers/keysutility';
 export * from './lib/common/helpers/expression';
 export * from './lib/common/schemaprocessor';
+// eslint-disable-next-line import/export
+export * from './lib/expression/parser';
 export * from './lib/expression/scanner';
 export * from './lib/manifest/parser';
 export * from './lib/models/expression';

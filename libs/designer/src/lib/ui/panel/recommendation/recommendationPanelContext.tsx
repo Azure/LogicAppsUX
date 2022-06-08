@@ -46,7 +46,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const searchResults = searchResponse.data;
   const browseResults = browseResponse.data;
 
-  const onOperationClick = (typeId: string) => {
+  const onOperationClick = (_typeId: string) => {
     const addPayload: AddNodePayload = {
       id: selectedNode,
       parentId: parentId,

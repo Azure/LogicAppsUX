@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 type Primitive = number | boolean | string;
 type NonPrimitive = Record<string, unknown>;
 

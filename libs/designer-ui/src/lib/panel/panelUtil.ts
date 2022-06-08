@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { getPropertyValue } from '@microsoft-logic-apps/utils';
 
 export enum PanelLocation {
@@ -65,10 +66,6 @@ export function unregisterTab(name: string, registeredTabs: Record<string, Panel
   if (Object.keys(registeredTabs).some((registeredTabName) => registeredTabName === name)) {
     delete registeredTabs[name];
   }
-}
-
-export function deleteAllTabs(registeredTabs: Record<string, PanelTab>): void {
-  registeredTabs = {};
 }
 
 export function getTabs(sort: boolean, registeredTabs: Record<string, PanelTab>): PanelTab[] {

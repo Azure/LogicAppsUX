@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import { isArrayOrObjectValueCompatibleWithSchema, getAndEscapeSegment } from '../parameterhelper';
 import type { InputParameter } from '@microsoft-logic-apps/parsers';

@@ -24,7 +24,7 @@ export interface PanelPivotProps {
   onCategoryClick?(item: PivotItem): void;
   trackEvent(data: PageActionTelemetryData): void;
 }
-export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackEvent }: PanelPivotProps): JSX.Element => {
+export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange }: PanelPivotProps): JSX.Element => {
   const intl = useIntl();
   const onTabSelected = (item?: PivotItem): void => {
     if (item) {
@@ -34,7 +34,7 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, trackE
     }
   };
 
-  const trackEventHandler = (isCollapsed: boolean, itemKey?: string): void => {
+  const trackEventHandler = (_isCollapsed: boolean, _itemKey?: string): void => {
     // TODO: 12798935 Analytics (event logging)
   };
   const overflowLabel = intl.formatMessage({
