@@ -27,7 +27,7 @@ plugins.args = {
     },
   ],
 };
-// TODO 14556566: Adding Tokens to Base Editor
+
 export const token = Template.bind({});
 token.args = {
   className: 'msla-editor-container',
