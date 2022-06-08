@@ -67,7 +67,6 @@ export const Card: React.FC<CardProps> = ({
   icon,
   isDragging,
   isMonitoringView,
-  readOnly,
   selected,
   staticResultsEnabled,
   title,

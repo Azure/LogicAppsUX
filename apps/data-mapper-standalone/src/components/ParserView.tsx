@@ -1,5 +1,7 @@
-import { customerOrdersJsonMock, ParserView } from '@microsoft/logic-apps-data-mapper';
+import { customerOrdersJsonMock, ParserInputFormat, ParserView } from '@microsoft/logic-apps-data-mapper';
 
 export const ParserViewInApp = () => {
-  return <ParserView input={JSON.stringify(customerOrdersJsonMock, null, '\t')} />;
+  const parserInput = JSON.stringify(customerOrdersJsonMock, null, '\t');
+
+  return <ParserView input={parserInput} inputFormat={ParserInputFormat.JSON_FORMAT} />;
 };

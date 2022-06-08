@@ -17,21 +17,18 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   drag,
   draggable,
   dragPreview,
-  errorLevel,
-  errorMessage,
   icon,
   isDragging,
   isMonitoringView,
-  selected,
   title,
   onClick,
   onCollapse,
 }) => {
-  const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
+  const handleClick: React.MouseEventHandler<HTMLElement> = () => {
     onClick?.();
   };
 
-  const handleCollapse = (e: React.MouseEvent<HTMLButtonElement>): void => {
+  const handleCollapse = (): void => {
     if (onCollapse) {
       onCollapse({
         currentTarget: undefined,

@@ -184,6 +184,6 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId }: PanelRootProps):
 };
 
 // TODO: 12798935 Analytics (event logging)
-const handleTrackEvent = (data: PageActionTelemetryData): void => {
+const handleTrackEvent = (_data: PageActionTelemetryData): void => {
   console.log('Track Event');
 };
