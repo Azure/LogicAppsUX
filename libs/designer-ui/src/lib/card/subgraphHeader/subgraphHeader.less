@@ -9,6 +9,10 @@
   background-color: var(--main-color, black);
   color: white;
 
+  &:hover {
+    filter: invert(1) brightness(1.2) invert(1);
+  }
+
   .msla-subgraph-title {
     flex-grow: 1;
     align-self: center;
@@ -17,13 +21,5 @@
     text-align: left;
     word-break: break-word;
     padding: 4px 8px;
-  }
-
-  .collapse-toggle {
-    background: none;
-    height: 100%;
-    border: none;
-    color: white;
-    cursor: pointer;
   }
 }

@@ -2,43 +2,6 @@
 
 @scope-v2-width: (@card-v2-width + 20px);
 
-.msla-scope-v2 {
-  display: block;
-  margin: 0 auto -20px;
-  width: fit-content;
-
-  &.msla-has-comment {
-    margin-bottom: -26px;
-  }
-
-  &.msla-has-status {
-    margin-top: -20px;
-  }
-
-  &.msla-small {
-    &.msla-has-footer {
-      margin: -5px auto 0 auto;
-    }
-  }
-
-  &.dragging {
-    opacity: 0.7;
-  }
-}
-
-.msla-main-page {
-  .msla-card-scope-body {
-    background-color: @scopev2-background-color;
-  }
-
-  .msla-scope-v2 {
-    &.inactive {
-      cursor: default;
-      opacity: 0.5;
-    }
-  }
-}
-
 .msla-scope-v2--body {
   background-color: @scopev2-background-color;
   border: 2px solid #979593;
@@ -47,7 +10,7 @@
   min-width: @scope-v2-width;
   padding: 20px 8px 15px;
   position: relative;
-  margin-top: -16px;
+  top: -16px;
   width: 100%;
   height: calc(100% - 32px);
 
@@ -58,333 +21,6 @@
   &.msla-selected {
     border: 2px solid #605e5c;
   }
-
-  &.msla-has-comment {
-    padding-top: 26px;
-    top: -26px;
-  }
-
-  > .msla-scope-v2--collapsed {
-    font: 13px/18px @font-family;
-    margin: 10px 10px 10px;
-    text-align: center;
-  }
-
-  &.msla-small {
-    padding-top: 20px;
-    top: -8px;
-
-    // NOTE(joechung): Footer props are supported only on small-headered scopes.
-    &.msla-has-footer {
-      padding-bottom: 30px;
-
-      &.msla-has-comment {
-        padding-bottom: 50px;
-      }
-
-      &.msla-has-status {
-        padding-bottom: 40px;
-
-        &.msla-has-comment {
-          padding-bottom: 70px;
-        }
-      }
-
-      .msla-drop-zone {
-        margin-bottom: 5px;
-      }
-    }
-
-    > .msla-scope-v2--collapsed {
-      margin: 0 10px 10px;
-    }
-  }
-
-  .msla-card-container {
-    margin-bottom: 10px;
-  }
-
-  .msla-drop-zone-container-scope {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-
-    &.no-children {
-      margin-top: 35px;
-    }
-  }
-}
-
-.msla-scope-v2--header:not(.msla-small),
-.msla-scope-v2--footer {
-  box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
-
-  &:focus,
-  &:hover {
-    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
-  }
-
-  & > .msla-inner {
-    > .panel-card-error {
-      flex-basis: 100%;
-      font: 12px/16px @font-family;
-      margin: 4px 12px 8px 12px;
-      overflow: hidden;
-      padding-left: 2px;
-      text-align: left;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-
-      > .panel-card-error-icon {
-        font-size: 12px;
-        margin-right: 2px;
-      }
-    }
-  }
-}
-
-.msla-scope-v2--header,
-.msla-scope-v2--footer {
-  box-sizing: border-box;
-  color: #fff;
-  cursor: pointer;
-  display: block;
-  margin: 0 auto;
-  min-height: @card-v2-height;
-  padding: 0;
-  position: relative;
-  width: @card-v2-width;
-  z-index: 1;
-
-  &.msla-card-ghost-image {
-    position: fixed;
-    pointer-events: none;
-    opacity: 100%;
-    z-index: 12;
-    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0px 12px 40px rgba(0, 0, 0, 0.24);
-  }
-
-  &:not(.msla-small).msla-selected {
-    border-radius: 2px;
-    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
-
-    &.dragging {
-      &.msla-card-ghost-image {
-        position: fixed;
-        pointer-events: none;
-        opacity: 100%;
-        z-index: 12;
-        box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0px 12px 40px rgba(0, 0, 0, 0.24);
-      }
-    }
-  }
-
-  > .msla-inner {
-    flex-wrap: wrap;
-    outline: 1px solid #fff;
-
-    > button,
-    > [class^='ms-TooltipHost'] > button {
-      background-color: rgba(0, 0, 0, 0);
-      border: 1px solid transparent;
-      color: #fff;
-      cursor: pointer;
-      word-break: break-word;
-
-      &.msla-selector {
-        flex: 1;
-        min-width: 60px; /* 60px + 32px button = 92px */
-      }
-
-      &.msla-toggle {
-        height: 100%;
-        padding: 0;
-      }
-
-      &:focus {
-        border: 1px solid #fff;
-        outline: 0;
-      }
-
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.2);
-      }
-    }
-  }
-
-  > .msla-inner,
-  > .msla-inner > button,
-  > .msla-inner > [class^='ms-TooltipHost'] > button {
-    border: 2px solid transparent;
-    display: flex;
-
-    > img {
-      align-self: flex-start;
-      height: 24px;
-      padding: 8px 0 8px 4px;
-      width: 24px;
-    }
-
-    > span {
-      align-self: center;
-      flex: 1;
-      font: 14px/20px @semibold-font-family;
-      padding: 8px;
-      text-align: left;
-    }
-
-    > i[data-icon-name] {
-      align-self: stretch;
-      font-size: 14px;
-      line-height: 20px;
-      padding: 10px 8px;
-    }
-  }
-
-  > .msla-inner:focus {
-    border: 2px solid #605e5c;
-    border-radius: 2px;
-    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
-  }
-
-  > .msla-inner:hover {
-    button {
-      background-color: rgba(0, 0, 0, 0.2);
-    }
-  }
-
-  &.msla-small {
-    min-height: @card-v2-small-height;
-    min-width: @card-v2-small-width;
-    position: relative;
-    text-align: center;
-    top: 6px;
-
-    > .msla-inner {
-      border-radius: 2px;
-      display: inline-flex;
-      overflow: visible;
-      padding: 0;
-    }
-
-    > .msla-inner,
-    > .msla-inner > button,
-    > .msla-inner > [class^='ms-TooltipHost'] > button {
-      > span {
-        padding: 4px 8px;
-      }
-
-      > i[data-icon-name] {
-        padding: 4px 8px;
-      }
-
-      &:focus {
-        border-color: transparent;
-      }
-    }
-  }
-}
-
-.msla-scope-v2--footer {
-  cursor: pointer;
-  top: -40px;
-  margin-bottom: -40px;
-
-  &.msla-body-small {
-    top: -25px;
-    margin-bottom: -25px;
-
-    &.msla-has-comment {
-      top: -50px;
-      margin-bottom: -50px;
-    }
-
-    &.msla-has-status {
-      top: -50px;
-      margin-bottom: -50px;
-
-      &.msla-has-comment {
-        top: -75px;
-        margin-bottom: -75px;
-      }
-    }
-  }
-}
-
-.msla-main-page {
-  .msla-scope-v2--header > .msla-inner {
-    button.inactive {
-      cursor: default;
-      opacity: 0.5;
-    }
-  }
-}
-
-/* NOTE(joechung): Add top margin only and consider border in box size calculations for scopes in monitoring view. */
-.msla-scope-v2 {
-  .msla-card-scope-body-canvas {
-    box-sizing: border-box;
-    margin: 8px 0 0;
-
-    > .msla-card-container {
-      margin-top: 30px;
-    }
-  }
-}
-
-body.dark {
-  .msla-scope-v2--body {
-    width: 100%;
-    height: calc(100% - 40px);
-    background: #252423;
-    border: 2px solid #8a8886;
-
-    &.msla-selected {
-      border: 2px solid @ms-color-neutralPrimary;
-    }
-
-    .msla-scope-v2--collapsed {
-      color: #a19f9d;
-    }
-  }
-
-  .msla-scope-v2--header:not(.msla-small),
-  .msla-scope-v2--footer {
-    &.msla-selected {
-      box-shadow: 0 1.2px 3.6px rgba(255, 255, 255, 0.1), 0 6.4px 14.4px rgba(255, 255, 255, 0.13);
-    }
-  }
-
-  .msla-scope-v2--footer {
-    &:focus,
-    &:hover {
-      box-shadow: 0 1.2px 3.6px rgba(255, 255, 255, 0.1), 0 6.4px 14.4px rgba(255, 255, 255, 0.13);
-    }
-  }
-
-  .msla-scope-v2--header {
-    > .msla-inner {
-      > button,
-      > [class^='ms-TooltipHost'] > button {
-        color: @ms-color-black;
-
-        &:focus {
-          outline: 1px solid @ms-color-white;
-        }
-      }
-    }
-  }
-
-  .msla-scope-v2--footer,
-  .msla-scope-v2--header {
-    .msla-badges {
-      outline: 1px solid #fff;
-    }
-  }
-
-  .msla-monitoring-scope-container .msla-pill {
-    color: @ms-color-black;
-  }
 }
 
 .msla-scope-card {
@@ -393,11 +29,25 @@ body.dark {
   cursor: pointer;
 
   .msla-scope-header-wrapper {
+    box-sizing: border-box;
+    color: @ms-color-white;
+    color: white;
+    cursor: pointer;
+    margin: 0 auto;
+    position: relative;
+    width: @card-v2-width;
+    z-index: 1;
+
     border: 2px solid var(--brand-color, black);
     border-radius: 2px;
     background-color: var(--brand-color, black);
 
+    box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+
     &:hover {
+      box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
+      filter: invert(1) brightness(1.2) invert(1); // Darken by 20% without darkening white pixels
+
       .gripper-section {
         visibility: visible;
         &.draggable {
@@ -443,13 +93,5 @@ body.dark {
     margin: 10px 8px 10px 0;
     text-align: left;
     word-break: break-word;
-  }
-
-  .collapse-toggle {
-    background: none;
-    height: 100%;
-    border: none;
-    color: white;
-    cursor: pointer;
   }
 }

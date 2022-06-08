@@ -1,7 +1,8 @@
-import { DirectionalHint, FontSizes, Icon, TooltipHost } from '@fluentui/react';
+import CollapseToggle from '../../collapseToggle';
+import type { SubgraphType } from '@microsoft-logic-apps/utils';
 
 interface SubgraphHeaderProps {
-  subgraphType: 'CONDITIONAL-TRUE' | 'CONDITIONAL-FALSE' | 'SWITCH-CASE';
+  subgraphType: SubgraphType;
   name?: string;
   collapsed?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
@@ -21,25 +22,16 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({ subgraphType, na
       title: `Case-${name}`,
       color: '#828282',
     },
-  };
-
-  const iconName = collapsed ? 'ChevronDown' : 'ChevronUp';
-  const toggleText = collapsed ? 'Expand' : 'Collapse';
-
-  const collapseIconStyles = {
-    root: {
-      fontSize: FontSizes.small,
+    'SWITCH-DEFAULT': {
+      title: 'Default',
+      color: '#828282',
     },
   };
 
   return (
     <div className="msla-subgraph-header" style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}>
       <div className="msla-subgraph-title">{SubgraphTypeData[subgraphType].title}</div>
-      <TooltipHost content={toggleText} directionalHint={DirectionalHint.rightCenter}>
-        <button aria-label={toggleText} className="collapse-toggle" onClick={handleCollapse}>
-          <Icon iconName={iconName} styles={collapseIconStyles} />
-        </button>
-      </TooltipHost>
+      <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
     </div>
   );
 };
