@@ -1,7 +1,7 @@
 import type { RootState } from './Store';
+import type { Schema } from '@microsoft-logic-apps/parsers';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { Schema } from '@microsoft-logic-apps/parsers';
 
 export interface SchemaLoadingState {
   armToken?: string;
@@ -72,7 +72,7 @@ export const schemaDataLoaderSlice = createSlice({
       state.inputSchema = action.payload;
     });
 
-    builder.addCase(loadInputSchema.rejected, (state, action) => {
+    builder.addCase(loadInputSchema.rejected, (state) => {
       // TODO change to null for error handling case
       state.inputSchema = undefined;
     });
@@ -81,7 +81,7 @@ export const schemaDataLoaderSlice = createSlice({
       state.outputSchema = action.payload;
     });
 
-    builder.addCase(loadOutputSchema.rejected, (state, action) => {
+    builder.addCase(loadOutputSchema.rejected, (state) => {
       // TODO change to null for error handling case
       state.outputSchema = undefined;
     });
