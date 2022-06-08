@@ -1,4 +1,4 @@
-import { EditorCommandBar } from '../components/EditorCommandBar';
+import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { LeftHandPanel } from './LeftHandPanel';
 import type { ILayerProps } from '@fluentui/react';
 import { LayerHost } from '@fluentui/react';
