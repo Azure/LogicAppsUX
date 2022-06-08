@@ -10,6 +10,7 @@ import {
   VerticalDivider,
   IconNames,
   PrimaryButton,
+  IButtonStyles,
 } from '@fluentui/react';
 import type { ICommandBarItemProps, IComponentAsProps, IComponentAs, IButtonProps } from '@fluentui/react';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -183,11 +184,11 @@ const IndividualCommandBarButtonAsExample: FunctionComponent<IIndividualCommandB
           { key: '5-31-2022-214', text: '5/31/2022 2:14 PM' },
           { key: '5-31-2022-114', text: '5/31/2022 1:14 PM' },
           { key: '5-31-2022-1214', text: '5/31/2022 12:14 PM' },
+
+          { key: '5-31-2022-1214', text: 'Show all versions', onClick: () => console.log('show all versions clicked') },
         ],
       },
-      onClick: () => console.log('Info'),
     },
-
     {
       key: 'publish',
       onRenderIcon: () => {
