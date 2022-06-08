@@ -1,8 +1,8 @@
+import CollapseToggle from '../../collapseToggle';
 import { StatusPill } from '../../monitoring';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
-import { css, DirectionalHint, Icon, TooltipHost } from '@fluentui/react';
-import { Handle, Position } from 'react-flow-renderer';
+import { css, Icon, TooltipHost } from '@fluentui/react';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
@@ -25,6 +25,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   isMonitoringView,
   selected,
   title,
+  readOnly,
   onClick,
   onCollapse,
 }) => {
@@ -32,7 +33,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
     onClick?.();
   };
 
-  const handleCollapse = (e: React.MouseEvent<HTMLButtonElement>): void => {
+  const handleCollapse = (event: { currentTarget: any }): void => {
     if (onCollapse) {
       onCollapse({
         currentTarget: undefined,
@@ -40,8 +41,6 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
     }
   };
 
-  const iconName = collapsed ? 'ChevronDown' : 'ChevronUp';
-  const toggleText = collapsed ? 'Expand' : 'Collapse';
   const badges = [
     ...(commentBox && commentBox.comment
       ? [{ title: 'Comment', content: commentBox.comment, darkBackground: true, iconProps: { iconName: 'Comment' }, active }]
@@ -68,11 +67,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
               {icon ? <img className="scope-icon" alt="" role="presentation" src={icon} /> : null}
               <div className="msla-scope-title">{title}</div>
             </div>
-            <TooltipHost content={toggleText} directionalHint={DirectionalHint.rightCenter}>
-              <button aria-label={toggleText} className="collapse-toggle" onClick={handleCollapse}>
-                <Icon iconName={iconName} />
-              </button>
-            </TooltipHost>
+            <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
           </div>
           <div>
             <div className="msla-badges">

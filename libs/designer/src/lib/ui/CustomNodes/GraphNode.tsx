@@ -71,6 +71,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           id={id}
           isMonitoringView={isMonitoringView}
           title={data.label}
+          readOnly={readOnly}
         />
         <Handle
           type="source"
