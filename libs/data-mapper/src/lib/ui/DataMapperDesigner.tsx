@@ -1,3 +1,4 @@
+import { EditorCommandBar } from '../components/EditorCommandBar';
 import { LeftHandPanel } from './LeftHandPanel';
 import type { ILayerProps } from '@fluentui/react';
 import { LayerHost } from '@fluentui/react';
@@ -16,29 +17,36 @@ export const DataMapperDesigner = () => {
     <DndProvider backend={HTML5Backend}>
       <div>
         <div style={{ height: '20px' }}></div>
-        <LayerHost
-          id={layerHostId}
+        <div
           style={{
             // TODO - Remove
-            position: 'relative',
-            overflow: 'hidden',
             border: '1px solid #ccc',
           }}
         >
-          <div className="msla-designer-canvas msla-panel-mode">
-            <ReactFlowProvider>
-              <ReactFlow
-                minZoom={0}
-                nodesDraggable={false}
-                proOptions={{
-                  account: 'paid-sponsor',
-                  hideAttribution: true,
-                }}
-              ></ReactFlow>
-            </ReactFlowProvider>
-            <LeftHandPanel layerProps={panelLayerProps} />
-          </div>
-        </LayerHost>
+          <EditorCommandBar />
+          <LayerHost
+            id={layerHostId}
+            style={{
+              // TODO - Remove
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            <div className="msla-designer-canvas msla-panel-mode">
+              <ReactFlowProvider>
+                <ReactFlow
+                  minZoom={0}
+                  nodesDraggable={false}
+                  proOptions={{
+                    account: 'paid-sponsor',
+                    hideAttribution: true,
+                  }}
+                ></ReactFlow>
+              </ReactFlowProvider>
+              <LeftHandPanel layerProps={panelLayerProps} />
+            </div>
+          </LayerHost>
+        </div>
       </div>
     </DndProvider>
   );
