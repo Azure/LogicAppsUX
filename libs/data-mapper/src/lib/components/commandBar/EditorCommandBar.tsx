@@ -1,7 +1,18 @@
 import type { JsonInputStyle } from '../../models';
-import { discardCurrentState, publishState, redoState, saveState, undoState } from './helpers';
+import {
+  discardCurrentState,
+  publishState,
+  redoState,
+  runTest,
+  saveState,
+  showConfig,
+  showFeedback,
+  showSearchbar,
+  showTutorial,
+  undoState,
+} from './helpers';
 import { CommandBar, initializeIcons, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
-import type { ICommandBarItemProps } from '@fluentui/react';
+import type { IComponentAs, ICommandBarItemProps } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
 
@@ -26,6 +37,11 @@ interface EditorCommandBarButtonsProps {
   stateStack: DataMapState[];
   stateStackInd: number;
   onStateStackChange: (stateStackInd: number) => void;
+  onTestClick: () => void;
+  onConfigClick: () => void;
+  onTutorialClick: () => void;
+  onFeedbackClick: () => void;
+  onSearchClick: () => void;
   onPublishClick: () => void;
 }
 
@@ -39,8 +55,17 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   stateStack,
   stateStackInd,
   onStateStackChange,
+  onTestClick,
+  onConfigClick,
+  onTutorialClick,
+  onFeedbackClick,
+  onSearchClick,
   onPublishClick,
 }) => {
+  const PublishButtonWrapper: IComponentAs<ICommandBarItemProps> = () => (
+    <PrimaryButton style={{ alignSelf: 'center', marginRight: '5%' }} text="Publish" onClick={onPublishClick} />
+  );
+
   const items: ICommandBarItemProps[] = [
     {
       key: 'save',
@@ -95,7 +120,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
         },
       },
     },
-    { key: 'test', text: 'Test', split: true, iconProps: { iconName: 'Play' }, onClick: () => console.log('Test button clicked') },
+    { key: 'test', text: 'Test', split: true, iconProps: { iconName: 'Play' }, onClick: onTestClick },
     {
       key: 'divider-2',
       itemType: ContextualMenuItemType.Divider,
@@ -115,32 +140,31 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       key: 'configuration',
       text: 'Configuration',
       iconProps: { iconName: 'Settings' },
-      onClick: () => console.log('configuration button clicked'),
+      onClick: onConfigClick,
     },
     {
       key: 'tour_tutorial',
       text: 'Tour / Tutorial',
       iconProps: { iconName: 'Help' },
-      onClick: () => console.log('Tour / Tutorial button clicked'),
+      onClick: onTutorialClick,
     },
     {
       key: 'feedback',
       text: 'Give feedback',
       iconProps: { iconName: 'Feedback' },
-      onClick: () => console.log('Feedback button clicked'),
+      onClick: onFeedbackClick,
     },
   ];
 
   const farItems: ICommandBarItemProps[] = [
     {
       key: 'tile',
-      text: 'Grid view',
-      ariaLabel: 'Grid view',
+      text: 'Global Search',
+      ariaLabel: 'Global Search',
       iconOnly: true,
       iconProps: { iconName: 'Search' },
-      onClick: () => console.log('Search button clicked'),
+      onClick: onSearchClick,
     },
-
     {
       key: 'divider',
       itemType: ContextualMenuItemType.Divider,
@@ -159,6 +183,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     {
       key: 'current-status',
       text: stateStackInd === 0 ? 'Current (Last save: ... mins ago)' : stateStack[stateStackInd].time,
+      ariaLabel: 'version',
       split: false,
       subMenuProps: {
         items: stateStack.map((state, ind) => {
@@ -166,9 +191,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
             key: state.time,
             text: ind === 0 ? 'Current (Last save: ... mins ago)' : state.time,
             disabled: stateStackInd === ind,
-            onClick: () => {
-              onStateStackChange(ind);
-            },
+            onClick: () => onStateStackChange(ind),
           };
         }),
       },
@@ -176,9 +199,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     {
       key: 'publish',
       disabled: true,
-      onRenderIcon: () => {
-        return <PrimaryButton text="Publish" onClick={onPublishClick} />;
-      },
+      commandBarButtonAs: PublishButtonWrapper,
     },
   ];
 
@@ -212,6 +233,11 @@ const EditorCommandBarWrapper: FunctionComponent = () => {
       stateStack={exampleStateStack}
       stateStackInd={stateStackInd}
       onStateStackChange={onStateStackChange}
+      onTestClick={runTest}
+      onConfigClick={showConfig}
+      onTutorialClick={showTutorial}
+      onFeedbackClick={showFeedback}
+      onSearchClick={showSearchbar}
       onPublishClick={publishState}
     />
   );
