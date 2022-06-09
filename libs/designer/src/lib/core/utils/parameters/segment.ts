@@ -58,7 +58,6 @@ export class ValueSegmentConvertor {
    * @return {ValueSegment[]}
    */
   public convertToValueSegments(value: any): ValueSegment[] {
-    /* tslint:disable-line: no-any */
     if (isNullOrUndefined(value)) {
       return [createLiteralValueSegment('')];
     } else if (typeof value === 'string') {
