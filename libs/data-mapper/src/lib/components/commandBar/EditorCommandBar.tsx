@@ -72,27 +72,27 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   const Resources = {
     SAVE: intl.formatMessage({
       defaultMessage: 'Save',
-      description: 'Button text for save',
+      description: 'Button text for save the changes',
     }),
     UNDO: intl.formatMessage({
       defaultMessage: 'Undo',
-      description: 'Button text for undo',
+      description: 'Button text for undo the last action',
     }),
     REDO: intl.formatMessage({
       defaultMessage: 'Redo',
-      description: 'Button text for redo',
+      description: 'Button text for redo the last undone action',
     }),
     CTR_Z: intl.formatMessage({
       defaultMessage: 'Ctrl + Z',
-      description: 'Button text for control Z',
+      description: 'Button text for the control-Z button combination to undo the last action',
     }),
     CTR_Y: intl.formatMessage({
       defaultMessage: 'Ctrl + Y',
-      description: 'Button text for control Y',
+      description: 'Button text for the control-Y button combination to redo the last undone action',
     }),
     DISCARD: intl.formatMessage({
       defaultMessage: 'Discard',
-      description: 'Button text for discard',
+      description: 'Button text for discard the unsaved changes',
     }),
     RUN_TEST: intl.formatMessage({
       defaultMessage: 'Test',
@@ -100,7 +100,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     }),
     CONFIGURATION: intl.formatMessage({
       defaultMessage: 'Configuration',
-      description: 'Button text for configuration',
+      description: 'Button text for opening the configuration',
     }),
     TOUR_TUTORIAL: intl.formatMessage({
       defaultMessage: 'Tour/Tutorial',
@@ -108,7 +108,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     }),
     GIVE_FEEDBACK: intl.formatMessage({
       defaultMessage: 'Give feedback',
-      description: 'Button text for give feedback',
+      description: 'Button text for submitting feedback',
     }),
     GLOBAL_SEARCH: intl.formatMessage({
       defaultMessage: 'Global search',
@@ -276,7 +276,7 @@ const EditorCommandBarWrapper: FunctionComponent = () => {
   exampleStateStack.push({
     time: intl.formatMessage({
       defaultMessage: 'Show all versions',
-      description: 'Dropdown text for show all versions',
+      description: 'Dropdown text for show all version histories',
     }),
   });
 

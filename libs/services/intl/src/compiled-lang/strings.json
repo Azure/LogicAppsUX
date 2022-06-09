@@ -17,12 +17,6 @@
       "value": "Required. The value to return if the expression is 'false'."
     }
   ],
-  "//M4rv": [
-    {
-      "type": 0,
-      "value": "Undo"
-    }
-  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -153,6 +147,12 @@
     {
       "type": 0,
       "value": "Required. The value to convert to XML."
+    }
+  ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Show all versions"
     }
   ],
   "1Fn5n+": [
@@ -361,12 +361,6 @@
     {
       "type": 0,
       "value": "Required. The name of the loop whose item you want."
-    }
-  ],
-  "5jq8TX": [
-    {
-      "type": 0,
-      "value": "Redo"
     }
   ],
   "5qzZMo": [
@@ -633,6 +627,12 @@
       "value": "Duration"
     }
   ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
+    }
+  ],
   "ECZC6Y": [
     {
       "type": 0,
@@ -741,12 +741,6 @@
     {
       "type": 0,
       "value": "Returns the query from a URI"
-    }
-  ],
-  "GGYD1Q": [
-    {
-      "type": 0,
-      "value": "Ctrl + Z"
     }
   ],
   "GLd3MU": [
@@ -1157,6 +1151,12 @@
       "value": "Required. The object to check if it is less or equal to the comparing object."
     }
   ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Discard"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -1235,12 +1235,6 @@
       "value": "h"
     }
   ],
-  "RBWb0G": [
-    {
-      "type": 0,
-      "value": "Show all versions"
-    }
-  ],
   "RX2Shm": [
     {
       "type": 0,
@@ -1313,10 +1307,10 @@
       "value": "Required. The name of the action with a form-data or form-encoded response."
     }
   ],
-  "SwShJf": [
+  "Sh10cw": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Save"
     }
   ],
   "T7zcR6": [
@@ -1329,6 +1323,12 @@
     {
       "type": 0,
       "value": "Failed"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Give feedback"
     }
   ],
   "TI44R1": [
@@ -1453,12 +1453,6 @@
     {
       "type": 0,
       "value": "Required. The name of the new property."
-    }
-  ],
-  "W8Spd6": [
-    {
-      "type": 0,
-      "value": "Ctrl + Y"
     }
   ],
   "W8cbO8": [
@@ -1615,12 +1609,6 @@
       "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
     }
   ],
-  "YfMhiC": [
-    {
-      "type": 0,
-      "value": "Configuration"
-    }
-  ],
   "YoQara": [
     {
       "type": 0,
@@ -1649,12 +1637,6 @@
     {
       "type": 0,
       "value": "This operation has already been deleted."
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "a7j3gS": [
@@ -1715,6 +1697,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Configuration"
     }
   ],
   "cJm+ah": [
@@ -1953,16 +1941,16 @@
       "value": "Alt/Option + click to download {displayName}"
     }
   ],
-  "hfxvcj": [
-    {
-      "type": 0,
-      "value": "Discard"
-    }
-  ],
   "hrbDu6": [
     {
       "type": 0,
       "value": "Duration"
+    }
+  ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Redo"
     }
   ],
   "iBlvhu": [
@@ -2453,6 +2441,12 @@
       "value": "Required. The value that is converted to an integer."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2751,6 +2745,12 @@
     {
       "type": 0,
       "value": "Required. The collection for which to get the length."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [
