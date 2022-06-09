@@ -10,7 +10,7 @@ import {
   ParameterGroupKeys,
   toParameterInfoMap,
   updateParameterWithValues,
-} from '../../utils/parameterhelper';
+} from '../../utils/parameters/helper';
 import { getOperationSettings } from './settings';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
