@@ -15,6 +15,7 @@ import { CommandBar, initializeIcons, ContextualMenuItemType, PrimaryButton } fr
 import type { IComponentAs, ICommandBarItemProps } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
+import { useIntl } from 'react-intl';
 
 export const EditorCommandBar = () => {
   return <EditorCommandBarWrapper />;
@@ -62,29 +63,100 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   onSearchClick,
   onPublishClick,
 }) => {
+  const intl = useIntl();
+
   const PublishButtonWrapper: IComponentAs<ICommandBarItemProps> = () => (
-    <PrimaryButton style={{ alignSelf: 'center', marginRight: '5%' }} text="Publish" onClick={onPublishClick} />
+    <PrimaryButton style={{ alignSelf: 'center', marginRight: '5%' }} text={Resources.PUBLISH} onClick={onPublishClick} />
   );
+
+  const Resources = {
+    SAVE: intl.formatMessage({
+      defaultMessage: 'Save',
+      description: 'Button text for save',
+    }),
+    UNDO: intl.formatMessage({
+      defaultMessage: 'Undo',
+      description: 'Button text for undo',
+    }),
+    REDO: intl.formatMessage({
+      defaultMessage: 'Redo',
+      description: 'Button text for redo',
+    }),
+    CTR_Z: intl.formatMessage({
+      defaultMessage: 'Ctrl + Z',
+      description: 'Button text for control Z',
+    }),
+    CTR_Y: intl.formatMessage({
+      defaultMessage: 'Ctrl + Y',
+      description: 'Button text for control Y',
+    }),
+    DISCARD: intl.formatMessage({
+      defaultMessage: 'Discard',
+      description: 'Button text for discard',
+    }),
+    RUN_TEST: intl.formatMessage({
+      defaultMessage: 'Test',
+      description: 'Button text for running test',
+    }),
+    CONFIGURATION: intl.formatMessage({
+      defaultMessage: 'Configuration',
+      description: 'Button text for configuration',
+    }),
+    TOUR_TUTORIAL: intl.formatMessage({
+      defaultMessage: 'Tour/Tutorial',
+      description: 'Button text for tour and tutorial',
+    }),
+    GIVE_FEEDBACK: intl.formatMessage({
+      defaultMessage: 'Give feedback',
+      description: 'Button text for give feedback',
+    }),
+    GLOBAL_SEARCH: intl.formatMessage({
+      defaultMessage: 'Global search',
+      description: 'Button text for global search',
+    }),
+    PUBLISH: intl.formatMessage({
+      defaultMessage: 'Publish',
+      description: 'Button text for publish',
+    }),
+  };
+
+  const divider: ICommandBarItemProps = {
+    key: 'global-divider',
+    itemType: ContextualMenuItemType.Divider,
+    iconProps: {
+      iconName: 'Separator',
+    },
+    iconOnly: true,
+    disabled: true,
+    buttonStyles: {
+      root: {
+        width: 10,
+        minWidth: 'unset',
+      },
+    },
+  };
 
   const items: ICommandBarItemProps[] = [
     {
       key: 'save',
-      text: 'Save',
+      text: Resources.SAVE,
+      ariaLabel: Resources.SAVE,
       iconProps: { iconName: 'Save' },
       onClick: onSaveClick,
     },
     {
       key: 'undo-redo',
-      text: showUndo ? 'Undo' : 'Redo',
+      text: showUndo ? Resources.UNDO : Resources.REDO,
+      ariaLabel: showUndo ? Resources.UNDO : Resources.REDO,
       iconProps: { iconName: showUndo ? 'Undo' : 'Redo' },
       split: false,
       subMenuProps: {
         items: [
           {
             key: 'undo',
-            text: 'Undo',
+            text: Resources.UNDO,
             iconProps: { iconName: 'Undo' },
-            secondaryText: 'Ctrl + Z',
+            secondaryText: Resources.CTR_Z,
             onClick: () => {
               if (!showUndo) onUndoRedoChange(showUndo);
               onUndoClick();
@@ -92,9 +164,9 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
           },
           {
             key: 'redo',
-            text: 'Redo',
+            text: Resources.REDO,
             iconProps: { iconName: 'Redo' },
-            secondaryText: 'Ctrl + Y',
+            secondaryText: Resources.CTR_Y,
             onClick: () => {
               if (showUndo) onUndoRedoChange(showUndo);
               onRedoClick();
@@ -104,53 +176,41 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       },
       onClick: () => console.log('Undo-redo button clicked'),
     },
-    { key: 'discard', text: 'Discard', iconProps: { iconName: 'Cancel' }, onClick: onDiscardClick },
+    { key: 'discard', text: Resources.DISCARD, ariaLabel: Resources.DISCARD, iconProps: { iconName: 'Cancel' }, onClick: onDiscardClick },
     {
-      key: 'divider-1',
-      itemType: ContextualMenuItemType.Divider,
-      iconProps: {
-        iconName: 'Separator',
-      },
-      iconOnly: true,
-      disabled: true,
-      buttonStyles: {
-        root: {
-          width: 10,
-          minWidth: 'unset',
-        },
-      },
+      ...divider,
+      key: 'discard-test-divider',
     },
-    { key: 'test', text: 'Test', split: true, iconProps: { iconName: 'Play' }, onClick: onTestClick },
     {
-      key: 'divider-2',
-      itemType: ContextualMenuItemType.Divider,
-      iconProps: {
-        iconName: 'Separator',
-      },
-      iconOnly: true,
-      disabled: true,
-      buttonStyles: {
-        root: {
-          width: 10,
-          minWidth: 'unset',
-        },
-      },
+      key: 'test',
+      text: Resources.RUN_TEST,
+      ariaLabel: Resources.RUN_TEST,
+      split: true,
+      iconProps: { iconName: 'Play' },
+      onClick: onTestClick,
+    },
+    {
+      ...divider,
+      key: 'test-config-divider',
     },
     {
       key: 'configuration',
-      text: 'Configuration',
+      text: Resources.CONFIGURATION,
+      ariaLabel: Resources.CONFIGURATION,
       iconProps: { iconName: 'Settings' },
       onClick: onConfigClick,
     },
     {
       key: 'tour_tutorial',
-      text: 'Tour / Tutorial',
+      text: Resources.TOUR_TUTORIAL,
+      ariaLabel: Resources.TOUR_TUTORIAL,
       iconProps: { iconName: 'Help' },
       onClick: onTutorialClick,
     },
     {
       key: 'feedback',
-      text: 'Give feedback',
+      text: Resources.GIVE_FEEDBACK,
+      ariaLabel: Resources.GIVE_FEEDBACK,
       iconProps: { iconName: 'Feedback' },
       onClick: onFeedbackClick,
     },
@@ -158,30 +218,19 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
 
   const farItems: ICommandBarItemProps[] = [
     {
-      key: 'tile',
-      text: 'Global Search',
-      ariaLabel: 'Global Search',
+      key: 'search',
+      text: Resources.GLOBAL_SEARCH,
+      ariaLabel: Resources.GLOBAL_SEARCH,
       iconOnly: true,
       iconProps: { iconName: 'Search' },
       onClick: onSearchClick,
     },
     {
-      key: 'divider',
-      itemType: ContextualMenuItemType.Divider,
-      iconProps: {
-        iconName: 'Separator',
-      },
-      iconOnly: true,
-      disabled: true,
-      buttonStyles: {
-        root: {
-          width: 10,
-          minWidth: 'unset',
-        },
-      },
+      ...divider,
+      key: 'search-version-divider',
     },
     {
-      key: 'current-status',
+      key: 'version',
       text: stateStackInd === 0 ? 'Current (Last save: ... mins ago)' : stateStack[stateStackInd].time,
       ariaLabel: 'version',
       split: false,
@@ -198,7 +247,8 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     },
     {
       key: 'publish',
-      disabled: true,
+      text: Resources.PUBLISH,
+      ariaLabel: Resources.PUBLISH,
       commandBarButtonAs: PublishButtonWrapper,
     },
   ];
@@ -207,12 +257,15 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
 };
 
 const EditorCommandBarWrapper: FunctionComponent = () => {
+  const intl = useIntl();
+
   const [showUndo, setShowUndo] = useState(true);
   const onUndoRedoChange = useCallback((showUndo) => setShowUndo(!showUndo), []);
 
   const [stateStackInd, setStateStackInd] = useState(0);
   const onStateStackChange = useCallback((stateStackInd) => setStateStackInd(stateStackInd), []);
 
+  // This is a placeholder example - TODO: when save/discard is implemented, replace this (14132709)
   const exampleStateStack: DataMapState[] = [
     { time: '5/31/2022 3:14 PM' },
     { time: '5/31/2022 2:14 PM' },
@@ -220,7 +273,12 @@ const EditorCommandBarWrapper: FunctionComponent = () => {
     { time: '5/31/2022 12:14 PM' },
   ];
 
-  exampleStateStack.push({ time: 'Show all versions' });
+  exampleStateStack.push({
+    time: intl.formatMessage({
+      defaultMessage: 'Show all versions',
+      description: 'Dropdown text for show all versions',
+    }),
+  });
 
   return (
     <EditorCommandBarButtons
