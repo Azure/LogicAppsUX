@@ -1,4 +1,5 @@
 import Constants from '../../../common/constants';
+import { isRootNode } from '../../parsers/models/workflowNode';
 import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest, OperationManifestSetting, UploadChunkMetadata } from '@microsoft-logic-apps/utils';
 import {
@@ -571,3 +572,12 @@ const isSettingSupportedFromOperationManifest = <T>(
       operationManifestSetting.scopes.findIndex((scope) => equals(scope, isTrigger ? SettingScope.Trigger : SettingScope.Action)) >= 0)
   );
 };
+
+// const isChunkedTransferModeSupported = (nodeId: string, isTrigger: boolean ): boolean => {
+//   if (isTrigger) {
+//     return false;
+//   }
+//   return isSettingSupportedFromOperationManifest(getOperationChunkingSettingFromManifest(manifest), false)
+//   return isChunkingSupportedFromOperationManifest(nodeId, isTrigger);
+
+// };

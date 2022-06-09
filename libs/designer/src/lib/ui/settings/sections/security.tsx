@@ -37,7 +37,7 @@ export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLab
 
 // TODO (andrewfowose): replace hard-set settingProps in Security to data from operationMetadataSlice
 export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: SectionProps): JSX.Element | null => {
-  if (secureInputs === undefined && secureOutputs === undefined) return null;
+  // if (secureInputs === undefined && secureOutputs === undefined) return null;
   const secureInputsLabel = <SettingLabel labelText="Secure Inputs" infoTooltipText="Secure inputs of the operation." isChild={false} />;
   const secureOutputsLabel = (
     <SettingLabel
@@ -66,7 +66,7 @@ export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: Sect
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: secureInputs !== undefined,
+          visible: true, //isSupported fn here
           readOnly,
           checked: secureInputs,
           onToggleInputChange: (_, checked) => onSecureInputsChange(!!checked),
@@ -76,7 +76,7 @@ export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: Sect
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: secureOutputs !== undefined,
+          visible: true, // IsSupported fn here
           readOnly,
           checked: secureOutputs,
           onToggleInputChange: (_, checked) => onSecureOutputsChange(!!checked),

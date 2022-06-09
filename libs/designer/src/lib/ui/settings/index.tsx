@@ -12,6 +12,7 @@ import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { RootState } from '../../core/store';
 import { DataHandling } from './sections/datahandling';
 import { General } from './sections/general';
+import { Networking } from './sections/networking';
 import { Security } from './sections/security';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
@@ -89,11 +90,30 @@ export const SettingsPanel = (): JSX.Element => {
     } else return null;
   };
 
+  const renderNetworking = (): JSX.Element | null => {
+    const networkingProps: SectionProps = {
+      readOnly,
+      nodeId,
+      retryPolicy,
+      suppressWorkflowHeaders,
+      suppressWorkflowHeadersOnResponse,
+      paging,
+      uploadChunk,
+      downloadChunkSize,
+      asynchronous,
+      disableAsyncPattern,
+      requestOptions,
+    };
+
+    return <Networking {...networkingProps} />;
+  };
+
   const renderAllSettingsSections = (): JSX.Element => {
     return (
       <>
         {renderDataHandling()}
         {renderGeneral()}
+        {renderNetworking()}
         {renderSecurity()}
       </>
     );

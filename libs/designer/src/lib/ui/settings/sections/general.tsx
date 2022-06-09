@@ -1,21 +1,16 @@
 import type { SectionProps } from '..';
-// import { updateNodeSettings } from '../../../core/state/operationMetadataSlice';
+// import updateNodeSettings  from '../../../core/state/operationMetadataSlice';
 import { SettingLabel } from './security';
-import { useBoolean } from '@fluentui/react-hooks';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-export const General = ({
-  splitOn,
-  timeout,
-  concurrency: concurrencyValues,
-  conditionExpressions,
-  readOnly,
-  nodeId,
-}: SectionProps): JSX.Element => {
-  const [concurrency, setConcurrency] = useBoolean(concurrencyValues?.enabled ?? false);
+export const General = ({ splitOn, timeout, concurrency, conditionExpressions, readOnly, nodeId }: SectionProps): JSX.Element => {
+  const [concurrencyFromState, setConcurrency] = useState(concurrency ?? { enabled: false, value: undefined });
+  const [splitOnFromState, setSplitOn] = useState(splitOn ?? { enabled: false, value: undefined });
+  const [conditionExpressionsFromState, setConditionExpressions] = useState(conditionExpressions ?? []);
+  const [timeoutFromState, setTimeout] = useState(timeout ?? '');
   const dispatch = useDispatch();
   const splitOnLabel = (
     <SettingLabel
@@ -50,21 +45,27 @@ export const General = ({
     />
   );
 
-  const onConcurrencyChange = (checked: boolean | undefined): void => {
-    setConcurrency.toggle();
+  const onConcurrencyToggle = (checked: boolean): void => {
+    setConcurrency({ ...concurrencyFromState, enabled: checked });
     // write to store w/ paylaod {concurrency: {enabled: !!checked, value: settings.concurrency.value}}
     // dispatch(updateNodeSettings({ id: nodeId, settings: { concurrency: { enabled: true, value: concurrencyValues?.value } } }));
   };
 
   const onConcurrencyValueChange = (value: number): void => {
+    setConcurrency({ ...concurrencyFromState, value });
     // write to store with payload: concurrency: {enabled: !!checked, value}
     // dispatch(updateNodeSettings({ id: nodeId, settings: { concurrency: { enabled: concurrency, value } } }));
   };
 
   const onSplitOnToggle = (checked: boolean): void => {
     //  validation?
+    setSplitOn({ ...splitOnFromState, enabled: checked });
     // dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { enabled: !!checked, value: splitOn?.value } } }));
   };
+
+  // const onSplitOnvalueChange = (value: string): void => {
+
+  // }
 
   const generalSectionProps: SettingSectionProps = {
     id: 'general',
@@ -74,9 +75,9 @@ export const General = ({
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: splitOn !== undefined,
+          visible: true, //isSupported fn
           readOnly,
-          checked: splitOn?.enabled,
+          checked: splitOnFromState.enabled,
           onToggleInputChange: (_, checked) => onSplitOnToggle(!!checked), // build onSplitOnChange handler
           customLabel: () => splitOnLabel,
         },
@@ -84,9 +85,9 @@ export const General = ({
       {
         settingType: 'SettingTextField',
         settingProp: {
-          visible: timeout !== undefined,
+          visible: true, // isSupported fn
           id: 'timeoutDuration',
-          value: '',
+          value: timeoutFromState,
           customLabel: () => timeoutLabel,
           readOnly,
           onValueChange: (_, newValue) => console.log(newValue),
@@ -95,8 +96,8 @@ export const General = ({
       {
         settingType: 'MultiAddExpressionEditor',
         settingProp: {
-          visible: conditionExpressions !== undefined,
-          initialExpressions: conditionExpressions,
+          visible: true, // isSupported fn
+          initialExpressions: conditionExpressionsFromState,
           readOnly,
           customLabel: () => triggerConditionsLabel,
         },
@@ -104,21 +105,20 @@ export const General = ({
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: concurrencyValues !== undefined && concurrencyValues.value !== undefined, //isConcurrencyEnabled?
+          visible: true, //isConcurrencySupported?
           readOnly,
-          checked: concurrency,
-          onToggleInputChange: (_, checked) => onConcurrencyChange(!!checked),
+          checked: concurrencyFromState.enabled,
+          onToggleInputChange: (_, checked) => onConcurrencyToggle(!!checked),
           customLabel: () => concurrencyLabel,
         },
       },
       {
         settingType: 'CustomValueSlider',
         settingProp: {
-          visible: concurrency === true,
+          visible: concurrencyFromState.enabled === true,
           maxVal: 100,
           minVal: 0,
-          value: concurrencyValues?.value ?? 0,
-          customLabel: () => concurrencyLabel,
+          value: concurrency?.value ?? 0,
           onValueChange: onConcurrencyValueChange,
           sliderLabel: 'Degree of Parallelism',
           readOnly,
