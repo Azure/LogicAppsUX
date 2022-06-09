@@ -1,3 +1,4 @@
+import type { Expression } from '@microsoft-logic-apps/parsers';
 import type { Exception } from '@microsoft-logic-apps/utils';
 
 export interface ParameterInfo {
@@ -24,7 +25,7 @@ export interface ParameterInfo {
   suppressCasting?: boolean;
   type: string;
   validationErrors?: string[];
-  value: any;
+  value: ValueSegment[];
   viewModel?: any;
   visibility?: string;
 }
@@ -45,4 +46,47 @@ export enum DynamicCallStatus {
   STARTED,
   SUCCEEDED,
   FAILED,
+}
+
+export interface ValueSegment {
+  id: string;
+  type: ValueSegmentType;
+  value: string;
+  token?: Token;
+}
+
+export enum ValueSegmentType {
+  LITERAL = 'literal',
+  TOKEN = 'token',
+}
+
+export interface Token {
+  actionName?: string;
+  arrayDetails?: {
+    loopSource?: string;
+    parentArrayName?: string;
+    parentArrayKey?: string;
+    itemsSchema?: OpenAPIV2.SchemaObject;
+  };
+  brandColor?: string;
+  description?: string;
+  expression?: Expression;
+  format?: string;
+  icon?: string;
+  key: string;
+  name?: string;
+  required?: boolean;
+  source?: string;
+  title?: string;
+  tokenType: TokenType;
+  type?: string;
+}
+
+export enum TokenType {
+  FX,
+  ITEM,
+  ITERATIONINDEX,
+  OUTPUTS,
+  PARAMETER,
+  VARIABLE,
 }

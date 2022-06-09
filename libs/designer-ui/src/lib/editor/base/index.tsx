@@ -1,4 +1,5 @@
 import type { InputTokenProps } from '../../token/inputToken';
+import type { ValueSegmentType } from '../models/parameter';
 import { prepopulatedRichText } from './initialConfig';
 import { TokenNode } from './nodes/tokenNode';
 import AutoFocusPlugin from './plugins/AutoFocusPlugin';
@@ -17,12 +18,6 @@ import type { EditorState } from 'lexical';
 import { $getRoot, $getSelection } from 'lexical';
 import { useIntl } from 'react-intl';
 
-export enum ValueSegmentType {
-  LITERAL = 'literal',
-  TOKEN = 'token',
-  ENUM = 'enum',
-  FUNCTION = 'function',
-}
 export type Segment = {
   segmentId?: string;
 } & (
@@ -31,7 +26,7 @@ export type Segment = {
       token: InputTokenProps;
     }
   | {
-      type: ValueSegmentType.LITERAL | ValueSegmentType.FUNCTION | ValueSegmentType.ENUM;
+      type: ValueSegmentType.LITERAL;
       value: string;
     }
 );
