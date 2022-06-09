@@ -1,5 +1,5 @@
+import { getConnectionsApiAndMapping } from '../actions/bjsworkflow/connections';
 import { initializeOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
-import { getConnectionsApiAndMapping } from '../state/connectionSlice';
 import type { WorkflowState } from '../state/workflowSlice';
 import type { RootState } from '../store';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
@@ -20,7 +20,7 @@ export const initializeGraphState = createAsyncThunk<Promise<DeserializedWorkflo
       initializeOperationMetadata(deserializedWorkflow, thunkAPI.dispatch);
       const actionsAndTriggers = deserializedWorkflow.actionData;
       console.log(actionsAndTriggers);
-      getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState);
+      getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
       return deserializedWorkflow;
     } else if (spec === 'CNCF') {
       throw new Error('Spec not implemented.');
