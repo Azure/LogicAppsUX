@@ -1,5 +1,5 @@
 import type { RootState } from './Store';
-import type { Schema } from '@microsoft-logic-apps/parsers';
+import type { Schema } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 

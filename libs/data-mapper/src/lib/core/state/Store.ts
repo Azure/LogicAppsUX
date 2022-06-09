@@ -1,8 +1,10 @@
 import panelReducer from './PanelSlice';
+import reactFlowReducer from './ReactFlowSlice';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
+    reactFlow: reactFlowReducer,
     panel: panelReducer,
   },
 });
