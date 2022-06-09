@@ -12,14 +12,14 @@ export interface ConnectionReferencesPayload {
   connectionsMapping: Record<string, string>;
 }
 
-const initialState: ConnectionsStoreState = {
+export const initialConnectionsState: ConnectionsStoreState = {
   connectionReferences: {},
   connectionsMapping: {},
 };
 
 export const connectionSlice = createSlice({
   name: 'connections',
-  initialState,
+  initialState: initialConnectionsState,
   reducers: {
     initializeConnectionReferences: (state, action: PayloadAction<ConnectionReferencesPayload>) => {
       state = action.payload;
@@ -31,6 +31,6 @@ export const connectionSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeConnectionReferences } = connectionSlice.actions;
+export const { initializeConnectionReferences, initializeConnectionsMappings } = connectionSlice.actions;
 
 export default connectionSlice.reducer;
