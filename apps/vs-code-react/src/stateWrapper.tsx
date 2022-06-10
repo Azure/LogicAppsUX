@@ -24,7 +24,7 @@ export const StateWrapper: React.FC = () => {
         }
       }
     }
-  }, [overviewState]);
+  }, [overviewState, navigate]);
 
   return null;
 };
