@@ -149,6 +149,12 @@
       "value": "Gerekli. XML'ye dönüştürülecek değer."
     }
   ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Show all versions"
+    }
+  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -229,6 +235,12 @@
     {
       "type": 0,
       "value": "Gerekli. Veri URI'sine dönüştürülecek değer."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Global search"
     }
   ],
   "2K2fAj": [
@@ -319,6 +331,12 @@
     {
       "type": 0,
       "value": "Hizmet istek kimliği"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Tour/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -607,6 +625,12 @@
     {
       "type": 0,
       "value": "Süre"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
     }
   ],
   "ECZC6Y": [
@@ -1127,6 +1151,12 @@
       "value": "Gerekli. Karşılaştırma nesnesinden küçük veya bu nesneye eşit olup olmadığı denetlenecek nesne."
     }
   ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Discard"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -1273,6 +1303,12 @@
       "value": "Gerekli. Form-data veya form-encoded yanıtı içeren eylemin adı."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1283,6 +1319,12 @@
     {
       "type": 0,
       "value": "Başarısız"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Give feedback"
     }
   ],
   "TI44R1": [
@@ -1653,6 +1695,12 @@
       "value": "panel"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Configuration"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1791,6 +1839,12 @@
       "value": "Yok Sayıldı"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Publish"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1889,6 +1943,12 @@
       "value": "Süre"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Redo"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1945,6 +2005,12 @@
     {
       "type": 0,
       "value": " sn"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "j2MU0b": [
@@ -2371,6 +2437,12 @@
       "value": "Gerekli. Tamsayıya dönüştürülen değer."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2669,6 +2741,12 @@
     {
       "type": 0,
       "value": "Gerekli. Uzunluğun alınacağı koleksiyon."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [
