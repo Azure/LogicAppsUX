@@ -1,13 +1,28 @@
-import Constants from '../../common/constants';
-import { initializeArrayViewModel } from './editors/array';
+import Constants from '../../../common/constants';
+import { initializeArrayViewModel } from '../editors/array';
+import {
+  createLiteralValueSegment,
+  isExpressionToken,
+  isItemToken,
+  isIterationIndexToken,
+  isLiteralValueSegment,
+  isOutputToken,
+  isParameterToken,
+  isTokenValueSegment,
+  isVariableToken,
+  ValueSegmentConvertor,
+} from './segment';
 import type { InputParameter, ResolvedParameter, SchemaProcessorOptions, SchemaProperty, Segment } from '@microsoft-logic-apps/parsers';
 import {
   createEx,
+  convertToStringLiteral,
   decodePropertySegment,
   DefaultKeyPrefix,
   encodePropertySegment,
   isAncestorKey,
   isTemplateExpression,
+  OutputKeys,
+  OutputSource,
   parseEx,
   SchemaProcessor,
   SegmentType,
@@ -15,17 +30,20 @@ import {
 } from '@microsoft-logic-apps/parsers';
 import {
   clone,
+  endsWith,
   equals,
   first,
   format,
   getPropertyValue,
   guid,
+  includes,
   isNullOrUndefined,
   isObject,
+  startsWith,
   ValidationErrorCode,
   ValidationException,
 } from '@microsoft-logic-apps/utils';
-import type { ParameterInfo } from '@microsoft/designer-ui';
+import type { ParameterInfo, Token, ValueSegment } from '@microsoft/designer-ui';
 
 export const ParameterGroupKeys = {
   DEFAULT: 'default',
@@ -176,9 +194,202 @@ export function shouldIncludeSelfForRepetitionReference(graphNodeType: string, p
   return false;
 }
 
-// TODO - Update the method to return value segments once its data structure is determined.
-export function loadParameterValue(parameter: InputParameter): any {
-  return parameter.isNotificationUrl ? `@${Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}` : parameter.value;
+export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
+  const valueObject = parameter.isNotificationUrl ? `@${Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}` : parameter.value;
+
+  // TODO - Might need more parsing for Javascript code editor
+  let valueSegments = convertToValueSegments(valueObject, undefined /* repetitionContext */, !parameter.suppressCasting /* shouldUncast */);
+
+  // TODO - Need to set value display name correctly from metadata for file/folder picker.
+
+  valueSegments = compressSegments(valueSegments);
+
+  for (const segment of valueSegments) {
+    ensureExpressionValue(segment);
+  }
+
+  return valueSegments;
+}
+
+export function compressSegments(segments: ValueSegment[], addInsertAnchorIfNeeded = false): ValueSegment[] {
+  const result: ValueSegment[] = [];
+
+  if (!segments || !segments.length) {
+    if (addInsertAnchorIfNeeded) {
+      result.push(createLiteralValueSegment(''));
+    }
+
+    return result;
+  }
+
+  let current = segments[0];
+
+  for (let i = 1; i < segments.length; i++) {
+    if (isLiteralValueSegment(current) && isLiteralValueSegment(segments[i])) {
+      current.value += segments[i].value;
+    } else {
+      result.push(current);
+
+      // We create empty literals around tokens, so that value insertion is possible
+      if (isTokenValueSegment(segments[i]) && !isLiteralValueSegment(current)) {
+        result.push(createLiteralValueSegment(''));
+      }
+
+      current = segments[i];
+    }
+  }
+
+  result.push(current);
+  return result;
+}
+
+export function convertToTokenExpression(value: any): string {
+  if (isNullOrUndefined(value)) {
+    return '';
+  } else if (typeof value === 'object') {
+    return JSON.stringify(value, null, 2);
+  } else {
+    return value.toString();
+  }
+}
+
+export function convertToValueSegments(
+  value: any,
+  repetitionContext: RepetitionContext | undefined,
+  shouldUncast: boolean
+): ValueSegment[] {
+  try {
+    const convertor = new ValueSegmentConvertor({
+      repetitionContext,
+      shouldUncast,
+      rawModeEnabled: true,
+    });
+    return convertor.convertToValueSegments(value);
+  } catch {
+    return [createLiteralValueSegment(typeof value === 'string' ? value : JSON.stringify(value, null, 2))];
+  }
+}
+
+export function ensureExpressionValue(valueSegment: ValueSegment): void {
+  if (isTokenValueSegment(valueSegment)) {
+    // eslint-disable-next-line no-param-reassign
+    valueSegment.value = getTokenExpressionValue(valueSegment.token as Token, valueSegment.value);
+  }
+}
+
+export function getTokenExpressionValue(token: Token, currentValue?: string): string {
+  const { name } = token;
+
+  if (isExpressionToken(token) || isParameterToken(token) || isVariableToken(token) || isIterationIndexToken(token)) {
+    return currentValue as string;
+  } else if (isItemToken(token)) {
+    // TODO - Update when array item tokens are correctly created
+    if (currentValue) {
+      return currentValue as string;
+    } else {
+      return `${Constants.ITEM}`;
+    }
+  } else if (isOutputToken(token)) {
+    if (currentValue) {
+      return currentValue as string;
+    } else {
+      if (name && equals(name, Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME)) {
+        return name;
+      } else {
+        return getNonOpenApiTokenExpressionValue(token);
+      }
+    }
+  }
+
+  return currentValue as string;
+}
+
+function getNonOpenApiTokenExpressionValue(token: Token): string {
+  const { actionName, name, source, required, key } = token;
+  const optional = !isNullOrUndefined(required) && !required;
+  let propertyPath: string;
+
+  if (
+    !name ||
+    equals(name, OutputKeys.Queries) ||
+    equals(name, OutputKeys.Headers) ||
+    equals(name, OutputKeys.Body) ||
+    endsWith(name, OutputKeys.Item) ||
+    equals(name, OutputKeys.Outputs) ||
+    equals(name, OutputKeys.StatusCode) ||
+    equals(name, OutputKeys.Name) ||
+    equals(name, OutputKeys.Properties) ||
+    equals(name, OutputKeys.PathParameters)
+  ) {
+    propertyPath = '';
+  } else {
+    propertyPath = convertPathToBracketsFormat(name, optional);
+  }
+
+  // NOTE(tonytang): If the token is inside array, instead of serialize to the wrong definition, we serialize to item() for now.
+  // TODO(tonytang): Need to have a full story for showing/hiding tokens that represent item().
+  if (token.arrayDetails) {
+    if (token.arrayDetails.loopSource) {
+      return `@items(${convertToStringLiteral(token.arrayDetails.loopSource)})${propertyPath}`;
+    } else {
+      return `${Constants.ITEM}${propertyPath}`;
+    }
+  }
+
+  let expressionValue: string;
+  const propertyInQueries = !!source && equals(source, OutputSource.Queries);
+  const propertyInHeaders = !!source && equals(source, OutputSource.Headers);
+  const propertyInOutputs = !!source && equals(source, OutputSource.Outputs);
+  const propertyInStatusCode = !!source && equals(source, OutputSource.StatusCode);
+
+  if (!actionName) {
+    if (propertyInQueries) {
+      expressionValue = `${Constants.TRIGGER_QUERIES_OUTPUT}${propertyPath}`;
+    } else if (propertyInHeaders) {
+      expressionValue = `${Constants.TRIGGER_HEADERS_OUTPUT}${propertyPath}`;
+    } else if (propertyInStatusCode) {
+      expressionValue = `${Constants.TRIGGER_OUTPUTS_OUTPUT}['${Constants.OUTPUT_LOCATIONS.STATUS_CODE}']`;
+    } else if (propertyInOutputs) {
+      if (equals(name, OutputKeys.PathParameters) || includes(key, OutputKeys.PathParameters)) {
+        expressionValue = `${Constants.TRIGGER_OUTPUTS_OUTPUT}['${Constants.OUTPUT_LOCATIONS.RELATIVE_PATH_PARAMETERS}']${propertyPath}`;
+      } else {
+        expressionValue = `${Constants.TRIGGER_OUTPUTS_OUTPUT}${propertyPath}`;
+      }
+    } else {
+      expressionValue = `${Constants.TRIGGER_BODY_OUTPUT}${propertyPath}`;
+    }
+  } else {
+    // NOTE(psamband): We escape the characters in step name to convert it to string literal for generating the expression.
+    const stepName = convertToStringLiteral(actionName);
+    if (propertyInQueries) {
+      expressionValue = `${Constants.OUTPUTS}(${stepName})['${Constants.OUTPUT_LOCATIONS.QUERIES}']${propertyPath}`;
+    } else if (propertyInHeaders) {
+      expressionValue = `${Constants.OUTPUTS}(${stepName})['${Constants.OUTPUT_LOCATIONS.HEADERS}']${propertyPath}`;
+    } else if (propertyInStatusCode) {
+      expressionValue = `${Constants.OUTPUTS}(${stepName})['${Constants.OUTPUT_LOCATIONS.STATUS_CODE}']`;
+    } else if (propertyInOutputs) {
+      expressionValue = `${Constants.OUTPUTS}(${stepName})${propertyPath}`;
+    } else {
+      expressionValue = `${Constants.OUTPUT_LOCATIONS.BODY}(${stepName})${propertyPath}`;
+    }
+  }
+
+  return expressionValue;
+}
+
+export function convertPathToBracketsFormat(path: string, optional: boolean): string {
+  const pathSegments = path.split('.');
+
+  const value = pathSegments
+    .map((pathSegment) => {
+      const propertyStartsWithOptional = startsWith(pathSegment, '?');
+      const pathSegmentValue = propertyStartsWithOptional ? pathSegment.substr(1) : pathSegment;
+      const optionalQuestionMark = optional ? '?' : '';
+      return `${optionalQuestionMark}[${convertToStringLiteral(decodePropertySegment(pathSegmentValue))}]`;
+    })
+    .join('');
+
+  return optional && !startsWith(value, '?') ? `?${value}` : value;
 }
 
 function getPreservedValue(parameter: InputParameter): any {
@@ -633,4 +844,38 @@ export function escapeSchemaProperties(schemaProperties: Record<string, any>): R
   }
 
   return escapedSchemaProperties;
+}
+
+export function getNormalizedName(name: string): string {
+  if (!name) {
+    return name;
+  }
+
+  // Replace occurrences of ?[ from the name.
+  let normalizedName = name.replace(/\?\[/g, '');
+
+  // Replace occurrences of ?. from the name.
+  normalizedName = normalizedName.replace(/\?\./g, '');
+
+  // Replace occurrences of [ ] ' . from the name.
+  // eslint-disable-next-line no-useless-escape
+  normalizedName = normalizedName.replace(/[\['\]\.]/g, '');
+
+  return normalizedName || name;
+}
+
+export function getRepetitionReference(repetitionContext: RepetitionContext, actionName?: string): RepetitionReference | undefined {
+  if (actionName) {
+    return first((item) => equals(item.actionName, actionName), repetitionContext.repetitionReferences);
+  } else {
+    return getClosestRepetitionReference(repetitionContext);
+  }
+}
+
+function getClosestRepetitionReference(repetitionContext: RepetitionContext): RepetitionReference | undefined {
+  if (repetitionContext && repetitionContext.repetitionReferences && repetitionContext.repetitionReferences.length) {
+    return repetitionContext.repetitionReferences[0];
+  }
+
+  return undefined;
 }
