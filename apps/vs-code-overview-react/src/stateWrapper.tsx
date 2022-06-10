@@ -1,3 +1,4 @@
+import { ProjectName } from './run-service';
 import type { RootState } from './state/store';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -10,12 +11,12 @@ export const StateWrapper: React.FC = () => {
   useEffect(() => {
     if (overviewState.initialized) {
       switch (overviewState.project) {
-        case 'export': {
-          navigate('/export', { replace: true });
+        case ProjectName.export: {
+          navigate(`/${ProjectName.export}`, { replace: true });
           break;
         }
-        case 'overview': {
-          navigate('/overview', { replace: true });
+        case ProjectName.overview: {
+          navigate(`/${ProjectName.overview}`, { replace: true });
           break;
         }
         default: {
