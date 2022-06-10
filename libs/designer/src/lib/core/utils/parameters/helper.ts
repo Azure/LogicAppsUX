@@ -131,7 +131,7 @@ export function createParameterInfo(
       isDynamic: !!parameter.isDynamic,
       isUnknown: parameter.isUnknown,
     },
-    hideInUI: !isNullOrUndefined(parameter.hideInUI) ? parameter.hideInUI : equals(parameter.visibility, 'hideInUI'),
+    hideInUI: parameter?.hideInUI ?? equals(parameter.visibility, 'hideInUI'),
     label: parameter.title || parameter.summary || parameter.name,
     parameterKey: parameter.key,
     parameterName: parameter.name,
