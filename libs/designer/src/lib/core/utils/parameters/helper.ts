@@ -131,7 +131,7 @@ export function createParameterInfo(
       isDynamic: !!parameter.isDynamic,
       isUnknown: parameter.isUnknown,
     },
-    hideInUI: parameter.invisible,
+    hideInUI: parameter?.hideInUI ?? equals(parameter.visibility, 'hideInUI'),
     label: parameter.title || parameter.summary || parameter.name,
     parameterKey: parameter.key,
     parameterName: parameter.name,
@@ -692,7 +692,7 @@ function getExtraSegments(key: string, ancestorKey: string): Segment[] {
 }
 
 function transformInputParameter(inputParameter: InputParameter, parameterValue: any, invisible = false): InputParameter {
-  return { ...inputParameter, invisible, value: parameterValue };
+  return { ...inputParameter, hideInUI: invisible, value: parameterValue };
 }
 
 /**
