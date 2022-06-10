@@ -1,26 +1,29 @@
-import { App } from './app/app';
-import type { RunDisplayItem } from './run-service';
 import type { RootState } from './state/store';
-import { VSCodeContext } from './webviewCommunication';
-import { useContext } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export const StateWrapper: React.FC = () => {
+  const navigate = useNavigate();
   const overviewState = useSelector((state: RootState) => state.overview);
-  const vscode = useContext(VSCodeContext);
-  return overviewState.initialized ? (
-    <App
-      apiVersion={overviewState.apiVersion}
-      baseUrl={overviewState.baseUrl}
-      onOpenRun={(run: RunDisplayItem) => {
-        vscode.postMessage({
-          command: 'LoadRun',
-          item: run,
-        });
-      }}
-      workflowProperties={overviewState.workflowProperties}
-      accessToken={overviewState.accessToken}
-      corsNotice={overviewState.corsNotice}
-    ></App>
-  ) : null;
+
+  useEffect(() => {
+    if (overviewState.initialized) {
+      switch (overviewState.project) {
+        case 'export': {
+          navigate('/export', { replace: true });
+          break;
+        }
+        case 'overview': {
+          navigate('/overview', { replace: true });
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+  }, [overviewState]);
+
+  return null;
 };
