@@ -1,7 +1,10 @@
+import type { InputTokenProps } from '../../token/inputToken';
+import type { ValueSegmentType } from '../models/parameter';
+import { prepopulatedRichText } from './initialConfig';
+import { TokenNode } from './nodes/tokenNode';
 import AutoFocusPlugin from './plugins/AutoFocusPlugin';
 import AutoLinkPlugin from './plugins/AutoLinkPlugin';
 import ClearEditorPlugin from './plugins/ClearEditorPlugin';
-import TokenPlugin from './plugins/TokenPlugin';
 import TreeViewPlugin from './plugins/TreeViewPlugin';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import LexicalClearEditorPlugin from '@lexical/react/LexicalClearEditorPlugin';
@@ -15,10 +18,24 @@ import type { EditorState } from 'lexical';
 import { $getRoot, $getSelection } from 'lexical';
 import { useIntl } from 'react-intl';
 
+export type Segment = {
+  segmentId?: string;
+} & (
+  | {
+      type: ValueSegmentType.TOKEN;
+      token: InputTokenProps;
+    }
+  | {
+      type: ValueSegmentType.LITERAL;
+      value: string;
+    }
+);
+
 export interface BaseEditorProps {
   className?: string;
   placeholder?: string;
   BasePlugins?: BasePlugins;
+  initialValue?: Segment[];
   children?: React.ReactNode;
 }
 
@@ -50,12 +67,12 @@ const onError = (error: Error) => {
   console.error(error);
 };
 
-export const BaseEditor = ({ className, placeholder, BasePlugins = {}, children }: BaseEditorProps) => {
+export const BaseEditor = ({ className, placeholder, BasePlugins = {}, initialValue, children }: BaseEditorProps) => {
   const intl = useIntl();
   const initialConfig = {
     defaultTheme,
     onError,
-    nodes: [TableCellNode, TableNode, TableRowNode, AutoLinkNode, LinkNode],
+    nodes: [TableCellNode, TableNode, TableRowNode, AutoLinkNode, LinkNode, TokenNode],
   };
 
   const { autoFocus = true, autoLink, clearEditor, history = true, tokens, treeView } = BasePlugins;
@@ -70,14 +87,24 @@ export const BaseEditor = ({ className, placeholder, BasePlugins = {}, children 
       <div className={className ?? 'msla-base-editor'}>
         <LexicalRichTextPlugin
           contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
-          placeholder={<div className="editor-placeholder"> {placeholder} </div>}
+          placeholder={<span className="editor-placeholder"> {placeholder} </span>}
+          initialEditorState={
+            initialValue &&
+            (() => {
+              prepopulatedRichText(initialValue, tokens);
+            })
+          }
         />
         <LexicalOnChangePlugin onChange={onChange} />
         {treeView ? <TreeViewPlugin /> : null}
         {autoFocus ? <AutoFocusPlugin /> : null}
         {history ? <HistoryPlugin /> : null}
         {autoLink ? <AutoLinkPlugin /> : null}
-        {tokens ? <TokenPlugin /> : null}
+        {/* 
+          NOTE 14672766: Commenting out TokenPlugin because has a few issues
+          and is not needed for read only. Will revisit later.
+        */}
+        {/* {tokens ? <TokenPlugin data={[]} /> : null} */}
         {clearEditor ? <ClearEditorPlugin /> : null}
         {children}
         <LexicalClearEditorPlugin />

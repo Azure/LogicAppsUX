@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { isRootNode } from '../../parsers/models/workflowNode';
@@ -9,7 +10,7 @@ import {
   ParameterGroupKeys,
   toParameterInfoMap,
   updateParameterWithValues,
-} from '../../utils/parameterhelper';
+} from '../../utils/parameters/helper';
 import { getOperationSettings } from './settings';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';

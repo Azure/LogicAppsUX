@@ -3,14 +3,14 @@ import type { JsonInputStyle } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-export interface WorkflowLoadingState {
+export interface DataMapLoadingState {
   armToken?: string;
   resourcePath?: string;
   loadingMethod: 'file' | 'arm';
   dataMap?: JsonInputStyle;
 }
 
-const initialState: WorkflowLoadingState = {
+const initialState: DataMapLoadingState = {
   loadingMethod: 'file',
   resourcePath: 'SimpleCustomerOrder.json',
 };
@@ -51,7 +51,7 @@ export const dataMapDataLoaderSlice = createSlice({
       state.dataMap = action.payload;
     });
 
-    builder.addCase(loadDataMap.rejected, (state, action) => {
+    builder.addCase(loadDataMap.rejected, (state) => {
       // TODO change to null for error handling case
       state.dataMap = undefined;
     });

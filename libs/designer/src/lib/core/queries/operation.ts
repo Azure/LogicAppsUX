@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connector, OperationInfo, OperationManifest } from '@microsoft-logic-apps/utils';
