@@ -11,6 +11,7 @@ export const ParametersTab = () => {
   const selectedNode = useSelector((state: RootState) => state.panel.selectedNode);
   const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
   const { readOnly = false } = useContext(ProviderWrappedContext) ?? {};
+
   return (
     <>
       {Object.keys(parameters?.parameterGroups ?? {}).map((sectionName) => {
@@ -26,6 +27,7 @@ export const ParametersTab = () => {
                 label: param.label,
                 tokenEditor: true,
                 value: param.value,
+                required: param.required,
               },
             };
           });

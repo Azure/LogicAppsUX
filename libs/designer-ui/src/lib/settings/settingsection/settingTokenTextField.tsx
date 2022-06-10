@@ -15,13 +15,16 @@ export interface SettingTokenTextFieldProps {
   label: string;
   readOnly?: boolean;
   tokenEditor: true;
+  required?: boolean;
   onValueChange?: TextInputChangeHandler;
 }
-export const SettingTokenTextField: React.FC<SettingTokenTextFieldProps> = ({ value, placeholder, label, readOnly }) => {
+export const SettingTokenTextField: React.FC<SettingTokenTextFieldProps> = ({ value, placeholder, label, readOnly, required }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="msla-input-parameter-label">
-        <Label className="msla-label">{label.toUpperCase()}</Label>
+        <Label className="msla-label" required={required}>
+          {label.toUpperCase()}
+        </Label>
       </div>
       <BaseEditor
         className="msla-setting-token-editor-container"
