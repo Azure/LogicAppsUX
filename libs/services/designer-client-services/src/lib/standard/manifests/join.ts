@@ -10,18 +10,22 @@ export default {
     summary: 'Join',
 
     inputs: {
-      from: {
-        type: 'array',
-        title: 'From',
-        required: true,
-        description: 'Array to join',
+      type: 'object',
+      properties: {
+        from: {
+          type: 'array',
+          title: 'From',
+          required: true,
+          description: 'Array to join',
+        },
+        joinWith: {
+          type: 'string',
+          title: 'Join with',
+          required: true,
+          description: 'Join with separator',
+        },
       },
-      joinWith: {
-        type: 'string',
-        title: 'Join with',
-        required: true,
-        description: 'Join with separator',
-      },
+      required: ['from', 'joinWith'],
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,
