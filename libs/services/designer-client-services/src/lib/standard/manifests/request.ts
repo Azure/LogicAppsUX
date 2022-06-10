@@ -10,55 +10,59 @@ export default {
     summary: 'When a HTTP request is received',
 
     inputs: {
-      callbackUrl: {
-        type: 'string',
-        title: 'HTTP URL',
-        description: 'URL will be generated after save',
-        'x-ms-visiblity': 'important',
-        'x-ms-editor': 'copyable',
-        'x-ms-serialization': 'uionly',
-      },
-      schema: {
-        type: 'object',
-        title: 'Request Body JSON Schema',
-        description:
-          'Example:\n{\n    "type": "object",\n    "properties": {\n        "address": {\n            "type": "string"\n        }\n    },\n    "required": ["address"]\n}',
-        'x-ms-editor': 'schema',
-        'x-ms-visiblity': 'important',
-      },
-      method: {
-        type: 'string',
-        title: 'Method',
-        'x-ms-editor': 'combobox',
-        'x-ms-editor-options': {
-          options: [
-            {
-              displayName: 'GET',
-              value: 'GET',
-            },
-            {
-              displayName: 'PUT',
-              value: 'PUT',
-            },
-            {
-              displayName: 'POST',
-              value: 'POST',
-            },
-            {
-              displayName: 'PATCH',
-              value: 'PATCH',
-            },
-            {
-              displayName: 'DELETE',
-              value: 'DELETE',
-            },
-          ],
+      type: 'object',
+      properties: {
+        callbackUrl: {
+          type: 'string',
+          title: 'HTTP URL',
+          description: 'URL will be generated after save',
+          'x-ms-visiblity': 'important',
+          'x-ms-editor': 'copyable',
+          'x-ms-serialization': 'uionly',
+        },
+        schema: {
+          type: 'object',
+          title: 'Request Body JSON Schema',
+          description:
+            'Example:\n{\n    "type": "object",\n    "properties": {\n        "address": {\n            "type": "string"\n        }\n    },\n    "required": ["address"]\n}',
+          'x-ms-editor': 'schema',
+          'x-ms-visiblity': 'important',
+        },
+        method: {
+          type: 'string',
+          title: 'Method',
+          'x-ms-editor': 'combobox',
+          'x-ms-editor-options': {
+            options: [
+              {
+                displayName: 'GET',
+                value: 'GET',
+              },
+              {
+                displayName: 'PUT',
+                value: 'PUT',
+              },
+              {
+                displayName: 'POST',
+                value: 'POST',
+              },
+              {
+                displayName: 'PATCH',
+                value: 'PATCH',
+              },
+              {
+                displayName: 'DELETE',
+                value: 'DELETE',
+              },
+            ],
+          },
+        },
+        relativePath: {
+          type: 'string',
+          title: 'Relative path',
         },
       },
-      relativePath: {
-        type: 'string',
-        title: 'Relative path',
-      },
+      required: [],
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,

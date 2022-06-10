@@ -10,21 +10,25 @@ export default {
     summary: 'Select',
 
     inputs: {
-      from: {
-        type: 'array',
-        title: 'From',
-        required: true,
-        description: 'Array to select from',
-      },
-      select: {
-        type: 'object',
-        title: 'Map',
-        required: true,
-        'x-ms-editor': 'dictionary',
-        'x-ms-editor-options': {
-          valueType: 'any',
+      type: 'object',
+      properties: {
+        from: {
+          type: 'array',
+          title: 'From',
+          required: true,
+          description: 'Array to select from',
+        },
+        select: {
+          type: 'object',
+          title: 'Map',
+          required: true,
+          'x-ms-editor': 'dictionary',
+          'x-ms-editor-options': {
+            valueType: 'any',
+          },
         },
       },
+      required: ['from', 'select'],
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,

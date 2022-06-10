@@ -10,35 +10,39 @@ export default {
     summary: 'Response',
 
     inputs: {
-      statusCode: {
-        type: 'integer',
-        title: 'Status Code',
-        required: true,
-        default: 200,
-      },
-      headers: {
-        type: 'object',
-        title: 'Headers',
-        description: 'Enter JSON object of response headers',
-        'x-ms-visibility': 'important',
-        'x-ms-editor': 'dictionary',
-        'x-ms-editor-options': {
-          valueType: 'string',
+      type: 'object',
+      properties: {
+        statusCode: {
+          type: 'integer',
+          title: 'Status Code',
+          required: true,
+          default: 200,
+        },
+        headers: {
+          type: 'object',
+          title: 'Headers',
+          description: 'Enter JSON object of response headers',
+          'x-ms-visibility': 'important',
+          'x-ms-editor': 'dictionary',
+          'x-ms-editor-options': {
+            valueType: 'string',
+          },
+        },
+        schema: {
+          type: 'object',
+          title: 'Response Body JSON Schema',
+          description:
+            'Example:\n{\n    "type": "object",\n    "properties": {\n        "address": {\n            "type": "string"\n        }\n    },\n    "required": ["address"]\n}',
+          'x-ms-editor': 'schema',
+        },
+        body: {
+          type: 'any',
+          title: 'Body',
+          description: 'Enter response content',
+          'x-ms-visibility': 'important',
         },
       },
-      schema: {
-        type: 'object',
-        title: 'Response Body JSON Schema',
-        description:
-          'Example:\n{\n    "type": "object",\n    "properties": {\n        "address": {\n            "type": "string"\n        }\n    },\n    "required": ["address"]\n}',
-        'x-ms-editor': 'schema',
-      },
-      body: {
-        type: 'any',
-        title: 'Body',
-        description: 'Enter response content',
-        'x-ms-visibility': 'important',
-      },
+      required: ['statusCode'],
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,
