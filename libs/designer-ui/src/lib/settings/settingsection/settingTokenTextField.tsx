@@ -20,7 +20,7 @@ export interface SettingTokenTextFieldProps {
 }
 export const SettingTokenTextField: React.FC<SettingTokenTextFieldProps> = ({ value, placeholder, label, readOnly, required }) => {
   return (
-    <div>
+    <>
       <div className="msla-input-parameter-label">
         <Label className="msla-label" required={required}>
           {label.toUpperCase()}
@@ -48,6 +48,6 @@ export const SettingTokenTextField: React.FC<SettingTokenTextFieldProps> = ({ va
           }
         })}
       />
-    </div>
+    </>
   );
 };
