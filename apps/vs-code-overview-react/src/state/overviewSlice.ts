@@ -1,3 +1,4 @@
+import type { ProjectName } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -8,7 +9,7 @@ export interface InitializePayload {
   corsNotice?: string;
   accessToken?: string;
   workflowProperties: OverviewPropertiesProps;
-  project: string;
+  project: ProjectName;
 }
 
 interface initializedOverviewState {
@@ -18,7 +19,7 @@ interface initializedOverviewState {
   apiVersion: string;
   baseUrl: string;
   workflowProperties: OverviewPropertiesProps;
-  project: string;
+  project: ProjectName;
 }
 
 interface uninitializedOverviewState {

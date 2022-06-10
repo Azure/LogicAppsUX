@@ -140,3 +140,8 @@ interface RunTriggerHistoryProperties {
   startTime: string;
   status: string;
 }
+
+export enum ProjectName {
+  export = 'export',
+  overview = 'overview',
+}
