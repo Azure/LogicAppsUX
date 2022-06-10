@@ -1,4 +1,4 @@
-describe('vs-code-overview-react/app', () => {
+describe('vs-code-react/app', () => {
   beforeEach(() => {
     cy.visit('/iframe.html?id=fortesting-overview--e-2-e');
     cy.intercept('GET', 'https://baseurl/workflows/run/runs?api-version=apiversion', { fixture: 'overview/happy/get-runs.json' }).as(
