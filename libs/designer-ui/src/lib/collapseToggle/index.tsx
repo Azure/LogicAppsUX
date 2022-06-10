@@ -1,5 +1,6 @@
 import { TooltipHost, DirectionalHint, Icon } from '@fluentui/react';
 import { FontSizes } from '@fluentui/theme';
+import { useIntl } from 'react-intl';
 
 interface CollapseToggleProps {
   collapsed?: boolean;
@@ -9,8 +10,19 @@ interface CollapseToggleProps {
 const CollapseToggle = (props: CollapseToggleProps) => {
   const { collapsed = false, handleCollapse } = props;
 
+  const intl = useIntl();
+  const EXPAND_TEXT = intl.formatMessage({
+    defaultMessage: 'Expand',
+    description: 'Expand, making the node bigger, showing the contents',
+  });
+
+  const COLLAPSE_TEXT = intl.formatMessage({
+    defaultMessage: 'Collapse',
+    description: 'Collapse, making the node smaller, hiding the contents',
+  });
+
   const iconName = collapsed ? 'ChevronDown' : 'ChevronUp';
-  const toggleText = collapsed ? 'Expand' : 'Collapse';
+  const toggleText = collapsed ? EXPAND_TEXT : COLLAPSE_TEXT;
 
   return (
     <TooltipHost content={toggleText} directionalHint={DirectionalHint.rightCenter}>

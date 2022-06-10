@@ -157,15 +157,7 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
   };
 
   if (isSwitchAction(action)) {
-    const [defaultGraph, defaultActions, defaultNodesMetadata] = processNestedActions(
-      `${actionName}-defaultActions`,
-      action.default?.actions
-    );
-    actionGraphs.push(defaultGraph);
-    allActions = { ...defaultActions };
-    nodesMetadata = { ...defaultNodesMetadata };
-
-    addEmptyPlaceholderNodeIfNeeded(defaultGraph, nodesMetadata);
+    applyActions(`${actionName}-defaultActions`, action.default?.actions, 'SWITCH-DEFAULT');
     for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
       applyActions(`${actionName}-${caseName}Actions`, caseAction.actions, 'SWITCH-CASE');
     }

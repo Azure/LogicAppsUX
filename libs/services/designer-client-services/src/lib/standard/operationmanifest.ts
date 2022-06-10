@@ -238,7 +238,31 @@ function isServiceProviderOperation(definition: any): boolean {
 }
 
 function isInBuiltOperation(definition: any): boolean {
-  return supportedManifestTypes.includes(definition.type.toLowerCase());
+  switch (definition.type.toLowerCase()) {
+    case compose:
+    case condition:
+    case foreach:
+    case function_:
+    case initializevariable:
+    case incrementvariable:
+    case invokefunction:
+    case javascriptcode:
+    case liquid:
+    case request:
+    case response:
+    case workflow:
+    case xslt:
+    case xmlvalidation:
+    case flatfiledecoding:
+    case flatfileencoding:
+    case scope:
+    case swiftdecode:
+    case swiftencode:
+      return true;
+
+    default:
+      return false;
+  }
 }
 
 function getBuiltInOperationInfo(definition: any): OperationInfo {
