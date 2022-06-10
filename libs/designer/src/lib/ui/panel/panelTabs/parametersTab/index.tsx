@@ -1,44 +1,44 @@
 import constants from '../../../../common/constants';
 import { ProviderWrappedContext } from '../../../../core';
 import type { RootState } from '../../../../core/store';
-import type { PanelTab, SettingSectionProps } from '@microsoft/designer-ui';
+import { getId } from '@fluentui/react';
+import type { PanelTab, Settings, SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
-  // TODO: Retrieve logic from a redux store?
   const selectedNode = useSelector((state: RootState) => state.panel.selectedNode);
   const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
-  const { readOnly } = useContext(ProviderWrappedContext) ?? {};
-  if (parameters?.isLoading) {
-    return <div>Loading</div>;
-  }
-
+  const { readOnly = false } = useContext(ProviderWrappedContext) ?? {};
   return (
     <>
-      {Object.keys(parameters?.parameterGroups ?? {}).map((key) => {
-        const settingSectionProps: SettingSectionProps = {
-          id: 'defaultID',
-          title: 'Default',
-          expanded: false,
-          settings: parameters.parameterGroups[key]?.parameters.map((param) => {
+      {Object.keys(parameters?.parameterGroups ?? {}).map((sectionName) => {
+        const id = getId();
+        const settings: Settings[] = parameters.parameterGroups[sectionName]?.parameters
+          .filter((x) => !x.hideInUI)
+          .map((param) => {
             return {
-              settingType: 'SettingTextField',
+              settingType: 'SettingTokenTextField',
               settingProp: {
                 readOnly,
                 id: param.id,
                 label: param.label,
+                tokenEditor: true,
                 value: param.value,
               },
             };
-          }),
+          });
+        const settingSectionProps: SettingSectionProps = {
+          id: getId(),
+          title: sectionName.toUpperCase(),
+          expanded: true,
+          settings,
         };
         return (
-          <>
-            {key === 'default' ? null : <h3>{key}</h3>}
+          <div key={id}>
             <SettingsSection {...settingSectionProps} />
-          </>
+          </div>
         );
       })}
     </>

@@ -10,6 +10,7 @@ import {
   CustomValueSlider,
   SettingTextField,
   SettingToggle,
+  SettingTokenTextField,
 } from './settingsection';
 import type {
   MultiSelectSettingProps,
@@ -20,6 +21,7 @@ import type {
   ReactiveToggleProps,
   CustomValueSliderProps,
   SettingTextFieldProps,
+  SettingTokenTextFieldProps,
   SettingToggleProps,
 } from './settingsection';
 import { Separator, useTheme, Icon } from '@fluentui/react';
@@ -63,6 +65,10 @@ export type Settings =
   | {
       settingType: 'SettingToggle';
       settingProp: SettingToggleProps;
+    }
+  | {
+      settingType: 'SettingTokenTextField';
+      settingProp: SettingTokenTextFieldProps;
     };
 
 export interface SettingSectionProps {
@@ -145,6 +151,8 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
               return <SettingTextField {...settingProp} />;
             case 'SettingToggle':
               return <SettingToggle {...settingProp} />;
+            case 'SettingTokenTextField':
+              return <SettingTokenTextField {...settingProp} />;
             default:
               return null;
           }
