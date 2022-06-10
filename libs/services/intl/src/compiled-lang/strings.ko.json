@@ -149,6 +149,12 @@
       "value": "필수 항목으로, XML로 변환할 값입니다."
     }
   ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Show all versions"
+    }
+  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -218,6 +224,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 데이터 URI를 변환할 값입니다."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Global search"
     }
   ],
   "2K2fAj": [
@@ -308,6 +320,12 @@
     {
       "type": 0,
       "value": "서비스 요청 ID"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Tour/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -596,6 +614,12 @@
     {
       "type": 0,
       "value": "기간"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
     }
   ],
   "ECZC6Y": [
@@ -1105,6 +1129,12 @@
       "value": "필수 항목으로, 비교하는 개체보다 작거나 같은지 확인할 개체입니다."
     }
   ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Discard"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -1240,6 +1270,12 @@
       "value": "필수 사항으로, 양식 데이터 또는 양식 인코딩 응답이 있는 작업의 이름입니다."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1250,6 +1286,12 @@
     {
       "type": 0,
       "value": "실패함"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Give feedback"
     }
   ],
   "TI44R1": [
@@ -1620,6 +1662,12 @@
       "value": "패널"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Configuration"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1758,6 +1806,12 @@
       "value": "무시됨"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Publish"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1845,6 +1899,12 @@
       "value": "기간"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Redo"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1901,6 +1961,12 @@
     {
       "type": 0,
       "value": "초"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "j2MU0b": [
@@ -2316,6 +2382,12 @@
       "value": "필수 항목으로, 정수로 변환되는 값입니다."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2614,6 +2686,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 길이를 가져올 컬렉션입니다."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [

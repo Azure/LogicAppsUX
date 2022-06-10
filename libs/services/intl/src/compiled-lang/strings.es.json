@@ -149,6 +149,12 @@
       "value": "Obligatorio. El valor que se convertirá a XML."
     }
   ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Show all versions"
+    }
+  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -229,6 +235,12 @@
     {
       "type": 0,
       "value": "Obligatorio. El valor que se convertirá a un URI de datos."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Global search"
     }
   ],
   "2K2fAj": [
@@ -319,6 +331,12 @@
     {
       "type": 0,
       "value": "Id. de solicitud de servicio"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Tour/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -607,6 +625,12 @@
     {
       "type": 0,
       "value": "Duración"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
     }
   ],
   "ECZC6Y": [
@@ -1127,6 +1151,12 @@
       "value": "Obligatorio. El objeto que se comprobará si es menor o igual que el objeto con el que se está comparando."
     }
   ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Discard"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -1273,6 +1303,12 @@
       "value": "Obligatorio. El nombre de la acción con una respuesta form-data o form-encoded."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1283,6 +1319,12 @@
     {
       "type": 0,
       "value": "Con errores"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Give feedback"
     }
   ],
   "TI44R1": [
@@ -1653,6 +1695,12 @@
       "value": "panel"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Configuration"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1791,6 +1839,12 @@
       "value": "Omitido"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Publish"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1897,6 +1951,12 @@
       "value": "Duración"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Redo"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1953,6 +2013,12 @@
     {
       "type": 0,
       "value": "s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "j2MU0b": [
@@ -2379,6 +2445,12 @@
       "value": "Obligatorio. El valor que se convierte a un entero."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2677,6 +2749,12 @@
     {
       "type": 0,
       "value": "Obligatorio. La colección de la cual se obtendrá la longitud."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [
