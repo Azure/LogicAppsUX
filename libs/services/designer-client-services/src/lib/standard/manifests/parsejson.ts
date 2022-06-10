@@ -10,19 +10,23 @@ export default {
     summary: 'Parse JSON',
 
     inputs: {
-      content: {
-        title: 'Content',
-        required: true,
-        description: 'Array to create table from',
+      type: 'object',
+      properties: {
+        content: {
+          title: 'Content',
+          required: true,
+          description: 'Array to create table from',
+        },
+        schema: {
+          type: 'object',
+          title: 'Schema',
+          description:
+            'Example:\n{\n    "type": "object",\n    "properties": {\n        "address": {\n            "type": "string"\n        }\n    },\n    "required": ["address"]\n}',
+          required: true,
+          'x-ms-editor': 'schema',
+        },
       },
-      schema: {
-        type: 'object',
-        title: 'Schema',
-        description:
-          'Example:\n{\n    "type": "object",\n    "properties": {\n        "address": {\n            "type": "string"\n        }\n    },\n    "required": ["address"]\n}',
-        required: true,
-        'x-ms-editor': 'schema',
-      },
+      required: ['content', 'schema'],
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,

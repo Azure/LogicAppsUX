@@ -10,21 +10,25 @@ export default {
     summary: 'Filter array',
 
     inputs: {
-      from: {
-        type: 'array',
-        title: 'From',
-        required: true,
-        description: 'Array to filter',
-      },
-      where: {
-        type: 'string',
-        'x-ms-editor': 'condition',
-        'x-ms-editor-options': {
-          isOldFormat: true,
+      type: 'object',
+      properties: {
+        from: {
+          type: 'array',
+          title: 'From',
+          required: true,
+          description: 'Array to filter',
         },
-        required: true,
-        title: 'Filter Query',
+        where: {
+          type: 'string',
+          'x-ms-editor': 'condition',
+          'x-ms-editor-options': {
+            isOldFormat: true,
+          },
+          required: true,
+          title: 'Filter Query',
+        },
       },
+      required: ['from', 'where'],
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,

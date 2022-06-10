@@ -10,24 +10,28 @@ export default {
     summary: 'Create HTML table',
 
     inputs: {
-      from: {
-        type: 'array',
-        title: 'From',
-        required: true,
-        description: 'Array to create table from',
+      type: 'object',
+      properties: {
+        from: {
+          type: 'array',
+          title: 'From',
+          required: true,
+          description: 'Array to create table from',
+        },
+        format: {
+          type: 'string',
+          default: 'HTML',
+          required: true,
+          'x-ms-visibility': 'hideInUI',
+        },
+        columns: {
+          type: 'array',
+          title: 'Columns',
+          required: true,
+          'x-ms-editor': 'table',
+        },
       },
-      format: {
-        type: 'string',
-        default: 'HTML',
-        required: true,
-        'x-ms-visibility': 'hideInUI',
-      },
-      columns: {
-        type: 'array',
-        title: 'Columns',
-        required: true,
-        'x-ms-editor': 'table',
-      },
+      required: ['from', 'format', 'columns'],
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,
