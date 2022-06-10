@@ -5,7 +5,7 @@
       "Fetch_From_Zen_API": {
         "inputs": {
           "method": "GET",
-          "uri": "https://zenquotes.io/api/random?key=5a154c9a4f64a544506fcbd416b57f6516d1dbcf"
+          "uri": "https://zenquotes.io/api/random"
         },
         "runAfter": {},
         "type": "Http"
