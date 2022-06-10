@@ -33,6 +33,7 @@ export type Segment = {
 
 export interface BaseEditorProps {
   className?: string;
+  readonly?: boolean;
   placeholder?: string;
   BasePlugins?: BasePlugins;
   initialValue?: Segment[];
@@ -67,7 +68,7 @@ const onError = (error: Error) => {
   console.error(error);
 };
 
-export const BaseEditor = ({ className, placeholder, BasePlugins = {}, initialValue, children }: BaseEditorProps) => {
+export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugins = {}, initialValue, children }: BaseEditorProps) => {
   const intl = useIntl();
   const initialConfig = {
     defaultTheme,

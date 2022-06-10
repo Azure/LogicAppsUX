@@ -2,7 +2,7 @@ import constants from '../../../../common/constants';
 import { ProviderWrappedContext } from '../../../../core';
 import type { RootState } from '../../../../core/store';
 import { getId } from '@fluentui/react';
-import type { PanelTab, Settings, SettingSectionProps } from '@microsoft/designer-ui';
+import type { PanelTab, Settings } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
@@ -29,15 +29,9 @@ export const ParametersTab = () => {
               },
             };
           });
-        const settingSectionProps: SettingSectionProps = {
-          id: getId(),
-          title: sectionName.toUpperCase(),
-          expanded: true,
-          settings,
-        };
         return (
           <div key={id}>
-            <SettingsSection {...settingSectionProps} />
+            <SettingsSection id={getId()} title={sectionName} settings={settings} showHeading={false} />
           </div>
         );
       })}
