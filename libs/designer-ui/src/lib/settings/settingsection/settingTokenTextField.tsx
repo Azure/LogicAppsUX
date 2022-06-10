@@ -17,7 +17,7 @@ export interface SettingTokenTextFieldProps {
   tokenEditor: true;
   onValueChange?: TextInputChangeHandler;
 }
-export const SettingTokenTextField: React.FC<SettingTokenTextFieldProps> = ({ value, placeholder, label }) => {
+export const SettingTokenTextField: React.FC<SettingTokenTextFieldProps> = ({ value, placeholder, label, readOnly }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="msla-input-parameter-label">
@@ -27,6 +27,7 @@ export const SettingTokenTextField: React.FC<SettingTokenTextFieldProps> = ({ va
         className="msla-setting-token-editor-container"
         placeholder={placeholder}
         BasePlugins={{ tokens: true }}
+        readonly={readOnly}
         initialValue={value.map((x) => {
           if (x.type === ValueSegmentType.TOKEN) {
             return {

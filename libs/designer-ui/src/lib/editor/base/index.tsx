@@ -73,6 +73,7 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
   const initialConfig = {
     defaultTheme,
     onError,
+    readOnly: readonly,
     nodes: [TableCellNode, TableNode, TableRowNode, AutoLinkNode, LinkNode, TokenNode],
   };
 
