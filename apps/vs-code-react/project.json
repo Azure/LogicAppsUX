@@ -1,5 +1,5 @@
 {
-  "sourceRoot": "apps/vs-code-overview-react/src",
+  "sourceRoot": "apps/vs-code-react/src",
   "projectType": "application",
   "targets": {
     "build": {
@@ -9,13 +9,13 @@
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/vs-code-designer/overview",
-        "index": "apps/vs-code-overview-react/src/index.html",
+        "index": "apps/vs-code-react/src/index.html",
         "baseHref": "/",
-        "main": "apps/vs-code-overview-react/src/main.tsx",
-        "polyfills": "apps/vs-code-overview-react/src/polyfills.ts",
-        "tsConfig": "apps/vs-code-overview-react/tsconfig.app.json",
-        "assets": ["apps/vs-code-overview-react/src/favicon.ico", "apps/vs-code-overview-react/src/assets"],
-        "styles": ["apps/vs-code-overview-react/src/styles.less"],
+        "main": "apps/vs-code-react/src/main.tsx",
+        "polyfills": "apps/vs-code-react/src/polyfills.ts",
+        "tsConfig": "apps/vs-code-react/tsconfig.app.json",
+        "assets": ["apps/vs-code-react/src/favicon.ico", "apps/vs-code-react/src/assets"],
+        "styles": ["apps/vs-code-react/src/styles.less"],
         "scripts": [],
         "webpackConfig": "@nrwl/react/plugins/webpack"
       },
@@ -23,8 +23,8 @@
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/vs-code-overview-react/src/environments/environment.ts",
-              "with": "apps/vs-code-overview-react/src/environments/environment.prod.ts"
+              "replace": "apps/vs-code-react/src/environments/environment.ts",
+              "with": "apps/vs-code-react/src/environments/environment.prod.ts"
             }
           ],
           "optimization": true,
@@ -45,16 +45,16 @@
     "serve": {
       "executor": "@nrwl/web:dev-server",
       "options": {
-        "buildTarget": "vs-code-overview-react:build",
+        "buildTarget": "vs-code-react:build",
         "hmr": true
       },
       "configurations": {
         "production": {
-          "buildTarget": "vs-code-overview-react:build:production",
+          "buildTarget": "vs-code-react:build:production",
           "hmr": false
         },
         "development": {
-          "buildTarget": "vs-code-overview-react:build:development"
+          "buildTarget": "vs-code-react:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -63,14 +63,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/vs-code-overview-react/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/vs-code-react/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/vs-code-overview-react"],
+      "outputs": ["coverage/apps/vs-code-react"],
       "options": {
-        "jestConfig": "apps/vs-code-overview-react/jest.config.ts",
+        "jestConfig": "apps/vs-code-react/jest.config.ts",
         "passWithNoTests": true
       }
     }
