@@ -149,6 +149,12 @@
       "value": "Parametr wymagany. Wartość do przekonwertowania na dane XML."
     }
   ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Show all versions"
+    }
+  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -269,6 +275,12 @@
       "value": "Wymagane. Wartość do przekonwertowania na dane identyfikatora URI."
     }
   ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Global search"
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
@@ -357,6 +369,12 @@
     {
       "type": 0,
       "value": "Identyfikator żądania usługi"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Tour/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -645,6 +663,12 @@
     {
       "type": 0,
       "value": "Czas trwania"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
     }
   ],
   "ECZC6Y": [
@@ -1187,6 +1211,12 @@
       "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on mniejszy lub równy porównywanemu obiektowi."
     }
   ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Discard"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -1355,6 +1385,12 @@
       "value": "Wymagane. Nazwa akcji z odpowiedzią w postaci danych formularza lub odpowiedzią zakodowaną w formularzu."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1365,6 +1401,12 @@
     {
       "type": 0,
       "value": "Niepowodzenie"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Give feedback"
     }
   ],
   "TI44R1": [
@@ -1735,6 +1777,12 @@
       "value": "panel"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Configuration"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1873,6 +1921,12 @@
       "value": "Zignorowane"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Publish"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -2001,6 +2055,12 @@
       "value": "Czas trwania"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Redo"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -2057,6 +2117,12 @@
     {
       "type": 0,
       "value": " s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "j2MU0b": [
@@ -2505,6 +2571,12 @@
       "value": "Parametr wymagany. Wartość konwertowana na liczbę całkowitą."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2803,6 +2875,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Kolekcja, której długość należy uzyskać."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [

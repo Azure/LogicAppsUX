@@ -1,9 +1,9 @@
 export interface Schema {
   name: string;
-  type: string;
+  type: SchemaType;
   targetNamespace: string;
   namespaces: Map<string, string>;
-  rootNode: SchemaNode;
+  schemaTreeRoot: SchemaNode;
 }
 
 export interface SchemaNode {
@@ -11,9 +11,24 @@ export interface SchemaNode {
   name: string;
   namespacePrefix: string;
   namespaceUri: string;
-  nodeDataType: string;
+  schemaNodeDataType: string; // XmlTypeCode
+  properties: SchemaNodeProperties;
   optional?: boolean;
   repeating?: boolean;
   attribute?: boolean;
   children: SchemaNode[];
+  parent: SchemaNode;
+}
+
+export enum SchemaType {
+  NotSpecified = 'NotSpecified',
+  XML = 'XML',
+  JSON = 'JSON',
+}
+
+export enum SchemaNodeProperties {
+  NotSpecified = 0,
+  Optional = 1,
+  Repeating = 2,
+  Attribute = 4,
 }
