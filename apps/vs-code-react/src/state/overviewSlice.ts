@@ -1,3 +1,4 @@
+import type { ProjectName } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -8,6 +9,7 @@ export interface InitializePayload {
   corsNotice?: string;
   accessToken?: string;
   workflowProperties: OverviewPropertiesProps;
+  project: ProjectName;
 }
 
 interface initializedOverviewState {
@@ -17,6 +19,7 @@ interface initializedOverviewState {
   apiVersion: string;
   baseUrl: string;
   workflowProperties: OverviewPropertiesProps;
+  project: ProjectName;
 }
 
 interface uninitializedOverviewState {
@@ -34,8 +37,9 @@ export const overviewSlice = createSlice({
   initialState: initialState as OverviewState,
   reducers: {
     initialize: (state: OverviewState, action: PayloadAction<InitializePayload>) => {
-      const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties } = action.payload;
+      const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, project } = action.payload;
       state.initialized = true;
+      (state as initializedOverviewState).project = project;
       (state as initializedOverviewState).accessToken = accessToken;
       (state as initializedOverviewState).apiVersion = apiVersion;
       (state as initializedOverviewState).baseUrl = baseUrl;

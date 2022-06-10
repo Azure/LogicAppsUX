@@ -1,6 +1,6 @@
 import '../../../libs/designer/src/lib/ui/styles.less';
+import { Router } from './router/index';
 import { store } from './state/store';
-import { StateWrapper } from './stateWrapper';
 import { ThemeProvider } from './themeProvider';
 import { WebViewCommunication } from './webviewCommunication';
 import { initializeIcons } from '@fluentui/react';
@@ -14,7 +14,7 @@ ReactDOM.render(
     <ThemeProvider>
       <Provider store={store}>
         <WebViewCommunication>
-          <StateWrapper />
+          <Router />
         </WebViewCommunication>
       </Provider>
     </ThemeProvider>

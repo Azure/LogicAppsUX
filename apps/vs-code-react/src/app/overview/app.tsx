@@ -1,6 +1,6 @@
-import messages from '../../../../libs/services/intl/src/compiled-lang/strings.json';
-import type { RunDisplayItem, Runs } from '../run-service';
-import { mapToRunItem, RunService } from '../run-service';
+import messages from '../../../../../libs/services/intl/src/compiled-lang/strings.json';
+import type { RunDisplayItem, Runs } from '../../run-service';
+import { mapToRunItem, RunService } from '../../run-service';
 import type { OnErrorFn } from '@formatjs/intl';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import { Overview, isRunError } from '@microsoft/designer-ui';
