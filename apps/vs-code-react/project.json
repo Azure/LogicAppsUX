@@ -8,7 +8,7 @@
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/vs-code-designer/overview",
+        "outputPath": "dist/apps/vs-code-designer/react",
         "index": "apps/vs-code-react/src/index.html",
         "baseHref": "/",
         "main": "apps/vs-code-react/src/main.tsx",
