@@ -18,20 +18,15 @@
         "runAfter": {},
         "type": "ApiConnection"
       },
-      "Initialize_variable": {
+      "Join": {
         "inputs": {
-          "variables": [
-            {
-              "name": "t",
-              "type": "integer",
-              "value": 0
-            }
-          ]
+          "from": "@triggerBody()",
+          "joinWith": ","
         },
         "runAfter": {
           "Response": ["Succeeded"]
         },
-        "type": "InitializeVariable"
+        "type": "Join"
       },
       "Response": {
         "inputs": {

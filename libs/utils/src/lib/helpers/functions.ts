@@ -233,7 +233,7 @@ export function getPropertyValue(object: Record<string, unknown> | null | undefi
  * @arg [boolean] caseInsensitive - Whether to use a case insensitive comparison on property names.
  * @return {any} - The value of the property, if found. Otherwise, undefined.
  */
-export function getObjectPropertyValue(object: Record<string, unknown>, properties: string[], caseInsensitive = true): any {
+export function getObjectPropertyValue(object: Record<string, any>, properties: string[], caseInsensitive = true): any {
   let value = object || {};
 
   for (const property of properties) {
