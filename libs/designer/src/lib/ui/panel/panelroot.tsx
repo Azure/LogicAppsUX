@@ -6,6 +6,7 @@ import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
+import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
 import { settingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
@@ -50,7 +51,9 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
   const showCommentBox = !isNullOrUndefined(comment);
   useEffect(() => {
     monitoringTab.enabled = !!isMonitoringView;
-    setRegisteredTabs((currentTabs) => registerTabs([monitoringTab, aboutTab, codeViewTab, settingsTab, scratchTab], currentTabs));
+    setRegisteredTabs((currentTabs) =>
+      registerTabs([monitoringTab, parametersTab, aboutTab, codeViewTab, settingsTab, scratchTab], currentTabs)
+    );
   }, [readOnly, isMonitoringView]);
 
   useEffect(() => {

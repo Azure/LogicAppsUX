@@ -51,13 +51,11 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
         aria-describedby={describedBy}
         className={css('msla-content-fit', isDragging && 'dragging')}
         aria-label={title}
-        role="button"
-        onClick={handleClick}
         tabIndex={0}
       >
         <div className="msla-scope-v2--header msla-scope-header-style" style={{ borderColor: brandColor }}>
           {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
-          <button className="msla-inner msla-scope-header-inner" style={bgStyle}>
+          <button className="msla-inner msla-scope-header-inner" style={bgStyle} onClick={handleClick}>
             <button className="msla-selector" draggable={true} tabIndex={-1}>
               <div className="panel-card-content-gripper-section">{draggable ? <Gripper fill={'#FFFFF'} /> : null}</div>
               {icon ? <img alt="" role="presentation" src={icon} width="24" height="24" /> : null}
