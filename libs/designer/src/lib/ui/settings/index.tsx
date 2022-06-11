@@ -74,9 +74,7 @@ export const SettingsPanel = (): JSX.Element => {
       readOnly,
       nodeId,
     };
-    if (secureInputs !== undefined || secureOutputs !== undefined) {
-      return <Security {...securitySectionProps} />;
-    } else return null;
+    return <Security {...securitySectionProps} />;
   };
 
   const renderDataHandling = (): JSX.Element | null => {

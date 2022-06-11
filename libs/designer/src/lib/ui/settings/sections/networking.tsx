@@ -179,7 +179,7 @@ export const Networking = ({
 
     const workflowHeadersOnResponseCustomLabel = (
       <SettingLabel
-        labelText="Suppress workflow headers"
+        labelText="Suppress workflow headers on response"
         infoTooltipText="Limit Logic Apps to not include workflow metadata headers in the response."
         isChild={false}
       />

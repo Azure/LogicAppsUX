@@ -27,7 +27,7 @@ export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLab
       <div className={className}>
         <div className="msla-setting-section-row-text">{labelText}</div>
         <TooltipHost hostClassName="msla-setting-section-row-info" content={infoTooltipText}>
-          <IconButton iconProps={infoIconProps} styles={infoIconStyles} />
+          <IconButton iconProps={infoIconProps} styles={infoIconStyles} className="msla-setting-section-row-info-icon" />
         </TooltipHost>
       </div>
     );
