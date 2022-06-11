@@ -12,7 +12,7 @@ interface TokenToParse {
   value?: string;
 }
 
-export default class ExpressionParser {
+export class ExpressionParser {
   private static _tokenList: TokenToParse[] = [
     {
       tokenType: ExpressionTokenType.StringLiteral,

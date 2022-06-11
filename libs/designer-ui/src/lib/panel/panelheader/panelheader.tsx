@@ -134,7 +134,7 @@ export const PanelHeader = ({
         items={[]}
         overflowItems={panelHeaderMenuItems}
         onRenderOverflowButton={onRenderOverflowButton}
-        onRenderItem={function (item: IOverflowSetItemProps) {
+        onRenderItem={function (_item: IOverflowSetItemProps) {
           throw new Error('Function not implemented.');
         }}
       />

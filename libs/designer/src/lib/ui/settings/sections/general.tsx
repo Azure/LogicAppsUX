@@ -4,14 +4,16 @@ import { SettingLabel } from './security';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 
-export const General = ({ splitOn, timeout, concurrency, conditionExpressions, readOnly, nodeId }: SectionProps): JSX.Element => {
+// import { useDispatch } from 'react-redux';
+
+export const General = ({ splitOn, timeout, concurrency, conditionExpressions, readOnly /*nodeId*/ }: SectionProps): JSX.Element => {
   const [concurrencyFromState, setConcurrency] = useState(concurrency ?? { enabled: false, value: undefined });
   const [splitOnFromState, setSplitOn] = useState(splitOn ?? { enabled: false, value: undefined });
-  const [conditionExpressionsFromState, setConditionExpressions] = useState(conditionExpressions ?? []);
-  const [timeoutFromState, setTimeout] = useState(timeout ?? '');
-  const dispatch = useDispatch();
+  const [conditionExpressionsFromState /*setConditionExpressions*/] = useState(conditionExpressions ?? []);
+  const [timeoutFromState /*setTimeout*/] = useState(timeout ?? '');
+  // const dispatch = useDispatch();
+
   const splitOnLabel = (
     <SettingLabel
       labelText="Split On"
@@ -26,9 +28,9 @@ export const General = ({ splitOn, timeout, concurrency, conditionExpressions, r
       isChild={false}
     />
   );
-  const timeoutDurationLabel = (
-    <SettingLabel labelText="Duration" infoTooltipText="Specify the duration in ISO 8601 format." isChild={true} />
-  );
+  // const timeoutDurationLabel = (
+  //   <SettingLabel labelText="Duration" infoTooltipText="Specify the duration in ISO 8601 format." isChild={true} />
+  // );
   const concurrencyLabel = (
     <SettingLabel
       labelText="Concurrency Control"

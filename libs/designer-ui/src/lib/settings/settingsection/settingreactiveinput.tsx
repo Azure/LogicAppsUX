@@ -1,4 +1,5 @@
 import { SettingTextField } from './settingtextfield';
+import type { TextInputChangeHandler } from './settingtextfield';
 import { SettingToggle } from './settingtoggle';
 import type { SettingProps } from './settingtoggle';
 import { useState } from 'react';
@@ -7,9 +8,10 @@ export interface ReactiveToggleProps extends SettingProps {
   textFieldLabel: string;
   textFieldId?: string;
   textFieldValue: string;
-  defaultChecked?: boolean;
+  checked?: boolean;
   onToggleLabel: string;
   offToggleLabel: string;
+  onValueChange: TextInputChangeHandler;
 }
 
 export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
@@ -17,13 +19,14 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
   textFieldLabel,
   textFieldId,
   readOnly = false,
-  defaultChecked,
+  checked,
   customLabel,
   visible,
   onToggleLabel,
   offToggleLabel,
+  onValueChange,
 }: ReactiveToggleProps): JSX.Element | null => {
-  const [checkedState, setChecked] = useState(defaultChecked ?? false);
+  const [checkedState, setChecked] = useState(checked ?? false);
   const onToggleInputChange = (e: React.MouseEvent<HTMLElement>, checked?: boolean): void => {
     e.stopPropagation();
     e.preventDefault();
@@ -33,26 +36,53 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
   if (!visible) {
     return null;
   }
-  return (
-    <>
-      <SettingToggle
-        checked={checkedState}
-        readOnly={readOnly}
-        onToggleInputChange={onToggleInputChange}
-        visible={visible}
-        onText={onToggleLabel}
-        offText={offToggleLabel}
-      />
-      {checkedState ? (
-        <SettingTextField
-          id={textFieldId}
-          value={textFieldValue}
-          label={textFieldLabel}
-          customLabel={customLabel}
+
+  if (customLabel) {
+    return (
+      <>
+        {customLabel()}
+        <SettingToggle
+          checked={checkedState}
           readOnly={readOnly}
+          onToggleInputChange={onToggleInputChange}
           visible={visible}
+          onText={onToggleLabel}
+          offText={offToggleLabel}
         />
-      ) : null}
-    </>
-  );
+        {checkedState ? (
+          <SettingTextField
+            id={textFieldId}
+            value={textFieldValue}
+            label={textFieldLabel}
+            readOnly={readOnly}
+            visible={visible}
+            onValueChange={onValueChange}
+          />
+        ) : null}
+      </>
+    );
+  } else {
+    return (
+      <>
+        <SettingToggle
+          checked={checkedState}
+          readOnly={readOnly}
+          onToggleInputChange={onToggleInputChange}
+          visible={visible}
+          onText={onToggleLabel}
+          offText={offToggleLabel}
+        />
+        {checkedState ? (
+          <SettingTextField
+            id={textFieldId}
+            value={textFieldValue}
+            label={textFieldLabel}
+            readOnly={readOnly}
+            visible={visible}
+            onValueChange={onValueChange}
+          />
+        ) : null}
+      </>
+    );
+  }
 };

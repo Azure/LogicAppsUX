@@ -14,6 +14,7 @@ import { DataHandling } from './sections/datahandling';
 import { General } from './sections/general';
 import { Networking } from './sections/networking';
 import { Security } from './sections/security';
+import { Tracking } from './sections/tracking';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -42,7 +43,7 @@ export const SettingsPanel = (): JSX.Element => {
     trackedProperties,
     uploadChunk,
     splitOn,
-    splitOnConfiguration,
+    // splitOnConfiguration,
     paging,
     downloadChunkSize,
     concurrency,
@@ -108,13 +109,26 @@ export const SettingsPanel = (): JSX.Element => {
     return <Networking {...networkingProps} />;
   };
 
+  const renderTracking = (): JSX.Element | null => {
+    const trackingProps: SectionProps = {
+      readOnly,
+      nodeId,
+      trackedProperties,
+      correlation, //correlation setting contains trackingId setting being used in this component
+    };
+
+    return <Tracking {...trackingProps} />;
+  };
+
   const renderAllSettingsSections = (): JSX.Element => {
     return (
       <>
         {renderDataHandling()}
         {renderGeneral()}
         {renderNetworking()}
+        {/* {renderRunAfter()} */}
         {renderSecurity()}
+        {renderTracking()}
       </>
     );
   };

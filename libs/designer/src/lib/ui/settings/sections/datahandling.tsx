@@ -4,7 +4,11 @@ import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
 import { useState } from 'react';
 
-export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompression, readOnly, nodeId }: SectionProps): JSX.Element => {
+export const DataHandling = ({
+  requestSchemaValidation,
+  disableAutomaticDecompression,
+  readOnly /*nodeId*/,
+}: SectionProps): JSX.Element => {
   const [automaticDecompression, setAutomaticDecompression] = useState(disableAutomaticDecompression);
   const [schemaValidation, setSchemaValidation] = useState(requestSchemaValidation);
   const requestSchemaValidationLabel = (

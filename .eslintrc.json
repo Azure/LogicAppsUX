@@ -38,6 +38,7 @@
           }
         ],
         "import/no-unresolved": "off",
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "destructuredArrayIgnorePattern": "^_" }],
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/consistent-type-assertions": ["error", { "assertionStyle": "as" }],
@@ -54,6 +55,7 @@
             "ignoreList": ["foo"]
           }
         ],
+        "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }],
         "formatjs/enforce-default-message": ["error", "literal"],
         "formatjs/enforce-description": ["error", "literal"],
         "formatjs/no-multiple-whitespaces": [1],

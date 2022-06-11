@@ -41,19 +41,37 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
     return null;
   }
 
-  return (
-    <TextField
-      className="msla-setting-section-textField"
-      id={id}
-      label={label}
-      onRenderLabel={customLabel}
-      ariaLabel={label}
-      value={textVal}
-      defaultValue={defaultValue}
-      placeholder={placeholder}
-      styles={textFieldStyles}
-      readOnly={readOnly}
-      onChange={handleTextInputChange}
-    />
-  );
+  if (customLabel) {
+    return (
+      <>
+        {customLabel()}
+        <TextField
+          className="msla-setting-section-textField"
+          id={id}
+          ariaLabel={label}
+          value={textVal}
+          defaultValue={defaultValue}
+          placeholder={placeholder}
+          styles={textFieldStyles}
+          readOnly={readOnly}
+          onChange={handleTextInputChange}
+        />
+      </>
+    );
+  } else {
+    return (
+      <TextField
+        className="msla-setting-section-textField"
+        id={id}
+        label={label}
+        ariaLabel={label}
+        value={textVal}
+        defaultValue={defaultValue}
+        placeholder={placeholder}
+        styles={textFieldStyles}
+        readOnly={readOnly}
+        onChange={handleTextInputChange}
+      />
+    );
+  }
 };

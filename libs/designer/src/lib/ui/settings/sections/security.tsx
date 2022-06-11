@@ -49,13 +49,13 @@ export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: Sect
 
   const onSecureInputsChange = (checked: boolean): void => {
     // write to store
-    console.log('secure inputs changed');
+    console.log(`Secure Inputs: ${checked}`);
   };
 
   const onSecureOutputsChange = (checked: boolean): void => {
     if (checked === undefined) return;
     // write to store
-    console.log('secure outputs changed');
+    console.log(`secure outputs changed to ${checked} for ${nodeId}`);
   };
 
   const securitySectionProps: SettingSectionProps = {

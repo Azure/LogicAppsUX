@@ -1,5 +1,4 @@
-import type { QueryParameters } from '../httpClient';
-import { HttpClient } from '../httpClient';
+import type { IHttpClient, QueryParameters } from '../httpClient';
 import type { ArmResources, Connection, Connector } from '@microsoft-logic-apps/utils';
 import { equals, connectionsMock } from '@microsoft-logic-apps/utils';
 
@@ -8,6 +7,7 @@ interface StandardConnectionServiceArgs {
   baseUrl: string;
   locale?: string;
   filterByLocation?: boolean;
+  httpClient: IHttpClient;
   apiHubServiceDetails?: {
     apiVersion: string;
     baseUrl: string;
@@ -29,9 +29,9 @@ export class StandardConnectionService {
   }
 
   async getConnector(connectorId: string): Promise<Connector> {
-    const { apiVersion, baseUrl } = this.options;
+    const { apiVersion, baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}?api-version=${apiVersion}`;
-    const response = await HttpClient().get<Connector>({ uri, type: 'GET' });
+    const response = await httpClient.get<Connector>({ uri });
     console.log(response);
     //return response;
     return { properties: {} } as any;
@@ -41,7 +41,7 @@ export class StandardConnectionService {
     return [];
   }
 
-  async getConnection(connectionId: string): Promise<Connection | undefined> {
+  async getConnection(_connectionId: string): Promise<Connection | undefined> {
     throw new Error('Function not implemented.');
     // let connection: Connection | undefined;
     // if (isArmResourceId(connectionId)) {
@@ -53,9 +53,9 @@ export class StandardConnectionService {
   }
 
   private async _getConnectionInApiHub(connectionId: string): Promise<Connection> {
-    const connection = await HttpClient().get<Connection>({
-      uri: `${connectionId}/api-version=${this.options.apiHubServiceDetails?.apiVersion}`,
-      type: 'GET',
+    const { apiHubServiceDetails, httpClient } = this.options;
+    const connection = await httpClient.get<Connection>({
+      uri: `${connectionId}/api-version=${apiHubServiceDetails?.apiVersion}`,
     });
 
     return connection;
@@ -63,11 +63,12 @@ export class StandardConnectionService {
 
   async getConnections(): Promise<Connection[]> {
     const response = await this._getConnectionsInApiHub();
+    console.log(response);
     return connectionsMock;
   }
 
   private async _getConnectionsInApiHub(): Promise<Connection[]> {
-    const { apiHubServiceDetails, filterByLocation } = this.options;
+    const { apiHubServiceDetails, filterByLocation, httpClient } = this.options;
     if (!apiHubServiceDetails) {
       return [];
     }
@@ -83,7 +84,7 @@ export class StandardConnectionService {
     };
 
     try {
-      const response = await HttpClient().get<ArmResources<Connection>>({ uri, type: 'GET', queryParameters });
+      const response = await httpClient.get<ArmResources<Connection>>({ uri, queryParameters });
       const allConnections = await this._followContinuationTokens<Connection>(response);
       return allConnections.filter((connection: Connection) => {
         return filterByLocation ? equals(connection.location, location) : true;
@@ -110,7 +111,7 @@ export class StandardConnectionService {
   }
 
   private async _followContinuationToken<T>(continuationToken: string): Promise<ArmResources<T>> {
-    const response = await HttpClient().get<ArmResources<T>>({ uri: continuationToken, type: 'GET' });
+    const response = await this.options.httpClient.get<ArmResources<T>>({ uri: continuationToken });
 
     return response;
   }
