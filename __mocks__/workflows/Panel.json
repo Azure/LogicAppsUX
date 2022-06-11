@@ -8,7 +8,17 @@
           "uri": "https://zenquotes.io/api/random"
         },
         "runAfter": {},
-        "type": "Http"
+        "type": "ApiConnection"
+      },
+      "Join": {
+        "inputs": {
+          "from": "@triggerBody()",
+          "joinWith": ","
+        },
+        "runAfter": {
+          "Response": ["Succeeded"]
+        },
+        "type": "Join"
       },
       "Response": {
         "inputs": {
