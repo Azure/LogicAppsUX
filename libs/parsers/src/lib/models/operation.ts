@@ -1,4 +1,5 @@
 import type { DownloadChunkMetadata, UploadChunkMetadata } from '@microsoft-logic-apps/utils';
+import { equals } from '@microsoft-logic-apps/utils';
 
 export interface EnumObject {
   displayName: string;
@@ -15,8 +16,9 @@ export interface InputParameter extends ParameterBase {
   // This defines a complex type for the object supported by the editors.
   schema?: any;
   suppressCasting?: boolean;
-  invisible?: boolean;
+  hideInUI?: boolean;
   alternativeKey?: string;
+  skipSerialization?: boolean;
 }
 
 export interface Annotation {
@@ -173,6 +175,7 @@ export interface ParameterBase {
   readOnly?: boolean;
   recommended?: any;
   required?: boolean;
+  serialization?: string;
   summary?: string;
   title?: string;
   visibility?: string;
@@ -245,6 +248,7 @@ export function toInputParameter(schemaProperty: SchemaProperty, suppressCasting
     recommended,
     required,
     schema,
+    serialization,
     summary,
     title,
     type,
@@ -273,6 +277,7 @@ export function toInputParameter(schemaProperty: SchemaProperty, suppressCasting
     recommended,
     required,
     schema,
+    skipSerialization: equals(serialization, 'uionly'),
     summary,
     suppressCasting,
     title,

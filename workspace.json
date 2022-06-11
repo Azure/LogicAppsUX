@@ -15,6 +15,6 @@
     "vs-code-data-mapper-react": "apps/vs-code-data-mapper-react",
     "vs-code-designer": "apps/vs-code-designer",
     "vs-code-designer-react": "apps/vs-code-designer-react",
-    "vs-code-overview-react": "apps/vs-code-overview-react"
+    "vs-code-react": "apps/vs-code-react"
   }
 }
