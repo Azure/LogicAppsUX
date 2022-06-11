@@ -49,7 +49,7 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
   const iconUri = useIconUri(operationInfo);
   const showCommentBox = !isNullOrUndefined(comment);
   useEffect(() => {
-    monitoringTab.enabled = isMonitoringView;
+    monitoringTab.enabled = !!isMonitoringView;
     setRegisteredTabs((currentTabs) => registerTabs([monitoringTab, aboutTab, codeViewTab, settingsTab, scratchTab], currentTabs));
   }, [readOnly, isMonitoringView]);
 
