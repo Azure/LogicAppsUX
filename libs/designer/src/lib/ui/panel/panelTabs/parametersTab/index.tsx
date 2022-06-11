@@ -1,5 +1,5 @@
 import constants from '../../../../common/constants';
-import { ProviderWrappedContext } from '../../../../core';
+import { ProviderWrappedContext } from '../../../../core/ProviderWrappedContext';
 import type { RootState } from '../../../../core/store';
 import { getId } from '@fluentui/react';
 import type { PanelTab, Settings } from '@microsoft/designer-ui';
