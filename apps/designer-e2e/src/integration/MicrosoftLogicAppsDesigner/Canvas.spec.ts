@@ -7,7 +7,7 @@ describe('designer: Canvas', () => {
     const cardTitle = 'Increment_variable_10';
     const cardSelector = `[${DATA_CY_ATTR}=card-${cardTitle}]`;
 
-    cy.get(cardSelector).trigger('dragstart');
+    cy.get(cardSelector).trigger('dragstart', {force:true});
     cy.get('.msla-action-button-v2').first().trigger('drop');
 
     // this will improve as we change the designer to update upon drop
