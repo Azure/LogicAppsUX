@@ -510,6 +510,9 @@
       <Item ItemId=";4wavwk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Tour/Tutorial]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Führung/Tutorial]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -948,6 +951,9 @@
       <Item ItemId=";DysO/Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Ctrl + Y]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[STRG+Y]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1951,7 +1957,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Give feedback]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Feedback senden]]></Val>
+            <Val><![CDATA[Feedback geben]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3523,7 +3529,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Undo]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Rückgängig]]></Val>
+            <Val><![CDATA[Rückgängig machen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3963,6 +3969,9 @@
       <Item ItemId=";xFQXAI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Ctrl + Z]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[STRG+Z]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
