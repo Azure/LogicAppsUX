@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import type { ConnectionReferences } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -25,7 +26,7 @@ export const connectionSlice = createSlice({
       state = action.payload;
     },
     initializeConnectionsMappings: (state, action: PayloadAction<Record<string, string>>) => {
-      state = { ...state, connectionsMapping: action.payload };
+      state.connectionsMapping = action.payload;
     },
   },
 });

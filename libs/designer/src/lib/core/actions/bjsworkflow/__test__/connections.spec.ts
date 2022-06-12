@@ -2,7 +2,11 @@ import Constants from '../../../../common/constants';
 import { _getManifestBasedConnectionMapping } from '../../../actions/bjsworkflow/connections';
 import type { OperationMetadataState } from '../../../state/operationMetadataSlice';
 import type { RootState } from '../../../store';
-import type { IOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import type {
+  IOperationManifestService,
+  StandardOperationManifestServiceOptions,
+  IHttpClient,
+} from '@microsoft-logic-apps/designer-client-services';
 import { InitOperationManifestService, StandardOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { createItem } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
@@ -47,9 +51,29 @@ const mockApiConnectionAction: LogicAppsV2.OpenApiOperationAction = {
   },
 };
 
+class MockHttpClient implements IHttpClient {
+  dispose() {
+    return;
+  }
+  get<ReturnType>() {
+    const a: unknown = {};
+    return a as ReturnType;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  post<ReturnType, _BodyType>() {
+    const a: unknown = {};
+    return a as ReturnType;
+  }
+}
+
 function makeMockStdOperationManifestService(referenceKeyFormat: ConnectionReferenceKeyFormat | ''): IOperationManifestService {
+  const serviceOptions: StandardOperationManifestServiceOptions = {
+    apiVersion: 'version',
+    baseUrl: 'url',
+    httpClient: new MockHttpClient(),
+  };
   class MockStdOperationManifestService extends StandardOperationManifestService {
-    getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
+    getOperationManifest(_connectorId: string, _operationId: string): Promise<OperationManifest> {
       const mockManifest = createItem;
       if (referenceKeyFormat) {
         mockManifest.properties.connectionReference = {
@@ -59,5 +83,5 @@ function makeMockStdOperationManifestService(referenceKeyFormat: ConnectionRefer
       return Promise.resolve(createItem);
     }
   }
-  return new MockStdOperationManifestService({});
+  return new MockStdOperationManifestService(serviceOptions);
 }

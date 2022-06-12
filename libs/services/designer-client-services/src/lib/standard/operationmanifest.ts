@@ -62,7 +62,7 @@ const supportedManifestTypes = [
 
 export type getAccessTokenType = () => Promise<string>;
 
-interface StandardOperationManifestServiceOptions {
+export interface StandardOperationManifestServiceOptions {
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;

@@ -4,7 +4,7 @@ import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
 import {
   useBrandColor,
   useIconUri,
-  useNodeConnectionId,
+  useNodeConnectionName,
   useNodeDescription,
   useNodeMetadata,
   useOperationInfo,
@@ -56,7 +56,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const style = hasNestedParent && !parentEdges.length ? { marginTop: 40 } : undefined;
   const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
-  const connectionId = useNodeConnectionId(id);
+  const connectionName = useNodeConnectionName(id);
 
   const nodeClick = useCallback(() => {
     if (isCollapsed) {
@@ -108,7 +108,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           brandColor={brandColor}
           id={id}
           connectionRequired={true}
-          connectionDisplayName="ttha222@outlook.com"
+          connectionDisplayName={connectionName}
           commentBox={comment}
           drag={drag}
           dragPreview={dragPreview}

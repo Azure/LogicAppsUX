@@ -1,3 +1,4 @@
+import { useConnection } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { OperationInfo, OperationManifestProperties } from '@microsoft-logic-apps/utils';
@@ -22,13 +23,17 @@ export const useNodeMetadata = (nodeId?: string) => {
   });
 };
 
-export const useNodeConnectionId = (nodeId: string) => {
+export const useNodeConnectionName = (nodeId: string) => {
   return useSelector((state: RootState) => {
     if (!nodeId) {
       return undefined;
     }
-    const operation = state.workflow.operations[nodeId];
-    return operation?.description;
+    const connectionId = state.connections.connectionsMapping[nodeId];
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const connection = useConnection(connectionId); // danielle this may not work
+
+    return connection?.name ?? '';
   });
 };
 

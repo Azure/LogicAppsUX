@@ -1,10 +1,11 @@
 import Constants from '../../../common/constants';
 import { getOperationManifest } from '../../queries/operation';
+import { initializeConnectionsMappings } from '../../state/connectionSlice';
 import type { Operations } from '../../state/workflowSlice';
 import type { RootState } from '../../store';
 import { OperationManifestService, ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import { equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
-import type { Dispatch } from 'react';
+import type { Dispatch } from '@reduxjs/toolkit';
 
 /**
  * Map nodes to associated connections
@@ -66,12 +67,13 @@ const isOpenApiConnectionType = (type: string): boolean => {
 export async function getConnectionsApiAndMapping(
   operations: Operations,
   getState: () => RootState,
-  dispatch: Dispatch<RootState>
+  dispatch: Dispatch
 ): Promise<Record<string, string>> {
   const connectionService = ConnectionService();
   await connectionService.getConnections();
   const connectionsMappings = await getConnectionsMappingForNodes(operations, getState);
-  return Promise.resolve({});
+  dispatch(initializeConnectionsMappings(connectionsMappings));
+  return Promise.resolve({}); // danielle does anything depend on this?
 }
 
 export async function _getManifestBasedConnectionMapping(
@@ -152,6 +154,6 @@ function getConnectionKeyFromName(definition: any): string {
 }
 
 // tslint:disable-next-line: no-any
-function _getLegacyConnectionReferenceKey(operationDefinition: any): string | undefined {
+function _getLegacyConnectionReferenceKey(_operationDefinition: any): string | undefined {
   throw new Error('Function not implemented.');
 }
