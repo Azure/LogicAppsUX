@@ -5,6 +5,7 @@ import { initializeConnectionsMappings } from '../../state/connectionSlice';
 import type { Operations } from '../../state/workflowSlice';
 import type { RootState } from '../../store';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import { equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -86,19 +87,14 @@ export async function _getManifestBasedConnectionMapping(
     const { connectorId, operationId } = operations.operationInfo[nodeId];
     const operationManifest = await getOperationManifest({ connectorId, operationId });
     const connectionReferenceKeyFormat =
-      (operationManifest.properties.connectionReference && operationManifest.properties.connectionReference.referenceKeyFormat) ?? ''; // danielle why do we even allow empty here? Ans: some operations don't require a connection
+      (operationManifest.properties.connectionReference && operationManifest.properties.connectionReference.referenceKeyFormat) ?? '';
     if (connectionReferenceKeyFormat === '') {
       return Promise.resolve(undefined);
     }
-    // get connectorId and operationId from nodeId Danielle how do we get state operationMEtadataSlice
-    // call getOperationManifest using connectorId and operationId
-    // get from operation manifest manifest.properties.connectionReference && manifest.properties.connectionReference.referenceKeyFormat;
-    // reference key format tells us which type of connection to check the name for in the Operation
 
-    const connectionReferenceKey = isOpenApiConnectionType(operationDefinition.type)
+    const connectionReferenceKey = isOpenApiConnectionType(operationDefinition.type) // danielle can we make this more readable
       ? _getConnectionReferenceKeyForManifest(connectionReferenceKeyFormat, operationDefinition)
-      : // eslint-disable-next-line no-constant-condition
-      true // context.CardStoreUtility.isConnectionRequired(nodeId), where is this now?
+      : isConnectionRequiredForOperation(operationManifest)
       ? _getLegacyConnectionReferenceKey(operationDefinition)
       : undefined;
 
@@ -107,6 +103,10 @@ export async function _getManifestBasedConnectionMapping(
     // log exception
     return Promise.resolve(undefined);
   }
+}
+
+function isConnectionRequiredForOperation(manifest: OperationManifest): boolean {
+  return manifest.properties.connection?.required ?? false;
 }
 
 // tslint:disable-next-line: no-any
