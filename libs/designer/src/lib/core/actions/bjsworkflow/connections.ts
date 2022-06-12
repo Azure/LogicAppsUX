@@ -1,9 +1,10 @@
 import Constants from '../../../common/constants';
+import { getConnectionsQuery } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import { initializeConnectionsMappings } from '../../state/connectionSlice';
 import type { Operations } from '../../state/workflowSlice';
 import type { RootState } from '../../store';
-import { OperationManifestService, ConnectionService } from '@microsoft-logic-apps/designer-client-services';
+import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -69,8 +70,7 @@ export async function getConnectionsApiAndMapping(
   getState: () => RootState,
   dispatch: Dispatch
 ): Promise<Record<string, string>> {
-  const connectionService = ConnectionService();
-  await connectionService.getConnections();
+  await getConnectionsQuery(); // danielle can we not await here? use prefetch instead?
   const connectionsMappings = await getConnectionsMappingForNodes(operations, getState);
   dispatch(initializeConnectionsMappings(connectionsMappings));
   return Promise.resolve({}); // danielle does anything depend on this?

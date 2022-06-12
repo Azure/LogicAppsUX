@@ -4,11 +4,10 @@ import { useQuery } from 'react-query';
 
 const connectionKey = 'connections';
 
-export const getConnections = (): void => {
+export const getConnectionsQuery = async (): Promise<void> => {
   const queryClient = getReactQueryClient();
   const connectionService = ConnectionService();
-  queryClient.fetchQuery([connectionKey], () => connectionService.getConnections());
-  return;
+  return await queryClient.fetchQuery([connectionKey], () => connectionService.getConnections());
 };
 
 export const useConnectionsForConnector = (connectorId: string) => {

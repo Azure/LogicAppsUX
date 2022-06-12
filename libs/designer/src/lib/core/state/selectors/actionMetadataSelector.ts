@@ -29,11 +29,9 @@ export const useNodeConnectionName = (nodeId: string) => {
       return undefined;
     }
     const connectionId = state.connections.connectionsMapping[nodeId];
-
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const connection = useConnection(connectionId); // danielle this may not work
-
-    return connection?.name ?? '';
+    return connection?.properties.displayName ?? '';
   });
 };
 
