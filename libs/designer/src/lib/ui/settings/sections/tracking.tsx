@@ -4,14 +4,9 @@ import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
 import { useState } from 'react';
 
-export const Tracking = ({ readOnly, /*nodeId*/ correlation /*trackedProperties*/ }: SectionProps): JSX.Element | null => {
-  const sampleTP = {
-    dog: 'cat',
-    cat: 'dog',
-    some: 'else',
-  };
+export const Tracking = ({ readOnly, /*nodeId*/ correlation, trackedProperties }: SectionProps): JSX.Element | null => {
   const [correlationFromState, setCorrelation] = useState(correlation);
-  const [trackedPropertiesFromState, setTrackedProperties] = useState(sampleTP as any /*trackedProperties*/);
+  const [trackedPropertiesFromState, setTrackedProperties] = useState(trackedProperties);
 
   const clientTrackingIdLabel = (
     <SettingLabel

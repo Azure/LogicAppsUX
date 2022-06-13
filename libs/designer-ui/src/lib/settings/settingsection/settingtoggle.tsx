@@ -4,7 +4,7 @@ import { Toggle } from '@fluentui/react';
 type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
 
 export interface SettingProps {
-  visible: boolean;
+  visible?: boolean;
   readOnly?: boolean;
   customLabel?: () => JSX.Element;
 }
