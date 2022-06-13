@@ -136,25 +136,25 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
     if (subgraphType) {
       const scopeRootId = subgraphTitle ?? `${graphId}-${subgraphType}`;
       const prevRootId = graph.children[0].id;
-      graph.children.unshift({
+      graph.children.push({
         id: scopeRootId,
         height: 0,
         width: 0,
       } as WorkflowNode);
-      graph.edges.push({
-        id: `${scopeRootId}-${prevRootId}`,
-        source: scopeRootId,
-        target: prevRootId,
-      });
-      nodesMetadata = {
-        ...nodesMetadata,
-        ...{
-          [scopeRootId]: {
-            graphId,
-            subgraphType,
-          },
-        },
-      };
+      if (prevRootId !== emptyNodeId || subgraphType === 'SWITCH-ADD-CASE') {
+        graph.edges.push({
+          id: `${scopeRootId}-${prevRootId}`,
+          source: scopeRootId,
+          target: prevRootId,
+        });
+      } else {
+        // removes empty node from subgraphs
+        graph.children.splice(
+          graph.children.findIndex((node) => node.id === emptyNodeId),
+          1
+        );
+      }
+      nodesMetadata = { ...nodesMetadata, [scopeRootId]: { graphId, subgraphType } };
     }
   };
 
@@ -162,6 +162,7 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
     for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
       applyActions(`${actionName}-${caseName}Actions`, caseAction.actions, 'SWITCH-CASE', caseName);
     }
+    applyActions(`${actionName}-addCase`, undefined, 'SWITCH-ADD-CASE');
     applyActions(`${actionName}-defaultActions`, action.default?.actions, 'SWITCH-DEFAULT');
   } else if (isIfAction(action)) {
     applyActions(`${actionName}-actions`, action.actions, 'CONDITIONAL-TRUE');

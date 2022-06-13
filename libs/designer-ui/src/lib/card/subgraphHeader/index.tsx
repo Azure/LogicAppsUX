@@ -1,3 +1,4 @@
+import { ActionButtonV2 } from '../../actionbuttonv2';
 import CollapseToggle from '../../collapseToggle';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
@@ -9,6 +10,7 @@ interface SubgraphHeaderProps {
   collapsed?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
   onClick?(id: string): void;
+  showAddButton?: boolean;
 }
 
 export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
@@ -20,6 +22,14 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
   onClick,
 }) => {
   const intl = useIntl();
+
+  if (subgraphType === 'SWITCH-ADD-CASE') {
+    return (
+      <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%', marginTop: '16px' }}>
+        <ActionButtonV2 title={'Add Case'} />
+      </div>
+    );
+  }
 
   const SubgraphTypeData = {
     'CONDITIONAL-TRUE': {
@@ -59,8 +69,10 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
   };
 
   return (
-    <div className="msla-subgraph-header" style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }} onClick={handleClick}>
-      <div className="msla-subgraph-title">{SubgraphTypeData[subgraphType].title}</div>
+    <div className="msla-subgraph-header" style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}>
+      <div className="msla-subgraph-title" onClick={handleClick}>
+        {SubgraphTypeData[subgraphType].title}
+      </div>
       <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
     </div>
   );

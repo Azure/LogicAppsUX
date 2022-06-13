@@ -78,7 +78,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
   if (metadata?.isPlaceholderNode) {
-    if (readOnly) return null;
+    if (readOnly || !metadata.subgraphType) return null;
     return (
       <>
         {isFirstChild ? <div style={{ visibility: 'hidden', height: '32px' }} /> : null}
@@ -101,7 +101,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   return (
     <div>
       {isFirstChild ? <div style={{ visibility: 'hidden', height: '32px' }} /> : null}
-      {isFirstChild && !metadata?.subgraphType && !readOnly ? (
+      {isFirstChild && !readOnly && !metadata?.subgraphType ? (
         <div style={{ height: 30, margin: '5px auto' }}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>
@@ -145,7 +145,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           style={{ visibility: 'hidden', transform: 'translate(-50%, -50%)' }}
         />
       </div>
-      {!readOnly && childEdges.length === 0 ? (
+      {childEdges.length === 0 && !readOnly ? (
         <div style={{ height: 30, margin: '5px auto' }}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>

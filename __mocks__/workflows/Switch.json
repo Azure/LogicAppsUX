@@ -17,6 +17,10 @@
           "Second_Case": {
             "actions": {},
             "case": "test-2"
+          },
+          "Third_Case": {
+            "actions": {},
+            "case": "test-3"
           }
         },
         "default": {
