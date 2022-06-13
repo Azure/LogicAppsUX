@@ -54,7 +54,6 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   }, [dispatch, id, isCollapsed]);
 
   if (!node) {
-    console.log('NODE IS NULL');
     return null;
   }
 
