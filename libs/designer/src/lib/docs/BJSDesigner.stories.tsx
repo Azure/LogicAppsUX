@@ -1,5 +1,6 @@
 import type { DesignerOptionsContext } from '../index';
 import { BJSWorkflowProvider, Designer, DesignerProvider } from '../index';
+import ConditionalWorkflow from './conditionalWorkflow.json';
 import BigWorkflow from './simpleBigworkflow.json';
 import SimpleWorkflow from './simpleSmallWorkflow.json';
 import {
@@ -59,3 +60,5 @@ export const ReadOnlyExample = () => <RenderedComponent workflow={SimpleWorkflow
 export const MonitoringViewExample = () => (
   <RenderedComponent workflow={SimpleWorkflow} options={{ readOnly: true, isMonitoringView: true }} />
 );
+
+export const ConditionalExample = () => <RenderedComponent workflow={ConditionalWorkflow} />;

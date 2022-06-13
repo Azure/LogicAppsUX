@@ -1,5 +1,6 @@
 import type { IHttpClient } from '../httpClient';
 import type { IOperationManifestService } from '../operationmanifest';
+import conditionManifest from './manifests/condition';
 import csvManifest from './manifests/csvtable';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
@@ -46,6 +47,7 @@ const swiftdecode = 'swiftdecode';
 const swiftencode = 'swiftencode';
 const scope = 'scope';
 const foreach = 'foreach';
+const condition = 'if';
 const initializevariable = 'initializevariable';
 const incrementvariable = 'incrementvariable';
 const request = 'request';
@@ -57,6 +59,7 @@ const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 
 const supportedManifestTypes = [
   compose,
+  condition,
   csvtable,
   foreach,
   function_,
@@ -258,6 +261,7 @@ function isServiceProviderOperation(definition: any): boolean {
 function isInBuiltOperation(definition: any): boolean {
   switch (definition.type.toLowerCase()) {
     case compose:
+    case condition:
     case foreach:
     case function_:
     case initializevariable:
@@ -370,9 +374,13 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: dataOperationConnectorId,
     operationId: 'composeNew',
   },
+  [condition]: {
+    connectorId: 'connectionProviders/control',
+    operationId: condition,
+  },
   [foreach]: {
     connectorId: 'connectionProviders/control',
-    operationId: 'foreach',
+    operationId: foreach,
   },
   [function_]: {
     connectorId: azureFunctionConnectorId,
@@ -432,7 +440,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   },
   [scope]: {
     connectorId: 'connectionProviders/control',
-    operationId: 'scope',
+    operationId: scope,
   },
   [swiftdecode]: {
     connectorId: 'connectionProviders/swiftOperations',
@@ -445,6 +453,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
 };
 
 const supportedManifestObjects = new Map<string, OperationManifest>([
+  [condition, conditionManifest],
   [csvtable, csvManifest],
   [foreach, foreachManifest],
   [htmltable, htmlManifest],
