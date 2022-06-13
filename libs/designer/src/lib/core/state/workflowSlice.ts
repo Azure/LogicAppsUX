@@ -3,6 +3,7 @@ import type { AddNodePayload } from '../parsers/addNodeToWorkflow';
 import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../parsers/addNodeToWorkflow';
 import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
+import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
@@ -13,6 +14,7 @@ export interface NodesMetadata {
   [nodeId: string]: {
     graphId: string;
     isPlaceholderNode?: boolean;
+    subgraphType?: SubgraphType;
   };
 }
 

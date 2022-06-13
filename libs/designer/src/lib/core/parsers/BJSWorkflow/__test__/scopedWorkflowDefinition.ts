@@ -107,12 +107,33 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; act
           {
             id: 'ActionIf-actions',
             children: [
+              { id: 'ActionIf-actions-CONDITIONAL-TRUE', height: 0, width: 0 },
               { id: 'Increment_variable2', height: 0, width: 0 },
               { id: 'Increment_variable4', height: 0, width: 0 },
             ],
-            edges: [{ id: 'Increment_variable2-Increment_variable4', source: 'Increment_variable2', target: 'Increment_variable4' }],
+            edges: [
+              { id: 'Increment_variable2-Increment_variable4', source: 'Increment_variable2', target: 'Increment_variable4' },
+              {
+                id: 'ActionIf-actions-CONDITIONAL-TRUE-Increment_variable2',
+                source: 'ActionIf-actions-CONDITIONAL-TRUE',
+                target: 'Increment_variable2',
+              },
+            ],
           },
-          { id: 'ActionIf-elseActions', children: [{ id: 'Increment_variable3', height: 0, width: 0 }], edges: [] },
+          {
+            id: 'ActionIf-elseActions',
+            children: [
+              { id: 'ActionIf-elseActions-CONDITIONAL-FALSE', height: 0, width: 0 },
+              { id: 'Increment_variable3', height: 0, width: 0 },
+            ],
+            edges: [
+              {
+                id: 'ActionIf-elseActions-CONDITIONAL-FALSE-Increment_variable3',
+                source: 'ActionIf-elseActions-CONDITIONAL-FALSE',
+                target: 'Increment_variable3',
+              },
+            ],
+          },
         ],
       },
       {
@@ -185,6 +206,8 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowGraph; act
     Increment_variable: { graphId: 'root' },
     Initialize_variable: { graphId: 'root' },
     ActionIf: { graphId: 'root' },
+    'ActionIf-actions-CONDITIONAL-TRUE': { graphId: 'ActionIf-actions', subgraphType: 'CONDITIONAL-TRUE' },
+    'ActionIf-elseActions-CONDITIONAL-FALSE': { graphId: 'ActionIf-elseActions', subgraphType: 'CONDITIONAL-FALSE' },
     Increment_variable2: { graphId: 'ActionIf-actions' },
     Increment_variable4: { graphId: 'ActionIf-actions' },
     Increment_variable3: { graphId: 'ActionIf-elseActions' },

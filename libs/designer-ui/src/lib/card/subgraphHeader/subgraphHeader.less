@@ -1,0 +1,25 @@
+.msla-subgraph-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 16px auto 0;
+  height: 100%;
+  cursor: pointer;
+  border-radius: 2px;
+  background-color: var(--main-color, black);
+  color: white;
+
+  &:hover {
+    filter: invert(1) brightness(1.2) invert(1);
+  }
+
+  .msla-subgraph-title {
+    flex-grow: 1;
+    align-self: center;
+    display: inline-block;
+    font: 14px/20px normal @semibold-font-family;
+    text-align: left;
+    word-break: break-word;
+    padding: 4px 8px;
+  }
+}
