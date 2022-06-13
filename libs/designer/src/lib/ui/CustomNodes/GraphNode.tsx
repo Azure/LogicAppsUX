@@ -61,7 +61,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   const isEmptyGraph = !graph?.edges && (graph?.children[0] as any).children.length === 0;
   const normalizedType = node.type.toLowerCase();
 
-  if (normalizedType === 'scope' || normalizedType === 'foreach') {
+  if (normalizedType === 'scope' || normalizedType === 'foreach' || normalizedType === 'if') {
     return (
       <div className="msla-scope-v2 msla-scope-card">
         <Handle
@@ -81,6 +81,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           id={id}
           isMonitoringView={isMonitoringView}
           title={data.label}
+          readOnly={readOnly}
           onClick={nodeClick}
         />
         <Handle

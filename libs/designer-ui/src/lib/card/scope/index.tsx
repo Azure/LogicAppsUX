@@ -1,7 +1,8 @@
+import CollapseToggle from '../../collapseToggle';
 import { StatusPill } from '../../monitoring';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
-import { css, DirectionalHint, Icon, TooltipHost } from '@fluentui/react';
+import { css, Icon, TooltipHost } from '@fluentui/react';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
@@ -18,7 +19,6 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   draggable,
   dragPreview,
   icon,
-  isDragging,
   isMonitoringView,
   title,
   onClick,
@@ -36,39 +36,35 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
     }
   };
 
-  const iconName = collapsed ? 'ChevronDown' : 'ChevronUp';
-  const toggleText = collapsed ? 'Expand' : 'Collapse';
   const badges = [
     ...(commentBox && commentBox.comment
       ? [{ title: 'Comment', content: commentBox.comment, darkBackground: true, iconProps: { iconName: 'Comment' }, active }]
       : []),
   ];
-  const bgStyle = { backgroundColor: brandColor };
+
+  const colorVars = { ['--brand-color' as any]: brandColor };
+
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
-      <div
-        ref={drag}
-        aria-describedby={describedBy}
-        className={css('msla-content-fit', isDragging && 'dragging')}
-        aria-label={title}
-        tabIndex={0}
-      >
-        <div className="msla-scope-v2--header msla-scope-header-style" style={{ borderColor: brandColor }}>
+      <div aria-describedby={describedBy} className={'msla-content-fit'} aria-label={title} tabIndex={0}>
+        <div
+          ref={drag}
+          className="msla-scope-v2--header msla-scope-header-wrapper"
+          draggable={draggable}
+          style={colorVars}
+          onClick={handleClick}
+        >
           {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
-          <button className="msla-inner msla-scope-header-inner" style={bgStyle} onClick={handleClick}>
-            <button className="msla-selector" draggable={true} tabIndex={-1}>
-              <div className="panel-card-content-gripper-section">{draggable ? <Gripper fill={'#FFFFF'} /> : null}</div>
-              {icon ? <img alt="" role="presentation" src={icon} width="24" height="24" /> : null}
-              <span>{title}</span>
-            </button>
-            <TooltipHost content={toggleText} directionalHint={DirectionalHint.rightCenter}>
-              <button aria-label={toggleText} className="msla-toggle" onClick={handleCollapse}>
-                <Icon iconName={iconName} />
-              </button>
-            </TooltipHost>
-          </button>
+          <div className="msla-scope-header-content">
+            <div className="msla-scope-header-title-box">
+              <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
+              {icon ? <img className="scope-icon" alt="" role="presentation" src={icon} /> : null}
+              <div className="msla-scope-title">{title}</div>
+            </div>
+            <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
+          </div>
           <div>
-            <div className="msla-badges" style={bgStyle}>
+            <div className="msla-badges">
               {badges.map(({ title, content, darkBackground, iconProps }) => (
                 <TooltipHost key={title} content={content}>
                   <Icon

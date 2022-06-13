@@ -3,6 +3,7 @@ import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/
 import type { Operations, NodesMetadata } from '../../state/workflowSlice';
 import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../models/workflowNode';
 import { getIntl } from '@microsoft-logic-apps/intl';
+import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { equals, isNullOrEmpty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
@@ -122,37 +123,49 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
 
+  const applyActions = (graphId: string, actions: LogicAppsV2.Actions | undefined, subgraphType?: SubgraphType) => {
+    const [graph, operations, metadata] = processNestedActions(graphId, actions);
+
+    actionGraphs.push(graph);
+    allActions = { ...allActions, ...operations };
+    nodesMetadata = { ...nodesMetadata, ...metadata };
+    addEmptyPlaceholderNodeIfNeeded(graph, nodesMetadata);
+
+    if (subgraphType) {
+      const scopeRootId = `${graphId}-${subgraphType}`;
+      const prevRootId = graph.children[0].id;
+      graph.children.unshift({
+        id: scopeRootId,
+        height: 0,
+        width: 0,
+      } as WorkflowNode);
+      graph.edges.push({
+        id: `${scopeRootId}-${prevRootId}`,
+        source: scopeRootId,
+        target: prevRootId,
+      });
+      nodesMetadata = {
+        ...nodesMetadata,
+        ...{
+          [scopeRootId]: {
+            graphId,
+            subgraphType,
+          },
+        },
+      };
+    }
+  };
+
   if (isSwitchAction(action)) {
-    const [defaultGraph, defaultActions, defaultNodesMetadata] = processNestedActions(
-      `${actionName}-defaultActions`,
-      action.default?.actions
-    );
-    actionGraphs.push(defaultGraph);
-    allActions = { ...defaultActions };
-    nodesMetadata = { ...defaultNodesMetadata };
-
-    addEmptyPlaceholderNodeIfNeeded(defaultGraph, nodesMetadata);
+    applyActions(`${actionName}-defaultActions`, action.default?.actions, 'SWITCH-DEFAULT');
     for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
-      const [caseGraph, caseActions, caseNodesMetadata] = processNestedActions(`${actionName}-${caseName}Actions`, caseAction.actions);
-      actionGraphs.push(caseGraph);
-      allActions = { ...allActions, ...caseActions };
-      nodesMetadata = { ...nodesMetadata, ...caseNodesMetadata };
-      addEmptyPlaceholderNodeIfNeeded(caseGraph, nodesMetadata);
+      applyActions(`${actionName}-${caseName}Actions`, caseAction.actions, 'SWITCH-CASE');
     }
+  } else if (isIfAction(action)) {
+    applyActions(`${actionName}-actions`, action.actions, 'CONDITIONAL-TRUE');
+    applyActions(`${actionName}-elseActions`, action.else?.actions, 'CONDITIONAL-FALSE');
   } else {
-    const [scopeGraph, scopeActions, scopeNodesMetadata] = processNestedActions(`${actionName}-actions`, action.actions);
-    actionGraphs.push(scopeGraph);
-    allActions = { ...allActions, ...scopeActions };
-    nodesMetadata = { ...nodesMetadata, ...scopeNodesMetadata };
-    addEmptyPlaceholderNodeIfNeeded(scopeGraph, nodesMetadata);
-
-    if (isIfAction(action)) {
-      const [elseGraph, elseActions, elseNodesMetadata] = processNestedActions(`${actionName}-elseActions`, action.else?.actions);
-      actionGraphs.push(elseGraph);
-      allActions = { ...allActions, ...elseActions };
-      nodesMetadata = { ...nodesMetadata, ...elseNodesMetadata };
-      addEmptyPlaceholderNodeIfNeeded(elseGraph, nodesMetadata);
-    }
+    applyActions(`${actionName}-actions`, action.actions);
   }
 
   return [actionGraphs, allActions, nodesMetadata];

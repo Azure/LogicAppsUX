@@ -11,8 +11,8 @@ import { useMonitoringView, useReadOnly } from '../../core/state/selectors/desig
 import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
-import { Card } from '@microsoft/designer-ui';
-import { memo, useCallback } from 'react';
+import { Card, SubgraphHeader } from '@microsoft/designer-ui';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
@@ -21,6 +21,8 @@ import { useDispatch, useSelector } from 'react-redux';
 const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
+
+  const dispatch = useDispatch();
 
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
   const [{ isDragging }, drag, dragPreview] = useDrag(
@@ -49,11 +51,13 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const childEdges = useEdgesByParent(id);
   const parentEdges = useEdgesByChild(id);
   const metadata = useNodeMetadata(id);
-  const hasNestedParent = metadata?.graphId !== 'root';
-  const dispatch = useDispatch();
-  const style = hasNestedParent && !parentEdges.length ? { marginTop: 40 } : undefined;
   const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
+
+  const [isFirstChild, setIsFirstChild] = useState(false);
+  useEffect(() => {
+    setIsFirstChild(metadata?.graphId !== 'root' && !parentEdges.length);
+  }, [metadata, parentEdges, setIsFirstChild]);
 
   const nodeClick = useCallback(() => {
     if (isCollapsed) {
@@ -67,7 +71,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   if (metadata?.isPlaceholderNode) {
     if (readOnly) return null;
     return (
-      <div style={{ ...{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }, ...style }}>
+      <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
         <DropZone graphId={metadata?.graphId ?? ''} />
       </div>
     );
@@ -83,12 +87,13 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     : undefined;
 
   return (
-    <div style={style}>
-      {hasNestedParent && !parentEdges.length && (
-        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px', marginBottom: 5, marginLeft: 2 }}>
+    <div>
+      {isFirstChild ? <div style={{ visibility: 'hidden', height: '32px' }} /> : null}
+      {isFirstChild && !metadata?.subgraphType && !readOnly ? (
+        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px', marginBottom: 5 }}>
           {!readOnly ? <DropZone graphId={metadata?.graphId ?? ''} parent={id} /> : null}
         </div>
-      )}
+      ) : null}
       <div>
         <Handle
           type="target"
@@ -96,22 +101,26 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           isConnectable={false}
           style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
         />
-        <Card
-          title={data.label}
-          icon={iconUri}
-          draggable={!readOnly}
-          brandColor={brandColor}
-          id={id}
-          connectionRequired={false}
-          connectionDisplayName={undefined}
-          commentBox={comment}
-          drag={drag}
-          dragPreview={dragPreview}
-          isDragging={isDragging}
-          isMonitoringView={isMonitoringView}
-          readOnly={readOnly}
-          onClick={nodeClick}
-        />
+        {metadata?.subgraphType ? (
+          <SubgraphHeader subgraphType={metadata?.subgraphType} />
+        ) : (
+          <Card
+            title={data.label}
+            icon={iconUri}
+            draggable={!readOnly}
+            brandColor={brandColor}
+            id={id}
+            connectionRequired={false}
+            connectionDisplayName={undefined}
+            commentBox={comment}
+            drag={drag}
+            dragPreview={dragPreview}
+            isDragging={isDragging}
+            isMonitoringView={isMonitoringView}
+            readOnly={readOnly}
+            onClick={nodeClick}
+          />
+        )}
         <Handle
           type="source"
           position={sourcePosition}
