@@ -4,18 +4,13 @@ import { useIntl } from 'react-intl';
 
 interface SubgraphHeaderProps {
   subgraphType: SubgraphType;
-  name?: string;
+  title?: string;
   collapsed?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
 }
 
-export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({ subgraphType, name, collapsed, handleCollapse }) => {
+export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({ subgraphType, title, collapsed, handleCollapse }) => {
   const intl = useIntl();
-
-  const CASE_STRING = intl.formatMessage({
-    defaultMessage: 'Case',
-    description: 'Case, as in Case A / Case B / Case C',
-  });
 
   const SubgraphTypeData = {
     'CONDITIONAL-TRUE': {
@@ -33,11 +28,11 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({ subgraphType, na
       }),
     },
     'SWITCH-CASE': {
-      color: '#828282',
-      title: `${CASE_STRING}-${name}`,
+      color: '#484F58',
+      title: title,
     },
     'SWITCH-DEFAULT': {
-      color: '#828282',
+      color: '#484F58',
       title: intl.formatMessage({
         defaultMessage: 'Default',
         description: 'Default, the backup option if none other apply',

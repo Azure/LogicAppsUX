@@ -54,14 +54,14 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   }, [dispatch, id, isCollapsed]);
 
   if (!node) {
-    console.log('NODE IS NULL');
     return null;
   }
 
   const isEmptyGraph = !graph?.edges && (graph?.children[0] as any).children.length === 0;
   const normalizedType = node.type.toLowerCase();
 
-  if (normalizedType === 'scope' || normalizedType === 'foreach' || normalizedType === 'if') {
+  const validTypes = ['if', 'switch', 'foreach', 'scope'];
+  if (validTypes.includes(normalizedType)) {
     return (
       <div className="msla-scope-v2 msla-scope-card">
         <Handle

@@ -101,7 +101,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
         />
         {metadata?.subgraphType ? (
-          <SubgraphHeader subgraphType={metadata?.subgraphType} />
+          <SubgraphHeader subgraphType={metadata?.subgraphType} title={data?.label} />
         ) : (
           <Card
             title={data.label}
