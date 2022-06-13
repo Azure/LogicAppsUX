@@ -30,8 +30,8 @@ const elkLayout = async (workflowGraph: ElkNode) => {
   return layout;
 };
 
-const convertElkGraphToReactFlow = (graph: ElkNode): [Node<NodeData>[], Edge[]] => {
-  const nodes: Node<NodeData>[] = [];
+const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
+  const nodes: Node[] = [];
   const edges: Edge[] = [];
 
   const processChildren = (node: ElkNode, parent?: string) => {
@@ -99,12 +99,8 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowGraph | WorkflowNode): Elk
   };
 };
 
-interface NodeData {
-  label: string;
-}
-
 export const useLayout = (): [Node[], Edge[]] => {
-  const [reactFlowNodes, setReactFlowNodes] = useState<Node<NodeData>[]>([]);
+  const [reactFlowNodes, setReactFlowNodes] = useState<Node[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
   const workflowGraph = useSelector((state: RootState) => state.workflow.graph);
 

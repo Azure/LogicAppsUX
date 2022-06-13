@@ -1,20 +1,15 @@
-/* eslint-disable no-param-reassign */
-import type { ConnectionReferences } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface ConnectionsStoreState {
-  connectionReferences: ConnectionReferences; // { {referenceKey}: ConnectionReference } danielle help to explain format of reference key
-  connectionsMapping: Record<string, string>; // sample data { nodeId: referenceKey }
+  connectionsMapping: Record<string, string>; // Mapping is { nodeId: referenceKey }
 }
 
 export interface ConnectionReferencesPayload {
-  connectionReferences: ConnectionReferences;
   connectionsMapping: Record<string, string>;
 }
 
 export const initialConnectionsState: ConnectionsStoreState = {
-  connectionReferences: {},
   connectionsMapping: {},
 };
 
@@ -23,6 +18,7 @@ export const connectionSlice = createSlice({
   initialState: initialConnectionsState,
   reducers: {
     initializeConnectionReferences: (state, action: PayloadAction<ConnectionReferencesPayload>) => {
+      // eslint-disable-next-line no-param-reassign
       state = action.payload;
     },
     initializeConnectionsMappings: (state, action: PayloadAction<Record<string, string>>) => {

@@ -19,9 +19,7 @@ import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
-// Danielle need to pass ID or something to get connection
 const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
-  // danielle add type for data
   const { readOnly, isMonitoringView } = useContext(ProviderWrappedContext) ?? {};
 
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
@@ -67,7 +65,6 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
 
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
-  // const connection = useConnection()
 
   if (metadata?.isPlaceholderNode) {
     if (readOnly) return null;
