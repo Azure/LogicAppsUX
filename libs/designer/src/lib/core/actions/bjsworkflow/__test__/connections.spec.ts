@@ -1,5 +1,5 @@
 import Constants from '../../../../common/constants';
-import { _getManifestBasedConnectionMapping } from '../../../actions/bjsworkflow/connections';
+import { getManifestBasedConnectionMapping } from '../../../actions/bjsworkflow/connections';
 import type { OperationMetadataState } from '../../../state/operationMetadataSlice';
 import type { RootState } from '../../../store';
 import type {
@@ -18,7 +18,7 @@ const connectionName = 'name123';
 describe('connection workflow mappings', () => {
   it('should get the correct connectionId for the node', async () => {
     InitOperationManifestService(makeMockStdOperationManifestService(ConnectionReferenceKeyFormat.OpenApi));
-    const res = await _getManifestBasedConnectionMapping(mockGetState, nodeId, mockApiConnectionAction);
+    const res = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockApiConnectionAction);
     if (res) {
       expect(res[nodeId]).toEqual(connectionName);
     }
@@ -26,7 +26,7 @@ describe('connection workflow mappings', () => {
 
   it('should return undefined when there is no referenceKeyFormat', async () => {
     InitOperationManifestService(makeMockStdOperationManifestService(''));
-    const result = await _getManifestBasedConnectionMapping(mockGetState, nodeId, mockApiConnectionAction);
+    const result = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockApiConnectionAction);
     expect(result).toBeUndefined();
   });
 });

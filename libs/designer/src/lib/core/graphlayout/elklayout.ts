@@ -62,7 +62,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node<NodeData>[], Edge[]] 
       nodes.push({
         id: n.id,
         position: { x: n.x ?? 0, y: n.y ?? 0 },
-        data: { label: n.id }, // Danielle
+        data: { label: n.id },
         parentNode: node.id !== 'root' ? node.id : undefined,
         type: n.children ? 'graphNode' : 'testNode',
         style: n.children ? { height: n.height, width: n.width } : undefined,
@@ -104,7 +104,7 @@ interface NodeData {
 }
 
 export const useLayout = (): [Node[], Edge[]] => {
-  const [reactFlowNodes, setReactFlowNodes] = useState<Node<NodeData>[]>([]); // Danielle can we add the type here?
+  const [reactFlowNodes, setReactFlowNodes] = useState<Node<NodeData>[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
   const workflowGraph = useSelector((state: RootState) => state.workflow.graph);
 

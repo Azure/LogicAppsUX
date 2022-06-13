@@ -1,4 +1,4 @@
-import { useConnection } from '../../queries/connections';
+import { useConnectionByName } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { OperationInfo, OperationManifestProperties } from '@microsoft-logic-apps/utils';
@@ -30,7 +30,7 @@ export const useNodeConnectionName = (nodeId: string) => {
     }
     const connectionId = state.connections.connectionsMapping[nodeId];
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const connection = useConnection(connectionId); // danielle this may not work
+    const connection = useConnectionByName(connectionId); // Danielle diagnose why lint rule triggered here
     return connection?.properties.displayName ?? '';
   });
 };
