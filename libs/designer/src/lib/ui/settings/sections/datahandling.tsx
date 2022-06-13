@@ -1,7 +1,6 @@
 import type { SectionProps } from '..';
-import { SettingLabel } from './security';
+import { SettingLabel, SettingsSection } from '@microsoft/designer-ui';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
-import { SettingsSection } from '@microsoft/designer-ui';
 import { useState } from 'react';
 
 export const DataHandling = ({
@@ -24,10 +23,12 @@ export const DataHandling = ({
 
   const onAutomaticDecompressionChange = (checked: boolean): void => {
     setAutomaticDecompression(checked);
+    // validate
     // write to store
   };
   const onSchemaValidationChange = (checked: boolean): void => {
     setSchemaValidation(checked);
+    // validate
     // write to store
   };
 
@@ -42,8 +43,8 @@ export const DataHandling = ({
           readOnly,
           checked: automaticDecompression,
           onToggleInputChange: (_, checked) => onAutomaticDecompressionChange(!!checked), //createHandler
-          label: automaticDecompressionLabel,
-          visible: disableAutomaticDecompression !== undefined,
+          customLabel: () => automaticDecompressionLabel,
+          visible: true, //isAutomaticDecompressionSupported(nodeId)
         },
       },
       {
@@ -53,7 +54,7 @@ export const DataHandling = ({
           checked: schemaValidation,
           onToggleInputChange: (_, checked) => onSchemaValidationChange(!!checked),
           customLabel: () => requestSchemaValidationLabel,
-          visible: requestSchemaValidation !== undefined,
+          visible: true, //isSchemaValidationSupported(nodeId)
         },
       },
     ],

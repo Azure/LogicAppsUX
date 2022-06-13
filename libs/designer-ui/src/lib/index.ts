@@ -12,6 +12,7 @@ export * from './checkbox';
 // export * from './conditioncontrol';
 // export * from './configItem';
 export * from './copyinputcontrol';
+export * from './eventhandler';
 // export * from './datetimeeditor';
 export * from './dialogs';
 // export * from './dictionary';

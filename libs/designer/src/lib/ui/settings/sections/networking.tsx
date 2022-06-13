@@ -1,9 +1,8 @@
 import type { SectionProps } from '..';
-import { SettingLabel } from './security';
 // import { useDispatch } from "react-redux";
 import { useBoolean } from '@fluentui/react-hooks';
 import type { Settings, SettingSectionProps } from '@microsoft/designer-ui';
-import { SettingsSection } from '@microsoft/designer-ui';
+import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
 import { useState } from 'react';
 
 export const Networking = ({

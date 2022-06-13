@@ -1,8 +1,8 @@
 import type { SectionProps } from '..';
 // import updateNodeSettings  from '../../../core/state/operationMetadataSlice';
-import { SettingLabel } from './security';
+// import { SettingLabel } from './security';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
-import { SettingsSection } from '@microsoft/designer-ui';
+import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
 import { useState } from 'react';
 
 // import { useDispatch } from 'react-redux';
@@ -96,15 +96,6 @@ export const General = ({ splitOn, timeout, concurrency, conditionExpressions, r
         },
       },
       {
-        settingType: 'MultiAddExpressionEditor',
-        settingProp: {
-          visible: true, // isSupported fn
-          initialExpressions: conditionExpressionsFromState,
-          readOnly,
-          customLabel: () => triggerConditionsLabel,
-        },
-      },
-      {
         settingType: 'SettingToggle',
         settingProp: {
           visible: true, //isConcurrencySupported?
@@ -124,6 +115,15 @@ export const General = ({ splitOn, timeout, concurrency, conditionExpressions, r
           onValueChange: onConcurrencyValueChange,
           sliderLabel: 'Degree of Parallelism',
           readOnly,
+        },
+      },
+      {
+        settingType: 'MultiAddExpressionEditor',
+        settingProp: {
+          visible: true, // isSupported fn
+          initialExpressions: conditionExpressionsFromState,
+          readOnly,
+          customLabel: () => triggerConditionsLabel,
         },
       },
     ],

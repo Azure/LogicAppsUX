@@ -10,6 +10,7 @@ import {
   CustomValueSlider,
   SettingTextField,
   SettingToggle,
+  SettingDictionary,
 } from './settingsection';
 import type {
   MultiSelectSettingProps,
@@ -21,8 +22,10 @@ import type {
   CustomValueSliderProps,
   SettingTextFieldProps,
   SettingToggleProps,
+  SettingDictionaryProps,
 } from './settingsection';
-import { Separator, useTheme, Icon } from '@fluentui/react';
+import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
+import type { IIconStyles, IIconProps } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -63,6 +66,10 @@ export type Settings =
   | {
       settingType: 'SettingToggle';
       settingProp: SettingToggleProps;
+    }
+  | {
+      settingType: 'SettingDictionary';
+      settingProp: SettingDictionaryProps;
     };
 
 export interface SettingSectionProps {
@@ -127,6 +134,7 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
           settingProp.readOnly = isReadOnly;
         }
         if (!visible) {
+          // eslint-disable-next-line array-callback-return
           return;
         }
         const renderSetting = (): JSX.Element | null => {
@@ -149,6 +157,8 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
               return settingProp.visible ? <SettingTextField {...settingProp} /> : null;
             case 'SettingToggle':
               return settingProp.visible ? <SettingToggle {...settingProp} /> : null;
+            case 'SettingDictionary':
+              return settingProp.visible ? <SettingDictionary {...settingProp} /> : null;
             default:
               return null;
           }
@@ -162,3 +172,34 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
     </div>
   );
 };
+
+export interface SettingLabelProps {
+  labelText: string;
+  infoTooltipText?: string;
+  isChild: boolean;
+}
+
+const infoIconProps: IIconProps = {
+  iconName: 'Info',
+};
+
+const infoIconStyles: IIconStyles = {
+  root: {
+    color: '#8d8686',
+  },
+};
+
+export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLabelProps): JSX.Element {
+  const className = isChild ? 'msla-setting-section-row-child-label' : 'msla-setting-section-row-label';
+  if (infoTooltipText) {
+    return (
+      <div className={className}>
+        <div className="msla-setting-section-row-text">{labelText}</div>
+        <TooltipHost hostClassName="msla-setting-section-row-info" content={infoTooltipText}>
+          <IconButton iconProps={infoIconProps} styles={infoIconStyles} className="msla-setting-section-row-info-icon" />
+        </TooltipHost>
+      </div>
+    );
+  }
+  return <div className={className}>{labelText}</div>;
+}

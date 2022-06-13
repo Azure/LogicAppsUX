@@ -1,0 +1,96 @@
+import { TextField } from "@fluentui/react";
+import type { ITextFieldStyles } from "@fluentui/react";
+import { isObject } from "@microsoft-logic-apps/utils";
+import type { EventHandler } from "../..";
+import { SimpleDictionary } from "./dictionary/simpledictionary";
+import type { SettingProps } from "./settingtoggle";
+
+export type InputChangeHandler = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => void;
+
+export interface SettingDictionaryProps extends SettingProps {
+  values: any | Record<string, any> /* tslint:disable-line: no-any */;
+  onDictionaryChange?: EventHandler<Record<string, string> | undefined>;
+  onTextFieldChange?: InputChangeHandler;
+  label?: string;
+}
+
+export function SettingDictionary({
+  values,
+  readOnly,
+  onDictionaryChange,
+  onTextFieldChange,
+  visible,
+  customLabel
+}: SettingDictionaryProps): JSX.Element | null {
+  if (!visible) {
+      return null;
+  }
+
+  if (values === undefined || isObject(values)) {
+      return (
+          <ValuesInDictionary
+              values={values}
+              readOnly={readOnly}
+              onDictionaryChange={onDictionaryChange}
+              visible={visible}
+              customLabel={customLabel}
+          />
+      );
+  } else {
+      return <ValuesInTextField values={values} readOnly={readOnly} onTextFieldChange={onTextFieldChange} visible={visible} />;
+  }
+}
+
+function ValuesInDictionary({ values, readOnly, onDictionaryChange, label, customLabel }: SettingDictionaryProps): JSX.Element {
+  let valuesInDictionary: Record<string, string> = {};
+  if (isObject(values)) {
+      valuesInDictionary = {};
+      for (const key of Object.keys(values)) {
+          valuesInDictionary[key] = JSON.stringify(values[key]);
+      }
+  }
+
+  return customLabel ?
+    <>
+      {customLabel()}
+      <div className="msla-operation-setting">
+        <div className="msla-setting-row-dictionary-input">
+          <SimpleDictionary
+            disabled={readOnly}
+            readOnly={readOnly}
+            title={'Tracked Properties'}
+            value={values}
+            onChange={onDictionaryChange}
+          />
+        </div>
+      </div>
+    </> :
+    <div className="msla-operation-setting">
+      <div className="msla-setting-row-dictionary-input">
+        <SimpleDictionary
+          disabled={readOnly}
+          readOnly={readOnly}
+          title={label}
+          value={values}
+          onChange={onDictionaryChange}
+        />
+      </div>
+    </div>
+}
+
+function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, label }: SettingDictionaryProps): JSX.Element {
+  const textFieldStyles: Partial<ITextFieldStyles> = {
+    fieldGroup: { height: 24, width: '100%', display: 'inline', marginRight: 8 },
+    wrapper: { display: 'inline-flex', width: '100%' },
+  };
+  // TODO(joechung): What about "null", "false", "true", empty strings, stringified numbers, and other ambiguous JSON values?
+  const valuesInString = typeof values !== 'string' ? JSON.stringify(values) : values;
+  return customLabel ?
+  <>
+    {customLabel()}
+    <TextField className="msla-setting-row-text-input" disabled={readOnly} value={valuesInString} onChange={onTextFieldChange} styles={textFieldStyles} />
+  </> :
+  <div className="msla-setting-section-row">
+    <TextField label={label} className="msla-setting-row-text-input" disabled={readOnly} value={valuesInString} onChange={onTextFieldChange} styles={textFieldStyles} />
+  </div>
+}
