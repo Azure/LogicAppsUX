@@ -1,16 +1,15 @@
 import constants from '../../../../common/constants';
-import { ProviderWrappedContext } from '../../../../core/ProviderWrappedContext';
+import { useReadOnly } from '../../../../core/state/selectors/designerOptionsSelector';
 import type { RootState } from '../../../../core/store';
 import { getId } from '@fluentui/react';
 import type { PanelTab, Settings } from '@microsoft/designer-ui';
 import { SettingsSection } from '@microsoft/designer-ui';
-import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
   const selectedNode = useSelector((state: RootState) => state.panel.selectedNode);
   const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
-  const { readOnly = false } = useContext(ProviderWrappedContext) ?? {};
+  const readOnly = useReadOnly();
 
   return (
     <>
