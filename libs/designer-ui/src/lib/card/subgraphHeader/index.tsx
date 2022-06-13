@@ -3,13 +3,22 @@ import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 interface SubgraphHeaderProps {
+  parentId: string;
   subgraphType: SubgraphType;
   title?: string;
   collapsed?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
+  onClick?(id: string): void;
 }
 
-export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({ subgraphType, title, collapsed, handleCollapse }) => {
+export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
+  parentId,
+  subgraphType,
+  title = 'undefined',
+  collapsed,
+  handleCollapse,
+  onClick,
+}) => {
   const intl = useIntl();
 
   const SubgraphTypeData = {
@@ -40,8 +49,17 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({ subgraphType, ti
     },
   };
 
+  const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
+    e.stopPropagation();
+    if (subgraphType !== 'SWITCH-CASE') {
+      onClick?.(parentId);
+    } else {
+      onClick?.(title);
+    }
+  };
+
   return (
-    <div className="msla-subgraph-header" style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}>
+    <div className="msla-subgraph-header" style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }} onClick={handleClick}>
       <div className="msla-subgraph-title">{SubgraphTypeData[subgraphType].title}</div>
       <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
     </div>

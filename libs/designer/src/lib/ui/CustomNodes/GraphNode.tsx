@@ -68,7 +68,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           type="target"
           position={targetPosition}
           isConnectable={false}
-          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
+          style={{ transform: 'translate(-50%, 50%)', visibility: 'hidden' }}
         />
         <ScopeCard
           brandColor={brandColor}
@@ -88,7 +88,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           type="source"
           position={sourcePosition}
           isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
+          style={{ visibility: 'hidden', transform: 'translate(-50%, -50%)' }}
         />
       </div>
     );
@@ -111,13 +111,13 @@ function renderGenericGraph(
           type="target"
           position={targetPosition}
           isConnectable={false}
-          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
+          style={{ transform: 'translate(-50%, 50%)', visibility: 'hidden' }}
         />
         <Handle
           type="source"
           position={sourcePosition}
           isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
+          style={{ visibility: 'hidden', transform: 'translate(-50%, -50%)' }}
         />
       </div>
       {!readOnly && isEmptyGraph && (
