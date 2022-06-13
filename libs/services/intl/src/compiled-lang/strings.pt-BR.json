@@ -149,6 +149,12 @@
       "value": "Necessário. O valor para converter em XML."
     }
   ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Mostrar todas as versões"
+    }
+  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -229,6 +235,12 @@
     {
       "type": 0,
       "value": "Necessário. O valor para converter em URI de dados."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Pesquisa global"
     }
   ],
   "2K2fAj": [
@@ -319,6 +331,12 @@
     {
       "type": 0,
       "value": "ID da solicitação de serviço"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Tour/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -607,6 +625,12 @@
     {
       "type": 0,
       "value": "Duração"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
     }
   ],
   "ECZC6Y": [
@@ -1127,6 +1151,12 @@
       "value": "Necessário. O objeto para verificar se é menor ou igual ao objeto de comparação."
     }
   ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Descartar"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -1273,6 +1303,12 @@
       "value": "Necessário. O nome da ação com uma resposta de dados do formulário ou codificada no formulário."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Salvar"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1283,6 +1319,12 @@
     {
       "type": 0,
       "value": "Falhou"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Enviar comentários"
     }
   ],
   "TI44R1": [
@@ -1502,7 +1544,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Excluir"
     }
   ],
   "XtuP5e": [
@@ -1653,6 +1695,12 @@
       "value": "painel"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Configuração"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1791,6 +1839,12 @@
       "value": "Ignorado"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Publicar"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1889,6 +1943,12 @@
       "value": "Duração"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Refazer"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1945,6 +2005,12 @@
     {
       "type": 0,
       "value": "s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Testar"
     }
   ],
   "j2MU0b": [
@@ -2371,6 +2437,12 @@
       "value": "Necessário. O valor que é convertido em um inteiro."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Desfazer"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2669,6 +2741,12 @@
     {
       "type": 0,
       "value": "Necessário. A coleção para a qual obter o comprimento."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [

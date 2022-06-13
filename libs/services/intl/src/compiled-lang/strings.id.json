@@ -149,6 +149,12 @@
       "value": "Harus diisi. Nilai untuk dikonversi ke XML."
     }
   ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Tampilkan semua versi"
+    }
+  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -218,6 +224,12 @@
     {
       "type": 0,
       "value": "Wajib. Nilai yang dikonversi menjadi URI data."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Pencarian global"
     }
   ],
   "2K2fAj": [
@@ -308,6 +320,12 @@
     {
       "type": 0,
       "value": "ID permintaan layanan"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Tur/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -596,6 +614,12 @@
     {
       "type": 0,
       "value": "Durasi"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
     }
   ],
   "ECZC6Y": [
@@ -1105,6 +1129,12 @@
       "value": "Harus diisi. Objek untuk diperiksa jika kurang dari dari atau sama dengan objek yang dibandingkan."
     }
   ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Buang"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -1240,6 +1270,12 @@
       "value": "Wajib. Nama tindakan dengan data formulir atau respons dengan pengodean formulir."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Simpan"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1250,6 +1286,12 @@
     {
       "type": 0,
       "value": "Gagal"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Berikan tanggapan"
     }
   ],
   "TI44R1": [
@@ -1469,7 +1511,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Hapus"
     }
   ],
   "XtuP5e": [
@@ -1620,6 +1662,12 @@
       "value": "panel"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Konfigurasi"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1758,6 +1806,12 @@
       "value": "Diabaikan"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Terbitkan"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1845,6 +1899,12 @@
       "value": "Durasi"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Ulangi"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1901,6 +1961,12 @@
     {
       "type": 0,
       "value": "d"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Uji"
     }
   ],
   "j2MU0b": [
@@ -2316,6 +2382,12 @@
       "value": "Harus diisi. Nilai yang dikonversi ke bilangan bulat."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Batalkan"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2614,6 +2686,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Koleksi untuk mendapatkan panjang."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [

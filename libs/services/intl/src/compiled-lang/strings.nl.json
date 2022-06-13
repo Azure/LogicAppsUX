@@ -149,6 +149,12 @@
       "value": "Vereist. De waarde die moet worden geconverteerd naar XML."
     }
   ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Alle versies weergeven"
+    }
+  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -229,6 +235,12 @@
     {
       "type": 0,
       "value": "Vereist. De waarde die moet worden geconverteerd naar een gegevens-URI."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Algemene zoekopdracht"
     }
   ],
   "2K2fAj": [
@@ -319,6 +331,12 @@
     {
       "type": 0,
       "value": "Serviceaanvraag-id"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Rondleiding/zelfstudie"
     }
   ],
   "5J7j9k": [
@@ -607,6 +625,12 @@
     {
       "type": 0,
       "value": "Duur"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
     }
   ],
   "ECZC6Y": [
@@ -1127,6 +1151,12 @@
       "value": "Vereist. Het object dat moet worden gecontroleerd als dit kleiner dan of gelijk is aan de waarde van het vergelijkingsobject."
     }
   ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Negeren"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -1277,6 +1307,12 @@
       "value": "Vereist. De naam van de actie met een antwoord met formuliergegevens of -codes."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Opslaan"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1287,6 +1323,12 @@
     {
       "type": 0,
       "value": "Mislukt"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Feedback geven"
     }
   ],
   "TI44R1": [
@@ -1506,7 +1548,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Verwijderen"
     }
   ],
   "XtuP5e": [
@@ -1657,6 +1699,12 @@
       "value": "paneel"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Configuratie"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1795,6 +1843,12 @@
       "value": "Genegeerd"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Publiceren"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1901,6 +1955,12 @@
       "value": "Duur"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Opnieuw"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1957,6 +2017,12 @@
     {
       "type": 0,
       "value": "s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Testen"
     }
   ],
   "j2MU0b": [
@@ -2383,6 +2449,12 @@
       "value": "Vereist. De waarde die wordt geconverteerd naar een geheel getal."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Ongedaan maken"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2681,6 +2753,12 @@
     {
       "type": 0,
       "value": "Vereist. De verzameling waarvoor de lengte moet worden opgehaald."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [

@@ -46,15 +46,14 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
 
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
-      <div
-        aria-describedby={describedBy}
-        className={'msla-content-fit'}
-        aria-label={title}
-        role="button"
-        onClick={handleClick}
-        tabIndex={0}
-      >
-        <div ref={drag} className="msla-scope-v2--header msla-scope-header-wrapper" draggable={draggable} style={colorVars}>
+      <div aria-describedby={describedBy} className={'msla-content-fit'} aria-label={title} tabIndex={0}>
+        <div
+          ref={drag}
+          className="msla-scope-v2--header msla-scope-header-wrapper"
+          draggable={draggable}
+          style={colorVars}
+          onClick={handleClick}
+        >
           {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
           <div className="msla-scope-header-content">
             <div className="msla-scope-header-title-box">

@@ -149,6 +149,12 @@
       "value": "Obbligatorio. Valore da convertire in XML."
     }
   ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Mostra tutte le versioni"
+    }
+  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -229,6 +235,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore da convertire in URI di dati."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Ricerca globale"
     }
   ],
   "2K2fAj": [
@@ -319,6 +331,12 @@
     {
       "type": 0,
       "value": "ID richiesta servizio"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Tour/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -607,6 +625,12 @@
     {
       "type": 0,
       "value": "Durata"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
     }
   ],
   "ECZC6Y": [
@@ -1135,6 +1159,12 @@
       "value": "Obbligatorio. Oggetto da controllare per verificare se è minore o uguale al valore con cui è confrontato."
     }
   ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Rimuovi"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -1281,6 +1311,12 @@
       "value": "Obbligatorio. Nome dell'azione con una risposta con dati del modulo o codifica per il modulo."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Salva"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1291,6 +1327,12 @@
     {
       "type": 0,
       "value": "Operazione non riuscita"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Invia feedback"
     }
   ],
   "TI44R1": [
@@ -1510,7 +1552,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Elimina"
     }
   ],
   "XtuP5e": [
@@ -1661,6 +1703,12 @@
       "value": "pannello"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Configurazione"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1799,6 +1847,12 @@
       "value": "Ignorato"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Pubblica"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1897,6 +1951,12 @@
       "value": "Durata"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Ripeti"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1953,6 +2013,12 @@
     {
       "type": 0,
       "value": " s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "j2MU0b": [
@@ -2379,6 +2445,12 @@
       "value": "Obbligatorio. Valore convertito in un valore integer."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2677,6 +2749,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Raccolta per cui recuperare la lunghezza."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [

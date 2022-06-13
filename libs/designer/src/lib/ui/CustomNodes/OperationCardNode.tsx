@@ -67,7 +67,6 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
 
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
-
   if (metadata?.isPlaceholderNode) {
     if (readOnly) return null;
     return (
@@ -110,8 +109,8 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
             draggable={!readOnly}
             brandColor={brandColor}
             id={id}
-            connectionRequired={true}
-            connectionDisplayName="ttha222@outlook.com"
+            connectionRequired={false}
+            connectionDisplayName={undefined}
             commentBox={comment}
             drag={drag}
             dragPreview={dragPreview}
