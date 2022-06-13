@@ -5,7 +5,7 @@ import { Icon } from '@fluentui/react/lib/Icon';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface PanelHeaderCommentProps {
@@ -13,7 +13,7 @@ export interface PanelHeaderCommentProps {
   isCollapsed: boolean;
   noNodeSelected?: boolean;
   readOnlyMode?: boolean;
-  commentChange?(panelCommentChangeEvent?: string): void;
+  commentChange: (panelCommentChangeEvent?: string) => void;
 }
 
 const commentTextFieldStyle: Partial<ITextFieldStyles> = {
@@ -31,13 +31,8 @@ export const PanelHeaderComment = ({
 }: PanelHeaderCommentProps): JSX.Element => {
   const intl = useIntl();
 
-  const [cardComment, setCardComment] = useState(comment);
   const [commentHasFocus, setCommentHasFocus] = useState(false);
   const commentTextFieldRef = React.createRef<ITextField>();
-
-  useEffect(() => {
-    setCardComment(comment);
-  }, [comment]);
 
   const commentLabel = intl.formatMessage({
     defaultMessage: 'Comment',
@@ -56,7 +51,7 @@ export const PanelHeaderComment = ({
     });
 
     const onCommentChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-      setCardComment(newValue);
+      commentChange(newValue);
     };
 
     const onCommentBlur = (_: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
@@ -72,7 +67,7 @@ export const PanelHeaderComment = ({
     const onCommentTextFieldEscape = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
       if (isEscapeKey(e)) {
         setCommentHasFocus(false);
-        setCardComment(comment);
+        commentChange(comment);
         if (commentTextFieldRef.current) {
           commentTextFieldRef.current.blur();
         }
@@ -90,7 +85,7 @@ export const PanelHeaderComment = ({
         styles={commentTextFieldStyle}
         ariaLabel={commentTitle}
         maxLength={constants.PANEL.MAX_COMMENT_LENGTH}
-        value={cardComment}
+        value={comment ?? ''}
         onChange={onCommentChange}
         onBlur={readOnlyMode ? undefined : onCommentBlur}
         onFocus={onFocusComment}

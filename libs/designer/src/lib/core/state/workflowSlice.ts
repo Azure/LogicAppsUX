@@ -40,6 +40,10 @@ export const workflowSlice = createSlice({
     initWorkflowSpec: (state, action: PayloadAction<SpecTypes>) => {
       state.workflowSpec = action.payload;
     },
+    setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
+      const { nodeId, description } = action.payload;
+      state.operations[nodeId].description = description;
+    },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
       if (!state.graph) {
         return;
@@ -98,6 +102,6 @@ export const workflowSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initWorkflowSpec, addNode, updateNodeSizes } = workflowSlice.actions;
+export const { initWorkflowSpec, addNode, updateNodeSizes, setNodeDescription } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

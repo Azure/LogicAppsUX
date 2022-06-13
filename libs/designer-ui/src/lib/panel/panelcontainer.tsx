@@ -33,6 +33,7 @@ export type PanelContainerProps = {
   trackEvent(data: PageActionTelemetryData): void;
   setSelectedTab: React.Dispatch<React.SetStateAction<string | undefined>>;
   toggleCollapse: () => void;
+  onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
 } & CommonPanelProps;
 
@@ -57,6 +58,7 @@ export const PanelContainer = ({
   toggleCollapse,
   trackEvent,
   renderHeader,
+  onCommentChange,
 }: PanelContainerProps) => {
   const intl = useIntl();
   const onTabChange = (itemKey: string): void => {
@@ -81,6 +83,7 @@ export const PanelContainer = ({
           title={title}
           includeTitle={true}
           comment={comment}
+          commentChange={onCommentChange}
           toggleCollapse={toggleCollapse}
         />
       );
@@ -98,6 +101,7 @@ export const PanelContainer = ({
       readOnlyMode,
       title,
       comment,
+      onCommentChange,
       toggleCollapse,
     ]
   );

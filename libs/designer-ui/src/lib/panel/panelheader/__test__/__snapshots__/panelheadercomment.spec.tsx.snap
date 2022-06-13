@@ -35,6 +35,7 @@ exports[`ui/panel/panelheadercomment should construct. 1`] = `
         },
       }
     }
+    value=""
   />
 </div>
 `;

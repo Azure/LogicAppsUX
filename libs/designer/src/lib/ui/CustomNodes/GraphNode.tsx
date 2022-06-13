@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ProviderWrappedContext } from '../../core';
 import type { WorkflowGraph } from '../../core/parsers/models/workflowNode';
+import { changePanelNode, expandPanel } from '../../core/state/panelSlice';
 import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useWorkflowNode } from '../../core/state/selectors/workflowNodeSelector';
+import type { AppDispatch, RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
 import { ScopeCard } from '@microsoft/designer-ui';
-import { memo, useContext } from 'react';
+import { memo, useCallback, useContext } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
+import { useDispatch, useSelector } from 'react-redux';
 
 const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const node = useActionMetadata(id);
@@ -37,11 +40,18 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
     }),
     [readOnly]
   );
-
+  const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
   const graph = useWorkflowNode(id) as WorkflowGraph;
   const operationInfo = useOperationInfo(id);
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
+  const dispatch = useDispatch<AppDispatch>();
+  const nodeClick = useCallback(() => {
+    if (isCollapsed) {
+      dispatch(expandPanel());
+    }
+    dispatch(changePanelNode(id));
+  }, [dispatch, id, isCollapsed]);
 
   if (!node) {
     console.log('NODE IS NULL');
@@ -72,6 +82,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           isMonitoringView={isMonitoringView}
           title={data.label}
           readOnly={readOnly}
+          onClick={nodeClick}
         />
         <Handle
           type="source"

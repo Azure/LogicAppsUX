@@ -1,5 +1,16 @@
 import type { IHttpClient } from '../httpClient';
 import type { IOperationManifestService } from '../operationmanifest';
+import conditionManifest from './manifests/condition';
+import csvManifest from './manifests/csvtable';
+import foreachManifest from './manifests/foreach';
+import htmlManifest from './manifests/htmltable';
+import joinManifest from './manifests/join';
+import parsejsonManifest from './manifests/parsejson';
+import queryManifest from './manifests/query';
+import requestManifest from './manifests/request';
+import responseManifest from './manifests/response';
+import scopeManifest from './manifests/scope';
+import selectManifest from './manifests/select';
 import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft-logic-apps/parsers';
 import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
 import {
@@ -9,7 +20,6 @@ import {
   clone,
   equals,
   format,
-  SettingScope,
   UnsupportedException,
 } from '@microsoft-logic-apps/utils';
 import type { OperationInfo, OperationManifest, SplitOn } from '@microsoft-logic-apps/utils';
@@ -19,6 +29,12 @@ type SchemaObject = OpenAPIV2.SchemaObject;
 const invokefunction = 'invokefunction';
 const javascriptcode = 'javascriptcode';
 const compose = 'compose';
+const csvtable = 'csvtable';
+const htmltable = 'htmltable';
+const join = 'join';
+const parsejson = 'parsejson';
+const query = 'query';
+const select = 'select';
 const function_ = 'function';
 const liquid = 'liquid';
 const serviceprovider = 'serviceprovider';
@@ -36,22 +52,31 @@ const initializevariable = 'initializevariable';
 const incrementvariable = 'incrementvariable';
 const request = 'request';
 const response = 'response';
+const table = 'table';
 
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
+const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 
 const supportedManifestTypes = [
   compose,
   condition,
+  csvtable,
   foreach,
   function_,
+  htmltable,
   initializevariable,
   incrementvariable,
   invokefunction,
   javascriptcode,
+  join,
   liquid,
+  parsejson,
+  query,
   request,
   response,
+  select,
   serviceprovider,
+  table,
   workflow,
   xmlvalidation,
   xslt,
@@ -112,13 +137,9 @@ export class StandardOperationManifestService implements IOperationManifestServi
 
   async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedManifestObjects.get(operationId);
-    if (supportedManifest) return supportedManifest;
 
-    // NOTE: HACK to get operation manifest of dataOperation connector's action,
-    // should be removed when all manifests are created inside dataoperation.
-    if (equals(connectorId, 'connectionProviders/dataOperation')) {
-      // eslint-disable-next-line no-param-reassign
-      connectorId = 'connectionProviders/dataOperationNew';
+    if (supportedManifest) {
+      return supportedManifest;
     }
 
     const { apiVersion, baseUrl, httpClient } = this.options;
@@ -247,9 +268,13 @@ function isInBuiltOperation(definition: any): boolean {
     case incrementvariable:
     case invokefunction:
     case javascriptcode:
+    case join:
     case liquid:
+    case parsejson:
+    case query:
     case request:
     case response:
+    case select:
     case workflow:
     case xslt:
     case xmlvalidation:
@@ -258,6 +283,7 @@ function isInBuiltOperation(definition: any): boolean {
     case scope:
     case swiftdecode:
     case swiftencode:
+    case table:
       return true;
 
     default:
@@ -269,7 +295,7 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
   const normalizedOperationType = definition.type.toLowerCase();
   const kind = definition.kind ? definition.kind.toLowerCase() : undefined;
 
-  if (kind === undefined) {
+  if (kind === undefined && normalizedOperationType !== table) {
     return inBuiltOperationsMetadata[normalizedOperationType];
   }
 
@@ -320,6 +346,24 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
         default:
           throw new UnsupportedException(`Unsupported operation kind ${kind} for response type`);
       }
+    case table:
+      switch (definition.inputs?.format?.toLowerCase()) {
+        case 'csv':
+          return {
+            connectorId: dataOperationConnectorId,
+            operationId: csvtable,
+          };
+
+        case 'html':
+          return {
+            connectorId: dataOperationConnectorId,
+            operationId: htmltable,
+          };
+
+        default:
+          throw new UnsupportedException(`Unsupported table format ${definition.inputs?.format} for table type`);
+      }
+
     default:
       throw new UnsupportedException(`Unsupported built in operation type ${normalizedOperationType}`);
   }
@@ -327,7 +371,7 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
 
 const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   [compose]: {
-    connectorId: 'connectionProviders/dataOperationNew',
+    connectorId: dataOperationConnectorId,
     operationId: 'composeNew',
   },
   [condition]: {
@@ -357,6 +401,22 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   [javascriptcode]: {
     connectorId: 'connectionProviders/inlineCode',
     operationId: 'javaScriptCode',
+  },
+  [join]: {
+    connectorId: dataOperationConnectorId,
+    operationId: join,
+  },
+  [parsejson]: {
+    connectorId: dataOperationConnectorId,
+    operationId: parsejson,
+  },
+  [query]: {
+    connectorId: dataOperationConnectorId,
+    operationId: query,
+  },
+  [select]: {
+    connectorId: dataOperationConnectorId,
+    operationId: select,
   },
   [workflow]: {
     connectorId: 'connectionProviders/localWorkflowOperation',
@@ -392,69 +452,16 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   },
 };
 
-const foreachManifest: OperationManifest = {
-  properties: {
-    iconUri:
-      'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGQ9Im0wIDBoMzJ2MzJoLTMyeiIgZmlsbD0iIzQ4Njk5MSIvPg0KIDxwYXRoIGQ9Ik0xMSAyMGg3LjJsMSAxaC05LjJ2LTguM2wtMS4zIDEuMy0uNy0uNyAyLjUtMi41IDIuNSAyLjUtLjcuNy0xLjMtMS4zem0xMi4zLTJsLjcuNy0yLjUgMi41LTIuNS0yLjUuNy0uNyAxLjMgMS4zdi03LjNoLTcuMmwtMS0xaDkuMnY4LjN6IiBmaWxsPSIjZmZmIi8+DQo8L3N2Zz4NCg==',
-    brandColor: '#486991',
-    description: 'Executes a block of actions for each item in the input array.',
-
-    allowChildOperations: true,
-
-    inputs: {
-      type: 'array',
-      title: 'Select an output from previous steps',
-    },
-    inputsLocation: ['foreach'],
-    isInputsOptional: false,
-
-    outputs: {},
-    isOutputsOptional: false,
-
-    settings: {
-      trackedProperties: {
-        scopes: [SettingScope.Action],
-      },
-    },
-  },
-};
-
-const scopeManifest: OperationManifest = {
-  properties: {
-    iconUri:
-      'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGQ9Im0wIDBoMzJ2MzJoLTMyeiIgZmlsbD0iIzhDMzkwMCIvPg0KIDxwYXRoIGQ9Im04IDEwaDE2djEyaC0xNnptMTUgMTF2LTEwaC0xNHYxMHptLTItOHY2aC0xMHYtNnptLTEgNXYtNGgtOHY0eiIgZmlsbD0iI2ZmZiIvPg0KPC9zdmc+DQo=',
-    brandColor: '#8C3900',
-    description: 'Encapsulate a block of actions and inherit the last terminal status (Succeeded, Failed, Cancelled) of actions inside.',
-
-    allowChildOperations: true,
-
-    settings: {
-      trackedProperties: {
-        scopes: [SettingScope.Action],
-      },
-    },
-  },
-};
-
-const conditionManifest: OperationManifest = {
-  properties: {
-    iconUri:
-      'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iLTQgLTQgNjAgNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+DQogPHBhdGggZD0ibS00LTRoNjB2NjBoLTYweiIgZmlsbD0iIzQ4NEY1OCIvPg0KIDxwYXRoIGQ9Ik00MSAxOC41di03LjVoLTMwdjcuNWg1LjY0djEzLjgzbC0zLjI4NS0zLjI4NS0xLjA2NSAxLjA2NSA0LjAzNSA0LjA1Ljg3Ljg0aC02LjE5NXY2aDEzLjV2LTZoLTYuOWwuODU1LS44NTUgNC4wMzUtNC4wNS0xLjA2NS0xLjA2NS0zLjI4NSAzLjI4NXYtMTMuODE1aDE1djEzLjgzbC0zLjI4NS0zLjI4NS0xLjA2NSAxLjA2NSA0LjAzNSA0LjA1Ljg3Ljg0aC02LjE5NXY2aDEzLjV2LTZoLTYuOWwuODU1LS44NTUgNC4wMzUtNC4wNS0xLjA2NS0xLjA2NS0zLjI4NSAzLjI4NXYtMTMuODE1em0tMjguNS02aDI3djQuNWgtMjd6IiBmaWxsPSIjZmZmIi8+DQo8L3N2Zz4NCg==',
-    brandColor: '#484F58',
-    description: 'Conditionally execute a block of actions.',
-
-    allowChildOperations: true,
-
-    settings: {
-      trackedProperties: {
-        scopes: [SettingScope.Action],
-      },
-    },
-  },
-};
-
 const supportedManifestObjects = new Map<string, OperationManifest>([
-  [foreach, foreachManifest],
-  [scope, scopeManifest],
   [condition, conditionManifest],
+  [csvtable, csvManifest],
+  [foreach, foreachManifest],
+  [htmltable, htmlManifest],
+  [join, joinManifest],
+  [parsejson, parsejsonManifest],
+  [query, queryManifest],
+  [request, requestManifest],
+  [response, responseManifest],
+  [scope, scopeManifest],
+  [select, selectManifest],
 ]);

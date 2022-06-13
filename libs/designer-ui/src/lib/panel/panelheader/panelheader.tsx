@@ -36,7 +36,7 @@ export interface PanelHeaderProps {
   showCommentBox?: boolean;
   title?: string;
   includeTitle: boolean;
-  commentChange?(panelCommentChangeEvent?: string): void;
+  commentChange(panelCommentChangeEvent?: string): void;
   onDismissButtonClicked?(): void;
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;

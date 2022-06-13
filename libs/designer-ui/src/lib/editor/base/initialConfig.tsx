@@ -1,5 +1,5 @@
 import type { Segment } from '.';
-import { ValueSegmentType } from '.';
+import { ValueSegmentType } from '../models/parameter';
 import { $createTokenNode } from './nodes/tokenNode';
 import { $createParagraphNode, $createTextNode, $getRoot } from 'lexical';
 

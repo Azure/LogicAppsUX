@@ -161,6 +161,12 @@
       "value": "Required. The value to convert to XML."
     }
   ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Show all versions"
+    }
+  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -241,6 +247,12 @@
     {
       "type": 0,
       "value": "Required. The value to convert to data URI."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Global search"
     }
   ],
   "2K2fAj": [
@@ -331,6 +343,12 @@
     {
       "type": 0,
       "value": "Service request ID"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Tour/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -619,6 +637,12 @@
     {
       "type": 0,
       "value": "Duration"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
     }
   ],
   "ECZC6Y": [
@@ -1157,6 +1181,12 @@
       "value": "Required. The object to check if it is less or equal to the comparing object."
     }
   ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Discard"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -1307,6 +1337,12 @@
       "value": "Required. The name of the action with a form-data or form-encoded response."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1317,6 +1353,12 @@
     {
       "type": 0,
       "value": "Failed"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Give feedback"
     }
   ],
   "TI44R1": [
@@ -1687,6 +1729,12 @@
       "value": "panel"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Configuration"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1825,6 +1873,12 @@
       "value": "Ignored"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Publish"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1923,6 +1977,12 @@
       "value": "Duration"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Redo"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1979,6 +2039,12 @@
     {
       "type": 0,
       "value": "s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "j2MU0b": [
@@ -2405,6 +2471,12 @@
       "value": "Required. The value that is converted to an integer."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2709,6 +2781,12 @@
     {
       "type": 0,
       "value": "Required. The collection for which to get the length."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [
