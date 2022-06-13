@@ -8,11 +8,15 @@ export interface WorkflowLoadingState {
   resourcePath?: string;
   loadingMethod: 'file' | 'arm';
   workflowDefinition?: LogicAppsV2.WorkflowDefinition | null;
+  readOnly: boolean;
+  monitoringView: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
   loadingMethod: 'file',
   resourcePath: 'simpleBigworkflow.json',
+  readOnly: false,
+  monitoringView: false,
 };
 
 export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: void, thunkAPI) => {
@@ -53,6 +57,15 @@ export const workflowLoadingSlice = createSlice({
     changeLoadingMethod: (state, action: PayloadAction<'file' | 'arm'>) => {
       state.loadingMethod = action.payload;
     },
+    setReadOnly: (state, action: PayloadAction<boolean>) => {
+      state.readOnly = action.payload;
+    },
+    setMonitoringView: (state, action: PayloadAction<boolean>) => {
+      state.monitoringView = action.payload;
+      if (action.payload) {
+        state.readOnly = true;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action) => {
@@ -64,6 +77,6 @@ export const workflowLoadingSlice = createSlice({
   },
 });
 
-export const { changeArmToken, changeResourcePath, changeLoadingMethod } = workflowLoadingSlice.actions;
+export const { changeArmToken, changeResourcePath, changeLoadingMethod, setReadOnly, setMonitoringView } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

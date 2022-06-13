@@ -1,9 +1,9 @@
-import { ProviderWrappedContext } from '../../core';
 import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
+import { useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
 import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import { DropZone } from './dropzone';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { getEdgeCenter, getSmoothStepPath } from 'react-flow-renderer';
 import type { EdgeProps } from 'react-flow-renderer';
 
@@ -27,7 +27,7 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   targetPosition,
   style = {},
 }) => {
-  const { readOnly } = useContext(ProviderWrappedContext) ?? {};
+  const readOnly = useReadOnly();
 
   const allChildrenEdges = useEdgesByParent(source);
   const nodeMetadata = useNodeMetadata(source);

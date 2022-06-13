@@ -1,6 +1,6 @@
-import { ProviderWrappedContext } from '../../core/ProviderWrappedContext';
 import { collapsePanel, expandPanel } from '../../core/state/panelSlice';
 import { useIconUri, useNodeDescription, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
 import { setNodeDescription } from '../../core/state/workflowSlice';
 import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
@@ -22,7 +22,7 @@ import {
   PanelSize,
   registerTabs,
 } from '@microsoft/designer-ui';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -34,7 +34,8 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch();
 
-  const { readOnly, isMonitoringView } = useContext(ProviderWrappedContext) ?? {};
+  const readOnly = useReadOnly();
+  const isMonitoringView = useMonitoringView();
 
   const { collapsed, selectedNode, isDiscovery } = useSelector((state: RootState) => {
     return state.panel;
