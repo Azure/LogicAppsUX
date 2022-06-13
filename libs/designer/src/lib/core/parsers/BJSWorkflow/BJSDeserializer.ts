@@ -5,6 +5,7 @@ import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../models/workfl
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { equals, isNullOrEmpty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
+import { title } from 'process';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -123,7 +124,7 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
 
-  const applyActions = (graphId: string, actions: LogicAppsV2.Actions | undefined, subgraphType?: SubgraphType) => {
+  const applyActions = (graphId: string, actions: LogicAppsV2.Actions | undefined, subgraphType?: SubgraphType, subgraphTitle?: string) => {
     const [graph, operations, metadata] = processNestedActions(graphId, actions);
 
     actionGraphs.push(graph);
@@ -132,9 +133,9 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
     addEmptyPlaceholderNodeIfNeeded(graph, nodesMetadata);
 
     if (subgraphType) {
-      const scopeRootId = `${graphId}-${subgraphType}`;
+      const scopeRootId = subgraphTitle ?? `${graphId}-${subgraphType}`;
       const prevRootId = graph.children[0].id;
-      graph.children.unshift({
+      graph.children.push({
         id: scopeRootId,
         height: 0,
         width: 0,
@@ -157,10 +158,10 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
   };
 
   if (isSwitchAction(action)) {
-    applyActions(`${actionName}-defaultActions`, action.default?.actions, 'SWITCH-DEFAULT');
     for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
-      applyActions(`${actionName}-${caseName}Actions`, caseAction.actions, 'SWITCH-CASE');
+      applyActions(`${actionName}-${caseName}Actions`, caseAction.actions, 'SWITCH-CASE', caseName);
     }
+    applyActions(`${actionName}-defaultActions`, action.default?.actions, 'SWITCH-DEFAULT');
   } else if (isIfAction(action)) {
     applyActions(`${actionName}-actions`, action.actions, 'CONDITIONAL-TRUE');
     applyActions(`${actionName}-elseActions`, action.else?.actions, 'CONDITIONAL-FALSE');
