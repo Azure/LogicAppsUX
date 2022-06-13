@@ -1,7 +1,7 @@
 import { useLayout } from '../core/graphlayout';
 import { updateNodeSizes } from '../core/state/workflowSlice';
-import CustomTestNode from './CustomNodes/CustomTestNode';
 import GraphNode from './CustomNodes/GraphNode';
+import OperationCardNode from './CustomNodes/OperationCardNode';
 import { CustomEdge } from './connections/edge';
 import { PanelRoot } from './panel/panelroot';
 import { useCallback } from 'react';
@@ -16,7 +16,7 @@ export interface DesignerProps {
 }
 
 const nodeTypes = {
-  testNode: CustomTestNode,
+  testNode: OperationCardNode,
   graphNode: GraphNode,
 };
 

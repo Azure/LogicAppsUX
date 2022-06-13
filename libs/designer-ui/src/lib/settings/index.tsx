@@ -11,6 +11,7 @@ import {
   SettingTextField,
   SettingToggle,
   SettingDictionary,
+  SettingTokenTextField,
 } from './settingsection';
 import type {
   MultiSelectSettingProps,
@@ -21,11 +22,13 @@ import type {
   ReactiveToggleProps,
   CustomValueSliderProps,
   SettingTextFieldProps,
+  SettingTokenTextFieldProps,
   SettingToggleProps,
   SettingDictionaryProps,
 } from './settingsection';
 import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconStyles, IIconProps } from '@fluentui/react';
+import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -70,11 +73,16 @@ export type Settings =
   | {
       settingType: 'SettingDictionary';
       settingProp: SettingDictionaryProps;
+    }
+  | {
+      settingType: 'SettingTokenTextField';
+      settingProp: SettingTokenTextFieldProps;
     };
 
 export interface SettingSectionProps {
   id?: string;
   title?: string;
+  showHeading?: boolean;
   expanded?: boolean;
   settings: Settings[];
   isReadOnly?: boolean;
@@ -82,7 +90,7 @@ export interface SettingSectionProps {
 
 // TODO (andrewfowose #13363298): create component with dynamic addition of setting keys and values, (dictionary)
 
-export function SettingsSection({ title = 'Settings', expanded, isReadOnly, settings }: SettingSectionProps): JSX.Element {
+export const SettingsSection: FC<SettingSectionProps> = ({ title = 'Settings', showHeading = true, expanded, isReadOnly, settings }) => {
   const [expandedState, setExpanded] = useState(!!expanded);
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
@@ -105,6 +113,15 @@ export function SettingsSection({ title = 'Settings', expanded, isReadOnly, sett
   });
   const headerTextClassName = isInverted ? 'msla-setting-section-header-text-dark' : 'msla-setting-section-header-text';
 
+  const internalSettings = (
+    <>
+      {expandedState || !showHeading ? renderSettings(settings, isReadOnly) : null}
+      <Separator className="msla-setting-section-separator" styles={separatorStyles} />
+    </>
+  );
+  if (!showHeading) {
+    return internalSettings;
+  }
   return (
     <div className="msla-setting-section">
       <div className="msla-setting-section-content">
@@ -117,12 +134,11 @@ export function SettingsSection({ title = 'Settings', expanded, isReadOnly, sett
           />
           <div className={headerTextClassName}>{title}</div>
         </button>
-        {expandedState ? renderSettings(settings, isReadOnly) : null}
-        <Separator className="msla-setting-section-separator" styles={separatorStyles} />
+        {internalSettings}
       </div>
     </div>
   );
-}
+};
 
 const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element => {
   return (
@@ -159,6 +175,8 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
               return settingProp.visible ? <SettingToggle {...settingProp} /> : null;
             case 'SettingDictionary':
               return settingProp.visible ? <SettingDictionary {...settingProp} /> : null;
+            case 'SettingTokenTextField':
+              return <SettingTokenTextField {...settingProp} />;
             default:
               return null;
           }
