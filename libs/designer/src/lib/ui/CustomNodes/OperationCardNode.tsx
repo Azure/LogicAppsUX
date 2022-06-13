@@ -65,14 +65,27 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     dispatch(changePanelNode(id));
   }, [dispatch, id, isCollapsed]);
 
+  const subgraphClick = useCallback(
+    (_id: string) => {
+      if (isCollapsed) {
+        dispatch(expandPanel());
+      }
+      dispatch(changePanelNode(_id));
+    },
+    [dispatch, isCollapsed]
+  );
+
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
   if (metadata?.isPlaceholderNode) {
     if (readOnly) return null;
     return (
-      <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
-        <DropZone graphId={metadata?.graphId ?? ''} />
-      </div>
+      <>
+        {isFirstChild ? <div style={{ visibility: 'hidden', height: '32px' }} /> : null}
+        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
+          <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
+        </div>
+      </>
     );
   }
 
@@ -89,8 +102,8 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     <div>
       {isFirstChild ? <div style={{ visibility: 'hidden', height: '32px' }} /> : null}
       {isFirstChild && !metadata?.subgraphType && !readOnly ? (
-        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px', marginBottom: 5 }}>
-          {!readOnly ? <DropZone graphId={metadata?.graphId ?? ''} parent={id} /> : null}
+        <div style={{ height: 30, margin: '5px auto' }}>
+          <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>
       ) : null}
       <div>
@@ -98,10 +111,15 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           type="target"
           position={targetPosition}
           isConnectable={false}
-          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
+          style={{ visibility: 'hidden', transform: 'translate(-50%, 50%)' }}
         />
         {metadata?.subgraphType ? (
-          <SubgraphHeader subgraphType={metadata?.subgraphType} title={data?.label} />
+          <SubgraphHeader
+            parentId={metadata?.graphId.split('-')[0] ?? ''}
+            subgraphType={metadata?.subgraphType}
+            title={data?.label}
+            onClick={subgraphClick}
+          />
         ) : (
           <Card
             title={data.label}
@@ -124,14 +142,14 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           type="source"
           position={sourcePosition}
           isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
+          style={{ visibility: 'hidden', transform: 'translate(-50%, -50%)' }}
         />
       </div>
-      {!readOnly && childEdges.length === 0 && (
-        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
+      {!readOnly && childEdges.length === 0 ? (
+        <div style={{ height: 30, margin: '5px auto' }}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

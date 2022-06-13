@@ -130,7 +130,8 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
     actionGraphs.push(graph);
     allActions = { ...allActions, ...operations };
     nodesMetadata = { ...nodesMetadata, ...metadata };
-    addEmptyPlaceholderNodeIfNeeded(graph, nodesMetadata);
+
+    const emptyNodeId = addEmptyPlaceholderNodeIfNeeded(graph, nodesMetadata);
 
     if (subgraphType) {
       const scopeRootId = subgraphTitle ?? `${graphId}-${subgraphType}`;
@@ -188,7 +189,7 @@ const processNestedActions = (graphId: string, actions: LogicAppsV2.Actions | un
   ];
 };
 
-const addEmptyPlaceholderNodeIfNeeded = (graph: WorkflowGraph, nodesMetadata: NodesMetadata): void => {
+const addEmptyPlaceholderNodeIfNeeded = (graph: WorkflowGraph, nodesMetadata: NodesMetadata): string | undefined => {
   if (!graph.children.length) {
     const nodeId = `${graph.id}-emptyNode`;
     graph.children.push({
@@ -198,7 +199,9 @@ const addEmptyPlaceholderNodeIfNeeded = (graph: WorkflowGraph, nodesMetadata: No
     });
     // eslint-disable-next-line no-param-reassign
     nodesMetadata[nodeId] = { graphId: graph.id, isPlaceholderNode: true };
+    return nodeId;
   }
+  return undefined;
 };
 
 const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => {
