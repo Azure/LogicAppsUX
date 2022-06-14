@@ -118,10 +118,10 @@ export const RunAfterActionDetails = ({
               <div className="msla-run-after-edge-header-text">{title}</div>
             </div>
             <RunAfterTrafficLights statuses={statuses} />
-            <DeleteButton visible={isDeleteVisible && !readOnly} onDelete={onDelete} />
           </div>
         </div>
       </div>
+      <DeleteButton visible={isDeleteVisible && !readOnly} onDelete={onDelete} />
       {(!collapsible || expanded) && (
         <RunAfterActionStatuses
           isReadOnly={readOnly}
