@@ -8,10 +8,10 @@ import { useState } from 'react';
 // import { useDispatch } from 'react-redux';
 
 export const General = ({ splitOn, timeout, concurrency, conditionExpressions, readOnly /*nodeId*/ }: SectionProps): JSX.Element => {
-  const [concurrencyFromState, setConcurrency] = useState(concurrency ?? { enabled: false, value: undefined });
-  const [splitOnFromState, setSplitOn] = useState(splitOn ?? { enabled: false, value: undefined });
-  const [conditionExpressionsFromState /*setConditionExpressions*/] = useState(conditionExpressions ?? []);
-  const [timeoutFromState /*setTimeout*/] = useState(timeout ?? '');
+  const [concurrencyFromState, setConcurrency] = useState(concurrency?.value ?? { enabled: false, value: undefined });
+  const [splitOnFromState, setSplitOn] = useState(splitOn?.value ?? { enabled: false, value: undefined });
+  const [conditionExpressionsFromState /*setConditionExpressions*/] = useState(conditionExpressions?.value ?? []);
+  const [timeoutFromState, setTimeout] = useState(timeout?.value ?? '');
   // const dispatch = useDispatch();
 
   const splitOnLabel = (
@@ -69,6 +69,12 @@ export const General = ({ splitOn, timeout, concurrency, conditionExpressions, r
 
   // }
 
+  const onTimeoutValueChange = (newVal: string): void => {
+    setTimeout(newVal);
+    // validate if necessary
+    // dispatch to store
+  };
+
   const generalSectionProps: SettingSectionProps = {
     id: 'general',
     title: 'General',
@@ -77,54 +83,58 @@ export const General = ({ splitOn, timeout, concurrency, conditionExpressions, r
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: true, //isSupported fn
           readOnly,
           checked: splitOnFromState.enabled,
           onToggleInputChange: (_, checked) => onSplitOnToggle(!!checked), // build onSplitOnChange handler
           customLabel: () => splitOnLabel,
+          onText: 'On',
+          offText: 'Off',
         },
+        visible: splitOn?.isSupported, //isSupported fn
       },
       {
         settingType: 'SettingTextField',
         settingProp: {
-          visible: true, // isSupported fn
           id: 'timeoutDuration',
           value: timeoutFromState,
           customLabel: () => timeoutLabel,
           readOnly,
-          onValueChange: (_, newValue) => console.log(newValue),
+          onValueChange: (_, newValue) => onTimeoutValueChange(newValue as string),
         },
+        visible: timeout?.isSupported, // isSupported fn
       },
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: true, //isConcurrencySupported?
           readOnly,
           checked: concurrencyFromState.enabled,
           onToggleInputChange: (_, checked) => onConcurrencyToggle(!!checked),
           customLabel: () => concurrencyLabel,
+          onText: 'On',
+          offText: 'Off',
         },
+        visible: concurrency?.isSupported, //isConcurrencySupported?
       },
       {
         settingType: 'CustomValueSlider',
         settingProp: {
-          visible: concurrencyFromState.enabled === true,
           maxVal: 100,
           minVal: 0,
-          value: concurrency?.value ?? 0,
+          value: concurrencyFromState.value ?? 50,
           onValueChange: onConcurrencyValueChange,
           sliderLabel: 'Degree of Parallelism',
           readOnly,
         },
+        visible: concurrencyFromState.enabled === true,
       },
       {
         settingType: 'MultiAddExpressionEditor',
         settingProp: {
-          visible: true, // isSupported fn
           initialExpressions: conditionExpressionsFromState,
           readOnly,
           customLabel: () => triggerConditionsLabel,
         },
+        visible: conditionExpressions?.isSupported, // isSupported fn
       },
     ],
   }; // render sectionProps conditionally based on which settings are enabled for given operation

@@ -20,7 +20,6 @@ export const CustomValueSlider = ({
   defaultValue = (minVal + maxVal) / 2,
   customLabel,
   sliderLabel,
-  visible,
   onValueChange,
 }: CustomValueSliderProps): JSX.Element | null => {
   const [sliderCount, setCount] = useState(value ?? defaultValue);
@@ -28,10 +27,6 @@ export const CustomValueSlider = ({
     setCount(value);
     onValueChange?.(value);
   };
-
-  if (!visible) {
-    return null;
-  }
 
   if (customLabel) {
     return (

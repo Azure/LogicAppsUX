@@ -24,7 +24,6 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
   placeholder,
   customLabel,
   onValueChange,
-  visible,
   defaultValue,
 }): JSX.Element | null => {
   const [textVal, setVal] = useState(value ?? '');
@@ -36,10 +35,6 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
     fieldGroup: { height: 24, width: '100%', display: 'inline', marginRight: 8 },
     wrapper: { display: 'inline-flex', width: '100%', maxHeight: 40, alignItems: 'center', paddingLeft: 35 },
   };
-
-  if (!visible) {
-    return null;
-  }
 
   if (customLabel) {
     return (

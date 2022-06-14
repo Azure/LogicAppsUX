@@ -40,7 +40,7 @@ export const SettingsPanel = (): JSX.Element => {
     concurrency,
     conditionExpressions,
     correlation,
-    graphEdges,
+    runAfter,
   } = useSelector((state: RootState) => {
     return state.operations.settings[nodeId] ?? {};
   });
@@ -61,7 +61,7 @@ export const SettingsPanel = (): JSX.Element => {
       readOnly: false,
       nodeId,
     };
-    if (splitOn !== undefined || timeout !== undefined || concurrency !== undefined || conditionExpressions !== undefined) {
+    if (splitOn?.isSupported || timeout?.isSupported || concurrency?.isSupported || conditionExpressions?.isSupported) {
       return <General {...generalSectionProps} />;
     } else return null;
   };
@@ -73,7 +73,7 @@ export const SettingsPanel = (): JSX.Element => {
       readOnly: false,
       nodeId,
     };
-    if (requestSchemaValidation !== undefined || disableAutomaticDecompression !== undefined) {
+    if (requestSchemaValidation?.isSupported || disableAutomaticDecompression?.isSupported) {
       return <DataHandling {...dataHandlingProps} />;
     } else return null;
   };
@@ -92,17 +92,28 @@ export const SettingsPanel = (): JSX.Element => {
       disableAsyncPattern,
       requestOptions,
     };
-
-    return <Networking {...networkingProps} />;
+    if (
+      retryPolicy?.isSupported ||
+      suppressWorkflowHeaders?.isSupported ||
+      suppressWorkflowHeadersOnResponse?.isSupported ||
+      paging?.isSupported ||
+      uploadChunk?.isSupported ||
+      downloadChunkSize?.isSupported ||
+      asynchronous?.isSupported ||
+      disableAsyncPattern?.isSupported ||
+      requestOptions?.isSupported
+    ) {
+      return <Networking {...networkingProps} />;
+    } else return null;
   };
 
   const renderRunAfter = (): JSX.Element | null => {
     const runAfterProps: SectionProps = {
       readOnly: false,
       nodeId,
-      graphEdges,
+      runAfter,
     };
-    return <RunAfter allEdges={allEdges} {...runAfterProps} />;
+    return runAfter?.isSupported ? <RunAfter allEdges={allEdges} {...runAfterProps} /> : null;
   };
 
   const renderSecurity = (): JSX.Element | null => {
@@ -122,8 +133,9 @@ export const SettingsPanel = (): JSX.Element => {
       trackedProperties,
       correlation, //correlation setting contains trackingId setting being used in this component
     };
-
-    return <Tracking {...trackingProps} />;
+    if (trackedProperties?.isSupported || correlation?.isSupported) {
+      return <Tracking {...trackingProps} />;
+    } else return null;
   };
 
   const renderAllSettingsSections = (): JSX.Element => {

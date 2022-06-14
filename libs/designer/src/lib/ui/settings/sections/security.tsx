@@ -32,22 +32,22 @@ export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: Sect
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: true, //isSupported fn here
           readOnly,
-          checked: secureInputs,
+          checked: secureInputs?.value,
           onToggleInputChange: (_, checked) => onSecureInputsChange(!!checked),
           customLabel: () => secureInputsLabel,
         },
+        visible: secureInputs?.isSupported, //isSupported fn here
       },
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: true, // IsSupported fn here
           readOnly,
-          checked: secureOutputs,
+          checked: secureOutputs?.value,
           onToggleInputChange: (_, checked) => onSecureOutputsChange(!!checked),
           customLabel: () => secureOutputsLabel,
         },
+        visible: secureOutputs?.isSupported, // IsSupported fn here
       },
     ],
   };

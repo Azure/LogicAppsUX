@@ -21,7 +21,6 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
   readOnly = false,
   checked,
   customLabel,
-  visible,
   onToggleLabel,
   offToggleLabel,
   onValueChange,
@@ -33,10 +32,6 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
     setChecked(!!checked);
   };
 
-  if (!visible) {
-    return null;
-  }
-
   if (customLabel) {
     return (
       <>
@@ -45,7 +40,6 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
           checked={checkedState}
           readOnly={readOnly}
           onToggleInputChange={onToggleInputChange}
-          visible={visible}
           onText={onToggleLabel}
           offText={offToggleLabel}
         />
@@ -55,7 +49,6 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
             value={textFieldValue}
             label={textFieldLabel}
             readOnly={readOnly}
-            visible={visible}
             onValueChange={onValueChange}
           />
         ) : null}
@@ -68,7 +61,6 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
           checked={checkedState}
           readOnly={readOnly}
           onToggleInputChange={onToggleInputChange}
-          visible={visible}
           onText={onToggleLabel}
           offText={offToggleLabel}
         />
@@ -78,7 +70,6 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
             value={textFieldValue}
             label={textFieldLabel}
             readOnly={readOnly}
-            visible={visible}
             onValueChange={onValueChange}
           />
         ) : null}

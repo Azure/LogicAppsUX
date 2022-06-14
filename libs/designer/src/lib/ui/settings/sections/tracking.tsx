@@ -4,9 +4,9 @@ import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
 import { useState } from 'react';
 
-export const Tracking = ({ readOnly, /*nodeId*/ correlation, trackedProperties }: SectionProps): JSX.Element | null => {
-  const [correlationFromState, setCorrelation] = useState(correlation);
-  const [trackedPropertiesFromState, setTrackedProperties] = useState(trackedProperties);
+export const Tracking = ({ readOnly, correlation, trackedProperties }: SectionProps): JSX.Element | null => {
+  const [correlationFromState, setCorrelation] = useState(correlation?.value ?? { clientTrackingId: '' });
+  const [trackedPropertiesFromState, setTrackedProperties] = useState(trackedProperties?.value);
 
   const clientTrackingIdLabel = (
     <SettingLabel
@@ -68,24 +68,24 @@ export const Tracking = ({ readOnly, /*nodeId*/ correlation, trackedProperties }
         settingType: 'SettingTextField',
         settingProp: {
           readOnly,
-          visible: true, //isCorrelationSupported(nodeId)
           value: correlationFromState?.clientTrackingId ?? '',
           label: 'Tracking Id',
           customLabel: () => clientTrackingIdLabel,
           onValueChange: (_, newVal) => onClientTrackingIdChange(newVal as string),
         },
+        visible: correlation?.isSupported, //isCorrelationSupported(nodeId)
         // {ADD TRACKED PROPERTIES}
       },
       {
         settingType: 'SettingDictionary',
         settingProp: {
           readOnly,
-          visible: true,
           values: trackedPropertiesFromState,
           onDictionaryChange: (newVal) => onTrackedPropertiesDictionaryValueChanged(newVal as Record<string, string>),
           onTextFieldChange: (_, newVal) => onTrackedPropertiesStringValueChange(newVal as string),
           customLabel: () => trackedPropertiesLabel,
         },
+        visible: trackedProperties?.isSupported,
       },
     ],
   };

@@ -15,8 +15,9 @@ interface RunAfterProps extends SectionProps {
   allEdges: Record<string, runAfterConfigs>;
 }
 
-export const RunAfter = ({ graphEdges, readOnly = false, allEdges }: RunAfterProps): JSX.Element | null => {
+export const RunAfter = ({ runAfter, readOnly = false, allEdges }: RunAfterProps): JSX.Element | null => {
   const [statuses, setStatuses] = useState<Record<string, string[]>>({});
+  const graphEdges = runAfter?.value;
 
   useEffect(() => {
     setStatuses((): Record<string, string[]> => {
@@ -77,7 +78,7 @@ export const RunAfter = ({ graphEdges, readOnly = false, allEdges }: RunAfterPro
         settingProp: {
           items: GetRunAfterProps(),
         },
-        visible: Object.keys(statuses).length > 0,
+        visible: runAfter?.isSupported,
       },
     ],
   };
