@@ -5,7 +5,7 @@ import { Succeeded } from '../../monitoring/statuspill/images/succeeded';
 import { TimedOut } from '../../monitoring/statuspill/images/timedout';
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
-import { useBoolean } from '@fluentui/react-hooks/lib/useBoolean';
+import { useBoolean } from '@fluentui/react-hooks';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
