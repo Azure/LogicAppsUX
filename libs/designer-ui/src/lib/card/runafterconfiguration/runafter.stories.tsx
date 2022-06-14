@@ -4,7 +4,7 @@ import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: RunAfter,
-  title: 'Components/MultiRunAfter',
+  title: 'Components/RunAfter/multiple',
 } as ComponentMeta<typeof RunAfter>;
 const Template: ComponentStory<typeof RunAfter> = (args: RunAfterProps) => <RunAfter {...args} />;
 

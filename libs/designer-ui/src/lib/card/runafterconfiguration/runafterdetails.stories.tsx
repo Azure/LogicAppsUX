@@ -4,7 +4,7 @@ import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: RunAfterActionDetails,
-  title: 'Components/RunAfter',
+  title: 'Components/RunAfter/single',
 } as ComponentMeta<typeof RunAfterActionDetails>;
 const Template: ComponentStory<typeof RunAfterActionDetails> = (args: RunAfterActionDetailsProps) => <RunAfterActionDetails {...args} />;
 

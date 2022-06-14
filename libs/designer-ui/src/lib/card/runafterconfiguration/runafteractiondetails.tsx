@@ -1,3 +1,4 @@
+import constants from '../../constants';
 import { Failed } from '../../monitoring/statuspill/images/failed';
 import { Skipped } from '../../monitoring/statuspill/images/skipped';
 import { Succeeded } from '../../monitoring/statuspill/images/succeeded';
@@ -7,9 +8,9 @@ import { RunAfterTrafficLights } from './runaftertrafficlights';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
+import { Icon } from '@fluentui/react/lib/Icon';
 import type { ISeparatorStyles } from '@fluentui/react/lib/Separator';
 import { Separator } from '@fluentui/react/lib/Separator';
-import { FontSizes } from '@fluentui/react/lib/Styling';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { format } from 'util';
@@ -82,19 +83,6 @@ export const RunAfterActionDetails = ({
     defaultMessage: 'Collapse',
     description: 'An accessible label for collapse toggle icon',
   });
-
-  const iconProps: IIconProps = {
-    iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed',
-  };
-  const chevronStyles: IButtonStyles = {
-    icon: {
-      color: '#8a8886',
-      fontSize: FontSizes.small,
-    },
-    root: {
-      ...(!collapsible && { display: 'none' }),
-    },
-  };
   const onToggleActionExpand = (): void => {
     setExpanded(!expanded);
   };
@@ -118,11 +106,11 @@ export const RunAfterActionDetails = ({
         <div className="msla-run-after-edge-header-contents-container" {...collapsibleProps}>
           <div>
             <div className="msla-run-after-edge-header-contents">
-              <IconButton
-                ariaLabel={format(expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`, title)}
+              <Icon
                 className="msla-run-after-icon"
-                iconProps={iconProps}
-                styles={chevronStyles}
+                ariaLabel={format(expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`, title)}
+                iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
+                styles={{ root: { fontSize: 14, color: constants.CHEVRON_ROOT_COLOR_LIGHT } }}
               />
               <div className="msla-run-after-edge-header-logo">
                 <img alt="" className="msla-run-after-logo-image" role="presentation" src={icon} />
