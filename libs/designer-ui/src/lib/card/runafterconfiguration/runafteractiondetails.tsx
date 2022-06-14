@@ -5,13 +5,14 @@ import { Succeeded } from '../../monitoring/statuspill/images/succeeded';
 import { TimedOut } from '../../monitoring/statuspill/images/timedout';
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
+import { useBoolean } from '@fluentui/react-hooks/lib/useBoolean';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { Icon } from '@fluentui/react/lib/Icon';
 import type { ISeparatorStyles } from '@fluentui/react/lib/Separator';
 import { Separator } from '@fluentui/react/lib/Separator';
-import React, { useState } from 'react';
+import type { MouseEvent } from 'react';
 import { useIntl } from 'react-intl';
 import { format } from 'util';
 
@@ -83,12 +84,9 @@ export const RunAfterActionDetails = ({
     defaultMessage: 'Collapse',
     description: 'An accessible label for collapse toggle icon',
   });
-  const onToggleActionExpand = (): void => {
-    setExpanded(!expanded);
-  };
 
   const collapsibleProps = collapsible
-    ? { 'aria-expanded': expanded, role: 'button', tabIndex: 0, onClick: onToggleActionExpand }
+    ? { 'aria-expanded': expanded, role: 'button', tabIndex: 0, onClick: setExpanded.toggle }
     : undefined;
 
   const handleRenderLabel = (status: string, label: string): JSX.Element => {
@@ -146,7 +144,7 @@ const DeleteButton = ({ visible, onDelete }: DeleteButtonProps): JSX.Element | n
     defaultMessage: 'Delete',
     description: 'Delete Button',
   });
-  function handleDelete(e: React.MouseEvent<unknown>): void {
+  function handleDelete(e: MouseEvent<unknown>): void {
     e.preventDefault();
     e.stopPropagation();
     onDelete?.();
