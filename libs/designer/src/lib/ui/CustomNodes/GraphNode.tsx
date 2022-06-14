@@ -65,12 +65,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <div className="msla-scope-v2 msla-scope-card">
-        <Handle
-          type="target"
-          position={targetPosition}
-          isConnectable={false}
-          style={{ transform: 'translate(-50%, 50%)', visibility: 'hidden' }}
-        />
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <ScopeCard
           brandColor={brandColor}
           icon={iconUri}
@@ -85,12 +80,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           readOnly={readOnly}
           onClick={nodeClick}
         />
-        <Handle
-          type="source"
-          position={sourcePosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(-50%, -50%)' }}
-        />
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
     );
   } else {
@@ -108,18 +98,8 @@ function renderGenericGraph(
   return (
     <div className="msla-actions-container">
       <div>
-        <Handle
-          type="target"
-          position={targetPosition}
-          isConnectable={false}
-          style={{ transform: 'translate(-50%, 50%)', visibility: 'hidden' }}
-        />
-        <Handle
-          type="source"
-          position={sourcePosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(-50%, -50%)' }}
-        />
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {!readOnly && isEmptyGraph && (
         <div style={{ display: 'grid', placeItems: 'center', width: '200', height: '30', marginTop: '10px' }}>
