@@ -1,21 +1,39 @@
+import { ActionButtonV2 } from '../../actionbuttonv2';
 import CollapseToggle from '../../collapseToggle';
+import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 interface SubgraphHeaderProps {
+  parentId: string;
   subgraphType: SubgraphType;
-  name?: string;
+  title?: string;
   collapsed?: boolean;
+  readOnly?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
+  onClick?(id: string): void;
+  showAddButton?: boolean;
 }
 
-export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({ subgraphType, name, collapsed, handleCollapse }) => {
+export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
+  parentId,
+  subgraphType,
+  title = 'undefined',
+  collapsed,
+  readOnly = false,
+  handleCollapse,
+  onClick,
+}) => {
   const intl = useIntl();
 
-  const CASE_STRING = intl.formatMessage({
-    defaultMessage: 'Case',
-    description: 'Case, as in Case A / Case B / Case C',
-  });
+  if (subgraphType === 'SWITCH-ADD-CASE') {
+    if (readOnly) return null;
+    return (
+      <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%', marginTop: '24px' }}>
+        <ActionButtonV2 title={'Add Case'} />
+      </div>
+    );
+  }
 
   const SubgraphTypeData = {
     'CONDITIONAL-TRUE': {
@@ -24,6 +42,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({ subgraphType, na
         defaultMessage: 'True',
         description: 'True',
       }),
+      size: 'small',
     },
     'CONDITIONAL-FALSE': {
       color: '#A4262C',
@@ -31,24 +50,53 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({ subgraphType, na
         defaultMessage: 'False',
         description: 'False',
       }),
+      size: 'small',
     },
     'SWITCH-CASE': {
-      color: '#828282',
-      title: `${CASE_STRING}-${name}`,
+      color: '#484F58',
+      title: title,
+      size: 'large',
     },
     'SWITCH-DEFAULT': {
-      color: '#828282',
+      color: '#484F58',
       title: intl.formatMessage({
         defaultMessage: 'Default',
         description: 'Default, the backup option if none other apply',
       }),
+      size: 'small',
     },
   };
 
-  return (
-    <div className="msla-subgraph-header" style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}>
-      <div className="msla-subgraph-title">{SubgraphTypeData[subgraphType].title}</div>
-      <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
-    </div>
-  );
+  const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
+    e.stopPropagation();
+    if (subgraphType !== 'SWITCH-CASE') {
+      onClick?.(parentId);
+    } else {
+      onClick?.(title);
+    }
+  };
+
+  const data = SubgraphTypeData[subgraphType];
+
+  if (data.size === 'large') {
+    return (
+      <div className={css('msla-subgraph-header', data.size)} style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}>
+        <button className="msla-subgraph-title" onClick={handleClick}>
+          {data.title}
+        </button>
+        <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
+      </div>
+    );
+  } else if (data.size === 'small') {
+    return (
+      <button
+        className={css('msla-subgraph-header', data.size)}
+        style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
+        onClick={handleCollapse}
+      >
+        <div className="msla-subgraph-title">{data.title}</div>
+        <CollapseToggle disabled collapsed={collapsed} />
+      </button>
+    );
+  } else return null;
 };
