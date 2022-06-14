@@ -675,6 +675,12 @@
       "value": "Returns a parameter value that is defined in the definition"
     }
   ],
+  "FGS2fS": [
+    {
+      "type": 0,
+      "value": "has failed"
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
@@ -2191,6 +2197,12 @@
       "value": "Title"
     }
   ],
+  "lcVG4C": [
+    {
+      "type": 0,
+      "value": "is skipped"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -2415,6 +2427,12 @@
       "value": "Checks if the string ends with a value (case-insensitive, invariant culture)"
     }
   ],
+  "qPUX59": [
+    {
+      "type": 0,
+      "value": "is successful"
+    }
+  ],
   "qSejoi": [
     {
       "type": 0,
@@ -2517,6 +2535,12 @@
     {
       "type": 0,
       "value": "Returns the day of year component of a string timestamp"
+    }
+  ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "sDkAVZ": [
@@ -2703,6 +2727,12 @@
     {
       "type": 0,
       "value": "Required. The name of the action whose outputs you want."
+    }
+  ],
+  "vcBAuU": [
+    {
+      "type": 0,
+      "value": "has timed out"
     }
   ],
   "vwH/XV": [

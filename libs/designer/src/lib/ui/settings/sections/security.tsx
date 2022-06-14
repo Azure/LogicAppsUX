@@ -4,7 +4,6 @@ import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
 
 // TODO (andrewfowose): replace hard-set settingProps in Security to data from operationMetadataSlice
 export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: SectionProps): JSX.Element | null => {
-  // if (secureInputs === undefined && secureOutputs === undefined) return null;
   const secureInputsLabel = <SettingLabel labelText="Secure Inputs" infoTooltipText="Secure inputs of the operation." isChild={false} />;
   const secureOutputsLabel = (
     <SettingLabel

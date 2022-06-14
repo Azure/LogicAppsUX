@@ -11,7 +11,7 @@ export interface ReactiveToggleProps extends SettingProps {
   checked?: boolean;
   onToggleLabel: string;
   offToggleLabel: string;
-  onValueChange: TextInputChangeHandler;
+  onValueChange?: TextInputChangeHandler;
 }
 
 export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({

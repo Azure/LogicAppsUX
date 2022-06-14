@@ -47,6 +47,13 @@ interface UploadChunk {
   uploadChunkSize?: number;
 }
 
+export interface GraphEdge {
+  predecessorId: string;
+  successorId?: string;
+  metadata?: string;
+  statuses?: string[];
+}
+
 export interface Settings {
   asynchronous?: boolean;
   correlation?: CorrelationSettings;
@@ -70,6 +77,7 @@ export interface Settings {
   conditionExpressions?: string[];
   uploadChunk?: UploadChunk;
   downloadChunkSize?: number;
+  graphEdges?: GraphEdge[];
 }
 
 /**
@@ -109,6 +117,7 @@ export const getOperationSettings = (
     trackedProperties: getTrackedProperties(operation, isTrigger, manifest),
     requestSchemaValidation: getRequestSchemaValidation(operation),
     conditionExpressions: getConditionExpressions(operation),
+    graphEdges: getRunAfter(operation),
   };
 };
 
@@ -551,6 +560,16 @@ const getConditionExpressions = (definition: LogicAppsV2.TriggerDefinition | und
   }
 
   return conditions.map((condition) => condition.expression as string);
+};
+
+const getRunAfter = (definition: LogicAppsV2.ActionDefinition | undefined): GraphEdge[] => {
+  const graphEdges = [];
+  if (definition?.runAfter) {
+    for (const [predecessorId, statuses] of Object.entries(definition.runAfter)) {
+      graphEdges.push({ predecessorId, statuses });
+    }
+  }
+  return graphEdges;
 };
 
 const getOperationOptionsSettingFromManifest = (manifest: OperationManifest): OperationManifestSetting<OperationOptions[]> | undefined => {

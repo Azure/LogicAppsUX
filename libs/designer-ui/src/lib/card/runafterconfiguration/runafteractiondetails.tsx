@@ -1,0 +1,192 @@
+import { Failed } from '../../monitoring/statuspill/images/failed';
+import { Skipped } from '../../monitoring/statuspill/images/skipped';
+import { Succeeded } from '../../monitoring/statuspill/images/succeeded';
+import { TimedOut } from '../../monitoring/statuspill/images/timedout';
+import { RunAfterActionStatuses } from './runafteractionstatuses';
+import { RunAfterTrafficLights } from './runaftertrafficlights';
+import type { IButtonStyles } from '@fluentui/react/lib/Button';
+import { IconButton } from '@fluentui/react/lib/Button';
+import type { IIconProps } from '@fluentui/react/lib/Icon';
+import type { ISeparatorStyles } from '@fluentui/react/lib/Separator';
+import { Separator } from '@fluentui/react/lib/Separator';
+import { FontSizes } from '@fluentui/react/lib/Styling';
+import React, { useState } from 'react';
+import { useIntl } from 'react-intl';
+import { format } from 'util';
+
+export enum Status {
+  SUCCEEDED = 'SUCCEEDED',
+  FAILED = 'FAILED',
+  SKIPPED = 'SKIPPED',
+  TIMEDOUT = 'TIMEDOUT',
+}
+
+export type onChangeHandler = (status: string, checked?: boolean) => void;
+
+interface LabelProps {
+  label: string;
+  status: string;
+}
+
+export interface RunAfterActionDetailsProps {
+  collapsible?: boolean;
+  expanded: boolean;
+  icon: string;
+  id: string;
+  isDeleteVisible: boolean;
+  readOnly: boolean;
+  statuses: string[];
+  title: string;
+  visible?: boolean;
+  onDelete?(): void;
+  onRenderLabel?(props: LabelProps): JSX.Element | null;
+  onStatusChange?: onChangeHandler;
+}
+
+const deleteIconProp: IIconProps = {
+  iconName: 'Delete',
+};
+
+const deleteIconStyles: IButtonStyles = {
+  icon: {
+    color: '#0078d4',
+    fontSize: 16,
+  },
+};
+
+const separatorStyles: Partial<ISeparatorStyles> = {
+  root: {
+    color: '#d4d4d4',
+  },
+};
+
+export const RunAfterActionDetails = ({
+  collapsible = true,
+  icon,
+  isDeleteVisible,
+  readOnly,
+  statuses,
+  title,
+  onDelete,
+  onStatusChange,
+  onRenderLabel,
+}: RunAfterActionDetailsProps) => {
+  const [expanded, setExpanded] = useState(false);
+  const intl = useIntl();
+
+  const expandAriaLabel = intl.formatMessage({
+    defaultMessage: 'Expand',
+    description: 'An accessible label for expand toggle icon',
+  });
+  const collapseAriaLabel = intl.formatMessage({
+    defaultMessage: 'Collapse',
+    description: 'An accessible label for collapse toggle icon',
+  });
+
+  const iconProps: IIconProps = {
+    iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed',
+  };
+  const chevronStyles: IButtonStyles = {
+    icon: {
+      color: '#8a8886',
+      fontSize: FontSizes.small,
+    },
+    root: {
+      ...(!collapsible && { display: 'none' }),
+    },
+  };
+  const onToggleActionExpand = (): void => {
+    setExpanded(!expanded);
+  };
+
+  const collapsibleProps = collapsible
+    ? { 'aria-expanded': expanded, role: 'button', tabIndex: 0, onClick: onToggleActionExpand }
+    : undefined;
+
+  const handleRenderLabel = (status: string, label: string): JSX.Element => {
+    const props: LabelProps = {
+      label,
+      status,
+    };
+
+    return onRenderLabel?.(props) ?? <Label {...props} />;
+  };
+
+  return (
+    <>
+      <div className="msla-run-after-edge-header">
+        <div className="msla-run-after-edge-header-contents-container" {...collapsibleProps}>
+          <div>
+            <div className="msla-run-after-edge-header-contents">
+              <IconButton
+                ariaLabel={format(expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`, title)}
+                className="msla-run-after-icon"
+                iconProps={iconProps}
+                styles={chevronStyles}
+              />
+              <div className="msla-run-after-edge-header-logo">
+                <img alt="" className="msla-run-after-logo-image" role="presentation" src={icon} />
+              </div>
+              <div className="msla-run-after-edge-header-text">{title}</div>
+            </div>
+            <RunAfterTrafficLights statuses={statuses} />
+            <DeleteButton visible={isDeleteVisible && !readOnly} onDelete={onDelete} />
+          </div>
+        </div>
+      </div>
+      {(!collapsible || expanded) && (
+        <RunAfterActionStatuses
+          isReadOnly={readOnly}
+          statuses={statuses}
+          onStatusChange={onStatusChange}
+          onRenderLabel={handleRenderLabel}
+        />
+      )}
+      <Separator className="msla-run-after-separator" styles={separatorStyles} />
+    </>
+  );
+};
+
+interface DeleteButtonProps extends Pick<RunAfterActionDetailsProps, 'onDelete'> {
+  visible: boolean;
+}
+
+const DeleteButton = ({ visible, onDelete }: DeleteButtonProps): JSX.Element | null => {
+  const intl = useIntl();
+
+  const MENU_DELETE = intl.formatMessage({
+    defaultMessage: 'Delete',
+    description: 'Delete Button',
+  });
+  function handleDelete(e: React.MouseEvent<unknown>): void {
+    e.preventDefault();
+    e.stopPropagation();
+    onDelete?.();
+  }
+
+  if (!visible) {
+    return null;
+  }
+
+  return (
+    <div className="msla-run-after-delete-icon">
+      <IconButton ariaLabel={MENU_DELETE} iconProps={deleteIconProp} styles={deleteIconStyles} onClick={handleDelete} />
+    </div>
+  );
+};
+
+const Label = ({ label, status }: LabelProps): JSX.Element => {
+  const checkboxLabelBadge: Record<string, JSX.Element> = {
+    [Status.SUCCEEDED]: <Succeeded />,
+    [Status.SKIPPED]: <Skipped />,
+    [Status.FAILED]: <Failed />,
+    [Status.TIMEDOUT]: <TimedOut />,
+  };
+
+  return (
+    <>
+      <div className="msla-run-after-label-badge">{checkboxLabelBadge[status.toUpperCase()]}</div>
+      <span>{label}</span>
+    </>
+  );
+};

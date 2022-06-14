@@ -1,3 +1,5 @@
+import type { RunAfterProps } from '../card/runafterconfiguration';
+import { RunAfter } from '../card/runafterconfiguration';
 import constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
 import {
@@ -32,52 +34,61 @@ import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
+type SettingBase = {
+  visible?: boolean;
+};
 // Using discriminated union to create a dependency of SettingType and SettingProp
-export type Settings =
-  | {
-      settingType: 'MultiSelectSetting';
-      settingProp: MultiSelectSettingProps;
-    }
-  | {
-      settingType: 'MultiAddExpressionEditor';
-      settingProp: MultiAddExpressionEditorProps;
-    }
-  | {
-      settingType: 'ExpressionsEditor';
-      settingProp: ExpressionsEditorProps;
-    }
-  | {
-      settingType: 'Expressions';
-      settingProp: ExpressionsProps;
-    }
-  | {
-      settingType: 'Expression';
-      settingProp: ExpressionProps;
-    }
-  | {
-      settingType: 'ReactiveToggle';
-      settingProp: ReactiveToggleProps;
-    }
-  | {
-      settingType: 'CustomValueSlider';
-      settingProp: CustomValueSliderProps;
-    }
-  | {
-      settingType: 'SettingTextField';
-      settingProp: SettingTextFieldProps;
-    }
-  | {
-      settingType: 'SettingToggle';
-      settingProp: SettingToggleProps;
-    }
-  | {
-      settingType: 'SettingDictionary';
-      settingProp: SettingDictionaryProps;
-    }
-  | {
-      settingType: 'SettingTokenTextField';
-      settingProp: SettingTokenTextFieldProps;
-    };
+export type Settings = SettingBase &
+  (
+    | {
+        settingType: 'MultiSelectSetting';
+        settingProp: MultiSelectSettingProps;
+      }
+    | {
+        settingType: 'MultiAddExpressionEditor';
+        settingProp: MultiAddExpressionEditorProps;
+      }
+    | {
+        settingType: 'ExpressionsEditor';
+        settingProp: ExpressionsEditorProps;
+      }
+    | {
+        settingType: 'Expressions';
+        settingProp: ExpressionsProps;
+      }
+    | {
+        settingType: 'Expression';
+        settingProp: ExpressionProps;
+      }
+    | {
+        settingType: 'ReactiveToggle';
+        settingProp: ReactiveToggleProps;
+      }
+    | {
+        settingType: 'CustomValueSlider';
+        settingProp: CustomValueSliderProps;
+      }
+    | {
+        settingType: 'SettingTextField';
+        settingProp: SettingTextFieldProps;
+      }
+    | {
+        settingType: 'SettingToggle';
+        settingProp: SettingToggleProps;
+      }
+    | {
+        settingType: 'SettingDictionary';
+        settingProp: SettingDictionaryProps;
+      }
+    | {
+        settingType: 'SettingTokenTextField';
+        settingProp: SettingTokenTextFieldProps;
+      }
+    | {
+        settingType: 'RunAfter';
+        settingProp: RunAfterProps;
+      }
+  );
 
 export interface SettingSectionProps {
   id?: string;
@@ -144,39 +155,37 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
   return (
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
-        const { settingType, settingProp } = setting;
-        const { visible } = settingProp;
+        const { settingType, settingProp, visible = true } = setting;
         if (!settingProp.readOnly) {
           settingProp.readOnly = isReadOnly;
         }
-        if (!visible) {
-          // eslint-disable-next-line array-callback-return
-          return;
-        }
         const renderSetting = (): JSX.Element | null => {
+          if (!visible) return null;
           switch (settingType) {
             case 'MultiSelectSetting':
-              return settingProp.visible ? <MultiSelectSetting {...settingProp} /> : null;
+              return <MultiSelectSetting {...settingProp} />;
             case 'MultiAddExpressionEditor':
-              return settingProp.visible ? <MultiAddExpressionEditor {...settingProp} /> : null;
+              return <MultiAddExpressionEditor {...settingProp} />;
             case 'ExpressionsEditor':
-              return settingProp.visible ? <ExpressionsEditor {...settingProp} /> : null;
+              return <ExpressionsEditor {...settingProp} />;
             case 'Expressions':
-              return settingProp.visible ? <Expressions {...settingProp} /> : null;
+              return <Expressions {...settingProp} />;
             case 'Expression':
-              return settingProp.visible ? <Expression {...settingProp} /> : null;
+              return <Expression {...settingProp} />;
             case 'ReactiveToggle':
-              return settingProp.visible ? <ReactiveToggle {...settingProp} /> : null;
+              return <ReactiveToggle {...settingProp} />;
             case 'CustomValueSlider':
-              return settingProp.visible ? <CustomValueSlider {...settingProp} /> : null;
+              return <CustomValueSlider {...settingProp} />;
             case 'SettingTextField':
-              return settingProp.visible ? <SettingTextField {...settingProp} /> : null;
+              return <SettingTextField {...settingProp} />;
             case 'SettingToggle':
-              return settingProp.visible ? <SettingToggle {...settingProp} /> : null;
+              return <SettingToggle {...settingProp} />;
             case 'SettingDictionary':
-              return settingProp.visible ? <SettingDictionary {...settingProp} /> : null;
+              return <SettingDictionary {...settingProp} />;
             case 'SettingTokenTextField':
               return <SettingTokenTextField {...settingProp} />;
+            case 'RunAfter':
+              return <RunAfter {...settingProp} />;
             default:
               return null;
           }

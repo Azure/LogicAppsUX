@@ -9,10 +9,13 @@
 // <Tracking>
 import { ProviderWrappedContext } from '../../core';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
+import { useAllOperations, useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../core/store';
 import { DataHandling } from './sections/datahandling';
 import { General } from './sections/general';
 import { Networking } from './sections/networking';
+import type { runAfterConfigs } from './sections/runafter';
+import { RunAfter } from './sections/runafter';
 import { Security } from './sections/security';
 import { Tracking } from './sections/tracking';
 import { useContext } from 'react';
@@ -49,9 +52,17 @@ export const SettingsPanel = (): JSX.Element => {
     concurrency,
     conditionExpressions,
     correlation,
+    graphEdges,
   } = useSelector((state: RootState) => {
-    return state.operations.settings[nodeId];
+    return state.operations.settings[nodeId] ?? {};
   });
+
+  // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
+  const incomingEdges = useAllOperations();
+  const allEdges: Record<string, runAfterConfigs> = {};
+  for (const key in incomingEdges) {
+    allEdges[key] = GetEdgeInfo(key);
+  }
 
   const renderGeneral = (): JSX.Element | null => {
     const generalSectionProps: SectionProps = {
@@ -65,16 +76,6 @@ export const SettingsPanel = (): JSX.Element => {
     if (splitOn !== undefined || timeout !== undefined || concurrency !== undefined || conditionExpressions !== undefined) {
       return <General {...generalSectionProps} />;
     } else return null;
-  };
-
-  const renderSecurity = (): JSX.Element | null => {
-    const securitySectionProps: SectionProps = {
-      secureInputs,
-      secureOutputs,
-      readOnly,
-      nodeId,
-    };
-    return <Security {...securitySectionProps} />;
   };
 
   const renderDataHandling = (): JSX.Element | null => {
@@ -107,6 +108,25 @@ export const SettingsPanel = (): JSX.Element => {
     return <Networking {...networkingProps} />;
   };
 
+  const renderRunAfter = (): JSX.Element | null => {
+    const runAfterProps: SectionProps = {
+      readOnly,
+      nodeId,
+      graphEdges,
+    };
+    return <RunAfter allEdges={allEdges} {...runAfterProps} />;
+  };
+
+  const renderSecurity = (): JSX.Element | null => {
+    const securitySectionProps: SectionProps = {
+      secureInputs,
+      secureOutputs,
+      readOnly,
+      nodeId,
+    };
+    return <Security {...securitySectionProps} />;
+  };
+
   const renderTracking = (): JSX.Element | null => {
     const trackingProps: SectionProps = {
       readOnly,
@@ -124,7 +144,7 @@ export const SettingsPanel = (): JSX.Element => {
         {renderDataHandling()}
         {renderGeneral()}
         {renderNetworking()}
-        {/* {renderRunAfter()} */}
+        {renderRunAfter()}
         {renderSecurity()}
         {renderTracking()}
       </>
@@ -132,4 +152,10 @@ export const SettingsPanel = (): JSX.Element => {
   };
 
   return renderAllSettingsSections();
+};
+
+const GetEdgeInfo = (id: string): runAfterConfigs => {
+  const operationInfo = useOperationInfo(id);
+  const iconUri = useIconUri(operationInfo);
+  return { icon: iconUri, title: id };
 };

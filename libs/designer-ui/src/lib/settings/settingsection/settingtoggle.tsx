@@ -18,15 +18,10 @@ export const SettingToggle = ({
   onToggleInputChange,
   checked,
   label,
-  visible,
   customLabel,
   onText,
   offText,
 }: SettingToggleProps): JSX.Element | null => {
-  if (!visible) {
-    return null;
-  }
-
   if (customLabel) {
     return (
       <>

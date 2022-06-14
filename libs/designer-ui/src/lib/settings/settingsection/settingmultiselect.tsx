@@ -7,6 +7,7 @@ type StatusChangeHandler = (selections: MultiSelectOption[]) => void;
 export interface MultiSelectOption {
   label: string;
   value: string;
+  icon?: JSX.Element;
 }
 
 export interface MultiSelectSettingProps extends SettingProps {

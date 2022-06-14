@@ -6,6 +6,7 @@ export * from './announcedmatches';
 export * from './card';
 export * from './card/scope';
 export * from './card/types';
+export * from './card/runafterconfiguration';
 export * from './checkbox';
 // export * from './colorizer';
 // export * from './combobox';
