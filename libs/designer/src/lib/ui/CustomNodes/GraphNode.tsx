@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { ProviderWrappedContext } from '../../core';
 import type { WorkflowGraph } from '../../core/parsers/models/workflowNode';
 import { changePanelNode, expandPanel } from '../../core/state/panelSlice';
 import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
 import { useWorkflowNode } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
 import { ScopeCard } from '@microsoft/designer-ui';
-import { memo, useCallback, useContext } from 'react';
+import { memo, useCallback } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
@@ -16,7 +16,8 @@ import { useDispatch, useSelector } from 'react-redux';
 const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const node = useActionMetadata(id);
 
-  const { readOnly, isMonitoringView } = useContext(ProviderWrappedContext) ?? {};
+  const readOnly = useReadOnly();
+  const isMonitoringView = useMonitoringView();
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -60,7 +61,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   const isEmptyGraph = !graph?.edges && (graph?.children[0] as any).children.length === 0;
   const normalizedType = node.type.toLowerCase();
 
-  if (normalizedType === 'scope' || normalizedType === 'foreach') {
+  if (normalizedType === 'scope' || normalizedType === 'foreach' || normalizedType === 'if') {
     return (
       <div className="msla-scope-v2 msla-scope-card">
         <Handle
@@ -80,6 +81,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           id={id}
           isMonitoringView={isMonitoringView}
           title={data.label}
+          readOnly={readOnly}
           onClick={nodeClick}
         />
         <Handle

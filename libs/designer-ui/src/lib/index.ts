@@ -5,6 +5,7 @@ export * from './announcedmatches';
 // export * from './authentication';
 export * from './card';
 export * from './card/scope';
+export * from './card/subgraphHeader';
 export * from './card/types';
 export * from './card/runafterconfiguration';
 export * from './checkbox';
