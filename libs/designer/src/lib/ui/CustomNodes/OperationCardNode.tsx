@@ -119,6 +119,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
             parentId={metadata?.graphId.split('-')[0] ?? ''}
             subgraphType={metadata?.subgraphType}
             title={data?.label}
+            readOnly={readOnly}
             onClick={subgraphClick}
           />
         ) : (

@@ -1,5 +1,6 @@
 import { ActionButtonV2 } from '../../actionbuttonv2';
 import CollapseToggle from '../../collapseToggle';
+import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
@@ -8,6 +9,7 @@ interface SubgraphHeaderProps {
   subgraphType: SubgraphType;
   title?: string;
   collapsed?: boolean;
+  readOnly?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
   onClick?(id: string): void;
   showAddButton?: boolean;
@@ -18,14 +20,16 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
   subgraphType,
   title = 'undefined',
   collapsed,
+  readOnly = false,
   handleCollapse,
   onClick,
 }) => {
   const intl = useIntl();
 
   if (subgraphType === 'SWITCH-ADD-CASE') {
+    if (readOnly) return null;
     return (
-      <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%', marginTop: '16px' }}>
+      <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%', marginTop: '24px' }}>
         <ActionButtonV2 title={'Add Case'} />
       </div>
     );
@@ -49,6 +53,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
     'SWITCH-CASE': {
       color: '#484F58',
       title: title,
+      classes: ['large'],
     },
     'SWITCH-DEFAULT': {
       color: '#484F58',
@@ -57,7 +62,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
         description: 'Default, the backup option if none other apply',
       }),
     },
-  };
+  } as any;
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
@@ -68,10 +73,15 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
     }
   };
 
+  const data = SubgraphTypeData[subgraphType];
+
   return (
-    <div className="msla-subgraph-header" style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}>
+    <div
+      className={css('msla-subgraph-header', ...(data?.classes ?? []))}
+      style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
+    >
       <div className="msla-subgraph-title" onClick={handleClick}>
-        {SubgraphTypeData[subgraphType].title}
+        {data.title}
       </div>
       <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
     </div>
