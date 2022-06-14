@@ -35,6 +35,12 @@
       "value": "Menampilkan elemen dalam array yang dimulai dari indeks Count"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Menampilkan representasi biner dari string dengan pengodean URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -658,10 +670,22 @@
       "value": "Menghasilkan bagian string yang ditentukan oleh indeks awal dan indeks akhir"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Menampilkan isi dari sebagian output beberapa bagian terkait pemicu"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1097,6 +1121,12 @@
     {
       "type": 0,
       "value": "Wajib. Jumlah detik yang akan ditambahkan. Dapat berupa nilai negatif untuk mengurangi detik."
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "PaPPLr": [
@@ -2422,6 +2452,12 @@
     {
       "type": 0,
       "value": "Menampilkan representasi dengan pengodean URI dari nilai"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
