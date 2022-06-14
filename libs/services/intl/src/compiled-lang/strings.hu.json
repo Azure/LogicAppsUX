@@ -35,6 +35,12 @@
       "value": "A tömb elemeit adja vissza, az indexszámmal kezdve."
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Egy URI-ként kódolt sztring bináris megfelelőjét adja vissza."
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -669,10 +681,22 @@
       "value": "Egy sztringnek a kezdőindex és a záróindex által meghatározott szakaszát adja vissza."
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "A trigger többrészes kimenetéből az egyik rész törzsét adja vissza."
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1119,6 +1143,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A hozzáadni kívánt másodpercek száma. Lehet negatív érték is másodpercek kivonása céljából."
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "PaPPLr": [
@@ -2489,6 +2519,12 @@
     {
       "type": 0,
       "value": "Egy értéket URI-ként kódolt értékként ad vissza."
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
