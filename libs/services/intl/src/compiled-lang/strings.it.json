@@ -35,6 +35,12 @@
       "value": "Restituisce gli elementi nella matrice a partire dal numero di indice"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Restituisce una rappresentazione binaria di una stringa con codifica URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -669,10 +681,22 @@
       "value": "Restituisce una sezione di una stringa definita dall'indice iniziale e dall'indice finale"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Restituisce il corpo per una parte nell'output multiparte del trigger"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1127,6 +1151,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero di secondi da aggiungere. Può essere negativo per sottrarre i secondi."
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "PaPPLr": [
@@ -2485,6 +2515,12 @@
     {
       "type": 0,
       "value": "Restituisce una rappresentazione con codifica URI di un valore"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
