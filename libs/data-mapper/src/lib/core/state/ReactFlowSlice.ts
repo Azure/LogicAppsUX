@@ -1,4 +1,4 @@
-import type { SchemaNode } from '../../models/Schema';
+import type { SchemaNodeExtended } from '../../models/Schema';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import type { Node as ReactFlowNode } from 'react-flow-renderer';
@@ -15,8 +15,8 @@ const childOutputX = rootOutputX + 10;
 const childOutputYOffset = 50;
 
 export interface UpdateReactFlowAction {
-  inputSchema?: SchemaNode;
-  outputSchema?: SchemaNode;
+  inputSchema?: SchemaNodeExtended;
+  outputSchema?: SchemaNodeExtended;
 }
 
 export interface ReactFlowState {
@@ -40,7 +40,7 @@ export const reactFlowSlice = createSlice({
   },
 });
 
-const convertToReactFlowNode = (inputSchemaNode?: SchemaNode, outputSchemaNode?: SchemaNode): ReactFlowNode[] => {
+const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, outputSchemaNode?: SchemaNodeExtended): ReactFlowNode[] => {
   const reactFlowNodes: ReactFlowNode[] = [];
 
   if (inputSchemaNode) {
@@ -57,7 +57,7 @@ const convertToReactFlowNode = (inputSchemaNode?: SchemaNode, outputSchemaNode?:
       },
     });
 
-    inputSchemaNode.children.forEach((childNode, index) => {
+    inputSchemaNode.children?.forEach((childNode, index) => {
       reactFlowNodes.push({
         id: `input-${childNode.key}`,
         data: {
@@ -87,7 +87,7 @@ const convertToReactFlowNode = (inputSchemaNode?: SchemaNode, outputSchemaNode?:
       },
     });
 
-    outputSchemaNode.children.forEach((childNode, index) => {
+    outputSchemaNode.children?.forEach((childNode, index) => {
       reactFlowNodes.push({
         id: `output-${childNode.key}`,
         data: {
