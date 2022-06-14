@@ -11,10 +11,15 @@ export const getConnectionsQuery = async (): Promise<void> => {
 };
 
 export const useConnectionByName = (connectionName: string) => {
-  const connectionsQuery = useQuery([connectionKey], () => {
-    const connectionService = ConnectionService();
-    return connectionService.getConnections();
-  });
+  const connectionsQuery = useQuery(
+    [connectionKey],
+    () => {
+      const connectionService = ConnectionService();
+      return connectionService.getConnections();
+    },
+    { staleTime: 1000 * 6 * 5 }
+  );
+
   const connections = connectionsQuery.data;
   const connectionForConnector = connections && connections.find((connection) => connection.name === connectionName);
   return connectionForConnector;

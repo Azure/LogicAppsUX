@@ -18,7 +18,7 @@ export async function getConnectionsMappingForNodes(operations: Operations, getS
   for (const [nodeId, operation] of Object.entries(operations)) {
     try {
       if (
-        operationManifestService.isSupported(operation.type, operation.kind) || // Danielle can I make this logic more clear? Its a little confusing the "why"; ask Priti
+        operationManifestService.isSupported(operation.type, operation.kind) || // Danielle to refactor this logic to make it more clear no. 14723337
         isApiConnectionType(operation.type) ||
         (equals(operation.type, Constants.NODE.TYPE.MANUAL) && equals(operation.kind, Constants.NODE.KIND.APICONNECTION))
       ) {
