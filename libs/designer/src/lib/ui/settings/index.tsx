@@ -1,13 +1,3 @@
-// this should have all settings sections together in one place
-// later on will include the logic to render certain settings and/or sections
-// for now should show and export:
-// <General>
-// <Run After>
-// <Networking>
-// <Data Handling>
-// <Security>
-// <Tracking>
-import { ProviderWrappedContext } from '../../core';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import { useAllOperations, useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../core/store';
@@ -18,7 +8,6 @@ import type { runAfterConfigs } from './sections/runafter';
 import { RunAfter } from './sections/runafter';
 import { Security } from './sections/security';
 import { Tracking } from './sections/tracking';
-import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
 export interface SectionProps extends Settings {
@@ -30,7 +19,6 @@ export const SettingsPanel = (): JSX.Element => {
   const nodeId = useSelector((state: RootState) => {
     return state.panel.selectedNode;
   });
-  const { readOnly } = useContext(ProviderWrappedContext) ?? {};
   const {
     secureInputs,
     secureOutputs,
@@ -70,7 +58,7 @@ export const SettingsPanel = (): JSX.Element => {
       timeout,
       concurrency,
       conditionExpressions,
-      readOnly,
+      readOnly: false,
       nodeId,
     };
     if (splitOn !== undefined || timeout !== undefined || concurrency !== undefined || conditionExpressions !== undefined) {
@@ -82,7 +70,7 @@ export const SettingsPanel = (): JSX.Element => {
     const dataHandlingProps: SectionProps = {
       requestSchemaValidation,
       disableAutomaticDecompression,
-      readOnly,
+      readOnly: false,
       nodeId,
     };
     if (requestSchemaValidation !== undefined || disableAutomaticDecompression !== undefined) {
@@ -92,7 +80,7 @@ export const SettingsPanel = (): JSX.Element => {
 
   const renderNetworking = (): JSX.Element | null => {
     const networkingProps: SectionProps = {
-      readOnly,
+      readOnly: false,
       nodeId,
       retryPolicy,
       suppressWorkflowHeaders,
@@ -110,7 +98,7 @@ export const SettingsPanel = (): JSX.Element => {
 
   const renderRunAfter = (): JSX.Element | null => {
     const runAfterProps: SectionProps = {
-      readOnly,
+      readOnly: false,
       nodeId,
       graphEdges,
     };
@@ -121,7 +109,7 @@ export const SettingsPanel = (): JSX.Element => {
     const securitySectionProps: SectionProps = {
       secureInputs,
       secureOutputs,
-      readOnly,
+      readOnly: false,
       nodeId,
     };
     return <Security {...securitySectionProps} />;
@@ -129,7 +117,7 @@ export const SettingsPanel = (): JSX.Element => {
 
   const renderTracking = (): JSX.Element | null => {
     const trackingProps: SectionProps = {
-      readOnly,
+      readOnly: false,
       nodeId,
       trackedProperties,
       correlation, //correlation setting contains trackingId setting being used in this component
