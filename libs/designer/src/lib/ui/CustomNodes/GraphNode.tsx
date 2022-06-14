@@ -60,8 +60,8 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   const isEmptyGraph = !graph?.edges && (graph?.children[0] as any).children.length === 0;
   const normalizedType = node.type.toLowerCase();
 
-  const validTypes = ['if', 'switch', 'foreach', 'scope'];
-  if (validTypes.includes(normalizedType)) {
+  const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope'];
+  if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <div className="msla-scope-v2 msla-scope-card">
         <Handle
