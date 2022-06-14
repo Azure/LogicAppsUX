@@ -35,6 +35,12 @@
       "value": "從索引計數開始，傳回陣列中的元素"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "傳回 URI 編碼字串的二進位表示法"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -658,10 +670,22 @@
       "value": "傳回起始索引和結束索引所定義之字串的區段"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "傳回 multipart 觸發程序輸出中一部分的本文"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1097,6 +1121,12 @@
     {
       "type": 0,
       "value": "必要。要加上的秒數。可以是負數以減去秒數。"
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "PaPPLr": [
@@ -2422,6 +2452,12 @@
     {
       "type": 0,
       "value": "傳回值的 URI 編碼表示法"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [

@@ -35,6 +35,12 @@
       "value": "Gibt die Elemente im Array beginnend bei Index \"Anzahl\" zurück."
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Gibt eine Binärdarstellung einer URI-codierten Zeichenfolge zurück."
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -669,10 +681,22 @@
       "value": "Gibt einen Abschnitt einer Zeichenfolge zurück, die durch den Startindex und den Endindex definiert wird."
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Gibt den Text für einen Teil in einer mehrteiligen Ausgabe des Triggers zurück."
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1119,6 +1143,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Anzahl der zu addierenden Sekunden. Kann negativ sein, um Sekunden zu subtrahieren."
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "PaPPLr": [
@@ -2481,6 +2511,12 @@
     {
       "type": 0,
       "value": "Gibt eine URI-codierte Darstellung eines Werts zurück."
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
