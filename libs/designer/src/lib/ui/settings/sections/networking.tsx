@@ -18,20 +18,20 @@ export const Networking = ({
   disableAsyncPattern,
   requestOptions,
 }: SectionProps): JSX.Element => {
-  const [asyncPatternFromState, toggleAsyncPattern] = useBoolean(!!disableAsyncPattern);
-  const [asyncResponseFromState, toggleAsyncResponse] = useBoolean(!!asynchronous);
+  const [disableAsyncPatternFromState, toggleDisableAsyncPattern] = useBoolean(!!disableAsyncPattern?.value);
+  const [asyncResponseFromState, toggleAsyncResponse] = useBoolean(!!asynchronous?.value);
   // const [downloadChunkFromState, setDownloadChunk] = useState(downloadChunkSize);
-  const [pagingFromState, setPaging] = useState(paging);
+  const [pagingFromState, setPaging] = useState(paging?.value ?? { enabled: false, value: undefined });
   // const [retryPolicyFromState, setRetryPolicy] = useState(retryPolicy);
-  const [requestOptionsFromState, setRequestOptions] = useState(requestOptions);
-  const [suppressWorkflowHeadersFromState, toggleSuppressWorkflowHeaders] = useBoolean(!!suppressWorkflowHeaders);
+  const [requestOptionsFromState, setRequestOptions] = useState(requestOptions?.value ?? { timeout: '' });
+  const [suppressWorkflowHeadersFromState, toggleSuppressWorkflowHeaders] = useBoolean(!!suppressWorkflowHeaders?.value);
   // const [uploadChunkFromState, setUploadChunk] = useState(uploadChunk);
-  const [workflowHeadersOnResponseFromState, toggleWorkflowHeadersOnResponse] = useBoolean(!!suppressWorkflowHeadersOnResponse);
+  const [workflowHeadersOnResponseFromState, toggleWorkflowHeadersOnResponse] = useBoolean(!!suppressWorkflowHeadersOnResponse?.value);
 
   const getAsyncPatternSetting = (): Settings => {
     const onAsyncPatternToggle = (_checked: boolean): void => {
       // validate first and surface error if invalid?
-      toggleAsyncPattern.toggle();
+      toggleDisableAsyncPattern.toggle();
       // dispatch to store
     };
     const asyncPatternCustomLabel = (
@@ -44,9 +44,9 @@ export const Networking = ({
     return {
       settingType: 'SettingToggle',
       settingProp: {
-        visible: true,
+        visible: disableAsyncPattern?.isSupported,
         readOnly,
-        checked: !asyncPatternFromState,
+        checked: !disableAsyncPatternFromState,
         onToggleInputChange: (_, checked) => onAsyncPatternToggle(!!checked),
         customLabel: () => asyncPatternCustomLabel,
         inlineLabel: true,
@@ -73,7 +73,7 @@ export const Networking = ({
     return {
       settingType: 'SettingToggle',
       settingProp: {
-        visible: true, // isAsynchronousResponseSupported
+        visible: asynchronous?.isSupported,
         readOnly,
         checked: asyncResponseFromState,
         onToggleInputChange: (_, checked) => onAsyncResponseToggle(!!checked),
@@ -103,7 +103,7 @@ export const Networking = ({
       settingType: 'SettingTextField',
       settingProp: {
         readOnly,
-        visible: true, //isRequestOptionsSupported(nodeId)
+        visible: requestOptions?.isSupported, //isRequestOptionsSupported(nodeId)
         value: requestOptionsFromState?.timeout ?? '',
         label: 'Duration',
         placeholder: 'Example: PT1S',
@@ -132,7 +132,7 @@ export const Networking = ({
       settingType: 'SettingToggle',
       settingProp: {
         readOnly,
-        visible: true, //isSuppressWorkflowSupported(nodeId)
+        visible: suppressWorkflowHeaders?.isSupported, //isSuppressWorkflowSupported(nodeId)
         checked: suppressWorkflowHeadersFromState,
         customLabel: () => suppressWorkflowHeadersCustomlabel,
         onText: 'On',
@@ -159,7 +159,7 @@ export const Networking = ({
       settingType: 'ReactiveToggle',
       settingProp: {
         readOnly,
-        visible: true, //isPaginationSupported(nodeId)
+        visible: paging?.isSupported, //isPaginationSupported(nodeId)
         textFieldLabel: 'Threshold',
         textFieldValue: pagingFromState?.value?.toString() ?? '',
         checked: pagingFromState?.enabled,
@@ -187,7 +187,7 @@ export const Networking = ({
       settingType: 'SettingToggle',
       settingProp: {
         readOnly,
-        visible: true, //isSuppressWorklowHeadersOnResponseSupported
+        visible: suppressWorkflowHeadersOnResponse?.isSupported, //isSuppressWorklowHeadersOnResponseSupported
         checked: workflowHeadersOnResponseFromState,
         customLabel: () => workflowHeadersOnResponseCustomLabel,
         onText: 'On',

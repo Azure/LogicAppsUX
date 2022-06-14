@@ -8,8 +8,8 @@ export const DataHandling = ({
   disableAutomaticDecompression,
   readOnly /*nodeId*/,
 }: SectionProps): JSX.Element => {
-  const [automaticDecompression, setAutomaticDecompression] = useState(disableAutomaticDecompression);
-  const [schemaValidation, setSchemaValidation] = useState(requestSchemaValidation);
+  const [automaticDecompression, setAutomaticDecompression] = useState(disableAutomaticDecompression?.value ?? false);
+  const [schemaValidation, setSchemaValidation] = useState(requestSchemaValidation?.value ?? false);
   const requestSchemaValidationLabel = (
     <SettingLabel
       labelText="Schema Validation"
@@ -42,9 +42,11 @@ export const DataHandling = ({
         settingProp: {
           readOnly,
           checked: automaticDecompression,
-          onToggleInputChange: (_, checked) => onAutomaticDecompressionChange(!!checked), //createHandler
+          onToggleInputChange: (_, checked) => onAutomaticDecompressionChange(!!checked),
           customLabel: () => automaticDecompressionLabel,
-          visible: true, //isAutomaticDecompressionSupported(nodeId)
+          visible: disableAutomaticDecompression?.isSupported,
+          onText: 'On',
+          offText: 'Off',
         },
       },
       {
@@ -54,7 +56,9 @@ export const DataHandling = ({
           checked: schemaValidation,
           onToggleInputChange: (_, checked) => onSchemaValidationChange(!!checked),
           customLabel: () => requestSchemaValidationLabel,
-          visible: true, //isSchemaValidationSupported(nodeId)
+          visible: requestSchemaValidation?.isSupported,
+          onText: 'On',
+          offText: 'Off',
         },
       },
     ],

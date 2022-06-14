@@ -62,7 +62,7 @@ export const SettingsPanel = (): JSX.Element => {
       readOnly,
       nodeId,
     };
-    if (splitOn !== undefined || timeout !== undefined || concurrency !== undefined || conditionExpressions !== undefined) {
+    if (splitOn?.isSupported || timeout?.isSupported || concurrency?.isSupported || conditionExpressions?.isSupported) {
       return <General {...generalSectionProps} />;
     } else return null;
   };
@@ -74,7 +74,9 @@ export const SettingsPanel = (): JSX.Element => {
       readOnly,
       nodeId,
     };
-    return <Security {...securitySectionProps} />;
+    if (secureInputs?.isSupported || secureOutputs?.isSupported) {
+      return <Security {...securitySectionProps} />;
+    } else return null;
   };
 
   const renderDataHandling = (): JSX.Element | null => {
@@ -84,7 +86,7 @@ export const SettingsPanel = (): JSX.Element => {
       readOnly,
       nodeId,
     };
-    if (requestSchemaValidation !== undefined || disableAutomaticDecompression !== undefined) {
+    if (requestSchemaValidation?.isSupported || disableAutomaticDecompression?.isSupported) {
       return <DataHandling {...dataHandlingProps} />;
     } else return null;
   };
@@ -103,8 +105,19 @@ export const SettingsPanel = (): JSX.Element => {
       disableAsyncPattern,
       requestOptions,
     };
-
-    return <Networking {...networkingProps} />;
+    if (
+      retryPolicy?.isSupported ||
+      suppressWorkflowHeaders?.isSupported ||
+      suppressWorkflowHeadersOnResponse?.isSupported ||
+      paging?.isSupported ||
+      uploadChunk?.isSupported ||
+      downloadChunkSize?.isSupported ||
+      asynchronous?.isSupported ||
+      disableAsyncPattern?.isSupported ||
+      requestOptions?.isSupported
+    ) {
+      return <Networking {...networkingProps} />;
+    } else return null;
   };
 
   const renderTracking = (): JSX.Element | null => {
@@ -114,8 +127,9 @@ export const SettingsPanel = (): JSX.Element => {
       trackedProperties,
       correlation, //correlation setting contains trackingId setting being used in this component
     };
-
-    return <Tracking {...trackingProps} />;
+    if (trackedProperties?.isSupported || correlation?.isSupported) {
+      return <Tracking {...trackingProps} />;
+    } else return null;
   };
 
   const renderAllSettingsSections = (): JSX.Element => {

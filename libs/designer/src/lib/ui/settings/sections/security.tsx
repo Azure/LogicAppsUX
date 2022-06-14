@@ -4,7 +4,6 @@ import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
 
 // TODO (andrewfowose): replace hard-set settingProps in Security to data from operationMetadataSlice
 export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: SectionProps): JSX.Element | null => {
-  // if (secureInputs === undefined && secureOutputs === undefined) return null;
   const secureInputsLabel = <SettingLabel labelText="Secure Inputs" infoTooltipText="Secure inputs of the operation." isChild={false} />;
   const secureOutputsLabel = (
     <SettingLabel
@@ -33,9 +32,9 @@ export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: Sect
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: true, //isSupported fn here
+          visible: secureInputs?.isSupported, //isSupported fn here
           readOnly,
-          checked: secureInputs,
+          checked: secureInputs?.value,
           onToggleInputChange: (_, checked) => onSecureInputsChange(!!checked),
           customLabel: () => secureInputsLabel,
         },
@@ -43,9 +42,9 @@ export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: Sect
       {
         settingType: 'SettingToggle',
         settingProp: {
-          visible: true, // IsSupported fn here
+          visible: secureOutputs?.isSupported, // IsSupported fn here
           readOnly,
-          checked: secureOutputs,
+          checked: secureOutputs?.value,
           onToggleInputChange: (_, checked) => onSecureOutputsChange(!!checked),
           customLabel: () => secureOutputsLabel,
         },
