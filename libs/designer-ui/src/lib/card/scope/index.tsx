@@ -56,11 +56,12 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
         >
           {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
           <div className="msla-scope-header-content">
-            <div className="msla-scope-header-title-box">
+            <div className={css('msla-selection-box', false && 'selected')} /> {/* TODO: Assign selection here */}
+            <button className="msla-scope-header-title-box">
               <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
               {icon ? <img className="scope-icon" alt="" role="presentation" src={icon} /> : null}
               <div className="msla-scope-title">{title}</div>
-            </div>
+            </button>
             <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
           </div>
           <div>

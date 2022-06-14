@@ -3,12 +3,13 @@ import { FontSizes } from '@fluentui/theme';
 import { useIntl } from 'react-intl';
 
 interface CollapseToggleProps {
+  disabled?: boolean;
   collapsed?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
 }
 
 const CollapseToggle = (props: CollapseToggleProps) => {
-  const { collapsed = false, handleCollapse } = props;
+  const { disabled = false, collapsed = false, handleCollapse } = props;
 
   const intl = useIntl();
   const EXPAND_TEXT = intl.formatMessage({
@@ -26,7 +27,7 @@ const CollapseToggle = (props: CollapseToggleProps) => {
 
   return (
     <TooltipHost content={toggleText} directionalHint={DirectionalHint.rightCenter}>
-      <button aria-label={toggleText} className="msla-collapse-toggle" onClick={handleCollapse}>
+      <button aria-label={toggleText} disabled={disabled} className="msla-collapse-toggle" onClick={handleCollapse}>
         <Icon iconName={iconName} styles={{ root: { fontSize: FontSizes.small } }} />
       </button>
     </TooltipHost>

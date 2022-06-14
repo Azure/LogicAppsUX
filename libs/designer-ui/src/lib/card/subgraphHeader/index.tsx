@@ -42,6 +42,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
         defaultMessage: 'True',
         description: 'True',
       }),
+      size: 'small',
     },
     'CONDITIONAL-FALSE': {
       color: '#A4262C',
@@ -49,11 +50,12 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
         defaultMessage: 'False',
         description: 'False',
       }),
+      size: 'small',
     },
     'SWITCH-CASE': {
       color: '#484F58',
       title: title,
-      classes: ['large'],
+      size: 'large',
     },
     'SWITCH-DEFAULT': {
       color: '#484F58',
@@ -61,8 +63,9 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
         defaultMessage: 'Default',
         description: 'Default, the backup option if none other apply',
       }),
+      size: 'small',
     },
-  } as any;
+  };
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
@@ -75,15 +78,25 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
 
   const data = SubgraphTypeData[subgraphType];
 
-  return (
-    <div
-      className={css('msla-subgraph-header', ...(data?.classes ?? []))}
-      style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
-    >
-      <div className="msla-subgraph-title" onClick={handleClick}>
-        {data.title}
+  if (data.size === 'large') {
+    return (
+      <div className={css('msla-subgraph-header', data.size)} style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}>
+        <button className="msla-subgraph-title" onClick={handleClick}>
+          {data.title}
+        </button>
+        <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
       </div>
-      <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
-    </div>
-  );
+    );
+  } else if (data.size === 'small') {
+    return (
+      <button
+        className={css('msla-subgraph-header', data.size)}
+        style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
+        onClick={handleCollapse}
+      >
+        <div className="msla-subgraph-title">{data.title}</div>
+        <CollapseToggle disabled collapsed={collapsed} />
+      </button>
+    );
+  } else return null;
 };

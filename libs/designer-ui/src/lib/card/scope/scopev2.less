@@ -1,4 +1,4 @@
-@import (reference) '../../variables.less';
+@import (reference) '../../mixins.less';
 
 @scope-v2-width: (@card-v2-width + 20px);
 
@@ -12,7 +12,7 @@
   position: relative;
   top: -16px;
   width: 100%;
-  height: calc(100% - 32px);
+  height: calc(100% - 24px);
 
   &.msla-expanded {
     min-height: 72px;
@@ -38,7 +38,6 @@
     width: @card-v2-width;
     z-index: 1;
 
-    border: 2px solid var(--brand-color, black);
     border-radius: 2px;
     background-color: var(--brand-color, black);
 
@@ -46,7 +45,6 @@
 
     &:hover {
       box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
-      filter: invert(1) brightness(1.15) invert(1); // Darken by 20% without darkening white pixels
 
       .gripper-section {
         visibility: visible;
@@ -57,22 +55,44 @@
     }
   }
 
+  .msla-selection-box {
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    &.selected {
+      outline: 1px solid white;
+      outline-offset: -3px;
+    }
+  }
+
   .msla-scope-header-content {
     display: flex;
-    gap: 8px;
     flex-wrap: nowrap;
-    border: 1px solid white;
+    border-radius: 2px;
+    overflow: hidden;
   }
 
   .msla-scope-header-title-box {
+    border: none;
+    padding: 0px;
+    color: white;
     flex-grow: 1;
     display: flex;
     flex-direction: row;
     align-items: center;
+    background-color: var(--brand-color, black);
+    .node-button-interaction();
+  }
+
+  .msla-collapse-toggle {
+    background-color: var(--brand-color, black);
+    .node-button-interaction();
   }
 
   .gripper-section {
-    padding: 13px 4px 11px; // This should be '12px 4px' but our svg is rendering too high
+    padding: 12px 6px 10px;
     text-align: center;
     visibility: hidden;
     filter: brightness(0) invert(1); // This sets it to white
@@ -81,7 +101,7 @@
   .scope-icon {
     height: 24px;
     width: 24px;
-    margin-left: -6px;
+    margin: 0px 2px 0px -6px;
     z-index: 0;
   }
 
