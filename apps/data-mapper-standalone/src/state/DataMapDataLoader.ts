@@ -12,7 +12,7 @@ export interface DataMapLoadingState {
 
 const initialState: DataMapLoadingState = {
   loadingMethod: 'file',
-  resourcePath: 'SimpleCustomerOrder.json',
+  resourcePath: '',
 };
 
 export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunkAPI) => {
@@ -24,7 +24,6 @@ export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunk
   } else {
     try {
       const dataMap = await import(`../../../../__mocks__/dataMaps/${currentState.dataMapDataLoader.resourcePath}`);
-      console.log(dataMap);
       return dataMap;
     } catch {
       return null;

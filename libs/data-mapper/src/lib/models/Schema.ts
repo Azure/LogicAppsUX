@@ -17,7 +17,6 @@ export interface SchemaNode {
   repeating?: boolean;
   attribute?: boolean;
   children: SchemaNode[];
-  parent: SchemaNode;
 }
 
 export enum SchemaType {
@@ -32,3 +31,33 @@ export enum SchemaNodeProperties {
   Repeating = 2,
   Attribute = 4,
 }
+
+export interface SchemaExtended extends Schema {
+  schemaTreeRoot: SchemaNodeExtended;
+}
+
+export interface SchemaNodeExtended extends SchemaNode {
+  children: SchemaNodeExtended[];
+  pathToRoot: SchemaNode[];
+}
+
+export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
+  const extendedSchema: SchemaExtended = {
+    ...schema,
+    schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(schema.schemaTreeRoot, []),
+  };
+
+  return extendedSchema;
+};
+
+const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPath: SchemaNode[]): SchemaNodeExtended => {
+  const pathToRoot: SchemaNode[] = [...parentPath, schemaNode];
+
+  const extendedSchemaNode: SchemaNodeExtended = {
+    ...schemaNode,
+    children: schemaNode.children ? schemaNode.children.map((child) => convertSchemaNodeToSchemaNodeExtended(child, pathToRoot)) : [],
+    pathToRoot: pathToRoot,
+  };
+
+  return extendedSchemaNode;
+};
