@@ -103,17 +103,12 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     <div>
       {isFirstChild ? <div style={{ visibility: 'hidden', height: '32px' }} /> : null}
       {isFirstChild && !readOnly && !metadata?.subgraphType ? (
-        <div style={{ height: 30, margin: '5px auto' }}>
+        <div className={'edge-drop-zone-container'}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>
       ) : null}
       <div>
-        <Handle
-          type="target"
-          position={targetPosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(-50%, 50%)' }}
-        />
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         {metadata?.subgraphType ? (
           <SubgraphHeader
             parentId={metadata?.graphId.split('-')[0] ?? ''}
@@ -140,15 +135,10 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
             onClick={nodeClick}
           />
         )}
-        <Handle
-          type="source"
-          position={sourcePosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(-50%, -50%)' }}
-        />
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {childEdges.length === 0 && !readOnly ? (
-        <div style={{ height: 30, margin: '5px auto' }}>
+        <div className={'edge-drop-zone-container'}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>
       ) : null}
