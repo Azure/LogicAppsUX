@@ -8,7 +8,6 @@ exports[`ui/settings/settingreactiveinput should construct 1`] = `
     onText="On"
     onToggleInputChange={[Function]}
     readOnly={false}
-    visible={true}
   />
 </React.Fragment>
 `;

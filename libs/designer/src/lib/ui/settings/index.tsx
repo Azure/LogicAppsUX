@@ -123,7 +123,7 @@ export const SettingsPanel = (): JSX.Element => {
       readOnly: false,
       nodeId,
     };
-    return <Security {...securitySectionProps} />;
+    return secureInputs?.isSupported || secureOutputs?.isSupported ? <Security {...securitySectionProps} /> : null;
   };
 
   const renderTracking = (): JSX.Element | null => {

@@ -159,6 +159,7 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
         if (!settingProp.readOnly) {
           settingProp.readOnly = isReadOnly;
         }
+        const className = settingType === 'RunAfter' ? 'msla-setting-section-run-after-setting' : 'msla-setting-section-setting';
         const renderSetting = (): JSX.Element | null => {
           if (!visible) return null;
           switch (settingType) {
@@ -191,7 +192,7 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
           }
         };
         return (
-          <div key={i} className="msla-setting-section-setting">
+          <div key={i} className={className}>
             {renderSetting()}
           </div>
         );
