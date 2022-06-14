@@ -59,8 +59,7 @@ class MockHttpClient implements IHttpClient {
     const a: unknown = {};
     return a as ReturnType;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  post<ReturnType, _BodyType>() {
+  post<ReturnType>() {
     const a: unknown = {};
     return a as ReturnType;
   }

@@ -1,3 +1,4 @@
+import { initializeGraphState } from '../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../parsers/addNodeToWorkflow';
 import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../parsers/addNodeToWorkflow';
 import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
@@ -84,14 +85,14 @@ export const workflowSlice = createSlice({
       }
     },
   },
-  // extraReducers: (builder) => {
-  //   // Add reducers for additional action types here, and handle loading state as needed
-  //   builder.addCase(initializeGraphState.fulfilled, (state, action) => {
-  //     state.graph = action.payload.graph;
-  //     state.operations = action.payload.actionData;
-  //     state.nodesMetadata = action.payload.nodesMetadata;
-  //   });
-  // },
+  extraReducers: (builder) => {
+    // Add reducers for additional action types here, and handle loading state as needed
+    builder.addCase(initializeGraphState.fulfilled, (state, action) => {
+      state.graph = action.payload.graph;
+      state.operations = action.payload.actionData;
+      state.nodesMetadata = action.payload.nodesMetadata;
+    });
+  },
 });
 
 // Action creators are generated for each case reducer function

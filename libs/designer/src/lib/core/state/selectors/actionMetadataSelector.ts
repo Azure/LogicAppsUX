@@ -24,15 +24,12 @@ export const useNodeMetadata = (nodeId?: string) => {
 };
 
 export const useNodeConnectionName = (nodeId: string) => {
-  return useSelector((state: RootState) => {
-    if (!nodeId) {
-      return undefined;
-    }
-    const connectionId = state.connections.connectionsMapping[nodeId];
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const connection = useConnectionByName(connectionId); // Danielle diagnose why lint rule triggered here
-    return connection?.properties.displayName ?? '';
+  const connectionId = useSelector((state: RootState) => {
+    // danielle test this live
+    return nodeId ? state.connections.connectionsMapping[nodeId] : '';
   });
+  const connection = useConnectionByName(connectionId);
+  return connection?.properties.displayName ?? '';
 };
 
 export const useNodeDescription = (nodeId: string) => {

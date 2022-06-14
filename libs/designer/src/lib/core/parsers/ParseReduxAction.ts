@@ -6,7 +6,7 @@ import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-export const initializeGraphState = createAsyncThunk<Promise<DeserializedWorkflow>, LogicAppsV2.WorkflowDefinition, { state: RootState }>(
+export const initializeGraphState = createAsyncThunk<DeserializedWorkflow, LogicAppsV2.WorkflowDefinition, { state: RootState }>(
   'parser/deserialize',
   async (workflowDefinition: LogicAppsV2.WorkflowDefinition, thunkAPI): Promise<DeserializedWorkflow> => {
     const { workflow } = thunkAPI.getState() as { workflow: WorkflowState };

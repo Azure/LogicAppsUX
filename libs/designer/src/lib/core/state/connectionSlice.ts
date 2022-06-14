@@ -18,8 +18,7 @@ export const connectionSlice = createSlice({
   initialState: initialConnectionsState,
   reducers: {
     initializeConnectionReferences: (state, action: PayloadAction<ConnectionReferencesPayload>) => {
-      // eslint-disable-next-line no-param-reassign
-      state = action.payload;
+      return action.payload;
     },
     initializeConnectionsMappings: (state, action: PayloadAction<Record<string, string>>) => {
       state.connectionsMapping = action.payload;

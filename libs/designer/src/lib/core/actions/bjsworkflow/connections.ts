@@ -61,7 +61,7 @@ const isOpenApiConnectionType = (type: string): boolean => {
   );
 };
 
-export async function getConnectionsApiAndMapping(operations: Operations, getState: () => RootState, dispatch: Dispatch): Promise<void> {
+export async function getConnectionsApiAndMapping(operations: Operations, getState: () => RootState, dispatch: Dispatch) {
   getConnectionsQuery();
   const connectionsMappings = await getConnectionsMappingForNodes(operations, getState);
   dispatch(initializeConnectionsMappings(connectionsMappings));
@@ -83,11 +83,15 @@ export async function getManifestBasedConnectionMapping(
       return Promise.resolve(undefined);
     }
 
-    const connectionReferenceKey = isOpenApiConnectionType(operationDefinition.type) // danielle can we make this more readable
-      ? getConnectionReferenceKeyForManifest(connectionReferenceKeyFormat, operationDefinition)
-      : isConnectionRequiredForOperation(operationManifest)
-      ? _getLegacyConnectionReferenceKey(operationDefinition)
-      : undefined;
+    let connectionReferenceKey: string | undefined;
+    if (isOpenApiConnectionType(operationDefinition.type)) {
+      connectionReferenceKey = getConnectionReferenceKeyForManifest(connectionReferenceKeyFormat, operationDefinition);
+    } else if (isConnectionRequiredForOperation(operationManifest)) {
+      // danielle can you consolidate this logic into above function?
+      connectionReferenceKey = _getLegacyConnectionReferenceKey(operationDefinition);
+    } else {
+      connectionReferenceKey = undefined;
+    }
 
     return connectionReferenceKey ? { [nodeId]: connectionReferenceKey } : undefined;
   } catch (exception) {
@@ -129,7 +133,6 @@ function getOpenApiConnectionReferenceKey(operationDefinition: LogicAppsV2.OpenA
   return connectionName;
 }
 
-// tslint:disable-next-line: no-any
 function _getLegacyConnectionReferenceKey(_operationDefinition: any): string | undefined {
   throw new Error('Function not implemented.');
 }
