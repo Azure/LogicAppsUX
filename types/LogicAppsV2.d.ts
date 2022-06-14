@@ -48,6 +48,18 @@ declare namespace LogicAppsV2 {
 
   type Actions = Record<string, ActionDefinition>;
 
+  /* Service provider Actions and Triggers */
+
+  interface ServiceProvider {
+    inputs: ServiceProviderConfiguration;
+  }
+
+  interface ServiceProviderConfiguration {
+    serviceProviderConfiguration: {
+      connectionName: string;
+    };
+  }
+
   /* API Connection actions and triggers */
 
   interface ApiConnectionAction extends TimeoutableAction {

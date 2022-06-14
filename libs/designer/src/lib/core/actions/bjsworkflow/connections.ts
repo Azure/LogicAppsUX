@@ -87,7 +87,6 @@ export async function getManifestBasedConnectionMapping(
     if (isOpenApiConnectionType(operationDefinition.type)) {
       connectionReferenceKey = getConnectionReferenceKeyForManifest(connectionReferenceKeyFormat, operationDefinition);
     } else if (isConnectionRequiredForOperation(operationManifest)) {
-      // danielle can you consolidate this logic into above function?
       connectionReferenceKey = _getLegacyConnectionReferenceKey(operationDefinition);
     } else {
       connectionReferenceKey = undefined;
@@ -105,20 +104,16 @@ function isConnectionRequiredForOperation(manifest: OperationManifest): boolean 
 }
 
 // tslint:disable-next-line: no-any
-function getConnectionReferenceKeyForManifest(
-  referenceFormat: string,
-  operationDefinition: any /*LogicAppsV2.OperationDefinition */
-): string {
-  // Danielle there is no typing corresponding to ServiceProviderConfiguration in Operation Definition, ask Priti
+function getConnectionReferenceKeyForManifest(referenceFormat: string, operationDefinition: LogicAppsV2.OperationDefinition): string {
   switch (referenceFormat) {
     case ConnectionReferenceKeyFormat.Function:
-      return operationDefinition.inputs.function.connectionName;
+      return (operationDefinition as LogicAppsV2.FunctionAction).inputs.function.connectionName;
 
     case ConnectionReferenceKeyFormat.ServiceProvider:
-      return operationDefinition.inputs.serviceProviderConfiguration.connectionName;
+      return (operationDefinition as LogicAppsV2.ServiceProvider).inputs.serviceProviderConfiguration.connectionName;
 
     case ConnectionReferenceKeyFormat.OpenApi:
-      return getOpenApiConnectionReferenceKey(operationDefinition.inputs as LogicAppsV2.OpenApiOperationInputs);
+      return getOpenApiConnectionReferenceKey((operationDefinition as LogicAppsV2.OpenApiOperationAction).inputs);
   }
   return '';
 }
