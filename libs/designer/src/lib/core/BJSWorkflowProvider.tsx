@@ -1,10 +1,10 @@
 import { ProviderWrappedContext } from './ProviderWrappedContext';
-import { InitializeServices } from './actions/bjsworkflow/initialize';
 import { initializeGraphState } from './parsers/ParseReduxAction';
+import { initializeServices } from './state/designerOptionsSlice';
 import { initWorkflowSpec } from './state/workflowSlice';
-import type { AppDispatch } from './store';
+import type { AppDispatch, RootState } from './store';
 import React, { useContext, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
   workflow: LogicAppsV2.WorkflowDefinition;
@@ -23,12 +23,14 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
 
 export const BJSWorkflowProvider: React.FC<BJSWorkflowProviderProps> = (props) => {
   const wrapped = useContext(ProviderWrappedContext);
+  const dispatch = useDispatch<AppDispatch>();
+  const servicesInitialized = useSelector((state: RootState) => state.designerOptions.servicesInitialized);
   if (!wrapped) {
     throw new Error('BJSWorkflowProvider must be used inside of a DesignerProvider');
   }
 
-  if (!wrapped.servicesInitialized) {
-    InitializeServices(wrapped.services);
+  if (!servicesInitialized) {
+    dispatch(initializeServices(wrapped));
   }
 
   return <DataProviderInner {...props} />;

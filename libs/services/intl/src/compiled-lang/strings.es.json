@@ -35,6 +35,12 @@
       "value": "Devuelve los elementos de la matriz empezando por el número de índices."
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Devuelve una representación binaria de una cadena codificada de URI."
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -669,10 +681,22 @@
       "value": "Devuelve una sección de una cadena definida por el índice inicial y el índice final."
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Devuelve el cuerpo de una parte en una salida de varias partes del desencadenador."
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1119,6 +1143,12 @@
     {
       "type": 0,
       "value": "Obligatorio. El número de segundos que se agregarán. Puede ser negativo para restar segundos."
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "PaPPLr": [
@@ -2485,6 +2515,12 @@
     {
       "type": 0,
       "value": "Devuelve una representación codificada de URI de un valor."
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [

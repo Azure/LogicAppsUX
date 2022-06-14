@@ -35,6 +35,12 @@
       "value": "Returnerar elementen i den matris som börjar vid antalindexet"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Returnerar en binär representation av en URI-kodad sträng"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -669,10 +681,22 @@
       "value": "Returnerar ett avsnitt i en sträng som definieras av start- och slutindexet"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Returnerar brödtexten för en del i utlösarens multipart-utdata"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1119,6 +1143,12 @@
     {
       "type": 0,
       "value": "Krävs. Antalet sekunder att lägga till. Kan vara negativt för att subtrahera sekunder."
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "PaPPLr": [
@@ -2485,6 +2515,12 @@
     {
       "type": 0,
       "value": "Returnerar en URI-kodad representation av ett värde"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [

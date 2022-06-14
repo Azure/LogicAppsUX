@@ -6,9 +6,7 @@ import {
   StandardOperationManifestService,
   StandardSearchService,
 } from '@microsoft-logic-apps/designer-client-services';
-import type { DesignerOptionsContext } from '@microsoft/logic-apps-designer';
-import { DesignerProvider, BJSWorkflowProvider, Designer, ProviderWrappedContext } from '@microsoft/logic-apps-designer';
-import { useState } from 'react';
+import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
@@ -24,32 +22,19 @@ const operationManifestService = new StandardOperationManifestService({
 });
 const searchService = new StandardSearchService();
 export const DesignerWrapper = () => {
-  // This is temporary logic, lets us switch context values during testing
-  const [readOnly, setReadOnly] = useState(false);
-  const [isMonitoringView, setIsMonitoringView] = useState(false);
-
-  const workflow = useSelector((state: RootState) => state.workflowLoader.workflowDefinition);
-  const designerProviderProps: DesignerOptionsContext = {
+  const { workflowDefinition, readOnly, monitoringView } = useSelector((state: RootState) => state.workflowLoader);
+  const designerProviderProps = {
     services: { connectionService, operationManifestService, searchService },
     readOnly,
-    toggleReadOnly: () => {
-      setReadOnly(!readOnly);
-    },
-    isMonitoringView,
-    toggleMonitoringView: () => {
-      setIsMonitoringView(!isMonitoringView);
-      if (!readOnly) setReadOnly(!readOnly);
-    },
+    isMonitoringView: monitoringView,
   };
 
   return (
     <>
-      <ProviderWrappedContext.Provider value={designerProviderProps}>
-        <SettingsBox />
-      </ProviderWrappedContext.Provider>
+      <SettingsBox />
       <DesignerProvider locale="en-US" options={{ ...designerProviderProps }}>
-        {workflow ? (
-          <BJSWorkflowProvider workflow={workflow}>
+        {workflowDefinition ? (
+          <BJSWorkflowProvider workflow={workflowDefinition}>
             <Designer></Designer>
           </BJSWorkflowProvider>
         ) : null}
