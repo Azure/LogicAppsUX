@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { ProviderWrappedContext } from '../../core';
 import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
 import {
   useBrandColor,
@@ -8,18 +7,20 @@ import {
   useNodeMetadata,
   useOperationInfo,
 } from '../../core/state/selectors/actionMetadataSelector';
+import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
 import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
 import { Card, SubgraphHeader } from '@microsoft/designer-ui';
-import { memo, useCallback, useContext, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
 const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
-  const { readOnly, isMonitoringView } = useContext(ProviderWrappedContext) ?? {};
+  const readOnly = useReadOnly();
+  const isMonitoringView = useMonitoringView();
 
   const dispatch = useDispatch();
 

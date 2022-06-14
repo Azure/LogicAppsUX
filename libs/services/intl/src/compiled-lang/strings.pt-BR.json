@@ -35,6 +35,12 @@
       "value": "Retorna os elementos na matriz começando na Contagem do índice"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Retorna uma representação binária de uma cadeia de caracteres codificada no URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -669,10 +681,22 @@
       "value": "Retorna uma seção de uma cadeia de caracteres definida pelo índice inicial e pelo índice final"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Retorna o corpo de uma parte de uma saída de várias partes de um gatilho"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1119,6 +1143,12 @@
     {
       "type": 0,
       "value": "Necessário. O número de segundos a adicionar. Pode ser negativo para subtrair segundos."
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
     }
   ],
   "PaPPLr": [
@@ -2477,6 +2507,12 @@
     {
       "type": 0,
       "value": "Retorna uma representação codificada no URI de um valor"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
