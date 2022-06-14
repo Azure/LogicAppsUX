@@ -77,7 +77,7 @@ export const RunAfter = ({ graphEdges, readOnly = false, allEdges }: RunAfterPro
         settingProp: {
           items: GetRunAfterProps(),
         },
-        visible: true,
+        visible: Object.keys(statuses).length > 0,
       },
     ],
   };
