@@ -136,7 +136,7 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
     if (subgraphType) {
       const scopeRootId = subgraphTitle ?? `${graphId}-${subgraphType}`;
       const prevRootId = graph.children[0].id;
-      graph.children.push({
+      graph.children.unshift({
         id: scopeRootId,
         height: 0,
         width: 0,
