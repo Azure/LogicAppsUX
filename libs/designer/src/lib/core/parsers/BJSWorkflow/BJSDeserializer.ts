@@ -5,6 +5,7 @@ import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../models/workfl
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { equals, isNullOrEmpty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
+import { title } from 'process';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -123,44 +124,46 @@ const processScopeActions = (actionName: string, action: LogicAppsV2.ScopeAction
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
 
-  const applyActions = (graphId: string, actions: LogicAppsV2.Actions | undefined, subgraphType?: SubgraphType) => {
+  const applyActions = (graphId: string, actions: LogicAppsV2.Actions | undefined, subgraphType?: SubgraphType, subgraphTitle?: string) => {
     const [graph, operations, metadata] = processNestedActions(graphId, actions);
 
     actionGraphs.push(graph);
     allActions = { ...allActions, ...operations };
     nodesMetadata = { ...nodesMetadata, ...metadata };
-    addEmptyPlaceholderNodeIfNeeded(graph, nodesMetadata);
+
+    const emptyNodeId = addEmptyPlaceholderNodeIfNeeded(graph, nodesMetadata);
 
     if (subgraphType) {
-      const scopeRootId = `${graphId}-${subgraphType}`;
+      const scopeRootId = subgraphTitle ?? `${graphId}-${subgraphType}`;
       const prevRootId = graph.children[0].id;
       graph.children.unshift({
         id: scopeRootId,
         height: 0,
         width: 0,
       } as WorkflowNode);
-      graph.edges.push({
-        id: `${scopeRootId}-${prevRootId}`,
-        source: scopeRootId,
-        target: prevRootId,
-      });
-      nodesMetadata = {
-        ...nodesMetadata,
-        ...{
-          [scopeRootId]: {
-            graphId,
-            subgraphType,
-          },
-        },
-      };
+      if (prevRootId !== emptyNodeId || subgraphType === 'SWITCH-ADD-CASE') {
+        graph.edges.push({
+          id: `${scopeRootId}-${prevRootId}`,
+          source: scopeRootId,
+          target: prevRootId,
+        });
+      } else {
+        // removes empty node from subgraphs
+        graph.children.splice(
+          graph.children.findIndex((node) => node.id === emptyNodeId),
+          1
+        );
+      }
+      nodesMetadata = { ...nodesMetadata, [scopeRootId]: { graphId, subgraphType } };
     }
   };
 
   if (isSwitchAction(action)) {
-    applyActions(`${actionName}-defaultActions`, action.default?.actions, 'SWITCH-DEFAULT');
     for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
-      applyActions(`${actionName}-${caseName}Actions`, caseAction.actions, 'SWITCH-CASE');
+      applyActions(`${actionName}-${caseName}Actions`, caseAction.actions, 'SWITCH-CASE', caseName);
     }
+    applyActions(`${actionName}-addCase`, undefined, 'SWITCH-ADD-CASE');
+    applyActions(`${actionName}-defaultActions`, action.default?.actions, 'SWITCH-DEFAULT');
   } else if (isIfAction(action)) {
     applyActions(`${actionName}-actions`, action.actions, 'CONDITIONAL-TRUE');
     applyActions(`${actionName}-elseActions`, action.else?.actions, 'CONDITIONAL-FALSE');
@@ -187,7 +190,7 @@ const processNestedActions = (graphId: string, actions: LogicAppsV2.Actions | un
   ];
 };
 
-const addEmptyPlaceholderNodeIfNeeded = (graph: WorkflowGraph, nodesMetadata: NodesMetadata): void => {
+const addEmptyPlaceholderNodeIfNeeded = (graph: WorkflowGraph, nodesMetadata: NodesMetadata): string | undefined => {
   if (!graph.children.length) {
     const nodeId = `${graph.id}-emptyNode`;
     graph.children.push({
@@ -197,7 +200,9 @@ const addEmptyPlaceholderNodeIfNeeded = (graph: WorkflowGraph, nodesMetadata: No
     });
     // eslint-disable-next-line no-param-reassign
     nodesMetadata[nodeId] = { graphId: graph.id, isPlaceholderNode: true };
+    return nodeId;
   }
+  return undefined;
 };
 
 const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => {

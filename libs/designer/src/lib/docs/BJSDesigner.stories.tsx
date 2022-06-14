@@ -1,8 +1,9 @@
 import type { DesignerOptionsContext } from '../index';
 import { BJSWorkflowProvider, Designer, DesignerProvider } from '../index';
-import ConditionalWorkflow from './conditionalWorkflow.json';
-import BigWorkflow from './simpleBigworkflow.json';
-import SimpleWorkflow from './simpleSmallWorkflow.json';
+import ConditionalWorkflow from './storybookWorkflows/conditionalWorkflow.json';
+import BigWorkflow from './storybookWorkflows/simpleBigworkflow.json';
+import SimpleWorkflow from './storybookWorkflows/simpleSmallWorkflow.json';
+import SwitchWorkflow from './storybookWorkflows/switchWorkflow.json';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -62,3 +63,4 @@ export const MonitoringViewExample = () => (
 );
 
 export const ConditionalExample = () => <RenderedComponent workflow={ConditionalWorkflow} />;
+export const SwitchExample = () => <RenderedComponent workflow={SwitchWorkflow} />;

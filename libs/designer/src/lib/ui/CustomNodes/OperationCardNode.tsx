@@ -66,14 +66,27 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     dispatch(changePanelNode(id));
   }, [dispatch, id, isCollapsed]);
 
+  const subgraphClick = useCallback(
+    (_id: string) => {
+      if (isCollapsed) {
+        dispatch(expandPanel());
+      }
+      dispatch(changePanelNode(_id));
+    },
+    [dispatch, isCollapsed]
+  );
+
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
   if (metadata?.isPlaceholderNode) {
-    if (readOnly) return null;
+    if (readOnly || !isFirstChild) return null;
     return (
-      <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
-        <DropZone graphId={metadata?.graphId ?? ''} />
-      </div>
+      <>
+        <div style={{ visibility: 'hidden', height: '32px' }} />
+        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
+          <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
+        </div>
+      </>
     );
   }
 
@@ -89,20 +102,21 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   return (
     <div>
       {isFirstChild ? <div style={{ visibility: 'hidden', height: '32px' }} /> : null}
-      {isFirstChild && !metadata?.subgraphType && !readOnly ? (
-        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px', marginBottom: 5 }}>
-          {!readOnly ? <DropZone graphId={metadata?.graphId ?? ''} parent={id} /> : null}
+      {isFirstChild && !readOnly && !metadata?.subgraphType ? (
+        <div className={'edge-drop-zone-container'}>
+          <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>
       ) : null}
       <div>
-        <Handle
-          type="target"
-          position={targetPosition}
-          isConnectable={false}
-          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
-        />
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         {metadata?.subgraphType ? (
-          <SubgraphHeader subgraphType={metadata?.subgraphType} />
+          <SubgraphHeader
+            parentId={metadata?.graphId.split('-')[0] ?? ''}
+            subgraphType={metadata?.subgraphType}
+            title={data?.label}
+            readOnly={readOnly}
+            onClick={subgraphClick}
+          />
         ) : (
           <Card
             title={data.label}
@@ -121,18 +135,13 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
             onClick={nodeClick}
           />
         )}
-        <Handle
-          type="source"
-          position={sourcePosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
-        />
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
-      {!readOnly && childEdges.length === 0 && (
-        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
+      {childEdges.length === 0 && !readOnly ? (
+        <div className={'edge-drop-zone-container'}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

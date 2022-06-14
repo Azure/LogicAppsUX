@@ -11,6 +11,7 @@ import requestManifest from './manifests/request';
 import responseManifest from './manifests/response';
 import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
+import switchManifest from './manifests/switch';
 import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft-logic-apps/parsers';
 import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
 import {
@@ -48,6 +49,7 @@ const swiftencode = 'swiftencode';
 const scope = 'scope';
 const foreach = 'foreach';
 const condition = 'if';
+const switchType = 'switch';
 const initializevariable = 'initializevariable';
 const incrementvariable = 'incrementvariable';
 const request = 'request';
@@ -75,6 +77,7 @@ const supportedManifestTypes = [
   request,
   response,
   select,
+  switchType,
   serviceprovider,
   table,
   workflow,
@@ -275,6 +278,7 @@ function isInBuiltOperation(definition: any): boolean {
     case request:
     case response:
     case select:
+    case switchType:
     case workflow:
     case xslt:
     case xmlvalidation:
@@ -418,6 +422,10 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: dataOperationConnectorId,
     operationId: select,
   },
+  [switchType]: {
+    connectorId: 'connectionProviders/control',
+    operationId: switchType,
+  },
   [workflow]: {
     connectorId: 'connectionProviders/localWorkflowOperation',
     operationId: 'invokeWorkflow',
@@ -464,4 +472,5 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
+  [switchType, switchManifest],
 ]);

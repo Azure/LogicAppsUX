@@ -9,6 +9,7 @@ export const fileOptions = [
   'Panel.json',
   'ComplexConditionals.json',
   'Conditionals.json',
+  'Switch.json',
   'MoreComplex.json',
   'MultipleRunAftersBig.json',
   'Scoped.json',
