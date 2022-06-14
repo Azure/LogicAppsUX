@@ -84,7 +84,7 @@ export async function getManifestBasedConnectionMapping(
     }
 
     let connectionReferenceKey: string | undefined;
-    if (isOpenApiConnectionType(operationDefinition.type)) {
+    if (isOpenApiConnectionType(operationDefinition.type) || connectionReferenceKeyFormat !== undefined) {
       connectionReferenceKey = getConnectionReferenceKeyForManifest(connectionReferenceKeyFormat, operationDefinition);
     } else if (isConnectionRequiredForOperation(operationManifest)) {
       connectionReferenceKey = _getLegacyConnectionReferenceKey(operationDefinition);
