@@ -72,7 +72,7 @@ export const RunAfterActionDetails = ({
   onStatusChange,
   onRenderLabel,
 }: RunAfterActionDetailsProps) => {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useBoolean(false);
   const intl = useIntl();
 
   const expandAriaLabel = intl.formatMessage({
