@@ -1,3 +1,4 @@
+import type { SettingProps } from './settingtoggle';
 import { ActionButton, IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { TextField } from '@fluentui/react/lib/TextField';
@@ -6,25 +7,28 @@ import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface MultiAddExpressionEditorProps {
+type ExpressionChangeHandler = (updatedExpressions: string[]) => void;
+export interface MultiAddExpressionEditorProps extends SettingProps {
   initialExpressions?: string[];
-  readOnly?: boolean;
-  visible?: boolean;
+  onExpressionsChange: ExpressionChangeHandler;
 }
 
 export const MultiAddExpressionEditor = ({
   initialExpressions = [],
   readOnly = false,
-  visible = true,
+  customLabel,
+  onExpressionsChange,
 }: MultiAddExpressionEditorProps): JSX.Element | null => {
-  const [, setExpressions] = useState(initialExpressions);
-  const onExpressionsChange = (updatedExpressions: string[]): void => {
-    setExpressions(updatedExpressions);
-  };
-
-  return visible ? (
-    <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />
-  ) : null;
+  if (customLabel) {
+    return (
+      <>
+        {customLabel()}
+        <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />
+      </>
+    );
+  } else {
+    return <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />;
+  }
 };
 
 const styles: Partial<ITextFieldStyles> = {
@@ -37,10 +41,9 @@ const styles: Partial<ITextFieldStyles> = {
   },
 };
 
-export interface ExpressionsEditorProps {
+export interface ExpressionsEditorProps extends SettingProps {
   initialExpressions: string[];
   maximumExpressions?: number;
-  readOnly?: boolean;
   onChange(updatedExpressions: string[]): void;
 }
 
@@ -61,6 +64,7 @@ export const ExpressionsEditor = ({
     readOnly: false,
     onChange,
     maximumExpressions: maximumExpressions ?? 10,
+    customLabel: () => <div>{'Expression Editor'}</div>,
   };
 
   const addIconProps: IIconProps = {
@@ -111,10 +115,9 @@ export const ExpressionsEditor = ({
   );
 };
 
-export interface ExpressionsProps {
+export interface ExpressionsProps extends SettingProps {
   ref?: React.RefObject<any>;
   expressions: string[];
-  readOnly?: boolean;
   onChange(index: number, newExpression: string): void;
   onDelete(index: number): void;
 }
@@ -141,10 +144,9 @@ export const Expressions = ({ expressions, readOnly = false, onChange, onDelete 
   );
 };
 
-export interface ExpressionProps {
+export interface ExpressionProps extends SettingProps {
   expression: string;
   index: number;
-  readOnly?: boolean;
   onChange(index: number, newExpression: string | undefined): void;
   onDelete(index: number): void;
 }

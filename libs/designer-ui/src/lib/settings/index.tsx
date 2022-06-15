@@ -1,3 +1,5 @@
+import type { RunAfterProps } from '../card/runafterconfiguration';
+import { RunAfter } from '../card/runafterconfiguration';
 import constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
 import {
@@ -10,6 +12,7 @@ import {
   CustomValueSlider,
   SettingTextField,
   SettingToggle,
+  SettingDictionary,
   SettingTokenTextField,
 } from './settingsection';
 import type {
@@ -23,54 +26,69 @@ import type {
   SettingTextFieldProps,
   SettingTokenTextFieldProps,
   SettingToggleProps,
+  SettingDictionaryProps,
 } from './settingsection';
-import { Separator, useTheme, Icon } from '@fluentui/react';
+import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
+import type { IIconStyles, IIconProps } from '@fluentui/react';
 import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-// Using discriminated union to create a dependency of SettingType and SettingProp
-export type Settings =
-  | {
-      settingType: 'MultiSelectSetting';
-      settingProp: MultiSelectSettingProps;
-    }
-  | {
-      settingType: 'MultiAddExpressionEditor';
-      settingProp: MultiAddExpressionEditorProps;
-    }
-  | {
-      settingType: 'ExpressionsEditor';
-      settingProp: ExpressionsEditorProps;
-    }
-  | {
-      settingType: 'Expressions';
-      settingProp: ExpressionsProps;
-    }
-  | {
-      settingType: 'Expression';
-      settingProp: ExpressionProps;
-    }
-  | {
-      settingType: 'ReactiveToggle';
-      settingProp: ReactiveToggleProps;
-    }
-  | {
-      settingType: 'CustomValueSlider';
-      settingProp: CustomValueSliderProps;
-    }
-  | {
-      settingType: 'SettingTextField';
-      settingProp: SettingTextFieldProps;
-    }
-  | {
-      settingType: 'SettingToggle';
-      settingProp: SettingToggleProps;
-    }
-  | {
-      settingType: 'SettingTokenTextField';
-      settingProp: SettingTokenTextFieldProps;
-    };
+type SettingBase = {
+  visible?: boolean;
+};
+
+export type Settings = SettingBase &
+  (
+    | {
+        settingType: 'MultiSelectSetting';
+        settingProp: MultiSelectSettingProps;
+      }
+    | {
+        settingType: 'MultiAddExpressionEditor';
+        settingProp: MultiAddExpressionEditorProps;
+      }
+    | {
+        settingType: 'ExpressionsEditor';
+        settingProp: ExpressionsEditorProps;
+      }
+    | {
+        settingType: 'Expressions';
+        settingProp: ExpressionsProps;
+      }
+    | {
+        settingType: 'Expression';
+        settingProp: ExpressionProps;
+      }
+    | {
+        settingType: 'ReactiveToggle';
+        settingProp: ReactiveToggleProps;
+      }
+    | {
+        settingType: 'CustomValueSlider';
+        settingProp: CustomValueSliderProps;
+      }
+    | {
+        settingType: 'SettingTextField';
+        settingProp: SettingTextFieldProps;
+      }
+    | {
+        settingType: 'SettingToggle';
+        settingProp: SettingToggleProps;
+      }
+    | {
+        settingType: 'SettingDictionary';
+        settingProp: SettingDictionaryProps;
+      }
+    | {
+        settingType: 'SettingTokenTextField';
+        settingProp: SettingTokenTextFieldProps;
+      }
+    | {
+        settingType: 'RunAfter';
+        settingProp: RunAfterProps;
+      }
+  );
 
 export interface SettingSectionProps {
   id?: string;
@@ -80,8 +98,6 @@ export interface SettingSectionProps {
   settings: Settings[];
   isReadOnly?: boolean;
 }
-
-// TODO (andrewfowose #13363298): create component with dynamic addition of setting keys and values, (dictionary)
 
 export const SettingsSection: FC<SettingSectionProps> = ({ title = 'Settings', showHeading = true, expanded, isReadOnly, settings }) => {
   const [expandedState, setExpanded] = useState(!!expanded);
@@ -135,13 +151,15 @@ export const SettingsSection: FC<SettingSectionProps> = ({ title = 'Settings', s
 
 const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element => {
   return (
-    <div className="msla-settings-container">
+    <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
-        const { settingType, settingProp } = setting;
+        const { settingType, settingProp, visible = true } = setting;
         if (!settingProp.readOnly) {
           settingProp.readOnly = isReadOnly;
         }
+        const className = settingType === 'RunAfter' ? 'msla-setting-section-run-after-setting' : 'msla-setting-section-setting';
         const renderSetting = (): JSX.Element | null => {
+          if (!visible) return null;
           switch (settingType) {
             case 'MultiSelectSetting':
               return <MultiSelectSetting {...settingProp} />;
@@ -161,14 +179,18 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
               return <SettingTextField {...settingProp} />;
             case 'SettingToggle':
               return <SettingToggle {...settingProp} />;
+            case 'SettingDictionary':
+              return <SettingDictionary {...settingProp} />;
             case 'SettingTokenTextField':
               return <SettingTokenTextField {...settingProp} />;
+            case 'RunAfter':
+              return <RunAfter {...settingProp} />;
             default:
               return null;
           }
         };
         return (
-          <div key={i} className="msla-setting-content">
+          <div key={i} className={className}>
             {renderSetting()}
           </div>
         );
@@ -176,3 +198,34 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
     </div>
   );
 };
+
+export interface SettingLabelProps {
+  labelText: string;
+  infoTooltipText?: string;
+  isChild: boolean;
+}
+
+const infoIconProps: IIconProps = {
+  iconName: 'Info',
+};
+
+const infoIconStyles: IIconStyles = {
+  root: {
+    color: '#8d8686',
+  },
+};
+
+export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLabelProps): JSX.Element {
+  const className = isChild ? 'msla-setting-section-row-child-label' : 'msla-setting-section-row-label';
+  if (infoTooltipText) {
+    return (
+      <div className={className}>
+        <div className="msla-setting-section-row-text">{labelText}</div>
+        <TooltipHost hostClassName="msla-setting-section-row-info" content={infoTooltipText}>
+          <IconButton iconProps={infoIconProps} styles={infoIconStyles} className="msla-setting-section-row-info-icon" />
+        </TooltipHost>
+      </div>
+    );
+  }
+  return <div className={className}>{labelText}</div>;
+}

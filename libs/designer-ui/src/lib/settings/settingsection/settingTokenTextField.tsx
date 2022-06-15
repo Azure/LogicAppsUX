@@ -1,13 +1,14 @@
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { BaseEditor } from '../../editor/base';
+import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
 import React from 'react';
 import type { FormEvent } from 'react';
 
 export type TextInputChangeHandler = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => void;
 
-export interface SettingTokenTextFieldProps {
+export interface SettingTokenTextFieldProps extends SettingProps {
   id?: string;
   value: ValueSegment[];
   defaultValue?: string;

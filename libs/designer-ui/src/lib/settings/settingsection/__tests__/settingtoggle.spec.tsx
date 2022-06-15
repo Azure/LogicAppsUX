@@ -7,7 +7,7 @@ describe('ui/settings/settingtoggle', () => {
   let minimal: SettingToggleProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
-    minimal = { readOnly: false, checked: false };
+    minimal = { readOnly: false, checked: false, visible: true };
     renderer = ReactShallowRenderer.createRenderer();
   });
 
