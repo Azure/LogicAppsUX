@@ -59,7 +59,7 @@ settingSection.args = {
     },
     {
       settingType: 'MultiAddExpressionEditor',
-      settingProp: {},
+      settingProp: { onExpressionsChange: () => console.log('function not implemented') },
       visible: true,
     },
     {

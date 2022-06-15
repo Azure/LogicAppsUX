@@ -1,7 +1,7 @@
 import type { SectionProps } from '..';
+import type { SettingSectionProps } from './';
+import { SettingsSection, SettingLabel } from './';
 import { isObject } from '@microsoft-logic-apps/utils';
-import type { SettingSectionProps } from '@microsoft/designer-ui';
-import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 

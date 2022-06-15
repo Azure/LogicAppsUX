@@ -1,5 +1,5 @@
-import type { RunAfterProps } from './';
-import { RunAfter } from './';
+import type { RunAfterProps } from '.';
+import { RunAfter } from '.';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {

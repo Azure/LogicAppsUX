@@ -1,7 +1,7 @@
 import type { SectionProps } from '..';
+import type { Settings, SettingSectionProps } from './';
+import { SettingsSection, SettingLabel } from './';
 import { useBoolean } from '@fluentui/react-hooks';
-import type { Settings, SettingSectionProps } from '@microsoft/designer-ui';
-import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 

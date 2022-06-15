@@ -1,7 +1,7 @@
 import type { SectionProps } from '..';
+import type { SettingSectionProps } from './';
+import { SettingsSection, SettingLabel } from './';
 import { useBoolean } from '@fluentui/react-hooks';
-import type { SettingSectionProps } from '@microsoft/designer-ui';
-import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 
 // TODO (andrewfowose): replace hard-set settingProps in Security to data from operationMetadataSlice
