@@ -690,7 +690,7 @@ const getUploadChunk = (
   }
 };
 
-const isChunkedTransferModeSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
+export const isChunkedTransferModeSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
   if (manifest) {
     const chunkingSetting = getOperationSettingFromManifest(manifest, 'chunking') as
       | OperationManifestSetting<UploadChunkMetadata>

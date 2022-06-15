@@ -34,7 +34,7 @@ export const SettingsPanel = (): JSX.Element => {
     trackedProperties,
     uploadChunk,
     splitOn,
-    // splitOnConfiguration,
+    splitOnConfiguration,
     paging,
     downloadChunkSize,
     concurrency,
@@ -60,6 +60,7 @@ export const SettingsPanel = (): JSX.Element => {
       conditionExpressions,
       readOnly: false,
       nodeId,
+      splitOnConfiguration,
     };
     if (splitOn?.isSupported || timeout?.isSupported || concurrency?.isSupported || conditionExpressions?.isSupported) {
       return <General {...generalSectionProps} />;
@@ -91,6 +92,7 @@ export const SettingsPanel = (): JSX.Element => {
       asynchronous,
       disableAsyncPattern,
       requestOptions,
+      splitOnConfiguration,
     };
     if (
       retryPolicy?.isSupported ||
@@ -131,7 +133,7 @@ export const SettingsPanel = (): JSX.Element => {
       readOnly: false,
       nodeId,
       trackedProperties,
-      correlation, //correlation setting contains trackingId setting being used in this component
+      correlation,
     };
     if (trackedProperties?.isSupported || correlation?.isSupported) {
       return <Tracking {...trackingProps} />;
