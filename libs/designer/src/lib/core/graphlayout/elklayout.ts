@@ -13,12 +13,13 @@ const defaultLayoutOptions: Record<string, string> = {
   'org.eclipse.elk.alignment': 'TOP',
   'org.eclipse.elk.layered.layering.strategy': 'INTERACTIVE',
   'org.eclipse.elk.edge.type': 'DIRECTED',
-  'org.eclipse.elk.edgeRouting': 'POLYLINE',
   'elk.layered.unnecessaryBendpoints': 'false',
   'org.eclipse.elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-  'elk.layered.spacing.edgeNodeBetweenLayers': '50',
   'org.eclipse.elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
+  'elk.layered.spacing.edgeNodeBetweenLayers': '50',
   'spacing.nodeNodeBetweenLayers': '70',
+  // This option allows the first layer children of a graph to be laid out in order of appearance in manifest. This is useful for subgraph ordering, like in Switch nodes.
+  'elk.layered.crossingMinimization.semiInteractive': 'true',
 };
 
 const elkLayout = async (workflowGraph: ElkNode) => {
@@ -96,6 +97,9 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowGraph | WorkflowNode): Elk
         target: undefined,
         source: undefined,
       })),
+    layoutOptions: {
+      'elk.position': `(0, 0)`, // See 'crossingMinimization.semiInteractive' above
+    },
   };
 };
 
