@@ -6,7 +6,7 @@ export * from './lib/exception/unsupported';
 export * from './lib/exception/validation';
 export * from './lib/helpers/functions';
 export * from './lib/helpers/guid';
-
+export * from './lib/helpers/stringFunctions';
 export * from './lib/models/armresource';
 export * from './lib/models/connector';
 export * from './lib/models/connection';

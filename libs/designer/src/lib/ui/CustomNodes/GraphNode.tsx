@@ -6,6 +6,7 @@ import { useMonitoringView, useReadOnly } from '../../core/state/selectors/desig
 import { useWorkflowNode } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
+import { labelCase } from '@microsoft-logic-apps/utils';
 import { ScopeCard } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
 import { useDrag } from 'react-dnd';
@@ -62,6 +63,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   const normalizedType = node.type.toLowerCase();
 
   const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope'];
+  const label = labelCase(data.label);
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <div className="msla-scope-v2 msla-scope-card">
@@ -76,7 +78,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           isDragging={isDragging}
           id={id}
           isMonitoringView={isMonitoringView}
-          title={data.label}
+          title={label}
           readOnly={readOnly}
           onClick={nodeClick}
         />
