@@ -8,7 +8,7 @@ import { codeViewTab } from './panelTabs/codeViewTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
-import { settingsTab } from './panelTabs/settingsTab';
+import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption, PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
@@ -53,7 +53,7 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
   useEffect(() => {
     monitoringTab.enabled = !!isMonitoringView;
     setRegisteredTabs((currentTabs) =>
-      registerTabs([monitoringTab, parametersTab, aboutTab, codeViewTab, settingsTab, scratchTab], currentTabs)
+      registerTabs([monitoringTab, parametersTab, aboutTab, codeViewTab, SettingsTab, scratchTab], currentTabs)
     );
   }, [readOnly, isMonitoringView]);
 
