@@ -16,6 +16,7 @@ import {
   SettingToggle,
   SettingDictionary,
   SettingTokenTextField,
+  SettingDropdown,
 } from '@microsoft/designer-ui';
 import type {
   MultiSelectSettingProps,
@@ -29,6 +30,7 @@ import type {
   SettingTokenTextFieldProps,
   SettingToggleProps,
   SettingDictionaryProps,
+  SettingDropdownProps,
 } from '@microsoft/designer-ui';
 import type { FC } from 'react';
 import { useCallback, useState } from 'react';
@@ -87,6 +89,10 @@ export type Settings = SettingBase &
     | {
         settingType: 'RunAfter';
         settingProp: RunAfterProps;
+      }
+    | {
+        settingType: 'SettingDropdown';
+        settingProp: SettingDropdownProps;
       }
   );
 
@@ -185,6 +191,8 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
               return <SettingTokenTextField {...settingProp} />;
             case 'RunAfter':
               return <RunAfter {...settingProp} />;
+            case 'SettingDropdown':
+              return <SettingDropdown {...settingProp} />;
             default:
               return null;
           }
