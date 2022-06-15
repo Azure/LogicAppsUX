@@ -5,6 +5,7 @@ import { isRootNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
 import { initializeNodes } from '../../state/operationMetadataSlice';
+import { clearPanel } from '../../state/panelSlice';
 import {
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
@@ -32,7 +33,7 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
       // swagger case here
     }
   }
-
+  dispatch(clearPanel());
   dispatch(initializeNodes(await Promise.all(promises)));
 };
 
