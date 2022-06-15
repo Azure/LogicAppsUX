@@ -1,10 +1,11 @@
+import { AddSchemaPanelButton, SchemaTypes } from '../components/addSchemaPanelButton';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { RootState } from '../core/state/Store';
 import { LeftHandPanel } from './LeftHandPanel';
-import type { ILayerProps } from '@fluentui/react';
 import { LayerHost } from '@fluentui/react';
+import type { ILayerProps } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
@@ -17,6 +18,15 @@ export const DataMapperDesigner = () => {
     hostId: layerHostId,
   };
 
+  // TODO: change those later
+  const [inputSchema, setInputSchema] = useState<string | undefined>(undefined);
+  const onInputSchemaChange = useCallback((inputSchema: string) => setInputSchema(inputSchema), []);
+  const [outputSchema, setOutputSchema] = useState<string | undefined>(undefined);
+  const onOutputSchemaChange = useCallback((outputSchema: string) => setOutputSchema(outputSchema), []);
+
+  const schemaList: string[] = ['SimpleCustomerOrderSchema.json', 'ExampleSchema.json'];
+
+  // const [isPanelOpen, { setTrue: showPanel, setFalse: hidePanel }] = useBoolean(false);
   const [nodes, edges] = useLayout();
 
   return (
@@ -39,22 +49,33 @@ export const DataMapperDesigner = () => {
             }}
           >
             <div className="msla-designer-canvas msla-panel-mode">
-              <ReactFlowProvider>
-                <ReactFlow
-                  nodes={nodes}
-                  edges={edges}
-                  minZoom={0}
-                  nodesDraggable={false}
-                  fitView
-                  proOptions={{
-                    account: 'paid-sponsor',
-                    hideAttribution: true,
-                  }}
-                  style={{
-                    position: 'unset',
-                  }}
-                ></ReactFlow>
-              </ReactFlowProvider>
+              {!inputSchema && (
+                <AddSchemaPanelButton schemaType={SchemaTypes.INPUT} onSchemaChange={onInputSchemaChange} schemaFilesList={schemaList} />
+              )}
+
+              {!outputSchema && (
+                <AddSchemaPanelButton schemaType={SchemaTypes.OUTPUT} onSchemaChange={onOutputSchemaChange} schemaFilesList={schemaList} />
+              )}
+
+              {inputSchema && outputSchema && (
+                <ReactFlowProvider>
+                  <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    minZoom={0}
+                    nodesDraggable={false}
+                    fitView
+                    proOptions={{
+                      account: 'paid-sponsor',
+                      hideAttribution: true,
+                    }}
+                    style={{
+                      position: 'unset',
+                    }}
+                  ></ReactFlow>
+                </ReactFlowProvider>
+              )}
+
               <LeftHandPanel layerProps={panelLayerProps} />
             </div>
           </LayerHost>
