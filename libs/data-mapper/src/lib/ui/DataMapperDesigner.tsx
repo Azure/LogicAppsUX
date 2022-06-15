@@ -26,7 +26,6 @@ export const DataMapperDesigner = () => {
 
   const schemaList: string[] = ['SimpleCustomerOrderSchema.json', 'ExampleSchema.json'];
 
-  // const [isPanelOpen, { setTrue: showPanel, setFalse: hidePanel }] = useBoolean(false);
   const [nodes, edges] = useLayout();
 
   return (
