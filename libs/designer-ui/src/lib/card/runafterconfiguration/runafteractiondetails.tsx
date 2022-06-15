@@ -12,7 +12,7 @@ import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { Icon } from '@fluentui/react/lib/Icon';
 import type { ISeparatorStyles } from '@fluentui/react/lib/Separator';
 import { Separator } from '@fluentui/react/lib/Separator';
-import React from 'react';
+import type { MouseEvent } from 'react';
 import { useIntl } from 'react-intl';
 import { format } from 'util';
 
@@ -86,8 +86,8 @@ export const RunAfterActionDetails = ({
   });
 
   const collapsibleProps = collapsible
-    ? { 'aria-expanded': expanded, role: 'button', tabIndex: 0, onClick: () => setExpanded.toggle() }
-    : {};
+    ? { 'aria-expanded': expanded, role: 'button', tabIndex: 0, onClick: setExpanded.toggle }
+    : undefined;
 
   const handleRenderLabel = (status: string, label: string): JSX.Element => {
     const props: LabelProps = {
@@ -144,7 +144,7 @@ const DeleteButton = ({ visible, onDelete }: DeleteButtonProps): JSX.Element | n
     defaultMessage: 'Delete',
     description: 'Delete Button',
   });
-  function handleDelete(e: React.MouseEvent<unknown>): void {
+  function handleDelete(e: MouseEvent<unknown>): void {
     e.preventDefault();
     e.stopPropagation();
     onDelete?.();
