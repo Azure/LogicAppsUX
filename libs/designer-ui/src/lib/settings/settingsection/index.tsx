@@ -15,3 +15,4 @@ export { SettingDictionary } from './settingdictionary';
 export type { SettingDictionaryProps } from './settingdictionary';
 export { SettingTokenTextField } from './settingTokenTextField';
 export type { SettingTokenTextFieldProps } from './settingTokenTextField';
+export type { SettingDropdownProps } from './settingdropdown';
