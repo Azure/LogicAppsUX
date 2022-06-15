@@ -1963,6 +1963,12 @@
       "value": "Select"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
   "dWFyfN": [
     {
       "type": 0,
@@ -2551,6 +2557,12 @@
     {
       "type": 0,
       "value": "Required. The dataURI to decode into a binary representation."
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Content Transfer"
     }
   ],
   "oV0xQ9": [

@@ -144,7 +144,7 @@ export const General = ({
         settingProp: {
           readOnly,
           checked: splitOnFromState.enabled,
-          onToggleInputChange: (_, checked) => onSplitOnToggle(!!checked), // build onSplitOnChange handler
+          onToggleInputChange: (_, checked) => onSplitOnToggle(!!checked),
           customLabel: () => splitOnLabel,
           onText,
           offText,

@@ -690,7 +690,7 @@ const getUploadChunk = (
   }
 };
 
-const isChunkedTransferModeSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
+export const isChunkedTransferModeSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
   if (manifest) {
     const chunkingSetting = getOperationSettingFromManifest(manifest, 'chunking') as
       | OperationManifestSetting<UploadChunkMetadata>
@@ -839,10 +839,6 @@ const getRunAfter = (definition: LogicAppsV2.ActionDefinition | undefined): Grap
   }
   return graphEdges;
 };
-
-// const getOperationOptionsSettingFromManifest = (manifest: OperationManifest): OperationManifestSetting<OperationOptions[]> | undefined => {
-//   return manifest && manifest.properties.settings ? manifest.properties.settings.operationOptions : undefined;
-// };
 
 const getRuntimeConfiguration = (definition: LogicAppsV2.OperationDefinition) => {
   return getObjectPropertyValue(definition as any, [Constants.SETTINGS.PROPERTY_NAMES.RUNTIME_CONFIGURATION]);
