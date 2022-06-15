@@ -1,5 +1,5 @@
-import type { RunAfterProps } from '.';
-import { RunAfter } from '.';
+import type { RunAfterProps } from './';
+import { RunAfter } from './';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
@@ -12,7 +12,6 @@ const items = [
   {
     collapsible: true,
     expanded: false,
-    icon: 'https://connectoricons-prod.azureedge.net/release-2021-12-11-apseth/1.0.1538.2616/sftpwithssh/icon.png',
     id: 'test',
     isDeleteVisible: true,
     readOnly: false,
@@ -22,7 +21,6 @@ const items = [
   {
     collapsible: true,
     expanded: false,
-    icon: 'https://connectoricons-prod.azureedge.net/release-2021-12-11-apseth/1.0.1538.2616/sftpwithssh/icon.png',
     id: 'test',
     isDeleteVisible: true,
     readOnly: false,
