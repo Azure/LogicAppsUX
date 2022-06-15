@@ -50,23 +50,9 @@ export const SettingDropdown = ({
       text,
     }));
   };
-
-  if (customLabel) {
-    return (
-      <>
-        {customLabel()}
-        <Dropdown
-          className="msla-setting-section-dropdown"
-          id={id}
-          disabled={readOnly}
-          options={mapDropdownItemsToIDropdownOptions(items)}
-          selectedKey={selectedValue}
-          onChange={(_, option) => onSelectionChanged?.(option as IDropdownOption)}
-        />
-      </>
-    );
-  } else {
-    return (
+  return (
+    <>
+      {customLabel ? customLabel() : null}
       <Dropdown
         className="msla-setting-section-dropdown"
         id={id}
@@ -75,6 +61,6 @@ export const SettingDropdown = ({
         selectedKey={selectedValue}
         onChange={(_, option) => onSelectionChanged?.(option as IDropdownOption)}
       />
-    );
-  }
+    </>
+  );
 };
