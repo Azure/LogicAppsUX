@@ -150,7 +150,7 @@ export class StandardOperationManifestService implements IOperationManifestServi
     const operationName = operationId.split('/').slice(-1)[0];
     const queryParameters = {
       'api-version': apiVersion,
-      expand: 'properties/manifest',
+      $expand: 'properties/manifest',
     };
 
     try {
