@@ -25,6 +25,10 @@ export const panelSlice = createSlice({
     collapsePanel: (state) => {
       state.collapsed = true;
     },
+    clearPanel: (state) => {
+      state.collapsed = true;
+      state.selectedNode = '';
+    },
     changePanelNode: (state, action: PayloadAction<string>) => {
       if (!action) return;
       state.selectedNode = action.payload;
@@ -45,6 +49,6 @@ export const panelSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { expandPanel, collapsePanel, changePanelNode, expandDiscoveryPanel, switchToOperationPanel } = panelSlice.actions;
+export const { expandPanel, collapsePanel, clearPanel, changePanelNode, expandDiscoveryPanel, switchToOperationPanel } = panelSlice.actions;
 
 export default panelSlice.reducer;

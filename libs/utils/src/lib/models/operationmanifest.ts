@@ -166,4 +166,4 @@ export interface OperationManifestProperties {
   externalDocs?: Documentation;
 }
 
-export type SubgraphType = 'CONDITIONAL-TRUE' | 'CONDITIONAL-FALSE' | 'SWITCH-CASE' | 'SWITCH-DEFAULT';
+export type SubgraphType = 'CONDITIONAL-TRUE' | 'CONDITIONAL-FALSE' | 'SWITCH-CASE' | 'SWITCH-DEFAULT' | 'SWITCH-ADD-CASE';
