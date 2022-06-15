@@ -1,21 +1,16 @@
 import type { SectionProps } from '../';
-import type { SettingSectionProps, RunAfterActionDetailsProps } from '@microsoft/designer-ui';
-import { SettingsSection } from '@microsoft/designer-ui';
+import type { WorkflowEdge } from '../../../core/parsers/models/workflowNode';
+import type { SettingSectionProps } from '../settingsection';
+import { SettingsSection } from '../settingsection';
+import type { RunAfterActionDetailsProps } from './runafterconfiguration';
 import { useEffect, useState } from 'react';
 
 // TODO: 14714481 We need to support all incoming edges and runAfterConfigMenu
-
-export interface runAfterConfigs {
-  statuses?: string[];
-  icon: string;
-  title: string;
-}
-
 interface RunAfterProps extends SectionProps {
-  allEdges: Record<string, runAfterConfigs>;
+  allEdges: WorkflowEdge[];
 }
 
-export const RunAfter = ({ runAfter, readOnly = false, allEdges }: RunAfterProps): JSX.Element | null => {
+export const RunAfter = ({ runAfter, readOnly = false }: RunAfterProps): JSX.Element | null => {
   const [statuses, setStatuses] = useState<Record<string, string[]>>({});
   const graphEdges = runAfter?.value;
 
@@ -54,7 +49,6 @@ export const RunAfter = ({ runAfter, readOnly = false, allEdges }: RunAfterProps
       items.push({
         collapsible: true,
         expanded: false,
-        icon: allEdges[predecessorId]?.icon,
         id: predecessorId,
         isDeleteVisible: true,
         readOnly: readOnly,

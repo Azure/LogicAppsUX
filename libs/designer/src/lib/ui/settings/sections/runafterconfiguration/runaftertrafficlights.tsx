@@ -1,6 +1,6 @@
-import { EmptyTrafficLightDot, TrafficLightDot } from '../images/dynamicsvgs/trafficlightsvgs';
 import { Status } from './runafteractiondetails';
 import { useTheme } from '@fluentui/react';
+import { EmptyTrafficLightDot, TrafficLightDot } from '@microsoft/designer-ui';
 import * as React from 'react';
 
 export interface RunAfterTrafficLightsProps {
