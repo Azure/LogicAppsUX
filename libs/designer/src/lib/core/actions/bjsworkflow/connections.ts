@@ -123,7 +123,7 @@ function getOpenApiConnectionReferenceKey(operationDefinition: LogicAppsV2.OpenA
   if (typeof operationDefinition.host.connection === 'string') {
     connectionName = operationDefinition.host.connection;
   } else {
-    connectionName = operationDefinition.host.connection.name;
+    connectionName = operationDefinition.host.connection.referenceName;
   }
   return connectionName;
 }

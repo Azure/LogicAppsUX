@@ -60,14 +60,14 @@ export class StandardConnectionService {
   }
 
   private async getConnectionsInApiHub(): Promise<Connection[]> {
-    const { apiHubServiceDetails, filterByLocation, httpClient } = this.options;
+    const { apiHubServiceDetails, filterByLocation, httpClient, baseUrl } = this.options;
     if (!apiHubServiceDetails) {
       return [];
     }
 
     const { subscriptionId, resourceGroup, location, apiVersion } = apiHubServiceDetails;
 
-    const uri = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`;
+    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`;
 
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,

@@ -122,7 +122,7 @@ declare namespace LogicAppsV2 {
   type ApiConnectionHostConnection = string | ApiConnectionHostConnectionType;
 
   interface ApiConnectionHostConnectionType {
-    name: string;
+    referenceName: string;
   }
 
   type ApiConnectionQueries = string | Record<string, any>;
