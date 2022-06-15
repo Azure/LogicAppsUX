@@ -1,91 +1,12 @@
 import constants from '../../../common/constants';
-import type { PanelTab, SettingSectionProps } from '@microsoft/designer-ui';
-import { SettingsSection } from '@microsoft/designer-ui';
+import { SettingsPanel } from '../../settings/';
+import type { PanelTab } from '@microsoft/designer-ui';
 
-export const SettingsTab = () => {
-  const settingSectionProps: SettingSectionProps = {
-    id: 'this is an ID',
-    title: 'Sample Setting Section',
-    expanded: false,
-    settings: [
-      {
-        settingType: 'MultiSelectSetting',
-        settingProp: {
-          options: [
-            {
-              label: 'Label 1',
-              value: 'Label 1 Value',
-            },
-            {
-              label: 'Label 2',
-              value: 'Label 2 Value',
-            },
-            {
-              label: 'Label 3',
-              value: 'Label 3 Value',
-            },
-            {
-              label: 'Label 4',
-              value: 'Label 4 Value',
-            },
-          ],
-          selections: [],
-        },
-      },
-      {
-        settingType: 'SettingTextField',
-        settingProp: {
-          label: 'Test Label',
-          value: 'Test Value',
-        },
-      },
-      {
-        settingType: 'ReactiveToggle',
-        settingProp: { textFieldValue: 'This is a test value', textFieldLabel: 'Test Label', onToggleLabel: 'On', offToggleLabel: 'Off' },
-      },
-      {
-        settingType: 'MultiAddExpressionEditor',
-        settingProp: {},
-      },
-      {
-        settingType: 'CustomValueSlider',
-        settingProp: { minVal: 10, maxVal: 300, value: 200, onToggleLabel: 'On', offToggleLabel: 'Off', sliderLabel: 'Slider' },
-      },
-      {
-        settingType: 'MultiSelectSetting',
-        settingProp: {
-          options: [
-            {
-              label: 'Label 1',
-              value: 'Label 1 Value',
-            },
-            {
-              label: 'Label 2',
-              value: 'Label 2 Value',
-            },
-            {
-              label: 'Label 3',
-              value: 'Label 3 Value',
-            },
-            {
-              label: 'Label 4',
-              value: 'Label 4 Value',
-            },
-          ],
-          selections: [],
-          readOnly: true,
-        },
-      },
-    ],
-  };
-  return <SettingsSection {...settingSectionProps} />;
-};
-
-export const settingsTab: PanelTab = {
+export const SettingsTab: PanelTab = {
   title: 'Settings',
   name: constants.PANEL_TAB_NAMES.SETTINGS,
   description: 'Request Settings',
   enabled: true,
-  content: <SettingsTab />,
+  content: <SettingsPanel />,
   order: 0,
 };

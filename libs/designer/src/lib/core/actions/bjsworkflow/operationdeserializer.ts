@@ -6,6 +6,7 @@ import { getOperationInfo, getOperationManifest } from '../../queries/operation'
 import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operationMetadataSlice';
 import type { Operations } from '../../state/workflowSlice';
+import { clearPanel } from '../../state/panelSlice';
 import {
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
@@ -48,6 +49,7 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
   const allNodeData = (await Promise.all(promises)).filter((node) => !!node) as NodeDataWithManifest[];
 
   updateTokenMetadataInParameters(allNodeData, operations, triggerNodeId);
+  dispatch(clearPanel());
   dispatch(
     initializeNodes(
       allNodeData.map((data) => {

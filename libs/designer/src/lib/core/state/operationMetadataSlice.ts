@@ -62,6 +62,10 @@ export interface NodeData {
   nodeOutputs: NodeOutputs;
   settings: Settings;
 }
+interface AddSettingsPayload {
+  id: string;
+  settings: Settings;
+}
 
 export const operationMetadataSlice = createSlice({
   name: 'operationMetadata',
@@ -82,6 +86,14 @@ export const operationMetadataSlice = createSlice({
         state.outputParameters[id] = nodeOutputs;
         state.settings[id] = settings;
       }
+    },
+    updateNodeSettings: (state: any, action: PayloadAction<AddSettingsPayload>) => {
+      const { id, settings } = action.payload;
+      if (!state.settings[id]) {
+        state.settings[id] = {};
+      }
+
+      state.settings[id] = { ...state.settings[id], ...settings };
     },
   },
 });

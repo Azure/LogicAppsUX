@@ -1,3 +1,4 @@
+import type { SettingProps } from './settingtoggle';
 import { Checkbox } from '@fluentui/react';
 import React, { useState } from 'react';
 
@@ -6,14 +7,14 @@ type StatusChangeHandler = (selections: MultiSelectOption[]) => void;
 export interface MultiSelectOption {
   label: string;
   value: string;
+  icon?: JSX.Element;
 }
 
-export interface MultiSelectSettingProps {
+export interface MultiSelectSettingProps extends SettingProps {
   options: MultiSelectOption[];
   selections: MultiSelectOption[];
   readOnly?: boolean;
   onSelectionChange?: StatusChangeHandler;
-  onRenderLabel?: JSX.Element | null;
 }
 
 export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
@@ -21,13 +22,14 @@ export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
   options,
   selections,
   onSelectionChange,
-  onRenderLabel,
-}: MultiSelectSettingProps): JSX.Element => {
+  customLabel,
+}: MultiSelectSettingProps): JSX.Element | null => {
   const [userSelections, setUserSelections] = useState(selections);
   const handleSelectionChange = (selection: MultiSelectOption, checked: boolean): void => {
     setUserSelections(checked ? [...userSelections, selection] : userSelections.filter((item) => item !== selection));
     onSelectionChange?.(userSelections); //this is where caller handles any side effects i.e. store update based on component state
   };
+
   return (
     <div className="msla-run-after-statuses">
       {options.map((option, index) => {
@@ -37,7 +39,7 @@ export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
               disabled={readOnly}
               checked={userSelections.includes(option)}
               label={option.label}
-              onRenderLabel={onRenderLabel ? () => onRenderLabel : undefined}
+              onRenderLabel={customLabel}
               onChange={(_, checked) => handleSelectionChange(option, !!checked)}
             />
           </div>
