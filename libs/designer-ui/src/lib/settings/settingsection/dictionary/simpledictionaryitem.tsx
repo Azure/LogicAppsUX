@@ -68,11 +68,11 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
     ? 'msla-dictionary-item-cell msla-input-parameter-dictionary-value msla-dictionary-item-last'
     : 'msla-dictionary-item-cell msla-input-parameter-dictionary-value';
 
-  const renderDelete = (): JSX.Element => {
-    let deleteButtonClass = 'msla-button msla-dictionary-item-delete';
+  const renderDelete = (): JSX.Element | null => {
+    const deleteButtonClass = 'msla-button msla-dictionary-item-delete';
 
     if (isLastItem || disabled || readOnly) {
-      deleteButtonClass += ' msla-hidden';
+      return null;
     }
 
     return (
