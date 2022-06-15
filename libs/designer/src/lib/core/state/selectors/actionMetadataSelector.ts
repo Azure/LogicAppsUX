@@ -48,6 +48,12 @@ export const useOperationInfo = (nodeId: string) => {
   });
 };
 
+export const useAllOperations = () => {
+  return useSelector((state: RootState) => {
+    return state.operations.operationInfo;
+  });
+};
+
 export const useConnector = (connectorId: string) => {
   const connectionService = ConnectionService();
   return useQuery(['connector', { connectorId }], () => connectionService.getConnector(connectorId), {

@@ -36,12 +36,6 @@ describe('connection workflow mappings', () => {
     jest.clearAllMocks();
   });
 
-  it('should return undefined when there is no referenceKeyFormat', async () => {
-    makeMockStdOperationManifestService('');
-    const result = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockApiConnectionAction);
-    expect(result).toBeUndefined();
-  });
-
   it('should get the correct connectionId for the node', async () => {
     makeMockStdOperationManifestService(ConnectionReferenceKeyFormat.OpenApi);
 
@@ -49,6 +43,12 @@ describe('connection workflow mappings', () => {
     if (res) {
       expect(res[nodeId]).toEqual(connectionName);
     }
+  });
+
+  it('should return undefined when there is no referenceKeyFormat', async () => {
+    makeMockStdOperationManifestService('');
+    const result = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockApiConnectionAction);
+    expect(result).toBeUndefined();
   });
 });
 
@@ -76,13 +76,13 @@ function makeMockStdOperationManifestService(referenceKeyFormat: ConnectionRefer
   jest
     .spyOn(StandardOperationManifestService.prototype, 'getOperationManifest')
     .mockImplementation((_connectorId: string, _operationId: string): Promise<OperationManifest> => {
-      const mockManifest = createItem;
+      const mockManifest = { ...createItem };
       if (referenceKeyFormat) {
         mockManifest.properties.connectionReference = {
           referenceKeyFormat: referenceKeyFormat,
         };
       }
-      return Promise.resolve(createItem);
+      return Promise.resolve(mockManifest);
     });
   InitOperationManifestService(new StandardOperationManifestService(serviceOptions));
 }

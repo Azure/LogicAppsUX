@@ -31,8 +31,8 @@ export class StandardConnectionService {
   async getConnector(connectorId: string): Promise<Connector> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}?api-version=${apiVersion}`;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const response = await httpClient.get<Connector>({ uri });
-    console.log(response);
     //return response;
     return {} as any;
   }
