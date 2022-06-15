@@ -73,6 +73,7 @@ export interface Token {
   expression?: Expression;
   format?: string;
   icon?: string;
+  isSecure?: boolean;
   key: string;
   name?: string;
   required?: boolean;

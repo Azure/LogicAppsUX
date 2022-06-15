@@ -39,3 +39,11 @@ export const getOperationManifest = async ({ connectorId, operationId }: Operati
     operationManifestService.getOperationManifest(connectorId, operationId)
   );
 };
+
+export const getOperationManifestForNode = async (
+  nodeId: string,
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+): Promise<OperationManifest> => {
+  const operationInfo = await getOperationInfo(nodeId, operation);
+  return getOperationManifest(operationInfo);
+};
