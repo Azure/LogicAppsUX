@@ -3,22 +3,50 @@ import { Toggle } from '@fluentui/react';
 
 type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
 
-export interface SettingToggleProps extends IToggleProps {
+export interface SettingProps {
   readOnly?: boolean;
-  onLabel: string;
-  offLabel: string;
+  customLabel?: () => JSX.Element;
+}
+
+export interface SettingToggleProps extends IToggleProps, SettingProps {
   onToggleInputChange?: ToggleChangeHandler;
 }
 
-export const SettingToggle = ({ readOnly, onToggleInputChange, checked, onLabel, offLabel }: SettingToggleProps): JSX.Element => {
+export const SettingToggle = ({
+  readOnly,
+  onToggleInputChange,
+  checked,
+  label,
+  customLabel,
+  onText,
+  offText,
+}: SettingToggleProps): JSX.Element | null => {
+  if (customLabel) {
+    return (
+      <>
+        {customLabel()}
+        <Toggle
+          className="msla-setting-section-toggle"
+          checked={checked}
+          disabled={readOnly}
+          onText={onText}
+          offText={offText}
+          onChange={onToggleInputChange}
+          label={label}
+        />
+      </>
+    );
+  }
+
   return (
     <Toggle
       className="msla-setting-section-toggle"
       checked={checked}
       disabled={readOnly}
-      onText={onLabel}
-      offText={offLabel}
+      onText={onText}
+      offText={offText}
       onChange={onToggleInputChange}
+      label={label}
     />
   );
 };
