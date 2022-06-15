@@ -3,29 +3,41 @@ import { isObject } from '@microsoft-logic-apps/utils';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
 import { useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export const Tracking = ({ readOnly, correlation, trackedProperties }: SectionProps): JSX.Element | null => {
   const [correlationFromState, setCorrelation] = useState(correlation?.value ?? { clientTrackingId: '' });
   const [trackedPropertiesFromState, setTrackedProperties] = useState(trackedProperties?.value);
 
+  const intl = useIntl();
+  const clientIdTrackingTitle = intl.formatMessage({
+    defaultMessage: 'Custom Tracking Id',
+    description: 'title for client tracking id setting',
+  });
+  const clientTrackingTootltipText = intl.formatMessage({
+    defaultMessage: 'Set the tracking id for the run. For split-on this tracking id is for the initiating request.',
+    description: 'description for client tracking id setting',
+  });
+  const trackingTitle = intl.formatMessage({
+    defaultMessage: 'Tracking',
+    description: 'title for tracking component',
+  });
+  const trackedPropertiesTitle = intl.formatMessage({
+    defaultMessage: 'Tracked Properties',
+    description: 'title for tracked properties setting',
+  });
+
   const clientTrackingIdLabel = (
-    <SettingLabel
-      labelText="Custom Tracking Id"
-      infoTooltipText="Set the tracking id for the run. For split-on this tracking id is for the initiating request."
-      isChild={false}
-    />
+    <SettingLabel labelText={clientIdTrackingTitle} infoTooltipText={clientTrackingTootltipText} isChild={false} />
   );
 
   const onClientTrackingIdChange = (newValue: string): void => {
     setCorrelation({ clientTrackingId: newValue });
-    // validate?
-    // dispatch change action to store
+    // TODO (14427339): Setting Validation
+    // TODO (14427277): Write to Store
   };
 
   const onTrackedPropertiesDictionaryValueChanged = (newValue: Record<string, string>): void => {
-    // runs on key AND value change.
-    // check that it is last key.
-    // when the value of the last key first changes, add another key, value pair to tracked properties
     let trackedProperties: Record<string, any> = {}; // tslint:disable-line: no-any
     console.log(isObject([]));
     if (isObject(newValue) && Object.keys(newValue).length > 0 && Object.keys(newValue).some((key) => newValue[key] !== undefined)) {
@@ -54,27 +66,25 @@ export const Tracking = ({ readOnly, correlation, trackedProperties }: SectionPr
       }
     }
     setTrackedProperties(trackedProperties);
-    // this.context.designerContext.SettingActions.updateNodeSettings(this.props.nodeId, { trackedProperties });
-    // this.forceUpdate(); // TODO (afowose) subscribe to setting store changes, save settings to local state, and render using those.
+    // TODO (14427339): Setting Validation
+    // TODO (14427277): Write to Store
   };
 
-  const trackedPropertiesLabel = <SettingLabel labelText="Tracked Properties" isChild={false} />;
+  const trackedPropertiesLabel = <SettingLabel labelText={trackedPropertiesTitle} isChild={false} />;
 
   const trackingSectionProps: SettingSectionProps = {
     id: 'tracking',
-    title: 'Tracking',
+    title: trackingTitle,
     settings: [
       {
         settingType: 'SettingTextField',
         settingProp: {
           readOnly,
           value: correlationFromState?.clientTrackingId ?? '',
-          label: 'Tracking Id',
           customLabel: () => clientTrackingIdLabel,
           onValueChange: (_, newVal) => onClientTrackingIdChange(newVal as string),
         },
-        visible: correlation?.isSupported, //isCorrelationSupported(nodeId)
-        // {ADD TRACKED PROPERTIES}
+        visible: correlation?.isSupported,
       },
       {
         settingType: 'SettingDictionary',

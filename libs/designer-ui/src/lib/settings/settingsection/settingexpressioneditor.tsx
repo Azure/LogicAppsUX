@@ -7,20 +7,18 @@ import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
+type ExpressionChangeHandler = (updatedExpressions: string[]) => void;
 export interface MultiAddExpressionEditorProps extends SettingProps {
   initialExpressions?: string[];
+  onExpressionsChange: ExpressionChangeHandler;
 }
 
 export const MultiAddExpressionEditor = ({
   initialExpressions = [],
   readOnly = false,
   customLabel,
+  onExpressionsChange,
 }: MultiAddExpressionEditorProps): JSX.Element | null => {
-  const [, setExpressions] = useState(initialExpressions);
-  const onExpressionsChange = (updatedExpressions: string[]): void => {
-    setExpressions(updatedExpressions);
-  };
-
   if (customLabel) {
     return (
       <>

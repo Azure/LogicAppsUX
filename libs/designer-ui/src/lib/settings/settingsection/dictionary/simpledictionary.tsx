@@ -1,6 +1,5 @@
-// import Constants from '../constants';
-import type { EventHandler } from  '../../../eventhandler'
-import { Label } from  '../../../label'
+import type { EventHandler } from '../../../eventhandler';
+import { Label } from '../../../label';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
 import type { SimpleDictionaryItemProps, SimpleDictionaryRowModel } from './simpledictionaryitem';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -39,7 +38,7 @@ const convertItemsModelToDictionary = (items: SimpleDictionaryRowModel[]): Recor
   let result: Record<string, string> | undefined;
   let newItems = [...items];
   if (items[items.length - 1].value?.length === 1) {
-    newItems = [...items, {id: guid(), key: '', value: '' }];
+    newItems = [...items, { id: guid(), key: '', value: '' }];
   }
   if (newItems.length > 0) {
     result = {};
@@ -48,10 +47,6 @@ const convertItemsModelToDictionary = (items: SimpleDictionaryRowModel[]): Recor
         result[item.key] = item.value || '';
       }
     }
-
-    // if (result[Object.keys(items)[items.length -1]].length === 1) {
-    //   result.
-    // }
 
     if (Object.keys(result).length === 0) {
       result = undefined;
@@ -69,17 +64,10 @@ const renderLabel = (name: string, elementId: string): JSX.Element => (
   </div>
 );
 
-// const isRowEmpty = (item: SimpleDictionaryRowModel): boolean => !item.key && !item.value;
-
 export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({ disabled, title, readOnly, value, onChange }): JSX.Element => {
-  // eslint-disable-next-line no-unused-vars
-  // const [controlValue, _setControlValue] = useState(value);
   const [items, setItems] = useState(convertDictionaryToKeyValuePair(value));
 
   const elementId = guid();
-
-  // const getChangeHandler = () => handleItemChange;
-  // const getCurrentPropertyValue = () => value;
 
   const handleItemDelete = (e: SimpleDictionaryRowModel): void => {
     const newItems = items.filter((item) => item.id !== e.id);
@@ -117,7 +105,6 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({ disabled, ti
       readOnly,
       onDelete: handleItemDelete,
       onChange: handleItemChange,
-      // onFocus: handleItemFocus,
     };
 
     return <SimpleDictionaryItem key={item.id} {...props} />;

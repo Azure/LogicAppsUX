@@ -66,7 +66,7 @@ function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, l
     fieldGroup: { height: 24, width: '100%', display: 'inline', marginRight: 8 },
     wrapper: { display: 'inline-flex', width: '100%' },
   };
-  // TODO(joechung): What about "null", "false", "true", empty strings, stringified numbers, and other ambiguous JSON values?
+  // TODO (14725265) add check /support for ambiguous value types being passed in here
   const valuesInString = typeof values !== 'string' ? JSON.stringify(values) : values;
   return customLabel ? (
     <>

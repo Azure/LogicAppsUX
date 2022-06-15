@@ -37,7 +37,7 @@ import { useIntl } from 'react-intl';
 type SettingBase = {
   visible?: boolean;
 };
-// Using discriminated union to create a dependency of SettingType and SettingProp
+
 export type Settings = SettingBase &
   (
     | {
@@ -98,8 +98,6 @@ export interface SettingSectionProps {
   settings: Settings[];
   isReadOnly?: boolean;
 }
-
-// TODO (andrewfowose #13363298): create component with dynamic addition of setting keys and values, (dictionary)
 
 export const SettingsSection: FC<SettingSectionProps> = ({ title = 'Settings', showHeading = true, expanded, isReadOnly, settings }) => {
   const [expandedState, setExpanded] = useState(!!expanded);

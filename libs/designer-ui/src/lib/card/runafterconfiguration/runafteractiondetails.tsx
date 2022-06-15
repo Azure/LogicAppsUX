@@ -5,13 +5,14 @@ import { Succeeded } from '../../monitoring/statuspill/images/succeeded';
 import { TimedOut } from '../../monitoring/statuspill/images/timedout';
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
+import { useBoolean } from '@fluentui/react-hooks';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { Icon } from '@fluentui/react/lib/Icon';
 import type { ISeparatorStyles } from '@fluentui/react/lib/Separator';
 import { Separator } from '@fluentui/react/lib/Separator';
-import React, { useState } from 'react';
+import React from 'react';
 import { useIntl } from 'react-intl';
 import { format } from 'util';
 
@@ -83,13 +84,10 @@ export const RunAfterActionDetails = ({
     defaultMessage: 'Collapse',
     description: 'An accessible label for collapse toggle icon',
   });
-  const onToggleActionExpand = (): void => {
-    setExpanded(!expanded);
-  };
 
   const collapsibleProps = collapsible
-    ? { 'aria-expanded': expanded, role: 'button', tabIndex: 0, onClick: onToggleActionExpand }
-    : undefined;
+    ? { 'aria-expanded': expanded, role: 'button', tabIndex: 0, onClick: () => setExpanded.toggle() }
+    : {};
 
   const handleRenderLabel = (status: string, label: string): JSX.Element => {
     const props: LabelProps = {
@@ -110,7 +108,7 @@ export const RunAfterActionDetails = ({
                 className="msla-run-after-icon"
                 ariaLabel={format(expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`, title)}
                 iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
-                styles={{ root: { fontSize: 14, color: constants.CHEVRON_ROOT_COLOR_LIGHT } }}
+                styles={{ root: { color: constants.CHEVRON_ROOT_COLOR_LIGHT } }}
               />
               <div className="msla-run-after-edge-header-logo">
                 <img alt="" className="msla-run-after-logo-image" role="presentation" src={icon} />

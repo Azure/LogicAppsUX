@@ -1,41 +1,73 @@
 import type { SectionProps } from '..';
+import { useBoolean } from '@fluentui/react-hooks';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
+import { useIntl } from 'react-intl';
 
 // TODO (andrewfowose): replace hard-set settingProps in Security to data from operationMetadataSlice
-export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: SectionProps): JSX.Element | null => {
-  const secureInputsLabel = <SettingLabel labelText="Secure Inputs" infoTooltipText="Secure inputs of the operation." isChild={false} />;
-  const secureOutputsLabel = (
-    <SettingLabel
-      labelText="Secure Outputs"
-      infoTooltipText="Secure outputs of the operation and references of output properties."
-      isChild={false}
-    />
-  );
+export const Security = ({ secureInputs, secureOutputs, readOnly }: SectionProps): JSX.Element | null => {
+  const [secureInputsFromState, setSecureInputs] = useBoolean(!!secureInputs?.value);
+  const [secureOutputsFromState, setSecureOutputs] = useBoolean(!!secureOutputs?.value);
 
-  const onSecureInputsChange = (checked: boolean): void => {
-    // write to store
-    console.log(`Secure Inputs: ${checked}`);
+  const intl = useIntl();
+  const onText = intl.formatMessage({
+    defaultMessage: 'On',
+    description: 'label when setting is on',
+  });
+  const offText = intl.formatMessage({
+    defaultMessage: 'Off',
+    description: 'label when setting is off',
+  });
+  const secureInputsTitle = intl.formatMessage({
+    defaultMessage: 'Secure Inputs',
+    description: 'title for the secure inputs setting',
+  });
+  const secureInputsTooltipText = intl.formatMessage({
+    defaultMessage: 'Secure inputs of the operation.',
+    description: 'description of the secure inputs setting',
+  });
+  const secureOutputsTitle = intl.formatMessage({
+    defaultMessage: 'Secure Outputs',
+    description: 'title for secure outputs setting',
+  });
+  const secureOutputsTooltipText = intl.formatMessage({
+    defaultMessage: 'Secure outputs of the operation and references of output properties.',
+    description: 'description of secure outputs setting',
+  });
+  const securityTitle = intl.formatMessage({
+    defaultMessage: 'Security',
+    description: 'title of security setting section',
+  });
+
+  const secureInputsLabel = <SettingLabel labelText={secureInputsTitle} infoTooltipText={secureInputsTooltipText} isChild={false} />;
+  const secureOutputsLabel = <SettingLabel labelText={secureOutputsTitle} infoTooltipText={secureOutputsTooltipText} isChild={false} />;
+
+  const onSecureInputsChange = (): void => {
+    // TODO (14427339): Setting Validation
+    // TODO (14427277): Write to Store
+    setSecureInputs.toggle();
   };
 
-  const onSecureOutputsChange = (checked: boolean): void => {
-    if (checked === undefined) return;
-    // write to store
-    console.log(`secure outputs changed to ${checked} for ${nodeId}`);
+  const onSecureOutputsChange = (): void => {
+    // TODO (14427339): Setting Validation
+    // TODO (14427277): Write to Store
+    setSecureOutputs.toggle();
   };
 
   const securitySectionProps: SettingSectionProps = {
     id: 'security',
-    title: 'Security',
+    title: securityTitle,
     expanded: false,
     settings: [
       {
         settingType: 'SettingToggle',
         settingProp: {
           readOnly,
-          checked: secureInputs?.value,
-          onToggleInputChange: (_, checked) => onSecureInputsChange(!!checked),
+          checked: secureInputsFromState,
+          onToggleInputChange: () => onSecureInputsChange(),
           customLabel: () => secureInputsLabel,
+          onText,
+          offText,
         },
         visible: secureInputs?.isSupported, //isSupported fn here
       },
@@ -43,9 +75,11 @@ export const Security = ({ secureInputs, secureOutputs, readOnly, nodeId }: Sect
         settingType: 'SettingToggle',
         settingProp: {
           readOnly,
-          checked: secureOutputs?.value,
-          onToggleInputChange: (_, checked) => onSecureOutputsChange(!!checked),
+          checked: secureOutputsFromState,
+          onToggleInputChange: () => onSecureOutputsChange(),
           customLabel: () => secureOutputsLabel,
+          onText,
+          offText,
         },
         visible: secureOutputs?.isSupported, // IsSupported fn here
       },

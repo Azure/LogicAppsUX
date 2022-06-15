@@ -20,7 +20,6 @@ export interface SimpleDictionaryItemProps {
   readOnly?: boolean;
   onChange?: EventHandler<SimpleDictionaryRowModel>;
   onDelete?: EventHandler<SimpleDictionaryRowModel>;
-  // onFocus?: EventHandler<SimpleDictionaryRowModel>;
 }
 
 const deleteButtonIconProps: IIconProps = {
@@ -43,8 +42,7 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
   });
 
   const itemKeyAriaLabel = intl.formatMessage({
-    // defaultMessage: `${format(unformattedItemKeyAriaLabel, itemIndex)}`,
-    defaultMessage: 'test message',
+    defaultMessage: 'Key',
     description: 'Accessibility Label for dictionary text key field',
   });
   const dictionaryItemKeyPlaceholder = intl.formatMessage({
@@ -53,7 +51,7 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
   });
   const itemValueAriaLabel = intl.formatMessage({
     // defaultMessage: `${format(unformattedItemValueAriaLabel, itemIndex)}`,
-    defaultMessage: 'test message 2',
+    defaultMessage: 'Value',
     description: 'Accessibility Label for the dictionary text value field',
   });
   const dictionaryItemValuePlaceholder = intl.formatMessage({

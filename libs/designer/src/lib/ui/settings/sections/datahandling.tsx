@@ -2,12 +2,9 @@ import type { SectionProps } from '..';
 import { SettingLabel, SettingsSection } from '@microsoft/designer-ui';
 import type { SettingSectionProps } from '@microsoft/designer-ui';
 import { useState } from 'react';
+import { useIntl } from 'react-intl';
 
-export const DataHandling = ({
-  requestSchemaValidation,
-  disableAutomaticDecompression,
-  readOnly /*nodeId*/,
-}: SectionProps): JSX.Element => {
+export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompression, readOnly }: SectionProps): JSX.Element => {
   const [automaticDecompression, setAutomaticDecompression] = useState(disableAutomaticDecompression?.value ?? false);
   const [schemaValidation, setSchemaValidation] = useState(requestSchemaValidation?.value ?? false);
   const requestSchemaValidationLabel = (
@@ -23,18 +20,33 @@ export const DataHandling = ({
 
   const onAutomaticDecompressionChange = (checked: boolean): void => {
     setAutomaticDecompression(checked);
-    // validate
-    // write to store
+    // TODO (14427339): Setting Validation
+    // TODO (14427277): Write to Store
   };
   const onSchemaValidationChange = (checked: boolean): void => {
     setSchemaValidation(checked);
-    // validate
-    // write to store
+    // TODO (14427339): Setting Validation
+    // TODO (14427277): Write to Store
   };
+
+  const intl = useIntl();
+
+  const dataHandlingTitle = intl.formatMessage({
+    defaultMessage: 'Data Handling',
+    description: 'title for data handling setting section',
+  });
+  const onText = intl.formatMessage({
+    defaultMessage: 'On',
+    description: 'label when setting is on',
+  });
+  const offText = intl.formatMessage({
+    defaultMessage: 'Off',
+    description: 'label when setting is off',
+  });
 
   const dataHandlingSectionProps: SettingSectionProps = {
     id: 'dataHandling',
-    title: 'Data Handling',
+    title: dataHandlingTitle,
     expanded: false,
     settings: [
       {
@@ -44,8 +56,8 @@ export const DataHandling = ({
           checked: automaticDecompression,
           onToggleInputChange: (_, checked) => onAutomaticDecompressionChange(!!checked),
           customLabel: () => automaticDecompressionLabel,
-          onText: 'On',
-          offText: 'Off',
+          onText,
+          offText,
         },
         visible: disableAutomaticDecompression?.isSupported,
       },
@@ -56,8 +68,8 @@ export const DataHandling = ({
           checked: schemaValidation,
           onToggleInputChange: (_, checked) => onSchemaValidationChange(!!checked),
           customLabel: () => requestSchemaValidationLabel,
-          onText: 'On',
-          offText: 'Off',
+          onText,
+          offText,
         },
         visible: requestSchemaValidation?.isSupported,
       },
