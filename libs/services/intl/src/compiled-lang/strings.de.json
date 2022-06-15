@@ -35,6 +35,12 @@
       "value": "Gibt die Elemente im Array beginnend bei Index \"Anzahl\" zurück."
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Gibt eine Binärdarstellung einer URI-codierten Zeichenfolge zurück."
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +164,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Alle Versionen anzeigen"
     }
   ],
   "1Fn5n+": [
@@ -240,7 +252,7 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Globale Suche"
     }
   ],
   "2K2fAj": [
@@ -336,7 +348,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Führung/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -630,7 +642,7 @@
   "DysO/Q": [
     {
       "type": 0,
-      "value": "Ctrl + Y"
+      "value": "STRG+Y"
     }
   ],
   "ECZC6Y": [
@@ -669,10 +681,22 @@
       "value": "Gibt einen Abschnitt einer Zeichenfolge zurück, die durch den Startindex und den Endindex definiert wird."
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Gibt den Text für einen Teil in einer mehrteiligen Ausgabe des Triggers zurück."
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1121,6 +1145,12 @@
       "value": "Erforderlich. Die Anzahl der zu addierenden Sekunden. Kann negativ sein, um Sekunden zu subtrahieren."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1154,7 +1184,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Verwerfen"
     }
   ],
   "QEp3C8": [
@@ -1310,7 +1340,7 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Speichern"
     }
   ],
   "T7zcR6": [
@@ -1328,7 +1358,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Feedback geben"
     }
   ],
   "TI44R1": [
@@ -1548,7 +1578,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Löschen"
     }
   ],
   "XtuP5e": [
@@ -1702,7 +1732,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfiguration"
     }
   ],
   "cJm+ah": [
@@ -1846,7 +1876,7 @@
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Veröffentlichen"
     }
   ],
   "gCXOd5": [
@@ -1950,7 +1980,7 @@
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Wiederholen"
     }
   ],
   "iBlvhu": [
@@ -2444,7 +2474,7 @@
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Rückgängig machen"
     }
   ],
   "r8aZXs": [
@@ -2481,6 +2511,12 @@
     {
       "type": 0,
       "value": "Gibt eine URI-codierte Darstellung eines Werts zurück."
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
@@ -2750,7 +2786,7 @@
   "xFQXAI": [
     {
       "type": 0,
-      "value": "Ctrl + Z"
+      "value": "STRG+Z"
     }
   ],
   "xJ6vjn": [

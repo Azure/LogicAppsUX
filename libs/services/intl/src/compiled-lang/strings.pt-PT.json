@@ -35,6 +35,12 @@
       "value": "Devolve os elementos da matriz começando no índice de Contagem"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Devolve uma representação binária de uma cadeia codificada de URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +164,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Mostrar todas as versões"
     }
   ],
   "1Fn5n+": [
@@ -240,7 +252,7 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Pesquisa global"
     }
   ],
   "2K2fAj": [
@@ -336,7 +348,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Visita guiada/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -669,10 +681,22 @@
       "value": "Devolve uma secção de uma cadeia definida pelo índice de início e pelo índice de fim"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Devolve o corpo de uma parte numa saída de várias partes do acionador"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1121,6 +1145,12 @@
       "value": "Obrigatório. O número de segundos a adicionar. Pode ser negativo para subtrair segundos."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1154,7 +1184,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Eliminar"
     }
   ],
   "QEp3C8": [
@@ -1306,7 +1336,7 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Guardar"
     }
   ],
   "T7zcR6": [
@@ -1324,7 +1354,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Fornecer feedback"
     }
   ],
   "TI44R1": [
@@ -1544,7 +1574,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Eliminar"
     }
   ],
   "XtuP5e": [
@@ -1698,7 +1728,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Configuração"
     }
   ],
   "cJm+ah": [
@@ -1842,7 +1872,7 @@
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Publicar"
     }
   ],
   "gCXOd5": [
@@ -1954,7 +1984,7 @@
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Refazer"
     }
   ],
   "iBlvhu": [
@@ -2018,7 +2048,7 @@
   "iy8rNf": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Testar"
     }
   ],
   "j2MU0b": [
@@ -2448,7 +2478,7 @@
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Anular"
     }
   ],
   "r8aZXs": [
@@ -2485,6 +2515,12 @@
     {
       "type": 0,
       "value": "Devolve uma representação codificada de URI de um valor"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [

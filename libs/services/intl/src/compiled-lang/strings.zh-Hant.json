@@ -35,6 +35,12 @@
       "value": "從索引計數開始，傳回陣列中的元素"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "傳回 URI 編碼字串的二進位表示法"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +164,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "顯示所有版本"
     }
   ],
   "1Fn5n+": [
@@ -229,7 +241,7 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "全域搜尋"
     }
   ],
   "2K2fAj": [
@@ -325,7 +337,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "導覽/教學課程"
     }
   ],
   "5J7j9k": [
@@ -658,10 +670,22 @@
       "value": "傳回起始索引和結束索引所定義之字串的區段"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "傳回 multipart 觸發程序輸出中一部分的本文"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1099,6 +1123,12 @@
       "value": "必要。要加上的秒數。可以是負數以減去秒數。"
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1132,7 +1162,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "捨棄"
     }
   ],
   "QEp3C8": [
@@ -1273,7 +1303,7 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "儲存"
     }
   ],
   "T7zcR6": [
@@ -1291,7 +1321,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "提供意見反應"
     }
   ],
   "TI44R1": [
@@ -1511,7 +1541,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "刪除"
     }
   ],
   "XtuP5e": [
@@ -1665,7 +1695,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "設定"
     }
   ],
   "cJm+ah": [
@@ -1809,7 +1839,7 @@
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "發佈"
     }
   ],
   "gCXOd5": [
@@ -1902,7 +1932,7 @@
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "重做"
     }
   ],
   "iBlvhu": [
@@ -1966,7 +1996,7 @@
   "iy8rNf": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "測試"
     }
   ],
   "j2MU0b": [
@@ -2385,7 +2415,7 @@
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "復原"
     }
   ],
   "r8aZXs": [
@@ -2422,6 +2452,12 @@
     {
       "type": 0,
       "value": "傳回值的 URI 編碼表示法"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [

@@ -35,6 +35,12 @@
       "value": "返回数组中从索引计数开始计起的元素"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "返回 URI 编码字符串的二进制表示形式"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +164,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "显示所有版本"
     }
   ],
   "1Fn5n+": [
@@ -233,7 +245,7 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "全局搜索"
     }
   ],
   "2K2fAj": [
@@ -329,7 +341,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "导览/教程"
     }
   ],
   "5J7j9k": [
@@ -662,10 +674,22 @@
       "value": "返回由开始索引和结束索引定义的字符串部分"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "返回触发器的多部分输出中的一个部分的正文"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1103,6 +1127,12 @@
       "value": "必需。要添加的秒数。可以为负数以减去相应的秒数。"
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1136,7 +1166,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "放弃"
     }
   ],
   "QEp3C8": [
@@ -1277,7 +1307,7 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "保存"
     }
   ],
   "T7zcR6": [
@@ -1295,7 +1325,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "提供反馈"
     }
   ],
   "TI44R1": [
@@ -1519,7 +1549,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "删除"
     }
   ],
   "XtuP5e": [
@@ -1673,7 +1703,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "配置"
     }
   ],
   "cJm+ah": [
@@ -1817,7 +1847,7 @@
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "发布"
     }
   ],
   "gCXOd5": [
@@ -1918,7 +1948,7 @@
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "重做"
     }
   ],
   "iBlvhu": [
@@ -1982,7 +2012,7 @@
   "iy8rNf": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "测试"
     }
   ],
   "j2MU0b": [
@@ -2409,7 +2439,7 @@
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "撤消"
     }
   ],
   "r8aZXs": [
@@ -2446,6 +2476,12 @@
     {
       "type": 0,
       "value": "返回值的 URI 编码表示形式"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [

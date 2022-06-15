@@ -35,6 +35,12 @@
       "value": "Restituisce gli elementi nella matrice a partire dal numero di indice"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Restituisce una rappresentazione binaria di una stringa con codifica URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +164,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Mostra tutte le versioni"
     }
   ],
   "1Fn5n+": [
@@ -240,7 +252,7 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Ricerca globale"
     }
   ],
   "2K2fAj": [
@@ -669,10 +681,22 @@
       "value": "Restituisce una sezione di una stringa definita dall'indice iniziale e dall'indice finale"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Restituisce il corpo per una parte nell'output multiparte del trigger"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1129,6 +1153,12 @@
       "value": "Obbligatorio. Numero di secondi da aggiungere. Può essere negativo per sottrarre i secondi."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1162,7 +1192,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Rimuovi"
     }
   ],
   "QEp3C8": [
@@ -1314,7 +1344,7 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Salva"
     }
   ],
   "T7zcR6": [
@@ -1332,7 +1362,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Invia feedback"
     }
   ],
   "TI44R1": [
@@ -1552,7 +1582,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Elimina"
     }
   ],
   "XtuP5e": [
@@ -1706,7 +1736,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Configurazione"
     }
   ],
   "cJm+ah": [
@@ -1850,7 +1880,7 @@
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Pubblica"
     }
   ],
   "gCXOd5": [
@@ -1954,7 +1984,7 @@
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Ripeti"
     }
   ],
   "iBlvhu": [
@@ -2448,7 +2478,7 @@
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Annulla"
     }
   ],
   "r8aZXs": [
@@ -2485,6 +2515,12 @@
     {
       "type": 0,
       "value": "Restituisce una rappresentazione con codifica URI di un valore"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [

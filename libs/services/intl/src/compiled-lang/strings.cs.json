@@ -35,6 +35,12 @@
       "value": "Vrátí prvek pole, který začíná na indexu Počet."
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Vrátí binární reprezentaci řetězce zakódovaného jako identifikátor URI."
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +164,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Zobrazit všechny verze"
     }
   ],
   "1Fn5n+": [
@@ -274,7 +286,7 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Globální vyhledávání"
     }
   ],
   "2K2fAj": [
@@ -370,7 +382,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Prohlídka/kurz"
     }
   ],
   "5J7j9k": [
@@ -664,7 +676,7 @@
   "DysO/Q": [
     {
       "type": 0,
-      "value": "Ctrl + Y"
+      "value": "Ctrl+Y"
     }
   ],
   "ECZC6Y": [
@@ -703,10 +715,22 @@
       "value": "Vrátí část řetězce definovanou počátečním a koncovým indexem."
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Vrátí text pro určitou část ve výstupu triggeru s několika částmi."
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1177,6 +1201,12 @@
       "value": "Povinný parametr. Počet sekund, které se mají přičíst. Může to být i záporná hodnota, při které se sekundy odečtou."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1210,7 +1240,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Zahodit"
     }
   ],
   "QEp3C8": [
@@ -1384,7 +1414,7 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Uložit"
     }
   ],
   "T7zcR6": [
@@ -1402,7 +1432,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Poslat zpětnou vazbu"
     }
   ],
   "TI44R1": [
@@ -1622,7 +1652,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Odstranit"
     }
   ],
   "XtuP5e": [
@@ -1776,7 +1806,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfigurace"
     }
   ],
   "cJm+ah": [
@@ -1920,7 +1950,7 @@
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Publikovat"
     }
   ],
   "gCXOd5": [
@@ -2050,7 +2080,7 @@
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Znovu"
     }
   ],
   "iBlvhu": [
@@ -2566,7 +2596,7 @@
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Zpět"
     }
   ],
   "r8aZXs": [
@@ -2603,6 +2633,12 @@
     {
       "type": 0,
       "value": "Vrátí reprezentaci určité hodnoty zakódovanou jako identifikátor URI."
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
@@ -2872,7 +2908,7 @@
   "xFQXAI": [
     {
       "type": 0,
-      "value": "Ctrl + Z"
+      "value": "Ctrl+Z"
     }
   ],
   "xJ6vjn": [

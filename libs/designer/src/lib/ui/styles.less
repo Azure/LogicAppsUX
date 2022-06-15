@@ -8,3 +8,18 @@
 .edgebutton-foreignobject {
   overflow: visible;
 }
+
+.node-handle {
+  visibility: hidden;
+  &.top {
+    transform: translate(-50%, 50%);
+  }
+  &.bottom {
+    transform: translate(-50%, -50%);
+  }
+}
+
+.edge-drop-zone-container {
+  height: 30;
+  margin: 5px auto;
+}

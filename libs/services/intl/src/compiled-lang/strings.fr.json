@@ -35,6 +35,12 @@
       "value": "Retourne les éléments du tableau en commençant au niveau du nombre d'index"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Retourne la représentation binaire d'une chaîne encodée sous forme d'URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +164,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Afficher toutes les versions"
     }
   ],
   "1Fn5n+": [
@@ -240,7 +252,7 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Recherche générale"
     }
   ],
   "2K2fAj": [
@@ -336,7 +348,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Visite guidée/didacticiel"
     }
   ],
   "5J7j9k": [
@@ -630,7 +642,7 @@
   "DysO/Q": [
     {
       "type": 0,
-      "value": "Ctrl + Y"
+      "value": "Ctrl+Y"
     }
   ],
   "ECZC6Y": [
@@ -669,10 +681,22 @@
       "value": "Retourne une section d’une chaîne définie par l’index de début et l’index de fin"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Retourne le corps d'une partie dans une sortie en plusieurs parties du déclencheur"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1121,6 +1145,12 @@
       "value": "Obligatoire. Nombre de secondes à ajouter. Peut être négatif pour soustraire des secondes."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1154,7 +1184,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Abandonner"
     }
   ],
   "QEp3C8": [
@@ -1306,7 +1336,7 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Enregistrer"
     }
   ],
   "T7zcR6": [
@@ -1324,7 +1354,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Envoyer des commentaires"
     }
   ],
   "TI44R1": [
@@ -1544,7 +1574,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Supprimer"
     }
   ],
   "XtuP5e": [
@@ -1842,7 +1872,7 @@
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Publier"
     }
   ],
   "gCXOd5": [
@@ -1954,7 +1984,7 @@
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Rétablir"
     }
   ],
   "iBlvhu": [
@@ -2448,7 +2478,7 @@
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Annuler"
     }
   ],
   "r8aZXs": [
@@ -2485,6 +2515,12 @@
     {
       "type": 0,
       "value": "Retourne la représentation encodée sous forme d'URI d'une valeur"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
@@ -2754,7 +2790,7 @@
   "xFQXAI": [
     {
       "type": 0,
-      "value": "Ctrl + Z"
+      "value": "Ctrl+Z"
     }
   ],
   "xJ6vjn": [

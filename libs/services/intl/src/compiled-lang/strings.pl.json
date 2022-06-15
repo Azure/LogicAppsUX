@@ -35,6 +35,12 @@
       "value": "Zwraca elementy w tablicy, zaczynając od indeksu Liczba"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Zwraca binarną reprezentację ciągu zakodowanego jako identyfikator URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +164,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Wyświetlanie wszystkich wersji"
     }
   ],
   "1Fn5n+": [
@@ -278,7 +290,7 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Wyszukiwanie globalne"
     }
   ],
   "2K2fAj": [
@@ -374,7 +386,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Przewodnik/samouczek"
     }
   ],
   "5J7j9k": [
@@ -668,7 +680,7 @@
   "DysO/Q": [
     {
       "type": 0,
-      "value": "Ctrl + Y"
+      "value": "Ctrl+Y"
     }
   ],
   "ECZC6Y": [
@@ -707,10 +719,22 @@
       "value": "Zwraca sekcję ciągu zdefiniowaną przez indeks początkowy i indeks końcowy"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Zwraca treść dla części w wieloczęściowych danych wyjściowych wyzwalacza"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1181,6 +1205,12 @@
       "value": "Wymagane. Liczba sekund do dodania. Może być ujemna na potrzeby odejmowania sekund."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1214,7 +1244,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Odrzuć"
     }
   ],
   "QEp3C8": [
@@ -1388,7 +1418,7 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Zapisz"
     }
   ],
   "T7zcR6": [
@@ -1406,7 +1436,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Prześlij opinię"
     }
   ],
   "TI44R1": [
@@ -1626,7 +1656,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Usuń"
     }
   ],
   "XtuP5e": [
@@ -1780,7 +1810,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfiguracja"
     }
   ],
   "cJm+ah": [
@@ -1924,7 +1954,7 @@
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Publikuj"
     }
   ],
   "gCXOd5": [
@@ -2058,7 +2088,7 @@
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Wykonaj ponownie"
     }
   ],
   "iBlvhu": [
@@ -2574,7 +2604,7 @@
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Cofnij"
     }
   ],
   "r8aZXs": [
@@ -2611,6 +2641,12 @@
     {
       "type": 0,
       "value": "Zwraca reprezentację wartości zakodowaną jako identyfikator URI"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
@@ -2880,7 +2916,7 @@
   "xFQXAI": [
     {
       "type": 0,
-      "value": "Ctrl + Z"
+      "value": "Ctrl+Z"
     }
   ],
   "xJ6vjn": [

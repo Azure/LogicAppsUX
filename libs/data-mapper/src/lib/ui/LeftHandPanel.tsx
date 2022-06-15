@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { collapsePanel, expandPanel } from '../core/state/PanelSlice';
 import type { RootState } from '../core/state/Store';
 import { toolboxTab } from './tabs/ToolboxTab';
@@ -60,6 +61,7 @@ export const LeftHandPanel = ({ selectedTabId, layerProps }: LeftHandPanelProps)
         panelHeaderMenu={[]}
         includeTitle={false}
         toggleCollapse={togglePanel}
+        commentChange={() => {}}
       />
     );
   }, [collapsed, togglePanel]);
@@ -80,6 +82,7 @@ export const LeftHandPanel = ({ selectedTabId, layerProps }: LeftHandPanelProps)
       showCommentBox={false}
       renderHeader={renderHeader}
       layerProps={layerProps}
+      onCommentChange={() => {}}
     />
   );
 };

@@ -40,14 +40,9 @@ export const DropZone: React.FC<DropZoneProps> = ({ parent, child }) => {
       className={css('msla-drop-zone-viewmanager2', isOver && canDrop && 'canDrop', isOver && !canDrop && 'cannotDrop')}
       style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}
     >
-      {isOver && canDrop && (
+      {isOver && (
         <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>
-          <AllowDropTarget fill="#0078D4" />
-        </div>
-      )}
-      {isOver && !canDrop && (
-        <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>
-          <BlockDropTarget fill="#797775" />
+          {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill="#797775" />}
         </div>
       )}
       {!isOver && <ActionButtonV2 title={'Text'} onClick={(e) => onEdgeEndClick(e, parent, child)} />}

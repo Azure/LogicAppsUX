@@ -35,6 +35,12 @@
       "value": "Возвращает элементы в массиве, начиная со счетчика индекса"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Возвращает двоичное представление сроки в кодировке URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +164,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Показать все версии"
     }
   ],
   "1Fn5n+": [
@@ -262,7 +274,7 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Глобальный поиск"
     }
   ],
   "2K2fAj": [
@@ -358,7 +370,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Обзор/учебник"
     }
   ],
   "5J7j9k": [
@@ -652,7 +664,7 @@
   "DysO/Q": [
     {
       "type": 0,
-      "value": "Ctrl + Y"
+      "value": "CTRL+Y"
     }
   ],
   "ECZC6Y": [
@@ -691,10 +703,22 @@
       "value": "Возвращает раздел строки, определяемый начальным и конечным индексом"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Возвращает тело части в составных выходных данных триггера"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1165,6 +1189,12 @@
       "value": "Требуется. Число добавляемых секунд. Значение может быть отрицательным для вычитания секунд."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1198,7 +1228,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Отменить"
     }
   ],
   "QEp3C8": [
@@ -1372,7 +1402,7 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Сохранить"
     }
   ],
   "T7zcR6": [
@@ -1390,7 +1420,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Оставить отзыв"
     }
   ],
   "TI44R1": [
@@ -1610,7 +1640,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Удалить"
     }
   ],
   "XtuP5e": [
@@ -1764,7 +1794,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Конфигурация"
     }
   ],
   "cJm+ah": [
@@ -1908,7 +1938,7 @@
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Опубликовать"
     }
   ],
   "gCXOd5": [
@@ -2042,7 +2072,7 @@
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Повторить"
     }
   ],
   "iBlvhu": [
@@ -2106,7 +2136,7 @@
   "iy8rNf": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Тест"
     }
   ],
   "j2MU0b": [
@@ -2558,7 +2588,7 @@
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Отменить"
     }
   ],
   "r8aZXs": [
@@ -2595,6 +2625,12 @@
     {
       "type": 0,
       "value": "Возвращает представление значения в кодировке URI"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
@@ -2864,7 +2900,7 @@
   "xFQXAI": [
     {
       "type": 0,
-      "value": "Ctrl + Z"
+      "value": "CTRL+Z"
     }
   ],
   "xJ6vjn": [

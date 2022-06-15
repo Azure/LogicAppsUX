@@ -1,5 +1,6 @@
 import type { IHttpClient } from '../httpClient';
 import type { IOperationManifestService } from '../operationmanifest';
+import conditionManifest from './manifests/condition';
 import csvManifest from './manifests/csvtable';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
@@ -10,6 +11,7 @@ import requestManifest from './manifests/request';
 import responseManifest from './manifests/response';
 import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
+import switchManifest from './manifests/switch';
 import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft-logic-apps/parsers';
 import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
 import {
@@ -46,6 +48,8 @@ const swiftdecode = 'swiftdecode';
 const swiftencode = 'swiftencode';
 const scope = 'scope';
 const foreach = 'foreach';
+const condition = 'if';
+const switchType = 'switch';
 const initializevariable = 'initializevariable';
 const incrementvariable = 'incrementvariable';
 const request = 'request';
@@ -57,6 +61,7 @@ const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 
 const supportedManifestTypes = [
   compose,
+  condition,
   csvtable,
   foreach,
   function_,
@@ -72,6 +77,7 @@ const supportedManifestTypes = [
   request,
   response,
   select,
+  switchType,
   serviceprovider,
   table,
   workflow,
@@ -258,6 +264,7 @@ function isServiceProviderOperation(definition: any): boolean {
 function isInBuiltOperation(definition: any): boolean {
   switch (definition.type.toLowerCase()) {
     case compose:
+    case condition:
     case foreach:
     case function_:
     case initializevariable:
@@ -271,6 +278,7 @@ function isInBuiltOperation(definition: any): boolean {
     case request:
     case response:
     case select:
+    case switchType:
     case workflow:
     case xslt:
     case xmlvalidation:
@@ -370,9 +378,13 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: dataOperationConnectorId,
     operationId: 'composeNew',
   },
+  [condition]: {
+    connectorId: 'connectionProviders/control',
+    operationId: condition,
+  },
   [foreach]: {
     connectorId: 'connectionProviders/control',
-    operationId: 'foreach',
+    operationId: foreach,
   },
   [function_]: {
     connectorId: azureFunctionConnectorId,
@@ -410,6 +422,10 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: dataOperationConnectorId,
     operationId: select,
   },
+  [switchType]: {
+    connectorId: 'connectionProviders/control',
+    operationId: switchType,
+  },
   [workflow]: {
     connectorId: 'connectionProviders/localWorkflowOperation',
     operationId: 'invokeWorkflow',
@@ -432,7 +448,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   },
   [scope]: {
     connectorId: 'connectionProviders/control',
-    operationId: 'scope',
+    operationId: scope,
   },
   [swiftdecode]: {
     connectorId: 'connectionProviders/swiftOperations',
@@ -445,6 +461,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
 };
 
 const supportedManifestObjects = new Map<string, OperationManifest>([
+  [condition, conditionManifest],
   [csvtable, csvManifest],
   [foreach, foreachManifest],
   [htmltable, htmlManifest],
@@ -455,4 +472,5 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
+  [switchType, switchManifest],
 ]);

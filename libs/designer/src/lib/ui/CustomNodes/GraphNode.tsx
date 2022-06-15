@@ -1,19 +1,23 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { ProviderWrappedContext } from '../../core';
 import type { WorkflowGraph } from '../../core/parsers/models/workflowNode';
+import { changePanelNode, expandPanel } from '../../core/state/panelSlice';
 import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
 import { useWorkflowNode } from '../../core/state/selectors/workflowNodeSelector';
+import type { AppDispatch, RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
 import { ScopeCard } from '@microsoft/designer-ui';
-import { memo, useContext } from 'react';
+import { memo, useCallback } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
+import { useDispatch, useSelector } from 'react-redux';
 
 const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const node = useActionMetadata(id);
 
-  const { readOnly, isMonitoringView } = useContext(ProviderWrappedContext) ?? {};
+  const readOnly = useReadOnly();
+  const isMonitoringView = useMonitoringView();
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -37,11 +41,18 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
     }),
     [readOnly]
   );
-
+  const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
   const graph = useWorkflowNode(id) as WorkflowGraph;
   const operationInfo = useOperationInfo(id);
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
+  const dispatch = useDispatch<AppDispatch>();
+  const nodeClick = useCallback(() => {
+    if (isCollapsed) {
+      dispatch(expandPanel());
+    }
+    dispatch(changePanelNode(id));
+  }, [dispatch, id, isCollapsed]);
 
   if (!node) {
     return null;
@@ -50,15 +61,11 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   const isEmptyGraph = !graph?.edges && (graph?.children[0] as any).children.length === 0;
   const normalizedType = node.type.toLowerCase();
 
-  if (normalizedType === 'scope' || normalizedType === 'foreach') {
+  const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope'];
+  if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <div className="msla-scope-v2 msla-scope-card">
-        <Handle
-          type="target"
-          position={targetPosition}
-          isConnectable={false}
-          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
-        />
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <ScopeCard
           brandColor={brandColor}
           icon={iconUri}
@@ -70,13 +77,10 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           id={id}
           isMonitoringView={isMonitoringView}
           title={data.label}
+          readOnly={readOnly}
+          onClick={nodeClick}
         />
-        <Handle
-          type="source"
-          position={sourcePosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
-        />
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
     );
   } else {
@@ -94,18 +98,8 @@ function renderGenericGraph(
   return (
     <div className="msla-actions-container">
       <div>
-        <Handle
-          type="target"
-          position={targetPosition}
-          isConnectable={false}
-          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
-        />
-        <Handle
-          type="source"
-          position={sourcePosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
-        />
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {!readOnly && isEmptyGraph && (
         <div style={{ display: 'grid', placeItems: 'center', width: '200', height: '30', marginTop: '10px' }}>
