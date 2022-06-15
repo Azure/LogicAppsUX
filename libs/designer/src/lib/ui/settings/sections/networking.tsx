@@ -1,7 +1,7 @@
 import type { SectionProps } from '..';
 import constants from '../../../common/constants';
-import type { Settings, SettingSectionProps } from './';
-import { SettingsSection, SettingLabel } from './';
+import type { Settings, SettingSectionProps } from '../settingsection';
+import { SettingsSection, SettingLabel } from '../settingsection';
 import { useBoolean } from '@fluentui/react-hooks';
 import { equals } from '@microsoft-logic-apps/utils';
 import { useState } from 'react';

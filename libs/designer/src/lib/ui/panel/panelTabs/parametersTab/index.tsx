@@ -1,8 +1,8 @@
 import constants from '../../../../common/constants';
 import { useReadOnly } from '../../../../core/state/selectors/designerOptionsSelector';
 import type { RootState } from '../../../../core/store';
-import { SettingsSection } from '../../../settings/sections';
-import type { Settings } from '../../../settings/sections';
+import { SettingsSection } from '../../../settings/settingsection';
+import type { Settings } from '../../../settings/settingsection';
 import { getId } from '@fluentui/react';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';

@@ -1,6 +1,6 @@
-import constants from '../../../common/constants';
-import type { RunAfterProps } from './runafterconfiguration';
-import { RunAfter } from './runafterconfiguration';
+import constants from '../../common/constants';
+import type { RunAfterProps } from './sections/runafterconfiguration';
+import { RunAfter } from './sections/runafterconfiguration';
 import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconStyles, IIconProps } from '@fluentui/react';
 import {

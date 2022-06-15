@@ -1,6 +1,6 @@
 import type { SectionProps } from '..';
-import { SettingLabel, SettingsSection } from './';
-import type { SettingSectionProps } from './';
+import { SettingLabel, SettingsSection } from '../settingsection';
+import type { SettingSectionProps } from '../settingsection';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 

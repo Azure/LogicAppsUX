@@ -1,7 +1,7 @@
 import type { SectionProps } from '../';
 import type { WorkflowEdge } from '../../../core/parsers/models/workflowNode';
-import type { SettingSectionProps } from './';
-import { SettingsSection } from './';
+import type { SettingSectionProps } from '../settingsection';
+import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
 import { useEffect, useState } from 'react';
 

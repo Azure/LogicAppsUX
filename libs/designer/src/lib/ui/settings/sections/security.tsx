@@ -1,6 +1,6 @@
 import type { SectionProps } from '..';
-import type { SettingSectionProps } from './';
-import { SettingsSection, SettingLabel } from './';
+import type { SettingSectionProps } from '../settingsection';
+import { SettingsSection, SettingLabel } from '../settingsection';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useIntl } from 'react-intl';
 
