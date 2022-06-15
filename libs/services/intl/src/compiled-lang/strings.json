@@ -1469,6 +1469,12 @@
       "value": "Custom Tracking Id"
     }
   ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -2015,6 +2021,12 @@
     {
       "type": 0,
       "value": "Required. The index of where the substring begins in parameter 1."
+    }
+  ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "Array"
     }
   ],
   "f/lWTW": [
