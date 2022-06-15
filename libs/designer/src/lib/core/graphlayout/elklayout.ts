@@ -12,6 +12,7 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.direction': 'DOWN',
   'org.eclipse.elk.alignment': 'TOP',
   'org.eclipse.elk.layered.layering.strategy': 'INTERACTIVE',
+  'org.eclipse.elk.edge.type': 'DIRECTED',
   'elk.layered.unnecessaryBendpoints': 'false',
   'org.eclipse.elk.hierarchyHandling': 'INCLUDE_CHILDREN',
   'org.eclipse.elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
