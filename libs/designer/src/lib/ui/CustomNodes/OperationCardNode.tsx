@@ -11,6 +11,7 @@ import { useMonitoringView, useReadOnly } from '../../core/state/selectors/desig
 import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
+import { labelCase } from '@microsoft-logic-apps/utils';
 import { Card, SubgraphHeader } from '@microsoft/designer-ui';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -99,6 +100,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
       }
     : undefined;
 
+  const label = labelCase(data.label);
   return (
     <div>
       {isFirstChild ? <div style={{ visibility: 'hidden', height: '32px' }} /> : null}
@@ -113,13 +115,13 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           <SubgraphHeader
             parentId={metadata?.graphId.split('-')[0] ?? ''}
             subgraphType={metadata?.subgraphType}
-            title={data?.label}
+            title={label}
             readOnly={readOnly}
             onClick={subgraphClick}
           />
         ) : (
           <Card
-            title={data.label}
+            title={label}
             icon={iconUri}
             draggable={!readOnly}
             brandColor={brandColor}
