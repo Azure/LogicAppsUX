@@ -12,7 +12,11 @@ describe('ui/settings/settingreactiveinput', () => {
       readOnly: false,
       textFieldLabel: 'text field label',
       textFieldValue: 'test',
-      defaultChecked: false,
+      checked: false,
+      visible: true,
+      onToggleLabel: 'On',
+      offToggleLabel: 'Off',
+      onValueChange: () => null,
     };
     renderer = ReactShallowRenderer.createRenderer();
   });
@@ -27,7 +31,7 @@ describe('ui/settings/settingreactiveinput', () => {
   });
 
   it('should have child text field with correct value', () => {
-    const props: ReactiveToggleProps = { ...minimal, defaultChecked: true };
+    const props: ReactiveToggleProps = { ...minimal, checked: true };
     renderer.render(<ReactiveToggle {...props} />);
 
     const reactiveToggle = renderer.getRenderOutput();

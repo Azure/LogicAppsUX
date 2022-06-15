@@ -10,5 +10,8 @@ export { SettingTextField } from './settingtextfield';
 export type { SettingTextFieldProps } from './settingtextfield';
 export { SettingToggle } from './settingtoggle';
 export type { SettingToggleProps } from './settingtoggle';
+export { SettingLabel } from './settinglabel';
+export { SettingDictionary } from './settingdictionary';
+export type { SettingDictionaryProps } from './settingdictionary';
 export { SettingTokenTextField } from './settingTokenTextField';
 export type { SettingTokenTextFieldProps } from './settingTokenTextField';

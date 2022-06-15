@@ -17,6 +17,12 @@
       "value": "必需。表达式为 \"false\" 时要返回的值。"
     }
   ],
+  "+xiT4Q": [
+    {
+      "type": 0,
+      "value": "Pagination"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "显示运行菜单"
+    }
+  ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Tracking"
     }
   ],
   "0R2D5l": [
@@ -218,6 +230,24 @@
       "value": "必需。要搜索其索引的值。"
     }
   ],
+  "1VRGCF": [
+    {
+      "type": 0,
+      "value": "Specify one or more expressions which must be true for the trigger to fire."
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Secure Inputs"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "1jhzOM": [
     {
       "type": 0,
@@ -248,6 +278,12 @@
       "value": "全局搜索"
     }
   ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
@@ -266,6 +302,12 @@
       "value": "必需。包含表单数据或表单编码响应的操作的名称。"
     }
   ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -282,6 +324,12 @@
     {
       "type": 0,
       "value": "已出错"
+    }
+  ],
+  "3qG1VT": [
+    {
+      "type": 0,
+      "value": "Tracked Properties"
     }
   ],
   "3rzrWf": [
@@ -494,6 +542,24 @@
       "value": "必需。要进行 URI 编码的字符串。"
     }
   ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Request Options"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Suppress workflow headers on response"
+    }
+  ],
   "8wr0zO": [
     {
       "type": 0,
@@ -566,6 +632,12 @@
       "value": "必需。要检索的部件的索引。"
     }
   ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Key"
+    }
+  ],
   "BCAnZP": [
     {
       "type": 0,
@@ -606,6 +678,12 @@
     {
       "type": 0,
       "value": "必需。要检查其是否大于比较对象的对象。"
+    }
+  ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
     }
   ],
   "CG772M": [
@@ -668,6 +746,18 @@
       "value": "返回定义中定义的参数值"
     }
   ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Secure Outputs"
+    }
+  ],
+  "FGS2fS": [
+    {
+      "type": 0,
+      "value": "has failed"
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
@@ -684,6 +774,12 @@
     {
       "type": 0,
       "value": "返回触发器的多部分输出中的一个部分的正文"
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Split On"
     }
   ],
   "FUuFlC": [
@@ -809,6 +905,12 @@
       "value": "必需。要返回的表单数据值的键名称。"
     }
   ],
+  "HXLutF": [
+    {
+      "type": 0,
+      "value": "Key"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -831,6 +933,12 @@
     {
       "type": 0,
       "value": "返回参数中传入的第一个非 NULL 对象"
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Asynchronous Pattern"
     }
   ],
   "J5/7vN": [
@@ -885,6 +993,12 @@
     {
       "type": 0,
       "value": "必填。数值格式字符串。"
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
     }
   ],
   "K50znc": [
@@ -957,6 +1071,12 @@
     {
       "type": 0,
       "value": "必需。要与被加数 2 相加的数字。"
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "Secure outputs of the operation and references of output properties."
     }
   ],
   "MDbmMw": [
@@ -1310,6 +1430,12 @@
       "value": "保存"
     }
   ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "Custom Tracking Id"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1398,6 +1524,18 @@
     {
       "type": 0,
       "value": "由于安全配置而未显示内容。"
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "General"
     }
   ],
   "V0ZbQO": [
@@ -1552,6 +1690,12 @@
       "value": "删除"
     }
   ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Limit Logic Apps to not include workflow metadata headers in the response."
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1616,6 +1760,12 @@
       "value": "无"
     }
   ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Concurrency Control"
+    }
+  ],
   "ZME5hh": [
     {
       "type": 0,
@@ -1658,10 +1808,28 @@
       "value": "必需。要从集合前面删除的对象数。必须是一个正整数。"
     }
   ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Data Handling"
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
       "value": "必需。要检查其是否大于或等于被比较值的对象。"
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
     }
   ],
   "ba9yGJ": [
@@ -1760,6 +1928,12 @@
       "value": "选择"
     }
   ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "Secure inputs of the operation."
+    }
+  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -1844,6 +2018,12 @@
       "value": "已忽略"
     }
   ],
+  "g0a4Qe": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -1890,6 +2070,12 @@
     {
       "type": 0,
       "value": "转换函数"
+    }
+  ],
+  "gWRF8m": [
+    {
+      "type": 0,
+      "value": "Trigger Conditions"
     }
   ],
   "gu9o9z": [
@@ -1945,10 +2131,22 @@
       "value": "持续时间"
     }
   ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Asynchronous Response"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
       "value": "重做"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Networking"
     }
   ],
   "iBlvhu": [
@@ -2063,6 +2261,12 @@
       "value": "在 JSON 中编辑"
     }
   ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Duration"
+    }
+  ],
   "k/oqFL": [
     {
       "type": 0,
@@ -2159,6 +2363,12 @@
       "value": "标题"
     }
   ],
+  "lcVG4C": [
+    {
+      "type": 0,
+      "value": "is skipped"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -2201,6 +2411,12 @@
       "value": "返回数据 URI 的字符串表示形式"
     }
   ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -2211,6 +2427,12 @@
     {
       "type": 0,
       "value": "必需。要转换为小写的字符串。如果字符串中的某字符没有小写等效项，则该字符在返回的字符串中保持不变。"
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
     }
   ],
   "n35O/+": [
@@ -2235,6 +2457,12 @@
     {
       "type": 0,
       "value": "必填。要删除的属性名称。"
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Suppress workflow headers"
     }
   ],
   "ngsC44": [
@@ -2355,6 +2583,12 @@
       "value": "刷新"
     }
   ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Security"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -2389,6 +2623,12 @@
     {
       "type": 0,
       "value": "检查字符串是否以某个值结尾(区分大小写，固定区域性)"
+    }
+  ],
+  "qPUX59": [
+    {
+      "type": 0,
+      "value": "is successful"
     }
   ],
   "qSejoi": [
@@ -2436,6 +2676,12 @@
       "value": "必需。转换为整数的值。"
     }
   ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+    }
+  ],
   "r43nMc": [
     {
       "type": 0,
@@ -2478,22 +2724,28 @@
       "value": "返回值的 URI 编码表示形式"
     }
   ],
-  "riPK6U": [
-    {
-      "type": 0,
-      "value": "Case"
-    }
-  ],
   "s5RV9B": [
     {
       "type": 0,
       "value": "返回字符串时间戳年组件的某天"
     }
   ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
       "value": "从表单数据或表单编码触发器输出返回一系列匹配密键名称的值"
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Degree of Parallelism"
     }
   ],
   "sZ0G/Z": [
@@ -2506,6 +2758,12 @@
     {
       "type": 0,
       "value": "必需。要检查其是否为空的集合。"
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Action Timeout"
     }
   ],
   "sfJTHV": [
@@ -2622,6 +2880,12 @@
       "value": "将小时数的整数值添加到传入的字符串时间戳"
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -2674,6 +2938,12 @@
     {
       "type": 0,
       "value": "必需。需要获取其输出的操作的名称。"
+    }
+  ],
+  "vcBAuU": [
+    {
+      "type": 0,
+      "value": "has timed out"
     }
   ],
   "vwH/XV": [
@@ -2764,6 +3034,12 @@
     {
       "type": 0,
       "value": "编辑器输入"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Threshold"
     }
   ],
   "xV/oyK": [

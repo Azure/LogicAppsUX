@@ -16,7 +16,8 @@
           "joinWith": ","
         },
         "runAfter": {
-          "Response": ["Succeeded"]
+          "Response": ["Succeeded"],
+          "Fetch_From_Zen_API": ["Succeeded", "Failed"]
         },
         "type": "Join"
       },
