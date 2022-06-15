@@ -35,6 +35,12 @@
       "value": "Dizideki öğeleri Sayı dizininden başlayarak döndürür"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "URI ile kodlanmış bir dizenin ikili gösterimini döndürür"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -147,6 +159,12 @@
     {
       "type": 0,
       "value": "Gerekli. XML'ye dönüştürülecek değer."
+    }
+  ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Tüm sürümleri göster"
     }
   ],
   "1Fn5n+": [
@@ -229,6 +247,12 @@
     {
       "type": 0,
       "value": "Gerekli. Veri URI'sine dönüştürülecek değer."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Genel arama"
     }
   ],
   "2K2fAj": [
@@ -319,6 +343,12 @@
     {
       "type": 0,
       "value": "Hizmet istek kimliği"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Tur/Öğretici"
     }
   ],
   "5J7j9k": [
@@ -609,6 +639,12 @@
       "value": "Süre"
     }
   ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
+    }
+  ],
   "ECZC6Y": [
     {
       "type": 0,
@@ -645,10 +681,22 @@
       "value": "Başlangıç dizini ve bitiş dizini tarafından tanımlanan bir dize bölümü döndürür"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Tetikleyicinin çok parçalı çıkışında, bir parçanın gövdesini döndürür"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1097,6 +1145,12 @@
       "value": "Gerekli. Eklenecek saniye sayısı. Saniye sayısının çıkarılması için negatif olabilir."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1125,6 +1179,12 @@
     {
       "type": 0,
       "value": "Gerekli. Karşılaştırma nesnesinden küçük veya bu nesneye eşit olup olmadığı denetlenecek nesne."
+    }
+  ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "At"
     }
   ],
   "QEp3C8": [
@@ -1273,6 +1333,12 @@
       "value": "Gerekli. Form-data veya form-encoded yanıtı içeren eylemin adı."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Kaydet"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1283,6 +1349,12 @@
     {
       "type": 0,
       "value": "Başarısız"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Geri bildirim gönder"
     }
   ],
   "TI44R1": [
@@ -1502,7 +1574,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Sil"
     }
   ],
   "XtuP5e": [
@@ -1653,6 +1725,12 @@
       "value": "panel"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Yapılandırma"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1791,6 +1869,12 @@
       "value": "Yok Sayıldı"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Yayımla"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1889,6 +1973,12 @@
       "value": "Süre"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Yinele"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1945,6 +2035,12 @@
     {
       "type": 0,
       "value": " sn"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Sına"
     }
   ],
   "j2MU0b": [
@@ -2371,6 +2467,12 @@
       "value": "Gerekli. Tamsayıya dönüştürülen değer."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Geri Al"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2405,6 +2507,12 @@
     {
       "type": 0,
       "value": "Bir değerin URI ile kodlanmış gösterimini döndürür"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
@@ -2669,6 +2777,12 @@
     {
       "type": 0,
       "value": "Gerekli. Uzunluğun alınacağı koleksiyon."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [

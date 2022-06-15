@@ -1,12 +1,16 @@
-import { ProviderWrappedContext } from '../../core/ProviderWrappedContext';
 import { collapsePanel, expandPanel } from '../../core/state/panelSlice';
+import { useIconUri, useNodeDescription, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
+import { setNodeDescription } from '../../core/state/workflowSlice';
 import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
+import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
 import { settingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
+import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption, PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
 import {
   getTabs,
@@ -18,36 +22,39 @@ import {
   PanelSize,
   registerTabs,
 } from '@microsoft/designer-ui';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface PanelRootProps {
-  cardIcon?: string;
-  comment?: string;
   selectedTabId?: string;
 }
 
-export const PanelRoot = ({ cardIcon, comment, selectedTabId }: PanelRootProps): JSX.Element => {
+export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch();
 
-  const { readOnly, isMonitoringView } = useContext(ProviderWrappedContext) ?? {};
+  const readOnly = useReadOnly();
+  const isMonitoringView = useMonitoringView();
 
   const { collapsed, selectedNode, isDiscovery } = useSelector((state: RootState) => {
     return state.panel;
   });
 
-  const [showCommentBox, setShowCommentBox] = useState(Boolean(comment));
-  const [currentComment, setCurrentComment] = useState(comment);
   const [selectedTab, setSelectedTab] = useState(selectedTabId);
   const [width, setWidth] = useState(PanelSize.Auto);
 
   const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
 
+  const comment = useNodeDescription(selectedNode);
+  const operationInfo = useOperationInfo(selectedNode);
+  const iconUri = useIconUri(operationInfo);
+  const showCommentBox = !isNullOrUndefined(comment);
   useEffect(() => {
-    monitoringTab.enabled = isMonitoringView;
-    setRegisteredTabs((currentTabs) => registerTabs([monitoringTab, aboutTab, codeViewTab, settingsTab, scratchTab], currentTabs));
+    monitoringTab.enabled = !!isMonitoringView;
+    setRegisteredTabs((currentTabs) =>
+      registerTabs([monitoringTab, parametersTab, aboutTab, codeViewTab, settingsTab, scratchTab], currentTabs)
+    );
   }, [readOnly, isMonitoringView]);
 
   useEffect(() => {
@@ -134,12 +141,10 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId }: PanelRootProps):
   };
 
   const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
-    if (currentComment != null) {
-      setCurrentComment(undefined);
-      setShowCommentBox(false);
+    if (showCommentBox) {
+      dispatch(setNodeDescription({ nodeId: selectedNode }));
     } else {
-      setCurrentComment('');
-      setShowCommentBox(true);
+      dispatch(setNodeDescription({ nodeId: selectedNode, description: '' }));
     }
   };
 
@@ -161,8 +166,8 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId }: PanelRootProps):
     <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width}></RecommendationPanelContext>
   ) : (
     <PanelContainer
-      cardIcon={cardIcon}
-      comment={currentComment}
+      cardIcon={iconUri}
+      comment={comment}
       panelLocation={PanelLocation.Right}
       isCollapsed={collapsed}
       noNodeSelected={!selectedNode}
@@ -178,6 +183,9 @@ export const PanelRoot = ({ cardIcon, comment, selectedTabId }: PanelRootProps):
       setSelectedTab={setSelectedTab}
       toggleCollapse={togglePanel}
       trackEvent={handleTrackEvent}
+      onCommentChange={(value) => {
+        dispatch(setNodeDescription({ nodeId: selectedNode, description: value }));
+      }}
       title={selectedNode}
     />
   );

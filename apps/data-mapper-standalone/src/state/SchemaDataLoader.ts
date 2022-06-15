@@ -1,5 +1,5 @@
 import type { RootState } from './Store';
-import type { Schema } from '@microsoft-logic-apps/parsers';
+import type { Schema } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
@@ -14,8 +14,8 @@ export interface SchemaLoadingState {
 
 const initialState: SchemaLoadingState = {
   loadingMethod: 'file',
-  inputResourcePath: 'SimpleCustomerOrderSchema.json',
-  outputResourcePath: 'SimpleCustomerOrderSchema.json',
+  inputResourcePath: '',
+  outputResourcePath: '',
 };
 
 export const loadInputSchema = createAsyncThunk('schema/loadInputSchema', async (_: void, thunkAPI) => {
@@ -90,8 +90,7 @@ export const schemaDataLoaderSlice = createSlice({
 
 const loadSchemaFromMock = async (resourcePath: string): Promise<Schema | undefined> => {
   try {
-    const schema = await import(`../../../../__mocks__/schemas/${resourcePath}`);
-    console.log(schema);
+    const schema: Schema = await import(`../../../../__mocks__/schemas/${resourcePath}`);
     return schema;
   } catch {
     return undefined;

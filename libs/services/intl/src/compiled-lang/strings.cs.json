@@ -35,6 +35,12 @@
       "value": "Vrátí prvek pole, který začíná na indexu Počet."
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Vrátí binární reprezentaci řetězce zakódovaného jako identifikátor URI."
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -147,6 +159,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Hodnota, která se má převést na XML."
+    }
+  ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Zobrazit všechny verze"
     }
   ],
   "1Fn5n+": [
@@ -265,6 +283,12 @@
       "value": "Povinný parametr. Hodnota, která se má převést na identifikátor URI dat."
     }
   ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Globální vyhledávání"
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
@@ -353,6 +377,12 @@
     {
       "type": 0,
       "value": "ID žádosti o služby"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Prohlídka/kurz"
     }
   ],
   "5J7j9k": [
@@ -643,6 +673,12 @@
       "value": "Doba trvání"
     }
   ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl+Y"
+    }
+  ],
   "ECZC6Y": [
     {
       "type": 0,
@@ -679,10 +715,22 @@
       "value": "Vrátí část řetězce definovanou počátečním a koncovým indexem."
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Vrátí text pro určitou část ve výstupu triggeru s několika částmi."
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1153,6 +1201,12 @@
       "value": "Povinný parametr. Počet sekund, které se mají přičíst. Může to být i záporná hodnota, při které se sekundy odečtou."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1181,6 +1235,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není menší nebo rovný porovnávanému objektu."
+    }
+  ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Zahodit"
     }
   ],
   "QEp3C8": [
@@ -1351,6 +1411,12 @@
       "value": "Povinný parametr. Název akce s odpovědí form-data nebo form-encoded."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Uložit"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1361,6 +1427,12 @@
     {
       "type": 0,
       "value": "Selhání"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Poslat zpětnou vazbu"
     }
   ],
   "TI44R1": [
@@ -1580,7 +1652,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Odstranit"
     }
   ],
   "XtuP5e": [
@@ -1731,6 +1803,12 @@
       "value": "panel"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Konfigurace"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1869,6 +1947,12 @@
       "value": "Ignorováno"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Publikovat"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1993,6 +2077,12 @@
       "value": "Doba trvání"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Znovu"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -2049,6 +2139,12 @@
     {
       "type": 0,
       "value": " s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "j2MU0b": [
@@ -2497,6 +2593,12 @@
       "value": "Vyžadováno. Hodnota, která se má převést na celé číslo."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Zpět"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2531,6 +2633,12 @@
     {
       "type": 0,
       "value": "Vrátí reprezentaci určité hodnoty zakódovanou jako identifikátor URI."
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
@@ -2795,6 +2903,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Kolekce, pro kterou se má získat délka."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl+Z"
     }
   ],
   "xJ6vjn": [

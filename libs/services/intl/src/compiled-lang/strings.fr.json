@@ -35,6 +35,12 @@
       "value": "Retourne les éléments du tableau en commençant au niveau du nombre d'index"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Retourne la représentation binaire d'une chaîne encodée sous forme d'URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -147,6 +159,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Valeur à convertir en XML."
+    }
+  ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Afficher toutes les versions"
     }
   ],
   "1Fn5n+": [
@@ -229,6 +247,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Valeur à convertir en URI de données."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Recherche générale"
     }
   ],
   "2K2fAj": [
@@ -319,6 +343,12 @@
     {
       "type": 0,
       "value": "ID de demande de service"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Visite guidée/didacticiel"
     }
   ],
   "5J7j9k": [
@@ -609,6 +639,12 @@
       "value": "Durée"
     }
   ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl+Y"
+    }
+  ],
   "ECZC6Y": [
     {
       "type": 0,
@@ -645,10 +681,22 @@
       "value": "Retourne une section d’une chaîne définie par l’index de début et l’index de fin"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Retourne le corps d'une partie dans une sortie en plusieurs parties du déclencheur"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1097,6 +1145,12 @@
       "value": "Obligatoire. Nombre de secondes à ajouter. Peut être négatif pour soustraire des secondes."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1125,6 +1179,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Objet à vérifier pour voir s'il est inférieur ou égal à l'objet comparé."
+    }
+  ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Abandonner"
     }
   ],
   "QEp3C8": [
@@ -1273,6 +1333,12 @@
       "value": "Obligatoire. Nom de l'action avec une réponse encodée dans le formulaire ou avec des données de formulaire."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Enregistrer"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1283,6 +1349,12 @@
     {
       "type": 0,
       "value": "Échec"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Envoyer des commentaires"
     }
   ],
   "TI44R1": [
@@ -1502,7 +1574,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Supprimer"
     }
   ],
   "XtuP5e": [
@@ -1653,6 +1725,12 @@
       "value": "volet"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Configuration"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1791,6 +1869,12 @@
       "value": "Ignoré"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Publier"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1897,6 +1981,12 @@
       "value": "Durée"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Rétablir"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1953,6 +2043,12 @@
     {
       "type": 0,
       "value": " s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "j2MU0b": [
@@ -2379,6 +2475,12 @@
       "value": "Obligatoire. Valeur convertie en entier."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Annuler"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2413,6 +2515,12 @@
     {
       "type": 0,
       "value": "Retourne la représentation encodée sous forme d'URI d'une valeur"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
@@ -2677,6 +2785,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Collection pour laquelle obtenir la longueur."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl+Z"
     }
   ],
   "xJ6vjn": [

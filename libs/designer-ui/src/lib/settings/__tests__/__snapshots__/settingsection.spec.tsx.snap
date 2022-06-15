@@ -30,16 +30,18 @@ exports[`ui/settings/settingsection should construct 1`] = `
         random setting
       </div>
     </button>
-    <Separator
-      className="msla-setting-section-separator"
-      styles={
-        Object {
-          "root": Object {
-            "color": "#eaeaea",
-          },
+    <React.Fragment>
+      <Separator
+        className="msla-setting-section-separator"
+        styles={
+          Object {
+            "root": Object {
+              "color": "#eaeaea",
+            },
+          }
         }
-      }
-    />
+      />
+    </React.Fragment>
   </div>
 </div>
 `;

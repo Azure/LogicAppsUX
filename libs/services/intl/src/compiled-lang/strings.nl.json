@@ -35,6 +35,12 @@
       "value": "De elementen in de matrix die beginnen bij de index Aantal worden geretourneerd"
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Er wordt een binaire weergave van een tekenreeks met URI-codering geretourneerd"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -147,6 +159,12 @@
     {
       "type": 0,
       "value": "Vereist. De waarde die moet worden geconverteerd naar XML."
+    }
+  ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Alle versies weergeven"
     }
   ],
   "1Fn5n+": [
@@ -229,6 +247,12 @@
     {
       "type": 0,
       "value": "Vereist. De waarde die moet worden geconverteerd naar een gegevens-URI."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Algemene zoekopdracht"
     }
   ],
   "2K2fAj": [
@@ -319,6 +343,12 @@
     {
       "type": 0,
       "value": "Serviceaanvraag-id"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Rondleiding/zelfstudie"
     }
   ],
   "5J7j9k": [
@@ -609,6 +639,12 @@
       "value": "Duur"
     }
   ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
+    }
+  ],
   "ECZC6Y": [
     {
       "type": 0,
@@ -645,10 +681,22 @@
       "value": "Retourneert een sectie van een tekenreeks die wordt gedefinieerd door de beginindex en de eindindex"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "De hoofdtekst wordt gedeeltelijk geretourneerd in een uitvoer van meerdere delen van de trigger"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1097,6 +1145,12 @@
       "value": "Vereist. Het aantal seconden dat moet worden opgeteld. Kan negatief zijn om seconden af te trekken."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1125,6 +1179,12 @@
     {
       "type": 0,
       "value": "Vereist. Het object dat moet worden gecontroleerd als dit kleiner dan of gelijk is aan de waarde van het vergelijkingsobject."
+    }
+  ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Negeren"
     }
   ],
   "QEp3C8": [
@@ -1277,6 +1337,12 @@
       "value": "Vereist. De naam van de actie met een antwoord met formuliergegevens of -codes."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Opslaan"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1287,6 +1353,12 @@
     {
       "type": 0,
       "value": "Mislukt"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Feedback geven"
     }
   ],
   "TI44R1": [
@@ -1506,7 +1578,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Verwijderen"
     }
   ],
   "XtuP5e": [
@@ -1657,6 +1729,12 @@
       "value": "paneel"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Configuratie"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1795,6 +1873,12 @@
       "value": "Genegeerd"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Publiceren"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1901,6 +1985,12 @@
       "value": "Duur"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Opnieuw"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1957,6 +2047,12 @@
     {
       "type": 0,
       "value": "s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Testen"
     }
   ],
   "j2MU0b": [
@@ -2383,6 +2479,12 @@
       "value": "Vereist. De waarde die wordt geconverteerd naar een geheel getal."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Ongedaan maken"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2417,6 +2519,12 @@
     {
       "type": 0,
       "value": "Er wordt een weergave met URI-codering van een waarde geretourneerd"
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
@@ -2681,6 +2789,12 @@
     {
       "type": 0,
       "value": "Vereist. De verzameling waarvoor de lengte moet worden opgehaald."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
     }
   ],
   "xJ6vjn": [

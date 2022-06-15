@@ -35,6 +35,12 @@
       "value": "Gibt die Elemente im Array beginnend bei Index \"Anzahl\" zurück."
     }
   ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Gibt eine Binärdarstellung einer URI-codierten Zeichenfolge zurück."
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "0ZlNtf": [
@@ -147,6 +159,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Wert, der in XML konvertiert werden soll."
+    }
+  ],
+  "1ED/HW": [
+    {
+      "type": 0,
+      "value": "Alle Versionen anzeigen"
     }
   ],
   "1Fn5n+": [
@@ -229,6 +247,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Wert, der in einen Daten-URI konvertiert werden soll."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Globale Suche"
     }
   ],
   "2K2fAj": [
@@ -319,6 +343,12 @@
     {
       "type": 0,
       "value": "Dienstanforderungs-ID"
+    }
+  ],
+  "4wavwk": [
+    {
+      "type": 0,
+      "value": "Führung/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -609,6 +639,12 @@
       "value": "Dauer"
     }
   ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "STRG+Y"
+    }
+  ],
   "ECZC6Y": [
     {
       "type": 0,
@@ -645,10 +681,22 @@
       "value": "Gibt einen Abschnitt einer Zeichenfolge zurück, die durch den Startindex und den Endindex definiert wird."
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Gibt den Text für einen Teil in einer mehrteiligen Ausgabe des Triggers zurück."
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -1097,6 +1145,12 @@
       "value": "Erforderlich. Die Anzahl der zu addierenden Sekunden. Kann negativ sein, um Sekunden zu subtrahieren."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1125,6 +1179,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es kleiner oder gleich dem Vergleichsobjekt ist."
+    }
+  ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Verwerfen"
     }
   ],
   "QEp3C8": [
@@ -1277,6 +1337,12 @@
       "value": "Erforderlich. Der Name der Aktion mit einer form-data- oder form-encoded-Antwort."
     }
   ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Speichern"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1287,6 +1353,12 @@
     {
       "type": 0,
       "value": "Fehlgeschlagen"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Feedback geben"
     }
   ],
   "TI44R1": [
@@ -1506,7 +1578,7 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Löschen"
     }
   ],
   "XtuP5e": [
@@ -1657,6 +1729,12 @@
       "value": "Bereich"
     }
   ],
+  "cCYmTK": [
+    {
+      "type": 0,
+      "value": "Konfiguration"
+    }
+  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -1795,6 +1873,12 @@
       "value": "Ignoriert"
     }
   ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Veröffentlichen"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -1893,6 +1977,12 @@
       "value": "Dauer"
     }
   ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Wiederholen"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -1949,6 +2039,12 @@
     {
       "type": 0,
       "value": "s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "j2MU0b": [
@@ -2375,6 +2471,12 @@
       "value": "Erforderlich. Der Wert, der in eine ganze Zahl konvertiert wird."
     }
   ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Rückgängig machen"
+    }
+  ],
   "r8aZXs": [
     {
       "type": 0,
@@ -2409,6 +2511,12 @@
     {
       "type": 0,
       "value": "Gibt eine URI-codierte Darstellung eines Werts zurück."
+    }
+  ],
+  "riPK6U": [
+    {
+      "type": 0,
+      "value": "Case"
     }
   ],
   "s5RV9B": [
@@ -2673,6 +2781,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Sammlung, für die die Länge abgerufen werden soll."
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "STRG+Z"
     }
   ],
   "xJ6vjn": [

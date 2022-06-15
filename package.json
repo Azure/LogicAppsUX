@@ -1,6 +1,6 @@
 {
   "name": "microsoft-logic-apps",
-  "version": "0.0.42",
+  "version": "0.0.44",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -68,6 +68,7 @@
     "react-query": "3.39.0",
     "react-redux": "8.0.1",
     "react-remark": "^2.1.0",
+    "react-router-dom": "^6.3.0",
     "react-use": "^17.3.2",
     "regenerator-runtime": "^0.13.9",
     "tiny-invariant": "^1.2.0",
