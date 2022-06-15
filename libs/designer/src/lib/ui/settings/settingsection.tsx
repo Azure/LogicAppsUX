@@ -163,9 +163,18 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
         if (!settingProp.readOnly) {
           settingProp.readOnly = isReadOnly;
         }
-        const className = settingType === 'RunAfter' ? 'msla-setting-section-run-after-setting' : 'msla-setting-section-setting';
+        const getClassName = (): string => {
+          let className = 'msla-setting-section-setting';
+          if (settingType === 'RunAfter') {
+            className = 'msla-setting-section-run-after-setting';
+            return className;
+          } else if (settingType === 'MultiAddExpressionEditor') {
+            className = 'msla-setting-section-expression-field';
+            return className;
+          }
+          return className;
+        };
         const renderSetting = (): JSX.Element | null => {
-          if (!visible) return null;
           switch (settingType) {
             case 'MultiSelectSetting':
               return <MultiSelectSetting {...settingProp} />;
@@ -197,11 +206,11 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
               return null;
           }
         };
-        return (
-          <div key={i} className={className}>
+        return visible ? (
+          <div key={i} className={getClassName()}>
             {renderSetting()}
           </div>
-        );
+        ) : null;
       })}
     </div>
   );
