@@ -5,8 +5,8 @@ import { isRootNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operationMetadataSlice';
-import type { Operations } from '../../state/workflowSlice';
 import { clearPanel } from '../../state/panelSlice';
+import type { Operations } from '../../state/workflowSlice';
 import {
   loadParameterValuesFromDefault,
   ParameterGroupKeys,

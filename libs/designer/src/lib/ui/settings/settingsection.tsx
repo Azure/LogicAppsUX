@@ -1,8 +1,10 @@
-import type { RunAfterProps } from '../card/runafterconfiguration';
-import { RunAfter } from '../card/runafterconfiguration';
-import constants from '../constants';
-import { isHighContrastBlack } from '../utils/theme';
+import constants from '../../common/constants';
+import type { RunAfterProps } from './sections/runafterconfiguration';
+import { RunAfter } from './sections/runafterconfiguration';
+import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
+import type { IIconStyles, IIconProps } from '@fluentui/react';
 import {
+  isHighContrastBlack,
   MultiSelectSetting,
   MultiAddExpressionEditor,
   ExpressionsEditor,
@@ -14,7 +16,8 @@ import {
   SettingToggle,
   SettingDictionary,
   SettingTokenTextField,
-} from './settingsection';
+  SettingDropdown,
+} from '@microsoft/designer-ui';
 import type {
   MultiSelectSettingProps,
   MultiAddExpressionEditorProps,
@@ -28,10 +31,7 @@ import type {
   SettingToggleProps,
   SettingDictionaryProps,
   SettingDropdownProps,
-} from './settingsection';
-import { SettingDropdown } from './settingsection/settingdropdown';
-import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
-import type { IIconStyles, IIconProps } from '@fluentui/react';
+} from '@microsoft/designer-ui';
 import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -115,7 +115,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({ title = 'Settings', s
   }, [expandedState]);
 
   const separatorStyles = {
-    root: { color: isInverted ? constants.SETTING_SEPARATOR_COLOR_DARK : constants.SETTING_SEPARATOR_COLOR_LIGHT },
+    root: { color: isInverted ? constants.Settings.SETTING_SEPARATOR_COLOR_DARK : constants.Settings.SETTING_SEPARATOR_COLOR_LIGHT },
   };
   const intl = useIntl();
   const expandAriaLabel = intl.formatMessage({
@@ -145,7 +145,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({ title = 'Settings', s
             className="msla-setting-section-header-icon"
             ariaLabel={expandedState ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
             iconName={expandedState ? 'ChevronDownMed' : 'ChevronRightMed'}
-            styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
+            styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
           />
           <div className={headerTextClassName}>{title}</div>
         </button>
