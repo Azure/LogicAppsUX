@@ -17,8 +17,8 @@ import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { getOperationSettings } from './settings';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
-import { map, OperationManifest } from '@microsoft-logic-apps/utils';
-import { aggregate, ConnectionReferenceKeyFormat, equals, getObjectPropertyValue, unmap } from '@microsoft-logic-apps/utils';
+import type { OperationManifest } from '@microsoft-logic-apps/utils';
+import { map, aggregate, ConnectionReferenceKeyFormat, equals, getObjectPropertyValue, unmap } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
