@@ -22,6 +22,7 @@ describe('elklayout', () => {
           { id: 'node2', height: 0, width: 0 },
         ],
         edges: [{ id: 'node1-node2', sources: ['node1'], targets: ['node2'] }],
+        layoutOptions: { 'elk.position': '(0, 0)' },
       };
 
       expect(convertWorkflowGraphToElkGraph(input)).toEqual(expectedOutput);
@@ -79,8 +80,14 @@ describe('elklayout', () => {
                 edges: [
                   { id: 'Increment_variable2-Increment_variable4', sources: ['Increment_variable2'], targets: ['Increment_variable4'] },
                 ],
+                layoutOptions: { 'elk.position': '(0, 0)' },
               },
-              { id: 'ActionIf-elseActions', children: [{ id: 'Increment_variable3', height: 0, width: 0 }], edges: [] },
+              {
+                id: 'ActionIf-elseActions',
+                children: [{ id: 'Increment_variable3', height: 0, width: 0 }],
+                edges: [],
+                layoutOptions: { 'elk.position': '(0, 0)' },
+              },
             ],
           },
           { id: 'Response', height: 0, width: 0 },
@@ -91,6 +98,7 @@ describe('elklayout', () => {
           { id: 'Increment_variable-ActionIf', sources: ['Increment_variable'], targets: ['ActionIf'] },
           { id: 'ActionIf-Response', sources: ['ActionIf'], targets: ['Response'] },
         ],
+        layoutOptions: { 'elk.position': '(0, 0)' },
       };
 
       expect(convertWorkflowGraphToElkGraph(input)).toEqual(expectedOutput);
