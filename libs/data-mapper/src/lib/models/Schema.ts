@@ -38,6 +38,7 @@ export interface SchemaExtended extends Schema {
 
 export interface SchemaNodeExtended extends SchemaNode {
   children: SchemaNodeExtended[];
+  // Inclusive of the current node
   pathToRoot: SchemaNode[];
 }
 
