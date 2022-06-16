@@ -1,6 +1,6 @@
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import type { ArmResources, Connection, Connector } from '@microsoft-logic-apps/utils';
-import { equals, connectionsMock } from '@microsoft-logic-apps/utils';
+import { equals } from '@microsoft-logic-apps/utils';
 
 interface StandardConnectionServiceArgs {
   apiVersion: string;
@@ -34,7 +34,7 @@ export class StandardConnectionService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const response = await httpClient.get<Connector>({ uri });
     //return response;
-    return { properties: {} } as any;
+    return {} as any;
   }
 
   async getConnectors(): Promise<Connector[]> {
@@ -43,16 +43,9 @@ export class StandardConnectionService {
 
   async getConnection(_connectionId: string): Promise<Connection | undefined> {
     throw new Error('Function not implemented.');
-    // let connection: Connection | undefined;
-    // if (isArmResourceId(connectionId)) {
-    //   connection = await this._getConnectionInApiHub(connectionId);
-    // } else {
-    //   connection = await (await this.getConnections()).find(conn => conn.id === connectionId);
-    // }
-    // return connection;
   }
 
-  private async _getConnectionInApiHub(connectionId: string): Promise<Connection> {
+  private async getConnectionInApiHub(connectionId: string): Promise<Connection> {
     const { apiHubServiceDetails, httpClient } = this.options;
     const connection = await httpClient.get<Connection>({
       uri: `${connectionId}/api-version=${apiHubServiceDetails?.apiVersion}`,
@@ -62,20 +55,19 @@ export class StandardConnectionService {
   }
 
   async getConnections(): Promise<Connection[]> {
-    const response = await this._getConnectionsInApiHub();
-    console.log(response);
-    return connectionsMock;
+    const response = await this.getConnectionsInApiHub();
+    return response;
   }
 
-  private async _getConnectionsInApiHub(): Promise<Connection[]> {
-    const { apiHubServiceDetails, filterByLocation, httpClient } = this.options;
+  private async getConnectionsInApiHub(): Promise<Connection[]> {
+    const { apiHubServiceDetails, filterByLocation, httpClient, baseUrl } = this.options;
     if (!apiHubServiceDetails) {
       return [];
     }
 
     const { subscriptionId, resourceGroup, location, apiVersion } = apiHubServiceDetails;
 
-    const uri = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`;
+    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`;
 
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,

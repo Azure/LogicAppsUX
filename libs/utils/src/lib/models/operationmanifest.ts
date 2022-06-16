@@ -106,7 +106,7 @@ export interface ConnectionMetadata {
   type?: ConnectionType;
 }
 
-export interface ConnectionReference {
+export interface ConnectionReferenceKeyFormatMapping {
   referenceKeyFormat: ConnectionReferenceKeyFormat;
 }
 
@@ -161,7 +161,7 @@ export interface OperationManifestProperties {
   actions?: ActionSetting[];
 
   connection?: ConnectionMetadata;
-  connectionReference?: ConnectionReference;
+  connectionReference?: ConnectionReferenceKeyFormatMapping;
 
   externalDocs?: Documentation;
 }

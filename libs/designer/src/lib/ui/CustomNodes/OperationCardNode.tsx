@@ -3,6 +3,7 @@ import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
 import {
   useBrandColor,
   useIconUri,
+  useNodeConnectionName,
   useNodeDescription,
   useNodeMetadata,
   useOperationInfo,
@@ -54,6 +55,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
+  const connectionName = useNodeConnectionName(id);
 
   const [isFirstChild, setIsFirstChild] = useState(false);
   useEffect(() => {
@@ -127,7 +129,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
             brandColor={brandColor}
             id={id}
             connectionRequired={false}
-            connectionDisplayName={undefined}
+            connectionDisplayName={connectionName}
             commentBox={comment}
             drag={drag}
             dragPreview={dragPreview}

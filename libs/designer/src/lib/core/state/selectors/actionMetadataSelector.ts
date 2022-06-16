@@ -1,3 +1,4 @@
+import { useConnectionByName } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { OperationInfo } from '@microsoft-logic-apps/utils';
@@ -21,6 +22,15 @@ export const useNodeMetadata = (nodeId?: string) => {
     }
     return state.workflow.nodesMetadata[nodeId];
   });
+};
+
+export const useNodeConnectionName = (nodeId: string) => {
+  const connectionId = useSelector((state: RootState) => {
+    // danielle test this live
+    return nodeId ? state.connections.connectionsMapping[nodeId] : '';
+  });
+  const connection = useConnectionByName(connectionId);
+  return connection?.properties.displayName ?? '';
 };
 
 export const useNodeDescription = (nodeId: string) => {
