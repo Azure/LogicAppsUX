@@ -11,12 +11,14 @@ export interface WorkflowNode {
   children?: WorkflowGraph[];
   height: number;
   width: number;
+  type: 'testNode' | 'scopeHeader' | 'subgraphHeader' | 'hiddenNode';
 }
 
 export interface WorkflowEdge {
   id: string;
   source: string;
   target: string;
+  type?: 'buttonEdge' | 'onlyEdge' | 'hiddenEdge';
 }
 
 export const isWorkflowNode = (node: any): node is WorkflowNode => {

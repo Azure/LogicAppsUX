@@ -394,8 +394,10 @@ body.dark {
   }
 }
 
-// There are some generated graph action nodes with no children, and they are blocking other elements
-//   This stops those empty positioning nodes from interfering with touch events
-.react-flow__node:empty {
+.react-flow__node {
+  cursor: default !important;
   pointer-events: none !important;
+  & > div {
+    pointer-events: initial;
+  }
 }

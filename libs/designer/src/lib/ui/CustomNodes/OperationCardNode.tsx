@@ -11,7 +11,7 @@ import { useMonitoringView, useReadOnly } from '../../core/state/selectors/desig
 import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
-import { Card, SubgraphHeader } from '@microsoft/designer-ui';
+import { Card } from '@microsoft/designer-ui';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
@@ -66,27 +66,14 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     dispatch(changePanelNode(id));
   }, [dispatch, id, isCollapsed]);
 
-  const subgraphClick = useCallback(
-    (_id: string) => {
-      if (isCollapsed) {
-        dispatch(expandPanel());
-      }
-      dispatch(changePanelNode(_id));
-    },
-    [dispatch, isCollapsed]
-  );
-
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
   if (metadata?.isPlaceholderNode) {
     if (readOnly || !isFirstChild) return null;
     return (
-      <>
-        <div style={{ visibility: 'hidden', height: '32px' }} />
-        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
-          <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
-        </div>
-      </>
+      <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
+        <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
+      </div>
     );
   }
 
@@ -101,7 +88,6 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
 
   return (
     <div>
-      {isFirstChild ? <div style={{ visibility: 'hidden', height: '32px' }} /> : null}
       {isFirstChild && !readOnly && !metadata?.subgraphType ? (
         <div className={'edge-drop-zone-container'}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
@@ -109,32 +95,22 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
       ) : null}
       <div>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-        {metadata?.subgraphType ? (
-          <SubgraphHeader
-            parentId={metadata?.graphId.split('-')[0] ?? ''}
-            subgraphType={metadata?.subgraphType}
-            title={data?.label}
-            readOnly={readOnly}
-            onClick={subgraphClick}
-          />
-        ) : (
-          <Card
-            title={data.label}
-            icon={iconUri}
-            draggable={!readOnly}
-            brandColor={brandColor}
-            id={id}
-            connectionRequired={false}
-            connectionDisplayName={undefined}
-            commentBox={comment}
-            drag={drag}
-            dragPreview={dragPreview}
-            isDragging={isDragging}
-            isMonitoringView={isMonitoringView}
-            readOnly={readOnly}
-            onClick={nodeClick}
-          />
-        )}
+        <Card
+          title={data.label}
+          icon={iconUri}
+          draggable={!readOnly}
+          brandColor={brandColor}
+          id={id}
+          connectionRequired={false}
+          connectionDisplayName={undefined}
+          commentBox={comment}
+          drag={drag}
+          dragPreview={dragPreview}
+          isDragging={isDragging}
+          isMonitoringView={isMonitoringView}
+          readOnly={readOnly}
+          onClick={nodeClick}
+        />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {childEdges.length === 0 && !readOnly ? (

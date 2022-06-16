@@ -157,7 +157,7 @@ describe('elklayout', () => {
             id: 'node1-node2',
             source: 'node1',
             target: 'node2',
-            type: 'buttonedge',
+            type: 'buttonEdge',
           },
         ],
       ];
@@ -289,14 +289,14 @@ describe('elklayout', () => {
             id: 'manual-Initialize_variable',
             target: 'Initialize_variable',
             source: 'manual',
-            type: 'buttonedge',
+            type: 'buttonEdge',
             data: { elkEdge: { id: 'manual-Initialize_variable', sources: ['manual'], targets: ['Initialize_variable'] } },
           },
           {
             id: 'Initialize_variable-Increment_variable',
             target: 'Increment_variable',
             source: 'Initialize_variable',
-            type: 'buttonedge',
+            type: 'buttonEdge',
             data: {
               elkEdge: { id: 'Initialize_variable-Increment_variable', sources: ['Initialize_variable'], targets: ['Increment_variable'] },
             },
@@ -305,28 +305,28 @@ describe('elklayout', () => {
             id: 'Increment_variable-ActionIf',
             target: 'ActionIf',
             source: 'Increment_variable',
-            type: 'buttonedge',
+            type: 'buttonEdge',
             data: { elkEdge: { id: 'Increment_variable-ActionIf', sources: ['Increment_variable'], targets: ['ActionIf'] } },
           },
           {
             id: 'ActionIf-EmptyScope',
             target: 'EmptyScope',
             source: 'ActionIf',
-            type: 'buttonedge',
+            type: 'buttonEdge',
             data: { elkEdge: { id: 'ActionIf-EmptyScope', sources: ['ActionIf'], targets: ['EmptyScope'] } },
           },
           {
             id: 'EmptyScope-Response',
             target: 'Response',
             source: 'EmptyScope',
-            type: 'buttonedge',
+            type: 'buttonEdge',
             data: { elkEdge: { id: 'EmptyScope-Response', sources: ['EmptyScope'], targets: ['Response'] } },
           },
           {
             id: 'Increment_variable2-Increment_variable4',
             target: 'Increment_variable4',
             source: 'Increment_variable2',
-            type: 'buttonedge',
+            type: 'buttonEdge',
             data: {
               elkEdge: {
                 id: 'Increment_variable2-Increment_variable4',

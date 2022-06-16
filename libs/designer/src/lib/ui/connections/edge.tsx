@@ -15,7 +15,7 @@ export interface LogicAppsEdgeProps {
 }
 const foreignObjectHeight = 30;
 const foreignObjectWidth = 200;
-export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
+export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   id,
   sourceX,
   sourceY,

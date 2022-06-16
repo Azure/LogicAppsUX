@@ -1,8 +1,14 @@
 import { useLayout } from '../core/graphlayout';
 import { updateNodeSizes } from '../core/state/workflowSlice';
-import GraphNode from './CustomNodes/GraphNode';
-import OperationCardNode from './CustomNodes/OperationCardNode';
-import { CustomEdge } from './connections/edge';
+// import GraphNode from './CustomNodes/GraphNode';
+import GraphNode from './CustomNodes/GraphContainerNode';
+import HiddenNode from './CustomNodes/HiddenNode';
+import TestNode from './CustomNodes/OperationCardNode';
+import ScopeHeaderNode from './CustomNodes/ScopeHeaderNode';
+import SubgraphHeaderNode from './CustomNodes/SubgraphHeaderNode';
+import { ButtonEdge } from './connections/edge';
+// import { OnlyEdge } from './connections/onlyEdge';
+import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
 import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
@@ -15,13 +21,22 @@ export interface DesignerProps {
   graphId?: string;
 }
 
-const nodeTypes = {
-  testNode: OperationCardNode,
+type NodeTypes = 'testNode' | 'scopeHeader' | 'subgraphHeader' | 'hiddenNode' | 'graphNode';
+type NodeTypesObj = {
+  [key in NodeTypes]: React.ComponentType<any>;
+};
+const nodeTypes: NodeTypesObj = {
+  testNode: TestNode,
   graphNode: GraphNode,
+  scopeHeader: ScopeHeaderNode,
+  subgraphHeader: SubgraphHeaderNode,
+  hiddenNode: HiddenNode,
 };
 
 const edgeTypes = {
-  buttonedge: CustomEdge,
+  buttonEdge: ButtonEdge,
+  // onlyEdge: OnlyEdge,
+  hiddenEdge: HiddenEdge,
 };
 
 export const Designer = () => {

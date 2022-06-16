@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 interface SubgraphHeaderProps {
   parentId: string;
-  subgraphType: SubgraphType;
+  subgraphType?: SubgraphType;
   title?: string;
   collapsed?: boolean;
   readOnly?: boolean;
@@ -25,6 +25,8 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
   onClick,
 }) => {
   const intl = useIntl();
+
+  if (!subgraphType) return null;
 
   if (subgraphType === 'SWITCH-ADD-CASE') {
     if (readOnly) return null;
