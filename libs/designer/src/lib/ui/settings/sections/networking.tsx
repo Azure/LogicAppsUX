@@ -1,31 +1,32 @@
 import type { SectionProps } from '..';
+import constants from '../../../common/constants';
+import type { Settings, SettingSectionProps } from '../settingsection';
+import { SettingsSection, SettingLabel } from '../settingsection';
 import { useBoolean } from '@fluentui/react-hooks';
-import type { Settings, SettingSectionProps } from '@microsoft/designer-ui';
-import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
+import { equals } from '@microsoft-logic-apps/utils';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export const Networking = ({
   readOnly,
-  // retryPolicy,
   suppressWorkflowHeaders,
   suppressWorkflowHeadersOnResponse,
   paging,
-  // uploadChunk,
-  // downloadChunkSize,
+  uploadChunk,
+  downloadChunkSize,
   asynchronous,
   disableAsyncPattern,
   requestOptions,
 }: SectionProps): JSX.Element => {
   const [disableAsyncPatternFromState, toggleDisableAsyncPattern] = useBoolean(!!disableAsyncPattern?.value);
   const [asyncResponseFromState, toggleAsyncResponse] = useBoolean(!!asynchronous?.value);
-  // const [downloadChunkFromState, setDownloadChunk] = useState(downloadChunkSize);
   const [pagingFromState, setPaging] = useState(paging?.value ?? { enabled: false, value: undefined });
-  // const [retryPolicyFromState, setRetryPolicy] = useState(retryPolicy);
   const [requestOptionsFromState, setRequestOptions] = useState(requestOptions?.value ?? { timeout: '' });
   const [suppressWorkflowHeadersFromState, toggleSuppressWorkflowHeaders] = useBoolean(!!suppressWorkflowHeaders?.value);
-  // const [uploadChunkFromState, setUploadChunk] = useState(uploadChunk);
   const [workflowHeadersOnResponseFromState, toggleWorkflowHeadersOnResponse] = useBoolean(!!suppressWorkflowHeadersOnResponse?.value);
+  const [chunkedTransferModeFromState, setChunkedTransferMode] = useBoolean(
+    equals(uploadChunk?.value?.transferMode, constants.SETTINGS.TRANSFER_MODE.CHUNKED)
+  );
 
   const intl = useIntl();
   const onText = intl.formatMessage({
@@ -99,6 +100,15 @@ export const Networking = ({
   const networking = intl.formatMessage({
     defaultMessage: 'Networking',
     description: 'title for networking setting section',
+  });
+  const contentTransferTitle = intl.formatMessage({
+    defaultMessage: 'Content Transfer',
+    description: 'title for content transfer setting',
+  });
+  const contentTransferDescription = intl.formatMessage({
+    defaultMessage:
+      'Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks',
+    description: 'description of content transfer setting',
   });
 
   const getAsyncPatternSetting = (): Settings => {
@@ -244,6 +254,30 @@ export const Networking = ({
     };
   };
 
+  const getContentTransferSetting = (): Settings => {
+    const contentTransferLabel = (
+      <SettingLabel labelText={contentTransferTitle} infoTooltipText={contentTransferDescription} isChild={false} />
+    );
+    const onContentTransferToggle = (): void => {
+      setChunkedTransferMode.toggle();
+      // TODO (14427339): Setting Validation
+      // TODO (14427277): Write to Store
+    };
+
+    return {
+      settingType: 'SettingToggle',
+      settingProp: {
+        checked: chunkedTransferModeFromState,
+        readOnly,
+        onText,
+        offText,
+        onToggleInputChange: () => onContentTransferToggle(),
+        customLabel: () => contentTransferLabel,
+      },
+      visible: uploadChunk?.isSupported || downloadChunkSize?.isSupported,
+    };
+  };
+
   const networkingSectionProps: SettingSectionProps = {
     id: 'networking',
     title: networking,
@@ -251,10 +285,8 @@ export const Networking = ({
     settings: [
       getAsyncPatternSetting(),
       getAsyncResponseSetting(),
-      // getDownloadChunkSettind(),
-      // getUploadChunkSetting(),
+      getContentTransferSetting(),
       getPaginationSetting(),
-      // getRetryPolicySetting(),
       getRequestOptionSetting(),
       getSuppressHeadersSetting(),
       getWorkflowHeadersOnResponseSetting(),

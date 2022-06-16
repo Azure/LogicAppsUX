@@ -1,10 +1,10 @@
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
-import { useAllOperations, useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
+import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DataHandling } from './sections/datahandling';
 import { General } from './sections/general';
 import { Networking } from './sections/networking';
-import type { runAfterConfigs } from './sections/runafter';
 import { RunAfter } from './sections/runafter';
 import { Security } from './sections/security';
 import { Tracking } from './sections/tracking';
@@ -34,7 +34,7 @@ export const SettingsPanel = (): JSX.Element => {
     trackedProperties,
     uploadChunk,
     splitOn,
-    // splitOnConfiguration,
+    splitOnConfiguration,
     paging,
     downloadChunkSize,
     concurrency,
@@ -46,11 +46,7 @@ export const SettingsPanel = (): JSX.Element => {
   });
 
   // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
-  const incomingEdges = useAllOperations();
-  const allEdges: Record<string, runAfterConfigs> = {};
-  for (const key in incomingEdges) {
-    allEdges[key] = GetEdgeInfo(key);
-  }
+  const allEdges: WorkflowEdge[] = useEdgesByParent();
 
   const renderGeneral = (): JSX.Element | null => {
     const generalSectionProps: SectionProps = {
@@ -60,6 +56,7 @@ export const SettingsPanel = (): JSX.Element => {
       conditionExpressions,
       readOnly: false,
       nodeId,
+      splitOnConfiguration,
     };
     if (splitOn?.isSupported || timeout?.isSupported || concurrency?.isSupported || conditionExpressions?.isSupported) {
       return <General {...generalSectionProps} />;
@@ -91,6 +88,7 @@ export const SettingsPanel = (): JSX.Element => {
       asynchronous,
       disableAsyncPattern,
       requestOptions,
+      splitOnConfiguration,
     };
     if (
       retryPolicy?.isSupported ||
@@ -131,7 +129,7 @@ export const SettingsPanel = (): JSX.Element => {
       readOnly: false,
       nodeId,
       trackedProperties,
-      correlation, //correlation setting contains trackingId setting being used in this component
+      correlation,
     };
     if (trackedProperties?.isSupported || correlation?.isSupported) {
       return <Tracking {...trackingProps} />;
@@ -152,10 +150,4 @@ export const SettingsPanel = (): JSX.Element => {
   };
 
   return renderAllSettingsSections();
-};
-
-const GetEdgeInfo = (id: string): runAfterConfigs => {
-  const operationInfo = useOperationInfo(id);
-  const iconUri = useIconUri(operationInfo);
-  return { icon: iconUri, title: id };
 };

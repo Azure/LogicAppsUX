@@ -7,7 +7,7 @@ import { configureStore } from '@reduxjs/toolkit';
 export const store = configureStore({
   reducer: {
     schema: schemaReducer,
-    breadCrumb: breadcrumbReducer,
+    breadcrumb: breadcrumbReducer,
     reactFlow: reactFlowReducer,
     panel: panelReducer,
   },

@@ -1,8 +1,5 @@
-import constants from '../../constants';
-import { Failed } from '../../monitoring/statuspill/images/failed';
-import { Skipped } from '../../monitoring/statuspill/images/skipped';
-import { Succeeded } from '../../monitoring/statuspill/images/succeeded';
-import { TimedOut } from '../../monitoring/statuspill/images/timedout';
+import constants from '../../../../common/constants';
+import { useOperationInfo, useIconUri } from '../../../../core/state/selectors/actionMetadataSelector';
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -12,6 +9,7 @@ import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { Icon } from '@fluentui/react/lib/Icon';
 import type { ISeparatorStyles } from '@fluentui/react/lib/Separator';
 import { Separator } from '@fluentui/react/lib/Separator';
+import { Failed, Skipped, Succeeded, TimedOut } from '@microsoft/designer-ui';
 import type { MouseEvent } from 'react';
 import { useIntl } from 'react-intl';
 import { format } from 'util';
@@ -33,7 +31,6 @@ interface LabelProps {
 export interface RunAfterActionDetailsProps {
   collapsible?: boolean;
   expanded: boolean;
-  icon: string;
   id: string;
   isDeleteVisible: boolean;
   readOnly: boolean;
@@ -64,7 +61,6 @@ const separatorStyles: Partial<ISeparatorStyles> = {
 
 export const RunAfterActionDetails = ({
   collapsible = true,
-  icon,
   isDeleteVisible,
   readOnly,
   statuses,
@@ -108,10 +104,10 @@ export const RunAfterActionDetails = ({
                 className="msla-run-after-icon"
                 ariaLabel={format(expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`, title)}
                 iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
-                styles={{ root: { color: constants.CHEVRON_ROOT_COLOR_LIGHT } }}
+                styles={{ root: { color: constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
               />
               <div className="msla-run-after-edge-header-logo">
-                <img alt="" className="msla-run-after-logo-image" role="presentation" src={icon} />
+                <img alt="" className="msla-run-after-logo-image" role="presentation" src={useIcon(title) ?? ''} />
               </div>
               <div className="msla-run-after-edge-header-text">{title}</div>
             </div>
@@ -175,4 +171,9 @@ const Label = ({ label, status }: LabelProps): JSX.Element => {
       <span>{label}</span>
     </>
   );
+};
+
+const useIcon = (selectedNode: string): string => {
+  const operationInfo = useOperationInfo(selectedNode);
+  return useIconUri(operationInfo);
 };

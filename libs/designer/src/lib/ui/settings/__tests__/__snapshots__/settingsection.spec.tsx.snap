@@ -12,7 +12,7 @@ exports[`ui/settings/settingsection should construct 1`] = `
       onClick={[Function]}
     >
       <Memo(Icon)
-        ariaLabel="Expand random setting"
+        ariaLabel="Expand Sample Setting Section"
         className="msla-setting-section-header-icon"
         iconName="ChevronRightMed"
         styles={
@@ -27,7 +27,7 @@ exports[`ui/settings/settingsection should construct 1`] = `
       <div
         className="msla-setting-section-header-text"
       >
-        random setting
+        Sample Setting Section
       </div>
     </button>
     <React.Fragment>

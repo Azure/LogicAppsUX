@@ -52,9 +52,12 @@ const initialState: OperationMetadataState = {
   settings: {},
 };
 
+interface AddOperationInfoPayload extends OperationInfo {
+  id: string;
+}
+
 export interface NodeData {
   id: string;
-  operationInfo: OperationInfo;
   nodeInputs: NodeInputs;
   nodeOutputs: NodeOutputs;
   settings: Settings;
@@ -68,15 +71,21 @@ export const operationMetadataSlice = createSlice({
   name: 'operationMetadata',
   initialState,
   reducers: {
+    initializeOperationInfo: (state, action: PayloadAction<AddOperationInfoPayload>) => {
+      const { id, connectorId, operationId } = action.payload;
+      state.operationInfo[id] = { connectorId, operationId };
+    },
     initializeNodes: (state: any, action: PayloadAction<(NodeData | undefined)[]>) => {
-      action.payload.forEach((node) => {
-        if (!node) return;
-        const { id, operationInfo, nodeInputs, nodeOutputs, settings } = node;
-        state.operationInfo[id] = operationInfo;
+      for (const nodeData of action.payload) {
+        if (!nodeData) {
+          return;
+        }
+
+        const { id, nodeInputs, nodeOutputs, settings } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.settings[id] = settings;
-      });
+      }
     },
     updateNodeSettings: (state: any, action: PayloadAction<AddSettingsPayload>) => {
       const { id, settings } = action.payload;
@@ -90,6 +99,6 @@ export const operationMetadataSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeNodes } = operationMetadataSlice.actions;
+export const { initializeNodes, initializeOperationInfo } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

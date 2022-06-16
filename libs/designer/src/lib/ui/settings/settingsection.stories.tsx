@@ -1,5 +1,5 @@
-import type { SettingSectionProps } from '../';
-import { SettingsSection } from '../';
+import type { SettingSectionProps } from './settingsection';
+import { SettingsSection } from './settingsection';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
@@ -59,7 +59,7 @@ settingSection.args = {
     },
     {
       settingType: 'MultiAddExpressionEditor',
-      settingProp: {},
+      settingProp: { onExpressionsChange: () => console.log('function not implemented') },
       visible: true,
     },
     {
