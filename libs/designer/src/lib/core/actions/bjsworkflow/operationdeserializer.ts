@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
-import { isRootNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operationMetadataSlice';
 import { clearPanel } from '../../state/panelSlice';
 import type { Operations } from '../../state/workflowSlice';
+import { isRootNode } from '../../utils/graph';
 import {
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
