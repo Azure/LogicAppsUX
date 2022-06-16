@@ -20,8 +20,6 @@ export default {
 } as ComponentMeta<typeof EditorBreadcrumb>;
 
 const Template: ComponentStory<typeof EditorBreadcrumb> = () => {
-  console.log(store.getState().breadcrumb.breadcrumbItems);
-
   return <EditorBreadcrumb />;
 };
 
