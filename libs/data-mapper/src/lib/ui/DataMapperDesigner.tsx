@@ -47,7 +47,14 @@ export const DataMapperDesigner = () => {
               overflow: 'hidden',
             }}
           >
-            <div className="msla-designer-canvas msla-panel-mode">
+            <div
+              className="msla-designer-canvas msla-panel-mode"
+              style={{
+                // TODO - remove
+                paddingLeft: 400,
+                backgroundColor: '#EDEBE9',
+              }}
+            >
               {!inputSchema && (
                 <AddSchemaPanelButton schemaType={SchemaTypes.INPUT} onSchemaChange={onInputSchemaChange} schemaFilesList={schemaList} />
               )}

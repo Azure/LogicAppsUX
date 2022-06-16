@@ -1,14 +1,9 @@
+import { DocumentCardBasicExample } from './selectSchemaCard';
 import { ChoiceGroup, DefaultButton, Dropdown, initializeIcons, Panel, PrimaryButton, TextField } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
-
-export interface AddSchemaModelProps {
-  schemaType: SchemaTypes;
-  onSchemaChange: (schemaFileName: string) => void;
-  schemaFilesList: string[];
-}
 
 export enum SchemaTypes {
   INPUT = 'input',
@@ -20,12 +15,18 @@ export enum UploadSchemaTypes {
   SELECT_FROM = 'select-from',
 }
 
-initializeIcons();
+export interface AddSchemaModelProps {
+  schemaType: SchemaTypes;
+  onSchemaChange: (schemaFileName: string) => void;
+  schemaFilesList: string[];
+}
 
 const uploadSchemaOptions: IChoiceGroupOption[] = [
   { key: UploadSchemaTypes.UPLOAD_NEW, text: 'Upload new' },
   { key: UploadSchemaTypes.SELECT_FROM, text: 'Select from existing' },
 ];
+
+initializeIcons();
 
 export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ schemaType, onSchemaChange, schemaFilesList }) => {
   const [isPanelOpen, { setTrue: showPanel, setFalse: hidePanel }] = useBoolean(false);
@@ -61,8 +62,10 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
 
   return (
     <div>
-      <DefaultButton text={`${schemaType} schema`} onClick={showPanel} />
+      {/* <DefaultButton text={`${schemaType} schema`} onClick={showPanel} /> */}
+      <DocumentCardBasicExample schemaType={schemaType} onClick={showPanel} />
       <Panel
+        isLightDismiss
         isOpen={isPanelOpen}
         onDismiss={hidePanel}
         headerText={`Add ${schemaType} schema`}
