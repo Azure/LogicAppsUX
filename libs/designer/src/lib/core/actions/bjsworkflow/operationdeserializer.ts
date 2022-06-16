@@ -29,12 +29,12 @@ export interface NodeDataWithManifest extends NodeData {
 
 export const initializeOperationMetadata = async (deserializedWorkflow: DeserializedWorkflow, dispatch: Dispatch): Promise<void> => {
   const promises: Promise<NodeDataWithManifest | undefined>[] = [];
-  const { actionData: operations, graph } = deserializedWorkflow;
+  const { actionData: operations, graph, nodesMetadata } = deserializedWorkflow;
   const operationManifestService = OperationManifestService();
   let triggerNodeId = '';
 
   for (const [operationId, operation] of Object.entries(operations)) {
-    const isTrigger = isRootNode(graph, operationId);
+    const isTrigger = isRootNode(graph, operationId, nodesMetadata);
 
     if (isTrigger) {
       triggerNodeId = operationId;
