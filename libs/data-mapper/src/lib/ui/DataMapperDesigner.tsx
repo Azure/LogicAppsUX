@@ -1,4 +1,4 @@
-import { EditorBreadCrumb } from '../components/breadcrumb/EditorBreadCrumb';
+import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { updateBreadcrumbForSchema } from '../core/state/BreadcrumbSlice';
 import { updateReactFlowForSchema } from '../core/state/ReactFlowSlice';
@@ -64,7 +64,7 @@ export const DataMapperDesigner = () => {
           }}
         >
           <EditorCommandBar />
-          <EditorBreadCrumb />
+          <EditorBreadcrumb />
           <LayerHost
             id={layerHostId}
             style={{
