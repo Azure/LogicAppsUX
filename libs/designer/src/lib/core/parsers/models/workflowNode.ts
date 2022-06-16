@@ -1,4 +1,4 @@
-import { equals, isObject } from '@microsoft-logic-apps/utils';
+import { isObject } from '@microsoft-logic-apps/utils';
 
 export interface WorkflowGraph {
   id: string;
@@ -25,8 +25,4 @@ export const isWorkflowNode = (node: any): node is WorkflowNode => {
 
 export const isWorkflowGraph = (node: any): node is WorkflowGraph => {
   return isObject(node) && typeof node.id === 'string' && typeof node.children === 'object' && typeof node.edges === 'object';
-};
-
-export const isRootNode = (graph: WorkflowGraph, nodeId: string): boolean => {
-  return !graph.edges.some((edge) => equals(edge.target, nodeId));
 };
