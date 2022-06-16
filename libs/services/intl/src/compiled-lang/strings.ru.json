@@ -1531,6 +1531,12 @@
       "value": "Custom Tracking Id"
     }
   ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -2019,6 +2025,12 @@
       "value": "Выбрать"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
   "dWFyfN": [
     {
       "type": 0,
@@ -2077,6 +2089,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Индекс начала подстроки в параметре 1."
+    }
+  ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "Array"
     }
   ],
   "f/lWTW": [
@@ -2631,6 +2649,12 @@
     {
       "type": 0,
       "value": "Требуется. dataURI для декодирования в двоичное представление."
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Content Transfer"
     }
   ],
   "oV0xQ9": [
