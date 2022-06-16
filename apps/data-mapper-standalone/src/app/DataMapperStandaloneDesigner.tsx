@@ -7,6 +7,7 @@ export const DataMapperStandaloneDesigner = () => {
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
   const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
+  // const availableSchemas
 
   return (
     <>

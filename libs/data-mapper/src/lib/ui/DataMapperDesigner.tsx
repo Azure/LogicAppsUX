@@ -28,6 +28,10 @@ export const DataMapperDesigner = () => {
 
   const [nodes, edges] = useLayout();
 
+  // const onSubmit = () => {
+  //   dispatch(setInputSchmea)
+  // }
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div>
