@@ -1,5 +1,5 @@
+import { initialState } from '../../parsers/__test__/mocks/workflowMock';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { initialState } from '../../parsers/models/mocks/workflowMock';
 import reducer, { addNode } from '../workflowSlice';
 
 describe('workflow slice reducers', () => {

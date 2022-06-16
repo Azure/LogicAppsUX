@@ -1,6 +1,6 @@
 import { addWorkflowNode, createNodeWithDefaultSize, insertMiddleWorkflowEdge, setWorkflowEdge } from '../addNodeToWorkflow';
+import type { WorkflowGraph } from '../models/workflowNode';
 import { mockGraph } from './mocks/workflowMock';
-import type { WorkflowGraph } from './workflowNode';
 
 describe('edit workflow', () => {
   let graph: WorkflowGraph;
