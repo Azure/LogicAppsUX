@@ -1,5 +1,5 @@
 import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
-import { isWorkflowNode } from '../parsers/models/workflowNode';
+import { isWorkflowGraph } from '../parsers/models/workflowNode';
 import type { RootState } from '../store';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
@@ -10,17 +10,21 @@ import { useSelector } from 'react-redux';
 const defaultLayoutOptions: Record<string, string> = {
   'elk.algorithm': 'org.eclipse.elk.layered',
   'elk.direction': 'DOWN',
-  'org.eclipse.elk.alignment': 'TOP',
-  'org.eclipse.elk.layered.layering.strategy': 'INTERACTIVE',
-  'org.eclipse.elk.edge.type': 'DIRECTED',
+  'elk.alignment': 'TOP',
+  'elk.layered.layering.strategy': 'INTERACTIVE',
+  'elk.edge.type': 'DIRECTED',
   'elk.layered.unnecessaryBendpoints': 'false',
-  'org.eclipse.elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-  'org.eclipse.elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
-  'elk.layered.spacing.edgeNodeBetweenLayers': '50',
-  'spacing.nodeNodeBetweenLayers': '70',
+  'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+  'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
+  'elk.layered.spacing.edgeNodeBetweenLayers': '40',
+  'elk.layered.spacing.nodeNodeBetweenLayers': '60',
+  'elk.padding': '[top=0,left=16,bottom=16,right=16]',
   // This option allows the first layer children of a graph to be laid out in order of appearance in manifest. This is useful for subgraph ordering, like in Switch nodes.
   'elk.layered.crossingMinimization.semiInteractive': 'true',
 };
+
+const defaultEdgeType = 'buttonEdge';
+const defaultNodeType = 'testNode';
 
 const elkLayout = async (workflowGraph: ElkNode) => {
   const graph = new ELK();
@@ -41,7 +45,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
         id: edge.id,
         target: edge.targets[0],
         source: edge.sources[0],
-        type: 'buttonedge',
+        type: edge.layoutOptions?.['edgeType'] ?? defaultEdgeType,
         data: {
           elkEdge: edge,
         },
@@ -49,12 +53,13 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
     }
 
     if (parent && parent !== 'root') {
+      const typeFromLayout = node.layoutOptions?.['nodeType'] ?? defaultNodeType;
       nodes.push({
         id: node.id,
         position: { x: node.x ?? 0, y: node.y ?? 0 },
         data: { label: node.id },
         parentNode: parent,
-        type: node.children ? 'graphNode' : 'testNode',
+        type: typeFromLayout,
         style: node.children ? { height: node.height, width: node.width } : undefined,
       });
     }
@@ -65,7 +70,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
         position: { x: n.x ?? 0, y: n.y ?? 0 },
         data: { label: n.id },
         parentNode: node.id !== 'root' ? node.id : undefined,
-        type: n.children ? 'graphNode' : 'testNode',
+        type: n.layoutOptions?.['nodeType'] ?? defaultNodeType,
         style: n.children ? { height: n.height, width: n.width } : undefined,
       });
 
@@ -79,28 +84,34 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
 };
 
 const convertWorkflowGraphToElkGraph = (node: WorkflowGraph | WorkflowNode): ElkNode => {
-  if (isWorkflowNode(node)) {
+  if (!isWorkflowGraph(node)) {
     return {
       ...node,
-      children: node.children && node.children.map(convertWorkflowGraphToElkGraph),
+      children: node.children?.map(convertWorkflowGraphToElkGraph),
+      layoutOptions: {
+        nodeType: node?.type ?? defaultNodeType,
+      },
     };
-  }
-  return {
-    ...node,
-    children: node.children && node.children.map(convertWorkflowGraphToElkGraph),
-    edges:
-      node.edges &&
-      node.edges.map((edge) => ({
+  } else {
+    return {
+      ...node,
+      children: node.children?.map(convertWorkflowGraphToElkGraph),
+      edges: node.edges?.map((edge) => ({
         ...edge,
         targets: [edge.target],
         sources: [edge.source],
         target: undefined,
         source: undefined,
+        layoutOptions: {
+          edgeType: edge?.type ?? defaultEdgeType,
+        },
       })),
-    layoutOptions: {
-      'elk.position': `(0, 0)`, // See 'crossingMinimization.semiInteractive' above
-    },
-  };
+      layoutOptions: {
+        'elk.position': `(0, 0)`, // See 'crossingMinimization.semiInteractive' above
+        nodeType: 'graphNode',
+      },
+    };
+  }
 };
 
 export const useLayout = (): [Node[], Edge[]] => {
@@ -117,6 +128,7 @@ export const useLayout = (): [Node[], Edge[]] => {
     elkLayout(elkGraph)
       .then((g) => {
         const [n, e] = convertElkGraphToReactFlow(g);
+        console.log(n);
         setReactFlowNodes(n);
         setReactFlowEdges(e);
       })
