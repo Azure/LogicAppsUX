@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { WorkflowGraph } from '../../core/parsers/models/workflowNode';
+import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
 import { changePanelNode, expandPanel } from '../../core/state/panelSlice';
 import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
@@ -42,7 +42,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
     [readOnly]
   );
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
-  const graph = useWorkflowNode(id) as WorkflowGraph;
+  const graph = useWorkflowNode(id) as WorkflowNode;
   const operationInfo = useOperationInfo(id);
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
@@ -58,7 +58,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
     return null;
   }
 
-  const isEmptyGraph = !graph?.edges && (graph?.children[0] as any).children.length === 0;
+  const isEmptyGraph = !graph?.edges && !(graph?.children?.[0] as any)?.children?.length;
   const normalizedType = node.type.toLowerCase();
 
   const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope'];

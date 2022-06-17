@@ -5,8 +5,8 @@ import { isRootNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operationMetadataSlice';
-import type { Operations } from '../../state/workflowSlice';
 import { clearPanel } from '../../state/panelSlice';
+import type { Operations } from '../../state/workflowSlice';
 import {
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
@@ -29,12 +29,12 @@ export interface NodeDataWithManifest extends NodeData {
 
 export const initializeOperationMetadata = async (deserializedWorkflow: DeserializedWorkflow, dispatch: Dispatch): Promise<void> => {
   const promises: Promise<NodeDataWithManifest | undefined>[] = [];
-  const { actionData: operations, graph } = deserializedWorkflow;
+  const { actionData: operations, graph, nodesMetadata } = deserializedWorkflow;
   const operationManifestService = OperationManifestService();
   let triggerNodeId = '';
 
   for (const [operationId, operation] of Object.entries(operations)) {
-    const isTrigger = isRootNode(graph, operationId);
+    const isTrigger = isRootNode(graph, operationId, nodesMetadata);
 
     if (isTrigger) {
       triggerNodeId = operationId;

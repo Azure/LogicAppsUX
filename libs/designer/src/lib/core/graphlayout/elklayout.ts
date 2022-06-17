@@ -1,5 +1,5 @@
-import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
-import { isWorkflowGraph } from '../parsers/models/workflowNode';
+import type { WorkflowNode } from '../parsers/models/workflowNode';
+import { isWorkflowNode } from '../parsers/models/workflowNode';
 import type { RootState } from '../store';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
@@ -26,10 +26,10 @@ const defaultLayoutOptions: Record<string, string> = {
 const defaultEdgeType = 'buttonEdge';
 const defaultNodeType = 'testNode';
 
-const elkLayout = async (workflowGraph: ElkNode) => {
-  const graph = new ELK();
+const elkLayout = async (graph: ElkNode) => {
+  const elk = new ELK();
 
-  const layout = await graph.layout(JSON.parse(JSON.stringify(workflowGraph)), {
+  const layout = await elk.layout(JSON.parse(JSON.stringify(graph)), {
     layoutOptions: defaultLayoutOptions,
   });
   return layout;
@@ -53,13 +53,12 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
     }
 
     if (parent && parent !== 'root') {
-      const typeFromLayout = node.layoutOptions?.['nodeType'] ?? defaultNodeType;
       nodes.push({
         id: node.id,
         position: { x: node.x ?? 0, y: node.y ?? 0 },
         data: { label: node.id },
         parentNode: parent,
-        type: typeFromLayout,
+        type: node.layoutOptions?.['nodeType'] ?? defaultNodeType,
         style: node.children ? { height: node.height, width: node.width } : undefined,
       });
     }
@@ -83,10 +82,11 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
   return [nodes, edges];
 };
 
-const convertWorkflowGraphToElkGraph = (node: WorkflowGraph | WorkflowNode): ElkNode => {
-  if (!isWorkflowGraph(node)) {
+const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
+  if (isWorkflowNode(node)) {
     return {
       ...node,
+      edges: undefined, // node has no edges
       children: node.children?.map(convertWorkflowGraphToElkGraph),
       layoutOptions: {
         nodeType: node?.type ?? defaultNodeType,
@@ -123,12 +123,12 @@ export const useLayout = (): [Node[], Edge[]] => {
     if (!workflowGraph) {
       return;
     }
-
+    console.log('WFG', workflowGraph);
     const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
+    console.log('ELK', elkGraph);
     elkLayout(elkGraph)
       .then((g) => {
         const [n, e] = convertElkGraphToReactFlow(g);
-        console.log(n);
         setReactFlowNodes(n);
         setReactFlowEdges(e);
       })

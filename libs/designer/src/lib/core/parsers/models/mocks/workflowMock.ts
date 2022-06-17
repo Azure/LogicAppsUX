@@ -1,44 +1,32 @@
 import type { WorkflowState } from '../../../state/workflowSlice';
-import type { WorkflowGraph } from '../workflowNode';
+import type { WorkflowNode, WorkflowNodeType } from '../workflowNode';
 
 export const initialState: WorkflowState = {
   graph: {
     id: 'root',
     children: [],
     edges: [],
+    type: 'graphNode',
   },
   operations: {},
   nodesMetadata: {},
 };
 
-export const mockGraph: WorkflowGraph = {
+const createMockNode = (id: string) => ({
+  id,
+  type: 'testNode' as WorkflowNodeType,
+  height: 67,
+  width: 200,
+});
+
+export const mockGraph: WorkflowNode = {
   id: 'root',
-  children: [
-    {
-      id: 'manual',
-      height: 67,
-      width: 200,
-    },
-    {
-      id: 'Get_rows',
-      height: 67,
-      width: 200,
-    },
-    {
-      id: 'Initialize_variable',
-      height: 102,
-      width: 200,
-    },
-    {
-      id: 'Response',
-      height: 67,
-      width: 200,
-    },
-  ],
+  type: 'graphNode',
+  children: [createMockNode('Manual'), createMockNode('Get_rows'), createMockNode('Initialize_variable'), createMockNode('Response')],
   edges: [
     {
-      id: 'manual-Get_rows',
-      source: 'manual',
+      id: 'Manual-Get_rows',
+      source: 'Manual',
       target: 'Get_rows',
     },
     {

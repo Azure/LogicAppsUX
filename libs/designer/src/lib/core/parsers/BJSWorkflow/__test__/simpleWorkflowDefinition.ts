@@ -1,5 +1,5 @@
 import type { Operations, NodesMetadata } from '../../../state/workflowSlice';
-import type { WorkflowGraph } from '../../models/workflowNode';
+import type { WorkflowNode } from '../../models/workflowNode';
 
 export const simpleWorkflowDefinitionInput = {
   $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
@@ -49,7 +49,7 @@ export const simpleWorkflowDefinitionInput = {
   },
 };
 
-export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowGraph; actionData: Operations; nodesMetadata: NodesMetadata } = {
+export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowNode; actionData: Operations; nodesMetadata: NodesMetadata } = {
   graph: {
     id: 'root',
     children: [
