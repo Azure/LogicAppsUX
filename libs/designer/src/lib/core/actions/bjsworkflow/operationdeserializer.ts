@@ -66,19 +66,27 @@ const initializeOperationDetailsForManifest = async (
   isTrigger: boolean,
   dispatch: Dispatch
 ): Promise<NodeDataWithManifest | undefined> => {
-  const operationInfo = await getOperationInfo(nodeId, operation);
+  try {
+    const operationInfo = await getOperationInfo(nodeId, operation);
 
-  if (operationInfo) {
-    const manifest = await getOperationManifest(operationInfo);
+    if (operationInfo) {
+      const manifest = await getOperationManifest(operationInfo);
 
-    dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
+      dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
 
-    const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
-    const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);
-    const settings = getOperationSettings(operation, isTrigger, operation.type, manifest);
-    return { id: nodeId, nodeInputs, nodeOutputs, settings, manifest };
+      const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
+      const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);
+      const settings = getOperationSettings(operation, isTrigger, operation.type, manifest);
+      return { id: nodeId, nodeInputs, nodeOutputs, settings, manifest };
+    }
+
+    return;
+  } catch (error) {
+    const errorMessage = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
+    console.log(errorMessage);
+
+    return;
   }
-  return;
 };
 
 const getInputParametersFromManifest = (nodeId: string, manifest: OperationManifest, stepDefinition: any): NodeInputs => {

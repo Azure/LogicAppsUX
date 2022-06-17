@@ -45,8 +45,8 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
   const graph = useWorkflowNode(id) as WorkflowGraph;
   const operationInfo = useOperationInfo(id);
-  const brandColor = useBrandColor(operationInfo);
-  const iconUri = useIconUri(operationInfo);
+  const brandColorResult = useBrandColor(operationInfo);
+  const iconUriResult = useIconUri(operationInfo);
   const dispatch = useDispatch<AppDispatch>();
   const nodeClick = useCallback(() => {
     if (isCollapsed) {
@@ -69,8 +69,8 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
       <div className="msla-scope-v2 msla-scope-card">
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <ScopeCard
-          brandColor={brandColor}
-          icon={iconUri}
+          brandColor={brandColorResult.result}
+          icon={iconUriResult.result}
           collapsed={false}
           drag={drag}
           draggable={!readOnly}
@@ -78,6 +78,7 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           isDragging={isDragging}
           id={id}
           isMonitoringView={isMonitoringView}
+          isLoading={iconUriResult.isLoading}
           title={label}
           readOnly={readOnly}
           onClick={nodeClick}
