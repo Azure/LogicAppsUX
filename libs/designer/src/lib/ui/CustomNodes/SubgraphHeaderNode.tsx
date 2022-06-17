@@ -53,7 +53,7 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
             <DropZone graphId={id} parent={metadata?.graphId ?? ''} />
           </div>
         ) : (
-          <p className="no-actions-text">NO ACTIONS</p>
+          <p className="no-actions-text">No Actions</p>
         )
       ) : null}
     </div>

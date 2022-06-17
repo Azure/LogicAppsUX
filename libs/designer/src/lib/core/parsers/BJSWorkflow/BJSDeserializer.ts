@@ -125,7 +125,15 @@ const buildGraphFromActions = (
     }
 
     nodes.push(node);
+
+    // // Place empty footer node, to add more nodes
+    // if (!(node.edges?.find((edge) => edge.source === actionName))) {
+    //   const footerId = `${actionName}-footer`
+    //   nodes.push(createWorkflowNode(footerId, 'testNode'))
+    //   edges.push(createWorkflowEdge(actionName, footerId))
+    // }
   }
+
   return [nodes, edges, allActions, nodesMetadata];
 };
 
@@ -147,6 +155,7 @@ const processScopeActions = (
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
 
+  // For use on scope nodes with a single flow
   const applyActions = (graphId: string, actions?: LogicAppsV2.Actions) => {
     const [graph, operations, metadata] = processNestedActions(graphId, actions);
 
@@ -161,6 +170,7 @@ const processScopeActions = (
     }
   };
 
+  // For use on scope nodes with multiple flows
   const applySubgraphActions = (
     subgraphId: string,
     actions: LogicAppsV2.Actions | undefined,
