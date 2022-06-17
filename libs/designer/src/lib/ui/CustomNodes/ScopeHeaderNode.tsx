@@ -1,7 +1,9 @@
 import { changePanelNode, expandPanel } from '../../core/state/panelSlice';
 import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
+import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
+import { DropZone } from '../connections/dropzone';
 import { ScopeHeaderCard } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
 import { useDrag } from 'react-dnd';
@@ -45,6 +47,7 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
   const operationInfo = useOperationInfo(scopeId);
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
+  const childEdges = useEdgesByParent(id);
   const dispatch = useDispatch<AppDispatch>();
   const nodeClick = useCallback(() => {
     if (isCollapsed) {
@@ -62,24 +65,35 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
   const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope'];
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
-      <div className="msla-scope-card">
-        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-        <ScopeHeaderCard
-          brandColor={brandColor}
-          icon={iconUri}
-          collapsed={false}
-          drag={drag}
-          draggable={!readOnly}
-          dragPreview={dragPreview}
-          isDragging={isDragging}
-          id={scopeId}
-          isMonitoringView={isMonitoringView}
-          title={scopeId}
-          readOnly={readOnly}
-          onClick={nodeClick}
-        />
-        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
-      </div>
+      <>
+        <div className="msla-scope-card">
+          <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+          <ScopeHeaderCard
+            brandColor={brandColor}
+            icon={iconUri}
+            collapsed={false}
+            drag={drag}
+            draggable={!readOnly}
+            dragPreview={dragPreview}
+            isDragging={isDragging}
+            id={scopeId}
+            isMonitoringView={isMonitoringView}
+            title={scopeId}
+            readOnly={readOnly}
+            onClick={nodeClick}
+          />
+          <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+        </div>
+        {childEdges.length === 0 ? (
+          !readOnly ? (
+            <div className={'edge-drop-zone-container'}>
+              <DropZone graphId={scopeId} parent={undefined} />
+            </div>
+          ) : (
+            <p className="no-actions-text">NO ACTIONS</p>
+          )
+        ) : null}
+      </>
     );
   } else {
     return <h1>{'GENERIC'}</h1>;

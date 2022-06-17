@@ -1,11 +1,18 @@
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
+import { useReadOnly } from '../state/selectors/designerOptionsSelector';
 import type { RootState } from '../store';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useEffect, useState } from 'react';
 import type { Edge, Node } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
+
+export const layerSpacing = {
+  default: '50',
+  readOnly: '32',
+  onlyEdge: '16',
+};
 
 const defaultLayoutOptions: Record<string, string> = {
   'elk.algorithm': 'org.eclipse.elk.layered',
@@ -17,21 +24,29 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
   'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
   'elk.layered.spacing.edgeEdgeBetweenLayers': '0',
-  'elk.layered.spacing.edgeNodeBetweenLayers': '50',
-  'elk.layered.spacing.nodeNodeBetweenLayers': '50',
+  'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.default,
+  'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.default,
   'elk.padding': '[top=0,left=16,bottom=16,right=16]',
   // This option allows the first layer children of a graph to be laid out in order of appearance in manifest. This is useful for subgraph ordering, like in Switch nodes.
   'elk.layered.crossingMinimization.semiInteractive': 'true',
 };
 
+const readOnlyOptions: Record<string, string> = {
+  'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.readOnly,
+  'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.readOnly,
+};
+
 const defaultEdgeType = 'buttonEdge';
 const defaultNodeType = 'testNode';
 
-const elkLayout = async (graph: ElkNode) => {
+const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
   const elk = new ELK();
 
   const layout = await elk.layout(JSON.parse(JSON.stringify(graph)), {
-    layoutOptions: defaultLayoutOptions,
+    layoutOptions: {
+      ...defaultLayoutOptions,
+      ...(readOnly && readOnlyOptions),
+    },
   });
   return layout;
 };
@@ -110,6 +125,10 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       layoutOptions: {
         'elk.position': `(0, 0)`, // See 'crossingMinimization.semiInteractive' above
         nodeType: 'graphNode',
+        ...(node.edges?.[0]?.type === 'onlyEdge' && {
+          'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.onlyEdge,
+          'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.onlyEdge,
+        }),
       },
     };
   }
@@ -120,12 +139,14 @@ export const useLayout = (): [Node[], Edge[]] => {
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
   const workflowGraph = useSelector((state: RootState) => state.workflow.graph);
 
+  const readOnly = useReadOnly();
+
   useEffect(() => {
     if (!workflowGraph) {
       return;
     }
     const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
-    elkLayout(elkGraph)
+    elkLayout(elkGraph, readOnly)
       .then((g) => {
         const [n, e] = convertElkGraphToReactFlow(g);
         setReactFlowNodes(n);

@@ -47,10 +47,14 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>
-      {childEdges.length === 0 && !isAddCase && !readOnly ? (
-        <div className={'edge-drop-zone-container'}>
-          <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
-        </div>
+      {childEdges.length === 0 && !isAddCase ? (
+        !readOnly ? (
+          <div className={'edge-drop-zone-container'}>
+            <DropZone graphId={id} parent={metadata?.graphId ?? ''} />
+          </div>
+        ) : (
+          <p className="no-actions-text">NO ACTIONS</p>
+        )
       ) : null}
     </div>
   );
