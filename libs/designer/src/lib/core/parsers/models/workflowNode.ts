@@ -12,13 +12,13 @@ export interface WorkflowNode {
   width?: number; // Action Nodes
 }
 
-export type WorkflowNodeEdge = 'buttonEdge' | 'onlyEdge' | 'hiddenEdge';
+export type WorkflowEdgeType = 'buttonEdge' | 'onlyEdge' | 'hiddenEdge';
 
 export interface WorkflowEdge {
   id: string;
   source: string;
   target: string;
-  type?: WorkflowNodeEdge;
+  type?: WorkflowEdgeType;
 }
 
 export const isWorkflowNode = (node: WorkflowNode) => node.type !== 'graphNode';

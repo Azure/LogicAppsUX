@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 import type { Operations, NodesMetadata } from '../../state/workflowSlice';
-import type { WorkflowEdge, WorkflowNode } from '../models/workflowNode';
+import type { WorkflowEdge, WorkflowEdgeType, WorkflowNode, WorkflowNodeType } from '../models/workflowNode';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { equals, isNullOrEmpty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
@@ -77,21 +77,22 @@ const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAp
   return equals(action.type, 'switch');
 };
 
-// THIS IS WHERE THE INITIAL NODE SIZE IS SET
-const createWorkflowNode = (id: string, type: any): WorkflowNode => {
+// INITIAL NODE SIZE IS SET HERE
+const createWorkflowNode = (id: string, type: WorkflowNodeType): WorkflowNode => {
   return {
     id,
     type,
-    height: 20,
-    width: 80,
+    height: 40,
+    width: 200,
   };
 };
 
-const createWorkflowEdge = (source: string, target: string): WorkflowEdge => {
+const createWorkflowEdge = (source: string, target: string, type?: WorkflowEdgeType): WorkflowEdge => {
   return {
     id: `${source}-${target}`,
     source,
     target,
+    type: type ?? 'buttonEdge',
   };
 };
 
@@ -105,9 +106,7 @@ const buildGraphFromActions = (
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
   for (const [actionName, action] of Object.entries(actions)) {
-    const node = isScopeAction(action)
-      ? createWorkflowNode(actionName, hidden ? 'hiddenNode' : 'graphNode')
-      : createWorkflowNode(actionName, 'testNode');
+    const node = isScopeAction(action) ? createWorkflowNode(actionName, 'graphNode') : createWorkflowNode(actionName, 'testNode');
 
     allActions[actionName] = { ...action };
     nodesMetadata[actionName] = { graphId };
@@ -118,8 +117,9 @@ const buildGraphFromActions = (
     }
 
     if (isScopeAction(action)) {
-      const [scopeGraphs, scopeActions, scopeNodesMetadata] = processScopeActions(graphId, actionName, action);
-      node.children = [...scopeGraphs];
+      const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(actionName, action);
+      node.children = scopeNodes;
+      node.edges = scopeEdges;
       allActions = { ...allActions, ...scopeActions };
       nodesMetadata = { ...nodesMetadata, ...scopeNodesMetadata };
     }
@@ -130,79 +130,79 @@ const buildGraphFromActions = (
 };
 
 const processScopeActions = (
-  graphId: string,
+  // graphId: string,
   actionName: string,
   action: LogicAppsV2.ScopeAction
-): [WorkflowNode[], Operations, NodesMetadata] => {
-  // TODO: Create Header Node
-  const rootGraph: WorkflowNode = {
-    id: `${actionName}-graphContainer`,
-    type: 'graphNode',
-    children: [],
-    edges: [],
-  };
+): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
+  // const rootGraphId = `${actionName}-graphContainer`;
+  const nodes: WorkflowNode[] = [];
+  const edges: WorkflowEdge[] = [];
 
-  const scopeHeaderNode = createWorkflowNode(`${actionName}-scope`, 'scopeHeader');
-  const scopeGraphNode = createWorkflowNode(`${actionName}-graph`, 'hiddenNode');
-  scopeGraphNode.children = [];
+  const scopeId = `${actionName}-scopeHeader`;
+  const scopeHeaderNode = createWorkflowNode(scopeId, 'scopeHeader');
+  // const scopeGraphNode = createWorkflowNode(`${actionName}-graph`, 'hiddenNode');
+  // scopeGraphNode.children = [];
+  nodes.push(scopeHeaderNode);
 
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
 
-  const applySubgraphActions = (graphId: string, actions?: LogicAppsV2.Actions, subgraphType?: SubgraphType, subgraphTitle?: string) => {
+  const applyActions = (graphId: string, actions?: LogicAppsV2.Actions) => {
     const [graph, operations, metadata] = processNestedActions(graphId, actions);
-    if (!rootGraph?.edges) rootGraph.edges = [];
-    if (!subgraphType) scopeGraphNode.type = 'hiddenNode';
 
-    scopeGraphNode.children?.push(graph);
+    nodes.push(graph);
+    edges.push(...(graph?.edges ?? []));
     allActions = { ...allActions, ...operations };
     nodesMetadata = { ...nodesMetadata, ...metadata };
 
-    if (subgraphType) {
-      const scopeId = `${actionName}-scope`;
-      const rootId = subgraphTitle ?? `${actionName}-${subgraphType}`;
-      const subgraphHeaderNode = createWorkflowNode(rootId, 'subgraphHeader');
-
-      const isAddCase = subgraphType === 'SWITCH-ADD-CASE';
-
-      // Connect scopeHeader to subgraphHeader
-      const scopeChildEdge = createWorkflowEdge(scopeId, rootId);
-      scopeChildEdge.type = isAddCase ? 'hiddenEdge' : 'onlyEdge';
-      rootGraph.edges.push(scopeChildEdge);
-      // Connect subgraphHeader to first child
-      if (graph.children?.[0]) {
-        rootGraph.edges.push(createWorkflowEdge(rootId, graph.children[0].id));
-      }
-
-      graph.children = [subgraphHeaderNode, ...(graph.children ?? [])];
-      nodesMetadata = { ...nodesMetadata, [rootId]: { graphId, subgraphType } };
+    // Connect scopeHeader to first child
+    if (graph.children?.[0]) {
+      edges.push(createWorkflowEdge(scopeId, graph.children[0].id));
     }
+  };
+
+  const applySubgraphActions = (
+    subgraphId: string,
+    actions: LogicAppsV2.Actions | undefined,
+    subgraphType: SubgraphType,
+    subgraphTitle?: string
+  ) => {
+    const [graph, operations, metadata] = processNestedActions(subgraphId, actions);
+
+    nodes.push(graph);
+    allActions = { ...allActions, ...operations };
+    nodesMetadata = { ...nodesMetadata, ...metadata };
+
+    const rootId = subgraphTitle ?? `${actionName}-${subgraphType}`;
+    const subgraphHeaderNode = createWorkflowNode(rootId, 'subgraphHeader');
+
+    const isAddCase = subgraphType === 'SWITCH-ADD-CASE';
+
+    // Connect scopeHeader to subgraphHeader
+    edges.push(createWorkflowEdge(scopeId, subgraphId, 'onlyEdge'));
+    // Connect subgraphHeader to first child
+    if (graph.children?.[0]) {
+      edges.push(createWorkflowEdge(rootId, graph.children[0].id));
+    }
+
+    graph.children = [subgraphHeaderNode, ...(graph.children ?? [])];
+    nodesMetadata = { ...nodesMetadata, [rootId]: { graphId: subgraphId, subgraphType } };
   };
 
   if (isSwitchAction(action)) {
     for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
-      applySubgraphActions(`${actionName}-${caseName}Actions`, caseAction.actions, 'SWITCH-CASE', caseName);
+      applySubgraphActions(`${actionName}-${caseName}`, caseAction.actions, 'SWITCH-CASE', caseName);
     }
     applySubgraphActions(`${actionName}-addCase`, undefined, 'SWITCH-ADD-CASE');
-    applySubgraphActions(`${actionName}-defaultActions`, action.default?.actions, 'SWITCH-DEFAULT');
+    applySubgraphActions(`${actionName}-defaultCase`, action.default?.actions, 'SWITCH-DEFAULT');
   } else if (isIfAction(action)) {
     applySubgraphActions(`${actionName}-actions`, action.actions, 'CONDITIONAL-TRUE');
     applySubgraphActions(`${actionName}-elseActions`, action.else?.actions, 'CONDITIONAL-FALSE');
   } else {
-    applySubgraphActions(`${actionName}-actions`, action.actions);
+    applyActions(`${actionName}-actions`, action.actions);
   }
 
-  if (scopeGraphNode.children?.length === 1) {
-    // Hide graph container UI
-    const scopeChildEdge = createWorkflowEdge(`${actionName}-scope`, scopeGraphNode.children[0].id);
-    scopeChildEdge.type = 'hiddenEdge';
-    if (!rootGraph?.edges) rootGraph.edges = [];
-    rootGraph.edges.push(scopeChildEdge);
-  }
-
-  rootGraph.children = [scopeHeaderNode, scopeGraphNode];
-
-  return [[rootGraph], allActions, nodesMetadata];
+  return [nodes, edges, allActions, nodesMetadata];
 };
 
 const processNestedActions = (graphId: string, actions: LogicAppsV2.Actions | undefined): [WorkflowNode, Operations, NodesMetadata] => {
