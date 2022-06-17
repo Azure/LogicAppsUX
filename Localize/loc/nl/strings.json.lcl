@@ -36,6 +36,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+xiT4Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Pagination]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Paginering]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";/I/U8L" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Body]]></Val>
@@ -59,6 +68,15 @@
           <Val><![CDATA[Returns the elements in the array starting at index Count]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[De elementen in de matrix die beginnen bij de index Aantal worden geretourneerd]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";/WW7If" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[True]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Waar]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -135,11 +153,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";0KMjv6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Tracking]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bijhouden]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";0R2D5l" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a binary representation of a URI encoded string]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Er wordt een binaire weergave van een tekenreeks met URI-codering geretourneerd]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";0Vzp0l" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Collapse]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Samenvouwen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -327,6 +363,33 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";1VRGCF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Specify one or more expressions which must be true for the trigger to fire.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geef een of meer expressies op die waar moeten zijn om de trigger te activeren.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";1ejxkP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Secure Inputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Beveiligde invoerwaarden]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";1htSs7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Off]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Uit]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";1jhzOM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The object to check if it is less than value being compared to.]]></Val>
@@ -372,6 +435,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";2Cdt4p" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Schakel splitOn in om een exemplaar van de werkstroom per item te starten in de geselecteerde matrix. Elk exemplaar kan ook een afzonderlijke tracerings-id hebben.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";2K2fAj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[End time]]></Val>
@@ -399,6 +471,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";2tTQ0A" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[On]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";33+WHG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Identifier]]></Val>
@@ -422,6 +503,15 @@
           <Val><![CDATA[Faulted]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Mislukt]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";3qG1VT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Tracked Properties]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bijgehouden eigenschappen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -741,6 +831,33 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";8j+a0n" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Met het asynchrone patroon blijft de Logic Apps-engine navragen bij de URL die is opgegeven in de locatieheader van het antwoord tot een definitieve status wordt bereikt, als door de externe server wordt aangegeven dat de aanvraag is geaccepteerd voor verwerking met een 202 (Accepted)-antwoord.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8ubEPi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Request Options]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aanvraagopties]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8wlfdo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Suppress workflow headers on response]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Werkstroomheaders onderdrukken bij antwoord]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";8wr0zO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Adds an integer number of days to a string timestamp passed in]]></Val>
@@ -849,6 +966,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";BBD8Em" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Key]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sleutel]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";BCAnZP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used.]]></Val>
@@ -908,6 +1034,15 @@
           <Val><![CDATA[Required. The object to check if it is greater than comparing object.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vereist. Het object dat moet worden gecontroleerd als dit groter is dan de waarde van het vergelijkingsobject.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";C4NQ1J" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Items die voldoen aan de opgegeven drempelwaarde, ophalen door het vervolgtoken te volgen. Vanwege de paginagrootte van de connector kan het aantal geretourneerde items de drempelwaarde overschrijden.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1002,6 +1137,24 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";FDWfqM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Secure Outputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Beveiligde uitvoerwaarden]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FGS2fS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[has failed]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[is mislukt]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";FN5zHQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a section of a string defined by the start index and the end index]]></Val>
@@ -1011,11 +1164,38 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";FNbA9+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Expand]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Uitvouwen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";FS+/Tb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the body for a part in a multipart output of the trigger]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[De hoofdtekst wordt gedeeltelijk geretourneerd in een uitvoer van meerdere delen van de trigger]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FUhNu4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Split On]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Splitsen op]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FUuFlC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Default]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Standaard]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1212,6 +1392,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";HXLutF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Key]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sleutel]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";HfrUId" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select a card to see the content]]></Val>
@@ -1244,6 +1433,15 @@
           <Val><![CDATA[Returns the first non-null object in the arguments passed in]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Het eerste object dat niet null is in de ingevoerde argumenten wordt geretourneerd]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";J/Kz1j" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Asynchronous Pattern]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Asynchroon patroon]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1325,6 +1523,15 @@
           <Val><![CDATA[Required. The numeric format string.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vereist. De tekenreeks met een numerieke notatie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";JzqgNM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set the tracking id for the run. For split-on this tracking id is for the initiating request.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Stel de tracerings-id voor de uitvoering in. Bij splitOn is deze tracerings-id is voor de initiatie-aanvraag.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1433,6 +1640,15 @@
           <Val><![CDATA[Required. The number to add to Summand 2.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vereist. Het getal dat moet worden opgeteld bij opteltal 2.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MCQODe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Secure outputs of the operation and references of output properties.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Uitvoerwaarden van de bewerking en verwijzingen naar uitvoereigenschappen beveiligen.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1667,6 +1883,15 @@
           <Val><![CDATA[Required. The number of seconds to add. Can be negative to subtract seconds.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vereist. Het aantal seconden dat moet worden opgeteld. Kan negatief zijn om seconden af te trekken.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PXa0D4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[False]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Onwaar]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1935,6 +2160,24 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";SmCQys" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Custom Tracking Id]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aangepaste tracerings-id]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";T0BFpC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set the tracking id for the run. For split-on this tracking id is for the initiating request.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Stel de tracerings-id voor de uitvoering in. Bij splitOn is deze tracerings-id is voor de initiatie-aanvraag.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";T7zcR6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The expressions that must be true.]]></Val>
@@ -2066,6 +2309,24 @@
           <Val><![CDATA[Content not shown due to security configuration.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Kan de inhoud niet weergegeven vanwege de beveiligingsconfiguratie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Ur+wph" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Click to delete item]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Klik om het item te verwijderen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";V+/c21" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[General]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Algemeen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2250,6 +2511,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";XsktQ/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Limit Logic Apps to not include workflow metadata headers in the response.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Een beperking voor Logic Apps instellen om te voorkomen dat het antwoord metagegevens van de werkstroom bevat.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";XtuP5e" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Math functions]]></Val>
@@ -2340,6 +2610,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ZM1mRy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Concurrency Control]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Gelijktijdigheid beheren]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ZME5hh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the day of month component of a string timestamp]]></Val>
@@ -2403,11 +2682,38 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";aK4iLW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Data Handling]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Gegevensverwerking]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";b9/1dK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Waarde]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";bTrk+S" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The object to check if it is greater than or equal to value being compared to.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vereist. Het object dat moet worden gecontroleerd als dit groter dan of gelijk is aan de vergelijkingswaarde.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";bWBMhe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Logic App-exemplaren worden standaard tegelijkertijd of parallel uitgevoerd. Met dit besturingselement wordt gewijzigd hoe nieuwe uitvoeringen in de wachtrij worden opgeslagen. Dit kan na inschakelen niet worden gewijzigd. Als u zoveel mogelijk parallelle exemplaren wilt uitvoeren, laat u dit besturingselement uitgeschakeld. Als u het aantal parallelle uitvoeringen wilt beperken, schakelt u dit besturingselement in en selecteert u een limiet. Als u opeenvolgend wilt uitvoeren, selecteert u 1 als limiet.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2556,6 +2862,21 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";dSTRb/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";dWFyfN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Secure inputs of the operation.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Beveiligde invoerwaarden van de bewerking.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";dhvk0u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a string representation of a base 64 encoded string]]></Val>
@@ -2637,6 +2958,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";euC/DV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Array]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Matrix]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";f/lWTW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The objects to check for null.]]></Val>
@@ -2678,6 +3008,15 @@
           <Val><![CDATA[Ignored]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Genegeerd]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";g0a4Qe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Waarde]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2750,6 +3089,15 @@
           <Val><![CDATA[Conversion functions]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Conversiefuncties]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";gWRF8m" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Trigger Conditions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Triggervoorwaarden]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2838,11 +3186,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";i/b3Ko" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Asynchronous Response]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Asynchroon antwoord]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";i1cwra" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Redo]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Opnieuw]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";i4C4aB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Networking]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Networking]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3009,6 +3375,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";juR40n" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Duration]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Duur]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";k/oqFL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The base64 encoded string.]]></Val>
@@ -3117,6 +3492,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";lcVG4C" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[is skipped]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[is overgeslagen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";lgs5sf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Stateless run mode:]]></Val>
@@ -3180,6 +3564,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";mOr9ll" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[De maximale duur voor één uitgaande aanvraag van deze actie. Als de aanvraag na het uitvoeren van nieuwe pogingen niet binnen deze limiet is voltooid, mislukt de actie.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";mPakaD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Url encodes the input string]]></Val>
@@ -3194,6 +3587,15 @@
           <Val><![CDATA[Required. The string to convert to lower casing. If a character in the string does not have a lowercase equivalent, the character is included unchanged in the returned string.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vereist. De tekenreeks die moet worden geconverteerd naar kleine letters. Als een teken in de tekenreeks geen equivalent voor kleine letters heeft, wordt het teken ongewijzigd opgenomen in de geretourneerde tekenreeks.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";mjS/k1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Limit Logic Apps to not include workflow metadata headers in the outgoing request.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Een beperking voor Logic Apps instellen om te voorkomen dat de uitgaande aanvraag headers met metagegevens van de werkstroom bevat.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3230,6 +3632,15 @@
           <Val><![CDATA[Required. The name of the property to remove.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vereist. De naam van de eigenschap die moet worden verwijderd.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";nZ4nLn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Suppress workflow headers]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Werkstroomheaders onderdrukken]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3284,6 +3695,15 @@
           <Val><![CDATA[Required. The dataURI to decode into a binary representation.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vereist. De gegevens-URI die moet worden gedecodeerd naar een binaire indeling.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";oLtwMw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Content Transfer]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Inhoudsoverdracht]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3387,6 +3807,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ptkf0D" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Security]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Beveiliging]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";q/+Uex" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns an XML node, nodeset or value as JSON from the provided XPath expression]]></Val>
@@ -3437,6 +3866,15 @@
           <Val><![CDATA[Checks if the string ends with a value (case-insensitive, invariant culture)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Er wordt gecontroleerd of de tekenreeks eindigt op een waarde (niet-hoofdlettergevoelig, niet-cultuurgebonden)]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";qPUX59" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[is successful]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[is voltooid]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3525,6 +3963,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";qrxi0L" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Met een asynchroon antwoord kan de logische app antwoorden met een 202-melding (Geaccepteerd) om aan te geven dat het verzoek wordt verwerkt. Er wordt een locatieheader verstrekt om de eindstatus op te halen.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";r43nMc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Undo]]></Val>
@@ -3597,11 +4044,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";s7nGyC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Delete]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Verwijderen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";sDkAVZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns an array of values matching the key name from form-data or form-encoded trigger output]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Er wordt een matrix van waarden geretourneerd die overeenkomen met de sleutelnaam van de triggeruitvoer van formuliergegevens of formuliercodes]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";sW47JR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Degree of Parallelism]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Niveau van parallelle uitvoering]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3620,6 +4085,15 @@
           <Val><![CDATA[Required. The collection to check if it is empty.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vereist. De verzameling waarvoor moet worden gecontroleerd of deze leeg is.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";scmyvO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Action Timeout]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Actietime-out]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3777,6 +4251,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";uZH8Qs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Beperk de maximale duur tussen herhaalde pogingen en asynchrone antwoorden voor deze actie. Opmerking: hiermee wordt de time-out van de aanvraag van één aanvraag niet gewijzigd.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";uc/PoD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The number of time units the desired time is in the past.]]></Val>
@@ -3854,6 +4337,15 @@
           <Val><![CDATA[Required. The name of the action whose outputs you want.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vereist. De naam van de actie met de gewenste uitvoer.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vcBAuU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[has timed out]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[heeft een time-out gehad]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3989,6 +4481,15 @@
           <Val><![CDATA[Editor Input]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Editor-invoer]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";xQQ9ko" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Threshold]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Drempelwaarde]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
