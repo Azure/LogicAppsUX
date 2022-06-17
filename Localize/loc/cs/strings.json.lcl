@@ -36,6 +36,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+xiT4Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Pagination]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Stránkování]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";/I/U8L" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Body]]></Val>
@@ -59,6 +68,15 @@
           <Val><![CDATA[Returns the elements in the array starting at index Count]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vrátí prvek pole, který začíná na indexu Počet.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";/WW7If" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[True]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pravda]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -135,11 +153,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";0KMjv6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Tracking]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sledování]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";0R2D5l" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a binary representation of a URI encoded string]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vrátí binární reprezentaci řetězce zakódovaného jako identifikátor URI.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";0Vzp0l" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Collapse]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sbalit]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -333,6 +369,33 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";1VRGCF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Specify one or more expressions which must be true for the trigger to fire.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zadejte alespoň jeden výraz, který musí být true, aby se trigger aktivoval.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";1ejxkP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Secure Inputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zabezpečit vstupy]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";1htSs7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Off]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vypnuto]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";1jhzOM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The object to check if it is less than value being compared to.]]></Val>
@@ -378,6 +441,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";2Cdt4p" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pokud chcete spustit instanci pracovního postupu pro jednotlivé položky ve vybraném poli, povolte dělení. Každá instance navíc může mít své vlastní ID pro sledování.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";2K2fAj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[End time]]></Val>
@@ -405,6 +477,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";2tTQ0A" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[On]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zapnuto]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";33+WHG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Identifier]]></Val>
@@ -428,6 +509,15 @@
           <Val><![CDATA[Faulted]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[S chybou]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";3qG1VT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Tracked Properties]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sledované vlastnosti]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -747,6 +837,33 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";8j+a0n" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pokud u asynchronního zpracování vzdálený server označí přijetí žádosti o zpracování pomocí odpovědi 202 (Přijato), modul Logic Apps bude i nadále pokračovat v cyklickém dotazování adresy URL zadané v hlavičce umístění odpovědi, dokud se nedosáhne konečného stavu.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8ubEPi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Request Options]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Možnosti žádosti]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8wlfdo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Suppress workflow headers on response]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Potlačit hlavičky pracovního postupu v odpovědi]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";8wr0zO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Adds an integer number of days to a string timestamp passed in]]></Val>
@@ -855,6 +972,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";BBD8Em" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Key]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Klíč]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";BCAnZP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used.]]></Val>
@@ -914,6 +1040,15 @@
           <Val><![CDATA[Required. The object to check if it is greater than comparing object.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší než porovnávaný objekt.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";C4NQ1J" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Načtěte položky, aby se splnila zadaná prahová hodnota tak, že se bude následovat token pro pokračování. Kvůli velikosti stránky konektoru může počet vrácených položek překročit prahovou hodnotu.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1008,6 +1143,24 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";FDWfqM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Secure Outputs]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zabezpečit výstupy]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FGS2fS" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[has failed]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[neúspěšné]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";FN5zHQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a section of a string defined by the start index and the end index]]></Val>
@@ -1017,11 +1170,38 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";FNbA9+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Expand]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Rozbalit]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";FS+/Tb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the body for a part in a multipart output of the trigger]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vrátí text pro určitou část ve výstupu triggeru s několika částmi.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FUhNu4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Split On]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Rozdělit v]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";FUuFlC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Default]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Výchozí]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1224,6 +1404,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";HXLutF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Key]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Klíč]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";HfrUId" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please select a card to see the content]]></Val>
@@ -1256,6 +1445,15 @@
           <Val><![CDATA[Returns the first non-null object in the arguments passed in]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vrátí první objekt v předaných argumentech, který není null.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";J/Kz1j" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Asynchronous Pattern]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Asynchronní zpracování]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1337,6 +1535,15 @@
           <Val><![CDATA[Required. The numeric format string.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Povinné. Číselný řetězec formátu]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";JzqgNM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set the tracking id for the run. For split-on this tracking id is for the initiating request.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nastavte ID pro sledování běhu. V případě dělení toto ID pro sledování slouží k zahájení požadavku.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1445,6 +1652,15 @@
           <Val><![CDATA[Required. The number to add to Summand 2.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Povinný parametr. Číslo, které se má přičíst ke sčítanci 2.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MCQODe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Secure outputs of the operation and references of output properties.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Umožňuje zabezpečit výstupy operace a odkazy výstupních vlastností.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1679,6 +1895,15 @@
           <Val><![CDATA[Required. The number of seconds to add. Can be negative to subtract seconds.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Povinný parametr. Počet sekund, které se mají přičíst. Může to být i záporná hodnota, při které se sekundy odečtou.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";PXa0D4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[False]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nepravda]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1953,6 +2178,24 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";SmCQys" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Custom Tracking Id]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vlastní ID sledování]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";T0BFpC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Set the tracking id for the run. For split-on this tracking id is for the initiating request.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nastavte ID pro sledování běhu. V případě dělení toto ID pro sledování slouží k zahájení požadavku.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";T7zcR6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The expressions that must be true.]]></Val>
@@ -2084,6 +2327,24 @@
           <Val><![CDATA[Content not shown due to security configuration.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Kvůli konfiguraci zabezpečení se obsah nezobrazuje.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Ur+wph" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Click to delete item]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kliknutím odstraníte položku.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";V+/c21" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[General]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Obecné]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2268,6 +2529,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";XsktQ/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Limit Logic Apps to not include workflow metadata headers in the response.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Omezí aplikace Logic Apps tak, aby do odpovědi nezahrnovaly hlavičky metadat pracovních postupů.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";XtuP5e" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Math functions]]></Val>
@@ -2358,6 +2628,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ZM1mRy" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Concurrency Control]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Řízení souběžnosti]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ZME5hh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the day of month component of a string timestamp]]></Val>
@@ -2421,11 +2700,38 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";aK4iLW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Data Handling]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zpracování dat]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";b9/1dK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hodnota]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";bTrk+S" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The object to check if it is greater than or equal to value being compared to.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší nebo rovný porovnávané hodnotě.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";bWBMhe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ve výchozím nastavení se instance aplikace logiky spouštějí současně nebo paralelně. Tento ovládací prvek změní způsob zařazení nových spuštění do fronty a po povolení se nedá změnit. Pokud chcete spustit co nejvíce paralelních instancí, nechte tento ovládací prvek vypnutý. Pokud chcete omezit počet paralelních spuštění, zapněte tento ovládací prvek a vyberte limit. Pokud chcete spouštět sekvenčně, vyberte jako limit 1.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2574,6 +2880,21 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";dSTRb/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";dWFyfN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Secure inputs of the operation.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Umožňuje zabezpečit vstupy operace.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";dhvk0u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a string representation of a base 64 encoded string]]></Val>
@@ -2655,6 +2976,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";euC/DV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Array]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pole]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";f/lWTW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The objects to check for null.]]></Val>
@@ -2696,6 +3026,15 @@
           <Val><![CDATA[Ignored]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Ignorováno]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";g0a4Qe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hodnota]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2768,6 +3107,15 @@
           <Val><![CDATA[Conversion functions]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Převodní funkce]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";gWRF8m" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Trigger Conditions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Podmínky aktivační události]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2862,11 +3210,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";i/b3Ko" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Asynchronous Response]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Asynchronní odpověď]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";i1cwra" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Redo]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Znovu]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";i4C4aB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Networking]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sítě]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3033,6 +3399,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";juR40n" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Duration]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Doba trvání]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";k/oqFL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The base64 encoded string.]]></Val>
@@ -3141,6 +3516,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";lcVG4C" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[is skipped]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[přeskočeno]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";lgs5sf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Stateless run mode:]]></Val>
@@ -3204,6 +3588,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";mOr9ll" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Maximální doba trvání jedné odchozí žádosti z této akce. Pokud se žádost nedokončí během této doby po spuštění opakovaných pokusů, akce se nezdaří.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";mPakaD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Url encodes the input string]]></Val>
@@ -3218,6 +3611,15 @@
           <Val><![CDATA[Required. The string to convert to lower casing. If a character in the string does not have a lowercase equivalent, the character is included unchanged in the returned string.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vyžadováno. Řetězec, který se má převést na malá písmena. Pokud některý znak v řetězci nemá odpovídající znak malé abecedy, zůstane ve vráceném řetězci beze změny.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";mjS/k1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Limit Logic Apps to not include workflow metadata headers in the outgoing request.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Omezí aplikace Logic Apps tak, aby do odchozích požadavků nezahrnovaly hlavičky metadat pracovních postupů.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3254,6 +3656,15 @@
           <Val><![CDATA[Required. The name of the property to remove.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Povinné. Název vlastnosti, která se odebere]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";nZ4nLn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Suppress workflow headers]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Potlačit hlavičky pracovních postupů]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3308,6 +3719,15 @@
           <Val><![CDATA[Required. The dataURI to decode into a binary representation.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Povinný parametr. Identifikátor URI dat, který se má dekódovat do binárního formátu.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";oLtwMw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Content Transfer]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Přenos obsahu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3411,6 +3831,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ptkf0D" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Security]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zabezpečení]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";q/+Uex" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns an XML node, nodeset or value as JSON from the provided XPath expression]]></Val>
@@ -3461,6 +3890,15 @@
           <Val><![CDATA[Checks if the string ends with a value (case-insensitive, invariant culture)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Zkontrolujte, jestli řetězec končí určitou hodnotou (nerozlišuje velikost písmen, invariantní jazyková verze).]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";qPUX59" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[is successful]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[úspěšné]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3555,6 +3993,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";qrxi0L" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Asynchronní odpověď umožní aplikaci Logic Apps odpovědět kódem 202 (Přijato) a dát tak vědět, že se požadavek přijal ke zpracování. Pomocí poskytnuté hlavičky umístění půjde načíst koncový stav.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";r43nMc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Undo]]></Val>
@@ -3627,11 +4074,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";s7nGyC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Delete]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Odstranit]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";sDkAVZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns an array of values matching the key name from form-data or form-encoded trigger output]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vrátí pole hodnot, které odpovídají názvu klíče z výstupu triggeru form-data nebo form-encoded.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";sW47JR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Degree of Parallelism]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Stupeň paralelismu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3650,6 +4115,15 @@
           <Val><![CDATA[Required. The collection to check if it is empty.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vyžadováno. Kolekce, u které se má zkontrolovat, zda není prázdná.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";scmyvO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Action Timeout]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Časový limit akce]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3807,6 +4281,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";uZH8Qs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Omezte maximální dobu trvání mezi opakovanými pokusy a asynchronními odpověďmi na tuto akci. Poznámka: Časový limit požadavku jedné žádosti se nezmění.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";uc/PoD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The number of time units the desired time is in the past.]]></Val>
@@ -3884,6 +4367,15 @@
           <Val><![CDATA[Required. The name of the action whose outputs you want.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Povinný parametr. Název akce, jejíž výstupy požadujete.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vcBAuU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[has timed out]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[vypršelo]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4019,6 +4511,15 @@
           <Val><![CDATA[Editor Input]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vstup editoru]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";xQQ9ko" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Threshold]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Mezní hodnota]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
