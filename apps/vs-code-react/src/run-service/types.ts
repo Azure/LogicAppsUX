@@ -6,6 +6,10 @@ export interface IRunService {
   runTrigger(callbackInfo: CallbackInfo): Promise<any>;
 }
 
+export interface IApiService {
+  getSubscriptions(): Promise<any>;
+}
+
 export interface ArmResources<T> {
   nextLink?: string;
   value: T[];
@@ -37,6 +41,8 @@ export interface ContentLink {
 }
 
 export type Run = ArmResource<RunProperties>;
+
+export type Subscription = ArmResource<SubscriptionProperties>;
 
 export interface RunDisplayItem {
   duration: string;
@@ -126,6 +132,22 @@ interface RunProperties {
     name: string;
     type: string;
   };
+}
+
+interface SubscriptionProperties {
+  authorizationSource?: string;
+  displayName: string;
+  id?: string;
+  managedByTenants?: Array<string>;
+  state?: string;
+  subscriptionId?: string;
+  subscriptionPolicies?: {
+    locationPlacementId?: string;
+    quotaId?: string;
+    spendingLimit?: string;
+  };
+  tags?: Record<string, string>;
+  tenantId?: string;
 }
 
 interface RunTriggerHistoryProperties {
