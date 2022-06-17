@@ -6,7 +6,11 @@ export interface ApiServiceOptions {
 }
 
 export class ApiService implements IApiService {
-  constructor(private options: ApiServiceOptions) {}
+  private options: ApiServiceOptions;
+
+  constructor(options: ApiServiceOptions) {
+    this.options = options;
+  }
 
   private getAccessTokenHeaders = () => {
     const { accessToken } = this.options;
@@ -20,12 +24,12 @@ export class ApiService implements IApiService {
   };
 
   async getSubscriptions(): Promise<any> {
-    //const { apiVersion, baseUrl } = this.options;
     const headers = this.getAccessTokenHeaders();
+    console.log('accessToken4', headers);
 
     //const uri = `${baseUrl}/subscriptions?api-version=${apiVersion}`;
     const uri = 'https://management.azure.com/subscriptions?api-version=2020-01-01';
-    const response = await fetch(uri, { headers });
+    const response = await fetch(uri, { headers, method: 'GET' });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }

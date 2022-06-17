@@ -1,6 +1,23 @@
+import { ApiService } from '../../../run-service/export/index';
+import { useOutlet } from '../export';
 import { DetailsList, Text } from '@fluentui/react';
+import { useMemo } from 'react';
+import { useQuery } from 'react-query';
 
 export const Home: React.FC = () => {
+  const { baseUrl, accessToken } = useOutlet();
+
+  const apiService = useMemo(
+    () =>
+      new ApiService({
+        baseUrl,
+        accessToken,
+      }),
+    [accessToken, baseUrl]
+  );
+  const { data: subscriptions } = useQuery('subscriptions', apiService.getSubscriptions);
+  console.log('subscriptions', subscriptions);
+
   return (
     <>
       <Text variant="xLarge" nowrap block>
