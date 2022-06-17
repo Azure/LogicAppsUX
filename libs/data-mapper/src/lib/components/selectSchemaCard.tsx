@@ -13,7 +13,23 @@ interface SelectSchemaCardProps {
 const imageStyle = { paddingLeft: 70, paddingRight: 70, paddingTop: 64, paddingBottom: 28 };
 
 export const SelectSchemaCard: FunctionComponent<SelectSchemaCardProps> = ({ schemaType, onClick }) => (
-  <div className="schema-card" aria-label="Select schema" onClick={onClick}>
+  <div
+    className="schema-card"
+    aria-label="Select schema"
+    onClick={onClick}
+    style={{
+      justifyContent: 'center',
+      justifyItems: 'center',
+      justifySelf: 'center',
+      alignContent: 'center',
+      alignItems: 'center',
+      // height: 'inherit',
+      // marginLeft: 'auto',
+      // marginRight: 'auto',
+      margin: 'auto',
+      padding: 'auto',
+    }}
+  >
     <Image className="on-hover" src={stateImageOnHover} alt="select on hover" style={imageStyle} />
     <Image className="on-rest" src={stateImageOnRest} alt="select on rest" style={imageStyle} />
     {`Select an ${schemaType} schema`}

@@ -3,14 +3,15 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { updateBreadcrumbForSchema } from '../core/state/BreadcrumbSlice';
 import { updateReactFlowForSchema } from '../core/state/ReactFlowSlice';
-import { setCurrentInputNode, setCurrentOutputNode } from '../core/state/SchemaSlice';
+import { setCurrentInputNode, setCurrentOutputNode, setInputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
+import type { Schema } from '../models';
 import { LeftHandPanel } from './LeftHandPanel';
 import { LayerHost } from '@fluentui/react';
 import type { ILayerProps } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -24,13 +25,10 @@ export const DataMapperDesigner = () => {
     hostId: layerHostId,
   };
 
-  // TODO: change those later
-  const [inputSchema, setInputSchema] = useState<string | undefined>(undefined);
-  const onInputSchemaChange = useCallback((inputSchema: string) => setInputSchema(inputSchema), []);
-  const [outputSchema, setOutputSchema] = useState<string | undefined>(undefined);
-  const onOutputSchemaChange = useCallback((outputSchema: string) => setOutputSchema(outputSchema), []);
-
-  const schemaList: string[] = ['SimpleCustomerOrderSchema.json', 'ExampleSchema.json'];
+  const inputSchema = store.getState().schema.inputSchema;
+  const outputSchema = store.getState().schema.outputSchema;
+  // const availableSchemas = store.getState().schemaDataLoader.outputSchema;
+  const availableSchemas: Schema[] = [];
 
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch<AppDispatch>();
@@ -63,9 +61,45 @@ export const DataMapperDesigner = () => {
     }
   };
 
-  // const onSubmit = () => {
-  //   dispatch(setInputSchmea)
-  // }
+  const onSubmitInput = (inputSchema: Schema) => {
+    dispatch(setInputSchema(inputSchema));
+
+    const schemaState = store.getState().schema;
+    const currentSchemaNode = schemaState.currentInputNode;
+
+    dispatch(setCurrentInputNode(currentSchemaNode));
+    dispatch(updateReactFlowForSchema({ inputSchema: currentSchemaNode, outputSchema: schemaState.currentOutputNode }));
+  };
+
+  const onSubmitOutput = (outputSchema: Schema) => {
+    dispatch(setInputSchema(outputSchema));
+
+    const schemaState = store.getState().schema;
+    const currentSchemaNode = schemaState.currentOutputNode;
+
+    dispatch(setCurrentOutputNode(currentSchemaNode));
+    dispatch(updateReactFlowForSchema({ inputSchema: schemaState.currentInputNode, outputSchema: currentSchemaNode }));
+  };
+
+  const reactFlowDrawing = (
+    <ReactFlowProvider>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodeDoubleClick={onNodeDoubleClick}
+        minZoom={0}
+        nodesDraggable={false}
+        fitView
+        proOptions={{
+          account: 'paid-sponsor',
+          hideAttribution: true,
+        }}
+        style={{
+          position: 'unset',
+        }}
+      ></ReactFlow>
+    </ReactFlowProvider>
+  );
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -74,56 +108,67 @@ export const DataMapperDesigner = () => {
           style={{
             // TODO - Remove
             border: '1px solid #ccc',
+            height: '100%',
           }}
         >
           <EditorCommandBar />
           <EditorBreadcrumb />
-          <LayerHost
-            id={layerHostId}
-            style={{
-              // TODO - Remove
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            <div
+
+          {/* <div
               className="msla-designer-canvas msla-panel-mode"
               style={{
-                // TODO - remove
-                paddingLeft: 400,
+                // TODO - Remove
                 backgroundColor: '#EDEBE9',
               }}
+            > */}
+          {inputSchema && outputSchema ? (
+            <LayerHost
+              id={layerHostId}
+              style={{
+                // TODO - Remove
+                position: 'relative',
+                overflow: 'hidden',
+              }}
             >
-              {!inputSchema && (
-                <AddSchemaPanelButton schemaType={SchemaTypes.INPUT} onSchemaChange={onInputSchemaChange} schemaFilesList={schemaList} />
-              )}
-
-              {!outputSchema && (
-                <AddSchemaPanelButton schemaType={SchemaTypes.OUTPUT} onSchemaChange={onOutputSchemaChange} schemaFilesList={schemaList} />
-              )}
-
-              {inputSchema && outputSchema && (
-                <ReactFlowProvider>
-                  <ReactFlow
-                    nodes={nodes}
-                    edges={edges}
-                    onNodeDoubleClick={onNodeDoubleClick}
-                    minZoom={0}
-                    nodesDraggable={false}
-                    fitView
-                    proOptions={{
-                      account: 'paid-sponsor',
-                      hideAttribution: true,
-                    }}
-                    style={{
-                      position: 'unset',
-                    }}
-                  ></ReactFlow>
-                </ReactFlowProvider>
-              )}
-              <LeftHandPanel layerProps={panelLayerProps} />
+              <div
+                className="msla-designer-canvas msla-panel-mode"
+                style={{
+                  // TODO - Remove
+                  backgroundColor: '#EDEBE9',
+                }}
+              >
+                {reactFlowDrawing}
+              </div>
+            </LayerHost>
+          ) : (
+            <div
+              className="msla-designer-canvas msla-panel-mode"
+              style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#EDEBE9' }}
+            >
+              <div style={{ width: '50%', display: 'left' }}>
+                {inputSchema ? (
+                  // ? reactFlowDrawing
+                  <></>
+                ) : (
+                  <AddSchemaPanelButton schemaType={SchemaTypes.INPUT} onSubmitSchema={onSubmitInput} schemaFilesList={availableSchemas} />
+                )}
+              </div>
+              <div style={{ width: '50%', display: 'right' }}>
+                {outputSchema ? (
+                  // ? reactFlowDrawing
+                  <></>
+                ) : (
+                  <AddSchemaPanelButton
+                    schemaType={SchemaTypes.OUTPUT}
+                    onSubmitSchema={onSubmitOutput}
+                    schemaFilesList={availableSchemas}
+                  />
+                )}
+              </div>
             </div>
-          </LayerHost>
+          )}
+          <LeftHandPanel layerProps={panelLayerProps} />
+          {/* </div> */}
         </div>
       </div>
     </DndProvider>

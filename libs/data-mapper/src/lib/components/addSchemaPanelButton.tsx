@@ -1,3 +1,4 @@
+import type { Schema } from '../models';
 import { SelectSchemaCard } from './selectSchemaCard';
 import { ChoiceGroup, DefaultButton, Dropdown, initializeIcons, Panel, PrimaryButton, TextField } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
@@ -17,8 +18,8 @@ export enum UploadSchemaTypes {
 
 export interface AddSchemaModelProps {
   schemaType: SchemaTypes;
-  onSchemaChange: (schemaFileName: string) => void;
-  schemaFilesList: string[];
+  onSubmitSchema: (schema: Schema) => void;
+  schemaFilesList: Schema[];
 }
 
 const uploadSchemaOptions: IChoiceGroupOption[] = [
@@ -28,15 +29,15 @@ const uploadSchemaOptions: IChoiceGroupOption[] = [
 
 initializeIcons();
 
-export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ schemaType, onSchemaChange, schemaFilesList }) => {
+export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ schemaType, onSubmitSchema, schemaFilesList }) => {
   const [isPanelOpen, { setTrue: showPanel, setFalse: hidePanel }] = useBoolean(false);
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SELECT_FROM);
-  const [selectedSchemaName, setSelectedSchemaName] = useState<IDropdownOption>();
+  const [selectedSchema, setSelectedSchema] = useState<IDropdownOption>();
 
-  const dataMapDropdownOptions = schemaFilesList.map((fileName) => ({ key: fileName, text: fileName, data: {} }));
+  const dataMapDropdownOptions = schemaFilesList.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
 
   const onSelectedItemChange = useCallback((_: unknown, item?: IDropdownOption): void => {
-    setSelectedSchemaName(item);
+    setSelectedSchema(item);
   }, []);
 
   const onUploadTypeChange = useCallback((_: unknown, option?: IChoiceGroupOption): void => {
@@ -44,24 +45,31 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
   }, []);
 
   const onSchemaAddClick = () => {
-    if (selectedSchemaName) onSchemaChange(selectedSchemaName.text);
+    if (selectedSchema) onSubmitSchema(selectedSchema.data);
     hidePanel();
   };
 
   const onRenderFooterContent = useCallback(
     () => (
       <div>
-        <PrimaryButton onClick={onSchemaAddClick} disabled={!selectedSchemaName} styles={{ root: { marginRight: 8 } }}>
+        <PrimaryButton onClick={onSchemaAddClick} disabled={!selectedSchema} styles={{ root: { marginRight: 8 } }}>
           Add
         </PrimaryButton>
         <DefaultButton onClick={hidePanel}>Cancel</DefaultButton>
       </div>
     ),
-    [hidePanel, selectedSchemaName]
+    [hidePanel, selectedSchema]
   );
 
   return (
-    <div>
+    <div
+      style={
+        {
+          // height: '100%',
+          // background: 'yellow'
+        }
+      }
+    >
       <SelectSchemaCard schemaType={schemaType} onClick={showPanel} />
       <Panel
         isLightDismiss
@@ -97,7 +105,7 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
 
         {uploadType === UploadSchemaTypes.SELECT_FROM && (
           <Dropdown
-            selectedKey={selectedSchemaName ? selectedSchemaName.key : undefined}
+            selectedKey={selectedSchema ? selectedSchema.key : undefined}
             placeholder={`select ${schemaType}`}
             options={dataMapDropdownOptions}
             onChange={onSelectedItemChange}
