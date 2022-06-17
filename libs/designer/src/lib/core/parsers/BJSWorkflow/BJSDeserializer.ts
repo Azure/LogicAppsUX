@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 import type { Operations, NodesMetadata } from '../../state/workflowSlice';
-import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../models/workflowNode';
+import type { WorkflowEdge, WorkflowNode } from '../models/workflowNode';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { equals, isNullOrEmpty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
@@ -12,7 +12,7 @@ const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolea
 };
 
 export type DeserializedWorkflow = {
-  graph: WorkflowGraph;
+  graph: WorkflowNode;
   actionData: Operations;
   nodesMetadata: NodesMetadata;
 };
@@ -54,10 +54,11 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Deseria
     : [[], [], {}];
   allActions = { ...allActions, ...actions };
   nodesMetadata = { ...nodesMetadata, ...actionNodesMetadata };
-  const graph: WorkflowGraph = {
+  const graph: WorkflowNode = {
     id: 'root',
     children: [...children, ...remainingChildren],
     edges: [...rootEdges, ...edges],
+    type: 'graphNode',
   };
 
   return { graph, actionData: allActions, nodesMetadata };
@@ -76,12 +77,13 @@ const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAp
   return equals(action.type, 'switch');
 };
 
+// THIS IS WHERE THE INITIAL NODE SIZE IS SET
 const createWorkflowNode = (id: string, type: any): WorkflowNode => {
   return {
     id,
-    height: 0,
-    width: 0,
     type,
+    height: 20,
+    width: 80,
   };
 };
 
@@ -131,10 +133,11 @@ const processScopeActions = (
   graphId: string,
   actionName: string,
   action: LogicAppsV2.ScopeAction
-): [WorkflowGraph[], Operations, NodesMetadata] => {
+): [WorkflowNode[], Operations, NodesMetadata] => {
   // TODO: Create Header Node
-  const rootGraph: WorkflowGraph = {
+  const rootGraph: WorkflowNode = {
     id: `${actionName}-graphContainer`,
+    type: 'graphNode',
     children: [],
     edges: [],
   };
@@ -148,7 +151,7 @@ const processScopeActions = (
 
   const applySubgraphActions = (graphId: string, actions?: LogicAppsV2.Actions, subgraphType?: SubgraphType, subgraphTitle?: string) => {
     const [graph, operations, metadata] = processNestedActions(graphId, actions);
-
+    if (!rootGraph?.edges) rootGraph.edges = [];
     if (!subgraphType) scopeGraphNode.type = 'hiddenNode';
 
     scopeGraphNode.children?.push(graph);
@@ -171,7 +174,7 @@ const processScopeActions = (
         rootGraph.edges.push(createWorkflowEdge(rootId, graph.children[0].id));
       }
 
-      graph.children.unshift(subgraphHeaderNode);
+      graph.children = [subgraphHeaderNode, ...(graph.children ?? [])];
       nodesMetadata = { ...nodesMetadata, [rootId]: { graphId, subgraphType } };
     }
   };
@@ -189,10 +192,11 @@ const processScopeActions = (
     applySubgraphActions(`${actionName}-actions`, action.actions);
   }
 
-  if (scopeGraphNode.children.length === 1) {
+  if (scopeGraphNode.children?.length === 1) {
     // Hide graph container UI
     const scopeChildEdge = createWorkflowEdge(`${actionName}-scope`, scopeGraphNode.children[0].id);
     scopeChildEdge.type = 'hiddenEdge';
+    if (!rootGraph?.edges) rootGraph.edges = [];
     rootGraph.edges.push(scopeChildEdge);
   }
 
@@ -201,7 +205,7 @@ const processScopeActions = (
   return [[rootGraph], allActions, nodesMetadata];
 };
 
-const processNestedActions = (graphId: string, actions: LogicAppsV2.Actions | undefined): [WorkflowGraph, Operations, NodesMetadata] => {
+const processNestedActions = (graphId: string, actions: LogicAppsV2.Actions | undefined): [WorkflowNode, Operations, NodesMetadata] => {
   const [children, edges, scopeActions, scopeNodesMetadata] = !isNullOrUndefined(actions)
     ? buildGraphFromActions(actions, graphId, true)
     : [[], [], {}, {}];
@@ -211,6 +215,7 @@ const processNestedActions = (graphId: string, actions: LogicAppsV2.Actions | un
       id: graphId,
       children,
       edges,
+      type: 'graphNode',
     },
     scopeActions,
     scopeNodesMetadata,

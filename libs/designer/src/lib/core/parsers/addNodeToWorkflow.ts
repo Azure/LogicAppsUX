@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import type { NodesMetadata } from '../state/workflowSlice';
-import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from './models/workflowNode';
+import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 
 const getEdgeId = (parent: string, child: string) => `${parent}-${child}`;
 
@@ -15,7 +15,7 @@ export const createNodeWithDefaultSize = (id: string): WorkflowNode => {
   return { id, height: 67, width: 200, type: 'testNode' }; // TODO: Assign correct type here
 };
 
-export const addNodeToWorkflow = (payload: AddNodePayload, workflowGraph: WorkflowGraph, nodesMetadata: NodesMetadata) => {
+export const addNodeToWorkflow = (payload: AddNodePayload, workflowGraph: WorkflowNode, nodesMetadata: NodesMetadata) => {
   addNodeMetadata(nodesMetadata, payload);
   const workflowNode: WorkflowNode = createNodeWithDefaultSize(payload.id);
   addWorkflowNode(workflowNode, workflowGraph);
@@ -25,18 +25,19 @@ const addNodeMetadata = (nodesMetadata: NodesMetadata, payload: AddNodePayload) 
   nodesMetadata[payload.id] = { graphId: payload.graphId };
 };
 
-export const insertMiddleWorkflowEdge = (parent: string, current: string, child: string, graph: WorkflowGraph): void => {
+export const insertMiddleWorkflowEdge = (parent: string, current: string, child: string, graph: WorkflowNode): void => {
   const workflowEdge: WorkflowEdge = {
     id: getEdgeId(current, child),
     source: current,
     target: child,
   };
+  if (!graph?.edges) graph.edges = [];
   graph.edges.push(workflowEdge);
   graph.edges = removeWorkflowEdge(parent, child, graph.edges);
 };
 
-export const addWorkflowNode = (node: WorkflowNode, graph: WorkflowGraph): void => {
-  graph?.children.push(node);
+export const addWorkflowNode = (node: WorkflowNode, graph: WorkflowNode): void => {
+  graph.children = [...(graph?.children ?? []), node];
 };
 
 const removeWorkflowEdge = (parent: string, child: string, edges: WorkflowEdge[]): WorkflowEdge[] => {
@@ -44,11 +45,12 @@ const removeWorkflowEdge = (parent: string, child: string, edges: WorkflowEdge[]
   return parentEdge;
 };
 
-export const setWorkflowEdge = (parent: string, child: string, graph: WorkflowGraph) => {
+export const setWorkflowEdge = (parent: string, child: string, graph: WorkflowNode) => {
   const workflowEdge: WorkflowEdge = {
     id: `${parent}-${child}`,
     source: parent,
     target: child,
   };
+  if (!graph?.edges) graph.edges = [];
   graph?.edges.push(workflowEdge);
 };

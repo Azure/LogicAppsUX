@@ -41,7 +41,7 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
     [readOnly]
   );
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
-  // const graph = useWorkflowNode(scopeId) as WorkflowGraph;
+  // const graph = useWorkflowNode(scopeId) as WorkflowNode;
   const operationInfo = useOperationInfo(scopeId);
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);

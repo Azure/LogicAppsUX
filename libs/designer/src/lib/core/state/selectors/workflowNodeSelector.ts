@@ -1,30 +1,21 @@
-import type { WorkflowEdge, WorkflowGraph, WorkflowNode } from '../../parsers/models/workflowNode';
+import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowGraph } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 
 export const getWorkflowNodeFromState = (state: RootState, actionId: string) => {
   const graph = state.workflow.graph;
-  const traverseGraph = (workflowGraph: WorkflowGraph): WorkflowGraph | WorkflowNode | undefined => {
-    for (const actionNode of workflowGraph.children) {
-      if (actionNode.id === actionId) {
-        return actionNode;
-      }
 
-      const nestedGraphs = actionNode.children?.filter((g) => g.children?.length) ?? [];
-      for (const graph of nestedGraphs) {
-        const node = traverseGraph(graph);
-        if (node) {
-          return node;
-        }
-      }
+  const traverseGraph = (node: WorkflowNode): WorkflowNode | undefined => {
+    if (node.id === actionId) return node;
+    else {
+      let result = undefined;
+      for (const child of node.children ?? []) result = traverseGraph(child);
+      return result;
     }
-    return undefined;
   };
-  if (graph) {
-    return traverseGraph(graph);
-  }
-  return undefined;
+
+  return graph ? traverseGraph(graph) : undefined;
 };
 
 export const useWorkflowNode = (actionId?: string) => {
@@ -42,9 +33,9 @@ export const useEdgesByParent = (parentId?: string) => {
       return [];
     }
     let edges: WorkflowEdge[] = [];
-    const traverseGraph = (gnode: WorkflowGraph | WorkflowNode): void => {
+    const traverseGraph = (gnode: WorkflowNode): void => {
       if (isWorkflowGraph(gnode)) {
-        edges = [...edges, ...gnode.edges];
+        edges = [...edges, ...(gnode?.edges ?? [])];
       }
       gnode.children?.forEach(traverseGraph);
     };
@@ -61,11 +52,11 @@ export const useEdgesByChild = (childId?: string) => {
       return [];
     }
     let edges: WorkflowEdge[] = [];
-    const traverseGraph = (gnode: WorkflowGraph | WorkflowNode): void => {
-      if (isWorkflowGraph(gnode)) {
-        edges = [...edges, ...gnode.edges];
+    const traverseGraph = (graph: WorkflowNode): void => {
+      if (graph.edges) {
+        edges = [...edges, ...graph.edges];
       }
-      gnode.children?.forEach(traverseGraph);
+      graph.children?.forEach(traverseGraph);
     };
     if (state.workflow.graph) {
       traverseGraph(state.workflow.graph);

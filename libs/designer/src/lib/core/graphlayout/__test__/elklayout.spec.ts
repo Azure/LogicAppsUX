@@ -1,57 +1,67 @@
-import type { WorkflowGraph } from '../../parsers/models/workflowNode';
+import type { WorkflowNode, WorkflowNodeType } from '../../parsers/models/workflowNode';
 import { exportForTesting } from '../elklayout';
 import type { ElkNode } from 'elkjs/lib/elk-api';
 import type { Edge, Node } from 'react-flow-renderer';
+
+const createWorkflowNode = (id: string) => ({
+  id,
+  width: 0,
+  height: 0,
+  type: 'testNode' as WorkflowNodeType,
+});
 
 const { convertWorkflowGraphToElkGraph, convertElkGraphToReactFlow, elkLayout } = exportForTesting;
 describe('elklayout', () => {
   describe('convertWorkflowGraphToElkGraph', () => {
     it('should properly convert a valid WorkflowGraph to an ElkNode', () => {
-      const input = {
+      const input: WorkflowNode = {
         id: 'root',
-        children: [
-          { id: 'node1', height: 0, width: 0 },
-          { id: 'node2', height: 0, width: 0 },
-        ],
+        type: 'graphNode',
+        children: [createWorkflowNode('node1'), createWorkflowNode('node2')],
         edges: [{ id: 'node1-node2', source: 'node1', target: 'node2' }],
       };
       const expectedOutput: ElkNode = {
         id: 'root',
-        children: [
-          { id: 'node1', height: 0, width: 0 },
-          { id: 'node2', height: 0, width: 0 },
-        ],
+        children: [createWorkflowNode('node1'), createWorkflowNode('node2')],
         edges: [{ id: 'node1-node2', sources: ['node1'], targets: ['node2'] }],
-        layoutOptions: { 'elk.position': '(0, 0)' },
+        layoutOptions: {
+          'elk.position': '(0, 0)',
+          type: 'graphNode',
+        },
       };
 
       expect(convertWorkflowGraphToElkGraph(input)).toEqual(expectedOutput);
     });
 
     it('should properly convert a valid WorkflowGraph with scopes to an ElkNode', () => {
-      const input: WorkflowGraph = {
+      const input: WorkflowNode = {
         id: 'root',
+        type: 'graphNode',
         children: [
-          { id: 'manual', height: 0, width: 0 },
-          { id: 'Increment_variable', height: 0, width: 0 },
-          { id: 'Initialize_variable', height: 0, width: 0 },
+          createWorkflowNode('manual'),
+          createWorkflowNode('Increment_variable'),
+          createWorkflowNode('Initialize_variable'),
           {
             id: 'ActionIf',
+            type: 'testNode',
             height: 0,
             width: 0,
             children: [
               {
                 id: 'ActionIf-actions',
-                children: [
-                  { id: 'Increment_variable2', height: 0, width: 0 },
-                  { id: 'Increment_variable4', height: 0, width: 0 },
-                ],
+                children: [createWorkflowNode('Increment_variable2'), createWorkflowNode('Increment_variable4')],
                 edges: [{ id: 'Increment_variable2-Increment_variable4', source: 'Increment_variable2', target: 'Increment_variable4' }],
+                type: 'graphNode',
               },
-              { id: 'ActionIf-elseActions', children: [{ id: 'Increment_variable3', height: 0, width: 0 }], edges: [] },
+              {
+                id: 'ActionIf-elseActions',
+                children: [createWorkflowNode('Increment_variable3')],
+                edges: [],
+                type: 'graphNode',
+              },
             ],
           },
-          { id: 'Response', height: 0, width: 0 },
+          createWorkflowNode('Response'),
         ],
         edges: [
           { id: 'manual-Initialize_variable', source: 'manual', target: 'Initialize_variable' },
