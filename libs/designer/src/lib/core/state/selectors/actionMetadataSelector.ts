@@ -6,6 +6,11 @@ import { getObjectPropertyValue } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
+interface QueryResult {
+  isLoading?: boolean;
+  result: any;
+}
+
 export const useActionMetadata = (actionId?: string) => {
   return useSelector((state: RootState) => {
     if (!actionId) {
@@ -65,30 +70,37 @@ export const useOperationManifest = (operationInfo: OperationInfo) => {
   const operationManifestService = OperationManifestService();
   const connectorId = operationInfo?.connectorId?.toLowerCase();
   const operationId = operationInfo?.operationId?.toLowerCase();
-  const manifestQuery = useQuery(
+  return useQuery(
     ['manifest', { connectorId }, { operationId }],
     () => operationManifestService.getOperationManifest(connectorId, operationId),
     {
       enabled: !!connectorId && !!operationId,
     }
   );
-
-  return manifestQuery;
 };
 
-const useNodeAttribute = (operationInfo: OperationInfo, propertyInManifest: string[], propertyInConnector: string[]) => {
-  const { data: manifest } = useOperationManifest(operationInfo);
+const useNodeAttribute = (operationInfo: OperationInfo, propertyInManifest: string[], propertyInConnector: string[]): QueryResult => {
+  const { data: manifest, isLoading } = useOperationManifest(operationInfo);
   const { data: connector } = useConnector(operationInfo?.connectorId);
 
   if (manifest) {
-    return getObjectPropertyValue(manifest.properties, propertyInManifest);
+    return {
+      isLoading,
+      result: getObjectPropertyValue(manifest.properties, propertyInManifest),
+    };
   }
 
   if (connector) {
-    return getObjectPropertyValue(connector.properties, propertyInConnector);
+    return {
+      isLoading,
+      result: getObjectPropertyValue(connector.properties, propertyInConnector),
+    };
   }
 
-  return '';
+  return {
+    isLoading,
+    result: '',
+  };
 };
 
 export const useBrandColor = (operationInfo: OperationInfo) => {
