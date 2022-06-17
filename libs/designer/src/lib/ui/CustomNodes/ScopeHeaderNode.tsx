@@ -90,7 +90,7 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
               <DropZone graphId={scopeId} parent={undefined} />
             </div>
           ) : (
-            <p className="no-actions-text">NO ACTIONS</p>
+            <p className="no-actions-text">No Actions</p>
           )
         ) : null}
       </>

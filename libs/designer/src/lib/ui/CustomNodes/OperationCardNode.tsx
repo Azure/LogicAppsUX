@@ -87,12 +87,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     : undefined;
 
   return (
-    <div>
-      {isFirstChild && !readOnly && !metadata?.subgraphType ? (
-        <div className={'edge-drop-zone-container'}>
-          <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
-        </div>
-      ) : null}
+    <>
       <div>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
@@ -118,7 +113,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>
       ) : null}
-    </div>
+    </>
   );
 };
 

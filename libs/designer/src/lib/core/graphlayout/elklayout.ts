@@ -22,6 +22,7 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.edge.type': 'DIRECTED',
   'elk.layered.unnecessaryBendpoints': 'false',
   'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+  'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
   'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
   'elk.layered.spacing.edgeEdgeBetweenLayers': '0',
   'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.default,
@@ -126,6 +127,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
         'elk.position': `(0, 0)`, // See 'crossingMinimization.semiInteractive' above
         nodeType: 'graphNode',
         ...(node.edges?.[0]?.type === 'onlyEdge' && {
+          'elk.layered.nodePlacement.strategy': 'SIMPLE',
           'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.onlyEdge,
           'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.onlyEdge,
         }),
