@@ -150,7 +150,7 @@ const processScopeActions = (
   const applyActions = (graphId: string, actions?: LogicAppsV2.Actions) => {
     const [graph, operations, metadata] = processNestedActions(graphId, actions);
 
-    nodes.push(graph);
+    nodes.push(...(graph?.children ?? []));
     edges.push(...(graph?.edges ?? []));
     allActions = { ...allActions, ...operations };
     nodesMetadata = { ...nodesMetadata, ...metadata };
@@ -177,9 +177,10 @@ const processScopeActions = (
     const subgraphHeaderNode = createWorkflowNode(rootId, 'subgraphHeader');
 
     const isAddCase = subgraphType === 'SWITCH-ADD-CASE';
+    if (isAddCase) graph.type = 'hiddenNode';
 
     // Connect scopeHeader to subgraphHeader
-    edges.push(createWorkflowEdge(scopeId, subgraphId, 'onlyEdge'));
+    edges.push(createWorkflowEdge(scopeId, subgraphHeaderNode.id, isAddCase ? 'hiddenEdge' : 'onlyEdge'));
     // Connect subgraphHeader to first child
     if (graph.children?.[0]) {
       edges.push(createWorkflowEdge(rootId, graph.children[0].id));
