@@ -20,6 +20,8 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
   const childEdges = useEdgesByParent(id);
   const metadata = useNodeMetadata(id);
 
+  const isAddCase = metadata?.subgraphType === 'SWITCH-ADD-CASE';
+
   const subgraphClick = useCallback(
     (_id: string) => {
       if (isCollapsed) {
@@ -32,18 +34,20 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
 
   return (
     <div>
-      <div>
-        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-        <SubgraphHeader
-          parentId={metadata?.graphId.split('-')[0] ?? ''}
-          subgraphType={metadata?.subgraphType}
-          title={data?.label}
-          readOnly={readOnly}
-          onClick={subgraphClick}
-        />
-        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+      <div style={{ minHeight: '40px', display: 'flex', alignItems: 'center' }}>
+        <div style={{ position: 'relative' }}>
+          <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+          <SubgraphHeader
+            parentId={metadata?.graphId.split('-')[0] ?? ''}
+            subgraphType={metadata?.subgraphType}
+            title={data?.label}
+            readOnly={readOnly}
+            onClick={subgraphClick}
+          />
+          <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+        </div>
       </div>
-      {childEdges.length === 0 && !readOnly ? (
+      {childEdges.length === 0 && !isAddCase && !readOnly ? (
         <div className={'edge-drop-zone-container'}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>

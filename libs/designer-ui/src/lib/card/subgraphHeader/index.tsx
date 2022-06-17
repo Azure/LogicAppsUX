@@ -31,7 +31,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
   if (subgraphType === 'SWITCH-ADD-CASE') {
     if (readOnly) return null;
     return (
-      <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%', marginTop: '24px' }}>
+      <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
         <ActionButtonV2 title={'Add Case'} />
       </div>
     );
@@ -91,14 +91,16 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
     );
   } else if (data.size === 'small') {
     return (
-      <button
-        className={css('msla-subgraph-header', data.size)}
-        style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
-        onClick={handleCollapse}
-      >
-        <div className="msla-subgraph-title">{data.title}</div>
-        <CollapseToggle disabled collapsed={collapsed} />
-      </button>
+      <div style={{ width: 200, display: 'grid', placeItems: 'center' }}>
+        <button
+          className={css('msla-subgraph-header', data.size)}
+          style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
+          onClick={handleCollapse}
+        >
+          <div className="msla-subgraph-title">{data.title}</div>
+          <CollapseToggle disabled collapsed={collapsed} />
+        </button>
+      </div>
     );
   } else return null;
 };

@@ -16,8 +16,9 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.layered.unnecessaryBendpoints': 'false',
   'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
   'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
-  'elk.layered.spacing.edgeNodeBetweenLayers': '40',
-  'elk.layered.spacing.nodeNodeBetweenLayers': '60',
+  'elk.layered.spacing.edgeEdgeBetweenLayers': '0',
+  'elk.layered.spacing.edgeNodeBetweenLayers': '50',
+  'elk.layered.spacing.nodeNodeBetweenLayers': '50',
   'elk.padding': '[top=0,left=16,bottom=16,right=16]',
   // This option allows the first layer children of a graph to be laid out in order of appearance in manifest. This is useful for subgraph ordering, like in Switch nodes.
   'elk.layered.crossingMinimization.semiInteractive': 'true',
@@ -40,16 +41,18 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
   const edges: Edge[] = [];
 
   const processChildren = (node: ElkNode, parent?: string) => {
-    for (const edge of node.edges as ElkExtendedEdge[]) {
-      edges.push({
-        id: edge.id,
-        target: edge.targets[0],
-        source: edge.sources[0],
-        type: edge.layoutOptions?.['edgeType'] ?? defaultEdgeType,
-        data: {
-          elkEdge: edge,
-        },
-      });
+    if (node.edges) {
+      for (const edge of node.edges as ElkExtendedEdge[]) {
+        edges.push({
+          id: edge.id,
+          target: edge.targets[0],
+          source: edge.sources[0],
+          type: edge.layoutOptions?.['edgeType'] ?? defaultEdgeType,
+          data: {
+            elkEdge: edge,
+          },
+        });
+      }
     }
 
     if (parent && parent !== 'root') {
@@ -62,19 +65,17 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
         style: node.children ? { height: node.height, width: node.width } : undefined,
       });
     }
-
-    for (const n of node.children as ElkNode[]) {
-      nodes.push({
-        id: n.id,
-        position: { x: n.x ?? 0, y: n.y ?? 0 },
-        data: { label: n.id },
-        parentNode: node.id !== 'root' ? node.id : undefined,
-        type: n.layoutOptions?.['nodeType'] ?? defaultNodeType,
-        style: n.children ? { height: n.height, width: n.width } : undefined,
-      });
-
-      if (n.children) {
-        n.children.forEach((x) => processChildren(x, n.id));
+    if (node.children) {
+      for (const n of node.children as ElkNode[]) {
+        nodes.push({
+          id: n.id,
+          position: { x: n.x ?? 0, y: n.y ?? 0 },
+          data: { label: n.id },
+          parentNode: node.id !== 'root' ? node.id : undefined,
+          type: n.layoutOptions?.['nodeType'] ?? defaultNodeType,
+          style: n.children ? { height: n.height, width: n.width } : undefined,
+        });
+        processChildren(n, node.id);
       }
     }
   };
@@ -123,9 +124,7 @@ export const useLayout = (): [Node[], Edge[]] => {
     if (!workflowGraph) {
       return;
     }
-    console.log('WFG', workflowGraph);
     const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
-    console.log('ELK', elkGraph);
     elkLayout(elkGraph)
       .then((g) => {
         const [n, e] = convertElkGraphToReactFlow(g);

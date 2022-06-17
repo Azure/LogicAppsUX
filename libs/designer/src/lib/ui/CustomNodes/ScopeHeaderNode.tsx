@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
-  const scopeId = id.replace('-scope', '');
+  const scopeId = id.replace('-scopeHeader', '');
 
   const node = useActionMetadata(scopeId);
 
