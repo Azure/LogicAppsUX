@@ -62,14 +62,7 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
   );
 
   return (
-    <div
-      style={
-        {
-          // height: '100%',
-          // background: 'yellow'
-        }
-      }
-    >
+    <div>
       <SelectSchemaCard schemaType={schemaType} onClick={showPanel} />
       <Panel
         isLightDismiss

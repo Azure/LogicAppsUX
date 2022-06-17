@@ -11,7 +11,6 @@ export interface UpdateBreadcrumbAction {
 export interface SchemaState {
   inputSchema?: SchemaExtended;
   outputSchema?: SchemaExtended;
-
   currentInputNode?: SchemaNodeExtended;
   currentOutputNode?: SchemaNodeExtended;
 }

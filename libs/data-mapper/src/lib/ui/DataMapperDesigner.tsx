@@ -143,11 +143,24 @@ export const DataMapperDesigner = () => {
           ) : (
             <div
               className="msla-designer-canvas msla-panel-mode"
-              style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#EDEBE9' }}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                backgroundColor: '#EDEBE9',
+                height: '500px',
+                justifyContent: 'center',
+                justifyItems: 'center',
+                justifySelf: 'center',
+                alignContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
+                margin: 'auto',
+                padding: 'auto',
+              }}
             >
               <div style={{ width: '50%', display: 'left' }}>
                 {inputSchema ? (
-                  // ? reactFlowDrawing
+                  // reactFlowDrawing
                   <></>
                 ) : (
                   <AddSchemaPanelButton schemaType={SchemaTypes.INPUT} onSubmitSchema={onSubmitInput} schemaFilesList={availableSchemas} />
