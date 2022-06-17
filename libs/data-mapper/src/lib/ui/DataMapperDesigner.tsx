@@ -1,7 +1,6 @@
+import { convertToReactFlowNode } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import { updateBreadcrumbForSchema } from '../core/state/BreadcrumbSlice';
-import { updateReactFlowForSchema } from '../core/state/ReactFlowSlice';
 import { setCurrentInputNode, setCurrentOutputNode } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
@@ -10,7 +9,7 @@ import type { ILayerProps } from '@fluentui/react';
 import { LayerHost } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
@@ -36,8 +35,6 @@ export const DataMapperDesigner = () => {
             ? currentSchemaNode
             : currentSchemaNode.children.find((schemaNode) => schemaNode.key === node.id);
         dispatch(setCurrentInputNode(newCurrentSchemaNode));
-        dispatch(updateReactFlowForSchema({ inputSchema: newCurrentSchemaNode, outputSchema: schemaState.currentOutputNode }));
-        // Don't need to update the breadcrumb on input traversal
       }
     } else {
       const currentSchemaNode = schemaState.currentOutputNode;
@@ -48,8 +45,6 @@ export const DataMapperDesigner = () => {
             ? currentSchemaNode
             : currentSchemaNode.children.find((schemaNode) => schemaNode.key === trimmedNodeId);
         dispatch(setCurrentOutputNode(newCurrentSchemaNode));
-        dispatch(updateReactFlowForSchema({ inputSchema: schemaState.currentInputNode, outputSchema: newCurrentSchemaNode }));
-        dispatch(updateBreadcrumbForSchema({ schema: schemaState.outputSchema, currentNode: newCurrentSchemaNode }));
       }
     }
   };
@@ -101,18 +96,13 @@ export const DataMapperDesigner = () => {
 };
 
 export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
-  const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode[]>([]);
-  const [reactFlowEdges, setReactFlowEdges] = useState<ReactFlowEdge[]>([]);
-  const reactFlowGraph = useSelector((state: RootState) => state.reactFlow.graph);
+  const reactFlowEdges: ReactFlowEdge[] = [];
+  const inputSchemaNode = useSelector((state: RootState) => state.schema.currentInputNode);
+  const outputSchemaNode = useSelector((state: RootState) => state.schema.currentOutputNode);
 
-  useEffect(() => {
-    if (!reactFlowGraph) {
-      return;
-    }
-
-    setReactFlowNodes(reactFlowGraph);
-    setReactFlowEdges([]);
-  }, [reactFlowGraph]);
+  const reactFlowNodes = useMemo(() => {
+    return convertToReactFlowNode(inputSchemaNode, outputSchemaNode);
+  }, [inputSchemaNode, outputSchemaNode]);
 
   return [reactFlowNodes, reactFlowEdges];
 };
