@@ -2,7 +2,7 @@ import CollapseToggle from '../../collapseToggle';
 import { StatusPill } from '../../monitoring';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
-import { css, Icon, TooltipHost } from '@fluentui/react';
+import { css, Icon, Spinner, SpinnerSize, TooltipHost } from '@fluentui/react';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
@@ -20,6 +20,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   dragPreview,
   icon,
   isMonitoringView,
+  isLoading,
   title,
   onClick,
   onCollapse,
@@ -43,6 +44,11 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   ];
 
   const colorVars = { ['--brand-color' as any]: brandColor };
+  const cardIcon = isLoading ? (
+    <Spinner className="msla-card-header-spinner" size={SpinnerSize.small} />
+  ) : icon ? (
+    <img className="scope-icon" alt="" role="presentation" src={icon} />
+  ) : null;
 
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
@@ -59,7 +65,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             <div className={css('msla-selection-box', false && 'selected')} /> {/* TODO: Assign selection here */}
             <button className="msla-scope-header-title-box">
               <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
-              {icon ? <img className="scope-icon" alt="" role="presentation" src={icon} /> : null}
+              {cardIcon}
               <div className="msla-scope-title">{title}</div>
             </button>
             <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />

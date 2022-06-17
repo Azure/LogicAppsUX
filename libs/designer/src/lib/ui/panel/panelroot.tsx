@@ -47,8 +47,9 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
 
   const comment = useNodeDescription(selectedNode);
   const operationInfo = useOperationInfo(selectedNode);
-  const iconUri = useIconUri(operationInfo);
+  const iconUriResult = useIconUri(operationInfo);
   const showCommentBox = !isNullOrUndefined(comment);
+
   useEffect(() => {
     monitoringTab.enabled = !!isMonitoringView;
     setRegisteredTabs((currentTabs) => registerTabs([monitoringTab, parametersTab, SettingsTab, codeViewTab, aboutTab], currentTabs));
@@ -163,11 +164,12 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
     <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width}></RecommendationPanelContext>
   ) : (
     <PanelContainer
-      cardIcon={iconUri}
+      cardIcon={iconUriResult.result}
       comment={comment}
       panelLocation={PanelLocation.Right}
       isCollapsed={collapsed}
       noNodeSelected={!selectedNode}
+      isLoading={iconUriResult.isLoading}
       panelScope={PanelScope.CardLevel}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}

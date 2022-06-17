@@ -79,8 +79,9 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     [dispatch, isCollapsed]
   );
 
-  const brandColor = useBrandColor(operationInfo);
-  const iconUri = useIconUri(operationInfo);
+  const brandColorResult = useBrandColor(operationInfo);
+  const iconUriResult = useIconUri(operationInfo);
+
   if (metadata?.isPlaceholderNode) {
     if (readOnly || !isFirstChild) return null;
     return (
@@ -93,9 +94,10 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     );
   }
 
+  const brandColor = brandColorResult.result;
   const comment = nodeComment
     ? {
-        brandColor: brandColor,
+        brandColor,
         comment: nodeComment,
         isDismissed: false,
         isEditing: false,
@@ -124,7 +126,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
         ) : (
           <Card
             title={label}
-            icon={iconUri}
+            icon={iconUriResult.result}
             draggable={!readOnly}
             brandColor={brandColor}
             id={id}
@@ -135,6 +137,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
             dragPreview={dragPreview}
             isDragging={isDragging}
             isMonitoringView={isMonitoringView}
+            isLoading={iconUriResult.isLoading}
             readOnly={readOnly}
             onClick={nodeClick}
           />

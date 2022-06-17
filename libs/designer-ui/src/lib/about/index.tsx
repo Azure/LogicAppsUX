@@ -1,5 +1,6 @@
 import type { BadgeProps } from '../card';
 import { DocumentationItem } from '../recommendation/documentationItem';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ILabelStyles } from '@fluentui/react/lib/Label';
 import { Label } from '@fluentui/react/lib/Label';
 import { useIntl } from 'react-intl';
@@ -15,10 +16,19 @@ export interface AboutProps {
   description?: string;
   descriptionDocumentation?: OpenAPIV2.ExternalDocumentationObject;
   headerIcons?: BadgeProps[];
+  isLoading?: boolean;
 }
 
-export const About = ({ connectorDisplayName, description, descriptionDocumentation, headerIcons }: AboutProps): JSX.Element => {
+export const About = ({ connectorDisplayName, description, descriptionDocumentation, headerIcons, isLoading }: AboutProps): JSX.Element => {
   const intl = useIntl();
+
+  if (isLoading) {
+    return (
+      <div className="msla-panel-about-container">
+        <Spinner size={SpinnerSize.large} />
+      </div>
+    );
+  }
 
   const badgeHeaderIcons = (badges: BadgeProps[]): JSX.Element => {
     return (

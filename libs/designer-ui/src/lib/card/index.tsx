@@ -7,7 +7,7 @@ import { Gripper } from './images/dynamicsvgs/gripper';
 import type { CommentBoxProps, MenuItemOption } from './types';
 import { getCardStyle } from './utils';
 import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
-import { css } from '@fluentui/react';
+import { Spinner, SpinnerSize, css } from '@fluentui/react';
 import { equals } from '@microsoft-logic-apps/utils';
 import { useState } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
@@ -30,6 +30,7 @@ export interface CardProps {
   id: string;
   isDragging?: boolean;
   isMonitoringView?: boolean;
+  isLoading?: boolean;
   readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
   selected?: boolean;
@@ -67,6 +68,7 @@ export const Card: React.FC<CardProps> = ({
   icon,
   isDragging,
   isMonitoringView,
+  isLoading,
   selected,
   staticResultsEnabled,
   title,
@@ -114,6 +116,14 @@ export const Card: React.FC<CardProps> = ({
     }
   };
 
+  const cardIcon = isLoading ? (
+    <Spinner className="msla-card-header-spinner" size={SpinnerSize.small} />
+  ) : icon ? (
+    <div className="panel-card-content-icon-section">
+      <img className="panel-card-icon" src={icon} alt="" />
+    </div>
+  ) : null;
+
   return (
     <div ref={dragPreview}>
       <div
@@ -143,11 +153,7 @@ export const Card: React.FC<CardProps> = ({
           >
             <div className="panel-card-content-container">
               <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
-              {icon ? (
-                <div className="panel-card-content-icon-section">
-                  <img className="panel-card-icon" src={icon} alt="" />
-                </div>
-              ) : null}
+              {cardIcon}
               <div className="panel-card-top-content">
                 <div className="panel-msla-title">{title}</div>
               </div>
