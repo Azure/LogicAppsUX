@@ -17,6 +17,12 @@
       "value": "Parametr wymagany. Wartość do zwrócenia, jeśli wyrażenie ma wartość „fałsz”."
     }
   ],
+  "+xiT4Q": [
+    {
+      "type": 0,
+      "value": "Pagination"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -87,6 +93,12 @@
     {
       "type": 0,
       "value": "Pokaż menu uruchamiania"
+    }
+  ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Tracking"
     }
   ],
   "0R2D5l": [
@@ -263,6 +275,24 @@
       "value": "Parametr wymagany. Wartość, której indeks jest wyszukiwany."
     }
   ],
+  "1VRGCF": [
+    {
+      "type": 0,
+      "value": "Specify one or more expressions which must be true for the trigger to fire."
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Secure Inputs"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "1jhzOM": [
     {
       "type": 0,
@@ -293,6 +323,12 @@
       "value": "Wyszukiwanie globalne"
     }
   ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+    }
+  ],
   "2K2fAj": [
     {
       "type": 0,
@@ -311,6 +347,12 @@
       "value": "Wymagane. Nazwa akcji z odpowiedzią w postaci danych formularza lub odpowiedzią zakodowaną w formularzu."
     }
   ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -327,6 +369,12 @@
     {
       "type": 0,
       "value": "Błędne"
+    }
+  ],
+  "3qG1VT": [
+    {
+      "type": 0,
+      "value": "Tracked Properties"
     }
   ],
   "3rzrWf": [
@@ -539,6 +587,24 @@
       "value": "Wymagane. Ciąg do zakodowania jako identyfikator URI."
     }
   ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Request Options"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Suppress workflow headers on response"
+    }
+  ],
   "8wr0zO": [
     {
       "type": 0,
@@ -611,6 +677,12 @@
       "value": "Wymagane. Indeks części do pobrania."
     }
   ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Key"
+    }
+  ],
   "BCAnZP": [
     {
       "type": 0,
@@ -651,6 +723,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on większy od porównywanego obiektu."
+    }
+  ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
     }
   ],
   "CG772M": [
@@ -713,6 +791,18 @@
       "value": "Zwraca wartość parametru zdefiniowanego w definicji"
     }
   ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Secure Outputs"
+    }
+  ],
+  "FGS2fS": [
+    {
+      "type": 0,
+      "value": "has failed"
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
@@ -729,6 +819,12 @@
     {
       "type": 0,
       "value": "Zwraca treść dla części w wieloczęściowych danych wyjściowych wyzwalacza"
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Split On"
     }
   ],
   "FUuFlC": [
@@ -887,6 +983,12 @@
       "value": "Wymagane. Nazwa klucza zwracanej wartości danych formularza."
     }
   ],
+  "HXLutF": [
+    {
+      "type": 0,
+      "value": "Key"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -909,6 +1011,12 @@
     {
       "type": 0,
       "value": "Zwraca pierwszy obiekt o wartości innej niż null w przekazanych argumentach"
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Asynchronous Pattern"
     }
   ],
   "J5/7vN": [
@@ -963,6 +1071,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg formatu liczbowego."
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
     }
   ],
   "K50znc": [
@@ -1035,6 +1149,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba dodawana do składnika 2."
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "Secure outputs of the operation and references of output properties."
     }
   ],
   "MDbmMw": [
@@ -1421,6 +1541,18 @@
       "value": "Zapisz"
     }
   ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "Custom Tracking Id"
+    }
+  ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1509,6 +1641,18 @@
     {
       "type": 0,
       "value": "Nie pokazano zawartości z powodu konfiguracji zabezpieczeń."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "General"
     }
   ],
   "V0ZbQO": [
@@ -1659,6 +1803,12 @@
       "value": "Usuń"
     }
   ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Limit Logic Apps to not include workflow metadata headers in the response."
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -1723,6 +1873,12 @@
       "value": "Brak"
     }
   ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Concurrency Control"
+    }
+  ],
   "ZME5hh": [
     {
       "type": 0,
@@ -1765,10 +1921,28 @@
       "value": "Parametr wymagany. Liczba obiektów do usunięcia z początku kolekcji. Musi być dodatnią liczbą całkowitą."
     }
   ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Data Handling"
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
       "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on większy lub równy wartości, z którą jest porównywany."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
     }
   ],
   "ba9yGJ": [
@@ -1867,6 +2041,18 @@
       "value": "Wybierz"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "Secure inputs of the operation."
+    }
+  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -1921,6 +2107,12 @@
       "value": "Parametr wymagany. Indeks, w którym podciąg rozpoczyna się w parametrze 1."
     }
   ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -1949,6 +2141,12 @@
     {
       "type": 0,
       "value": "Zignorowane"
+    }
+  ],
+  "g0a4Qe": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "g4igOR": [
@@ -1997,6 +2195,12 @@
     {
       "type": 0,
       "value": "Funkcje konwersji"
+    }
+  ],
+  "gWRF8m": [
+    {
+      "type": 0,
+      "value": "Trigger Conditions"
     }
   ],
   "gu9o9z": [
@@ -2085,10 +2289,22 @@
       "value": "Czas trwania"
     }
   ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Asynchronous Response"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
       "value": "Wykonaj ponownie"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Networking"
     }
   ],
   "iBlvhu": [
@@ -2203,6 +2419,12 @@
       "value": "Edytuj w pliku JSON"
     }
   ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Duration"
+    }
+  ],
   "k/oqFL": [
     {
       "type": 0,
@@ -2299,6 +2521,12 @@
       "value": "Tytuł"
     }
   ],
+  "lcVG4C": [
+    {
+      "type": 0,
+      "value": "is skipped"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -2341,6 +2569,12 @@
       "value": "Zwraca ciągową reprezentację identyfikatora URI danych"
     }
   ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -2351,6 +2585,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Ciąg do przekonwertowania na małe litery. Jeśli znak w ciągu nie ma odpowiadającej małej litery, w zwróconym ciągu zostanie on uwzględniony jako niezmieniony."
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
     }
   ],
   "n35O/+": [
@@ -2375,6 +2615,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa właściwości do usunięcia."
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Suppress workflow headers"
     }
   ],
   "ngsC44": [
@@ -2419,6 +2665,12 @@
     {
       "type": 0,
       "value": "Wymagane. Identyfikator URI do zdekodowania do reprezentacji binarnej."
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Content Transfer"
     }
   ],
   "oV0xQ9": [
@@ -2487,6 +2739,12 @@
       "value": "Odśwież"
     }
   ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Security"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -2521,6 +2779,12 @@
     {
       "type": 0,
       "value": "Sprawdza, czy ciąg kończy się wartością (bez uwzględniania wielkości liter, kultura niezmienna)"
+    }
+  ],
+  "qPUX59": [
+    {
+      "type": 0,
+      "value": "is successful"
     }
   ],
   "qSejoi": [
@@ -2601,6 +2865,12 @@
       "value": "Parametr wymagany. Wartość konwertowana na liczbę całkowitą."
     }
   ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+    }
+  ],
   "r43nMc": [
     {
       "type": 0,
@@ -2643,22 +2913,28 @@
       "value": "Zwraca reprezentację wartości zakodowaną jako identyfikator URI"
     }
   ],
-  "riPK6U": [
-    {
-      "type": 0,
-      "value": "Case"
-    }
-  ],
   "s5RV9B": [
     {
       "type": 0,
       "value": "Zwraca składnik dnia roku z sygnatury czasowej ciągu"
     }
   ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
       "value": "Zwraca tablicę wartości odpowiadających nazwie klucza w danych wyjściowych wyzwalacza form-data lub form-encoded"
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Degree of Parallelism"
     }
   ],
   "sZ0G/Z": [
@@ -2671,6 +2947,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Kolekcja do sprawdzenia, czy jest pusta."
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Action Timeout"
     }
   ],
   "sfJTHV": [
@@ -2787,6 +3069,12 @@
       "value": "Dodaje liczbę całkowitą godzin do przekazanej sygnatury czasowej ciągu"
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -2839,6 +3127,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa akcji z żądanymi danymi wyjściowymi."
+    }
+  ],
+  "vcBAuU": [
+    {
+      "type": 0,
+      "value": "has timed out"
     }
   ],
   "vwH/XV": [
@@ -2929,6 +3223,12 @@
     {
       "type": 0,
       "value": "Dane wejściowe edytora"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Threshold"
     }
   ],
   "xV/oyK": [

@@ -6,6 +6,7 @@ import { useMonitoringView, useReadOnly } from '../../core/state/selectors/desig
 import { useWorkflowNode } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
+import { labelCase } from '@microsoft-logic-apps/utils';
 import { ScopeCard } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
 import { useDrag } from 'react-dnd';
@@ -61,15 +62,12 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
   const isEmptyGraph = !graph?.edges && (graph?.children[0] as any).children.length === 0;
   const normalizedType = node.type.toLowerCase();
 
-  if (normalizedType === 'scope' || normalizedType === 'foreach' || normalizedType === 'if') {
+  const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope'];
+  const label = labelCase(data.label);
+  if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <div className="msla-scope-v2 msla-scope-card">
-        <Handle
-          type="target"
-          position={targetPosition}
-          isConnectable={false}
-          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
-        />
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <ScopeCard
           brandColor={brandColor}
           icon={iconUri}
@@ -80,16 +78,11 @@ const GraphNode = ({ data, targetPosition = Position.Top, sourcePosition = Posit
           isDragging={isDragging}
           id={id}
           isMonitoringView={isMonitoringView}
-          title={data.label}
+          title={label}
           readOnly={readOnly}
           onClick={nodeClick}
         />
-        <Handle
-          type="source"
-          position={sourcePosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
-        />
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
     );
   } else {
@@ -107,18 +100,8 @@ function renderGenericGraph(
   return (
     <div className="msla-actions-container">
       <div>
-        <Handle
-          type="target"
-          position={targetPosition}
-          isConnectable={false}
-          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
-        />
-        <Handle
-          type="source"
-          position={sourcePosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
-        />
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {!readOnly && isEmptyGraph && (
         <div style={{ display: 'grid', placeItems: 'center', width: '200', height: '30', marginTop: '10px' }}>

@@ -3,6 +3,7 @@ import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
 import {
   useBrandColor,
   useIconUri,
+  useNodeConnectionName,
   useNodeDescription,
   useNodeMetadata,
   useOperationInfo,
@@ -11,6 +12,7 @@ import { useMonitoringView, useReadOnly } from '../../core/state/selectors/desig
 import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
+import { labelCase } from '@microsoft-logic-apps/utils';
 import { Card, SubgraphHeader } from '@microsoft/designer-ui';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -53,6 +55,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
+  const connectionName = useNodeConnectionName(id);
 
   const [isFirstChild, setIsFirstChild] = useState(false);
   useEffect(() => {
@@ -66,14 +69,27 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     dispatch(changePanelNode(id));
   }, [dispatch, id, isCollapsed]);
 
+  const subgraphClick = useCallback(
+    (_id: string) => {
+      if (isCollapsed) {
+        dispatch(expandPanel());
+      }
+      dispatch(changePanelNode(_id));
+    },
+    [dispatch, isCollapsed]
+  );
+
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
   if (metadata?.isPlaceholderNode) {
-    if (readOnly) return null;
+    if (readOnly || !isFirstChild) return null;
     return (
-      <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
-        <DropZone graphId={metadata?.graphId ?? ''} />
-      </div>
+      <>
+        <div style={{ visibility: 'hidden', height: '32px' }} />
+        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
+          <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
+        </div>
+      </>
     );
   }
 
@@ -86,32 +102,34 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
       }
     : undefined;
 
+  const label = labelCase(data.label);
   return (
     <div>
       {isFirstChild ? <div style={{ visibility: 'hidden', height: '32px' }} /> : null}
-      {isFirstChild && !metadata?.subgraphType && !readOnly ? (
-        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px', marginBottom: 5 }}>
-          {!readOnly ? <DropZone graphId={metadata?.graphId ?? ''} parent={id} /> : null}
+      {isFirstChild && !readOnly && !metadata?.subgraphType ? (
+        <div className={'edge-drop-zone-container'}>
+          <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>
       ) : null}
       <div>
-        <Handle
-          type="target"
-          position={targetPosition}
-          isConnectable={false}
-          style={{ transform: 'translate(0, 50%)', visibility: 'hidden' }}
-        />
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         {metadata?.subgraphType ? (
-          <SubgraphHeader subgraphType={metadata?.subgraphType} />
+          <SubgraphHeader
+            parentId={metadata?.graphId.split('-')[0] ?? ''}
+            subgraphType={metadata?.subgraphType}
+            title={label}
+            readOnly={readOnly}
+            onClick={subgraphClick}
+          />
         ) : (
           <Card
-            title={data.label}
+            title={label}
             icon={iconUri}
             draggable={!readOnly}
             brandColor={brandColor}
             id={id}
             connectionRequired={false}
-            connectionDisplayName={undefined}
+            connectionDisplayName={connectionName}
             commentBox={comment}
             drag={drag}
             dragPreview={dragPreview}
@@ -121,18 +139,13 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
             onClick={nodeClick}
           />
         )}
-        <Handle
-          type="source"
-          position={sourcePosition}
-          isConnectable={false}
-          style={{ visibility: 'hidden', transform: 'translate(0, -50%)' }}
-        />
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
-      {!readOnly && childEdges.length === 0 && (
-        <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
+      {childEdges.length === 0 && !readOnly ? (
+        <div className={'edge-drop-zone-container'}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

@@ -1,5 +1,6 @@
+import { ValueSegmentType } from '../models/parameter';
 import type { BaseEditorProps } from './';
-import { ValueSegmentType, BaseEditor } from './';
+import { BaseEditor } from './';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {

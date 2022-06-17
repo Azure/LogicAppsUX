@@ -1,16 +1,22 @@
 import { AddSchemaPanelButton, SchemaTypes } from '../components/addSchemaPanelButton';
+import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import type { RootState } from '../core/state/Store';
+import { updateBreadcrumbForSchema } from '../core/state/BreadcrumbSlice';
+import { updateReactFlowForSchema } from '../core/state/ReactFlowSlice';
+import { setCurrentInputNode, setCurrentOutputNode } from '../core/state/SchemaSlice';
+import type { AppDispatch, RootState } from '../core/state/Store';
+import { store } from '../core/state/Store';
 import { LeftHandPanel } from './LeftHandPanel';
 import { LayerHost } from '@fluentui/react';
 import type { ILayerProps } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import { useCallback, useEffect, useState } from 'react';
+import type { MouseEvent as ReactMouseEvent } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const DataMapperDesigner = () => {
   const layerHostId = useId('layerHost');
@@ -27,6 +33,35 @@ export const DataMapperDesigner = () => {
   const schemaList: string[] = ['SimpleCustomerOrderSchema.json', 'ExampleSchema.json'];
 
   const [nodes, edges] = useLayout();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
+    const schemaState = store.getState().schema;
+    if (node.type === 'input') {
+      const currentSchemaNode = schemaState.currentInputNode;
+      if (currentSchemaNode) {
+        const newCurrentSchemaNode =
+          currentSchemaNode.key === node.id
+            ? currentSchemaNode
+            : currentSchemaNode.children.find((schemaNode) => schemaNode.key === node.id);
+        dispatch(setCurrentInputNode(newCurrentSchemaNode));
+        dispatch(updateReactFlowForSchema({ inputSchema: newCurrentSchemaNode, outputSchema: schemaState.currentOutputNode }));
+        // Don't need to update the breadcrumb on input traversal
+      }
+    } else {
+      const currentSchemaNode = schemaState.currentOutputNode;
+      if (currentSchemaNode) {
+        const trimmedNodeId = node.id.substring(7);
+        const newCurrentSchemaNode =
+          currentSchemaNode.key === trimmedNodeId
+            ? currentSchemaNode
+            : currentSchemaNode.children.find((schemaNode) => schemaNode.key === trimmedNodeId);
+        dispatch(setCurrentOutputNode(newCurrentSchemaNode));
+        dispatch(updateReactFlowForSchema({ inputSchema: schemaState.currentInputNode, outputSchema: newCurrentSchemaNode }));
+        dispatch(updateBreadcrumbForSchema({ schema: schemaState.outputSchema, currentNode: newCurrentSchemaNode }));
+      }
+    }
+  };
 
   // const onSubmit = () => {
   //   dispatch(setInputSchmea)
@@ -35,7 +70,6 @@ export const DataMapperDesigner = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div>
-        <div style={{ height: '20px' }}></div>
         <div
           style={{
             // TODO - Remove
@@ -43,6 +77,7 @@ export const DataMapperDesigner = () => {
           }}
         >
           <EditorCommandBar />
+          <EditorBreadcrumb />
           <LayerHost
             id={layerHostId}
             style={{
@@ -72,6 +107,7 @@ export const DataMapperDesigner = () => {
                   <ReactFlow
                     nodes={nodes}
                     edges={edges}
+                    onNodeDoubleClick={onNodeDoubleClick}
                     minZoom={0}
                     nodesDraggable={false}
                     fitView
@@ -85,7 +121,6 @@ export const DataMapperDesigner = () => {
                   ></ReactFlow>
                 </ReactFlowProvider>
               )}
-
               <LeftHandPanel layerProps={panelLayerProps} />
             </div>
           </LayerHost>

@@ -12,7 +12,7 @@ export const StateWrapper: React.FC = () => {
     if (overviewState.initialized) {
       switch (overviewState.project) {
         case ProjectName.export: {
-          navigate(`/${ProjectName.export}`, { replace: true });
+          navigate(`/${ProjectName.export}/home`, { replace: true });
           break;
         }
         case ProjectName.overview: {

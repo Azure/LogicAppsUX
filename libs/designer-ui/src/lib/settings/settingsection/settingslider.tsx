@@ -1,18 +1,15 @@
-import { Label } from '../../label';
-import { SettingToggle } from './settingtoggle';
+import type { SettingProps } from './settingtoggle';
 import { Slider } from '@fluentui/react';
-import { useBoolean } from '@fluentui/react-hooks';
 import React, { useState } from 'react';
 
-export interface CustomValueSliderProps {
+type ValueChangeHandler = (value: number) => void;
+export interface CustomValueSliderProps extends SettingProps {
   value: number;
-  readOnly?: boolean;
   maxVal?: number;
   minVal?: number;
   defaultValue?: number;
   sliderLabel: string;
-  onToggleLabel: string;
-  offToggleLabel: string;
+  onValueChange: ValueChangeHandler;
 }
 
 export const CustomValueSlider = ({
@@ -21,43 +18,49 @@ export const CustomValueSlider = ({
   maxVal = 100,
   minVal = 0,
   defaultValue = (minVal + maxVal) / 2,
-  onToggleLabel,
-  offToggleLabel,
+  customLabel,
   sliderLabel,
-}: CustomValueSliderProps): JSX.Element => {
-  const [checked, toggleChecked] = useBoolean(false);
-  const onToggleInputChange = () => {
-    toggleChecked.toggle();
-  };
+  onValueChange,
+}: CustomValueSliderProps): JSX.Element | null => {
   const [sliderCount, setCount] = useState(value ?? defaultValue);
   const onSliderValueChanged = (value: number): void => {
     setCount(value);
+    onValueChange?.(value);
   };
 
-  return (
-    <>
-      <SettingToggle readOnly={readOnly} onToggleInputChange={onToggleInputChange} onLabel={onToggleLabel} offLabel={offToggleLabel} />
-      {checked ? (
-        <div>
-          <div className="msla-operation-setting">
-            <div className="msla-setting-label">
-              <Label text={sliderLabel} />
-            </div>
-            <div className="msla-setting-input">
-              <Slider
-                ariaLabel={sliderLabel}
-                defaultValue={defaultValue}
-                disabled={readOnly}
-                max={maxVal}
-                min={minVal}
-                showValue={true}
-                value={sliderCount}
-                onChange={onSliderValueChanged}
-              />
-            </div>
-          </div>
+  if (customLabel) {
+    return (
+      <>
+        {customLabel()}
+        <div className="msla-setting-input">
+          <Slider
+            label={sliderLabel}
+            ariaLabel={sliderLabel}
+            disabled={readOnly}
+            max={maxVal}
+            min={minVal}
+            showValue={true}
+            value={sliderCount}
+            onChange={onSliderValueChanged}
+          />
         </div>
-      ) : null}
-    </>
+      </>
+    );
+  }
+
+  return (
+    <div className="msla-setting-input">
+      <Slider
+        label={sliderLabel}
+        ariaLabel={sliderLabel}
+        defaultValue={defaultValue}
+        disabled={readOnly}
+        max={maxVal}
+        min={minVal}
+        showValue={true}
+        value={sliderCount}
+        onChange={onSliderValueChanged}
+      />
+    </div>
   );
 };
