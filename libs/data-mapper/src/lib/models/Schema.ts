@@ -39,7 +39,12 @@ export interface SchemaExtended extends Schema {
 export interface SchemaNodeExtended extends SchemaNode {
   children: SchemaNodeExtended[];
   // Inclusive of the current node
-  pathToRoot: SchemaNode[];
+  pathToRoot: PathItem[];
+}
+
+export interface PathItem {
+  key: string;
+  name: string;
 }
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
@@ -51,8 +56,8 @@ export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended =>
   return extendedSchema;
 };
 
-const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPath: SchemaNode[]): SchemaNodeExtended => {
-  const pathToRoot: SchemaNode[] = [...parentPath, schemaNode];
+const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPath: PathItem[]): SchemaNodeExtended => {
+  const pathToRoot: PathItem[] = [...parentPath, { key: schemaNode.key, name: schemaNode.name }];
 
   const extendedSchemaNode: SchemaNodeExtended = {
     ...schemaNode,
