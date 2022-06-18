@@ -20,7 +20,7 @@
   "+xiT4Q": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "Penomoran halaman"
     }
   ],
   "/I/U8L": [
@@ -98,7 +98,7 @@
   "0KMjv6": [
     {
       "type": 0,
-      "value": "Tracking"
+      "value": "Pelacakan"
     }
   ],
   "0R2D5l": [
@@ -110,7 +110,7 @@
   "0Vzp0l": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Ciutkan"
     }
   ],
   "0ZlNtf": [
@@ -229,19 +229,19 @@
   "1VRGCF": [
     {
       "type": 0,
-      "value": "Specify one or more expressions which must be true for the trigger to fire."
+      "value": "Tentukan satu atau beberapa ekspresi yang harus benar untuk pemicu yang akan diaktifkan."
     }
   ],
   "1ejxkP": [
     {
       "type": 0,
-      "value": "Secure Inputs"
+      "value": "Input Aman"
     }
   ],
   "1htSs7": [
     {
       "type": 0,
-      "value": "Off"
+      "value": "Tidak Aktif"
     }
   ],
   "1jhzOM": [
@@ -277,7 +277,7 @@
   "2Cdt4p": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+      "value": "Aktifkan pemisahan untuk memulai instans alur kerja setiap item dalam array yang dipilih. Setiap instans juga dapat memiliki id pelacakan yang berbeda."
     }
   ],
   "2K2fAj": [
@@ -301,7 +301,7 @@
   "2tTQ0A": [
     {
       "type": 0,
-      "value": "On"
+      "value": "Aktif"
     }
   ],
   "33+WHG": [
@@ -325,7 +325,7 @@
   "3qG1VT": [
     {
       "type": 0,
-      "value": "Tracked Properties"
+      "value": "Properti yang Dipantau"
     }
   ],
   "3rzrWf": [
@@ -541,19 +541,19 @@
   "8j+a0n": [
     {
       "type": 0,
-      "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+      "value": "Dengan pola asinkron, jika server jarak jauh menunjukkan bahwa permintaan diterima untuk diproses dengan respons 202 (Diterima), mesin Logic Apps akan terus membuat polling URL yang ditentukan di header lokasi respons hingga mencapai status terminal."
     }
   ],
   "8ubEPi": [
     {
       "type": 0,
-      "value": "Request Options"
+      "value": "Opsi Permintaan"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Sembunyikan header alur kerja pada respons"
     }
   ],
   "8wr0zO": [
@@ -631,7 +631,7 @@
   "BBD8Em": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Kunci"
     }
   ],
   "BCAnZP": [
@@ -679,7 +679,7 @@
   "C4NQ1J": [
     {
       "type": 0,
-      "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+      "value": "Ambil item untuk memenuhi ambang yang ditetapkan dengan mengikuti token terusan. Karena ukuran halaman konektor, angka yang dihasilkan dapat melebihi ambang."
     }
   ],
   "CG772M": [
@@ -745,13 +745,13 @@
   "FDWfqM": [
     {
       "type": 0,
-      "value": "Secure Outputs"
+      "value": "Output Aman"
     }
   ],
   "FGS2fS": [
     {
       "type": 0,
-      "value": "has failed"
+      "value": "gagal"
     }
   ],
   "FN5zHQ": [
@@ -763,7 +763,7 @@
   "FNbA9+": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Luaskan"
     }
   ],
   "FS+/Tb": [
@@ -775,7 +775,7 @@
   "FUhNu4": [
     {
       "type": 0,
-      "value": "Split On"
+      "value": "Pisahkan Saat"
     }
   ],
   "FUuFlC": [
@@ -904,7 +904,7 @@
   "HXLutF": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Kunci"
     }
   ],
   "HfrUId": [
@@ -934,7 +934,7 @@
   "J/Kz1j": [
     {
       "type": 0,
-      "value": "Asynchronous Pattern"
+      "value": "Pola Asinkron"
     }
   ],
   "J5/7vN": [
@@ -994,7 +994,7 @@
   "JzqgNM": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Atur id pelacakan untuk dijalankan. Untuk pemisahan, id pelacakan ini untuk memulai permintaan."
     }
   ],
   "K50znc": [
@@ -1072,7 +1072,7 @@
   "MCQODe": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties."
+      "value": "Mengamankan output dari operasi dan referensi properti output."
     }
   ],
   "MDbmMw": [
@@ -1429,13 +1429,13 @@
   "SmCQys": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Id Pelacakan Kustom"
     }
   ],
   "T0BFpC": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Atur id pelacakan untuk dijalankan. Untuk pemisahan, id pelacakan ini untuk memulai permintaan."
     }
   ],
   "T7zcR6": [
@@ -1531,13 +1531,13 @@
   "Ur+wph": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Klik untuk menghapus item"
     }
   ],
   "V+/c21": [
     {
       "type": 0,
-      "value": "General"
+      "value": "Umum"
     }
   ],
   "V0ZbQO": [
@@ -1691,7 +1691,7 @@
   "XsktQ/": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the response."
+      "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam respons."
     }
   ],
   "XtuP5e": [
@@ -1761,7 +1761,7 @@
   "ZM1mRy": [
     {
       "type": 0,
-      "value": "Concurrency Control"
+      "value": "Kontrol Konkurensi"
     }
   ],
   "ZME5hh": [
@@ -1809,13 +1809,13 @@
   "aK4iLW": [
     {
       "type": 0,
-      "value": "Data Handling"
+      "value": "Penanganan Data"
     }
   ],
   "b9/1dK": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Nilai"
     }
   ],
   "bTrk+S": [
@@ -1827,7 +1827,7 @@
   "bWBMhe": [
     {
       "type": 0,
-      "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
+      "value": "Secara default, instans Aplikasi Logika berjalan secara bersamaan, atau secara paralel. Kontrol ini mengubah bagaimana eksekusi baru diantrekan dan tidak dapat diubah setelah diaktifkan. Untuk menjalankan instans paralel sebanyak mungkin, biarkan kontrol ini dinonaktifkan. Untuk membatasi jumlah eksekusi paralel, aktifkan kontrol ini, lalu pilih batas. Untuk menjalankannya secara berurutan, pilih 1 sebagai batas."
     }
   ],
   "ba9yGJ": [
@@ -1929,13 +1929,13 @@
   "dSTRb/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Tentukan perilaku dan kemampuan untuk mentransfer konten melalui HTTP. Pesan berukuran besar dapat dibagi menjadi permintaan yang lebih kecil ke konektor untuk memungkinkan pengunggahan pesan berukuran besar. Detail dapat ditemukan di http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "dWFyfN": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation."
+      "value": "Mengamankan input operasi."
     }
   ],
   "dhvk0u": [
@@ -2031,7 +2031,7 @@
   "g0a4Qe": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Nilai"
     }
   ],
   "g4igOR": [
@@ -2085,7 +2085,7 @@
   "gWRF8m": [
     {
       "type": 0,
-      "value": "Trigger Conditions"
+      "value": "Kondisi Pemicu"
     }
   ],
   "gu9o9z": [
@@ -2136,7 +2136,7 @@
   "i/b3Ko": [
     {
       "type": 0,
-      "value": "Asynchronous Response"
+      "value": "Respons Asinkron"
     }
   ],
   "i1cwra": [
@@ -2148,7 +2148,7 @@
   "i4C4aB": [
     {
       "type": 0,
-      "value": "Networking"
+      "value": "Jaringan"
     }
   ],
   "iBlvhu": [
@@ -2266,7 +2266,7 @@
   "juR40n": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Durasi"
     }
   ],
   "k/oqFL": [
@@ -2368,7 +2368,7 @@
   "lcVG4C": [
     {
       "type": 0,
-      "value": "is skipped"
+      "value": "dilewati"
     }
   ],
   "lgs5sf": [
@@ -2416,7 +2416,7 @@
   "mOr9ll": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
+      "value": "Durasi maksimum untuk permintaan keluar tunggal dari tindakan ini. Jika permintaan tidak selesai dalam batas ini setelah menjalankan percobaan ulang, tindakan gagal."
     }
   ],
   "mPakaD": [
@@ -2434,7 +2434,7 @@
   "mjS/k1": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+      "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
     }
   ],
   "n35O/+": [
@@ -2464,7 +2464,7 @@
   "nZ4nLn": [
     {
       "type": 0,
-      "value": "Suppress workflow headers"
+      "value": "Sembunyikan header alur kerja"
     }
   ],
   "ngsC44": [
@@ -2514,7 +2514,7 @@
   "oLtwMw": [
     {
       "type": 0,
-      "value": "Content Transfer"
+      "value": "Transfer Konten"
     }
   ],
   "oV0xQ9": [
@@ -2586,7 +2586,7 @@
   "ptkf0D": [
     {
       "type": 0,
-      "value": "Security"
+      "value": "Keamanan"
     }
   ],
   "q/+Uex": [
@@ -2628,7 +2628,7 @@
   "qPUX59": [
     {
       "type": 0,
-      "value": "is successful"
+      "value": "berhasil"
     }
   ],
   "qSejoi": [
@@ -2679,7 +2679,7 @@
   "qrxi0L": [
     {
       "type": 0,
-      "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+      "value": "Respons asinkron memungkinkan Aplikasi Logika merespons dengan 202 (Diterima) untuk menunjukkan bahwa permintaan telah diterima untuk diproses. Header lokasi akan disediakan untuk menerima keadaan akhir."
     }
   ],
   "r43nMc": [
@@ -2733,7 +2733,7 @@
   "s7nGyC": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Hapus"
     }
   ],
   "sDkAVZ": [
@@ -2745,7 +2745,7 @@
   "sW47JR": [
     {
       "type": 0,
-      "value": "Degree of Parallelism"
+      "value": "Tingkat Paralelisme"
     }
   ],
   "sZ0G/Z": [
@@ -2763,7 +2763,7 @@
   "scmyvO": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Batas Waktu Tindakan"
     }
   ],
   "sfJTHV": [
@@ -2883,7 +2883,7 @@
   "uZH8Qs": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
+      "value": "Batasi durasi maksimum antara percobaan ulang dan respons asinkron untuk tindakan ini. Catatan: Ini tidak mengubah batas waktu permintaan dari permintaan tunggal."
     }
   ],
   "uc/PoD": [
@@ -2943,7 +2943,7 @@
   "vcBAuU": [
     {
       "type": 0,
-      "value": "has timed out"
+      "value": "waktu telah habis"
     }
   ],
   "vwH/XV": [
@@ -3039,7 +3039,7 @@
   "xQQ9ko": [
     {
       "type": 0,
-      "value": "Threshold"
+      "value": "Ambang"
     }
   ],
   "xV/oyK": [

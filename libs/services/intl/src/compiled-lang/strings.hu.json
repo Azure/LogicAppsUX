@@ -20,7 +20,7 @@
   "+xiT4Q": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "Oldalakra tördelés"
     }
   ],
   "/I/U8L": [
@@ -44,7 +44,7 @@
   "/WW7If": [
     {
       "type": 0,
-      "value": "True"
+      "value": "Igaz"
     }
   ],
   "/doURb": [
@@ -98,7 +98,7 @@
   "0KMjv6": [
     {
       "type": 0,
-      "value": "Tracking"
+      "value": "Követés"
     }
   ],
   "0R2D5l": [
@@ -110,7 +110,7 @@
   "0Vzp0l": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Összecsukás"
     }
   ],
   "0ZlNtf": [
@@ -240,19 +240,19 @@
   "1VRGCF": [
     {
       "type": 0,
-      "value": "Specify one or more expressions which must be true for the trigger to fire."
+      "value": "Adjon meg egy vagy több olyan kifejezést, amelynek igaznak kell lennie a trigger aktiválásához."
     }
   ],
   "1ejxkP": [
     {
       "type": 0,
-      "value": "Secure Inputs"
+      "value": "Biztonságos bemenetek"
     }
   ],
   "1htSs7": [
     {
       "type": 0,
-      "value": "Off"
+      "value": "Kikapcsolva"
     }
   ],
   "1jhzOM": [
@@ -288,7 +288,7 @@
   "2Cdt4p": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+      "value": "Ha engedélyezi a felosztást, a rendszer a kiválasztott tömb minden eleméhez elindítja a munkafolyamat egy példányát. Minden példány rendelkezhet eltérő követési azonosítóval is."
     }
   ],
   "2K2fAj": [
@@ -312,7 +312,7 @@
   "2tTQ0A": [
     {
       "type": 0,
-      "value": "On"
+      "value": "Bekapcsolva"
     }
   ],
   "33+WHG": [
@@ -336,7 +336,7 @@
   "3qG1VT": [
     {
       "type": 0,
-      "value": "Tracked Properties"
+      "value": "Követett tulajdonságok"
     }
   ],
   "3rzrWf": [
@@ -552,19 +552,19 @@
   "8j+a0n": [
     {
       "type": 0,
-      "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+      "value": "Az aszinkron minta használata esetén ha a távoli kiszolgáló 202-es (Elfogadva) válasszal jelzi, hogy a kérelmet elfogadta feldolgozásra, a Logic Apps-motor addig folytatja a válasz helyet megjelölő fejlécében megadott URL-cím lekérdezését, amíg végállapotba nem kerül."
     }
   ],
   "8ubEPi": [
     {
       "type": 0,
-      "value": "Request Options"
+      "value": "Kérelem beállításai"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Munkafolyamat-fejlécek elrejtése a válaszban"
     }
   ],
   "8wr0zO": [
@@ -642,7 +642,7 @@
   "BBD8Em": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Kulcs"
     }
   ],
   "BCAnZP": [
@@ -690,7 +690,7 @@
   "C4NQ1J": [
     {
       "type": 0,
-      "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+      "value": "Elemek beolvasása a megadott küszöbérték teljesítéséhez a folytatási kódot követve. Az összekötő oldalmérete miatt a visszaadott elemek száma meghaladhatja a küszöbértéket."
     }
   ],
   "CG772M": [
@@ -756,13 +756,13 @@
   "FDWfqM": [
     {
       "type": 0,
-      "value": "Secure Outputs"
+      "value": "Biztonságos kimenetek"
     }
   ],
   "FGS2fS": [
     {
       "type": 0,
-      "value": "has failed"
+      "value": "nem sikerült"
     }
   ],
   "FN5zHQ": [
@@ -774,7 +774,7 @@
   "FNbA9+": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Kibontás"
     }
   ],
   "FS+/Tb": [
@@ -786,13 +786,13 @@
   "FUhNu4": [
     {
       "type": 0,
-      "value": "Split On"
+      "value": "Felosztás bekapcsolva"
     }
   ],
   "FUuFlC": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Alapértelmezett"
     }
   ],
   "FVavKy": [
@@ -926,7 +926,7 @@
   "HXLutF": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Kulcs"
     }
   ],
   "HfrUId": [
@@ -956,7 +956,7 @@
   "J/Kz1j": [
     {
       "type": 0,
-      "value": "Asynchronous Pattern"
+      "value": "Aszinkron minta"
     }
   ],
   "J5/7vN": [
@@ -1016,7 +1016,7 @@
   "JzqgNM": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Állítsa be a futtatás követési azonosítóját. Felosztás esetén a követési azonosító a kezdeményező kérelemhez tartozik."
     }
   ],
   "K50znc": [
@@ -1094,7 +1094,7 @@
   "MCQODe": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties."
+      "value": "A művelet kimeneteinek és a kimeneti tulajdonságok hivatkozásainak biztonságossá tétele."
     }
   ],
   "MDbmMw": [
@@ -1268,7 +1268,7 @@
   "PXa0D4": [
     {
       "type": 0,
-      "value": "False"
+      "value": "Hamis"
     }
   ],
   "PaPPLr": [
@@ -1466,13 +1466,13 @@
   "SmCQys": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Egyéni követési azonosító"
     }
   ],
   "T0BFpC": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Állítsa be a futtatás követési azonosítóját. Felosztás esetén a követési azonosító a kezdeményező kérelemhez tartozik."
     }
   ],
   "T7zcR6": [
@@ -1568,13 +1568,13 @@
   "Ur+wph": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Kattintson ide az elem törléséhez"
     }
   ],
   "V+/c21": [
     {
       "type": 0,
-      "value": "General"
+      "value": "Általános"
     }
   ],
   "V0ZbQO": [
@@ -1728,7 +1728,7 @@
   "XsktQ/": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the response."
+      "value": "A munkafolyamat-metaadatokat tartalmazó fejlécek a Logic Apps-válaszban való megjelenítésének letiltása."
     }
   ],
   "XtuP5e": [
@@ -1798,7 +1798,7 @@
   "ZM1mRy": [
     {
       "type": 0,
-      "value": "Concurrency Control"
+      "value": "Egyidejűség-vezérlés"
     }
   ],
   "ZME5hh": [
@@ -1846,13 +1846,13 @@
   "aK4iLW": [
     {
       "type": 0,
-      "value": "Data Handling"
+      "value": "Adatok kezelése"
     }
   ],
   "b9/1dK": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Érték"
     }
   ],
   "bTrk+S": [
@@ -1864,7 +1864,7 @@
   "bWBMhe": [
     {
       "type": 0,
-      "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
+      "value": "A logikaialkalmazás-példányok alapértelmezés szerint egyszerre vagy párhuzamosan futnak. Ez a vezérlő módosítja az új futtatások várólistára helyezésének módját, és az engedélyezés után már nem módosítható. Ha a lehető legtöbb párhuzamos példányt szeretné futtatni, hagyja kikapcsolva ezt a vezérlőt. A párhuzamos futtatások számának korlátozásához kapcsolja be ezt a vezérlőt, és válasszon korlátot. A szekvenciális futtatáshoz válassza az 1 értéket korlátként."
     }
   ],
   "ba9yGJ": [
@@ -1972,7 +1972,7 @@
   "dWFyfN": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation."
+      "value": "A művelet bemeneteinek biztonságossá tétele."
     }
   ],
   "dhvk0u": [
@@ -2032,7 +2032,7 @@
   "euC/DV": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Tömb"
     }
   ],
   "f/lWTW": [
@@ -2068,7 +2068,7 @@
   "g0a4Qe": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Érték"
     }
   ],
   "g4igOR": [
@@ -2122,7 +2122,7 @@
   "gWRF8m": [
     {
       "type": 0,
-      "value": "Trigger Conditions"
+      "value": "Aktiválási feltételek"
     }
   ],
   "gu9o9z": [
@@ -2192,7 +2192,7 @@
   "i/b3Ko": [
     {
       "type": 0,
-      "value": "Asynchronous Response"
+      "value": "Aszinkron válasz"
     }
   ],
   "i1cwra": [
@@ -2204,7 +2204,7 @@
   "i4C4aB": [
     {
       "type": 0,
-      "value": "Networking"
+      "value": "Hálózatkezelés"
     }
   ],
   "iBlvhu": [
@@ -2322,7 +2322,7 @@
   "juR40n": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Időtartam"
     }
   ],
   "k/oqFL": [
@@ -2424,7 +2424,7 @@
   "lcVG4C": [
     {
       "type": 0,
-      "value": "is skipped"
+      "value": "kihagyva"
     }
   ],
   "lgs5sf": [
@@ -2472,7 +2472,7 @@
   "mOr9ll": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
+      "value": "A műveletből származó egyetlen kimenő kérelem maximális időtartama. Ha a kérelem nem fejeződik be ezen a korláton belül az újrapróbálkozások futtatása után, a művelet sikertelen lesz."
     }
   ],
   "mPakaD": [
@@ -2490,7 +2490,7 @@
   "mjS/k1": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+      "value": "A munkafolyamat-metaadatokat tartalmazó fejlécek a kimenő Logic Apps-kérelemben való megjelenítésének letiltása."
     }
   ],
   "n35O/+": [
@@ -2520,7 +2520,7 @@
   "nZ4nLn": [
     {
       "type": 0,
-      "value": "Suppress workflow headers"
+      "value": "Munkafolyamat-fejlécek elrejtése"
     }
   ],
   "ngsC44": [
@@ -2570,7 +2570,7 @@
   "oLtwMw": [
     {
       "type": 0,
-      "value": "Content Transfer"
+      "value": "Tartalomátvitel"
     }
   ],
   "oV0xQ9": [
@@ -2642,7 +2642,7 @@
   "ptkf0D": [
     {
       "type": 0,
-      "value": "Security"
+      "value": "Biztonság"
     }
   ],
   "q/+Uex": [
@@ -2684,7 +2684,7 @@
   "qPUX59": [
     {
       "type": 0,
-      "value": "is successful"
+      "value": "sikeres"
     }
   ],
   "qSejoi": [
@@ -2746,7 +2746,7 @@
   "qrxi0L": [
     {
       "type": 0,
-      "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+      "value": "Az aszinkron válasz lehetővé teszi, hogy egy logikai alkalmazás „202 – Elfogadva” választ adjon, jelezve, hogy elfogadta és feldolgozza a kérést. A válasz tartalmaz egy helyfejlécet is, amely a végállapot beolvasására szolgál."
     }
   ],
   "r43nMc": [
@@ -2800,7 +2800,7 @@
   "s7nGyC": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Törlés"
     }
   ],
   "sDkAVZ": [
@@ -2812,7 +2812,7 @@
   "sW47JR": [
     {
       "type": 0,
-      "value": "Degree of Parallelism"
+      "value": "Párhuzamosság szintje"
     }
   ],
   "sZ0G/Z": [
@@ -2830,7 +2830,7 @@
   "scmyvO": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Művelet időkorlátja"
     }
   ],
   "sfJTHV": [
@@ -2950,7 +2950,7 @@
   "uZH8Qs": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
+      "value": "Korlátozza az újrapróbálkozások és az aszinkron válaszok közötti maximális időtartamot ehhez a művelethez. Megjegyzés: Ez nem módosítja az egyszerű kérelem időkorlátját."
     }
   ],
   "uc/PoD": [
@@ -3010,7 +3010,7 @@
   "vcBAuU": [
     {
       "type": 0,
-      "value": "has timed out"
+      "value": "túllépte az időkorlátot"
     }
   ],
   "vwH/XV": [
@@ -3106,7 +3106,7 @@
   "xQQ9ko": [
     {
       "type": 0,
-      "value": "Threshold"
+      "value": "Küszöbérték"
     }
   ],
   "xV/oyK": [

@@ -20,7 +20,7 @@
   "+xiT4Q": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "Paginação"
     }
   ],
   "/I/U8L": [
@@ -44,7 +44,7 @@
   "/WW7If": [
     {
       "type": 0,
-      "value": "True"
+      "value": "Verdadeiro"
     }
   ],
   "/doURb": [
@@ -98,7 +98,7 @@
   "0KMjv6": [
     {
       "type": 0,
-      "value": "Tracking"
+      "value": "Acompanhamento"
     }
   ],
   "0R2D5l": [
@@ -110,7 +110,7 @@
   "0Vzp0l": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Recolher"
     }
   ],
   "0ZlNtf": [
@@ -240,19 +240,19 @@
   "1VRGCF": [
     {
       "type": 0,
-      "value": "Specify one or more expressions which must be true for the trigger to fire."
+      "value": "Especifique uma ou mais expressões que precisam ser true para que o gatilho seja disparado."
     }
   ],
   "1ejxkP": [
     {
       "type": 0,
-      "value": "Secure Inputs"
+      "value": "Entradas Seguras"
     }
   ],
   "1htSs7": [
     {
       "type": 0,
-      "value": "Off"
+      "value": "Desativado"
     }
   ],
   "1jhzOM": [
@@ -288,7 +288,7 @@
   "2Cdt4p": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+      "value": "Habilite a divisão para iniciar uma instância do fluxo de trabalho por item na matriz selecionada. Cada instância também pode ter uma ID de rastreamento diferente."
     }
   ],
   "2K2fAj": [
@@ -312,7 +312,7 @@
   "2tTQ0A": [
     {
       "type": 0,
-      "value": "On"
+      "value": "Ativado"
     }
   ],
   "33+WHG": [
@@ -336,7 +336,7 @@
   "3qG1VT": [
     {
       "type": 0,
-      "value": "Tracked Properties"
+      "value": "Propriedades Rastreadas"
     }
   ],
   "3rzrWf": [
@@ -552,19 +552,19 @@
   "8j+a0n": [
     {
       "type": 0,
-      "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+      "value": "Com o padrão assíncrono, se o servidor remoto indicar que a solicitação é aceita para processamento com uma resposta 202 (aceitada), o mecanismo dos Aplicativos Lógicos continuarão sondando a URL especificada no cabeçalho de localização de resposta até alcançar um estado terminal."
     }
   ],
   "8ubEPi": [
     {
       "type": 0,
-      "value": "Request Options"
+      "value": "Opções de Solicitação"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Suprimir cabeçalhos de fluxo de trabalho na resposta"
     }
   ],
   "8wr0zO": [
@@ -642,7 +642,7 @@
   "BBD8Em": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Chave"
     }
   ],
   "BCAnZP": [
@@ -690,7 +690,7 @@
   "C4NQ1J": [
     {
       "type": 0,
-      "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+      "value": "Recupere itens para atingir o limite especificado seguindo o token de continuação. Devido ao tamanho da página do conector, o número retornado pode exceder o limite."
     }
   ],
   "CG772M": [
@@ -756,13 +756,13 @@
   "FDWfqM": [
     {
       "type": 0,
-      "value": "Secure Outputs"
+      "value": "Saídas Seguras"
     }
   ],
   "FGS2fS": [
     {
       "type": 0,
-      "value": "has failed"
+      "value": "falhou"
     }
   ],
   "FN5zHQ": [
@@ -774,7 +774,7 @@
   "FNbA9+": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandir"
     }
   ],
   "FS+/Tb": [
@@ -786,13 +786,13 @@
   "FUhNu4": [
     {
       "type": 0,
-      "value": "Split On"
+      "value": "Dividir Em"
     }
   ],
   "FUuFlC": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Padrão"
     }
   ],
   "FVavKy": [
@@ -926,7 +926,7 @@
   "HXLutF": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Chave"
     }
   ],
   "HfrUId": [
@@ -956,7 +956,7 @@
   "J/Kz1j": [
     {
       "type": 0,
-      "value": "Asynchronous Pattern"
+      "value": "Padrão Assíncrono"
     }
   ],
   "J5/7vN": [
@@ -1016,7 +1016,7 @@
   "JzqgNM": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Defina a ID de rastreamento para a execução. Para divisão, essa ID é para a solicitação inicial."
     }
   ],
   "K50znc": [
@@ -1094,7 +1094,7 @@
   "MCQODe": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties."
+      "value": "Proteger saídas da operação e referências de propriedades de saída."
     }
   ],
   "MDbmMw": [
@@ -1268,7 +1268,7 @@
   "PXa0D4": [
     {
       "type": 0,
-      "value": "False"
+      "value": "Falso"
     }
   ],
   "PaPPLr": [
@@ -1462,13 +1462,13 @@
   "SmCQys": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "ID de Rastreamento Personalizada"
     }
   ],
   "T0BFpC": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Defina a ID de rastreamento para a execução. Para divisão, essa ID é para a solicitação inicial."
     }
   ],
   "T7zcR6": [
@@ -1564,13 +1564,13 @@
   "Ur+wph": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Clique para excluir o item"
     }
   ],
   "V+/c21": [
     {
       "type": 0,
-      "value": "General"
+      "value": "Geral"
     }
   ],
   "V0ZbQO": [
@@ -1724,7 +1724,7 @@
   "XsktQ/": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the response."
+      "value": "Limite os Aplicativos Lógicos para não incluir cabeçalhos de metadados de fluxo de trabalho na resposta."
     }
   ],
   "XtuP5e": [
@@ -1794,7 +1794,7 @@
   "ZM1mRy": [
     {
       "type": 0,
-      "value": "Concurrency Control"
+      "value": "Controle de Simultaneidade"
     }
   ],
   "ZME5hh": [
@@ -1842,13 +1842,13 @@
   "aK4iLW": [
     {
       "type": 0,
-      "value": "Data Handling"
+      "value": "Tratamento de Dados"
     }
   ],
   "b9/1dK": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Valor"
     }
   ],
   "bTrk+S": [
@@ -1860,7 +1860,7 @@
   "bWBMhe": [
     {
       "type": 0,
-      "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
+      "value": "Por padrão, as instâncias do Aplicativo Lógico são executadas ao mesmo tempo ou em paralelo. Este controle altera como as novas execuções são enfileiradas e não pode ser alteradas após a habilitação. Para executar o máximo de instâncias paralelas possível, deixe este controle desativado. Para limitar o número de execuções paralelas, ative este controle e selecione um limite. Para executar sequencialmente, selecione 1 como o limite."
     }
   ],
   "ba9yGJ": [
@@ -1962,13 +1962,13 @@
   "dSTRb/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Especifique o comportamento e os recursos para transferir conteúdo por HTTP. Mensagens grandes podem ser divididas em solicitações menores para o conector para permitir o carregamento de mensagens grandes. Os detalhes podem ser encontrados em http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "dWFyfN": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation."
+      "value": "Proteger entradas da operação."
     }
   ],
   "dhvk0u": [
@@ -2028,7 +2028,7 @@
   "euC/DV": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Matriz"
     }
   ],
   "f/lWTW": [
@@ -2064,7 +2064,7 @@
   "g0a4Qe": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Valor"
     }
   ],
   "g4igOR": [
@@ -2118,7 +2118,7 @@
   "gWRF8m": [
     {
       "type": 0,
-      "value": "Trigger Conditions"
+      "value": "Condições do Gatilho"
     }
   ],
   "gu9o9z": [
@@ -2180,7 +2180,7 @@
   "i/b3Ko": [
     {
       "type": 0,
-      "value": "Asynchronous Response"
+      "value": "Resposta Assíncrona"
     }
   ],
   "i1cwra": [
@@ -2192,7 +2192,7 @@
   "i4C4aB": [
     {
       "type": 0,
-      "value": "Networking"
+      "value": "Rede"
     }
   ],
   "iBlvhu": [
@@ -2310,7 +2310,7 @@
   "juR40n": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Duração"
     }
   ],
   "k/oqFL": [
@@ -2412,7 +2412,7 @@
   "lcVG4C": [
     {
       "type": 0,
-      "value": "is skipped"
+      "value": "foi ignorado"
     }
   ],
   "lgs5sf": [
@@ -2460,7 +2460,7 @@
   "mOr9ll": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
+      "value": "A duração máxima em uma única solicitação de saída desta ação. Se a solicitação não terminar dentro desse limite após a execução de novas tentativas, a ação falhará."
     }
   ],
   "mPakaD": [
@@ -2478,7 +2478,7 @@
   "mjS/k1": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+      "value": "Limite os Aplicativos Lógicos para não incluir cabeçalhos de metadados de fluxo de trabalho na solicitação de saída."
     }
   ],
   "n35O/+": [
@@ -2508,7 +2508,7 @@
   "nZ4nLn": [
     {
       "type": 0,
-      "value": "Suppress workflow headers"
+      "value": "Suprimir cabeçalhos de fluxo de trabalho"
     }
   ],
   "ngsC44": [
@@ -2558,7 +2558,7 @@
   "oLtwMw": [
     {
       "type": 0,
-      "value": "Content Transfer"
+      "value": "Transferência de Conteúdo"
     }
   ],
   "oV0xQ9": [
@@ -2630,7 +2630,7 @@
   "ptkf0D": [
     {
       "type": 0,
-      "value": "Security"
+      "value": "Segurança"
     }
   ],
   "q/+Uex": [
@@ -2672,7 +2672,7 @@
   "qPUX59": [
     {
       "type": 0,
-      "value": "is successful"
+      "value": "é bem-sucedido"
     }
   ],
   "qSejoi": [
@@ -2734,7 +2734,7 @@
   "qrxi0L": [
     {
       "type": 0,
-      "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+      "value": "A resposta assíncrona permite que um Aplicativo Lógico responda com um 202 (Aceito) para indicar que a solicitação foi aceita para processamento. Um cabeçalho de localização será fornecido para recuperar o estado final."
     }
   ],
   "r43nMc": [
@@ -2788,7 +2788,7 @@
   "s7nGyC": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Excluir"
     }
   ],
   "sDkAVZ": [
@@ -2800,7 +2800,7 @@
   "sW47JR": [
     {
       "type": 0,
-      "value": "Degree of Parallelism"
+      "value": "Grau de Paralelismo"
     }
   ],
   "sZ0G/Z": [
@@ -2818,7 +2818,7 @@
   "scmyvO": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Tempo limite da ação"
     }
   ],
   "sfJTHV": [
@@ -2938,7 +2938,7 @@
   "uZH8Qs": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
+      "value": "Limite a duração máxima entre as repetições e as respostas assíncronas para esta ação. Observação: isso não altera o tempo limite da solicitação de uma única solicitação."
     }
   ],
   "uc/PoD": [
@@ -2998,7 +2998,7 @@
   "vcBAuU": [
     {
       "type": 0,
-      "value": "has timed out"
+      "value": "atingiu o tempo limite"
     }
   ],
   "vwH/XV": [
@@ -3094,7 +3094,7 @@
   "xQQ9ko": [
     {
       "type": 0,
-      "value": "Threshold"
+      "value": "Limite"
     }
   ],
   "xV/oyK": [
