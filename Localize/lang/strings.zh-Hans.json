@@ -302,7 +302,7 @@
   "d3bSQA": "删除评论",
   "dDYCuU": "了解详细信息",
   "dFInXP": "选择",
-  "dSTRb/": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks",
+  "dSTRb/": "指定通过 HTTP 传输内容的行为和功能。大型消息可能会拆分为对连接器的较小请求，以允许上传大型消息。有关详细信息，请参阅 http://aka.ms/logicapps-chunk#upload-content-in-chunks",
   "dWFyfN": "对操作的输入进行保护。",
   "dhvk0u": "返回 Base 64 编码字符串的字符串表示形式",
   "dqgt9y": "将参数转换为布尔值",

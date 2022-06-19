@@ -302,7 +302,7 @@
   "d3bSQA": "Ta bort kommentar",
   "dDYCuU": "Läs mer",
   "dFInXP": "Välj",
-  "dSTRb/": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks",
+  "dSTRb/": "Ange beteende och funktioner för överföring av innehåll via HTTP. Stora meddelanden kan delas upp i mindre begäranden till anslutningen för att tillåta uppladdning av stora meddelanden. Information finns på http://aka.ms/logicapps-chunk#upload-content-in-chunks",
   "dWFyfN": "Säkra indata för åtgärden.",
   "dhvk0u": "Returnerar en strängrepresentation av en Base 64-kodad sträng",
   "dqgt9y": "Konverterar parametern till ett booleskt värde",
