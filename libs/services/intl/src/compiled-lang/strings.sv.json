@@ -1966,7 +1966,7 @@
   "dSTRb/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Ange beteende och funktioner för överföring av innehåll via HTTP. Stora meddelanden kan delas upp i mindre begäranden till anslutningen för att tillåta uppladdning av stora meddelanden. Information finns på http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "dWFyfN": [
