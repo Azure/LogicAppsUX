@@ -151,7 +151,7 @@ export enum ProjectName {
   overview = 'overview',
 }
 
-interface WorkflowProperties {
+export interface WorkflowProperties {
   id: string;
   location: string;
   name: string;
@@ -167,4 +167,10 @@ export interface Workflows {
   facets: Record<string, string>;
   resultTruncated: string;
   totalRecords: number;
+}
+
+export interface WorflowsList {
+  key: string;
+  name: string;
+  resourceGroup: string;
 }

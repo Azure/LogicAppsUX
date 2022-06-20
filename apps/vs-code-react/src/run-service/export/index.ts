@@ -25,6 +25,27 @@ export class ApiService implements IApiService {
     });
   };
 
+  private getPayload = (skipToken?: string) => {
+    let options = {};
+    if (skipToken) {
+      options = {
+        $skipToken: skipToken,
+      };
+    } else {
+      options = {
+        $top: 100,
+        $skip: 0,
+      };
+    }
+
+    return {
+      query:
+        "resources|where type =~ 'microsoft.logic/workflows' or (type =~ 'microsoft.web/sites' and kind contains 'workflowapp')\r\n| project name,resourceGroup,id,type,location,subscriptionId|sort by (tolower(tostring(name))) asc",
+      subscriptions: [],
+      options,
+    };
+  };
+
   async getMoreWorkflows(continuationToken: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
     const response = await fetch(continuationToken, { headers, method: 'POST' });
@@ -38,23 +59,18 @@ export class ApiService implements IApiService {
 
   async getWorkflows(): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const payload = {
-      query:
-        "resources|where type =~ 'microsoft.logic/workflows' or (type =~ 'microsoft.web/sites' and kind contains 'workflowapp')\r\n| project name,resourceGroup,id,type,location,subscriptionId|sort by (tolower(tostring(name))) asc",
-      subscriptions: [],
-      options: {
-        $top: 100,
-        $skip: 0,
-      },
-    };
+    const payload = this.getPayload();
     const uri = 'https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01';
+
     const response = await fetch(uri, { headers, method: 'POST', body: JSON.stringify(payload) });
+
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
     const workflowsResponse: Workflows = await response.json();
     const { $skipToken: nextLink, data: workflows } = workflowsResponse;
+
     return { nextLink, workflows };
   }
 }
