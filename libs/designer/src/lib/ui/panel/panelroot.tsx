@@ -1,6 +1,6 @@
-import { collapsePanel, expandPanel } from '../../core/state/panelSlice';
+import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { collapsePanel, expandPanel } from '../../core/state/panel/panelSlice';
 import { useIconUri, useNodeDescription, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
-import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
 import { setNodeDescription } from '../../core/state/workflowSlice';
 import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';

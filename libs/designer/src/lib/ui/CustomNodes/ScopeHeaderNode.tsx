@@ -1,6 +1,7 @@
-import { changePanelNode, expandPanel } from '../../core/state/panelSlice';
+import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
+import { changePanelNode, expandPanel } from '../../core/state/panel/panelSlice';
 import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
-import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
 import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
@@ -17,15 +18,13 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
 
   const node = useActionMetadata(scopeId);
 
+  const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
-      // "type" is required. It is used by the "accept" specification of drop targets.
       type: 'BOX',
-      // The collect function utilizes a "monitor" instance (see the Overview for what this is)
-      // to pull important pieces of state from the DnD system.
       end: (item, monitor) => {
         const dropResult = monitor.getDropResult<{ parent: string; child: string }>();
         if (item && dropResult) {
@@ -42,19 +41,21 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
     }),
     [readOnly]
   );
-  const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
+
   // const graph = useWorkflowNode(scopeId) as WorkflowNode;
+  const selected = useIsNodeSelected(scopeId);
   const operationInfo = useOperationInfo(scopeId);
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
   const childEdges = useEdgesByParent(id);
-  const dispatch = useDispatch<AppDispatch>();
+
+  const isPanelCollapsed = useSelector((state: RootState) => state.panel.collapsed);
   const nodeClick = useCallback(() => {
-    if (isCollapsed) {
+    if (isPanelCollapsed) {
       dispatch(expandPanel());
     }
     dispatch(changePanelNode(scopeId));
-  }, [dispatch, scopeId, isCollapsed]);
+  }, [dispatch, scopeId, isPanelCollapsed]);
 
   if (!node) {
     return null;
@@ -81,6 +82,7 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
             title={scopeId}
             readOnly={readOnly}
             onClick={nodeClick}
+            selected={selected}
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>

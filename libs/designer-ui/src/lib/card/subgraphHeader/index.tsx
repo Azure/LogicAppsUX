@@ -9,6 +9,7 @@ interface SubgraphHeaderProps {
   subgraphType?: SubgraphType;
   title?: string;
   collapsed?: boolean;
+  selected?: boolean;
   readOnly?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
   onClick?(id: string): void;
@@ -20,6 +21,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
   subgraphType,
   title = 'undefined',
   collapsed,
+  selected = false,
   readOnly = false,
   handleCollapse,
   onClick,
@@ -82,7 +84,12 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
 
   if (data.size === 'large') {
     return (
-      <div className={css('msla-subgraph-header', data.size)} style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}>
+      <div
+        className={css('msla-subgraph-header', data.size)}
+        style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
+        tabIndex={-1}
+      >
+        <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
         <button className="msla-subgraph-title" onClick={handleClick}>
           {data.title}
         </button>

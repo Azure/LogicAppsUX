@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
+import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
+import { expandPanel, changePanelNode } from '../../core/state/panel/panelSlice';
 import {
   useBrandColor,
   useIconUri,
@@ -7,7 +9,6 @@ import {
   useNodeMetadata,
   useOperationInfo,
 } from '../../core/state/selectors/actionMetadataSelector';
-import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
 import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
@@ -48,6 +49,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     [readOnly]
   );
 
+  const selected = useIsNodeSelected(id);
   const childEdges = useEdgesByParent(id);
   const parentEdges = useEdgesByChild(id);
   const metadata = useNodeMetadata(id);
@@ -105,6 +107,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           isMonitoringView={isMonitoringView}
           readOnly={readOnly}
           onClick={nodeClick}
+          selected={selected}
         />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>

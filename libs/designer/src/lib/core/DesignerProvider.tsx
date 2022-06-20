@@ -1,7 +1,7 @@
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { ReactQueryProvider } from './ReactQueryProvider';
-import type { DesignerOptionsState, ServiceOptions } from './state/designerOptionsSlice';
-import { initDesignerOptions } from './state/designerOptionsSlice';
+import type { DesignerOptionsState, ServiceOptions } from './state/designerOptions/designerOptionsInterfaces';
+import { initDesignerOptions } from './state/designerOptions/designerOptionsSlice';
 import { store } from './store';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import type { Theme } from '@fluentui/react';

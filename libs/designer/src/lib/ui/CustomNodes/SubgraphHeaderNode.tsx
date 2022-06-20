@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
+import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
+import { expandPanel, changePanelNode } from '../../core/state/panel/panelSlice';
 import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
 import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
@@ -11,14 +12,18 @@ import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+  const subgraphId = id.replace('-subgraphHeader', '');
+
   const readOnly = useReadOnly();
   const dispatch = useDispatch();
 
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
 
+  const selected = useIsNodeSelected(subgraphId);
+  const metadata = useNodeMetadata(subgraphId);
   const childEdges = useEdgesByParent(id);
-  const metadata = useNodeMetadata(id);
 
   const isAddCase = metadata?.subgraphType === 'SWITCH-ADD-CASE';
 
@@ -40,7 +45,8 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
           <SubgraphHeader
             parentId={metadata?.graphId.split('-')[0] ?? ''}
             subgraphType={metadata?.subgraphType}
-            title={data?.label}
+            title={subgraphId}
+            selected={selected}
             readOnly={readOnly}
             onClick={subgraphClick}
           />
@@ -50,7 +56,7 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
       {childEdges.length === 0 && !isAddCase ? (
         !readOnly ? (
           <div className={'edge-drop-zone-container'}>
-            <DropZone graphId={id} parent={metadata?.graphId ?? ''} />
+            <DropZone graphId={subgraphId} parent={metadata?.graphId ?? ''} />
           </div>
         ) : (
           <p className="no-actions-text">No Actions</p>

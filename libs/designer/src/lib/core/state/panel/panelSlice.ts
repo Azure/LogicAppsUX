@@ -1,13 +1,6 @@
+import type { PanelState } from './panelInterfaces';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-
-export interface PanelState {
-  collapsed: boolean;
-  selectedNode: string;
-  isDiscovery: boolean;
-  parentId?: string;
-  childId?: string;
-}
 
 const initialState: PanelState = {
   collapsed: true,

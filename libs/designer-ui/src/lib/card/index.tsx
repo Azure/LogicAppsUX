@@ -115,7 +115,7 @@ export const Card: React.FC<CardProps> = ({
   };
 
   return (
-    <div ref={dragPreview}>
+    <div ref={dragPreview} style={{ position: 'relative' }}>
       <div
         ref={drag}
         aria-describedby={describedBy}
@@ -130,17 +130,15 @@ export const Card: React.FC<CardProps> = ({
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
         onClick={handleClick}
+        onContextMenu={handleContextMenu}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        onKeyUp={handleKeyUp}
       >
         {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
+        <div className={css('msla-selection-box', selected && 'selected')} />
         <div className="panel-card-main">
-          <div
-            className="panel-card-header"
-            role="button"
-            onContextMenu={handleContextMenu}
-            onKeyDown={handleKeyDown}
-            tabIndex={0}
-            onKeyUp={handleKeyUp}
-          >
+          <div className="panel-card-header" role="button">
             <div className="panel-card-content-container">
               <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
               {icon ? (

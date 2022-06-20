@@ -4,7 +4,6 @@ export * from './announcedmatches';
 // export * from './arrayeditor';
 // export * from './authentication';
 export * from './card';
-export * from './card/scope';
 export * from './card/scopeHeaderCard';
 export * from './card/subgraphHeader';
 export * from './card/graphContainer';

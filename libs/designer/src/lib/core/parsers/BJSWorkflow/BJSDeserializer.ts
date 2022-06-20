@@ -171,19 +171,14 @@ const processScopeActions = (
   };
 
   // For use on scope nodes with multiple flows
-  const applySubgraphActions = (
-    subgraphId: string,
-    actions: LogicAppsV2.Actions | undefined,
-    subgraphType: SubgraphType,
-    subgraphTitle?: string
-  ) => {
+  const applySubgraphActions = (subgraphId: string, actions: LogicAppsV2.Actions | undefined, subgraphType: SubgraphType) => {
     const [graph, operations, metadata] = processNestedActions(subgraphId, actions);
 
     nodes.push(graph);
     allActions = { ...allActions, ...operations };
     nodesMetadata = { ...nodesMetadata, ...metadata };
 
-    const rootId = subgraphTitle ?? `${actionName}-${subgraphType}`;
+    const rootId = `${subgraphId}-subgraphHeader`;
     const subgraphHeaderNode = createWorkflowNode(rootId, 'subgraphHeader');
 
     const isAddCase = subgraphType === 'SWITCH-ADD-CASE';
@@ -197,12 +192,12 @@ const processScopeActions = (
     }
 
     graph.children = [subgraphHeaderNode, ...(graph.children ?? [])];
-    nodesMetadata = { ...nodesMetadata, [rootId]: { graphId: subgraphId, subgraphType } };
+    nodesMetadata = { ...nodesMetadata, [subgraphId]: { graphId: subgraphId, subgraphType } };
   };
 
   if (isSwitchAction(action)) {
     for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
-      applySubgraphActions(`${actionName}-${caseName}`, caseAction.actions, 'SWITCH-CASE', caseName);
+      applySubgraphActions(caseName, caseAction.actions, 'SWITCH-CASE');
     }
     applySubgraphActions(`${actionName}-addCase`, undefined, 'SWITCH-ADD-CASE');
     applySubgraphActions(`${actionName}-defaultCase`, action.default?.actions, 'SWITCH-DEFAULT');
