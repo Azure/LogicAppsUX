@@ -24,9 +24,9 @@ export const DataMapperDesigner = () => {
     hostId: layerHostId,
   };
 
-  const inputSchema = store.getState().schema.inputSchema;
-  const outputSchema = store.getState().schema.outputSchema;
-  const availableSchemas = store.getState().schema.availableSchemas;
+  const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
+  const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
+  const availableSchemas = useSelector((state: RootState) => state.schema.availableSchemas);
 
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch<AppDispatch>();
@@ -114,10 +114,10 @@ export const DataMapperDesigner = () => {
           <div className="msla-designer-canvas msla-panel-mode not-loaded">
             <div className="left">
               {inputSchema ? (
-                <></>
+                <></> // TODO: show loaded reactflow in this case instead of empty background (14772680)
               ) : (
                 <AddSchemaPanelButton
-                  schemaType={SchemaTypes.INPUT}
+                  schemaType={SchemaTypes.Input}
                   onSubmitSchema={onSubmitInput}
                   schemaFilesList={availableSchemas ?? []}
                 />
@@ -125,10 +125,10 @@ export const DataMapperDesigner = () => {
             </div>
             <div className="right">
               {outputSchema ? (
-                <></>
+                <></> // TODO: show loaded reactflow in this case instead of empty background (14772680)
               ) : (
                 <AddSchemaPanelButton
-                  schemaType={SchemaTypes.OUTPUT}
+                  schemaType={SchemaTypes.Output}
                   onSubmitSchema={onSubmitOutput}
                   schemaFilesList={availableSchemas ?? []}
                 />

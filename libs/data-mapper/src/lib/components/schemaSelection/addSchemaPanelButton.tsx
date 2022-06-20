@@ -8,13 +8,13 @@ import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 
 export enum SchemaTypes {
-  INPUT = 'input',
-  OUTPUT = 'output',
+  Input = 'input',
+  Output = 'output',
 }
 
 export enum UploadSchemaTypes {
-  UPLOAD_NEW = 'upload-new',
-  SELECT_FROM = 'select-from',
+  UploadNew = 'upload-new',
+  SelectFrom = 'select-from',
 }
 
 export interface AddSchemaModelProps {
@@ -24,33 +24,21 @@ export interface AddSchemaModelProps {
 }
 
 const uploadSchemaOptions: IChoiceGroupOption[] = [
-  { key: UploadSchemaTypes.UPLOAD_NEW, text: 'Upload new' },
-  { key: UploadSchemaTypes.SELECT_FROM, text: 'Select from existing' },
+  // { key: UploadSchemaTypes.UploadNew, text: 'Upload new' },  // TODO: enable this when funtionality will be developed (14772529)
+  { key: UploadSchemaTypes.SelectFrom, text: 'Select from existing' },
 ];
 
 initializeIcons();
 
 export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ schemaType, onSubmitSchema, schemaFilesList }) => {
   const [isPanelOpen, { setTrue: showPanel, setFalse: hidePanel }] = useBoolean(false);
-  const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SELECT_FROM);
+  const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
   const [selectedSchema, setSelectedSchema] = useState<IDropdownOption>();
+  const [errorMessage, setErrorMessage] = useState('');
 
   const dataMapDropdownOptions = schemaFilesList.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
 
   const intl = useIntl();
-
-  const onSelectedItemChange = useCallback((_: unknown, item?: IDropdownOption): void => {
-    setSelectedSchema(item);
-  }, []);
-
-  const onUploadTypeChange = useCallback((_: unknown, option?: IChoiceGroupOption): void => {
-    if (option) setUploadType(option.key);
-  }, []);
-
-  const onSchemaAddClick = () => {
-    if (selectedSchema) onSubmitSchema(selectedSchema.data);
-    hidePanel();
-  };
 
   const addMessage = intl.formatMessage({
     defaultMessage: 'Add',
@@ -68,20 +56,66 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
     defaultMessage: 'Select a file to upload',
     description: 'This is shown as a placeholder text for selecting a file to upload',
   });
-  const uploadSelectLabelMessage = intl.formatMessage(
-    {
-      defaultMessage: 'Upload or select an {schemaType} schema to be used for your map.',
-      description: 'label to inform to upload or select schema to be used',
-    },
-    { schemaType: schemaType }
-  );
-  const selectSchemaPlaceholderMessage = intl.formatMessage(
-    {
-      defaultMessage: 'select {schemaType}',
-      description: 'placeholder for selecting the schema dropdown',
-    },
-    { schemaType: schemaType }
-  );
+  const genericErrMsg = intl.formatMessage({
+    defaultMessage: 'Failed loading the schema. Please try again.',
+    description: 'error message for loading the schema',
+  });
+
+  let addSchemaHeaderText = '',
+    uploadSelectLabelMessage = '',
+    selectSchemaPlaceholderMessage = '';
+  switch (schemaType) {
+    case SchemaTypes.Input:
+      addSchemaHeaderText = intl.formatMessage({
+        defaultMessage: 'Add input schema',
+        description: 'header text to inform this panel is for adding input schema',
+      });
+      uploadSelectLabelMessage = intl.formatMessage({
+        defaultMessage: 'Upload or select an input schema to be used for your map.',
+        description: 'label to inform to upload or select input schema to be used',
+      });
+      selectSchemaPlaceholderMessage = intl.formatMessage({
+        defaultMessage: 'select input',
+        description: 'placeholder for selecting the input schema dropdown',
+      });
+      break;
+    case SchemaTypes.Output:
+      addSchemaHeaderText = intl.formatMessage({
+        defaultMessage: 'Add output schema',
+        description: 'header text to inform this panel is for adding output schema',
+      });
+      uploadSelectLabelMessage = intl.formatMessage({
+        defaultMessage: 'Upload or select an output schema to be used for your map.',
+        description: 'label to inform to upload or select output schema to be used',
+      });
+      selectSchemaPlaceholderMessage = intl.formatMessage({
+        defaultMessage: 'select output',
+        description: 'placeholder for selecting the output schema dropdown',
+      });
+      break;
+    default:
+      break;
+  }
+
+  const onSelectedItemChange = useCallback((_: unknown, item?: IDropdownOption): void => {
+    setSelectedSchema(item);
+  }, []);
+
+  const onUploadTypeChange = useCallback((_: unknown, option?: IChoiceGroupOption): void => {
+    if (option) {
+      setUploadType(option.key);
+    }
+  }, []);
+
+  const onSchemaAddClick = useCallback(() => {
+    setErrorMessage('');
+    if (selectedSchema) {
+      onSubmitSchema(selectedSchema.data);
+      hidePanel();
+    } else {
+      setErrorMessage(genericErrMsg);
+    }
+  }, [hidePanel, onSubmitSchema, selectedSchema, genericErrMsg]);
 
   const onRenderFooterContent = useCallback(
     () => (
@@ -92,7 +126,7 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
         <DefaultButton onClick={hidePanel}>{cancelMessage}</DefaultButton>
       </div>
     ),
-    [hidePanel, selectedSchema]
+    [hidePanel, selectedSchema, addMessage, cancelMessage, onSchemaAddClick]
   );
 
   return (
@@ -103,7 +137,7 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
         isLightDismiss
         isOpen={isPanelOpen}
         onDismiss={hidePanel}
-        headerText={`Add ${schemaType} schema`}
+        headerText={addSchemaHeaderText}
         closeButtonAriaLabel="Close"
         onRenderFooterContent={onRenderFooterContent}
         isFooterAtBottom={true}
@@ -118,7 +152,7 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
           style={{ marginBottom: 16 }}
         />
 
-        {uploadType === UploadSchemaTypes.UPLOAD_NEW && (
+        {uploadType === UploadSchemaTypes.UploadNew && (
           <div className="upload-new">
             <TextField placeholder={uploadMessage} />
             <PrimaryButton text="Browse" style={{ marginLeft: 8 }}>
@@ -127,12 +161,13 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
           </div>
         )}
 
-        {uploadType === UploadSchemaTypes.SELECT_FROM && (
+        {uploadType === UploadSchemaTypes.SelectFrom && (
           <Dropdown
             selectedKey={selectedSchema ? selectedSchema.key : undefined}
             placeholder={selectSchemaPlaceholderMessage}
             options={dataMapDropdownOptions}
             onChange={onSelectedItemChange}
+            errorMessage={errorMessage}
           />
         )}
       </Panel>

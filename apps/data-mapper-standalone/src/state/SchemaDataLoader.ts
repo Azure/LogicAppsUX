@@ -61,12 +61,8 @@ export const loadAvailableSchemas = createAsyncThunk('schema/loadAvailableSchema
     return undefined;
   } else {
     if (availableSchemaPaths) {
-      const availableSchemas: Schema[] = [];
-      for (const schemaPath of availableSchemaPaths) {
-        const schemaLoaded = await loadSchemaFromMock(schemaPath);
-        if (schemaLoaded) availableSchemas.push(schemaLoaded);
-      }
-      return availableSchemas;
+      const loadedSchemas = availableSchemaPaths.map(async (schemaPath) => loadSchemaFromMock(schemaPath));
+      return (await Promise.all(loadedSchemas)).filter((x) => x) as Schema[];
     }
   }
 
