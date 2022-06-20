@@ -115,34 +115,11 @@ export const DataMapperDesigner = () => {
                 overflow: 'hidden',
               }}
             >
-              <div
-                className="msla-designer-canvas msla-panel-mode"
-                style={{
-                  // TODO - Remove
-                  backgroundColor: '#EDEBE9',
-                }}
-              >
-                {reactFlowDrawing}
-              </div>
+              <div className="msla-designer-canvas msla-panel-mode">{reactFlowDrawing}</div>
             </LayerHost>
           ) : (
-            <div
-              className="msla-designer-canvas msla-panel-mode"
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                backgroundColor: '#EDEBE9',
-                justifyContent: 'center',
-                justifyItems: 'center',
-                justifySelf: 'center',
-                alignContent: 'center',
-                alignItems: 'center',
-                alignSelf: 'center',
-                margin: 'auto',
-                padding: 'auto',
-              }}
-            >
-              <div style={{ width: '50%', display: 'left' }}>
+            <div className="msla-designer-canvas msla-panel-mode ">
+              <div className="left">
                 {inputSchema ? (
                   <></>
                 ) : (
@@ -153,7 +130,7 @@ export const DataMapperDesigner = () => {
                   />
                 )}
               </div>
-              <div style={{ width: '50%', display: 'right' }}>
+              <div className="right">
                 {outputSchema ? (
                   <></>
                 ) : (

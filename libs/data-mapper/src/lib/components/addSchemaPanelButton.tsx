@@ -65,6 +65,7 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
     <div>
       <SelectSchemaCard schemaType={schemaType} onClick={showPanel} />
       <Panel
+        className="add-schema-panel"
         isLightDismiss
         isOpen={isPanelOpen}
         onDismiss={hidePanel}
@@ -84,13 +85,7 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
         />
 
         {uploadType === UploadSchemaTypes.UPLOAD_NEW && (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              width: '100%',
-            }}
-          >
+          <div className="upload-new">
             <TextField placeholder="Select a file to upload" />
             <PrimaryButton text="Browse" style={{ marginLeft: 8 }} />
           </div>
