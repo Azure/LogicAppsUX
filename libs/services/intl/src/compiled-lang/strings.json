@@ -741,6 +741,20 @@
       "value": "Required. The index of where to start extracting the substring."
     }
   ],
+  "EiT2wu": [
+    {
+      "type": 0,
+      "value": "Select an "
+    },
+    {
+      "type": 1,
+      "value": "schemaType"
+    },
+    {
+      "type": 0,
+      "value": " schema"
+    }
+  ],
   "F3IDl8": [
     {
       "type": 0,
@@ -1475,6 +1489,16 @@
       "value": "Save"
     }
   ],
+  "SldYiQ": [
+    {
+      "type": 0,
+      "value": "select "
+    },
+    {
+      "type": 1,
+      "value": "schemaType"
+    }
+  ],
   "SmCQys": [
     {
       "type": 0,
@@ -1937,6 +1961,20 @@
     {
       "type": 0,
       "value": "Required. The value to search the index of."
+    }
+  ],
+  "cNchtI": [
+    {
+      "type": 0,
+      "value": "Upload or select an "
+    },
+    {
+      "type": 1,
+      "value": "schemaType"
+    },
+    {
+      "type": 0,
+      "value": " schema to be used for your map."
     }
   ],
   "ci6ex1": [

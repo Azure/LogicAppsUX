@@ -68,6 +68,20 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
     defaultMessage: 'Select a file to upload',
     description: 'This is shown as a placeholder text for selecting a file to upload',
   });
+  const uploadSelectLabelMessage = intl.formatMessage(
+    {
+      defaultMessage: 'Upload or select an {schemaType} schema to be used for your map.',
+      description: 'label to inform to upload or select schema to be used',
+    },
+    { schemaType: schemaType }
+  );
+  const selectSchemaPlaceholderMessage = intl.formatMessage(
+    {
+      defaultMessage: 'select {schemaType}',
+      description: 'placeholder for selecting the schema dropdown',
+    },
+    { schemaType: schemaType }
+  );
 
   const onRenderFooterContent = useCallback(
     () => (
@@ -94,7 +108,7 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
         onRenderFooterContent={onRenderFooterContent}
         isFooterAtBottom={true}
       >
-        <p>{`Upload or select an ${schemaType} schema to be used for your map.`}</p>
+        <p>{uploadSelectLabelMessage}</p>
 
         <ChoiceGroup
           selectedKey={uploadType}
@@ -116,7 +130,7 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
         {uploadType === UploadSchemaTypes.SELECT_FROM && (
           <Dropdown
             selectedKey={selectedSchema ? selectedSchema.key : undefined}
-            placeholder={`select ${schemaType}`}
+            placeholder={selectSchemaPlaceholderMessage}
             options={dataMapDropdownOptions}
             onChange={onSelectedItemChange}
           />
