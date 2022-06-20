@@ -1,6 +1,6 @@
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { initializeGraphState } from './parsers/ParseReduxAction';
-import { initializeServices } from './state/designerOptionsSlice';
+import { initializeServices } from './state/designerOptions/designerOptionsSlice';
 import { initWorkflowSpec } from './state/workflowSlice';
 import type { AppDispatch, RootState } from './store';
 import React, { useContext, useEffect } from 'react';

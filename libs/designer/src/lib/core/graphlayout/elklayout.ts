@@ -1,6 +1,6 @@
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
-import { useReadOnly } from '../state/selectors/designerOptionsSelector';
+import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import type { RootState } from '../store';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
@@ -158,7 +158,7 @@ export const useLayout = (): [Node[], Edge[]] => {
         console.error(err);
         //TODO: Appropriately log this when we have analytics
       });
-  }, [workflowGraph]);
+  }, [workflowGraph, readOnly]);
 
   return [reactFlowNodes, reactFlowEdges];
 };

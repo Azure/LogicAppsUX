@@ -1,4 +1,4 @@
-import type { DesignerOptionsState } from '../core/state/designerOptionsSlice';
+import type { DesignerOptionsState } from '../core/state/designerOptions/designerOptionsInterfaces';
 import { BJSWorkflowProvider, Designer, DesignerProvider } from '../index';
 import AllScopesWorkflow from './storybookWorkflows/allScopesWorkflow.json';
 import BigWorkflow from './storybookWorkflows/simpleBigworkflow.json';

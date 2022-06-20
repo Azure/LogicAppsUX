@@ -1,5 +1,5 @@
 import constants from '../../../../common/constants';
-import { useReadOnly } from '../../../../core/state/selectors/designerOptionsSelector';
+import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { RootState } from '../../../../core/store';
 import { getId } from '@fluentui/react';
 import type { PanelTab, Settings } from '@microsoft/designer-ui';
