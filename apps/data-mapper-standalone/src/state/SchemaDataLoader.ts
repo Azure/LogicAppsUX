@@ -29,8 +29,6 @@ export const loadInputSchema = createAsyncThunk('schema/loadInputSchema', async 
     return undefined;
   } else {
     if (inputResourcePath) {
-      console.log('inputResourcePath: ', inputResourcePath);
-      // console.log("loadInputSchema loadSchemaFromMock: ", loadSchemaFromMock(inputResourcePath));
       return loadSchemaFromMock(inputResourcePath);
     }
   }
@@ -56,24 +54,19 @@ export const loadOutputSchema = createAsyncThunk('schema/loadOutputSchema', asyn
 
 export const loadAvailableSchemas = createAsyncThunk('schema/loadAvailableSchemas', async (_: void, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
-
-  // console.log("-----state ", currentState);
-
-  const availableSchemaPath = currentState.schemaDataLoader.availableResourcesPaths?.[0];
-
-  // console.log("-----availableSchemaPath ", availableSchemaPath);
+  const availableSchemaPaths = currentState.schemaDataLoader.availableResourcesPaths;
 
   // TODO ARM loading
   if (currentState.schemaDataLoader.loadingMethod === 'arm') {
     return undefined;
   } else {
-    if (availableSchemaPath) {
-      // console.log("availableSchemaPath: ", availableSchemaPath);
-      // console.log("availableSchemaPath loadSchemaFromMock: ", loadSchemaFromMock(availableSchemaPath));
-      const schemaList: Schema[] = [];
-      const firstSchema = await loadSchemaFromMock(availableSchemaPath);
-      if (firstSchema) schemaList.push(firstSchema);
-      return schemaList;
+    if (availableSchemaPaths) {
+      const availableSchemas: Schema[] = [];
+      for (const schemaPath of availableSchemaPaths) {
+        const schemaLoaded = await loadSchemaFromMock(schemaPath);
+        if (schemaLoaded) availableSchemas.push(schemaLoaded);
+      }
+      return availableSchemas;
     }
   }
 
@@ -88,14 +81,12 @@ export const schemaDataLoaderSlice = createSlice({
       state.armToken = action.payload;
     },
     changeInputResourcePath: (state, action: PayloadAction<string>) => {
-      // console.log("changeInputResourcePath action.payload: ", action.payload);
       state.inputResourcePath = action.payload;
     },
     changeOutputResourcePath: (state, action: PayloadAction<string>) => {
       state.outputResourcePath = action.payload;
     },
     changeAvailableResourcesPath: (state, action: PayloadAction<string[]>) => {
-      // console.log("changeAvailableResourcesPath action.payload: ", action.payload);
       state.availableResourcesPaths = action.payload;
     },
     changeLoadingMethod: (state, action: PayloadAction<'file' | 'arm'>) => {

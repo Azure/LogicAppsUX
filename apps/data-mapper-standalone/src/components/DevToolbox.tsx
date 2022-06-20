@@ -57,14 +57,12 @@ export const DevToolbox: React.FC = () => {
   );
 
   const loadSchemasIntoMemory = useCallback(() => {
-    console.log('---schemaFileOptions', schemaFileOptions);
     dispatch(schemaDataLoaderSlice.actions.changeAvailableResourcesPath(schemaFileOptions));
     dispatch(loadAvailableSchemas());
   }, [dispatch]);
 
   const changeInputSchemaResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
-      console.log('---item?.key', item?.key as string);
       dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath((item?.key as string) ?? ''));
       dispatch(loadInputSchema());
     },

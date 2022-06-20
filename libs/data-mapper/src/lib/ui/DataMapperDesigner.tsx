@@ -132,7 +132,6 @@ export const DataMapperDesigner = () => {
                 display: 'flex',
                 flexDirection: 'row',
                 backgroundColor: '#EDEBE9',
-                height: '500px',
                 justifyContent: 'center',
                 justifyItems: 'center',
                 justifySelf: 'center',

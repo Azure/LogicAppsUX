@@ -1,7 +1,6 @@
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
 import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
-// import type { Schema } from '@microsoft/logic-apps-data-mapper';
 import { useSelector } from 'react-redux';
 
 export const DataMapperStandaloneDesigner = () => {
@@ -9,9 +8,6 @@ export const DataMapperStandaloneDesigner = () => {
   const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
   const availableSchemas = useSelector((state: RootState) => state.schemaDataLoader.availableSchemas);
-  console.log('inputSchema: ', inputSchema);
-  console.log('availableSchemas: ', availableSchemas);
-  // const availableSchemas: Schema[] = [];
 
   return (
     <>

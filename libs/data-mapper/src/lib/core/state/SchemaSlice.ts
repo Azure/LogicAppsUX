@@ -39,7 +39,6 @@ export const schemaSlice = createSlice({
       }
     },
     setAvailableSchemas: (state, action: PayloadAction<Schema[] | undefined>) => {
-      console.log('setAvailableSchemas: ', action.payload);
       state.availableSchemas = action.payload;
     },
     setCurrentInputNode: (state, action: PayloadAction<SchemaNodeExtended | undefined>) => {

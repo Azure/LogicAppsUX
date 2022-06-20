@@ -30,7 +30,6 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ inputSchema, ou
   }, [dispatch, outputSchema]);
 
   useEffect(() => {
-    // console.log('------availableSchemas triggered');
     if (availableSchemas) {
       dispatch(setAvailableSchemas(availableSchemas));
     }
