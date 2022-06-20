@@ -7,7 +7,8 @@ export interface IRunService {
 }
 
 export interface IApiService {
-  getSubscriptions(): Promise<any>;
+  getMoreWorkflows(continuationToken: string): Promise<any>;
+  getWorkflows(): Promise<any>;
 }
 
 export interface ArmResources<T> {
@@ -41,8 +42,6 @@ export interface ContentLink {
 }
 
 export type Run = ArmResource<RunProperties>;
-
-export type Subscription = ArmResource<SubscriptionProperties>;
 
 export interface RunDisplayItem {
   duration: string;
@@ -134,22 +133,6 @@ interface RunProperties {
   };
 }
 
-interface SubscriptionProperties {
-  authorizationSource?: string;
-  displayName: string;
-  id?: string;
-  managedByTenants?: Array<string>;
-  state?: string;
-  subscriptionId?: string;
-  subscriptionPolicies?: {
-    locationPlacementId?: string;
-    quotaId?: string;
-    spendingLimit?: string;
-  };
-  tags?: Record<string, string>;
-  tenantId?: string;
-}
-
 interface RunTriggerHistoryProperties {
   code?: string;
   correlation?: Correlation;
@@ -166,4 +149,22 @@ interface RunTriggerHistoryProperties {
 export enum ProjectName {
   export = 'export',
   overview = 'overview',
+}
+
+interface WorkflowProperties {
+  id: string;
+  location: string;
+  name: string;
+  resourceGroup: string;
+  subscriptionId: string;
+  type: string;
+}
+
+export interface Workflows {
+  $skipToken: string;
+  count: number;
+  data: Array<WorkflowProperties>;
+  facets: Record<string, string>;
+  resultTruncated: string;
+  totalRecords: number;
 }

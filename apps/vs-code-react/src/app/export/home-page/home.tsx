@@ -2,7 +2,7 @@ import { ApiService } from '../../../run-service/export/index';
 import { useOutlet } from '../export';
 import { DetailsList, Text } from '@fluentui/react';
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useInfiniteQuery } from 'react-query';
 
 export const Home: React.FC = () => {
   const { baseUrl, accessToken } = useOutlet();
@@ -15,8 +15,21 @@ export const Home: React.FC = () => {
       }),
     [accessToken, baseUrl]
   );
-  const { data: subscriptions } = useQuery('subscriptions', apiService.getSubscriptions);
-  console.log('subscriptions', subscriptions);
+
+  const loadWorkflows = ({ pageParam }: { pageParam?: string }) => {
+    if (pageParam) {
+      return apiService.getMoreWorkflows(pageParam);
+    }
+    return apiService.getWorkflows();
+  };
+
+  const { data } = useInfiniteQuery<any>('worflowsData', loadWorkflows, {
+    getNextPageParam: (lastPage) => lastPage.nextLink,
+    refetchInterval: 5000, // 5 seconds refresh interval
+    refetchIntervalInBackground: false, // It will automatically refetch when window is focused
+  });
+
+  console.log('data', data);
 
   return (
     <>

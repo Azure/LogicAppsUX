@@ -1,4 +1,4 @@
-import type { ArmResources, IApiService, Subscription } from '../types';
+import type { ArmResources, IApiService, Workflows } from '../types';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
@@ -20,22 +20,41 @@ export class ApiService implements IApiService {
 
     return new Headers({
       Authorization: accessToken,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     });
   };
 
-  async getSubscriptions(): Promise<any> {
+  async getMoreWorkflows(continuationToken: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    console.log('accessToken4', headers);
-
-    //const uri = `${baseUrl}/subscriptions?api-version=${apiVersion}`;
-    const uri = 'https://management.azure.com/subscriptions?api-version=2020-01-01';
-    const response = await fetch(uri, { headers, method: 'GET' });
+    const response = await fetch(continuationToken, { headers, method: 'POST' });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
-    const parsedResponse: ArmResources<Subscription> = await response.json();
-    const { nextLink, value: subscriptions } = parsedResponse;
-    return { nextLink, subscriptions };
+    const { nextLink, value: runs }: ArmResources<any> = await response.json();
+    return { nextLink, runs };
+  }
+
+  async getWorkflows(): Promise<any> {
+    const headers = this.getAccessTokenHeaders();
+    const payload = {
+      query:
+        "resources|where type =~ 'microsoft.logic/workflows' or (type =~ 'microsoft.web/sites' and kind contains 'workflowapp')\r\n| project name,resourceGroup,id,type,location,subscriptionId|sort by (tolower(tostring(name))) asc",
+      subscriptions: [],
+      options: {
+        $top: 100,
+        $skip: 0,
+      },
+    };
+    const uri = 'https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01';
+    const response = await fetch(uri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    const workflowsResponse: Workflows = await response.json();
+    const { $skipToken: nextLink, data: workflows } = workflowsResponse;
+    return { nextLink, workflows };
   }
 }
