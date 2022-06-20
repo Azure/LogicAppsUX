@@ -3,7 +3,7 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { updateBreadcrumbForSchema } from '../core/state/BreadcrumbSlice';
 import { updateReactFlowForSchema } from '../core/state/ReactFlowSlice';
-import { setCurrentInputNode, setCurrentOutputNode, setInputSchema } from '../core/state/SchemaSlice';
+import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema } from '../models';
@@ -27,8 +27,9 @@ export const DataMapperDesigner = () => {
 
   const inputSchema = store.getState().schema.inputSchema;
   const outputSchema = store.getState().schema.outputSchema;
-  // const availableSchemas = store.getState().schemaDataLoader.outputSchema;
-  const availableSchemas: Schema[] = [];
+  const availableSchemas = store.getState().schema.availableSchemas;
+  console.log('---------------------availableSchemas', availableSchemas);
+  // const availableSchemas: Schema[] = [];
 
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch<AppDispatch>();
@@ -72,7 +73,7 @@ export const DataMapperDesigner = () => {
   };
 
   const onSubmitOutput = (outputSchema: Schema) => {
-    dispatch(setInputSchema(outputSchema));
+    dispatch(setOutputSchema(outputSchema));
 
     const schemaState = store.getState().schema;
     const currentSchemaNode = schemaState.currentOutputNode;
@@ -163,7 +164,11 @@ export const DataMapperDesigner = () => {
                   // reactFlowDrawing
                   <></>
                 ) : (
-                  <AddSchemaPanelButton schemaType={SchemaTypes.INPUT} onSubmitSchema={onSubmitInput} schemaFilesList={availableSchemas} />
+                  <AddSchemaPanelButton
+                    schemaType={SchemaTypes.INPUT}
+                    onSubmitSchema={onSubmitInput}
+                    schemaFilesList={availableSchemas ?? []}
+                  />
                 )}
               </div>
               <div style={{ width: '50%', display: 'right' }}>
@@ -174,7 +179,7 @@ export const DataMapperDesigner = () => {
                   <AddSchemaPanelButton
                     schemaType={SchemaTypes.OUTPUT}
                     onSubmitSchema={onSubmitOutput}
-                    schemaFilesList={availableSchemas}
+                    schemaFilesList={availableSchemas ?? []}
                   />
                 )}
               </div>

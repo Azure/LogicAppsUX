@@ -11,6 +11,7 @@ export interface UpdateBreadcrumbAction {
 export interface SchemaState {
   inputSchema?: SchemaExtended;
   outputSchema?: SchemaExtended;
+  availableSchemas?: Schema[];
   currentInputNode?: SchemaNodeExtended;
   currentOutputNode?: SchemaNodeExtended;
 }
@@ -37,6 +38,10 @@ export const schemaSlice = createSlice({
         state.currentOutputNode = extendedSchema.schemaTreeRoot;
       }
     },
+    setAvailableSchemas: (state, action: PayloadAction<Schema[] | undefined>) => {
+      console.log('setAvailableSchemas: ', action.payload);
+      state.availableSchemas = action.payload;
+    },
     setCurrentInputNode: (state, action: PayloadAction<SchemaNodeExtended | undefined>) => {
       state.currentInputNode = action.payload;
     },
@@ -46,6 +51,6 @@ export const schemaSlice = createSlice({
   },
 });
 
-export const { setInputSchema, setOutputSchema, setCurrentInputNode, setCurrentOutputNode } = schemaSlice.actions;
+export const { setInputSchema, setOutputSchema, setAvailableSchemas, setCurrentInputNode, setCurrentOutputNode } = schemaSlice.actions;
 
 export default schemaSlice.reducer;

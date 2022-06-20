@@ -1,5 +1,5 @@
 import { dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
-import { loadInputSchema, loadOutputSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
+import { loadAvailableSchemas, loadInputSchema, loadOutputSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, TextField } from '@fluentui/react';
@@ -56,8 +56,15 @@ export const DevToolbox: React.FC = () => {
     [dispatch]
   );
 
+  const loadSchemasIntoMemory = useCallback(() => {
+    console.log('---schemaFileOptions', schemaFileOptions);
+    dispatch(schemaDataLoaderSlice.actions.changeAvailableResourcesPath(schemaFileOptions));
+    dispatch(loadAvailableSchemas());
+  }, [dispatch]);
+
   const changeInputSchemaResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
+      console.log('---item?.key', item?.key as string);
       dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath((item?.key as string) ?? ''));
       dispatch(loadInputSchema());
     },
@@ -120,6 +127,7 @@ export const DevToolbox: React.FC = () => {
       ) : null}
       {loadingMethod === 'file' ? (
         <div>
+          <button onClick={loadSchemasIntoMemory}>Load schemas into memory</button>
           <Dropdown
             label="Data Map"
             selectedKey={resourcePath}

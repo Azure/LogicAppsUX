@@ -7,9 +7,11 @@ export interface SchemaLoadingState {
   armToken?: string;
   inputResourcePath?: string;
   outputResourcePath?: string;
+  availableResourcesPaths?: string[];
   loadingMethod: 'file' | 'arm';
   inputSchema?: Schema;
   outputSchema?: Schema;
+  availableSchemas?: Schema[];
 }
 
 const initialState: SchemaLoadingState = {
@@ -27,6 +29,8 @@ export const loadInputSchema = createAsyncThunk('schema/loadInputSchema', async 
     return undefined;
   } else {
     if (inputResourcePath) {
+      console.log('inputResourcePath: ', inputResourcePath);
+      // console.log("loadInputSchema loadSchemaFromMock: ", loadSchemaFromMock(inputResourcePath));
       return loadSchemaFromMock(inputResourcePath);
     }
   }
@@ -50,6 +54,32 @@ export const loadOutputSchema = createAsyncThunk('schema/loadOutputSchema', asyn
   return undefined;
 });
 
+export const loadAvailableSchemas = createAsyncThunk('schema/loadAvailableSchemas', async (_: void, thunkAPI) => {
+  const currentState: RootState = thunkAPI.getState() as RootState;
+
+  // console.log("-----state ", currentState);
+
+  const availableSchemaPath = currentState.schemaDataLoader.availableResourcesPaths?.[0];
+
+  // console.log("-----availableSchemaPath ", availableSchemaPath);
+
+  // TODO ARM loading
+  if (currentState.schemaDataLoader.loadingMethod === 'arm') {
+    return undefined;
+  } else {
+    if (availableSchemaPath) {
+      // console.log("availableSchemaPath: ", availableSchemaPath);
+      // console.log("availableSchemaPath loadSchemaFromMock: ", loadSchemaFromMock(availableSchemaPath));
+      const schemaList: Schema[] = [];
+      const firstSchema = await loadSchemaFromMock(availableSchemaPath);
+      if (firstSchema) schemaList.push(firstSchema);
+      return schemaList;
+    }
+  }
+
+  return undefined;
+});
+
 export const schemaDataLoaderSlice = createSlice({
   name: 'schema',
   initialState,
@@ -58,10 +88,15 @@ export const schemaDataLoaderSlice = createSlice({
       state.armToken = action.payload;
     },
     changeInputResourcePath: (state, action: PayloadAction<string>) => {
+      // console.log("changeInputResourcePath action.payload: ", action.payload);
       state.inputResourcePath = action.payload;
     },
     changeOutputResourcePath: (state, action: PayloadAction<string>) => {
       state.outputResourcePath = action.payload;
+    },
+    changeAvailableResourcesPath: (state, action: PayloadAction<string[]>) => {
+      // console.log("changeAvailableResourcesPath action.payload: ", action.payload);
+      state.availableResourcesPaths = action.payload;
     },
     changeLoadingMethod: (state, action: PayloadAction<'file' | 'arm'>) => {
       state.loadingMethod = action.payload;
@@ -84,6 +119,15 @@ export const schemaDataLoaderSlice = createSlice({
     builder.addCase(loadOutputSchema.rejected, (state) => {
       // TODO change to null for error handling case
       state.outputSchema = undefined;
+    });
+
+    builder.addCase(loadAvailableSchemas.fulfilled, (state, action) => {
+      state.availableSchemas = action.payload;
+    });
+
+    builder.addCase(loadAvailableSchemas.rejected, (state) => {
+      // TODO change to null for error handling case
+      state.availableSchemas = undefined;
     });
   },
 });
