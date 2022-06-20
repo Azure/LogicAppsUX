@@ -2865,6 +2865,9 @@
       <Item ItemId=";dSTRb/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[HTTP 経由でコンテンツを転送するための動作と機能を指定します。大きなメッセージは、大きなメッセージのアップロードを許可するために、コネクタに対する小さな要求に分割される可能性があります。詳細については、http://aka.ms/logicapps-chunk#upload-content-in-chunks を参照してください]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
