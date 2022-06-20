@@ -95,56 +95,48 @@ export const DataMapperDesigner = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div>
-        <div
-          style={{
-            // TODO - Remove
-            border: '1px solid #ccc',
-            height: '100%',
-          }}
-        >
-          <EditorCommandBar />
-          <EditorBreadcrumb />
+      <div className="data-mapper-shell">
+        <EditorCommandBar />
+        <EditorBreadcrumb />
 
-          {inputSchema && outputSchema ? (
-            <LayerHost
-              id={layerHostId}
-              style={{
-                // TODO - Remove
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
-              <div className="msla-designer-canvas msla-panel-mode">{reactFlowDrawing}</div>
-            </LayerHost>
-          ) : (
-            <div className="msla-designer-canvas msla-panel-mode ">
-              <div className="left">
-                {inputSchema ? (
-                  <></>
-                ) : (
-                  <AddSchemaPanelButton
-                    schemaType={SchemaTypes.INPUT}
-                    onSubmitSchema={onSubmitInput}
-                    schemaFilesList={availableSchemas ?? []}
-                  />
-                )}
-              </div>
-              <div className="right">
-                {outputSchema ? (
-                  <></>
-                ) : (
-                  <AddSchemaPanelButton
-                    schemaType={SchemaTypes.OUTPUT}
-                    onSubmitSchema={onSubmitOutput}
-                    schemaFilesList={availableSchemas ?? []}
-                  />
-                )}
-              </div>
+        {inputSchema && outputSchema ? (
+          <LayerHost
+            id={layerHostId}
+            style={{
+              // TODO - Remove
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            <div className="msla-designer-canvas msla-panel-mode">{reactFlowDrawing}</div>
+          </LayerHost>
+        ) : (
+          <div className="msla-designer-canvas msla-panel-mode not-loaded">
+            <div className="left">
+              {inputSchema ? (
+                <></>
+              ) : (
+                <AddSchemaPanelButton
+                  schemaType={SchemaTypes.INPUT}
+                  onSubmitSchema={onSubmitInput}
+                  schemaFilesList={availableSchemas ?? []}
+                />
+              )}
             </div>
-          )}
-          <LeftHandPanel layerProps={panelLayerProps} />
-        </div>
+            <div className="right">
+              {outputSchema ? (
+                <></>
+              ) : (
+                <AddSchemaPanelButton
+                  schemaType={SchemaTypes.OUTPUT}
+                  onSubmitSchema={onSubmitOutput}
+                  schemaFilesList={availableSchemas ?? []}
+                />
+              )}
+            </div>
+          </div>
+        )}
+        <LeftHandPanel layerProps={panelLayerProps} />
       </div>
     </DndProvider>
   );
