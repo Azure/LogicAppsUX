@@ -1,10 +1,11 @@
-import type { Schema } from '../models';
+import type { Schema } from '../../models';
 import { SelectSchemaCard } from './selectSchemaCard';
 import { ChoiceGroup, DefaultButton, Dropdown, initializeIcons, Panel, PrimaryButton, TextField } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
+import { useIntl } from 'react-intl';
 
 export enum SchemaTypes {
   INPUT = 'input',
@@ -36,6 +37,8 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
 
   const dataMapDropdownOptions = schemaFilesList.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
 
+  const intl = useIntl();
+
   const onSelectedItemChange = useCallback((_: unknown, item?: IDropdownOption): void => {
     setSelectedSchema(item);
   }, []);
@@ -49,13 +52,30 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
     hidePanel();
   };
 
+  const addMessage = intl.formatMessage({
+    defaultMessage: 'Add',
+    description: 'Button text for Add to add the selected schema file to use',
+  });
+  const cancelMessage = intl.formatMessage({
+    defaultMessage: 'Cancel',
+    description: 'Button text for Cancel to cancel the schema selection.',
+  });
+  const browseMessage = intl.formatMessage({
+    defaultMessage: 'Browse',
+    description: 'This is a button text where clicking will lead to browsing to select a file to upload',
+  });
+  const uploadMessage = intl.formatMessage({
+    defaultMessage: 'Select a file to upload',
+    description: 'This is shown as a placeholder text for selecting a file to upload',
+  });
+
   const onRenderFooterContent = useCallback(
     () => (
       <div>
         <PrimaryButton onClick={onSchemaAddClick} disabled={!selectedSchema} styles={{ root: { marginRight: 8 } }}>
-          Add
+          {addMessage}
         </PrimaryButton>
-        <DefaultButton onClick={hidePanel}>Cancel</DefaultButton>
+        <DefaultButton onClick={hidePanel}>{cancelMessage}</DefaultButton>
       </div>
     ),
     [hidePanel, selectedSchema]
@@ -86,8 +106,10 @@ export const AddSchemaPanelButton: FunctionComponent<AddSchemaModelProps> = ({ s
 
         {uploadType === UploadSchemaTypes.UPLOAD_NEW && (
           <div className="upload-new">
-            <TextField placeholder="Select a file to upload" />
-            <PrimaryButton text="Browse" style={{ marginLeft: 8 }} />
+            <TextField placeholder={uploadMessage} />
+            <PrimaryButton text="Browse" style={{ marginLeft: 8 }}>
+              {browseMessage}
+            </PrimaryButton>
           </div>
         )}
 

@@ -1,6 +1,6 @@
 import type { SchemaTypes } from './addSchemaPanelButton';
-import stateImageOnHover from './state_image.png';
-import stateImageOnRest from './state_image_disabled.png';
+import stateImageOnHover from './card_image_onhover.png';
+import stateImageOnRest from './card_image_onrest.png';
 import { Image } from '@fluentui/react/lib/Image';
 import type { FunctionComponent } from 'react';
 

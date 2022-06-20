@@ -971,6 +971,12 @@
       "value": "Required. A string that contains the time."
     }
   ],
+  "JQlAMD": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -1023,6 +1029,12 @@
     {
       "type": 0,
       "value": "Required. The object to add a new property to."
+    }
+  ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
     }
   ],
   "K90YEU": [
@@ -1719,6 +1731,12 @@
       "value": "Request"
     }
   ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -1847,6 +1865,12 @@
     {
       "type": 0,
       "value": "Data Handling"
+    }
+  ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "b9/1dK": [
