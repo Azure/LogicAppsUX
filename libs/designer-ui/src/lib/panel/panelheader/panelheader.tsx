@@ -2,6 +2,7 @@ import type { MenuItemOption } from '../../card/types';
 import { PanelLocation, PanelScope } from '../panelUtil';
 import { PanelHeaderComment } from './panelheadercomment';
 import { PanelHeaderTitle } from './panelheadertitle';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { IButton, IButtonStyles } from '@fluentui/react/lib/Button';
 import { IconButton } from '@fluentui/react/lib/Button';
 import type { ICalloutProps } from '@fluentui/react/lib/Callout';
@@ -27,6 +28,7 @@ export interface PanelHeaderProps {
   cardIcon?: string;
   comment?: string;
   titleId?: string;
+  isLoading?: boolean;
   panelHeaderControlType?: PanelHeaderControlType;
   panelHeaderMenu: MenuItemOption[];
   noNodeSelected?: boolean;
@@ -85,6 +87,7 @@ export const PanelHeader = ({
   cardIcon,
   comment,
   noNodeSelected,
+  isLoading,
   panelScope,
   titleId,
   panelHeaderControlType,
@@ -115,6 +118,12 @@ export const PanelHeader = ({
   const getCollapseIconName: string = (isRight && isCollapsed) || (!isRight && !isCollapsed) ? 'DoubleChevronLeft8' : 'DoubleChevronRight8';
 
   const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
+
+  const iconComponent = isLoading ? (
+    <Spinner size={SpinnerSize.small} />
+  ) : cardIcon ? (
+    <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" />
+  ) : null;
 
   const getPanelHeaderMenu = (): JSX.Element => {
     const panelHeaderMenuItems = panelHeaderMenu.map((item) => ({
@@ -192,7 +201,7 @@ export const PanelHeader = ({
       {!noNodeOnCardLevel ? (
         <>
           <div className="msla-panel-card-header">
-            {cardIcon ? <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" /> : null}
+            {iconComponent}
             {includeTitle ? (
               <div className="msla-panel-card-title-container" hidden={isCollapsed}>
                 <PanelHeaderTitle

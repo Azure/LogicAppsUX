@@ -20,7 +20,7 @@
   "+xiT4Q": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "Разбивка на страницы"
     }
   ],
   "/I/U8L": [
@@ -98,7 +98,7 @@
   "0KMjv6": [
     {
       "type": 0,
-      "value": "Tracking"
+      "value": "Отслеживание"
     }
   ],
   "0R2D5l": [
@@ -110,7 +110,7 @@
   "0Vzp0l": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Свернуть"
     }
   ],
   "0ZlNtf": [
@@ -262,19 +262,19 @@
   "1VRGCF": [
     {
       "type": 0,
-      "value": "Specify one or more expressions which must be true for the trigger to fire."
+      "value": "Укажите выражения, которые должны быть истинными для срабатывания триггера."
     }
   ],
   "1ejxkP": [
     {
       "type": 0,
-      "value": "Secure Inputs"
+      "value": "Безопасные входные данные"
     }
   ],
   "1htSs7": [
     {
       "type": 0,
-      "value": "Off"
+      "value": "Выкл"
     }
   ],
   "1jhzOM": [
@@ -310,7 +310,7 @@
   "2Cdt4p": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+      "value": "Позволяет splitOn запускать экземпляр рабочего процесса для каждого элемента в выбранном массиве. У каждого экземпляра также может быть отдельный ИД отслеживания."
     }
   ],
   "2K2fAj": [
@@ -334,7 +334,7 @@
   "2tTQ0A": [
     {
       "type": 0,
-      "value": "On"
+      "value": "Вкл"
     }
   ],
   "33+WHG": [
@@ -358,7 +358,7 @@
   "3qG1VT": [
     {
       "type": 0,
-      "value": "Tracked Properties"
+      "value": "Отслеживаемые свойства"
     }
   ],
   "3rzrWf": [
@@ -574,19 +574,19 @@
   "8j+a0n": [
     {
       "type": 0,
-      "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+      "value": "При использовании асинхронного шаблона применяется следующая схема: если удаленный сервер сообщает, что запрос принят к обработке, при помощи ответа \"202 (Принято)\", то подсистема Logic Apps продолжит опрашивать URL-адрес, указанный в заголовке расположения ответа, до тех пор, пока не будет достигнуто терминальное состояние."
     }
   ],
   "8ubEPi": [
     {
       "type": 0,
-      "value": "Request Options"
+      "value": "Параметры запроса"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Скрытие заголовков рабочего процесса при ответе"
     }
   ],
   "8wr0zO": [
@@ -664,7 +664,7 @@
   "BBD8Em": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Ключ"
     }
   ],
   "BCAnZP": [
@@ -712,7 +712,7 @@
   "C4NQ1J": [
     {
       "type": 0,
-      "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+      "value": "Получите элементы в соответствии с указанным пороговым значением, используя маркер продолжения. Из-за размера страницы соединителя возвращаемое число элементов может превышать пороговое значение."
     }
   ],
   "CG772M": [
@@ -778,13 +778,13 @@
   "FDWfqM": [
     {
       "type": 0,
-      "value": "Secure Outputs"
+      "value": "Безопасные выходные данные"
     }
   ],
   "FGS2fS": [
     {
       "type": 0,
-      "value": "has failed"
+      "value": "завершился сбоем"
     }
   ],
   "FN5zHQ": [
@@ -796,7 +796,7 @@
   "FNbA9+": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Развернуть"
     }
   ],
   "FS+/Tb": [
@@ -808,13 +808,13 @@
   "FUhNu4": [
     {
       "type": 0,
-      "value": "Split On"
+      "value": "Разделение"
     }
   ],
   "FUuFlC": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "По умолчанию"
     }
   ],
   "FVavKy": [
@@ -970,7 +970,7 @@
   "HXLutF": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Ключ"
     }
   ],
   "HfrUId": [
@@ -1000,7 +1000,7 @@
   "J/Kz1j": [
     {
       "type": 0,
-      "value": "Asynchronous Pattern"
+      "value": "Асинхронный шаблон"
     }
   ],
   "J5/7vN": [
@@ -1060,7 +1060,7 @@
   "JzqgNM": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Задает ИД отслеживания для запуска. При использовании splitOn этот ИД будет использован для инициирующего запроса."
     }
   ],
   "K50znc": [
@@ -1138,7 +1138,7 @@
   "MCQODe": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties."
+      "value": "Защита выходных данных операции и ссылок выходных свойств."
     }
   ],
   "MDbmMw": [
@@ -1528,13 +1528,13 @@
   "SmCQys": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Настраиваемый ИД отслеживания"
     }
   ],
   "T0BFpC": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Задает ИД отслеживания для запуска. При использовании splitOn этот ИД будет использован для инициирующего запроса."
     }
   ],
   "T7zcR6": [
@@ -1630,13 +1630,13 @@
   "Ur+wph": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Щелкните, чтобы удалить элемент"
     }
   ],
   "V+/c21": [
     {
       "type": 0,
-      "value": "General"
+      "value": "Общие"
     }
   ],
   "V0ZbQO": [
@@ -1790,7 +1790,7 @@
   "XsktQ/": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the response."
+      "value": "Запрет на включение в ответ заголовков метаданных по рабочим процессам в Logic Apps."
     }
   ],
   "XtuP5e": [
@@ -1860,7 +1860,7 @@
   "ZM1mRy": [
     {
       "type": 0,
-      "value": "Concurrency Control"
+      "value": "Управление параллелизмом"
     }
   ],
   "ZME5hh": [
@@ -1908,13 +1908,13 @@
   "aK4iLW": [
     {
       "type": 0,
-      "value": "Data Handling"
+      "value": "Обработка данных"
     }
   ],
   "b9/1dK": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Значение"
     }
   ],
   "bTrk+S": [
@@ -1926,7 +1926,7 @@
   "bWBMhe": [
     {
       "type": 0,
-      "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
+      "value": "По умолчанию экземпляры приложения логики запускаются одновременно (параллельно). Данный элемент управления изменяет принцип очередности новых запусков, и после включения изменить его невозможно. Чтобы запускать максимум параллельных экземпляров, не включайте этот элемент. Чтобы ограничить их число, включите его и задайте лимит. При лимите \"1\" запуски будут выполняться последовательно."
     }
   ],
   "ba9yGJ": [
@@ -2028,13 +2028,13 @@
   "dSTRb/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Укажите поведение и возможности передачи содержимого по HTTP. При отправке больших сообщений они могут быть разделены на запросы меньшего размера к соединителю. Подробнее см. по адресу http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "dWFyfN": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation."
+      "value": "Защита входных данных операции."
     }
   ],
   "dhvk0u": [
@@ -2094,7 +2094,7 @@
   "euC/DV": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Массив"
     }
   ],
   "f/lWTW": [
@@ -2130,7 +2130,7 @@
   "g0a4Qe": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Значение"
     }
   ],
   "g4igOR": [
@@ -2184,7 +2184,7 @@
   "gWRF8m": [
     {
       "type": 0,
-      "value": "Trigger Conditions"
+      "value": "Условия триггера"
     }
   ],
   "gu9o9z": [
@@ -2276,7 +2276,7 @@
   "i/b3Ko": [
     {
       "type": 0,
-      "value": "Asynchronous Response"
+      "value": "Асинхронный отклик"
     }
   ],
   "i1cwra": [
@@ -2288,7 +2288,7 @@
   "i4C4aB": [
     {
       "type": 0,
-      "value": "Networking"
+      "value": "Сеть"
     }
   ],
   "iBlvhu": [
@@ -2406,7 +2406,7 @@
   "juR40n": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Длительность"
     }
   ],
   "k/oqFL": [
@@ -2508,7 +2508,7 @@
   "lcVG4C": [
     {
       "type": 0,
-      "value": "is skipped"
+      "value": "пропущен"
     }
   ],
   "lgs5sf": [
@@ -2556,7 +2556,7 @@
   "mOr9ll": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
+      "value": "Максимальная длительность одного исходящего запроса от этого действия. Если запрос не завершится в течение этого предела после выполнения повторных попыток, выполнение действия завершится сбоем."
     }
   ],
   "mPakaD": [
@@ -2574,7 +2574,7 @@
   "mjS/k1": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+      "value": "Запрет на включение в исходящий запрос заголовков метаданных по рабочим процессам в Logic Apps."
     }
   ],
   "n35O/+": [
@@ -2604,7 +2604,7 @@
   "nZ4nLn": [
     {
       "type": 0,
-      "value": "Suppress workflow headers"
+      "value": "Скрытие заголовков рабочего процесса"
     }
   ],
   "ngsC44": [
@@ -2654,7 +2654,7 @@
   "oLtwMw": [
     {
       "type": 0,
-      "value": "Content Transfer"
+      "value": "Передача содержимого"
     }
   ],
   "oV0xQ9": [
@@ -2726,7 +2726,7 @@
   "ptkf0D": [
     {
       "type": 0,
-      "value": "Security"
+      "value": "Безопасность"
     }
   ],
   "q/+Uex": [
@@ -2768,7 +2768,7 @@
   "qPUX59": [
     {
       "type": 0,
-      "value": "is successful"
+      "value": "выполнен"
     }
   ],
   "qSejoi": [
@@ -2852,7 +2852,7 @@
   "qrxi0L": [
     {
       "type": 0,
-      "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+      "value": "При использовании асинхронного отклика приложение логики может отправлять ответ 202 (Принято), чтобы показать, что запрос принят к обработке. Для получения окончательного состояния будет предоставлен заголовок расположения."
     }
   ],
   "r43nMc": [
@@ -2906,7 +2906,7 @@
   "s7nGyC": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Удалить"
     }
   ],
   "sDkAVZ": [
@@ -2918,7 +2918,7 @@
   "sW47JR": [
     {
       "type": 0,
-      "value": "Degree of Parallelism"
+      "value": "Степень параллелизма"
     }
   ],
   "sZ0G/Z": [
@@ -2936,7 +2936,7 @@
   "scmyvO": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Время ожидания действия"
     }
   ],
   "sfJTHV": [
@@ -3056,7 +3056,7 @@
   "uZH8Qs": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
+      "value": "Ограничение максимальной длительности между повторными попытками и асинхронными ответами для этого действия. Примечание. Это не изменяет время ожидания одного запроса."
     }
   ],
   "uc/PoD": [
@@ -3116,7 +3116,7 @@
   "vcBAuU": [
     {
       "type": 0,
-      "value": "has timed out"
+      "value": "превысил время ожидания"
     }
   ],
   "vwH/XV": [
@@ -3212,7 +3212,7 @@
   "xQQ9ko": [
     {
       "type": 0,
-      "value": "Threshold"
+      "value": "Пороговое значение"
     }
   ],
   "xV/oyK": [

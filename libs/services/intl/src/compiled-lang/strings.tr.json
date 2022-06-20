@@ -20,7 +20,7 @@
   "+xiT4Q": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "Sayfalandırma"
     }
   ],
   "/I/U8L": [
@@ -98,7 +98,7 @@
   "0KMjv6": [
     {
       "type": 0,
-      "value": "Tracking"
+      "value": "İzleme"
     }
   ],
   "0R2D5l": [
@@ -110,7 +110,7 @@
   "0Vzp0l": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Daralt"
     }
   ],
   "0ZlNtf": [
@@ -240,19 +240,19 @@
   "1VRGCF": [
     {
       "type": 0,
-      "value": "Specify one or more expressions which must be true for the trigger to fire."
+      "value": "Tetikleyicinin başlatılması için doğru olması gereken bir veya daha fazla ifade belirtin."
     }
   ],
   "1ejxkP": [
     {
       "type": 0,
-      "value": "Secure Inputs"
+      "value": "Güvenli Girişler"
     }
   ],
   "1htSs7": [
     {
       "type": 0,
-      "value": "Off"
+      "value": "Kapalı"
     }
   ],
   "1jhzOM": [
@@ -288,7 +288,7 @@
   "2Cdt4p": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+      "value": "Seçili dizideki her öğe için iş akışının bir örneğini başlatmak istiyorsanız bölünmüş seçeneğini etkinleştirin. Her örnek, özgün bir izleme kimliğine de sahip olabilir."
     }
   ],
   "2K2fAj": [
@@ -312,7 +312,7 @@
   "2tTQ0A": [
     {
       "type": 0,
-      "value": "On"
+      "value": "Açık"
     }
   ],
   "33+WHG": [
@@ -336,7 +336,7 @@
   "3qG1VT": [
     {
       "type": 0,
-      "value": "Tracked Properties"
+      "value": "İzlenen Özellikler"
     }
   ],
   "3rzrWf": [
@@ -552,19 +552,19 @@
   "8j+a0n": [
     {
       "type": 0,
-      "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+      "value": "Zaman uyumsuz düzen seçildiğinde, uzak sunucu 202 (Kabul Edildi) yanıtı göndererek isteğin işlenmek üzere kabul edildiğini belirtirse Logic Apps altyapısı, bir sona erme durumuna ulaşılana kadar yanıtın konum üst bilgisinde belirtilen URL'yi yoklamayı sürdürür."
     }
   ],
   "8ubEPi": [
     {
       "type": 0,
-      "value": "Request Options"
+      "value": "İstek Seçenekleri"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Yanıtta iş akışı üst bilgilerini gösterme"
     }
   ],
   "8wr0zO": [
@@ -642,7 +642,7 @@
   "BBD8Em": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Anahtar"
     }
   ],
   "BCAnZP": [
@@ -690,7 +690,7 @@
   "C4NQ1J": [
     {
       "type": 0,
-      "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+      "value": "Devamlılık belirtecini izleyerek, belirtilen eşikleri karşılayacak şekilde öğeleri alın. Bağlayıcının sayfa boyutu nedeniyle, döndürülen sayı eşiği aşabilir."
     }
   ],
   "CG772M": [
@@ -756,13 +756,13 @@
   "FDWfqM": [
     {
       "type": 0,
-      "value": "Secure Outputs"
+      "value": "Güvenli Çıkışlar"
     }
   ],
   "FGS2fS": [
     {
       "type": 0,
-      "value": "has failed"
+      "value": "başarısız oldu"
     }
   ],
   "FN5zHQ": [
@@ -774,7 +774,7 @@
   "FNbA9+": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Genişlet"
     }
   ],
   "FS+/Tb": [
@@ -786,13 +786,13 @@
   "FUhNu4": [
     {
       "type": 0,
-      "value": "Split On"
+      "value": "Şu Durumda Böl"
     }
   ],
   "FUuFlC": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Varsayılan"
     }
   ],
   "FVavKy": [
@@ -926,7 +926,7 @@
   "HXLutF": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Anahtar"
     }
   ],
   "HfrUId": [
@@ -956,7 +956,7 @@
   "J/Kz1j": [
     {
       "type": 0,
-      "value": "Asynchronous Pattern"
+      "value": "Zaman Uyumsuz Düzen"
     }
   ],
   "J5/7vN": [
@@ -1016,7 +1016,7 @@
   "JzqgNM": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Çalıştırmanın izleme kimliğini ayarlayın. Bölünmüş izleme için bu izleme kimliği isteği başlatmaya yarar."
     }
   ],
   "K50znc": [
@@ -1094,7 +1094,7 @@
   "MCQODe": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties."
+      "value": "İşlemin çıkışlarını ve çıkış özelliği başvurularını güvenli hale getirin."
     }
   ],
   "MDbmMw": [
@@ -1462,13 +1462,13 @@
   "SmCQys": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Özel İzleme Kimliği"
     }
   ],
   "T0BFpC": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Çalıştırmanın izleme kimliğini ayarlayın. Bölünmüş izleme için bu izleme kimliği isteği başlatmaya yarar."
     }
   ],
   "T7zcR6": [
@@ -1564,13 +1564,13 @@
   "Ur+wph": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Öğeyi silmek için tıklayın"
     }
   ],
   "V+/c21": [
     {
       "type": 0,
-      "value": "General"
+      "value": "Genel"
     }
   ],
   "V0ZbQO": [
@@ -1724,7 +1724,7 @@
   "XsktQ/": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the response."
+      "value": "Logic Apps'i yanıtta iş akışı meta veri üst bilgileri eklememek için sınırlandırın."
     }
   ],
   "XtuP5e": [
@@ -1794,7 +1794,7 @@
   "ZM1mRy": [
     {
       "type": 0,
-      "value": "Concurrency Control"
+      "value": "Eşzamanlılık Denetimi"
     }
   ],
   "ZME5hh": [
@@ -1842,13 +1842,13 @@
   "aK4iLW": [
     {
       "type": 0,
-      "value": "Data Handling"
+      "value": "Veri İşleme"
     }
   ],
   "b9/1dK": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Değer"
     }
   ],
   "bTrk+S": [
@@ -1860,7 +1860,7 @@
   "bWBMhe": [
     {
       "type": 0,
-      "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
+      "value": "Varsayılan olarak, Mantıksal Uygulama örnekleri aynı anda veya paralel olarak çalışır. Bu denetim, yeni çalıştırmaların sıraya alınma şeklini değiştirir ve etkinleştirildikten sonra değiştirilemez. Mümkün olduğunca çok sayıda paralel örnek çalıştırmak için bu denetimi devre dışı bırakın. Paralel çalıştırma sayısını sınırlamak için bu denetimi etkinleştirin ve bir sınır seçin. Sırayla çalıştırmak için sınır olarak 1 değerini seçin."
     }
   ],
   "ba9yGJ": [
@@ -1962,13 +1962,13 @@
   "dSTRb/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "HTTP üzerinden içerik aktarma davranışını ve özelliklerini belirtin. Büyük boyutlu iletilerin karşıya yüklenmesine olanak sağlamak için bu iletiler küçük isteklere bölünerek bağlayıcıya gönderilebilir. Ayrıntıları şu sayfada bulabilirsiniz: http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "dWFyfN": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation."
+      "value": "İşlemin girişlerini güvenli hale getirin."
     }
   ],
   "dhvk0u": [
@@ -2028,7 +2028,7 @@
   "euC/DV": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Dizi"
     }
   ],
   "f/lWTW": [
@@ -2064,7 +2064,7 @@
   "g0a4Qe": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Değer"
     }
   ],
   "g4igOR": [
@@ -2118,7 +2118,7 @@
   "gWRF8m": [
     {
       "type": 0,
-      "value": "Trigger Conditions"
+      "value": "Tetikleyici Koşulları"
     }
   ],
   "gu9o9z": [
@@ -2180,7 +2180,7 @@
   "i/b3Ko": [
     {
       "type": 0,
-      "value": "Asynchronous Response"
+      "value": "Zaman Uyumsuz Yanıt"
     }
   ],
   "i1cwra": [
@@ -2192,7 +2192,7 @@
   "i4C4aB": [
     {
       "type": 0,
-      "value": "Networking"
+      "value": "Ağ"
     }
   ],
   "iBlvhu": [
@@ -2310,7 +2310,7 @@
   "juR40n": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Süre"
     }
   ],
   "k/oqFL": [
@@ -2412,7 +2412,7 @@
   "lcVG4C": [
     {
       "type": 0,
-      "value": "is skipped"
+      "value": "atlandı"
     }
   ],
   "lgs5sf": [
@@ -2460,7 +2460,7 @@
   "mOr9ll": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
+      "value": "Bu eylemden gelen tek bir giden istekte en uzun süre. İstek yeniden denemeler çalıştırıldıktan sonra bu sınır içinde tamamlanmazsa eylem başarısız olur."
     }
   ],
   "mPakaD": [
@@ -2478,7 +2478,7 @@
   "mjS/k1": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+      "value": "Logic Apps'i giden isteklerde iş akışı meta veri üst bilgileri eklememek için sınırlandırın."
     }
   ],
   "n35O/+": [
@@ -2508,7 +2508,7 @@
   "nZ4nLn": [
     {
       "type": 0,
-      "value": "Suppress workflow headers"
+      "value": "İş akışı üst bilgilerini gösterme"
     }
   ],
   "ngsC44": [
@@ -2558,7 +2558,7 @@
   "oLtwMw": [
     {
       "type": 0,
-      "value": "Content Transfer"
+      "value": "İçerik Aktarımı"
     }
   ],
   "oV0xQ9": [
@@ -2630,7 +2630,7 @@
   "ptkf0D": [
     {
       "type": 0,
-      "value": "Security"
+      "value": "Güvenlik"
     }
   ],
   "q/+Uex": [
@@ -2672,7 +2672,7 @@
   "qPUX59": [
     {
       "type": 0,
-      "value": "is successful"
+      "value": "başarılı"
     }
   ],
   "qSejoi": [
@@ -2734,7 +2734,7 @@
   "qrxi0L": [
     {
       "type": 0,
-      "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+      "value": "Zaman uyumsuz yanıt, bir mantıksal uygulamanın, isteğin işlenmek üzere kabul edildiğini göstermek için 202 (Kabul Edildi) yanıtı göndermesine olanak sağlar. Son durumun alınması için bir konum üst bilgisi sağlanır."
     }
   ],
   "r43nMc": [
@@ -2788,7 +2788,7 @@
   "s7nGyC": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Sil"
     }
   ],
   "sDkAVZ": [
@@ -2800,7 +2800,7 @@
   "sW47JR": [
     {
       "type": 0,
-      "value": "Degree of Parallelism"
+      "value": "Paralellik Derecesi"
     }
   ],
   "sZ0G/Z": [
@@ -2818,7 +2818,7 @@
   "scmyvO": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Eylem Zaman Aşımı"
     }
   ],
   "sfJTHV": [
@@ -2938,7 +2938,7 @@
   "uZH8Qs": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
+      "value": "Bu eylem ile ilişkili yeniden denemeler ve zaman uyumsuz yanıtlar arasındaki en uzun süreyi sınırlayın. Not: Bu, tek bir isteğin istek zaman aşımını değiştirmez."
     }
   ],
   "uc/PoD": [
@@ -2998,7 +2998,7 @@
   "vcBAuU": [
     {
       "type": 0,
-      "value": "has timed out"
+      "value": "zaman aşımına uğradı"
     }
   ],
   "vwH/XV": [
@@ -3094,7 +3094,7 @@
   "xQQ9ko": [
     {
       "type": 0,
-      "value": "Threshold"
+      "value": "Eşik"
     }
   ],
   "xV/oyK": [

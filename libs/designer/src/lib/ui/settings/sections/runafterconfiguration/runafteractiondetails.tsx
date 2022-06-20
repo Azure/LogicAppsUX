@@ -175,5 +175,5 @@ const Label = ({ label, status }: LabelProps): JSX.Element => {
 
 const useIcon = (selectedNode: string): string => {
   const operationInfo = useOperationInfo(selectedNode);
-  return useIconUri(operationInfo);
+  return useIconUri(operationInfo).result;
 };
