@@ -48,7 +48,8 @@ export class ApiService implements IApiService {
 
   async getMoreWorkflows(continuationToken: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const response = await fetch(continuationToken, { headers, method: 'POST' });
+    const payload = this.getPayload();
+    const response = await fetch(continuationToken, { headers, method: 'POST', body: JSON.stringify(payload) });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }

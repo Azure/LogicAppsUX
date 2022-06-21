@@ -174,3 +174,8 @@ export interface WorflowsList {
   name: string;
   resourceGroup: string;
 }
+
+export interface OutletContext {
+  accessToken: string;
+  baseUrl: string;
+}

@@ -1,4 +1,5 @@
 import messages from '../../../../../libs/services/intl/src/compiled-lang/strings.json';
+import type { OutletContext } from '../../run-service';
 import type { RootState } from '../../state/store';
 import './export.less';
 import { Text } from '@fluentui/react';
@@ -10,8 +11,6 @@ import { useSelector } from 'react-redux';
 import { Outlet, useOutletContext } from 'react-router-dom';
 
 const queryClient = new QueryClient();
-
-type ContextType = any;
 
 export const ExportApp: React.FC = () => {
   const overviewState = useSelector((state: RootState) => state.overview);
@@ -37,5 +36,5 @@ export const ExportApp: React.FC = () => {
 };
 
 export function useOutlet() {
-  return useOutletContext<ContextType>();
+  return useOutletContext<OutletContext>();
 }

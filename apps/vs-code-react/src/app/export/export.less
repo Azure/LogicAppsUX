@@ -1,11 +1,32 @@
-* {
-  box-sizing: border-box;
-}
-
 .msla-export {
   height: 100vh;
 
   &-title {
     padding: 15px 0;
+  }
+
+  &-overview-panel {
+    display: flex;
+    max-height: 60%;
+
+    &-list {
+      width: 75%;
+      display: flex;
+      flex-direction: column;
+
+      &-workflows {
+        overflow: auto;
+        margin: 15px 0;
+        flex: 1;
+      }
+    }
+
+    &-divider {
+      padding: 0 20px;
+
+      &::after {
+        width: 3px;
+      }
+    }
   }
 }
