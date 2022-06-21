@@ -32,7 +32,7 @@ const initialState: VscodeState = {
   initialized: false,
 };
 
-export const overviewSlice = createSlice({
+export const vscodeSlice = createSlice({
   name: 'vscode',
   initialState: initialState as VscodeState,
   reducers: {
@@ -53,6 +53,6 @@ export const overviewSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initialize, updateAccessToken } = overviewSlice.actions;
+export const { initialize, updateAccessToken } = vscodeSlice.actions;
 
-export default overviewSlice.reducer;
+export default vscodeSlice.reducer;
