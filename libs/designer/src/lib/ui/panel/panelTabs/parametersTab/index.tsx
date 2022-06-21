@@ -45,7 +45,7 @@ export const parametersTab: PanelTab = {
   title: 'Parameters',
   name: constants.PANEL_TAB_NAMES.PARAMETERS,
   description: 'Request History',
-  enabled: true,
+  visible: true,
   content: <ParametersTab />,
   order: 0,
   icon: 'Info',

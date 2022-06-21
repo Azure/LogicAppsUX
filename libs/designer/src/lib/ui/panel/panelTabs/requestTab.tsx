@@ -239,7 +239,7 @@ export const monitorRequestTab: PanelTab = {
   title: 'Request',
   name: constants.PANEL_TAB_NAMES.REQUEST_HISTORY,
   description: 'Request History',
-  enabled: true,
+  visible: true,
   content: <RequestPanelTab />,
   order: 0,
   icon: 'Rerun',

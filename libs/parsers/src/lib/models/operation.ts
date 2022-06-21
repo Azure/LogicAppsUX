@@ -179,6 +179,7 @@ export interface ParameterBase {
   summary?: string;
   title?: string;
   visibility?: string;
+  groupName?: string;
 }
 
 export interface SchemaProperty extends ParameterBase {

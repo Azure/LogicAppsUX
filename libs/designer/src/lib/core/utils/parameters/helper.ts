@@ -89,17 +89,11 @@ export interface RepetitionReference {
 
 /**
  * Converts to parameter info map.
- * @arg {string} nodeType - The type of the node.
  * @arg {InputParameter[]} inputParameters - The input parameters.
  * @arg {any} [stepDefinition] - The step definition.
  * @arg {string} [nodeId] - The graph node id which contains the specified parameters.
  */
-export function toParameterInfoMap(
-  nodeType: string,
-  inputParameters: InputParameter[],
-  stepDefinition?: any,
-  nodeId?: string
-): ParameterInfo[] {
+export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any, nodeId?: string): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
   const result: ParameterInfo[] = [];
 
@@ -945,7 +939,7 @@ export function updateTokenMetadata(
   const tokenNodeData = nodes[tokenNodeId];
   const tokenNodeOperation = operations[tokenNodeId];
   const nodeType = tokenNodeOperation?.type;
-  const isSecure = tokenNodeData ? hasSecureOutputs(nodeType, tokenNodeData.settings) : false;
+  const isSecure = tokenNodeData ? hasSecureOutputs(nodeType, tokenNodeData.settings ?? {}) : false;
   const nodeOutputInfo = getOutputByTokenInfo(unmap(tokenNodeData?.nodeOutputs.outputs), valueSegment.token as Token, parameterType);
 
   const brandColor =

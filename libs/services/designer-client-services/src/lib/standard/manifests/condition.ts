@@ -9,6 +9,22 @@ export default {
     description: 'Identifies which block of actions to execute based on the evaluation of condition input.',
 
     allowChildOperations: true,
+    childOperationsLocation: ['actions'],
+    subGraphDetails: {
+      else: {
+        location: ['actions'],
+      },
+    },
+
+    inputs: {
+      type: 'object',
+      title: 'Condition expression',
+      'x-ms-editor': 'condition',
+      'x-ms-editor-options': {},
+      required: true,
+    },
+    inputsLocation: ['expression'],
+    isInputsOptional: false,
 
     connector: {
       id: 'connectionProviders/control',

@@ -12,6 +12,8 @@ import responseManifest from './manifests/response';
 import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
+import terminateManifest from './manifests/terminate';
+import untilManifest from './manifests/until';
 import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft-logic-apps/parsers';
 import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
 import {
@@ -55,9 +57,12 @@ const incrementvariable = 'incrementvariable';
 const request = 'request';
 const response = 'response';
 const table = 'table';
+const terminate = 'terminate';
+const until = 'until';
 
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
+const controlConnectorId = 'connectionProviders/control';
 
 const supportedManifestTypes = [
   compose,
@@ -88,6 +93,8 @@ const supportedManifestTypes = [
   scope,
   swiftdecode,
   swiftencode,
+  terminate,
+  until,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -288,6 +295,8 @@ function isInBuiltOperation(definition: any): boolean {
     case swiftdecode:
     case swiftencode:
     case table:
+    case terminate:
+    case until:
       return true;
 
     default:
@@ -379,11 +388,11 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     operationId: 'composeNew',
   },
   [condition]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: condition,
   },
   [foreach]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: foreach,
   },
   [function_]: {
@@ -423,7 +432,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     operationId: select,
   },
   [switchType]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: switchType,
   },
   [workflow]: {
@@ -447,7 +456,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     operationId: 'flatFileEncoding',
   },
   [scope]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: scope,
   },
   [swiftdecode]: {
@@ -457,6 +466,14 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   [swiftencode]: {
     connectorId: 'connectionProviders/swiftOperations',
     operationId: 'swiftEncode',
+  },
+  [terminate]: {
+    connectorId: controlConnectorId,
+    operationId: terminate,
+  },
+  [until]: {
+    connectorId: controlConnectorId,
+    operationId: until,
   },
 };
 
@@ -473,4 +490,6 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [scope, scopeManifest],
   [select, selectManifest],
   [switchType, switchManifest],
+  [terminate, terminateManifest],
+  [until, untilManifest],
 ]);

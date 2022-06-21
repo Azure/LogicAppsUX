@@ -13,6 +13,7 @@ export interface ParentPropertyInfo {
   arrayName?: string;
   isArray?: boolean;
   visibility?: string;
+  groupName?: string;
 }
 
 // NOTE(tonytang): Below options are internal and should not be passed in except when called by the schema processor itself.
@@ -134,11 +135,13 @@ export class SchemaProcessor {
         this.options.parentProperty.arrayName = this.options.prefix;
         this.options.parentProperty.isArray = true;
         this.options.parentProperty.visibility = this._getVisibility(schema);
+        this.options.parentProperty.groupName = this._getGroupName(schema);
       } else {
         this.options.parentProperty = {
           arrayName: this._getName(),
           isArray: true,
           visibility: this._getVisibility(schema),
+          groupName: this._getGroupName(schema),
         };
       }
 
@@ -469,6 +472,7 @@ export class SchemaProcessor {
     const summary = this._getSummary(schema[SwaggerConstants.ExtensionProperties.Summary], '');
     const type = (schema.type as string) || SwaggerConstants.Types.Any;
     const visibility = this._getVisibility(schema);
+    const groupName = this._getGroupName(schema);
     const alias = schema[SwaggerConstants.ExtensionProperties.Alias];
 
     // Exclude read-only parameters from input schema, i.e., objects in Swagger body parameters.
@@ -493,6 +497,7 @@ export class SchemaProcessor {
       encode,
       enum: $enum,
       format,
+      groupName,
       itemSchema,
       isInsideArray,
       isNested,
@@ -535,6 +540,12 @@ export class SchemaProcessor {
   private _getVisibility(schema: SchemaObject): string {
     return (
       schema[SwaggerConstants.ExtensionProperties.Visibility] || (this.options.parentProperty ? this.options.parentProperty.visibility : '')
+    );
+  }
+
+  private _getGroupName(schema: SchemaObject): string {
+    return (
+      schema[SwaggerConstants.ExtensionProperties.GroupName] || (this.options.parentProperty ? this.options.parentProperty.groupName : '')
     );
   }
 
