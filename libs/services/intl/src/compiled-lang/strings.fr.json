@@ -17,6 +17,12 @@
       "value": "Obligatoire. Valeur à retourner si l'expression est false."
     }
   ],
+  "+xiT4Q": [
+    {
+      "type": 0,
+      "value": "Pagination"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -33,6 +39,12 @@
     {
       "type": 0,
       "value": "Retourne les éléments du tableau en commençant au niveau du nombre d'index"
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "/doURb": [
@@ -83,10 +95,22 @@
       "value": "Afficher le menu Exécuter"
     }
   ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Suivi"
+    }
+  ],
   "0R2D5l": [
     {
       "type": 0,
       "value": "Retourne la représentation binaire d'une chaîne encodée sous forme d'URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Réduire"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +176,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Afficher toutes les versions"
     }
   ],
   "1Fn5n+": [
@@ -213,6 +237,24 @@
       "value": "Obligatoire. Valeur pour laquelle rechercher l'index."
     }
   ],
+  "1VRGCF": [
+    {
+      "type": 0,
+      "value": "Spécifiez une ou plusieurs expressions qui doivent être vraies pour que le déclencheur se déclenche."
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Entrées sécurisées"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Désactivé"
+    }
+  ],
   "1jhzOM": [
     {
       "type": 0,
@@ -240,7 +282,13 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Recherche générale"
+    }
+  ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Activez le fractionnement pour démarrer une instance du flux de travail par élément dans le tableau sélectionné. Chaque instance peut également avoir un ID de suivi distinct."
     }
   ],
   "2K2fAj": [
@@ -261,6 +309,12 @@
       "value": "Obligatoire. Nom de l'action avec une réponse encodée dans le formulaire ou avec des données de formulaire."
     }
   ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "Actif"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,6 +331,12 @@
     {
       "type": 0,
       "value": "En échec"
+    }
+  ],
+  "3qG1VT": [
+    {
+      "type": 0,
+      "value": "Propriétés suivies"
     }
   ],
   "3rzrWf": [
@@ -336,7 +396,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Visite guidée/didacticiel"
     }
   ],
   "5J7j9k": [
@@ -489,6 +549,24 @@
       "value": "Obligatoire. Chaîne à encoder sous forme d'URI."
     }
   ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "Avec le modèle asynchrone, si le serveur distant indique que le traitement de la demande est accepté avec la réponse 202 (Accepté), le moteur Logic Apps continue à interroger l'URL spécifiée dans l'en-tête d'emplacement de la réponse jusqu'à atteindre un état terminal."
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Options de demande"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Supprimer les en-têtes de workflow lors de la réponse"
+    }
+  ],
   "8wr0zO": [
     {
       "type": 0,
@@ -561,6 +639,12 @@
       "value": "Obligatoire. Index de la partie à récupérer."
     }
   ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Clé"
+    }
+  ],
   "BCAnZP": [
     {
       "type": 0,
@@ -603,6 +687,12 @@
       "value": "Obligatoire. Objet à vérifier pour voir s'il est supérieur à l'objet comparé."
     }
   ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Récupérez des éléments pour atteindre le seuil spécifié en suivant le jeton de continuation. En raison de la taille de page du connecteur, le nombre retourné peut dépasser le seuil."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
@@ -630,7 +720,7 @@
   "DysO/Q": [
     {
       "type": 0,
-      "value": "Ctrl + Y"
+      "value": "Ctrl+Y"
     }
   ],
   "ECZC6Y": [
@@ -663,16 +753,46 @@
       "value": "Retourne une valeur de paramètre définie dans la définition"
     }
   ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Sorties sécurisées"
+    }
+  ],
+  "FGS2fS": [
+    {
+      "type": 0,
+      "value": "a échoué"
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
       "value": "Retourne une section d’une chaîne définie par l’index de début et l’index de fin"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Développer"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Retourne le corps d'une partie dans une sortie en plusieurs parties du déclencheur"
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Fractionner sur"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Par défaut"
     }
   ],
   "FVavKy": [
@@ -803,6 +923,12 @@
       "value": "Obligatoire. Nom de clé de la valeur de données de formulaire à retourner."
     }
   ],
+  "HXLutF": [
+    {
+      "type": 0,
+      "value": "Clé"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -825,6 +951,12 @@
     {
       "type": 0,
       "value": "Retourne le premier objet non-Null dans les arguments transmis"
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Modèle asynchrone"
     }
   ],
   "J5/7vN": [
@@ -879,6 +1011,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne de format numérique."
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Définissez l’ID de suivi de l’exécution. Pour le paramètre SplitOn, cet ID de suivi concerne la demande d’origine."
     }
   ],
   "K50znc": [
@@ -951,6 +1089,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Numéro à ajouter à l'opérande 2."
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "Sécurisez les sorties de l’opération et les références des propriétés de sortie."
     }
   ],
   "MDbmMw": [
@@ -1121,6 +1265,12 @@
       "value": "Obligatoire. Nombre de secondes à ajouter. Peut être négatif pour soustraire des secondes."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1154,7 +1304,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Abandonner"
     }
   ],
   "QEp3C8": [
@@ -1306,7 +1456,19 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Enregistrer"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "ID de suivi personnalisé"
+    }
+  ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "Définissez l’ID de suivi de l’exécution. Pour le paramètre SplitOn, cet ID de suivi concerne la demande d’origine."
     }
   ],
   "T7zcR6": [
@@ -1324,7 +1486,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Envoyer des commentaires"
     }
   ],
   "TI44R1": [
@@ -1397,6 +1559,18 @@
     {
       "type": 0,
       "value": "Contenu non affiché en raison de la configuration de la sécurité."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Cliquez pour supprimer l'élément"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "Général"
     }
   ],
   "V0ZbQO": [
@@ -1544,7 +1718,13 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Supprimer"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Limitez Logic Apps de sorte qu’aucun en-tête de métadonnées de workflow ne soit inclus dans la réponse."
     }
   ],
   "XtuP5e": [
@@ -1611,6 +1791,12 @@
       "value": "Aucun"
     }
   ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Contrôle d'accès concurrentiel"
+    }
+  ],
   "ZME5hh": [
     {
       "type": 0,
@@ -1653,10 +1839,28 @@
       "value": "Obligatoire. Nombre d'objets à supprimer de l'avant de la collection. Doit être un entier positif."
     }
   ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Gestion des données"
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Valeur"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
       "value": "Obligatoire. Objet à vérifier pour voir s'il est supérieur ou égal à la valeur comparée."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "Par défaut, les instances d’application logique s’exécutent en même temps ou en parallèle. Ce contrôle modifie la façon dont les nouvelles exécutions sont mises en file d’attente et ne peut pas être modifié après l’activation. Pour exécuter autant d’instances parallèles que possible, laissez ce contrôle désactivé. Pour limiter le nombre d’exécutions parallèles, activez ce contrôle et sélectionnez une limite. Pour une exécution séquentielle, sélectionnez 1 comme limite."
     }
   ],
   "ba9yGJ": [
@@ -1755,6 +1959,18 @@
       "value": "Sélectionner"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Spécifiez le comportement et les fonctionnalités de transfert de contenu via HTTP. Les messages volumineux peuvent être divisés en requêtes plus petites adressées au connecteur pour permettre le chargement de messages volumineux. Pour plus d’informations, consultez http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "Sécurisez les entrées de l’opération."
+    }
+  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -1809,6 +2025,12 @@
       "value": "Obligatoire. Index d'où la sous-chaîne commence dans le paramètre 1."
     }
   ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "Tableau"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -1839,10 +2061,16 @@
       "value": "Ignoré"
     }
   ],
+  "g0a4Qe": [
+    {
+      "type": 0,
+      "value": "Valeur"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Publier"
     }
   ],
   "gCXOd5": [
@@ -1885,6 +2113,12 @@
     {
       "type": 0,
       "value": "Fonctions de conversion"
+    }
+  ],
+  "gWRF8m": [
+    {
+      "type": 0,
+      "value": "Conditions du déclencheur"
     }
   ],
   "gu9o9z": [
@@ -1951,10 +2185,22 @@
       "value": "Durée"
     }
   ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Réponse asynchrone"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Rétablir"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Réseau"
     }
   ],
   "iBlvhu": [
@@ -2069,6 +2315,12 @@
       "value": "Modifier dans JSON"
     }
   ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Durée"
+    }
+  ],
   "k/oqFL": [
     {
       "type": 0,
@@ -2165,6 +2417,12 @@
       "value": "Titre"
     }
   ],
+  "lcVG4C": [
+    {
+      "type": 0,
+      "value": "est ignorée"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -2207,6 +2465,12 @@
       "value": "Retourne la représentation sous forme de chaîne d'un URI de données"
     }
   ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "Durée maximale sur une demande sortante unique de cette action. Si la demande ne se termine pas dans cette limite après l’exécution de nouvelles tentatives, l’action échoue."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -2217,6 +2481,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne à convertir en minuscules. Si un caractère de la chaîne n'a pas d'équivalent en minuscules, le caractère reste inchangé dans la chaîne retournée."
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Limitez Logic Apps de sorte qu’aucun en-tête de métadonnées de workflow ne soit inclus dans la demande sortante."
     }
   ],
   "n35O/+": [
@@ -2241,6 +2511,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de la propriété à supprimer."
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Supprimer les en-têtes de workflow"
     }
   ],
   "ngsC44": [
@@ -2285,6 +2561,12 @@
     {
       "type": 0,
       "value": "Obligatoire. dataURI à décoder en représentation binaire."
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Transfert de contenu"
     }
   ],
   "oV0xQ9": [
@@ -2353,6 +2635,12 @@
       "value": "Actualiser"
     }
   ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Sécurité"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -2387,6 +2675,12 @@
     {
       "type": 0,
       "value": "Vérifie si la chaîne se termine par une valeur (culture invariante qui ne respecte pas la casse)"
+    }
+  ],
+  "qPUX59": [
+    {
+      "type": 0,
+      "value": "a réussi"
     }
   ],
   "qSejoi": [
@@ -2445,10 +2739,16 @@
       "value": "Obligatoire. Valeur convertie en entier."
     }
   ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "Une réponse asynchrone permet à une application logique de répondre avec un état 202 (accepté) qui indique que le traitement de la demande a été accepté. Un en-tête d'emplacement est fourni pour récupérer l'état final."
+    }
+  ],
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Annuler"
     }
   ],
   "r8aZXs": [
@@ -2493,10 +2793,22 @@
       "value": "Retourne le jour du composant Année d'un horodateur de chaîne"
     }
   ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Supprimer"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
       "value": "Retourne un tableau de valeurs correspondant au nom de clé d'une sortie de déclencheur de données de formulaire ou encodée dans un formulaire"
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Degré de parallélisme"
     }
   ],
   "sZ0G/Z": [
@@ -2509,6 +2821,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Collection à vérifier pour voir si elle est vide."
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Délai d’expiration de l’action"
     }
   ],
   "sfJTHV": [
@@ -2625,6 +2943,12 @@
       "value": "Ajoute un nombre entier d'heures à un horodateur de chaîne transmis"
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Limitez la durée maximale entre les nouvelles tentatives et les réponses asynchrones pour cette action. Remarque : cela ne modifie pas le délai d’expiration d’une demande unique."
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -2677,6 +3001,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de l'action dont vous voulez obtenir les sorties."
+    }
+  ],
+  "vcBAuU": [
+    {
+      "type": 0,
+      "value": "a expiré"
     }
   ],
   "vwH/XV": [
@@ -2754,7 +3084,7 @@
   "xFQXAI": [
     {
       "type": 0,
-      "value": "Ctrl + Z"
+      "value": "Ctrl+Z"
     }
   ],
   "xJ6vjn": [
@@ -2767,6 +3097,12 @@
     {
       "type": 0,
       "value": "Entrée de l’éditeur"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Seuil"
     }
   ],
   "xV/oyK": [

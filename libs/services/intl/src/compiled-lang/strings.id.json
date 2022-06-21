@@ -17,6 +17,12 @@
       "value": "Harus diisi. Nilai untuk dikembalikan jika ekspresi adalah 'false'."
     }
   ],
+  "+xiT4Q": [
+    {
+      "type": 0,
+      "value": "Penomoran halaman"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -33,6 +39,12 @@
     {
       "type": 0,
       "value": "Menampilkan elemen dalam array yang dimulai dari indeks Count"
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "/doURb": [
@@ -83,10 +95,22 @@
       "value": "Tampilkan menu eksekusi"
     }
   ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Pelacakan"
+    }
+  ],
   "0R2D5l": [
     {
       "type": 0,
       "value": "Menampilkan representasi biner dari string dengan pengodean URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Ciutkan"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +176,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Tampilkan semua versi"
     }
   ],
   "1Fn5n+": [
@@ -202,6 +226,24 @@
       "value": "Harus diisi. Nilai untuk mencari indeks."
     }
   ],
+  "1VRGCF": [
+    {
+      "type": 0,
+      "value": "Tentukan satu atau beberapa ekspresi yang harus benar untuk pemicu yang akan diaktifkan."
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Input Aman"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Tidak Aktif"
+    }
+  ],
   "1jhzOM": [
     {
       "type": 0,
@@ -229,7 +271,13 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Pencarian global"
+    }
+  ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Aktifkan pemisahan untuk memulai instans alur kerja setiap item dalam array yang dipilih. Setiap instans juga dapat memiliki id pelacakan yang berbeda."
     }
   ],
   "2K2fAj": [
@@ -250,6 +298,12 @@
       "value": "Wajib. Nama tindakan dengan data formulir atau respons dengan pengodean formulir."
     }
   ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "Aktif"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -266,6 +320,12 @@
     {
       "type": 0,
       "value": "Bermasalah"
+    }
+  ],
+  "3qG1VT": [
+    {
+      "type": 0,
+      "value": "Properti yang Dipantau"
     }
   ],
   "3rzrWf": [
@@ -325,7 +385,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Tur/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -478,6 +538,24 @@
       "value": "Wajib. String dengan pengodean URI."
     }
   ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "Dengan pola asinkron, jika server jarak jauh menunjukkan bahwa permintaan diterima untuk diproses dengan respons 202 (Diterima), mesin Logic Apps akan terus membuat polling URL yang ditentukan di header lokasi respons hingga mencapai status terminal."
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Opsi Permintaan"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Sembunyikan header alur kerja pada respons"
+    }
+  ],
   "8wr0zO": [
     {
       "type": 0,
@@ -550,6 +628,12 @@
       "value": "Wajib. Indeks bagian yang akan diambil."
     }
   ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Kunci"
+    }
+  ],
   "BCAnZP": [
     {
       "type": 0,
@@ -590,6 +674,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Objek untuk diperiksa jika lebih besar dari objek yang dibandingkan."
+    }
+  ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Ambil item untuk memenuhi ambang yang ditetapkan dengan mengikuti token terusan. Karena ukuran halaman konektor, angka yang dihasilkan dapat melebihi ambang."
     }
   ],
   "CG772M": [
@@ -652,16 +742,46 @@
       "value": "Menampilkan nilai parameter yang ditetapkan dalam definisi"
     }
   ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Output Aman"
+    }
+  ],
+  "FGS2fS": [
+    {
+      "type": 0,
+      "value": "gagal"
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
       "value": "Menghasilkan bagian string yang ditentukan oleh indeks awal dan indeks akhir"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Luaskan"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Menampilkan isi dari sebagian output beberapa bagian terkait pemicu"
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Pisahkan Saat"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Default"
     }
   ],
   "FVavKy": [
@@ -781,6 +901,12 @@
       "value": "Wajib. Nama kunci nilai data formulir yang akan ditampilkan."
     }
   ],
+  "HXLutF": [
+    {
+      "type": 0,
+      "value": "Kunci"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -803,6 +929,12 @@
     {
       "type": 0,
       "value": "Menampilkan objek non-null pertama pada argumen yang diberikan"
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Pola Asinkron"
     }
   ],
   "J5/7vN": [
@@ -857,6 +989,12 @@
     {
       "type": 0,
       "value": "Wajib. String format numerik."
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Atur id pelacakan untuk dijalankan. Untuk pemisahan, id pelacakan ini untuk memulai permintaan."
     }
   ],
   "K50znc": [
@@ -929,6 +1067,12 @@
     {
       "type": 0,
       "value": "Wajib. Nomor yang akan ditambahkan ke Summand 2."
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "Mengamankan output dari operasi dan referensi properti output."
     }
   ],
   "MDbmMw": [
@@ -1099,6 +1243,12 @@
       "value": "Wajib. Jumlah detik yang akan ditambahkan. Dapat berupa nilai negatif untuk mengurangi detik."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1132,7 +1282,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Buang"
     }
   ],
   "QEp3C8": [
@@ -1273,7 +1423,19 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Simpan"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "Id Pelacakan Kustom"
+    }
+  ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "Atur id pelacakan untuk dijalankan. Untuk pemisahan, id pelacakan ini untuk memulai permintaan."
     }
   ],
   "T7zcR6": [
@@ -1291,7 +1453,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Berikan tanggapan"
     }
   ],
   "TI44R1": [
@@ -1364,6 +1526,18 @@
     {
       "type": 0,
       "value": "Konten tidak ditampilkan karena konfigurasi keamanan."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Klik untuk menghapus item"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "Umum"
     }
   ],
   "V0ZbQO": [
@@ -1511,7 +1685,13 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Hapus"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam respons."
     }
   ],
   "XtuP5e": [
@@ -1578,6 +1758,12 @@
       "value": "Tidak ada"
     }
   ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Kontrol Konkurensi"
+    }
+  ],
   "ZME5hh": [
     {
       "type": 0,
@@ -1620,10 +1806,28 @@
       "value": "Harus diisi. Jumlah objek untuk dihapus dari bagian depan Koleksi. Harus bilangan bulat positif."
     }
   ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Penanganan Data"
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Nilai"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
       "value": "Harus diisi. Objek untuk diperiksa jika lebih besar dari atau sama dengan nilai yang dibandingkan."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "Secara default, instans Aplikasi Logika berjalan secara bersamaan, atau secara paralel. Kontrol ini mengubah bagaimana eksekusi baru diantrekan dan tidak dapat diubah setelah diaktifkan. Untuk menjalankan instans paralel sebanyak mungkin, biarkan kontrol ini dinonaktifkan. Untuk membatasi jumlah eksekusi paralel, aktifkan kontrol ini, lalu pilih batas. Untuk menjalankannya secara berurutan, pilih 1 sebagai batas."
     }
   ],
   "ba9yGJ": [
@@ -1665,7 +1869,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfigurasi"
     }
   ],
   "cJm+ah": [
@@ -1722,6 +1926,18 @@
       "value": "Pilih"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Tentukan perilaku dan kemampuan untuk mentransfer konten melalui HTTP. Pesan berukuran besar dapat dibagi menjadi permintaan yang lebih kecil ke konektor untuk memungkinkan pengunggahan pesan berukuran besar. Detail dapat ditemukan di http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "Mengamankan input operasi."
+    }
+  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -1776,6 +1992,12 @@
       "value": "Harus diisi. Indeks substring awal dalam parameter 1."
     }
   ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -1806,10 +2028,16 @@
       "value": "Diabaikan"
     }
   ],
+  "g0a4Qe": [
+    {
+      "type": 0,
+      "value": "Nilai"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Terbitkan"
     }
   ],
   "gCXOd5": [
@@ -1852,6 +2080,12 @@
     {
       "type": 0,
       "value": "Fungsi konversi"
+    }
+  ],
+  "gWRF8m": [
+    {
+      "type": 0,
+      "value": "Kondisi Pemicu"
     }
   ],
   "gu9o9z": [
@@ -1899,10 +2133,22 @@
       "value": "Durasi"
     }
   ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Respons Asinkron"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Ulangi"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Jaringan"
     }
   ],
   "iBlvhu": [
@@ -1966,7 +2212,7 @@
   "iy8rNf": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Uji"
     }
   ],
   "j2MU0b": [
@@ -2015,6 +2261,12 @@
     {
       "type": 0,
       "value": "Edit di JSON"
+    }
+  ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Durasi"
     }
   ],
   "k/oqFL": [
@@ -2113,6 +2365,12 @@
       "value": "Judul"
     }
   ],
+  "lcVG4C": [
+    {
+      "type": 0,
+      "value": "dilewati"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -2155,6 +2413,12 @@
       "value": "Menampilkan representasi string dari URI data"
     }
   ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "Durasi maksimum untuk permintaan keluar tunggal dari tindakan ini. Jika permintaan tidak selesai dalam batas ini setelah menjalankan percobaan ulang, tindakan gagal."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -2165,6 +2429,12 @@
     {
       "type": 0,
       "value": "Harus diisi. String untuk dikonversi ke huruf kecil. Jika karakter dalam string tidak memiliki huruf kecil yang ekuivalen, karakter meliputi string yang tidak berubah dalam string yang belum dikembalikan."
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
     }
   ],
   "n35O/+": [
@@ -2189,6 +2459,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama properti yang akan dihapus."
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Sembunyikan header alur kerja"
     }
   ],
   "ngsC44": [
@@ -2233,6 +2509,12 @@
     {
       "type": 0,
       "value": "Wajib. Ini adalah dataURI yang dikodekan menjadi representasi biner."
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Transfer Konten"
     }
   ],
   "oV0xQ9": [
@@ -2301,6 +2583,12 @@
       "value": "Refresh"
     }
   ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Keamanan"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -2335,6 +2623,12 @@
     {
       "type": 0,
       "value": "Memeriksa apakah string berakhir dengan nilai (tidak peka huruf besar/kecil, kultur invarian)"
+    }
+  ],
+  "qPUX59": [
+    {
+      "type": 0,
+      "value": "berhasil"
     }
   ],
   "qSejoi": [
@@ -2382,10 +2676,16 @@
       "value": "Harus diisi. Nilai yang dikonversi ke bilangan bulat."
     }
   ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "Respons asinkron memungkinkan Aplikasi Logika merespons dengan 202 (Diterima) untuk menunjukkan bahwa permintaan telah diterima untuk diproses. Header lokasi akan disediakan untuk menerima keadaan akhir."
+    }
+  ],
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Batalkan"
     }
   ],
   "r8aZXs": [
@@ -2430,10 +2730,22 @@
       "value": "Menampilkan komponen jumlah hari dalam setahun dari tanda waktu string"
     }
   ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Hapus"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
       "value": "Menampilkan array nilai yang cocok dengan nama kunci dari data formulir atau output pemicu dengan pengodean formulir"
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Tingkat Paralelisme"
     }
   ],
   "sZ0G/Z": [
@@ -2446,6 +2758,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Koleksi untuk diperiksa jika kosong."
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Batas Waktu Tindakan"
     }
   ],
   "sfJTHV": [
@@ -2562,6 +2880,12 @@
       "value": "Menambahkan jumlah bilangan bulat jam ke tanda waktu string yang diberikan"
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Batasi durasi maksimum antara percobaan ulang dan respons asinkron untuk tindakan ini. Catatan: Ini tidak mengubah batas waktu permintaan dari permintaan tunggal."
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -2614,6 +2938,12 @@
     {
       "type": 0,
       "value": "Wajib. Nama tindakan yang output isinya Anda inginkan."
+    }
+  ],
+  "vcBAuU": [
+    {
+      "type": 0,
+      "value": "waktu telah habis"
     }
   ],
   "vwH/XV": [
@@ -2704,6 +3034,12 @@
     {
       "type": 0,
       "value": "Input Editor"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Ambang"
     }
   ],
   "xV/oyK": [

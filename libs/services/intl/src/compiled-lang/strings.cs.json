@@ -17,6 +17,12 @@
       "value": "Vyžadováno. Hodnota, která se má vrátit, pokud má výraz hodnotu false."
     }
   ],
+  "+xiT4Q": [
+    {
+      "type": 0,
+      "value": "Stránkování"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -33,6 +39,12 @@
     {
       "type": 0,
       "value": "Vrátí prvek pole, který začíná na indexu Počet."
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "Pravda"
     }
   ],
   "/doURb": [
@@ -83,10 +95,22 @@
       "value": "Zobrazit nabídku spuštění"
     }
   ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Sledování"
+    }
+  ],
   "0R2D5l": [
     {
       "type": 0,
       "value": "Vrátí binární reprezentaci řetězce zakódovaného jako identifikátor URI."
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Sbalit"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +176,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Zobrazit všechny verze"
     }
   ],
   "1Fn5n+": [
@@ -247,6 +271,24 @@
       "value": "Vyžadováno. Hodnota, jejíž index se má hledat."
     }
   ],
+  "1VRGCF": [
+    {
+      "type": 0,
+      "value": "Zadejte alespoň jeden výraz, který musí být true, aby se trigger aktivoval."
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Zabezpečit vstupy"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Vypnuto"
+    }
+  ],
   "1jhzOM": [
     {
       "type": 0,
@@ -274,7 +316,13 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Globální vyhledávání"
+    }
+  ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Pokud chcete spustit instanci pracovního postupu pro jednotlivé položky ve vybraném poli, povolte dělení. Každá instance navíc může mít své vlastní ID pro sledování."
     }
   ],
   "2K2fAj": [
@@ -295,6 +343,12 @@
       "value": "Povinný parametr. Název akce s odpovědí form-data nebo form-encoded."
     }
   ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "Zapnuto"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -311,6 +365,12 @@
     {
       "type": 0,
       "value": "S chybou"
+    }
+  ],
+  "3qG1VT": [
+    {
+      "type": 0,
+      "value": "Sledované vlastnosti"
     }
   ],
   "3rzrWf": [
@@ -370,7 +430,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Prohlídka/kurz"
     }
   ],
   "5J7j9k": [
@@ -523,6 +583,24 @@
       "value": "Povinný parametr. Řetězec, který se má kódovat jako identifikátor URI."
     }
   ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "Pokud u asynchronního zpracování vzdálený server označí přijetí žádosti o zpracování pomocí odpovědi 202 (Přijato), modul Logic Apps bude i nadále pokračovat v cyklickém dotazování adresy URL zadané v hlavičce umístění odpovědi, dokud se nedosáhne konečného stavu."
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Možnosti žádosti"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Potlačit hlavičky pracovního postupu v odpovědi"
+    }
+  ],
   "8wr0zO": [
     {
       "type": 0,
@@ -595,6 +673,12 @@
       "value": "Povinný parametr. Index části, která se má načíst."
     }
   ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Klíč"
+    }
+  ],
   "BCAnZP": [
     {
       "type": 0,
@@ -637,6 +721,12 @@
       "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší než porovnávaný objekt."
     }
   ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Načtěte položky, aby se splnila zadaná prahová hodnota tak, že se bude následovat token pro pokračování. Kvůli velikosti stránky konektoru může počet vrácených položek překročit prahovou hodnotu."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
@@ -664,7 +754,7 @@
   "DysO/Q": [
     {
       "type": 0,
-      "value": "Ctrl + Y"
+      "value": "Ctrl+Y"
     }
   ],
   "ECZC6Y": [
@@ -697,16 +787,46 @@
       "value": "Vrátí hodnotu parametru definovanou v definici."
     }
   ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Zabezpečit výstupy"
+    }
+  ],
+  "FGS2fS": [
+    {
+      "type": 0,
+      "value": "neúspěšné"
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
       "value": "Vrátí část řetězce definovanou počátečním a koncovým indexem."
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Rozbalit"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Vrátí text pro určitou část ve výstupu triggeru s několika částmi."
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Rozdělit v"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Výchozí"
     }
   ],
   "FVavKy": [
@@ -859,6 +979,12 @@
       "value": "Povinný parametr. Název klíče datové hodnoty ve formuláři, která se má vrátit."
     }
   ],
+  "HXLutF": [
+    {
+      "type": 0,
+      "value": "Klíč"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -881,6 +1007,12 @@
     {
       "type": 0,
       "value": "Vrátí první objekt v předaných argumentech, který není null."
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Asynchronní zpracování"
     }
   ],
   "J5/7vN": [
@@ -935,6 +1067,12 @@
     {
       "type": 0,
       "value": "Povinné. Číselný řetězec formátu"
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Nastavte ID pro sledování běhu. V případě dělení toto ID pro sledování slouží k zahájení požadavku."
     }
   ],
   "K50znc": [
@@ -1007,6 +1145,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Číslo, které se má přičíst ke sčítanci 2."
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "Umožňuje zabezpečit výstupy operace a odkazy výstupních vlastností."
     }
   ],
   "MDbmMw": [
@@ -1177,6 +1321,12 @@
       "value": "Povinný parametr. Počet sekund, které se mají přičíst. Může to být i záporná hodnota, při které se sekundy odečtou."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "Nepravda"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1210,7 +1360,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Zahodit"
     }
   ],
   "QEp3C8": [
@@ -1384,7 +1534,19 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Uložit"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "Vlastní ID sledování"
+    }
+  ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "Nastavte ID pro sledování běhu. V případě dělení toto ID pro sledování slouží k zahájení požadavku."
     }
   ],
   "T7zcR6": [
@@ -1402,7 +1564,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Poslat zpětnou vazbu"
     }
   ],
   "TI44R1": [
@@ -1475,6 +1637,18 @@
     {
       "type": 0,
       "value": "Kvůli konfiguraci zabezpečení se obsah nezobrazuje."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Kliknutím odstraníte položku."
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "Obecné"
     }
   ],
   "V0ZbQO": [
@@ -1622,7 +1796,13 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Odstranit"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Omezí aplikace Logic Apps tak, aby do odpovědi nezahrnovaly hlavičky metadat pracovních postupů."
     }
   ],
   "XtuP5e": [
@@ -1689,6 +1869,12 @@
       "value": "Žádné"
     }
   ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Řízení souběžnosti"
+    }
+  ],
   "ZME5hh": [
     {
       "type": 0,
@@ -1731,10 +1917,28 @@
       "value": "Vyžadováno. Počet objektů, které se mají odebrat ze začátku kolekce. Musí to být kladné celé číslo."
     }
   ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Zpracování dat"
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Hodnota"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
       "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší nebo rovný porovnávané hodnotě."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "Ve výchozím nastavení se instance aplikace logiky spouštějí současně nebo paralelně. Tento ovládací prvek změní způsob zařazení nových spuštění do fronty a po povolení se nedá změnit. Pokud chcete spustit co nejvíce paralelních instancí, nechte tento ovládací prvek vypnutý. Pokud chcete omezit počet paralelních spuštění, zapněte tento ovládací prvek a vyberte limit. Pokud chcete spouštět sekvenčně, vyberte jako limit 1."
     }
   ],
   "ba9yGJ": [
@@ -1776,7 +1980,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfigurace"
     }
   ],
   "cJm+ah": [
@@ -1833,6 +2037,18 @@
       "value": "Vybrat"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Zadejte chování a možnosti pro přenos obsahu přes protokol HTTP. Velké zprávy mohou být rozděleny na menší žádosti směřované na konektor, aby je bylo možné nahrát. Podrobnosti najdete na http://aka.ms/logicapps-chunk#upload-content-in-chunks."
+    }
+  ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "Umožňuje zabezpečit vstupy operace."
+    }
+  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -1887,6 +2103,12 @@
       "value": "Vyžadováno. Index určující, kde začíná v parametru 1 podřetězec."
     }
   ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "Pole"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -1917,10 +2139,16 @@
       "value": "Ignorováno"
     }
   ],
+  "g0a4Qe": [
+    {
+      "type": 0,
+      "value": "Hodnota"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Publikovat"
     }
   ],
   "gCXOd5": [
@@ -1963,6 +2191,12 @@
     {
       "type": 0,
       "value": "Převodní funkce"
+    }
+  ],
+  "gWRF8m": [
+    {
+      "type": 0,
+      "value": "Podmínky aktivační události"
     }
   ],
   "gu9o9z": [
@@ -2047,10 +2281,22 @@
       "value": "Doba trvání"
     }
   ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Asynchronní odpověď"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Znovu"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Sítě"
     }
   ],
   "iBlvhu": [
@@ -2165,6 +2411,12 @@
       "value": "Upravit ve formátu JSON"
     }
   ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Doba trvání"
+    }
+  ],
   "k/oqFL": [
     {
       "type": 0,
@@ -2261,6 +2513,12 @@
       "value": "Název"
     }
   ],
+  "lcVG4C": [
+    {
+      "type": 0,
+      "value": "přeskočeno"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -2303,6 +2561,12 @@
       "value": "Vrátí řetězcovou reprezentaci identifikátoru URI dat."
     }
   ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "Maximální doba trvání jedné odchozí žádosti z této akce. Pokud se žádost nedokončí během této doby po spuštění opakovaných pokusů, akce se nezdaří."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -2313,6 +2577,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který se má převést na malá písmena. Pokud některý znak v řetězci nemá odpovídající znak malé abecedy, zůstane ve vráceném řetězci beze změny."
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Omezí aplikace Logic Apps tak, aby do odchozích požadavků nezahrnovaly hlavičky metadat pracovních postupů."
     }
   ],
   "n35O/+": [
@@ -2337,6 +2607,12 @@
     {
       "type": 0,
       "value": "Povinné. Název vlastnosti, která se odebere"
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Potlačit hlavičky pracovních postupů"
     }
   ],
   "ngsC44": [
@@ -2381,6 +2657,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Identifikátor URI dat, který se má dekódovat do binárního formátu."
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Přenos obsahu"
     }
   ],
   "oV0xQ9": [
@@ -2449,6 +2731,12 @@
       "value": "Aktualizovat"
     }
   ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Zabezpečení"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -2483,6 +2771,12 @@
     {
       "type": 0,
       "value": "Zkontrolujte, jestli řetězec končí určitou hodnotou (nerozlišuje velikost písmen, invariantní jazyková verze)."
+    }
+  ],
+  "qPUX59": [
+    {
+      "type": 0,
+      "value": "úspěšné"
     }
   ],
   "qSejoi": [
@@ -2563,10 +2857,16 @@
       "value": "Vyžadováno. Hodnota, která se má převést na celé číslo."
     }
   ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "Asynchronní odpověď umožní aplikaci Logic Apps odpovědět kódem 202 (Přijato) a dát tak vědět, že se požadavek přijal ke zpracování. Pomocí poskytnuté hlavičky umístění půjde načíst koncový stav."
+    }
+  ],
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Zpět"
     }
   ],
   "r8aZXs": [
@@ -2611,10 +2911,22 @@
       "value": "Vrátí část řetězcového časového razítka, která představuje den v roce."
     }
   ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Odstranit"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
       "value": "Vrátí pole hodnot, které odpovídají názvu klíče z výstupu triggeru form-data nebo form-encoded."
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Stupeň paralelismu"
     }
   ],
   "sZ0G/Z": [
@@ -2627,6 +2939,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Kolekce, u které se má zkontrolovat, zda není prázdná."
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Časový limit akce"
     }
   ],
   "sfJTHV": [
@@ -2743,6 +3061,12 @@
       "value": "Přidá celočíselný počet hodin do předaného řetězcového časového razítka."
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Omezte maximální dobu trvání mezi opakovanými pokusy a asynchronními odpověďmi na tuto akci. Poznámka: Časový limit požadavku jedné žádosti se nezmění."
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -2795,6 +3119,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název akce, jejíž výstupy požadujete."
+    }
+  ],
+  "vcBAuU": [
+    {
+      "type": 0,
+      "value": "vypršelo"
     }
   ],
   "vwH/XV": [
@@ -2872,7 +3202,7 @@
   "xFQXAI": [
     {
       "type": 0,
-      "value": "Ctrl + Z"
+      "value": "Ctrl+Z"
     }
   ],
   "xJ6vjn": [
@@ -2885,6 +3215,12 @@
     {
       "type": 0,
       "value": "Vstup editoru"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Mezní hodnota"
     }
   ],
   "xV/oyK": [

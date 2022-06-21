@@ -25,7 +25,6 @@ export interface PanelTab {
   enabled?: boolean;
   order: number;
   content: React.ReactElement;
-  visibilityPredicate?(): boolean;
 }
 
 export interface CommonPanelProps {

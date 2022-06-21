@@ -17,6 +17,12 @@
       "value": "Obligatoriskt. Det värde som ska returneras om uttrycket är falskt."
     }
   ],
+  "+xiT4Q": [
+    {
+      "type": 0,
+      "value": "Sidnumrering"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -33,6 +39,12 @@
     {
       "type": 0,
       "value": "Returnerar elementen i den matris som börjar vid antalindexet"
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "Sant"
     }
   ],
   "/doURb": [
@@ -83,10 +95,22 @@
       "value": "Visa körningsmenyn"
     }
   ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Spårning"
+    }
+  ],
   "0R2D5l": [
     {
       "type": 0,
       "value": "Returnerar en binär representation av en URI-kodad sträng"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Dölj"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +176,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Visa alla versioner"
     }
   ],
   "1Fn5n+": [
@@ -213,6 +237,24 @@
       "value": "Obligatoriskt. Det värde det ska sökas efter i indexet."
     }
   ],
+  "1VRGCF": [
+    {
+      "type": 0,
+      "value": "Ange ett eller flera uttryck som måste vara sanna för att utlösaren ska utlösas."
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Säkra indata"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Av"
+    }
+  ],
   "1jhzOM": [
     {
       "type": 0,
@@ -240,7 +282,13 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Global sökning"
+    }
+  ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Starta en instans av arbetsflödet per objekt i den markerade matrisen genom att aktivera delning. Varje instans kan också ha distinkta spårnings-ID:n."
     }
   ],
   "2K2fAj": [
@@ -261,6 +309,12 @@
       "value": "Krävs. Namnet på åtgärden med ett formulärdata- eller formulärkodat svar."
     }
   ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "På"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,6 +331,12 @@
     {
       "type": 0,
       "value": "Fel"
+    }
+  ],
+  "3qG1VT": [
+    {
+      "type": 0,
+      "value": "Sparade egenskaper"
     }
   ],
   "3rzrWf": [
@@ -336,7 +396,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Rundtur/självstudier"
     }
   ],
   "5J7j9k": [
@@ -489,6 +549,24 @@
       "value": "Krävs. Strängen som ska URI-kodas."
     }
   ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "Om fjärrservern, med asynkront mönster, indikerar att förfrågan har godkänts för bearbetning med ett 202-svar (godkänt), så fortsätter Logic Apps-motorn att söka av den URL som angetts i svarets platsrubrik till dess att ett avslutat tillstånd uppnåtts."
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Alternativ för begäran"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Ignorera arbetsflödeshuvuden vid svar"
+    }
+  ],
   "8wr0zO": [
     {
       "type": 0,
@@ -561,6 +639,12 @@
       "value": "Krävs. Index för delen att hämta."
     }
   ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Nyckel"
+    }
+  ],
   "BCAnZP": [
     {
       "type": 0,
@@ -601,6 +685,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är större än det objekt det jämförs med."
+    }
+  ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Hämta objekt som uppfyller det angivna tröskelvärdet genom att följa fortsättningstoken. På grund av anslutningsappens sidstorlek, kan antalet som returneras överstiga tröskelvärdet."
     }
   ],
   "CG772M": [
@@ -663,16 +753,46 @@
       "value": "Returnerar ett parametervärde som definieras i definitionen"
     }
   ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Säkra utdata"
+    }
+  ],
+  "FGS2fS": [
+    {
+      "type": 0,
+      "value": "har misslyckats"
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
       "value": "Returnerar ett avsnitt i en sträng som definieras av start- och slutindexet"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Expandera"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Returnerar brödtexten för en del i utlösarens multipart-utdata"
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Dela vid"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Standard"
     }
   ],
   "FVavKy": [
@@ -803,6 +923,12 @@
       "value": "Krävs. Nyckelnamnet för formulärdatavärdet att returnera."
     }
   ],
+  "HXLutF": [
+    {
+      "type": 0,
+      "value": "Nyckel"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -825,6 +951,12 @@
     {
       "type": 0,
       "value": "Returnerar det första icke-null-objektet i det argument som har skickats in"
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Asynkront mönster"
     }
   ],
   "J5/7vN": [
@@ -879,6 +1011,12 @@
     {
       "type": 0,
       "value": "Krävs. Den numeriska formatsträngen."
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Konfigurera körningens spårnings-ID. Delning för det här spårnings-ID:t för att initiera begäran."
     }
   ],
   "K50znc": [
@@ -951,6 +1089,12 @@
     {
       "type": 0,
       "value": "Krävs. Talet som ska läggas till i Summand 2."
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "Säkra utdata för åtgärden och referenser till utdataegenskaper."
     }
   ],
   "MDbmMw": [
@@ -1121,6 +1265,12 @@
       "value": "Krävs. Antalet sekunder att lägga till. Kan vara negativt för att subtrahera sekunder."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "Falskt"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1154,7 +1304,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Ignorera"
     }
   ],
   "QEp3C8": [
@@ -1310,7 +1460,19 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Spara"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "Anpassat spårnings-ID"
+    }
+  ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "Konfigurera körningens spårnings-ID. Delning för det här spårnings-ID:t för att initiera begäran."
     }
   ],
   "T7zcR6": [
@@ -1328,7 +1490,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Ge feedback"
     }
   ],
   "TI44R1": [
@@ -1401,6 +1563,18 @@
     {
       "type": 0,
       "value": "Innehållet visas inte på grund av säkerhetskonfigurationen."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Klicka för att ta bort objektet"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "Allmänt"
     }
   ],
   "V0ZbQO": [
@@ -1548,7 +1722,13 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Ta bort"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i svaret."
     }
   ],
   "XtuP5e": [
@@ -1615,6 +1795,12 @@
       "value": "Inget"
     }
   ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Samtidighetskontroller"
+    }
+  ],
   "ZME5hh": [
     {
       "type": 0,
@@ -1657,10 +1843,28 @@
       "value": "Obligatoriskt. Det antal objekt som ska tas bort från samlingens framsida. Det måste vara ett positivt heltal."
     }
   ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Datahantering"
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Värde"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
       "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är större än eller lika med det värde det jämförs med."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "Logikappinstanser körs som standard samtidigt eller parallellt. Med den här kontrollen ändrar du hur nya körningar köas, och detta kan inte ändras efter aktivering. Lämna den här kontrollen inaktiverad om du vill köra så många parallella instanser som möjligt. Aktivera den här kontrollen om du vill begränsa antalet parallella körningar, och välj en gräns. Välj 1 som gräns om du vill köra sekventiellt."
     }
   ],
   "ba9yGJ": [
@@ -1702,7 +1906,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfiguration"
     }
   ],
   "cJm+ah": [
@@ -1759,6 +1963,18 @@
       "value": "Välj"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Ange beteende och funktioner för överföring av innehåll via HTTP. Stora meddelanden kan delas upp i mindre begäranden till anslutningen för att tillåta uppladdning av stora meddelanden. Information finns på http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "Säkra indata för åtgärden."
+    }
+  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -1813,6 +2029,12 @@
       "value": "Obligatoriskt. Det index i vilket delsträngen börjar i parameter 1."
     }
   ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "Matris"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -1843,10 +2065,16 @@
       "value": "Ignorerat"
     }
   ],
+  "g0a4Qe": [
+    {
+      "type": 0,
+      "value": "Värde"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Publicera"
     }
   ],
   "gCXOd5": [
@@ -1889,6 +2117,12 @@
     {
       "type": 0,
       "value": "Omvandlingsfunktioner"
+    }
+  ],
+  "gWRF8m": [
+    {
+      "type": 0,
+      "value": "Utlösarvillkor"
     }
   ],
   "gu9o9z": [
@@ -1951,10 +2185,22 @@
       "value": "Varaktighet"
     }
   ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Asynkront svar"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Gör om"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Nätverk"
     }
   ],
   "iBlvhu": [
@@ -2069,6 +2315,12 @@
       "value": "Redigera i JSON"
     }
   ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Varaktighet"
+    }
+  ],
   "k/oqFL": [
     {
       "type": 0,
@@ -2165,6 +2417,12 @@
       "value": "Rubrik"
     }
   ],
+  "lcVG4C": [
+    {
+      "type": 0,
+      "value": "har hoppats över"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -2207,6 +2465,12 @@
       "value": "Returnerar en strängrepresentation av ett data-URI"
     }
   ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "Den maximala varaktigheten för en enskild utgående begäran från den här åtgärden. Om begäran inte slutförs inom den här gränsen efter att återförsök har körts kommer åtgärden att misslyckas."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -2217,6 +2481,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den sträng som ska konverteras till gemener. Om ett tecken i strängen inte har någon gemen motsvarighet, så inkluderas tecknet oförändrat i den returnerade strängen."
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i utgående begäran."
     }
   ],
   "n35O/+": [
@@ -2241,6 +2511,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Namnet på den egenskap som ska tas bort."
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Utelämna arbetsflödesrubriker"
     }
   ],
   "ngsC44": [
@@ -2285,6 +2561,12 @@
     {
       "type": 0,
       "value": "Krävs. dataURI att avkoda till binär representation."
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Innehållsöverföring"
     }
   ],
   "oV0xQ9": [
@@ -2353,6 +2635,12 @@
       "value": "Uppdatera"
     }
   ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Säkerhet"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -2387,6 +2675,12 @@
     {
       "type": 0,
       "value": "Kontrollerar om strängen slutar med ett värde (skiftlägseokänsligt, invariant kultur)"
+    }
+  ],
+  "qPUX59": [
+    {
+      "type": 0,
+      "value": "har lyckats"
     }
   ],
   "qSejoi": [
@@ -2445,10 +2739,16 @@
       "value": "Obligatoriskt. Det värde som konverteras till ett heltal."
     }
   ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "Det asynkrona svaret tillåter en logikapp att svara med 202 (godkänd) för att indikera att förfrågan har godkänts för bearbetning. En platsrubrik kommer att tillhandahållas för att hämta den slutliga statusen."
+    }
+  ],
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Ångra"
     }
   ],
   "r8aZXs": [
@@ -2493,10 +2793,22 @@
       "value": "Returnerar en strängtidsstämpels årsdagskomponent"
     }
   ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Ta bort"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
       "value": "Returnerar en matris med värden som matchar nyckelnamnen från formulärdata eller formulärkodade utlösarutdata"
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Grad av parallellitet"
     }
   ],
   "sZ0G/Z": [
@@ -2509,6 +2821,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den samling som ska kontrolleras om den är tom."
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Tidsgräns för åtgärd"
     }
   ],
   "sfJTHV": [
@@ -2625,6 +2943,12 @@
       "value": "Lägger till ett heltalsvärde för det antal timmar för vilka en strängtidsstämpel skickas in"
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Begränsa den maximala varaktigheten mellan återförsök och asynkrona svar för den här åtgärden. Obs! Detta ändrar inte tidsgränsen för begäran för en enskild begäran."
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -2677,6 +3001,12 @@
     {
       "type": 0,
       "value": "Krävs. Namnet på åtgärden vars utdata du vill ha."
+    }
+  ],
+  "vcBAuU": [
+    {
+      "type": 0,
+      "value": "har uppnått tidsgränsen"
     }
   ],
   "vwH/XV": [
@@ -2767,6 +3097,12 @@
     {
       "type": 0,
       "value": "Redigerarens indata"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Tröskelvärde"
     }
   ],
   "xV/oyK": [

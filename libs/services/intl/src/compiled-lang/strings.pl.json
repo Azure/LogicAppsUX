@@ -17,6 +17,12 @@
       "value": "Parametr wymagany. Wartość do zwrócenia, jeśli wyrażenie ma wartość „fałsz”."
     }
   ],
+  "+xiT4Q": [
+    {
+      "type": 0,
+      "value": "Paginacja"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -33,6 +39,12 @@
     {
       "type": 0,
       "value": "Zwraca elementy w tablicy, zaczynając od indeksu Liczba"
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "Prawda"
     }
   ],
   "/doURb": [
@@ -83,10 +95,22 @@
       "value": "Pokaż menu uruchamiania"
     }
   ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Śledzenie"
+    }
+  ],
   "0R2D5l": [
     {
       "type": 0,
       "value": "Zwraca binarną reprezentację ciągu zakodowanego jako identyfikator URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Zwiń"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +176,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Wyświetlanie wszystkich wersji"
     }
   ],
   "1Fn5n+": [
@@ -251,6 +275,24 @@
       "value": "Parametr wymagany. Wartość, której indeks jest wyszukiwany."
     }
   ],
+  "1VRGCF": [
+    {
+      "type": 0,
+      "value": "Określ co najmniej jedno wyrażenie, które musi być prawdziwe, aby wyzwalacz został uruchomiony."
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Zabezpieczanie danych wejściowych"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Wyłączone"
+    }
+  ],
   "1jhzOM": [
     {
       "type": 0,
@@ -278,7 +320,13 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Wyszukiwanie globalne"
+    }
+  ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Włącz podział, aby uruchomić wystąpienie przepływu pracy na element w wybranej tablicy. Każde wystąpienie może mieć również oddzielny identyfikator śledzenia."
     }
   ],
   "2K2fAj": [
@@ -299,6 +347,12 @@
       "value": "Wymagane. Nazwa akcji z odpowiedzią w postaci danych formularza lub odpowiedzią zakodowaną w formularzu."
     }
   ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "Włączone"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -315,6 +369,12 @@
     {
       "type": 0,
       "value": "Błędne"
+    }
+  ],
+  "3qG1VT": [
+    {
+      "type": 0,
+      "value": "Śledzone właściwości"
     }
   ],
   "3rzrWf": [
@@ -374,7 +434,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Przewodnik/samouczek"
     }
   ],
   "5J7j9k": [
@@ -527,6 +587,24 @@
       "value": "Wymagane. Ciąg do zakodowania jako identyfikator URI."
     }
   ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "Jeśli w przypadku wzorca asynchronicznego serwer wskazuje, że żądanie zostało zaakceptowane do przetworzenia, przy użyciu odpowiedzi 202 (Zaakceptowano), aparat usługi Logic Apps będzie nadal sondować adres URL określony w nagłówku lokalizacji odpowiedzi do czasu osiągnięcia stanu końcowego."
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Opcje żądania"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Pomijanie nagłówków przepływu pracy w odpowiedzi"
+    }
+  ],
   "8wr0zO": [
     {
       "type": 0,
@@ -599,6 +677,12 @@
       "value": "Wymagane. Indeks części do pobrania."
     }
   ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Klucz"
+    }
+  ],
   "BCAnZP": [
     {
       "type": 0,
@@ -641,6 +725,12 @@
       "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on większy od porównywanego obiektu."
     }
   ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Pobierz elementy, aby osiągnąć określony próg, zgodnie z tokenem kontynuacji. Ze względu na rozmiar strony łącznika zwrócona liczba elementów może przekraczać próg."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
@@ -668,7 +758,7 @@
   "DysO/Q": [
     {
       "type": 0,
-      "value": "Ctrl + Y"
+      "value": "Ctrl+Y"
     }
   ],
   "ECZC6Y": [
@@ -701,16 +791,46 @@
       "value": "Zwraca wartość parametru zdefiniowanego w definicji"
     }
   ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Zabezpieczanie danych wyjściowych"
+    }
+  ],
+  "FGS2fS": [
+    {
+      "type": 0,
+      "value": "zakończone niepowodzeniem"
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
       "value": "Zwraca sekcję ciągu zdefiniowaną przez indeks początkowy i indeks końcowy"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Rozwiń"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Zwraca treść dla części w wieloczęściowych danych wyjściowych wyzwalacza"
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Podziel na"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Domyślny"
     }
   ],
   "FVavKy": [
@@ -863,6 +983,12 @@
       "value": "Wymagane. Nazwa klucza zwracanej wartości danych formularza."
     }
   ],
+  "HXLutF": [
+    {
+      "type": 0,
+      "value": "Klucz"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -885,6 +1011,12 @@
     {
       "type": 0,
       "value": "Zwraca pierwszy obiekt o wartości innej niż null w przekazanych argumentach"
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Wzorzec asynchroniczny"
     }
   ],
   "J5/7vN": [
@@ -939,6 +1071,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg formatu liczbowego."
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Ustaw identyfikator śledzenia dla przebiegu. W przypadku podziału ten identyfikator śledzenia dotyczy żądania inicjującego."
     }
   ],
   "K50znc": [
@@ -1011,6 +1149,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba dodawana do składnika 2."
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "Zabezpiecz dane wyjściowe operacji i odwołania właściwości danych wyjściowych."
     }
   ],
   "MDbmMw": [
@@ -1181,6 +1325,12 @@
       "value": "Wymagane. Liczba sekund do dodania. Może być ujemna na potrzeby odejmowania sekund."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "Fałsz"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1214,7 +1364,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Odrzuć"
     }
   ],
   "QEp3C8": [
@@ -1388,7 +1538,19 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Zapisz"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "Niestandardowy identyfikator śledzenia"
+    }
+  ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "Ustaw identyfikator śledzenia dla przebiegu. W przypadku podziału ten identyfikator śledzenia dotyczy żądania inicjującego."
     }
   ],
   "T7zcR6": [
@@ -1406,7 +1568,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Prześlij opinię"
     }
   ],
   "TI44R1": [
@@ -1479,6 +1641,18 @@
     {
       "type": 0,
       "value": "Nie pokazano zawartości z powodu konfiguracji zabezpieczeń."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Kliknij, aby usunąć element"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "Ogólne"
     }
   ],
   "V0ZbQO": [
@@ -1626,7 +1800,13 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Usuń"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Ogranicz aplikacje usługi Logic Apps, aby nie dołączały nagłówków metadanych przepływu pracy do odpowiedzi."
     }
   ],
   "XtuP5e": [
@@ -1693,6 +1873,12 @@
       "value": "Brak"
     }
   ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Kontrola współbieżności"
+    }
+  ],
   "ZME5hh": [
     {
       "type": 0,
@@ -1735,10 +1921,28 @@
       "value": "Parametr wymagany. Liczba obiektów do usunięcia z początku kolekcji. Musi być dodatnią liczbą całkowitą."
     }
   ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Obsługa danych"
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Wartość"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
       "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on większy lub równy wartości, z którą jest porównywany."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "Domyślnie wystąpienia aplikacji logiki są uruchamiane w tym samym czasie (równolegle). Ta kontrolka zmienia sposób kolejkowania nowych uruchomień. Po włączeniu nie można jej zmienić. Aby uruchomić równolegle możliwie największą liczbę wystąpień, pozostaw tę kontrolkę wyłączoną. Aby ograniczyć liczbę równoległych uruchomień, włącz tę kontrolkę i wybierz limit. Aby uruchomić wystąpienia sekwencyjnie, wybierz 1 jako limit."
     }
   ],
   "ba9yGJ": [
@@ -1780,7 +1984,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfiguracja"
     }
   ],
   "cJm+ah": [
@@ -1837,6 +2041,18 @@
       "value": "Wybierz"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Określ zachowanie i możliwości przesyłania zawartości za pomocą protokołu HTTP. Duże wiadomości można podzielić na mniejsze żądania do łącznika, aby umożliwić przekazywanie dużych wiadomości. Szczegóły można znaleźć na stronie http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "Zabezpiecz dane wejściowe operacji."
+    }
+  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -1891,6 +2107,12 @@
       "value": "Parametr wymagany. Indeks, w którym podciąg rozpoczyna się w parametrze 1."
     }
   ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "Tablica"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -1921,10 +2143,16 @@
       "value": "Zignorowane"
     }
   ],
+  "g0a4Qe": [
+    {
+      "type": 0,
+      "value": "Wartość"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Publikuj"
     }
   ],
   "gCXOd5": [
@@ -1967,6 +2195,12 @@
     {
       "type": 0,
       "value": "Funkcje konwersji"
+    }
+  ],
+  "gWRF8m": [
+    {
+      "type": 0,
+      "value": "Warunki wyzwalacza"
     }
   ],
   "gu9o9z": [
@@ -2055,10 +2289,22 @@
       "value": "Czas trwania"
     }
   ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Odpowiedź asynchroniczna"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Wykonaj ponownie"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Sieć"
     }
   ],
   "iBlvhu": [
@@ -2173,6 +2419,12 @@
       "value": "Edytuj w pliku JSON"
     }
   ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Czas trwania"
+    }
+  ],
   "k/oqFL": [
     {
       "type": 0,
@@ -2269,6 +2521,12 @@
       "value": "Tytuł"
     }
   ],
+  "lcVG4C": [
+    {
+      "type": 0,
+      "value": "pominięto"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -2311,6 +2569,12 @@
       "value": "Zwraca ciągową reprezentację identyfikatora URI danych"
     }
   ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "Maksymalny czas trwania w przypadku pojedynczego żądania wychodzącego z tej akcji. Jeśli żądanie nie zakończy się w ramach tego limitu po wykonaniu ponownych prób, akcja zakończy się niepowodzeniem."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -2321,6 +2585,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Ciąg do przekonwertowania na małe litery. Jeśli znak w ciągu nie ma odpowiadającej małej litery, w zwróconym ciągu zostanie on uwzględniony jako niezmieniony."
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Ogranicz aplikacje usługi Logic Apps, aby nie dołączały nagłówków metadanych przepływu pracy do żądania wychodzącego."
     }
   ],
   "n35O/+": [
@@ -2345,6 +2615,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa właściwości do usunięcia."
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Pomijanie nagłówków przepływu pracy"
     }
   ],
   "ngsC44": [
@@ -2389,6 +2665,12 @@
     {
       "type": 0,
       "value": "Wymagane. Identyfikator URI do zdekodowania do reprezentacji binarnej."
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Transfer zawartości"
     }
   ],
   "oV0xQ9": [
@@ -2457,6 +2739,12 @@
       "value": "Odśwież"
     }
   ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Zabezpieczenia"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -2491,6 +2779,12 @@
     {
       "type": 0,
       "value": "Sprawdza, czy ciąg kończy się wartością (bez uwzględniania wielkości liter, kultura niezmienna)"
+    }
+  ],
+  "qPUX59": [
+    {
+      "type": 0,
+      "value": "zakończone powodzeniem"
     }
   ],
   "qSejoi": [
@@ -2571,10 +2865,16 @@
       "value": "Parametr wymagany. Wartość konwertowana na liczbę całkowitą."
     }
   ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "Odpowiedź asynchroniczna pozwala aplikacji logiki odpowiedzieć wartością 202 (Zaakceptowano) w celu wskazania, że żądanie zostało zaakceptowane do przetwarzania. Nagłówek lokalizacji zostanie dostarczony w celu pobrania ostatecznego stanu."
+    }
+  ],
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Cofnij"
     }
   ],
   "r8aZXs": [
@@ -2619,10 +2919,22 @@
       "value": "Zwraca składnik dnia roku z sygnatury czasowej ciągu"
     }
   ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Usuń"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
       "value": "Zwraca tablicę wartości odpowiadających nazwie klucza w danych wyjściowych wyzwalacza form-data lub form-encoded"
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Stopień równoległości"
     }
   ],
   "sZ0G/Z": [
@@ -2635,6 +2947,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Kolekcja do sprawdzenia, czy jest pusta."
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Limit czasu akcji"
     }
   ],
   "sfJTHV": [
@@ -2751,6 +3069,12 @@
       "value": "Dodaje liczbę całkowitą godzin do przekazanej sygnatury czasowej ciągu"
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Ogranicz maksymalny czas trwania między ponownymi próbami a odpowiedziami asynchronicznymi w przypadku tej akcji. Uwaga: nie powoduje to zmiany limitu czasu żądania pojedynczego żądania."
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -2803,6 +3127,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa akcji z żądanymi danymi wyjściowymi."
+    }
+  ],
+  "vcBAuU": [
+    {
+      "type": 0,
+      "value": "upłynął limit czasu"
     }
   ],
   "vwH/XV": [
@@ -2880,7 +3210,7 @@
   "xFQXAI": [
     {
       "type": 0,
-      "value": "Ctrl + Z"
+      "value": "Ctrl+Z"
     }
   ],
   "xJ6vjn": [
@@ -2893,6 +3223,12 @@
     {
       "type": 0,
       "value": "Dane wejściowe edytora"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Próg"
     }
   ],
   "xV/oyK": [

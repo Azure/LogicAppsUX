@@ -17,6 +17,12 @@
       "value": "Kötelező megadni. Az akkor visszaadandó érték, ha a kifejezés hamis."
     }
   ],
+  "+xiT4Q": [
+    {
+      "type": 0,
+      "value": "Oldalakra tördelés"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -33,6 +39,12 @@
     {
       "type": 0,
       "value": "A tömb elemeit adja vissza, az indexszámmal kezdve."
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "Igaz"
     }
   ],
   "/doURb": [
@@ -83,10 +95,22 @@
       "value": "Futtatási menü megjelenítése"
     }
   ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Követés"
+    }
+  ],
   "0R2D5l": [
     {
       "type": 0,
       "value": "Egy URI-ként kódolt sztring bináris megfelelőjét adja vissza."
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Összecsukás"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +176,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Az összes verzió megjelenítése"
     }
   ],
   "1Fn5n+": [
@@ -213,6 +237,24 @@
       "value": "Kötelező megadni. Az érték, melynek meg kell keresni az indexét."
     }
   ],
+  "1VRGCF": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy vagy több olyan kifejezést, amelynek igaznak kell lennie a trigger aktiválásához."
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Biztonságos bemenetek"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Kikapcsolva"
+    }
+  ],
   "1jhzOM": [
     {
       "type": 0,
@@ -240,7 +282,13 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Globális keresés"
+    }
+  ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Ha engedélyezi a felosztást, a rendszer a kiválasztott tömb minden eleméhez elindítja a munkafolyamat egy példányát. Minden példány rendelkezhet eltérő követési azonosítóval is."
     }
   ],
   "2K2fAj": [
@@ -261,6 +309,12 @@
       "value": "Kötelező megadni. Az űrlapadatokat tartalmazó vagy űrlapként formázott választ adó művelet neve."
     }
   ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "Bekapcsolva"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,6 +331,12 @@
     {
       "type": 0,
       "value": "Hibás"
+    }
+  ],
+  "3qG1VT": [
+    {
+      "type": 0,
+      "value": "Követett tulajdonságok"
     }
   ],
   "3rzrWf": [
@@ -336,7 +396,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Bemutató/oktatóanyag"
     }
   ],
   "5J7j9k": [
@@ -489,6 +549,24 @@
       "value": "Kötelező megadni. Az URI-ként kódolandó sztring."
     }
   ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "Az aszinkron minta használata esetén ha a távoli kiszolgáló 202-es (Elfogadva) válasszal jelzi, hogy a kérelmet elfogadta feldolgozásra, a Logic Apps-motor addig folytatja a válasz helyet megjelölő fejlécében megadott URL-cím lekérdezését, amíg végállapotba nem kerül."
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Kérelem beállításai"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Munkafolyamat-fejlécek elrejtése a válaszban"
+    }
+  ],
   "8wr0zO": [
     {
       "type": 0,
@@ -561,6 +639,12 @@
       "value": "Kötelező megadni. A beolvasandó rész indexe."
     }
   ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Kulcs"
+    }
+  ],
   "BCAnZP": [
     {
       "type": 0,
@@ -603,6 +687,12 @@
       "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy nagyobb-e a hasonlított objektumnál."
     }
   ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Elemek beolvasása a megadott küszöbérték teljesítéséhez a folytatási kódot követve. Az összekötő oldalmérete miatt a visszaadott elemek száma meghaladhatja a küszöbértéket."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
@@ -630,7 +720,7 @@
   "DysO/Q": [
     {
       "type": 0,
-      "value": "Ctrl + Y"
+      "value": "Ctrl+Y"
     }
   ],
   "ECZC6Y": [
@@ -663,16 +753,46 @@
       "value": "Egy olyan paraméterértéket ad vissza, amely meg van adva a definícióban."
     }
   ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Biztonságos kimenetek"
+    }
+  ],
+  "FGS2fS": [
+    {
+      "type": 0,
+      "value": "nem sikerült"
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
       "value": "Egy sztringnek a kezdőindex és a záróindex által meghatározott szakaszát adja vissza."
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Kibontás"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "A trigger többrészes kimenetéből az egyik rész törzsét adja vissza."
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Felosztás bekapcsolva"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Alapértelmezett"
     }
   ],
   "FVavKy": [
@@ -803,6 +923,12 @@
       "value": "Kötelező megadni. A visszaadandó űrlapadatérték kulcsneve."
     }
   ],
+  "HXLutF": [
+    {
+      "type": 0,
+      "value": "Kulcs"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -825,6 +951,12 @@
     {
       "type": 0,
       "value": "Az átadott argumentumok első nem nullértékű objektumát adja vissza."
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Aszinkron minta"
     }
   ],
   "J5/7vN": [
@@ -879,6 +1011,12 @@
     {
       "type": 0,
       "value": "Kötelező. A numerikus formázó sztring."
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Állítsa be a futtatás követési azonosítóját. Felosztás esetén a követési azonosító a kezdeményező kérelemhez tartozik."
     }
   ],
   "K50znc": [
@@ -951,6 +1089,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A 2. összeadandóhoz hozzáadandó szám."
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "A művelet kimeneteinek és a kimeneti tulajdonságok hivatkozásainak biztonságossá tétele."
     }
   ],
   "MDbmMw": [
@@ -1121,6 +1265,12 @@
       "value": "Kötelező megadni. A hozzáadni kívánt másodpercek száma. Lehet negatív érték is másodpercek kivonása céljából."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "Hamis"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1154,7 +1304,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Elvetés"
     }
   ],
   "QEp3C8": [
@@ -1310,7 +1460,19 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Mentés"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "Egyéni követési azonosító"
+    }
+  ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "Állítsa be a futtatás követési azonosítóját. Felosztás esetén a követési azonosító a kezdeményező kérelemhez tartozik."
     }
   ],
   "T7zcR6": [
@@ -1328,7 +1490,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Visszajelzés küldése"
     }
   ],
   "TI44R1": [
@@ -1401,6 +1563,18 @@
     {
       "type": 0,
       "value": "A tartalom a biztonsági konfiguráció miatt nem jelenik meg."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Kattintson ide az elem törléséhez"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "Általános"
     }
   ],
   "V0ZbQO": [
@@ -1548,7 +1722,13 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Törlés"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "A munkafolyamat-metaadatokat tartalmazó fejlécek a Logic Apps-válaszban való megjelenítésének letiltása."
     }
   ],
   "XtuP5e": [
@@ -1615,6 +1795,12 @@
       "value": "Nincs"
     }
   ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Egyidejűség-vezérlés"
+    }
+  ],
   "ZME5hh": [
     {
       "type": 0,
@@ -1657,10 +1843,28 @@
       "value": "Kötelező megadni. A gyűjtemény elejéről eltávolítandó objektumok száma. Pozitív egész számnak kell lennie."
     }
   ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Adatok kezelése"
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Érték"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
       "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy a vele összehasonlított értéknél nagyobb vagy azzal egyenlő-e."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "A logikaialkalmazás-példányok alapértelmezés szerint egyszerre vagy párhuzamosan futnak. Ez a vezérlő módosítja az új futtatások várólistára helyezésének módját, és az engedélyezés után már nem módosítható. Ha a lehető legtöbb párhuzamos példányt szeretné futtatni, hagyja kikapcsolva ezt a vezérlőt. A párhuzamos futtatások számának korlátozásához kapcsolja be ezt a vezérlőt, és válasszon korlátot. A szekvenciális futtatáshoz válassza az 1 értéket korlátként."
     }
   ],
   "ba9yGJ": [
@@ -1702,7 +1906,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfiguráció"
     }
   ],
   "cJm+ah": [
@@ -1759,6 +1963,18 @@
       "value": "Kijelölés"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Megadhatja a HTTP protokollon keresztüli tartalomátvitel viselkedését és képességeit. A nagy méretű üzenetek esetleg fel lesznek osztva az összekötőnek küldött kisebb kérelmekre, hogy lehetővé váljon a nagy méretű üzenetek feltöltése. További részletek a http://aka.ms/logicapps-chunk#upload-content-in-chunks címen olvashatók."
+    }
+  ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "A művelet bemeneteinek biztonságossá tétele."
+    }
+  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -1813,6 +2029,12 @@
       "value": "Kötelező megadni. A sztringrész kezdetének indexe az 1. paraméterben."
     }
   ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "Tömb"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -1843,10 +2065,16 @@
       "value": "Mellőzve"
     }
   ],
+  "g0a4Qe": [
+    {
+      "type": 0,
+      "value": "Érték"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Közzététel"
     }
   ],
   "gCXOd5": [
@@ -1889,6 +2117,12 @@
     {
       "type": 0,
       "value": "Konverziós függvények"
+    }
+  ],
+  "gWRF8m": [
+    {
+      "type": 0,
+      "value": "Aktiválási feltételek"
     }
   ],
   "gu9o9z": [
@@ -1955,10 +2189,22 @@
       "value": "Időtartam"
     }
   ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Aszinkron válasz"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Mégis"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Hálózatkezelés"
     }
   ],
   "iBlvhu": [
@@ -2022,7 +2268,7 @@
   "iy8rNf": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Tesztelés"
     }
   ],
   "j2MU0b": [
@@ -2071,6 +2317,12 @@
     {
       "type": 0,
       "value": "Szerkesztés JSON formátumban"
+    }
+  ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Időtartam"
     }
   ],
   "k/oqFL": [
@@ -2169,6 +2421,12 @@
       "value": "Cím"
     }
   ],
+  "lcVG4C": [
+    {
+      "type": 0,
+      "value": "kihagyva"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -2211,6 +2469,12 @@
       "value": "Adat-URI sztringként való visszaadása."
     }
   ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "A műveletből származó egyetlen kimenő kérelem maximális időtartama. Ha a kérelem nem fejeződik be ezen a korláton belül az újrapróbálkozások futtatása után, a művelet sikertelen lesz."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -2221,6 +2485,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A kisbetűssé alakítandó sztring. A sztring azon karakterei, melyeknek nincs kisbetűs megfelelője, változatlanul fognak szerepelni a visszaadott sztringben."
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "A munkafolyamat-metaadatokat tartalmazó fejlécek a kimenő Logic Apps-kérelemben való megjelenítésének letiltása."
     }
   ],
   "n35O/+": [
@@ -2245,6 +2515,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az eltávolítandó tulajdonság neve."
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Munkafolyamat-fejlécek elrejtése"
     }
   ],
   "ngsC44": [
@@ -2289,6 +2565,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A bináris ábrázolásúként dekódolandó adat-URI."
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Tartalomátvitel"
     }
   ],
   "oV0xQ9": [
@@ -2357,6 +2639,12 @@
       "value": "Frissítés"
     }
   ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Biztonság"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -2391,6 +2679,12 @@
     {
       "type": 0,
       "value": "Annak ellenőrzése, hogy a sztring egy adott értékre végződik-e (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
+    }
+  ],
+  "qPUX59": [
+    {
+      "type": 0,
+      "value": "sikeres"
     }
   ],
   "qSejoi": [
@@ -2449,10 +2743,16 @@
       "value": "Kötelező megadni. Az egész számmá alakítandó érték."
     }
   ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "Az aszinkron válasz lehetővé teszi, hogy egy logikai alkalmazás „202 – Elfogadva” választ adjon, jelezve, hogy elfogadta és feldolgozza a kérést. A válasz tartalmaz egy helyfejlécet is, amely a végállapot beolvasására szolgál."
+    }
+  ],
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Visszavonás"
     }
   ],
   "r8aZXs": [
@@ -2497,10 +2797,22 @@
       "value": "Egy sztring típusú időbélyegnek az év napját megadó összetevőjét adja vissza."
     }
   ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Törlés"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
       "value": "Egy olyan értéktömböt ad vissza az űrlapadatokból vagy a trigger űrlapként kódolt kimenetéből, amely megegyezik a kulcsnévvel."
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Párhuzamosság szintje"
     }
   ],
   "sZ0G/Z": [
@@ -2513,6 +2825,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A gyűjtemény, melyet ellenőrizni kell, hogy üres-e."
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Művelet időkorlátja"
     }
   ],
   "sfJTHV": [
@@ -2629,6 +2947,12 @@
       "value": "Egy egész számmal megadott óraszám hozzáadása az átadott sztring típusú időbélyeghez."
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Korlátozza az újrapróbálkozások és az aszinkron válaszok közötti maximális időtartamot ehhez a művelethez. Megjegyzés: Ez nem módosítja az egyszerű kérelem időkorlátját."
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -2681,6 +3005,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Azon művelet neve, melynek kimenetei szükségesek."
+    }
+  ],
+  "vcBAuU": [
+    {
+      "type": 0,
+      "value": "túllépte az időkorlátot"
     }
   ],
   "vwH/XV": [
@@ -2771,6 +3101,12 @@
     {
       "type": 0,
       "value": "Szerkesztőbe bevitt szöveg"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Küszöbérték"
     }
   ],
   "xV/oyK": [

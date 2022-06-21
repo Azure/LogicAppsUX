@@ -9,16 +9,13 @@
 @import './featurefeedback/featurefeedback.less';
 @import './codeeditor.less';
 @import './picker/picker.less';
-
+@import './collapseToggle/collapseToggle.less';
 @import './card/batch.less';
 @import './card/card.less';
 @import './card/cardmonitor.less';
 @import './card/recurrence.less';
-@import './card/if/if.less';
-@import './card/ifmonitor/ifmonitor.less';
 @import './card/parametersmonitor/parametersmonitor.less';
 @import './card/triggerselector/triggerselector.less';
-@import './card/runafterconfiguration/runafterconfiguration.less';
 @import './card/scope/scope.less';
 @import './card/foreach/foreach.less';
 @import './card/until/until.less';
@@ -75,6 +72,7 @@
 @import './workflowparameters/workflowparameters.less';
 @import './card/cardv2.less';
 @import './card/scope/scopev2.less';
+@import './card/subgraphHeader/subgraphHeader.less';
 @import './overview/overview.less';
 @import './about/about.less';
 
@@ -392,4 +390,10 @@ body.dark {
   .msla-drop-zone {
     height: unset;
   }
+}
+
+// There are some generated graph action nodes with no children, and they are blocking other elements
+//   This stops those empty positioning nodes from interfering with touch events
+.react-flow__node:empty {
+  pointer-events: none !important;
 }

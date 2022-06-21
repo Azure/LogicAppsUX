@@ -17,6 +17,12 @@
       "value": "Obbligatorio. Valore da restituire se l'espressione è 'false'."
     }
   ],
+  "+xiT4Q": [
+    {
+      "type": 0,
+      "value": "Impaginazione"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -33,6 +39,12 @@
     {
       "type": 0,
       "value": "Restituisce gli elementi nella matrice a partire dal numero di indice"
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
     }
   ],
   "/doURb": [
@@ -83,10 +95,22 @@
       "value": "Mostra menu Esegui"
     }
   ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Verifica"
+    }
+  ],
   "0R2D5l": [
     {
       "type": 0,
       "value": "Restituisce una rappresentazione binaria di una stringa con codifica URI"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Comprimi"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +176,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Mostra tutte le versioni"
     }
   ],
   "1Fn5n+": [
@@ -213,6 +237,24 @@
       "value": "Obbligatorio. Valore di cui cercare l'indice."
     }
   ],
+  "1VRGCF": [
+    {
+      "type": 0,
+      "value": "Specificare una o più espressioni che devono essere true per l'attivazione del trigger."
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Input sicuri"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Disattivato"
+    }
+  ],
   "1jhzOM": [
     {
       "type": 0,
@@ -240,7 +282,13 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Ricerca globale"
+    }
+  ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Abilita la suddivisione per avviare un'istanza del flusso di lavoro per ogni elemento nella matrice selezionata. Ogni istanza può anche avere un ID di traccia distinto."
     }
   ],
   "2K2fAj": [
@@ -261,6 +309,12 @@
       "value": "Obbligatorio. Nome dell'azione con una risposta con dati del modulo o codifica per il modulo."
     }
   ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "Sì"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,6 +331,12 @@
     {
       "type": 0,
       "value": "Con errori"
+    }
+  ],
+  "3qG1VT": [
+    {
+      "type": 0,
+      "value": "Proprietà rilevate"
     }
   ],
   "3rzrWf": [
@@ -336,7 +396,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Presentazione/esercitazione"
     }
   ],
   "5J7j9k": [
@@ -489,6 +549,24 @@
       "value": "Obbligatorio. Stringa da codificare in URI."
     }
   ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "Con il modello asincrono, se il server remoto indica che la richiesta è stata accettata per l'elaborazione con una risposta 202 (Accettata), il motore di App per la logica continua a eseguire il poll dell'URL specificato nell'intestazione Location della risposta, fino a raggiungere uno stato terminale."
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Opzioni richiesta"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Elimina intestazioni del flusso di lavoro nella risposta"
+    }
+  ],
   "8wr0zO": [
     {
       "type": 0,
@@ -561,6 +639,12 @@
       "value": "Obbligatorio. Indice della parte da recuperare."
     }
   ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Chiave"
+    }
+  ],
   "BCAnZP": [
     {
       "type": 0,
@@ -603,6 +687,12 @@
       "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore del valore con cui è confrontato."
     }
   ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Recuperare gli elementi per raggiungere la soglia specificata seguendo il token di continuazione. A causa delle dimensioni della pagina del connettore, il numero restituito potrebbe superare la soglia."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
@@ -630,7 +720,7 @@
   "DysO/Q": [
     {
       "type": 0,
-      "value": "Ctrl + Y"
+      "value": "CTRL+Y"
     }
   ],
   "ECZC6Y": [
@@ -663,16 +753,46 @@
       "value": "Restituisce un valore di parametro specificato nella definizione"
     }
   ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Output sicuri"
+    }
+  ],
+  "FGS2fS": [
+    {
+      "type": 0,
+      "value": "ha avuto esito negativo"
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
       "value": "Restituisce una sezione di una stringa definita dall'indice iniziale e dall'indice finale"
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Espandi"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Restituisce il corpo per una parte nell'output multiparte del trigger"
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Dividi al"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Predefinito"
     }
   ],
   "FVavKy": [
@@ -803,6 +923,12 @@
       "value": "Obbligatorio. Nome della chiave del valore dei dati del modulo da restituire."
     }
   ],
+  "HXLutF": [
+    {
+      "type": 0,
+      "value": "Chiave"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -825,6 +951,12 @@
     {
       "type": 0,
       "value": "Restituisce il primo oggetto non Null negli argomenti passati"
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Modello asincrono"
     }
   ],
   "J5/7vN": [
@@ -879,6 +1011,12 @@
     {
       "type": 0,
       "value": "Necessario. Stringa di formato numerico."
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Impostare l'ID di traccia per l'esecuzione. Per le operazioni di suddivisione, l'ID di traccia è per la richiesta di avvio."
     }
   ],
   "K50znc": [
@@ -951,6 +1089,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero da aggiungere all'addendo 2."
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "Output sicuri dell'operazione e riferimenti delle proprietà di output."
     }
   ],
   "MDbmMw": [
@@ -1129,6 +1273,12 @@
       "value": "Obbligatorio. Numero di secondi da aggiungere. Può essere negativo per sottrarre i secondi."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1162,7 +1312,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Rimuovi"
     }
   ],
   "QEp3C8": [
@@ -1314,7 +1464,19 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Salva"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "ID di traccia personalizzato"
+    }
+  ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "Impostare l'ID di traccia per l'esecuzione. Per le operazioni di suddivisione, l'ID di traccia è per la richiesta di avvio."
     }
   ],
   "T7zcR6": [
@@ -1332,7 +1494,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Invia feedback"
     }
   ],
   "TI44R1": [
@@ -1405,6 +1567,18 @@
     {
       "type": 0,
       "value": "Il contenuto non è visualizzato a causa della configurazione di sicurezza."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Fare clic per eliminare l'elemento"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "Generale"
     }
   ],
   "V0ZbQO": [
@@ -1552,7 +1726,13 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Elimina"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella risposta."
     }
   ],
   "XtuP5e": [
@@ -1619,6 +1799,12 @@
       "value": "Nessuno"
     }
   ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Controllo concorrenza"
+    }
+  ],
   "ZME5hh": [
     {
       "type": 0,
@@ -1661,10 +1847,28 @@
       "value": "Obbligatorio. Numero di oggetti da rimuovere dalla parte iniziale della raccolta. Deve essere un intero positivo."
     }
   ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Gestione dei dati"
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Valore"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
       "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore o uguale al valore con cui è confrontato."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "Per impostazione predefinita, le istanze dell'app per la logica vengono eseguite contemporaneamente o in parallelo. Questo controllo cambia la modalità di accodamento delle nuove esecuzioni e non può essere modificato dopo l'abilitazione. Per eseguire il numero massimo possibile di istanze parallele, lasciare disattivato questo controllo. Per limitare il numero di esecuzioni parallele, attivare questo controllo e selezionare un limite. Per l'esecuzione sequenziale, impostare 1 come limite."
     }
   ],
   "ba9yGJ": [
@@ -1706,7 +1910,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Configurazione"
     }
   ],
   "cJm+ah": [
@@ -1763,6 +1967,18 @@
       "value": "Seleziona"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Specificare il comportamento e le funzionalità per il trasferimento del contenuto su HTTP. I messaggi di grandi dimensioni possono essere suddivisi in richieste più piccole al connettore per consentire il caricamento di messaggi di grandi dimensioni. Per i dettagli, vedere http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "Input sicuri dell'operazione."
+    }
+  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -1817,6 +2033,12 @@
       "value": "Obbligatorio. Indice della posizione di inizio della sottostringa nel parametro 1."
     }
   ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -1847,10 +2069,16 @@
       "value": "Ignorato"
     }
   ],
+  "g0a4Qe": [
+    {
+      "type": 0,
+      "value": "Valore"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Pubblica"
     }
   ],
   "gCXOd5": [
@@ -1893,6 +2121,12 @@
     {
       "type": 0,
       "value": "Funzioni di conversione"
+    }
+  ],
+  "gWRF8m": [
+    {
+      "type": 0,
+      "value": "Condizioni trigger"
     }
   ],
   "gu9o9z": [
@@ -1951,10 +2185,22 @@
       "value": "Durata"
     }
   ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Risposta asincrona"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Ripeti"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Rete"
     }
   ],
   "iBlvhu": [
@@ -2069,6 +2315,12 @@
       "value": "Modificare in JSON"
     }
   ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Durata"
+    }
+  ],
   "k/oqFL": [
     {
       "type": 0,
@@ -2165,6 +2417,12 @@
       "value": "Titolo"
     }
   ],
+  "lcVG4C": [
+    {
+      "type": 0,
+      "value": "è stato ignorato"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -2207,6 +2465,12 @@
       "value": "Restituisce una rappresentazione stringa di un URI di dati"
     }
   ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "Durata massima di una singola richiesta in uscita da questa azione. Se la richiesta non termina entro questo limite dopo l'esecuzione di nuovi tentativi, l'azione non riesce."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -2217,6 +2481,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa da convertire in lettere minuscole. Se un carattere nella stringa non ha un equivalente in lettere minuscole, il carattere verrà riportato invariato nella stringa restituita."
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella richiesta in uscita."
     }
   ],
   "n35O/+": [
@@ -2241,6 +2511,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome della proprietà da rimuovere."
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Elimina intestazioni del flusso di lavoro"
     }
   ],
   "ngsC44": [
@@ -2285,6 +2561,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. URI di dati da codificare in una rappresentazione binaria."
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Trasferimento di contenuto"
     }
   ],
   "oV0xQ9": [
@@ -2353,6 +2635,12 @@
       "value": "Aggiorna"
     }
   ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Sicurezza"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -2387,6 +2675,12 @@
     {
       "type": 0,
       "value": "Verifica se la stringa termina con un valore (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
+  "qPUX59": [
+    {
+      "type": 0,
+      "value": "ha avuto esito positivo"
     }
   ],
   "qSejoi": [
@@ -2445,10 +2739,16 @@
       "value": "Obbligatorio. Valore convertito in un valore integer."
     }
   ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "La risposta asincrona consente a un'app per la logica di rispondere con un codice 202 (Accettata) per indicare che la richiesta è stata accettata per l'elaborazione. Verrà fornita un'intestazione Location per recuperare lo stato finale."
+    }
+  ],
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Annulla"
     }
   ],
   "r8aZXs": [
@@ -2493,10 +2793,22 @@
       "value": "Restituisce il componente giorno dell'anno di un timestamp in formato stringa"
     }
   ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Elimina"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
       "value": "Restituisce una matrice di valori corrispondenti al nome della chiave dall'output del trigger dei dati del modulo o con codifica per il modulo"
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Grado di parallelismo"
     }
   ],
   "sZ0G/Z": [
@@ -2509,6 +2821,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Raccolta da controllare per verificare se è vuota."
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Timeout azione"
     }
   ],
   "sfJTHV": [
@@ -2625,6 +2943,12 @@
       "value": "Aggiunge un numero intero di ore al timestamp in formato stringa passato"
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Limita la durata massima tra i tentativi e le risposte asincrone per questa azione. Nota: questo non modifica il timeout della richiesta di una singola richiesta."
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -2677,6 +3001,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome dell'azione di cui si desidera ottenere gli output."
+    }
+  ],
+  "vcBAuU": [
+    {
+      "type": 0,
+      "value": "è scaduto"
     }
   ],
   "vwH/XV": [
@@ -2754,7 +3084,7 @@
   "xFQXAI": [
     {
       "type": 0,
-      "value": "Ctrl + Z"
+      "value": "CTRL+Z"
     }
   ],
   "xJ6vjn": [
@@ -2767,6 +3097,12 @@
     {
       "type": 0,
       "value": "Input editor"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Soglia"
     }
   ],
   "xV/oyK": [

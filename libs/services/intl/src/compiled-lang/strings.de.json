@@ -17,6 +17,12 @@
       "value": "Erforderlich. Der zurückzugebende Wert, falls der Ausdruck \"falsch\" ist."
     }
   ],
+  "+xiT4Q": [
+    {
+      "type": 0,
+      "value": "Paginierung"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
@@ -33,6 +39,12 @@
     {
       "type": 0,
       "value": "Gibt die Elemente im Array beginnend bei Index \"Anzahl\" zurück."
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "TRUE"
     }
   ],
   "/doURb": [
@@ -83,10 +95,22 @@
       "value": "Ausführungsmenü anzeigen"
     }
   ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Nachverfolgung"
+    }
+  ],
   "0R2D5l": [
     {
       "type": 0,
       "value": "Gibt eine Binärdarstellung einer URI-codierten Zeichenfolge zurück."
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Reduzieren"
     }
   ],
   "0ZlNtf": [
@@ -152,7 +176,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "Show all versions"
+      "value": "Alle Versionen anzeigen"
     }
   ],
   "1Fn5n+": [
@@ -213,6 +237,24 @@
       "value": "Erforderlich. Der Wert, dessen Index durchsucht werden soll."
     }
   ],
+  "1VRGCF": [
+    {
+      "type": 0,
+      "value": "Geben Sie mindestens einen Ausdruck an, der zum Auslösen des Triggers den Wert TRUE aufweisen muss."
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Sichere Eingaben"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Aus"
+    }
+  ],
   "1jhzOM": [
     {
       "type": 0,
@@ -240,7 +282,13 @@
   "23uZn1": [
     {
       "type": 0,
-      "value": "Global search"
+      "value": "Globale Suche"
+    }
+  ],
+  "2Cdt4p": [
+    {
+      "type": 0,
+      "value": "Aktivieren Sie die aufgeteilte Ausführung, um für jedes Element im ausgewählten Array eine Instanz des Workflows zu starten. Jede Instanz kann auch eine eigene Nachverfolgungs-ID aufweisen."
     }
   ],
   "2K2fAj": [
@@ -261,6 +309,12 @@
       "value": "Erforderlich. Der Name der Aktion mit einer form-data- oder form-encoded-Antwort."
     }
   ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "Ein"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -277,6 +331,12 @@
     {
       "type": 0,
       "value": "Fehlerhaft"
+    }
+  ],
+  "3qG1VT": [
+    {
+      "type": 0,
+      "value": "Nachverfolgte Eigenschaften"
     }
   ],
   "3rzrWf": [
@@ -336,7 +396,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "Führung/Tutorial"
     }
   ],
   "5J7j9k": [
@@ -489,6 +549,24 @@
       "value": "Erforderlich. Die als URI zu codierende Zeichenfolge."
     }
   ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "Beim asynchronen Muster fährt die Logic Apps-Engine mit dem Abruf der im Adressheader der Antwort angegebenen URL fort, bis ein Endstatus erreicht ist, sofern der Remoteserver mit einer 202-Antwort (Akzeptiert) signalisiert, dass die Anforderung zur Verarbeitung akzeptiert wird."
+    }
+  ],
+  "8ubEPi": [
+    {
+      "type": 0,
+      "value": "Anforderungsoptionen"
+    }
+  ],
+  "8wlfdo": [
+    {
+      "type": 0,
+      "value": "Unterdrücken von Workflowheadern bei der Antwort"
+    }
+  ],
   "8wr0zO": [
     {
       "type": 0,
@@ -561,6 +639,12 @@
       "value": "Erforderlich. Der Index des abzurufenden Teils."
     }
   ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Schlüssel"
+    }
+  ],
   "BCAnZP": [
     {
       "type": 0,
@@ -603,6 +687,12 @@
       "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer als das Vergleichsobjekt ist."
     }
   ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Hiermit werden die im Schwellenwert angegebenen Elemente gemäß Fortsetzungstoken abgerufen. Aufgrund der Seitengröße des Connectors überschreitet die zurückgegebene Anzahl möglicherweise den Schwellenwert."
+    }
+  ],
   "CG772M": [
     {
       "type": 0,
@@ -630,7 +720,7 @@
   "DysO/Q": [
     {
       "type": 0,
-      "value": "Ctrl + Y"
+      "value": "STRG+Y"
     }
   ],
   "ECZC6Y": [
@@ -663,16 +753,46 @@
       "value": "Gibt einen Parameterwert zurück, der in der Definition definiert ist."
     }
   ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Sichere Ausgaben"
+    }
+  ],
+  "FGS2fS": [
+    {
+      "type": 0,
+      "value": "ist fehlerhaft"
+    }
+  ],
   "FN5zHQ": [
     {
       "type": 0,
       "value": "Gibt einen Abschnitt einer Zeichenfolge zurück, die durch den Startindex und den Endindex definiert wird."
     }
   ],
+  "FNbA9+": [
+    {
+      "type": 0,
+      "value": "Erweitern"
+    }
+  ],
   "FS+/Tb": [
     {
       "type": 0,
       "value": "Gibt den Text für einen Teil in einer mehrteiligen Ausgabe des Triggers zurück."
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Teilen bei"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Standard"
     }
   ],
   "FVavKy": [
@@ -803,6 +923,12 @@
       "value": "Erforderlich. Der Schlüsselname des zurückzugebenden Formulardatenwerts."
     }
   ],
+  "HXLutF": [
+    {
+      "type": 0,
+      "value": "Schlüssel"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -825,6 +951,12 @@
     {
       "type": 0,
       "value": "Gibt das erste Objekt in den übergebenen Argumenten zurück, das nicht NULL lautet."
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Asynchrones Muster"
     }
   ],
   "J5/7vN": [
@@ -879,6 +1011,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die numerische Formatzeichenfolge."
+    }
+  ],
+  "JzqgNM": [
+    {
+      "type": 0,
+      "value": "Legen Sie die Nachverfolgungs-ID für die Ausführung fest. Bei aufgeteilten Ausführungen gilt diese Nachverfolgungs-ID für die initiierende Anforderung."
     }
   ],
   "K50znc": [
@@ -951,6 +1089,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zahl, die mit Summand 2 addiert werden soll."
+    }
+  ],
+  "MCQODe": [
+    {
+      "type": 0,
+      "value": "Hiermit werden die Ausgaben für den Vorgang und Verweise auf Ausgabeeigenschaften geschützt."
     }
   ],
   "MDbmMw": [
@@ -1121,6 +1265,12 @@
       "value": "Erforderlich. Die Anzahl der zu addierenden Sekunden. Kann negativ sein, um Sekunden zu subtrahieren."
     }
   ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "FALSE"
+    }
+  ],
   "PaPPLr": [
     {
       "type": 0,
@@ -1154,7 +1304,7 @@
   "Q4TUFX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Verwerfen"
     }
   ],
   "QEp3C8": [
@@ -1310,7 +1460,19 @@
   "Sh10cw": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Speichern"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "Benutzerdefinierte Nachverfolgungs-ID"
+    }
+  ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "Legen Sie die Nachverfolgungs-ID für die Ausführung fest. Bei aufgeteilten Ausführungen gilt diese Nachverfolgungs-ID für die initiierende Anforderung."
     }
   ],
   "T7zcR6": [
@@ -1328,7 +1490,7 @@
   "TEN+cR": [
     {
       "type": 0,
-      "value": "Give feedback"
+      "value": "Feedback geben"
     }
   ],
   "TI44R1": [
@@ -1401,6 +1563,18 @@
     {
       "type": 0,
       "value": "Der Inhalt wird aufgrund der Sicherheitskonfiguration nicht angezeigt."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Klicken, um Element zu löschen"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "Allgemein"
     }
   ],
   "V0ZbQO": [
@@ -1548,7 +1722,13 @@
   "XqamWZ": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Löschen"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Durch diese Einstellung schließen Logik-Apps keine Workflow-Metadatenheader in der Antwort ein."
     }
   ],
   "XtuP5e": [
@@ -1615,6 +1795,12 @@
       "value": "Keine"
     }
   ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Gleichzeitigkeitssteuerung"
+    }
+  ],
   "ZME5hh": [
     {
       "type": 0,
@@ -1657,10 +1843,28 @@
       "value": "Erforderlich. Die Anzahl von Objekten, die vom Anfang der Sammlung entfernt werden sollen. Muss eine positive ganze Zahl sein."
     }
   ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Datenverarbeitung"
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Wert"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
       "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer oder gleich dem Vergleichswert ist."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "Standardmäßig werden Logik-App-Instanzen gleichzeitig oder parallel ausgeführt. Dieses Steuerelement ändert, wie neue Ausführungen in die Warteschlange eingereiht werden, und kann nach der Aktivierung nicht mehr geändert werden. Lassen Sie dieses Steuerelement deaktiviert, um so viele parallele Instanzen wie möglich auszuführen. Um die Anzahl paralleler Ausführungen einzuschränken, aktivieren Sie dieses Steuerelement, und wählen Sie einen Grenzwert aus. Wählen Sie 1 als Grenzwert für eine sequenzielle Ausführung aus."
     }
   ],
   "ba9yGJ": [
@@ -1702,7 +1906,7 @@
   "cCYmTK": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfiguration"
     }
   ],
   "cJm+ah": [
@@ -1759,6 +1963,18 @@
       "value": "Auswählen"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "Geben Sie das Verhalten und die Funktionen für die Übertragung von Inhalten über HTTP an. Große Nachrichten können in kleinere Anforderungen an den Connector aufgeteilt werden, um das Hochladen großer Nachrichten zu ermöglichen. Details finden Sie unter http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "dWFyfN": [
+    {
+      "type": 0,
+      "value": "Hiermit sorgen Sie für sichere Eingaben für den Vorgang."
+    }
+  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -1813,6 +2029,12 @@
       "value": "Erforderlich. Der Index, bei dem die Teilzeichenfolge in Parameter 1 beginnt."
     }
   ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -1843,10 +2065,16 @@
       "value": "Ignoriert"
     }
   ],
+  "g0a4Qe": [
+    {
+      "type": 0,
+      "value": "Wert"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
-      "value": "Publish"
+      "value": "Veröffentlichen"
     }
   ],
   "gCXOd5": [
@@ -1889,6 +2117,12 @@
     {
       "type": 0,
       "value": "Konvertierungsfunktionen"
+    }
+  ],
+  "gWRF8m": [
+    {
+      "type": 0,
+      "value": "Triggerbedingungen"
     }
   ],
   "gu9o9z": [
@@ -1947,10 +2181,22 @@
       "value": "Dauer"
     }
   ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Asynchrone Antwort"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Wiederholen"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Networking"
     }
   ],
   "iBlvhu": [
@@ -2065,6 +2311,12 @@
       "value": "In JSON bearbeiten"
     }
   ],
+  "juR40n": [
+    {
+      "type": 0,
+      "value": "Dauer"
+    }
+  ],
   "k/oqFL": [
     {
       "type": 0,
@@ -2161,6 +2413,12 @@
       "value": "Titel"
     }
   ],
+  "lcVG4C": [
+    {
+      "type": 0,
+      "value": "wurde übersprungen"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -2203,6 +2461,12 @@
       "value": "Gibt eine Zeichenfolgendarstellung eines Daten-URI zurück."
     }
   ],
+  "mOr9ll": [
+    {
+      "type": 0,
+      "value": "Die maximale Dauer für eine einzelne ausgehende Anforderung dieser Aktion. Wenn die Anforderung nach dem Ausführen von Wiederholungsversuchen nicht innerhalb dieses Limits abgeschlossen wird, schlägt die Aktion fehl."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -2213,6 +2477,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, die in Kleinbuchstaben konvertiert werden soll. Wenn für ein Zeichen in der Zeichenfolge keine Entsprechung in Kleinbuchstaben vorhanden ist, wird das Zeichen unverändert in die zurückgegebene Zeichenfolge übernommen."
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Durch diese Einstellung schließen Logik-Apps keine Workflow-Metadatenheader in ausgehenden Anforderungen ein."
     }
   ],
   "n35O/+": [
@@ -2237,6 +2507,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der zu entfernenden Eigenschaft."
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Workflowheader unterdrücken"
     }
   ],
   "ngsC44": [
@@ -2281,6 +2557,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der dataURI, der in die Binärdarstellung decodiert werden soll."
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Inhaltsübertragung"
     }
   ],
   "oV0xQ9": [
@@ -2349,6 +2631,12 @@
       "value": "Aktualisieren"
     }
   ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Sicherheit"
+    }
+  ],
   "q/+Uex": [
     {
       "type": 0,
@@ -2383,6 +2671,12 @@
     {
       "type": 0,
       "value": "Prüft, ob die Zeichenfolge mit einem Wert endet (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
+    }
+  ],
+  "qPUX59": [
+    {
+      "type": 0,
+      "value": "ist erfolgreich"
     }
   ],
   "qSejoi": [
@@ -2441,10 +2735,16 @@
       "value": "Erforderlich. Der Wert, der in eine ganze Zahl konvertiert wird."
     }
   ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "\"Asynchrone Antwort\" ermöglicht es einer Logik-App, durch die Antwort \"202 (Zulässig)\" darauf hinzuweisen, dass die Anforderung zur Verarbeitung akzeptiert wurde. Es wird ein Adressheader bereitgestellt, um den Endzustand abzurufen. "
+    }
+  ],
   "r43nMc": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Rückgängig machen"
     }
   ],
   "r8aZXs": [
@@ -2489,10 +2789,22 @@
       "value": "Gibt die Jahrestagkomponente eines Zeichenfolgen-Zeitstempels zurück."
     }
   ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Löschen"
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
       "value": "Gibt ein Array von Werten zurück, das dem Schlüsselnamen aus der form-data- oder form-encoded-Triggerausgabe entspricht."
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Grad an Parallelität"
     }
   ],
   "sZ0G/Z": [
@@ -2505,6 +2817,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Sammlung, bei der geprüft werden soll, ob sie leer ist."
+    }
+  ],
+  "scmyvO": [
+    {
+      "type": 0,
+      "value": "Aktionstimeout"
     }
   ],
   "sfJTHV": [
@@ -2621,6 +2939,12 @@
       "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Stunden hinzu."
     }
   ],
+  "uZH8Qs": [
+    {
+      "type": 0,
+      "value": "Schränken Sie die maximale Dauer zwischen Wiederholungen und asynchronen Antworten für diese Aktion ein. Hinweis: Dadurch wird das Anforderungstimeout einer einzelnen Anforderung nicht geändert."
+    }
+  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -2673,6 +2997,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der Aktion, deren Ausgaben Sie erhalten möchten."
+    }
+  ],
+  "vcBAuU": [
+    {
+      "type": 0,
+      "value": "hat die Zeit überschritten"
     }
   ],
   "vwH/XV": [
@@ -2750,7 +3080,7 @@
   "xFQXAI": [
     {
       "type": 0,
-      "value": "Ctrl + Z"
+      "value": "STRG+Z"
     }
   ],
   "xJ6vjn": [
@@ -2763,6 +3093,12 @@
     {
       "type": 0,
       "value": "Editoreingabe"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Schwellenwert"
     }
   ],
   "xV/oyK": [

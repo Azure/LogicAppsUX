@@ -1,5 +1,37 @@
 @import (reference) '../variables.less';
 
+.msla-setting-token-editor-container {
+  width: 100%;
+  border-radius: 2px;
+
+  .editor-input {
+    outline: 1px solid @panel-mode-panel-border-color;
+    resize: none;
+    font-size: 15px;
+    tab-size: 1;
+    min-height: 30px;
+    line-height: 30px;
+    caret-color: #444;
+    padding-inline-start: 5px;
+    p {
+      margin: 0;
+      line-height: 1.5rem;
+    }
+  }
+  .editor-placeholder {
+    color: #696969;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    margin-top: -40px;
+    margin-left: 5px;
+    font-size: 15px;
+    user-select: none;
+    display: inline-block;
+    pointer-events: none;
+  }
+}
+
 .msla-setting-section {
   display: inline-block;
   width: 100%;
@@ -66,25 +98,34 @@
       }
     }
 
-    .msla-setting-content {
-      padding-bottom: 16px;
+    .msla-setting-section-dropdown {
+      display: block;
+      width: 50%;
+      margin-left: 45%;
+      margin-bottom: 8px;
+    }
+
+    .msla-setting-section-settings {
+      margin-top: 10px;
+      margin-bottom: -10px;
+    }
+
+    .msla-setting-section-setting {
+      margin-left: 46px;
+      display: flex;
+      margin-bottom: 8px;
+    }
+
+    .msla-setting-section-run-after-setting {
+      margin-left: 46px;
     }
 
     .msla-setting-section-row {
       display: flex;
-      margin-top: 16px;
-      margin-left: 34px;
-      align-items: center;
 
       .msla-setting-section-row-text {
-        padding-top: 6px;
-        font-size: 12px;
         font-family: @font-family;
-      }
-
-      .msla-setting-section-row-toggle {
-        margin-top: 6px;
-        margin-left: 50%;
+        padding-top: 3px;
       }
 
       .msla-setting-section-row-text-input {
@@ -97,6 +138,10 @@
       margin-left: 50px;
     }
 
+    .msla-setting-section-row-info-icon {
+      margin-top: -6px;
+    }
+
     .msla-setting-section-separator {
       padding: 0px;
       width: 100%;
@@ -107,10 +152,15 @@
     .msla-setting-section-row-label {
       display: flex;
       width: 80%;
+      justify-content: left;
 
       .msla-operation-setting {
         min-width: 400px;
       }
+    }
+
+    .msla-operation-setting {
+      width: 81%;
     }
 
     .msla-setting-section-row-child-label {
@@ -124,19 +174,22 @@
 
     .msla-setting-tracked-properties-dictionary {
       margin-right: -16px;
+    }
 
-      .msla-setting-row-dictionary-input {
-        min-width: 200px;
-      }
+    .msla-setting-row-dictionary-input {
+      min-width: 200px;
+      margin-right: 8px;
     }
 
     .msla-setting-section-toggle {
       margin-top: 6px;
       padding-left: 35px;
+      justify-content: right;
     }
 
     .msla-setting-section-textField {
       width: ~'calc( 100% - 35px )';
+      margin-right: 36px;
     }
   }
 }
@@ -146,10 +199,29 @@
 }
 
 .msla-trigger-condition-expression {
-  display: flex;
+  display: inherit;
+  margin-left: 12px;
+  width: 100%;
+  margin-top: 8px;
 
   [class^='ms-TextField'] {
     flex: 1;
+  }
+}
+
+.msla-setting-section-expression-field {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 48px;
+
+  .msla-setting-section-row-label {
+    display: flex;
+    width: 80%;
+    justify-content: left;
+    margin-top: 9px;
+  }
+  .ms-Button--action {
+    margin-left: 36px;
   }
 }
 

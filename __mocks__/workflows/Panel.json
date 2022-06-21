@@ -2,44 +2,36 @@
   "definition": {
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
-      "Get_rows": {
+      "Fetch_From_Zen_API": {
         "inputs": {
-          "host": {
-            "connection": {
-              "referenceName": "googlesheet"
-            }
-          },
-          "method": "get",
-          "path": "/datasets/@{encodeURIComponent(encodeURIComponent('1FMEmoAsFhVD_gyDJ7eOQYU0Ly_gCqGAfleVtdhvZp3A'))}/tables/@{encodeURIComponent(encodeURIComponent('170475114'))}/items"
-        },
-        "metadata": {
-          "1FMEmoAsFhVD_gyDJ7eOQYU0Ly_gCqGAfleVtdhvZp3A": "/BETA2 - Zenith Community Master Balance Sheet"
+          "method": "GET",
+          "uri": "https://zenquotes.io/api/random"
         },
         "runAfter": {},
         "type": "ApiConnection"
       },
-      "Initialize_variable": {
+      "Join": {
         "inputs": {
-          "variables": [
-            {
-              "name": "t",
-              "type": "integer",
-              "value": 0
-            }
-          ]
+          "from": "@triggerBody()",
+          "joinWith": ","
         },
         "runAfter": {
-          "Response": ["Succeeded"]
+          "Response": ["Succeeded"],
+          "Fetch_From_Zen_API": ["Succeeded", "Failed"]
         },
-        "type": "InitializeVariable"
+        "type": "Join"
       },
       "Response": {
         "inputs": {
+          "body": "@body('Fetch_From_Zen_API')",
+          "headers": {
+            "content-type": "text/json"
+          },
           "statusCode": 200
         },
         "kind": "http",
         "runAfter": {
-          "Get_rows": ["Succeeded"]
+          "Fetch_From_Zen_API": ["Succeeded"]
         },
         "type": "Response"
       }
@@ -48,11 +40,13 @@
     "outputs": {},
     "triggers": {
       "manual": {
-        "inputs": {},
+        "inputs": {
+          "method": "GET"
+        },
         "kind": "Http",
         "type": "Request"
       }
     }
   },
-  "kind": "Stateful"
+  "kind": "Stateless"
 }

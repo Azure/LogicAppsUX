@@ -1,8 +1,15 @@
+import { useConnectionByName } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { OperationInfo, OperationManifestProperties } from '@microsoft-logic-apps/utils';
+import type { OperationInfo } from '@microsoft-logic-apps/utils';
+import { getObjectPropertyValue } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
+
+interface QueryResult {
+  isLoading?: boolean;
+  result: any;
+}
 
 export const useActionMetadata = (actionId?: string) => {
   return useSelector((state: RootState) => {
@@ -22,6 +29,15 @@ export const useNodeMetadata = (nodeId?: string) => {
   });
 };
 
+export const useNodeConnectionName = (nodeId: string) => {
+  const connectionId = useSelector((state: RootState) => {
+    // danielle test this live
+    return nodeId ? state.connections.connectionsMapping[nodeId] : '';
+  });
+  const connection = useConnectionByName(connectionId);
+  return connection?.properties.displayName ?? '';
+};
+
 export const useNodeDescription = (nodeId: string) => {
   return useSelector((state: RootState) => {
     if (!nodeId) {
@@ -37,6 +53,12 @@ export const useOperationInfo = (nodeId: string) => {
   });
 };
 
+export const useAllOperations = () => {
+  return useSelector((state: RootState) => {
+    return state.operations.operationInfo;
+  });
+};
+
 export const useConnector = (connectorId: string) => {
   const connectionService = ConnectionService();
   return useQuery(['connector', { connectorId }], () => connectionService.getConnector(connectorId), {
@@ -48,36 +70,63 @@ export const useOperationManifest = (operationInfo: OperationInfo) => {
   const operationManifestService = OperationManifestService();
   const connectorId = operationInfo?.connectorId?.toLowerCase();
   const operationId = operationInfo?.operationId?.toLowerCase();
-  const manifestQuery = useQuery(
+  return useQuery(
     ['manifest', { connectorId }, { operationId }],
     () => operationManifestService.getOperationManifest(connectorId, operationId),
     {
       enabled: !!connectorId && !!operationId,
     }
   );
-
-  return manifestQuery;
 };
 
-const useNodeAttribute = (operationInfo: OperationInfo, attributeName: keyof OperationManifestProperties): string => {
-  const { data: manifest } = useOperationManifest(operationInfo);
+const useNodeAttribute = (operationInfo: OperationInfo, propertyInManifest: string[], propertyInConnector: string[]): QueryResult => {
+  const { data: manifest, isLoading } = useOperationManifest(operationInfo);
   const { data: connector } = useConnector(operationInfo?.connectorId);
 
   if (manifest) {
-    return manifest.properties[attributeName];
+    return {
+      isLoading,
+      result: getObjectPropertyValue(manifest.properties, propertyInManifest),
+    };
   }
 
   if (connector) {
-    return connector.properties[attributeName];
+    return {
+      isLoading,
+      result: getObjectPropertyValue(connector.properties, propertyInConnector),
+    };
   }
 
-  return '';
+  return {
+    isLoading,
+    result: '',
+  };
 };
 
 export const useBrandColor = (operationInfo: OperationInfo) => {
-  return useNodeAttribute(operationInfo, 'brandColor');
+  return useNodeAttribute(operationInfo, ['brandColor'], ['brandColor']);
 };
 
 export const useIconUri = (operationInfo: OperationInfo) => {
-  return useNodeAttribute(operationInfo, 'iconUri');
+  return useNodeAttribute(operationInfo, ['iconUri'], ['iconUri']);
+};
+
+export const useConnectorName = (operationInfo: OperationInfo) => {
+  return useNodeAttribute(operationInfo, ['connector', 'properties', 'displayName'], ['displayName']);
+};
+
+export const useConnectorDescription = (operationInfo: OperationInfo) => {
+  return useNodeAttribute(operationInfo, ['connector', 'properties', 'description'], ['description']);
+};
+
+export const useConnectorDocumentation = (operationInfo: OperationInfo) => {
+  return useNodeAttribute(operationInfo, ['externalDocs'], ['description']);
+};
+
+export const useConnectorEnvironmentBadge = (operationInfo: OperationInfo) => {
+  return useNodeAttribute(operationInfo, ['environmentBadge'], ['environmentBadge']);
+};
+
+export const useConnectorStatusBadge = (operationInfo: OperationInfo) => {
+  return useNodeAttribute(operationInfo, ['statusBadge'], ['environmentBadge']);
 };
