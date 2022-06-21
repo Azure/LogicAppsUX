@@ -18,10 +18,11 @@ import { useIntl } from 'react-intl';
 
 export interface EditorCommandBarProps {
   saveStateCall: () => void;
+  isStateDirty: boolean;
 }
 
-export const EditorCommandBar: FunctionComponent<EditorCommandBarProps> = ({ saveStateCall }) => {
-  return <EditorCommandBarWrapper saveStateCall={saveStateCall} />;
+export const EditorCommandBar: FunctionComponent<EditorCommandBarProps> = ({ saveStateCall, isStateDirty }) => {
+  return <EditorCommandBarWrapper saveStateCall={saveStateCall} isStateDirty={isStateDirty} />;
 };
 
 initializeIcons();
@@ -32,6 +33,7 @@ interface DataMapState {
 }
 
 interface EditorCommandBarButtonsProps {
+  isStateDirty: boolean;
   onSaveClick: () => void;
   onUndoClick: () => void;
   onRedoClick: () => void;
@@ -50,6 +52,7 @@ interface EditorCommandBarButtonsProps {
 }
 
 const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> = ({
+  isStateDirty,
   onSaveClick,
   onUndoClick,
   onRedoClick,
@@ -146,6 +149,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       ariaLabel: Resources.SAVE,
       iconProps: { iconName: 'Save' },
       onClick: onSaveClick,
+      disabled: !isStateDirty,
     },
     {
       key: 'undo-redo',
@@ -179,7 +183,14 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       },
       onClick: () => console.log('Undo-redo button clicked'),
     },
-    { key: 'discard', text: Resources.DISCARD, ariaLabel: Resources.DISCARD, iconProps: { iconName: 'Cancel' }, onClick: onDiscardClick },
+    {
+      key: 'discard',
+      text: Resources.DISCARD,
+      ariaLabel: Resources.DISCARD,
+      iconProps: { iconName: 'Cancel' },
+      onClick: onDiscardClick,
+      disabled: !isStateDirty,
+    },
     {
       ...divider,
       key: 'discard-test-divider',
@@ -259,7 +270,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   return <CommandBar items={items} farItems={farItems} ariaLabel="Use left and right arrow keys to navigate between commands" />;
 };
 
-const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ saveStateCall }) => {
+const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ saveStateCall, isStateDirty }) => {
   const intl = useIntl();
 
   const [showUndo, setShowUndo] = useState(true);
@@ -285,6 +296,7 @@ const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ sav
 
   return (
     <EditorCommandBarButtons
+      isStateDirty={isStateDirty}
       onSaveClick={saveStateCall}
       onUndoClick={undoState}
       onRedoClick={redoState}

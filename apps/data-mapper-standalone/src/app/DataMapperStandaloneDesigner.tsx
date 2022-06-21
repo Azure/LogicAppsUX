@@ -18,7 +18,7 @@ export const DataMapperStandaloneDesigner = () => {
       <DevToolbox />
       <DataMapperDesignerProvider locale="en-US" options={{}}>
         <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={availableSchemas}>
-          <DataMapperDesigner saveStateCall={saveStateCall} />
+          <DataMapperDesigner saveStateCall={saveStateCall} isStateDirty={false} />
         </DataMapDataProvider>
       </DataMapperDesignerProvider>
     </>

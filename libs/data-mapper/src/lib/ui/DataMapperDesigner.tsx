@@ -20,9 +20,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export interface DataMapperDesignerProps {
   saveStateCall: () => void;
+  isStateDirty: boolean;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall }) => {
+export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, isStateDirty }) => {
   const layerHostId = useId('layerHost');
   const panelLayerProps: ILayerProps = {
     hostId: layerHostId,
@@ -111,7 +112,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
-        <EditorCommandBar saveStateCall={saveStateCall} />
+        <EditorCommandBar saveStateCall={saveStateCall} isStateDirty={isStateDirty} />
         <EditorBreadcrumb />
 
         {inputSchema && outputSchema ? (
