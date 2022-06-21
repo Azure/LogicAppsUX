@@ -4,7 +4,6 @@ import {
   publishState,
   redoState,
   runTest,
-  saveState,
   showConfig,
   showFeedback,
   showSearchbar,
@@ -17,8 +16,12 @@ import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 
-export const EditorCommandBar = () => {
-  return <EditorCommandBarWrapper />;
+export interface EditorCommandBarProps {
+  saveStateCall: () => void;
+}
+
+export const EditorCommandBar: FunctionComponent<EditorCommandBarProps> = ({ saveStateCall }) => {
+  return <EditorCommandBarWrapper saveStateCall={saveStateCall} />;
 };
 
 initializeIcons();
@@ -256,7 +259,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   return <CommandBar items={items} farItems={farItems} ariaLabel="Use left and right arrow keys to navigate between commands" />;
 };
 
-const EditorCommandBarWrapper: FunctionComponent = () => {
+const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ saveStateCall }) => {
   const intl = useIntl();
 
   const [showUndo, setShowUndo] = useState(true);
@@ -282,7 +285,7 @@ const EditorCommandBarWrapper: FunctionComponent = () => {
 
   return (
     <EditorCommandBarButtons
-      onSaveClick={saveState}
+      onSaveClick={saveStateCall}
       onUndoClick={undoState}
       onRedoClick={redoState}
       showUndo={showUndo}

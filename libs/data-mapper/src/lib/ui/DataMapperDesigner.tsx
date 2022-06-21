@@ -18,7 +18,11 @@ import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-re
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const DataMapperDesigner = () => {
+export interface DataMapperDesignerProps {
+  saveStateCall: () => void;
+}
+
+export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall }) => {
   const layerHostId = useId('layerHost');
   const panelLayerProps: ILayerProps = {
     hostId: layerHostId,
@@ -107,7 +111,7 @@ export const DataMapperDesigner = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
-        <EditorCommandBar />
+        <EditorCommandBar saveStateCall={saveStateCall} />
         <EditorBreadcrumb />
 
         {inputSchema && outputSchema ? (
