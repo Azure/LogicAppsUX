@@ -198,7 +198,7 @@ export function exclude(array: string[], itemsToExclude: string[]): void {
  * @arg [boolean] caseInsensitive - Whether to use a case insensitive comparison on property names.
  * @return {any} - The value of the property, if found. Otherwise, undefined.
  */
-export function getPropertyValue(object: Record<string, unknown> | null | undefined, propertyName: string, caseInsensitive = true): any {
+export function getPropertyValue(object: Record<string, any> | null | undefined, propertyName: string, caseInsensitive = true): any {
   object = object || {};
 
   if (propertyName === '__proto__' || propertyName === 'constructor') throw new Error('attempting to access protected properties');
