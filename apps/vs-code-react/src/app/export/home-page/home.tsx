@@ -1,6 +1,6 @@
 import { ApiService } from '../../../run-service/export/index';
 import { useOutlet } from '../export';
-import { getListColumns, parseWorflowData } from './helper';
+import { getListColumns, parseWorkflowData } from './helper';
 import { Separator, ShimmeredDetailsList, Text } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useInfiniteQuery } from 'react-query';
@@ -24,12 +24,12 @@ export const Home: React.FC = () => {
     return apiService.getWorkflows();
   };
 
-  const { data } = useInfiniteQuery<any>('worflowsData', loadWorkflows, {
+  const { data } = useInfiniteQuery<any>('workflowsData', loadWorkflows, {
     getNextPageParam: (lastPage) => lastPage.nextLink,
   });
 
-  const worflowItems = useMemo(() => {
-    return parseWorflowData(data?.pages);
+  const workflowItems = useMemo(() => {
+    return parseWorkflowData(data?.pages);
   }, [data?.pages]);
 
   return (
@@ -44,9 +44,9 @@ export const Home: React.FC = () => {
         </Text>
         <div className="msla-export-overview-panel-list-workflows">
           <ShimmeredDetailsList
-            items={worflowItems ?? []}
+            items={workflowItems ?? []}
             columns={getListColumns()}
-            enableShimmer={!worflowItems}
+            enableShimmer={!workflowItems}
             ariaLabelForSelectionColumn="Toggle selection"
             ariaLabelForSelectAllCheckbox="Toggle selection for all items"
             checkButtonAriaLabel="select row"

@@ -1,12 +1,12 @@
-import type { WorflowsList, WorkflowProperties } from '../../../run-service/types';
+import type { WorkflowsList, WorkflowProperties } from '../../../run-service/types';
 
-export const parseWorflowData = (workflowPages: any[] | undefined) => {
+export const parseWorkflowData = (workflowPages: any[] | undefined) => {
   return workflowPages?.reduce<any[]>((acc: any, val: { workflows: WorkflowProperties[] }) => {
     return [...acc, ...val.workflows.map(mapToWorkflowItem)];
   }, []);
 };
 
-export const mapToWorkflowItem = (workflow: WorkflowProperties): WorflowsList => {
+export const mapToWorkflowItem = (workflow: WorkflowProperties): WorkflowsList => {
   const { name, resourceGroup, id } = workflow;
   return {
     key: id,

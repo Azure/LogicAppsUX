@@ -169,7 +169,7 @@ export interface Workflows {
   totalRecords: number;
 }
 
-export interface WorflowsList {
+export interface WorkflowsList {
   key: string;
   name: string;
   resourceGroup: string;
