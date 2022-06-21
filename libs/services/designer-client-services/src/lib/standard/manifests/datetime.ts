@@ -681,6 +681,7 @@ export const addToTimeManifest = {
     connector: dateTimeConnector,
 
     settings: {
+      secureData: {},
       trackedProperties: {
         scopes: [SettingScope.Action],
       },
@@ -754,6 +755,7 @@ export const convertTimezoneManifest = {
     connector: dateTimeConnector,
 
     settings: {
+      secureData: {},
       trackedProperties: {
         scopes: [SettingScope.Action],
       },
@@ -783,6 +785,7 @@ export const currentTimeManifest = {
     connector: dateTimeConnector,
 
     settings: {
+      secureData: {},
       trackedProperties: {
         scopes: [SettingScope.Action],
       },
@@ -835,6 +838,7 @@ export const getFutureTimeManifest = {
     connector: dateTimeConnector,
 
     settings: {
+      secureData: {},
       trackedProperties: {
         scopes: [SettingScope.Action],
       },
@@ -887,6 +891,7 @@ export const getPastTimeManifest = {
     connector: dateTimeConnector,
 
     settings: {
+      secureData: {},
       trackedProperties: {
         scopes: [SettingScope.Action],
       },
@@ -944,6 +949,7 @@ export const subtractFromTimeManifest = {
     connector: dateTimeConnector,
 
     settings: {
+      secureData: {},
       trackedProperties: {
         scopes: [SettingScope.Action],
       },
