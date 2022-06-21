@@ -146,7 +146,7 @@ const processScopeActions = (
   const nodes: WorkflowNode[] = [];
   const edges: WorkflowEdge[] = [];
 
-  const scopeId = `${actionName}-scopeHeader`;
+  const scopeId = `${actionName}-#scopeHeader`;
   const scopeHeaderNode = createWorkflowNode(scopeId, 'scopeHeader');
   // const scopeGraphNode = createWorkflowNode(`${actionName}-graph`, 'hiddenNode');
   // scopeGraphNode.children = [];
@@ -178,7 +178,7 @@ const processScopeActions = (
     allActions = { ...allActions, ...operations };
     nodesMetadata = { ...nodesMetadata, ...metadata };
 
-    const rootId = `${subgraphId}-subgraphHeader`;
+    const rootId = `${subgraphId}-#subgraphHeader`;
     const subgraphHeaderNode = createWorkflowNode(rootId, 'subgraphHeader');
 
     const isAddCase = subgraphType === 'SWITCH-ADD-CASE';
