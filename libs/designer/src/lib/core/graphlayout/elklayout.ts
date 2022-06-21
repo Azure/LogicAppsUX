@@ -110,9 +110,10 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       },
     };
   } else {
+    const children = node.children?.map(convertWorkflowGraphToElkGraph);
     return {
       ...node,
-      children: node.children?.map(convertWorkflowGraphToElkGraph),
+      children,
       edges: node.edges?.map((edge) => ({
         ...edge,
         targets: [edge.target],
@@ -124,6 +125,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
         },
       })),
       layoutOptions: {
+        'elk.padding': '[top=0,left=16,bottom=48,right=16]', // allow space for add buttons
         'elk.position': `(0, 0)`, // See 'crossingMinimization.semiInteractive' above
         nodeType: 'graphNode',
         ...(node.edges?.[0]?.type === 'onlyEdge' && {

@@ -89,7 +89,7 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
         {childEdges.length === 0 ? (
           !readOnly ? (
             <div className={'edge-drop-zone-container'}>
-              <DropZone graphId={scopeId} parent={undefined} />
+              <DropZone graphId={scopeId} parent={scopeId} />
             </div>
           ) : (
             <p className="no-actions-text">No Actions</p>

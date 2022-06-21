@@ -64,7 +64,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               requiredExtensions="http://www.w3.org/1999/xhtml"
             >
               <div style={{ padding: '4px' }}>
-                <DropZone parent={source} graphId={nodeMetadata?.graphId ?? ''} />
+                <DropZone graphId={nodeMetadata?.graphId ?? ''} parent={source} />
               </div>
             </foreignObject>
           )}
@@ -77,7 +77,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
             requiredExtensions="http://www.w3.org/1999/xhtml"
           >
             <div style={{ padding: '4px' }}>
-              <DropZone parent={source} child={target} graphId={nodeMetadata?.graphId ?? ''} />
+              <DropZone graphId={nodeMetadata?.graphId ?? ''} parent={source} child={target} />
             </div>
           </foreignObject>
         </>
