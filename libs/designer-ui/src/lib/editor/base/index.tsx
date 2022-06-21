@@ -2,15 +2,15 @@ import type { InputTokenProps } from '../../token/inputToken';
 import type { ValueSegmentType } from '../models/parameter';
 import { prepopulatedRichText } from './initialConfig';
 import { TokenNode } from './nodes/tokenNode';
-import AutoFocusPlugin from './plugins/AutoFocusPlugin';
+import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLinkPlugin';
 import ClearEditor from './plugins/ClearEditorPlugin';
-import TreeViewPlugin from './plugins/TreeViewPlugin';
+import { TreeViewPlugin as TreeView } from './plugins/TreeViewPlugin';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
-import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
+import { ClearEditorPlugin as ClearEditorEnabled } from '@lexical/react/LexicalClearEditorPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
@@ -99,9 +99,9 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
           }
         />
         <OnChangePlugin onChange={onChange} />
-        {treeView ? <TreeViewPlugin /> : null}
-        {autoFocus ? <AutoFocusPlugin /> : null}
-        {history ? <HistoryPlugin /> : null}
+        {treeView ? <TreeView /> : null}
+        {autoFocus ? <AutoFocus /> : null}
+        {history ? <History /> : null}
         {autoLink ? <AutoLink /> : null}
         {/* 
           NOTE 14672766: Commenting out TokenPlugin because has a few issues
@@ -110,7 +110,7 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
         {/* {tokens ? <TokenPlugin data={[]} /> : null} */}
         {clearEditor ? <ClearEditor /> : null}
         {children}
-        <ClearEditorPlugin />
+        <ClearEditorEnabled />
       </div>
     </LexicalComposer>
   );
