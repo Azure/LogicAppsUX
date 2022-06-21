@@ -60,7 +60,7 @@ export interface NodeData {
   id: string;
   nodeInputs: NodeInputs;
   nodeOutputs: NodeOutputs;
-  settings: Settings;
+  settings?: Settings;
 }
 interface AddSettingsPayload {
   id: string;
