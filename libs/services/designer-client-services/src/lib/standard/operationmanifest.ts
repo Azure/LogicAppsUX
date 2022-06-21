@@ -333,39 +333,14 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
     case expression:
       switch (definition.kind?.toLowerCase()) {
         case addtotime:
-          return {
-            connectorId: dateTimeConnectorId,
-            operationId: addtotime,
-          };
-
         case converttimezone:
-          return {
-            connectorId: dateTimeConnectorId,
-            operationId: converttimezone,
-          };
-
         case currenttime:
-          return {
-            connectorId: dateTimeConnectorId,
-            operationId: currenttime,
-          };
-
         case getfuturetime:
-          return {
-            connectorId: dateTimeConnectorId,
-            operationId: getfuturetime,
-          };
-
         case getpasttime:
-          return {
-            connectorId: dateTimeConnectorId,
-            operationId: getpasttime,
-          };
-
         case subtractfromtime:
           return {
             connectorId: dateTimeConnectorId,
-            operationId: subtractfromtime,
+            operationId: definition.kind.toLowerCase(),
           };
 
         default:
