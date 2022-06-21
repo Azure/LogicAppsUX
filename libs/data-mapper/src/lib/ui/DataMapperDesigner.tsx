@@ -1,12 +1,14 @@
 import { convertToReactFlowNode } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import { setCurrentInputNode, setCurrentOutputNode } from '../core/state/SchemaSlice';
+import { AddSchemaPanelButton, SchemaTypes } from '../components/schemaSelection/addSchemaPanelButton';
+import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
+import type { Schema } from '../models';
 import { LeftHandPanel } from './LeftHandPanel';
-import type { ILayerProps } from '@fluentui/react';
 import { LayerHost } from '@fluentui/react';
+import type { ILayerProps } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useMemo } from 'react';
@@ -21,6 +23,10 @@ export const DataMapperDesigner = () => {
   const panelLayerProps: ILayerProps = {
     hostId: layerHostId,
   };
+
+  const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
+  const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
+  const availableSchemas = useSelector((state: RootState) => state.schema.availableSchemas);
 
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch<AppDispatch>();
@@ -49,17 +55,51 @@ export const DataMapperDesigner = () => {
     }
   };
 
+  const onSubmitInput = (inputSchema: Schema) => {
+    dispatch(setInputSchema(inputSchema));
+
+    const schemaState = store.getState().schema;
+    const currentSchemaNode = schemaState.currentInputNode;
+
+    dispatch(setCurrentInputNode(currentSchemaNode));
+  };
+
+  const onSubmitOutput = (outputSchema: Schema) => {
+    dispatch(setOutputSchema(outputSchema));
+
+    const schemaState = store.getState().schema;
+    const currentSchemaNode = schemaState.currentOutputNode;
+
+    dispatch(setCurrentOutputNode(currentSchemaNode));
+  };
+
+  const reactFlowDrawing = (
+    <ReactFlowProvider>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodeDoubleClick={onNodeDoubleClick}
+        minZoom={0}
+        nodesDraggable={false}
+        fitView
+        proOptions={{
+          account: 'paid-sponsor',
+          hideAttribution: true,
+        }}
+        style={{
+          position: 'unset',
+        }}
+      ></ReactFlow>
+    </ReactFlowProvider>
+  );
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <div>
-        <div
-          style={{
-            // TODO - Remove
-            border: '1px solid #ccc',
-          }}
-        >
-          <EditorCommandBar />
-          <EditorBreadcrumb />
+      <div className="data-mapper-shell">
+        <EditorCommandBar />
+        <EditorBreadcrumb />
+
+        {inputSchema && outputSchema ? (
           <LayerHost
             id={layerHostId}
             style={{
@@ -68,28 +108,35 @@ export const DataMapperDesigner = () => {
               overflow: 'hidden',
             }}
           >
-            <div className="msla-designer-canvas msla-panel-mode">
-              <ReactFlowProvider>
-                <ReactFlow
-                  nodes={nodes}
-                  edges={edges}
-                  onNodeDoubleClick={onNodeDoubleClick}
-                  minZoom={0}
-                  nodesDraggable={false}
-                  fitView
-                  proOptions={{
-                    account: 'paid-sponsor',
-                    hideAttribution: true,
-                  }}
-                  style={{
-                    position: 'unset',
-                  }}
-                ></ReactFlow>
-              </ReactFlowProvider>
-              <LeftHandPanel layerProps={panelLayerProps} />
-            </div>
+            <div className="msla-designer-canvas msla-panel-mode">{reactFlowDrawing}</div>
           </LayerHost>
-        </div>
+        ) : (
+          <div className="msla-designer-canvas msla-panel-mode not-loaded">
+            <div className="left">
+              {inputSchema ? (
+                <></> // TODO: show loaded reactflow in this case instead of empty background (14772680)
+              ) : (
+                <AddSchemaPanelButton
+                  schemaType={SchemaTypes.Input}
+                  onSubmitSchema={onSubmitInput}
+                  schemaFilesList={availableSchemas ?? []}
+                />
+              )}
+            </div>
+            <div className="right">
+              {outputSchema ? (
+                <></> // TODO: show loaded reactflow in this case instead of empty background (14772680)
+              ) : (
+                <AddSchemaPanelButton
+                  schemaType={SchemaTypes.Output}
+                  onSubmitSchema={onSubmitOutput}
+                  schemaFilesList={availableSchemas ?? []}
+                />
+              )}
+            </div>
+          </div>
+        )}
+        <LeftHandPanel layerProps={panelLayerProps} />
       </div>
     </DndProvider>
   );
