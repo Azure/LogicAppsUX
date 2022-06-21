@@ -8,11 +8,11 @@ export interface InitializePayload {
   baseUrl: string;
   corsNotice?: string;
   accessToken?: string;
-  workflowProperties: OverviewPropertiesProps;
+  workflowProperties?: OverviewPropertiesProps;
   project: ProjectName;
 }
 
-interface initializedOverviewState {
+interface initializedVscodeState {
   initialized: true;
   accessToken?: string;
   corsNotice?: string;
@@ -22,31 +22,31 @@ interface initializedOverviewState {
   project: ProjectName;
 }
 
-interface uninitializedOverviewState {
+interface uninitializedVscodeState {
   initialized: false;
   accessToken?: string;
 }
-export type OverviewState = uninitializedOverviewState | initializedOverviewState;
+export type VscodeState = uninitializedVscodeState | initializedVscodeState;
 
-const initialState: OverviewState = {
+const initialState: VscodeState = {
   initialized: false,
 };
 
 export const overviewSlice = createSlice({
-  name: 'overview',
-  initialState: initialState as OverviewState,
+  name: 'vscode',
+  initialState: initialState as VscodeState,
   reducers: {
-    initialize: (state: OverviewState, action: PayloadAction<InitializePayload>) => {
+    initialize: (state: VscodeState, action: PayloadAction<InitializePayload>) => {
       const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, project } = action.payload;
       state.initialized = true;
-      (state as initializedOverviewState).project = project;
-      (state as initializedOverviewState).accessToken = accessToken;
-      (state as initializedOverviewState).apiVersion = apiVersion;
-      (state as initializedOverviewState).baseUrl = baseUrl;
-      (state as initializedOverviewState).corsNotice = corsNotice;
-      (state as initializedOverviewState).workflowProperties = workflowProperties;
+      (state as initializedVscodeState).project = project;
+      (state as initializedVscodeState).accessToken = accessToken;
+      (state as initializedVscodeState).apiVersion = apiVersion;
+      (state as initializedVscodeState).baseUrl = baseUrl;
+      (state as initializedVscodeState).corsNotice = corsNotice;
+      (state as initializedVscodeState).workflowProperties = workflowProperties!;
     },
-    updateAccessToken: (state: OverviewState, action: PayloadAction<string | undefined>) => {
+    updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
     },
   },

@@ -13,7 +13,7 @@ import { Outlet, useOutletContext } from 'react-router-dom';
 const queryClient = new QueryClient();
 
 export const ExportApp: React.FC = () => {
-  const overviewState = useSelector((state: RootState) => state.overview);
+  const vscodeState = useSelector((state: RootState) => state.vscode);
 
   const handleError: OnErrorFn = useCallback((err) => {
     if (err.code !== 'MISSING_TRANSLATION') {
@@ -21,14 +21,14 @@ export const ExportApp: React.FC = () => {
     }
   }, []);
 
-  return overviewState.initialized ? (
+  return vscodeState.initialized ? (
     <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError}>
       <QueryClientProvider client={queryClient}>
         <div className="msla-export">
           <Text variant="xxLarge" className="msla-export-title" nowrap block>
             Export Logic App
           </Text>
-          <Outlet context={{ baseUrl: overviewState.baseUrl, accessToken: overviewState.accessToken }} />
+          <Outlet context={{ baseUrl: vscodeState.baseUrl, accessToken: vscodeState.accessToken }} />
         </div>
       </QueryClientProvider>
     </IntlProvider>

@@ -1,12 +1,10 @@
 // eslint-disable-next-line import/no-named-as-default
-import exportSlice from './exportSlice';
 import overviewSlice from './overviewSlice';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
-    overview: overviewSlice,
-    export: exportSlice,
+    vscode: overviewSlice,
   },
 });
 
