@@ -20,7 +20,7 @@
   "+xiT4Q": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "Paginación"
     }
   ],
   "/I/U8L": [
@@ -98,7 +98,7 @@
   "0KMjv6": [
     {
       "type": 0,
-      "value": "Tracking"
+      "value": "Seguimiento"
     }
   ],
   "0R2D5l": [
@@ -110,7 +110,7 @@
   "0Vzp0l": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Contraer"
     }
   ],
   "0ZlNtf": [
@@ -240,19 +240,19 @@
   "1VRGCF": [
     {
       "type": 0,
-      "value": "Specify one or more expressions which must be true for the trigger to fire."
+      "value": "Especifique una o varias expresiones que deben ser \"true\" para que se active el desencadenador."
     }
   ],
   "1ejxkP": [
     {
       "type": 0,
-      "value": "Secure Inputs"
+      "value": "Entradas seguras"
     }
   ],
   "1htSs7": [
     {
       "type": 0,
-      "value": "Off"
+      "value": "Desactivado"
     }
   ],
   "1jhzOM": [
@@ -288,7 +288,7 @@
   "2Cdt4p": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+      "value": "Habilita una división para iniciar una instancia del flujo de trabajo por elemento en la matriz seleccionada. Cada instancia también puede tener un id de seguimiento distinto."
     }
   ],
   "2K2fAj": [
@@ -312,7 +312,7 @@
   "2tTQ0A": [
     {
       "type": 0,
-      "value": "On"
+      "value": "Activado"
     }
   ],
   "33+WHG": [
@@ -336,7 +336,7 @@
   "3qG1VT": [
     {
       "type": 0,
-      "value": "Tracked Properties"
+      "value": "Propiedades controladas"
     }
   ],
   "3rzrWf": [
@@ -552,19 +552,19 @@
   "8j+a0n": [
     {
       "type": 0,
-      "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+      "value": "Con el modelo asincrónico, si el servidor remoto indica que se acepta la solicitud para procesarla con una respuesta 202 (aceptada), el motor de Logic Apps sondeará la dirección URL especificada en el encabezado de ubicación de respuesta hasta alcanzar un estado terminal."
     }
   ],
   "8ubEPi": [
     {
       "type": 0,
-      "value": "Request Options"
+      "value": "Opciones de solicitud"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Suprimir encabezados de flujo de trabajo en la respuesta"
     }
   ],
   "8wr0zO": [
@@ -642,7 +642,7 @@
   "BBD8Em": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Clave"
     }
   ],
   "BCAnZP": [
@@ -690,7 +690,7 @@
   "C4NQ1J": [
     {
       "type": 0,
-      "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+      "value": "Para recuperar los elementos que cumplen el umbral especificado, siga el token de continuación. Debido al tamaño de página del conector, el número devuelto puede superar el umbral."
     }
   ],
   "CG772M": [
@@ -756,13 +756,13 @@
   "FDWfqM": [
     {
       "type": 0,
-      "value": "Secure Outputs"
+      "value": "Salidas seguras"
     }
   ],
   "FGS2fS": [
     {
       "type": 0,
-      "value": "has failed"
+      "value": "con errores"
     }
   ],
   "FN5zHQ": [
@@ -774,7 +774,7 @@
   "FNbA9+": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandir"
     }
   ],
   "FS+/Tb": [
@@ -786,13 +786,13 @@
   "FUhNu4": [
     {
       "type": 0,
-      "value": "Split On"
+      "value": "Dividir"
     }
   ],
   "FUuFlC": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Predeterminado"
     }
   ],
   "FVavKy": [
@@ -926,7 +926,7 @@
   "HXLutF": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Clave"
     }
   ],
   "HfrUId": [
@@ -956,7 +956,7 @@
   "J/Kz1j": [
     {
       "type": 0,
-      "value": "Asynchronous Pattern"
+      "value": "Modelo asincrónico"
     }
   ],
   "J5/7vN": [
@@ -1016,7 +1016,7 @@
   "JzqgNM": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Defina el id. de seguimiento de la ejecución. En caso de división, este id. de seguimiento se aplica a la solicitud inicial."
     }
   ],
   "K50znc": [
@@ -1094,7 +1094,7 @@
   "MCQODe": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties."
+      "value": "Salidas seguras de la operación y referencias de las propiedades de salida."
     }
   ],
   "MDbmMw": [
@@ -1462,13 +1462,13 @@
   "SmCQys": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Id. de seguimiento personalizado"
     }
   ],
   "T0BFpC": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Defina el id. de seguimiento de la ejecución. En caso de división, este id. de seguimiento se aplica a la solicitud inicial."
     }
   ],
   "T7zcR6": [
@@ -1564,7 +1564,7 @@
   "Ur+wph": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Hacer clic para borrar el elemento"
     }
   ],
   "V+/c21": [
@@ -1724,7 +1724,7 @@
   "XsktQ/": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the response."
+      "value": "Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la respuesta."
     }
   ],
   "XtuP5e": [
@@ -1794,7 +1794,7 @@
   "ZM1mRy": [
     {
       "type": 0,
-      "value": "Concurrency Control"
+      "value": "Control de simultaneidad"
     }
   ],
   "ZME5hh": [
@@ -1842,13 +1842,13 @@
   "aK4iLW": [
     {
       "type": 0,
-      "value": "Data Handling"
+      "value": "Control de datos"
     }
   ],
   "b9/1dK": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Valor"
     }
   ],
   "bTrk+S": [
@@ -1860,7 +1860,7 @@
   "bWBMhe": [
     {
       "type": 0,
-      "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
+      "value": "De forma predeterminada, las instancias de aplicación lógica se ejecutan al mismo tiempo o en paralelo. Este control cambia la forma en que las ejecuciones nuevas se pone en cola y no se pueden cambiar después de habilitarlo. Para ejecutar tantas instancias paralelas como sea posible, deje este control desactivado. Para limitar el número de ejecuciones paralelas, active este control y seleccione un límite. Para ejecutar secuencialmente, seleccione 1 como límite."
     }
   ],
   "ba9yGJ": [
@@ -1962,13 +1962,13 @@
   "dSTRb/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Especifique el comportamiento y las funcionalidades de transferencia de contenido a través de HTTP. Los mensajes grandes pueden dividirse en solicitudes más pequeñas para el conector a fin de permitir la carga de mensajes grandes. Los detalles están disponibles en http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "dWFyfN": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation."
+      "value": "Entradas seguras de la operación."
     }
   ],
   "dhvk0u": [
@@ -2028,7 +2028,7 @@
   "euC/DV": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Matriz"
     }
   ],
   "f/lWTW": [
@@ -2064,7 +2064,7 @@
   "g0a4Qe": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Valor"
     }
   ],
   "g4igOR": [
@@ -2118,7 +2118,7 @@
   "gWRF8m": [
     {
       "type": 0,
-      "value": "Trigger Conditions"
+      "value": "Condiciones del desencadenador"
     }
   ],
   "gu9o9z": [
@@ -2188,7 +2188,7 @@
   "i/b3Ko": [
     {
       "type": 0,
-      "value": "Asynchronous Response"
+      "value": "Respuesta asincrónica"
     }
   ],
   "i1cwra": [
@@ -2200,7 +2200,7 @@
   "i4C4aB": [
     {
       "type": 0,
-      "value": "Networking"
+      "value": "Redes"
     }
   ],
   "iBlvhu": [
@@ -2318,7 +2318,7 @@
   "juR40n": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Duración"
     }
   ],
   "k/oqFL": [
@@ -2420,7 +2420,7 @@
   "lcVG4C": [
     {
       "type": 0,
-      "value": "is skipped"
+      "value": "se omitió"
     }
   ],
   "lgs5sf": [
@@ -2468,7 +2468,7 @@
   "mOr9ll": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
+      "value": "Duración máxima en una única solicitud de salida de esta acción. Si la solicitud no finaliza dentro de este límite después de ejecutar reintentos, se produce un error en la acción."
     }
   ],
   "mPakaD": [
@@ -2486,7 +2486,7 @@
   "mjS/k1": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+      "value": "Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la solicitud saliente."
     }
   ],
   "n35O/+": [
@@ -2516,7 +2516,7 @@
   "nZ4nLn": [
     {
       "type": 0,
-      "value": "Suppress workflow headers"
+      "value": "Suprimir encabezados de flujo de trabajo"
     }
   ],
   "ngsC44": [
@@ -2566,7 +2566,7 @@
   "oLtwMw": [
     {
       "type": 0,
-      "value": "Content Transfer"
+      "value": "Transferencia de contenido"
     }
   ],
   "oV0xQ9": [
@@ -2638,7 +2638,7 @@
   "ptkf0D": [
     {
       "type": 0,
-      "value": "Security"
+      "value": "Seguridad"
     }
   ],
   "q/+Uex": [
@@ -2680,7 +2680,7 @@
   "qPUX59": [
     {
       "type": 0,
-      "value": "is successful"
+      "value": "correcto"
     }
   ],
   "qSejoi": [
@@ -2742,7 +2742,7 @@
   "qrxi0L": [
     {
       "type": 0,
-      "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+      "value": "La respuesta asincrónica permite que una aplicación lógica responda con 202 (Aceptado) para indicar que la solicitud se aceptó para su procesamiento. Se proporcionará un encabezado de ubicación para recuperar el estado final."
     }
   ],
   "r43nMc": [
@@ -2796,7 +2796,7 @@
   "s7nGyC": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Eliminar"
     }
   ],
   "sDkAVZ": [
@@ -2808,7 +2808,7 @@
   "sW47JR": [
     {
       "type": 0,
-      "value": "Degree of Parallelism"
+      "value": "Grado de paralelismo"
     }
   ],
   "sZ0G/Z": [
@@ -2826,7 +2826,7 @@
   "scmyvO": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Tiempo de espera de la acción"
     }
   ],
   "sfJTHV": [
@@ -2946,7 +2946,7 @@
   "uZH8Qs": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
+      "value": "Limite la duración máxima entre los reintentos y las respuestas asincrónicas para esta acción. Nota: esto no modifica el tiempo de espera de una sola solicitud."
     }
   ],
   "uc/PoD": [
@@ -3006,7 +3006,7 @@
   "vcBAuU": [
     {
       "type": 0,
-      "value": "has timed out"
+      "value": "ha agotado el tiempo de espera"
     }
   ],
   "vwH/XV": [
@@ -3102,7 +3102,7 @@
   "xQQ9ko": [
     {
       "type": 0,
-      "value": "Threshold"
+      "value": "Umbral"
     }
   ],
   "xV/oyK": [

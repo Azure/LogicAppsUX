@@ -20,7 +20,7 @@
   "+xiT4Q": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "Paginering"
     }
   ],
   "/I/U8L": [
@@ -44,7 +44,7 @@
   "/WW7If": [
     {
       "type": 0,
-      "value": "True"
+      "value": "Waar"
     }
   ],
   "/doURb": [
@@ -98,7 +98,7 @@
   "0KMjv6": [
     {
       "type": 0,
-      "value": "Tracking"
+      "value": "Bijhouden"
     }
   ],
   "0R2D5l": [
@@ -110,7 +110,7 @@
   "0Vzp0l": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Samenvouwen"
     }
   ],
   "0ZlNtf": [
@@ -240,19 +240,19 @@
   "1VRGCF": [
     {
       "type": 0,
-      "value": "Specify one or more expressions which must be true for the trigger to fire."
+      "value": "Geef een of meer expressies op die waar moeten zijn om de trigger te activeren."
     }
   ],
   "1ejxkP": [
     {
       "type": 0,
-      "value": "Secure Inputs"
+      "value": "Beveiligde invoerwaarden"
     }
   ],
   "1htSs7": [
     {
       "type": 0,
-      "value": "Off"
+      "value": "Uit"
     }
   ],
   "1jhzOM": [
@@ -288,7 +288,7 @@
   "2Cdt4p": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+      "value": "Schakel splitOn in om een exemplaar van de werkstroom per item te starten in de geselecteerde matrix. Elk exemplaar kan ook een afzonderlijke tracerings-id hebben."
     }
   ],
   "2K2fAj": [
@@ -312,7 +312,7 @@
   "2tTQ0A": [
     {
       "type": 0,
-      "value": "On"
+      "value": "Aan"
     }
   ],
   "33+WHG": [
@@ -336,7 +336,7 @@
   "3qG1VT": [
     {
       "type": 0,
-      "value": "Tracked Properties"
+      "value": "Bijgehouden eigenschappen"
     }
   ],
   "3rzrWf": [
@@ -552,19 +552,19 @@
   "8j+a0n": [
     {
       "type": 0,
-      "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+      "value": "Met het asynchrone patroon blijft de Logic Apps-engine navragen bij de URL die is opgegeven in de locatieheader van het antwoord tot een definitieve status wordt bereikt, als door de externe server wordt aangegeven dat de aanvraag is geaccepteerd voor verwerking met een 202 (Accepted)-antwoord."
     }
   ],
   "8ubEPi": [
     {
       "type": 0,
-      "value": "Request Options"
+      "value": "Aanvraagopties"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Werkstroomheaders onderdrukken bij antwoord"
     }
   ],
   "8wr0zO": [
@@ -642,7 +642,7 @@
   "BBD8Em": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Sleutel"
     }
   ],
   "BCAnZP": [
@@ -690,7 +690,7 @@
   "C4NQ1J": [
     {
       "type": 0,
-      "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+      "value": "Items die voldoen aan de opgegeven drempelwaarde, ophalen door het vervolgtoken te volgen. Vanwege de paginagrootte van de connector kan het aantal geretourneerde items de drempelwaarde overschrijden."
     }
   ],
   "CG772M": [
@@ -756,13 +756,13 @@
   "FDWfqM": [
     {
       "type": 0,
-      "value": "Secure Outputs"
+      "value": "Beveiligde uitvoerwaarden"
     }
   ],
   "FGS2fS": [
     {
       "type": 0,
-      "value": "has failed"
+      "value": "is mislukt"
     }
   ],
   "FN5zHQ": [
@@ -774,7 +774,7 @@
   "FNbA9+": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Uitvouwen"
     }
   ],
   "FS+/Tb": [
@@ -786,13 +786,13 @@
   "FUhNu4": [
     {
       "type": 0,
-      "value": "Split On"
+      "value": "Splitsen op"
     }
   ],
   "FUuFlC": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Standaard"
     }
   ],
   "FVavKy": [
@@ -926,7 +926,7 @@
   "HXLutF": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Sleutel"
     }
   ],
   "HfrUId": [
@@ -956,7 +956,7 @@
   "J/Kz1j": [
     {
       "type": 0,
-      "value": "Asynchronous Pattern"
+      "value": "Asynchroon patroon"
     }
   ],
   "J5/7vN": [
@@ -1016,7 +1016,7 @@
   "JzqgNM": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Stel de tracerings-id voor de uitvoering in. Bij splitOn is deze tracerings-id is voor de initiatie-aanvraag."
     }
   ],
   "K50znc": [
@@ -1094,7 +1094,7 @@
   "MCQODe": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties."
+      "value": "Uitvoerwaarden van de bewerking en verwijzingen naar uitvoereigenschappen beveiligen."
     }
   ],
   "MDbmMw": [
@@ -1268,7 +1268,7 @@
   "PXa0D4": [
     {
       "type": 0,
-      "value": "False"
+      "value": "Onwaar"
     }
   ],
   "PaPPLr": [
@@ -1466,13 +1466,13 @@
   "SmCQys": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Aangepaste tracerings-id"
     }
   ],
   "T0BFpC": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Stel de tracerings-id voor de uitvoering in. Bij splitOn is deze tracerings-id is voor de initiatie-aanvraag."
     }
   ],
   "T7zcR6": [
@@ -1568,13 +1568,13 @@
   "Ur+wph": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Klik om het item te verwijderen"
     }
   ],
   "V+/c21": [
     {
       "type": 0,
-      "value": "General"
+      "value": "Algemeen"
     }
   ],
   "V0ZbQO": [
@@ -1728,7 +1728,7 @@
   "XsktQ/": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the response."
+      "value": "Een beperking voor Logic Apps instellen om te voorkomen dat het antwoord metagegevens van de werkstroom bevat."
     }
   ],
   "XtuP5e": [
@@ -1798,7 +1798,7 @@
   "ZM1mRy": [
     {
       "type": 0,
-      "value": "Concurrency Control"
+      "value": "Gelijktijdigheid beheren"
     }
   ],
   "ZME5hh": [
@@ -1846,13 +1846,13 @@
   "aK4iLW": [
     {
       "type": 0,
-      "value": "Data Handling"
+      "value": "Gegevensverwerking"
     }
   ],
   "b9/1dK": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Waarde"
     }
   ],
   "bTrk+S": [
@@ -1864,7 +1864,7 @@
   "bWBMhe": [
     {
       "type": 0,
-      "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
+      "value": "Logic App-exemplaren worden standaard tegelijkertijd of parallel uitgevoerd. Met dit besturingselement wordt gewijzigd hoe nieuwe uitvoeringen in de wachtrij worden opgeslagen. Dit kan na inschakelen niet worden gewijzigd. Als u zoveel mogelijk parallelle exemplaren wilt uitvoeren, laat u dit besturingselement uitgeschakeld. Als u het aantal parallelle uitvoeringen wilt beperken, schakelt u dit besturingselement in en selecteert u een limiet. Als u opeenvolgend wilt uitvoeren, selecteert u 1 als limiet."
     }
   ],
   "ba9yGJ": [
@@ -1966,13 +1966,13 @@
   "dSTRb/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Geef het gedrag en de mogelijkheden op voor het overbrengen van inhoud via HTTP. Grote berichten worden mogelijk opgesplitst in kleinere aanvragen aan de connector, om het uploaden van grote berichten toe te staan. Meer informatie vindt u op http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "dWFyfN": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation."
+      "value": "Beveiligde invoerwaarden van de bewerking."
     }
   ],
   "dhvk0u": [
@@ -2032,7 +2032,7 @@
   "euC/DV": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Matrix"
     }
   ],
   "f/lWTW": [
@@ -2068,7 +2068,7 @@
   "g0a4Qe": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Waarde"
     }
   ],
   "g4igOR": [
@@ -2122,7 +2122,7 @@
   "gWRF8m": [
     {
       "type": 0,
-      "value": "Trigger Conditions"
+      "value": "Triggervoorwaarden"
     }
   ],
   "gu9o9z": [
@@ -2192,7 +2192,7 @@
   "i/b3Ko": [
     {
       "type": 0,
-      "value": "Asynchronous Response"
+      "value": "Asynchroon antwoord"
     }
   ],
   "i1cwra": [
@@ -2322,7 +2322,7 @@
   "juR40n": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Duur"
     }
   ],
   "k/oqFL": [
@@ -2424,7 +2424,7 @@
   "lcVG4C": [
     {
       "type": 0,
-      "value": "is skipped"
+      "value": "is overgeslagen"
     }
   ],
   "lgs5sf": [
@@ -2472,7 +2472,7 @@
   "mOr9ll": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
+      "value": "De maximale duur voor één uitgaande aanvraag van deze actie. Als de aanvraag na het uitvoeren van nieuwe pogingen niet binnen deze limiet is voltooid, mislukt de actie."
     }
   ],
   "mPakaD": [
@@ -2490,7 +2490,7 @@
   "mjS/k1": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+      "value": "Een beperking voor Logic Apps instellen om te voorkomen dat de uitgaande aanvraag headers met metagegevens van de werkstroom bevat."
     }
   ],
   "n35O/+": [
@@ -2520,7 +2520,7 @@
   "nZ4nLn": [
     {
       "type": 0,
-      "value": "Suppress workflow headers"
+      "value": "Werkstroomheaders onderdrukken"
     }
   ],
   "ngsC44": [
@@ -2570,7 +2570,7 @@
   "oLtwMw": [
     {
       "type": 0,
-      "value": "Content Transfer"
+      "value": "Inhoudsoverdracht"
     }
   ],
   "oV0xQ9": [
@@ -2642,7 +2642,7 @@
   "ptkf0D": [
     {
       "type": 0,
-      "value": "Security"
+      "value": "Beveiliging"
     }
   ],
   "q/+Uex": [
@@ -2684,7 +2684,7 @@
   "qPUX59": [
     {
       "type": 0,
-      "value": "is successful"
+      "value": "is voltooid"
     }
   ],
   "qSejoi": [
@@ -2746,7 +2746,7 @@
   "qrxi0L": [
     {
       "type": 0,
-      "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+      "value": "Met een asynchroon antwoord kan de logische app antwoorden met een 202-melding (Geaccepteerd) om aan te geven dat het verzoek wordt verwerkt. Er wordt een locatieheader verstrekt om de eindstatus op te halen."
     }
   ],
   "r43nMc": [
@@ -2800,7 +2800,7 @@
   "s7nGyC": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Verwijderen"
     }
   ],
   "sDkAVZ": [
@@ -2812,7 +2812,7 @@
   "sW47JR": [
     {
       "type": 0,
-      "value": "Degree of Parallelism"
+      "value": "Niveau van parallelle uitvoering"
     }
   ],
   "sZ0G/Z": [
@@ -2830,7 +2830,7 @@
   "scmyvO": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Actietime-out"
     }
   ],
   "sfJTHV": [
@@ -2950,7 +2950,7 @@
   "uZH8Qs": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
+      "value": "Beperk de maximale duur tussen herhaalde pogingen en asynchrone antwoorden voor deze actie. Opmerking: hiermee wordt de time-out van de aanvraag van één aanvraag niet gewijzigd."
     }
   ],
   "uc/PoD": [
@@ -3010,7 +3010,7 @@
   "vcBAuU": [
     {
       "type": 0,
-      "value": "has timed out"
+      "value": "heeft een time-out gehad"
     }
   ],
   "vwH/XV": [
@@ -3106,7 +3106,7 @@
   "xQQ9ko": [
     {
       "type": 0,
-      "value": "Threshold"
+      "value": "Drempelwaarde"
     }
   ],
   "xV/oyK": [
