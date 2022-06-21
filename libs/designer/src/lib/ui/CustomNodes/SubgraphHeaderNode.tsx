@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
-  const subgraphId = id.replace('-subgraphHeader', '');
+  const subgraphId = id.split('-#')[0];
 
   const readOnly = useReadOnly();
   const dispatch = useDispatch();

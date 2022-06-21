@@ -29,6 +29,8 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 }) => {
   const readOnly = useReadOnly();
 
+  const sourceId = source.split('-#')[0];
+
   const allChildrenEdges = useEdgesByParent(source);
   const nodeMetadata = useNodeMetadata(source);
   const [edgeCenterX, edgeCenterY] = getEdgeCenter({
@@ -64,7 +66,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               requiredExtensions="http://www.w3.org/1999/xhtml"
             >
               <div style={{ padding: '4px' }}>
-                <DropZone graphId={nodeMetadata?.graphId ?? ''} parent={source} />
+                <DropZone graphId={nodeMetadata?.graphId ?? ''} parent={sourceId} />
               </div>
             </foreignObject>
           )}
@@ -77,7 +79,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
             requiredExtensions="http://www.w3.org/1999/xhtml"
           >
             <div style={{ padding: '4px' }}>
-              <DropZone graphId={nodeMetadata?.graphId ?? ''} parent={source} child={target} />
+              <DropZone graphId={nodeMetadata?.graphId ?? ''} parent={sourceId} child={target} />
             </div>
           </foreignObject>
         </>

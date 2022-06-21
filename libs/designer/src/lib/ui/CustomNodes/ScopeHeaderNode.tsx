@@ -5,7 +5,7 @@ import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '
 import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
-import { ScopeHeaderCard } from '@microsoft/designer-ui';
+import { ScopeCard } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
-  const scopeId = id.replace('-scopeHeader', '');
+  const scopeId = id.split('-#')[0];
 
   const node = useActionMetadata(scopeId);
 
@@ -69,7 +69,7 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
       <>
         <div className="msla-scope-card">
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-          <ScopeHeaderCard
+          <ScopeCard
             brandColor={brandColor}
             icon={iconUri}
             collapsed={false}
