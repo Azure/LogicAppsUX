@@ -73,24 +73,35 @@ export const DataMapperDesigner = () => {
     dispatch(setCurrentOutputNode(currentSchemaNode));
   };
 
-  const reactFlowDrawing = (
-    <ReactFlowProvider>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodeDoubleClick={onNodeDoubleClick}
-        minZoom={0}
-        nodesDraggable={false}
-        fitView
-        proOptions={{
-          account: 'paid-sponsor',
-          hideAttribution: true,
-        }}
-        style={{
-          position: 'unset',
-        }}
-      ></ReactFlow>
-    </ReactFlowProvider>
+  const layeredReactFlow = (
+    <LayerHost
+      id={layerHostId}
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        width: '100%',
+      }}
+    >
+      <div className="msla-designer-canvas msla-panel-mode">
+        <ReactFlowProvider>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodeDoubleClick={onNodeDoubleClick}
+            minZoom={0}
+            nodesDraggable={false}
+            fitView
+            proOptions={{
+              account: 'paid-sponsor',
+              hideAttribution: true,
+            }}
+            style={{
+              position: 'unset',
+            }}
+          />
+        </ReactFlowProvider>
+      </div>
+    </LayerHost>
   );
 
   return (
@@ -100,21 +111,12 @@ export const DataMapperDesigner = () => {
         <EditorBreadcrumb />
 
         {inputSchema && outputSchema ? (
-          <LayerHost
-            id={layerHostId}
-            style={{
-              // TODO - Remove
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            <div className="msla-designer-canvas msla-panel-mode">{reactFlowDrawing}</div>
-          </LayerHost>
+          layeredReactFlow
         ) : (
           <div className="msla-designer-canvas msla-panel-mode not-loaded">
             <div className="left">
               {inputSchema ? (
-                <></> // TODO: show loaded reactflow in this case instead of empty background (14772680)
+                layeredReactFlow
               ) : (
                 <AddSchemaPanelButton
                   schemaType={SchemaTypes.Input}
@@ -125,7 +127,7 @@ export const DataMapperDesigner = () => {
             </div>
             <div className="right">
               {outputSchema ? (
-                <></> // TODO: show loaded reactflow in this case instead of empty background (14772680)
+                layeredReactFlow
               ) : (
                 <AddSchemaPanelButton
                   schemaType={SchemaTypes.Output}
