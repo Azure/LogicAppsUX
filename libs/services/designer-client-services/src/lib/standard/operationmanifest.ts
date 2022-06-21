@@ -2,6 +2,14 @@ import type { IHttpClient } from '../httpClient';
 import type { IOperationManifestService } from '../operationmanifest';
 import conditionManifest from './manifests/condition';
 import csvManifest from './manifests/csvtable';
+import {
+  addToTimeManifest,
+  convertTimezoneManifest,
+  currentTimeManifest,
+  getFutureTimeManifest,
+  getPastTimeManifest,
+  subtractFromTimeManifest,
+} from './manifests/datetime';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
 import joinManifest from './manifests/join';
@@ -59,18 +67,25 @@ const response = 'response';
 const table = 'table';
 const terminate = 'terminate';
 const until = 'until';
+const expression = 'expression';
+const addtotime = 'addtotime';
+const converttimezone = 'converttimezone';
+const currenttime = 'currenttime';
+const getfuturetime = 'getfuturetime';
+const getpasttime = 'getpasttime';
+const subtractfromtime = 'subtractfromtime';
 
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
+const dateTimeConnectorId = 'connectionProviders/datetime';
 
 const supportedManifestTypes = [
   compose,
   condition,
-  csvtable,
+  expression,
   foreach,
   function_,
-  htmltable,
   initializevariable,
   incrementvariable,
   invokefunction,
@@ -272,6 +287,7 @@ function isInBuiltOperation(definition: any): boolean {
   switch (definition.type.toLowerCase()) {
     case compose:
     case condition:
+    case expression:
     case foreach:
     case function_:
     case initializevariable:
@@ -314,6 +330,22 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
 
   const liquidConnectorId = 'connectionProviders/liquidOperations';
   switch (normalizedOperationType) {
+    case expression:
+      switch (definition.kind?.toLowerCase()) {
+        case addtotime:
+        case converttimezone:
+        case currenttime:
+        case getfuturetime:
+        case getpasttime:
+        case subtractfromtime:
+          return {
+            connectorId: dateTimeConnectorId,
+            operationId: definition.kind.toLowerCase(),
+          };
+
+        default:
+          throw new UnsupportedException(`Unsupported datetime kind '${definition.kind}'`);
+      }
     case liquid:
       switch (kind) {
         case 'jsontojson':
@@ -478,9 +510,14 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
 };
 
 const supportedManifestObjects = new Map<string, OperationManifest>([
+  [addtotime, addToTimeManifest],
   [condition, conditionManifest],
+  [converttimezone, convertTimezoneManifest],
   [csvtable, csvManifest],
+  [currenttime, currentTimeManifest],
   [foreach, foreachManifest],
+  [getfuturetime, getFutureTimeManifest],
+  [getpasttime, getPastTimeManifest],
   [htmltable, htmlManifest],
   [join, joinManifest],
   [parsejson, parsejsonManifest],
@@ -489,6 +526,7 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
+  [subtractfromtime, subtractFromTimeManifest],
   [switchType, switchManifest],
   [terminate, terminateManifest],
   [until, untilManifest],
