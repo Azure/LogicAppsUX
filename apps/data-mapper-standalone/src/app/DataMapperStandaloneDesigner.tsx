@@ -11,6 +11,7 @@ export const DataMapperStandaloneDesigner = () => {
 
   const saveStateCall = () => {
     new Promise((resolve) => setTimeout(resolve, 10));
+    // console.log();
   };
 
   return (
@@ -18,7 +19,7 @@ export const DataMapperStandaloneDesigner = () => {
       <DevToolbox />
       <DataMapperDesignerProvider locale="en-US" options={{}}>
         <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={availableSchemas}>
-          <DataMapperDesigner saveStateCall={saveStateCall} isStateDirty={false} />
+          <DataMapperDesigner saveStateCall={saveStateCall} />
         </DataMapDataProvider>
       </DataMapperDesignerProvider>
     </>

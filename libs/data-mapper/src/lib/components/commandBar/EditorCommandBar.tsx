@@ -156,7 +156,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       text: showUndo ? Resources.UNDO : Resources.REDO,
       ariaLabel: showUndo ? Resources.UNDO : Resources.REDO,
       iconProps: { iconName: showUndo ? 'Undo' : 'Redo' },
-      split: false,
+      split: true,
       subMenuProps: {
         items: [
           {
@@ -199,7 +199,6 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       key: 'test',
       text: Resources.RUN_TEST,
       ariaLabel: Resources.RUN_TEST,
-      split: true,
       iconProps: { iconName: 'Play' },
       onClick: onTestClick,
     },

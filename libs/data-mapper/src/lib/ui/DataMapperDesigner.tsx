@@ -21,10 +21,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export interface DataMapperDesignerProps {
   saveStateCall: () => void;
-  isStateDirty: boolean;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, isStateDirty }) => {
+export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall }) => {
   const layerHostId = useId('layerHost');
   const panelLayerProps: ILayerProps = {
     hostId: layerHostId,
@@ -33,6 +32,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
   const availableSchemas = useSelector((state: RootState) => state.schema.availableSchemas);
+  const isStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
 
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch<AppDispatch>();
