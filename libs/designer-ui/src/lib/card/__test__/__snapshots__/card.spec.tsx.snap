@@ -1,29 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`lib/card should render 1`] = `
-<div>
+<div
+  style={
+    Object {
+      "position": "relative",
+    }
+  }
+>
   <div
     aria-label="title"
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
+    tabIndex={0}
   >
+    <div
+      className="msla-selection-box"
+    />
     <div
       className="panel-card-main"
     >
       <div
         className="panel-card-header"
-        onContextMenu={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
         role="button"
-        tabIndex={0}
       >
         <div
           className="panel-card-content-container"
@@ -55,29 +64,38 @@ exports[`lib/card should render 1`] = `
 `;
 
 exports[`lib/card should render as cloned 1`] = `
-<div>
+<div
+  style={
+    Object {
+      "position": "relative",
+    }
+  }
+>
   <div
     aria-label="title"
     className="msla-panel-card-container msla-card-ghost-image"
     data-testid="card-title"
     onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
+    tabIndex={0}
   >
+    <div
+      className="msla-selection-box"
+    />
     <div
       className="panel-card-main"
     >
       <div
         className="panel-card-header"
-        onContextMenu={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
         role="button"
-        tabIndex={0}
       >
         <div
           className="panel-card-content-container"
@@ -109,29 +127,38 @@ exports[`lib/card should render as cloned 1`] = `
 `;
 
 exports[`lib/card should render as draggable 1`] = `
-<div>
+<div
+  style={
+    Object {
+      "position": "relative",
+    }
+  }
+>
   <div
     aria-label="title"
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
+    tabIndex={0}
   >
+    <div
+      className="msla-selection-box"
+    />
     <div
       className="panel-card-main"
     >
       <div
         className="panel-card-header"
-        onContextMenu={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
         role="button"
-        tabIndex={0}
       >
         <div
           className="panel-card-content-container"
@@ -139,22 +166,18 @@ exports[`lib/card should render as draggable 1`] = `
           <div
             className="panel-card-content-gripper-section draggable"
           >
-            <span
-              tabIndex={0}
+            <svg
+              fill="none"
+              height="15"
+              viewBox="0 0 2 10"
+              width="8"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <svg
-                fill="none"
-                height="15"
-                viewBox="0 0 2 10"
-                width="8"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M0 2V0H2V2H0ZM0 6V4H2V6H0ZM0 10V8H2V10H0Z"
-                  fill="#605E5C"
-                />
-              </svg>
-            </span>
+              <path
+                d="M0 2V0H2V2H0ZM0 6V4H2V6H0ZM0 10V8H2V10H0Z"
+                fill="#605E5C"
+              />
+            </svg>
           </div>
           <div
             className="panel-card-top-content"
@@ -180,29 +203,38 @@ exports[`lib/card should render as draggable 1`] = `
 `;
 
 exports[`lib/card should render as inactive 1`] = `
-<div>
+<div
+  style={
+    Object {
+      "position": "relative",
+    }
+  }
+>
   <div
     aria-label="title"
     className="msla-panel-card-container inactive"
     data-testid="card-title"
     onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
+    tabIndex={0}
   >
+    <div
+      className="msla-selection-box"
+    />
     <div
       className="panel-card-main"
     >
       <div
         className="panel-card-header"
-        onContextMenu={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
         role="button"
-        tabIndex={0}
       >
         <div
           className="panel-card-content-container"
@@ -234,29 +266,38 @@ exports[`lib/card should render as inactive 1`] = `
 `;
 
 exports[`lib/card should render as selected 1`] = `
-<div>
+<div
+  style={
+    Object {
+      "position": "relative",
+    }
+  }
+>
   <div
     aria-label="title"
     className="msla-panel-card-container msla-panel-card-container-selected"
     data-testid="card-title"
     onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
+    tabIndex={0}
   >
+    <div
+      className="msla-selection-box selected"
+    />
     <div
       className="panel-card-main"
     >
       <div
         className="panel-card-header"
-        onContextMenu={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
         role="button"
-        tabIndex={0}
       >
         <div
           className="panel-card-content-container"
@@ -288,29 +329,38 @@ exports[`lib/card should render as selected 1`] = `
 `;
 
 exports[`lib/card should render with a context menu 1`] = `
-<div>
+<div
+  style={
+    Object {
+      "position": "relative",
+    }
+  }
+>
   <div
     aria-label="title"
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
+    tabIndex={0}
   >
+    <div
+      className="msla-selection-box"
+    />
     <div
       className="panel-card-main"
     >
       <div
         className="panel-card-header"
-        onContextMenu={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
         role="button"
-        tabIndex={0}
       >
         <div
           className="panel-card-content-container"
@@ -342,29 +392,38 @@ exports[`lib/card should render with a context menu 1`] = `
 `;
 
 exports[`lib/card should render with an icon 1`] = `
-<div>
+<div
+  style={
+    Object {
+      "position": "relative",
+    }
+  }
+>
   <div
     aria-label="title"
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
+    tabIndex={0}
   >
+    <div
+      className="msla-selection-box"
+    />
     <div
       className="panel-card-main"
     >
       <div
         className="panel-card-header"
-        onContextMenu={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
         role="button"
-        tabIndex={0}
       >
         <div
           className="panel-card-content-container"
