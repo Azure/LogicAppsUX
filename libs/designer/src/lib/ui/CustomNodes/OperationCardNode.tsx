@@ -3,6 +3,7 @@ import { expandPanel, changePanelNode } from '../../core/state/panelSlice';
 import {
   useBrandColor,
   useIconUri,
+  useNodeConnectionName,
   useNodeDescription,
   useNodeMetadata,
   useOperationInfo,
@@ -54,6 +55,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
+  const connectionName = useNodeConnectionName(id);
 
   const [isFirstChild, setIsFirstChild] = useState(false);
   useEffect(() => {
@@ -77,8 +79,9 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     [dispatch, isCollapsed]
   );
 
-  const brandColor = useBrandColor(operationInfo);
-  const iconUri = useIconUri(operationInfo);
+  const brandColorResult = useBrandColor(operationInfo);
+  const iconUriResult = useIconUri(operationInfo);
+
   if (metadata?.isPlaceholderNode) {
     if (readOnly || !isFirstChild) return null;
     return (
@@ -91,9 +94,10 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     );
   }
 
+  const brandColor = brandColorResult.result;
   const comment = nodeComment
     ? {
-        brandColor: brandColor,
+        brandColor,
         comment: nodeComment,
         isDismissed: false,
         isEditing: false,
@@ -122,17 +126,18 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
         ) : (
           <Card
             title={label}
-            icon={iconUri}
+            icon={iconUriResult.result}
             draggable={!readOnly}
             brandColor={brandColor}
             id={id}
             connectionRequired={false}
-            connectionDisplayName={undefined}
+            connectionDisplayName={connectionName}
             commentBox={comment}
             drag={drag}
             dragPreview={dragPreview}
             isDragging={isDragging}
             isMonitoringView={isMonitoringView}
+            isLoading={iconUriResult.isLoading}
             readOnly={readOnly}
             onClick={nodeClick}
           />

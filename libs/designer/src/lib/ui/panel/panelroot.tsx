@@ -1,5 +1,6 @@
+import constants from '../../common/constants';
 import { collapsePanel, expandPanel } from '../../core/state/panelSlice';
-import { useIconUri, useNodeDescription, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useIconUri, useNodeDescription, useNodeMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
 import { setNodeDescription } from '../../core/state/workflowSlice';
 import type { RootState } from '../../core/store';
@@ -12,6 +13,7 @@ import { RecommendationPanelContext } from './recommendation/recommendationPanel
 import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption, PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
 import {
+  updateTabs,
   getTabs,
   MenuItemType,
   PanelContainer,
@@ -47,16 +49,43 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
 
   const comment = useNodeDescription(selectedNode);
   const operationInfo = useOperationInfo(selectedNode);
-  const iconUri = useIconUri(operationInfo);
+  const iconUriResult = useIconUri(operationInfo);
+  const nodeMetaData = useNodeMetadata(selectedNode);
   const showCommentBox = !isNullOrUndefined(comment);
+
   useEffect(() => {
-    monitoringTab.enabled = !!isMonitoringView;
+    monitoringTab.visible = !!isMonitoringView;
     setRegisteredTabs((currentTabs) => registerTabs([monitoringTab, parametersTab, SettingsTab, codeViewTab, aboutTab], currentTabs));
   }, [readOnly, isMonitoringView]);
 
   useEffect(() => {
     setSelectedTab(getTabs(true, registeredTabs)[0]?.name.toLowerCase());
   }, [registeredTabs]);
+
+  useEffect(() => {
+    if (nodeMetaData && nodeMetaData.subgraphType) {
+      setRegisteredTabs((currentTabs) =>
+        updateTabs(currentTabs, (tab) => {
+          return {
+            ...tab,
+            visible:
+              tab.name === constants.PANEL_TAB_NAMES.MONITORING
+                ? tab.visible
+                : (nodeMetaData.subgraphType === 'SWITCH-CASE' && tab.name === constants.PANEL_TAB_NAMES.PARAMETERS) ?? false,
+          };
+        })
+      );
+    } else {
+      setRegisteredTabs((currentTabs) =>
+        updateTabs(currentTabs, (tab) => {
+          return {
+            ...tab,
+            visible: tab.name === constants.PANEL_TAB_NAMES.MONITORING ? tab.visible : true,
+          };
+        })
+      );
+    }
+  }, [selectedNode, nodeMetaData]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -163,11 +192,12 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
     <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width}></RecommendationPanelContext>
   ) : (
     <PanelContainer
-      cardIcon={iconUri}
+      cardIcon={iconUriResult.result}
       comment={comment}
       panelLocation={PanelLocation.Right}
       isCollapsed={collapsed}
       noNodeSelected={!selectedNode}
+      isLoading={iconUriResult.isLoading}
       panelScope={PanelScope.CardLevel}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}

@@ -1,5 +1,5 @@
 import type { WorkflowState } from '../../../state/workflowSlice';
-import type { WorkflowGraph } from '../workflowNode';
+import type { WorkflowGraph } from '../../models/workflowNode';
 
 export const initialState: WorkflowState = {
   graph: {

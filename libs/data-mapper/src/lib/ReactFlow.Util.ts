@@ -1,6 +1,4 @@
-import type { SchemaNodeExtended } from '../../models/Schema';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
+import type { SchemaNodeExtended } from './models/Schema';
 import type { Node as ReactFlowNode } from 'react-flow-renderer';
 import { Position } from 'react-flow-renderer';
 
@@ -14,33 +12,7 @@ const rootOutputY = 0;
 const childOutputX = rootOutputX + 10;
 const childOutputYOffset = 50;
 
-export interface UpdateReactFlowAction {
-  inputSchema?: SchemaNodeExtended;
-  outputSchema?: SchemaNodeExtended;
-}
-
-export interface ReactFlowState {
-  graph?: ReactFlowNode[];
-}
-
-export const initialReactFlowState: ReactFlowState = {
-  graph: undefined,
-};
-
-export const reactFlowSlice = createSlice({
-  name: 'reactFlow',
-  initialState: initialReactFlowState,
-  reducers: {
-    updateReactFlowForSchema: (state, action: PayloadAction<UpdateReactFlowAction>) => {
-      const { inputSchema, outputSchema } = action.payload;
-      const newGraph = convertToReactFlowNode(inputSchema, outputSchema);
-
-      state.graph = newGraph;
-    },
-  },
-});
-
-const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, outputSchemaNode?: SchemaNodeExtended): ReactFlowNode[] => {
+export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, outputSchemaNode?: SchemaNodeExtended): ReactFlowNode[] => {
   const reactFlowNodes: ReactFlowNode[] = [];
 
   if (inputSchemaNode) {
@@ -105,8 +77,3 @@ const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, outputSche
 
   return reactFlowNodes;
 };
-
-// Action creators are generated for each case reducer function
-export const { updateReactFlowForSchema } = reactFlowSlice.actions;
-
-export default reactFlowSlice.reducer;
