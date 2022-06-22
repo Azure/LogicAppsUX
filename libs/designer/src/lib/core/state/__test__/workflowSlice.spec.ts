@@ -11,9 +11,10 @@ describe('workflow slice reducers', () => {
     const state = reducer(initialState, addNode(mockAddNode));
     expect(state.graph?.children).toEqual([
       {
-        height: 67,
         id: '123',
+        height: 67,
         width: 200,
+        type: 'testNode',
       },
     ]);
     expect(state.nodesMetadata).toEqual({

@@ -56,7 +56,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
-  const processChildren = (node: ElkNode, parent?: string) => {
+  const processChildren = (node: ElkNode) => {
     if (node.edges) {
       for (const edge of node.edges as ElkExtendedEdge[]) {
         edges.push({
@@ -71,16 +71,6 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
       }
     }
 
-    if (parent && parent !== 'root') {
-      nodes.push({
-        id: node.id,
-        position: { x: node.x ?? 0, y: node.y ?? 0 },
-        data: { label: node.id },
-        parentNode: parent,
-        type: node.layoutOptions?.['nodeType'] ?? defaultNodeType,
-        style: node.children ? { height: node.height, width: node.width } : undefined,
-      });
-    }
     if (node.children) {
       for (const n of node.children as ElkNode[]) {
         nodes.push({
@@ -89,9 +79,9 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
           data: { label: n.id },
           parentNode: node.id !== 'root' ? node.id : undefined,
           type: n.layoutOptions?.['nodeType'] ?? defaultNodeType,
-          style: n.children ? { height: n.height, width: n.width } : undefined,
+          style: n?.children && n?.height ? { height: n?.height, width: n?.width } : undefined,
         });
-        processChildren(n, node.id);
+        processChildren(n);
       }
     }
   };
@@ -102,7 +92,9 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
 const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
   if (isWorkflowNode(node)) {
     return {
-      ...node,
+      id: node.id,
+      height: node.height,
+      width: node.width,
       edges: undefined, // node has no edges
       children: node.children?.map(convertWorkflowGraphToElkGraph),
       layoutOptions: {
@@ -112,18 +104,19 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
   } else {
     const children = node.children?.map(convertWorkflowGraphToElkGraph);
     return {
-      ...node,
+      id: node.id,
+      height: node.height,
+      width: node.width,
       children,
-      edges: node.edges?.map((edge) => ({
-        ...edge,
-        targets: [edge.target],
-        sources: [edge.source],
-        target: undefined,
-        source: undefined,
-        layoutOptions: {
-          edgeType: edge?.type ?? defaultEdgeType,
-        },
-      })),
+      edges:
+        node.edges?.map((edge) => ({
+          id: edge.id,
+          sources: [edge.source],
+          targets: [edge.target],
+          layoutOptions: {
+            edgeType: edge?.type ?? defaultEdgeType,
+          },
+        })) ?? [],
       layoutOptions: {
         'elk.padding': '[top=0,left=16,bottom=48,right=16]', // allow space for add buttons
         'elk.position': `(0, 0)`, // See 'crossingMinimization.semiInteractive' above

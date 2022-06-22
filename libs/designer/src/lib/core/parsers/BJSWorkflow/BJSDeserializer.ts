@@ -45,6 +45,7 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Deseria
         id: `${triggerNode?.id}-${key}`,
         source: triggerNode?.id ?? '',
         target: key,
+        type: 'buttonEdge',
       });
     }
   }
@@ -98,8 +99,7 @@ const createWorkflowEdge = (source: string, target: string, type?: WorkflowEdgeT
 
 const buildGraphFromActions = (
   actions: Record<string, LogicAppsV2.ActionDefinition>,
-  graphId: string,
-  hidden?: boolean
+  graphId: string
 ): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
   const nodes: WorkflowNode[] = [];
   const edges: WorkflowEdge[] = [];
@@ -173,6 +173,7 @@ const processScopeActions = (
   // For use on scope nodes with multiple flows
   const applySubgraphActions = (subgraphId: string, actions: LogicAppsV2.Actions | undefined, subgraphType: SubgraphType) => {
     const [graph, operations, metadata] = processNestedActions(subgraphId, actions);
+    if (!graph?.edges) graph.edges = [];
 
     nodes.push(graph);
     allActions = { ...allActions, ...operations };
@@ -188,7 +189,7 @@ const processScopeActions = (
     edges.push(createWorkflowEdge(scopeId, subgraphHeaderNode.id, isAddCase ? 'hiddenEdge' : 'onlyEdge'));
     // Connect subgraphHeader to first child
     if (graph.children?.[0]) {
-      edges.push(createWorkflowEdge(rootId, graph.children[0].id));
+      graph.edges.push(createWorkflowEdge(rootId, graph.children[0].id));
     }
 
     graph.children = [subgraphHeaderNode, ...(graph.children ?? [])];
@@ -213,7 +214,7 @@ const processScopeActions = (
 
 const processNestedActions = (graphId: string, actions: LogicAppsV2.Actions | undefined): [WorkflowNode, Operations, NodesMetadata] => {
   const [children, edges, scopeActions, scopeNodesMetadata] = !isNullOrUndefined(actions)
-    ? buildGraphFromActions(actions, graphId, true)
+    ? buildGraphFromActions(actions, graphId)
     : [[], [], {}, {}];
 
   return [
