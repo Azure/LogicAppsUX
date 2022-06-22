@@ -327,6 +327,12 @@
       "value": "Obbligatorio. Separatore."
     }
   ],
+  "3X/ZDK": [
+    {
+      "type": 0,
+      "value": "Upload or select an output schema to be used for your map."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -349,6 +355,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero di un'unità di tempo specificata da sottrarre."
+    }
+  ],
+  "3wagjT": [
+    {
+      "type": 0,
+      "value": "select input"
     }
   ],
   "47kOXr": [
@@ -585,6 +597,12 @@
       "value": "Connettore"
     }
   ],
+  "9I0PcK": [
+    {
+      "type": 0,
+      "value": "Add output schema"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -607,6 +625,12 @@
     {
       "type": 0,
       "value": "Restituisce il risultato dell'aggiunta dei due numeri"
+    }
+  ],
+  "9mWdNA": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
     }
   ],
   "9u/Ae3": [
@@ -941,6 +965,12 @@
       "value": "Converte il timestamp in formato stringa passato da UTIC al fuso orario di destinazione"
     }
   ],
+  "IngtMG": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -969,6 +999,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa contenente l'ora."
+    }
+  ],
+  "JQlAMD": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1013,6 +1049,12 @@
       "value": "Necessario. Stringa di formato numerico."
     }
   ],
+  "JqZfdk": [
+    {
+      "type": 0,
+      "value": "Add input schema"
+    }
+  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1023,6 +1065,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Oggetto a cui aggiungere una nuova proprietà."
+    }
+  ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
     }
   ],
   "K90YEU": [
@@ -1723,6 +1771,12 @@
       "value": "Richiesta"
     }
   ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -1853,6 +1907,12 @@
       "value": "Gestione dei dati"
     }
   ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -1899,6 +1959,12 @@
     {
       "type": 0,
       "value": "Restituisce un oggetto con una proprietà impostata sul valore specificato"
+    }
+  ],
+  "c5/wGq": [
+    {
+      "type": 0,
+      "value": "select output"
     }
   ],
   "c6XbVI": [
@@ -2575,6 +2641,12 @@
       "value": "Immettere l'identificatore di esecuzione per aprire l'esecuzione"
     }
   ],
+  "orhWzV": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
+    }
+  ],
   "p/0r2N": [
     {
       "type": 0,
@@ -2857,6 +2929,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa contenente il nome del fuso orario del fuso orario di destinazione. Per informazioni dettagliate, vedere https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "t5CdhT": [
+    {
+      "type": 0,
+      "value": "Upload or select an input schema to be used for your map."
     }
   ],
   "tE7Zam": [
