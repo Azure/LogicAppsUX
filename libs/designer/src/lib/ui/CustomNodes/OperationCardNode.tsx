@@ -5,6 +5,7 @@ import { expandPanel, changePanelNode } from '../../core/state/panel/panelSlice'
 import {
   useBrandColor,
   useIconUri,
+  useNodeConnectionName,
   useNodeDescription,
   useNodeMetadata,
   useOperationInfo,
@@ -12,6 +13,7 @@ import {
 import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
+import { labelCase } from '@microsoft-logic-apps/utils';
 import { Card } from '@microsoft/designer-ui';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -55,6 +57,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
+  const connectionName = useNodeConnectionName(id);
 
   const [isFirstChild, setIsFirstChild] = useState(false);
   useEffect(() => {
@@ -68,8 +71,9 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     dispatch(changePanelNode(id));
   }, [dispatch, id, isCollapsed]);
 
-  const brandColor = useBrandColor(operationInfo);
-  const iconUri = useIconUri(operationInfo);
+  const brandColorResult = useBrandColor(operationInfo);
+  const iconUriResult = useIconUri(operationInfo);
+
   if (metadata?.isPlaceholderNode) {
     if (readOnly || !isFirstChild) return null;
     return (
@@ -79,27 +83,29 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     );
   }
 
+  const brandColor = brandColorResult.result;
   const comment = nodeComment
     ? {
-        brandColor: brandColor,
+        brandColor,
         comment: nodeComment,
         isDismissed: false,
         isEditing: false,
       }
     : undefined;
 
+  const label = labelCase(data.label);
   return (
     <>
       <div>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
-          title={data.label}
-          icon={iconUri}
+          title={label}
+          icon={iconUriResult.result}
           draggable={!readOnly}
           brandColor={brandColor}
           id={id}
           connectionRequired={false}
-          connectionDisplayName={undefined}
+          connectionDisplayName={connectionName}
           commentBox={comment}
           drag={drag}
           dragPreview={dragPreview}

@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
-import { isRootNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import type { Operations } from '../../state/workflowSlice';
+import { isRootNode } from '../../utils/graph';
 import {
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
@@ -19,7 +19,15 @@ import { getOperationSettings } from './settings';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { map, aggregate, ConnectionReferenceKeyFormat, equals, getObjectPropertyValue, unmap } from '@microsoft-logic-apps/utils';
+import {
+  getPropertyValue,
+  map,
+  aggregate,
+  ConnectionReferenceKeyFormat,
+  equals,
+  getObjectPropertyValue,
+  unmap,
+} from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -28,7 +36,7 @@ export interface NodeDataWithManifest extends NodeData {
 }
 
 export const initializeOperationMetadata = async (deserializedWorkflow: DeserializedWorkflow, dispatch: Dispatch): Promise<void> => {
-  const promises: Promise<NodeDataWithManifest | undefined>[] = [];
+  const promises: Promise<NodeDataWithManifest[] | undefined>[] = [];
   const { actionData: operations, graph, nodesMetadata } = deserializedWorkflow;
   const operationManifestService = OperationManifestService();
   let triggerNodeId = '';
@@ -46,7 +54,7 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
     }
   }
 
-  const allNodeData = (await Promise.all(promises)).filter((node) => !!node) as NodeDataWithManifest[];
+  const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithManifest[][]);
 
   updateTokenMetadataInParameters(allNodeData, operations, triggerNodeId);
   dispatch(clearPanel());
@@ -65,20 +73,67 @@ const initializeOperationDetailsForManifest = async (
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
   dispatch: Dispatch
-): Promise<NodeDataWithManifest | undefined> => {
-  const operationInfo = await getOperationInfo(nodeId, operation);
+): Promise<NodeDataWithManifest[] | undefined> => {
+  try {
+    const operationInfo = await getOperationInfo(nodeId, operation);
 
-  if (operationInfo) {
-    const manifest = await getOperationManifest(operationInfo);
+    if (operationInfo) {
+      const manifest = await getOperationManifest(operationInfo);
 
-    dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
+      dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
 
-    const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
-    const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);
-    const settings = getOperationSettings(operation, isTrigger, operation.type, manifest);
-    return { id: nodeId, nodeInputs, nodeOutputs, settings, manifest };
+      const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
+      const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);
+      const settings = getOperationSettings(operation, isTrigger, operation.type, manifest);
+
+      const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
+      return [{ id: nodeId, nodeInputs, nodeOutputs, settings, manifest }, ...childGraphInputs];
+    }
+
+    return;
+  } catch (error) {
+    const errorMessage = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
+    console.log(errorMessage);
+
+    return;
   }
-  return;
+};
+
+const processChildGraphAndItsInputs = (
+  manifest: OperationManifest,
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+): NodeDataWithManifest[] => {
+  const { subGraphDetails } = manifest.properties;
+  const nodesData: NodeDataWithManifest[] = [];
+
+  if (subGraphDetails) {
+    for (const subGraphKey of Object.keys(subGraphDetails)) {
+      const { inputs, inputsLocation, isAdditive } = subGraphDetails[subGraphKey];
+      const subOperation = getPropertyValue(operation, subGraphKey);
+      if (inputs) {
+        const subManifest = { properties: { inputs, inputsLocation } } as any;
+        if (isAdditive) {
+          for (const subNodeKey of Object.keys(subOperation)) {
+            nodesData.push({
+              id: subNodeKey,
+              nodeInputs: getInputParametersFromManifest(subNodeKey, subManifest, subOperation[subNodeKey]),
+              nodeOutputs: { outputs: {} },
+              manifest: subManifest,
+            });
+          }
+        }
+
+        nodesData.push({
+          id: subGraphKey,
+          nodeInputs: getInputParametersFromManifest(subGraphKey, subManifest, subOperation),
+          nodeOutputs: { outputs: {} },
+          manifest: subManifest,
+        });
+      }
+    }
+  }
+
+  return nodesData;
 };
 
 const getInputParametersFromManifest = (nodeId: string, manifest: OperationManifest, stepDefinition: any): NodeInputs => {
@@ -86,11 +141,9 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
     false /* includeParentObject */,
     0 /* expandArrayPropertiesDepth */
   );
-  let nodeType = '';
   let primaryInputParametersInArray = unmap(primaryInputParameters);
 
   if (stepDefinition) {
-    nodeType = stepDefinition.type;
     const { inputsLocation } = manifest.properties;
 
     // In the case of retry policy, it is treated as an input
@@ -125,7 +178,7 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
     loadParameterValuesFromDefault(primaryInputParameters);
   }
 
-  const allParametersAsArray = toParameterInfoMap(nodeType, primaryInputParametersInArray, stepDefinition, nodeId);
+  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
 
   // TODO(14490585)- Initialize editor view models
 

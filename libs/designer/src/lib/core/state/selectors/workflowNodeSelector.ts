@@ -27,7 +27,7 @@ export const useWorkflowNode = (actionId?: string) => {
   });
 };
 
-export const useEdgesByParent = (parentId?: string) => {
+export const useEdgesByParent = (parentId?: string): WorkflowEdge[] => {
   return useSelector((state: RootState) => {
     if (!parentId) {
       return [];
@@ -46,7 +46,7 @@ export const useEdgesByParent = (parentId?: string) => {
   });
 };
 
-export const useEdgesByChild = (childId?: string) => {
+export const useEdgesByChild = (childId?: string): WorkflowEdge[] => {
   return useSelector((state: RootState) => {
     if (!childId) {
       return [];

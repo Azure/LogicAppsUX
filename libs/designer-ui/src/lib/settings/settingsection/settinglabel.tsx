@@ -1,5 +1,5 @@
-import { IconButton, TooltipHost } from "@fluentui/react";
-import type { IIconStyles, IIconProps } from "@fluentui/react";
+import { IconButton, TooltipHost } from '@fluentui/react';
+import type { IIconStyles, IIconProps } from '@fluentui/react';
 
 export interface SettingLabelProps {
   labelText: string;
@@ -16,7 +16,6 @@ const infoIconStyles: IIconStyles = {
     color: '#8d8686',
   },
 };
-
 
 export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLabelProps): JSX.Element {
   const className = isChild ? 'msla-setting-section-row-child-label' : 'msla-setting-section-row-label';

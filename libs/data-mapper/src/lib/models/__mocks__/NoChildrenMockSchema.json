@@ -1,0 +1,15 @@
+{
+  "name": "CustomerOrders.xsd",
+  "type": "XML",
+  "targetNamespace": "http://NewMapper.CustomerOrders",
+  "namespaces": {
+    "ns0": "http://NewMapper.CustomerOrders"
+  },
+  "schemaTreeRoot": {
+    "key": "/ns0:CustomerOrders",
+    "name": "CustomerOrders",
+    "namespacePrefix": "ns0",
+    "type": "ComplexType",
+    "children": []
+  }
+}

@@ -2,6 +2,14 @@ import type { IHttpClient } from '../httpClient';
 import type { IOperationManifestService } from '../operationmanifest';
 import conditionManifest from './manifests/condition';
 import csvManifest from './manifests/csvtable';
+import {
+  addToTimeManifest,
+  convertTimezoneManifest,
+  currentTimeManifest,
+  getFutureTimeManifest,
+  getPastTimeManifest,
+  subtractFromTimeManifest,
+} from './manifests/datetime';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
 import joinManifest from './manifests/join';
@@ -12,6 +20,8 @@ import responseManifest from './manifests/response';
 import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
+import terminateManifest from './manifests/terminate';
+import untilManifest from './manifests/until';
 import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft-logic-apps/parsers';
 import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
 import {
@@ -55,17 +65,27 @@ const incrementvariable = 'incrementvariable';
 const request = 'request';
 const response = 'response';
 const table = 'table';
+const terminate = 'terminate';
+const until = 'until';
+const expression = 'expression';
+const addtotime = 'addtotime';
+const converttimezone = 'converttimezone';
+const currenttime = 'currenttime';
+const getfuturetime = 'getfuturetime';
+const getpasttime = 'getpasttime';
+const subtractfromtime = 'subtractfromtime';
 
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
+const controlConnectorId = 'connectionProviders/control';
+const dateTimeConnectorId = 'connectionProviders/datetime';
 
 const supportedManifestTypes = [
   compose,
   condition,
-  csvtable,
+  expression,
   foreach,
   function_,
-  htmltable,
   initializevariable,
   incrementvariable,
   invokefunction,
@@ -88,11 +108,13 @@ const supportedManifestTypes = [
   scope,
   swiftdecode,
   swiftencode,
+  terminate,
+  until,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
 
-interface StandardOperationManifestServiceOptions {
+export interface StandardOperationManifestServiceOptions {
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;
@@ -150,7 +172,7 @@ export class StandardOperationManifestService implements IOperationManifestServi
     const operationName = operationId.split('/').slice(-1)[0];
     const queryParameters = {
       'api-version': apiVersion,
-      expand: 'properties/manifest',
+      $expand: 'properties/manifest',
     };
 
     try {
@@ -265,6 +287,7 @@ function isInBuiltOperation(definition: any): boolean {
   switch (definition.type.toLowerCase()) {
     case compose:
     case condition:
+    case expression:
     case foreach:
     case function_:
     case initializevariable:
@@ -288,6 +311,8 @@ function isInBuiltOperation(definition: any): boolean {
     case swiftdecode:
     case swiftencode:
     case table:
+    case terminate:
+    case until:
       return true;
 
     default:
@@ -305,6 +330,22 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
 
   const liquidConnectorId = 'connectionProviders/liquidOperations';
   switch (normalizedOperationType) {
+    case expression:
+      switch (definition.kind?.toLowerCase()) {
+        case addtotime:
+        case converttimezone:
+        case currenttime:
+        case getfuturetime:
+        case getpasttime:
+        case subtractfromtime:
+          return {
+            connectorId: dateTimeConnectorId,
+            operationId: definition.kind.toLowerCase(),
+          };
+
+        default:
+          throw new UnsupportedException(`Unsupported datetime kind '${definition.kind}'`);
+      }
     case liquid:
       switch (kind) {
         case 'jsontojson':
@@ -379,11 +420,11 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     operationId: 'composeNew',
   },
   [condition]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: condition,
   },
   [foreach]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: foreach,
   },
   [function_]: {
@@ -423,7 +464,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     operationId: select,
   },
   [switchType]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: switchType,
   },
   [workflow]: {
@@ -447,7 +488,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     operationId: 'flatFileEncoding',
   },
   [scope]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: scope,
   },
   [swiftdecode]: {
@@ -458,12 +499,25 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: 'connectionProviders/swiftOperations',
     operationId: 'swiftEncode',
   },
+  [terminate]: {
+    connectorId: controlConnectorId,
+    operationId: terminate,
+  },
+  [until]: {
+    connectorId: controlConnectorId,
+    operationId: until,
+  },
 };
 
 const supportedManifestObjects = new Map<string, OperationManifest>([
+  [addtotime, addToTimeManifest],
   [condition, conditionManifest],
+  [converttimezone, convertTimezoneManifest],
   [csvtable, csvManifest],
+  [currenttime, currentTimeManifest],
   [foreach, foreachManifest],
+  [getfuturetime, getFutureTimeManifest],
+  [getpasttime, getPastTimeManifest],
   [htmltable, htmlManifest],
   [join, joinManifest],
   [parsejson, parsejsonManifest],
@@ -472,5 +526,8 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
+  [subtractfromtime, subtractFromTimeManifest],
   [switchType, switchManifest],
+  [terminate, terminateManifest],
+  [until, untilManifest],
 ]);

@@ -5,6 +5,7 @@ import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '
 import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
+import { labelCase } from '@microsoft-logic-apps/utils';
 import { ScopeCard } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
 import { useDrag } from 'react-dnd';
@@ -63,6 +64,8 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
 
   const normalizedType = node.type.toLowerCase();
 
+  const label = labelCase(scopeId);
+
   const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope'];
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
@@ -70,8 +73,9 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
         <div className="msla-scope-card">
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           <ScopeCard
-            brandColor={brandColor}
-            icon={iconUri}
+            brandColor={brandColor.result}
+            icon={iconUri.result}
+            isLoading={iconUri.isLoading}
             collapsed={false}
             drag={drag}
             draggable={!readOnly}
@@ -79,7 +83,7 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
             isDragging={isDragging}
             id={scopeId}
             isMonitoringView={isMonitoringView}
-            title={scopeId}
+            title={label}
             readOnly={readOnly}
             onClick={nodeClick}
             selected={selected}

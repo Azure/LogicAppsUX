@@ -14,7 +14,7 @@ export const codeViewTab: PanelTab = {
   title: 'Code View',
   name: constants.PANEL_TAB_NAMES.CODE_VIEW,
   description: 'Code View Tab',
-  enabled: true,
+  visible: true,
   content: <CodeViewTab />,
   order: 1,
   icon: 'Info',

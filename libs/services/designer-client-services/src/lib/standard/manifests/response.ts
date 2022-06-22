@@ -36,7 +36,6 @@ export default {
           'x-ms-editor': 'schema',
         },
         body: {
-          type: 'any',
           title: 'Body',
           description: 'Enter response content',
           'x-ms-visibility': 'important',
