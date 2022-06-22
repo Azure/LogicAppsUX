@@ -2,7 +2,8 @@ import { convertToReactFlowNode } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { AddSchemaPanelButton, SchemaTypes } from '../components/schemaSelection/addSchemaPanelButton';
-import { setDataMapState } from '../core/state/DataMapSlice';
+import type { DataMapOperationState } from '../core/state/DataMapSlice';
+import { doDataMapOperation } from '../core/state/DataMapSlice';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
@@ -68,14 +69,18 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     const currentSchemaNode = schemaState.currentInputNode;
 
     dispatch(setCurrentInputNode(currentSchemaNode));
+
     if (outputSchema) {
-      dispatch(
-        setDataMapState({
+      const dataMapOperationState: DataMapOperationState = {
+        curDataMap: {
           srcSchemaName: inputSchema.name,
           dstSchemaName: outputSchema.name,
           mappings: { targetNodeKey: `ns0:${outputSchema.name}` },
-        })
-      );
+        },
+        currentInputNode: currentSchemaNode,
+        currentOutputNode: schemaState.currentOutputNode,
+      };
+      dispatch(doDataMapOperation(dataMapOperationState));
     }
   };
 
@@ -87,13 +92,16 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
     dispatch(setCurrentOutputNode(currentSchemaNode));
     if (inputSchema) {
-      dispatch(
-        setDataMapState({
+      const dataMapOperationState: DataMapOperationState = {
+        curDataMap: {
           srcSchemaName: inputSchema.name,
           dstSchemaName: outputSchema.name,
           mappings: { targetNodeKey: `ns0:${outputSchema.name}` },
-        })
-      );
+        },
+        currentInputNode: schemaState.currentInputNode,
+        currentOutputNode: currentSchemaNode,
+      };
+      dispatch(doDataMapOperation(dataMapOperationState));
     }
   };
 
