@@ -5,6 +5,7 @@ export * from './lib/common/schemaprocessor';
 export * from './lib/expression/parser';
 export * from './lib/expression/scanner';
 export * from './lib/manifest/parser';
+export * from './lib/manifest/__test__/data/manifests';
 export * from './lib/models/expression';
 export * from './lib/models/operation';
 export * from './lib/resolution-service/resolution-service';

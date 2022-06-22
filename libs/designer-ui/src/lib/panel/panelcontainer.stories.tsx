@@ -57,8 +57,8 @@ Container.args = {
   showCommentBox: true,
   selectedTab: 'About',
   tabs: {
-    About: { enabled: true, name: 'About', title: 'About', order: 0, content: <About {...aboutProps} /> },
-    CodeView: { enabled: true, name: 'Code View', title: 'Code View', order: 0, content: <Peek {...peekProps} /> },
+    About: { visible: true, name: 'About', title: 'About', order: 0, content: <About {...aboutProps} /> },
+    CodeView: { visible: true, name: 'Code View', title: 'Code View', order: 0, content: <Peek {...peekProps} /> },
   },
   width: '630px',
   title: 'Panel',

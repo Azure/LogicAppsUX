@@ -9,6 +9,7 @@ export default {
     description: 'Encapsulate a block of actions and inherit the last terminal status (Succeeded, Failed, Cancelled) of actions inside.',
 
     allowChildOperations: true,
+    childOperationsLocation: ['actions'],
 
     connector: {
       id: 'connectionProviders/control',

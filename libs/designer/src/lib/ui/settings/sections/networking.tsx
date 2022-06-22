@@ -1,9 +1,9 @@
 import type { SectionProps } from '..';
 import constants from '../../../common/constants';
+import type { Settings, SettingSectionProps } from '../settingsection';
+import { SettingsSection, SettingLabel } from '../settingsection';
 import { useBoolean } from '@fluentui/react-hooks';
 import { equals } from '@microsoft-logic-apps/utils';
-import type { Settings, SettingSectionProps } from '@microsoft/designer-ui';
-import { SettingsSection, SettingLabel } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 

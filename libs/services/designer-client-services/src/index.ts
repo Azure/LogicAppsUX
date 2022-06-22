@@ -4,5 +4,5 @@ export * from './lib/search';
 export * from './lib/httpClient';
 
 export { StandardConnectionService } from './lib/standard/connection';
-export { StandardOperationManifestService } from './lib/standard/operationmanifest';
+export { StandardOperationManifestService, StandardOperationManifestServiceOptions } from './lib/standard/operationmanifest';
 export { StandardSearchService } from './lib/standard/search';

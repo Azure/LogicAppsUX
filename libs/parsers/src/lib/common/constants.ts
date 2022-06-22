@@ -20,6 +20,7 @@ export const ExtensionProperties = {
   EditorOptions: 'x-ms-editor-options',
   Encode: 'x-ms-url-encoding',
   Format: 'x-ms-format',
+  GroupName: 'x-ms-group-name',
   Headers: 'x-ms-headers',
   Method: 'x-ms-method',
   Notification: 'x-ms-notification',

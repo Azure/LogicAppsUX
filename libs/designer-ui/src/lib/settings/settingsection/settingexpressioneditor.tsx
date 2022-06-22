@@ -107,10 +107,10 @@ export const ExpressionsEditor = ({
 
   return (
     <>
-      <Expressions ref={expressionRef} expressions={expressions} readOnly={readOnly} onChange={handleChange} onDelete={handleDelete} />
       {expressions.length < defaultProps.maximumExpressions ? (
         <ActionButton disabled={readOnly} iconProps={addIconProps} text={addCondition} onClick={handleAddClick} />
       ) : null}
+      <Expressions ref={expressionRef} expressions={expressions} readOnly={readOnly} onChange={handleChange} onDelete={handleDelete} />
     </>
   );
 };

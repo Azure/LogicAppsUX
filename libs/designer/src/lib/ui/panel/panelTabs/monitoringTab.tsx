@@ -11,7 +11,7 @@ export const monitoringTab: PanelTab = {
   title: 'Monitoring',
   name: constants.PANEL_TAB_NAMES.MONITORING,
   description: 'Monitoring View Tab',
-  enabled: true,
+  visible: true,
   content: <MonitoringTab />,
   order: 0,
   icon: 'Info',

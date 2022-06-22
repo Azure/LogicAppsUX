@@ -106,7 +106,7 @@ export interface ConnectionMetadata {
   type?: ConnectionType;
 }
 
-export interface ConnectionReference {
+export interface ConnectionReferenceKeyFormatMapping {
   referenceKeyFormat: ConnectionReferenceKeyFormat;
 }
 
@@ -126,6 +126,16 @@ export interface OperationManifestProperties {
   summary?: string;
 
   allowChildOperations?: boolean;
+  childOperationsLocation?: string[];
+
+  subGraphDetails?: {
+    [graphName: string]: {
+      location?: string[];
+      inputs?: SwaggerSchema;
+      inputsLocation?: string[];
+      isAdditive?: boolean;
+    };
+  };
 
   statusBadge?: Badge;
   environmentBadge?: Badge;
@@ -161,7 +171,7 @@ export interface OperationManifestProperties {
   actions?: ActionSetting[];
 
   connection?: ConnectionMetadata;
-  connectionReference?: ConnectionReference;
+  connectionReference?: ConnectionReferenceKeyFormatMapping;
 
   externalDocs?: Documentation;
 }

@@ -1,14 +1,10 @@
-import breadcrumbReducer from './BreadcrumbSlice';
 import panelReducer from './PanelSlice';
-import reactFlowReducer from './ReactFlowSlice';
 import schemaReducer from './SchemaSlice';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
     schema: schemaReducer,
-    breadCrumb: breadcrumbReducer,
-    reactFlow: reactFlowReducer,
     panel: panelReducer,
   },
 });

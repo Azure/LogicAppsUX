@@ -1,0 +1,41 @@
+{
+  "name": "CustomerOrders.xsd",
+  "type": "XML",
+  "targetNamespace": "http://NewMapper.CustomerOrders",
+  "namespaces": {
+    "ns0": "http://NewMapper.CustomerOrders"
+  },
+  "schemaTreeRoot": {
+    "key": "/ns0:CustomerOrders",
+    "name": "CustomerOrders",
+    "namespacePrefix": "ns0",
+    "type": "ComplexType",
+    "children": [
+      {
+        "key": "/ns0:CustomerOrders/Customer",
+        "name": "Customer",
+        "type": "ComplexType",
+        "repeating": true,
+        "children": [
+          {
+            "key": "/ns0:CustomerOrders/Customer/ShippingAddress",
+            "name": "ShippingAddress",
+            "type": "ComplexType",
+            "children": [
+              {
+                "key": "/ns0:CustomerOrders/Customer/ShippingAddress/Line1",
+                "name": "Line1",
+                "type": "string"
+              },
+              {
+                "key": "/ns0:CustomerOrders/Customer/ShippingAddress/Line2",
+                "name": "Line2",
+                "type": "string"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

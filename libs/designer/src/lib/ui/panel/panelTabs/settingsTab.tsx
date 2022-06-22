@@ -6,7 +6,7 @@ export const SettingsTab: PanelTab = {
   title: 'Settings',
   name: constants.PANEL_TAB_NAMES.SETTINGS,
   description: 'Request Settings',
-  enabled: true,
+  visible: true,
   content: <SettingsPanel />,
   order: 0,
 };

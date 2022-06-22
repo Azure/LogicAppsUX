@@ -2,38 +2,106 @@
   "definition": {
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
-      "Fetch_From_Zen_API": {
-        "inputs": {
-          "method": "GET",
-          "uri": "https://zenquotes.io/api/random"
+      "Condition": {
+        "actions": {
+          "Join": {
+            "inputs": {
+              "from": "@triggerBody()",
+              "joinWith": ","
+            },
+            "runAfter": {},
+            "type": "Join"
+          }
+        },
+        "else": {
+          "actions": {
+            "Join1": {
+              "inputs": {
+                "from": "@triggerBody()",
+                "joinWith": ","
+              },
+              "runAfter": {},
+              "type": "Join"
+            }
+          }
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": ["a", "a"]
+            }
+          ]
         },
         "runAfter": {},
-        "type": "ApiConnection"
+        "type": "If"
       },
-      "Join": {
-        "inputs": {
-          "from": "@triggerBody()",
-          "joinWith": ","
+      "Switch": {
+        "cases": {
+          "Case": {
+            "actions": {
+              "Join2": {
+                "inputs": {
+                  "from": "@triggerBody()",
+                  "joinWith": ","
+                },
+                "runAfter": {},
+                "type": "Join"
+              }
+            },
+            "case": "a"
+          }
         },
+        "default": {
+          "actions": {
+            "Join3": {
+              "inputs": {
+                "from": "@triggerBody()",
+                "joinWith": ","
+              },
+              "runAfter": {},
+              "type": "Join"
+            }
+          }
+        },
+        "expression": "@triggerBody()",
         "runAfter": {
-          "Response": ["Succeeded"],
-          "Fetch_From_Zen_API": ["Succeeded", "Failed"]
+          "Condition": ["Succeeded"]
         },
-        "type": "Join"
+        "type": "Switch"
       },
-      "Response": {
+      "Terminate": {
         "inputs": {
-          "body": "@body('Fetch_From_Zen_API')",
-          "headers": {
-            "content-type": "text/json"
+          "runError": {
+            "code": "133",
+            "message": "eww"
           },
-          "statusCode": 200
+          "runStatus": "Failed"
         },
-        "kind": "http",
         "runAfter": {
-          "Fetch_From_Zen_API": ["Succeeded"]
+          "Until": ["Succeeded"]
         },
-        "type": "Response"
+        "type": "Terminate"
+      },
+      "Until": {
+        "actions": {
+          "Join4": {
+            "inputs": {
+              "from": "@triggerBody()",
+              "joinWith": ","
+            },
+            "runAfter": {},
+            "type": "Join"
+          }
+        },
+        "expression": "@equals('d', 'd')",
+        "limit": {
+          "count": 601,
+          "timeout": "PT2H"
+        },
+        "runAfter": {
+          "Switch": ["Succeeded"]
+        },
+        "type": "Until"
       }
     },
     "contentVersion": "1.0.0.0",

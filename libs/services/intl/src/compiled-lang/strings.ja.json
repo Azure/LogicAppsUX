@@ -20,7 +20,7 @@
   "+xiT4Q": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "改ページ"
     }
   ],
   "/I/U8L": [
@@ -98,7 +98,7 @@
   "0KMjv6": [
     {
       "type": 0,
-      "value": "Tracking"
+      "value": "追跡"
     }
   ],
   "0R2D5l": [
@@ -110,7 +110,7 @@
   "0Vzp0l": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "折りたたむ"
     }
   ],
   "0ZlNtf": [
@@ -176,7 +176,7 @@
   "1ED/HW": [
     {
       "type": 0,
-      "value": "すべてのバージョンの表示"
+      "value": "すべてのバージョンを表示"
     }
   ],
   "1Fn5n+": [
@@ -229,19 +229,19 @@
   "1VRGCF": [
     {
       "type": 0,
-      "value": "Specify one or more expressions which must be true for the trigger to fire."
+      "value": "トリガーを起動するために true にすべき 1 つまたは複数の式を指定します。"
     }
   ],
   "1ejxkP": [
     {
       "type": 0,
-      "value": "Secure Inputs"
+      "value": "セキュリティで保護された入力"
     }
   ],
   "1htSs7": [
     {
       "type": 0,
-      "value": "Off"
+      "value": "オフ"
     }
   ],
   "1jhzOM": [
@@ -277,7 +277,7 @@
   "2Cdt4p": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+      "value": "選択したアレイの各項目のワークフローのインスタンスを開始するために分割を有効にします。各インスタンスには、個別の追跡 ID がある場合もあります。"
     }
   ],
   "2K2fAj": [
@@ -301,7 +301,7 @@
   "2tTQ0A": [
     {
       "type": 0,
-      "value": "On"
+      "value": "オン"
     }
   ],
   "33+WHG": [
@@ -316,6 +316,12 @@
       "value": "必須。区切り記号。"
     }
   ],
+  "3X/ZDK": [
+    {
+      "type": 0,
+      "value": "Upload or select an output schema to be used for your map."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -325,7 +331,7 @@
   "3qG1VT": [
     {
       "type": 0,
-      "value": "Tracked Properties"
+      "value": "追跡対象プロパティ"
     }
   ],
   "3rzrWf": [
@@ -338,6 +344,12 @@
     {
       "type": 0,
       "value": "必須。減算する、指定された時間単位の数です。"
+    }
+  ],
+  "3wagjT": [
+    {
+      "type": 0,
+      "value": "select input"
     }
   ],
   "47kOXr": [
@@ -385,7 +397,7 @@
   "4wavwk": [
     {
       "type": 0,
-      "value": "Tour/Tutorial"
+      "value": "ツアーおよびチュートリアル"
     }
   ],
   "5J7j9k": [
@@ -541,19 +553,19 @@
   "8j+a0n": [
     {
       "type": 0,
-      "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+      "value": "非同期パターンでは、202 (Accepted) 応答で処理要求が受領されていることをリモート サーバーが示す場合、Logic Apps エンジンは、最終状態になるまで、応答の場所ヘッダーで指定された URL をポーリングし続けます。"
     }
   ],
   "8ubEPi": [
     {
       "type": 0,
-      "value": "Request Options"
+      "value": "要求のオプション"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "応答時のワークフロー ヘッダーを抑制する"
     }
   ],
   "8wr0zO": [
@@ -572,6 +584,12 @@
     {
       "type": 0,
       "value": "コネクタ"
+    }
+  ],
+  "9I0PcK": [
+    {
+      "type": 0,
+      "value": "Add output schema"
     }
   ],
   "9JuvQ4": [
@@ -596,6 +614,12 @@
     {
       "type": 0,
       "value": "2 つの数値を加算した結果を返します"
+    }
+  ],
+  "9mWdNA": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
     }
   ],
   "9u/Ae3": [
@@ -631,7 +655,7 @@
   "BBD8Em": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "キー"
     }
   ],
   "BCAnZP": [
@@ -679,7 +703,7 @@
   "C4NQ1J": [
     {
       "type": 0,
-      "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+      "value": "継続トークンに従い、指定されたしきい値を満たすように項目を取得します。コネクタのページ サイズにより、返される数がしきい値を超える場合があります。"
     }
   ],
   "CG772M": [
@@ -745,13 +769,13 @@
   "FDWfqM": [
     {
       "type": 0,
-      "value": "Secure Outputs"
+      "value": "セキュリティで保護された出力"
     }
   ],
   "FGS2fS": [
     {
       "type": 0,
-      "value": "has failed"
+      "value": "に失敗しました"
     }
   ],
   "FN5zHQ": [
@@ -763,7 +787,7 @@
   "FNbA9+": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展開"
     }
   ],
   "FS+/Tb": [
@@ -775,13 +799,13 @@
   "FUhNu4": [
     {
       "type": 0,
-      "value": "Split On"
+      "value": "分割"
     }
   ],
   "FUuFlC": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "既定"
     }
   ],
   "FVavKy": [
@@ -904,7 +928,7 @@
   "HXLutF": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "キー"
     }
   ],
   "HfrUId": [
@@ -917,6 +941,12 @@
     {
       "type": 0,
       "value": "渡される文字列タイムスタンプを UTC からターゲット タイム ゾーンに変換します"
+    }
+  ],
+  "IngtMG": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "Ip7Iax": [
@@ -934,7 +964,7 @@
   "J/Kz1j": [
     {
       "type": 0,
-      "value": "Asynchronous Pattern"
+      "value": "非同期パターン"
     }
   ],
   "J5/7vN": [
@@ -947,6 +977,12 @@
     {
       "type": 0,
       "value": "必須。時刻を含む文字列。"
+    }
+  ],
+  "JQlAMD": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -991,16 +1027,28 @@
       "value": "必須。数値形式の文字列。"
     }
   ],
+  "JqZfdk": [
+    {
+      "type": 0,
+      "value": "Add input schema"
+    }
+  ],
   "JzqgNM": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "実行の追跡 ID を設定します。分割の場合、この追跡 ID は開始要求用です。"
     }
   ],
   "K50znc": [
     {
       "type": 0,
       "value": "必須。新しいプロパティを追加するオブジェクト。"
+    }
+  ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
     }
   ],
   "K90YEU": [
@@ -1072,7 +1120,7 @@
   "MCQODe": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties."
+      "value": "出力プロパティの操作と参照のセキュリティ保護された出力。"
     }
   ],
   "MDbmMw": [
@@ -1429,7 +1477,13 @@
   "SmCQys": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "カスタムの追跡 ID"
+    }
+  ],
+  "T0BFpC": [
+    {
+      "type": 0,
+      "value": "実行の追跡 ID を設定します。分割の場合、この追跡 ID は開始要求用です。"
     }
   ],
   "T7zcR6": [
@@ -1525,13 +1579,13 @@
   "Ur+wph": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "クリックして項目を削除してください"
     }
   ],
   "V+/c21": [
     {
       "type": 0,
-      "value": "General"
+      "value": "全般"
     }
   ],
   "V0ZbQO": [
@@ -1676,6 +1730,12 @@
       "value": "要求"
     }
   ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -1685,7 +1745,7 @@
   "XsktQ/": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the response."
+      "value": "応答にワークフロー メタデータ ヘッダーを含めないように Logic Apps を制限します。"
     }
   ],
   "XtuP5e": [
@@ -1755,7 +1815,7 @@
   "ZM1mRy": [
     {
       "type": 0,
-      "value": "Concurrency Control"
+      "value": "コンカレンシーの制御"
     }
   ],
   "ZME5hh": [
@@ -1803,13 +1863,19 @@
   "aK4iLW": [
     {
       "type": 0,
-      "value": "Data Handling"
+      "value": "データ処理"
+    }
+  ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "b9/1dK": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "値"
     }
   ],
   "bTrk+S": [
@@ -1821,7 +1887,7 @@
   "bWBMhe": [
     {
       "type": 0,
-      "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
+      "value": "既定では、ロジック アプリ インスタンスは同時に、つまり並列で実行されます。このコントロールでは、新たな実行がキューに登録される方法が変わるため、有効にした後で変更することはできません。可能な限り多くの並列インスタンスを実行するには、このコントロールをオフのままにします。並列実行の数を制限するには、このコントロールを有効にして制限数を選択します。順に実行するには、制限数として 1 を選択します。"
     }
   ],
   "ba9yGJ": [
@@ -1852,6 +1918,12 @@
     {
       "type": 0,
       "value": "指定された値に設定されたプロパティが含まれるオブジェクトを返します"
+    }
+  ],
+  "c5/wGq": [
+    {
+      "type": 0,
+      "value": "select output"
     }
   ],
   "c6XbVI": [
@@ -1920,10 +1992,16 @@
       "value": "選択"
     }
   ],
+  "dSTRb/": [
+    {
+      "type": 0,
+      "value": "HTTP 経由でコンテンツを転送するための動作と機能を指定します。大きなメッセージは、大きなメッセージのアップロードを許可するために、コネクタに対する小さな要求に分割される可能性があります。詳細については、http://aka.ms/logicapps-chunk#upload-content-in-chunks を参照してください"
+    }
+  ],
   "dWFyfN": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation."
+      "value": "操作のセキュリティで保護された入力。"
     }
   ],
   "dhvk0u": [
@@ -1980,6 +2058,12 @@
       "value": "必須。パラメーター 1 で部分文字列の開始位置を示すインデックス。"
     }
   ],
+  "euC/DV": [
+    {
+      "type": 0,
+      "value": "アレイ"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -2013,7 +2097,7 @@
   "g0a4Qe": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "値"
     }
   ],
   "g4igOR": [
@@ -2067,7 +2151,7 @@
   "gWRF8m": [
     {
       "type": 0,
-      "value": "Trigger Conditions"
+      "value": "トリガー条件"
     }
   ],
   "gu9o9z": [
@@ -2118,7 +2202,7 @@
   "i/b3Ko": [
     {
       "type": 0,
-      "value": "Asynchronous Response"
+      "value": "非同期応答"
     }
   ],
   "i1cwra": [
@@ -2130,7 +2214,7 @@
   "i4C4aB": [
     {
       "type": 0,
-      "value": "Networking"
+      "value": "ネットワーク"
     }
   ],
   "iBlvhu": [
@@ -2248,7 +2332,7 @@
   "juR40n": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "期間"
     }
   ],
   "k/oqFL": [
@@ -2350,7 +2434,7 @@
   "lcVG4C": [
     {
       "type": 0,
-      "value": "is skipped"
+      "value": "がスキップされます"
     }
   ],
   "lgs5sf": [
@@ -2398,7 +2482,7 @@
   "mOr9ll": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
+      "value": "このアクションからの単一の送信要求での最長期間。再試行の実行後にこの制限内で要求が完了しない場合、アクションは失敗します。"
     }
   ],
   "mPakaD": [
@@ -2416,7 +2500,7 @@
   "mjS/k1": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+      "value": "送信要求にワークフロー メタデータ ヘッダーを含めないように Logic Apps を制限します。"
     }
   ],
   "n35O/+": [
@@ -2446,7 +2530,7 @@
   "nZ4nLn": [
     {
       "type": 0,
-      "value": "Suppress workflow headers"
+      "value": "ワークフロー ヘッダーの抑制"
     }
   ],
   "ngsC44": [
@@ -2493,10 +2577,22 @@
       "value": "必須。バイナリ表現にデコードする dataURI。"
     }
   ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "コンテンツ転送"
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "実行を開く実行識別子を入力してください"
+    }
+  ],
+  "orhWzV": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
     }
   ],
   "p/0r2N": [
@@ -2562,7 +2658,7 @@
   "ptkf0D": [
     {
       "type": 0,
-      "value": "Security"
+      "value": "セキュリティ"
     }
   ],
   "q/+Uex": [
@@ -2604,7 +2700,7 @@
   "qPUX59": [
     {
       "type": 0,
-      "value": "is successful"
+      "value": "に成功しました"
     }
   ],
   "qSejoi": [
@@ -2655,7 +2751,7 @@
   "qrxi0L": [
     {
       "type": 0,
-      "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+      "value": "非同期応答により、ロジック アプリは、処理要求が受理されたことを示す 202 (受理されました) で応答することができます。場所ヘッダーは、最終状態を取得するために提供されます。"
     }
   ],
   "r43nMc": [
@@ -2709,7 +2805,7 @@
   "s7nGyC": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "削除"
     }
   ],
   "sDkAVZ": [
@@ -2721,7 +2817,7 @@
   "sW47JR": [
     {
       "type": 0,
-      "value": "Degree of Parallelism"
+      "value": "並列処理の次数"
     }
   ],
   "sZ0G/Z": [
@@ -2739,7 +2835,7 @@
   "scmyvO": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "アクションのタイムアウト"
     }
   ],
   "sfJTHV": [
@@ -2770,6 +2866,12 @@
     {
       "type": 0,
       "value": "必須。変換先のタイム ゾーンのタイム ゾーン名を含む文字列です。詳しくは、https://msdn.microsoft.com/ja-jp/library/gg154758.aspx をご覧ください。"
+    }
+  ],
+  "t5CdhT": [
+    {
+      "type": 0,
+      "value": "Upload or select an input schema to be used for your map."
     }
   ],
   "tE7Zam": [
@@ -2859,7 +2961,7 @@
   "uZH8Qs": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
+      "value": "このアクションの再試行と非同期応答の間の最長期間を制限します。注: 単一の要求の要求タイムアウトは変更されません。"
     }
   ],
   "uc/PoD": [
@@ -2919,7 +3021,7 @@
   "vcBAuU": [
     {
       "type": 0,
-      "value": "has timed out"
+      "value": "がタイムアウトしました"
     }
   ],
   "vwH/XV": [
@@ -3015,7 +3117,7 @@
   "xQQ9ko": [
     {
       "type": 0,
-      "value": "Threshold"
+      "value": "しきい値"
     }
   ],
   "xV/oyK": [

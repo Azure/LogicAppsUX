@@ -234,9 +234,10 @@ declare namespace LogicApps {
 
   interface FunctionInputs extends RetryableActionInputs {
     body?: any;
-    function?: {
+    function: {
       id: string;
       name?: string;
+      connectionName: string;
       type?: string;
     };
     functionApp?: {

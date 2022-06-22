@@ -52,7 +52,7 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange }: Pane
         overflowAriaLabel={overflowLabel}
       >
         {Object.entries(tabs).map(([name, panelTab]) => {
-          return panelTab.enabled ? <PivotItem key={name} itemKey={name} headerText={panelTab.title} /> : null;
+          return panelTab.visible ? <PivotItem key={name} itemKey={name} headerText={panelTab.title} /> : null;
         })}
       </Pivot>
     </div>

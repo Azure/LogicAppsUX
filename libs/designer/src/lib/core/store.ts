@@ -1,3 +1,4 @@
+import connectionsReducer from './state/connectionSlice';
 import designerOptionsReducer from './state/designerOptions/designerOptionsSlice';
 import operationMetadataReducer from './state/operationMetadataSlice';
 import panelReducer from './state/panel/panelSlice';
@@ -9,6 +10,7 @@ export const store = configureStore({
     workflow: workflowReducer,
     operations: operationMetadataReducer,
     panel: panelReducer,
+    connections: connectionsReducer,
     designerOptions: designerOptionsReducer,
   },
 });
