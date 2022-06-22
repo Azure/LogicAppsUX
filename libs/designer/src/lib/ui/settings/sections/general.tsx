@@ -1,9 +1,18 @@
-import type { SectionProps } from '..';
+import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandler } from '..';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
-import type { IDropdownOption } from '@fluentui/react';
-import { useState } from 'react';
+import type { DropdownSelectionChangeHandler, ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
+
+export interface GeneralSectionProps extends SectionProps {
+  onConcurrencyToggle: ToggleHandler;
+  onConcurrencyValueChange: NumberChangeHandler;
+  onSplitOnToggle: ToggleHandler;
+  onSplitOnSelectionChanged: DropdownSelectionChangeHandler;
+  onTimeoutValueChange: TextChangeHandler;
+  onTriggerConditionsChange: ExpressionChangeHandler;
+  onClientTrackingIdChange: TextChangeHandler;
+}
 
 export const General = ({
   splitOn,
@@ -12,14 +21,21 @@ export const General = ({
   concurrency,
   conditionExpressions,
   readOnly,
-}: SectionProps): JSX.Element => {
-  const [concurrencyFromState, setConcurrency] = useState(concurrency?.value ?? { enabled: false, value: undefined });
-  const [splitOnFromState, setSplitOn] = useState(splitOn?.value ?? { enabled: false, value: undefined });
-  const [conditionExpressionsFromState, setConditionExpressions] = useState(conditionExpressions?.value ?? []);
-  const [timeoutFromState, setTimeout] = useState(timeout?.value ?? '');
-  const [splitOnClientTrackingIdFromState, setSplitOnClientTrackingId] = useState(
-    splitOnConfiguration?.correlation?.clientTrackingId ?? ''
-  );
+  onConcurrencyToggle,
+  onConcurrencyValueChange,
+  onSplitOnToggle,
+  onSplitOnSelectionChanged,
+  onTimeoutValueChange,
+  onTriggerConditionsChange,
+  onClientTrackingIdChange,
+}: GeneralSectionProps): JSX.Element => {
+  // const [concurrencyFromState, setConcurrency] = useState(concurrency?.value ?? { enabled: false, value: undefined });
+  // const [splitOnFromState, setSplitOn] = useState(splitOn?.value ?? { enabled: false, value: undefined });
+  // const [conditionExpressionsFromState, setConditionExpressions] = useState(conditionExpressions?.value ?? []);
+  // const [timeoutFromState, setTimeout] = useState(timeout?.value ?? '');
+  // const [splitOnClientTrackingIdFromState, setSplitOnClientTrackingId] = useState(
+  //   splitOnConfiguration?.correlation?.clientTrackingId ?? ''
+  // );
 
   const intl = useIntl();
   const generalTitle = intl.formatMessage({
@@ -96,44 +112,6 @@ export const General = ({
     <SettingLabel labelText={triggerConditionsTitle} infoTooltipText={triggerConditionsTooltipText} isChild={false} />
   );
 
-  const onConcurrencyToggle = (checked: boolean): void => {
-    setConcurrency({ ...concurrencyFromState, enabled: checked });
-    // TODO (14427339): Setting Validation
-    // TODO (14427277): Write to Store
-  };
-
-  const onConcurrencyValueChange = (value: number): void => {
-    setConcurrency({ ...concurrencyFromState, value });
-    // TODO (14427339): Setting Validation
-    // TODO (14427277): Write to Store
-  };
-
-  const onSplitOnToggle = (checked: boolean): void => {
-    setSplitOn({ ...splitOnFromState, enabled: checked });
-    // TODO (14427339): Setting Validation
-    // TODO (14427277): Write to Store
-  };
-
-  const onTimeoutValueChange = (newVal: string): void => {
-    setTimeout(newVal);
-    // TODO (14427339): Setting Validation
-    // TODO (14427277): Write to Store
-  };
-
-  const onTriggerConditionsChange = (newExpressions: string[]): void => {
-    setConditionExpressions(newExpressions);
-  };
-
-  const onClientTrackingIdChange = (newVal: string): void => {
-    setSplitOnClientTrackingId(newVal);
-    // TODO (14427339): Setting Validation
-    // TODO (14427277): Write to Store
-  };
-
-  const onSplitOnDropdownSelectionChanged = (selectedOption: IDropdownOption): void => {
-    setSplitOn({ ...splitOnFromState, value: selectedOption.key.toString() });
-  };
-
   const generalSectionProps: SettingSectionProps = {
     id: 'general',
     title: generalTitle,
@@ -143,7 +121,7 @@ export const General = ({
         settingType: 'SettingToggle',
         settingProp: {
           readOnly,
-          checked: splitOnFromState.enabled,
+          checked: splitOn?.value?.enabled,
           onToggleInputChange: (_, checked) => onSplitOnToggle(!!checked),
           customLabel: () => splitOnLabel,
           onText,
@@ -156,9 +134,9 @@ export const General = ({
         settingProp: {
           id: 'arrayValue',
           readOnly,
-          items: [splitOnFromState.value ? { title: splitOnFromState.value, value: splitOnFromState.value } : { title: '', value: '' }],
-          selectedValue: splitOnFromState.value,
-          onSelectionChanged: onSplitOnDropdownSelectionChanged,
+          items: [splitOn?.value?.value ? { title: splitOn.value.value, value: splitOn.value.value } : { title: '', value: '' }],
+          selectedValue: splitOn?.value?.value,
+          onSelectionChanged: onSplitOnSelectionChanged,
           customLabel: () => arrayDropdownLabel,
         },
         visible: splitOn?.isSupported,
@@ -167,8 +145,8 @@ export const General = ({
         settingType: 'SettingTextField',
         settingProp: {
           id: 'splitOntrackingId',
-          value: splitOnClientTrackingIdFromState,
-          readOnly: readOnly || !splitOnFromState.enabled,
+          value: splitOnConfiguration?.correlation?.clientTrackingId ?? '',
+          readOnly: readOnly || !splitOn?.value?.enabled,
           customLabel: () => clientTrackingIdLabel,
           onValueChange: (_, newVal) => onClientTrackingIdChange(newVal as string),
         },
@@ -178,7 +156,7 @@ export const General = ({
         settingType: 'SettingTextField',
         settingProp: {
           id: 'timeoutDuration',
-          value: timeoutFromState,
+          value: timeout?.value ?? '',
           customLabel: () => timeoutLabel,
           readOnly,
           onValueChange: (_, newValue) => onTimeoutValueChange(newValue as string),
@@ -189,7 +167,7 @@ export const General = ({
         settingType: 'SettingToggle',
         settingProp: {
           readOnly,
-          checked: concurrencyFromState.enabled,
+          checked: concurrency?.value?.enabled,
           onToggleInputChange: (_, checked) => onConcurrencyToggle(!!checked),
           customLabel: () => concurrencyLabel,
           onText,
@@ -202,17 +180,17 @@ export const General = ({
         settingProp: {
           maxVal: 100,
           minVal: 0,
-          value: concurrencyFromState.value ?? 50,
+          value: concurrency?.value?.value ?? 50,
           onValueChange: onConcurrencyValueChange,
           sliderLabel: degreeOfParallelism,
           readOnly,
         },
-        visible: concurrencyFromState.enabled === true,
+        visible: concurrency?.value?.enabled === true,
       },
       {
         settingType: 'MultiAddExpressionEditor',
         settingProp: {
-          initialExpressions: conditionExpressionsFromState,
+          initialExpressions: conditionExpressions?.value,
           readOnly,
           customLabel: () => triggerConditionsLabel,
           onExpressionsChange: onTriggerConditionsChange,
