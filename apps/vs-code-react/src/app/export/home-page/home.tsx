@@ -1,6 +1,7 @@
 import { ApiService } from '../../../run-service/export/index';
 import { useOutlet } from '../export';
 import { getListColumns, parseWorkflowData } from './helper';
+import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
 import { useMemo, useState } from 'react';
 import { useInfiniteQuery } from 'react-query';
@@ -38,10 +39,6 @@ export const Home: React.FC = () => {
     },
   });
 
-  const renderWorkflows = selectedWorkflows.map((workflow: any) => {
-    return <h4 key={workflow.id}>{workflow.name}</h4>;
-  });
-
   return (
     <div className="msla-export-overview-panel">
       <div className="msla-export-overview-panel-list">
@@ -67,7 +64,7 @@ export const Home: React.FC = () => {
         </div>
       </div>
       <Separator vertical className="msla-export-overview-panel-divider" />
-      {renderWorkflows}
+      <SelectedList selectedWorkflows={selectedWorkflows} />
     </div>
   );
 };
