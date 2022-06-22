@@ -320,6 +320,12 @@
       "value": "必需。分隔符。"
     }
   ],
+  "3X/ZDK": [
+    {
+      "type": 0,
+      "value": "Upload or select an output schema to be used for your map."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -342,6 +348,12 @@
     {
       "type": 0,
       "value": "必需。要减去的指定时间单位数。"
+    }
+  ],
+  "3wagjT": [
+    {
+      "type": 0,
+      "value": "select input"
     }
   ],
   "47kOXr": [
@@ -578,6 +590,12 @@
       "value": "连接器"
     }
   ],
+  "9I0PcK": [
+    {
+      "type": 0,
+      "value": "Add output schema"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -600,6 +618,12 @@
     {
       "type": 0,
       "value": "返回这两个数字相加后的结果"
+    }
+  ],
+  "9mWdNA": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
     }
   ],
   "9u/Ae3": [
@@ -923,6 +947,12 @@
       "value": "将传入的字符串时间戳从 UTC 转换为目标时区"
     }
   ],
+  "IngtMG": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -951,6 +981,12 @@
     {
       "type": 0,
       "value": "必需。包含时间的一个字符串。"
+    }
+  ],
+  "JQlAMD": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -995,6 +1031,12 @@
       "value": "必填。数值格式字符串。"
     }
   ],
+  "JqZfdk": [
+    {
+      "type": 0,
+      "value": "Add input schema"
+    }
+  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1005,6 +1047,12 @@
     {
       "type": 0,
       "value": "必填。要将新属性添加到的对象。"
+    }
+  ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
     }
   ],
   "K90YEU": [
@@ -1690,6 +1738,12 @@
       "value": "请求"
     }
   ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -1820,6 +1874,12 @@
       "value": "数据处理"
     }
   ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -1866,6 +1926,12 @@
     {
       "type": 0,
       "value": "返回一个对象，此对象的某个属性已设置为所提供的值"
+    }
+  ],
+  "c5/wGq": [
+    {
+      "type": 0,
+      "value": "select output"
     }
   ],
   "c6XbVI": [
@@ -2547,6 +2613,12 @@
       "value": "输入运行标识符以打开运行"
     }
   ],
+  "orhWzV": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
+    }
+  ],
   "p/0r2N": [
     {
       "type": 0,
@@ -2818,6 +2890,12 @@
     {
       "type": 0,
       "value": "必需。一个字符串，它包含目标时区的时区名称。请访问 https://msdn.microsoft.com/en-us/library/gg154758.aspx 查看详细信息。"
+    }
+  ],
+  "t5CdhT": [
+    {
+      "type": 0,
+      "value": "Upload or select an input schema to be used for your map."
     }
   ],
   "tE7Zam": [

@@ -316,6 +316,12 @@
       "value": "必要。分隔符號。"
     }
   ],
+  "3X/ZDK": [
+    {
+      "type": 0,
+      "value": "Upload or select an output schema to be used for your map."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -338,6 +344,12 @@
     {
       "type": 0,
       "value": "必要。要減去之指定時間單位的數字。"
+    }
+  ],
+  "3wagjT": [
+    {
+      "type": 0,
+      "value": "select input"
     }
   ],
   "47kOXr": [
@@ -574,6 +586,12 @@
       "value": "連接器"
     }
   ],
+  "9I0PcK": [
+    {
+      "type": 0,
+      "value": "Add output schema"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -596,6 +614,12 @@
     {
       "type": 0,
       "value": "傳回兩個數字相加的結果"
+    }
+  ],
+  "9mWdNA": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
     }
   ],
   "9u/Ae3": [
@@ -919,6 +943,12 @@
       "value": "將傳入的字串時間戳記從 UTC 轉換成目標時區"
     }
   ],
+  "IngtMG": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -947,6 +977,12 @@
     {
       "type": 0,
       "value": "必要。包含時間的字串。"
+    }
+  ],
+  "JQlAMD": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -991,6 +1027,12 @@
       "value": "必要項。數值格式字串。"
     }
   ],
+  "JqZfdk": [
+    {
+      "type": 0,
+      "value": "Add input schema"
+    }
+  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1001,6 +1043,12 @@
     {
       "type": 0,
       "value": "必要。接收新增屬性的物件。"
+    }
+  ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
     }
   ],
   "K90YEU": [
@@ -1682,6 +1730,12 @@
       "value": "要求"
     }
   ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -1812,6 +1866,12 @@
       "value": "資料處理"
     }
   ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -1858,6 +1918,12 @@
     {
       "type": 0,
       "value": "傳回屬性設為所提供之值的物件"
+    }
+  ],
+  "c5/wGq": [
+    {
+      "type": 0,
+      "value": "select output"
     }
   ],
   "c6XbVI": [
@@ -2523,6 +2589,12 @@
       "value": "輸入執行識別碼以開啟執行"
     }
   ],
+  "orhWzV": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
+    }
+  ],
   "p/0r2N": [
     {
       "type": 0,
@@ -2794,6 +2866,12 @@
     {
       "type": 0,
       "value": "必要。包含目的地時區之時區名稱的字串。如需詳細資料，請參閱 https://msdn.microsoft.com/en-us/library/gg154758.aspx。"
+    }
+  ],
+  "t5CdhT": [
+    {
+      "type": 0,
+      "value": "Upload or select an input schema to be used for your map."
     }
   ],
   "tE7Zam": [

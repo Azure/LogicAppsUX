@@ -327,6 +327,12 @@
       "value": "Gerekli. Ayırıcı."
     }
   ],
+  "3X/ZDK": [
+    {
+      "type": 0,
+      "value": "Upload or select an output schema to be used for your map."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -349,6 +355,12 @@
     {
       "type": 0,
       "value": "Zorunlu. Çıkarmak için belirtilen zaman birimi sayısı."
+    }
+  ],
+  "3wagjT": [
+    {
+      "type": 0,
+      "value": "select input"
     }
   ],
   "47kOXr": [
@@ -585,6 +597,12 @@
       "value": "Bağlayıcı"
     }
   ],
+  "9I0PcK": [
+    {
+      "type": 0,
+      "value": "Add output schema"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -607,6 +625,12 @@
     {
       "type": 0,
       "value": "İki sayı arasındaki toplama işleminin sonucunu döndürür"
+    }
+  ],
+  "9mWdNA": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
     }
   ],
   "9u/Ae3": [
@@ -941,6 +965,12 @@
       "value": "Geçirilen bir dize zaman damgasını UTC'den hedef saat dilimine dönüştürür"
     }
   ],
+  "IngtMG": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -969,6 +999,12 @@
     {
       "type": 0,
       "value": "Gerekli. Zamanı içeren bir dize."
+    }
+  ],
+  "JQlAMD": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1013,6 +1049,12 @@
       "value": "Gerekli. Sayısal biçim dizesi."
     }
   ],
+  "JqZfdk": [
+    {
+      "type": 0,
+      "value": "Add input schema"
+    }
+  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1023,6 +1065,12 @@
     {
       "type": 0,
       "value": "Gerekli. Yeni özelliğin ekleneceği nesne."
+    }
+  ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
     }
   ],
   "K90YEU": [
@@ -1715,6 +1763,12 @@
       "value": "İstek"
     }
   ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -1845,6 +1899,12 @@
       "value": "Veri İşleme"
     }
   ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -1891,6 +1951,12 @@
     {
       "type": 0,
       "value": "Bir özelliğin sağlanan değere ayarlandığı nesneyi döndürür"
+    }
+  ],
+  "c5/wGq": [
+    {
+      "type": 0,
+      "value": "select output"
     }
   ],
   "c6XbVI": [
@@ -2567,6 +2633,12 @@
       "value": "Çalıştırmayı açmak için çalıştırma tanımlayıcısını girin"
     }
   ],
+  "orhWzV": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
+    }
+  ],
   "p/0r2N": [
     {
       "type": 0,
@@ -2849,6 +2921,12 @@
     {
       "type": 0,
       "value": "Zorunlu. Hedef saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "t5CdhT": [
+    {
+      "type": 0,
+      "value": "Upload or select an input schema to be used for your map."
     }
   ],
   "tE7Zam": [
