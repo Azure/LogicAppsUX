@@ -71,6 +71,6 @@ export const dataMapSlice = createSlice({
   },
 });
 
-export const { doDataMapOperation, saveDataMap } = dataMapSlice.actions;
+export const { doDataMapOperation, undoDataMapOperation, redoDataMapOperation, saveDataMap, discardDataMap } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

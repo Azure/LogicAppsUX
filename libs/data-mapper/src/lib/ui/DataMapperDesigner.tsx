@@ -3,7 +3,7 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { AddSchemaPanelButton, SchemaTypes } from '../components/schemaSelection/addSchemaPanelButton';
 import type { DataMapOperationState } from '../core/state/DataMapSlice';
-import { doDataMapOperation } from '../core/state/DataMapSlice';
+import { doDataMapOperation, redoDataMapOperation, undoDataMapOperation } from '../core/state/DataMapSlice';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
@@ -105,6 +105,18 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     }
   };
 
+  const onSaveClick = () => {
+    saveStateCall();
+  };
+
+  const onUndoClick = () => {
+    dispatch(undoDataMapOperation());
+  };
+
+  const onRedoClick = () => {
+    dispatch(redoDataMapOperation());
+  };
+
   const layeredReactFlow = (
     <LayerHost
       id={layerHostId}
@@ -139,7 +151,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
-        <EditorCommandBar saveStateCall={saveStateCall} isStateDirty={isStateDirty} />
+        <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} isStateDirty={isStateDirty} />
         <EditorBreadcrumb />
 
         {inputSchema && outputSchema ? (

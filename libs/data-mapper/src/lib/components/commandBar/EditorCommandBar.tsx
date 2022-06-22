@@ -1,15 +1,5 @@
 import type { JsonInputStyle } from '../../models';
-import {
-  discardCurrentState,
-  publishState,
-  redoState,
-  runTest,
-  showConfig,
-  showFeedback,
-  showSearchbar,
-  showTutorial,
-  undoState,
-} from './helpers';
+import { discardCurrentState, publishState, runTest, showConfig, showFeedback, showSearchbar, showTutorial } from './helpers';
 import { CommandBar, initializeIcons, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
 import type { IComponentAs, ICommandBarItemProps } from '@fluentui/react';
 import { useCallback, useState } from 'react';
@@ -17,12 +7,17 @@ import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface EditorCommandBarProps {
-  saveStateCall: () => void;
+  onSaveClick: () => void;
   isStateDirty: boolean;
+
+  onUndoClick: () => void;
+  onRedoClick: () => void;
 }
 
-export const EditorCommandBar: FunctionComponent<EditorCommandBarProps> = ({ saveStateCall, isStateDirty }) => {
-  return <EditorCommandBarWrapper saveStateCall={saveStateCall} isStateDirty={isStateDirty} />;
+export const EditorCommandBar: FunctionComponent<EditorCommandBarProps> = ({ onSaveClick, isStateDirty, onUndoClick, onRedoClick }) => {
+  return (
+    <EditorCommandBarWrapper onSaveClick={onSaveClick} isStateDirty={isStateDirty} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
+  );
 };
 
 initializeIcons();
@@ -269,7 +264,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   return <CommandBar items={items} farItems={farItems} ariaLabel="Use left and right arrow keys to navigate between commands" />;
 };
 
-const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ saveStateCall, isStateDirty }) => {
+const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ onSaveClick, isStateDirty, onUndoClick, onRedoClick }) => {
   const intl = useIntl();
 
   const [showUndo, setShowUndo] = useState(true);
@@ -296,9 +291,9 @@ const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ sav
   return (
     <EditorCommandBarButtons
       isStateDirty={isStateDirty}
-      onSaveClick={saveStateCall}
-      onUndoClick={undoState}
-      onRedoClick={redoState}
+      onSaveClick={onSaveClick}
+      onUndoClick={onUndoClick}
+      onRedoClick={onRedoClick}
       showUndo={showUndo}
       onUndoRedoChange={onUndoRedoChange}
       onDiscardClick={discardCurrentState}
