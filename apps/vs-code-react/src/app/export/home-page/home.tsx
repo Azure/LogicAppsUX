@@ -1,21 +1,20 @@
 import { ApiService } from '../../../run-service/export/index';
 import { useOutlet } from '../export';
 import { getListColumns, parseWorkflowData } from './helper';
-import { Separator, ShimmeredDetailsList, Text } from '@fluentui/react';
-import { useMemo } from 'react';
+import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
+import { useMemo, useState } from 'react';
 import { useInfiniteQuery } from 'react-query';
 
 export const Home: React.FC = () => {
   const { baseUrl, accessToken } = useOutlet();
+  const [selectedWorkflows, setSelectedWorkflows] = useState<any>([]);
 
-  const apiService = useMemo(
-    () =>
-      new ApiService({
-        baseUrl,
-        accessToken,
-      }),
-    [accessToken, baseUrl]
-  );
+  const apiService = useMemo(() => {
+    return new ApiService({
+      baseUrl,
+      accessToken,
+    });
+  }, [accessToken, baseUrl]);
 
   const loadWorkflows = ({ pageParam }: { pageParam?: string }) => {
     if (pageParam) {
@@ -26,11 +25,22 @@ export const Home: React.FC = () => {
 
   const { data } = useInfiniteQuery<any>('workflowsData', loadWorkflows, {
     getNextPageParam: (lastPage) => lastPage.nextLink,
+    refetchOnWindowFocus: false,
   });
 
   const workflowItems = useMemo(() => {
     return parseWorkflowData(data?.pages);
   }, [data?.pages]);
+
+  const selection = new Selection({
+    onSelectionChanged: () => {
+      setSelectedWorkflows(selection.getSelection());
+    },
+  });
+
+  const renderWorkflows = selectedWorkflows.map((workflow: any) => {
+    return <h4 key={workflow.id}>{workflow.name}</h4>;
+  });
 
   return (
     <div className="msla-export-overview-panel">
@@ -51,11 +61,13 @@ export const Home: React.FC = () => {
             ariaLabelForSelectAllCheckbox="Toggle selection for all items"
             checkButtonAriaLabel="select row"
             selectionPreservedOnEmptyClick={true}
-            selectionMode={2}
+            selectionMode={SelectionMode.multiple}
+            selection={selection}
           />
         </div>
       </div>
       <Separator vertical className="msla-export-overview-panel-divider" />
+      {renderWorkflows}
     </div>
   );
 };

@@ -17,7 +17,7 @@ export const mapToWorkflowItem = (workflow: WorkflowProperties): WorkflowsList =
 
 export const getListColumns = () => {
   return [
-    { key: 'column1', name: 'Name', fieldName: 'name', minWidth: 100, maxWidth: 200, isResizable: true },
-    { key: 'column2', name: 'Resource Group', fieldName: 'resourceGroup', minWidth: 100, maxWidth: 200, isResizable: true },
+    { key: 'column1', name: 'Name', fieldName: 'name', minWidth: 170, maxWidth: 250, isResizable: true },
+    { key: 'column2', name: 'Resource Group', fieldName: 'resourceGroup', minWidth: 170, maxWidth: 250, isResizable: true },
   ];
 };
