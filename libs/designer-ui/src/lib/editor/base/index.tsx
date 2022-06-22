@@ -7,7 +7,6 @@ import AutoLink from './plugins/AutoLinkPlugin';
 import ClearEditor from './plugins/ClearEditorPlugin';
 import { TreeViewPlugin as TreeView } from './plugins/TreeViewPlugin';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
-import { ClearEditorPlugin as ClearEditorEnabled } from '@lexical/react/LexicalClearEditorPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
@@ -110,7 +109,6 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
         {/* {tokens ? <TokenPlugin data={[]} /> : null} */}
         {clearEditor ? <ClearEditor /> : null}
         {children}
-        <ClearEditorEnabled />
       </div>
     </LexicalComposer>
   );
