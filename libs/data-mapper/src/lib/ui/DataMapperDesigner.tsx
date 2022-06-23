@@ -3,7 +3,13 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { AddSchemaPanelButton, SchemaTypes } from '../components/schemaSelection/addSchemaPanelButton';
 import type { DataMapOperationState } from '../core/state/DataMapSlice';
-import { doDataMapOperation, redoDataMapOperation, undoDataMapOperation } from '../core/state/DataMapSlice';
+import {
+  redoDataMapOperation,
+  undoDataMapOperation,
+  removeCurDataMap,
+  changeInputSchemaOperation,
+  changeOutputSchemaOperation,
+} from '../core/state/DataMapSlice';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
@@ -63,6 +69,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onSubmitInput = (inputSchema: Schema) => {
+    const oldInputSchema = store.getState().schema.inputSchema; //TODO: need to verify this is the value before changing
     dispatch(setInputSchema(inputSchema));
 
     const schemaState = store.getState().schema;
@@ -80,11 +87,13 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         currentInputNode: currentSchemaNode,
         currentOutputNode: schemaState.currentOutputNode,
       };
-      dispatch(doDataMapOperation(dataMapOperationState));
+      // dispatch(doDataMapOperation(dataMapOperationState));
+      dispatch(changeInputSchemaOperation({ incomingDataMapOperation: dataMapOperationState, oldInputSchema: oldInputSchema }));
     }
   };
 
   const onSubmitOutput = (outputSchema: Schema) => {
+    const oldOutputSchema = store.getState().schema.outputSchema; //TODO: need to verify this is the value before changing
     dispatch(setOutputSchema(outputSchema));
 
     const schemaState = store.getState().schema;
@@ -101,12 +110,14 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         currentInputNode: schemaState.currentInputNode,
         currentOutputNode: currentSchemaNode,
       };
-      dispatch(doDataMapOperation(dataMapOperationState));
+      // dispatch(doDataMapOperation(dataMapOperationState));
+      dispatch(changeOutputSchemaOperation({ incomingDataMapOperation: dataMapOperationState, oldOutputSchema: oldOutputSchema }));
     }
   };
 
   const onSaveClick = () => {
-    saveStateCall();
+    saveStateCall(); // TODO: do the next call only when this is successful
+    // dispatch(saveDataMap()); //TODO: call this
   };
 
   const onUndoClick = () => {
@@ -153,6 +164,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       <div className="data-mapper-shell">
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} isStateDirty={isStateDirty} />
         <EditorBreadcrumb />
+
+        <button onClick={() => dispatch(removeCurDataMap)}>Remove cur data map</button>
 
         {inputSchema && outputSchema ? (
           layeredReactFlow
