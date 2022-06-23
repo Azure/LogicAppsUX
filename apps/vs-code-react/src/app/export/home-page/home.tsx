@@ -5,11 +5,37 @@ import { getListColumns, parseWorkflowData } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
 import { useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useInfiniteQuery } from 'react-query';
 
 export const Home: React.FC = () => {
   const { baseUrl, accessToken } = useOutlet();
   const [selectedWorkflows, setSelectedWorkflows] = useState<any>([]);
+  const intl = useIntl();
+
+  const intlText = {
+    SELECT_TITLE: intl.formatMessage({
+      defaultMessage: 'Select Apps to Export',
+      description: 'Select apps to export title',
+    }),
+    SELECT_DESCRIPTION: intl.formatMessage({
+      defaultMessage:
+        'Here you are able to export a selection of Logic Apps into a code format for re-usage and integration into larger Logic App schemas',
+      description: 'Select apps to export description',
+    }),
+    TOGGLE_SELECTION: intl.formatMessage({
+      defaultMessage: 'Toggle selection',
+      description: 'Select apps to export description',
+    }),
+    TOGGLE_SELECTION_ALL: intl.formatMessage({
+      defaultMessage: 'Toggle selection for all items',
+      description: 'Select apps to export description',
+    }),
+    SELECT_WORKFLOW: intl.formatMessage({
+      defaultMessage: 'Select workflow',
+      description: 'Select apps to export description',
+    }),
+  };
 
   const apiService = useMemo(() => {
     return new ApiService({
@@ -44,20 +70,19 @@ export const Home: React.FC = () => {
     <div className="msla-export-overview-panel">
       <div className="msla-export-overview-panel-list">
         <Text variant="xLarge" nowrap block>
-          Select Apps to Export
+          {intlText.SELECT_TITLE}
         </Text>
         <Text variant="large" nowrap block>
-          Here you are able to export a selection of Logic Apps into a code format for re-usage and integration into larger Logic App
-          schemas
+          {intlText.SELECT_DESCRIPTION}
         </Text>
         <div className="msla-export-overview-panel-list-workflows">
           <ShimmeredDetailsList
             items={workflowItems ?? []}
             columns={getListColumns()}
             enableShimmer={!workflowItems}
-            ariaLabelForSelectionColumn="Toggle selection"
-            ariaLabelForSelectAllCheckbox="Toggle selection for all items"
-            checkButtonAriaLabel="select row"
+            ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
+            ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
+            checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
             selectionPreservedOnEmptyClick={true}
             selectionMode={SelectionMode.multiple}
             selection={selection}

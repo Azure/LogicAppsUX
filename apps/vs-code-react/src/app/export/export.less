@@ -10,9 +10,10 @@
     max-height: 60%;
 
     &-list {
-      width: 75%;
+      flex: 5 1 auto;
       display: flex;
       flex-direction: column;
+      max-width: 75%;
 
       &-workflows {
         overflow: auto;
@@ -32,6 +33,8 @@
     &-selected {
       display: flex;
       flex-direction: column;
+      max-width: 20%;
+      flex: 2 1 auto;
 
       &-title {
         padding: 0 0 16px 8px;
