@@ -29,13 +29,38 @@
       }
     }
 
-    &-selected-list {
+    &-selected {
       display: flex;
       flex-direction: column;
 
-      &-item {
-        display: inline-flex;
-        align-items: center;
+      &-title {
+        padding: 0 0 16px 8px;
+      }
+
+      &-list {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        flex: 1;
+
+        &-item {
+          display: inline-flex;
+          align-items: center;
+
+          &-text {
+            max-width: 45%;
+          }
+
+          .subtext-color {
+            color: #cccccc;
+          }
+
+          &-subtext {
+            display: flex;
+            max-width: 45%;
+            padding-left: 6px;
+          }
+        }
       }
     }
   }
