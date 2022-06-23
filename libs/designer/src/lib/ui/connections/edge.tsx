@@ -29,6 +29,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 }) => {
   const readOnly = useReadOnly();
 
+  // Remove any added id-specifier to get the actual id
   const sourceId = source.split('-#')[0];
 
   const allChildrenEdges = useEdgesByParent(source);

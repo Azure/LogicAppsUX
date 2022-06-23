@@ -1,44 +1,8 @@
-import type { WorkflowEdge, WorkflowEdgeType, WorkflowNode, WorkflowNodeType } from '../../parsers/models/workflowNode';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import { createWorkflowNode, createWorkflowEdge, createElkNode, createElkEdge, createSharedEdge } from '../../utils/graph';
 import { exportForTesting } from '../elklayout';
-import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk-api';
+import type { ElkNode } from 'elkjs/lib/elk-api';
 import type { Edge, Node } from 'react-flow-renderer';
-
-const createWorkflowNode = (id: string, type?: WorkflowNodeType) => ({
-  id,
-  width: 200,
-  height: 40,
-  type: type ?? 'testNode',
-});
-
-const createElkNode = (id: string, type?: WorkflowNodeType) => ({
-  id,
-  width: 200,
-  height: 40,
-  layoutOptions: {
-    nodeType: type ?? 'testNode',
-  },
-});
-
-const createWorkflowEdge = (source: string, target: string, type?: WorkflowEdgeType): WorkflowEdge => ({
-  id: `${source}-${target}`,
-  source,
-  target,
-  type: type ?? 'buttonEdge',
-});
-
-const createElkEdge = (source: string, target: string, type?: WorkflowEdgeType): ElkExtendedEdge => ({
-  id: `${source}-${target}`,
-  sources: [source],
-  targets: [target],
-  layoutOptions: {
-    edgeType: type ?? 'buttonEdge',
-  },
-});
-
-const createSharedEdge = (source: string, target: string, type?: WorkflowEdgeType) => ({
-  ...createWorkflowEdge(source, target, type),
-  data: { elkEdge: createElkEdge(source, target, type) },
-});
 
 const elkGraphLayoutOptions = {
   'elk.padding': '[top=0,left=16,bottom=48,right=16]',

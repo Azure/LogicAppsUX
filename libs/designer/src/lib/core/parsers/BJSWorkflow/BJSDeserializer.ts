@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 import type { Operations, NodesMetadata } from '../../state/workflowSlice';
+import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowEdge, WorkflowEdgeType, WorkflowNode, WorkflowNodeType } from '../models/workflowNode';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
@@ -26,7 +27,7 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Deseria
   let nodesMetadata: NodesMetadata = {};
   if (definition.triggers && !isNullOrEmpty(definition.triggers)) {
     const [[tID, trigger]] = Object.entries(definition.triggers);
-    triggerNode = createWorkflowNode(tID, 'testNode');
+    triggerNode = createWorkflowNode(tID);
     allActions[tID] = { ...trigger };
     nodesMetadata[tID] = { graphId: 'root' };
   }
@@ -41,12 +42,7 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Deseria
     const entries = Object.entries(definition.actions);
     const parentlessChildren = entries.filter(([, value]) => isNullOrEmpty(value.runAfter));
     for (const [key] of parentlessChildren) {
-      rootEdges.push({
-        id: `${triggerNode?.id}-${key}`,
-        source: triggerNode?.id ?? '',
-        target: key,
-        type: 'buttonEdge',
-      });
+      rootEdges.push(createWorkflowEdge(triggerNode?.id ?? '', key));
     }
   }
 
@@ -78,25 +74,6 @@ const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAp
   return equals(action.type, 'switch');
 };
 
-// INITIAL NODE SIZE IS SET HERE
-const createWorkflowNode = (id: string, type: WorkflowNodeType): WorkflowNode => {
-  return {
-    id,
-    type,
-    height: 40,
-    width: 200,
-  };
-};
-
-const createWorkflowEdge = (source: string, target: string, type?: WorkflowEdgeType): WorkflowEdge => {
-  return {
-    id: `${source}-${target}`,
-    source,
-    target,
-    type: type ?? 'buttonEdge',
-  };
-};
-
 const buildGraphFromActions = (
   actions: Record<string, LogicAppsV2.ActionDefinition>,
   graphId: string
@@ -106,7 +83,7 @@ const buildGraphFromActions = (
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
   for (const [actionName, action] of Object.entries(actions)) {
-    const node = isScopeAction(action) ? createWorkflowNode(actionName, 'graphNode') : createWorkflowNode(actionName, 'testNode');
+    const node = createWorkflowNode(actionName, isScopeAction(action) ? 'graphNode' : 'testNode');
 
     allActions[actionName] = { ...action };
     nodesMetadata[actionName] = { graphId };
@@ -126,7 +103,8 @@ const buildGraphFromActions = (
 
     nodes.push(node);
 
-    // // Place empty footer node, to add more nodes
+    // TODO: WIP - This is where scope footer nodes will be set up
+    // // Place footer node
     // if (!(node.edges?.find((edge) => edge.source === actionName))) {
     //   const footerId = `${actionName}-footer`
     //   nodes.push(createWorkflowNode(footerId, 'testNode'))
@@ -148,8 +126,6 @@ const processScopeActions = (
 
   const scopeId = `${actionName}-#scopeHeader`;
   const scopeHeaderNode = createWorkflowNode(scopeId, 'scopeHeader');
-  // const scopeGraphNode = createWorkflowNode(`${actionName}-graph`, 'hiddenNode');
-  // scopeGraphNode.children = [];
   nodes.push(scopeHeaderNode);
 
   let allActions: Operations = {};
