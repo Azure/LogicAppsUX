@@ -7,9 +7,9 @@ export interface WorkflowNode {
   id: string;
   type: WorkflowNodeType;
   children?: WorkflowNode[];
-  edges?: WorkflowEdge[]; // Graph nodes
-  height?: number; // Action nodes
-  width?: number; // Action Nodes
+  edges?: WorkflowEdge[]; // Graph nodes only
+  height?: number; // Action nodes only
+  width?: number; // Action Nodes only
 }
 
 export type WorkflowEdgeType = 'buttonEdge' | 'onlyEdge' | 'hiddenEdge';

@@ -1,5 +1,6 @@
 import type { Operations, NodesMetadata } from '../../../state/workflowSlice';
-import type { WorkflowEdge, WorkflowEdgeType, WorkflowNode, WorkflowNodeType } from '../../models/workflowNode';
+import { createWorkflowNode, createWorkflowEdge } from '../../../utils/graph';
+import type { WorkflowNode } from '../../models/workflowNode';
 
 export const scopedWorkflowDefinitionInput = {
   $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
@@ -91,20 +92,6 @@ export const scopedWorkflowDefinitionInput = {
     },
   },
 };
-
-const createWorkflowNode = (id: string, type?: WorkflowNodeType) => ({
-  id,
-  height: 40,
-  width: 200,
-  type: type ?? 'testNode',
-});
-
-const createWorkflowEdge = (source: string, target: string, type?: WorkflowEdgeType): WorkflowEdge => ({
-  id: `${source}-${target}`,
-  source,
-  target,
-  type: type ?? 'buttonEdge',
-});
 
 export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; actionData: Operations; nodesMetadata: NodesMetadata } = {
   graph: {
