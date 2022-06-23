@@ -3,7 +3,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { TextNode } from 'lexical';
 import { useCallback, useEffect } from 'react';
 
-export default function TokenPlugin() {
+export default function Token() {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     if (!editor.hasNodes([TokenNode])) {
