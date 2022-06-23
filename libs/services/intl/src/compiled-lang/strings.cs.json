@@ -20,7 +20,7 @@
   "+xiT4Q": [
     {
       "type": 0,
-      "value": "Pagination"
+      "value": "Stránkování"
     }
   ],
   "/I/U8L": [
@@ -44,7 +44,7 @@
   "/WW7If": [
     {
       "type": 0,
-      "value": "True"
+      "value": "Pravda"
     }
   ],
   "/doURb": [
@@ -98,7 +98,7 @@
   "0KMjv6": [
     {
       "type": 0,
-      "value": "Tracking"
+      "value": "Sledování"
     }
   ],
   "0R2D5l": [
@@ -110,7 +110,7 @@
   "0Vzp0l": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Sbalit"
     }
   ],
   "0ZlNtf": [
@@ -274,19 +274,19 @@
   "1VRGCF": [
     {
       "type": 0,
-      "value": "Specify one or more expressions which must be true for the trigger to fire."
+      "value": "Zadejte alespoň jeden výraz, který musí být true, aby se trigger aktivoval."
     }
   ],
   "1ejxkP": [
     {
       "type": 0,
-      "value": "Secure Inputs"
+      "value": "Zabezpečit vstupy"
     }
   ],
   "1htSs7": [
     {
       "type": 0,
-      "value": "Off"
+      "value": "Vypnuto"
     }
   ],
   "1jhzOM": [
@@ -322,7 +322,7 @@
   "2Cdt4p": [
     {
       "type": 0,
-      "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
+      "value": "Pokud chcete spustit instanci pracovního postupu pro jednotlivé položky ve vybraném poli, povolte dělení. Každá instance navíc může mít své vlastní ID pro sledování."
     }
   ],
   "2K2fAj": [
@@ -346,7 +346,7 @@
   "2tTQ0A": [
     {
       "type": 0,
-      "value": "On"
+      "value": "Zapnuto"
     }
   ],
   "33+WHG": [
@@ -361,6 +361,12 @@
       "value": "Vyžadováno. Oddělovač."
     }
   ],
+  "3X/ZDK": [
+    {
+      "type": 0,
+      "value": "Upload or select an output schema to be used for your map."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -370,7 +376,7 @@
   "3qG1VT": [
     {
       "type": 0,
-      "value": "Tracked Properties"
+      "value": "Sledované vlastnosti"
     }
   ],
   "3rzrWf": [
@@ -383,6 +389,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Počet zadaných jednotek času, které se mají odečíst"
+    }
+  ],
+  "3wagjT": [
+    {
+      "type": 0,
+      "value": "select input"
     }
   ],
   "47kOXr": [
@@ -586,19 +598,19 @@
   "8j+a0n": [
     {
       "type": 0,
-      "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+      "value": "Pokud u asynchronního zpracování vzdálený server označí přijetí žádosti o zpracování pomocí odpovědi 202 (Přijato), modul Logic Apps bude i nadále pokračovat v cyklickém dotazování adresy URL zadané v hlavičce umístění odpovědi, dokud se nedosáhne konečného stavu."
     }
   ],
   "8ubEPi": [
     {
       "type": 0,
-      "value": "Request Options"
+      "value": "Možnosti žádosti"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Potlačit hlavičky pracovního postupu v odpovědi"
     }
   ],
   "8wr0zO": [
@@ -617,6 +629,12 @@
     {
       "type": 0,
       "value": "Konektor"
+    }
+  ],
+  "9I0PcK": [
+    {
+      "type": 0,
+      "value": "Add output schema"
     }
   ],
   "9JuvQ4": [
@@ -641,6 +659,12 @@
     {
       "type": 0,
       "value": "Vrátí výsledek součtu daných dvou čísel."
+    }
+  ],
+  "9mWdNA": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
     }
   ],
   "9u/Ae3": [
@@ -676,7 +700,7 @@
   "BBD8Em": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Klíč"
     }
   ],
   "BCAnZP": [
@@ -724,7 +748,7 @@
   "C4NQ1J": [
     {
       "type": 0,
-      "value": "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold."
+      "value": "Načtěte položky, aby se splnila zadaná prahová hodnota tak, že se bude následovat token pro pokračování. Kvůli velikosti stránky konektoru může počet vrácených položek překročit prahovou hodnotu."
     }
   ],
   "CG772M": [
@@ -790,13 +814,13 @@
   "FDWfqM": [
     {
       "type": 0,
-      "value": "Secure Outputs"
+      "value": "Zabezpečit výstupy"
     }
   ],
   "FGS2fS": [
     {
       "type": 0,
-      "value": "has failed"
+      "value": "neúspěšné"
     }
   ],
   "FN5zHQ": [
@@ -808,7 +832,7 @@
   "FNbA9+": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Rozbalit"
     }
   ],
   "FS+/Tb": [
@@ -820,13 +844,13 @@
   "FUhNu4": [
     {
       "type": 0,
-      "value": "Split On"
+      "value": "Rozdělit v"
     }
   ],
   "FUuFlC": [
     {
       "type": 0,
-      "value": "Default"
+      "value": "Výchozí"
     }
   ],
   "FVavKy": [
@@ -982,7 +1006,7 @@
   "HXLutF": [
     {
       "type": 0,
-      "value": "Key"
+      "value": "Klíč"
     }
   ],
   "HfrUId": [
@@ -995,6 +1019,12 @@
     {
       "type": 0,
       "value": "Převede předané řetězcové časové razítko z formátu UTC na cílové časové pásmo."
+    }
+  ],
+  "IngtMG": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "Ip7Iax": [
@@ -1012,7 +1042,7 @@
   "J/Kz1j": [
     {
       "type": 0,
-      "value": "Asynchronous Pattern"
+      "value": "Asynchronní zpracování"
     }
   ],
   "J5/7vN": [
@@ -1025,6 +1055,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec, který obsahuje časový údaj."
+    }
+  ],
+  "JQlAMD": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1069,16 +1105,28 @@
       "value": "Povinné. Číselný řetězec formátu"
     }
   ],
+  "JqZfdk": [
+    {
+      "type": 0,
+      "value": "Add input schema"
+    }
+  ],
   "JzqgNM": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Nastavte ID pro sledování běhu. V případě dělení toto ID pro sledování slouží k zahájení požadavku."
     }
   ],
   "K50znc": [
     {
       "type": 0,
       "value": "Povinné. Objekt, do kterého se přidá nová vlastnost"
+    }
+  ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
     }
   ],
   "K90YEU": [
@@ -1150,7 +1198,7 @@
   "MCQODe": [
     {
       "type": 0,
-      "value": "Secure outputs of the operation and references of output properties."
+      "value": "Umožňuje zabezpečit výstupy operace a odkazy výstupních vlastností."
     }
   ],
   "MDbmMw": [
@@ -1324,7 +1372,7 @@
   "PXa0D4": [
     {
       "type": 0,
-      "value": "False"
+      "value": "Nepravda"
     }
   ],
   "PaPPLr": [
@@ -1540,13 +1588,13 @@
   "SmCQys": [
     {
       "type": 0,
-      "value": "Custom Tracking Id"
+      "value": "Vlastní ID sledování"
     }
   ],
   "T0BFpC": [
     {
       "type": 0,
-      "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
+      "value": "Nastavte ID pro sledování běhu. V případě dělení toto ID pro sledování slouží k zahájení požadavku."
     }
   ],
   "T7zcR6": [
@@ -1642,13 +1690,13 @@
   "Ur+wph": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Kliknutím odstraníte položku."
     }
   ],
   "V+/c21": [
     {
       "type": 0,
-      "value": "General"
+      "value": "Obecné"
     }
   ],
   "V0ZbQO": [
@@ -1793,6 +1841,12 @@
       "value": "Žádost"
     }
   ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -1802,7 +1856,7 @@
   "XsktQ/": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the response."
+      "value": "Omezí aplikace Logic Apps tak, aby do odpovědi nezahrnovaly hlavičky metadat pracovních postupů."
     }
   ],
   "XtuP5e": [
@@ -1872,7 +1926,7 @@
   "ZM1mRy": [
     {
       "type": 0,
-      "value": "Concurrency Control"
+      "value": "Řízení souběžnosti"
     }
   ],
   "ZME5hh": [
@@ -1920,13 +1974,19 @@
   "aK4iLW": [
     {
       "type": 0,
-      "value": "Data Handling"
+      "value": "Zpracování dat"
+    }
+  ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "b9/1dK": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Hodnota"
     }
   ],
   "bTrk+S": [
@@ -1938,7 +1998,7 @@
   "bWBMhe": [
     {
       "type": 0,
-      "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
+      "value": "Ve výchozím nastavení se instance aplikace logiky spouštějí současně nebo paralelně. Tento ovládací prvek změní způsob zařazení nových spuštění do fronty a po povolení se nedá změnit. Pokud chcete spustit co nejvíce paralelních instancí, nechte tento ovládací prvek vypnutý. Pokud chcete omezit počet paralelních spuštění, zapněte tento ovládací prvek a vyberte limit. Pokud chcete spouštět sekvenčně, vyberte jako limit 1."
     }
   ],
   "ba9yGJ": [
@@ -1969,6 +2029,12 @@
     {
       "type": 0,
       "value": "Vrátí objekt, ve kterém se určitá vlastnost nastavila na poskytnutou hodnotu."
+    }
+  ],
+  "c5/wGq": [
+    {
+      "type": 0,
+      "value": "select output"
     }
   ],
   "c6XbVI": [
@@ -2040,13 +2106,13 @@
   "dSTRb/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Zadejte chování a možnosti pro přenos obsahu přes protokol HTTP. Velké zprávy mohou být rozděleny na menší žádosti směřované na konektor, aby je bylo možné nahrát. Podrobnosti najdete na http://aka.ms/logicapps-chunk#upload-content-in-chunks."
     }
   ],
   "dWFyfN": [
     {
       "type": 0,
-      "value": "Secure inputs of the operation."
+      "value": "Umožňuje zabezpečit vstupy operace."
     }
   ],
   "dhvk0u": [
@@ -2106,7 +2172,7 @@
   "euC/DV": [
     {
       "type": 0,
-      "value": "Array"
+      "value": "Pole"
     }
   ],
   "f/lWTW": [
@@ -2142,7 +2208,7 @@
   "g0a4Qe": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Hodnota"
     }
   ],
   "g4igOR": [
@@ -2196,7 +2262,7 @@
   "gWRF8m": [
     {
       "type": 0,
-      "value": "Trigger Conditions"
+      "value": "Podmínky aktivační události"
     }
   ],
   "gu9o9z": [
@@ -2284,7 +2350,7 @@
   "i/b3Ko": [
     {
       "type": 0,
-      "value": "Asynchronous Response"
+      "value": "Asynchronní odpověď"
     }
   ],
   "i1cwra": [
@@ -2296,7 +2362,7 @@
   "i4C4aB": [
     {
       "type": 0,
-      "value": "Networking"
+      "value": "Sítě"
     }
   ],
   "iBlvhu": [
@@ -2414,7 +2480,7 @@
   "juR40n": [
     {
       "type": 0,
-      "value": "Duration"
+      "value": "Doba trvání"
     }
   ],
   "k/oqFL": [
@@ -2516,7 +2582,7 @@
   "lcVG4C": [
     {
       "type": 0,
-      "value": "is skipped"
+      "value": "přeskočeno"
     }
   ],
   "lgs5sf": [
@@ -2564,7 +2630,7 @@
   "mOr9ll": [
     {
       "type": 0,
-      "value": "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails."
+      "value": "Maximální doba trvání jedné odchozí žádosti z této akce. Pokud se žádost nedokončí během této doby po spuštění opakovaných pokusů, akce se nezdaří."
     }
   ],
   "mPakaD": [
@@ -2582,7 +2648,7 @@
   "mjS/k1": [
     {
       "type": 0,
-      "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+      "value": "Omezí aplikace Logic Apps tak, aby do odchozích požadavků nezahrnovaly hlavičky metadat pracovních postupů."
     }
   ],
   "n35O/+": [
@@ -2612,7 +2678,7 @@
   "nZ4nLn": [
     {
       "type": 0,
-      "value": "Suppress workflow headers"
+      "value": "Potlačit hlavičky pracovních postupů"
     }
   ],
   "ngsC44": [
@@ -2662,13 +2728,19 @@
   "oLtwMw": [
     {
       "type": 0,
-      "value": "Content Transfer"
+      "value": "Přenos obsahu"
     }
   ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Zadejte identifikátor spuštění a spuštění otevřete."
+    }
+  ],
+  "orhWzV": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
     }
   ],
   "p/0r2N": [
@@ -2734,7 +2806,7 @@
   "ptkf0D": [
     {
       "type": 0,
-      "value": "Security"
+      "value": "Zabezpečení"
     }
   ],
   "q/+Uex": [
@@ -2776,7 +2848,7 @@
   "qPUX59": [
     {
       "type": 0,
-      "value": "is successful"
+      "value": "úspěšné"
     }
   ],
   "qSejoi": [
@@ -2860,7 +2932,7 @@
   "qrxi0L": [
     {
       "type": 0,
-      "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+      "value": "Asynchronní odpověď umožní aplikaci Logic Apps odpovědět kódem 202 (Přijato) a dát tak vědět, že se požadavek přijal ke zpracování. Pomocí poskytnuté hlavičky umístění půjde načíst koncový stav."
     }
   ],
   "r43nMc": [
@@ -2914,7 +2986,7 @@
   "s7nGyC": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Odstranit"
     }
   ],
   "sDkAVZ": [
@@ -2926,7 +2998,7 @@
   "sW47JR": [
     {
       "type": 0,
-      "value": "Degree of Parallelism"
+      "value": "Stupeň paralelismu"
     }
   ],
   "sZ0G/Z": [
@@ -2944,7 +3016,7 @@
   "scmyvO": [
     {
       "type": 0,
-      "value": "Action Timeout"
+      "value": "Časový limit akce"
     }
   ],
   "sfJTHV": [
@@ -2975,6 +3047,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec, který obsahuje název cílového časového pásma. Podrobnosti najdete tady: https://msdn.microsoft.com/en-us/library/gg154758.aspx"
+    }
+  ],
+  "t5CdhT": [
+    {
+      "type": 0,
+      "value": "Upload or select an input schema to be used for your map."
     }
   ],
   "tE7Zam": [
@@ -3064,7 +3142,7 @@
   "uZH8Qs": [
     {
       "type": 0,
-      "value": "Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request."
+      "value": "Omezte maximální dobu trvání mezi opakovanými pokusy a asynchronními odpověďmi na tuto akci. Poznámka: Časový limit požadavku jedné žádosti se nezmění."
     }
   ],
   "uc/PoD": [
@@ -3124,7 +3202,7 @@
   "vcBAuU": [
     {
       "type": 0,
-      "value": "has timed out"
+      "value": "vypršelo"
     }
   ],
   "vwH/XV": [
@@ -3220,7 +3298,7 @@
   "xQQ9ko": [
     {
       "type": 0,
-      "value": "Threshold"
+      "value": "Mezní hodnota"
     }
   ],
   "xV/oyK": [

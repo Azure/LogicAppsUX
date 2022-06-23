@@ -1,15 +1,20 @@
-import type { UpdateBreadcrumbAction } from '../../core/state/BreadcrumbSlice';
-import { updateBreadcrumbForSchema } from '../../core/state/BreadcrumbSlice';
+import { setCurrentOutputNode, setOutputSchema } from '../../core/state/SchemaSlice';
 import { store } from '../../core/state/Store';
-import type { Schema } from '../../models/Schema';
+import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import { convertSchemaToSchemaExtended } from '../../models/Schema';
 import { simpleMockSchema } from '../../models/__mocks__';
 import { EditorBreadcrumb } from './EditorBreadcrumb';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import { Provider } from 'react-redux';
 
+interface MockStoreData {
+  schema: SchemaExtended;
+  currentNode: SchemaNodeExtended;
+}
+
 const MockStore = ({ mockState, children }) => {
-  store.dispatch(updateBreadcrumbForSchema(mockState));
+  store.dispatch(setOutputSchema(mockState.schema));
+  store.dispatch(setCurrentOutputNode(mockState.currentNode));
 
   return <Provider store={store}>{children}</Provider>;
 };
@@ -29,7 +34,7 @@ Standard.decorators = [
     const schema: Schema = JSON.parse(JSON.stringify(simpleMockSchema));
     const extendedSchema = convertSchemaToSchemaExtended(schema);
 
-    const stateUpdate: UpdateBreadcrumbAction = {
+    const stateUpdate: MockStoreData = {
       schema: extendedSchema,
       currentNode: extendedSchema.schemaTreeRoot.children[0],
     };

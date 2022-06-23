@@ -22,7 +22,7 @@ export const toolboxTab: PanelTab = {
   title: 'Toolbox Title',
   name: 'Toolbox name',
   description: 'Toolbox description',
-  enabled: true,
+  visible: true,
   content: <ToolboxTabContent />,
   order: 0,
   icon: 'Info',

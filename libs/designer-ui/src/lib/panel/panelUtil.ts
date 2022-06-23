@@ -22,7 +22,7 @@ export interface PanelTab {
   title: string;
   description?: string;
   icon?: string;
-  enabled?: boolean;
+  visible?: boolean;
   order: number;
   content: React.ReactElement;
 }
@@ -61,6 +61,14 @@ export function registerTab(tabInfo: PanelTab, registeredTabs: Record<string, Pa
   return registeredTabs;
 }
 
+export function updateTabs(registeredTabs: Record<string, PanelTab>, updateFn: (tab: PanelTab) => PanelTab): Record<string, PanelTab> {
+  const updatedTabs: Record<string, PanelTab> = {};
+  for (const tabName of Object.keys(registeredTabs)) {
+    updatedTabs[tabName] = updateFn(registeredTabs[tabName]);
+  }
+  return updatedTabs;
+}
+
 export function unregisterTab(name: string, registeredTabs: Record<string, PanelTab>): void {
   if (Object.keys(registeredTabs).some((registeredTabName) => registeredTabName === name)) {
     delete registeredTabs[name];
@@ -69,7 +77,7 @@ export function unregisterTab(name: string, registeredTabs: Record<string, Panel
 
 export function getTabs(sort: boolean, registeredTabs: Record<string, PanelTab>): PanelTab[] {
   // Get all tabs not specifically defined as not enabled
-  const enabledTabs = Object.values(registeredTabs).filter((tab) => tab.enabled !== false);
+  const enabledTabs = Object.values(registeredTabs).filter((tab) => tab.visible !== false);
   return sort ? enabledTabs.sort((a, b) => a.order - b.order) : enabledTabs;
 }
 

@@ -19,6 +19,7 @@ export type PanelContainerProps = {
   comment?: string;
   panelLocation: PanelLocation;
   noNodeSelected: boolean;
+  isLoading?: boolean;
   panelScope: PanelScope;
   pivotDisabled?: boolean;
   panelHeaderControlType?: PanelHeaderControlType;
@@ -43,6 +44,7 @@ export const PanelContainer = ({
   isCollapsed,
   panelLocation,
   noNodeSelected,
+  isLoading,
   panelScope,
   panelHeaderControlType,
   panelHeaderMenu,
@@ -82,6 +84,7 @@ export const PanelContainer = ({
           titleId={headerTextId}
           title={title}
           includeTitle={true}
+          isLoading={isLoading}
           comment={comment}
           commentChange={onCommentChange}
           toggleCollapse={toggleCollapse}
@@ -91,6 +94,7 @@ export const PanelContainer = ({
     [
       cardIcon,
       isCollapsed,
+      isLoading,
       panelLocation,
       showCommentBox,
       noNodeSelected,

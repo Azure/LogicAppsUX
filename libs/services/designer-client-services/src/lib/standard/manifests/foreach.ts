@@ -9,6 +9,7 @@ export default {
     description: 'Executes a block of actions for each item in the input array.',
 
     allowChildOperations: true,
+    childOperationsLocation: ['actions'],
 
     inputs: {
       type: 'array',
