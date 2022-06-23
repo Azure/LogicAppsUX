@@ -1,9 +1,18 @@
 import type { WorkflowsList } from '../../../run-service';
 import { Text, IconButton } from '@fluentui/react';
 import type { IIconProps } from '@fluentui/react';
+import { useIntl } from 'react-intl';
 
 export const SelectedList: React.FC<any> = ({ selectedWorkflows }) => {
   const emojiIcon: IIconProps = { iconName: 'Cancel' };
+  const intl = useIntl();
+
+  const intlText = {
+    SELECTED_APPS: intl.formatMessage({
+      defaultMessage: 'Selected Apps',
+      description: 'Selected apps title',
+    }),
+  };
 
   const renderWorkflows = selectedWorkflows.map((workflow: WorkflowsList) => {
     return (
@@ -25,7 +34,7 @@ export const SelectedList: React.FC<any> = ({ selectedWorkflows }) => {
   return (
     <div className="msla-export-overview-panel-selected">
       <Text variant="xLarge" nowrap block className="msla-export-overview-panel-selected-title">
-        Selected Apps
+        {intlText.SELECTED_APPS}
       </Text>
       <div className="msla-export-overview-panel-selected-list">{renderWorkflows}</div>
     </div>
