@@ -1,4 +1,5 @@
 import { ApiService } from '../../../run-service/export/index';
+import { QueryKeys } from '../../../run-service/types';
 import { useOutlet } from '../export';
 import { getListColumns, parseWorkflowData } from './helper';
 import { SelectedList } from './selectedList';
@@ -24,7 +25,7 @@ export const Home: React.FC = () => {
     return apiService.getWorkflows();
   };
 
-  const { data } = useInfiniteQuery<any>('workflowsData', loadWorkflows, {
+  const { data } = useInfiniteQuery<any>(QueryKeys.workflowsData, loadWorkflows, {
     getNextPageParam: (lastPage) => lastPage.nextLink,
     refetchOnWindowFocus: false,
   });

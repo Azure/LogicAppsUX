@@ -179,3 +179,8 @@ export interface OutletContext {
   accessToken: string;
   baseUrl: string;
 }
+
+export enum QueryKeys {
+  workflowsData = 'workflowsData',
+  runsData = 'runsData',
+}
