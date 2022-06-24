@@ -28,7 +28,13 @@ export const ExportApp: React.FC = () => {
           <Text variant="xxLarge" className="msla-export-title" nowrap block>
             Export Logic App
           </Text>
-          <Outlet context={{ baseUrl: vscodeState.baseUrl, accessToken: vscodeState.accessToken }} />
+          <Outlet
+            context={{
+              baseUrl: vscodeState.baseUrl,
+              accessToken: vscodeState.accessToken,
+              selectedWorkflows: vscodeState.selectedWorkflows,
+            }}
+          />
         </div>
       </QueryClientProvider>
     </IntlProvider>

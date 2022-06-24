@@ -1,17 +1,20 @@
 import { ApiService } from '../../../run-service/export/index';
 import { QueryKeys } from '../../../run-service/types';
+import type { AppDispatch } from '../../../state/store';
+import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
 import { useOutlet } from '../export';
 import { getListColumns, parseWorkflowData } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useInfiniteQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
 
 export const Home: React.FC = () => {
-  const { baseUrl, accessToken } = useOutlet();
-  const [selectedWorkflows, setSelectedWorkflows] = useState<any>([]);
+  const { baseUrl, accessToken, selectedWorkflows } = useOutlet();
   const intl = useIntl();
+  const dispatch: AppDispatch = useDispatch();
 
   const intlText = {
     SELECT_TITLE: intl.formatMessage({
@@ -62,7 +65,11 @@ export const Home: React.FC = () => {
 
   const selection = new Selection({
     onSelectionChanged: () => {
-      setSelectedWorkflows(selection.getSelection());
+      dispatch(
+        updateSelectedWorkFlows({
+          selectedWorkflows: selection.getSelection(),
+        })
+      );
     },
   });
 
@@ -90,7 +97,7 @@ export const Home: React.FC = () => {
         </div>
       </div>
       <Separator vertical className="msla-export-overview-panel-divider" />
-      <SelectedList selectedWorkflows={selectedWorkflows} />
+      <SelectedList selectedItems={selectedWorkflows} />
     </div>
   );
 };

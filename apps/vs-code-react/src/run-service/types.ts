@@ -178,6 +178,11 @@ export interface WorkflowsList {
 export interface OutletContext {
   accessToken: string;
   baseUrl: string;
+  selectedWorkflows: Array<WorkflowsList>;
+}
+
+export interface ISelectedListProps {
+  selectedItems: Array<WorkflowsList>;
 }
 
 export enum QueryKeys {

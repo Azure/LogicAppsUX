@@ -20,6 +20,7 @@ interface initializedVscodeState {
   baseUrl: string;
   workflowProperties: OverviewPropertiesProps;
   project: ProjectName;
+  selectedWorkflows: Array<any>;
 }
 
 interface uninitializedVscodeState {
@@ -45,14 +46,19 @@ export const vscodeSlice = createSlice({
       (state as initializedVscodeState).baseUrl = baseUrl;
       (state as initializedVscodeState).corsNotice = corsNotice;
       (state as initializedVscodeState).workflowProperties = workflowProperties!;
+      (state as initializedVscodeState).selectedWorkflows = [];
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
+    },
+    updateSelectedWorkFlows: (state: VscodeState, action: PayloadAction<any>) => {
+      const { selectedWorkflows } = action.payload;
+      (state as initializedVscodeState).selectedWorkflows = selectedWorkflows;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initialize, updateAccessToken } = vscodeSlice.actions;
+export const { initialize, updateAccessToken, updateSelectedWorkFlows } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;
