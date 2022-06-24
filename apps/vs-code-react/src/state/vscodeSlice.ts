@@ -18,7 +18,7 @@ interface initializedVscodeState {
   corsNotice?: string;
   apiVersion: string;
   baseUrl: string;
-  workflowProperties: OverviewPropertiesProps;
+  workflowProperties: OverviewPropertiesProps | undefined;
   project: ProjectName;
   selectedWorkflows: Array<any>;
 }
@@ -45,7 +45,7 @@ export const vscodeSlice = createSlice({
       (state as initializedVscodeState).apiVersion = apiVersion;
       (state as initializedVscodeState).baseUrl = baseUrl;
       (state as initializedVscodeState).corsNotice = corsNotice;
-      (state as initializedVscodeState).workflowProperties = workflowProperties!;
+      (state as initializedVscodeState).workflowProperties = workflowProperties;
       (state as initializedVscodeState).selectedWorkflows = [];
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
