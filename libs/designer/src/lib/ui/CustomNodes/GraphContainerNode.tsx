@@ -1,7 +1,7 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { useActionMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
@@ -15,7 +15,7 @@ const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePositio
 
   const selected = useIsNodeSelected(id);
   const actionMetadata = useActionMetadata(id);
-  const childEdges = useEdgesByParent(id);
+  const childEdges = useEdgesBySource(id);
   const showAddButton = !readOnly && actionMetadata?.type && childEdges.length === 0;
 
   const hasFooter = actionMetadata?.type.toLowerCase() === 'until';

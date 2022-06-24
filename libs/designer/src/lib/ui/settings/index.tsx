@@ -1,6 +1,6 @@
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
-import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DataHandling } from './sections/datahandling';
 import { General } from './sections/general';
@@ -46,7 +46,7 @@ export const SettingsPanel = (): JSX.Element => {
   });
 
   // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
-  const allEdges: WorkflowEdge[] = useEdgesByParent();
+  const allEdges: WorkflowEdge[] = useEdgesBySource();
 
   const renderGeneral = (): JSX.Element | null => {
     const generalSectionProps: SectionProps = {

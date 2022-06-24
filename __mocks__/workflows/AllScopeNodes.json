@@ -170,7 +170,26 @@
           "DoUntil_Case": {
             "actions": {
               "Until": {
-                "actions": {},
+                "actions": {
+                  "Until_Action_1": {
+                    "inputs": {
+                      "name": "var1",
+                      "value": 1
+                    },
+                    "runAfter": {},
+                    "type": "IncrementVariable"
+                  },
+                  "Until_Action_2": {
+                    "inputs": {
+                      "name": "var1",
+                      "value": 1
+                    },
+                    "runAfter": {
+                      "Until_Action_1": ["Succeeded"]
+                    },
+                    "type": "IncrementVariable"
+                  }
+                },
                 "expression": "@equals('hey', 'hey')",
                 "limit": {
                   "count": 60,

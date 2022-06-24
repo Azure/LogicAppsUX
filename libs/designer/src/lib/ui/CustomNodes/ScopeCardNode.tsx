@@ -2,7 +2,7 @@ import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, expandPanel } from '../../core/state/panel/panelSlice';
 import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
@@ -49,7 +49,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const operationInfo = useOperationInfo(scopeId);
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
-  const childEdges = useEdgesByParent(id);
+  const edges = useEdgesBySource(id);
 
   const isPanelCollapsed = useSelector((state: RootState) => state.panel.collapsed);
   const nodeClick = useCallback(() => {
@@ -65,8 +65,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const label = labelCase(scopeId);
 
+  const isEmpty = edges.filter((edge) => !edge.target.endsWith('#footer')).length === 0;
   const isFooter = id.endsWith('#footer');
-  const showAddButton = childEdges.length === 0 && !isFooter;
+  const showEmptyGraphComponents = isEmpty && !isFooter;
 
   const normalizedType = node.type.toLowerCase();
   const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope', 'until'];
@@ -93,7 +94,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
-        {showAddButton ? (
+        {showEmptyGraphComponents ? (
           !readOnly ? (
             <div className={'edge-drop-zone-container'}>
               <DropZone graphId={scopeId} parent={scopeId} />
