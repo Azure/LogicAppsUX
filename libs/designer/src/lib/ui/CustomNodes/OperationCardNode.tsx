@@ -56,7 +56,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const connectionName = useNodeConnectionName(id);
 
   const isLeafNode = edges.filter((edge) => !edge.target.endsWith('#footer')).length === 0;
-  const showEmptyGraphComponents = isLeafNode && !readOnly;
+  const showLeafComponents = isLeafNode && !readOnly;
 
   const nodeClick = useCallback(() => {
     if (isCollapsed) {
@@ -102,7 +102,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
         />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
-      {showEmptyGraphComponents ? (
+      {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>
