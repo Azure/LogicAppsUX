@@ -15,8 +15,10 @@ const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePositio
 
   const selected = useIsNodeSelected(id);
   const actionMetadata = useActionMetadata(id);
-  const childEdges = useEdgesBySource(id);
-  const showAddButton = !readOnly && actionMetadata?.type && childEdges.length === 0;
+  const edges = useEdgesBySource(id);
+
+  const isLeafNode = edges.filter((edge) => !edge.target.endsWith('#footer')).length === 0;
+  const showLeafComponents = isLeafNode && !readOnly && actionMetadata?.type;
 
   const hasFooter = actionMetadata?.type.toLowerCase() === 'until';
 
@@ -27,7 +29,7 @@ const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePositio
         <GraphContainer selected={selected} />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
-      {showAddButton && (
+      {showLeafComponents && (
         <div className="edge-drop-zone-container">
           <DropZone graphId={id} parent={id} />
         </div>
