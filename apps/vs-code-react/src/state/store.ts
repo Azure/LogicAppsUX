@@ -1,12 +1,10 @@
 // eslint-disable-next-line import/no-named-as-default
-import overviewSlice from './overviewSlice';
+import vscodeSlice from './vscodeSlice';
 import { configureStore } from '@reduxjs/toolkit';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { AnyObject } from 'immer/dist/internal';
 
 export const store = configureStore({
   reducer: {
-    overview: overviewSlice,
+    vscode: vscodeSlice,
   },
 });
 
