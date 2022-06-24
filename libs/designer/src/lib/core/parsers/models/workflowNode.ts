@@ -1,7 +1,7 @@
 import type { NodesMetadata } from '../../state/workflowSlice';
 import { equals } from '@microsoft-logic-apps/utils';
 
-export type WorkflowNodeType = 'graphNode' | 'testNode' | 'scopeHeader' | 'subgraphHeader' | 'hiddenNode';
+export type WorkflowNodeType = 'graphNode' | 'testNode' | 'scopeNode' | 'subgraphHeader' | 'hiddenNode';
 
 export interface WorkflowNode {
   id: string;

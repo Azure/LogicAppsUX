@@ -166,6 +166,20 @@
               }
             },
             "case": "test-3"
+          },
+          "DoUntil_Case": {
+            "actions": {
+              "Until": {
+                "actions": {},
+                "expression": "@equals('hey', 'hey')",
+                "limit": {
+                  "count": 60,
+                  "timeout": "PT1H"
+                },
+                "type": "Until"
+              }
+            },
+            "case": "test-4"
           }
         },
         "default": {

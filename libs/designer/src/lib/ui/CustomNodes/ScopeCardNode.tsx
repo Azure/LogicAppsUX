@@ -5,6 +5,7 @@ import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '
 import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
+import { css } from '@fluentui/react';
 import { labelCase } from '@microsoft-logic-apps/utils';
 import { ScopeCard } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
@@ -14,7 +15,7 @@ import type { NodeProps } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const scopeId = id.split('-#')[0];
 
   const node = useActionMetadata(scopeId);
@@ -62,15 +63,17 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
     return null;
   }
 
-  const normalizedType = node.type.toLowerCase();
-
   const label = labelCase(scopeId);
 
-  const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope'];
+  const isFooter = id.endsWith('#footer');
+  const showAddButton = childEdges.length === 0 && !isFooter;
+
+  const normalizedType = node.type.toLowerCase();
+  const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope', 'until'];
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <>
-        <div className="msla-scope-card">
+        <div className={css('msla-scope-card', isFooter && 'is-footer')}>
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           <ScopeCard
             brandColor={brandColor.result}
@@ -90,7 +93,7 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
-        {childEdges.length === 0 ? (
+        {showAddButton ? (
           !readOnly ? (
             <div className={'edge-drop-zone-container'}>
               <DropZone graphId={scopeId} parent={scopeId} />
@@ -106,6 +109,6 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
   }
 };
 
-ScopeHeaderNode.displayName = 'ScopeNode';
+ScopeCardNode.displayName = 'ScopeNode';
 
-export default memo(ScopeHeaderNode);
+export default memo(ScopeCardNode);
