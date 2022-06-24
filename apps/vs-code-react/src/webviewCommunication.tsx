@@ -1,6 +1,6 @@
-import type { InitializePayload } from './state/overviewSlice';
-import { initialize, updateAccessToken } from './state/overviewSlice';
 import type { AppDispatch } from './state/store';
+import type { InitializePayload } from './state/vscodeSlice';
+import { initialize, updateAccessToken } from './state/vscodeSlice';
 import useEventListener from '@use-it/event-listener';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
