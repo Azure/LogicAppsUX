@@ -107,7 +107,7 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
         height: 40,
         width: 200,
         children: [
-          createWorkflowNode('ActionIf-#scopeHeader', 'scopeHeader'),
+          createWorkflowNode('ActionIf-#header', 'scopeNode'),
           {
             id: 'ActionIf-actions',
             type: 'graphNode',
@@ -132,8 +132,8 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
           },
         ],
         edges: [
-          createWorkflowEdge('ActionIf-#scopeHeader', 'ActionIf-actions-#subgraphHeader', 'onlyEdge'),
-          createWorkflowEdge('ActionIf-#scopeHeader', 'ActionIf-elseActions-#subgraphHeader', 'onlyEdge'),
+          createWorkflowEdge('ActionIf-#header', 'ActionIf-actions-#subgraphHeader', 'onlyEdge'),
+          createWorkflowEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraphHeader', 'onlyEdge'),
         ],
       },
       {
@@ -141,7 +141,7 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
         type: 'graphNode',
         height: 40,
         width: 200,
-        children: [createWorkflowNode('EmptyScope-#scopeHeader', 'scopeHeader')],
+        children: [createWorkflowNode('EmptyScope-#header', 'scopeNode')],
         edges: [],
       },
       createWorkflowNode('Response'),

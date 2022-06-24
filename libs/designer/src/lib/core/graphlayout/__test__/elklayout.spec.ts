@@ -42,7 +42,7 @@ describe('elklayout', () => {
             id: 'ActionIf',
             type: 'graphNode',
             children: [
-              createWorkflowNode('ActionIf-#scopeHeader', 'scopeHeader'),
+              createWorkflowNode('ActionIf-#header', 'scopeNode'),
               {
                 id: 'ActionIf-actions',
                 children: [
@@ -67,8 +67,8 @@ describe('elklayout', () => {
               },
             ],
             edges: [
-              createWorkflowEdge('ActionIf-#scopeHeader', 'ActionIf-actions-#subgraphHeader'),
-              createWorkflowEdge('ActionIf-#scopeHeader', 'ActionIf-elseActions-#subgraphHeader'),
+              createWorkflowEdge('ActionIf-#header', 'ActionIf-actions-#subgraphHeader'),
+              createWorkflowEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraphHeader'),
             ],
           },
           createWorkflowNode('Response'),
@@ -91,7 +91,7 @@ describe('elklayout', () => {
             id: 'ActionIf',
             layoutOptions: elkGraphLayoutOptions,
             children: [
-              createElkNode('ActionIf-#scopeHeader', 'scopeHeader'),
+              createElkNode('ActionIf-#header', 'scopeNode'),
               {
                 id: 'ActionIf-actions',
                 layoutOptions: elkGraphLayoutOptions,
@@ -113,8 +113,8 @@ describe('elklayout', () => {
               },
             ],
             edges: [
-              createElkEdge('ActionIf-#scopeHeader', 'ActionIf-actions-#subgraphHeader'),
-              createElkEdge('ActionIf-#scopeHeader', 'ActionIf-elseActions-#subgraphHeader'),
+              createElkEdge('ActionIf-#header', 'ActionIf-actions-#subgraphHeader'),
+              createElkEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraphHeader'),
             ],
           },
           createElkNode('Response'),
@@ -200,7 +200,7 @@ describe('elklayout', () => {
             x: 307,
             y: 308,
             children: [
-              { ...createElkNode('ActionIf-#scopeHeader', 'scopeHeader'), x: 307, y: 308 },
+              { ...createElkNode('ActionIf-#header', 'scopeNode'), x: 307, y: 308 },
               {
                 id: 'ActionIf-actions',
                 layoutOptions: elkGraphLayoutOptions,
@@ -225,8 +225,8 @@ describe('elklayout', () => {
               },
             ],
             edges: [
-              createElkEdge('ActionIf-#scopeHeader', 'ActionIf-actions-#subgraphHeader', 'onlyEdge'),
-              createElkEdge('ActionIf-#scopeHeader', 'ActionIf-elseActions-#subgraphHeader', 'onlyEdge'),
+              createElkEdge('ActionIf-#header', 'ActionIf-actions-#subgraphHeader', 'onlyEdge'),
+              createElkEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraphHeader', 'onlyEdge'),
             ],
           },
           {
@@ -234,7 +234,7 @@ describe('elklayout', () => {
             layoutOptions: elkGraphLayoutOptions,
             x: 307,
             y: 308,
-            children: [createElkNode('EmptyScope-#scopeHeader', 'scopeHeader')],
+            children: [createElkNode('EmptyScope-#header', 'scopeNode')],
             edges: [],
           },
           { ...createElkNode('Response'), x: 304, y: 305 },
@@ -276,10 +276,10 @@ describe('elklayout', () => {
             data: { label: 'ActionIf' },
           },
           {
-            id: 'ActionIf-#scopeHeader',
-            type: 'scopeHeader',
+            id: 'ActionIf-#header',
+            type: 'scopeNode',
             position: { x: 307, y: 308 },
-            data: { label: 'ActionIf-#scopeHeader' },
+            data: { label: 'ActionIf-#header' },
             parentNode: 'ActionIf',
           },
           {
@@ -338,10 +338,10 @@ describe('elklayout', () => {
             data: { label: 'EmptyScope' },
           },
           {
-            id: 'EmptyScope-#scopeHeader',
-            type: 'scopeHeader',
+            id: 'EmptyScope-#header',
+            type: 'scopeNode',
             position: { x: 0, y: 0 },
-            data: { label: 'EmptyScope-#scopeHeader' },
+            data: { label: 'EmptyScope-#header' },
             parentNode: 'EmptyScope',
           },
           {
@@ -357,8 +357,8 @@ describe('elklayout', () => {
           createSharedEdge('Increment_variable', 'ActionIf'),
           createSharedEdge('ActionIf', 'EmptyScope'),
           createSharedEdge('EmptyScope', 'Response'),
-          createSharedEdge('ActionIf-#scopeHeader', 'ActionIf-actions-#subgraphHeader', 'onlyEdge'),
-          createSharedEdge('ActionIf-#scopeHeader', 'ActionIf-elseActions-#subgraphHeader', 'onlyEdge'),
+          createSharedEdge('ActionIf-#header', 'ActionIf-actions-#subgraphHeader', 'onlyEdge'),
+          createSharedEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraphHeader', 'onlyEdge'),
           createSharedEdge('ActionIf-actions-#subgraphHeader', 'Increment_variable2'),
           createSharedEdge('Increment_variable2', 'Increment_variable4'),
           createSharedEdge('ActionIf-elseActions-#subgraphHeader', 'Increment_variable3'),

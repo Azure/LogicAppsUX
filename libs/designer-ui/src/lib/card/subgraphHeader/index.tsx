@@ -69,6 +69,14 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
       }),
       size: 'small',
     },
+    'UNTIL-DO': {
+      color: '#486991',
+      title: intl.formatMessage({
+        defaultMessage: 'Do',
+        description: 'Do, as in "to do an action"',
+      }),
+      size: 'small',
+    },
   };
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
