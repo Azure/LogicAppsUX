@@ -8,7 +8,7 @@ export interface InitializePayload {
   baseUrl: string;
   corsNotice?: string;
   accessToken?: string;
-  workflowProperties?: OverviewPropertiesProps;
+  workflowProperties: OverviewPropertiesProps;
   project: ProjectName;
 }
 
@@ -18,7 +18,7 @@ interface initializedVscodeState {
   corsNotice?: string;
   apiVersion: string;
   baseUrl: string;
-  workflowProperties: OverviewPropertiesProps | undefined;
+  workflowProperties: OverviewPropertiesProps;
   project: ProjectName;
   selectedWorkflows: Array<any>;
 }
