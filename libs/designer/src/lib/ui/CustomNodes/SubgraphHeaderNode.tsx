@@ -3,7 +3,7 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { expandPanel, changePanelNode } from '../../core/state/panel/panelSlice';
 import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
 import { SubgraphHeader } from '@microsoft/designer-ui';
@@ -23,7 +23,7 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
 
   const selected = useIsNodeSelected(subgraphId);
   const metadata = useNodeMetadata(subgraphId);
-  const childEdges = useEdgesByParent(id);
+  const edges = useEdgesBySource(id);
 
   const isAddCase = metadata?.subgraphType === 'SWITCH-ADD-CASE';
 
@@ -36,6 +36,9 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
     },
     [dispatch, isCollapsed]
   );
+
+  const isEmpty = edges.filter((edge) => !edge.target.endsWith('#footer')).length === 0;
+  const showEmptyGraphComponents = isEmpty && !isAddCase;
 
   return (
     <div>
@@ -53,7 +56,7 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>
-      {childEdges.length === 0 && !isAddCase ? (
+      {showEmptyGraphComponents ? (
         !readOnly ? (
           <div className={'edge-drop-zone-container'}>
             <DropZone graphId={subgraphId} parent={metadata?.graphId ?? ''} />
