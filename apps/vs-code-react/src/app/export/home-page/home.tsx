@@ -1,18 +1,20 @@
 import { ApiService } from '../../../run-service/export/index';
 import { QueryKeys } from '../../../run-service/types';
-import type { AppDispatch } from '../../../state/store';
+import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
-import { useOutlet } from '../export';
+import type { initializedVscodeState } from '../../../state/vscodeSlice';
 import { getListColumns, parseWorkflowData } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useInfiniteQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const Home: React.FC = () => {
-  const { baseUrl, accessToken, selectedWorkflows } = useOutlet();
+  const vscodeState = useSelector((state: RootState) => state.vscode);
+
+  const { baseUrl, accessToken } = vscodeState as initializedVscodeState;
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
 
@@ -71,7 +73,20 @@ export const Home: React.FC = () => {
         })
       );
     },
+    items: workflowItems,
   });
+
+  const deselectItem = (itemKey: string) => {
+    /*const selectedItems = selectedWorkflows.filter((workflow) => workflow.key !== itemKey);
+    dispatch(
+      updateSelectedWorkFlows({
+        selectedWorkflows: selectedItems,
+      })
+    );*/
+    console.log(selection.getItemIndex(itemKey));
+    selection.setAllSelected(false);
+    console.log(selection.getItems());
+  };
 
   return (
     <div className="msla-export-overview-panel">
@@ -86,18 +101,18 @@ export const Home: React.FC = () => {
           <ShimmeredDetailsList
             items={workflowItems ?? []}
             columns={getListColumns()}
+            setKey="set"
             enableShimmer={!workflowItems}
             ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
             ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
             checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
-            selectionPreservedOnEmptyClick={true}
             selectionMode={SelectionMode.multiple}
             selection={selection}
           />
         </div>
       </div>
       <Separator vertical className="msla-export-overview-panel-divider" />
-      <SelectedList selectedItems={selectedWorkflows} />
+      <SelectedList deselectItem={deselectItem} />
     </div>
   );
 };

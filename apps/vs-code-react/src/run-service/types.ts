@@ -181,10 +181,6 @@ export interface OutletContext {
   selectedWorkflows: Array<WorkflowsList>;
 }
 
-export interface ISelectedListProps {
-  selectedItems: Array<WorkflowsList>;
-}
-
 export enum QueryKeys {
   workflowsData = 'workflowsData',
   runsData = 'runsData',

@@ -12,7 +12,7 @@ export interface InitializePayload {
   project: ProjectName;
 }
 
-interface initializedVscodeState {
+export interface initializedVscodeState {
   initialized: true;
   accessToken?: string;
   corsNotice?: string;

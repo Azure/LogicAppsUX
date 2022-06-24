@@ -1,11 +1,17 @@
-import type { ISelectedListProps, WorkflowsList } from '../../../run-service';
+import type { WorkflowsList } from '../../../run-service';
+import type { RootState } from '../../../state/store';
+import type { initializedVscodeState } from '../../../state/vscodeSlice';
 import { Text, IconButton } from '@fluentui/react';
 import type { IIconProps } from '@fluentui/react';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
-export const SelectedList: React.FC<ISelectedListProps> = ({ selectedItems }) => {
-  const emojiIcon: IIconProps = { iconName: 'Cancel' };
+export const SelectedList: React.FC<any> = ({ deselectItem }) => {
   const intl = useIntl();
+  const vscodeState = useSelector((state: RootState) => state.vscode);
+  const { selectedWorkflows: selectedItems } = vscodeState as initializedVscodeState;
+
+  const emojiIcon: IIconProps = { iconName: 'Cancel' };
 
   const intlText = {
     SELECTED_APPS: intl.formatMessage({
@@ -15,16 +21,17 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ selectedItems }) =>
   };
 
   const renderItems = selectedItems.map((workflow: WorkflowsList) => {
+    const { key, name, resourceGroup } = workflow;
     return (
       <div key={workflow.key} className="msla-export-overview-panel-selected-list-item">
-        <IconButton iconProps={emojiIcon} aria-label="cancel" />
+        <IconButton iconProps={emojiIcon} aria-label="cancel" onClick={() => deselectItem(key)} />
         <Text variant="large" nowrap block className="msla-export-overview-panel-selected-list-item-text">
-          {workflow.name + ' '}
+          {name + ' '}
         </Text>
         <div className="msla-export-overview-panel-selected-list-item-subtext subtext-color">
           (
           <Text variant="medium" nowrap block className="subtext-color">
-            {workflow.resourceGroup}
+            {resourceGroup}
           </Text>
           )
         </div>
