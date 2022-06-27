@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { NodeChange } from 'react-flow-renderer';
-import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
+import ReactFlow, { Controls, ReactFlowProvider } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 
 export interface DesignerProps {
@@ -47,6 +47,7 @@ export const Designer = () => {
             minZoom={0}
             nodesDraggable={false}
             edgeTypes={edgeTypes}
+            panOnScroll={true}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,
@@ -54,6 +55,7 @@ export const Designer = () => {
           >
             <PanelRoot />
           </ReactFlow>
+          <Controls showInteractive={false} />
         </ReactFlowProvider>
       </div>
     </DndProvider>

@@ -319,7 +319,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "맵에 사용할 출력 스키마를 업로드하거나 선택합니다."
     }
   ],
   "3kI7xF": [
@@ -349,7 +349,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "입력 선택"
     }
   ],
   "47kOXr": [
@@ -589,7 +589,7 @@
   "9I0PcK": [
     {
       "type": 0,
-      "value": "Add output schema"
+      "value": "출력 스키마 추가"
     }
   ],
   "9JuvQ4": [
@@ -619,7 +619,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "출력 스키마 선택"
     }
   ],
   "9u/Ae3": [
@@ -946,7 +946,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "입력 스키마 선택"
     }
   ],
   "Ip7Iax": [
@@ -982,7 +982,7 @@
   "JQlAMD": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "취소"
     }
   ],
   "JSfWJ0": [
@@ -1030,7 +1030,7 @@
   "JqZfdk": [
     {
       "type": 0,
-      "value": "Add input schema"
+      "value": "입력 스키마 추가"
     }
   ],
   "JzqgNM": [
@@ -1048,7 +1048,7 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "업로드할 파일 선택"
     }
   ],
   "K90YEU": [
@@ -1733,7 +1733,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "찾아보기"
     }
   ],
   "XqamWZ": [
@@ -1869,7 +1869,7 @@
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "추가"
     }
   ],
   "b9/1dK": [
@@ -1923,7 +1923,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "출력 선택"
     }
   ],
   "c6XbVI": [
@@ -2592,7 +2592,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "스키마를 로드하지 못했습니다. 다시 시도하세요."
     }
   ],
   "p/0r2N": [
@@ -2871,7 +2871,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "맵에 사용할 입력 스키마를 업로드하거나 선택합니다."
     }
   ],
   "tE7Zam": [

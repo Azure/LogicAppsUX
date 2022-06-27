@@ -1,6 +1,6 @@
 import messages from '../../../../../libs/services/intl/src/compiled-lang/strings.json';
+import { mapToRunItem, RunService, QueryKeys } from '../../run-service';
 import type { RunDisplayItem, Runs } from '../../run-service';
-import { mapToRunItem, RunService } from '../../run-service';
 import type { OnErrorFn } from '@formatjs/intl';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import { Overview, isRunError } from '@microsoft/designer-ui';
@@ -55,11 +55,15 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
     return runService.getRuns();
   };
 
-  const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>('runsData', loadRuns, {
-    getNextPageParam: (lastPage) => lastPage.nextLink,
-    refetchInterval: 5000, // 5 seconds refresh interval
-    refetchIntervalInBackground: false, // It will automatically refetch when window is focused
-  });
+  const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>(
+    QueryKeys.runsData,
+    loadRuns,
+    {
+      getNextPageParam: (lastPage) => lastPage.nextLink,
+      refetchInterval: 5000, // 5 seconds refresh interval
+      refetchIntervalInBackground: false, // It will automatically refetch when window is focused
+    }
+  );
 
   const runItems = useMemo(
     () =>

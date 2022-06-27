@@ -22,7 +22,12 @@ export const EditorBreadcrumb = (): JSX.Element => {
     return [];
   }, [dispatch, outputSchema, currentOutputNode]);
 
-  return <Breadcrumb items={breadcrumbItems} maxDisplayedItems={maxBreadcrumbItems} overflowIndex={overflowIndex} />;
+  return breadcrumbItems.length < 1 ? (
+    // Breadcrumb doesn't display when empty, this is a breadcrumb space placeholder
+    <div style={{ height: '37px', marginTop: '11px' }}></div>
+  ) : (
+    <Breadcrumb items={breadcrumbItems} maxDisplayedItems={maxBreadcrumbItems} overflowIndex={overflowIndex} />
+  );
 };
 
 const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended, currentNode?: SchemaNodeExtended) => {
