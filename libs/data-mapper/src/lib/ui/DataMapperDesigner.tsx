@@ -2,7 +2,9 @@ import { convertToReactFlowNode } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
-import { AddSchemaPanelButton, SchemaTypes } from '../components/schemaSelection/addSchemaPanelButton';
+import { SchemaTypes } from '../components/schemaSelection/addSchemaPanelButton';
+import { SelectSchemaCard } from '../components/schemaSelection/selectSchemaCard';
+import { openInputSchemaPanel, openOutputSchemaPanel } from '../core/state/PanelSlice';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
@@ -74,6 +76,13 @@ export const DataMapperDesigner = () => {
     dispatch(setCurrentOutputNode(currentSchemaNode));
   };
 
+  const onInputSchemaClick = () => {
+    dispatch(openInputSchemaPanel());
+  };
+  const onOutputSchemaClick = () => {
+    dispatch(openOutputSchemaPanel());
+  };
+
   const layeredReactFlow = (
     <LayerHost
       id={layerHostId}
@@ -117,26 +126,10 @@ export const DataMapperDesigner = () => {
         ) : (
           <div className="msla-designer-canvas msla-panel-mode not-loaded">
             <div className="left">
-              {inputSchema ? (
-                layeredReactFlow
-              ) : (
-                <AddSchemaPanelButton
-                  schemaType={SchemaTypes.Input}
-                  onSubmitSchema={onSubmitInput}
-                  schemaFilesList={availableSchemas ?? []}
-                />
-              )}
+              {inputSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Input} onClick={onInputSchemaClick} />}
             </div>
             <div className="right">
-              {outputSchema ? (
-                layeredReactFlow
-              ) : (
-                <AddSchemaPanelButton
-                  schemaType={SchemaTypes.Output}
-                  onSubmitSchema={onSubmitOutput}
-                  schemaFilesList={availableSchemas ?? []}
-                />
-              )}
+              {outputSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Input} onClick={onOutputSchemaClick} />}
             </div>
           </div>
         )}

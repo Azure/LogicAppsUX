@@ -1,4 +1,4 @@
-import { closeDefaultConfigPanel, openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
+import { closeDefaultConfigPanel, closeSchemaChangePanel, openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { ChangeSchemaView } from './ChangeSchemaView';
@@ -32,11 +32,6 @@ export interface EditorConfigPanelProps {
   schemaFilesList?: Schema[] | undefined;
 }
 
-// const uploadSchemaOptions: IChoiceGroupOption[] = [
-//   // { key: UploadSchemaTypes.UploadNew, text: 'Upload new' },  // TODO: enable this when funtionality will be developed (14772529)
-//   { key: UploadSchemaTypes.SelectFrom, text: 'Select from existing' },
-// ];
-
 initializeIcons();
 
 export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
@@ -51,16 +46,16 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
 
   const hideEntirePanel = () => {
     dispatch(closeDefaultConfigPanel());
+    setErrorMessage('');
   };
   const closeSchemaPanel = () => {
-    dispatch(closeDefaultConfigPanel());
+    dispatch(closeSchemaChangePanel());
+    setErrorMessage('');
   };
-  // const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
+
   const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
   const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
-  // const [errorMessage, setErrorMessage] = useState('');
-
-  // const dataMapDropdownOptions = schemaFilesList.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
+  const [errorMessage, setErrorMessage] = useState('');
 
   const intl = useIntl();
 
@@ -76,24 +71,28 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     defaultMessage: 'Configuration',
     description: 'Header text to inform users this panel is for configuration.',
   });
+  const genericErrMsg = intl.formatMessage({
+    defaultMessage: 'Failed loading the schema. Please try again.',
+    description: 'error message for loading the schema',
+  });
 
   const onInputSchemaAddClick = useCallback(() => {
-    // setErrorMessage('');
+    setErrorMessage('');
     if (selectedInputSchema) {
       onSubmitInputSchema(selectedInputSchema.data);
       closeSchemaPanel();
     } else {
-      // setErrorMessage(genericErrMsg);
+      setErrorMessage(genericErrMsg);
     }
   }, [closeSchemaPanel, onSubmitInputSchema, selectedInputSchema]);
 
   const onOutputSchemaAddClick = useCallback(() => {
-    // setErrorMessage('');
+    setErrorMessage('');
     if (selectedOutputSchema) {
       onSubmitOutputSchema(selectedOutputSchema.data);
       closeSchemaPanel();
     } else {
-      // setErrorMessage(genericErrMsg);
+      setErrorMessage(genericErrMsg);
     }
   }, [closeSchemaPanel, onSubmitOutputSchema, selectedOutputSchema]);
 
@@ -116,8 +115,6 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     [hideEntirePanel, addMessage, cancelMessage]
   );
 
-  // TODO: modify to use below
-  // const [schemaType, setSchemaType] = useState<SchemaTypes | undefined>(undefined);
   const onInputSchemaClick = () => {
     dispatch(openInputSchemaPanel());
   };
@@ -170,7 +167,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
       <Panel
         className="config-panel"
         isLightDismiss
-        isOpen={isDefaultPanelOpen}
+        isOpen={isDefaultPanelOpen || isChangeSchemaPanelOpen}
         onDismiss={hideEntirePanel}
         // headerText={showChangeSchemaView ? undefined : configurationHeader}
         onRenderNavigationContent={onRenderNavigationContent}
@@ -185,6 +182,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
               schemaFilesList={schemaFilesList}
               selectedSchema={schemaType === SchemaTypes.Input ? selectedInputSchema : selectedOutputSchema}
               setSelectedSchema={schemaType === SchemaTypes.Input ? setSelectedInputSchema : setSelectedOutputSchema}
+              errorMessage={errorMessage}
             />
           ) : (
             <DefaultPanelView onInputSchemaClick={onInputSchemaClick} onOutputSchemaClick={onOutputSchemaClick} />

@@ -20,6 +20,7 @@ export interface ChangeSchemaView {
   selectedSchema?: IDropdownOption;
   setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
   schemaFilesList?: Schema[];
+  errorMessage: string;
 }
 
 const uploadSchemaOptions: IChoiceGroupOption[] = [
@@ -34,6 +35,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
   selectedSchema,
   setSelectedSchema,
   schemaFilesList,
+  errorMessage,
 }) => {
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
 
@@ -114,7 +116,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
           placeholder={selectSchemaPlaceholderMessage}
           options={dataMapDropdownOptions ?? []}
           onChange={onSelectedItemChange}
-          //   errorMessage={errorMessage}
+          errorMessage={errorMessage}
         />
       )}
     </div>

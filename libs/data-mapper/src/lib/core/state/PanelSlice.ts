@@ -34,8 +34,8 @@ export const panelSlice = createSlice({
     },
 
     closeDefaultConfigPanel: (state) => {
-      state.isDefaultConfigPanelOpen = false;
       state.isChangeSchemaPanelOpen = false;
+      state.isDefaultConfigPanelOpen = false;
       state.schemaType = undefined;
     },
 
@@ -49,7 +49,7 @@ export const panelSlice = createSlice({
       state.isChangeSchemaPanelOpen = true;
     },
 
-    closeSchemaPanel: (state) => {
+    closeSchemaChangePanel: (state) => {
       state.isChangeSchemaPanelOpen = false;
       state.schemaType = undefined;
     },
@@ -64,7 +64,7 @@ export const {
   closeDefaultConfigPanel,
   openInputSchemaPanel,
   openOutputSchemaPanel,
-  closeSchemaPanel,
+  closeSchemaChangePanel,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;
