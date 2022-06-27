@@ -615,12 +615,6 @@
       "value": "Connector"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1019,12 +1013,6 @@
       "value": "Required. A string that contains the time."
     }
   ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -1065,12 +1053,6 @@
     {
       "type": 0,
       "value": "Required. The numeric format string."
-    }
-  ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
     }
   ],
   "JzqgNM": [

@@ -1,4 +1,4 @@
-import { SchemaTypes } from './addSchemaPanelButton';
+import { SchemaTypes } from '../configPanel/EditorConfigPanel';
 import stateImageOnHover from './card_image_onhover.png';
 import stateImageOnRest from './card_image_onrest.png';
 import { Image } from '@fluentui/react/lib/Image';

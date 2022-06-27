@@ -15,11 +15,6 @@ export enum SchemaTypes {
   Output = 'output',
 }
 
-export enum UploadSchemaTypes {
-  UploadNew = 'upload-new',
-  SelectFrom = 'select-from',
-}
-
 export interface EditorConfigPanelProps {
   onSubmitInputSchema: (schema: Schema) => void;
   onSubmitOutputSchema: (schema: Schema) => void;

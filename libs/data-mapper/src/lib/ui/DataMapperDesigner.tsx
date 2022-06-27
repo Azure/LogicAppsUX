@@ -1,8 +1,7 @@
 import { convertToReactFlowNode } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
-import { SchemaTypes } from '../components/schemaSelection/addSchemaPanelButton';
+import { EditorConfigPanel, SchemaTypes } from '../components/configPanel/EditorConfigPanel';
 import { SelectSchemaCard } from '../components/schemaSelection/selectSchemaCard';
 import { openInputSchemaPanel, openOutputSchemaPanel } from '../core/state/PanelSlice';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';

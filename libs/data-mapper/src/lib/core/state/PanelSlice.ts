@@ -1,16 +1,16 @@
-import { SchemaTypes } from '../../components/schemaSelection/addSchemaPanelButton';
+import { SchemaTypes } from '../../components/configPanel/EditorConfigPanel';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface PanelState {
-  collapsed: boolean;
+  leftPanelCollapsed: boolean;
 
-  isDefaultConfigPanelOpen: boolean; // if the default one is open
-  isChangeSchemaPanelOpen: boolean; // if the input/output schema change panel is open - either on top or by itself
+  isDefaultConfigPanelOpen: boolean;
+  isChangeSchemaPanelOpen: boolean;
   schemaType?: SchemaTypes;
 }
 
 const initialState: PanelState = {
-  collapsed: true,
+  leftPanelCollapsed: true,
   isDefaultConfigPanelOpen: false,
   isChangeSchemaPanelOpen: false,
 };
@@ -19,14 +19,13 @@ export const panelSlice = createSlice({
   name: 'panel',
   initialState,
   reducers: {
-    expandPanel: (state) => {
-      state.collapsed = false;
+    expandLeftPanel: (state) => {
+      state.leftPanelCollapsed = false;
     },
-    collapsePanel: (state) => {
-      state.collapsed = true;
+    collapseLeftPanel: (state) => {
+      state.leftPanelCollapsed = true;
     },
 
-    // below are for schema panels
     openDefaultConfigPanel: (state) => {
       state.isChangeSchemaPanelOpen = false;
       state.schemaType = undefined;
@@ -58,8 +57,8 @@ export const panelSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  expandPanel,
-  collapsePanel,
+  expandLeftPanel,
+  collapseLeftPanel,
   openDefaultConfigPanel,
   closeDefaultConfigPanel,
   openInputSchemaPanel,
