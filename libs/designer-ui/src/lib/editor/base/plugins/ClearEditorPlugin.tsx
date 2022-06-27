@@ -1,9 +1,8 @@
-import { ClearEditorPlugin as ClearEditorEnabled } from '@lexical/react/LexicalClearEditorPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { CLEAR_EDITOR_COMMAND } from 'lexical';
 import { useIntl } from 'react-intl';
 
-export default function ClearEditor() {
+export default function ClearEditorPlugin() {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const text = intl.formatMessage({
@@ -19,7 +18,6 @@ export default function ClearEditor() {
       }}
     >
       {text}
-      <ClearEditorEnabled />
     </button>
   );
 }
