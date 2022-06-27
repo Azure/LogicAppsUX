@@ -319,7 +319,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "マップに使用する出力スキーマをアップロードまたは選択します。"
     }
   ],
   "3kI7xF": [
@@ -349,7 +349,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "入力の選択"
     }
   ],
   "47kOXr": [
@@ -589,7 +589,7 @@
   "9I0PcK": [
     {
       "type": 0,
-      "value": "Add output schema"
+      "value": "出力スキーマの追加"
     }
   ],
   "9JuvQ4": [
@@ -619,7 +619,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "出力スキーマの選択"
     }
   ],
   "9u/Ae3": [
@@ -946,7 +946,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "入力スキーマの選択"
     }
   ],
   "Ip7Iax": [
@@ -982,7 +982,7 @@
   "JQlAMD": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "キャンセル"
     }
   ],
   "JSfWJ0": [
@@ -1030,7 +1030,7 @@
   "JqZfdk": [
     {
       "type": 0,
-      "value": "Add input schema"
+      "value": "入力スキーマの追加"
     }
   ],
   "JzqgNM": [
@@ -1048,7 +1048,7 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "アップロードするファイルを選択します"
     }
   ],
   "K90YEU": [
@@ -1733,7 +1733,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "参照"
     }
   ],
   "XqamWZ": [
@@ -1869,7 +1869,7 @@
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "追加"
     }
   ],
   "b9/1dK": [
@@ -1923,7 +1923,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "出力の選択"
     }
   ],
   "c6XbVI": [
@@ -2592,7 +2592,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "スキーマの読み込みに失敗しました。もう一度やり直してください。"
     }
   ],
   "p/0r2N": [
@@ -2871,7 +2871,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "マップに使用する入力スキーマをアップロードまたは選択します。"
     }
   ],
   "tE7Zam": [

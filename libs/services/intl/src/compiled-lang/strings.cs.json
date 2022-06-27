@@ -364,7 +364,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Nahrajte nebo vyberte výstupní schéma, které se použije pro vaši mapu."
     }
   ],
   "3kI7xF": [
@@ -394,7 +394,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "vybrat vstup"
     }
   ],
   "47kOXr": [
@@ -634,7 +634,7 @@
   "9I0PcK": [
     {
       "type": 0,
-      "value": "Add output schema"
+      "value": "Přidejte výstupní schéma"
     }
   ],
   "9JuvQ4": [
@@ -664,7 +664,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Vyberte výstupní schéma."
     }
   ],
   "9u/Ae3": [
@@ -1024,7 +1024,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Vyberte vstupní schéma."
     }
   ],
   "Ip7Iax": [
@@ -1060,7 +1060,7 @@
   "JQlAMD": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Zrušit"
     }
   ],
   "JSfWJ0": [
@@ -1108,7 +1108,7 @@
   "JqZfdk": [
     {
       "type": 0,
-      "value": "Add input schema"
+      "value": "Přidejte vstupní schéma"
     }
   ],
   "JzqgNM": [
@@ -1126,7 +1126,7 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Vyberte soubor, který se má nahrát."
     }
   ],
   "K90YEU": [
@@ -1844,7 +1844,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Procházet"
     }
   ],
   "XqamWZ": [
@@ -1980,7 +1980,7 @@
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Přidat"
     }
   ],
   "b9/1dK": [
@@ -2034,7 +2034,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "vybrat výstup"
     }
   ],
   "c6XbVI": [
@@ -2740,7 +2740,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "Načtení schématu se nezdařilo. Opakujte akci."
     }
   ],
   "p/0r2N": [
@@ -3052,7 +3052,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Nahrajte nebo vyberte vstupní schéma, které se použije pro vaši mapu."
     }
   ],
   "tE7Zam": [
