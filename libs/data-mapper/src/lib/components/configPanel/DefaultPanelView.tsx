@@ -1,4 +1,4 @@
-import { initializeIcons } from '@fluentui/react';
+import { IconButton, initializeIcons, Text } from '@fluentui/react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -19,22 +19,22 @@ export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onI
 
   return (
     <div>
-      <p>{replaceMessage}</p>
+      <Text className="inform-text">{replaceMessage}</Text>
 
-      <div>
+      <div className="schema-selection-container">
         <div>
-          <p>Input Schema</p>
+          <Text className="schema-label-text">Input Schema</Text>
           <p>selectedSchema</p>
         </div>
-        <div onClick={onInputSchemaClick}>Pencil icon placeholder</div>
+        <IconButton iconProps={{ iconName: 'Edit' }} title="pencil" ariaLabel="pencil" onClick={onInputSchemaClick} />
       </div>
 
-      <div>
+      <div className="schema-selection-container">
         <div>
-          <p>Output Schema</p>
+          <Text className="schema-label-text">Output Schema</Text>
           <p>selectedSchema</p>
         </div>
-        <div onClick={onOutputSchemaClick}>Pencil icon placeholder</div>
+        <IconButton iconProps={{ iconName: 'Edit' }} title="pencil" ariaLabel="pencil" onClick={onOutputSchemaClick} />
       </div>
     </div>
   );

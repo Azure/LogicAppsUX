@@ -1,6 +1,7 @@
 import { convertToReactFlowNode } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
+import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { AddSchemaPanelButton, SchemaTypes } from '../components/schemaSelection/addSchemaPanelButton';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
@@ -108,6 +109,7 @@ export const DataMapperDesigner = () => {
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
         <EditorCommandBar />
+        <EditorConfigPanel schemaFilesList={availableSchemas} onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
         <EditorBreadcrumb />
 
         {inputSchema && outputSchema ? (

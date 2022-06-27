@@ -17,7 +17,9 @@ export enum UploadSchemaTypes {
 
 export interface ChangeSchemaView {
   schemaType?: SchemaTypes;
-  schemaFilesList: Schema[];
+  selectedSchema?: IDropdownOption;
+  setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
+  schemaFilesList?: Schema[];
 }
 
 const uploadSchemaOptions: IChoiceGroupOption[] = [
@@ -27,11 +29,15 @@ const uploadSchemaOptions: IChoiceGroupOption[] = [
 
 initializeIcons();
 
-export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({ schemaType, schemaFilesList }) => {
+export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
+  schemaType,
+  selectedSchema,
+  setSelectedSchema,
+  schemaFilesList,
+}) => {
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
-  const [selectedSchema, setSelectedSchema] = useState<IDropdownOption>();
 
-  const dataMapDropdownOptions = schemaFilesList.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
+  const dataMapDropdownOptions = schemaFilesList?.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
 
   const intl = useIntl();
 
@@ -106,7 +112,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({ schemaTy
         <Dropdown
           selectedKey={selectedSchema ? selectedSchema.key : undefined}
           placeholder={selectSchemaPlaceholderMessage}
-          options={dataMapDropdownOptions}
+          options={dataMapDropdownOptions ?? []}
           onChange={onSelectedItemChange}
           //   errorMessage={errorMessage}
         />
