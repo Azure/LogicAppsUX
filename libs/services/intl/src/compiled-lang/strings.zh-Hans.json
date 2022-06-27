@@ -323,7 +323,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "上传或选择要用于地图的输出架构。"
     }
   ],
   "3kI7xF": [
@@ -353,7 +353,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "选择输入"
     }
   ],
   "47kOXr": [
@@ -593,7 +593,7 @@
   "9I0PcK": [
     {
       "type": 0,
-      "value": "Add output schema"
+      "value": "添加输出架构"
     }
   ],
   "9JuvQ4": [
@@ -623,7 +623,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "选择输出架构"
     }
   ],
   "9u/Ae3": [
@@ -950,7 +950,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "选择输入架构"
     }
   ],
   "Ip7Iax": [
@@ -986,7 +986,7 @@
   "JQlAMD": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "JSfWJ0": [
@@ -1034,7 +1034,7 @@
   "JqZfdk": [
     {
       "type": 0,
-      "value": "Add input schema"
+      "value": "添加输入架构"
     }
   ],
   "JzqgNM": [
@@ -1052,7 +1052,7 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "选择文件进行上传"
     }
   ],
   "K90YEU": [
@@ -1741,7 +1741,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "浏览"
     }
   ],
   "XqamWZ": [
@@ -1877,7 +1877,7 @@
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "添加"
     }
   ],
   "b9/1dK": [
@@ -1931,7 +1931,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "选择输出"
     }
   ],
   "c6XbVI": [
@@ -2616,7 +2616,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "加载架构失败。请重试。"
     }
   ],
   "p/0r2N": [
@@ -2895,7 +2895,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "上传或选择要用于地图的输入架构。"
     }
   ],
   "tE7Zam": [
