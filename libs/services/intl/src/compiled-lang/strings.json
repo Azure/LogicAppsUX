@@ -1439,6 +1439,12 @@
       "value": "Required. The string that is split."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -1647,6 +1653,12 @@
     {
       "type": 0,
       "value": "Comment"
+    }
+  ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
     }
   ],
   "VZHick": [

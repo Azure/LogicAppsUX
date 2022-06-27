@@ -62,6 +62,38 @@
         }
       }
 
+      .msla-array-editor-container-collapsed {
+        width: 100%;
+        border-radius: 2px;
+
+        .editor-input {
+          outline: 1px solid @panel-mode-panel-border-color;
+          resize: none;
+          font-size: 15px;
+          tab-size: 1;
+          min-height: 75px;
+          line-height: 30px;
+          caret-color: #444;
+          padding-inline-start: 5px;
+          p {
+            margin: 0;
+            line-height: 1.5rem;
+          }
+        }
+        .editor-placeholder {
+          color: #696969;
+          overflow: hidden;
+          position: absolute;
+          text-overflow: ellipsis;
+          margin-top: -75px;
+          margin-left: 5px;
+          font-size: 15px;
+          user-select: none;
+          display: inline-block;
+          pointer-events: none;
+        }
+      }
+
       .msla-array-commands {
         margin-top: 0;
       }
