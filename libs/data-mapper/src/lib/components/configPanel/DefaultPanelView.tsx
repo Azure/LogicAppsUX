@@ -19,7 +19,8 @@ export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onI
 
   return (
     <div>
-      <Text className="inform-text">{replaceMessage}</Text>
+      {/* <Text className="inform-text">{replaceMessage}</Text> */}
+      <Text>{replaceMessage}</Text>
 
       <div className="schema-selection-container">
         <div>

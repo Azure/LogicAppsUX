@@ -79,9 +79,12 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
       break;
   }
 
-  const onSelectedItemChange = useCallback((_: unknown, item?: IDropdownOption): void => {
-    setSelectedSchema(item);
-  }, []);
+  const onSelectedItemChange = useCallback(
+    (_: unknown, item?: IDropdownOption): void => {
+      setSelectedSchema(item);
+    },
+    [setSelectedSchema]
+  );
 
   const onUploadTypeChange = useCallback((_: unknown, option?: IChoiceGroupOption): void => {
     if (option) {

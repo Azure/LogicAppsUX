@@ -125,41 +125,25 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     closeSchemaPanel();
   };
 
-  const backButtonStyles = {
-    root: {
-      margin: '24px',
-      // height: 'auto',
-      width: '100%',
-      background: 'pink',
-      // justifyContent: 'flex-start',
-    },
-  };
-
   const onRenderNavigationContent: IRenderFunction<IPanelProps> = useCallback(
     (props, defaultRender) => (
-      <>
-        {isChangeSchemaPanelOpen ? (
+      <div className="custom-navigation">
+        {isDefaultPanelOpen && isChangeSchemaPanelOpen ? (
           <div>
-            <IconButton
-              iconProps={{ iconName: 'Back' }}
-              title="back"
-              ariaLabel="back"
-              styles={backButtonStyles}
-              onClick={onBackButtonClick}
-            />
+            <IconButton iconProps={{ iconName: 'Back' }} title="back" ariaLabel="back" onClick={onBackButtonClick} />
             Back
           </div>
+        ) : isDefaultPanelOpen ? (
+          <Text className="header-text">{configurationHeader}</Text>
+        ) : isChangeSchemaPanelOpen ? (
+          <Text className="header-text">{'Add ... schema'}</Text>
         ) : (
-          <>
-            <Text className="header-text" styles={backButtonStyles}>
-              {configurationHeader}
-            </Text>
-            {defaultRender!(props)}
-          </>
+          <></>
         )}
-      </>
+        {isDefaultPanelOpen !== isChangeSchemaPanelOpen && defaultRender!(props)}
+      </div>
     ),
-    [isChangeSchemaPanelOpen]
+    [configurationHeader, isChangeSchemaPanelOpen, isDefaultPanelOpen, onBackButtonClick]
   );
 
   return (
@@ -169,7 +153,6 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
         isLightDismiss
         isOpen={isDefaultPanelOpen || isChangeSchemaPanelOpen}
         onDismiss={hideEntirePanel}
-        // headerText={showChangeSchemaView ? undefined : configurationHeader}
         onRenderNavigationContent={onRenderNavigationContent}
         closeButtonAriaLabel="Close"
         onRenderFooterContent={onRenderFooterContent}
