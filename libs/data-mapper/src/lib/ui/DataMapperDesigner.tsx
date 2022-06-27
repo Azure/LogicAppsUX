@@ -121,7 +121,10 @@ export const DataMapperDesigner = () => {
         <EditorBreadcrumb />
 
         {inputSchema && outputSchema ? (
-          layeredReactFlow
+          <div>
+            {layeredReactFlow}
+            <LeftHandPanel layerProps={panelLayerProps} />
+          </div>
         ) : (
           <div className="msla-designer-canvas msla-panel-mode not-loaded">
             <div className="left">
@@ -132,7 +135,6 @@ export const DataMapperDesigner = () => {
             </div>
           </div>
         )}
-        <LeftHandPanel layerProps={panelLayerProps} />
       </div>
     </DndProvider>
   );
