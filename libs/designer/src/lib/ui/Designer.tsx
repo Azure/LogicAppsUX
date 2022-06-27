@@ -47,6 +47,7 @@ export const Designer = () => {
             minZoom={0}
             nodesDraggable={false}
             edgeTypes={edgeTypes}
+            panOnScroll={true}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,
