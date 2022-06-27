@@ -1,3 +1,4 @@
+import { checkerboardBackgroundImage } from '../Constants';
 import { convertToReactFlowNode } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
@@ -7,8 +8,8 @@ import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema } from '../models';
 import { LeftHandPanel } from './LeftHandPanel';
-import { LayerHost } from '@fluentui/react';
 import type { ILayerProps } from '@fluentui/react';
+import { LayerHost } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useMemo } from 'react';
@@ -73,6 +74,13 @@ export const DataMapperDesigner = () => {
     dispatch(setCurrentOutputNode(currentSchemaNode));
   };
 
+  const reactFlowStyle = {
+    backgroundImage: checkerboardBackgroundImage,
+    backgroundSize: '20px 20px',
+    backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+    height: '600px',
+  };
+
   const layeredReactFlow = (
     <LayerHost
       id={layerHostId}
@@ -95,10 +103,8 @@ export const DataMapperDesigner = () => {
               account: 'paid-sponsor',
               hideAttribution: true,
             }}
-            style={{
-              position: 'unset',
-            }}
-          />
+            style={reactFlowStyle}
+          ></ReactFlow>
         </ReactFlowProvider>
       </div>
     </LayerHost>
