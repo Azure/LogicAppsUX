@@ -14,7 +14,7 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import type { EditorState } from 'lexical';
-import { $getRoot, $getSelection } from 'lexical';
+// import { $getRoot, $getSelection } from 'lexical';
 import { useIntl } from 'react-intl';
 
 export type Segment = {
@@ -57,9 +57,9 @@ const defaultTheme = {
 
 const onChange = (editorState: EditorState) => {
   editorState.read(() => {
-    const root = $getRoot();
-    const selection = $getSelection();
-    console.log(root, selection);
+    // const root = $getRoot();
+    // const selection = $getSelection();
+    // console.log(root, selection);
   });
 };
 
@@ -75,6 +75,11 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
     readOnly: readonly,
     nodes: [TableCellNode, TableNode, TableRowNode, AutoLinkNode, LinkNode, TokenNode],
     namespace: 'editor',
+    editorState:
+      initialValue &&
+      (() => {
+        prepopulatedRichText(initialValue, tokens);
+      }),
   };
 
   const { autoFocus = true, autoLink, clearEditor, history = true, tokens, treeView } = BasePlugins;
@@ -90,12 +95,6 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
         <RichTextPlugin
           contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
           placeholder={<span className="editor-placeholder"> {placeholder} </span>}
-          initialEditorState={
-            initialValue &&
-            (() => {
-              prepopulatedRichText(initialValue, tokens);
-            })
-          }
         />
         <OnChangePlugin onChange={onChange} />
         {treeView ? <TreeView /> : null}

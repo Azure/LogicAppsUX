@@ -23,7 +23,6 @@ export const CollapsedArray = ({ labelProps, items, setItems }: CollapsedArrayPr
       </div>
     );
   };
-  console.log(items);
   console.log(setItems);
 
   return (
@@ -44,14 +43,15 @@ const parseInitialValue = (items: ArrayEditorItemProps[]): Segment[] => {
   if (items.length === 0) {
     return [{ type: ValueSegmentType.LITERAL, value: '[\n  null\n]' }];
   }
-  // const parsedItems: Segment[] = [];
-  console.log(items);
-  // items.forEach((item) => {
-  //   const { key, content } = item;
-  //   content.forEach((segment) => {
-  //     parsedItems.push(segment);
-  //   });
-  //   parsedItems.push();
-  // });
-  return [];
+  const parsedItems: Segment[] = [];
+  parsedItems.push({ type: ValueSegmentType.LITERAL, value: '[\n  "' });
+  items.forEach((item, index) => {
+    const { content } = item;
+
+    content.forEach((segment) => {
+      parsedItems.push(segment);
+    });
+    parsedItems.push({ type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n]' });
+  });
+  return parsedItems;
 };

@@ -42,7 +42,12 @@ const calloutProps: ICalloutProps = {
   directionalHint: DirectionalHint.topCenter,
 };
 
-export const ArrayEditor: React.FC<ArrayEditorProps> = ({ readOnly = false, disabledToggle, initialItems = [], labelProps }) => {
+export const ArrayEditor: React.FC<ArrayEditorProps> = ({
+  readOnly = false,
+  disabledToggle,
+  initialItems = [],
+  labelProps,
+}): JSX.Element => {
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
   const [items, setItems] = useState(initialItems);
