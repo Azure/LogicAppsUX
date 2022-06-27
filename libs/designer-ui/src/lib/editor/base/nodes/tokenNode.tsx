@@ -1,5 +1,5 @@
 import { InputToken } from '../../../token/inputToken';
-import type { LexicalNode, SerializedElementNode, Spread } from 'lexical';
+import type { LexicalNode, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
 import React from 'react';
 
@@ -9,8 +9,10 @@ export type SerailizedTokenNode = Spread<
     title: string;
     description?: string;
     brandColor?: string;
+    type: 'token';
+    version: 1;
   },
-  SerializedElementNode
+  SerializedLexicalNode
 >;
 export class TokenNode extends DecoratorNode<JSX.Element> {
   __brandColor?: string;
@@ -19,15 +21,31 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   __title: string;
 
   static getType() {
-    return 'inputToken';
-  }
-
-  static getTitle() {
-    return 'title';
+    return 'token';
   }
 
   static clone(node: TokenNode) {
     return new TokenNode(node.__icon, node.__title, node.__description, node.__brandColor, node.__key);
+  }
+
+  static importJSON(serializedTokenNode: SerailizedTokenNode): TokenNode {
+    return new TokenNode(
+      serializedTokenNode.icon,
+      serializedTokenNode.title,
+      serializedTokenNode.description,
+      serializedTokenNode.brandColor
+    );
+  }
+
+  exportJSON(): SerailizedTokenNode {
+    return {
+      title: this.__title,
+      icon: this.__icon,
+      description: this.__description,
+      brandColor: this.__brandColor,
+      type: 'token',
+      version: 1,
+    };
   }
 
   constructor(icon: string, title: string, description?: string, brandColor?: string, key?: string) {
@@ -43,34 +61,12 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     return dom;
   }
 
-  updateDOM() {
+  updateDOM(): false {
     return false;
   }
 
   decorate() {
     return <InputToken description={this.__description} icon={this.__icon} title={this.__title} brandColor={this.__brandColor} />;
-  }
-  static importJSON(serializedTokenNode: SerailizedTokenNode): any {
-    return $createTokenNode(
-      serializedTokenNode.icon,
-      serializedTokenNode.title,
-      serializedTokenNode.description,
-      serializedTokenNode.brandColor
-    );
-  }
-  exportJSON(): SerailizedTokenNode {
-    return {
-      ...super.exportJSON(),
-      title: this.__title,
-      icon: this.__icon,
-      description: this.__description,
-      brandColor: this.__brandColor,
-      type: 'inputToken',
-      children: [],
-      direction: 'ltr',
-      format: 'left',
-      indent: 4,
-    };
   }
 }
 
@@ -78,6 +74,6 @@ export function $createTokenNode(icon: string, title: string, description?: stri
   return new TokenNode(icon, title, description, brandColor);
 }
 
-export function $isTokenNode(node: LexicalNode) {
+export function $isTokenNode(node: LexicalNode | null): node is TokenNode {
   return node instanceof TokenNode;
 }

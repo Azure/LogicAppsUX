@@ -14,7 +14,7 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import type { EditorState } from 'lexical';
-// import { $getRoot, $getSelection } from 'lexical';
+import { $getRoot } from 'lexical';
 import { useIntl } from 'react-intl';
 
 export type Segment = {
@@ -57,9 +57,10 @@ const defaultTheme = {
 
 const onChange = (editorState: EditorState) => {
   editorState.read(() => {
-    // const root = $getRoot();
+    const root = $getRoot();
     // const selection = $getSelection();
-    // console.log(root, selection);
+    console.log(editorState._nodeMap);
+    console.log(root);
   });
 };
 
