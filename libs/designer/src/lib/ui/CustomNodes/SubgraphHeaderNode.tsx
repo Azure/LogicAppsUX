@@ -22,7 +22,7 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
 
   const selected = useIsNodeSelected(subgraphId);
-  const metadata = useNodeMetadata(subgraphId);
+  const metadata = useNodeMetadata(id);
   const edges = useEdgesBySource(id);
 
   const isAddCase = metadata?.subgraphType === 'SWITCH-ADD-CASE';
