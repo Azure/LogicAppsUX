@@ -67,9 +67,11 @@ export const Home: React.FC = () => {
 
   const selection = new Selection({
     onSelectionChanged: () => {
+      const currentSelection = selection.getSelection();
+      console.log('test', currentSelection);
       dispatch(
         updateSelectedWorkFlows({
-          selectedWorkflows: selection.getSelection(),
+          selectedWorkflows: currentSelection,
         })
       );
     },
@@ -77,15 +79,7 @@ export const Home: React.FC = () => {
   });
 
   const deselectItem = (itemKey: string) => {
-    /*const selectedItems = selectedWorkflows.filter((workflow) => workflow.key !== itemKey);
-    dispatch(
-      updateSelectedWorkFlows({
-        selectedWorkflows: selectedItems,
-      })
-    );*/
-    console.log(selection.getItemIndex(itemKey));
-    selection.setAllSelected(false);
-    console.log(selection.getItems());
+    selection.toggleKeySelected(itemKey);
   };
 
   return (
