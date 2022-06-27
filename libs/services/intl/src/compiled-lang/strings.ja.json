@@ -316,6 +316,12 @@
       "value": "必須。区切り記号。"
     }
   ],
+  "3X/ZDK": [
+    {
+      "type": 0,
+      "value": "マップに使用する出力スキーマをアップロードまたは選択します。"
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -338,6 +344,12 @@
     {
       "type": 0,
       "value": "必須。減算する、指定された時間単位の数です。"
+    }
+  ],
+  "3wagjT": [
+    {
+      "type": 0,
+      "value": "入力の選択"
     }
   ],
   "47kOXr": [
@@ -574,6 +586,12 @@
       "value": "コネクタ"
     }
   ],
+  "9I0PcK": [
+    {
+      "type": 0,
+      "value": "出力スキーマの追加"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -596,6 +614,12 @@
     {
       "type": 0,
       "value": "2 つの数値を加算した結果を返します"
+    }
+  ],
+  "9mWdNA": [
+    {
+      "type": 0,
+      "value": "出力スキーマの選択"
     }
   ],
   "9u/Ae3": [
@@ -919,6 +943,12 @@
       "value": "渡される文字列タイムスタンプを UTC からターゲット タイム ゾーンに変換します"
     }
   ],
+  "IngtMG": [
+    {
+      "type": 0,
+      "value": "入力スキーマの選択"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -947,6 +977,12 @@
     {
       "type": 0,
       "value": "必須。時刻を含む文字列。"
+    }
+  ],
+  "JQlAMD": [
+    {
+      "type": 0,
+      "value": "キャンセル"
     }
   ],
   "JSfWJ0": [
@@ -991,6 +1027,12 @@
       "value": "必須。数値形式の文字列。"
     }
   ],
+  "JqZfdk": [
+    {
+      "type": 0,
+      "value": "入力スキーマの追加"
+    }
+  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1001,6 +1043,12 @@
     {
       "type": 0,
       "value": "必須。新しいプロパティを追加するオブジェクト。"
+    }
+  ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "アップロードするファイルを選択します"
     }
   ],
   "K90YEU": [
@@ -1682,6 +1730,12 @@
       "value": "要求"
     }
   ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "参照"
+    }
+  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -1812,6 +1866,12 @@
       "value": "データ処理"
     }
   ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "追加"
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -1858,6 +1918,12 @@
     {
       "type": 0,
       "value": "指定された値に設定されたプロパティが含まれるオブジェクトを返します"
+    }
+  ],
+  "c5/wGq": [
+    {
+      "type": 0,
+      "value": "出力の選択"
     }
   ],
   "c6XbVI": [
@@ -1929,7 +1995,7 @@
   "dSTRb/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "HTTP 経由でコンテンツを転送するための動作と機能を指定します。大きなメッセージは、大きなメッセージのアップロードを許可するために、コネクタに対する小さな要求に分割される可能性があります。詳細については、http://aka.ms/logicapps-chunk#upload-content-in-chunks を参照してください"
     }
   ],
   "dWFyfN": [
@@ -2523,6 +2589,12 @@
       "value": "実行を開く実行識別子を入力してください"
     }
   ],
+  "orhWzV": [
+    {
+      "type": 0,
+      "value": "スキーマの読み込みに失敗しました。もう一度やり直してください。"
+    }
+  ],
   "p/0r2N": [
     {
       "type": 0,
@@ -2794,6 +2866,12 @@
     {
       "type": 0,
       "value": "必須。変換先のタイム ゾーンのタイム ゾーン名を含む文字列です。詳しくは、https://msdn.microsoft.com/ja-jp/library/gg154758.aspx をご覧ください。"
+    }
+  ],
+  "t5CdhT": [
+    {
+      "type": 0,
+      "value": "マップに使用する入力スキーマをアップロードまたは選択します。"
     }
   ],
   "tE7Zam": [

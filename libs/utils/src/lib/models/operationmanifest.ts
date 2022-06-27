@@ -126,6 +126,16 @@ export interface OperationManifestProperties {
   summary?: string;
 
   allowChildOperations?: boolean;
+  childOperationsLocation?: string[];
+
+  subGraphDetails?: {
+    [graphName: string]: {
+      location?: string[];
+      inputs?: SwaggerSchema;
+      inputsLocation?: string[];
+      isAdditive?: boolean;
+    };
+  };
 
   statusBadge?: Badge;
   environmentBadge?: Badge;

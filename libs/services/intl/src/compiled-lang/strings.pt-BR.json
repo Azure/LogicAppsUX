@@ -327,6 +327,12 @@
       "value": "Necessário. O separador."
     }
   ],
+  "3X/ZDK": [
+    {
+      "type": 0,
+      "value": "Carregue ou selecione um esquema de saída a ser usado no mapa."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -349,6 +355,12 @@
     {
       "type": 0,
       "value": "Necessário. O número de uma unidade de tempo especificada para subtrair."
+    }
+  ],
+  "3wagjT": [
+    {
+      "type": 0,
+      "value": "selecionar entrada"
     }
   ],
   "47kOXr": [
@@ -585,6 +597,12 @@
       "value": "Conector"
     }
   ],
+  "9I0PcK": [
+    {
+      "type": 0,
+      "value": "Adicionar esquema de saída"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -607,6 +625,12 @@
     {
       "type": 0,
       "value": "Retorna o resultado da soma de dois números"
+    }
+  ],
+  "9mWdNA": [
+    {
+      "type": 0,
+      "value": "Selecionar um esquema de saída"
     }
   ],
   "9u/Ae3": [
@@ -941,6 +965,12 @@
       "value": "Converte uma cadeia de caracteres que o carimbo de data/hora passou de um UTC para um fuso horário de destino"
     }
   ],
+  "IngtMG": [
+    {
+      "type": 0,
+      "value": "Selecionar um esquema de entrada"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -969,6 +999,12 @@
     {
       "type": 0,
       "value": "Necessário. Uma cadeia de caracteres que contém o tempo."
+    }
+  ],
+  "JQlAMD": [
+    {
+      "type": 0,
+      "value": "Cancelar"
     }
   ],
   "JSfWJ0": [
@@ -1013,6 +1049,12 @@
       "value": "Obrigatório. A cadeia de caracteres de formato numérico."
     }
   ],
+  "JqZfdk": [
+    {
+      "type": 0,
+      "value": "Adicionar esquema de entrada"
+    }
+  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1023,6 +1065,12 @@
     {
       "type": 0,
       "value": "Necessário. O objeto ao qual uma nova propriedade será adicionada."
+    }
+  ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "Selecione um arquivo a ser carregado"
     }
   ],
   "K90YEU": [
@@ -1715,6 +1763,12 @@
       "value": "Solicitação"
     }
   ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "Procurar"
+    }
+  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -1845,6 +1899,12 @@
       "value": "Tratamento de Dados"
     }
   ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "Adicionar"
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -1891,6 +1951,12 @@
     {
       "type": 0,
       "value": "Retorna um objeto com uma propriedade definida com o valor fornecido"
+    }
+  ],
+  "c5/wGq": [
+    {
+      "type": 0,
+      "value": "selecionar saída"
     }
   ],
   "c6XbVI": [
@@ -2567,6 +2633,12 @@
       "value": "Insira o identificador de execução para abrir a execução"
     }
   ],
+  "orhWzV": [
+    {
+      "type": 0,
+      "value": "Falha ao carregar o esquema. Tente novamente."
+    }
+  ],
   "p/0r2N": [
     {
       "type": 0,
@@ -2849,6 +2921,12 @@
     {
       "type": 0,
       "value": "Necessário. Uma cadeia de caracteres que contém o nome do fuso horário de destino. Consulte https://msdn.microsoft.com/en-us/library/gg154758.aspx para obter detalhes."
+    }
+  ],
+  "t5CdhT": [
+    {
+      "type": 0,
+      "value": "Carregue ou selecione um esquema de entrada a ser usado no mapa."
     }
   ],
   "tE7Zam": [

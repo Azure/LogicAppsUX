@@ -2,6 +2,14 @@ import type { IHttpClient } from '../httpClient';
 import type { IOperationManifestService } from '../operationmanifest';
 import conditionManifest from './manifests/condition';
 import csvManifest from './manifests/csvtable';
+import {
+  addToTimeManifest,
+  convertTimezoneManifest,
+  currentTimeManifest,
+  getFutureTimeManifest,
+  getPastTimeManifest,
+  subtractFromTimeManifest,
+} from './manifests/datetime';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
 import joinManifest from './manifests/join';
@@ -9,9 +17,12 @@ import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
 import requestManifest from './manifests/request';
 import responseManifest from './manifests/response';
+import { delayManifest, delayUntilManifest, recurrenceManifest, slidingWindowManifest } from './manifests/schedule';
 import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
+import terminateManifest from './manifests/terminate';
+import untilManifest from './manifests/until';
 import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft-logic-apps/parsers';
 import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
 import {
@@ -55,17 +66,33 @@ const incrementvariable = 'incrementvariable';
 const request = 'request';
 const response = 'response';
 const table = 'table';
+const terminate = 'terminate';
+const until = 'until';
+const expression = 'expression';
+const addtotime = 'addtotime';
+const converttimezone = 'converttimezone';
+const currenttime = 'currenttime';
+const getfuturetime = 'getfuturetime';
+const getpasttime = 'getpasttime';
+const subtractfromtime = 'subtractfromtime';
+const recurrence = 'recurrence';
+const slidingwindow = 'slidingwindow';
+const wait = 'wait';
+const delay = 'delay';
+const delayuntil = 'delayuntil';
 
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
+const controlConnectorId = 'connectionProviders/control';
+const dateTimeConnectorId = 'connectionProviders/datetime';
+const scheduleConnectorId = 'connectionProviders/schedule';
 
 const supportedManifestTypes = [
   compose,
   condition,
-  csvtable,
+  expression,
   foreach,
   function_,
-  htmltable,
   initializevariable,
   incrementvariable,
   invokefunction,
@@ -74,9 +101,11 @@ const supportedManifestTypes = [
   liquid,
   parsejson,
   query,
+  recurrence,
   request,
   response,
   select,
+  slidingwindow,
   switchType,
   serviceprovider,
   table,
@@ -88,6 +117,9 @@ const supportedManifestTypes = [
   scope,
   swiftdecode,
   swiftencode,
+  terminate,
+  until,
+  wait,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -265,6 +297,7 @@ function isInBuiltOperation(definition: any): boolean {
   switch (definition.type.toLowerCase()) {
     case compose:
     case condition:
+    case expression:
     case foreach:
     case function_:
     case initializevariable:
@@ -275,9 +308,11 @@ function isInBuiltOperation(definition: any): boolean {
     case liquid:
     case parsejson:
     case query:
+    case recurrence:
     case request:
     case response:
     case select:
+    case slidingwindow:
     case switchType:
     case workflow:
     case xslt:
@@ -288,6 +323,9 @@ function isInBuiltOperation(definition: any): boolean {
     case swiftdecode:
     case swiftencode:
     case table:
+    case terminate:
+    case until:
+    case wait:
       return true;
 
     default:
@@ -299,12 +337,28 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
   const normalizedOperationType = definition.type.toLowerCase();
   const kind = definition.kind ? definition.kind.toLowerCase() : undefined;
 
-  if (kind === undefined && normalizedOperationType !== table) {
+  if (kind === undefined && normalizedOperationType !== table && normalizedOperationType !== wait) {
     return inBuiltOperationsMetadata[normalizedOperationType];
   }
 
   const liquidConnectorId = 'connectionProviders/liquidOperations';
   switch (normalizedOperationType) {
+    case expression:
+      switch (definition.kind?.toLowerCase()) {
+        case addtotime:
+        case converttimezone:
+        case currenttime:
+        case getfuturetime:
+        case getpasttime:
+        case subtractfromtime:
+          return {
+            connectorId: dateTimeConnectorId,
+            operationId: definition.kind.toLowerCase(),
+          };
+
+        default:
+          throw new UnsupportedException(`Unsupported datetime kind '${definition.kind}'`);
+      }
     case liquid:
       switch (kind) {
         case 'jsontojson':
@@ -368,6 +422,12 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
           throw new UnsupportedException(`Unsupported table format ${definition.inputs?.format} for table type`);
       }
 
+    case wait:
+      return {
+        connectorId: scheduleConnectorId,
+        operationId: definition.inputs?.until ? delayuntil : delay,
+      };
+
     default:
       throw new UnsupportedException(`Unsupported built in operation type ${normalizedOperationType}`);
   }
@@ -379,11 +439,11 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     operationId: 'composeNew',
   },
   [condition]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: condition,
   },
   [foreach]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: foreach,
   },
   [function_]: {
@@ -418,12 +478,20 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: dataOperationConnectorId,
     operationId: query,
   },
+  [recurrence]: {
+    connectorId: scheduleConnectorId,
+    operationId: recurrence,
+  },
   [select]: {
     connectorId: dataOperationConnectorId,
     operationId: select,
   },
+  [slidingwindow]: {
+    connectorId: scheduleConnectorId,
+    operationId: slidingwindow,
+  },
   [switchType]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: switchType,
   },
   [workflow]: {
@@ -447,7 +515,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     operationId: 'flatFileEncoding',
   },
   [scope]: {
-    connectorId: 'connectionProviders/control',
+    connectorId: controlConnectorId,
     operationId: scope,
   },
   [swiftdecode]: {
@@ -458,19 +526,39 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: 'connectionProviders/swiftOperations',
     operationId: 'swiftEncode',
   },
+  [terminate]: {
+    connectorId: controlConnectorId,
+    operationId: terminate,
+  },
+  [until]: {
+    connectorId: controlConnectorId,
+    operationId: until,
+  },
 };
 
 const supportedManifestObjects = new Map<string, OperationManifest>([
+  [addtotime, addToTimeManifest],
   [condition, conditionManifest],
+  [converttimezone, convertTimezoneManifest],
   [csvtable, csvManifest],
+  [currenttime, currentTimeManifest],
+  [delay, delayManifest],
+  [delayuntil, delayUntilManifest],
   [foreach, foreachManifest],
+  [getfuturetime, getFutureTimeManifest],
+  [getpasttime, getPastTimeManifest],
   [htmltable, htmlManifest],
   [join, joinManifest],
   [parsejson, parsejsonManifest],
   [query, queryManifest],
+  [recurrence, recurrenceManifest],
   [request, requestManifest],
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
+  [slidingwindow, slidingWindowManifest],
+  [subtractfromtime, subtractFromTimeManifest],
   [switchType, switchManifest],
+  [terminate, terminateManifest],
+  [until, untilManifest],
 ]);
