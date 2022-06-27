@@ -187,5 +187,6 @@ export interface ISelectedListProps {
 
 export enum QueryKeys {
   workflowsData = 'workflowsData',
+  subscriptionData = 'subscriptionData',
   runsData = 'runsData',
 }

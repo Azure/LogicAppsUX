@@ -74,4 +74,24 @@ export class ApiService implements IApiService {
 
     return { nextLink, workflows };
   }
+
+  async getSubscriptions(): Promise<any> {
+    console.log('data1');
+    const headers = this.getAccessTokenHeaders();
+    const uri = 'https://management.azure.com/subscriptions?api-version=2020-01-01';
+    console.log('data2');
+
+    const response = await fetch(uri, { headers, method: 'GET' });
+    console.log('data3', response);
+
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    const subscriptionsResponse: any = await response.json();
+    console.log('data', subscriptionsResponse);
+    const { value: subscriptions } = subscriptionsResponse;
+
+    return { subscriptions };
+  }
 }
