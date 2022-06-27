@@ -1,7 +1,7 @@
 import type { RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaTypes } from './EditorConfigPanel';
-import { ChoiceGroup, Dropdown, initializeIcons, PrimaryButton, TextField } from '@fluentui/react';
+import { ChoiceGroup, Dropdown, PrimaryButton, TextField } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
@@ -25,8 +25,6 @@ const uploadSchemaOptions: IChoiceGroupOption[] = [
   { key: UploadSchemaTypes.SelectFrom, text: 'Select from existing' },
 ];
 
-initializeIcons();
-
 export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({ schemaType, selectedSchema, setSelectedSchema, errorMessage }) => {
   const schemaFilesList = useSelector((state: RootState) => state.schema.availableSchemas);
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
@@ -44,8 +42,9 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({ schemaTy
     description: 'This is shown as a placeholder text for selecting a file to upload',
   });
 
-  let uploadSelectLabelMessage = '',
-    selectSchemaPlaceholderMessage = '';
+  let uploadSelectLabelMessage = '';
+  let selectSchemaPlaceholderMessage = '';
+
   switch (schemaType) {
     case SchemaTypes.Input:
       uploadSelectLabelMessage = intl.formatMessage({
@@ -89,19 +88,17 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({ schemaTy
       <p className="inform-text">{uploadSelectLabelMessage}</p>
 
       <ChoiceGroup
+        className="choice-group"
         selectedKey={uploadType}
         options={uploadSchemaOptions}
         onChange={onUploadTypeChange}
         required={true}
-        style={{ marginBottom: 16 }}
       />
 
       {uploadType === UploadSchemaTypes.UploadNew && (
         <div className="upload-new">
           <TextField placeholder={uploadMessage} />
-          <PrimaryButton text="Browse" style={{ marginLeft: 8 }}>
-            {browseMessage}
-          </PrimaryButton>
+          <PrimaryButton className="panel-button-right">{browseMessage}</PrimaryButton>
         </div>
       )}
 

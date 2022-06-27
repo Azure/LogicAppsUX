@@ -1,5 +1,5 @@
 import type { RootState } from '../../core/state/Store';
-import { IconButton, initializeIcons, Text } from '@fluentui/react';
+import { IconButton, Text } from '@fluentui/react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -8,8 +8,6 @@ export interface DefaultPanelViewProps {
   onInputSchemaClick: () => void;
   onOutputSchemaClick: () => void;
 }
-
-initializeIcons();
 
 export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onInputSchemaClick, onOutputSchemaClick }) => {
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
@@ -28,9 +26,13 @@ export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onI
     defaultMessage: 'Output Schema',
     description: 'label to inform the below schema name is for output schema',
   });
+  const pencilAriaLabel = intl.formatMessage({
+    defaultMessage: 'pencil icon',
+    description: 'icon to click to edit the schema selection, pressing will lead to a selection panel page',
+  });
 
   return (
-    <div style={{ height: '100%' }}>
+    <div>
       <p className="inform-text">{replaceMessage}</p>
 
       <div className="schema-selection-container">
@@ -38,7 +40,7 @@ export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onI
           <Text className="schema-label-text">{inputSchemaLabel}</Text>
           <p>{inputSchema?.name}</p>
         </div>
-        <IconButton iconProps={{ iconName: 'Edit' }} title="pencil" ariaLabel="pencil" onClick={onInputSchemaClick} />
+        <IconButton iconProps={{ iconName: 'Edit' }} title={pencilAriaLabel} ariaLabel={pencilAriaLabel} onClick={onInputSchemaClick} />
       </div>
 
       <div className="schema-selection-container">
@@ -46,7 +48,7 @@ export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onI
           <Text className="schema-label-text">{outputSchemaLabel}</Text>
           <p>{outputSchema?.name}</p>
         </div>
-        <IconButton iconProps={{ iconName: 'Edit' }} title="pencil" ariaLabel="pencil" onClick={onOutputSchemaClick} />
+        <IconButton iconProps={{ iconName: 'Edit' }} title={pencilAriaLabel} ariaLabel={pencilAriaLabel} onClick={onOutputSchemaClick} />
       </div>
     </div>
   );

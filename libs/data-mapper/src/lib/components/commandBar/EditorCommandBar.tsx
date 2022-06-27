@@ -13,7 +13,7 @@ import {
   showTutorial,
   undoState,
 } from './helpers';
-import { CommandBar, initializeIcons, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
+import { CommandBar, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
 import type { IComponentAs, ICommandBarItemProps } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
@@ -23,8 +23,6 @@ import { useDispatch } from 'react-redux';
 export const EditorCommandBar = () => {
   return <EditorCommandBarWrapper />;
 };
-
-initializeIcons();
 
 interface DataMapState {
   time: string;

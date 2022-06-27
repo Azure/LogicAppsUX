@@ -4,7 +4,7 @@ import type { Schema } from '../../models';
 import { ChangeSchemaView } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
-import { DefaultButton, IconButton, initializeIcons, Panel, PrimaryButton, Text } from '@fluentui/react';
+import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
@@ -19,8 +19,6 @@ export interface EditorConfigPanelProps {
   onSubmitInputSchema: (schema: Schema) => void;
   onSubmitOutputSchema: (schema: Schema) => void;
 }
-
-initializeIcons();
 
 export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ onSubmitInputSchema, onSubmitOutputSchema }) => {
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
@@ -38,7 +36,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
     description: 'Button text for Add to add the selected schema file to use',
   });
   const discardMessage = intl.formatMessage({
-    defaultMessage: 'Dicard',
+    defaultMessage: 'Discard',
     description: 'Button text for discard the changes and close the panel.',
   });
   const configurationHeader = intl.formatMessage({
@@ -49,7 +47,6 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
     defaultMessage: 'Failed loading the schema. Please try again.',
     description: 'error message for loading the schema',
   });
-
   const addInputSchemaHeaderMsg = intl.formatMessage({
     defaultMessage: 'Add Input Schema',
     description: 'header message for adding input schema',
@@ -57,6 +54,14 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
   const addOutputSchemaHeaderMsg = intl.formatMessage({
     defaultMessage: 'Add Output Schema',
     description: 'header message for adding output schema',
+  });
+  const backMessage = intl.formatMessage({
+    defaultMessage: 'Back',
+    description: 'button message for going back a panel to the default panel layer',
+  });
+  const closeAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close',
+    description: 'aria label for close icon button that closes that panel on click',
   });
 
   const hideEntirePanel = useCallback(() => {
@@ -94,9 +99,9 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
       <div>
         {isChangeSchemaPanelOpen && (
           <PrimaryButton
+            className="panel-button-left"
             onClick={schemaType === SchemaTypes.Input ? onInputSchemaAddClick : onOutputSchemaAddClick}
             disabled={schemaType === SchemaTypes.Input ? !selectedInputSchema : !selectedOutputSchema}
-            styles={{ root: { marginRight: 8 } }}
           >
             {addMessage}
           </PrimaryButton>
@@ -133,8 +138,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
       <div className="custom-navigation">
         {isDefaultPanelOpen && isChangeSchemaPanelOpen ? (
           <div>
-            <IconButton iconProps={{ iconName: 'Back' }} title="back" ariaLabel="back" onClick={onBackButtonClick} />
-            Back
+            <IconButton iconProps={{ iconName: 'Back' }} title={backMessage} ariaLabel={backMessage} onClick={onBackButtonClick} />
+            <Text className="back-header-text">{backMessage}</Text>
           </div>
         ) : isDefaultPanelOpen ? (
           <Text className="header-text">{configurationHeader}</Text>
@@ -154,6 +159,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
       isDefaultPanelOpen,
       onBackButtonClick,
       schemaType,
+      backMessage,
     ]
   );
 
@@ -165,7 +171,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
         isOpen={isDefaultPanelOpen || isChangeSchemaPanelOpen}
         onDismiss={hideEntirePanel}
         onRenderNavigationContent={onRenderNavigationContent}
-        closeButtonAriaLabel="Close"
+        closeButtonAriaLabel={closeAriaLabel}
         onRenderFooterContent={onRenderFooterContent}
         isFooterAtBottom={true}
       >

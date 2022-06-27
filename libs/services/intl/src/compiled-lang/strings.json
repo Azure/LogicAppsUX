@@ -309,12 +309,6 @@
       "value": "Required. The name of the action with a form-data or form-encoded response."
     }
   ],
-  "2hTjQH": [
-    {
-      "type": 0,
-      "value": "Dicard"
-    }
-  ],
   "2tTQ0A": [
     {
       "type": 0,
@@ -1897,6 +1891,12 @@
       "value": "This operation has already been deleted."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Discard"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -2057,6 +2057,12 @@
     {
       "type": 0,
       "value": "Secure inputs of the operation."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "pencil icon"
     }
   ],
   "dhvk0u": [
@@ -2503,6 +2509,12 @@
       "value": "Title"
     }
   ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Back"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -2615,6 +2627,12 @@
     {
       "type": 0,
       "value": "Adds an integer number of minutes to a string timestamp passed in"
+    }
+  ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "o/0SEj": [
