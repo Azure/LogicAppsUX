@@ -29,7 +29,6 @@ export const DataMapperDesigner = () => {
 
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
-  const availableSchemas = useSelector((state: RootState) => state.schema.availableSchemas);
 
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch<AppDispatch>();
@@ -118,7 +117,7 @@ export const DataMapperDesigner = () => {
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
         <EditorCommandBar />
-        <EditorConfigPanel schemaFilesList={availableSchemas} onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
+        <EditorConfigPanel onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
         <EditorBreadcrumb />
 
         {inputSchema && outputSchema ? (

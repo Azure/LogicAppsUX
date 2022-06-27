@@ -1,9 +1,11 @@
+import type { RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { ChoiceGroup, Dropdown, initializeIcons, PrimaryButton, TextField } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
 export enum SchemaTypes {
   Input = 'input',
@@ -19,7 +21,6 @@ export interface ChangeSchemaView {
   schemaType?: SchemaTypes;
   selectedSchema?: IDropdownOption;
   setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
-  schemaFilesList?: Schema[];
   errorMessage: string;
 }
 
@@ -30,13 +31,8 @@ const uploadSchemaOptions: IChoiceGroupOption[] = [
 
 initializeIcons();
 
-export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
-  schemaType,
-  selectedSchema,
-  setSelectedSchema,
-  schemaFilesList,
-  errorMessage,
-}) => {
+export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({ schemaType, selectedSchema, setSelectedSchema, errorMessage }) => {
+  const schemaFilesList = useSelector((state: RootState) => state.schema.availableSchemas);
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
 
   const dataMapDropdownOptions = schemaFilesList?.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
@@ -94,7 +90,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
 
   return (
     <div>
-      <p>{uploadSelectLabelMessage}</p>
+      <p className="inform-text">{uploadSelectLabelMessage}</p>
 
       <ChoiceGroup
         selectedKey={uploadType}

@@ -5,14 +5,9 @@ import { ChangeSchemaView } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, initializeIcons, Panel, PrimaryButton, Text } from '@fluentui/react';
-// import { PanelContent } from 'libs/designer-ui/src/lib/panel/panelcontent';
-// import { PanelPivot } from 'libs/designer-ui/src/lib/panel/panelpivot';
-// import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
-// import { useBoolean } from '@fluentui/react-hooks';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
-// import { RootState } from '../../core/state/Store';
 import { useDispatch, useSelector } from 'react-redux';
 
 export enum SchemaTypes {
@@ -26,46 +21,30 @@ export enum UploadSchemaTypes {
 }
 
 export interface EditorConfigPanelProps {
-  schemaType?: SchemaTypes;
   onSubmitInputSchema: (schema: Schema) => void;
   onSubmitOutputSchema: (schema: Schema) => void;
-  schemaFilesList?: Schema[] | undefined;
 }
 
 initializeIcons();
 
-export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
-  onSubmitInputSchema,
-  onSubmitOutputSchema,
-  schemaFilesList,
-}) => {
-  const dispatch = useDispatch<AppDispatch>();
+export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ onSubmitInputSchema, onSubmitOutputSchema }) => {
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
   const isChangeSchemaPanelOpen = useSelector((state: RootState) => state.panel.isChangeSchemaPanelOpen);
   const schemaType = useSelector((state: RootState) => state.panel.schemaType);
-
-  const hideEntirePanel = () => {
-    dispatch(closeDefaultConfigPanel());
-    setErrorMessage('');
-  };
-  const closeSchemaPanel = () => {
-    dispatch(closeSchemaChangePanel());
-    setErrorMessage('');
-  };
-
   const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
   const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
   const [errorMessage, setErrorMessage] = useState('');
 
+  const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
 
   const addMessage = intl.formatMessage({
     defaultMessage: 'Add',
     description: 'Button text for Add to add the selected schema file to use',
   });
-  const cancelMessage = intl.formatMessage({
-    defaultMessage: 'Cancel',
-    description: 'Button text for Cancel to cancel the schema selection.',
+  const discardMessage = intl.formatMessage({
+    defaultMessage: 'Dicard',
+    description: 'Button text for discard the changes and close the panel.',
   });
   const configurationHeader = intl.formatMessage({
     defaultMessage: 'Configuration',
@@ -76,6 +55,25 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     description: 'error message for loading the schema',
   });
 
+  const addInputSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Add Input Schema',
+    description: 'header message for adding input schema',
+  });
+  const addOutputSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Add Output Schema',
+    description: 'header message for adding output schema',
+  });
+
+  const hideEntirePanel = useCallback(() => {
+    dispatch(closeDefaultConfigPanel());
+    setErrorMessage('');
+  }, [dispatch, setErrorMessage]);
+
+  const closeSchemaPanel = useCallback(() => {
+    dispatch(closeSchemaChangePanel());
+    setErrorMessage('');
+  }, [dispatch, setErrorMessage]);
+
   const onInputSchemaAddClick = useCallback(() => {
     setErrorMessage('');
     if (selectedInputSchema) {
@@ -84,7 +82,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     } else {
       setErrorMessage(genericErrMsg);
     }
-  }, [closeSchemaPanel, onSubmitInputSchema, selectedInputSchema]);
+  }, [closeSchemaPanel, onSubmitInputSchema, selectedInputSchema, genericErrMsg]);
 
   const onOutputSchemaAddClick = useCallback(() => {
     setErrorMessage('');
@@ -94,7 +92,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     } else {
       setErrorMessage(genericErrMsg);
     }
-  }, [closeSchemaPanel, onSubmitOutputSchema, selectedOutputSchema]);
+  }, [closeSchemaPanel, onSubmitOutputSchema, selectedOutputSchema, genericErrMsg]);
 
   const onRenderFooterContent = useCallback(
     () => (
@@ -109,10 +107,20 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
           </PrimaryButton>
         )}
 
-        <DefaultButton onClick={hideEntirePanel}>{cancelMessage}</DefaultButton>
+        <DefaultButton onClick={hideEntirePanel}>{discardMessage}</DefaultButton>
       </div>
     ),
-    [hideEntirePanel, addMessage, cancelMessage]
+    [
+      hideEntirePanel,
+      addMessage,
+      discardMessage,
+      isChangeSchemaPanelOpen,
+      onInputSchemaAddClick,
+      onOutputSchemaAddClick,
+      schemaType,
+      selectedInputSchema,
+      selectedOutputSchema,
+    ]
   );
 
   const onInputSchemaClick = () => {
@@ -121,9 +129,9 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   const onOutputSchemaClick = () => {
     dispatch(openOutputSchemaPanel());
   };
-  const onBackButtonClick = () => {
+  const onBackButtonClick = useCallback(() => {
     closeSchemaPanel();
-  };
+  }, [closeSchemaPanel]);
 
   const onRenderNavigationContent: IRenderFunction<IPanelProps> = useCallback(
     (props, defaultRender) => (
@@ -136,14 +144,22 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
         ) : isDefaultPanelOpen ? (
           <Text className="header-text">{configurationHeader}</Text>
         ) : isChangeSchemaPanelOpen ? (
-          <Text className="header-text">{'Add ... schema'}</Text>
+          <Text className="header-text">{schemaType === SchemaTypes.Input ? addInputSchemaHeaderMsg : addOutputSchemaHeaderMsg}</Text>
         ) : (
-          <></>
+          <div />
         )}
-        {isDefaultPanelOpen !== isChangeSchemaPanelOpen && defaultRender!(props)}
+        {isDefaultPanelOpen !== isChangeSchemaPanelOpen && defaultRender?.(props)}
       </div>
     ),
-    [configurationHeader, isChangeSchemaPanelOpen, isDefaultPanelOpen, onBackButtonClick]
+    [
+      addInputSchemaHeaderMsg,
+      addOutputSchemaHeaderMsg,
+      configurationHeader,
+      isChangeSchemaPanelOpen,
+      isDefaultPanelOpen,
+      onBackButtonClick,
+      schemaType,
+    ]
   );
 
   return (
@@ -162,7 +178,6 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
           {isChangeSchemaPanelOpen ? (
             <ChangeSchemaView
               schemaType={schemaType}
-              schemaFilesList={schemaFilesList}
               selectedSchema={schemaType === SchemaTypes.Input ? selectedInputSchema : selectedOutputSchema}
               setSelectedSchema={schemaType === SchemaTypes.Input ? setSelectedInputSchema : setSelectedOutputSchema}
               errorMessage={errorMessage}
