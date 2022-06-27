@@ -13,7 +13,6 @@ type SpecTypes = 'BJS' | 'CNCF';
 export interface NodesMetadata {
   [nodeId: string]: {
     graphId: string;
-    isPlaceholderNode?: boolean;
     subgraphType?: SubgraphType;
   };
 }

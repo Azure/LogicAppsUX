@@ -47,7 +47,6 @@ describe('Graph Utilities', () => {
     nestedone: { graphId: 'condition-actions' },
     nestedtwo: { graphId: 'condition-actions' },
     'condition-elseactions-CONDITIONAL_FALSE': { graphId: 'condition-elseactions', subgraphType: 'CONDITIONAL_FALSE' },
-    'condition-elseactions-emptyNode': { graphId: 'condition-elseactions', isPlaceholderNode: true },
   };
 
   describe('isRootNode', () => {
