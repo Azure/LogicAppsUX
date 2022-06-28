@@ -34,7 +34,7 @@ const getChildrenNodes = (node: ElementNode, tokensEnabled: boolean): string => 
   node.__children.forEach((child) => {
     const childNode = $getNodeByKey(child);
     if (childNode && $isElementNode(childNode)) {
-      return (text += getChildrenNodes(childNode, tokensEnabled) + '\n');
+      return (text += getChildrenNodes(childNode, tokensEnabled));
     }
     if ($isTextNode(childNode)) {
       text += childNode.__text.trim();
@@ -47,6 +47,20 @@ const getChildrenNodes = (node: ElementNode, tokensEnabled: boolean): string => 
 };
 
 const validArray = (s: string): boolean => {
-  console.log(s);
-  return false;
+  return s.startsWith('[') && s.endsWith(']') && validateStrings(s.slice(1, s.length - 1));
+};
+const validateStrings = (s: string): boolean => {
+  const splitStrings = s.split(',');
+  for (let i = 0; i < splitStrings.length; i++) {
+    const currentString = splitStrings[i].trim();
+    if (
+      !currentString.startsWith('"') ||
+      !currentString.endsWith('"') ||
+      currentString.length < 2 ||
+      currentString.substring(1, currentString.length - 1).includes('"')
+    ) {
+      return false;
+    }
+  }
+  return true;
 };
