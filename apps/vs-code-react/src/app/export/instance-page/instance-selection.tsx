@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 export const InstanceSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as initializedVscodeState;
-  const { selectedSubscription } = exportData;
+  const { selectedSubscription, selectedIse } = exportData;
 
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
@@ -41,6 +41,14 @@ export const InstanceSelection: React.FC = () => {
       defaultMessage: 'Select an option',
       description: 'Select an option placeholder',
     }),
+    EMPTY_SUBSCRIPTION: intl.formatMessage({
+      defaultMessage: 'No subscriptions available',
+      description: 'No subscriptions available',
+    }),
+    EMPTY_ISE: intl.formatMessage({
+      defaultMessage: 'No ISE instances available',
+      description: 'No ISE instances available',
+    }),
   };
 
   const apiService = useMemo(() => {
@@ -66,22 +74,24 @@ export const InstanceSelection: React.FC = () => {
     data: iseData,
     isLoading: isIseLoading,
     refetch: refetchIse,
-  } = useQuery<any>(QueryKeys.iseData, loadIse, {
+  } = useQuery<any>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
     refetchOnWindowFocus: false,
     enabled: selectedSubscription !== '',
   });
 
   const onChangeSubscriptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
-    if (selectedOption) {
+    if (selectedOption && selectedSubscription !== selectedOption.key) {
       dispatch(
         updateSelectedSubscripton({
           selectedSubscription: selectedOption.key,
         })
       );
-
-      if (selectedSubscription !== '') {
-        refetchIse();
-      }
+      dispatch(
+        updateSelectedIse({
+          selectedIse: '',
+        })
+      );
+      refetchIse();
     }
   };
 
@@ -110,17 +120,18 @@ export const InstanceSelection: React.FC = () => {
       <Dropdown
         label={intlText.SELECTION_SUBSCRIPTION}
         options={subscriptions}
-        placeholder={intlText.SELECT_OPTION}
-        disabled={isSubscriptionsLoading}
+        placeholder={subscriptions.length ? intlText.SELECT_OPTION : intlText.EMPTY_SUBSCRIPTION}
+        disabled={isSubscriptionsLoading || !subscriptions.length}
         onChange={onChangeSubscriptions}
         className="msla-export-instance-panel-dropdown"
       />
       <Dropdown
         label={intlText.SELECTION_ISE}
         options={iseInstances}
-        placeholder={intlText.SELECT_OPTION}
-        disabled={isIseLoading || selectedSubscription === ''}
+        placeholder={iseInstances.length ? intlText.SELECT_OPTION : intlText.EMPTY_ISE}
+        disabled={isIseLoading || selectedSubscription === '' || !iseInstances.length}
         onChange={onChangeIse}
+        selectedKey={selectedIse}
         className="msla-export-instance-panel-dropdown"
       />
     </div>
