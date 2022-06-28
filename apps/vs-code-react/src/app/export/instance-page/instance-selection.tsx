@@ -3,7 +3,7 @@ import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedSubscripton } from '../../../state/vscodeSlice';
 import type { initializedVscodeState } from '../../../state/vscodeSlice';
-import { parseSubscriptionsData } from './helper';
+import { parseIseData, parseSubscriptionsData } from './helper';
 import { Dropdown, Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useMemo } from 'react';
@@ -13,7 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const InstanceSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken } = vscodeState as initializedVscodeState;
+  const { baseUrl, accessToken, exportData } = vscodeState as initializedVscodeState;
+  const { selectedSubscription } = exportData;
 
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
@@ -53,23 +54,40 @@ export const InstanceSelection: React.FC = () => {
     return apiService.getSubscriptions();
   };
 
-  const onChangeSubscriptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
-    if (selectedOption) {
-      dispatch(
-        updateSelectedSubscripton({
-          selectedWorkflows: selectedOption.key,
-        })
-      );
-    }
+  const loadIse = () => {
+    return apiService.getIse(selectedSubscription);
   };
 
   const { data: subscriptionsData, isLoading: isSubscriptionsLoading } = useQuery<any>(QueryKeys.subscriptionData, loadSubscriptions, {
     refetchOnWindowFocus: false,
   });
 
-  const subscriptions: IDropdownOption[] = isSubscriptionsLoading ? [] : parseSubscriptionsData(subscriptionsData);
+  const {
+    data: iseData,
+    isLoading: isIseLoading,
+    refetch: refetchIse,
+  } = useQuery<any>(QueryKeys.iseData, loadIse, {
+    refetchOnWindowFocus: false,
+    enabled: selectedSubscription !== '',
+  });
 
-  const iseInstances: IDropdownOption[] = [];
+  const onChangeSubscriptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
+    if (selectedOption) {
+      dispatch(
+        updateSelectedSubscripton({
+          selectedSubscription: selectedOption.key,
+        })
+      );
+
+      if (selectedSubscription !== '') {
+        refetchIse();
+      }
+    }
+  };
+
+  const subscriptions: IDropdownOption[] = isSubscriptionsLoading || !subscriptionsData ? [] : parseSubscriptionsData(subscriptionsData);
+
+  const iseInstances: IDropdownOption[] = isIseLoading || selectedSubscription === '' || !subscriptionsData ? [] : parseIseData(iseData);
 
   return (
     <div className="msla-export-instance-panel">
@@ -91,6 +109,7 @@ export const InstanceSelection: React.FC = () => {
         label={intlText.SELECTION_ISE}
         options={iseInstances}
         placeholder={intlText.SELECT_OPTION}
+        disabled={isIseLoading || selectedSubscription === ''}
         className="msla-export-instance-panel-dropdown"
       />
     </div>

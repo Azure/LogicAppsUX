@@ -189,6 +189,7 @@ export enum QueryKeys {
   workflowsData = 'workflowsData',
   subscriptionData = 'subscriptionData',
   runsData = 'runsData',
+  iseData = 'iseData',
 }
 
 export interface ISubscription {
@@ -204,5 +205,24 @@ export interface ISubscriptionsData {
 
 export type ExportData = {
   selectedWorkflows: Array<any>;
-  selectedSubscripton: string;
+  selectedSubscription: string;
 };
+
+export enum ResourceType {
+  workflows = 'workflows',
+  subscriptions = 'subscriptions',
+  ise = 'ise',
+}
+
+export interface IIse {
+  id: string;
+  subscriptionId: string;
+  iseName: string;
+  location: string;
+  resourceGroup: string;
+}
+
+export interface IIseData {
+  key: string;
+  text: string;
+}
