@@ -30,6 +30,10 @@ export const InstanceSelection: React.FC = () => {
       defaultMessage: 'Select an ISE (Integration Service Environment) instance',
       description: 'Select an ISE instance',
     }),
+    SELECT_OPTION: intl.formatMessage({
+      defaultMessage: 'Select an option',
+      description: 'Select an option placeholder',
+    }),
   };
 
   const apiService = useMemo(() => {
@@ -39,10 +43,17 @@ export const InstanceSelection: React.FC = () => {
     });
   }, [accessToken, baseUrl]);
 
-  const { data = [] } = useQuery(QueryKeys.subscriptionData, apiService.getSubscriptions);
-  console.log('data', data);
+  const loadSubscriptions = () => {
+    return apiService.getSubscriptions();
+  };
 
-  const subscriptions: IDropdownOption<any>[] = parseSubscriptionsData(data);
+  const { data: subscriptionsData, isLoading: isSubscriptionsLoading } = useQuery<any>(QueryKeys.subscriptionData, loadSubscriptions, {
+    refetchOnWindowFocus: false,
+  });
+
+  const subscriptions: IDropdownOption<any>[] = isSubscriptionsLoading ? [] : parseSubscriptionsData(subscriptionsData);
+
+  const iseInstances: IDropdownOption<any>[] = [];
 
   return (
     <div className="msla-export-instance-panel">
@@ -52,7 +63,19 @@ export const InstanceSelection: React.FC = () => {
       <Text variant="large" nowrap block>
         {intlText.SELECT_DESCRIPTION}
       </Text>
-      <Dropdown label={intlText.SELECTION_SUBSCRIPTION} options={subscriptions} className="msla-export-instance-panel-dropdown" />
+      <Dropdown
+        label={intlText.SELECTION_SUBSCRIPTION}
+        options={subscriptions}
+        placeholder={intlText.SELECT_OPTION}
+        disabled={isSubscriptionsLoading}
+        className="msla-export-instance-panel-dropdown"
+      />
+      <Dropdown
+        label={intlText.SELECTION_ISE}
+        options={iseInstances}
+        placeholder={intlText.SELECT_OPTION}
+        className="msla-export-instance-panel-dropdown"
+      />
     </div>
   );
 };
