@@ -12,13 +12,7 @@ import {
 } from './manifests/datetime';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
-import {
-  httpManifest,
-  httpTriggerManifest,
-  httpWithSwaggerManifest,
-  httpWebhookManifest,
-  httpWebhookTriggerManifest
-} from './manifests/http';
+import { httpManifest, httpWithSwaggerManifest, httpWebhookManifest } from './manifests/http';
 import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
@@ -381,9 +375,10 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
     case http:
       return {
         connectorId: httpConnectorId,
-        operationId: definition.inputs?.metadata?.apiDefinitionUrl && equals(definition.inputs?.metadata?.swaggerSource, 'custom')
-          ? httpwithswagger
-          : http
+        operationId:
+          definition.inputs?.metadata?.apiDefinitionUrl && equals(definition.inputs?.metadata?.swaggerSource, 'custom')
+            ? httpwithswagger
+            : http,
       };
 
     case liquid:
@@ -479,7 +474,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   },
   [httpwebhook]: {
     connectorId: httpConnectorId,
-    operationId: httpwebhook
+    operationId: httpwebhook,
   },
   [initializevariable]: {
     connectorId: 'connectionProviders/variable',
