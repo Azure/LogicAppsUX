@@ -9,6 +9,43 @@ import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import { equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
+export async function getConnectionsMappingForNodesRefactor(
+  operations: Operations,
+  getState: () => RootState
+): Promise<Record<string, string>> {
+  let connectionsMapping: Record<string, string> = {};
+  const operationManifestService = OperationManifestService();
+
+  const tasks: Promise<Record<string, string> | undefined>[] = [];
+
+  for (const [nodeId, operation] of Object.entries(operations)) {
+    try {
+      if (operationManifestService.isSupported(operation.type, operation.kind)) {
+        tasks.push(getManifestBasedConnectionMapping(getState, nodeId, operation));
+      } else if (
+        isApiConnectionType(operation.type) ||
+        (equals(operation.type, Constants.NODE.TYPE.MANUAL) && equals(operation.kind, Constants.NODE.KIND.APICONNECTION))
+      ) {
+        const connectionReferenceKey = _getLegacyConnectionReferenceKey(operation);
+
+        if (connectionReferenceKey !== undefined) {
+          connectionsMapping[nodeId] = connectionReferenceKey;
+        }
+      } else {
+        // no connection needed
+      }
+    } catch (exception) {
+      // log exception
+    }
+  }
+  const mappings = await Promise.all(tasks);
+  for (const mapping of mappings) {
+    connectionsMapping = { ...connectionsMapping, ...mapping };
+  }
+
+  return connectionsMapping;
+}
+
 export async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
   let connectionsMapping: Record<string, string> = {};
   const operationManifestService = OperationManifestService();
@@ -128,6 +165,10 @@ function getOpenApiConnectionReferenceKey(operationDefinition: LogicAppsV2.OpenA
   return connectionName;
 }
 
-function _getLegacyConnectionReferenceKey(_operationDefinition: any): string | undefined {
-  throw new Error('Function not implemented.');
+function _getLegacyConnectionReferenceKey(operationDefinition: any): string | undefined {
+  let referenceKey = operationDefinition.inputs.host.connection.referenceName;
+  if (!referenceKey) {
+    referenceKey = operationDefinition.inputs.host.connection.referenceName;
+  }
+  return referenceKey;
 }

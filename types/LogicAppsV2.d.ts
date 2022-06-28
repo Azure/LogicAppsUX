@@ -751,6 +751,7 @@ declare namespace LogicAppsV2 {
     actions?: Actions;
     outputs?: Outputs;
     staticResults?: Record<string, any>;
+    connectionReferences: ConnectionReferences;
   }
 
   /* Scope type */

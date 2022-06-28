@@ -22,11 +22,14 @@ const initialState: WorkflowLoadingState = {
 export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: void, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   if (currentState.workflowLoader.loadingMethod === 'arm') {
-    const results = await fetch(`https://management.azure.com/${currentState.workflowLoader.resourcePath}?api-version=2020-06-01`, {
-      headers: {
-        Authorization: `Bearer ${currentState.workflowLoader.armToken}`,
-      },
-    });
+    const results = await fetch(
+      `https://management.azure.com/${currentState.workflowLoader.resourcePath}?api-version=2020-06-01&$expand=connections.json`,
+      {
+        headers: {
+          Authorization: `Bearer ${currentState.workflowLoader.armToken}`,
+        },
+      }
+    );
     if (results.status === 200) {
       const wf = await results.json();
       const def = wf.properties.files['workflow.json'].definition;

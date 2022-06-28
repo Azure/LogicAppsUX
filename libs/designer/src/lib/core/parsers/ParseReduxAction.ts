@@ -19,6 +19,8 @@ export const initializeGraphState = createAsyncThunk<DeserializedWorkflow, Logic
       const deserializedWorkflow = BJSDeserialize(workflowDefinition);
       await initializeOperationMetadata(deserializedWorkflow, thunkAPI.dispatch);
       const actionsAndTriggers = deserializedWorkflow.actionData;
+      const connectionReferences = workflowDefinition.connectionReferences;
+      console.log(connectionReferences);
       getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
       return deserializedWorkflow;
     } else if (spec === 'CNCF') {
