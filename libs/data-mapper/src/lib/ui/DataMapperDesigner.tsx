@@ -131,7 +131,8 @@ export const DataMapperDesigner = () => {
         width: '100%',
       }}
     >
-      <ButtonContainer {...buttonContainerProps} />
+      {/* TODO (refortie) #14780194 - Will be refactored when we add in the data map overview component*/}
+      {inputSchema && outputSchema ? <ButtonContainer {...buttonContainerProps} /> : null}
       <div className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
@@ -160,10 +161,7 @@ export const DataMapperDesigner = () => {
         <EditorBreadcrumb />
 
         {inputSchema && outputSchema ? (
-          <div>
-            {layeredReactFlow}
-            <LeftHandPanel layerProps={panelLayerProps} />
-          </div>
+          <div>{layeredReactFlow}</div>
         ) : (
           <div className="msla-designer-canvas msla-panel-mode not-loaded" style={reactFlowStyle}>
             <div className="left">
