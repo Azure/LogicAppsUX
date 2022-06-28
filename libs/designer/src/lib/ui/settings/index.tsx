@@ -15,7 +15,6 @@ import type { SecuritySectionProps } from './sections/security';
 import { Tracking } from './sections/tracking';
 import type { TrackingSectionProps } from './sections/tracking';
 import type { IDropdownOption } from '@fluentui/react';
-import { useBoolean } from '@fluentui/react-hooks';
 import { equals, isObject } from '@microsoft-logic-apps/utils';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -63,76 +62,123 @@ export const SettingsPanel = (): JSX.Element => {
     isSupported: false,
   };
 
-  const [concurrencyFromState, setConcurrency] = useState(concurrency ?? { ...defaultState, value: { enabled: false, value: undefined } });
-  const [splitOnFromState, setSplitOn] = useState(splitOn ?? { ...defaultState, value: { enabled: false, value: undefined } });
-  const [conditionExpressionsFromState, setConditionExpressions] = useState(conditionExpressions ?? { ...defaultState, value: undefined });
-  const [timeoutFromState, setTimeout] = useState(timeout ?? { ...defaultState, value: undefined });
-  const [splitOnConfigurationFromState, setSplitOnConfiguration] = useState(
-    splitOnConfiguration ?? { correlation: { clientTrackingId: '' } }
-  );
-  const [automaticDecompression, setAutomaticDecompression] = useState(
-    disableAutomaticDecompression ?? { ...defaultState, value: undefined }
-  );
-  const [schemaValidation, setSchemaValidation] = useState(requestSchemaValidation ?? { ...defaultState, value: undefined });
-  const [disableAsyncPatternFromState, setDisableAsyncPattern] = useState(disableAsyncPattern ?? { ...defaultState, value: undefined });
-  const [asyncResponseFromState, setAsyncResponse] = useState(asynchronous ?? { ...defaultState, value: undefined });
-  const [pagingFromState, setPaging] = useState(paging ?? { ...defaultState, value: { enabled: false, value: undefined } });
-  const [requestOptionsFromState, setRequestOptions] = useState(requestOptions ?? { ...defaultState, value: { timeout: undefined } });
-  const [suppressWorkflowHeadersFromState, setSuppressWorkflowHeaders] = useState(
-    suppressWorkflowHeaders ?? { ...defaultState, value: undefined }
-  );
-  const [workflowHeadersOnResponseFromState, setWorkflowHeadersOnResponse] = useState(
-    suppressWorkflowHeadersOnResponse ?? { ...defaultState, value: undefined }
-  );
-  const [chunkedTransferModeFromState, setChunkedTransferMode] = useBoolean(
-    equals(uploadChunk?.value?.transferMode, constants.SETTINGS.TRANSFER_MODE.CHUNKED)
-  );
-  const [secureInputsFromState, setSecureInputs] = useState(secureInputs ?? { ...defaultState, value: false });
-  const [secureOutputsFromState, setSecureOutputs] = useState(secureOutputs ?? { ...defaultState, value: undefined });
-  const [correlationFromState, setCorrelation] = useState(correlation ?? { ...defaultState, value: { clientTrackingId: undefined } });
-  const [trackedPropertiesFromState, setTrackedProperties] = useState(trackedProperties ?? { ...defaultState, value: undefined });
+  const [settingsFromState, updateSettings] = useState({
+    concurrency: concurrency ?? { ...defaultState, value: { enabled: false, value: undefined } },
+    splitOn: splitOn ?? { ...defaultState, value: { enabled: false, value: undefined } },
+    conditionExpressions: conditionExpressions ?? { ...defaultState, value: undefined },
+    timeout: timeout ?? { ...defaultState, value: undefined },
+    splitOnConfiguration: splitOnConfiguration ?? { correlation: { clientTrackingId: '' } },
+    disableAutomaticDecompression: disableAutomaticDecompression ?? { ...defaultState, value: undefined },
+    requestSchemaValidation: requestSchemaValidation ?? { ...defaultState, value: undefined },
+    disableAsyncPattern: disableAsyncPattern ?? { ...defaultState, value: undefined },
+    asynchronous: asynchronous ?? { ...defaultState, value: undefined },
+    paging: paging ?? { ...defaultState, value: { enabled: false, value: undefined } },
+    requestOptions: requestOptions ?? { ...defaultState, value: { timeout: undefined } },
+    suppressWorkflowHeaders: suppressWorkflowHeaders ?? { ...defaultState, value: undefined },
+    suppressWorkflowHeadersOnResponse: suppressWorkflowHeadersOnResponse ?? { ...defaultState, value: undefined },
+    chunkedTransferMode: equals(uploadChunk?.value?.transferMode, constants.SETTINGS.TRANSFER_MODE.CHUNKED),
+    secureInputs: secureInputs ?? { ...defaultState, value: false },
+    secureOutputs: secureOutputs ?? { ...defaultState, value: undefined },
+    correlation: correlation ?? { ...defaultState, value: { clientTrackingId: undefined } },
+    trackedProperties: trackedProperties ?? { ...defaultState, value: undefined },
+  });
+
   // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
   const allEdges: WorkflowEdge[] = useEdgesByParent();
 
   const renderGeneral = (): JSX.Element | null => {
+    const {
+      concurrency: concurrencyFromState,
+      splitOn: splitOnFromState,
+      timeout: timeoutFromState,
+      conditionExpressions: conditionExpressionsFromState,
+      splitOnConfiguration: splitOnConfigurationFromState,
+    } = settingsFromState;
     const onConcurrencyToggle = (checked: boolean): void => {
-      setConcurrency({ ...concurrencyFromState, value: { ...concurrencyFromState.value, enabled: checked } });
+      updateSettings({
+        ...settingsFromState,
+        concurrency: {
+          ...concurrencyFromState,
+          value: { ...concurrencyFromState.value, enabled: checked },
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const onConcurrencyValueChange = (value: number): void => {
-      setConcurrency({ ...concurrencyFromState, value: { enabled: concurrencyFromState.value?.enabled ?? true, value } });
+      updateSettings({
+        ...settingsFromState,
+        concurrency: {
+          ...concurrencyFromState,
+          value: {
+            enabled: concurrencyFromState.value?.enabled ?? true,
+            value,
+          },
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const onSplitOnToggle = (checked: boolean): void => {
-      setSplitOn({ ...splitOnFromState, value: { ...splitOnFromState.value, enabled: checked } });
+      updateSettings({
+        ...settingsFromState,
+        splitOn: {
+          ...splitOnFromState,
+          value: {
+            ...splitOnFromState.value,
+            enabled: checked,
+          },
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const onTimeoutValueChange = (newVal: string): void => {
-      setTimeout({ ...timeoutFromState, value: newVal });
+      updateSettings({
+        ...settingsFromState,
+        timeout: {
+          ...timeoutFromState,
+          value: newVal,
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const onTriggerConditionsChange = (newExpressions: string[]): void => {
-      setConditionExpressions({ ...conditionExpressionsFromState, value: newExpressions });
+      updateSettings({
+        ...settingsFromState,
+        conditionExpressions: {
+          ...conditionExpressionsFromState,
+          value: newExpressions,
+        },
+      });
     };
 
     const onClientTrackingIdChange = (newVal: string): void => {
-      setSplitOnConfiguration({ correlation: { clientTrackingId: newVal } });
+      updateSettings({
+        ...settingsFromState,
+        splitOnConfiguration: {
+          correlation: { clientTrackingId: newVal },
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const onSplitOnSelectionChanged = (selectedOption: IDropdownOption): void => {
-      setSplitOn({
-        ...splitOnFromState,
-        value: { enabled: splitOnFromState.value?.enabled ?? true, value: selectedOption.key.toString() },
+      updateSettings({
+        ...settingsFromState,
+        splitOn: {
+          ...splitOnFromState,
+          value: {
+            enabled: splitOnFromState.value?.enabled ?? true,
+            value: selectedOption.key.toString(),
+          },
+        },
       });
     };
 
@@ -141,9 +187,9 @@ export const SettingsPanel = (): JSX.Element => {
       timeout: timeoutFromState,
       concurrency: concurrencyFromState,
       conditionExpressions: conditionExpressionsFromState,
+      splitOnConfiguration: splitOnConfigurationFromState,
       readOnly: false,
       nodeId,
-      splitOnConfiguration: splitOnConfigurationFromState,
       onConcurrencyToggle,
       onConcurrencyValueChange,
       onSplitOnToggle,
@@ -158,20 +204,36 @@ export const SettingsPanel = (): JSX.Element => {
   };
 
   const renderDataHandling = (): JSX.Element | null => {
+    const {
+      disableAutomaticDecompression: disableAutomaticDecompressionFromState,
+      requestSchemaValidation: requestSchemaValidationFromState,
+    } = settingsFromState;
     const onAutomaticDecompressionChange = (checked: boolean): void => {
-      setAutomaticDecompression({ ...automaticDecompression, value: checked });
+      updateSettings({
+        ...settingsFromState,
+        disableAutomaticDecompression: {
+          ...disableAutomaticDecompressionFromState,
+          value: checked,
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
     const onSchemaValidationChange = (checked: boolean): void => {
-      setSchemaValidation({ ...schemaValidation, value: checked });
+      updateSettings({
+        ...settingsFromState,
+        requestSchemaValidation: {
+          ...requestSchemaValidationFromState,
+          value: checked,
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const dataHandlingProps: DataHandlingSectionProps = {
-      requestSchemaValidation: schemaValidation,
-      disableAutomaticDecompression: automaticDecompression,
+      requestSchemaValidation: requestSchemaValidationFromState,
+      disableAutomaticDecompression: disableAutomaticDecompressionFromState,
       readOnly: false,
       nodeId,
       onAutomaticDecompressionChange,
@@ -183,65 +245,116 @@ export const SettingsPanel = (): JSX.Element => {
   };
 
   const renderNetworking = (): JSX.Element | null => {
+    const {
+      disableAsyncPattern: disableAsyncPatternFromState,
+      asynchronous: asynchronousFromState,
+      requestOptions: requestOptionsFromState,
+      suppressWorkflowHeaders: suppressWorkflowHeadersFromState,
+      paging: pagingFromState,
+      suppressWorkflowHeadersOnResponse: suppressHeadersOnResponseFromState,
+      chunkedTransferMode: chunkedTransferModeFromState,
+    } = settingsFromState;
     const onAsyncPatternToggle = (checked: boolean): void => {
-      setDisableAsyncPattern({ ...disableAsyncPatternFromState, value: checked });
+      updateSettings({
+        ...settingsFromState,
+        disableAsyncPattern: {
+          ...disableAsyncPatternFromState,
+          value: checked,
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const onAsyncResponseToggle = (checked: boolean): void => {
-      setAsyncResponse({ ...asyncResponseFromState, value: checked });
+      updateSettings({
+        ...settingsFromState,
+        asynchronous: {
+          ...asynchronousFromState,
+          value: checked,
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const onRequestOptionsChange = (newVal: string): void => {
-      setRequestOptions({ ...requestOptionsFromState, value: { timeout: newVal } });
+      updateSettings({
+        ...settingsFromState,
+        requestOptions: {
+          ...requestOptionsFromState,
+          value: { timeout: newVal },
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const onSuppressHeadersToggle = (checked: boolean): void => {
-      setSuppressWorkflowHeaders({ ...suppressWorkflowHeadersFromState, value: checked });
+      updateSettings({
+        ...settingsFromState,
+        suppressWorkflowHeaders: {
+          ...suppressWorkflowHeadersFromState,
+          value: checked,
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const onPaginationValueChange = (newVal: string): void => {
-      setPaging({ ...pagingFromState, value: { enabled: !!pagingFromState.value?.enabled, value: Number(newVal) } });
+      updateSettings({
+        ...settingsFromState,
+        paging: {
+          ...pagingFromState,
+          value: {
+            enabled: !!pagingFromState.value?.enabled,
+            value: Number(newVal),
+          },
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const onHeadersOnResponseToggle = (checked: boolean): void => {
-      setWorkflowHeadersOnResponse({ ...workflowHeadersOnResponseFromState, value: checked });
+      updateSettings({
+        ...settingsFromState,
+        suppressWorkflowHeadersOnResponse: {
+          ...suppressHeadersOnResponseFromState,
+          value: checked,
+        },
+      });
     };
 
-    const onContentTransferToggle = (): void => {
-      setChunkedTransferMode.toggle();
+    const onContentTransferToggle = (checked: boolean): void => {
+      updateSettings({
+        ...settingsFromState,
+        chunkedTransferMode: checked,
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const networkingProps: NetworkingSectionProps = {
+      suppressWorkflowHeaders: suppressWorkflowHeadersFromState,
+      suppressWorkflowHeadersOnResponse: suppressHeadersOnResponseFromState,
+      paging: pagingFromState,
+      asynchronous: asynchronousFromState,
       readOnly: false,
+      requestOptions: requestOptionsFromState,
+      disableAsyncPattern: disableAsyncPatternFromState,
+      chunkedTransferMode: chunkedTransferModeFromState,
       nodeId,
       retryPolicy,
-      suppressWorkflowHeaders: suppressWorkflowHeadersFromState,
-      suppressWorkflowHeadersOnResponse: workflowHeadersOnResponseFromState,
-      paging: pagingFromState,
       uploadChunk,
       downloadChunkSize,
-      asynchronous: asyncResponseFromState,
-      disableAsyncPattern: disableAsyncPattern,
-      requestOptions: requestOptionsFromState,
       onAsyncPatternToggle,
       onAsyncResponseToggle,
       onContentTransferToggle,
       onPaginationValueChange,
       onRequestOptionsChange,
       onHeadersOnResponseToggle,
-      chunkedTransferMode: chunkedTransferModeFromState,
       onSuppressHeadersToggle,
     };
     if (
@@ -269,21 +382,34 @@ export const SettingsPanel = (): JSX.Element => {
   };
 
   const renderSecurity = (): JSX.Element | null => {
+    const { secureInputs: secureInputsFromState, secureOutputs: secureOutputsFromState } = settingsFromState;
     const onSecureInputsChange = (checked: boolean): void => {
+      updateSettings({
+        ...settingsFromState,
+        secureInputs: {
+          ...secureInputsFromState,
+          value: checked,
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
-      setSecureInputs({ ...secureInputsFromState, value: checked });
     };
 
     const onSecureOutputsChange = (checked: boolean): void => {
+      updateSettings({
+        ...settingsFromState,
+        secureOutputs: {
+          ...secureOutputsFromState,
+          value: checked,
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
-      setSecureOutputs({ ...secureOutputsFromState, value: checked });
     };
 
     const securitySectionProps: SecuritySectionProps = {
-      secureInputs,
-      secureOutputs,
+      secureInputs: secureInputsFromState,
+      secureOutputs: secureOutputsFromState,
       readOnly: false,
       nodeId,
       onSecureInputsChange,
@@ -293,15 +419,23 @@ export const SettingsPanel = (): JSX.Element => {
   };
 
   const renderTracking = (): JSX.Element | null => {
+    const { correlation: correlationFromState, trackedProperties: trackedPropertiesFromState } = settingsFromState;
     const onClientTrackingIdChange = (newValue: string): void => {
-      setCorrelation({ ...correlationFromState, value: { clientTrackingId: newValue } });
+      updateSettings({
+        ...settingsFromState,
+        correlation: {
+          ...correlationFromState,
+          value: {
+            clientTrackingId: newValue,
+          },
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const onTrackedPropertiesDictionaryValueChanged = (newValue: Record<string, string>): void => {
       let trackedProperties: Record<string, any> = {}; // tslint:disable-line: no-any
-      console.log(isObject([]));
       if (isObject(newValue) && Object.keys(newValue).length > 0 && Object.keys(newValue).some((key) => newValue[key] !== undefined)) {
         trackedProperties = {};
         for (const key of Object.keys(newValue)) {
@@ -315,7 +449,13 @@ export const SettingsPanel = (): JSX.Element => {
           trackedProperties[key] = propertyValue;
         }
       }
-      setTrackedProperties({ ...trackedPropertiesFromState, value: trackedProperties });
+      updateSettings({
+        ...settingsFromState,
+        trackedProperties: {
+          ...trackedPropertiesFromState,
+          value: trackedProperties,
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
@@ -329,16 +469,22 @@ export const SettingsPanel = (): JSX.Element => {
           trackedProperties = newValue;
         }
       }
-      setTrackedProperties({ ...trackedPropertiesFromState, value: trackedProperties });
+      updateSettings({
+        ...settingsFromState,
+        trackedProperties: {
+          ...trackedPropertiesFromState,
+          value: trackedProperties,
+        },
+      });
       // TODO (14427339): Setting Validation
       // TODO (14427277): Write to Store
     };
 
     const trackingProps: TrackingSectionProps = {
+      trackedProperties: trackedPropertiesFromState,
+      correlation: correlationFromState,
       readOnly: false,
       nodeId,
-      trackedProperties,
-      correlation,
       onClientTrackingIdChange,
       onTrackedPropertiesDictionaryValueChanged,
       onTrackedPropertiesStringValueChange,

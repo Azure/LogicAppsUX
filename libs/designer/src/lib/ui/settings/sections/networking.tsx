@@ -10,7 +10,7 @@ export interface NetworkingSectionProps extends SectionProps {
   onSuppressHeadersToggle: ToggleHandler;
   onPaginationValueChange: TextChangeHandler;
   onHeadersOnResponseToggle: ToggleHandler;
-  onContentTransferToggle: () => void;
+  onContentTransferToggle: ToggleHandler;
   chunkedTransferMode: boolean;
 }
 
@@ -240,7 +240,7 @@ export const Networking = ({
         readOnly,
         onText,
         offText,
-        onToggleInputChange: () => onContentTransferToggle(),
+        onToggleInputChange: (_, checked) => onContentTransferToggle(!!checked),
         customLabel: () => contentTransferLabel,
       },
       visible: uploadChunk?.isSupported || downloadChunkSize?.isSupported,
