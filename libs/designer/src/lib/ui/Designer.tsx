@@ -1,4 +1,5 @@
 import { useLayout } from '../core/graphlayout';
+import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
 import { updateNodeSizes } from '../core/state/workflowSlice';
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
@@ -20,22 +21,21 @@ export interface DesignerProps {
   graphId?: string;
 }
 
-type NodeTypes = 'testNode' | 'scopeHeader' | 'subgraphHeader' | 'hiddenNode' | 'graphNode';
 type NodeTypesObj = {
-  [key in NodeTypes]: React.ComponentType<any>;
+  [key in WorkflowNodeType]: React.ComponentType<any>;
 };
 const nodeTypes: NodeTypesObj = {
-  testNode: TestNode,
-  graphNode: GraphNode,
-  scopeHeader: ScopeHeaderNode,
-  subgraphHeader: SubgraphHeaderNode,
-  hiddenNode: HiddenNode,
+  TEST_NODE: TestNode,
+  GRAPH_NODE: GraphNode,
+  SCOPE_HEADER: ScopeHeaderNode,
+  SUBGRAPH_HEADER: SubgraphHeaderNode,
+  HIDDEN_NODE: HiddenNode,
 };
 
 const edgeTypes = {
-  buttonEdge: ButtonEdge,
-  // onlyEdge: OnlyEdge,
-  hiddenEdge: HiddenEdge,
+  BUTTON_EDGE: ButtonEdge,
+  // ONLY_EDGE: undefined,
+  HIDDEN_EDGE: HiddenEdge,
 };
 
 export const Designer = () => {

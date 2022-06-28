@@ -10,7 +10,7 @@ import { monitoringTab } from './panelTabs/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
-import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
+import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption, PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
 import {
   updateTabs,
@@ -71,7 +71,7 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
             visible:
               tab.name === constants.PANEL_TAB_NAMES.MONITORING
                 ? tab.visible
-                : (nodeMetaData.subgraphType === 'SWITCH-CASE' && tab.name === constants.PANEL_TAB_NAMES.PARAMETERS) ?? false,
+                : (nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE && tab.name === constants.PANEL_TAB_NAMES.PARAMETERS) ?? false,
           };
         })
       );

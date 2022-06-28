@@ -6,6 +6,7 @@ import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelect
 import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
+import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { SubgraphHeader } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
@@ -25,7 +26,7 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
   const metadata = useNodeMetadata(subgraphId);
   const childEdges = useEdgesByParent(id);
 
-  const isAddCase = metadata?.subgraphType === 'SWITCH-ADD-CASE';
+  const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
 
   const subgraphClick = useCallback(
     (_id: string) => {
@@ -42,14 +43,16 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
       <div style={{ minHeight: '40px', display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'relative' }}>
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-          <SubgraphHeader
-            parentId={metadata?.graphId.split('-')[0] ?? ''}
-            subgraphType={metadata?.subgraphType}
-            title={subgraphId}
-            selected={selected}
-            readOnly={readOnly}
-            onClick={subgraphClick}
-          />
+          {metadata?.subgraphType ? (
+            <SubgraphHeader
+              parentId={metadata?.graphId.split('-')[0] ?? ''}
+              subgraphType={metadata.subgraphType}
+              title={subgraphId}
+              selected={selected}
+              readOnly={readOnly}
+              onClick={subgraphClick}
+            />
+          ) : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>

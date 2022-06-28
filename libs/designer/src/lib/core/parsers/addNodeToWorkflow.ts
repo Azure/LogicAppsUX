@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import type { NodesMetadata } from '../state/workflowSlice';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
+import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from './models/workflowNode';
 
 const getEdgeId = (parent: string, child: string) => `${parent}-${child}`;
 
@@ -12,7 +13,7 @@ export interface AddNodePayload {
 }
 
 export const createNodeWithDefaultSize = (id: string): WorkflowNode => {
-  return { id, height: 67, width: 200, type: 'testNode' }; // TODO: Assign correct type here
+  return { id, height: 67, width: 200, type: WORKFLOW_NODE_TYPES.TEST_NODE }; // TODO: Assign correct type here
 };
 
 export const addNodeToWorkflow = (payload: AddNodePayload, workflowGraph: WorkflowNode, nodesMetadata: NodesMetadata) => {
@@ -30,6 +31,7 @@ export const insertMiddleWorkflowEdge = (parent: string, current: string, child:
     id: getEdgeId(current, child),
     source: current,
     target: child,
+    type: WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
   };
   if (!graph?.edges) graph.edges = [];
   graph.edges.push(workflowEdge);
@@ -50,6 +52,7 @@ export const setWorkflowEdge = (parent: string, child: string, graph: WorkflowNo
     id: `${parent}-${child}`,
     source: parent,
     target: child,
+    type: WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
   };
   if (!graph?.edges) graph.edges = [];
   graph?.edges.push(workflowEdge);

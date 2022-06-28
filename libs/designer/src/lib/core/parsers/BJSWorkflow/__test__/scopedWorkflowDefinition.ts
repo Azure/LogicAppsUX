@@ -1,6 +1,8 @@
 import type { Operations, NodesMetadata } from '../../../state/workflowSlice';
 import { createWorkflowNode, createWorkflowEdge } from '../../../utils/graph';
 import type { WorkflowNode } from '../../models/workflowNode';
+import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '../../models/workflowNode';
+import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 
 export const scopedWorkflowDefinitionInput = {
   $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
@@ -96,23 +98,23 @@ export const scopedWorkflowDefinitionInput = {
 export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; actionData: Operations; nodesMetadata: NodesMetadata } = {
   graph: {
     id: 'root',
-    type: 'graphNode',
+    type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
     children: [
       createWorkflowNode('manual'),
       createWorkflowNode('Increment_variable'),
       createWorkflowNode('Initialize_variable'),
       {
         id: 'ActionIf',
-        type: 'graphNode',
+        type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
         height: 40,
         width: 200,
         children: [
-          createWorkflowNode('ActionIf-#scopeHeader', 'scopeHeader'),
+          createWorkflowNode('ActionIf-#scopeHeader', WORKFLOW_NODE_TYPES.SCOPE_HEADER),
           {
             id: 'ActionIf-actions',
-            type: 'graphNode',
+            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             children: [
-              createWorkflowNode('ActionIf-actions-#subgraphHeader', 'subgraphHeader'),
+              createWorkflowNode('ActionIf-actions-#subgraphHeader', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER),
               createWorkflowNode('Increment_variable2'),
               createWorkflowNode('Increment_variable4'),
             ],
@@ -123,25 +125,25 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
           },
           {
             id: 'ActionIf-elseActions',
-            type: 'graphNode',
+            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             children: [
-              createWorkflowNode('ActionIf-elseActions-#subgraphHeader', 'subgraphHeader'),
+              createWorkflowNode('ActionIf-elseActions-#subgraphHeader', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER),
               createWorkflowNode('Increment_variable3'),
             ],
             edges: [createWorkflowEdge('ActionIf-elseActions-#subgraphHeader', 'Increment_variable3')],
           },
         ],
         edges: [
-          createWorkflowEdge('ActionIf-#scopeHeader', 'ActionIf-actions-#subgraphHeader', 'onlyEdge'),
-          createWorkflowEdge('ActionIf-#scopeHeader', 'ActionIf-elseActions-#subgraphHeader', 'onlyEdge'),
+          createWorkflowEdge('ActionIf-#scopeHeader', 'ActionIf-actions-#subgraphHeader', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+          createWorkflowEdge('ActionIf-#scopeHeader', 'ActionIf-elseActions-#subgraphHeader', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
         ],
       },
       {
         id: 'EmptyScope',
-        type: 'graphNode',
+        type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
         height: 40,
         width: 200,
-        children: [createWorkflowNode('EmptyScope-#scopeHeader', 'scopeHeader')],
+        children: [createWorkflowNode('EmptyScope-#scopeHeader', WORKFLOW_NODE_TYPES.SCOPE_HEADER)],
         edges: [],
       },
       createWorkflowNode('Response'),
@@ -202,8 +204,8 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
     Increment_variable: { graphId: 'root' },
     Initialize_variable: { graphId: 'root' },
     ActionIf: { graphId: 'root' },
-    'ActionIf-actions': { graphId: 'ActionIf-actions', subgraphType: 'CONDITIONAL-TRUE' },
-    'ActionIf-elseActions': { graphId: 'ActionIf-elseActions', subgraphType: 'CONDITIONAL-FALSE' },
+    'ActionIf-actions': { graphId: 'ActionIf-actions', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE },
+    'ActionIf-elseActions': { graphId: 'ActionIf-elseActions', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE },
     Increment_variable2: { graphId: 'ActionIf-actions' },
     Increment_variable4: { graphId: 'ActionIf-actions' },
     Increment_variable3: { graphId: 'ActionIf-elseActions' },
