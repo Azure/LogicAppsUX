@@ -5,7 +5,7 @@ import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
 import TestNode from './CustomNodes/OperationCardNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
-import SubgraphHeaderNode from './CustomNodes/SubgraphHeaderNode';
+import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import { ButtonEdge } from './connections/edge';
 // import { OnlyEdge } from './connections/onlyEdge';
 import { HiddenEdge } from './connections/hiddenEdge';
@@ -28,7 +28,7 @@ const nodeTypes: NodeTypesObj = {
   TEST_NODE: TestNode,
   GRAPH_NODE: GraphNode,
   SCOPE_NODE: ScopeCardNode,
-  SUBGRAPH_HEADER: SubgraphHeaderNode,
+  SUBGRAPH_NODE: SubgraphCardNode,
   HIDDEN_NODE: HiddenNode,
 };
 
@@ -62,6 +62,8 @@ export const Designer = () => {
             nodesDraggable={false}
             edgeTypes={edgeTypes}
             panOnScroll={true}
+            deleteKeyCode={['Backspace', 'Delete']}
+            zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,

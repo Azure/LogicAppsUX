@@ -114,28 +114,28 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
             id: 'ActionIf-actions',
             type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             children: [
-              createWorkflowNode('ActionIf-actions-#subgraphHeader', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER),
+              createWorkflowNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE),
               createWorkflowNode('Increment_variable2'),
               createWorkflowNode('Increment_variable4'),
             ],
             edges: [
               createWorkflowEdge('Increment_variable2', 'Increment_variable4'),
-              createWorkflowEdge('ActionIf-actions-#subgraphHeader', 'Increment_variable2'),
+              createWorkflowEdge('ActionIf-actions-#subgraph', 'Increment_variable2'),
             ],
           },
           {
             id: 'ActionIf-elseActions',
             type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             children: [
-              createWorkflowNode('ActionIf-elseActions-#subgraphHeader', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER),
+              createWorkflowNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE),
               createWorkflowNode('Increment_variable3'),
             ],
-            edges: [createWorkflowEdge('ActionIf-elseActions-#subgraphHeader', 'Increment_variable3')],
+            edges: [createWorkflowEdge('ActionIf-elseActions-#subgraph', 'Increment_variable3')],
           },
         ],
         edges: [
-          createWorkflowEdge('ActionIf-#header', 'ActionIf-actions-#subgraphHeader', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
-          createWorkflowEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraphHeader', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+          createWorkflowEdge('ActionIf-#header', 'ActionIf-actions-#subgraph', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+          createWorkflowEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraph', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
         ],
       },
       {

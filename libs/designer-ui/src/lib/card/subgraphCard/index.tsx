@@ -5,7 +5,7 @@ import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
-interface SubgraphHeaderProps {
+interface SubgraphCardProps {
   parentId: string;
   subgraphType: SubgraphType;
   title?: string;
@@ -17,7 +17,7 @@ interface SubgraphHeaderProps {
   showAddButton?: boolean;
 }
 
-export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
+export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   parentId,
   subgraphType,
   title = 'undefined',
@@ -93,7 +93,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
   if (data.size === 'large') {
     return (
       <div
-        className={css('msla-subgraph-header', data.size)}
+        className={css('msla-subgraph-card', data.size)}
         style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
         tabIndex={-1}
       >
@@ -108,7 +108,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
     return (
       <div style={{ width: 200, display: 'grid', placeItems: 'center' }}>
         <button
-          className={css('msla-subgraph-header', data.size)}
+          className={css('msla-subgraph-card', data.size)}
           style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
           onClick={handleCollapse}
         >
