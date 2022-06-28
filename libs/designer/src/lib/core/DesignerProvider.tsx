@@ -1,7 +1,7 @@
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { ReactQueryProvider } from './ReactQueryProvider';
-import type { DesignerOptionsState, ServiceOptions } from './state/designerOptionsSlice';
-import { initDesignerOptions } from './state/designerOptionsSlice';
+import type { DesignerOptionsState, ServiceOptions } from './state/designerOptions/designerOptionsInterfaces';
+import { initDesignerOptions } from './state/designerOptions/designerOptionsSlice';
 import { store } from './store';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import type { Theme } from '@fluentui/react';
@@ -17,26 +17,20 @@ export interface DesignerProviderProps {
   children: React.ReactNode;
 }
 
-const OptionsStateSet = ({
-  options,
-  children,
-}: {
-  options: Omit<DesignerOptionsState, 'servicesInitialized'>;
-  children: React.ReactNode;
-}) => {
+const OptionsStateSet = ({ options, children }: any) => {
   const dispatch = useDispatch();
   useEffect(() => {
+    if (!options) return; // TODO: This dispatch keeps getting ran out of order in storybook, overwriting the options with null values each time.  This is just a quick temp safeguard.
     dispatch(initDesignerOptions({ readOnly: options.readOnly, isMonitoringView: options.isMonitoringView }));
-  }, [dispatch, options.readOnly, options.isMonitoringView]);
+  }, [dispatch, options]);
   return <>{children}</>;
 };
 
 export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', options, children }: DesignerProviderProps) => {
-  const { services, ...restOfOptions } = options;
   return (
     <ReduxProvider store={store}>
-      <OptionsStateSet options={restOfOptions}>
-        <ProviderWrappedContext.Provider value={services}>
+      <OptionsStateSet options={options}>
+        <ProviderWrappedContext.Provider value={options.services}>
           <ThemeProvider theme={theme} className="msla-theme-provider">
             <ReactQueryProvider>
               <IntlProvider

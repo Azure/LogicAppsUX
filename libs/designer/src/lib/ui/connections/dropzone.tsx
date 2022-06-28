@@ -1,4 +1,4 @@
-import { expandDiscoveryPanel } from '../../core/state/panelSlice';
+import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { css } from '@fluentui/utilities';

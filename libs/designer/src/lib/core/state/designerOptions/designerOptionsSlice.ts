@@ -1,25 +1,13 @@
+import type { DesignerOptionsState, ServiceOptions } from './designerOptionsInterfaces';
 import { InitConnectionService, InitOperationManifestService, InitSearchService } from '@microsoft-logic-apps/designer-client-services';
-import type { IConnectionService, IOperationManifestService, ISearchService } from '@microsoft-logic-apps/designer-client-services';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-
-export interface DesignerOptionsState {
-  readOnly?: boolean;
-  isMonitoringView?: boolean;
-  servicesInitialized?: boolean;
-}
 
 const initialState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
   servicesInitialized: false,
 };
-
-export interface ServiceOptions {
-  connectionService: IConnectionService;
-  operationManifestService: IOperationManifestService;
-  searchService: ISearchService;
-}
 
 export const initializeServices = createAsyncThunk(
   'initializeDesignerServices',

@@ -24,6 +24,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   title,
   onClick,
   onCollapse,
+  selected,
 }) => {
   const handleClick: React.MouseEventHandler<HTMLElement> = () => {
     onClick?.();
@@ -52,18 +53,18 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
 
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
-      <div aria-describedby={describedBy} className={'msla-content-fit'} aria-label={title} tabIndex={0}>
+      <div aria-describedby={describedBy} className={'msla-content-fit'} aria-label={title}>
         <div
           ref={drag}
-          className="msla-scope-v2--header msla-scope-header-wrapper"
+          className="msla-scope-v2--header msla-scope-card-wrapper"
           draggable={draggable}
           style={colorVars}
           onClick={handleClick}
         >
           {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
-          <div className="msla-scope-header-content">
-            <div className={css('msla-selection-box', false && 'selected')} /> {/* TODO: Assign selection here */}
-            <button className="msla-scope-header-title-box">
+          <div className="msla-scope-card-content">
+            <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} />
+            <button className="msla-scope-card-title-box">
               <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
               {cardIcon}
               <div className="msla-scope-title">{title}</div>
@@ -85,7 +86,6 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             </div>
           </div>
         </div>
-        <div className="msla-scope-v2--body msla-expanded" />
       </div>
     </div>
   );

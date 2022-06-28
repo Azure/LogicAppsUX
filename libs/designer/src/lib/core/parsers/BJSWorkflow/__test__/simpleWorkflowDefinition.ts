@@ -1,5 +1,7 @@
 import type { Operations, NodesMetadata } from '../../../state/workflowSlice';
-import type { WorkflowGraph } from '../../models/workflowNode';
+import { createWorkflowNode, createWorkflowEdge } from '../../../utils/graph';
+import type { WorkflowNode } from '../../models/workflowNode';
+import { WORKFLOW_NODE_TYPES } from '../../models/workflowNode';
 
 export const simpleWorkflowDefinitionInput = {
   $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
@@ -49,19 +51,20 @@ export const simpleWorkflowDefinitionInput = {
   },
 };
 
-export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowGraph; actionData: Operations; nodesMetadata: NodesMetadata } = {
+export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowNode; actionData: Operations; nodesMetadata: NodesMetadata } = {
   graph: {
     id: 'root',
+    type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
     children: [
-      { id: 'manual', height: 0, width: 0 },
-      { id: 'Increment_variable', height: 0, width: 0 },
-      { id: 'Initialize_variable', height: 0, width: 0 },
-      { id: 'Response', height: 0, width: 0 },
+      createWorkflowNode('manual'),
+      createWorkflowNode('Increment_variable'),
+      createWorkflowNode('Initialize_variable'),
+      createWorkflowNode('Response'),
     ],
     edges: [
-      { id: 'manual-Initialize_variable', source: 'manual', target: 'Initialize_variable' },
-      { id: 'Initialize_variable-Increment_variable', source: 'Initialize_variable', target: 'Increment_variable' },
-      { id: 'Increment_variable-Response', source: 'Increment_variable', target: 'Response' },
+      createWorkflowEdge('manual', 'Initialize_variable'),
+      createWorkflowEdge('Initialize_variable', 'Increment_variable'),
+      createWorkflowEdge('Increment_variable', 'Response'),
     ],
   },
   actionData: {

@@ -37,7 +37,7 @@ describe('lib/monitoring/statuspill', () => {
     const inner = React.Children.only(tooltipHost.props.children);
     expect(inner.props.className).toBe(classNames.pillInner);
 
-    const image = React.Children.only(inner.props.children);
+    const image = React.Children.toArray(inner.props.children)[0] as any;
     expect(image.props.status).toBe('Succeeded');
   });
 

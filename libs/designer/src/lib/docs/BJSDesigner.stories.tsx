@@ -1,9 +1,8 @@
-import type { DesignerOptionsContext } from '../index';
+import type { DesignerOptionsState } from '../core/state/designerOptions/designerOptionsInterfaces';
 import { BJSWorkflowProvider, Designer, DesignerProvider } from '../index';
-import ConditionalWorkflow from './storybookWorkflows/conditionalWorkflow.json';
+import AllScopesWorkflow from './storybookWorkflows/allScopesWorkflow.json';
 import BigWorkflow from './storybookWorkflows/simpleBigworkflow.json';
 import SimpleWorkflow from './storybookWorkflows/simpleSmallWorkflow.json';
-import SwitchWorkflow from './storybookWorkflows/switchWorkflow.json';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -18,7 +17,7 @@ export default {
 
 interface ComponentProps {
   workflow: any;
-  options?: Partial<DesignerOptionsContext>;
+  options?: Partial<DesignerOptionsState>;
 }
 
 const httpClient = {
@@ -62,5 +61,4 @@ export const MonitoringViewExample = () => (
   <RenderedComponent workflow={SimpleWorkflow} options={{ readOnly: true, isMonitoringView: true }} />
 );
 
-export const ConditionalExample = () => <RenderedComponent workflow={ConditionalWorkflow} />;
-export const SwitchExample = () => <RenderedComponent workflow={SwitchWorkflow} />;
+export const ScopesExample = () => <RenderedComponent workflow={AllScopesWorkflow} />;

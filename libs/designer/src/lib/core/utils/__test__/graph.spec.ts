@@ -1,41 +1,42 @@
-import { isRootNode } from '../graph';
+import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
+import { createWorkflowEdge, createWorkflowNode, isRootNode } from '../graph';
+import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 
 describe('Graph Utilities', () => {
   const graph = {
     id: 'root',
+    type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
     children: [
-      { id: 'manual', height: 0, width: 0 },
-      { id: 'firstaction', height: 0, width: 0 },
-      { id: 'secondaction', height: 0, width: 0 },
+      createWorkflowNode('manual'),
+      createWorkflowNode('firstAction'),
+      createWorkflowNode('secondAction'),
       {
         id: 'condition',
-        height: 0,
-        width: 0,
+        type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
         children: [
           {
             id: 'condition-actions',
+            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             children: [
-              { id: 'condition-actions-CONDITIONAL_TRUE', height: 0, width: 0 },
-              { id: 'nestedone', height: 0, width: 0 },
-              { id: 'nestedtwo', height: 0, width: 0 },
+              createWorkflowNode('condition-actions-CONDITIONAL_TRUE', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER),
+              createWorkflowNode('nestedOne'),
+              createWorkflowNode('nestedTwo'),
             ],
-            edges: [
-              { id: 'condition-actions-CONDITIONAL-TRUE-nestedone', source: 'condition-actions-CONDITIONAL-TRUE', target: 'nestedone' },
-              { id: 'nestedone-nestedtwo', source: 'nestedone', target: 'nestedtwo' },
-            ],
+            edges: [createWorkflowEdge('condition-actions-CONDITIONAL_TRUE', 'nestedOne'), createWorkflowEdge('nestedOne', 'nestedTwo')],
           },
           {
-            id: 'condition-elseactions',
-            children: [{ id: 'condition-elseactions-CONDITIONAL_FALSE', height: 0, width: 0 }],
+            id: 'condition-elseActions',
+            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+            children: [createWorkflowNode('condition-elseActions-CONDITIONAL_FALSE', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER)],
             edges: [],
           },
         ],
       },
     ],
     edges: [
-      { id: 'manual-firstaction', source: 'manual', target: 'firstaction' },
-      { id: 'firstaction-secondaction', source: 'firstaction', target: 'secondaction' },
-      { id: 'secondaction-condition', source: 'secondaction', target: 'condition' },
+      createWorkflowEdge('manual', 'firstaction'),
+      createWorkflowEdge('firstaction', 'secondaction'),
+      createWorkflowEdge('secondaction', 'condition'),
     ],
   };
   const nodesMetadata = {
@@ -43,11 +44,10 @@ describe('Graph Utilities', () => {
     firstaction: { graphId: 'root' },
     secondaction: { graphId: 'root' },
     condition: { graphId: 'root' },
-    'condition-actions-CONDITIONAL_TRUE': { graphId: 'condition-actions', subgraphType: 'CONDITIONAL_TRUE' },
+    'condition-actions-CONDITIONAL_TRUE': { graphId: 'condition-actions', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE },
     nestedone: { graphId: 'condition-actions' },
     nestedtwo: { graphId: 'condition-actions' },
-    'condition-elseactions-CONDITIONAL_FALSE': { graphId: 'condition-elseactions', subgraphType: 'CONDITIONAL_FALSE' },
-    'condition-elseactions-emptyNode': { graphId: 'condition-elseactions', isPlaceholderNode: true },
+    'condition-elseActions-CONDITIONAL_FALSE': { graphId: 'condition-elseActions', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE },
   };
 
   describe('isRootNode', () => {
