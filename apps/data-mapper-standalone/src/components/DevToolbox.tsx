@@ -7,7 +7,7 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const mapFileOptions = ['SimpleCustomerOrder.json'];
-export const schemaFileOptions = ['SimpleCustomerOrderSchema.json'];
+export const schemaFileOptions = ['SimpleCustomerOrderSchema.json', 'SimpleBuyerOrderSchema.json'];
 
 export const DevToolbox: React.FC = () => {
   const { resourcePath, armToken, loadingMethod } = useSelector((state: RootState) => {

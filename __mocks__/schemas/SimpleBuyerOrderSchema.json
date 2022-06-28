@@ -1,0 +1,66 @@
+{
+  "name": "BuyerOrders.xsd",
+  "type": "XML",
+  "targetNamespace": "http://NewMapper.BuyerOrders",
+  "namespaces": {
+    "ns0": "http://NewMapper.BuyerOrders"
+  },
+  "schemaTreeRoot": {
+    "key": "/ns0:BuyerOrders",
+    "name": "BuyerOrders",
+    "namespacePrefix": "ns0",
+    "type": "ComplexType",
+    "children": [
+      {
+        "key": "/ns0:BuyerOrders/@BoughtItem",
+        "name": "BoughtItem",
+        "type": "string",
+        "attribute": true
+      },
+      {
+        "key": "/ns0:BuyerOrders/Buyer",
+        "name": "Buyer",
+        "type": "ComplexType",
+        "repeating": true,
+        "children": [
+          {
+            "key": "/ns0:BuyerOrders/Buyer/@Name",
+            "name": "Name",
+            "type": "string",
+            "attribute": true,
+            "children": null
+          },
+          {
+            "key": "/ns0:BuyerOrders/Buyer/@OrderNumber",
+            "name": "OrderNumber",
+            "type": "string",
+            "attribute": true
+          },
+          {
+            "key": "/ns0:BuyerOrders/Buyer/@OrderValue",
+            "name": "OrderValue",
+            "type": "string",
+            "attribute": true
+          },
+          {
+            "key": "/ns0:BuyerOrders/Buyer/ShippingAddress",
+            "name": "ShippingAddress",
+            "type": "ComplexType",
+            "children": [
+              {
+                "key": "/ns0:BuyerOrders/Buyer/ShippingAddress/Line1",
+                "name": "Line1",
+                "type": "string"
+              },
+              {
+                "key": "/ns0:BuyerOrders/Buyer/ShippingAddress/Line2",
+                "name": "Line2",
+                "type": "string"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
