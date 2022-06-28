@@ -190,3 +190,20 @@ export enum QueryKeys {
   subscriptionData = 'subscriptionData',
   runsData = 'runsData',
 }
+
+export interface ISubscription {
+  id: string;
+  subscriptionId: string;
+  tenantId: string;
+  displayName: string;
+  state: string;
+  subscriptionPolicies: Record<string, string>;
+  authorizationSource: string;
+  managedByTenants: Array<Record<string, string>>;
+  tags: Record<string, string>;
+}
+
+export interface ISubscriptionsData {
+  key: string;
+  text: string;
+}

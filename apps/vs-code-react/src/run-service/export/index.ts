@@ -14,7 +14,6 @@ export class ApiService implements IApiService {
 
   private getAccessTokenHeaders = () => {
     const { accessToken } = this.options;
-    console.log('accessToken2', accessToken);
     if (!accessToken) {
       return undefined;
     }

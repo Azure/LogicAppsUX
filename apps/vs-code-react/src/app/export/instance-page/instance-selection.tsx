@@ -51,9 +51,9 @@ export const InstanceSelection: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  const subscriptions: IDropdownOption<any>[] = isSubscriptionsLoading ? [] : parseSubscriptionsData(subscriptionsData);
+  const subscriptions: IDropdownOption[] = isSubscriptionsLoading ? [] : parseSubscriptionsData(subscriptionsData);
 
-  const iseInstances: IDropdownOption<any>[] = [];
+  const iseInstances: IDropdownOption[] = [];
 
   return (
     <div className="msla-export-instance-panel">
