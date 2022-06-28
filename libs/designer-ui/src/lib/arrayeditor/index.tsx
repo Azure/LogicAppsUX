@@ -2,7 +2,7 @@ import KeyValueMode from '../card/images/key_value_mode.svg';
 import KeyValueModeInverted from '../card/images/key_value_mode_inverted.svg';
 import TextMode from '../card/images/text_mode.svg';
 import TextModeInverted from '../card/images/text_mode_inverted.svg';
-import type { Segment } from '../editor/base';
+import type { BaseEditorProps, Segment } from '../editor/base';
 import type { LabelProps } from '../label';
 import { isHighContrastBlack } from '../utils';
 import { CollapsedArray } from './collapsedarray';
@@ -23,7 +23,7 @@ export interface ArrayEditorItemProps {
   content: Segment[];
 }
 
-export interface ArrayEditorProps {
+export interface ArrayEditorProps extends BaseEditorProps {
   // addItemToolbarComponent?: JSX.Element;
   // canDeleteLastItem?: boolean;
   //   collapsed: boolean;
@@ -51,6 +51,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
   const [items, setItems] = useState(initialItems);
+  const [isValid, setIsValid] = useState(false);
 
   const handleToggle = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.stopPropagation();
@@ -86,7 +87,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   return (
     <div className="msla-array-editor-container">
       {/* {collapsed ? renderCollapsedArray() : renderExpandedArray()} */}
-      <CollapsedArray labelProps={labelProps} items={items} setItems={setItems} />
+      <CollapsedArray labelProps={labelProps} items={items} isValid={isValid} setItems={setItems} setIsValid={setIsValid} />
       <div className="msla-array-commands">{renderToggleButton(!readOnly && !disabledToggle)}</div>
     </div>
   );

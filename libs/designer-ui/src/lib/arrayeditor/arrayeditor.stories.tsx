@@ -30,7 +30,7 @@ Standard.args = {
       ],
     },
     {
-      key: 'test',
+      key: 'test2',
       content: [
         {
           type: ValueSegmentType.TOKEN,

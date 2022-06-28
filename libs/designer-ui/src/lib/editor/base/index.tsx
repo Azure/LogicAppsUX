@@ -6,15 +6,14 @@ import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
 import { TreeView } from './plugins/TreeView';
+import { Validation } from './plugins/Validation';
+import type { ValidationProps } from './plugins/Validation';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
-import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
-import type { EditorState } from 'lexical';
-import { $getRoot } from 'lexical';
 import { useIntl } from 'react-intl';
 
 export type Segment = {
@@ -46,6 +45,7 @@ export interface BasePlugins {
   history?: boolean;
   tokens?: boolean;
   treeView?: boolean;
+  validation?: ValidationProps;
 }
 
 const defaultTheme = {
@@ -53,15 +53,6 @@ const defaultTheme = {
   rtl: 'rtl',
   placeholder: 'editor-placeholder',
   paragraph: 'editor-paragraph',
-};
-
-const onChange = (editorState: EditorState) => {
-  editorState.read(() => {
-    const root = $getRoot();
-    // const selection = $getSelection();
-    console.log(editorState._nodeMap);
-    console.log(root);
-  });
 };
 
 const onError = (error: Error) => {
@@ -83,7 +74,7 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
       }),
   };
 
-  const { autoFocus = true, autoLink, clearEditor, history = true, tokens, treeView } = BasePlugins;
+  const { autoFocus = true, autoLink, clearEditor, history = true, tokens, treeView, validation } = BasePlugins;
 
   const editorInputLabel = intl.formatMessage({
     defaultMessage: 'Editor Input',
@@ -97,7 +88,6 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
           contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
           placeholder={<span className="editor-placeholder"> {placeholder} </span>}
         />
-        <OnChangePlugin onChange={onChange} />
         {treeView ? <TreeView /> : null}
         {autoFocus ? <AutoFocus /> : null}
         {history ? <History /> : null}
@@ -108,6 +98,14 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
         */}
         {/* {tokens ? <TokenPlugin data={[]} /> : null} */}
         {clearEditor ? <ClearEditor /> : null}
+        {validation ? (
+          <Validation
+            type={validation.type}
+            errorMessage={validation.errorMessage}
+            tokensEnabled={tokens}
+            className={validation.className}
+          />
+        ) : null}
         {children}
       </div>
     </LexicalComposer>

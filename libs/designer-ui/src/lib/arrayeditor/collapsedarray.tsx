@@ -9,7 +9,9 @@ import type { Dispatch, SetStateAction } from 'react';
 export interface CollapsedArrayProps {
   labelProps: LabelProps;
   items: ArrayEditorItemProps[];
+  isValid?: boolean;
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
+  setIsValid?: Dispatch<SetStateAction<boolean>>;
 }
 
 export const CollapsedArray = ({ labelProps, items, setItems }: CollapsedArrayProps): JSX.Element => {
@@ -31,9 +33,14 @@ export const CollapsedArray = ({ labelProps, items, setItems }: CollapsedArrayPr
       <div className="msla-array-content">
         <BaseEditor
           className="msla-array-editor-container-collapsed"
-          BasePlugins={{ tokens: true }}
+          BasePlugins={{
+            tokens: true,
+            validation: { type: 'ARRAY', errorMessage: 'Please Enter a Valid Array', className: 'msla-array-editor-validation' },
+          }}
           placeholder={'Enter an Array'}
           initialValue={parseInitialValue(items)}
+          // isValid={isValid}
+          // setIsValid={setIsValid}
         />
       </div>
     </div>

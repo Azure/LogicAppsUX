@@ -8,11 +8,11 @@ export default function ClearEditor() {
   const [editor] = useLexicalComposerContext();
   const text = intl.formatMessage({
     defaultMessage: 'Clear',
-    description: 'test',
+    description: 'Label to clear editor',
   });
   return (
     <button
-      title={'test'}
+      title={'clear editor'}
       onClick={() => {
         editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
         editor.focus();
