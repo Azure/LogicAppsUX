@@ -1,4 +1,4 @@
-import type { ProjectName } from '../run-service';
+import type { ExportData, ProjectName } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -12,7 +12,7 @@ export interface InitializePayload {
   project: ProjectName;
 }
 
-interface initializedVscodeState {
+export interface initializedVscodeState {
   initialized: true;
   accessToken?: string;
   corsNotice?: string;
@@ -21,6 +21,7 @@ interface initializedVscodeState {
   workflowProperties: OverviewPropertiesProps;
   project: ProjectName;
   selectedWorkflows: Array<any>;
+  exportData: ExportData;
 }
 
 interface uninitializedVscodeState {
@@ -47,6 +48,10 @@ export const vscodeSlice = createSlice({
       (state as initializedVscodeState).corsNotice = corsNotice;
       (state as initializedVscodeState).workflowProperties = workflowProperties;
       (state as initializedVscodeState).selectedWorkflows = [];
+      (state as initializedVscodeState).exportData = {
+        selectedWorkflows: [],
+        selectedSubscripton: '',
+      };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
@@ -55,10 +60,14 @@ export const vscodeSlice = createSlice({
       const { selectedWorkflows } = action.payload;
       (state as initializedVscodeState).selectedWorkflows = selectedWorkflows;
     },
+    updateSelectedSubscripton: (state: VscodeState, action: PayloadAction<any>) => {
+      const { selectedSubscripton } = action.payload;
+      (state as initializedVscodeState).exportData.selectedSubscripton = selectedSubscripton;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initialize, updateAccessToken, updateSelectedWorkFlows } = vscodeSlice.actions;
+export const { initialize, updateAccessToken, updateSelectedWorkFlows, updateSelectedSubscripton } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;

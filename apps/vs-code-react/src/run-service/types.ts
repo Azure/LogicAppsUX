@@ -194,16 +194,15 @@ export enum QueryKeys {
 export interface ISubscription {
   id: string;
   subscriptionId: string;
-  tenantId: string;
-  displayName: string;
-  state: string;
-  subscriptionPolicies: Record<string, string>;
-  authorizationSource: string;
-  managedByTenants: Array<Record<string, string>>;
-  tags: Record<string, string>;
+  subscriptionName: string;
 }
 
 export interface ISubscriptionsData {
   key: string;
   text: string;
 }
+
+export type ExportData = {
+  selectedWorkflows: Array<any>;
+  selectedSubscripton: string;
+};

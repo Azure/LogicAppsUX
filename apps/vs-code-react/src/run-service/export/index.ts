@@ -5,6 +5,11 @@ export interface ApiServiceOptions {
   accessToken?: string;
 }
 
+enum ResourceType {
+  workflows = 'workflows',
+  subscriptions = 'subscriptions',
+}
+
 export class ApiService implements IApiService {
   private options: ApiServiceOptions;
 
@@ -25,7 +30,28 @@ export class ApiService implements IApiService {
     });
   };
 
-  private getPayload = (skipToken?: string) => {
+  private getResourceOptions = (resourceType: string) => {
+    switch (resourceType) {
+      case ResourceType.workflows: {
+        return {
+          query:
+            "resources|where type =~ 'microsoft.logic/workflows' or (type =~ 'microsoft.web/sites' and kind contains 'workflowapp')\r\n| project name,resourceGroup,id,type,location,subscriptionId|sort by (tolower(tostring(name))) asc",
+          subscriptions: [],
+        };
+      }
+      case ResourceType.subscriptions: {
+        return {
+          query:
+            'resourcecontainers\n | where type == "microsoft.resources/subscriptions"\n| join kind=leftouter (securityresources \n | where properties.environment == "Azure" and properties.displayName == "ASC score"\n ) on subscriptionId\n | extend subscriptionName=name\n | project id, subscriptionId, subscriptionName|sort by (tolower(tostring(subscriptionName))) asc',
+        };
+      }
+      default: {
+        return {};
+      }
+    }
+  };
+
+  private getPayload = (resourceType: string, skipToken?: string) => {
     let options = {};
     if (skipToken) {
       options = {
@@ -38,17 +64,17 @@ export class ApiService implements IApiService {
       };
     }
 
+    const resourceOptions = this.getResourceOptions(resourceType);
+
     return {
-      query:
-        "resources|where type =~ 'microsoft.logic/workflows' or (type =~ 'microsoft.web/sites' and kind contains 'workflowapp')\r\n| project name,resourceGroup,id,type,location,subscriptionId|sort by (tolower(tostring(name))) asc",
-      subscriptions: [],
+      ...resourceOptions,
       options,
     };
   };
 
   async getMoreWorkflows(continuationToken: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const payload = this.getPayload();
+    const payload = this.getPayload(ResourceType.workflows);
     const response = await fetch(continuationToken, { headers, method: 'POST', body: JSON.stringify(payload) });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -60,7 +86,7 @@ export class ApiService implements IApiService {
 
   async getWorkflows(): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const payload = this.getPayload();
+    const payload = this.getPayload(ResourceType.workflows);
     const uri = 'https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01';
 
     const response = await fetch(uri, { headers, method: 'POST', body: JSON.stringify(payload) });
@@ -77,16 +103,16 @@ export class ApiService implements IApiService {
 
   async getSubscriptions(): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const uri = 'https://management.azure.com/subscriptions?api-version=2020-01-01';
-
-    const response = await fetch(uri, { headers, method: 'GET' });
+    const uri = 'https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01';
+    const payload = this.getPayload(ResourceType.subscriptions);
+    const response = await fetch(uri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
     const subscriptionsResponse: any = await response.json();
-    const { value: subscriptions } = subscriptionsResponse;
+    const { data: subscriptions } = subscriptionsResponse;
 
     return { subscriptions };
   }
