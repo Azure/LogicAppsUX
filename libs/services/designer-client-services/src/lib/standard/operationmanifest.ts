@@ -12,6 +12,13 @@ import {
 } from './manifests/datetime';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
+import {
+  httpManifest,
+  httpTriggerManifest,
+  httpWithSwaggerManifest,
+  httpWebhookManifest,
+  httpWebhookTriggerManifest
+} from './manifests/http';
 import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
@@ -80,12 +87,16 @@ const slidingwindow = 'slidingwindow';
 const wait = 'wait';
 const delay = 'delay';
 const delayuntil = 'delayuntil';
+const http = 'http';
+const httpwebhook = 'httpwebhook';
+const httpwithswagger = 'httpwithswagger';
 
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 const dateTimeConnectorId = 'connectionProviders/datetime';
 const scheduleConnectorId = 'connectionProviders/schedule';
+const httpConnectorId = 'connectionProviders/http';
 
 const supportedManifestTypes = [
   compose,
@@ -93,6 +104,8 @@ const supportedManifestTypes = [
   expression,
   foreach,
   function_,
+  http,
+  httpwebhook,
   initializevariable,
   incrementvariable,
   invokefunction,
@@ -300,6 +313,8 @@ function isInBuiltOperation(definition: any): boolean {
     case expression:
     case foreach:
     case function_:
+    case http:
+    case httpwebhook:
     case initializevariable:
     case incrementvariable:
     case invokefunction:
@@ -337,8 +352,11 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
   const normalizedOperationType = definition.type.toLowerCase();
   const kind = definition.kind ? definition.kind.toLowerCase() : undefined;
 
-  if (kind === undefined && normalizedOperationType !== table && normalizedOperationType !== wait) {
-    return inBuiltOperationsMetadata[normalizedOperationType];
+  if (kind === undefined) {
+    const operationInfo = inBuiltOperationsMetadata[normalizedOperationType];
+    if (operationInfo) {
+      return operationInfo;
+    }
   }
 
   const liquidConnectorId = 'connectionProviders/liquidOperations';
@@ -359,6 +377,15 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
         default:
           throw new UnsupportedException(`Unsupported datetime kind '${definition.kind}'`);
       }
+
+    case http:
+      return {
+        connectorId: httpConnectorId,
+        operationId: definition.inputs?.metadata?.apiDefinitionUrl && equals(definition.inputs?.metadata?.swaggerSource, 'custom')
+          ? httpwithswagger
+          : http
+      };
+
     case liquid:
       switch (kind) {
         case 'jsontojson':
@@ -449,6 +476,10 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   [function_]: {
     connectorId: azureFunctionConnectorId,
     operationId: 'azureFunction',
+  },
+  [httpwebhook]: {
+    connectorId: httpConnectorId,
+    operationId: httpwebhook
   },
   [initializevariable]: {
     connectorId: 'connectionProviders/variable',
@@ -548,6 +579,9 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [getfuturetime, getFutureTimeManifest],
   [getpasttime, getPastTimeManifest],
   [htmltable, htmlManifest],
+  [http, httpManifest],
+  [httpwebhook, httpWebhookManifest],
+  [httpwithswagger, httpWithSwaggerManifest],
   [join, joinManifest],
   [parsejson, parsejsonManifest],
   [query, queryManifest],
