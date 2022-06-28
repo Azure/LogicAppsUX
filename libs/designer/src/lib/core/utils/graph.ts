@@ -5,7 +5,7 @@ import { equals } from '@microsoft-logic-apps/utils';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
 
 export const isRootNode = (graph: WorkflowNode, nodeId: string, nodesMetadata: NodesMetadata) => {
-  return nodesMetadata[nodeId]?.graphId === graph.id && !graph?.edges?.some((edge) => equals(edge.target, nodeId));
+  return nodesMetadata[nodeId]?.graphId === graph.id && !graph.edges?.some((edge) => equals(edge.target, nodeId));
 };
 
 // This is the starting size for all nodes
