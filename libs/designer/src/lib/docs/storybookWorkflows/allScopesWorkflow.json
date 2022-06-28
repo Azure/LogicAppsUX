@@ -1,0 +1,213 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Switch": {
+        "cases": {
+          "Conditional_Case": {
+            "actions": {
+              "Condition": {
+                "actions": {
+                  "Terminate": {
+                    "inputs": {
+                      "runStatus": "Succeeded"
+                    },
+                    "runAfter": {},
+                    "type": "Terminate"
+                  },
+                  "Increment_variable_4": {
+                    "inputs": {
+                      "name": "var1",
+                      "value": 1
+                    },
+                    "runAfter": {
+                      "Terminate": ["Failed"]
+                    },
+                    "type": "IncrementVariable"
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Terminate_2": {
+                      "inputs": {
+                        "runError": {
+                          "code": "CreateAndGetGoalFailed",
+                          "message": "Created goal does not match expected goal"
+                        },
+                        "runStatus": "Failed"
+                      },
+                      "runAfter": {},
+                      "type": "Terminate"
+                    }
+                  }
+                },
+                "expression": { "and": [{ "equals": ["test", "test"] }] },
+                "runAfter": {},
+                "type": "If"
+              }
+            },
+            "case": "test"
+          },
+          "ForEach_Case": {
+            "actions": {
+              "ForEach": {
+                "actions": {
+                  "ForEach_Action_1": {
+                    "inputs": {
+                      "name": "var1",
+                      "value": 1
+                    },
+                    "runAfter": {},
+                    "type": "IncrementVariable"
+                  },
+                  "ForEach_nested": {
+                    "actions": {
+                      "ForEach_Action_2": {
+                        "inputs": {
+                          "name": "var1",
+                          "value": 1
+                        },
+                        "runAfter": {},
+                        "type": "IncrementVariable"
+                      },
+                      "ForEach_Action_3": {
+                        "inputs": {
+                          "name": "var1",
+                          "value": 1
+                        },
+                        "runAfter": {
+                          "ForEach_Action_2": ["Succeeded"]
+                        },
+                        "type": "IncrementVariable"
+                      }
+                    },
+                    "foreach": "@item()",
+                    "runAfter": {
+                      "ForEach_Action_1": ["Succeeded"]
+                    },
+                    "runtimeConfiguration": {
+                      "concurrency": {
+                        "repetitions": 2
+                      }
+                    },
+                    "type": "Foreach"
+                  },
+                  "ForEach_empty": {
+                    "actions": {},
+                    "foreach": "@item()",
+                    "runAfter": {
+                      "ForEach_nested": ["Succeeded"]
+                    },
+                    "type": "Foreach"
+                  }
+                },
+                "foreach": "@triggerBody()",
+                "runAfter": {},
+                "runtimeConfiguration": {
+                  "concurrency": {
+                    "repetitions": 20
+                  }
+                },
+                "trackedProperties": {
+                  "fsdfs": "sdfsdf"
+                },
+                "type": "Foreach"
+              }
+            },
+            "case": "test-2"
+          },
+          "Scope_Case": {
+            "actions": {
+              "Scope": {
+                "actions": {
+                  "Scope_Action_1": {
+                    "inputs": {
+                      "name": "var1",
+                      "value": 1
+                    },
+                    "runAfter": {},
+                    "type": "IncrementVariable"
+                  },
+                  "Scope_Action_2": {
+                    "inputs": {
+                      "name": "var1",
+                      "value": 1
+                    },
+                    "runAfter": {
+                      "Scope_Action_1": ["Succeeded"]
+                    },
+                    "type": "IncrementVariable"
+                  },
+                  "Scope_nested": {
+                    "actions": {
+                      "Scope_Action_3": {
+                        "inputs": {
+                          "name": "var1",
+                          "value": 1
+                        },
+                        "runAfter": {},
+                        "type": "IncrementVariable"
+                      }
+                    },
+                    "runAfter": {
+                      "Scope_Action_2": ["Succeeded"]
+                    },
+                    "type": "Scope"
+                  },
+                  "Scope_empty": {
+                    "actions": {},
+                    "runAfter": {
+                      "Scope_nested": ["Succeeded"]
+                    },
+                    "type": "Scope"
+                  }
+                },
+                "type": "Scope"
+              }
+            },
+            "case": "test-3"
+          }
+        },
+        "default": {
+          "actions": {
+            "Default-Compose": {
+              "inputs": "test",
+              "runAfter": {},
+              "type": "Compose"
+            }
+          }
+        },
+        "expression": "test",
+        "runAfter": {},
+        "type": "Switch"
+      },
+      "Initialize_owner": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "goalOwner",
+              "type": "string",
+              "value": "abc@microsoft.com"
+            }
+          ]
+        },
+        "runAfter": {
+          "Switch": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1
+        },
+        "type": "Recurrence"
+      }
+    }
+  },
+  "kind": "Stateful"
+}

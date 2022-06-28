@@ -1,7 +1,7 @@
 import constants from '../../common/constants';
-import { collapsePanel, expandPanel } from '../../core/state/panelSlice';
+import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { collapsePanel, expandPanel } from '../../core/state/panel/panelSlice';
 import { useIconUri, useNodeDescription, useNodeMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
-import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
 import { setNodeDescription } from '../../core/state/workflowSlice';
 import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
@@ -10,7 +10,7 @@ import { monitoringTab } from './panelTabs/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
-import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
+import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption, PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
 import {
   updateTabs,
@@ -71,7 +71,7 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
             visible:
               tab.name === constants.PANEL_TAB_NAMES.MONITORING
                 ? tab.visible
-                : (nodeMetaData.subgraphType === 'SWITCH-CASE' && tab.name === constants.PANEL_TAB_NAMES.PARAMETERS) ?? false,
+                : (nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE && tab.name === constants.PANEL_TAB_NAMES.PARAMETERS) ?? false,
           };
         })
       );
