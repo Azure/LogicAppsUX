@@ -2,22 +2,25 @@ import { $isTokenNode } from '../nodes/tokenNode';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, ElementNode } from 'lexical';
 import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
-import { useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 
 export interface ValidationProps {
   type: 'ARRAY' | 'JSON';
   className?: string;
   tokensEnabled?: boolean;
   errorMessage: string;
+  isValid?: boolean;
+  setIsValid?: Dispatch<SetStateAction<boolean>>;
 }
 
-export const Validation = ({ className, type, tokensEnabled = true, errorMessage }: ValidationProps) => {
-  const [isValid, setIsValid] = useState(false);
+export const Validation = ({ className, isValid, type, tokensEnabled = true, errorMessage, setIsValid }: ValidationProps) => {
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), tokensEnabled);
-      if (type === 'ARRAY') {
+      console.log(setIsValid);
+      if (type === 'ARRAY' && setIsValid) {
         setIsValid(validArray(editorString));
+        console.log(validArray(editorString));
       }
     });
   };

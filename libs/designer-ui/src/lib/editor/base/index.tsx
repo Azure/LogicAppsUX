@@ -104,6 +104,8 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
             errorMessage={validation.errorMessage}
             tokensEnabled={tokens}
             className={validation.className}
+            isValid={validation.isValid}
+            setIsValid={validation.setIsValid}
           />
         ) : null}
         {children}

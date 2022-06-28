@@ -14,7 +14,7 @@ export interface CollapsedArrayProps {
   setIsValid?: Dispatch<SetStateAction<boolean>>;
 }
 
-export const CollapsedArray = ({ labelProps, items, setItems }: CollapsedArrayProps): JSX.Element => {
+export const CollapsedArray = ({ labelProps, items, isValid, setItems, setIsValid }: CollapsedArrayProps): JSX.Element => {
   const renderLabel = (): JSX.Element => {
     const { text, isRequiredField } = labelProps;
     return (
@@ -35,12 +35,16 @@ export const CollapsedArray = ({ labelProps, items, setItems }: CollapsedArrayPr
           className="msla-array-editor-container-collapsed"
           BasePlugins={{
             tokens: true,
-            validation: { type: 'ARRAY', errorMessage: 'Please Enter a Valid Array', className: 'msla-array-editor-validation' },
+            validation: {
+              type: 'ARRAY',
+              errorMessage: 'Please Enter a Valid Array',
+              className: 'msla-array-editor-validation',
+              isValid,
+              setIsValid,
+            },
           }}
           placeholder={'Enter an Array'}
           initialValue={parseInitialValue(items)}
-          // isValid={isValid}
-          // setIsValid={setIsValid}
         />
       </div>
     </div>

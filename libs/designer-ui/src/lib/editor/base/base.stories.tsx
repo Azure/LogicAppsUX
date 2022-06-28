@@ -47,7 +47,7 @@ export const validation = Template.bind({});
 validation.args = {
   className: 'msla-editor-container',
   placeholder: 'Please enter a valid Array',
-  BasePlugins: { validation: { type: 'ARRAY', errorMessage: 'Please enter a valid array' } },
+  BasePlugins: { validation: { type: 'ARRAY', errorMessage: 'Please enter a valid array', isValid: false } },
   initialValue: [
     { type: ValueSegmentType.LITERAL, value: 'test\ntest' },
     { type: ValueSegmentType.LITERAL, value: 'test\ntest' },
