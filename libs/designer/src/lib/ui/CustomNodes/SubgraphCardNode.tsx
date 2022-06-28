@@ -7,14 +7,14 @@ import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelecto
 import type { RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
 import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
-import { SubgraphHeader } from '@microsoft/designer-ui';
+import { SubgraphCard } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const subgraphId = id.split('-#')[0];
 
   const readOnly = useReadOnly();
@@ -47,7 +47,7 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
         <div style={{ position: 'relative' }}>
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           {metadata?.subgraphType ? (
-            <SubgraphHeader
+            <SubgraphCard
               parentId={metadata?.graphId.split('-')[0] ?? ''}
               subgraphType={metadata.subgraphType}
               title={subgraphId}
@@ -72,6 +72,6 @@ const SubgraphHeaderNode = ({ data, targetPosition = Position.Top, sourcePositio
   );
 };
 
-SubgraphHeaderNode.displayName = 'SubgraphHeaderNode';
+SubgraphCardNode.displayName = 'SubgraphCardNode';
 
-export default memo(SubgraphHeaderNode);
+export default memo(SubgraphCardNode);

@@ -74,7 +74,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <>
-        <div className={css('msla-scope-card', isFooter && 'is-footer')}>
+        <div className={css('msla-scope-card')}>
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           <ScopeCard
             brandColor={brandColor.result}
