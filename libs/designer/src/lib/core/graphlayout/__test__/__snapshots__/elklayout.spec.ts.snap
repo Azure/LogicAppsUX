@@ -55,7 +55,7 @@ Object {
             Object {
               "id": "Increment_variable2-Increment_variable4",
               "layoutOptions": Object {
-                "edgeType": "buttonEdge",
+                "edgeType": "BUTTON_EDGE",
               },
               "sections": Array [
                 Object {
@@ -94,7 +94,7 @@ Object {
               "height": 40,
               "id": "Increment_variable3",
               "layoutOptions": Object {
-                "nodeType": "testNode",
+                "nodeType": "TEST_NODE",
               },
               "width": 200,
               "x": 16,
@@ -128,7 +128,7 @@ Object {
     Object {
       "id": "manual-Initialize_variable",
       "layoutOptions": Object {
-        "edgeType": "buttonEdge",
+        "edgeType": "BUTTON_EDGE",
       },
       "sections": Array [
         Object {
@@ -155,7 +155,7 @@ Object {
     Object {
       "id": "Initialize_variable-Increment_variable",
       "layoutOptions": Object {
-        "edgeType": "buttonEdge",
+        "edgeType": "BUTTON_EDGE",
       },
       "sections": Array [
         Object {
@@ -182,7 +182,7 @@ Object {
     Object {
       "id": "Increment_variable-ActionIf",
       "layoutOptions": Object {
-        "edgeType": "buttonEdge",
+        "edgeType": "BUTTON_EDGE",
       },
       "sections": Array [
         Object {
@@ -209,7 +209,7 @@ Object {
     Object {
       "id": "ActionIf-Response",
       "layoutOptions": Object {
-        "edgeType": "buttonEdge",
+        "edgeType": "BUTTON_EDGE",
       },
       "sections": Array [
         Object {
@@ -239,7 +239,7 @@ Object {
   "layoutOptions": Object {
     "elk.padding": "[top=0,left=16,bottom=48,right=16]",
     "elk.position": "(0, 0)",
-    "nodeType": "graphNode",
+    "nodeType": "GRAPH_NODE",
   },
   "width": 548,
   "x": 0,
