@@ -51,6 +51,7 @@ export const vscodeSlice = createSlice({
       (state as initializedVscodeState).exportData = {
         selectedWorkflows: [],
         selectedSubscription: '',
+        selectedIse: '',
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
@@ -64,10 +65,14 @@ export const vscodeSlice = createSlice({
       const { selectedSubscription } = action.payload;
       (state as initializedVscodeState).exportData.selectedSubscription = selectedSubscription;
     },
+    updateSelectedIse: (state: VscodeState, action: PayloadAction<any>) => {
+      const { selectedIse } = action.payload;
+      (state as initializedVscodeState).exportData.selectedIse = selectedIse;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initialize, updateAccessToken, updateSelectedWorkFlows, updateSelectedSubscripton } = vscodeSlice.actions;
+export const { initialize, updateAccessToken, updateSelectedWorkFlows, updateSelectedSubscripton, updateSelectedIse } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;

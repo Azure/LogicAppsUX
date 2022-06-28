@@ -206,6 +206,7 @@ export interface ISubscriptionsData {
 export type ExportData = {
   selectedWorkflows: Array<any>;
   selectedSubscription: string;
+  selectedIse: string;
 };
 
 export enum ResourceType {

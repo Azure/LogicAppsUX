@@ -1,7 +1,7 @@
 import { QueryKeys } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
-import { updateSelectedSubscripton } from '../../../state/vscodeSlice';
+import { updateSelectedIse, updateSelectedSubscripton } from '../../../state/vscodeSlice';
 import type { initializedVscodeState } from '../../../state/vscodeSlice';
 import { parseIseData, parseSubscriptionsData } from './helper';
 import { Dropdown, Text } from '@fluentui/react';
@@ -85,6 +85,16 @@ export const InstanceSelection: React.FC = () => {
     }
   };
 
+  const onChangeIse = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
+    if (selectedOption) {
+      dispatch(
+        updateSelectedIse({
+          selectedIse: selectedOption.key,
+        })
+      );
+    }
+  };
+
   const subscriptions: IDropdownOption[] = isSubscriptionsLoading || !subscriptionsData ? [] : parseSubscriptionsData(subscriptionsData);
 
   const iseInstances: IDropdownOption[] = isIseLoading || selectedSubscription === '' || !subscriptionsData ? [] : parseIseData(iseData);
@@ -110,6 +120,7 @@ export const InstanceSelection: React.FC = () => {
         options={iseInstances}
         placeholder={intlText.SELECT_OPTION}
         disabled={isIseLoading || selectedSubscription === ''}
+        onChange={onChangeIse}
         className="msla-export-instance-panel-dropdown"
       />
     </div>
