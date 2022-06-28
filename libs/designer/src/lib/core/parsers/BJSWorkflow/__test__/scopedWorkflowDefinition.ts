@@ -109,7 +109,7 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
         height: 40,
         width: 200,
         children: [
-          createWorkflowNode('ActionIf-#header', WORKFLOW_NODE_TYPES.SCOPE_NODE),
+          createWorkflowNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
           {
             id: 'ActionIf-actions',
             type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
@@ -134,8 +134,8 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
           },
         ],
         edges: [
-          createWorkflowEdge('ActionIf-#header', 'ActionIf-actions-#subgraph', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
-          createWorkflowEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraph', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+          createWorkflowEdge('ActionIf-#scope', 'ActionIf-actions-#subgraph', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+          createWorkflowEdge('ActionIf-#scope', 'ActionIf-elseActions-#subgraph', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
         ],
       },
       {
@@ -143,7 +143,7 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
         type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
         height: 40,
         width: 200,
-        children: [createWorkflowNode('EmptyScope-#header', WORKFLOW_NODE_TYPES.SCOPE_NODE)],
+        children: [createWorkflowNode('EmptyScope-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE)],
         edges: [],
       },
       createWorkflowNode('Response'),
@@ -204,8 +204,8 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
     Increment_variable: { graphId: 'root' },
     Initialize_variable: { graphId: 'root' },
     ActionIf: { graphId: 'root' },
-    'ActionIf-actions': { graphId: 'ActionIf-actions', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE },
-    'ActionIf-elseActions': { graphId: 'ActionIf-elseActions', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE },
+    'ActionIf-actions-#subgraph': { graphId: 'ActionIf-actions-#subgraph', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE },
+    'ActionIf-elseActions-#subgraph': { graphId: 'ActionIf-elseActions-#subgraph', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE },
     Increment_variable2: { graphId: 'ActionIf-actions' },
     Increment_variable4: { graphId: 'ActionIf-actions' },
     Increment_variable3: { graphId: 'ActionIf-elseActions' },
