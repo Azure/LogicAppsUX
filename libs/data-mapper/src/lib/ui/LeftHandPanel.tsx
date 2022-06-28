@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { collapsePanel, expandPanel } from '../core/state/PanelSlice';
+import { collapseLeftPanel, expandLeftPanel } from '../core/state/PanelSlice';
 import type { RootState } from '../core/state/Store';
 import { toolboxTab } from './tabs/ToolboxTab';
 import type { ILayerProps } from '@fluentui/react';
@@ -16,7 +16,7 @@ export interface LeftHandPanelProps {
 export const LeftHandPanel = ({ selectedTabId, layerProps }: LeftHandPanelProps): JSX.Element => {
   const dispatch = useDispatch();
 
-  const { collapsed } = useSelector((state: RootState) => {
+  const { leftPanelCollapsed: collapsed } = useSelector((state: RootState) => {
     return state.panel;
   });
 
@@ -37,11 +37,11 @@ export const LeftHandPanel = ({ selectedTabId, layerProps }: LeftHandPanelProps)
   }, [collapsed]);
 
   const collapse = useCallback(() => {
-    dispatch(collapsePanel());
+    dispatch(collapseLeftPanel());
   }, [dispatch]);
 
   const expand = useCallback(() => {
-    dispatch(expandPanel());
+    dispatch(expandLeftPanel());
   }, [dispatch]);
 
   const togglePanel = useCallback((): void => {
