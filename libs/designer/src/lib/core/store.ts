@@ -1,7 +1,7 @@
 import connectionsReducer from './state/connectionSlice';
-import designerOptionsReducer from './state/designerOptionsSlice';
+import designerOptionsReducer from './state/designerOptions/designerOptionsSlice';
 import operationMetadataReducer from './state/operationMetadataSlice';
-import panelReducer from './state/panelSlice';
+import panelReducer from './state/panel/panelSlice';
 import workflowReducer from './state/workflowSlice';
 import { configureStore } from '@reduxjs/toolkit';
 
