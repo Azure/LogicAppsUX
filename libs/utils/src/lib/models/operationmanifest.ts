@@ -79,6 +79,7 @@ export interface OperationManifestSettings {
   downloadChunking?: OperationManifestSetting<DownloadChunkMetadata>;
   operationOptions?: OperationManifestSetting<OperationOptions[]>;
   paging?: OperationManifestSetting<void>;
+  requestOptions?: OperationManifestSetting<void>;
   retryPolicy?: OperationManifestSetting<void>;
   secureData?: OperationManifestSetting<SecureDataOptions>;
   timeout?: OperationManifestSetting<void>;
