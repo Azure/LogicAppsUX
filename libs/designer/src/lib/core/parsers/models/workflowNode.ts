@@ -1,7 +1,11 @@
-import type { NodesMetadata } from '../../state/workflowSlice';
-import { equals } from '@microsoft-logic-apps/utils';
-
-export type WorkflowNodeType = 'graphNode' | 'testNode' | 'scopeNode' | 'subgraphHeader' | 'hiddenNode';
+export type WorkflowNodeType = 'GRAPH_NODE' | 'TEST_NODE' | 'SCOPE_NODE' | 'SUBGRAPH_HEADER' | 'HIDDEN_NODE';
+export const WORKFLOW_NODE_TYPES: Record<string, WorkflowNodeType> = {
+  GRAPH_NODE: 'GRAPH_NODE',
+  TEST_NODE: 'TEST_NODE',
+  SCOPE_NODE: 'SCOPE_NODE',
+  SUBGRAPH_HEADER: 'SUBGRAPH_HEADER',
+  HIDDEN_NODE: 'HIDDEN_NODE',
+};
 
 export interface WorkflowNode {
   id: string;
@@ -12,18 +16,19 @@ export interface WorkflowNode {
   width?: number; // Action Nodes only
 }
 
-export type WorkflowEdgeType = 'buttonEdge' | 'onlyEdge' | 'hiddenEdge';
+export type WorkflowEdgeType = 'BUTTON_EDGE' | 'ONLY_EDGE' | 'HIDDEN_EDGE';
+export const WORKFLOW_EDGE_TYPES: Record<string, WorkflowEdgeType> = {
+  BUTTON_EDGE: 'BUTTON_EDGE',
+  ONLY_EDGE: 'ONLY_EDGE',
+  HIDDEN_EDGE: 'HIDDEN_EDGE',
+};
 
 export interface WorkflowEdge {
   id: string;
   source: string;
   target: string;
-  type?: WorkflowEdgeType;
+  type: WorkflowEdgeType;
 }
 
-export const isWorkflowNode = (node: WorkflowNode) => node.type !== 'graphNode';
-export const isWorkflowGraph = (node: WorkflowNode) => node.type === 'graphNode';
-
-export const isRootNode = (graph: WorkflowNode, nodeId: string, nodesMetadata: NodesMetadata) => {
-  return nodesMetadata[nodeId]?.graphId === graph.id && !graph?.edges?.some((edge) => equals(edge.target, nodeId));
-};
+export const isWorkflowNode = (node: WorkflowNode) => node.type !== WORKFLOW_NODE_TYPES.GRAPH_NODE;
+export const isWorkflowGraph = (node: WorkflowNode) => node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE;

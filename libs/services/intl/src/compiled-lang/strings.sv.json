@@ -330,7 +330,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Ladda upp eller välj ett utdataschema som ska användas för kartan."
     }
   ],
   "3kI7xF": [
@@ -360,7 +360,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "välj indata"
     }
   ],
   "47kOXr": [
@@ -600,7 +600,7 @@
   "9I0PcK": [
     {
       "type": 0,
-      "value": "Add output schema"
+      "value": "Lägg till utdataschema"
     }
   ],
   "9JuvQ4": [
@@ -630,7 +630,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Välj ett utdataschema"
     }
   ],
   "9u/Ae3": [
@@ -968,7 +968,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Välj ett indataschema"
     }
   ],
   "Ip7Iax": [
@@ -1004,7 +1004,7 @@
   "JQlAMD": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Avbryt"
     }
   ],
   "JSfWJ0": [
@@ -1052,7 +1052,7 @@
   "JqZfdk": [
     {
       "type": 0,
-      "value": "Add input schema"
+      "value": "Lägg till indataschema"
     }
   ],
   "JzqgNM": [
@@ -1070,7 +1070,7 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Välj en fil att ladda upp"
     }
   ],
   "K90YEU": [
@@ -1770,7 +1770,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Bläddra"
     }
   ],
   "XqamWZ": [
@@ -1906,7 +1906,7 @@
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Lägg till"
     }
   ],
   "b9/1dK": [
@@ -1960,7 +1960,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "välj utdata"
     }
   ],
   "c6XbVI": [
@@ -2644,7 +2644,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "Det gick inte att läsa in schemat. Försök igen."
     }
   ],
   "p/0r2N": [
@@ -2934,7 +2934,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Ladda upp eller välj ett indataschema som ska användas för kartan."
     }
   ],
   "tE7Zam": [

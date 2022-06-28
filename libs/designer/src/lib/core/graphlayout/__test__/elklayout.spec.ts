@@ -1,13 +1,19 @@
-import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { createWorkflowNode, createWorkflowEdge, createElkNode, createElkEdge, createSharedEdge } from '../../utils/graph';
+import type { WorkflowEdgeType, WorkflowNode } from '../../parsers/models/workflowNode';
+import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
+import { createWorkflowNode, createWorkflowEdge, createElkNode, createElkEdge } from '../../utils/graph';
 import { exportForTesting } from '../elklayout';
 import type { ElkNode } from 'elkjs/lib/elk-api';
 import type { Edge, Node } from 'react-flow-renderer';
 
+const createSharedEdge = (source: string, target: string, type?: WorkflowEdgeType) => ({
+  ...createWorkflowEdge(source, target, type),
+  data: { elkEdge: createElkEdge(source, target, type) },
+});
+
 const elkGraphLayoutOptions = {
   'elk.padding': '[top=0,left=16,bottom=48,right=16]',
   'elk.position': '(0, 0)',
-  nodeType: 'graphNode',
+  nodeType: WORKFLOW_NODE_TYPES.GRAPH_NODE,
 };
 
 const { convertWorkflowGraphToElkGraph, convertElkGraphToReactFlow, elkLayout } = exportForTesting;
@@ -16,7 +22,7 @@ describe('elklayout', () => {
     it('should properly convert a valid WorkflowGraph to an ElkNode', () => {
       const input: WorkflowNode = {
         id: 'root',
-        type: 'graphNode',
+        type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
         children: [createWorkflowNode('node1'), createWorkflowNode('node2')],
         edges: [createWorkflowEdge('node1', 'node2')],
       };
@@ -33,20 +39,20 @@ describe('elklayout', () => {
     it('should properly convert a valid WorkflowGraph with scopes to an ElkNode', () => {
       const input: WorkflowNode = {
         id: 'root',
-        type: 'graphNode',
+        type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
         children: [
           createWorkflowNode('manual'),
           createWorkflowNode('Increment_variable'),
           createWorkflowNode('Initialize_variable'),
           {
             id: 'ActionIf',
-            type: 'graphNode',
+            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             children: [
-              createWorkflowNode('ActionIf-#header', 'scopeNode'),
+              createWorkflowNode('ActionIf-#header', WORKFLOW_NODE_TYPES.SCOPE_NODE),
               {
                 id: 'ActionIf-actions',
                 children: [
-                  createWorkflowNode('ActionIf-actions-#subgraphHeader', 'subgraphHeader'),
+                  createWorkflowNode('ActionIf-actions-#subgraphHeader', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER),
                   createWorkflowNode('Increment_variable2'),
                   createWorkflowNode('Increment_variable4'),
                 ],
@@ -54,16 +60,16 @@ describe('elklayout', () => {
                   createWorkflowEdge('ActionIf-actions-#subgraphHeader', 'Increment_variable2'),
                   createWorkflowEdge('Increment_variable2', 'Increment_variable4'),
                 ],
-                type: 'graphNode',
+                type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
               },
               {
                 id: 'ActionIf-elseActions',
                 children: [
-                  createWorkflowNode('ActionIf-elseActions-#subgraphHeader', 'subgraphHeader'),
+                  createWorkflowNode('ActionIf-elseActions-#subgraphHeader', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER),
                   createWorkflowNode('Increment_variable3'),
                 ],
                 edges: [createWorkflowEdge('ActionIf-elseActions-#subgraphHeader', 'Increment_variable3')],
-                type: 'graphNode',
+                type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
               },
             ],
             edges: [
@@ -91,12 +97,12 @@ describe('elklayout', () => {
             id: 'ActionIf',
             layoutOptions: elkGraphLayoutOptions,
             children: [
-              createElkNode('ActionIf-#header', 'scopeNode'),
+              createElkNode('ActionIf-#header', WORKFLOW_NODE_TYPES.SCOPE_NODE),
               {
                 id: 'ActionIf-actions',
                 layoutOptions: elkGraphLayoutOptions,
                 children: [
-                  createElkNode('ActionIf-actions-#subgraphHeader', 'subgraphHeader'),
+                  createElkNode('ActionIf-actions-#subgraphHeader', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER),
                   createElkNode('Increment_variable2'),
                   createElkNode('Increment_variable4'),
                 ],
@@ -108,7 +114,10 @@ describe('elklayout', () => {
               {
                 id: 'ActionIf-elseActions',
                 layoutOptions: elkGraphLayoutOptions,
-                children: [createElkNode('ActionIf-elseActions-#subgraphHeader', 'subgraphHeader'), createElkNode('Increment_variable3')],
+                children: [
+                  createElkNode('ActionIf-elseActions-#subgraphHeader', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER),
+                  createElkNode('Increment_variable3'),
+                ],
                 edges: [createElkEdge('ActionIf-elseActions-#subgraphHeader', 'Increment_variable3')],
               },
             ],
@@ -147,7 +156,7 @@ describe('elklayout', () => {
         [
           {
             id: 'node1',
-            type: 'testNode',
+            type: WORKFLOW_NODE_TYPES.TEST_NODE,
             parentNode: undefined,
             position: {
               x: 10,
@@ -159,7 +168,7 @@ describe('elklayout', () => {
           },
           {
             id: 'node2',
-            type: 'testNode',
+            type: WORKFLOW_NODE_TYPES.TEST_NODE,
             parentNode: undefined,
             position: {
               x: 10,
@@ -173,7 +182,7 @@ describe('elklayout', () => {
         [
           {
             id: 'node1-node2',
-            type: 'buttonEdge',
+            type: WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
             source: 'node1',
             target: 'node2',
             data: {
@@ -200,12 +209,12 @@ describe('elklayout', () => {
             x: 307,
             y: 308,
             children: [
-              { ...createElkNode('ActionIf-#header', 'scopeNode'), x: 307, y: 308 },
+              { ...createElkNode('ActionIf-#header', WORKFLOW_NODE_TYPES.SCOPE_NODE), x: 307, y: 308 },
               {
                 id: 'ActionIf-actions',
                 layoutOptions: elkGraphLayoutOptions,
                 children: [
-                  { ...createElkNode('ActionIf-actions-#subgraphHeader', 'subgraphHeader'), x: 50, y: 100 },
+                  { ...createElkNode('ActionIf-actions-#subgraphHeader', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER), x: 50, y: 100 },
                   { ...createElkNode('Increment_variable2'), x: 150, y: 200 },
                   { ...createElkNode('Increment_variable4'), x: 300, y: 301 },
                 ],
@@ -218,15 +227,15 @@ describe('elklayout', () => {
                 id: 'ActionIf-elseActions',
                 layoutOptions: elkGraphLayoutOptions,
                 children: [
-                  { ...createElkNode('ActionIf-elseActions-#subgraphHeader', 'subgraphHeader'), x: 0, y: 0 },
+                  { ...createElkNode('ActionIf-elseActions-#subgraphHeader', WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER), x: 0, y: 0 },
                   { ...createElkNode('Increment_variable3'), x: 302, y: 303 },
                 ],
                 edges: [createElkEdge('ActionIf-elseActions-#subgraphHeader', 'Increment_variable3')],
               },
             ],
             edges: [
-              createElkEdge('ActionIf-#header', 'ActionIf-actions-#subgraphHeader', 'onlyEdge'),
-              createElkEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraphHeader', 'onlyEdge'),
+              createElkEdge('ActionIf-#header', 'ActionIf-actions-#subgraphHeader', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+              createElkEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraphHeader', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
             ],
           },
           {
@@ -234,7 +243,7 @@ describe('elklayout', () => {
             layoutOptions: elkGraphLayoutOptions,
             x: 307,
             y: 308,
-            children: [createElkNode('EmptyScope-#header', 'scopeNode')],
+            children: [createElkNode('EmptyScope-#header', WORKFLOW_NODE_TYPES.SCOPE_NODE)],
             edges: [],
           },
           { ...createElkNode('Response'), x: 304, y: 305 },
@@ -255,98 +264,98 @@ describe('elklayout', () => {
             id: 'manual',
             position: { x: 50, y: 100 },
             data: { label: 'manual' },
-            type: 'testNode',
+            type: WORKFLOW_NODE_TYPES.TEST_NODE,
           },
           {
             id: 'Increment_variable',
-            type: 'testNode',
+            type: WORKFLOW_NODE_TYPES.TEST_NODE,
             position: { x: 60, y: 80 },
             data: { label: 'Increment_variable' },
           },
           {
             id: 'Initialize_variable',
-            type: 'testNode',
+            type: WORKFLOW_NODE_TYPES.TEST_NODE,
             position: { x: 70, y: 90 },
             data: { label: 'Initialize_variable' },
           },
           {
             id: 'ActionIf',
-            type: 'graphNode',
+            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             position: { x: 307, y: 308 },
             data: { label: 'ActionIf' },
           },
           {
             id: 'ActionIf-#header',
-            type: 'scopeNode',
+            type: WORKFLOW_NODE_TYPES.SCOPE_NODE,
             position: { x: 307, y: 308 },
             data: { label: 'ActionIf-#header' },
             parentNode: 'ActionIf',
           },
           {
             id: 'ActionIf-actions',
-            type: 'graphNode',
+            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             position: { x: 0, y: 0 },
             data: { label: 'ActionIf-actions' },
             parentNode: 'ActionIf',
           },
           {
             id: 'ActionIf-actions-#subgraphHeader',
-            type: 'subgraphHeader',
+            type: WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER,
             position: { x: 50, y: 100 },
             data: { label: 'ActionIf-actions-#subgraphHeader' },
             parentNode: 'ActionIf-actions',
           },
           {
             id: 'Increment_variable2',
-            type: 'testNode',
+            type: WORKFLOW_NODE_TYPES.TEST_NODE,
             position: { x: 150, y: 200 },
             data: { label: 'Increment_variable2' },
             parentNode: 'ActionIf-actions',
           },
           {
             id: 'Increment_variable4',
-            type: 'testNode',
+            type: WORKFLOW_NODE_TYPES.TEST_NODE,
             position: { x: 300, y: 301 },
             data: { label: 'Increment_variable4' },
             parentNode: 'ActionIf-actions',
           },
           {
             id: 'ActionIf-elseActions',
-            type: 'graphNode',
+            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             position: { x: 0, y: 0 },
             data: { label: 'ActionIf-elseActions' },
             parentNode: 'ActionIf',
           },
           {
             id: 'ActionIf-elseActions-#subgraphHeader',
-            type: 'subgraphHeader',
+            type: WORKFLOW_NODE_TYPES.SUBGRAPH_HEADER,
             position: { x: 0, y: 0 },
             data: { label: 'ActionIf-elseActions-#subgraphHeader' },
             parentNode: 'ActionIf-elseActions',
           },
           {
             id: 'Increment_variable3',
-            type: 'testNode',
+            type: WORKFLOW_NODE_TYPES.TEST_NODE,
             position: { x: 302, y: 303 },
             data: { label: 'Increment_variable3' },
             parentNode: 'ActionIf-elseActions',
           },
           {
             id: 'EmptyScope',
-            type: 'graphNode',
+            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             position: { x: 307, y: 308 },
             data: { label: 'EmptyScope' },
           },
           {
             id: 'EmptyScope-#header',
-            type: 'scopeNode',
+            type: WORKFLOW_NODE_TYPES.SCOPE_NODE,
             position: { x: 0, y: 0 },
             data: { label: 'EmptyScope-#header' },
             parentNode: 'EmptyScope',
           },
           {
             id: 'Response',
-            type: 'testNode',
+            type: WORKFLOW_NODE_TYPES.TEST_NODE,
             position: { x: 304, y: 305 },
             data: { label: 'Response' },
           },
@@ -357,8 +366,8 @@ describe('elklayout', () => {
           createSharedEdge('Increment_variable', 'ActionIf'),
           createSharedEdge('ActionIf', 'EmptyScope'),
           createSharedEdge('EmptyScope', 'Response'),
-          createSharedEdge('ActionIf-#header', 'ActionIf-actions-#subgraphHeader', 'onlyEdge'),
-          createSharedEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraphHeader', 'onlyEdge'),
+          createSharedEdge('ActionIf-#header', 'ActionIf-actions-#subgraphHeader', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+          createSharedEdge('ActionIf-#header', 'ActionIf-elseActions-#subgraphHeader', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
           createSharedEdge('ActionIf-actions-#subgraphHeader', 'Increment_variable2'),
           createSharedEdge('Increment_variable2', 'Increment_variable4'),
           createSharedEdge('ActionIf-elseActions-#subgraphHeader', 'Increment_variable3'),
