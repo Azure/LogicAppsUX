@@ -2,11 +2,12 @@ import { ActionButtonV2 } from '../../actionbuttonv2';
 import CollapseToggle from '../../collapseToggle';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
+import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 interface SubgraphHeaderProps {
   parentId: string;
-  subgraphType?: SubgraphType;
+  subgraphType: SubgraphType;
   title?: string;
   collapsed?: boolean;
   selected?: boolean;
@@ -28,9 +29,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
 }) => {
   const intl = useIntl();
 
-  if (!subgraphType) return null;
-
-  if (subgraphType === 'SWITCH-ADD-CASE') {
+  if (subgraphType === SUBGRAPH_TYPES['SWITCH_ADD_CASE']) {
     if (readOnly) return null;
     return (
       <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
@@ -39,8 +38,8 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
     );
   }
 
-  const SubgraphTypeData = {
-    'CONDITIONAL-TRUE': {
+  const SubgraphTypeData: Record<SubgraphType, any> = {
+    CONDITIONAL_TRUE: {
       color: '#428000',
       title: intl.formatMessage({
         defaultMessage: 'True',
@@ -48,7 +47,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
       }),
       size: 'small',
     },
-    'CONDITIONAL-FALSE': {
+    CONDITIONAL_FALSE: {
       color: '#A4262C',
       title: intl.formatMessage({
         defaultMessage: 'False',
@@ -56,12 +55,12 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
       }),
       size: 'small',
     },
-    'SWITCH-CASE': {
+    SWITCH_CASE: {
       color: '#484F58',
       title: title,
       size: 'large',
     },
-    'SWITCH-DEFAULT': {
+    SWITCH_DEFAULT: {
       color: '#484F58',
       title: intl.formatMessage({
         defaultMessage: 'Default',
@@ -69,7 +68,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
       }),
       size: 'small',
     },
-    'UNTIL-DO': {
+    UNTIL_DO: {
       color: '#486991',
       title: intl.formatMessage({
         defaultMessage: 'Do',
@@ -77,11 +76,12 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
       }),
       size: 'small',
     },
+    SWITCH_ADD_CASE: {},
   };
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
-    if (subgraphType !== 'SWITCH-CASE') {
+    if (subgraphType !== SUBGRAPH_TYPES['SWITCH_CASE']) {
       onClick?.(parentId);
     } else {
       onClick?.(title);

@@ -352,7 +352,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Отправьте или выберите выходную схему, которая будет использоваться для вашего сопоставления."
     }
   ],
   "3kI7xF": [
@@ -382,7 +382,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "выберите входные данные"
     }
   ],
   "47kOXr": [
@@ -622,7 +622,7 @@
   "9I0PcK": [
     {
       "type": 0,
-      "value": "Add output schema"
+      "value": "Добавление выходной схемы"
     }
   ],
   "9JuvQ4": [
@@ -652,7 +652,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Выберите выходную схему"
     }
   ],
   "9u/Ae3": [
@@ -1012,7 +1012,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Выберите входную схему"
     }
   ],
   "Ip7Iax": [
@@ -1048,7 +1048,7 @@
   "JQlAMD": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Отмена"
     }
   ],
   "JSfWJ0": [
@@ -1096,7 +1096,7 @@
   "JqZfdk": [
     {
       "type": 0,
-      "value": "Add input schema"
+      "value": "Добавление входной схемы"
     }
   ],
   "JzqgNM": [
@@ -1114,7 +1114,7 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Выберите файл для отправки"
     }
   ],
   "K90YEU": [
@@ -1832,7 +1832,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Обзор"
     }
   ],
   "XqamWZ": [
@@ -1968,7 +1968,7 @@
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Добавить"
     }
   ],
   "b9/1dK": [
@@ -2022,7 +2022,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "выберите выходные данные"
     }
   ],
   "c6XbVI": [
@@ -2732,7 +2732,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "Не удалось загрузить схему. Повторите попытку."
     }
   ],
   "p/0r2N": [
@@ -3044,7 +3044,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Отправьте или выберите входную схему, которая будет использоваться для вашего сопоставления."
     }
   ],
   "tE7Zam": [

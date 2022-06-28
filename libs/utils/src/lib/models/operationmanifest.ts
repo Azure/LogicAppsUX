@@ -176,4 +176,12 @@ export interface OperationManifestProperties {
   externalDocs?: Documentation;
 }
 
-export type SubgraphType = 'CONDITIONAL-TRUE' | 'CONDITIONAL-FALSE' | 'SWITCH-CASE' | 'SWITCH-DEFAULT' | 'SWITCH-ADD-CASE' | 'UNTIL-DO';
+export type SubgraphType = 'CONDITIONAL_TRUE' | 'CONDITIONAL_FALSE' | 'SWITCH_CASE' | 'SWITCH_DEFAULT' | 'SWITCH_ADD_CASE' | 'UNTIL_DO';
+export const SUBGRAPH_TYPES: Record<string, SubgraphType> = {
+  CONDITIONAL_TRUE: 'CONDITIONAL_TRUE',
+  CONDITIONAL_FALSE: 'CONDITIONAL_FALSE',
+  SWITCH_CASE: 'SWITCH_CASE',
+  SWITCH_DEFAULT: 'SWITCH_DEFAULT',
+  SWITCH_ADD_CASE: 'SWITCH_ADD_CASE',
+  UNTIL_DO: 'UNTIL_DO',
+};

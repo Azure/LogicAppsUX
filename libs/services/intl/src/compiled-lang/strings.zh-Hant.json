@@ -319,7 +319,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "上傳或選取要用於對應的輸出結構描述。"
     }
   ],
   "3kI7xF": [
@@ -349,7 +349,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "選取輸入"
     }
   ],
   "47kOXr": [
@@ -589,7 +589,7 @@
   "9I0PcK": [
     {
       "type": 0,
-      "value": "Add output schema"
+      "value": "新增輸出結構描述"
     }
   ],
   "9JuvQ4": [
@@ -619,7 +619,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "選取輸出結構描述"
     }
   ],
   "9u/Ae3": [
@@ -946,7 +946,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "選取輸入結構描述"
     }
   ],
   "Ip7Iax": [
@@ -982,7 +982,7 @@
   "JQlAMD": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "JSfWJ0": [
@@ -1030,7 +1030,7 @@
   "JqZfdk": [
     {
       "type": 0,
-      "value": "Add input schema"
+      "value": "新增輸入結構描述"
     }
   ],
   "JzqgNM": [
@@ -1048,7 +1048,7 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "選取要上傳的檔案"
     }
   ],
   "K90YEU": [
@@ -1733,7 +1733,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "瀏覽"
     }
   ],
   "XqamWZ": [
@@ -1869,7 +1869,7 @@
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "新增"
     }
   ],
   "b9/1dK": [
@@ -1923,7 +1923,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "選取輸出"
     }
   ],
   "c6XbVI": [
@@ -2592,7 +2592,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "無法載入結構描述。請再試一次。"
     }
   ],
   "p/0r2N": [
@@ -2871,7 +2871,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "上傳或選取要用於對應的輸入結構描述。"
     }
   ],
   "tE7Zam": [

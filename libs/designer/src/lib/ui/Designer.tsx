@@ -25,17 +25,17 @@ type NodeTypesObj = {
   [key in WorkflowNodeType]: React.ComponentType<any>;
 };
 const nodeTypes: NodeTypesObj = {
-  testNode: TestNode,
-  graphNode: GraphNode,
-  scopeNode: ScopeCardNode,
-  subgraphHeader: SubgraphHeaderNode,
-  hiddenNode: HiddenNode,
+  TEST_NODE: TestNode,
+  GRAPH_NODE: GraphNode,
+  SCOPE_NODE: ScopeCardNode,
+  SUBGRAPH_HEADER: SubgraphHeaderNode,
+  HIDDEN_NODE: HiddenNode,
 };
 
 const edgeTypes = {
-  buttonEdge: ButtonEdge,
-  // onlyEdge: OnlyEdge,
-  hiddenEdge: HiddenEdge,
+  BUTTON_EDGE: ButtonEdge,
+  // ONLY_EDGE: undefined,
+  HIDDEN_EDGE: HiddenEdge,
 };
 
 export const Designer = () => {

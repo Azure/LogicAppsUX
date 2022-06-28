@@ -1,6 +1,7 @@
 import type { Operations, NodesMetadata } from '../../../state/workflowSlice';
 import { createWorkflowNode, createWorkflowEdge } from '../../../utils/graph';
 import type { WorkflowNode } from '../../models/workflowNode';
+import { WORKFLOW_NODE_TYPES } from '../../models/workflowNode';
 
 export const simpleWorkflowDefinitionInput = {
   $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
@@ -53,7 +54,7 @@ export const simpleWorkflowDefinitionInput = {
 export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowNode; actionData: Operations; nodesMetadata: NodesMetadata } = {
   graph: {
     id: 'root',
-    type: 'graphNode',
+    type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
     children: [
       createWorkflowNode('manual'),
       createWorkflowNode('Increment_variable'),
