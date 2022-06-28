@@ -361,6 +361,12 @@
       "value": "Vyžadováno. Oddělovač."
     }
   ],
+  "3X/ZDK": [
+    {
+      "type": 0,
+      "value": "Nahrajte nebo vyberte výstupní schéma, které se použije pro vaši mapu."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -383,6 +389,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Počet zadaných jednotek času, které se mají odečíst"
+    }
+  ],
+  "3wagjT": [
+    {
+      "type": 0,
+      "value": "vybrat vstup"
     }
   ],
   "47kOXr": [
@@ -619,6 +631,12 @@
       "value": "Konektor"
     }
   ],
+  "9I0PcK": [
+    {
+      "type": 0,
+      "value": "Přidejte výstupní schéma"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -641,6 +659,12 @@
     {
       "type": 0,
       "value": "Vrátí výsledek součtu daných dvou čísel."
+    }
+  ],
+  "9mWdNA": [
+    {
+      "type": 0,
+      "value": "Vyberte výstupní schéma."
     }
   ],
   "9u/Ae3": [
@@ -997,6 +1021,12 @@
       "value": "Převede předané řetězcové časové razítko z formátu UTC na cílové časové pásmo."
     }
   ],
+  "IngtMG": [
+    {
+      "type": 0,
+      "value": "Vyberte vstupní schéma."
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -1025,6 +1055,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec, který obsahuje časový údaj."
+    }
+  ],
+  "JQlAMD": [
+    {
+      "type": 0,
+      "value": "Zrušit"
     }
   ],
   "JSfWJ0": [
@@ -1069,6 +1105,12 @@
       "value": "Povinné. Číselný řetězec formátu"
     }
   ],
+  "JqZfdk": [
+    {
+      "type": 0,
+      "value": "Přidejte vstupní schéma"
+    }
+  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1079,6 +1121,12 @@
     {
       "type": 0,
       "value": "Povinné. Objekt, do kterého se přidá nová vlastnost"
+    }
+  ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "Vyberte soubor, který se má nahrát."
     }
   ],
   "K90YEU": [
@@ -1793,6 +1841,12 @@
       "value": "Žádost"
     }
   ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "Procházet"
+    }
+  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -1923,6 +1977,12 @@
       "value": "Zpracování dat"
     }
   ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "Přidat"
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -1969,6 +2029,12 @@
     {
       "type": 0,
       "value": "Vrátí objekt, ve kterém se určitá vlastnost nastavila na poskytnutou hodnotu."
+    }
+  ],
+  "c5/wGq": [
+    {
+      "type": 0,
+      "value": "vybrat výstup"
     }
   ],
   "c6XbVI": [
@@ -2671,6 +2737,12 @@
       "value": "Zadejte identifikátor spuštění a spuštění otevřete."
     }
   ],
+  "orhWzV": [
+    {
+      "type": 0,
+      "value": "Načtení schématu se nezdařilo. Opakujte akci."
+    }
+  ],
   "p/0r2N": [
     {
       "type": 0,
@@ -2975,6 +3047,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec, který obsahuje název cílového časového pásma. Podrobnosti najdete tady: https://msdn.microsoft.com/en-us/library/gg154758.aspx"
+    }
+  ],
+  "t5CdhT": [
+    {
+      "type": 0,
+      "value": "Nahrajte nebo vyberte vstupní schéma, které se použije pro vaši mapu."
     }
   ],
   "tE7Zam": [

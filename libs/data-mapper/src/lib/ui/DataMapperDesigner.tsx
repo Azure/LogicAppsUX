@@ -1,7 +1,9 @@
+import { checkerboardBackgroundImage } from '../Constants';
 import { convertToReactFlowNode } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import { AddSchemaPanelButton, SchemaTypes } from '../components/schemaSelection/addSchemaPanelButton';
+import { EditorConfigPanel, SchemaTypes } from '../components/configPanel/EditorConfigPanel';
+import { SelectSchemaCard } from '../components/schemaSelection/selectSchemaCard';
 import type { DataMapOperationState } from '../core/state/DataMapSlice';
 import {
   redoDataMapOperation,
@@ -10,13 +12,14 @@ import {
   changeInputSchemaOperation,
   changeOutputSchemaOperation,
 } from '../core/state/DataMapSlice';
+import { openInputSchemaPanel, openOutputSchemaPanel } from '../core/state/PanelSlice';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema } from '../models';
 import { LeftHandPanel } from './LeftHandPanel';
-import { LayerHost } from '@fluentui/react';
 import type { ILayerProps } from '@fluentui/react';
+import { LayerHost } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useMemo } from 'react';
@@ -38,7 +41,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
-  const availableSchemas = useSelector((state: RootState) => state.schema.availableSchemas);
   const isStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
 
   const [nodes, edges] = useLayout();
@@ -128,6 +130,20 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     dispatch(redoDataMapOperation());
   };
 
+  const onInputSchemaClick = () => {
+    dispatch(openInputSchemaPanel());
+  };
+  const onOutputSchemaClick = () => {
+    dispatch(openOutputSchemaPanel());
+  };
+
+  const reactFlowStyle = {
+    backgroundImage: checkerboardBackgroundImage,
+    backgroundSize: '20px 20px',
+    backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+    height: '600px',
+  };
+
   const layeredReactFlow = (
     <LayerHost
       id={layerHostId}
@@ -150,10 +166,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
               account: 'paid-sponsor',
               hideAttribution: true,
             }}
-            style={{
-              position: 'unset',
-            }}
-          />
+            style={reactFlowStyle}
+          ></ReactFlow>
         </ReactFlowProvider>
       </div>
     </LayerHost>
@@ -163,39 +177,26 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} isStateDirty={isStateDirty} />
+        <EditorConfigPanel onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
         <EditorBreadcrumb />
 
         <button onClick={() => dispatch(removeCurDataMap)}>Remove cur data map</button>
 
         {inputSchema && outputSchema ? (
-          layeredReactFlow
+          <div>
+            {layeredReactFlow}
+            <LeftHandPanel layerProps={panelLayerProps} />
+          </div>
         ) : (
-          <div className="msla-designer-canvas msla-panel-mode not-loaded">
+          <div className="msla-designer-canvas msla-panel-mode not-loaded" style={reactFlowStyle}>
             <div className="left">
-              {inputSchema ? (
-                layeredReactFlow
-              ) : (
-                <AddSchemaPanelButton
-                  schemaType={SchemaTypes.Input}
-                  onSubmitSchema={onSubmitInput}
-                  schemaFilesList={availableSchemas ?? []}
-                />
-              )}
+              {inputSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Input} onClick={onInputSchemaClick} />}
             </div>
             <div className="right">
-              {outputSchema ? (
-                layeredReactFlow
-              ) : (
-                <AddSchemaPanelButton
-                  schemaType={SchemaTypes.Output}
-                  onSubmitSchema={onSubmitOutput}
-                  schemaFilesList={availableSchemas ?? []}
-                />
-              )}
+              {outputSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Output} onClick={onOutputSchemaClick} />}
             </div>
           </div>
         )}
-        <LeftHandPanel layerProps={panelLayerProps} />
       </div>
     </DndProvider>
   );

@@ -13,7 +13,7 @@ export const plugins = Template.bind({});
 plugins.args = {
   className: 'msla-editor-container-plugin',
   placeholder: 'Play around with some cool plugins here...',
-  BasePlugins: { autoFocus: true, autoLink: true, clearEditor: true, history: true, treeView: true, tokens: true },
+  BasePlugins: { autoFocus: true, autoLink: true, clearEditor: true, treeView: true, tokens: true },
   initialValue: [
     { type: ValueSegmentType.LITERAL, value: 'test\ntest' },
     { type: ValueSegmentType.LITERAL, value: 'test\ntest' },

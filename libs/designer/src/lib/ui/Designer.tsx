@@ -1,27 +1,41 @@
 import { useLayout } from '../core/graphlayout';
+import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
 import { updateNodeSizes } from '../core/state/workflowSlice';
-import GraphNode from './CustomNodes/GraphNode';
-import OperationCardNode from './CustomNodes/OperationCardNode';
-import { CustomEdge } from './connections/edge';
+import GraphNode from './CustomNodes/GraphContainerNode';
+import HiddenNode from './CustomNodes/HiddenNode';
+import TestNode from './CustomNodes/OperationCardNode';
+import ScopeHeaderNode from './CustomNodes/ScopeHeaderNode';
+import SubgraphHeaderNode from './CustomNodes/SubgraphHeaderNode';
+import { ButtonEdge } from './connections/edge';
+// import { OnlyEdge } from './connections/onlyEdge';
+import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
 import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { NodeChange } from 'react-flow-renderer';
-import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
+import ReactFlow, { Controls, ReactFlowProvider } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 
 export interface DesignerProps {
   graphId?: string;
 }
 
-const nodeTypes = {
-  testNode: OperationCardNode,
-  graphNode: GraphNode,
+type NodeTypesObj = {
+  [key in WorkflowNodeType]: React.ComponentType<any>;
+};
+const nodeTypes: NodeTypesObj = {
+  TEST_NODE: TestNode,
+  GRAPH_NODE: GraphNode,
+  SCOPE_HEADER: ScopeHeaderNode,
+  SUBGRAPH_HEADER: SubgraphHeaderNode,
+  HIDDEN_NODE: HiddenNode,
 };
 
 const edgeTypes = {
-  buttonedge: CustomEdge,
+  BUTTON_EDGE: ButtonEdge,
+  // ONLY_EDGE: undefined,
+  HIDDEN_EDGE: HiddenEdge,
 };
 
 export const Designer = () => {
@@ -47,6 +61,7 @@ export const Designer = () => {
             minZoom={0}
             nodesDraggable={false}
             edgeTypes={edgeTypes}
+            panOnScroll={true}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,
@@ -54,6 +69,7 @@ export const Designer = () => {
           >
             <PanelRoot />
           </ReactFlow>
+          <Controls showInteractive={false} />
         </ReactFlowProvider>
       </div>
     </DndProvider>

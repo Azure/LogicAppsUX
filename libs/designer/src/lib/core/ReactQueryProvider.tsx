@@ -20,7 +20,7 @@ export const ReactQueryProvider = (props: ProviderProps) => {
   }
   return (
     <QueryClientProvider client={reactQueryClient}>
-      <ReactQueryDevtools initialIsOpen={true} />
+      <ReactQueryDevtools initialIsOpen={true} toggleButtonProps={{ style: { marginLeft: '60px' } }} />
       {props.children}
     </QueryClientProvider>
   );

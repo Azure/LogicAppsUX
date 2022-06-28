@@ -316,6 +316,12 @@
       "value": "Diperlukan. Pemisah."
     }
   ],
+  "3X/ZDK": [
+    {
+      "type": 0,
+      "value": "Unggah atau pilih skema output yang akan digunakan untuk peta Anda."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -338,6 +344,12 @@
     {
       "type": 0,
       "value": "Wajib. Jumlah unit waktu yang ditentukan untuk mengurangi."
+    }
+  ],
+  "3wagjT": [
+    {
+      "type": 0,
+      "value": "pilih input"
     }
   ],
   "47kOXr": [
@@ -574,6 +586,12 @@
       "value": "Konektor"
     }
   ],
+  "9I0PcK": [
+    {
+      "type": 0,
+      "value": "Tambahkan skema output"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -596,6 +614,12 @@
     {
       "type": 0,
       "value": "Menampilkan hasil penambahan dua angka tersebut"
+    }
+  ],
+  "9mWdNA": [
+    {
+      "type": 0,
+      "value": "Pilih skema output"
     }
   ],
   "9u/Ae3": [
@@ -919,6 +943,12 @@
       "value": "Mengonversi tanda waktu string yang diberikan dari UTC ke zona waktu target"
     }
   ],
+  "IngtMG": [
+    {
+      "type": 0,
+      "value": "Pilih skema input"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -947,6 +977,12 @@
     {
       "type": 0,
       "value": "Wajib. String yang berisi waktu."
+    }
+  ],
+  "JQlAMD": [
+    {
+      "type": 0,
+      "value": "Batal"
     }
   ],
   "JSfWJ0": [
@@ -991,6 +1027,12 @@
       "value": "Wajib. String format numerik."
     }
   ],
+  "JqZfdk": [
+    {
+      "type": 0,
+      "value": "Tambahkan skema input"
+    }
+  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1001,6 +1043,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Objek untuk ditambahi properti baru."
+    }
+  ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "Pilih file yang akan diunggah"
     }
   ],
   "K90YEU": [
@@ -1682,6 +1730,12 @@
       "value": "Permintaan"
     }
   ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "Telusuri"
+    }
+  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -1812,6 +1866,12 @@
       "value": "Penanganan Data"
     }
   ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "Tambahkan"
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -1858,6 +1918,12 @@
     {
       "type": 0,
       "value": "Menghasilkan objek dengan properti yang diatur ke nilai yang disediakan"
+    }
+  ],
+  "c5/wGq": [
+    {
+      "type": 0,
+      "value": "pilih output"
     }
   ],
   "c6XbVI": [
@@ -2523,6 +2589,12 @@
       "value": "Masukkan pengidentifikasi eksekusi untuk membuka eksekusi"
     }
   ],
+  "orhWzV": [
+    {
+      "type": 0,
+      "value": "Gagal memuat skema. Coba lagi."
+    }
+  ],
   "p/0r2N": [
     {
       "type": 0,
@@ -2794,6 +2866,12 @@
     {
       "type": 0,
       "value": "Wajib. String berisi nama zona waktu dari zona waktu tempat tujuan. Lihat https://msdn.microsoft.com/en-us/library/gg154758.aspx untuk rinciannya."
+    }
+  ],
+  "t5CdhT": [
+    {
+      "type": 0,
+      "value": "Unggah atau pilih skema input yang akan digunakan untuk peta Anda."
     }
   ],
   "tE7Zam": [

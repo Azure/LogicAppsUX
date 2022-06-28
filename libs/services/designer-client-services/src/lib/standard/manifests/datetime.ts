@@ -1,32 +1,6 @@
+import { frequencyValues } from './schedule';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import { SettingScope } from '@microsoft-logic-apps/utils';
-
-const frequencyValues = [
-  {
-    displayName: 'Month',
-    value: 'Month',
-  },
-  {
-    displayName: 'Week',
-    value: 'Week',
-  },
-  {
-    displayName: 'Day',
-    value: 'Day',
-  },
-  {
-    displayName: 'Hour',
-    value: 'Hour',
-  },
-  {
-    displayName: 'Minute',
-    value: 'Minute',
-  },
-  {
-    displayName: 'Second',
-    value: 'Second',
-  },
-];
 
 const timeZones = [
   {
