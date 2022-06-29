@@ -4,6 +4,7 @@ import { changePanelNode, expandPanel } from '../../core/state/panel/panelSlice'
 import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
+import { isLeafNodeFromEdges } from '../../core/utils/graph';
 import { DropZone } from '../connections/dropzone';
 import { labelCase } from '@microsoft-logic-apps/utils';
 import { ScopeCard } from '@microsoft/designer-ui';
@@ -64,7 +65,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const label = labelCase(scopeId);
 
-  const isEmpty = edges.filter((edge) => !edge.target.endsWith('#footer')).length === 0;
+  const isEmpty = isLeafNodeFromEdges(edges);
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isEmpty && !isFooter;
 
