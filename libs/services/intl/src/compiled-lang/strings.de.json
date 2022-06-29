@@ -330,7 +330,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Laden Sie ein Ausgabeschema hoch, das für Ihre Zuordnung verwendet werden soll, oder wählen Sie eines aus."
     }
   ],
   "3kI7xF": [
@@ -360,7 +360,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "Eingabe auswählen"
     }
   ],
   "47kOXr": [
@@ -549,6 +549,12 @@
       "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer oder gleich dem Vergleichsobjekt ist."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Add Output Schema"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +571,12 @@
     {
       "type": 0,
       "value": "Beim asynchronen Muster fährt die Logic Apps-Engine mit dem Abruf der im Adressheader der Antwort angegebenen URL fort, bis ein Endstatus erreicht ist, sofern der Remoteserver mit einer 202-Antwort (Akzeptiert) signalisiert, dass die Anforderung zur Verarbeitung akzeptiert wird."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Input Schema"
     }
   ],
   "8ubEPi": [
@@ -597,12 +609,6 @@
       "value": "Connector"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -630,7 +636,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Ausgabeschema auswählen"
     }
   ],
   "9u/Ae3": [
@@ -968,7 +974,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Eingabeschema auswählen"
     }
   ],
   "Ip7Iax": [
@@ -999,12 +1005,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Eine Zeichenfolge, die die Zeit enthält."
-    }
-  ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1049,12 +1049,6 @@
       "value": "Erforderlich. Die numerische Formatzeichenfolge."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1070,13 +1064,19 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Datei für Upload auswählen"
     }
   ],
   "K90YEU": [
     {
       "type": 0,
       "value": "Gibt eine Teilmenge von Zeichen aus einer Zeichenfolge zurück."
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Output Schema"
     }
   ],
   "L+PY+j": [
@@ -1701,6 +1701,12 @@
       "value": "Gibt das Ergebnis aus der Multiplikation der beiden Zahlen zurück."
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Replace existing schema."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1770,7 +1776,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Durchsuchen"
     }
   ],
   "XqamWZ": [
@@ -1849,6 +1855,12 @@
       "value": "Keine"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Configuration"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1879,6 +1891,12 @@
       "value": "Dieser Vorgang wurde bereits gelöscht."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Discard"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1906,7 +1924,7 @@
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Hinzufügen"
     }
   ],
   "b9/1dK": [
@@ -1960,7 +1978,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "Ausgabe auswählen"
     }
   ],
   "c6XbVI": [
@@ -2039,6 +2057,12 @@
     {
       "type": 0,
       "value": "Hiermit sorgen Sie für sichere Eingaben für den Vorgang."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "pencil icon"
     }
   ],
   "dhvk0u": [
@@ -2401,6 +2425,12 @@
       "value": "Ja"
     }
   ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Add Input Schema"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -2477,6 +2507,12 @@
     {
       "type": 0,
       "value": "Titel"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Back"
     }
   ],
   "lcVG4C": [
@@ -2593,6 +2629,12 @@
       "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Minuten hinzu."
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2640,7 +2682,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "Fehler beim Laden des Schemas. Versuchen Sie es bitte noch einmal."
     }
   ],
   "p/0r2N": [
@@ -2930,7 +2972,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Laden Sie ein Eingabeschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus."
     }
   ],
   "tE7Zam": [

@@ -1,7 +1,7 @@
 import { initializeGraphState } from '../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../parsers/addNodeToWorkflow';
 import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../parsers/addNodeToWorkflow';
-import type { WorkflowGraph, WorkflowNode } from '../parsers/models/workflowNode';
+import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
@@ -22,7 +22,7 @@ export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
 
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
-  graph: WorkflowGraph | null;
+  graph: WorkflowNode | null;
   operations: Operations;
   nodesMetadata: NodesMetadata;
 }
@@ -70,7 +70,7 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return;
       }
-      const stack: (WorkflowGraph | WorkflowNode)[] = [state.graph];
+      const stack: WorkflowNode[] = [state.graph];
       const dimensionChangesById = dimensionChanges.reduce<Record<string, NodeDimensionChange>>((acc, val) => {
         if (val.type !== 'dimensions') {
           return acc;
@@ -88,7 +88,7 @@ export const workflowSlice = createSlice({
           node.height = c.dimensions.height;
           node.width = c.dimensions.width;
         }
-        node?.children && stack.push(...node.children);
+        !!node?.children?.length && stack.push(...node.children);
       }
     },
   },

@@ -12,11 +12,13 @@ import {
 } from './manifests/datetime';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
+import { httpManifest, httpWithSwaggerManifest, httpWebhookManifest } from './manifests/http';
 import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
 import requestManifest from './manifests/request';
 import responseManifest from './manifests/response';
+import { delayManifest, delayUntilManifest, recurrenceManifest, slidingWindowManifest } from './manifests/schedule';
 import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
@@ -74,11 +76,21 @@ const currenttime = 'currenttime';
 const getfuturetime = 'getfuturetime';
 const getpasttime = 'getpasttime';
 const subtractfromtime = 'subtractfromtime';
+const recurrence = 'recurrence';
+const slidingwindow = 'slidingwindow';
+const wait = 'wait';
+const delay = 'delay';
+const delayuntil = 'delayuntil';
+const http = 'http';
+const httpwebhook = 'httpwebhook';
+const httpwithswagger = 'httpwithswagger';
 
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 const dateTimeConnectorId = 'connectionProviders/datetime';
+const scheduleConnectorId = 'connectionProviders/schedule';
+const httpConnectorId = 'connectionProviders/http';
 
 const supportedManifestTypes = [
   compose,
@@ -86,6 +98,8 @@ const supportedManifestTypes = [
   expression,
   foreach,
   function_,
+  http,
+  httpwebhook,
   initializevariable,
   incrementvariable,
   invokefunction,
@@ -94,9 +108,11 @@ const supportedManifestTypes = [
   liquid,
   parsejson,
   query,
+  recurrence,
   request,
   response,
   select,
+  slidingwindow,
   switchType,
   serviceprovider,
   table,
@@ -110,6 +126,7 @@ const supportedManifestTypes = [
   swiftencode,
   terminate,
   until,
+  wait,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -290,6 +307,8 @@ function isInBuiltOperation(definition: any): boolean {
     case expression:
     case foreach:
     case function_:
+    case http:
+    case httpwebhook:
     case initializevariable:
     case incrementvariable:
     case invokefunction:
@@ -298,9 +317,11 @@ function isInBuiltOperation(definition: any): boolean {
     case liquid:
     case parsejson:
     case query:
+    case recurrence:
     case request:
     case response:
     case select:
+    case slidingwindow:
     case switchType:
     case workflow:
     case xslt:
@@ -313,6 +334,7 @@ function isInBuiltOperation(definition: any): boolean {
     case table:
     case terminate:
     case until:
+    case wait:
       return true;
 
     default:
@@ -324,8 +346,11 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
   const normalizedOperationType = definition.type.toLowerCase();
   const kind = definition.kind ? definition.kind.toLowerCase() : undefined;
 
-  if (kind === undefined && normalizedOperationType !== table) {
-    return inBuiltOperationsMetadata[normalizedOperationType];
+  if (kind === undefined) {
+    const operationInfo = inBuiltOperationsMetadata[normalizedOperationType];
+    if (operationInfo) {
+      return operationInfo;
+    }
   }
 
   const liquidConnectorId = 'connectionProviders/liquidOperations';
@@ -346,6 +371,16 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
         default:
           throw new UnsupportedException(`Unsupported datetime kind '${definition.kind}'`);
       }
+
+    case http:
+      return {
+        connectorId: httpConnectorId,
+        operationId:
+          definition.inputs?.metadata?.apiDefinitionUrl && equals(definition.inputs?.metadata?.swaggerSource, 'custom')
+            ? httpwithswagger
+            : http,
+      };
+
     case liquid:
       switch (kind) {
         case 'jsontojson':
@@ -409,6 +444,12 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
           throw new UnsupportedException(`Unsupported table format ${definition.inputs?.format} for table type`);
       }
 
+    case wait:
+      return {
+        connectorId: scheduleConnectorId,
+        operationId: definition.inputs?.until ? delayuntil : delay,
+      };
+
     default:
       throw new UnsupportedException(`Unsupported built in operation type ${normalizedOperationType}`);
   }
@@ -430,6 +471,10 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   [function_]: {
     connectorId: azureFunctionConnectorId,
     operationId: 'azureFunction',
+  },
+  [httpwebhook]: {
+    connectorId: httpConnectorId,
+    operationId: httpwebhook,
   },
   [initializevariable]: {
     connectorId: 'connectionProviders/variable',
@@ -459,9 +504,17 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: dataOperationConnectorId,
     operationId: query,
   },
+  [recurrence]: {
+    connectorId: scheduleConnectorId,
+    operationId: recurrence,
+  },
   [select]: {
     connectorId: dataOperationConnectorId,
     operationId: select,
+  },
+  [slidingwindow]: {
+    connectorId: scheduleConnectorId,
+    operationId: slidingwindow,
   },
   [switchType]: {
     connectorId: controlConnectorId,
@@ -515,17 +568,24 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [converttimezone, convertTimezoneManifest],
   [csvtable, csvManifest],
   [currenttime, currentTimeManifest],
+  [delay, delayManifest],
+  [delayuntil, delayUntilManifest],
   [foreach, foreachManifest],
   [getfuturetime, getFutureTimeManifest],
   [getpasttime, getPastTimeManifest],
   [htmltable, htmlManifest],
+  [http, httpManifest],
+  [httpwebhook, httpWebhookManifest],
+  [httpwithswagger, httpWithSwaggerManifest],
   [join, joinManifest],
   [parsejson, parsejsonManifest],
   [query, queryManifest],
+  [recurrence, recurrenceManifest],
   [request, requestManifest],
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
+  [slidingwindow, slidingWindowManifest],
   [subtractfromtime, subtractFromTimeManifest],
   [switchType, switchManifest],
   [terminate, terminateManifest],

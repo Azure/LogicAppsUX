@@ -6,6 +6,11 @@ export interface IRunService {
   runTrigger(callbackInfo: CallbackInfo): Promise<any>;
 }
 
+export interface IApiService {
+  getMoreWorkflows(continuationToken: string): Promise<any>;
+  getWorkflows(): Promise<any>;
+}
+
 export interface ArmResources<T> {
   nextLink?: string;
   value: T[];
@@ -144,4 +149,43 @@ interface RunTriggerHistoryProperties {
 export enum ProjectName {
   export = 'export',
   overview = 'overview',
+}
+
+export interface WorkflowProperties {
+  id: string;
+  location: string;
+  name: string;
+  resourceGroup: string;
+  subscriptionId: string;
+  type: string;
+}
+
+export interface Workflows {
+  $skipToken: string;
+  count: number;
+  data: Array<WorkflowProperties>;
+  facets: Record<string, string>;
+  resultTruncated: string;
+  totalRecords: number;
+}
+
+export interface WorkflowsList {
+  key: string;
+  name: string;
+  resourceGroup: string;
+}
+
+export interface OutletContext {
+  accessToken: string;
+  baseUrl: string;
+  selectedWorkflows: Array<WorkflowsList>;
+}
+
+export interface ISelectedListProps {
+  selectedItems: Array<WorkflowsList>;
+}
+
+export enum QueryKeys {
+  workflowsData = 'workflowsData',
+  runsData = 'runsData',
 }

@@ -330,7 +330,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Ladda upp eller välj ett utdataschema som ska användas för kartan."
     }
   ],
   "3kI7xF": [
@@ -360,7 +360,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "välj indata"
     }
   ],
   "47kOXr": [
@@ -549,6 +549,12 @@
       "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är större än eller lika med det objekt det jämförs med."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Add Output Schema"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +571,12 @@
     {
       "type": 0,
       "value": "Om fjärrservern, med asynkront mönster, indikerar att förfrågan har godkänts för bearbetning med ett 202-svar (godkänt), så fortsätter Logic Apps-motorn att söka av den URL som angetts i svarets platsrubrik till dess att ett avslutat tillstånd uppnåtts."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Input Schema"
     }
   ],
   "8ubEPi": [
@@ -597,12 +609,6 @@
       "value": "Anslutning"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -630,7 +636,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Välj ett utdataschema"
     }
   ],
   "9u/Ae3": [
@@ -968,7 +974,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Välj ett indataschema"
     }
   ],
   "Ip7Iax": [
@@ -999,12 +1005,6 @@
     {
       "type": 0,
       "value": "Krävs. En sträng som innehåller tiden."
-    }
-  ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1049,12 +1049,6 @@
       "value": "Krävs. Den numeriska formatsträngen."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1070,13 +1064,19 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Välj en fil att ladda upp"
     }
   ],
   "K90YEU": [
     {
       "type": 0,
       "value": "Returnerar en delmängd av tecken från en sträng"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Output Schema"
     }
   ],
   "L+PY+j": [
@@ -1701,6 +1701,12 @@
       "value": "Returnerar resultatet av att ha dividerat de två talen"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Replace existing schema."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1770,7 +1776,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Bläddra"
     }
   ],
   "XqamWZ": [
@@ -1849,6 +1855,12 @@
       "value": "Inget"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Configuration"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1879,6 +1891,12 @@
       "value": "Den här åtgärden har redan tagits bort."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Discard"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1906,7 +1924,7 @@
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Lägg till"
     }
   ],
   "b9/1dK": [
@@ -1960,7 +1978,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "välj utdata"
     }
   ],
   "c6XbVI": [
@@ -2039,6 +2057,12 @@
     {
       "type": 0,
       "value": "Säkra indata för åtgärden."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "pencil icon"
     }
   ],
   "dhvk0u": [
@@ -2405,6 +2429,12 @@
       "value": "Ja"
     }
   ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Add Input Schema"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -2481,6 +2511,12 @@
     {
       "type": 0,
       "value": "Rubrik"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Back"
     }
   ],
   "lcVG4C": [
@@ -2597,6 +2633,12 @@
       "value": "Lägger till ett heltalsvärde för det antal minuter för vilka en strängtidsstämpel skickas in"
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2644,7 +2686,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "Det gick inte att läsa in schemat. Försök igen."
     }
   ],
   "p/0r2N": [
@@ -2934,7 +2976,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Ladda upp eller välj ett indataschema som ska användas för kartan."
     }
   ],
   "tE7Zam": [

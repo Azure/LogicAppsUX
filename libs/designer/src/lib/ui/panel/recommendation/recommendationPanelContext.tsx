@@ -1,5 +1,5 @@
 import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
-import { switchToOperationPanel } from '../../../core/state/panelSlice';
+import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import { addNode } from '../../../core/state/workflowSlice';
 import type { RootState } from '../../../core/store';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
