@@ -18,7 +18,6 @@ interface SubgraphCardProps {
 }
 
 export const SubgraphCard: React.FC<SubgraphCardProps> = ({
-  parentId,
   subgraphType,
   title = 'undefined',
   collapsed,
@@ -79,13 +78,9 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     SWITCH_ADD_CASE: {},
   };
 
-  const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
+  const handleTitleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
-    if (subgraphType !== SUBGRAPH_TYPES['SWITCH_CASE']) {
-      onClick?.(parentId);
-    } else {
-      onClick?.(title);
-    }
+    onClick?.(title);
   };
 
   const data = SubgraphTypeData[subgraphType];
@@ -98,7 +93,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         tabIndex={-1}
       >
         <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
-        <button className="msla-subgraph-title" onClick={handleClick}>
+        <button className="msla-subgraph-title" onClick={handleTitleClick}>
           {data.title}
         </button>
         <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
@@ -110,8 +105,12 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         <button
           className={css('msla-subgraph-card', data.size)}
           style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
-          onClick={handleCollapse}
+          onClick={(e) => {
+            handleTitleClick(e);
+            handleCollapse?.(e);
+          }}
         >
+          <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
           <div className="msla-subgraph-title">{data.title}</div>
           <CollapseToggle disabled collapsed={collapsed} />
         </button>

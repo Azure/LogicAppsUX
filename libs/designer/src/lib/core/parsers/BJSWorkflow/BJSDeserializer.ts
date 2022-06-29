@@ -208,7 +208,7 @@ const processScopeActions = (
     applySubgraphActions(`${actionName}-actions`, action.actions, SUBGRAPH_TYPES.CONDITIONAL_TRUE);
     applySubgraphActions(`${actionName}-elseActions`, action.else?.actions, SUBGRAPH_TYPES.CONDITIONAL_FALSE);
   } else if (isUntilAction(action)) {
-    applyUntilActions(`${actionName}-actions`, action.actions);
+    applyUntilActions(actionName, action.actions);
   } else {
     applyActions(`${actionName}-actions`, action.actions);
   }
