@@ -8,6 +8,10 @@ export const isRootNode = (graph: WorkflowNode, nodeId: string, nodesMetadata: N
   return nodesMetadata[nodeId]?.graphId === graph.id && !graph.edges?.some((edge) => equals(edge.target, nodeId));
 };
 
+export const isLeafNodeFromEdges = (edges: WorkflowEdge[]) => {
+  return edges.filter((edge) => !edge.target.endsWith('#footer')).length === 0;
+};
+
 // This is the starting size for all nodes
 const DEFAULT_NODE_SIZE = {
   width: 200,

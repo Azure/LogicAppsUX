@@ -1,5 +1,4 @@
 import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
-import { isWorkflowGraph } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 
@@ -27,17 +26,15 @@ export const useWorkflowNode = (actionId?: string) => {
   });
 };
 
-export const useEdgesByParent = (parentId?: string): WorkflowEdge[] => {
+export const useEdgesBySource = (parentId?: string): WorkflowEdge[] => {
   return useSelector((state: RootState) => {
     if (!parentId) {
       return [];
     }
-    let edges: WorkflowEdge[] = [];
-    const traverseGraph = (gnode: WorkflowNode): void => {
-      if (isWorkflowGraph(gnode)) {
-        edges = [...edges, ...(gnode?.edges ?? [])];
-      }
-      gnode.children?.forEach(traverseGraph);
+    const edges: WorkflowEdge[] = [];
+    const traverseGraph = (graph: WorkflowNode): void => {
+      edges.push(...(graph?.edges ?? []));
+      graph.children?.forEach(traverseGraph);
     };
     if (state.workflow.graph) {
       traverseGraph(state.workflow.graph);
@@ -46,16 +43,14 @@ export const useEdgesByParent = (parentId?: string): WorkflowEdge[] => {
   });
 };
 
-export const useEdgesByChild = (childId?: string): WorkflowEdge[] => {
+export const useEdgesByTarget = (childId?: string): WorkflowEdge[] => {
   return useSelector((state: RootState) => {
     if (!childId) {
       return [];
     }
-    let edges: WorkflowEdge[] = [];
+    const edges: WorkflowEdge[] = [];
     const traverseGraph = (graph: WorkflowNode): void => {
-      if (graph.edges) {
-        edges = [...edges, ...graph.edges];
-      }
+      edges.push(...(graph?.edges ?? []));
       graph.children?.forEach(traverseGraph);
     };
     if (state.workflow.graph) {

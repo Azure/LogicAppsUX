@@ -5,7 +5,7 @@ export * from './announcedmatches';
 // export * from './authentication';
 export * from './card';
 export * from './card/scopeCard';
-export * from './card/subgraphHeader';
+export * from './card/subgraphCard';
 export * from './card/graphContainer';
 export * from './card/types';
 export * from './card/images/dynamicsvgs/trafficlightsvgs';

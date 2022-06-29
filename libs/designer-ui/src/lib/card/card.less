@@ -30,8 +30,7 @@
   width: 100%;
 }
 
-.msla-card,
-.msla-card-placeholder {
+.msla-card {
   &.msla-card-fixed-width {
     margin: 0 auto;
     min-width: @card-min-fixed-width;
@@ -61,8 +60,7 @@
 }
 
 .msla-connectionwizard-canvas--narrow {
-  .msla-card,
-  .msla-card-placeholder {
+  .msla-card {
     &.msla-card-fixed-width {
       .card-narrow-width-mixin();
     }
@@ -73,8 +71,7 @@
   }
 }
 
-.msla-card,
-.msla-card-placeholder {
+.msla-card {
   margin: 0 auto;
 }
 
@@ -118,8 +115,7 @@
   background-color: '#FFF';
 }
 
-.msla-card,
-.msla-card-placeholder {
+.msla-card {
   min-width: 200px;
   border: @defaultBorder;
   box-sizing: content-box;
@@ -270,7 +266,6 @@
 }
 
 .msla-card,
-.msla-card-placeholder,
 .msla-recommendation-dropdown,
 .msla-recommendation-footer,
 .msla-recommendation-empty {
@@ -705,14 +700,12 @@ body.dark {
     }
   }
 
-  .msla-card,
-  .msla-card-placeholder {
+  .msla-card {
     background-color: @ms-color-white;
   }
 
   .msla-main-page {
-    .msla-card,
-    .msla-card-placeholder {
+    .msla-card {
       background-color: #252423;
     }
   }

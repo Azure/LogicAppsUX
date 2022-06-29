@@ -4,8 +4,8 @@ import { updateNodeSizes } from '../core/state/workflowSlice';
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
 import TestNode from './CustomNodes/OperationCardNode';
-import ScopeHeaderNode from './CustomNodes/ScopeHeaderNode';
-import SubgraphHeaderNode from './CustomNodes/SubgraphHeaderNode';
+import ScopeCardNode from './CustomNodes/ScopeCardNode';
+import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import { ButtonEdge } from './connections/edge';
 // import { OnlyEdge } from './connections/onlyEdge';
 import { HiddenEdge } from './connections/hiddenEdge';
@@ -27,8 +27,8 @@ type NodeTypesObj = {
 const nodeTypes: NodeTypesObj = {
   TEST_NODE: TestNode,
   GRAPH_NODE: GraphNode,
-  SCOPE_HEADER: ScopeHeaderNode,
-  SUBGRAPH_HEADER: SubgraphHeaderNode,
+  SCOPE_NODE: ScopeCardNode,
+  SUBGRAPH_NODE: SubgraphCardNode,
   HIDDEN_NODE: HiddenNode,
 };
 
@@ -62,6 +62,8 @@ export const Designer = () => {
             nodesDraggable={false}
             edgeTypes={edgeTypes}
             panOnScroll={true}
+            deleteKeyCode={['Backspace', 'Delete']}
+            zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,
