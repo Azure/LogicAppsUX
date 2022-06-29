@@ -17,10 +17,8 @@ export const Validation = ({ className, isValid, type, tokensEnabled = true, err
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), tokensEnabled);
-      console.log(setIsValid);
       if (type === 'ARRAY' && setIsValid) {
         setIsValid(validArray(editorString));
-        console.log(validArray(editorString));
       }
     });
   };

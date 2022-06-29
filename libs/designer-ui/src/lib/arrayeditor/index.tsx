@@ -8,7 +8,7 @@ import { isHighContrastBlack } from '../utils';
 import { CollapsedArray } from './collapsedarray';
 import type { ICalloutProps } from '@fluentui/react';
 import { IconButton, TooltipHost, DirectionalHint } from '@fluentui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface IArrayEditorStyles {
@@ -19,23 +19,16 @@ export interface IArrayEditorStyles {
 }
 
 export interface ArrayEditorItemProps {
-  key: string;
+  key?: string;
   content: Segment[];
 }
 
 export interface ArrayEditorProps extends BaseEditorProps {
-  // addItemToolbarComponent?: JSX.Element;
-  // canDeleteLastItem?: boolean;
-  //   collapsed: boolean;
-  // disableAddNew?: boolean;
   disabledToggle?: boolean;
   initialItems?: ArrayEditorItemProps[];
   styles?: IArrayEditorStyles;
   readOnly?: boolean;
   labelProps: LabelProps;
-  // toggleExpand?(key: string, collapsed: boolean): void;
-  // onAddItemClick?(key: string): void;
-  // onDeleteItemClick?(itemKey: string): void;
 }
 
 const calloutProps: ICalloutProps = {
@@ -52,6 +45,10 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const [collapsed, setCollapsed] = useState(false);
   const [items, setItems] = useState(initialItems);
   const [isValid, setIsValid] = useState(false);
+
+  useEffect(() => {
+    console.log(items);
+  }, [items]);
 
   const handleToggle = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.stopPropagation();
@@ -87,7 +84,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   return (
     <div className="msla-array-editor-container">
       {/* {collapsed ? renderCollapsedArray() : renderExpandedArray()} */}
-      <CollapsedArray labelProps={labelProps} items={items} isValid={isValid} setItems={setItems} setIsValid={setIsValid} />
+      <CollapsedArray labelProps={labelProps} items={initialItems} isValid={isValid} setItems={setItems} setIsValid={setIsValid} />
       <div className="msla-array-commands">{renderToggleButton(!readOnly && !disabledToggle)}</div>
     </div>
   );

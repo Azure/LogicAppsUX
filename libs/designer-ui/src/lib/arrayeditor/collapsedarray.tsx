@@ -4,6 +4,7 @@ import type { Segment } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
+import { Serialize } from './plugins/Serialize';
 import type { Dispatch, SetStateAction } from 'react';
 
 export interface CollapsedArrayProps {
@@ -14,7 +15,7 @@ export interface CollapsedArrayProps {
   setIsValid?: Dispatch<SetStateAction<boolean>>;
 }
 
-export const CollapsedArray = ({ labelProps, items, isValid, setItems, setIsValid }: CollapsedArrayProps): JSX.Element => {
+export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, setIsValid }: CollapsedArrayProps): JSX.Element => {
   const renderLabel = (): JSX.Element => {
     const { text, isRequiredField } = labelProps;
     return (
@@ -25,7 +26,6 @@ export const CollapsedArray = ({ labelProps, items, isValid, setItems, setIsVali
       </div>
     );
   };
-  console.log(setItems);
 
   return (
     <div className="msla-array-container msla-array-editor-collapsed">
@@ -45,11 +45,14 @@ export const CollapsedArray = ({ labelProps, items, isValid, setItems, setIsVali
           }}
           placeholder={'Enter an Array'}
           initialValue={parseInitialValue(items)}
-        />
+        >
+          <Serialize isValid={isValid} setItems={setItems} />
+        </BaseEditor>
       </div>
     </div>
   );
 };
+
 const parseInitialValue = (items: ArrayEditorItemProps[]): Segment[] => {
   if (items.length === 0) {
     return [{ type: ValueSegmentType.LITERAL, value: '[\n  null\n]' }];
@@ -58,7 +61,6 @@ const parseInitialValue = (items: ArrayEditorItemProps[]): Segment[] => {
   parsedItems.push({ type: ValueSegmentType.LITERAL, value: '[\n  "' });
   items.forEach((item, index) => {
     const { content } = item;
-
     content.forEach((segment) => {
       parsedItems.push(segment);
     });
