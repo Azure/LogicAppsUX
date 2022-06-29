@@ -12,6 +12,7 @@ import {
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
+import { isLeafNodeFromEdges } from '../../core/utils/graph';
 import { DropZone } from '../connections/dropzone';
 import { labelCase } from '@microsoft-logic-apps/utils';
 import { Card } from '@microsoft/designer-ui';
@@ -55,8 +56,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const nodeComment = useNodeDescription(id);
   const connectionName = useNodeConnectionName(id);
 
-  const isLeafNode = edges.filter((edge) => !edge.target.endsWith('#footer')).length === 0;
-  const showLeafComponents = isLeafNode && !readOnly;
+  const showLeafComponents = !readOnly && isLeafNodeFromEdges(edges);
 
   const nodeClick = useCallback(() => {
     if (isCollapsed) {

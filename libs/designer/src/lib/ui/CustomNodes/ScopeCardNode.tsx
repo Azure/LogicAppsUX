@@ -5,7 +5,6 @@ import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '
 import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
-import { css } from '@fluentui/react';
 import { labelCase } from '@microsoft-logic-apps/utils';
 import { ScopeCard } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
@@ -74,7 +73,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <>
-        <div className={css('msla-scope-card')}>
+        <div className="msla-scope-card">
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           <ScopeCard
             brandColor={brandColor.result}
