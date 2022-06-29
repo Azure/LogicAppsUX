@@ -1,3 +1,5 @@
+import { openDefaultConfigPanel } from '../../core/state/PanelSlice';
+import type { AppDispatch } from '../../core/state/Store';
 import type { JsonInputStyle } from '../../models';
 import {
   discardCurrentState,
@@ -11,17 +13,16 @@ import {
   showTutorial,
   undoState,
 } from './helpers';
-import { CommandBar, initializeIcons, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
+import { CommandBar, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
 import type { IComponentAs, ICommandBarItemProps } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 export const EditorCommandBar = () => {
   return <EditorCommandBarWrapper />;
 };
-
-initializeIcons();
 
 interface DataMapState {
   time: string;
@@ -57,13 +58,13 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   stateStackInd,
   onStateStackChange,
   onTestClick,
-  onConfigClick,
   onTutorialClick,
   onFeedbackClick,
   onSearchClick,
   onPublishClick,
 }) => {
   const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
 
   const PublishButtonWrapper: IComponentAs<ICommandBarItemProps> = () => (
     <PrimaryButton style={{ alignSelf: 'center', marginRight: '5%' }} text={Resources.PUBLISH} onClick={onPublishClick} />
@@ -198,7 +199,9 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       text: Resources.CONFIGURATION,
       ariaLabel: Resources.CONFIGURATION,
       iconProps: { iconName: 'Settings' },
-      onClick: onConfigClick,
+      onClick: () => {
+        dispatch(openDefaultConfigPanel());
+      },
     },
     {
       key: 'tour_tutorial',
