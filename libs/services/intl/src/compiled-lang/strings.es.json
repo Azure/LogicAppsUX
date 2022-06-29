@@ -549,6 +549,12 @@
       "value": "Obligatorio. El objeto que se comprobará si es mayor o igual que el objeto con el que se está comparando."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Add Output Schema"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +571,12 @@
     {
       "type": 0,
       "value": "Con el modelo asincrónico, si el servidor remoto indica que se acepta la solicitud para procesarla con una respuesta 202 (aceptada), el motor de Logic Apps sondeará la dirección URL especificada en el encabezado de ubicación de respuesta hasta alcanzar un estado terminal."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Input Schema"
     }
   ],
   "8ubEPi": [
@@ -595,12 +607,6 @@
     {
       "type": 0,
       "value": "Conector"
-    }
-  ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Agregar esquema de salida"
     }
   ],
   "9JuvQ4": [
@@ -1001,12 +1007,6 @@
       "value": "Obligatorio. Una cadena que contiene la hora."
     }
   ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancelar"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -1049,12 +1049,6 @@
       "value": "Obligatoria. Cadena de formato numérico."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Agregar esquema de entrada"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1077,6 +1071,12 @@
     {
       "type": 0,
       "value": "Devuelve un subconjunto de caracteres de una cadena."
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Output Schema"
     }
   ],
   "L+PY+j": [
@@ -1697,6 +1697,12 @@
       "value": "Devuelve el resultado de multiplicar los dos números."
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Replace existing schema."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1845,6 +1851,12 @@
       "value": "Ninguno"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Configuration"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1873,6 +1885,12 @@
     {
       "type": 0,
       "value": "Ya se eliminó la operación."
+    }
+  ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Discard"
     }
   ],
   "a7j3gS": [
@@ -2035,6 +2053,12 @@
     {
       "type": 0,
       "value": "Entradas seguras de la operación."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "pencil icon"
     }
   ],
   "dhvk0u": [
@@ -2405,6 +2429,12 @@
       "value": "Sí"
     }
   ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Add Input Schema"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -2481,6 +2511,12 @@
     {
       "type": 0,
       "value": "Título"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Back"
     }
   ],
   "lcVG4C": [
@@ -2595,6 +2631,12 @@
     {
       "type": 0,
       "value": "Agrega un número entero de minutos a la marca de tiempo de una cadena pasada."
+    }
+  ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "o/0SEj": [
