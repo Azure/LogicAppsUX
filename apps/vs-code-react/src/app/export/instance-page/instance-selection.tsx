@@ -107,7 +107,7 @@ export const InstanceSelection: React.FC = () => {
 
   const subscriptions: IDropdownOption[] = isSubscriptionsLoading || !subscriptionsData ? [] : parseSubscriptionsData(subscriptionsData);
 
-  const iseInstances: IDropdownOption[] = isIseLoading || selectedSubscription === '' || !subscriptionsData ? [] : parseIseData(iseData);
+  const iseInstances: IDropdownOption[] = isIseLoading || selectedSubscription === '' || !iseData ? [] : parseIseData(iseData);
 
   return (
     <div className="msla-export-instance-panel">
@@ -131,7 +131,7 @@ export const InstanceSelection: React.FC = () => {
         placeholder={iseInstances.length ? intlText.SELECT_OPTION : intlText.EMPTY_ISE}
         disabled={isIseLoading || selectedSubscription === '' || !iseInstances.length}
         onChange={onChangeIse}
-        selectedKey={selectedIse}
+        selectedKey={selectedIse !== '' ? selectedIse : null}
         className="msla-export-instance-panel-dropdown"
       />
     </div>

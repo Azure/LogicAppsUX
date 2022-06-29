@@ -10,6 +10,6 @@ export const parseSubscriptionsData = (subscriptionsData: { subscriptions: Array
 export const parseIseData = (iseData: { ise: Array<IIse> }): Array<IIseData> => {
   const { ise } = iseData;
   return ise.reduce((acc: any, current: IIse) => {
-    return [...acc, { key: current.subscriptionId, text: current.iseName }];
+    return [...acc, { key: current.id, text: current.iseName }];
   }, []);
 };
