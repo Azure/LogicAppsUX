@@ -3,11 +3,12 @@ import { initializeGraphState } from './parsers/ParseReduxAction';
 import { initializeServices } from './state/designerOptionsSlice';
 import { initWorkflowSpec } from './state/workflowSlice';
 import type { AppDispatch, RootState } from './store';
+import type { Workflow } from '@microsoft-logic-apps/utils';
 import React, { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
-  workflow: LogicAppsV2.WorkflowDefinition;
+  workflow: Workflow<LogicAppsV2.WorkflowDefinition>;
   children?: React.ReactNode;
 }
 
@@ -15,7 +16,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
-    dispatch(initializeGraphState(workflow));
+    dispatch(initializeGraphState(workflow.definition));
   }, [dispatch, workflow]);
 
   return <>{children}</>;
