@@ -5,6 +5,7 @@ import { expandPanel, changePanelNode } from '../../core/state/panel/panelSlice'
 import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
 import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
 import type { RootState } from '../../core/store';
+import { isLeafNodeFromEdges } from '../../core/utils/graph';
 import { DropZone } from '../connections/dropzone';
 import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { SubgraphCard } from '@microsoft/designer-ui';
@@ -38,7 +39,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
     [dispatch, isCollapsed]
   );
 
-  const isEmpty = edges.filter((edge) => !edge.target.endsWith('#footer')).length === 0;
+  const isEmpty = isLeafNodeFromEdges(edges);
   const showEmptyGraphComponents = isEmpty && !isAddCase;
 
   return (
