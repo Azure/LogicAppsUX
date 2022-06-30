@@ -4,6 +4,7 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { EditorConfigPanel, SchemaTypes } from '../components/configPanel/EditorConfigPanel';
 import { SelectSchemaCard } from '../components/schemaSelection/selectSchemaCard';
+import { WarningModal } from '../components/warningModal/warningModal';
 import type { DataMapOperationState } from '../core/state/DataMapSlice';
 import { saveDataMap } from '../core/state/DataMapSlice';
 import {
@@ -173,7 +174,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
-        {/* <Modal  isOpen={true}>warning modal</Modal> */}
+        <WarningModal
+          onOkClick={() => {
+            //
+          }}
+        />
         <EditorConfigPanel onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
         <EditorBreadcrumb />
 
