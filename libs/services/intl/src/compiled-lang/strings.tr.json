@@ -1917,6 +1917,12 @@
       "value": "Veri İşleme"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Function"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -1957,6 +1963,12 @@
     {
       "type": 0,
       "value": "Gerekli. İlk Count nesnenin alınacağı koleksiyon."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Do"
     }
   ],
   "c2XklE": [
@@ -2395,6 +2407,12 @@
     {
       "type": 0,
       "value": "JSON dosyasında düzenle"
+    }
+  ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Toolbox"
     }
   ],
   "juR40n": [

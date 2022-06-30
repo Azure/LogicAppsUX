@@ -1999,6 +1999,12 @@
       "value": "Obsługa danych"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Function"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -2039,6 +2045,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Kolekcja, z której należy pobrać pierwsze obiekty (liczba)."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Do"
     }
   ],
   "c2XklE": [
@@ -2507,6 +2519,12 @@
     {
       "type": 0,
       "value": "Edytuj w pliku JSON"
+    }
+  ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Toolbox"
     }
   ],
   "juR40n": [

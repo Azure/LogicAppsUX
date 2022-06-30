@@ -1921,6 +1921,12 @@
       "value": "Datenverarbeitung"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Function"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -1961,6 +1967,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Sammlung, aus der die ersten Count-Objekte entnommen werden sollen."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Do"
     }
   ],
   "c2XklE": [
@@ -2399,6 +2411,12 @@
     {
       "type": 0,
       "value": "In JSON bearbeiten"
+    }
+  ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Toolbox"
     }
   ],
   "juR40n": [

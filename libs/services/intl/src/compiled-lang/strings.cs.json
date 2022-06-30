@@ -1995,6 +1995,12 @@
       "value": "Zpracování dat"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Function"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -2035,6 +2041,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Kolekce, ze které se mají získat první objekty Count."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Do"
     }
   ],
   "c2XklE": [
@@ -2499,6 +2511,12 @@
     {
       "type": 0,
       "value": "Upravit ve formátu JSON"
+    }
+  ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Toolbox"
     }
   ],
   "juR40n": [

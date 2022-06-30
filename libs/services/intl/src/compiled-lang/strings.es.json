@@ -1917,6 +1917,12 @@
       "value": "Control de datos"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Function"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -1957,6 +1963,12 @@
     {
       "type": 0,
       "value": "Obligatorio. La colección de la que se tomarán los primeros objetos de recuento."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Do"
     }
   ],
   "c2XklE": [
@@ -2403,6 +2415,12 @@
     {
       "type": 0,
       "value": "Editar en JSON"
+    }
+  ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Toolbox"
     }
   ],
   "juR40n": [
