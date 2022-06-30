@@ -1,4 +1,10 @@
-import { closeAllWarning, openChangeInputWarning, openChangeOutputWarning, removeOkClicked } from '../../core/state/ModalSlice';
+import {
+  closeAllWarning,
+  openChangeInputWarning,
+  openChangeOutputWarning,
+  removeOkClicked,
+  WarningModalState,
+} from '../../core/state/ModalSlice';
 import { closeDefaultConfigPanel, closeSchemaChangePanel, openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
@@ -26,7 +32,12 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
   const isChangeSchemaPanelOpen = useSelector((state: RootState) => state.panel.isChangeSchemaPanelOpen);
   const schemaType = useSelector((state: RootState) => state.panel.schemaType);
-  const isChangeSchemaConfirmed = useSelector((state: RootState) => state.modal.isChangeSchemaWarning && state.modal.isOkClicked);
+  const isChangeSchemaConfirmed = useSelector(
+    (state: RootState) =>
+      (state.modal.warningModalType === WarningModalState.ChangeInputWarning ||
+        state.modal.warningModalType === WarningModalState.ChangeOutputWarning) &&
+      state.modal.isOkClicked
+  );
   const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
   const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
   const [errorMessage, setErrorMessage] = useState('');

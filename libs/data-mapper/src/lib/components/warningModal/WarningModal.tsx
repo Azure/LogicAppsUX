@@ -1,4 +1,4 @@
-import { closeAllWarning, setOkClicked } from '../../core/state/ModalSlice';
+import { closeAllWarning, setOkClicked, WarningModalState } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { Dialog, DialogFooter, DefaultButton, PrimaryButton } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const WarningModal: FunctionComponent = () => {
   const isWarningModalOpen = useSelector((state: RootState) => state.modal.isWarningModalOpen);
-  // const isOkClicked = useSelector((state: RootState) => state.modal.isOkClicked);
+  const warningModalType = useSelector((state: RootState) => state.modal.warningModalType);
 
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
@@ -17,11 +17,28 @@ export const WarningModal: FunctionComponent = () => {
     defaultMessage: 'Warning',
     description: 'Header text for warning the user for not being allowed to go back to make changes',
   });
-  const warningMessage = intl.formatMessage({
-    defaultMessage: 'You will not be able to go back. Do you want to proceed?',
-    description:
-      'Message to inform users that they will not be able to revert back to previous changes and to ask if they want to proceed.',
-  });
+  const warningMessage =
+    warningModalType === WarningModalState.DiscardWarning
+      ? intl.formatMessage({
+          defaultMessage: 'All unsaved work will be gone. Do you want to proceed to discard everything?',
+          description:
+            'Message to inform users that they will not be able to revert back to previous changes and to ask if they want to proceed.',
+        })
+      : warningModalType === WarningModalState.ChangeInputWarning
+      ? intl.formatMessage({
+          defaultMessage:
+            'Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?',
+          description:
+            'Message to inform users that they will not be able to revert back to previous changes after changing input schema and to ask if they still want to proceed',
+        })
+      : warningModalType === WarningModalState.ChangeOutputWarning
+      ? intl.formatMessage({
+          defaultMessage:
+            'Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?',
+          description:
+            'Message to inform users that they will not be able to revert back to previous changes after changing output schema and to ask if they still want to proceed',
+        })
+      : '';
   const okMessage = intl.formatMessage({
     defaultMessage: 'OK',
     description: 'Button text for OK to proceed with agreeing to the warning displayed',

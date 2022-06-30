@@ -1,5 +1,5 @@
 import { discardDataMap } from '../../core/state/DataMapSlice';
-import { closeAllWarning, openDiscardWarning, removeOkClicked } from '../../core/state/ModalSlice';
+import { closeAllWarning, openDiscardWarning, removeOkClicked, WarningModalState } from '../../core/state/ModalSlice';
 import { openDefaultConfigPanel } from '../../core/state/PanelSlice';
 import { setInputSchemaExtended, setOutputSchemaExtended } from '../../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
@@ -64,7 +64,9 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   const isUndoStackEmpty = undoStack.length === 0;
   const redoStack = useSelector((state: RootState) => state.dataMap.redoStack);
   const isRedoStackEmpty = redoStack.length === 0;
-  const isDiscardConfirmed = useSelector((state: RootState) => state.modal.isDiscardWarning && state.modal.isOkClicked);
+  const isDiscardConfirmed = useSelector(
+    (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
+  );
 
   const lastCleanInputSchemaExtended = useSelector((state: RootState) => state.dataMap.pristineDataMap?.currentInputSchemaExtended);
   const lastCleanOutputSchemaExtended = useSelector((state: RootState) => state.dataMap.pristineDataMap?.currentOutputSchemaExtended);

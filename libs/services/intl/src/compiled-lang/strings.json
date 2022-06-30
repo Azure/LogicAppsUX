@@ -143,12 +143,6 @@
       "value": "Required. The string that may contain the value."
     }
   ],
-  "0uXcMe": [
-    {
-      "type": 0,
-      "value": "You will not be able to go back. Do you want to proceed?"
-    }
-  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -421,6 +415,12 @@
     {
       "type": 0,
       "value": "Tour/Tutorial"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
     }
   ],
   "5J7j9k": [
@@ -1253,6 +1253,12 @@
       "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
     }
   ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -1913,6 +1919,12 @@
     {
       "type": 0,
       "value": "This operation has already been deleted."
+    }
+  ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
     }
   ],
   "a64zhX": [

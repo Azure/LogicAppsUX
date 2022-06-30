@@ -7,7 +7,6 @@ export interface DataMapState {
   pristineDataMap?: DataMapOperationState;
   isDirty: boolean;
 
-  // TODO: keep the limit to 20
   undoStack: DataMapOperationState[];
   redoStack: DataMapOperationState[];
 }
@@ -51,6 +50,7 @@ export const dataMapSlice = createSlice({
       const incomingDataMapOperation = action.payload;
       if (incomingDataMapOperation) {
         if (state.curDataMapOperation) {
+          state.undoStack = state.undoStack.slice(-19);
           state.undoStack.push(state.curDataMapOperation);
         }
         state.curDataMapOperation = incomingDataMapOperation;
