@@ -116,7 +116,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const onSaveClick = () => {
     saveStateCall(); // TODO: do the next call only when this is successful
-    dispatch(saveDataMap());
+    dispatch(
+      saveDataMap({
+        inputSchemaExtended: inputSchema,
+        outputSchemaExtended: outputSchema,
+      })
+    );
   };
 
   const onUndoClick = () => {

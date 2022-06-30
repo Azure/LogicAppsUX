@@ -1,4 +1,4 @@
-import type { JsonInputStyle, SchemaNodeExtended } from '../../models';
+import type { JsonInputStyle, SchemaExtended, SchemaNodeExtended } from '../../models';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -14,6 +14,8 @@ export interface DataMapState {
 
 export interface DataMapOperationState {
   curDataMap: JsonInputStyle;
+  currentInputSchemaExtended?: SchemaExtended;
+  currentOutputSchemaExtended?: SchemaExtended;
   currentInputNode?: SchemaNodeExtended;
   currentOutputNode?: SchemaNodeExtended;
 }
@@ -86,25 +88,22 @@ export const dataMapSlice = createSlice({
     },
 
     saveDataMap: (
-      state
-      // action: PayloadAction<{inputSchemaExtended: SchemaExtended | undefined, outputSchemaExtended: SchemaExtended | undefined}>
+      state,
+      action: PayloadAction<{ inputSchemaExtended: SchemaExtended | undefined; outputSchemaExtended: SchemaExtended | undefined }>
     ) => {
       // TODO: consider those below => IMPORTANT FOR DISCARD
-      // const inputSchemaExtended = action.payload.inputSchemaExtended;
-      // const outputSchemaExtended = action.payload.outputSchemaExtended;
-
-      // TODO: API call for save, then upon successful callback => maybe this shouldn't be done here
+      const inputSchemaExtended = action.payload.inputSchemaExtended;
+      const outputSchemaExtended = action.payload.outputSchemaExtended;
+      if (state.curDataMapOperation) {
+        state.curDataMapOperation.currentInputSchemaExtended = inputSchemaExtended;
+        state.curDataMapOperation.currentOutputSchemaExtended = outputSchemaExtended;
+      }
       state.pristineDataMap = state.curDataMapOperation;
-      // state.pristineDataMap.oldInputSchema = inputSchemaExtended;
       state.isDirty = false;
-
-      // TODO: upon non-successful callback, isDirty doesn't change. nothing chnages.
     },
 
     discardDataMap: (state) => {
-      // doDataMapOperation(state.pristineDataMap); // TO BE DELETED
       state.curDataMapOperation = state.pristineDataMap;
-      // TODO: change the currentInput and currentOutput
       state.undoStack = [];
       state.redoStack = [];
       state.isDirty = false;
