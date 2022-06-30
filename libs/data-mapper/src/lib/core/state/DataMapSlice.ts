@@ -1,9 +1,9 @@
-import type { JsonInputStyle, SchemaExtended, SchemaNodeExtended } from '../../models';
+import type { JsonInputStyle, SchemaNodeExtended } from '../../models';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface DataMapState {
-  curDataMap?: DataMapOperationState;
+  curDataMapOperation?: DataMapOperationState;
   pristineDataMap?: DataMapOperationState;
   isDirty: boolean;
 
@@ -16,11 +16,6 @@ export interface DataMapOperationState {
   curDataMap: JsonInputStyle;
   currentInputNode?: SchemaNodeExtended;
   currentOutputNode?: SchemaNodeExtended;
-
-  isInputSchemaChanged?: boolean;
-  oldInputSchema?: SchemaExtended;
-  isOutputSchemaChanged?: boolean;
-  oldOutputSchema?: SchemaExtended;
 }
 
 const initialState: DataMapState = { isDirty: false, undoStack: [], redoStack: [] };
@@ -31,44 +26,38 @@ export const dataMapSlice = createSlice({
   reducers: {
     //TODO: remove below - just for debugging
     removeCurDataMap: (state) => {
-      state.curDataMap = undefined;
+      state.curDataMapOperation = undefined;
     },
 
-    changeInputSchemaOperation: (
-      state,
-      action: PayloadAction<{ incomingDataMapOperation: DataMapOperationState | undefined; oldInputSchema: SchemaExtended | undefined }>
-    ) => {
-      const incomingDataMapOperation = action.payload.incomingDataMapOperation;
-      const oldInputSchema = action.payload.oldInputSchema;
+    changeInputSchemaOperation: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
+      const incomingDataMapOperation = action.payload;
 
-      if (incomingDataMapOperation && state.curDataMap) {
-        state.curDataMap.isInputSchemaChanged = true;
-        state.curDataMap.oldInputSchema = oldInputSchema;
-        doDataMapOperation(incomingDataMapOperation);
+      if (incomingDataMapOperation) {
+        state.curDataMapOperation = incomingDataMapOperation;
+        state.isDirty = true;
+        state.undoStack = [];
+        state.redoStack = [];
       }
     },
 
-    changeOutputSchemaOperation: (
-      state,
-      action: PayloadAction<{ incomingDataMapOperation: DataMapOperationState | undefined; oldOutputSchema: SchemaExtended | undefined }>
-    ) => {
-      const incomingDataMapOperation = action.payload.incomingDataMapOperation;
-      const oldOutputSchema = action.payload.oldOutputSchema;
+    changeOutputSchemaOperation: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
+      const incomingDataMapOperation = action.payload;
 
-      if (incomingDataMapOperation && state.curDataMap) {
-        state.curDataMap.isOutputSchemaChanged = true;
-        state.curDataMap.oldOutputSchema = oldOutputSchema;
-        doDataMapOperation(incomingDataMapOperation);
+      if (incomingDataMapOperation) {
+        state.curDataMapOperation = incomingDataMapOperation;
+        state.isDirty = true;
+        state.undoStack = [];
+        state.redoStack = [];
       }
     },
 
     doDataMapOperation: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
       const incomingDataMapOperation = action.payload;
       if (incomingDataMapOperation) {
-        if (state.curDataMap) {
-          state.undoStack.push(state.curDataMap);
+        if (state.curDataMapOperation) {
+          state.undoStack.push(state.curDataMapOperation);
         }
-        state.curDataMap = incomingDataMapOperation;
+        state.curDataMapOperation = incomingDataMapOperation;
         state.redoStack = [];
         state.isDirty = true;
       }
@@ -77,9 +66,9 @@ export const dataMapSlice = createSlice({
     undoDataMapOperation: (state) => {
       const lastDataMap = state.undoStack.pop();
 
-      if (lastDataMap && state.curDataMap) {
-        state.redoStack.push(state.curDataMap);
-        state.curDataMap = lastDataMap;
+      if (lastDataMap && state.curDataMapOperation) {
+        state.redoStack.push(state.curDataMapOperation);
+        state.curDataMapOperation = lastDataMap;
         // TODO: set currentInputNode and currentOutputNode => dispatch calls
         state.isDirty = true;
       }
@@ -88,9 +77,9 @@ export const dataMapSlice = createSlice({
     redoDataMapOperation: (state) => {
       const lastDataMap = state.redoStack.pop();
 
-      if (lastDataMap && state.curDataMap) {
-        state.undoStack.push(state.curDataMap);
-        state.curDataMap = lastDataMap;
+      if (lastDataMap && state.curDataMapOperation) {
+        state.undoStack.push(state.curDataMapOperation);
+        state.curDataMapOperation = lastDataMap;
         // TODO: set currentInputNode and currentOutputNode => dispatch calls
         state.isDirty = true;
       }
@@ -100,12 +89,12 @@ export const dataMapSlice = createSlice({
       state
       // action: PayloadAction<{inputSchemaExtended: SchemaExtended | undefined, outputSchemaExtended: SchemaExtended | undefined}>
     ) => {
-      // TODO: consider those below
+      // TODO: consider those below => IMPORTANT FOR DISCARD
       // const inputSchemaExtended = action.payload.inputSchemaExtended;
       // const outputSchemaExtended = action.payload.outputSchemaExtended;
 
       // TODO: API call for save, then upon successful callback => maybe this shouldn't be done here
-      state.pristineDataMap = state.curDataMap;
+      state.pristineDataMap = state.curDataMapOperation;
       // state.pristineDataMap.oldInputSchema = inputSchemaExtended;
       state.isDirty = false;
 
@@ -113,7 +102,11 @@ export const dataMapSlice = createSlice({
     },
 
     discardDataMap: (state) => {
-      doDataMapOperation(state.pristineDataMap);
+      // doDataMapOperation(state.pristineDataMap); // TO BE DELETED
+      state.curDataMapOperation = state.pristineDataMap;
+      // TODO: change the currentInput and currentOutput
+      state.undoStack = [];
+      state.redoStack = [];
       state.isDirty = false;
     },
   },

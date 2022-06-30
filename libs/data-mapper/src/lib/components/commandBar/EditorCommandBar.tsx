@@ -1,5 +1,6 @@
+import { discardDataMap } from '../../core/state/DataMapSlice';
 import { openDefaultConfigPanel } from '../../core/state/PanelSlice';
-import type { AppDispatch } from '../../core/state/Store';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { JsonInputStyle } from '../../models';
 import { discardCurrentState, publishState, runTest, showConfig, showFeedback, showSearchbar, showTutorial } from './helpers';
 import { CommandBar, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
@@ -7,20 +8,16 @@ import type { IComponentAs, ICommandBarItemProps } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export interface EditorCommandBarProps {
   onSaveClick: () => void;
-  isStateDirty: boolean;
-
   onUndoClick: () => void;
   onRedoClick: () => void;
 }
 
-export const EditorCommandBar: FunctionComponent<EditorCommandBarProps> = ({ onSaveClick, isStateDirty, onUndoClick, onRedoClick }) => {
-  return (
-    <EditorCommandBarWrapper onSaveClick={onSaveClick} isStateDirty={isStateDirty} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
-  );
+export const EditorCommandBar: FunctionComponent<EditorCommandBarProps> = ({ onSaveClick, onUndoClick, onRedoClick }) => {
+  return <EditorCommandBarWrapper onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />;
 };
 
 interface DataMapState {
@@ -29,7 +26,6 @@ interface DataMapState {
 }
 
 interface EditorCommandBarButtonsProps {
-  isStateDirty: boolean;
   onSaveClick: () => void;
   onUndoClick: () => void;
   onRedoClick: () => void;
@@ -48,7 +44,6 @@ interface EditorCommandBarButtonsProps {
 }
 
 const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> = ({
-  isStateDirty,
   onSaveClick,
   onUndoClick,
   onRedoClick,
@@ -64,6 +59,12 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   onSearchClick,
   onPublishClick,
 }) => {
+  const isStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
+  const undoStack = useSelector((state: RootState) => state.dataMap.undoStack);
+  const isUndoStackEmpty = undoStack.length === 0;
+  const redoStack = useSelector((state: RootState) => state.dataMap.redoStack);
+  const isRedoStackEmpty = redoStack.length === 0;
+
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -164,6 +165,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
               if (!showUndo) onUndoRedoChange(showUndo);
               onUndoClick();
             },
+            disabled: isUndoStackEmpty,
           },
           {
             key: 'redo',
@@ -174,17 +176,22 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
               if (showUndo) onUndoRedoChange(showUndo);
               onRedoClick();
             },
+            disabled: isRedoStackEmpty,
           },
         ],
       },
       onClick: () => console.log('Undo-redo button clicked'),
+      primaryDisabled: showUndo ? isUndoStackEmpty : isRedoStackEmpty,
     },
     {
       key: 'discard',
       text: Resources.DISCARD,
       ariaLabel: Resources.DISCARD,
       iconProps: { iconName: 'Cancel' },
-      onClick: onDiscardClick,
+      onClick: () => {
+        onDiscardClick(); // TO BE REMOVED
+        dispatch(discardDataMap());
+      },
       disabled: !isStateDirty,
     },
     {
@@ -267,7 +274,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   return <CommandBar items={items} farItems={farItems} ariaLabel="Use left and right arrow keys to navigate between commands" />;
 };
 
-const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ onSaveClick, isStateDirty, onUndoClick, onRedoClick }) => {
+const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ onSaveClick, onUndoClick, onRedoClick }) => {
   const intl = useIntl();
 
   const [showUndo, setShowUndo] = useState(true);
@@ -293,7 +300,6 @@ const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ onS
 
   return (
     <EditorCommandBarButtons
-      isStateDirty={isStateDirty}
       onSaveClick={onSaveClick}
       onUndoClick={onUndoClick}
       onRedoClick={onRedoClick}
