@@ -1,18 +1,16 @@
 import { SchemaTypes } from '../configPanel/EditorConfigPanel';
-import stateImageOnHover from './card_image_onhover.png';
-import stateImageOnRest from './card_image_onrest.png';
-import { Image } from '@fluentui/react/lib/Image';
+import { IconButton } from '@fluentui/react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 
-interface SelectSchemaCardProps {
+interface SchemaCardProps {
   schemaType: SchemaTypes;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
-const imageStyle = { paddingLeft: 70, paddingRight: 70, paddingTop: 64, paddingBottom: 28 };
+// const imageStyle = { paddingLeft: 70, paddingRight: 70, paddingTop: 64, paddingBottom: 28 };
 
-export const SelectSchemaCard: FunctionComponent<SelectSchemaCardProps> = ({ schemaType, onClick }) => {
+export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ schemaType, onClick }) => {
   const intl = useIntl();
 
   let selectSchemaMsg = '';
@@ -35,9 +33,8 @@ export const SelectSchemaCard: FunctionComponent<SelectSchemaCardProps> = ({ sch
   }
 
   return (
-    <div className="schema-select-card" onClick={onClick}>
-      <Image className="on-hover" src={stateImageOnHover} alt="select a schema - on hover" style={imageStyle} />
-      <Image className="on-rest" src={stateImageOnRest} alt="select a schema - on rest" style={imageStyle} />
+    <div className="schema-card" onClick={onClick}>
+      <IconButton iconProps={{ iconName: 'Diamond' }} />
       {selectSchemaMsg}
     </div>
   );
