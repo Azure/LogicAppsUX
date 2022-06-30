@@ -1,8 +1,8 @@
 import Constants from '../../common/constants';
 import type { Settings } from '../actions/bjsworkflow/settings';
 
-export function hasSecureOutputs(nodeType: string, allSettings: Settings): boolean {
-  const { secureInputs, secureOutputs } = allSettings;
+export function hasSecureOutputs(nodeType: string, allSettings: Settings | undefined): boolean {
+  const { secureInputs, secureOutputs } = allSettings || {};
   return isSecureOutputsLinkedToInputs(nodeType) ? !!secureInputs : !!secureOutputs;
 }
 

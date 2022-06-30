@@ -58,6 +58,6 @@ export * from './settings/settingsection';
 export * from './telemetry/models';
 // export * from './textbox';
 export * from './tip';
-// export * from './tokenpicker';
+export * from './tokenpicker';
 export * from './utils';
 // export * from './workflowparameters';
