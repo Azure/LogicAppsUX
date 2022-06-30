@@ -86,11 +86,6 @@ export const InstanceSelection: React.FC = () => {
           selectedSubscription: selectedOption.key,
         })
       );
-      dispatch(
-        updateSelectedIse({
-          selectedIse: '',
-        })
-      );
       refetchIse();
     }
   };

@@ -198,11 +198,6 @@ export interface ISubscription {
   subscriptionName: string;
 }
 
-export interface ISubscriptionsData {
-  key: string;
-  text: string;
-}
-
 export type ExportData = {
   selectedWorkflows: Array<any>;
   selectedSubscription: string;
@@ -223,7 +218,7 @@ export interface IIse {
   resourceGroup: string;
 }
 
-export interface IIseData {
+export interface IDropDownOption {
   key: string;
   text: string;
 }

@@ -64,6 +64,7 @@ export const vscodeSlice = createSlice({
     updateSelectedSubscripton: (state: VscodeState, action: PayloadAction<any>) => {
       const { selectedSubscription } = action.payload;
       (state as initializedVscodeState).exportData.selectedSubscription = selectedSubscription;
+      (state as initializedVscodeState).exportData.selectedIse = '';
     },
     updateSelectedIse: (state: VscodeState, action: PayloadAction<any>) => {
       const { selectedIse } = action.payload;
