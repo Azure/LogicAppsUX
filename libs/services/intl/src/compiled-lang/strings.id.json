@@ -1884,6 +1884,12 @@
       "value": "Penanganan Data"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Function"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -1924,6 +1930,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Koleksi untuk mengambil objek hitungan pertama."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Do"
     }
   ],
   "c2XklE": [
@@ -2351,6 +2363,12 @@
     {
       "type": 0,
       "value": "Edit di JSON"
+    }
+  ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Toolbox"
     }
   ],
   "juR40n": [

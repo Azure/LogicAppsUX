@@ -1917,6 +1917,12 @@
       "value": "Gestion des données"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Function"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -1957,6 +1963,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Collection à partir de laquelle prendre les premiers objets Count."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Do"
     }
   ],
   "c2XklE": [
@@ -2403,6 +2415,12 @@
     {
       "type": 0,
       "value": "Modifier dans JSON"
+    }
+  ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Toolbox"
     }
   ],
   "juR40n": [
