@@ -1,8 +1,9 @@
 import { discardDataMap } from '../../core/state/DataMapSlice';
+import { openDiscardWarning } from '../../core/state/ModalSlice';
 import { openDefaultConfigPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { JsonInputStyle } from '../../models';
-import { discardCurrentState, publishState, runTest, showConfig, showFeedback, showSearchbar, showTutorial } from './helpers';
+import { publishState, runTest, showConfig, showFeedback, showSearchbar, showTutorial } from './helpers';
 import { CommandBar, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
 import type { IComponentAs, ICommandBarItemProps } from '@fluentui/react';
 import { useCallback, useState } from 'react';
@@ -31,7 +32,6 @@ interface EditorCommandBarButtonsProps {
   onRedoClick: () => void;
   showUndo: boolean;
   onUndoRedoChange: (showUndo: boolean) => void;
-  onDiscardClick: () => void;
   stateStack: DataMapState[];
   stateStackInd: number;
   onStateStackChange: (stateStackInd: number) => void;
@@ -49,7 +49,6 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   onRedoClick,
   showUndo,
   onUndoRedoChange,
-  onDiscardClick,
   stateStack,
   stateStackInd,
   onStateStackChange,
@@ -71,6 +70,10 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   const PublishButtonWrapper: IComponentAs<ICommandBarItemProps> = () => (
     <PrimaryButton style={{ alignSelf: 'center', marginRight: '5%' }} text={Resources.PUBLISH} onClick={onPublishClick} />
   );
+
+  const dispatchDiscardDM = () => {
+    dispatch(discardDataMap());
+  };
 
   const Resources = {
     SAVE: intl.formatMessage({
@@ -189,8 +192,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       ariaLabel: Resources.DISCARD,
       iconProps: { iconName: 'Cancel' },
       onClick: () => {
-        onDiscardClick(); // TO BE REMOVED
-        dispatch(discardDataMap());
+        dispatch(openDiscardWarning(dispatchDiscardDM));
       },
       disabled: !isStateDirty,
     },
@@ -305,7 +307,6 @@ const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ onS
       onRedoClick={onRedoClick}
       showUndo={showUndo}
       onUndoRedoChange={onUndoRedoChange}
-      onDiscardClick={discardCurrentState}
       stateStack={exampleStateStack}
       stateStackInd={stateStackInd}
       onStateStackChange={onStateStackChange}

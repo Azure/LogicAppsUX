@@ -6,12 +6,9 @@ import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export interface WarningModalProps {
-  onOkClick: () => void;
-}
-
-export const WarningModal: FunctionComponent<WarningModalProps> = ({ onOkClick }) => {
+export const WarningModal: FunctionComponent = () => {
   const isWarningModalOpen = useSelector((state: RootState) => state.modal.isWarningModalOpen);
+  const onOkClick = useSelector((state: RootState) => state.modal.onOkClick);
 
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
@@ -38,10 +35,10 @@ export const WarningModal: FunctionComponent<WarningModalProps> = ({ onOkClick }
     dispatch(closeAllWarning());
   }, [dispatch]);
 
-  const onOkButtonClick = useCallback(() => {
-    onOkClick();
-    closeWarningModal();
-  }, [onOkClick, closeWarningModal]);
+  // const onOkButtonClick = useCallback(() => {
+  //   // onOkClick();
+  //   closeWarningModal();
+  // }, [onOkClick, closeWarningModal]);
 
   const dialogContentProps = {
     title: warningHeader,
@@ -57,7 +54,14 @@ export const WarningModal: FunctionComponent<WarningModalProps> = ({ onOkClick }
         modalProps={{ isBlocking: true }}
       >
         <DialogFooter>
-          <PrimaryButton onClick={onOkButtonClick} text={okMessage} />
+          <PrimaryButton
+            onClick={() => {
+              if (onOkClick) {
+                onOkClick();
+              }
+            }}
+            text={okMessage}
+          />
           <DefaultButton onClick={closeWarningModal} text={cancelMessage} />
         </DialogFooter>
       </Dialog>
