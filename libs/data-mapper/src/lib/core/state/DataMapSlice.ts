@@ -26,11 +26,6 @@ export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
-    //TODO: remove below - just for debugging
-    removeCurDataMap: (state) => {
-      state.curDataMapOperation = undefined;
-    },
-
     changeInputSchemaOperation: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
       const incomingDataMapOperation = action.payload;
 
@@ -44,7 +39,6 @@ export const dataMapSlice = createSlice({
 
     changeOutputSchemaOperation: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
       const incomingDataMapOperation = action.payload;
-
       if (incomingDataMapOperation) {
         state.curDataMapOperation = incomingDataMapOperation;
         state.isDirty = true;
@@ -67,22 +61,18 @@ export const dataMapSlice = createSlice({
 
     undoDataMapOperation: (state) => {
       const lastDataMap = state.undoStack.pop();
-
       if (lastDataMap && state.curDataMapOperation) {
         state.redoStack.push(state.curDataMapOperation);
         state.curDataMapOperation = lastDataMap;
-        // TODO: set currentInputNode and currentOutputNode => dispatch calls
         state.isDirty = true;
       }
     },
 
     redoDataMapOperation: (state) => {
       const lastDataMap = state.redoStack.pop();
-
       if (lastDataMap && state.curDataMapOperation) {
         state.undoStack.push(state.curDataMapOperation);
         state.curDataMapOperation = lastDataMap;
-        // TODO: set currentInputNode and currentOutputNode => dispatch calls
         state.isDirty = true;
       }
     },
@@ -112,7 +102,6 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
-  removeCurDataMap,
   changeInputSchemaOperation,
   changeOutputSchemaOperation,
   doDataMapOperation,

@@ -6,11 +6,10 @@ import { EditorConfigPanel, SchemaTypes } from '../components/configPanel/Editor
 import { SelectSchemaCard } from '../components/schemaSelection/selectSchemaCard';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import type { DataMapOperationState } from '../core/state/DataMapSlice';
-import { saveDataMap } from '../core/state/DataMapSlice';
 import {
+  saveDataMap,
   redoDataMapOperation,
   undoDataMapOperation,
-  removeCurDataMap,
   changeInputSchemaOperation,
   changeOutputSchemaOperation,
 } from '../core/state/DataMapSlice';
@@ -43,6 +42,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
+  const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
 
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch<AppDispatch>();
@@ -126,15 +126,20 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const onUndoClick = () => {
     dispatch(undoDataMapOperation());
+    dispatch(setCurrentInputNode(curDataMapOperation?.currentInputNode));
+    dispatch(setCurrentOutputNode(curDataMapOperation?.currentOutputNode));
   };
 
   const onRedoClick = () => {
     dispatch(redoDataMapOperation());
+    dispatch(setCurrentInputNode(curDataMapOperation?.currentInputNode));
+    dispatch(setCurrentOutputNode(curDataMapOperation?.currentOutputNode));
   };
 
   const onInputSchemaClick = () => {
     dispatch(openInputSchemaPanel());
   };
+
   const onOutputSchemaClick = () => {
     dispatch(openOutputSchemaPanel());
   };
@@ -182,8 +187,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         <WarningModal />
         <EditorConfigPanel onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
         <EditorBreadcrumb />
-
-        <button onClick={() => dispatch(removeCurDataMap)}>Remove cur data map</button>
 
         {inputSchema && outputSchema ? (
           <div>
