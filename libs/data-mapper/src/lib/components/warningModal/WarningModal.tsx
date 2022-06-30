@@ -1,4 +1,4 @@
-import { closeAllWarning } from '../../core/state/ModalSlice';
+import { closeAllWarning, setOkClicked } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { Dialog, DialogFooter, DefaultButton, PrimaryButton } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const WarningModal: FunctionComponent = () => {
   const isWarningModalOpen = useSelector((state: RootState) => state.modal.isWarningModalOpen);
-  const onOkClick = useSelector((state: RootState) => state.modal.onOkClick);
+  // const isOkClicked = useSelector((state: RootState) => state.modal.isOkClicked);
 
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
@@ -35,11 +35,6 @@ export const WarningModal: FunctionComponent = () => {
     dispatch(closeAllWarning());
   }, [dispatch]);
 
-  // const onOkButtonClick = useCallback(() => {
-  //   // onOkClick();
-  //   closeWarningModal();
-  // }, [onOkClick, closeWarningModal]);
-
   const dialogContentProps = {
     title: warningHeader,
     subText: warningMessage,
@@ -56,9 +51,7 @@ export const WarningModal: FunctionComponent = () => {
         <DialogFooter>
           <PrimaryButton
             onClick={() => {
-              if (onOkClick) {
-                onOkClick();
-              }
+              dispatch(setOkClicked());
             }}
             text={okMessage}
           />

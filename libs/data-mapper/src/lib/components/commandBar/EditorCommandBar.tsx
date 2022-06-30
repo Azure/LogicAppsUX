@@ -1,12 +1,12 @@
 import { discardDataMap } from '../../core/state/DataMapSlice';
-import { openDiscardWarning } from '../../core/state/ModalSlice';
+import { closeAllWarning, openDiscardWarning, removeOkClicked } from '../../core/state/ModalSlice';
 import { openDefaultConfigPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { JsonInputStyle } from '../../models';
 import { publishState, runTest, showConfig, showFeedback, showSearchbar, showTutorial } from './helpers';
 import { CommandBar, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
 import type { IComponentAs, ICommandBarItemProps } from '@fluentui/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -63,6 +63,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   const isUndoStackEmpty = undoStack.length === 0;
   const redoStack = useSelector((state: RootState) => state.dataMap.redoStack);
   const isRedoStackEmpty = redoStack.length === 0;
+  const isDiscardConfirmed = useSelector((state: RootState) => state.modal.isDiscardWarning && state.modal.isOkClicked);
 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -71,9 +72,13 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     <PrimaryButton style={{ alignSelf: 'center', marginRight: '5%' }} text={Resources.PUBLISH} onClick={onPublishClick} />
   );
 
-  const dispatchDiscardDM = () => {
-    dispatch(discardDataMap());
-  };
+  useEffect(() => {
+    if (isDiscardConfirmed) {
+      dispatch(removeOkClicked());
+      dispatch(discardDataMap());
+      dispatch(closeAllWarning());
+    }
+  }, [dispatch, isDiscardConfirmed]);
 
   const Resources = {
     SAVE: intl.formatMessage({
@@ -192,7 +197,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       ariaLabel: Resources.DISCARD,
       iconProps: { iconName: 'Cancel' },
       onClick: () => {
-        dispatch(openDiscardWarning(dispatchDiscardDM));
+        dispatch(openDiscardWarning());
       },
       disabled: !isStateDirty,
     },

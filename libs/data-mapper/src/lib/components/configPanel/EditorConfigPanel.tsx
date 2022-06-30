@@ -1,4 +1,4 @@
-import { openChangeInputWarning, openChangeOutputWarning } from '../../core/state/ModalSlice';
+import { closeAllWarning, openChangeInputWarning, openChangeOutputWarning, removeOkClicked } from '../../core/state/ModalSlice';
 import { closeDefaultConfigPanel, closeSchemaChangePanel, openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
@@ -6,7 +6,7 @@ import { ChangeSchemaView } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +26,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
   const isChangeSchemaPanelOpen = useSelector((state: RootState) => state.panel.isChangeSchemaPanelOpen);
   const schemaType = useSelector((state: RootState) => state.panel.schemaType);
+  const isChangeSchemaConfirmed = useSelector((state: RootState) => state.modal.isChangeSchemaWarning && state.modal.isOkClicked);
   const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
   const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
   const [errorMessage, setErrorMessage] = useState('');
@@ -96,6 +97,28 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
     }
   }, [closeSchemaPanel, onSubmitOutputSchema, selectedOutputSchema, genericErrMsg]);
 
+  useEffect(() => {
+    if (isChangeSchemaConfirmed) {
+      dispatch(removeOkClicked());
+      if (schemaType === SchemaTypes.Input) {
+        editInputSchema();
+      } else {
+        editOutputSchema();
+      }
+      dispatch(closeAllWarning());
+    }
+  }, [
+    closeSchemaPanel,
+    dispatch,
+    editInputSchema,
+    editOutputSchema,
+    genericErrMsg,
+    isChangeSchemaConfirmed,
+    onSubmitInputSchema,
+    schemaType,
+    selectedInputSchema,
+  ]);
+
   const onRenderFooterContent = useCallback(
     () => (
       <div>
@@ -105,10 +128,10 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
             onClick={
               schemaType === SchemaTypes.Input
                 ? curDataMapOperation
-                  ? () => dispatch(openChangeInputWarning(editInputSchema))
+                  ? () => dispatch(openChangeInputWarning())
                   : editInputSchema
                 : curDataMapOperation
-                ? () => dispatch(openChangeOutputWarning(editOutputSchema))
+                ? () => dispatch(openChangeOutputWarning())
                 : editOutputSchema
             }
             disabled={schemaType === SchemaTypes.Input ? !selectedInputSchema : !selectedOutputSchema}

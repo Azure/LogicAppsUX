@@ -4,7 +4,7 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { EditorConfigPanel, SchemaTypes } from '../components/configPanel/EditorConfigPanel';
 import { SelectSchemaCard } from '../components/schemaSelection/selectSchemaCard';
-import { WarningModal } from '../components/warningModal/warningModal';
+import { WarningModal } from '../components/warningModal/WarningModal';
 import type { DataMapOperationState } from '../core/state/DataMapSlice';
 import { saveDataMap } from '../core/state/DataMapSlice';
 import {
