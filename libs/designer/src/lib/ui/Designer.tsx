@@ -6,6 +6,7 @@ import HiddenNode from './CustomNodes/HiddenNode';
 import TestNode from './CustomNodes/OperationCardNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
+import Minimap from './Minimap';
 import { ButtonEdge } from './connections/edge';
 // import { OnlyEdge } from './connections/onlyEdge';
 import { HiddenEdge } from './connections/hiddenEdge';
@@ -14,7 +15,7 @@ import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { NodeChange } from 'react-flow-renderer';
-import ReactFlow, { Controls, ReactFlowProvider } from 'react-flow-renderer';
+import ReactFlow, { Background, BackgroundVariant, Controls, ReactFlowProvider } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 
 export interface DesignerProps {
@@ -72,7 +73,9 @@ export const Designer = () => {
           >
             <PanelRoot />
           </ReactFlow>
+          <Minimap />
           <Controls showInteractive={false} />
+          <Background variant={BackgroundVariant.Dots} gap={23} size={0.75} />
         </ReactFlowProvider>
       </div>
     </DndProvider>
