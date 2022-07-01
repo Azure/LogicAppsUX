@@ -5,7 +5,7 @@ import { getOperationInfo, getOperationManifest } from '../../queries/operation'
 import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
-import type { Operations } from '../../state/workflowSlice';
+import type { Operations } from '../../state/workflow/workflowSlice';
 import { isRootNode } from '../../utils/graph';
 import {
   loadParameterValuesFromDefault,

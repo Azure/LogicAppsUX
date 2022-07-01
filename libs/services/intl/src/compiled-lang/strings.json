@@ -663,6 +663,46 @@
       "value": "Required. The string to encode into base64 representation."
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Actions"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Action"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
@@ -1077,6 +1117,46 @@
     {
       "type": 0,
       "value": "Output Schema"
+    }
+  ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cases"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Case"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
     }
   ],
   "L+PY+j": [

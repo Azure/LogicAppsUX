@@ -1,4 +1,4 @@
-import type { Operations, NodesMetadata } from '../../../state/workflowSlice';
+import type { Operations, NodesMetadata } from '../../../state/workflow/workflowSlice';
 import { createWorkflowNode, createWorkflowEdge } from '../../../utils/graph';
 import type { WorkflowNode } from '../../models/workflowNode';
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '../../models/workflowNode';
@@ -203,13 +203,17 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
     manual: { graphId: 'root' },
     Increment_variable: { graphId: 'root' },
     Initialize_variable: { graphId: 'root' },
-    ActionIf: { graphId: 'root' },
-    'ActionIf-actions-#subgraph': { graphId: 'ActionIf-actions-#subgraph', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE },
-    'ActionIf-elseActions-#subgraph': { graphId: 'ActionIf-elseActions-#subgraph', subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE },
+    ActionIf: { graphId: 'root', actionCount: 2 },
+    'ActionIf-actions-#subgraph': { graphId: 'ActionIf-actions-#subgraph', actionCount: 2, subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE },
+    'ActionIf-elseActions-#subgraph': {
+      graphId: 'ActionIf-elseActions-#subgraph',
+      actionCount: 1,
+      subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE,
+    },
     Increment_variable2: { graphId: 'ActionIf-actions' },
     Increment_variable4: { graphId: 'ActionIf-actions' },
     Increment_variable3: { graphId: 'ActionIf-elseActions' },
-    EmptyScope: { graphId: 'root' },
+    EmptyScope: { graphId: 'root', actionCount: 0 },
     Response: { graphId: 'root' },
   },
 };

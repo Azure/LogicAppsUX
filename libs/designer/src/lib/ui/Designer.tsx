@@ -1,6 +1,6 @@
 import { useLayout } from '../core/graphlayout';
 import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
-import { updateNodeSizes } from '../core/state/workflowSlice';
+import { updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
 import TestNode from './CustomNodes/OperationCardNode';
@@ -34,6 +34,7 @@ const nodeTypes: NodeTypesObj = {
 
 const edgeTypes = {
   BUTTON_EDGE: ButtonEdge,
+  HEADING_EDGE: ButtonEdge, // This is functionally the same as a button edge
   // ONLY_EDGE: undefined,
   HIDDEN_EDGE: HiddenEdge,
 };

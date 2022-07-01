@@ -1,7 +1,7 @@
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
-import type { RootState } from '../store';
+import { getWorkflowGraph } from '../state/workflow/workflowSelectors';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useEffect, useState } from 'react';
@@ -137,7 +137,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
 export const useLayout = (): [Node[], Edge[]] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<Node[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
-  const workflowGraph = useSelector((state: RootState) => state.workflow.graph);
+  const workflowGraph = useSelector(getWorkflowGraph);
 
   const readOnly = useReadOnly();
 

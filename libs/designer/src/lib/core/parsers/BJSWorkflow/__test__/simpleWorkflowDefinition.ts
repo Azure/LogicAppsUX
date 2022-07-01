@@ -1,4 +1,4 @@
-import type { Operations, NodesMetadata } from '../../../state/workflowSlice';
+import type { Operations, NodesMetadata } from '../../../state/workflow/workflowSlice';
 import { createWorkflowNode, createWorkflowEdge } from '../../../utils/graph';
 import type { WorkflowNode } from '../../models/workflowNode';
 import { WORKFLOW_NODE_TYPES } from '../../models/workflowNode';

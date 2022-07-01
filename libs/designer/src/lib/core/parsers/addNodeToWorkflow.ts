@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import type { NodesMetadata } from '../state/workflowSlice';
+import type { NodesMetadata } from '../state/workflow/workflowSlice';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from './models/workflowNode';
 
