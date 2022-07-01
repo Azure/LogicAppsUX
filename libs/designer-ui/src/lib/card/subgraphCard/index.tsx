@@ -5,7 +5,7 @@ import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
-interface SubgraphHeaderProps {
+interface SubgraphCardProps {
   parentId: string;
   subgraphType: SubgraphType;
   title?: string;
@@ -17,8 +17,7 @@ interface SubgraphHeaderProps {
   showAddButton?: boolean;
 }
 
-export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
-  parentId,
+export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   subgraphType,
   title = 'undefined',
   collapsed,
@@ -68,16 +67,20 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
       }),
       size: 'small',
     },
+    UNTIL_DO: {
+      color: '#486991',
+      title: intl.formatMessage({
+        defaultMessage: 'Do',
+        description: 'Do, as in "to do an action"',
+      }),
+      size: 'small',
+    },
     SWITCH_ADD_CASE: {},
   };
 
-  const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
+  const handleTitleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
-    if (subgraphType !== SUBGRAPH_TYPES['SWITCH_CASE']) {
-      onClick?.(parentId);
-    } else {
-      onClick?.(title);
-    }
+    onClick?.(title);
   };
 
   const data = SubgraphTypeData[subgraphType];
@@ -85,12 +88,12 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
   if (data.size === 'large') {
     return (
       <div
-        className={css('msla-subgraph-header', data.size)}
+        className={css('msla-subgraph-card', data.size)}
         style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
         tabIndex={-1}
       >
         <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
-        <button className="msla-subgraph-title" onClick={handleClick}>
+        <button className="msla-subgraph-title" onClick={handleTitleClick}>
           {data.title}
         </button>
         <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
@@ -100,10 +103,14 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
     return (
       <div style={{ width: 200, display: 'grid', placeItems: 'center' }}>
         <button
-          className={css('msla-subgraph-header', data.size)}
+          className={css('msla-subgraph-card', data.size)}
           style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
-          onClick={handleCollapse}
+          onClick={(e) => {
+            handleTitleClick(e);
+            handleCollapse?.(e);
+          }}
         >
+          <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
           <div className="msla-subgraph-title">{data.title}</div>
           <CollapseToggle disabled collapsed={collapsed} />
         </button>

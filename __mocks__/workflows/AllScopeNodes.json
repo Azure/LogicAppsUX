@@ -166,6 +166,60 @@
               }
             },
             "case": "test-3"
+          },
+          "DoUntil_Case": {
+            "actions": {
+              "Until": {
+                "actions": {
+                  "Until_Action_1": {
+                    "inputs": {
+                      "name": "var1",
+                      "value": 1
+                    },
+                    "runAfter": {},
+                    "type": "IncrementVariable"
+                  },
+                  "Until_Action_2": {
+                    "inputs": {
+                      "name": "var1",
+                      "value": 1
+                    },
+                    "runAfter": {
+                      "Until_Action_1": ["Succeeded"]
+                    },
+                    "type": "IncrementVariable"
+                  },
+                  "Until_Nested": {
+                    "actions": {
+                      "Until_Action_3": {
+                        "inputs": {
+                          "name": "var1",
+                          "value": 1
+                        },
+                        "runAfter": {},
+                        "type": "IncrementVariable"
+                      }
+                    },
+                    "expression": "@equals('hey', 'hey')",
+                    "limit": {
+                      "count": 60,
+                      "timeout": "PT1H"
+                    },
+                    "runAfter": {
+                      "Until_Action_2": ["Succeeded"]
+                    },
+                    "type": "Until"
+                  }
+                },
+                "expression": "@equals('hey', 'hey')",
+                "limit": {
+                  "count": 60,
+                  "timeout": "PT1H"
+                },
+                "type": "Until"
+              }
+            },
+            "case": "test-4"
           }
         },
         "default": {

@@ -126,6 +126,9 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
           'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.onlyEdge,
           'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.onlyEdge,
         }),
+        ...(node.children?.[node.children.length - 1].id.endsWith('#footer') && {
+          'elk.padding': '[top=0,left=16,bottom=0,right=16]',
+        }),
       },
     };
   }

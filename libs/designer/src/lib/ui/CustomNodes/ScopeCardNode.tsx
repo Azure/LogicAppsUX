@@ -2,8 +2,9 @@ import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, expandPanel } from '../../core/state/panel/panelSlice';
 import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
 import type { AppDispatch, RootState } from '../../core/store';
+import { isLeafNodeFromEdges } from '../../core/utils/graph';
 import { DropZone } from '../connections/dropzone';
 import { labelCase } from '@microsoft-logic-apps/utils';
 import { ScopeCard } from '@microsoft/designer-ui';
@@ -14,7 +15,7 @@ import type { NodeProps } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const scopeId = id.split('-#')[0];
 
   const node = useActionMetadata(scopeId);
@@ -48,7 +49,7 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
   const operationInfo = useOperationInfo(scopeId);
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
-  const childEdges = useEdgesByParent(id);
+  const edges = useEdgesBySource(id);
 
   const isPanelCollapsed = useSelector((state: RootState) => state.panel.collapsed);
   const nodeClick = useCallback(() => {
@@ -62,11 +63,14 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
     return null;
   }
 
-  const normalizedType = node.type.toLowerCase();
-
   const label = labelCase(scopeId);
 
-  const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope'];
+  const isEmpty = isLeafNodeFromEdges(edges);
+  const isFooter = id.endsWith('#footer');
+  const showEmptyGraphComponents = isEmpty && !isFooter;
+
+  const normalizedType = node.type.toLowerCase();
+  const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope', 'until'];
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <>
@@ -90,7 +94,7 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
-        {childEdges.length === 0 ? (
+        {showEmptyGraphComponents ? (
           !readOnly ? (
             <div className={'edge-drop-zone-container'}>
               <DropZone graphId={scopeId} parent={scopeId} />
@@ -106,6 +110,6 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
   }
 };
 
-ScopeHeaderNode.displayName = 'ScopeNode';
+ScopeCardNode.displayName = 'ScopeNode';
 
-export default memo(ScopeHeaderNode);
+export default memo(ScopeCardNode);
