@@ -565,7 +565,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "入力スキーマ"
     }
   ],
   "8ubEPi": [
@@ -1054,7 +1054,7 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "出力スキーマ"
     }
   ],
   "L+PY+j": [
@@ -1821,7 +1821,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "構成"
     }
   ],
   "ZM1mRy": [
@@ -1857,7 +1857,7 @@
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "破棄"
     }
   ],
   "a7j3gS": [
@@ -2482,7 +2482,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "戻る"
     }
   ],
   "lcVG4C": [
@@ -2602,7 +2602,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "閉じる"
     }
   ],
   "o/0SEj": [
