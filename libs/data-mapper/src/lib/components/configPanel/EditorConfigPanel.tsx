@@ -145,7 +145,11 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
                 ? () => dispatch(openChangeOutputWarning())
                 : editOutputSchema
             }
-            disabled={schemaType === SchemaTypes.Input ? !selectedInputSchema : !selectedOutputSchema}
+            disabled={
+              schemaType === SchemaTypes.Input
+                ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation?.curDataMap.srcSchemaName
+                : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation?.curDataMap.dstSchemaName
+            }
           >
             {addMessage}
           </PrimaryButton>

@@ -81,7 +81,6 @@ export const dataMapSlice = createSlice({
       state,
       action: PayloadAction<{ inputSchemaExtended: SchemaExtended | undefined; outputSchemaExtended: SchemaExtended | undefined }>
     ) => {
-      // TODO: consider those below => IMPORTANT FOR DISCARD
       const inputSchemaExtended = action.payload.inputSchemaExtended;
       const outputSchemaExtended = action.payload.outputSchemaExtended;
       if (state.curDataMapOperation) {
