@@ -30,7 +30,7 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Deseria
     const [[tID, trigger]] = Object.entries(definition.triggers);
     triggerNode = createWorkflowNode(tID);
     allActions[tID] = { ...trigger };
-    nodesMetadata[tID] = { graphId: 'root' };
+    nodesMetadata[tID] = { graphId: 'root', isRoot: true };
   }
 
   const children = [];
@@ -101,7 +101,7 @@ const buildGraphFromActions = (
     }
 
     // Assign root prop
-    nodesMetadata[actionName] = { ...nodesMetadata[actionName], ...(isRoot && { isRoot: true }) };
+    nodesMetadata[actionName] = { ...nodesMetadata[actionName], graphId, ...(isRoot && { isRoot: true }) };
     if (!isRoot) {
       for (const [runAfterAction] of Object.entries(action.runAfter ?? {})) {
         edges.push(createWorkflowEdge(runAfterAction, actionName));
