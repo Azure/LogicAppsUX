@@ -1,7 +1,7 @@
 import { initialState } from '../../parsers/__test__/mocks/workflowMock';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
-import reducer, { addNode } from '../workflowSlice';
+import reducer, { addNode } from '../workflow/workflowSlice';
 
 describe('workflow slice reducers', () => {
   it('should add initial node to the workflow', () => {

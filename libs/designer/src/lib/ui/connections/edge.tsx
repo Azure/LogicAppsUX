@@ -1,6 +1,6 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import React, { useMemo } from 'react';

@@ -1,7 +1,7 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { useActionMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import { isLeafNodeFromEdges } from '../../core/utils/graph';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';

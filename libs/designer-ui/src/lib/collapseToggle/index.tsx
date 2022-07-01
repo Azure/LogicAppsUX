@@ -1,4 +1,4 @@
-import { TooltipHost, DirectionalHint, Icon } from '@fluentui/react';
+import { TooltipHost, DirectionalHint, Icon, css } from '@fluentui/react';
 import { FontSizes } from '@fluentui/theme';
 import { useIntl } from 'react-intl';
 
@@ -27,7 +27,12 @@ const CollapseToggle = (props: CollapseToggleProps) => {
 
   return (
     <TooltipHost content={toggleText} directionalHint={DirectionalHint.rightCenter}>
-      <button aria-label={toggleText} disabled={disabled} className="msla-collapse-toggle" onClick={handleCollapse}>
+      <button
+        aria-label={toggleText}
+        disabled={disabled}
+        className={css('msla-collapse-toggle', disabled && 'disabled')}
+        onClick={handleCollapse}
+      >
         <Icon iconName={iconName} styles={{ root: { fontSize: FontSizes.small } }} />
       </button>
     </TooltipHost>

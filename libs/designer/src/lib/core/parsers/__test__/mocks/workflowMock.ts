@@ -1,4 +1,4 @@
-import type { WorkflowState } from '../../../state/workflowSlice';
+import type { WorkflowState } from '../../../state/workflow/workflowSlice';
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '../../models/workflowNode';
 import type { WorkflowNode } from '../../models/workflowNode';
 
@@ -11,6 +11,7 @@ export const initialState: WorkflowState = {
   },
   operations: {},
   nodesMetadata: {},
+  collapsedGraphIds: [],
 };
 
 const createMockNode = (id: string) => ({

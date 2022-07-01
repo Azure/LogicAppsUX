@@ -16,9 +16,10 @@ export interface WorkflowNode {
   width?: number; // Action Nodes only
 }
 
-export type WorkflowEdgeType = 'BUTTON_EDGE' | 'ONLY_EDGE' | 'HIDDEN_EDGE';
+export type WorkflowEdgeType = 'BUTTON_EDGE' | 'HEADING_EDGE' | 'ONLY_EDGE' | 'HIDDEN_EDGE';
 export const WORKFLOW_EDGE_TYPES: Record<string, WorkflowEdgeType> = {
   BUTTON_EDGE: 'BUTTON_EDGE',
+  HEADING_EDGE: 'HEADING_EDGE',
   ONLY_EDGE: 'ONLY_EDGE',
   HIDDEN_EDGE: 'HIDDEN_EDGE',
 };

@@ -663,6 +663,46 @@
       "value": "Ŕèɋůíŕèḋ. Ṯḫè śṭŕíńĝ ṭŏ èńćŏḋè íńṭŏ ḃâśè64 ŕèṗŕèśèńṭâṭíŏń."
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Ḁćṭíŏńś"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Ḁćṭíŏń"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Ḁćṭíŏńś"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
@@ -1077,6 +1117,46 @@
     {
       "type": 0,
       "value": "Õůṭṗůṭ Ṡćḫèṁâ"
+    }
+  ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Ḉâśèś"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Ḉâśè"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Ḉâśèś"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
     }
   ],
   "L+PY+j": [

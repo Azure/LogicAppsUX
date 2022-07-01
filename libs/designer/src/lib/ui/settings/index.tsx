@@ -1,6 +1,6 @@
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
-import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
 import { DataHandling } from './sections/datahandling';
 import { General } from './sections/general';

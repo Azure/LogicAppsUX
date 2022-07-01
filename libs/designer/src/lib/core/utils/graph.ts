@@ -1,6 +1,6 @@
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode, WorkflowEdgeType, WorkflowNodeType } from '../parsers/models/workflowNode';
-import type { NodesMetadata } from '../state/workflowSlice';
+import type { NodesMetadata } from '../state/workflow/workflowSlice';
 import { equals } from '@microsoft-logic-apps/utils';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
 
