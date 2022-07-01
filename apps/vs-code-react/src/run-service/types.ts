@@ -222,3 +222,10 @@ export interface IDropDownOption {
   key: string;
   text: string;
 }
+
+export enum ProjectRoutes {
+  export = 'export',
+  instance_selection = 'instance-selection',
+  selection = 'selection',
+  overview = 'overview',
+}
