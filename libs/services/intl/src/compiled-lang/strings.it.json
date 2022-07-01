@@ -549,6 +549,12 @@
       "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore o uguale al valore con cui è confrontato."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Aggiungi schema di output"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +571,12 @@
     {
       "type": 0,
       "value": "Con il modello asincrono, se il server remoto indica che la richiesta è stata accettata per l'elaborazione con una risposta 202 (Accettata), il motore di App per la logica continua a eseguire il poll dell'URL specificato nell'intestazione Location della risposta, fino a raggiungere uno stato terminale."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Schema di input"
     }
   ],
   "8ubEPi": [
@@ -595,12 +607,6 @@
     {
       "type": 0,
       "value": "Connettore"
-    }
-  ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Aggiungere schema di output"
     }
   ],
   "9JuvQ4": [
@@ -1001,12 +1007,6 @@
       "value": "Obbligatorio. Stringa contenente l'ora."
     }
   ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Annulla"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -1049,12 +1049,6 @@
       "value": "Necessario. Stringa di formato numerico."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Aggiungere schema di input"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1077,6 +1071,12 @@
     {
       "type": 0,
       "value": "Restituisce un subset di caratteri da una stringa"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Schema di output"
     }
   ],
   "L+PY+j": [
@@ -1705,6 +1705,12 @@
       "value": "Restituisce il risultato della moltiplicazione dei due numeri"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Sostituisci lo schema esistente."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1853,6 +1859,12 @@
       "value": "Nessuno"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Configurazione"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1883,6 +1895,12 @@
       "value": "Questa operazione è già stata eliminata."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Rimuovi"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1905,6 +1923,12 @@
     {
       "type": 0,
       "value": "Gestione dei dati"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "ajAro8": [
@@ -1947,6 +1971,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Raccolta da cui recuperare i primi oggetti Count."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Do"
     }
   ],
   "c2XklE": [
@@ -2043,6 +2073,12 @@
     {
       "type": 0,
       "value": "Input sicuri dell'operazione."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "icona a matita"
     }
   ],
   "dhvk0u": [
@@ -2381,6 +2417,12 @@
       "value": "Modificare in JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Toolbox"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2403,6 +2445,12 @@
     {
       "type": 0,
       "value": "Sì"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Aggiungi schema di input"
     }
   ],
   "kHcCxH": [
@@ -2481,6 +2529,12 @@
     {
       "type": 0,
       "value": "Titolo"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Indietro"
     }
   ],
   "lcVG4C": [
@@ -2595,6 +2649,12 @@
     {
       "type": 0,
       "value": "Aggiunge un numero intero di minuti al timestamp in formato stringa passato"
+    }
+  ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Chiudi"
     }
   ],
   "o/0SEj": [
