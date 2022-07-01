@@ -569,7 +569,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "输入架构"
     }
   ],
   "8ubEPi": [
@@ -1058,7 +1058,7 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "输出架构"
     }
   ],
   "L+PY+j": [
@@ -1829,7 +1829,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "配置"
     }
   ],
   "ZM1mRy": [
@@ -1865,7 +1865,7 @@
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "放弃"
     }
   ],
   "a7j3gS": [
@@ -2498,7 +2498,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "返回"
     }
   ],
   "lcVG4C": [
@@ -2618,7 +2618,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "关闭"
     }
   ],
   "o/0SEj": [

@@ -576,7 +576,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "Esquema de Entrada"
     }
   ],
   "8ubEPi": [
@@ -1076,7 +1076,7 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "Esquema de Saída"
     }
   ],
   "L+PY+j": [
@@ -1854,7 +1854,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Configuração"
     }
   ],
   "ZM1mRy": [
@@ -1890,7 +1890,7 @@
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Eliminar"
     }
   ],
   "a7j3gS": [
@@ -2534,7 +2534,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "Anterior"
     }
   ],
   "lcVG4C": [
@@ -2654,7 +2654,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Fechar"
     }
   ],
   "o/0SEj": [

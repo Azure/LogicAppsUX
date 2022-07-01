@@ -598,7 +598,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "Входная схема"
     }
   ],
   "8ubEPi": [
@@ -1120,7 +1120,7 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "Выходная схема"
     }
   ],
   "L+PY+j": [
@@ -1920,7 +1920,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Конфигурация"
     }
   ],
   "ZM1mRy": [
@@ -1956,7 +1956,7 @@
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Отменить"
     }
   ],
   "a7j3gS": [
@@ -2622,7 +2622,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "Назад"
     }
   ],
   "lcVG4C": [
@@ -2742,7 +2742,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Закрыть"
     }
   ],
   "o/0SEj": [

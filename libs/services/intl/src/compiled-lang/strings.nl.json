@@ -576,7 +576,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "Invoerschema"
     }
   ],
   "8ubEPi": [
@@ -1076,7 +1076,7 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "Uitvoerschema"
     }
   ],
   "L+PY+j": [
@@ -1858,7 +1858,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Configuratie"
     }
   ],
   "ZM1mRy": [
@@ -1894,7 +1894,7 @@
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Negeren"
     }
   ],
   "a7j3gS": [
@@ -2538,7 +2538,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "Vorige"
     }
   ],
   "lcVG4C": [
@@ -2658,7 +2658,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Sluiten"
     }
   ],
   "o/0SEj": [
