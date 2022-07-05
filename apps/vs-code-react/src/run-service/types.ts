@@ -187,5 +187,38 @@ export interface ISelectedListProps {
 
 export enum QueryKeys {
   workflowsData = 'workflowsData',
+  subscriptionData = 'subscriptionData',
   runsData = 'runsData',
+  iseData = 'iseData',
+}
+
+export interface ISubscription {
+  id: string;
+  subscriptionId: string;
+  subscriptionName: string;
+}
+
+export type ExportData = {
+  selectedWorkflows: Array<any>;
+  selectedSubscription: string;
+  selectedIse: string;
+};
+
+export enum ResourceType {
+  workflows = 'workflows',
+  subscriptions = 'subscriptions',
+  ise = 'ise',
+}
+
+export interface IIse {
+  id: string;
+  subscriptionId: string;
+  iseName: string;
+  location: string;
+  resourceGroup: string;
+}
+
+export interface IDropDownOption {
+  key: string;
+  text: string;
 }
