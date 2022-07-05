@@ -1,4 +1,4 @@
-import { useMinimap } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useMinimap } from '../core/state/designerView/designerViewSelectors';
 import { MiniMap } from 'react-flow-renderer';
 
 const Minimap = () => {
