@@ -15,7 +15,7 @@ describe('workflow slice reducers', () => {
         id: '123',
         height: 67,
         width: 200,
-        type: WORKFLOW_NODE_TYPES.TEST_NODE,
+        type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
       },
     ]);
     expect(state.nodesMetadata).toEqual({

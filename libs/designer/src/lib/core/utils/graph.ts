@@ -23,14 +23,14 @@ const DEFAULT_NODE_SIZE = {
 export const createWorkflowNode = (id: string, type?: WorkflowNodeType): WorkflowNode => ({
   id,
   ...DEFAULT_NODE_SIZE,
-  type: type ?? WORKFLOW_NODE_TYPES.TEST_NODE,
+  type: type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE,
 });
 
 export const createElkNode = (id: string, type?: WorkflowNodeType): ElkNode => ({
   id,
   ...DEFAULT_NODE_SIZE,
   layoutOptions: {
-    nodeType: type ?? WORKFLOW_NODE_TYPES.TEST_NODE,
+    nodeType: type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE,
   },
 });
 

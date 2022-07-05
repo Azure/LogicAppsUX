@@ -38,7 +38,7 @@ const readOnlyOptions: Record<string, string> = {
 };
 
 const defaultEdgeType = WORKFLOW_EDGE_TYPES.BUTTON_EDGE;
-const defaultNodeType = WORKFLOW_NODE_TYPES.TEST_NODE;
+const defaultNodeType = WORKFLOW_NODE_TYPES.OPERATION_NODE;
 
 const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
   const elk = new ELK();
