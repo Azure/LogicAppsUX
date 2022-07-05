@@ -118,6 +118,7 @@ export const InstanceSelection: React.FC = () => {
         placeholder={subscriptions.length ? intlText.SELECT_OPTION : intlText.EMPTY_SUBSCRIPTION}
         disabled={isSubscriptionsLoading || !subscriptions.length}
         onChange={onChangeSubscriptions}
+        selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
         className="msla-export-instance-panel-dropdown"
       />
       <Dropdown
