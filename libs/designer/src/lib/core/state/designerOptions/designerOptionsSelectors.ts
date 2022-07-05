@@ -8,3 +8,7 @@ export const useReadOnly = () => {
 export const useMonitoringView = () => {
   return useSelector((state: RootState) => state.designerOptions.isMonitoringView);
 };
+
+export const useMinimap = () => {
+  return useSelector((state: RootState) => state.designerOptions.showMinimap);
+};
