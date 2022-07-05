@@ -4,6 +4,7 @@ export interface DesignerOptionsState {
   readOnly?: boolean;
   isMonitoringView?: boolean;
   servicesInitialized?: boolean;
+  showMinimap?: boolean;
 }
 
 export interface ServiceOptions {
