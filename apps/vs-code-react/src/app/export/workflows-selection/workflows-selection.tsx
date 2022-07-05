@@ -74,15 +74,15 @@ export const WorkflowsSelection: React.FC = () => {
   });
 
   return (
-    <div className="msla-export-overview-panel">
-      <div className="msla-export-overview-panel-list">
+    <div className="msla-export-workflows-panel">
+      <div className="msla-export-workflows-panel-list">
         <Text variant="xLarge" nowrap block>
           {intlText.SELECT_TITLE}
         </Text>
         <Text variant="large" nowrap block>
           {intlText.SELECT_DESCRIPTION}
         </Text>
-        <div className="msla-export-overview-panel-list-workflows">
+        <div className="msla-export-workflows-panel-list-workflows">
           <ShimmeredDetailsList
             items={workflowItems ?? []}
             columns={getListColumns()}
@@ -96,7 +96,7 @@ export const WorkflowsSelection: React.FC = () => {
           />
         </div>
       </div>
-      <Separator vertical className="msla-export-overview-panel-divider" />
+      <Separator vertical className="msla-export-workflows-panel-divider" />
       <SelectedList selectedItems={selectedWorkflows} />
     </div>
   );
