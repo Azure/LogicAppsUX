@@ -142,7 +142,9 @@ const processScopeActions = (
       ...metadata,
       [graphId]: {
         graphId: rootGraphId,
-        actionCount: graph.children?.filter((node) => !node.id.includes('-#'))?.length ?? -1,
+        actionCount:
+          graph.children?.filter((node) => node.type === WORKFLOW_NODE_TYPES.TEST_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE)
+            ?.length ?? 0,
       },
     };
 
@@ -208,7 +210,9 @@ const processScopeActions = (
       [graphId]: {
         graphId: rootGraphId,
         subgraphType: SUBGRAPH_TYPES.UNTIL_DO,
-        actionCount: graph.children?.filter((node) => !node.id.includes('-#'))?.length ?? -1,
+        actionCount:
+          graph.children?.filter((node) => node.type === WORKFLOW_NODE_TYPES.TEST_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE)
+            ?.length ?? 0,
       },
     };
 
