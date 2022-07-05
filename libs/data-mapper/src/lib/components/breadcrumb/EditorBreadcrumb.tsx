@@ -2,14 +2,16 @@ import { setCurrentOutputNode } from '../../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import type { IBreadcrumbItem } from '@fluentui/react';
-import { Breadcrumb } from '@fluentui/react';
+import { ActionButton, Breadcrumb } from '@fluentui/react';
 import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 const maxBreadcrumbItems = 3;
 const overflowIndex = 1;
 
 export const EditorBreadcrumb = (): JSX.Element => {
+  const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
   const currentOutputNode = useSelector((state: RootState) => state.schema.currentOutputNode);
@@ -24,9 +26,41 @@ export const EditorBreadcrumb = (): JSX.Element => {
 
   return breadcrumbItems.length < 1 ? (
     // Breadcrumb doesn't display when empty, this is a breadcrumb space placeholder
-    <div style={{ height: '37px', marginTop: '11px' }}></div>
+    <div style={{ height: '40px', padding: '4px 8px' }}></div>
   ) : (
-    <Breadcrumb items={breadcrumbItems} maxDisplayedItems={maxBreadcrumbItems} overflowIndex={overflowIndex} />
+    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '4px 8px', height: '40px' }}>
+      <Breadcrumb
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'flex-start',
+          margin: '0px',
+        }}
+        items={breadcrumbItems}
+        maxDisplayedItems={maxBreadcrumbItems}
+        overflowIndex={overflowIndex}
+      />
+      <ActionButton
+        style={{
+          width: '130px',
+          height: '32px',
+          padding: '0px',
+          border: '0px',
+          marginLeft: 'auto',
+          marginRight: '12px',
+        }}
+        iconProps={{ iconName: 'Embed' }}
+        onClick={() => {
+          // TODO (refortie) #14887351 - Create the code view
+          console.log('Code view button clicked');
+        }}
+      >
+        {intl.formatMessage({
+          defaultMessage: 'Show code view',
+          description: 'Button to display the code view',
+        })}
+      </ActionButton>
+    </div>
   );
 };
 
