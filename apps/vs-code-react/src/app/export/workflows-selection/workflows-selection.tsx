@@ -11,7 +11,7 @@ import { useIntl } from 'react-intl';
 import { useInfiniteQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
-export const SelectionPage: React.FC = () => {
+export const WorkflowsSelection: React.FC = () => {
   const { baseUrl, accessToken, selectedWorkflows } = useOutlet();
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
