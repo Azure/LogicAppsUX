@@ -7,7 +7,6 @@ const initialState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
   servicesInitialized: false,
-  showMinimap: true,
 };
 
 export const initializeServices = createAsyncThunk(
@@ -28,10 +27,6 @@ export const designerOptionsSlice = createSlice({
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
     },
-    toggleMinimap: (state: DesignerOptionsState) => {
-      console.log('asdfasdfsdfas');
-      state.showMinimap = !state.showMinimap;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(initializeServices.fulfilled, (state, action) => {
@@ -41,6 +36,6 @@ export const designerOptionsSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initDesignerOptions, toggleMinimap } = designerOptionsSlice.actions;
+export const { initDesignerOptions } = designerOptionsSlice.actions;
 
 export default designerOptionsSlice.reducer;
