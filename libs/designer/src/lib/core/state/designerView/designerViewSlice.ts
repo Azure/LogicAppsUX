@@ -6,7 +6,7 @@ const initialState: DesignerViewState = {
 };
 
 export const designerViewSlice = createSlice({
-  name: 'designerOptions',
+  name: 'designerView',
   initialState,
   reducers: {
     toggleMinimap: (state: DesignerViewState) => {

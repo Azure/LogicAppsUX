@@ -11,7 +11,6 @@ const CustomControls = () => {
   const showMinimap = useMinimap();
 
   const minimapToggleClick = () => {
-    console.log('CLICKED');
     dispatch(toggleMinimap());
   };
 
