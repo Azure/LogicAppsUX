@@ -1,6 +1,6 @@
 import { ProjectRoutes } from '../../../run-service';
 import type { RootState } from '../../../state/store';
-import type { initializedVscodeState } from '../../../state/vscodeSlice';
+import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { PrimaryButton } from '@fluentui/react';
 import { useContext } from 'react';
@@ -15,7 +15,7 @@ export const Navigation: React.FC = () => {
   const location = useLocation();
 
   const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { exportData } = vscodeState as initializedVscodeState;
+  const { exportData } = vscodeState as InitializedVscodeState;
   const { selectedSubscription, selectedIse } = exportData;
 
   const intlText = {
