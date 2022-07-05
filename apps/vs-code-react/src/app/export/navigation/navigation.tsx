@@ -1,4 +1,4 @@
-import { ProjectRoutes } from '../../../run-service';
+import { RouteName } from '../../../run-service';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
@@ -47,22 +47,22 @@ export const Navigation: React.FC = () => {
     const { pathname } = location;
 
     switch (pathname) {
-      case `/${ProjectRoutes.export}/${ProjectRoutes.instance_selection}`: {
-        navigate(`/${ProjectRoutes.export}/${ProjectRoutes.selection}`);
+      case `/${RouteName.export}/${RouteName.instance_selection}`: {
+        navigate(`/${RouteName.export}/${RouteName.selection}`);
       }
     }
   };
 
   const isBackDisabled = (): boolean => {
     const { pathname } = location;
-    return pathname === `/${ProjectRoutes.export}/${ProjectRoutes.instance_selection}`;
+    return pathname === `/${RouteName.export}/${RouteName.instance_selection}`;
   };
 
   const isNextDisabled = (): boolean => {
     const { pathname } = location;
 
     switch (pathname) {
-      case `/${ProjectRoutes.export}/${ProjectRoutes.instance_selection}`: {
+      case `/${RouteName.export}/${RouteName.instance_selection}`: {
         return selectedSubscription === '' || selectedIse === '';
       }
       default: {

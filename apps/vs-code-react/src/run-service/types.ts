@@ -223,7 +223,7 @@ export interface IDropDownOption {
   text: string;
 }
 
-export enum ProjectRoutes {
+export enum RouteName {
   export = 'export',
   instance_selection = 'instance-selection',
   selection = 'selection',
