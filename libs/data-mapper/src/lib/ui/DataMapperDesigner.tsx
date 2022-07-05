@@ -1,36 +1,30 @@
 import { checkerboardBackgroundImage } from '../Constants';
 import { convertToReactFlowNode } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
+import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
+import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import { AddSchemaPanelButton, SchemaTypes } from '../components/schemaSelection/addSchemaPanelButton';
+import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
+import { MapOverview } from '../components/mapOverview/MapOverview';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema } from '../models';
-import { LeftHandPanel } from './LeftHandPanel';
-import type { ILayerProps } from '@fluentui/react';
-import { LayerHost } from '@fluentui/react';
-import { useId } from '@fluentui/react-hooks';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useMemo } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const DataMapperDesigner = () => {
-  const layerHostId = useId('layerHost');
-  const panelLayerProps: ILayerProps = {
-    hostId: layerHostId,
-  };
-
+  const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
-  const availableSchemas = useSelector((state: RootState) => state.schema.availableSchemas);
-
   const [nodes, edges] = useLayout();
-  const dispatch = useDispatch<AppDispatch>();
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
     const schemaState = store.getState().schema;
@@ -74,77 +68,75 @@ export const DataMapperDesigner = () => {
     dispatch(setCurrentOutputNode(currentSchemaNode));
   };
 
-  const reactFlowStyle = {
-    backgroundImage: checkerboardBackgroundImage,
-    backgroundSize: '20px 20px',
-    backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-    height: '600px',
-  };
+  const toolboxLoc = intl.formatMessage({
+    defaultMessage: 'Toolbox',
+    description: 'Label to open the input toolbox card',
+  });
 
-  const layeredReactFlow = (
-    <LayerHost
-      id={layerHostId}
-      style={{
-        position: 'relative',
-        overflow: 'hidden',
-        width: '100%',
-      }}
-    >
-      <div className="msla-designer-canvas msla-panel-mode">
-        <ReactFlowProvider>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodeDoubleClick={onNodeDoubleClick}
-            minZoom={0}
-            nodesDraggable={false}
-            fitView
-            proOptions={{
-              account: 'paid-sponsor',
-              hideAttribution: true,
-            }}
-            style={reactFlowStyle}
-          ></ReactFlow>
-        </ReactFlowProvider>
-      </div>
-    </LayerHost>
-  );
+  const functionLoc = intl.formatMessage({
+    defaultMessage: 'Function',
+    description: 'Label to open the Function card',
+  });
+
+  const buttonContainerProps: ButtonContainerProps = {
+    buttons: [
+      {
+        iconProps: { iconName: 'BranchFork2' },
+        title: toolboxLoc,
+        ariaLabel: toolboxLoc,
+        onClick: () => {
+          // TODO - open input toolbox popup
+        },
+      },
+      {
+        iconProps: { iconName: 'Variable' },
+        title: functionLoc,
+        ariaLabel: functionLoc,
+        onClick: () => {
+          // TODO - open functions popup
+        },
+      },
+    ],
+    horizontal: true,
+    xPos: '16px',
+    yPos: '16px',
+  };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
         <EditorCommandBar />
+        <EditorConfigPanel onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
         <EditorBreadcrumb />
-
         {inputSchema && outputSchema ? (
-          layeredReactFlow
+          <>
+            <ButtonContainer {...buttonContainerProps} />
+            <div className="msla-designer-canvas msla-panel-mode">
+              <ReactFlowProvider>
+                <ReactFlow
+                  nodes={nodes}
+                  edges={edges}
+                  onNodeDoubleClick={onNodeDoubleClick}
+                  minZoom={0}
+                  nodesDraggable={false}
+                  fitView
+                  proOptions={{
+                    account: 'paid-sponsor',
+                    hideAttribution: true,
+                  }}
+                  style={{
+                    backgroundImage: checkerboardBackgroundImage,
+                    backgroundSize: '20px 20px',
+                    backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+                    height: '600px',
+                  }}
+                ></ReactFlow>
+              </ReactFlowProvider>
+            </div>
+          </>
         ) : (
-          <div className="msla-designer-canvas msla-panel-mode not-loaded">
-            <div className="left">
-              {inputSchema ? (
-                layeredReactFlow
-              ) : (
-                <AddSchemaPanelButton
-                  schemaType={SchemaTypes.Input}
-                  onSubmitSchema={onSubmitInput}
-                  schemaFilesList={availableSchemas ?? []}
-                />
-              )}
-            </div>
-            <div className="right">
-              {outputSchema ? (
-                layeredReactFlow
-              ) : (
-                <AddSchemaPanelButton
-                  schemaType={SchemaTypes.Output}
-                  onSubmitSchema={onSubmitOutput}
-                  schemaFilesList={availableSchemas ?? []}
-                />
-              )}
-            </div>
-          </div>
+          <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
         )}
-        <LeftHandPanel layerProps={panelLayerProps} />
       </div>
     </DndProvider>
   );

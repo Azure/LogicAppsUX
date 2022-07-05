@@ -538,6 +538,12 @@
       "value": "Harus diisi. Objek untuk diperiksa jika lebih dari atau sama dengan objek yang sedang dibandingkan."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Tambahkan Skema Output"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -554,6 +560,12 @@
     {
       "type": 0,
       "value": "Dengan pola asinkron, jika server jarak jauh menunjukkan bahwa permintaan diterima untuk diproses dengan respons 202 (Diterima), mesin Logic Apps akan terus membuat polling URL yang ditentukan di header lokasi respons hingga mencapai status terminal."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Skema Input"
     }
   ],
   "8ubEPi": [
@@ -584,12 +596,6 @@
     {
       "type": 0,
       "value": "Konektor"
-    }
-  ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Tambahkan skema output"
     }
   ],
   "9JuvQ4": [
@@ -979,12 +985,6 @@
       "value": "Wajib. String yang berisi waktu."
     }
   ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Batal"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -1027,12 +1027,6 @@
       "value": "Wajib. String format numerik."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Tambahkan skema input"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1055,6 +1049,12 @@
     {
       "type": 0,
       "value": "Menampilkan subset karakter dari string"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Skema Output"
     }
   ],
   "L+PY+j": [
@@ -1664,6 +1664,12 @@
       "value": "Menampilkan hasil perkalian dua angka tersebut"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Ganti skema yang ada."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1812,6 +1818,12 @@
       "value": "Tidak ada"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Konfigurasi"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1842,6 +1854,12 @@
       "value": "Operasi ini sudah dihapus."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Buang"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1864,6 +1882,12 @@
     {
       "type": 0,
       "value": "Penanganan Data"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Fungsi"
     }
   ],
   "ajAro8": [
@@ -1906,6 +1930,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Koleksi untuk mengambil objek hitungan pertama."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Lakukan"
     }
   ],
   "c2XklE": [
@@ -2002,6 +2032,12 @@
     {
       "type": 0,
       "value": "Mengamankan input operasi."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "ikon pensil"
     }
   ],
   "dhvk0u": [
@@ -2329,6 +2365,12 @@
       "value": "Edit di JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Kotak Alat"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2351,6 +2393,12 @@
     {
       "type": 0,
       "value": "Ya"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Tambahkan Skema Input"
     }
   ],
   "kHcCxH": [
@@ -2429,6 +2477,12 @@
     {
       "type": 0,
       "value": "Judul"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Kembali"
     }
   ],
   "lcVG4C": [
@@ -2543,6 +2597,12 @@
     {
       "type": 0,
       "value": "Menambahkan jumlah bilangan bulat menit ke tanda waktu string yang diberikan"
+    }
+  ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Tutup"
     }
   ],
   "o/0SEj": [

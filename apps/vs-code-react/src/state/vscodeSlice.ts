@@ -12,7 +12,7 @@ export interface InitializePayload {
   project: ProjectName;
 }
 
-export interface initializedVscodeState {
+export interface InitializedVscodeState {
   initialized: true;
   accessToken?: string;
   corsNotice?: string;
@@ -24,11 +24,11 @@ export interface initializedVscodeState {
   exportData: ExportData;
 }
 
-interface uninitializedVscodeState {
+interface UninitializedVscodeState {
   initialized: false;
   accessToken?: string;
 }
-export type VscodeState = uninitializedVscodeState | initializedVscodeState;
+export type VscodeState = UninitializedVscodeState | InitializedVscodeState;
 
 const initialState: VscodeState = {
   initialized: false,
@@ -41,14 +41,14 @@ export const vscodeSlice = createSlice({
     initialize: (state: VscodeState, action: PayloadAction<InitializePayload>) => {
       const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, project } = action.payload;
       state.initialized = true;
-      (state as initializedVscodeState).project = project;
-      (state as initializedVscodeState).accessToken = accessToken;
-      (state as initializedVscodeState).apiVersion = apiVersion;
-      (state as initializedVscodeState).baseUrl = baseUrl;
-      (state as initializedVscodeState).corsNotice = corsNotice;
-      (state as initializedVscodeState).workflowProperties = workflowProperties;
-      (state as initializedVscodeState).selectedWorkflows = [];
-      (state as initializedVscodeState).exportData = {
+      (state as InitializedVscodeState).project = project;
+      (state as InitializedVscodeState).accessToken = accessToken;
+      (state as InitializedVscodeState).apiVersion = apiVersion;
+      (state as InitializedVscodeState).baseUrl = baseUrl;
+      (state as InitializedVscodeState).corsNotice = corsNotice;
+      (state as InitializedVscodeState).workflowProperties = workflowProperties;
+      (state as InitializedVscodeState).selectedWorkflows = [];
+      (state as InitializedVscodeState).exportData = {
         selectedWorkflows: [],
         selectedSubscription: '',
         selectedIse: '',
@@ -59,16 +59,16 @@ export const vscodeSlice = createSlice({
     },
     updateSelectedWorkFlows: (state: VscodeState, action: PayloadAction<any>) => {
       const { selectedWorkflows } = action.payload;
-      (state as initializedVscodeState).selectedWorkflows = selectedWorkflows;
+      (state as InitializedVscodeState).selectedWorkflows = selectedWorkflows;
     },
     updateSelectedSubscripton: (state: VscodeState, action: PayloadAction<any>) => {
       const { selectedSubscription } = action.payload;
-      (state as initializedVscodeState).exportData.selectedSubscription = selectedSubscription;
-      (state as initializedVscodeState).exportData.selectedIse = '';
+      (state as InitializedVscodeState).exportData.selectedSubscription = selectedSubscription;
+      (state as InitializedVscodeState).exportData.selectedIse = '';
     },
     updateSelectedIse: (state: VscodeState, action: PayloadAction<any>) => {
       const { selectedIse } = action.payload;
-      (state as initializedVscodeState).exportData.selectedIse = selectedIse;
+      (state as InitializedVscodeState).exportData.selectedIse = selectedIse;
     },
   },
 });

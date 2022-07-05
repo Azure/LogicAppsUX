@@ -2,7 +2,7 @@ import { QueryKeys } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedIse, updateSelectedSubscripton } from '../../../state/vscodeSlice';
-import type { initializedVscodeState } from '../../../state/vscodeSlice';
+import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { parseIseData, parseSubscriptionsData } from './helper';
 import { Dropdown, Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const InstanceSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken, exportData } = vscodeState as initializedVscodeState;
+  const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
   const { selectedSubscription, selectedIse } = exportData;
 
   const intl = useIntl();

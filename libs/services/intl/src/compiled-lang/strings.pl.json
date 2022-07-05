@@ -587,6 +587,12 @@
       "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on większy lub równy porównywanemu obiektowi."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Dodaj schemat danych wyjściowych"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -603,6 +609,12 @@
     {
       "type": 0,
       "value": "Jeśli w przypadku wzorca asynchronicznego serwer wskazuje, że żądanie zostało zaakceptowane do przetworzenia, przy użyciu odpowiedzi 202 (Zaakceptowano), aparat usługi Logic Apps będzie nadal sondować adres URL określony w nagłówku lokalizacji odpowiedzi do czasu osiągnięcia stanu końcowego."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Schemat wejściowy"
     }
   ],
   "8ubEPi": [
@@ -633,12 +645,6 @@
     {
       "type": 0,
       "value": "Łącznik"
-    }
-  ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Dodaj schemat danych wyjściowych"
     }
   ],
   "9JuvQ4": [
@@ -1061,12 +1067,6 @@
       "value": "Wymagane. Ciąg zawierający godzinę."
     }
   ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Anuluj"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -1109,12 +1109,6 @@
       "value": "Wymagane. Ciąg formatu liczbowego."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Dodaj schemat danych wejściowych"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1137,6 +1131,12 @@
     {
       "type": 0,
       "value": "Zwraca podciąg znaków z ciągu"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Schemat wyjściowy"
     }
   ],
   "L+PY+j": [
@@ -1779,6 +1779,12 @@
       "value": "Zwraca wynik mnożenia dwóch liczb"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Zamień istniejący schemat."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1927,6 +1933,12 @@
       "value": "Brak"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Konfiguracja"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1957,6 +1969,12 @@
       "value": "Ta operacja została już usunięta."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Odrzuć"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1979,6 +1997,12 @@
     {
       "type": 0,
       "value": "Obsługa danych"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Funkcja"
     }
   ],
   "ajAro8": [
@@ -2021,6 +2045,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Kolekcja, z której należy pobrać pierwsze obiekty (liczba)."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Wykonaj"
     }
   ],
   "c2XklE": [
@@ -2117,6 +2147,12 @@
     {
       "type": 0,
       "value": "Zabezpiecz dane wejściowe operacji."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "ikona ołówka"
     }
   ],
   "dhvk0u": [
@@ -2485,6 +2521,12 @@
       "value": "Edytuj w pliku JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Zestaw narzędzi"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2507,6 +2549,12 @@
     {
       "type": 0,
       "value": "Tak"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Dodaj schemat danych wejściowych"
     }
   ],
   "kHcCxH": [
@@ -2585,6 +2633,12 @@
     {
       "type": 0,
       "value": "Tytuł"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Wstecz"
     }
   ],
   "lcVG4C": [
@@ -2699,6 +2753,12 @@
     {
       "type": 0,
       "value": "Dodaje liczbę całkowitą minut do przekazanej sygnatury czasowej ciągu"
+    }
+  ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Zamknij"
     }
   ],
   "o/0SEj": [
