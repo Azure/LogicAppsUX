@@ -330,7 +330,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Cargue o seleccione un esquema de salida que se usará para la asignación."
     }
   ],
   "3kI7xF": [
@@ -360,7 +360,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "seleccionar entrada"
     }
   ],
   "47kOXr": [
@@ -549,6 +549,12 @@
       "value": "Obligatorio. El objeto que se comprobará si es mayor o igual que el objeto con el que se está comparando."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Agregar esquema de salida"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +571,12 @@
     {
       "type": 0,
       "value": "Con el modelo asincrónico, si el servidor remoto indica que se acepta la solicitud para procesarla con una respuesta 202 (aceptada), el motor de Logic Apps sondeará la dirección URL especificada en el encabezado de ubicación de respuesta hasta alcanzar un estado terminal."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Esquema de entrada"
     }
   ],
   "8ubEPi": [
@@ -597,12 +609,6 @@
       "value": "Conector"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -630,7 +636,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Seleccionar un esquema de salida"
     }
   ],
   "9u/Ae3": [
@@ -968,7 +974,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Seleccionar un esquema de entrada"
     }
   ],
   "Ip7Iax": [
@@ -999,12 +1005,6 @@
     {
       "type": 0,
       "value": "Obligatorio. Una cadena que contiene la hora."
-    }
-  ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1049,12 +1049,6 @@
       "value": "Obligatoria. Cadena de formato numérico."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1070,13 +1064,19 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Seleccione el archivo que se debe cargar."
     }
   ],
   "K90YEU": [
     {
       "type": 0,
       "value": "Devuelve un subconjunto de caracteres de una cadena."
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Esquema de salida"
     }
   ],
   "L+PY+j": [
@@ -1697,6 +1697,12 @@
       "value": "Devuelve el resultado de multiplicar los dos números."
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Reemplazar el esquema existente."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1766,7 +1772,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Examinar"
     }
   ],
   "XqamWZ": [
@@ -1845,6 +1851,12 @@
       "value": "Ninguno"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Configuración"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1875,6 +1887,12 @@
       "value": "Ya se eliminó la operación."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Descartar"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1899,10 +1917,16 @@
       "value": "Control de datos"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Función"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Agregar"
     }
   ],
   "b9/1dK": [
@@ -1941,6 +1965,12 @@
       "value": "Obligatorio. La colección de la que se tomarán los primeros objetos de recuento."
     }
   ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Hacer"
+    }
+  ],
   "c2XklE": [
     {
       "type": 0,
@@ -1956,7 +1986,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "seleccionar salida"
     }
   ],
   "c6XbVI": [
@@ -2035,6 +2065,12 @@
     {
       "type": 0,
       "value": "Entradas seguras de la operación."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "icono de lápiz"
     }
   ],
   "dhvk0u": [
@@ -2381,6 +2417,12 @@
       "value": "Editar en JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Cuadro de herramientas"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2403,6 +2445,12 @@
     {
       "type": 0,
       "value": "Sí"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Agregar esquema de entrada"
     }
   ],
   "kHcCxH": [
@@ -2481,6 +2529,12 @@
     {
       "type": 0,
       "value": "Título"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Atrás"
     }
   ],
   "lcVG4C": [
@@ -2597,6 +2651,12 @@
       "value": "Agrega un número entero de minutos a la marca de tiempo de una cadena pasada."
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Cerrar"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2644,7 +2704,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "No se pudo cargar el esquema. Inténtelo de nuevo."
     }
   ],
   "p/0r2N": [
@@ -2934,7 +2994,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Cargue o seleccione un esquema de entrada que se usará para la asignación."
     }
   ],
   "tE7Zam": [

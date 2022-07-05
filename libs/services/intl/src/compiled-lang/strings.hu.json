@@ -330,7 +330,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt kimeneti sémát."
     }
   ],
   "3kI7xF": [
@@ -360,7 +360,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "bemenet kiválasztása"
     }
   ],
   "47kOXr": [
@@ -549,6 +549,12 @@
       "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy a hasonlított objektumnál nagyobb vagy azzal egyenlő-e."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Kimeneti séma hozzáadása"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +571,12 @@
     {
       "type": 0,
       "value": "Az aszinkron minta használata esetén ha a távoli kiszolgáló 202-es (Elfogadva) válasszal jelzi, hogy a kérelmet elfogadta feldolgozásra, a Logic Apps-motor addig folytatja a válasz helyet megjelölő fejlécében megadott URL-cím lekérdezését, amíg végállapotba nem kerül."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Bemeneti séma"
     }
   ],
   "8ubEPi": [
@@ -597,12 +609,6 @@
       "value": "Összekötő"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -630,7 +636,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Kimeneti séma kiválasztása"
     }
   ],
   "9u/Ae3": [
@@ -968,7 +974,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Bemeneti séma kiválasztása"
     }
   ],
   "Ip7Iax": [
@@ -999,12 +1005,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az időt tartalmazó sztring."
-    }
-  ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1049,12 +1049,6 @@
       "value": "Kötelező. A numerikus formázó sztring."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1070,13 +1064,19 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Válassza ki a feltöltendő fájlt"
     }
   ],
   "K90YEU": [
     {
       "type": 0,
       "value": "Karakterek részhalmazát adja vissza egy sztringből."
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Kimeneti séma"
     }
   ],
   "L+PY+j": [
@@ -1701,6 +1701,12 @@
       "value": "A két szám szorzásának eredményét adja vissza."
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Meglévő séma cseréje."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1770,7 +1776,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Tallózás"
     }
   ],
   "XqamWZ": [
@@ -1849,6 +1855,12 @@
       "value": "Nincs"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Konfiguráció"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1879,6 +1891,12 @@
       "value": "Ezt a műveletet már törölték."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Elvetés"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1903,10 +1921,16 @@
       "value": "Adatok kezelése"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Függvény"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Hozzáadás"
     }
   ],
   "b9/1dK": [
@@ -1945,6 +1969,12 @@
       "value": "Kötelező megadni. A gyűjtemény, melyből be kell olvasni az első Count objektumokat."
     }
   ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Elvégzés"
+    }
+  ],
   "c2XklE": [
     {
       "type": 0,
@@ -1960,7 +1990,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "kimenet kiválasztása"
     }
   ],
   "c6XbVI": [
@@ -2039,6 +2069,12 @@
     {
       "type": 0,
       "value": "A művelet bemeneteinek biztonságossá tétele."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "ceruza ikon"
     }
   ],
   "dhvk0u": [
@@ -2385,6 +2421,12 @@
       "value": "Szerkesztés JSON formátumban"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Eszközkészlet"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2407,6 +2449,12 @@
     {
       "type": 0,
       "value": "Igen"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Bemeneti séma hozzáadása"
     }
   ],
   "kHcCxH": [
@@ -2485,6 +2533,12 @@
     {
       "type": 0,
       "value": "Cím"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Vissza"
     }
   ],
   "lcVG4C": [
@@ -2601,6 +2655,12 @@
       "value": "Egy egész számmal megadott percszám hozzáadása az átadott sztring típusú időbélyeghez."
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Bezárás"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2648,7 +2708,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "Nem sikerült betölteni a sémát. Próbálkozzon újra."
     }
   ],
   "p/0r2N": [
@@ -2938,7 +2998,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt bemeneti sémát."
     }
   ],
   "tE7Zam": [

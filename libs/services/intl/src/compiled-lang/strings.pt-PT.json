@@ -330,7 +330,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Carregue ou selecione um esquema de saída a utilizar para o seu mapa."
     }
   ],
   "3kI7xF": [
@@ -360,7 +360,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "selecionar entrada"
     }
   ],
   "47kOXr": [
@@ -549,6 +549,12 @@
       "value": "Obrigatório. O objeto a verificar se é igual ou superior ao objeto com que está a ser comparado."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Adicionar Esquema de Saída"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +571,12 @@
     {
       "type": 0,
       "value": "Com o padrão assíncrono, se o servidor remoto indicar que o pedido foi aceite para processamento com uma resposta 202 (Aceite), o motor do Logic Apps continuará a consultar o URL especificado no cabeçalho de localização da resposta até atingir um estado terminal."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Esquema de Entrada"
     }
   ],
   "8ubEPi": [
@@ -597,12 +609,6 @@
       "value": "Conector"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -630,7 +636,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Selecione um esquema de saída"
     }
   ],
   "9u/Ae3": [
@@ -968,7 +974,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Selecione um esquema de entrada"
     }
   ],
   "Ip7Iax": [
@@ -999,12 +1005,6 @@
     {
       "type": 0,
       "value": "Obrigatório. Uma cadeia que contém a hora."
-    }
-  ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1049,12 +1049,6 @@
       "value": "Obrigatório. A cadeia de formato numérico."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1070,13 +1064,19 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Selecione um ficheiro para carregar"
     }
   ],
   "K90YEU": [
     {
       "type": 0,
       "value": "Devolve um subconjunto de carateres a partir de uma cadeia"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Esquema de Saída"
     }
   ],
   "L+PY+j": [
@@ -1697,6 +1697,12 @@
       "value": "Devolve o resultado da multiplicação dos dois números"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Substituir esquema existente."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1766,7 +1772,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Procurar"
     }
   ],
   "XqamWZ": [
@@ -1845,6 +1851,12 @@
       "value": "Nenhuma"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Configuração"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1875,6 +1887,12 @@
       "value": "Esta operação já foi eliminada."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Eliminar"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1899,10 +1917,16 @@
       "value": "Processamento de Dados"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Função"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Adicionar"
     }
   ],
   "b9/1dK": [
@@ -1941,6 +1965,12 @@
       "value": "Obrigatório. A cadeia da qual se deve retirar os primeiros objetos de Contagem."
     }
   ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Fazer"
+    }
+  ],
   "c2XklE": [
     {
       "type": 0,
@@ -1956,7 +1986,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "selecionar saída"
     }
   ],
   "c6XbVI": [
@@ -2035,6 +2065,12 @@
     {
       "type": 0,
       "value": "Entradas seguras da operação."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "ícone de lápis"
     }
   ],
   "dhvk0u": [
@@ -2381,6 +2417,12 @@
       "value": "Editar em JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Caixa de Ferramentas"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2403,6 +2445,12 @@
     {
       "type": 0,
       "value": "Sim"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Adicionar Esquema de Entrada"
     }
   ],
   "kHcCxH": [
@@ -2481,6 +2529,12 @@
     {
       "type": 0,
       "value": "Título"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Anterior"
     }
   ],
   "lcVG4C": [
@@ -2597,6 +2651,12 @@
       "value": "Adiciona um número inteiro de minutos a um carimbo de data/hora de cadeia"
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2644,7 +2704,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "Falha ao carregar o esquema. Tente novamente."
     }
   ],
   "p/0r2N": [
@@ -2934,7 +2994,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Carregue ou selecione um esquema de entrada a utilizar para o seu mapa."
     }
   ],
   "tE7Zam": [

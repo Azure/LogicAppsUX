@@ -368,7 +368,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Przekaż lub wybierz schemat danych wyjściowych, który ma być używany dla mapy."
     }
   ],
   "3kI7xF": [
@@ -398,7 +398,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "wybierz dane wejściowe"
     }
   ],
   "47kOXr": [
@@ -587,6 +587,12 @@
       "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on większy lub równy porównywanemu obiektowi."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Dodaj schemat danych wyjściowych"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -603,6 +609,12 @@
     {
       "type": 0,
       "value": "Jeśli w przypadku wzorca asynchronicznego serwer wskazuje, że żądanie zostało zaakceptowane do przetworzenia, przy użyciu odpowiedzi 202 (Zaakceptowano), aparat usługi Logic Apps będzie nadal sondować adres URL określony w nagłówku lokalizacji odpowiedzi do czasu osiągnięcia stanu końcowego."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Schemat wejściowy"
     }
   ],
   "8ubEPi": [
@@ -635,12 +647,6 @@
       "value": "Łącznik"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -668,7 +674,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Wybierz schemat danych wyjściowych"
     }
   ],
   "9u/Ae3": [
@@ -1028,7 +1034,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Wybierz schemat danych wejściowych"
     }
   ],
   "Ip7Iax": [
@@ -1059,12 +1065,6 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg zawierający godzinę."
-    }
-  ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1109,12 +1109,6 @@
       "value": "Wymagane. Ciąg formatu liczbowego."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1130,13 +1124,19 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Wybierz plik do przekazania"
     }
   ],
   "K90YEU": [
     {
       "type": 0,
       "value": "Zwraca podciąg znaków z ciągu"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Schemat wyjściowy"
     }
   ],
   "L+PY+j": [
@@ -1779,6 +1779,12 @@
       "value": "Zwraca wynik mnożenia dwóch liczb"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Zamień istniejący schemat."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1848,7 +1854,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Przeglądaj"
     }
   ],
   "XqamWZ": [
@@ -1927,6 +1933,12 @@
       "value": "Brak"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Konfiguracja"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1957,6 +1969,12 @@
       "value": "Ta operacja została już usunięta."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Odrzuć"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1981,10 +1999,16 @@
       "value": "Obsługa danych"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Funkcja"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Dodaj"
     }
   ],
   "b9/1dK": [
@@ -2023,6 +2047,12 @@
       "value": "Parametr wymagany. Kolekcja, z której należy pobrać pierwsze obiekty (liczba)."
     }
   ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Wykonaj"
+    }
+  ],
   "c2XklE": [
     {
       "type": 0,
@@ -2038,7 +2068,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "wybierz wyjście"
     }
   ],
   "c6XbVI": [
@@ -2117,6 +2147,12 @@
     {
       "type": 0,
       "value": "Zabezpiecz dane wejściowe operacji."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "ikona ołówka"
     }
   ],
   "dhvk0u": [
@@ -2485,6 +2521,12 @@
       "value": "Edytuj w pliku JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Zestaw narzędzi"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2507,6 +2549,12 @@
     {
       "type": 0,
       "value": "Tak"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Dodaj schemat danych wejściowych"
     }
   ],
   "kHcCxH": [
@@ -2585,6 +2633,12 @@
     {
       "type": 0,
       "value": "Tytuł"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Wstecz"
     }
   ],
   "lcVG4C": [
@@ -2701,6 +2755,12 @@
       "value": "Dodaje liczbę całkowitą minut do przekazanej sygnatury czasowej ciągu"
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Zamknij"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2748,7 +2808,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "Nie można załadować schematu. Spróbuj ponownie."
     }
   ],
   "p/0r2N": [
@@ -3060,7 +3120,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Przekaż lub wybierz schemat danych wejściowych, który ma być używany dla mapy."
     }
   ],
   "tE7Zam": [

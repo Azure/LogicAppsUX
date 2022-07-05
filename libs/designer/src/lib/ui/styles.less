@@ -20,6 +20,26 @@
 }
 
 .edge-drop-zone-container {
-  height: 30;
-  margin: 5px auto;
+  margin: 8px auto;
+  position: absolute;
+  width: 100%;
+}
+
+.msla-graph-container-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-top: 20px;
+  display: flex;
+  box-sizing: border-box;
+  pointer-events: none !important;
+
+  &.has-footer {
+    padding-bottom: 20px;
+  }
+}
+
+.no-actions-text {
+  color: grey;
+  text-align: center;
+  margin: 16px 0px 8px;
 }

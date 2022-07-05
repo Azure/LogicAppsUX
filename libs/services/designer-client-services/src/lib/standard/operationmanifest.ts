@@ -12,16 +12,26 @@ import {
 } from './manifests/datetime';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
+import { httpManifest, httpWithSwaggerManifest, httpWebhookManifest } from './manifests/http';
 import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
 import requestManifest from './manifests/request';
 import responseManifest from './manifests/response';
+import { delayManifest, delayUntilManifest, recurrenceManifest, slidingWindowManifest } from './manifests/schedule';
 import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
+import {
+  appendArrayManifest,
+  appendStringManifest,
+  decrementManifest,
+  incrementManifest,
+  initializeManifest,
+  setManifest,
+} from './manifests/variables';
 import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft-logic-apps/parsers';
 import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
 import {
@@ -60,8 +70,6 @@ const scope = 'scope';
 const foreach = 'foreach';
 const condition = 'if';
 const switchType = 'switch';
-const initializevariable = 'initializevariable';
-const incrementvariable = 'incrementvariable';
 const request = 'request';
 const response = 'response';
 const table = 'table';
@@ -74,18 +82,40 @@ const currenttime = 'currenttime';
 const getfuturetime = 'getfuturetime';
 const getpasttime = 'getpasttime';
 const subtractfromtime = 'subtractfromtime';
+const recurrence = 'recurrence';
+const slidingwindow = 'slidingwindow';
+const wait = 'wait';
+const delay = 'delay';
+const delayuntil = 'delayuntil';
+const http = 'http';
+const httpwebhook = 'httpwebhook';
+const httpwithswagger = 'httpwithswagger';
+const initializevariable = 'initializevariable';
+const setvariable = 'setvariable';
+const incrementvariable = 'incrementvariable';
+const decrementvariable = 'decrementvariable';
+const appendtoarrayvariable = 'appendtoarrayvariable';
+const appendtostringvariable = 'appendtostringvariable';
 
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 const dateTimeConnectorId = 'connectionProviders/datetime';
+const scheduleConnectorId = 'connectionProviders/schedule';
+const httpConnectorId = 'connectionProviders/http';
+const variableConnectorId = 'connectionProviders/variable';
 
 const supportedManifestTypes = [
+  appendtoarrayvariable,
+  appendtostringvariable,
   compose,
   condition,
+  decrementvariable,
   expression,
   foreach,
   function_,
+  http,
+  httpwebhook,
   initializevariable,
   incrementvariable,
   invokefunction,
@@ -94,9 +124,12 @@ const supportedManifestTypes = [
   liquid,
   parsejson,
   query,
+  recurrence,
   request,
   response,
   select,
+  setvariable,
+  slidingwindow,
   switchType,
   serviceprovider,
   table,
@@ -110,6 +143,7 @@ const supportedManifestTypes = [
   swiftencode,
   terminate,
   until,
+  wait,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -285,11 +319,16 @@ function isServiceProviderOperation(definition: any): boolean {
 
 function isInBuiltOperation(definition: any): boolean {
   switch (definition.type.toLowerCase()) {
+    case appendtoarrayvariable:
+    case appendtostringvariable:
     case compose:
     case condition:
+    case decrementvariable:
     case expression:
     case foreach:
     case function_:
+    case http:
+    case httpwebhook:
     case initializevariable:
     case incrementvariable:
     case invokefunction:
@@ -298,9 +337,12 @@ function isInBuiltOperation(definition: any): boolean {
     case liquid:
     case parsejson:
     case query:
+    case recurrence:
     case request:
     case response:
     case select:
+    case setvariable:
+    case slidingwindow:
     case switchType:
     case workflow:
     case xslt:
@@ -313,6 +355,7 @@ function isInBuiltOperation(definition: any): boolean {
     case table:
     case terminate:
     case until:
+    case wait:
       return true;
 
     default:
@@ -324,8 +367,11 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
   const normalizedOperationType = definition.type.toLowerCase();
   const kind = definition.kind ? definition.kind.toLowerCase() : undefined;
 
-  if (kind === undefined && normalizedOperationType !== table) {
-    return inBuiltOperationsMetadata[normalizedOperationType];
+  if (kind === undefined) {
+    const operationInfo = inBuiltOperationsMetadata[normalizedOperationType];
+    if (operationInfo) {
+      return operationInfo;
+    }
   }
 
   const liquidConnectorId = 'connectionProviders/liquidOperations';
@@ -346,6 +392,16 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
         default:
           throw new UnsupportedException(`Unsupported datetime kind '${definition.kind}'`);
       }
+
+    case http:
+      return {
+        connectorId: httpConnectorId,
+        operationId:
+          definition.inputs?.metadata?.apiDefinitionUrl && equals(definition.inputs?.metadata?.swaggerSource, 'custom')
+            ? httpwithswagger
+            : http,
+      };
+
     case liquid:
       switch (kind) {
         case 'jsontojson':
@@ -409,12 +465,26 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
           throw new UnsupportedException(`Unsupported table format ${definition.inputs?.format} for table type`);
       }
 
+    case wait:
+      return {
+        connectorId: scheduleConnectorId,
+        operationId: definition.inputs?.until ? delayuntil : delay,
+      };
+
     default:
       throw new UnsupportedException(`Unsupported built in operation type ${normalizedOperationType}`);
   }
 }
 
 const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
+  [appendtoarrayvariable]: {
+    connectorId: variableConnectorId,
+    operationId: appendtoarrayvariable,
+  },
+  [appendtostringvariable]: {
+    connectorId: variableConnectorId,
+    operationId: appendtostringvariable,
+  },
   [compose]: {
     connectorId: dataOperationConnectorId,
     operationId: 'composeNew',
@@ -422,6 +492,10 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   [condition]: {
     connectorId: controlConnectorId,
     operationId: condition,
+  },
+  [decrementvariable]: {
+    connectorId: variableConnectorId,
+    operationId: decrementvariable,
   },
   [foreach]: {
     connectorId: controlConnectorId,
@@ -431,13 +505,17 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: azureFunctionConnectorId,
     operationId: 'azureFunction',
   },
+  [httpwebhook]: {
+    connectorId: httpConnectorId,
+    operationId: httpwebhook,
+  },
   [initializevariable]: {
-    connectorId: 'connectionProviders/variable',
-    operationId: 'initializevariable',
+    connectorId: variableConnectorId,
+    operationId: initializevariable,
   },
   [incrementvariable]: {
-    connectorId: 'connectionProviders/variable',
-    operationId: 'incrementvariable',
+    connectorId: variableConnectorId,
+    operationId: incrementvariable,
   },
   [invokefunction]: {
     connectorId: 'connectionProviders/localFunctionOperation',
@@ -459,9 +537,21 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: dataOperationConnectorId,
     operationId: query,
   },
+  [recurrence]: {
+    connectorId: scheduleConnectorId,
+    operationId: recurrence,
+  },
   [select]: {
     connectorId: dataOperationConnectorId,
     operationId: select,
+  },
+  [setvariable]: {
+    connectorId: variableConnectorId,
+    operationId: setvariable,
+  },
+  [slidingwindow]: {
+    connectorId: scheduleConnectorId,
+    operationId: slidingwindow,
   },
   [switchType]: {
     connectorId: controlConnectorId,
@@ -510,22 +600,35 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
 };
 
 const supportedManifestObjects = new Map<string, OperationManifest>([
+  [appendtoarrayvariable, appendArrayManifest],
+  [appendtostringvariable, appendStringManifest],
   [addtotime, addToTimeManifest],
   [condition, conditionManifest],
   [converttimezone, convertTimezoneManifest],
   [csvtable, csvManifest],
   [currenttime, currentTimeManifest],
+  [decrementvariable, decrementManifest],
+  [delay, delayManifest],
+  [delayuntil, delayUntilManifest],
   [foreach, foreachManifest],
   [getfuturetime, getFutureTimeManifest],
   [getpasttime, getPastTimeManifest],
   [htmltable, htmlManifest],
+  [http, httpManifest],
+  [httpwebhook, httpWebhookManifest],
+  [httpwithswagger, httpWithSwaggerManifest],
+  [incrementvariable, incrementManifest],
+  [initializevariable, initializeManifest],
   [join, joinManifest],
   [parsejson, parsejsonManifest],
   [query, queryManifest],
+  [recurrence, recurrenceManifest],
   [request, requestManifest],
   [response, responseManifest],
   [scope, scopeManifest],
   [select, selectManifest],
+  [setvariable, setManifest],
+  [slidingwindow, slidingWindowManifest],
   [subtractfromtime, subtractFromTimeManifest],
   [switchType, switchManifest],
   [terminate, terminateManifest],

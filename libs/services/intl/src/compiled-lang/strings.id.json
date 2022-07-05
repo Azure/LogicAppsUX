@@ -319,7 +319,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Unggah atau pilih skema output yang akan digunakan untuk peta Anda."
     }
   ],
   "3kI7xF": [
@@ -349,7 +349,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "pilih input"
     }
   ],
   "47kOXr": [
@@ -538,6 +538,12 @@
       "value": "Harus diisi. Objek untuk diperiksa jika lebih dari atau sama dengan objek yang sedang dibandingkan."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Tambahkan Skema Output"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -554,6 +560,12 @@
     {
       "type": 0,
       "value": "Dengan pola asinkron, jika server jarak jauh menunjukkan bahwa permintaan diterima untuk diproses dengan respons 202 (Diterima), mesin Logic Apps akan terus membuat polling URL yang ditentukan di header lokasi respons hingga mencapai status terminal."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Skema Input"
     }
   ],
   "8ubEPi": [
@@ -586,12 +598,6 @@
       "value": "Konektor"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -619,7 +625,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Pilih skema output"
     }
   ],
   "9u/Ae3": [
@@ -946,7 +952,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Pilih skema input"
     }
   ],
   "Ip7Iax": [
@@ -977,12 +983,6 @@
     {
       "type": 0,
       "value": "Wajib. String yang berisi waktu."
-    }
-  ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1027,12 +1027,6 @@
       "value": "Wajib. String format numerik."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1048,13 +1042,19 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Pilih file yang akan diunggah"
     }
   ],
   "K90YEU": [
     {
       "type": 0,
       "value": "Menampilkan subset karakter dari string"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Skema Output"
     }
   ],
   "L+PY+j": [
@@ -1664,6 +1664,12 @@
       "value": "Menampilkan hasil perkalian dua angka tersebut"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Ganti skema yang ada."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1733,7 +1739,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Telusuri"
     }
   ],
   "XqamWZ": [
@@ -1812,6 +1818,12 @@
       "value": "Tidak ada"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Konfigurasi"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1842,6 +1854,12 @@
       "value": "Operasi ini sudah dihapus."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Buang"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1866,10 +1884,16 @@
       "value": "Penanganan Data"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Fungsi"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Tambahkan"
     }
   ],
   "b9/1dK": [
@@ -1908,6 +1932,12 @@
       "value": "Harus diisi. Koleksi untuk mengambil objek hitungan pertama."
     }
   ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Lakukan"
+    }
+  ],
   "c2XklE": [
     {
       "type": 0,
@@ -1923,7 +1953,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "pilih output"
     }
   ],
   "c6XbVI": [
@@ -2002,6 +2032,12 @@
     {
       "type": 0,
       "value": "Mengamankan input operasi."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "ikon pensil"
     }
   ],
   "dhvk0u": [
@@ -2329,6 +2365,12 @@
       "value": "Edit di JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Kotak Alat"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2351,6 +2393,12 @@
     {
       "type": 0,
       "value": "Ya"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Tambahkan Skema Input"
     }
   ],
   "kHcCxH": [
@@ -2429,6 +2477,12 @@
     {
       "type": 0,
       "value": "Judul"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Kembali"
     }
   ],
   "lcVG4C": [
@@ -2545,6 +2599,12 @@
       "value": "Menambahkan jumlah bilangan bulat menit ke tanda waktu string yang diberikan"
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Tutup"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2592,7 +2652,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "Gagal memuat skema. Coba lagi."
     }
   ],
   "p/0r2N": [
@@ -2871,7 +2931,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Unggah atau pilih skema input yang akan digunakan untuk peta Anda."
     }
   ],
   "tE7Zam": [

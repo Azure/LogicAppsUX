@@ -330,7 +330,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Upload of selecteer een uitvoerschema dat voor uw toewijzing moet worden gebruikt."
     }
   ],
   "3kI7xF": [
@@ -360,7 +360,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "invoer selecteren"
     }
   ],
   "47kOXr": [
@@ -549,6 +549,12 @@
       "value": "Vereist. Het object dat moet worden gecontroleerd als dit groter dan of gelijk is aan de waarde van het vergelijkingsobject."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Voeg uitvoerschema toe"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +571,12 @@
     {
       "type": 0,
       "value": "Met het asynchrone patroon blijft de Logic Apps-engine navragen bij de URL die is opgegeven in de locatieheader van het antwoord tot een definitieve status wordt bereikt, als door de externe server wordt aangegeven dat de aanvraag is geaccepteerd voor verwerking met een 202 (Accepted)-antwoord."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Invoerschema"
     }
   ],
   "8ubEPi": [
@@ -597,12 +609,6 @@
       "value": "Connector"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -630,7 +636,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Een uitvoerschema selecteren"
     }
   ],
   "9u/Ae3": [
@@ -968,7 +974,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Een invoerschema selecteren"
     }
   ],
   "Ip7Iax": [
@@ -999,12 +1005,6 @@
     {
       "type": 0,
       "value": "Vereist. Een tekenreeks die de tijd bevat."
-    }
-  ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1049,12 +1049,6 @@
       "value": "Vereist. De tekenreeks met een numerieke notatie."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1070,13 +1064,19 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Een bestand selecteren dat moeten worden geüpload"
     }
   ],
   "K90YEU": [
     {
       "type": 0,
       "value": "Er wordt een tekensubset van een tekenreeks geretourneerd"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Uitvoerschema"
     }
   ],
   "L+PY+j": [
@@ -1701,6 +1701,12 @@
       "value": "Het resultaat van het vermenigvuldigen van de twee getallen wordt geretourneerd"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Vervang het bestaande schema."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1770,7 +1776,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Bladeren"
     }
   ],
   "XqamWZ": [
@@ -1849,6 +1855,12 @@
       "value": "Geen"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Configuratie"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1879,6 +1891,12 @@
       "value": "Deze bewerking is al verwijderd."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Negeren"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1903,10 +1921,16 @@
       "value": "Gegevensverwerking"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Functie"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Toevoegen"
     }
   ],
   "b9/1dK": [
@@ -1945,6 +1969,12 @@
       "value": "Vereist. De verzameling waaruit de objecten van de eerste telling moeten worden gehaald."
     }
   ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Doen"
+    }
+  ],
   "c2XklE": [
     {
       "type": 0,
@@ -1960,7 +1990,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "uitvoer selecteren"
     }
   ],
   "c6XbVI": [
@@ -2039,6 +2069,12 @@
     {
       "type": 0,
       "value": "Beveiligde invoerwaarden van de bewerking."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "potloodpictogram"
     }
   ],
   "dhvk0u": [
@@ -2385,6 +2421,12 @@
       "value": "In JSON bewerken"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Werkset"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2407,6 +2449,12 @@
     {
       "type": 0,
       "value": "Ja"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Voeg invoerschema toe"
     }
   ],
   "kHcCxH": [
@@ -2485,6 +2533,12 @@
     {
       "type": 0,
       "value": "Titel"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Vorige"
     }
   ],
   "lcVG4C": [
@@ -2601,6 +2655,12 @@
       "value": "Er wordt een geheel getal in minuten aan een ingevoerd tijdstempel voor een tekenreeks toegevoegd"
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Sluiten"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2648,7 +2708,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "Kan het schema niet laden. Probeer het opnieuw."
     }
   ],
   "p/0r2N": [
@@ -2938,7 +2998,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Upload of selecteer een invoerschema dat voor de toewijzing moet worden gebruikt."
     }
   ],
   "tE7Zam": [

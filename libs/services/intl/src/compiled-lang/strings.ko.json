@@ -319,7 +319,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "맵에 사용할 출력 스키마를 업로드하거나 선택합니다."
     }
   ],
   "3kI7xF": [
@@ -349,7 +349,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "입력 선택"
     }
   ],
   "47kOXr": [
@@ -538,6 +538,12 @@
       "value": "필수 항목으로, 비교하는 개체보다 크거나 같은지 확인할 개체입니다."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "출력 스키마 추가"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -554,6 +560,12 @@
     {
       "type": 0,
       "value": "비동기 패턴을 사용하면, 원격 서버가 202(수락됨) 응답을 통해 프로세싱에 대한 요청이 수락된 것으로 나타내는 경우 Logic Apps 엔진이 응답의 위치 헤더에 지정된 URL을 터미널 상태에 도달할 때까지 계속 폴링합니다."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "입력 스키마"
     }
   ],
   "8ubEPi": [
@@ -586,12 +598,6 @@
       "value": "커넥터"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -619,7 +625,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "출력 스키마 선택"
     }
   ],
   "9u/Ae3": [
@@ -946,7 +952,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "입력 스키마 선택"
     }
   ],
   "Ip7Iax": [
@@ -977,12 +983,6 @@
     {
       "type": 0,
       "value": "필수 사항으로, 시간을 포함하는 문자열입니다."
-    }
-  ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1027,12 +1027,6 @@
       "value": "숫자 형식 문자열입니다."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1048,13 +1042,19 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "업로드할 파일 선택"
     }
   ],
   "K90YEU": [
     {
       "type": 0,
       "value": "문자열에서 문자의 하위 집합을 반환합니다."
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "출력 스키마"
     }
   ],
   "L+PY+j": [
@@ -1664,6 +1664,12 @@
       "value": "두 숫자를 곱한 결과를 반환합니다."
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "기존 스키마 바꾸기"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1733,7 +1739,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "찾아보기"
     }
   ],
   "XqamWZ": [
@@ -1812,6 +1818,12 @@
       "value": "없음"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "구성"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1842,6 +1854,12 @@
       "value": "이 작업은 이미 삭제되었습니다."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "취소"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1866,10 +1884,16 @@
       "value": "데이터 처리"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "함수"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "추가"
     }
   ],
   "b9/1dK": [
@@ -1908,6 +1932,12 @@
       "value": "필수 항목으로, 첫 번째 Count 개체를 가져올 컬렉션입니다."
     }
   ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "수행"
+    }
+  ],
   "c2XklE": [
     {
       "type": 0,
@@ -1923,7 +1953,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "출력 선택"
     }
   ],
   "c6XbVI": [
@@ -2002,6 +2032,12 @@
     {
       "type": 0,
       "value": "작업의 입력을 보안 설정합니다."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "연필 아이콘"
     }
   ],
   "dhvk0u": [
@@ -2329,6 +2365,12 @@
       "value": "JSON에서 편집"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "도구 상자"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2351,6 +2393,12 @@
     {
       "type": 0,
       "value": "예"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "입력 스키마 추가"
     }
   ],
   "kHcCxH": [
@@ -2429,6 +2477,12 @@
     {
       "type": 0,
       "value": "제목"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "뒤로"
     }
   ],
   "lcVG4C": [
@@ -2545,6 +2599,12 @@
       "value": "전달된 문자열 타임스탬프에 정수 분 수를 더합니다."
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "닫기"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2592,7 +2652,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "스키마를 로드하지 못했습니다. 다시 시도하세요."
     }
   ],
   "p/0r2N": [
@@ -2871,7 +2931,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "맵에 사용할 입력 스키마를 업로드하거나 선택합니다."
     }
   ],
   "tE7Zam": [

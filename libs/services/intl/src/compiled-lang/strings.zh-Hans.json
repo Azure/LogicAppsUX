@@ -323,7 +323,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "上传或选择要用于地图的输出架构。"
     }
   ],
   "3kI7xF": [
@@ -353,7 +353,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "选择输入"
     }
   ],
   "47kOXr": [
@@ -542,6 +542,12 @@
       "value": "必需。要检查其是否大于或等于比较对象的对象。"
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "添加输出架构"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -558,6 +564,12 @@
     {
       "type": 0,
       "value": "在异步模式下，如果远程服务器指示处理 202 (已接受)响应的请求已被接受，逻辑应用将一直轮询在响应的位置标头中指定的 URL，直到达到终止状态。"
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "输入架构"
     }
   ],
   "8ubEPi": [
@@ -590,12 +602,6 @@
       "value": "连接器"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -623,7 +629,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "选择输出架构"
     }
   ],
   "9u/Ae3": [
@@ -950,7 +956,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "选择输入架构"
     }
   ],
   "Ip7Iax": [
@@ -981,12 +987,6 @@
     {
       "type": 0,
       "value": "必需。包含时间的一个字符串。"
-    }
-  ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1031,12 +1031,6 @@
       "value": "必填。数值格式字符串。"
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1052,13 +1046,19 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "选择文件进行上传"
     }
   ],
   "K90YEU": [
     {
       "type": 0,
       "value": "从字符串返回部分字符"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "输出架构"
     }
   ],
   "L+PY+j": [
@@ -1672,6 +1672,12 @@
       "value": "返回这两个数字相乘后的结果"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "替换现有架构。"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1741,7 +1747,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "浏览"
     }
   ],
   "XqamWZ": [
@@ -1820,6 +1826,12 @@
       "value": "无"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "配置"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1850,6 +1862,12 @@
       "value": "已删除此操作。"
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "放弃"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1874,10 +1892,16 @@
       "value": "数据处理"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "函数"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "添加"
     }
   ],
   "b9/1dK": [
@@ -1916,6 +1940,12 @@
       "value": "必需。要从中获取第一批计数对象的集合。"
     }
   ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "执行"
+    }
+  ],
   "c2XklE": [
     {
       "type": 0,
@@ -1931,7 +1961,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "选择输出"
     }
   ],
   "c6XbVI": [
@@ -2010,6 +2040,12 @@
     {
       "type": 0,
       "value": "对操作的输入进行保护。"
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "铅笔图标"
     }
   ],
   "dhvk0u": [
@@ -2345,6 +2381,12 @@
       "value": "在 JSON 中编辑"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "工具箱"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2367,6 +2409,12 @@
     {
       "type": 0,
       "value": "是"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "添加输入架构"
     }
   ],
   "kHcCxH": [
@@ -2445,6 +2493,12 @@
     {
       "type": 0,
       "value": "标题"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "后退"
     }
   ],
   "lcVG4C": [
@@ -2561,6 +2615,12 @@
       "value": "将分钟数的整数值添加到传入的字符串时间戳"
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2616,7 +2676,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "加载架构失败。请重试。"
     }
   ],
   "p/0r2N": [
@@ -2895,7 +2955,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "上传或选择要用于地图的输入架构。"
     }
   ],
   "tE7Zam": [

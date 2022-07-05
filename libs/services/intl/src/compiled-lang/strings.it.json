@@ -330,7 +330,7 @@
   "3X/ZDK": [
     {
       "type": 0,
-      "value": "Upload or select an output schema to be used for your map."
+      "value": "Caricare o selezionare uno schema di output da usare per la mappa."
     }
   ],
   "3kI7xF": [
@@ -360,7 +360,7 @@
   "3wagjT": [
     {
       "type": 0,
-      "value": "select input"
+      "value": "seleziona input"
     }
   ],
   "47kOXr": [
@@ -549,6 +549,12 @@
       "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore o uguale al valore con cui è confrontato."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Aggiungi schema di output"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +571,12 @@
     {
       "type": 0,
       "value": "Con il modello asincrono, se il server remoto indica che la richiesta è stata accettata per l'elaborazione con una risposta 202 (Accettata), il motore di App per la logica continua a eseguire il poll dell'URL specificato nell'intestazione Location della risposta, fino a raggiungere uno stato terminale."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Schema di input"
     }
   ],
   "8ubEPi": [
@@ -597,12 +609,6 @@
       "value": "Connettore"
     }
   ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Add output schema"
-    }
-  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -630,7 +636,7 @@
   "9mWdNA": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Selezionare uno schema di output"
     }
   ],
   "9u/Ae3": [
@@ -968,7 +974,7 @@
   "IngtMG": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Selezionare uno schema di input"
     }
   ],
   "Ip7Iax": [
@@ -999,12 +1005,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa contenente l'ora."
-    }
-  ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "JSfWJ0": [
@@ -1049,12 +1049,6 @@
       "value": "Necessario. Stringa di formato numerico."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Add input schema"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1070,13 +1064,19 @@
   "K5FFic": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Selezionare un file da caricare"
     }
   ],
   "K90YEU": [
     {
       "type": 0,
       "value": "Restituisce un subset di caratteri da una stringa"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Schema di output"
     }
   ],
   "L+PY+j": [
@@ -1705,6 +1705,12 @@
       "value": "Restituisce il risultato della moltiplicazione dei due numeri"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Sostituisci lo schema esistente."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1774,7 +1780,7 @@
   "XoICyH": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Esplora"
     }
   ],
   "XqamWZ": [
@@ -1853,6 +1859,12 @@
       "value": "Nessuno"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Configurazione"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1883,6 +1895,12 @@
       "value": "Questa operazione è già stata eliminata."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Rimuovi"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1907,10 +1925,16 @@
       "value": "Gestione dei dati"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Funzione"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Aggiungi"
     }
   ],
   "b9/1dK": [
@@ -1949,6 +1973,12 @@
       "value": "Obbligatorio. Raccolta da cui recuperare i primi oggetti Count."
     }
   ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Fare"
+    }
+  ],
   "c2XklE": [
     {
       "type": 0,
@@ -1964,7 +1994,7 @@
   "c5/wGq": [
     {
       "type": 0,
-      "value": "select output"
+      "value": "seleziona output"
     }
   ],
   "c6XbVI": [
@@ -2043,6 +2073,12 @@
     {
       "type": 0,
       "value": "Input sicuri dell'operazione."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "icona a matita"
     }
   ],
   "dhvk0u": [
@@ -2381,6 +2417,12 @@
       "value": "Modificare in JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Casella degli strumenti"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2403,6 +2445,12 @@
     {
       "type": 0,
       "value": "Sì"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Aggiungi schema di input"
     }
   ],
   "kHcCxH": [
@@ -2481,6 +2529,12 @@
     {
       "type": 0,
       "value": "Titolo"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Indietro"
     }
   ],
   "lcVG4C": [
@@ -2597,6 +2651,12 @@
       "value": "Aggiunge un numero intero di minuti al timestamp in formato stringa passato"
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Chiudi"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2644,7 +2704,7 @@
   "orhWzV": [
     {
       "type": 0,
-      "value": "Failed loading the schema. Please try again."
+      "value": "Non è stato possibile caricare lo schema. Riprovare."
     }
   ],
   "p/0r2N": [
@@ -2934,7 +2994,7 @@
   "t5CdhT": [
     {
       "type": 0,
-      "value": "Upload or select an input schema to be used for your map."
+      "value": "Caricare o selezionare uno schema di input da usare per la mappa."
     }
   ],
   "tE7Zam": [
