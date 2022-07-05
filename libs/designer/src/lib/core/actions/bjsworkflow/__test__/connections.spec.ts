@@ -1,5 +1,5 @@
 import Constants from '../../../../common/constants';
-import { getManifestBasedConnectionMapping } from '../../../actions/bjsworkflow/connections';
+import { getLegacyConnectionReferenceKey, getManifestBasedConnectionMapping } from '../../../actions/bjsworkflow/connections';
 import type { OperationMetadataState } from '../../../state/operationMetadataSlice';
 import type { RootState } from '../../../store';
 import type { StandardOperationManifestServiceOptions, IHttpClient } from '@microsoft-logic-apps/designer-client-services';
@@ -50,6 +50,32 @@ describe('connection workflow mappings', () => {
       expect(res[nodeId]).toEqual(connectionName);
     }
   });
+
+  it('should get correct key from legacy connection with explicit reference name', async () => {
+    const mockLegacyConnection = {
+      inputs: {
+        host: {
+          connection: {
+            referenceName: '123',
+          },
+        },
+      },
+    };
+    const key = getLegacyConnectionReferenceKey(mockLegacyConnection);
+    expect(key).toEqual('123');
+  });
+
+  it('should get correct key from legacy connection without reference name', async () => {
+    const mockLegacyConnection = {
+      inputs: {
+        host: {
+          connection: '123',
+        },
+      },
+    };
+    const key = getLegacyConnectionReferenceKey(mockLegacyConnection);
+    expect(key).toEqual('123');
+  });
 });
 
 const mockGetState = (): RootState => {
@@ -66,7 +92,7 @@ const mockApiConnectionAction: LogicAppsV2.OpenApiOperationAction = {
       apiId: '123',
       operationId: '2',
       connection: {
-        name: connectionName,
+        referenceName: connectionName,
       },
     },
   },

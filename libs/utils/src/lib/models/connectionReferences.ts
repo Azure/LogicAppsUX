@@ -15,7 +15,7 @@ export interface ApiHubAuthentication {
   identity?: string;
 }
 
-export interface ServiceProviderConnections {
+export interface ServiceProviderConnection {
   displayName: string;
   parameterValues: {
     connectionString: string;
@@ -25,9 +25,29 @@ export interface ServiceProviderConnections {
   };
 }
 
+export interface FunctionsConnection {
+  function: {
+    id: string;
+  };
+  triggerUrl: string;
+  authentication: {
+    type: string;
+    name: string;
+    value: string;
+  };
+  displayName: string;
+}
+
 export type ConnectionReferences = Record<string, ConnectionReference>;
 
 export interface ConnectionsJSON {
-  managedApiConnections: { [connectionName: string]: ConnectionReference };
-  serviceProviderConnections: { [connectionName: string]: ConnectionReference };
+  managedApiConnections?: { [connectionName: string]: ConnectionReference };
+  serviceProviderConnections?: { [connectionName: string]: ServiceProviderConnection };
+  functionConnections?: { [connectionName: string]: FunctionsConnection };
 }
+
+export const emptyConnections: ConnectionsJSON = {
+  managedApiConnections: {},
+  serviceProviderConnections: {},
+  functionConnections: {},
+};

@@ -26,7 +26,7 @@ export async function getConnectionsMappingForNodesRefactor(
         isApiConnectionType(operation.type) ||
         (equals(operation.type, Constants.NODE.TYPE.MANUAL) && equals(operation.kind, Constants.NODE.KIND.APICONNECTION))
       ) {
-        const connectionReferenceKey = _getLegacyConnectionReferenceKey(operation);
+        const connectionReferenceKey = getLegacyConnectionReferenceKey(operation);
 
         if (connectionReferenceKey !== undefined) {
           connectionsMapping[nodeId] = connectionReferenceKey;
@@ -62,7 +62,7 @@ export async function getConnectionsMappingForNodes(operations: Operations, getS
         if (operationManifestService.isSupported(operation.type, operation.kind)) {
           tasks.push(getManifestBasedConnectionMapping(getState, nodeId, operation));
         } else {
-          const connectionReferenceKey = _getLegacyConnectionReferenceKey(operation);
+          const connectionReferenceKey = getLegacyConnectionReferenceKey(operation);
 
           if (connectionReferenceKey !== undefined) {
             connectionsMapping[nodeId] = connectionReferenceKey;
@@ -124,7 +124,7 @@ export async function getManifestBasedConnectionMapping(
     if (isOpenApiConnectionType(operationDefinition.type) || connectionReferenceKeyFormat !== undefined) {
       connectionReferenceKey = getConnectionReferenceKeyForManifest(connectionReferenceKeyFormat, operationDefinition);
     } else if (isConnectionRequiredForOperation(operationManifest)) {
-      connectionReferenceKey = _getLegacyConnectionReferenceKey(operationDefinition);
+      connectionReferenceKey = getLegacyConnectionReferenceKey(operationDefinition);
     } else {
       connectionReferenceKey = undefined;
     }
@@ -140,7 +140,6 @@ function isConnectionRequiredForOperation(manifest: OperationManifest): boolean 
   return manifest.properties.connection?.required ?? false;
 }
 
-// tslint:disable-next-line: no-any
 function getConnectionReferenceKeyForManifest(referenceFormat: string, operationDefinition: LogicAppsV2.OperationDefinition): string {
   switch (referenceFormat) {
     case ConnectionReferenceKeyFormat.Function:
@@ -165,10 +164,11 @@ function getOpenApiConnectionReferenceKey(operationDefinition: LogicAppsV2.OpenA
   return connectionName;
 }
 
-function _getLegacyConnectionReferenceKey(operationDefinition: any): string | undefined {
+export function getLegacyConnectionReferenceKey(operationDefinition: any): string | undefined {
+  // danielle how is open api different
   let referenceKey = operationDefinition.inputs.host.connection.referenceName;
   if (!referenceKey) {
-    referenceKey = operationDefinition.inputs.host.connection.referenceName;
+    referenceKey = operationDefinition.inputs.host.connection;
   }
   return referenceKey;
 }

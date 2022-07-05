@@ -16,7 +16,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
-    dispatch(initializeGraphState(workflow.definition));
+    dispatch(initializeGraphState(workflow));
   }, [dispatch, workflow]);
 
   return <>{children}</>;

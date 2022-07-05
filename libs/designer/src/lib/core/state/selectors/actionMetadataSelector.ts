@@ -1,7 +1,7 @@
 import { useConnectionByName } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { OperationInfo } from '@microsoft-logic-apps/utils';
+import type { FunctionsConnection, OperationInfo, ServiceProviderConnection } from '@microsoft-logic-apps/utils';
 import { getObjectPropertyValue } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -31,11 +31,23 @@ export const useNodeMetadata = (nodeId?: string) => {
 
 export const useNodeConnectionName = (nodeId: string) => {
   const connectionId = useSelector((state: RootState) => {
-    // danielle test this live
     return nodeId ? state.connections.connectionsMapping[nodeId] : '';
   });
+  // dnaielle should I determine type here too???
   const connection = useConnectionByName(connectionId);
-  return connection?.properties.displayName ?? '';
+  const displayName = useSelector((state: RootState) => {
+    const connectionReferences = state.connections.connectionReferences;
+    const serviceProvider: ServiceProviderConnection | undefined =
+      connectionReferences.serviceProviderConnections && connectionReferences.serviceProviderConnections[connectionId];
+    const functionConnection: FunctionsConnection | undefined =
+      connectionReferences.functionConnections && connectionReferences.functionConnections[connectionId];
+    let displayName = serviceProvider?.displayName;
+    if (functionConnection) {
+      displayName = functionConnection.displayName;
+    }
+    return displayName;
+  });
+  return connection?.properties.displayName ?? displayName;
 };
 
 export const useNodeDescription = (nodeId: string) => {
