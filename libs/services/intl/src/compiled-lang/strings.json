@@ -243,6 +243,12 @@
       "value": "Specify one or more expressions which must be true for the trigger to fire."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
