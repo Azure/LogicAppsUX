@@ -85,7 +85,10 @@ const buildGraphFromActions = (
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
   for (const [actionName, action] of Object.entries(actions)) {
-    const node = createWorkflowNode(actionName, isScopeAction(action) ? WORKFLOW_NODE_TYPES.GRAPH_NODE : WORKFLOW_NODE_TYPES.TEST_NODE);
+    const node = createWorkflowNode(
+      actionName,
+      isScopeAction(action) ? WORKFLOW_NODE_TYPES.GRAPH_NODE : WORKFLOW_NODE_TYPES.OPERATION_NODE
+    );
 
     allActions[actionName] = { ...action };
 
@@ -143,7 +146,7 @@ const processScopeActions = (
       [graphId]: {
         graphId: rootGraphId,
         actionCount:
-          graph.children?.filter((node) => node.type === WORKFLOW_NODE_TYPES.TEST_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE)
+          graph.children?.filter((node) => node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE)
             ?.length ?? 0,
       },
     };
@@ -211,7 +214,7 @@ const processScopeActions = (
         graphId: rootGraphId,
         subgraphType: SUBGRAPH_TYPES.UNTIL_DO,
         actionCount:
-          graph.children?.filter((node) => node.type === WORKFLOW_NODE_TYPES.TEST_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE)
+          graph.children?.filter((node) => node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE)
             ?.length ?? 0,
       },
     };

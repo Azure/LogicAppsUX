@@ -16,7 +16,7 @@ export const initialState: WorkflowState = {
 
 const createMockNode = (id: string) => ({
   id,
-  type: WORKFLOW_NODE_TYPES.TEST_NODE,
+  type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
   height: 67,
   width: 200,
 });

@@ -13,7 +13,7 @@ export interface AddNodePayload {
 }
 
 export const createNodeWithDefaultSize = (id: string): WorkflowNode => {
-  return { id, height: 67, width: 200, type: WORKFLOW_NODE_TYPES.TEST_NODE }; // TODO: Assign correct type here
+  return { id, height: 67, width: 200, type: WORKFLOW_NODE_TYPES.OPERATION_NODE }; // TODO: Assign correct type here
 };
 
 export const addNodeToWorkflow = (payload: AddNodePayload, workflowGraph: WorkflowNode, nodesMetadata: NodesMetadata) => {
