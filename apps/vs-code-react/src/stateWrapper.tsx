@@ -12,7 +12,7 @@ export const StateWrapper: React.FC = () => {
     if (vscodeState.initialized) {
       switch (vscodeState.project) {
         case ProjectName.export: {
-          navigate(`/${ProjectName.export}/home`, { replace: true });
+          navigate(`/${ProjectName.export}/instance-selection`, { replace: true });
           break;
         }
         case ProjectName.overview: {

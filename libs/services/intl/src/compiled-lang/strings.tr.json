@@ -243,6 +243,12 @@
       "value": "Tetikleyicinin başlatılması için doğru olması gereken bir veya daha fazla ifade belirtin."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1920,7 +1926,7 @@
   "aL0Uut": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "İşlev"
     }
   ],
   "ajAro8": [
@@ -1968,7 +1974,7 @@
   "c/+j08": [
     {
       "type": 0,
-      "value": "Do"
+      "value": "Yapın"
     }
   ],
   "c2XklE": [
@@ -2412,7 +2418,7 @@
   "jsEMSu": [
     {
       "type": 0,
-      "value": "Toolbox"
+      "value": "Araç Kutusu"
     }
   ],
   "juR40n": [

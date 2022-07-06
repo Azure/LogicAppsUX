@@ -232,6 +232,12 @@
       "value": "指定一或多個必須為 true 的運算式，才可引發觸發程序。"
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1887,7 +1893,7 @@
   "aL0Uut": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "函數"
     }
   ],
   "ajAro8": [
@@ -1935,7 +1941,7 @@
   "c/+j08": [
     {
       "type": 0,
-      "value": "Do"
+      "value": "執行"
     }
   ],
   "c2XklE": [
@@ -2368,7 +2374,7 @@
   "jsEMSu": [
     {
       "type": 0,
-      "value": "Toolbox"
+      "value": "工具箱"
     }
   ],
   "juR40n": [

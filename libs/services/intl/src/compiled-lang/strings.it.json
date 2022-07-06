@@ -243,6 +243,12 @@
       "value": "Specificare una o più espressioni che devono essere true per l'attivazione del trigger."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1928,7 +1934,7 @@
   "aL0Uut": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Funzione"
     }
   ],
   "ajAro8": [
@@ -1976,7 +1982,7 @@
   "c/+j08": [
     {
       "type": 0,
-      "value": "Do"
+      "value": "Fare"
     }
   ],
   "c2XklE": [
@@ -2420,7 +2426,7 @@
   "jsEMSu": [
     {
       "type": 0,
-      "value": "Toolbox"
+      "value": "Casella degli strumenti"
     }
   ],
   "juR40n": [

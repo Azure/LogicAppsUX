@@ -243,6 +243,12 @@
       "value": "Adjon meg egy vagy több olyan kifejezést, amelynek igaznak kell lennie a trigger aktiválásához."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -552,7 +558,7 @@
   "8JFxmV": [
     {
       "type": 0,
-      "value": "Add Output Schema"
+      "value": "Kimeneti séma hozzáadása"
     }
   ],
   "8L+oIz": [
@@ -1704,7 +1710,7 @@
   "Wy/bhW": [
     {
       "type": 0,
-      "value": "Replace existing schema."
+      "value": "Meglévő séma cseréje."
     }
   ],
   "X8JjjT": [
@@ -1924,7 +1930,7 @@
   "aL0Uut": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Függvény"
     }
   ],
   "ajAro8": [
@@ -1972,7 +1978,7 @@
   "c/+j08": [
     {
       "type": 0,
-      "value": "Do"
+      "value": "Elvégzés"
     }
   ],
   "c2XklE": [
@@ -2074,7 +2080,7 @@
   "dWeRGU": [
     {
       "type": 0,
-      "value": "pencil icon"
+      "value": "ceruza ikon"
     }
   ],
   "dhvk0u": [
@@ -2424,7 +2430,7 @@
   "jsEMSu": [
     {
       "type": 0,
-      "value": "Toolbox"
+      "value": "Eszközkészlet"
     }
   ],
   "juR40n": [
@@ -2454,7 +2460,7 @@
   "kBw1WQ": [
     {
       "type": 0,
-      "value": "Add Input Schema"
+      "value": "Bemeneti séma hozzáadása"
     }
   ],
   "kHcCxH": [
