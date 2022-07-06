@@ -1,6 +1,6 @@
 import { ExportApp } from '../app/export/export';
-import { InstanceSelection } from '../app/export/instance-selection/instance-selection';
-import { WorkflowsSelection } from '../app/export/workflows-selection/workflows-selection';
+import { InstanceSelection } from '../app/export/instanceSelection/instanceSelection';
+import { WorkflowsSelection } from '../app/export/workflowsSelection/workflowsSelection';
 import { OverviewApp } from '../app/overview/index';
 import { RouteName } from '../run-service';
 import { StateWrapper } from '../stateWrapper';
