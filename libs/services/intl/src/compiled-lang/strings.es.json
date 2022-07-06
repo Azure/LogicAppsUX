@@ -243,6 +243,12 @@
       "value": "Especifique una o varias expresiones que deben ser \"true\" para que se active el desencadenador."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1920,7 +1926,7 @@
   "aL0Uut": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Función"
     }
   ],
   "ajAro8": [
@@ -1968,7 +1974,7 @@
   "c/+j08": [
     {
       "type": 0,
-      "value": "Do"
+      "value": "Hacer"
     }
   ],
   "c2XklE": [
@@ -2420,7 +2426,7 @@
   "jsEMSu": [
     {
       "type": 0,
-      "value": "Toolbox"
+      "value": "Cuadro de herramientas"
     }
   ],
   "juR40n": [

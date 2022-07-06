@@ -281,6 +281,12 @@
       "value": "Określ co najmniej jedno wyrażenie, które musi być prawdziwe, aby wyzwalacz został uruchomiony."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -2002,7 +2008,7 @@
   "aL0Uut": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Funkcja"
     }
   ],
   "ajAro8": [
@@ -2050,7 +2056,7 @@
   "c/+j08": [
     {
       "type": 0,
-      "value": "Do"
+      "value": "Wykonaj"
     }
   ],
   "c2XklE": [
@@ -2524,7 +2530,7 @@
   "jsEMSu": [
     {
       "type": 0,
-      "value": "Toolbox"
+      "value": "Zestaw narzędzi"
     }
   ],
   "juR40n": [

@@ -27,8 +27,11 @@ export const ButtonContainer: React.FC<ButtonContainerProps> = ({ buttons, horiz
   };
 
   return (
-    <Stack horizontal={horizontal} style={stackStyle}>
-      {stackItems}
-    </Stack>
+    // Placeholder div so that we can move the stack locally to the spot it's been inserted
+    <div style={{ position: 'relative', width: 0, height: 0 }}>
+      <Stack horizontal={horizontal} style={stackStyle}>
+        {stackItems}
+      </Stack>
+    </div>
   );
 };

@@ -2875,7 +2875,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Do]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Alkalmaz]]></Val>
+            <Val><![CDATA[Elvégzés]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3534,6 +3534,9 @@
       <Item ItemId=";jsEMSu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Toolbox]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Eszközkészlet]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
