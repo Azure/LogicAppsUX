@@ -236,6 +236,12 @@
       "value": "指定要触发触发器的必须为 true 的一个或多个表达式。"
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,

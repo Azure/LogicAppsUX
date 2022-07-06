@@ -232,6 +232,12 @@
       "value": "指定一或多個必須為 true 的運算式，才可引發觸發程序。"
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,

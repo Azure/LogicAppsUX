@@ -232,6 +232,12 @@
       "value": "트리거를 발생시키기 위해 true여야 하는 하나 이상의 식을 지정합니다."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
