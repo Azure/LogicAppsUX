@@ -277,6 +277,12 @@
       "value": "Zadejte alespoň jeden výraz, který musí být true, aby se trigger aktivoval."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -583,6 +589,12 @@
       "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší nebo rovný porovnávanému objektu."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Přidejte výstupní schéma"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -599,6 +611,12 @@
     {
       "type": 0,
       "value": "Pokud u asynchronního zpracování vzdálený server označí přijetí žádosti o zpracování pomocí odpovědi 202 (Přijato), modul Logic Apps bude i nadále pokračovat v cyklickém dotazování adresy URL zadané v hlavičce umístění odpovědi, dokud se nedosáhne konečného stavu."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Vstupní schéma"
     }
   ],
   "8ubEPi": [
@@ -629,12 +647,6 @@
     {
       "type": 0,
       "value": "Konektor"
-    }
-  ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Přidejte výstupní schéma"
     }
   ],
   "9JuvQ4": [
@@ -1057,12 +1069,6 @@
       "value": "Povinný parametr. Řetězec, který obsahuje časový údaj."
     }
   ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Zrušit"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -1105,12 +1111,6 @@
       "value": "Povinné. Číselný řetězec formátu"
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Přidejte vstupní schéma"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1133,6 +1133,12 @@
     {
       "type": 0,
       "value": "Vrátí podmnožinu znaků z řetězce."
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Výstupní schéma"
     }
   ],
   "L+PY+j": [
@@ -1775,6 +1781,12 @@
       "value": "Vrátí výsledek vynásobení daných dvou čísel."
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Nahraďte existující schéma."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1923,6 +1935,12 @@
       "value": "Žádné"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Konfigurace"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1953,6 +1971,12 @@
       "value": "Tato operace už byla odstraněna."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Zahodit"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1975,6 +1999,12 @@
     {
       "type": 0,
       "value": "Zpracování dat"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Funkce"
     }
   ],
   "ajAro8": [
@@ -2017,6 +2047,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Kolekce, ze které se mají získat první objekty Count."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Do"
     }
   ],
   "c2XklE": [
@@ -2113,6 +2149,12 @@
     {
       "type": 0,
       "value": "Umožňuje zabezpečit vstupy operace."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "ikona tužky"
     }
   ],
   "dhvk0u": [
@@ -2477,6 +2519,12 @@
       "value": "Upravit ve formátu JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Sada nástrojů"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2499,6 +2547,12 @@
     {
       "type": 0,
       "value": "Ano"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Přidejte vstupní schéma"
     }
   ],
   "kHcCxH": [
@@ -2577,6 +2631,12 @@
     {
       "type": 0,
       "value": "Název"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Zpět"
     }
   ],
   "lcVG4C": [
@@ -2691,6 +2751,12 @@
     {
       "type": 0,
       "value": "Přidá celočíselný počet minut do předaného řetězcového časového razítka."
+    }
+  ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Zavřít"
     }
   ],
   "o/0SEj": [

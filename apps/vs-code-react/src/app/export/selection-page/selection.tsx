@@ -2,7 +2,7 @@ import { ApiService } from '../../../run-service/export/index';
 import { QueryKeys } from '../../../run-service/types';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
-import type { initializedVscodeState } from '../../../state/vscodeSlice';
+import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { getListColumns, parseWorkflowData } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
@@ -11,10 +11,10 @@ import { useIntl } from 'react-intl';
 import { useInfiniteQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const Home: React.FC = () => {
+export const SelectionPage: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
 
-  const { baseUrl, accessToken } = vscodeState as initializedVscodeState;
+  const { baseUrl, accessToken } = vscodeState as InitializedVscodeState;
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
 

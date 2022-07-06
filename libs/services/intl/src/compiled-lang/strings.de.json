@@ -243,6 +243,12 @@
       "value": "Geben Sie mindestens einen Ausdruck an, der zum Auslösen des Triggers den Wert TRUE aufweisen muss."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -549,6 +555,12 @@
       "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer oder gleich dem Vergleichsobjekt ist."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Ausgabeschema hinzufügen"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +577,12 @@
     {
       "type": 0,
       "value": "Beim asynchronen Muster fährt die Logic Apps-Engine mit dem Abruf der im Adressheader der Antwort angegebenen URL fort, bis ein Endstatus erreicht ist, sofern der Remoteserver mit einer 202-Antwort (Akzeptiert) signalisiert, dass die Anforderung zur Verarbeitung akzeptiert wird."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Eingabeschema"
     }
   ],
   "8ubEPi": [
@@ -595,12 +613,6 @@
     {
       "type": 0,
       "value": "Connector"
-    }
-  ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Ausgabeschema hinzufügen"
     }
   ],
   "9JuvQ4": [
@@ -1001,12 +1013,6 @@
       "value": "Erforderlich. Eine Zeichenfolge, die die Zeit enthält."
     }
   ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Abbrechen"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -1049,12 +1055,6 @@
       "value": "Erforderlich. Die numerische Formatzeichenfolge."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Eingabeschema hinzufügen"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1077,6 +1077,12 @@
     {
       "type": 0,
       "value": "Gibt eine Teilmenge von Zeichen aus einer Zeichenfolge zurück."
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Ausgabeschema"
     }
   ],
   "L+PY+j": [
@@ -1701,6 +1707,12 @@
       "value": "Gibt das Ergebnis aus der Multiplikation der beiden Zahlen zurück."
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Vorhandenes Schema ersetzen."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1849,6 +1861,12 @@
       "value": "Keine"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Konfiguration"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1879,6 +1897,12 @@
       "value": "Dieser Vorgang wurde bereits gelöscht."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Verwerfen"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1901,6 +1925,12 @@
     {
       "type": 0,
       "value": "Datenverarbeitung"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Funktion"
     }
   ],
   "ajAro8": [
@@ -1943,6 +1973,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Sammlung, aus der die ersten Count-Objekte entnommen werden sollen."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Los"
     }
   ],
   "c2XklE": [
@@ -2039,6 +2075,12 @@
     {
       "type": 0,
       "value": "Hiermit sorgen Sie für sichere Eingaben für den Vorgang."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "Bleistiftsymbol"
     }
   ],
   "dhvk0u": [
@@ -2377,6 +2419,12 @@
       "value": "In JSON bearbeiten"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Toolbox"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2399,6 +2447,12 @@
     {
       "type": 0,
       "value": "Ja"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Eingabeschema hinzufügen"
     }
   ],
   "kHcCxH": [
@@ -2477,6 +2531,12 @@
     {
       "type": 0,
       "value": "Titel"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Zurück"
     }
   ],
   "lcVG4C": [
@@ -2591,6 +2651,12 @@
     {
       "type": 0,
       "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Minuten hinzu."
+    }
+  ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Schließen"
     }
   ],
   "o/0SEj": [

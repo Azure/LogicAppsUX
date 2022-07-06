@@ -243,6 +243,12 @@
       "value": "Especifique uma ou mais expressões que precisam ser true para que o gatilho seja disparado."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -549,6 +555,12 @@
       "value": "Necessário. O objeto para verificar se é maior ou igual ao objeto de comparação."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Adicionar Esquema de Saída"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +577,12 @@
     {
       "type": 0,
       "value": "Com o padrão assíncrono, se o servidor remoto indicar que a solicitação é aceita para processamento com uma resposta 202 (aceitada), o mecanismo dos Aplicativos Lógicos continuarão sondando a URL especificada no cabeçalho de localização de resposta até alcançar um estado terminal."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Esquema de Entrada"
     }
   ],
   "8ubEPi": [
@@ -595,12 +613,6 @@
     {
       "type": 0,
       "value": "Conector"
-    }
-  ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Adicionar esquema de saída"
     }
   ],
   "9JuvQ4": [
@@ -1001,12 +1013,6 @@
       "value": "Necessário. Uma cadeia de caracteres que contém o tempo."
     }
   ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Cancelar"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -1049,12 +1055,6 @@
       "value": "Obrigatório. A cadeia de caracteres de formato numérico."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Adicionar esquema de entrada"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1077,6 +1077,12 @@
     {
       "type": 0,
       "value": "Retorna um subconjunto de caracteres de uma cadeia de caracteres"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Esquema de Saída"
     }
   ],
   "L+PY+j": [
@@ -1697,6 +1703,12 @@
       "value": "Retorna o resultado da multiplicação dos dois números"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Substituir esquema existente."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1845,6 +1857,12 @@
       "value": "Nenhum"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Configuração"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1875,6 +1893,12 @@
       "value": "Esta operação já foi excluída."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Descartar"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1897,6 +1921,12 @@
     {
       "type": 0,
       "value": "Tratamento de Dados"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Função"
     }
   ],
   "ajAro8": [
@@ -1939,6 +1969,12 @@
     {
       "type": 0,
       "value": "Necessário. A coleção de onde obter os primeiros objetos de Contagem."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Fazer"
     }
   ],
   "c2XklE": [
@@ -2035,6 +2071,12 @@
     {
       "type": 0,
       "value": "Proteger entradas da operação."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "ícone de lápis"
     }
   ],
   "dhvk0u": [
@@ -2373,6 +2415,12 @@
       "value": "Editar no JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Caixa de ferramentas"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2395,6 +2443,12 @@
     {
       "type": 0,
       "value": "Sim"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Adicionar Esquema de Entrada"
     }
   ],
   "kHcCxH": [
@@ -2473,6 +2527,12 @@
     {
       "type": 0,
       "value": "Título"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Voltar"
     }
   ],
   "lcVG4C": [
@@ -2587,6 +2647,12 @@
     {
       "type": 0,
       "value": "Adiciona um número inteiro de minutos em um carimbo de data/hora de cadeia de caracteres passado"
+    }
+  ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Fechar"
     }
   ],
   "o/0SEj": [

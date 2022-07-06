@@ -6,7 +6,8 @@
 @import '../flyout/flyout.less';
 @import './parameters/parameters.less';
 @import './function/function.less';
-@import './scope/scope.less';
+@import './graphContainer/graphContainer.less';
+@import './scopeCard/scopeCard.less';
 
 .msla-card-loading {
   font-family: @font-family;
@@ -29,8 +30,7 @@
   width: 100%;
 }
 
-.msla-card,
-.msla-card-placeholder {
+.msla-card {
   &.msla-card-fixed-width {
     margin: 0 auto;
     min-width: @card-min-fixed-width;
@@ -60,8 +60,7 @@
 }
 
 .msla-connectionwizard-canvas--narrow {
-  .msla-card,
-  .msla-card-placeholder {
+  .msla-card {
     &.msla-card-fixed-width {
       .card-narrow-width-mixin();
     }
@@ -72,8 +71,7 @@
   }
 }
 
-.msla-card,
-.msla-card-placeholder {
+.msla-card {
   margin: 0 auto;
 }
 
@@ -117,8 +115,7 @@
   background-color: '#FFF';
 }
 
-.msla-card,
-.msla-card-placeholder {
+.msla-card {
   min-width: 200px;
   border: @defaultBorder;
   box-sizing: content-box;
@@ -269,7 +266,6 @@
 }
 
 .msla-card,
-.msla-card-placeholder,
 .msla-recommendation-dropdown,
 .msla-recommendation-footer,
 .msla-recommendation-empty {
@@ -704,14 +700,12 @@ body.dark {
     }
   }
 
-  .msla-card,
-  .msla-card-placeholder {
+  .msla-card {
     background-color: @ms-color-white;
   }
 
   .msla-main-page {
-    .msla-card,
-    .msla-card-placeholder {
+    .msla-card {
       background-color: #252423;
     }
   }
@@ -805,8 +799,26 @@ body.dark {
   }
 }
 
+.msla-selection-box {
+  pointer-events: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  box-sizing: border-box;
+  border-radius: 2px;
+  &.selected {
+    border: 2px solid #0078d4;
+    &.white-outline {
+      outline: 1px solid white;
+      outline-offset: -3px;
+    }
+  }
+}
+
 .msla-panel-card-container {
-  position: relative;
   border: 1px solid #c8c6c4;
   box-sizing: border-box;
   box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
@@ -820,12 +832,16 @@ body.dark {
   cursor: default;
 
   &:focus {
-    outline: 2px solid #605e5c;
+    outline: none;
+    // TODO: This overlaps the selection blue, looks strange
+    // .msla-selection-box {
+    //   border: 2px solid #605e5c;
+    // }
   }
 
   &:focus,
   &:hover {
-    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13) !important;
 
     .panel-card-content-gripper-section {
       visibility: visible;
@@ -836,7 +852,6 @@ body.dark {
   }
 
   &.msla-panel-card-container-selected {
-    border: 2px solid #0078d4;
     box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
   }
 
@@ -870,6 +885,7 @@ body.dark {
 
     .panel-card-header {
       cursor: pointer;
+
       .panel-card-content-container {
         flex: 1 1 auto;
         display: flex;
@@ -964,7 +980,7 @@ body.dark {
   }
 
   .panel-card-content-gripper-section {
-    padding: 13px 4px 11px; // This should be '12px 4px' but our svg is rendering too high
+    padding: 12px 4px 10px; // This should be '12px 4px' but our svg is rendering too high
     text-align: center;
     visibility: hidden;
   }

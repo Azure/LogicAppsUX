@@ -243,6 +243,12 @@
       "value": "Tetikleyicinin başlatılması için doğru olması gereken bir veya daha fazla ifade belirtin."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -549,6 +555,12 @@
       "value": "Gerekli. Karşılaştırma nesnesinden büyük veya bu nesneye eşit olup olmadığı denetlenecek nesne."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Çıkış Şeması Ekle"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +577,12 @@
     {
       "type": 0,
       "value": "Zaman uyumsuz düzen seçildiğinde, uzak sunucu 202 (Kabul Edildi) yanıtı göndererek isteğin işlenmek üzere kabul edildiğini belirtirse Logic Apps altyapısı, bir sona erme durumuna ulaşılana kadar yanıtın konum üst bilgisinde belirtilen URL'yi yoklamayı sürdürür."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Giriş Şeması"
     }
   ],
   "8ubEPi": [
@@ -595,12 +613,6 @@
     {
       "type": 0,
       "value": "Bağlayıcı"
-    }
-  ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Çıkış şeması ekle"
     }
   ],
   "9JuvQ4": [
@@ -1001,12 +1013,6 @@
       "value": "Gerekli. Zamanı içeren bir dize."
     }
   ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "İptal"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -1049,12 +1055,6 @@
       "value": "Gerekli. Sayısal biçim dizesi."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Giriş şeması ekle"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1077,6 +1077,12 @@
     {
       "type": 0,
       "value": "Bir dizedeki karakterlerin bir alt kümesini döndürür"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Çıkış Şeması"
     }
   ],
   "L+PY+j": [
@@ -1697,6 +1703,12 @@
       "value": "İki sayı arasındaki çarpma işleminin sonucunu döndürür"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Mevcut şemayı değiştir."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1845,6 +1857,12 @@
       "value": "Yok"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Yapılandırma"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1875,6 +1893,12 @@
       "value": "Bu işlem zaten silinmiş."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "At"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1897,6 +1921,12 @@
     {
       "type": 0,
       "value": "Veri İşleme"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "İşlev"
     }
   ],
   "ajAro8": [
@@ -1939,6 +1969,12 @@
     {
       "type": 0,
       "value": "Gerekli. İlk Count nesnenin alınacağı koleksiyon."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Yapın"
     }
   ],
   "c2XklE": [
@@ -2035,6 +2071,12 @@
     {
       "type": 0,
       "value": "İşlemin girişlerini güvenli hale getirin."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "kalem simgesi"
     }
   ],
   "dhvk0u": [
@@ -2373,6 +2415,12 @@
       "value": "JSON dosyasında düzenle"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Araç Kutusu"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2395,6 +2443,12 @@
     {
       "type": 0,
       "value": "Evet"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Giriş Şeması Ekle"
     }
   ],
   "kHcCxH": [
@@ -2473,6 +2527,12 @@
     {
       "type": 0,
       "value": "Başlık"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Geri"
     }
   ],
   "lcVG4C": [
@@ -2587,6 +2647,12 @@
     {
       "type": 0,
       "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir dakika sayısı ekler"
+    }
+  ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Kapat"
     }
   ],
   "o/0SEj": [

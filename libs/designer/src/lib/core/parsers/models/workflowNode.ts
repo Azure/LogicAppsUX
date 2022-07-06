@@ -1,28 +1,34 @@
-import { isObject } from '@microsoft-logic-apps/utils';
-
-export interface WorkflowGraph {
-  id: string;
-  children: WorkflowNode[];
-  edges: WorkflowEdge[];
-}
+export type WorkflowNodeType = 'GRAPH_NODE' | 'TEST_NODE' | 'SCOPE_NODE' | 'SUBGRAPH_NODE' | 'HIDDEN_NODE';
+export const WORKFLOW_NODE_TYPES: Record<string, WorkflowNodeType> = {
+  GRAPH_NODE: 'GRAPH_NODE',
+  TEST_NODE: 'TEST_NODE',
+  SCOPE_NODE: 'SCOPE_NODE',
+  SUBGRAPH_NODE: 'SUBGRAPH_NODE',
+  HIDDEN_NODE: 'HIDDEN_NODE',
+};
 
 export interface WorkflowNode {
   id: string;
-  children?: WorkflowGraph[];
-  height: number;
-  width: number;
+  type: WorkflowNodeType;
+  children?: WorkflowNode[];
+  edges?: WorkflowEdge[]; // Graph nodes only
+  height?: number; // Action nodes only
+  width?: number; // Action Nodes only
 }
+
+export type WorkflowEdgeType = 'BUTTON_EDGE' | 'ONLY_EDGE' | 'HIDDEN_EDGE';
+export const WORKFLOW_EDGE_TYPES: Record<string, WorkflowEdgeType> = {
+  BUTTON_EDGE: 'BUTTON_EDGE',
+  ONLY_EDGE: 'ONLY_EDGE',
+  HIDDEN_EDGE: 'HIDDEN_EDGE',
+};
 
 export interface WorkflowEdge {
   id: string;
   source: string;
   target: string;
+  type: WorkflowEdgeType;
 }
 
-export const isWorkflowNode = (node: any): node is WorkflowNode => {
-  return isObject(node) && typeof node.id === 'string' && typeof node.height === 'number' && typeof node.width === 'number';
-};
-
-export const isWorkflowGraph = (node: any): node is WorkflowGraph => {
-  return isObject(node) && typeof node.id === 'string' && typeof node.children === 'object' && typeof node.edges === 'object';
-};
+export const isWorkflowNode = (node: WorkflowNode) => node.type !== WORKFLOW_NODE_TYPES.GRAPH_NODE;
+export const isWorkflowGraph = (node: WorkflowNode) => node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE;

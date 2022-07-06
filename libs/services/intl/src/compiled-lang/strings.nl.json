@@ -243,6 +243,12 @@
       "value": "Geef een of meer expressies op die waar moeten zijn om de trigger te activeren."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -549,6 +555,12 @@
       "value": "Vereist. Het object dat moet worden gecontroleerd als dit groter dan of gelijk is aan de waarde van het vergelijkingsobject."
     }
   ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Voeg uitvoerschema toe"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -565,6 +577,12 @@
     {
       "type": 0,
       "value": "Met het asynchrone patroon blijft de Logic Apps-engine navragen bij de URL die is opgegeven in de locatieheader van het antwoord tot een definitieve status wordt bereikt, als door de externe server wordt aangegeven dat de aanvraag is geaccepteerd voor verwerking met een 202 (Accepted)-antwoord."
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Invoerschema"
     }
   ],
   "8ubEPi": [
@@ -595,12 +613,6 @@
     {
       "type": 0,
       "value": "Connector"
-    }
-  ],
-  "9I0PcK": [
-    {
-      "type": 0,
-      "value": "Uitvoerschema toevoegen"
     }
   ],
   "9JuvQ4": [
@@ -1001,12 +1013,6 @@
       "value": "Vereist. Een tekenreeks die de tijd bevat."
     }
   ],
-  "JQlAMD": [
-    {
-      "type": 0,
-      "value": "Annuleren"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -1049,12 +1055,6 @@
       "value": "Vereist. De tekenreeks met een numerieke notatie."
     }
   ],
-  "JqZfdk": [
-    {
-      "type": 0,
-      "value": "Invoerschema toevoegen"
-    }
-  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -1077,6 +1077,12 @@
     {
       "type": 0,
       "value": "Er wordt een tekensubset van een tekenreeks geretourneerd"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Uitvoerschema"
     }
   ],
   "L+PY+j": [
@@ -1701,6 +1707,12 @@
       "value": "Het resultaat van het vermenigvuldigen van de twee getallen wordt geretourneerd"
     }
   ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Vervang het bestaande schema."
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -1849,6 +1861,12 @@
       "value": "Geen"
     }
   ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Configuratie"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1879,6 +1897,12 @@
       "value": "Deze bewerking is al verwijderd."
     }
   ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Negeren"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -1901,6 +1925,12 @@
     {
       "type": 0,
       "value": "Gegevensverwerking"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Functie"
     }
   ],
   "ajAro8": [
@@ -1943,6 +1973,12 @@
     {
       "type": 0,
       "value": "Vereist. De verzameling waaruit de objecten van de eerste telling moeten worden gehaald."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Doen"
     }
   ],
   "c2XklE": [
@@ -2039,6 +2075,12 @@
     {
       "type": 0,
       "value": "Beveiligde invoerwaarden van de bewerking."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "potloodpictogram"
     }
   ],
   "dhvk0u": [
@@ -2385,6 +2427,12 @@
       "value": "In JSON bewerken"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Werkset"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2407,6 +2455,12 @@
     {
       "type": 0,
       "value": "Ja"
+    }
+  ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Voeg invoerschema toe"
     }
   ],
   "kHcCxH": [
@@ -2485,6 +2539,12 @@
     {
       "type": 0,
       "value": "Titel"
+    }
+  ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Vorige"
     }
   ],
   "lcVG4C": [
@@ -2599,6 +2659,12 @@
     {
       "type": 0,
       "value": "Er wordt een geheel getal in minuten aan een ingevoerd tijdstempel voor een tekenreeks toegevoegd"
+    }
+  ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Sluiten"
     }
   ],
   "o/0SEj": [
