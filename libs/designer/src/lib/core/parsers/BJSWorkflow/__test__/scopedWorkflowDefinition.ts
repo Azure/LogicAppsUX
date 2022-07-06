@@ -111,12 +111,12 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
         height: 40,
         width: 200,
         children: [
-          createWorkflowNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
+          createWorkflowNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE),
           {
             id: 'ActionIf-actions',
-            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+            type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
             children: [
-              createWorkflowNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE),
+              createWorkflowNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
               createWorkflowNode('Increment_variable2'),
               createWorkflowNode('Increment_variable4'),
             ],
@@ -127,9 +127,9 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
           },
           {
             id: 'ActionIf-elseActions',
-            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+            type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
             children: [
-              createWorkflowNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE),
+              createWorkflowNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
               createWorkflowNode('Increment_variable3'),
             ],
             edges: [createWorkflowEdge('ActionIf-elseActions-#subgraph', 'Increment_variable3', WORKFLOW_EDGE_TYPES.HEADING_EDGE)],
@@ -145,7 +145,7 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
         type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
         height: 40,
         width: 200,
-        children: [createWorkflowNode('EmptyScope-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE)],
+        children: [createWorkflowNode('EmptyScope-#scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE)],
         edges: [],
       },
       createWorkflowNode('Response'),
