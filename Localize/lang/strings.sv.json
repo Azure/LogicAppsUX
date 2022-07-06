@@ -34,6 +34,7 @@
   "1R6Vaa": "{count, plural, one {# matchade objekt.} =0 {inga matchade objekt.} other {# matchade objekt.}}",
   "1TE0e8": "Obligatoriskt. Det värde det ska sökas efter i indexet.",
   "1VRGCF": "Ange ett eller flera uttryck som måste vara sanna för att utlösaren ska utlösas.",
+  "1X4U/1": "Show code view",
   "1ejxkP": "Säkra indata",
   "1htSs7": "Av",
   "1jhzOM": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är mindre än det värde det jämförs med.",
