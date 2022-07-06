@@ -243,6 +243,12 @@
       "value": "Specificare una o più espressioni che devono essere true per l'attivazione del trigger."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,

@@ -243,6 +243,12 @@
       "value": "Especifique uma ou mais expressões que têm de ser verdadeiras para que o acionador seja acionado."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
