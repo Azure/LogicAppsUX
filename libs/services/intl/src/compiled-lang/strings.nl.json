@@ -243,6 +243,12 @@
       "value": "Geef een of meer expressies op die waar moeten zijn om de trigger te activeren."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -552,7 +558,7 @@
   "8JFxmV": [
     {
       "type": 0,
-      "value": "Add Output Schema"
+      "value": "Voeg uitvoerschema toe"
     }
   ],
   "8L+oIz": [
@@ -576,7 +582,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "Invoerschema"
     }
   ],
   "8ubEPi": [
@@ -1076,7 +1082,7 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "Uitvoerschema"
     }
   ],
   "L+PY+j": [
@@ -1704,7 +1710,7 @@
   "Wy/bhW": [
     {
       "type": 0,
-      "value": "Replace existing schema."
+      "value": "Vervang het bestaande schema."
     }
   ],
   "X8JjjT": [
@@ -1858,7 +1864,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Configuratie"
     }
   ],
   "ZM1mRy": [
@@ -1894,7 +1900,7 @@
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Negeren"
     }
   ],
   "a7j3gS": [
@@ -1919,6 +1925,12 @@
     {
       "type": 0,
       "value": "Gegevensverwerking"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Functie"
     }
   ],
   "ajAro8": [
@@ -1961,6 +1973,12 @@
     {
       "type": 0,
       "value": "Vereist. De verzameling waaruit de objecten van de eerste telling moeten worden gehaald."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Doen"
     }
   ],
   "c2XklE": [
@@ -2062,7 +2080,7 @@
   "dWeRGU": [
     {
       "type": 0,
-      "value": "pencil icon"
+      "value": "potloodpictogram"
     }
   ],
   "dhvk0u": [
@@ -2409,6 +2427,12 @@
       "value": "In JSON bewerken"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Werkset"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2436,7 +2460,7 @@
   "kBw1WQ": [
     {
       "type": 0,
-      "value": "Add Input Schema"
+      "value": "Voeg invoerschema toe"
     }
   ],
   "kHcCxH": [
@@ -2520,7 +2544,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "Vorige"
     }
   ],
   "lcVG4C": [
@@ -2640,7 +2664,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Sluiten"
     }
   ],
   "o/0SEj": [

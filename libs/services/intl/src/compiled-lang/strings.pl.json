@@ -281,6 +281,12 @@
       "value": "Określ co najmniej jedno wyrażenie, które musi być prawdziwe, aby wyzwalacz został uruchomiony."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -590,7 +596,7 @@
   "8JFxmV": [
     {
       "type": 0,
-      "value": "Add Output Schema"
+      "value": "Dodaj schemat danych wyjściowych"
     }
   ],
   "8L+oIz": [
@@ -614,7 +620,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "Schemat wejściowy"
     }
   ],
   "8ubEPi": [
@@ -1136,7 +1142,7 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "Schemat wyjściowy"
     }
   ],
   "L+PY+j": [
@@ -1782,7 +1788,7 @@
   "Wy/bhW": [
     {
       "type": 0,
-      "value": "Replace existing schema."
+      "value": "Zamień istniejący schemat."
     }
   ],
   "X8JjjT": [
@@ -1936,7 +1942,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfiguracja"
     }
   ],
   "ZM1mRy": [
@@ -1972,7 +1978,7 @@
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Odrzuć"
     }
   ],
   "a7j3gS": [
@@ -1997,6 +2003,12 @@
     {
       "type": 0,
       "value": "Obsługa danych"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Funkcja"
     }
   ],
   "ajAro8": [
@@ -2039,6 +2051,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Kolekcja, z której należy pobrać pierwsze obiekty (liczba)."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Wykonaj"
     }
   ],
   "c2XklE": [
@@ -2140,7 +2158,7 @@
   "dWeRGU": [
     {
       "type": 0,
-      "value": "pencil icon"
+      "value": "ikona ołówka"
     }
   ],
   "dhvk0u": [
@@ -2509,6 +2527,12 @@
       "value": "Edytuj w pliku JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Zestaw narzędzi"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2536,7 +2560,7 @@
   "kBw1WQ": [
     {
       "type": 0,
-      "value": "Add Input Schema"
+      "value": "Dodaj schemat danych wejściowych"
     }
   ],
   "kHcCxH": [
@@ -2620,7 +2644,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "Wstecz"
     }
   ],
   "lcVG4C": [
@@ -2740,7 +2764,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Zamknij"
     }
   ],
   "o/0SEj": [

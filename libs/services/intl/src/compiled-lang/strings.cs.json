@@ -277,6 +277,12 @@
       "value": "Zadejte alespoň jeden výraz, který musí být true, aby se trigger aktivoval."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -586,7 +592,7 @@
   "8JFxmV": [
     {
       "type": 0,
-      "value": "Add Output Schema"
+      "value": "Přidejte výstupní schéma"
     }
   ],
   "8L+oIz": [
@@ -610,7 +616,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "Vstupní schéma"
     }
   ],
   "8ubEPi": [
@@ -1132,7 +1138,7 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "Výstupní schéma"
     }
   ],
   "L+PY+j": [
@@ -1778,7 +1784,7 @@
   "Wy/bhW": [
     {
       "type": 0,
-      "value": "Replace existing schema."
+      "value": "Nahraďte existující schéma."
     }
   ],
   "X8JjjT": [
@@ -1932,7 +1938,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfigurace"
     }
   ],
   "ZM1mRy": [
@@ -1968,7 +1974,7 @@
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Zahodit"
     }
   ],
   "a7j3gS": [
@@ -1993,6 +1999,12 @@
     {
       "type": 0,
       "value": "Zpracování dat"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Funkce"
     }
   ],
   "ajAro8": [
@@ -2035,6 +2047,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Kolekce, ze které se mají získat první objekty Count."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Do"
     }
   ],
   "c2XklE": [
@@ -2136,7 +2154,7 @@
   "dWeRGU": [
     {
       "type": 0,
-      "value": "pencil icon"
+      "value": "ikona tužky"
     }
   ],
   "dhvk0u": [
@@ -2501,6 +2519,12 @@
       "value": "Upravit ve formátu JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Sada nástrojů"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2528,7 +2552,7 @@
   "kBw1WQ": [
     {
       "type": 0,
-      "value": "Add Input Schema"
+      "value": "Přidejte vstupní schéma"
     }
   ],
   "kHcCxH": [
@@ -2612,7 +2636,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "Zpět"
     }
   ],
   "lcVG4C": [
@@ -2732,7 +2756,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Zavřít"
     }
   ],
   "o/0SEj": [

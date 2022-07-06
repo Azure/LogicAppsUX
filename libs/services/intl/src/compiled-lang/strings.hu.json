@@ -243,6 +243,12 @@
       "value": "Adjon meg egy vagy több olyan kifejezést, amelynek igaznak kell lennie a trigger aktiválásához."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -552,7 +558,7 @@
   "8JFxmV": [
     {
       "type": 0,
-      "value": "Add Output Schema"
+      "value": "Kimeneti séma hozzáadása"
     }
   ],
   "8L+oIz": [
@@ -576,7 +582,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "Bemeneti séma"
     }
   ],
   "8ubEPi": [
@@ -1076,7 +1082,7 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "Kimeneti séma"
     }
   ],
   "L+PY+j": [
@@ -1704,7 +1710,7 @@
   "Wy/bhW": [
     {
       "type": 0,
-      "value": "Replace existing schema."
+      "value": "Meglévő séma cseréje."
     }
   ],
   "X8JjjT": [
@@ -1858,7 +1864,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfiguráció"
     }
   ],
   "ZM1mRy": [
@@ -1894,7 +1900,7 @@
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Elvetés"
     }
   ],
   "a7j3gS": [
@@ -1919,6 +1925,12 @@
     {
       "type": 0,
       "value": "Adatok kezelése"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Függvény"
     }
   ],
   "ajAro8": [
@@ -1961,6 +1973,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A gyűjtemény, melyből be kell olvasni az első Count objektumokat."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Elvégzés"
     }
   ],
   "c2XklE": [
@@ -2062,7 +2080,7 @@
   "dWeRGU": [
     {
       "type": 0,
-      "value": "pencil icon"
+      "value": "ceruza ikon"
     }
   ],
   "dhvk0u": [
@@ -2409,6 +2427,12 @@
       "value": "Szerkesztés JSON formátumban"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Eszközkészlet"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2436,7 +2460,7 @@
   "kBw1WQ": [
     {
       "type": 0,
-      "value": "Add Input Schema"
+      "value": "Bemeneti séma hozzáadása"
     }
   ],
   "kHcCxH": [
@@ -2520,7 +2544,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "Vissza"
     }
   ],
   "lcVG4C": [
@@ -2640,7 +2664,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Bezárás"
     }
   ],
   "o/0SEj": [
