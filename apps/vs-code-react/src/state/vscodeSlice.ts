@@ -20,7 +20,6 @@ export interface InitializedVscodeState {
   baseUrl: string;
   workflowProperties: OverviewPropertiesProps;
   project: ProjectName;
-  selectedWorkflows: Array<any>;
   exportData: ExportData;
 }
 
@@ -48,7 +47,6 @@ export const vscodeSlice = createSlice({
       (state as InitializedVscodeState).baseUrl = baseUrl;
       (state as InitializedVscodeState).corsNotice = corsNotice;
       (state as InitializedVscodeState).workflowProperties = workflowProperties;
-      (state as InitializedVscodeState).selectedWorkflows = [];
       (state as InitializedVscodeState).exportData = {
         selectedWorkflows: [],
         selectedSubscription: '',
@@ -60,7 +58,7 @@ export const vscodeSlice = createSlice({
     },
     updateSelectedWorkFlows: (state: VscodeState, action: PayloadAction<any>) => {
       const { selectedWorkflows } = action.payload;
-      (state as InitializedVscodeState).selectedWorkflows = selectedWorkflows;
+      (state as InitializedVscodeState).exportData.selectedWorkflows = selectedWorkflows;
     },
     updateSelectedSubscripton: (state: VscodeState, action: PayloadAction<any>) => {
       const { selectedSubscription } = action.payload;

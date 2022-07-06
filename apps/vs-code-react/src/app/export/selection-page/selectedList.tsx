@@ -9,7 +9,8 @@ import { useSelector } from 'react-redux';
 export const SelectedList: React.FC<any> = ({ deselectItem }) => {
   const intl = useIntl();
   const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { selectedWorkflows: selectedItems } = vscodeState as InitializedVscodeState;
+  const { exportData } = vscodeState as InitializedVscodeState;
+  const { selectedWorkflows: selectedItems } = exportData;
 
   const emojiIcon: IIconProps = { iconName: 'Cancel' };
 

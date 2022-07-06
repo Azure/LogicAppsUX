@@ -80,10 +80,9 @@ export class ApiService implements IApiService {
     };
   };
 
-  async getWorkflows(): Promise<any> {
+  async getWorkflows(subscriptionId: string, iseId: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const uri =
-      "https://management.azure.com/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/providers/Microsoft.Logic/workflows?api-version=2018-07-01-preview&$filter=properties/integrationServiceEnvironmentResourceId  eq '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/PGresource/providers/Microsoft.Logic/integrationServiceEnvironments/IntegrationTesting'";
+    const uri = `https://management.azure.com/subscriptions/${subscriptionId}/providers/Microsoft.Logic/workflows?api-version=2018-07-01-preview&$filter=properties/integrationServiceEnvironmentResourceId  eq '${iseId}'`;
 
     const response = await fetch(uri, { headers, method: 'GET' });
 

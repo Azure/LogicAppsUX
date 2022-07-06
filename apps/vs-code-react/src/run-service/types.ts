@@ -7,7 +7,7 @@ export interface IRunService {
 }
 
 export interface IApiService {
-  getWorkflows(): Promise<any>;
+  getWorkflows(subscriptionId: string, iseId: string): Promise<any>;
   getSubscriptions(): Promise<any>;
   getIse(selectedSubscription: string): Promise<any>;
 }
@@ -154,11 +154,11 @@ export enum ProjectName {
 
 export interface WorkflowProperties {
   id: string;
-  location: string;
   name: string;
-  resourceGroup: string;
-  subscriptionId: string;
   type: string;
+  location: string;
+  tags: Record<string, string>;
+  properties: Record<string, any>;
 }
 
 export interface Workflows {

@@ -13,7 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const SelectionPage: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken } = vscodeState as InitializedVscodeState;
+  const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
+  const { selectedSubscription, selectedIse } = exportData;
 
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
@@ -50,12 +51,16 @@ export const SelectionPage: React.FC = () => {
   }, [accessToken, baseUrl]);
 
   const loadWorkflows = () => {
-    return apiService.getWorkflows();
+    return apiService.getWorkflows(selectedSubscription, selectedIse);
   };
 
-  const { data: workflowsData, isLoading: isWorkflowsLoading } = useQuery<any>(QueryKeys.workflowsData, loadWorkflows, {
-    refetchOnWindowFocus: false,
-  });
+  const { data: workflowsData, isLoading: isWorkflowsLoading } = useQuery<any>(
+    [QueryKeys.workflowsData, { iseId: selectedIse }],
+    loadWorkflows,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const workflowItems: any = isWorkflowsLoading || !workflowsData ? [] : parseWorkflowData(workflowsData);
 
@@ -73,6 +78,7 @@ export const SelectionPage: React.FC = () => {
   });
 
   const deselectItem = (itemKey: string) => {
+    console.log('test2');
     selection.toggleKeySelected(itemKey);
   };
 
