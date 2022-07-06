@@ -120,7 +120,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       layoutOptions: {
         'elk.padding': '[top=0,left=16,bottom=48,right=16]', // allow space for add buttons
         'elk.position': `(0, 0)`, // See 'crossingMinimization.semiInteractive' above
-        nodeType: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+        nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
         ...(node.edges?.[0]?.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE && {
           'elk.layered.nodePlacement.strategy': 'SIMPLE',
           'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.onlyEdge,

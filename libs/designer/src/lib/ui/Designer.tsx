@@ -27,8 +27,9 @@ type NodeTypesObj = {
 const nodeTypes: NodeTypesObj = {
   OPERATION_NODE: OperationNode,
   GRAPH_NODE: GraphNode,
-  SCOPE_NODE: ScopeCardNode,
-  SUBGRAPH_NODE: SubgraphCardNode,
+  SUBGRAPH_NODE: GraphNode,
+  SCOPE_CARD_NODE: ScopeCardNode,
+  SUBGRAPH_CARD_NODE: SubgraphCardNode,
   HIDDEN_NODE: HiddenNode,
 };
 

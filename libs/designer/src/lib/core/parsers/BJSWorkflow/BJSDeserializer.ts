@@ -127,7 +127,7 @@ const processScopeActions = (
   const edges: WorkflowEdge[] = [];
 
   const headerId = `${actionName}-#scope`;
-  const scopeCardNode = createWorkflowNode(headerId, WORKFLOW_NODE_TYPES.SCOPE_NODE);
+  const scopeCardNode = createWorkflowNode(headerId, WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
   nodes.push(scopeCardNode);
 
   let allActions: Operations = {};
@@ -146,8 +146,12 @@ const processScopeActions = (
       [graphId]: {
         graphId: rootGraphId,
         actionCount:
-          graph.children?.filter((node) => node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE)
-            ?.length ?? 0,
+          graph.children?.filter(
+            (node) =>
+              node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE ||
+              node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE ||
+              node.type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE
+          )?.length ?? 0,
       },
     };
 
@@ -164,7 +168,7 @@ const processScopeActions = (
     actions: LogicAppsV2.Actions | undefined,
     subgraphType: SubgraphType
   ) => {
-    const [graph, operations, metadata] = processNestedActions(subgraphId, actions);
+    const [graph, operations, metadata] = processNestedActions(subgraphId, actions, true);
     if (!graph?.edges) graph.edges = [];
 
     nodes.push(graph);
@@ -172,7 +176,7 @@ const processScopeActions = (
     nodesMetadata = { ...nodesMetadata, ...metadata };
 
     const rootId = `${subgraphId}-#subgraph`;
-    const subgraphCardNode = createWorkflowNode(rootId, WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
+    const subgraphCardNode = createWorkflowNode(rootId, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
 
     const isAddCase = subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
     if (isAddCase) graph.type = WORKFLOW_NODE_TYPES.HIDDEN_NODE;
@@ -200,7 +204,7 @@ const processScopeActions = (
   //   use this instead of complicating the other setup functions
   const applyUntilActions = (graphId: string, actions: LogicAppsV2.Actions | undefined) => {
     scopeCardNode.id = scopeCardNode.id.replace('#scope', '#subgraph');
-    scopeCardNode.type = WORKFLOW_NODE_TYPES.SUBGRAPH_NODE;
+    scopeCardNode.type = WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE;
 
     const [graph, operations, metadata] = processNestedActions(graphId, actions);
 
@@ -214,8 +218,12 @@ const processScopeActions = (
         graphId: rootGraphId,
         subgraphType: SUBGRAPH_TYPES.UNTIL_DO,
         actionCount:
-          graph.children?.filter((node) => node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE)
-            ?.length ?? 0,
+          graph.children?.filter(
+            (node) =>
+              node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE ||
+              node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE ||
+              node.type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE
+          )?.length ?? 0,
       },
     };
 
@@ -230,7 +238,7 @@ const processScopeActions = (
     leafNodes.forEach((node) => {
       edges.push(createWorkflowEdge(node.id, footerId, WORKFLOW_EDGE_TYPES.HIDDEN_EDGE));
     });
-    nodes.push(createWorkflowNode(footerId, WORKFLOW_NODE_TYPES.SCOPE_NODE));
+    nodes.push(createWorkflowNode(footerId, WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE));
   };
 
   if (isSwitchAction(action)) {
@@ -253,7 +261,11 @@ const processScopeActions = (
   return [nodes, edges, allActions, nodesMetadata];
 };
 
-const processNestedActions = (graphId: string, actions: LogicAppsV2.Actions | undefined): [WorkflowNode, Operations, NodesMetadata] => {
+const processNestedActions = (
+  graphId: string,
+  actions: LogicAppsV2.Actions | undefined,
+  isSubgraph?: boolean
+): [WorkflowNode, Operations, NodesMetadata] => {
   const [children, edges, scopeActions, scopeNodesMetadata] = !isNullOrUndefined(actions)
     ? buildGraphFromActions(actions, graphId)
     : [[], [], {}, {}];
@@ -263,7 +275,7 @@ const processNestedActions = (graphId: string, actions: LogicAppsV2.Actions | un
       id: graphId,
       children,
       edges,
-      type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+      type: isSubgraph ? WORKFLOW_NODE_TYPES.SUBGRAPH_NODE : WORKFLOW_NODE_TYPES.GRAPH_NODE,
     },
     scopeActions,
     scopeNodesMetadata,

@@ -16,9 +16,9 @@ describe('Graph Utilities', () => {
         children: [
           {
             id: 'condition-actions',
-            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+            type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
             children: [
-              createWorkflowNode('condition-actions-CONDITIONAL_TRUE', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE),
+              createWorkflowNode('condition-actions-CONDITIONAL_TRUE', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
               createWorkflowNode('nestedOne'),
               createWorkflowNode('nestedTwo'),
             ],
@@ -26,8 +26,8 @@ describe('Graph Utilities', () => {
           },
           {
             id: 'condition-elseActions',
-            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
-            children: [createWorkflowNode('condition-elseActions-CONDITIONAL_FALSE', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE)],
+            type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
+            children: [createWorkflowNode('condition-elseActions-CONDITIONAL_FALSE', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE)],
             edges: [],
           },
         ],
