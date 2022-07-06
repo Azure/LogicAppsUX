@@ -8,13 +8,13 @@ import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useInfiniteQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const SelectionPage: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
-
   const { baseUrl, accessToken } = vscodeState as InitializedVscodeState;
+
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
 
@@ -49,21 +49,15 @@ export const SelectionPage: React.FC = () => {
     });
   }, [accessToken, baseUrl]);
 
-  const loadWorkflows = ({ pageParam }: { pageParam?: string }) => {
-    if (pageParam) {
-      return apiService.getMoreWorkflows(pageParam);
-    }
+  const loadWorkflows = () => {
     return apiService.getWorkflows();
   };
 
-  const { data } = useInfiniteQuery<any>(QueryKeys.workflowsData, loadWorkflows, {
-    getNextPageParam: (lastPage) => lastPage.nextLink,
+  const { data: workflowsData, isLoading: isWorkflowsLoading } = useQuery<any>(QueryKeys.workflowsData, loadWorkflows, {
     refetchOnWindowFocus: false,
   });
 
-  const workflowItems = useMemo(() => {
-    return parseWorkflowData(data?.pages);
-  }, [data?.pages]);
+  const workflowItems: any = isWorkflowsLoading || !workflowsData ? [] : parseWorkflowData(workflowsData);
 
   const selection = new Selection({
     onSelectionChanged: () => {
@@ -93,10 +87,10 @@ export const SelectionPage: React.FC = () => {
         </Text>
         <div className="msla-export-overview-panel-list-workflows">
           <ShimmeredDetailsList
-            items={workflowItems ?? []}
+            items={workflowItems}
             columns={getListColumns()}
             setKey="set"
-            enableShimmer={!workflowItems}
+            enableShimmer={isWorkflowsLoading}
             ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
             ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
             checkButtonAriaLabel={intlText.SELECT_WORKFLOW}

@@ -1,5 +1,5 @@
 import { ResourceType } from '../types';
-import type { ArmResources, IApiService, Workflows } from '../types';
+import type { IApiService } from '../types';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
@@ -80,32 +80,21 @@ export class ApiService implements IApiService {
     };
   };
 
-  async getMoreWorkflows(continuationToken: string): Promise<any> {
-    const headers = this.getAccessTokenHeaders();
-    const payload = this.getPayload(ResourceType.workflows);
-    const response = await fetch(continuationToken, { headers, method: 'POST', body: JSON.stringify(payload) });
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-
-    const { nextLink, value: runs }: ArmResources<any> = await response.json();
-    return { nextLink, runs };
-  }
-
   async getWorkflows(): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const payload = this.getPayload(ResourceType.workflows);
+    const uri =
+      "https://management.azure.com/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/providers/Microsoft.Logic/workflows?api-version=2018-07-01-preview&$filter=properties/integrationServiceEnvironmentResourceId  eq '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/PGresource/providers/Microsoft.Logic/integrationServiceEnvironments/IntegrationTesting'";
 
-    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(uri, { headers, method: 'GET' });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
-    const workflowsResponse: Workflows = await response.json();
-    const { $skipToken: nextLink, data: workflows } = workflowsResponse;
+    const workflowsResponse: any = await response.json();
+    const { value: workflows } = workflowsResponse;
 
-    return { nextLink, workflows };
+    return { workflows };
   }
 
   async getSubscriptions(): Promise<any> {

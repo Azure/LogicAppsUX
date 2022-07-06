@@ -1,6 +1,6 @@
 import type { WorkflowsList } from '../../../run-service';
 import type { RootState } from '../../../state/store';
-import type { initializedVscodeState } from '../../../state/vscodeSlice';
+import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { Text, IconButton } from '@fluentui/react';
 import type { IIconProps } from '@fluentui/react';
 import { useIntl } from 'react-intl';
@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 export const SelectedList: React.FC<any> = ({ deselectItem }) => {
   const intl = useIntl();
   const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { selectedWorkflows: selectedItems } = vscodeState as initializedVscodeState;
+  const { selectedWorkflows: selectedItems } = vscodeState as InitializedVscodeState;
 
   const emojiIcon: IIconProps = { iconName: 'Cancel' };
 

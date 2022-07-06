@@ -28,6 +28,7 @@ interface UninitializedVscodeState {
   initialized: false;
   accessToken?: string;
 }
+
 export type VscodeState = UninitializedVscodeState | InitializedVscodeState;
 
 const initialState: VscodeState = {

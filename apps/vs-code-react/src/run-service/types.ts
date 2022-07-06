@@ -7,8 +7,9 @@ export interface IRunService {
 }
 
 export interface IApiService {
-  getMoreWorkflows(continuationToken: string): Promise<any>;
   getWorkflows(): Promise<any>;
+  getSubscriptions(): Promise<any>;
+  getIse(selectedSubscription: string): Promise<any>;
 }
 
 export interface ArmResources<T> {
