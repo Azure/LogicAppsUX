@@ -6,6 +6,7 @@ import type { BaseEditorProps, Segment } from '../editor/base';
 import type { LabelProps } from '../label';
 import { isHighContrastBlack } from '../utils';
 import { CollapsedArray } from './collapsedarray';
+import { ExpandedArray } from './expandedarray';
 import type { ICalloutProps } from '@fluentui/react';
 import { IconButton, TooltipHost, DirectionalHint } from '@fluentui/react';
 import { useEffect, useState } from 'react';
@@ -20,12 +21,13 @@ export interface IArrayEditorStyles {
 
 export interface ArrayEditorItemProps {
   key?: string;
-  content: Segment[];
+  content: Segment[] | null;
 }
 
 export interface ArrayEditorProps extends BaseEditorProps {
   disabledToggle?: boolean;
   initialItems?: ArrayEditorItemProps[];
+  canDeleteLastItem?: boolean;
   styles?: IArrayEditorStyles;
   readOnly?: boolean;
   labelProps: LabelProps;
@@ -37,7 +39,8 @@ const calloutProps: ICalloutProps = {
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   readOnly = false,
-  disabledToggle,
+  disabledToggle = false,
+  canDeleteLastItem = true,
   initialItems = [],
   labelProps,
 }): JSX.Element => {
@@ -55,7 +58,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     setCollapsed(!collapsed);
   };
 
-  const renderToggleButton = (enabled: boolean): JSX.Element => {
+  const renderToggleButton = (enabled: boolean): JSX.Element | null => {
     const isInverted = isHighContrastBlack();
     const PARAMETER_EXPAND_ICON_DESC = intl.formatMessage({
       defaultMessage: 'Switch to detail inputs for array item',
@@ -68,7 +71,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     const toggleIcon = collapsed ? (isInverted ? KeyValueModeInverted : KeyValueMode) : isInverted ? TextModeInverted : TextMode;
     const toggleText = collapsed ? PARAMETER_EXPAND_ICON_DESC : PARAMETER_COLLAPSE_ICON_DESC;
 
-    return (
+    return !disabledToggle ? (
       <TooltipHost calloutProps={calloutProps} content={toggleText}>
         <IconButton
           aria-label={toggleText}
@@ -78,14 +81,25 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           onClick={handleToggle}
         />
       </TooltipHost>
-    );
+    ) : null;
   };
 
   return (
     <div className="msla-array-editor-container">
-      {/* {collapsed ? renderCollapsedArray() : renderExpandedArray()} */}
-      <CollapsedArray labelProps={labelProps} items={initialItems} isValid={isValid} setItems={setItems} setIsValid={setIsValid} />
-      <div className="msla-array-commands">{renderToggleButton(!readOnly && !disabledToggle)}</div>
+      {collapsed ? (
+        <CollapsedArray labelProps={labelProps} items={initialItems} isValid={isValid} setItems={setItems} setIsValid={setIsValid} />
+      ) : (
+        <ExpandedArray
+          items={items}
+          setItems={setItems}
+          labelProps={labelProps}
+          readOnly={readOnly}
+          canDeleteLastItem={canDeleteLastItem}
+        />
+      )}
+      {/* <CollapsedArray labelProps={labelProps} items={initialItems} isValid={isValid} setItems={setItems} setIsValid={setIsValid} /> */}
+
+      <div className="msla-array-commands">{renderToggleButton(isValid && !readOnly)}</div>
     </div>
   );
 };

@@ -61,7 +61,7 @@ const parseInitialValue = (items: ArrayEditorItemProps[]): Segment[] => {
   parsedItems.push({ type: ValueSegmentType.LITERAL, value: '[\n  "' });
   items.forEach((item, index) => {
     const { content } = item;
-    content.forEach((segment) => {
+    content?.forEach((segment) => {
       parsedItems.push(segment);
     });
     parsedItems.push({ type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n]' });

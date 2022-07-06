@@ -37,20 +37,41 @@ export const Serialize = ({ isValid, setItems }: SerializeProps) => {
 };
 
 const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[], currentSegments: Segment[]) => {
+  let inString = false;
   paragraphNode.__children.forEach((child) => {
     const childNode = $getNodeByKey(child);
     if ($isTextNode(childNode)) {
-      const splitChildNode = childNode.__text.split('"').filter((childNode) => {
-        return childNode.replace(/\[|\]|,/g, '').trim().length > 0;
+      const splitChildNode = childNode.__text.split(',').map((childNode) => {
+        return childNode.replace(/\[|\]/g, '').trim();
       });
       for (let i = 0; i < splitChildNode.length; i++) {
-        if (i > 0) {
-          returnItems.push({ content: clone(currentSegments) });
-          while (currentSegments.length) {
-            currentSegments.pop();
+        let text = splitChildNode[i];
+        if (text.length === 0) {
+          continue;
+        }
+
+        text = splitChildNode[i].replace(/^[^"]*"(.*)"[^"]*$/, '$1').trim();
+        if (text.length === 0) {
+          returnItems.push({ content: null });
+          continue;
+        }
+        if (text.indexOf('"') >= 0) {
+          currentSegments.push({ type: ValueSegmentType.LITERAL, value: text.replace('"', '') });
+          if (inString) {
+            returnItems.push({ content: clone(currentSegments) });
+            while (currentSegments.length) {
+              currentSegments.pop();
+            }
+          }
+          inString = !inString;
+        } else {
+          if (inString) {
+            currentSegments.push({ type: ValueSegmentType.LITERAL, value: text });
+          } else {
+            console.log(text);
+            returnItems.push({ content: [{ type: ValueSegmentType.LITERAL, value: text }] });
           }
         }
-        currentSegments.push({ type: ValueSegmentType.LITERAL, value: splitChildNode[i] });
       }
     } else if ($isTokenNode(childNode)) {
       currentSegments.push({
@@ -62,6 +83,10 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
           description: childNode.__description,
         },
       });
+      if (!inString) {
+        returnItems.push({ content: currentSegments });
+        currentSegments.pop();
+      }
     }
   });
   if (currentSegments.length > 0) {

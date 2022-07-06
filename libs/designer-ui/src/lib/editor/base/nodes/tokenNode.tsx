@@ -61,7 +61,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     return dom;
   }
 
-  updateDOM(): false {
+  updateDOM() {
     return false;
   }
 

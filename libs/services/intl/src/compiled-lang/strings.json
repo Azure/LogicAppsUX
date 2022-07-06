@@ -1001,6 +1001,12 @@
       "value": "Converts a string to lowercase using the casing rules of the invariant culture"
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -2927,6 +2933,12 @@
       "value": "Returns an array of values matching the key name from form-data or form-encoded trigger output"
     }
   ],
+  "sDzSr4": [
+    {
+      "type": 0,
+      "value": "Add new Item"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -3289,6 +3301,12 @@
     {
       "type": 0,
       "value": "Date and time functions"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [
