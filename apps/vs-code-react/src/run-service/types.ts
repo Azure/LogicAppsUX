@@ -223,6 +223,6 @@ export interface IDropDownOption {
 export enum RouteName {
   export = 'export',
   instance_selection = 'instance-selection',
-  selection = 'selection',
+  workflows_selection = 'workflows-selection',
   overview = 'overview',
 }

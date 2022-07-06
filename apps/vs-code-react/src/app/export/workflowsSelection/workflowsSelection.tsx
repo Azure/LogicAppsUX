@@ -11,7 +11,7 @@ import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const SelectionPage: React.FC = () => {
+export const WorkflowsSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
   const { selectedSubscription, selectedIse } = exportData;
@@ -83,15 +83,15 @@ export const SelectionPage: React.FC = () => {
   };
 
   return (
-    <div className="msla-export-overview-panel">
-      <div className="msla-export-overview-panel-list">
+    <div className="msla-export-workflows-panel">
+      <div className="msla-export-workflows-panel-list">
         <Text variant="xLarge" nowrap block>
           {intlText.SELECT_TITLE}
         </Text>
         <Text variant="large" nowrap block>
           {intlText.SELECT_DESCRIPTION}
         </Text>
-        <div className="msla-export-overview-panel-list-workflows">
+        <div className="msla-export-workflows-panel-list-workflows">
           <ShimmeredDetailsList
             items={workflowItems}
             columns={getListColumns()}
@@ -105,7 +105,7 @@ export const SelectionPage: React.FC = () => {
           />
         </div>
       </div>
-      <Separator vertical className="msla-export-overview-panel-divider" />
+      <Separator vertical className="msla-export-workflows-panel-divider" />
       <SelectedList deselectItem={deselectItem} />
     </div>
   );
