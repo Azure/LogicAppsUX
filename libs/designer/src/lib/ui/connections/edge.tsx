@@ -1,6 +1,6 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
 import { DropZone } from './dropzone';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import React, { useMemo } from 'react';
@@ -32,7 +32,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   // Remove any added id-specifier to get the actual id
   const sourceId = source.split('-#')[0];
 
-  const allChildrenEdges = useEdgesByParent(source);
+  const allChildrenEdges = useEdgesBySource(source);
   const nodeMetadata = useNodeMetadata(source);
   const [edgeCenterX, edgeCenterY] = getEdgeCenter({
     sourceX,
