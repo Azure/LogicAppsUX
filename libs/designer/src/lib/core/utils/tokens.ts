@@ -17,7 +17,7 @@ export function getTokenNodeIds(
   nodesManifest: Record<string, NodeDataWithManifest>,
   operationMap: Record<string, string>
 ): string[] {
-  const manifest = nodesManifest[nodeId].manifest;
+  const manifest = nodesManifest[nodeId]?.manifest;
   const tokenNodes = getUpstreamNodeIds(nodeId, graph, nodesMetadata, operationMap);
 
   // Should include itself as repetition reference if nodes can reference its outputs
@@ -37,7 +37,7 @@ export function getTokenNodeIds(
     }
   }
 
-  if (manifest.properties?.outputTokens?.selfReference) {
+  if (manifest?.properties?.outputTokens?.selfReference) {
     const allNodesInsideNode = getAllNodesInsideNode(nodeId, graph, operationMap);
     tokenNodes.push(...allNodesInsideNode);
   }
