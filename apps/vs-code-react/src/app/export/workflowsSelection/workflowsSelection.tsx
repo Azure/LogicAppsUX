@@ -67,7 +67,6 @@ export const WorkflowsSelection: React.FC = () => {
   const selection = new Selection({
     onSelectionChanged: () => {
       const currentSelection = selection.getSelection();
-      console.log('test', currentSelection);
       dispatch(
         updateSelectedWorkFlows({
           selectedWorkflows: currentSelection,
@@ -78,7 +77,6 @@ export const WorkflowsSelection: React.FC = () => {
   });
 
   const deselectItem = (itemKey: string) => {
-    console.log('test2');
     selection.toggleKeySelected(itemKey);
   };
 
