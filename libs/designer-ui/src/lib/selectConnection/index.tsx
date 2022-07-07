@@ -1,4 +1,5 @@
 import { getConnectionErrors } from '../helper';
+import INTL_STRINGS from './selectConnectionStrings';
 import type { IColumn } from '@fluentui/react';
 import {
   Icon,
@@ -38,9 +39,9 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
       ...connection,
       ...connection.properties,
       invalid: errors.length ? (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="msla-connection-error-icon-container">
           <TooltipHost content={errors.map((error) => error.error?.message).join(', ')}>
-            <Icon iconName="Error" style={{ fontSize: '18px', color: '#e00202' }} />
+            <Icon iconName="Error" className="msla-connection-error-icon" />
           </TooltipHost>
         </div>
       ) : null,
@@ -66,16 +67,16 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   const columns: IColumn[] = [
     {
       key: 'invalid',
-      name: 'Invalid',
-      ariaLabel: 'Is connection invalid',
+      name: intl.formatMessage(INTL_STRINGS.COLUMN_INVALID),
+      ariaLabel: intl.formatMessage(INTL_STRINGS.COLUMN_INVALID_ARIA),
       fieldName: 'invalid',
       minWidth: 50,
       maxWidth: 50,
     },
     {
       key: 'displayName',
-      name: 'Display Name',
-      ariaLabel: 'Display Name of the connection',
+      name: intl.formatMessage(INTL_STRINGS.COLUMN_DISPLAY_NAME),
+      ariaLabel: intl.formatMessage(INTL_STRINGS.COLUMN_DISPLAY_NAME_ARIA),
       fieldName: 'displayName',
       minWidth: 200,
       maxWidth: 200,
@@ -83,8 +84,8 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     },
     {
       key: 'name',
-      name: 'Name',
-      ariaLabel: 'Name of the connection',
+      name: intl.formatMessage(INTL_STRINGS.COLUMN_NAME),
+      ariaLabel: intl.formatMessage(INTL_STRINGS.COLUMN_NAME_ARIA),
       fieldName: 'name',
       minWidth: 100,
       maxWidth: 100,
@@ -92,29 +93,24 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     },
     {
       key: 'gateway',
-      name: 'Gateway',
-      ariaLabel: 'Gateway of the connection',
+      name: intl.formatMessage(INTL_STRINGS.COLUMN_GATEWAY),
+      ariaLabel: intl.formatMessage(INTL_STRINGS.COLUMN_GATEWAY_ARIA),
       fieldName: 'gateway',
       minWidth: 100,
       maxWidth: 100,
     },
   ];
 
-  const componentDescription = intl.formatMessage({
-    defaultMessage: 'Select an existing connection or create a new one.',
-    description: 'Select an existing connection or create a new one.',
-  });
-
   return (
     <div className="msla-select-connections-container">
-      <div>{componentDescription}</div>
+      <div>{intl.formatMessage(INTL_STRINGS.COMPONENT_DESCRIPTION)}</div>
 
       <MarqueeSelection selection={onSelect}>
         <DetailsList
           className="msla-connections-list"
           items={flattenedConnections}
           columns={columns}
-          setKey="connection1"
+          setKey="single"
           selection={onSelect}
           selectionMode={SelectionMode.single}
           layoutMode={DetailsListLayoutMode.justified}
@@ -122,16 +118,27 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
           selectionPreservedOnEmptyClick={true}
           onItemInvoked={(connection) => saveSelectionCallback(connection.id)}
           enterModalSelectionOnTouch={true}
-          ariaLabelForSelectionColumn="Toggle selection"
-          checkButtonAriaLabel="Select Connection"
+          checkButtonAriaLabel={intl.formatMessage(INTL_STRINGS.CHECK_BUTTON_ARIA)}
         />
       </MarqueeSelection>
 
       <div className="msla-select-connection-actions-container">
-        <PrimaryButton text={'Create New'} onClick={createNewConnectionCallback} />
+        <PrimaryButton
+          text={intl.formatMessage(INTL_STRINGS.BUTTON_CREATE)}
+          ariaLabel={intl.formatMessage(INTL_STRINGS.BUTTON_CREATE_ARIA)}
+          onClick={createNewConnectionCallback}
+        />
         <div id="action-gap" style={{ flexGrow: 1 }} />
-        <PrimaryButton text={'Save'} onClick={() => saveSelectionCallback(selection?.id)} />
-        <DefaultButton text={'Cancel'} onClick={cancelSelectionCallback} />
+        <PrimaryButton
+          text={intl.formatMessage(INTL_STRINGS.BUTTON_SAVE)}
+          ariaLabel={intl.formatMessage(INTL_STRINGS.BUTTON_SAVE_ARIA)}
+          onClick={() => saveSelectionCallback(selection?.id)}
+        />
+        <DefaultButton
+          text={intl.formatMessage(INTL_STRINGS.BUTTON_CANCEL)}
+          ariaLabel={intl.formatMessage(INTL_STRINGS.BUTTON_CANCEL_ARIA)}
+          onClick={cancelSelectionCallback}
+        />
       </div>
     </div>
   );

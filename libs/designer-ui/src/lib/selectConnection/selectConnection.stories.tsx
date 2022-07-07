@@ -62,7 +62,7 @@ const mockConnections: Connection[] = [
           status: 'error',
           error: {
             code: '0',
-            message: 'Something went wrong',
+            message: 'Invalid connection message ~',
           },
         },
       ],
