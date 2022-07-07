@@ -1,5 +1,5 @@
 import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
-import { WORKFLOW_EDGE_TYPES } from '../../parsers/models/workflowNode';
+import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowState } from './workflowSlice';
@@ -7,7 +7,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
 export const getWorkflowData = (state: RootState): WorkflowState => state.workflow;
-export const getWorkflowGraph = createSelector(getWorkflowData, (data) => {
+export const getRootWorkflowGraphForLayout = createSelector(getWorkflowData, (data) => {
   const rootNode = data.graph;
   const collapsedIds = data.collapsedGraphIds;
   if (Object.keys(collapsedIds).length === 0) return rootNode;
@@ -17,11 +17,11 @@ export const getWorkflowGraph = createSelector(getWorkflowData, (data) => {
     children: reduceCollapsed((node: WorkflowNode) => collapsedIds?.[node.id])(rootNode.children ?? []),
   };
 
-  console.log(newGraph);
   return newGraph;
 });
 
-const filterOutGraphChildren = (children: WorkflowNode[]) => children?.filter((child) => child.id.includes('-#'));
+const nonfilteredNodeTypes = [WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE];
+const filterOutGraphChildren = (children: WorkflowNode[]) => children?.filter((child) => nonfilteredNodeTypes.includes(child.type));
 const reduceCollapsed =
   (condition: (arg0: WorkflowNode) => any) =>
   (nodes: WorkflowNode[]): any => {
