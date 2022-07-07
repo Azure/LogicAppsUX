@@ -76,7 +76,7 @@ const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | unde
   } else {
     let result;
     for (const child of currentNode.children ?? []) {
-      result = getNode(nodeId, child as unknown as WorkflowNode);
+      result = getNode(nodeId, child as WorkflowNode);
 
       if (result) {
         return result;
