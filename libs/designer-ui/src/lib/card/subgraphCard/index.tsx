@@ -2,7 +2,7 @@ import { ActionButtonV2 } from '../../actionbuttonv2';
 import CollapseToggle from '../../collapseToggle';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
-import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
+import { labelCase, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 interface SubgraphCardProps {
@@ -46,7 +46,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         description: 'True',
       }),
       size: 'small',
-      clickId: parentId,
+      id: parentId,
     },
     CONDITIONAL_FALSE: {
       color: '#A4262C',
@@ -55,13 +55,13 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         description: 'False',
       }),
       size: 'small',
-      clickId: parentId,
+      id: parentId,
     },
     SWITCH_CASE: {
       color: '#484F58',
-      title: id,
+      title: labelCase(id),
       size: 'large',
-      clickId: id,
+      id: id,
     },
     SWITCH_DEFAULT: {
       color: '#484F58',
@@ -70,7 +70,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         description: 'Default, the backup option if none other apply',
       }),
       size: 'small',
-      clickId: parentId,
+      id: parentId,
     },
     UNTIL_DO: {
       color: '#486991',
@@ -79,7 +79,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         description: 'Do, as in "to do an action"',
       }),
       size: 'small',
-      clickId: id,
+      id: id,
     },
     SWITCH_ADD_CASE: {},
   };
@@ -88,7 +88,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
 
   const handleTitleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
-    onClick?.(data.clickId);
+    onClick?.(data.id);
   };
 
   if (data.size === 'large') {
