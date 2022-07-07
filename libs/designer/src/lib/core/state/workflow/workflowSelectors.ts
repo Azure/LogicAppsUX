@@ -10,11 +10,11 @@ export const getWorkflowData = (state: RootState): WorkflowState => state.workfl
 export const getWorkflowGraph = createSelector(getWorkflowData, (data) => {
   const rootNode = data.graph;
   const collapsedIds = data.collapsedGraphIds;
-  if (collapsedIds.length === 0) return rootNode;
+  if (Object.keys(collapsedIds).length === 0) return rootNode;
   if (!rootNode) return undefined;
   const newGraph = {
     ...rootNode,
-    children: reduceCollapsed((node: WorkflowNode) => collapsedIds.includes(node.id))(rootNode.children ?? []),
+    children: reduceCollapsed((node: WorkflowNode) => collapsedIds?.[node.id])(rootNode.children ?? []),
   };
 
   console.log(newGraph);
@@ -40,7 +40,7 @@ const reduceCollapsed =
 
 export const useAllCollapsedGraphs = createSelector(getWorkflowData, (data) => data.collapsedGraphIds);
 export const useIsGraphCollapsed = (graphId: string): boolean =>
-  useSelector((state: RootState) => state.workflow.collapsedGraphIds.includes(graphId));
+  useSelector((state: RootState): boolean => state.workflow.collapsedGraphIds?.[graphId]);
 
 export const getWorkflowNodeFromState = (state: RootState, actionId: string) => {
   const graph = state.workflow.graph;

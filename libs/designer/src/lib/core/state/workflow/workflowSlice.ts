@@ -26,7 +26,7 @@ export interface WorkflowState {
   graph: WorkflowNode | null;
   operations: Operations;
   nodesMetadata: NodesMetadata;
-  collapsedGraphIds: string[];
+  collapsedGraphIds: Record<string, boolean>;
 }
 
 export const initialWorkflowState: WorkflowState = {
@@ -34,7 +34,7 @@ export const initialWorkflowState: WorkflowState = {
   graph: null,
   operations: {},
   nodesMetadata: {},
-  collapsedGraphIds: [],
+  collapsedGraphIds: {},
 };
 
 export const workflowSlice = createSlice({
@@ -94,16 +94,12 @@ export const workflowSlice = createSlice({
         !!node?.children?.length && stack.push(...node.children);
       }
     },
-    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<string[]>) => {
+    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<Record<string, boolean>>) => {
       state.collapsedGraphIds = action.payload;
     },
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
-      const index = state.collapsedGraphIds.indexOf(action.payload);
-      if (index === -1) {
-        state.collapsedGraphIds.push(action.payload);
-      } else {
-        state.collapsedGraphIds.splice(index, 1);
-      }
+      if (state.collapsedGraphIds?.[action.payload] === true) delete state.collapsedGraphIds[action.payload];
+      else state.collapsedGraphIds[action.payload] = true;
     },
   },
   extraReducers: (builder) => {

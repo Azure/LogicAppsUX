@@ -1,11 +1,10 @@
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode, WorkflowEdgeType, WorkflowNodeType } from '../parsers/models/workflowNode';
 import type { NodesMetadata } from '../state/workflow/workflowSlice';
-import { equals } from '@microsoft-logic-apps/utils';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
 
-export const isRootNode = (graph: WorkflowNode, nodeId: string, nodesMetadata: NodesMetadata) => {
-  return nodesMetadata[nodeId]?.graphId === graph.id && !graph.edges?.some((edge) => equals(edge.target, nodeId));
+export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
+  return !!nodesMetadata[nodeId]?.isRoot;
 };
 
 export const isLeafNodeFromEdges = (edges: WorkflowEdge[]) => {
