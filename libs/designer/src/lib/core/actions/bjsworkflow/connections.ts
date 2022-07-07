@@ -166,9 +166,11 @@ function getOpenApiConnectionReferenceKey(operationDefinition: LogicAppsV2.OpenA
 
 export function getLegacyConnectionReferenceKey(operationDefinition: any): string | undefined {
   // danielle how is open api different
-  let referenceKey = operationDefinition.inputs.host.connection.referenceName;
-  if (!referenceKey) {
+  let referenceKey: string;
+  if (typeof operationDefinition.inputs.host.connection === 'string') {
     referenceKey = operationDefinition.inputs.host.connection;
+  } else {
+    referenceKey = operationDefinition.inputs.host.connection.referenceName;
   }
   return referenceKey;
 }
