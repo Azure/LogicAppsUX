@@ -46,6 +46,10 @@ export function getTokenNodeIds(
 }
 
 export function getBuiltInTokens(manifest: OperationManifest): OutputToken[] {
+  if (!manifest) {
+    return [];
+  }
+
   const icon = manifest.properties.iconUri;
   const brandColor = manifest.properties.brandColor;
 
@@ -71,6 +75,10 @@ export function convertOutputsToTokens(
   manifest: OperationManifest,
   allNodesData: Record<string, NodeDataWithManifest>
 ): OutputToken[] {
+  if (!manifest) {
+    return [];
+  }
+
   const icon = manifest.properties.iconUri;
   const brandColor = manifest.properties.brandColor;
   const isSecure = hasSecureOutputs(nodeType, allNodesData[nodeId].settings);

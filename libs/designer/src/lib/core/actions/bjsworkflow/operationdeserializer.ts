@@ -1,10 +1,13 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
+import type { AddTokensPayload, NodeTokens } from '../../state/tokensSlice';
+import { initializeTokens } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflowSlice';
 import { isRootNode } from '../../utils/graph';
 import {
@@ -15,6 +18,7 @@ import {
   updateTokenMetadata,
 } from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
+import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getOperationSettings } from './settings';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
@@ -30,10 +34,6 @@ import {
 } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
-import type { AddTokensPayload, NodeTokens} from '../../state/tokensSlice';
-import { initializeTokens } from '../../state/tokensSlice';
-import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 
 export interface NodeDataWithManifest extends NodeData {
   manifest: OperationManifest;
@@ -71,9 +71,7 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
     )
   );
 
-  dispatch(
-    initializeTokens(initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata))
-  );
+  dispatch(initializeTokens(initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata)));
 };
 
 const initializeOperationDetailsForManifest = async (
@@ -287,11 +285,17 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithManifest[], operatio
   }
 };
 
-const initializeOutputTokensForOperations = (allNodesData: NodeDataWithManifest[], operations: Operations, graph: WorkflowNode, nodesMetadata: NodesMetadata): AddTokensPayload => {
-  const nodeMap = Object.keys(operations)
-    .reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
-  const nodesWithManifest = allNodesData.reduce((actionNodes: Record<string, NodeDataWithManifest>, nodeData: NodeDataWithManifest) => 
-    ({ ...actionNodes, [nodeData.id]: nodeData }), {});
+const initializeOutputTokensForOperations = (
+  allNodesData: NodeDataWithManifest[],
+  operations: Operations,
+  graph: WorkflowNode,
+  nodesMetadata: NodesMetadata
+): AddTokensPayload => {
+  const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
+  const nodesWithManifest = allNodesData.reduce(
+    (actionNodes: Record<string, NodeDataWithManifest>, nodeData: NodeDataWithManifest) => ({ ...actionNodes, [nodeData.id]: nodeData }),
+    {}
+  );
 
   const result: AddTokensPayload = {};
 
@@ -299,16 +303,24 @@ const initializeOutputTokensForOperations = (allNodesData: NodeDataWithManifest[
     const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithManifest, nodeMap);
     const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds };
     const nodeData = nodesWithManifest[operationId];
-    const nodeManifest = nodeData.manifest;
+    const nodeManifest = nodeData?.manifest;
 
     nodeTokens.tokens.push(...getBuiltInTokens(nodeManifest));
-    nodeTokens.tokens.push(...convertOutputsToTokens(operationId, operations[operationId].type, nodeData.nodeOutputs.outputs, nodeManifest, nodesWithManifest));
+    nodeTokens.tokens.push(
+      ...convertOutputsToTokens(
+        operationId,
+        operations[operationId].type,
+        nodeData?.nodeOutputs.outputs ?? {},
+        nodeManifest,
+        nodesWithManifest
+      )
+    );
 
     result[operationId] = nodeTokens;
   }
 
   return result;
-}
+};
 
 const _getParametersSortedByVisibility = (parameters: ParameterInfo[]): ParameterInfo[] => {
   const sortedParameters: ParameterInfo[] = parameters.filter((parameter) => parameter.required);
