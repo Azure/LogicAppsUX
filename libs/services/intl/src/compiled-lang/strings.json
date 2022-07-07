@@ -3333,6 +3333,12 @@
       "value": "connectorName"
     }
   ],
+  "yoCi15": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one."
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
