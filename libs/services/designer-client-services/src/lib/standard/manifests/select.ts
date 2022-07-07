@@ -45,6 +45,13 @@ export default {
     },
     isOutputsOptional: false,
 
+    repetition: {
+      self: {
+        parametersToExclude: ['from']
+      },
+      loopParameter: 'from'
+    },
+
     connector: {
       id: 'connectionProviders/dataOperationNew',
       name: 'dataOperationNew',

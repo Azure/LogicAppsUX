@@ -43,6 +43,8 @@ import {
   SegmentType,
   Visibility,
 } from '@microsoft-logic-apps/parsers';
+import type {
+  OperationManifest} from '@microsoft-logic-apps/utils';
 import {
   aggregate,
   clone,
@@ -200,13 +202,9 @@ interface ParameterEditorProps {
   schema: any;
 }
 
-export function shouldIncludeSelfForRepetitionReference(graphNodeType: string, parameterName?: string): boolean {
-  if (
-    equals(graphNodeType, Constants.NODE.TYPE.QUERY) ||
-    equals(graphNodeType, Constants.NODE.TYPE.SELECT) ||
-    equals(graphNodeType, Constants.NODE.TYPE.TABLE)
-  ) {
-    return !parameterName || parameterName !== 'from';
+export function shouldIncludeSelfForRepetitionReference(manifest: OperationManifest, parameterName?: string): boolean {
+  if (manifest?.properties.repetition?.self) {
+    return !parameterName || !(manifest.properties.repetition.self.parametersToExclude ?? []).includes(parameterName);
   }
 
   return false;
@@ -1101,4 +1099,23 @@ export function getNormalizedTokenName(tokenName: string): string {
 
   // Replace occurences of ? from the tokenName.
   return tokenName.replace(/\?/g, '');
+}
+
+// TODO - Add code to get correct repetition context to handle nested foreach and foreach scenarios
+export function getRepetitionContext(_includeSelf?: boolean): RepetitionContext {
+  const repetitionReferences: RepetitionReference[] = [];
+  return {
+      repetitionReferences,
+  };
+}
+
+export function getRepetitionValue(manifest: OperationManifest, nodeInputs: ParameterInfo[]): any {
+  const loopParameter = manifest.properties.repetition?.loopParameter;
+
+  if (loopParameter) {
+    const parameter = nodeInputs.find(input => input.parameterName === loopParameter);
+    return parameter ? parameter.value : undefined;
+  }
+
+  return undefined;
 }

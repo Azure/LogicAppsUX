@@ -48,7 +48,7 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Deseria
   }
 
   const [remainingChildren, edges, actions, actionNodesMetadata] = !isNullOrUndefined(definition.actions)
-    ? buildGraphFromActions(definition.actions, 'root')
+    ? buildGraphFromActions(definition.actions, 'root', undefined /* parentNodeId */)
     : [[], [], {}];
   allActions = { ...allActions, ...actions };
   nodesMetadata = { ...nodesMetadata, ...actionNodesMetadata };
@@ -78,7 +78,8 @@ const isUntilAction = (action: LogicAppsV2.ActionDefinition) => action.type.toLo
 
 const buildGraphFromActions = (
   actions: Record<string, LogicAppsV2.ActionDefinition>,
-  graphId: string
+  graphId: string,
+  parentNodeId: string | undefined
 ): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
   const nodes: WorkflowNode[] = [];
   const edges: WorkflowEdge[] = [];
@@ -88,7 +89,7 @@ const buildGraphFromActions = (
     const node = createWorkflowNode(actionName, isScopeAction(action) ? WORKFLOW_NODE_TYPES.GRAPH_NODE : WORKFLOW_NODE_TYPES.TEST_NODE);
 
     allActions[actionName] = { ...action };
-    nodesMetadata[actionName] = { graphId };
+    nodesMetadata[actionName] = { graphId, parentNodeId };
     if (action.runAfter) {
       for (const [runAfterAction] of Object.entries(action.runAfter)) {
         edges.push(createWorkflowEdge(runAfterAction, actionName));
@@ -96,7 +97,7 @@ const buildGraphFromActions = (
     }
 
     if (isScopeAction(action)) {
-      const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(actionName, action);
+      const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(actionName, actionName, action);
       node.children = scopeNodes;
       node.edges = scopeEdges;
       allActions = { ...allActions, ...scopeActions };
@@ -111,6 +112,7 @@ const buildGraphFromActions = (
 
 const processScopeActions = (
   // graphId: string,
+  parentNodeId: string | undefined,
   actionName: string,
   action: LogicAppsV2.ScopeAction
 ): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
@@ -127,7 +129,7 @@ const processScopeActions = (
 
   // For use on scope nodes with a single flow
   const applyActions = (graphId: string, actions?: LogicAppsV2.Actions) => {
-    const [graph, operations, metadata] = processNestedActions(graphId, actions);
+    const [graph, operations, metadata] = processNestedActions(graphId, parentNodeId, actions);
 
     nodes.push(...(graph.children as []));
     edges.push(...(graph.edges as []));
@@ -142,7 +144,7 @@ const processScopeActions = (
 
   // For use on scope nodes with multiple flows
   const applySubgraphActions = (subgraphId: string, actions: LogicAppsV2.Actions | undefined, subgraphType: SubgraphType) => {
-    const [graph, operations, metadata] = processNestedActions(subgraphId, actions);
+    const [graph, operations, metadata] = processNestedActions(subgraphId, parentNodeId, actions);
     if (!graph?.edges) graph.edges = [];
 
     nodes.push(graph);
@@ -173,7 +175,7 @@ const processScopeActions = (
     scopeCardNode.id = scopeCardNode.id.replace('#scope', '#subgraph');
     scopeCardNode.type = WORKFLOW_NODE_TYPES.SUBGRAPH_NODE;
 
-    const [graph, operations, metadata] = processNestedActions(graphId, actions);
+    const [graph, operations, metadata] = processNestedActions(graphId, parentNodeId, actions);
 
     nodes.push(...(graph?.children ?? []));
     edges.push(...(graph?.edges ?? []));
@@ -210,15 +212,15 @@ const processScopeActions = (
   } else if (isUntilAction(action)) {
     applyUntilActions(actionName, action.actions);
   } else {
-    applyActions(`${actionName}-actions`, action.actions);
+    applyActions(actionName, action.actions);
   }
 
   return [nodes, edges, allActions, nodesMetadata];
 };
 
-const processNestedActions = (graphId: string, actions: LogicAppsV2.Actions | undefined): [WorkflowNode, Operations, NodesMetadata] => {
+const processNestedActions = (graphId: string, parentNodeId: string | undefined, actions: LogicAppsV2.Actions | undefined): [WorkflowNode, Operations, NodesMetadata] => {
   const [children, edges, scopeActions, scopeNodesMetadata] = !isNullOrUndefined(actions)
-    ? buildGraphFromActions(actions, graphId)
+    ? buildGraphFromActions(actions, graphId, parentNodeId)
     : [[], [], {}, {}];
 
   return [
