@@ -17,7 +17,7 @@ export const initializeGraphState = createAsyncThunk<DeserializedWorkflow, Logic
     }
     if (spec === 'BJS') {
       const deserializedWorkflow = BJSDeserialize(workflowDefinition);
-      await initializeOperationMetadata(deserializedWorkflow, thunkAPI.dispatch);
+      initializeOperationMetadata(deserializedWorkflow, thunkAPI.dispatch);
       const actionsAndTriggers = deserializedWorkflow.actionData;
       getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
       return deserializedWorkflow;
