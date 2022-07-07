@@ -12,11 +12,20 @@ export default {
     childOperationsLocation: ['actions'],
 
     inputs: {
-      type: 'array',
-      title: 'Select an output from previous steps',
+      type: 'object',
+      properties: {
+        foreach: {
+          type: 'array',
+          title: 'Select an output from previous steps',
+        },
+      },
     },
-    inputsLocation: ['foreach'],
+    inputsLocation: ['inputs'],
     isInputsOptional: false,
+
+    repetition: {
+      loopParameter: 'foreach',
+    },
 
     outputs: {},
     isOutputsOptional: false,
