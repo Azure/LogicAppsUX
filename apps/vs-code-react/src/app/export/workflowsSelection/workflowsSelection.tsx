@@ -3,9 +3,11 @@ import { QueryKeys } from '../../../run-service/types';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
-import { getListColumns, parseWorkflowData } from './helper';
+import { Filters } from './filters';
+import { getListColumns, parseResourceGroups, parseWorkflowData } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
+import type { IDropdownOption } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -64,6 +66,8 @@ export const WorkflowsSelection: React.FC = () => {
 
   const workflowItems: any = isWorkflowsLoading || !workflowsData ? [] : parseWorkflowData(workflowsData);
 
+  const resourceGroups: IDropdownOption[] = isWorkflowsLoading || !workflowsData ? [] : parseResourceGroups(workflowItems);
+
   const selection = new Selection({
     onSelectionChanged: () => {
       const currentSelection = selection.getSelection();
@@ -89,6 +93,7 @@ export const WorkflowsSelection: React.FC = () => {
         <Text variant="large" nowrap block>
           {intlText.SELECT_DESCRIPTION}
         </Text>
+        <Filters dropdownOptions={resourceGroups} />
         <div className="msla-export-workflows-panel-list-workflows">
           <ShimmeredDetailsList
             items={workflowItems}
