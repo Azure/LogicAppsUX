@@ -1,14 +1,15 @@
 import { ApiService } from '../../../run-service/export/index';
 import { QueryKeys } from '../../../run-service/types';
+import type { WorkflowsList } from '../../../run-service/types';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { Filters } from './filters';
-import { getListColumns, parseResourceGroups, parseWorkflowData } from './helper';
+import { filterByDropdown, getListColumns, parseResourceGroups, parseWorkflowData } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +18,9 @@ export const WorkflowsSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
   const { selectedSubscription, selectedIse } = exportData;
+  const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList>>([]);
+  const [allWorkflows, setAllWorkflows] = useState<Array<WorkflowsList>>([]);
+  const [resourceGroups, setResourceGroups] = useState<IDropdownOption[]>([]);
 
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
@@ -56,17 +60,27 @@ export const WorkflowsSelection: React.FC = () => {
     return apiService.getWorkflows(selectedSubscription, selectedIse);
   };
 
-  const { data: workflowsData, isLoading: isWorkflowsLoading } = useQuery<any>(
-    [QueryKeys.workflowsData, { iseId: selectedIse }],
-    loadWorkflows,
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
+  const onWorkflowsSuccess = (workflowsData: any) => {
+    const workflowItems: Array<WorkflowsList> = !workflowsData ? [] : parseWorkflowData(workflowsData);
+    const resourceGroups: IDropdownOption[] = !workflowsData ? [] : parseResourceGroups(workflowItems);
 
-  const workflowItems: any = isWorkflowsLoading || !workflowsData ? [] : parseWorkflowData(workflowsData);
+    setRenderWorkflows(workflowItems);
+    setAllWorkflows(workflowItems);
+    setResourceGroups(resourceGroups);
+  };
 
-  const resourceGroups: IDropdownOption[] = isWorkflowsLoading || !workflowsData ? [] : parseResourceGroups(workflowItems);
+  const { isLoading: isWorkflowsLoading } = useQuery<any>([QueryKeys.workflowsData, { iseId: selectedIse }], loadWorkflows, {
+    refetchOnWindowFocus: false,
+    onSuccess: onWorkflowsSuccess,
+  });
+
+  const onChangeDropdown = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
+    const updatedResourceGroups = [...resourceGroups];
+    updatedResourceGroups[index].selected = !updatedResourceGroups[index].selected;
+
+    setRenderWorkflows(filterByDropdown(allWorkflows, updatedResourceGroups));
+    setResourceGroups(updatedResourceGroups);
+  };
 
   const selection = new Selection({
     onSelectionChanged: () => {
@@ -77,12 +91,34 @@ export const WorkflowsSelection: React.FC = () => {
         })
       );
     },
-    items: workflowItems,
+    items: renderWorkflows as any,
   });
 
   const deselectItem = (itemKey: string) => {
     selection.toggleKeySelected(itemKey);
   };
+
+  const detailList = useMemo(() => {
+    return (
+      <div className="msla-export-workflows-panel-list-workflows">
+        <ShimmeredDetailsList
+          items={renderWorkflows}
+          columns={getListColumns()}
+          setKey="set"
+          enableShimmer={isWorkflowsLoading}
+          ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
+          ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
+          checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
+          selectionMode={SelectionMode.multiple}
+          selection={selection}
+        />
+      </div>
+    );
+  }, [renderWorkflows, isWorkflowsLoading, selection, intlText.TOGGLE_SELECTION, intlText.TOGGLE_SELECTION_ALL, intlText.SELECT_WORKFLOW]);
+
+  const filters = useMemo(() => {
+    return <Filters dropdownOptions={resourceGroups} onChangeDropdown={onChangeDropdown} isDataLoaded={isWorkflowsLoading} />;
+  }, [resourceGroups, isWorkflowsLoading, onChangeDropdown]);
 
   return (
     <div className="msla-export-workflows-panel">
@@ -93,20 +129,8 @@ export const WorkflowsSelection: React.FC = () => {
         <Text variant="large" nowrap block>
           {intlText.SELECT_DESCRIPTION}
         </Text>
-        <Filters dropdownOptions={resourceGroups} />
-        <div className="msla-export-workflows-panel-list-workflows">
-          <ShimmeredDetailsList
-            items={workflowItems}
-            columns={getListColumns()}
-            setKey="set"
-            enableShimmer={isWorkflowsLoading}
-            ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
-            ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
-            checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
-            selectionMode={SelectionMode.multiple}
-            selection={selection}
-          />
-        </div>
+        {filters}
+        {detailList}
       </div>
       <Separator vertical className="msla-export-workflows-panel-divider" />
       <SelectedList deselectItem={deselectItem} />
