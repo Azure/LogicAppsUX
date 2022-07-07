@@ -162,12 +162,7 @@ export interface WorkflowProperties {
 }
 
 export interface Workflows {
-  $skipToken: string;
-  count: number;
-  data: Array<WorkflowProperties>;
-  facets: Record<string, string>;
-  resultTruncated: string;
-  totalRecords: number;
+  value: Array<WorkflowProperties>;
 }
 
 export interface WorkflowsList {

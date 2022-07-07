@@ -1,5 +1,5 @@
 import { ResourceType } from '../types';
-import type { IApiService } from '../types';
+import type { IApiService, Workflows } from '../types';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
@@ -57,6 +57,10 @@ export class ApiService implements IApiService {
     }
   };
 
+  private getWorkflowsUri = (subscriptionId: string, iseId: string) => {
+    return `https://management.azure.com/subscriptions/${subscriptionId}/providers/Microsoft.Logic/workflows?api-version=2018-07-01-preview&$filter=properties/integrationServiceEnvironmentResourceId  eq '${iseId}'`;
+  };
+
   private getPayload = (resourceType: string, properties?: any) => {
     const skipToken = properties?.skipToken;
 
@@ -82,15 +86,14 @@ export class ApiService implements IApiService {
 
   async getWorkflows(subscriptionId: string, iseId: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const uri = `https://management.azure.com/subscriptions/${subscriptionId}/providers/Microsoft.Logic/workflows?api-version=2018-07-01-preview&$filter=properties/integrationServiceEnvironmentResourceId  eq '${iseId}'`;
-
-    const response = await fetch(uri, { headers, method: 'GET' });
+    const workflowsUri = this.getWorkflowsUri(subscriptionId, iseId);
+    const response = await fetch(workflowsUri, { headers, method: 'GET' });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
-    const workflowsResponse: any = await response.json();
+    const workflowsResponse: Workflows = await response.json();
     const { value: workflows } = workflowsResponse;
 
     return { workflows };
