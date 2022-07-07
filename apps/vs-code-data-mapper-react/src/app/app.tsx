@@ -5,7 +5,11 @@ export const App = () => {
   return (
     <DataMapperDesignerProvider locale="en-US" options={{}}>
       <DataMapDataProvider dataMap={undefined}>
-        <DataMapperDesigner></DataMapperDesigner>
+        <DataMapperDesigner
+          saveStateCall={() => {
+            console.log('save state called');
+          }}
+        ></DataMapperDesigner>
       </DataMapDataProvider>
     </DataMapperDesignerProvider>
   );
