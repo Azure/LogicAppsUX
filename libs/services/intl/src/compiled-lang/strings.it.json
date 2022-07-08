@@ -1,4 +1,10 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -243,6 +249,12 @@
       "value": "Specificare una o più espressioni che devono essere true per l'attivazione del trigger."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -409,6 +421,12 @@
     {
       "type": 0,
       "value": "Presentazione/esercitazione"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
     }
   ],
   "5J7j9k": [
@@ -863,6 +881,12 @@
       "value": "hours"
     }
   ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -1091,6 +1115,12 @@
       "value": "Restituisce il componente giorno della settimana di un timestamp in formato stringa"
     }
   ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Warning"
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -1227,6 +1257,12 @@
     {
       "type": 0,
       "value": "Restituisce i risultati delle azioni di primo livello nell'azione con ambito specificata, ad esempio un'azione For_each, Until o Scope."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
     }
   ],
   "Oib1mL": [
@@ -1895,6 +1931,12 @@
       "value": "Questa operazione è già stata eliminata."
     }
   ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+    }
+  ],
   "a64zhX": [
     {
       "type": 0,
@@ -1928,7 +1970,7 @@
   "aL0Uut": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Funzione"
     }
   ],
   "ajAro8": [
@@ -1976,7 +2018,7 @@
   "c/+j08": [
     {
       "type": 0,
-      "value": "Do"
+      "value": "Fare"
     }
   ],
   "c2XklE": [
@@ -2420,7 +2462,7 @@
   "jsEMSu": [
     {
       "type": 0,
-      "value": "Toolbox"
+      "value": "Casella degli strumenti"
     }
   ],
   "juR40n": [

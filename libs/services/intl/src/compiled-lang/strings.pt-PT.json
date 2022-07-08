@@ -1,4 +1,10 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -243,6 +249,12 @@
       "value": "Especifique uma ou mais expressões que têm de ser verdadeiras para que o acionador seja acionado."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -411,6 +423,12 @@
       "value": "Visita guiada/Tutorial"
     }
   ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -552,7 +570,7 @@
   "8JFxmV": [
     {
       "type": 0,
-      "value": "Add Output Schema"
+      "value": "Adicionar Esquema de Saída"
     }
   ],
   "8L+oIz": [
@@ -863,6 +881,12 @@
       "value": "hours"
     }
   ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -1091,6 +1115,12 @@
       "value": "Devolve o dia do componente da semana de um carimbo de data/hora de cadeia"
     }
   ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Warning"
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -1227,6 +1257,12 @@
     {
       "type": 0,
       "value": "Devolve os resultados das ações de nível superior na ação com âmbito especificada, como uma ação For_each, Até ou Âmbito."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
     }
   ],
   "Oib1mL": [
@@ -1700,7 +1736,7 @@
   "Wy/bhW": [
     {
       "type": 0,
-      "value": "Replace existing schema."
+      "value": "Substituir esquema existente."
     }
   ],
   "X8JjjT": [
@@ -1887,6 +1923,12 @@
       "value": "Esta operação já foi eliminada."
     }
   ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+    }
+  ],
   "a64zhX": [
     {
       "type": 0,
@@ -1920,7 +1962,7 @@
   "aL0Uut": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Função"
     }
   ],
   "ajAro8": [
@@ -1968,7 +2010,7 @@
   "c/+j08": [
     {
       "type": 0,
-      "value": "Do"
+      "value": "Fazer"
     }
   ],
   "c2XklE": [
@@ -2070,7 +2112,7 @@
   "dWeRGU": [
     {
       "type": 0,
-      "value": "pencil icon"
+      "value": "ícone de lápis"
     }
   ],
   "dhvk0u": [
@@ -2420,7 +2462,7 @@
   "jsEMSu": [
     {
       "type": 0,
-      "value": "Toolbox"
+      "value": "Caixa de Ferramentas"
     }
   ],
   "juR40n": [
@@ -2450,7 +2492,7 @@
   "kBw1WQ": [
     {
       "type": 0,
-      "value": "Add Input Schema"
+      "value": "Adicionar Esquema de Entrada"
     }
   ],
   "kHcCxH": [

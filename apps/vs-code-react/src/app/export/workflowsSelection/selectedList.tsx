@@ -16,12 +16,12 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ selectedItems }) =>
 
   const renderItems = selectedItems.map((workflow: WorkflowsList) => {
     return (
-      <div key={workflow.key} className="msla-export-overview-panel-selected-list-item">
+      <div key={workflow.key} className="msla-export-workflows-panel-selected-list-item">
         <IconButton iconProps={emojiIcon} aria-label="cancel" />
-        <Text variant="large" nowrap block className="msla-export-overview-panel-selected-list-item-text">
+        <Text variant="large" nowrap block className="msla-export-workflows-panel-selected-list-item-text">
           {workflow.name + ' '}
         </Text>
-        <div className="msla-export-overview-panel-selected-list-item-subtext subtext-color">
+        <div className="msla-export-workflows-panel-selected-list-item-subtext subtext-color">
           (
           <Text variant="medium" nowrap block className="subtext-color">
             {workflow.resourceGroup}
@@ -33,11 +33,11 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ selectedItems }) =>
   });
 
   return (
-    <div className="msla-export-overview-panel-selected">
-      <Text variant="xLarge" nowrap block className="msla-export-overview-panel-selected-title">
+    <div className="msla-export-workflows-panel-selected">
+      <Text variant="xLarge" nowrap block className="msla-export-workflows-panel-selected-title">
         {intlText.SELECTED_APPS}
       </Text>
-      <div className="msla-export-overview-panel-selected-list">{renderItems}</div>
+      <div className="msla-export-workflows-panel-selected-list">{renderItems}</div>
     </div>
   );
 };

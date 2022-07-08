@@ -45,12 +45,18 @@ export default {
     },
     isInputsOptional: false,
 
+    repetition: {},
+
     outputs: {
       type: 'integer',
       required: true,
       title: 'Current Iteration Index',
     },
     isOutputsOptional: false,
+
+    outputTokens: {
+      selfReference: true,
+    },
 
     connector: {
       id: 'connectionProviders/control',

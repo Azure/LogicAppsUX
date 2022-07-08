@@ -1,11 +1,14 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
-import type { Operations } from '../../state/workflow/workflowSlice';
+import type { AddTokensPayload, NodeTokens } from '../../state/tokensSlice';
+import { initializeTokens } from '../../state/tokensSlice';
+import type { NodesMetadata, Operations } from '../../state/workflow/workflowSlice';
 import { isRootNode } from '../../utils/graph';
 import {
   loadParameterValuesFromDefault,
@@ -15,6 +18,7 @@ import {
   updateTokenMetadata,
 } from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
+import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getOperationSettings } from './settings';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
@@ -42,13 +46,13 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
   let triggerNodeId = '';
 
   for (const [operationId, operation] of Object.entries(operations)) {
-    const isTrigger = isRootNode(graph, operationId, nodesMetadata);
+    const isTrigger = isRootNode(operationId, nodesMetadata);
 
     if (isTrigger) {
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, isTrigger, dispatch));
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch));
     } else {
       // swagger case here
     }
@@ -66,6 +70,8 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
       })
     )
   );
+
+  dispatch(initializeTokens(initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata)));
 };
 
 const initializeOperationDetailsForManifest = async (
@@ -277,6 +283,43 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithManifest[], operatio
       }
     }
   }
+};
+
+const initializeOutputTokensForOperations = (
+  allNodesData: NodeDataWithManifest[],
+  operations: Operations,
+  graph: WorkflowNode,
+  nodesMetadata: NodesMetadata
+): AddTokensPayload => {
+  const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
+  const nodesWithManifest = allNodesData.reduce(
+    (actionNodes: Record<string, NodeDataWithManifest>, nodeData: NodeDataWithManifest) => ({ ...actionNodes, [nodeData.id]: nodeData }),
+    {}
+  );
+
+  const result: AddTokensPayload = {};
+
+  for (const operationId of Object.keys(operations)) {
+    const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithManifest, nodeMap);
+    const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds };
+    const nodeData = nodesWithManifest[operationId];
+    const nodeManifest = nodeData?.manifest;
+
+    nodeTokens.tokens.push(...getBuiltInTokens(nodeManifest));
+    nodeTokens.tokens.push(
+      ...convertOutputsToTokens(
+        operationId,
+        operations[operationId].type,
+        nodeData?.nodeOutputs.outputs ?? {},
+        nodeManifest,
+        nodesWithManifest
+      )
+    );
+
+    result[operationId] = nodeTokens;
+  }
+
+  return result;
 };
 
 const _getParametersSortedByVisibility = (parameters: ParameterInfo[]): ParameterInfo[] => {
