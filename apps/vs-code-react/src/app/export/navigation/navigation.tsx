@@ -48,7 +48,7 @@ export const Navigation: React.FC = () => {
 
     switch (pathname) {
       case `/${RouteName.export}/${RouteName.instance_selection}`: {
-        navigate(`/${RouteName.export}/${RouteName.selection}`);
+        navigate(`/${RouteName.export}/${RouteName.workflows_selection}`);
       }
     }
   };
