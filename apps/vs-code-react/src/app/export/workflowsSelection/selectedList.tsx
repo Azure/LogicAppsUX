@@ -1,11 +1,17 @@
-import type { ISelectedListProps, WorkflowsList } from '../../../run-service';
-import { Text, IconButton } from '@fluentui/react';
-import type { IIconProps } from '@fluentui/react';
+import type { WorkflowsList } from '../../../run-service';
+import type { RootState } from '../../../state/store';
+import type { InitializedVscodeState } from '../../../state/vscodeSlice';
+import { Text } from '@fluentui/react';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
-export const SelectedList: React.FC<ISelectedListProps> = ({ selectedItems }) => {
-  const emojiIcon: IIconProps = { iconName: 'Cancel' };
+export const SelectedList: React.FC<any> = () => {
   const intl = useIntl();
+  const vscodeState = useSelector((state: RootState) => state.vscode);
+  const { exportData } = vscodeState as InitializedVscodeState;
+  const { selectedWorkflows: selectedItems } = exportData;
+
+  // const emojiIcon: IIconProps = { iconName: 'Cancel' };
 
   const intlText = {
     SELECTED_APPS: intl.formatMessage({
@@ -14,17 +20,19 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ selectedItems }) =>
     }),
   };
 
+  // const deselectButton = <IconButton iconProps={emojiIcon} aria-label="cancel" onClick={() => deselectItem(key)} />
+
   const renderItems = selectedItems.map((workflow: WorkflowsList) => {
+    const { name, resourceGroup } = workflow;
     return (
       <div key={workflow.key} className="msla-export-workflows-panel-selected-list-item">
-        <IconButton iconProps={emojiIcon} aria-label="cancel" />
         <Text variant="large" nowrap block className="msla-export-workflows-panel-selected-list-item-text">
-          {workflow.name + ' '}
+          {name + ' '}
         </Text>
         <div className="msla-export-workflows-panel-selected-list-item-subtext subtext-color">
           (
           <Text variant="medium" nowrap block className="subtext-color">
-            {workflow.resourceGroup}
+            {resourceGroup}
           </Text>
           )
         </div>

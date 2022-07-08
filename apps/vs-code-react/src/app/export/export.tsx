@@ -33,7 +33,6 @@ export const ExportApp: React.FC = () => {
             context={{
               baseUrl: vscodeState.baseUrl,
               accessToken: vscodeState.accessToken,
-              selectedWorkflows: vscodeState.selectedWorkflows,
             }}
           />
           <Navigation />
