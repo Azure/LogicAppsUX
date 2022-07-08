@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import type { NodesMetadata } from '../state/workflowSlice';
+import type { NodesMetadata } from '../state/workflow/workflowSlice';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from './models/workflowNode';
 
@@ -13,7 +13,7 @@ export interface AddNodePayload {
 }
 
 export const createNodeWithDefaultSize = (id: string): WorkflowNode => {
-  return { id, height: 67, width: 200, type: WORKFLOW_NODE_TYPES.TEST_NODE }; // TODO: Assign correct type here
+  return { id, height: 67, width: 200, type: WORKFLOW_NODE_TYPES.OPERATION_NODE };
 };
 
 export const addNodeToWorkflow = (payload: AddNodePayload, workflowGraph: WorkflowNode, nodesMetadata: NodesMetadata) => {

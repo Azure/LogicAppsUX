@@ -2,28 +2,29 @@ import { ActionButtonV2 } from '../../actionbuttonv2';
 import CollapseToggle from '../../collapseToggle';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
-import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
+import { labelCase, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 interface SubgraphCardProps {
+  id: string;
   parentId: string;
   subgraphType: SubgraphType;
-  title?: string;
   collapsed?: boolean;
+  handleCollapse?: (event: { currentTarget: any }) => void;
   selected?: boolean;
   readOnly?: boolean;
-  handleCollapse?: (event: { currentTarget: any }) => void;
   onClick?(id: string): void;
   showAddButton?: boolean;
 }
 
 export const SubgraphCard: React.FC<SubgraphCardProps> = ({
+  id,
+  parentId,
   subgraphType,
-  title = 'undefined',
   collapsed,
+  handleCollapse,
   selected = false,
   readOnly = false,
-  handleCollapse,
   onClick,
 }) => {
   const intl = useIntl();
@@ -45,6 +46,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         description: 'True',
       }),
       size: 'small',
+      id: parentId,
     },
     CONDITIONAL_FALSE: {
       color: '#A4262C',
@@ -53,11 +55,13 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         description: 'False',
       }),
       size: 'small',
+      id: parentId,
     },
     SWITCH_CASE: {
       color: '#484F58',
-      title: title,
+      title: labelCase(id),
       size: 'large',
+      id: id,
     },
     SWITCH_DEFAULT: {
       color: '#484F58',
@@ -66,6 +70,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         description: 'Default, the backup option if none other apply',
       }),
       size: 'small',
+      id: parentId,
     },
     UNTIL_DO: {
       color: '#486991',
@@ -74,16 +79,17 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         description: 'Do, as in "to do an action"',
       }),
       size: 'small',
+      id: id,
     },
     SWITCH_ADD_CASE: {},
   };
 
+  const data = SubgraphTypeData[subgraphType];
+
   const handleTitleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
-    onClick?.(title);
+    onClick?.(data.id);
   };
-
-  const data = SubgraphTypeData[subgraphType];
 
   if (data.size === 'large') {
     return (
@@ -102,7 +108,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   } else if (data.size === 'small') {
     return (
       <div style={{ width: 200, display: 'grid', placeItems: 'center' }}>
-        <button
+        <div
+          tabIndex={0}
           className={css('msla-subgraph-card', data.size)}
           style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
           onClick={(e) => {
@@ -113,7 +120,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
           <div className="msla-subgraph-title">{data.title}</div>
           <CollapseToggle disabled collapsed={collapsed} />
-        </button>
+        </div>
       </div>
     );
   } else return null;

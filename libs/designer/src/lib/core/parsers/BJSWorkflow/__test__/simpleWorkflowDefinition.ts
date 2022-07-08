@@ -1,4 +1,4 @@
-import type { Operations, NodesMetadata } from '../../../state/workflowSlice';
+import type { Operations, NodesMetadata } from '../../../state/workflow/workflowSlice';
 import { createWorkflowNode, createWorkflowEdge } from '../../../utils/graph';
 import type { WorkflowNode } from '../../models/workflowNode';
 import { WORKFLOW_NODE_TYPES } from '../../models/workflowNode';
@@ -6,16 +6,6 @@ import { WORKFLOW_NODE_TYPES } from '../../models/workflowNode';
 export const simpleWorkflowDefinitionInput = {
   $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
   actions: {
-    Increment_variable: {
-      inputs: {
-        name: 'var1',
-        value: 2,
-      },
-      runAfter: {
-        Initialize_variable: ['Succeeded'],
-      },
-      type: 'IncrementVariable',
-    },
     Initialize_variable: {
       inputs: {
         variables: [
@@ -25,8 +15,20 @@ export const simpleWorkflowDefinitionInput = {
           },
         ],
       },
-      runAfter: {},
+      runAfter: {
+        manual: ['Succeeded'],
+      },
       type: 'InitializeVariable',
+    },
+    Increment_variable: {
+      inputs: {
+        name: 'var1',
+        value: 2,
+      },
+      runAfter: {
+        Initialize_variable: ['Succeeded'],
+      },
+      type: 'IncrementVariable',
     },
     Response: {
       inputs: {
@@ -57,8 +59,8 @@ export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowNode; acti
     type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
     children: [
       createWorkflowNode('manual'),
-      createWorkflowNode('Increment_variable'),
       createWorkflowNode('Initialize_variable'),
+      createWorkflowNode('Increment_variable'),
       createWorkflowNode('Response'),
     ],
     edges: [
@@ -68,16 +70,20 @@ export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowNode; acti
     ],
   },
   actionData: {
-    manual: { inputs: {}, kind: 'Http', type: 'Request' },
+    manual: {
+      inputs: {},
+      kind: 'Http',
+      type: 'Request',
+    },
+    Initialize_variable: {
+      inputs: { variables: [{ name: 'var1', type: 'integer' }] },
+      runAfter: { manual: ['Succeeded'] },
+      type: 'InitializeVariable',
+    },
     Increment_variable: {
       inputs: { name: 'var1', value: 2 },
       runAfter: { Initialize_variable: ['Succeeded'] },
       type: 'IncrementVariable',
-    },
-    Initialize_variable: {
-      inputs: { variables: [{ name: 'var1', type: 'integer' }] },
-      runAfter: {},
-      type: 'InitializeVariable',
     },
     Response: {
       inputs: { body: "@variables('var1')", statusCode: 200 },
@@ -87,7 +93,7 @@ export const expectedSimpleWorkflowDefinitionOutput: { graph: WorkflowNode; acti
     },
   },
   nodesMetadata: {
-    manual: { graphId: 'root' },
+    manual: { graphId: 'root', isRoot: true },
     Increment_variable: { graphId: 'root' },
     Initialize_variable: { graphId: 'root' },
     Response: { graphId: 'root' },

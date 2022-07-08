@@ -1,7 +1,7 @@
 import { initialState } from '../../parsers/__test__/mocks/workflowMock';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
-import reducer, { addNode } from '../workflowSlice';
+import reducer, { addNode } from '../workflow/workflowSlice';
 
 describe('workflow slice reducers', () => {
   it('should add initial node to the workflow', () => {
@@ -15,7 +15,7 @@ describe('workflow slice reducers', () => {
         id: '123',
         height: 67,
         width: 200,
-        type: WORKFLOW_NODE_TYPES.TEST_NODE,
+        type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
       },
     ]);
     expect(state.nodesMetadata).toEqual({

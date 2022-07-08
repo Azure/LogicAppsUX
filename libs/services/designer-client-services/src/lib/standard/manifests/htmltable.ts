@@ -50,9 +50,9 @@ export default {
 
     repetition: {
       self: {
-        parametersToExclude: ['from']
+        parametersToExclude: ['from'],
       },
-      loopParameter: 'from'
+      loopParameter: 'from',
     },
 
     connector: {

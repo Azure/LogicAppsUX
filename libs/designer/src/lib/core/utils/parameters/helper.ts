@@ -1,7 +1,7 @@
 import Constants from '../../../common/constants';
 import type { NodeDataWithManifest } from '../../actions/bjsworkflow/operationdeserializer';
 import type { OutputInfo } from '../../state/operationMetadataSlice';
-import type { Operations as Actions } from '../../state/workflowSlice';
+import type { Operations as Actions } from '../../state/workflow/workflowSlice';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../card';
 import { initializeArrayViewModel } from '../editors/array';
 import { hasSecureOutputs } from '../setting';
@@ -43,8 +43,7 @@ import {
   SegmentType,
   Visibility,
 } from '@microsoft-logic-apps/parsers';
-import type {
-  OperationManifest} from '@microsoft-logic-apps/utils';
+import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import {
   aggregate,
   clone,
@@ -1105,7 +1104,7 @@ export function getNormalizedTokenName(tokenName: string): string {
 export function getRepetitionContext(_includeSelf?: boolean): RepetitionContext {
   const repetitionReferences: RepetitionReference[] = [];
   return {
-      repetitionReferences,
+    repetitionReferences,
   };
 }
 
@@ -1113,7 +1112,7 @@ export function getRepetitionValue(manifest: OperationManifest, nodeInputs: Para
   const loopParameter = manifest.properties.repetition?.loopParameter;
 
   if (loopParameter) {
-    const parameter = nodeInputs.find(input => input.parameterName === loopParameter);
+    const parameter = nodeInputs.find((input) => input.parameterName === loopParameter);
     return parameter ? parameter.value : undefined;
   }
 

@@ -55,7 +55,7 @@ export default {
     isOutputsOptional: false,
 
     outputTokens: {
-      selfReference: true
+      selfReference: true,
     },
 
     connector: {

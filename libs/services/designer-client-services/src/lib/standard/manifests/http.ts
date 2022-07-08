@@ -339,9 +339,7 @@ export const httpWebhookManifest = {
     },
     isOutputsOptional: false,
     outputTokens: {
-      builtIns: [
-        { name: 'listCallbackUrl()', title: 'Callback url', type: 'string', required: true }
-      ]
+      builtIns: [{ name: 'listCallbackUrl()', title: 'Callback url', type: 'string', required: true }],
     },
 
     connector,
