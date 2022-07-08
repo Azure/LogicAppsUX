@@ -1,7 +1,7 @@
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
-import { getWorkflowGraph } from '../state/workflow/workflowSelectors';
+import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useEffect, useState } from 'react';
@@ -38,7 +38,7 @@ const readOnlyOptions: Record<string, string> = {
 };
 
 const defaultEdgeType = WORKFLOW_EDGE_TYPES.BUTTON_EDGE;
-const defaultNodeType = WORKFLOW_NODE_TYPES.TEST_NODE;
+const defaultNodeType = WORKFLOW_NODE_TYPES.OPERATION_NODE;
 
 const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
   const elk = new ELK();
@@ -120,7 +120,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       layoutOptions: {
         'elk.padding': '[top=0,left=16,bottom=48,right=16]', // allow space for add buttons
         'elk.position': `(0, 0)`, // See 'crossingMinimization.semiInteractive' above
-        nodeType: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+        nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
         ...(node.edges?.[0]?.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE && {
           'elk.layered.nodePlacement.strategy': 'SIMPLE',
           'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.onlyEdge,
@@ -137,7 +137,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
 export const useLayout = (): [Node[], Edge[]] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<Node[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
-  const workflowGraph = useSelector(getWorkflowGraph);
+  const workflowGraph = useSelector(getRootWorkflowGraphForLayout);
 
   const readOnly = useReadOnly();
 

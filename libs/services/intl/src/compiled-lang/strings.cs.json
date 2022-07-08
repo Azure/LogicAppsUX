@@ -1,4 +1,10 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -277,6 +283,12 @@
       "value": "Zadejte alespoň jeden výraz, který musí být true, aby se trigger aktivoval."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Zobrazit zobrazení kódu"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -445,6 +457,12 @@
       "value": "Prohlídka/kurz"
     }
   ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -586,7 +604,7 @@
   "8JFxmV": [
     {
       "type": 0,
-      "value": "Add Output Schema"
+      "value": "Přidejte výstupní schéma"
     }
   ],
   "8L+oIz": [
@@ -919,6 +937,12 @@
       "value": "hours"
     }
   ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -1147,6 +1171,12 @@
       "value": "Vrátí část řetězcového časového razítka, která představuje den v týdnu."
     }
   ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Warning"
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -1283,6 +1313,12 @@
     {
       "type": 0,
       "value": "Vrátí výsledky z akcí na nejvyšší úrovni s určeným rozsahem, například z akcí For_each, Until nebo Scope."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
     }
   ],
   "Oib1mL": [
@@ -1778,7 +1814,7 @@
   "Wy/bhW": [
     {
       "type": 0,
-      "value": "Replace existing schema."
+      "value": "Nahraďte existující schéma."
     }
   ],
   "X8JjjT": [
@@ -1965,6 +2001,12 @@
       "value": "Tato operace už byla odstraněna."
     }
   ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+    }
+  ],
   "a64zhX": [
     {
       "type": 0,
@@ -1998,7 +2040,7 @@
   "aL0Uut": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Funkce"
     }
   ],
   "ajAro8": [
@@ -2148,7 +2190,7 @@
   "dWeRGU": [
     {
       "type": 0,
-      "value": "pencil icon"
+      "value": "ikona tužky"
     }
   ],
   "dhvk0u": [
@@ -2516,7 +2558,7 @@
   "jsEMSu": [
     {
       "type": 0,
-      "value": "Toolbox"
+      "value": "Sada nástrojů"
     }
   ],
   "juR40n": [
@@ -2546,7 +2588,7 @@
   "kBw1WQ": [
     {
       "type": 0,
-      "value": "Add Input Schema"
+      "value": "Přidejte vstupní schéma"
     }
   ],
   "kHcCxH": [

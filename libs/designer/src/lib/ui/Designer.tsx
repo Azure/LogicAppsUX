@@ -4,7 +4,7 @@ import { updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import Controls from './Controls';
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
-import TestNode from './CustomNodes/OperationCardNode';
+import OperationNode from './CustomNodes/OperationCardNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import Minimap from './Minimap';
@@ -27,10 +27,11 @@ type NodeTypesObj = {
   [key in WorkflowNodeType]: React.ComponentType<any>;
 };
 const nodeTypes: NodeTypesObj = {
-  TEST_NODE: TestNode,
+  OPERATION_NODE: OperationNode,
   GRAPH_NODE: GraphNode,
-  SCOPE_NODE: ScopeCardNode,
-  SUBGRAPH_NODE: SubgraphCardNode,
+  SUBGRAPH_NODE: GraphNode,
+  SCOPE_CARD_NODE: ScopeCardNode,
+  SUBGRAPH_CARD_NODE: SubgraphCardNode,
   HIDDEN_NODE: HiddenNode,
 };
 

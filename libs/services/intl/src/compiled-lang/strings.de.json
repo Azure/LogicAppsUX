@@ -1,4 +1,10 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -243,6 +249,12 @@
       "value": "Geben Sie mindestens einen Ausdruck an, der zum Auslösen des Triggers den Wert TRUE aufweisen muss."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Show code view"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -409,6 +421,12 @@
     {
       "type": 0,
       "value": "Führung/Tutorial"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
     }
   ],
   "5J7j9k": [
@@ -863,6 +881,12 @@
       "value": "hours"
     }
   ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -1091,6 +1115,12 @@
       "value": "Gibt die Wochentagkomponente eines Zeichenfolgen-Zeitstempels zurück."
     }
   ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Warning"
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -1227,6 +1257,12 @@
     {
       "type": 0,
       "value": "Hiermit werden die Ergebnisse der Aktionen der obersten Ebene in der angegebenen bereichsbezogenen Aktion zurückgegeben, z. B. eine for_each-, Until- oder Scope-Aktion."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
     }
   ],
   "Oib1mL": [
@@ -1891,6 +1927,12 @@
       "value": "Dieser Vorgang wurde bereits gelöscht."
     }
   ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+    }
+  ],
   "a64zhX": [
     {
       "type": 0,
@@ -1924,7 +1966,7 @@
   "aL0Uut": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Funktion"
     }
   ],
   "ajAro8": [
@@ -1972,7 +2014,7 @@
   "c/+j08": [
     {
       "type": 0,
-      "value": "Do"
+      "value": "Los"
     }
   ],
   "c2XklE": [

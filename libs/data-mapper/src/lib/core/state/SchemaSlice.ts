@@ -30,6 +30,10 @@ export const schemaSlice = createSlice({
         state.currentInputNode = extendedSchema.schemaTreeRoot;
       }
     },
+    setInputSchemaExtended: (state, action: PayloadAction<SchemaExtended | undefined>) => {
+      state.inputSchema = action.payload;
+      state.currentInputNode = action.payload?.schemaTreeRoot;
+    },
     setOutputSchema: (state, action: PayloadAction<Schema | undefined>) => {
       const incomingSchema = action.payload;
       if (incomingSchema) {
@@ -38,9 +42,14 @@ export const schemaSlice = createSlice({
         state.currentOutputNode = extendedSchema.schemaTreeRoot;
       }
     },
+    setOutputSchemaExtended: (state, action: PayloadAction<SchemaExtended | undefined>) => {
+      state.outputSchema = action.payload;
+      state.currentOutputNode = action.payload?.schemaTreeRoot;
+    },
     setAvailableSchemas: (state, action: PayloadAction<Schema[] | undefined>) => {
       state.availableSchemas = action.payload;
     },
+
     setCurrentInputNode: (state, action: PayloadAction<SchemaNodeExtended | undefined>) => {
       state.currentInputNode = action.payload;
     },
@@ -50,6 +59,14 @@ export const schemaSlice = createSlice({
   },
 });
 
-export const { setInputSchema, setOutputSchema, setAvailableSchemas, setCurrentInputNode, setCurrentOutputNode } = schemaSlice.actions;
+export const {
+  setInputSchema,
+  setInputSchemaExtended,
+  setOutputSchema,
+  setOutputSchemaExtended,
+  setAvailableSchemas,
+  setCurrentInputNode,
+  setCurrentOutputNode,
+} = schemaSlice.actions;
 
 export default schemaSlice.reducer;
