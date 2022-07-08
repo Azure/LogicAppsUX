@@ -191,7 +191,7 @@ export interface ISubscription {
 }
 
 export type ExportData = {
-  selectedWorkflows: Array<any>;
+  selectedWorkflows: Array<WorkflowsList>;
   selectedSubscription: string;
   selectedIse: string;
 };
@@ -219,5 +219,6 @@ export enum RouteName {
   export = 'export',
   instance_selection = 'instance-selection',
   workflows_selection = 'workflows-selection',
+  validation = 'validation',
   overview = 'overview',
 }
