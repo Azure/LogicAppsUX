@@ -2,6 +2,8 @@ import { getConnectionErrors } from '../helper';
 import INTL_STRINGS from './selectConnectionStrings';
 import type { IColumn } from '@fluentui/react';
 import {
+  MessageBar,
+  MessageBarType,
   Icon,
   TooltipHost,
   MarqueeSelection,
@@ -21,13 +23,15 @@ import { useIntl } from 'react-intl';
 export interface SelectConnectionProps {
   connections: Connection[];
   isLoading?: boolean;
+  showIdentityErrorBanner?: boolean;
   saveSelectionCallback: (selectedConnection?: string) => void;
   cancelSelectionCallback: () => void;
   createNewConnectionCallback: () => void;
 }
 
 export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
-  const { connections, isLoading, saveSelectionCallback, cancelSelectionCallback, createNewConnectionCallback } = props;
+  const { connections, isLoading, showIdentityErrorBanner, saveSelectionCallback, cancelSelectionCallback, createNewConnectionCallback } =
+    props;
 
   const intl = useIntl();
 
@@ -103,6 +107,10 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
 
   return (
     <div className="msla-select-connections-container">
+      {showIdentityErrorBanner ? (
+        <MessageBar messageBarType={MessageBarType.error}>{intl.formatMessage(INTL_STRINGS.IDENTITY_ERROR)}</MessageBar>
+      ) : null}
+
       <div>{intl.formatMessage(INTL_STRINGS.COMPONENT_DESCRIPTION)}</div>
 
       <MarqueeSelection selection={onSelect}>
@@ -124,8 +132,8 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
 
       <div className="msla-select-connection-actions-container">
         <PrimaryButton
-          text={intl.formatMessage(INTL_STRINGS.BUTTON_CREATE)}
-          ariaLabel={intl.formatMessage(INTL_STRINGS.BUTTON_CREATE_ARIA)}
+          text={intl.formatMessage(INTL_STRINGS.BUTTON_ADD)}
+          ariaLabel={intl.formatMessage(INTL_STRINGS.BUTTON_ADD_ARIA)}
           onClick={createNewConnectionCallback}
         />
         <div id="action-gap" style={{ flexGrow: 1 }} />

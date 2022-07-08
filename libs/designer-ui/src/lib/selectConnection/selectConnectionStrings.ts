@@ -1,4 +1,6 @@
 export default {
+  // There were a lot of strings / arias, so I pulled them out to this file to keep the index cleaner
+
   // Column Headings
   COLUMN_INVALID: {
     id: 'column_invalid',
@@ -44,6 +46,11 @@ export default {
   },
 
   // Other
+  IDENTITY_ERROR: {
+    id: 'identity_error',
+    defaultMessage: 'Invalid connection.',
+    description: 'Message shown when the current connection is invalid',
+  },
   COMPONENT_DESCRIPTION: {
     id: 'component_description',
     defaultMessage: 'Select an existing connection or create a new one.',
@@ -56,10 +63,10 @@ export default {
   },
 
   // Action Buttons
-  BUTTON_CREATE: {
-    id: 'button_create',
-    defaultMessage: 'Create',
-    description: 'Button to create a new connection',
+  BUTTON_ADD: {
+    id: 'button_add',
+    defaultMessage: 'Add new',
+    description: 'Button to add a new connection',
   },
   BUTTON_SAVE: {
     id: 'button_save',
@@ -73,19 +80,19 @@ export default {
   },
 
   // Action buttons aria labels
-  BUTTON_CREATE_ARIA: {
-    id: 'button_create_aria',
-    defaultMessage: 'Create a new connection',
-    description: 'aria label description for create button',
+  BUTTON_ADD_ARIA: {
+    id: 'button_add_aria',
+    defaultMessage: 'Add a new connection',
+    description: 'Aria label description for add button',
   },
   BUTTON_SAVE_ARIA: {
     id: 'button_save_aria',
     defaultMessage: 'Save the selected connection',
-    description: 'aria label description for save button',
+    description: 'Aria label description for save button',
   },
   BUTTON_CANCEL_ARIA: {
     id: 'button_cancel_aria',
     defaultMessage: 'Cancel the selection',
-    description: 'aria label description for cancel button',
+    description: 'Aria label description for cancel button',
   },
 };
