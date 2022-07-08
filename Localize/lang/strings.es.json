@@ -35,7 +35,7 @@
   "1R6Vaa": "{count, plural, one {# elemento coincidente.} =0 {no hay elementos coincidentes.} other {# elementos coincidentes.}}",
   "1TE0e8": "Obligatorio. El valor del cual se buscará el índice.",
   "1VRGCF": "Especifique una o varias expresiones que deben ser \"true\" para que se active el desencadenador.",
-  "1X4U/1": "Show code view",
+  "1X4U/1": "Mostrar vista de código",
   "1ejxkP": "Entradas seguras",
   "1htSs7": "Desactivado",
   "1jhzOM": "Obligatorio. El objeto que se comprobará si es menor que el valor con el que se está comparando.",
