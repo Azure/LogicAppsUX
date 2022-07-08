@@ -17,14 +17,14 @@ export default {
         foreach: {
           type: 'array',
           title: 'Select an output from previous steps',
-        }
-      }
+        },
+      },
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,
 
     repetition: {
-      loopParameter: 'foreach'
+      loopParameter: 'foreach',
     },
 
     outputs: {},
