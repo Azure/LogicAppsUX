@@ -1,7 +1,6 @@
+import type { OutputToken as Token } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { OutputToken as Token } from '@microsoft/designer-ui';
-
 
 export interface NodeTokens {
   isLoading?: boolean;
@@ -10,11 +9,11 @@ export interface NodeTokens {
 }
 
 export interface TokensState {
-    outputTokens: Record<string, NodeTokens>;
+  outputTokens: Record<string, NodeTokens>;
 }
 
 const initialState: TokensState = {
-  outputTokens: {}
+  outputTokens: {},
 };
 
 export type AddTokensPayload = Record<string, NodeTokens>;
@@ -25,7 +24,7 @@ export const tokensSlice = createSlice({
   reducers: {
     initializeTokens: (state, action: PayloadAction<AddTokensPayload>) => {
       state.outputTokens = action.payload;
-    }
+    },
   },
 });
 

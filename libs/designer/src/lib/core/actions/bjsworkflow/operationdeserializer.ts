@@ -8,7 +8,7 @@ import { initializeOperationInfo, initializeNodes } from '../../state/operationM
 import { clearPanel } from '../../state/panel/panelSlice';
 import type { AddTokensPayload, NodeTokens } from '../../state/tokensSlice';
 import { initializeTokens } from '../../state/tokensSlice';
-import type { NodesMetadata, Operations } from '../../state/workflowSlice';
+import type { NodesMetadata, Operations } from '../../state/workflow/workflowSlice';
 import { isRootNode } from '../../utils/graph';
 import {
   loadParameterValuesFromDefault,
@@ -46,13 +46,13 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
   let triggerNodeId = '';
 
   for (const [operationId, operation] of Object.entries(operations)) {
-    const isTrigger = isRootNode(graph, operationId, nodesMetadata);
+    const isTrigger = isRootNode(operationId, nodesMetadata);
 
     if (isTrigger) {
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, isTrigger, dispatch));
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch));
     } else {
       // swagger case here
     }

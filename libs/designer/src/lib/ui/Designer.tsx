@@ -1,9 +1,9 @@
 import { useLayout } from '../core/graphlayout';
 import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
-import { updateNodeSizes } from '../core/state/workflowSlice';
+import { updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
-import TestNode from './CustomNodes/OperationCardNode';
+import OperationNode from './CustomNodes/OperationCardNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import { ButtonEdge } from './connections/edge';
@@ -25,15 +25,17 @@ type NodeTypesObj = {
   [key in WorkflowNodeType]: React.ComponentType<any>;
 };
 const nodeTypes: NodeTypesObj = {
-  TEST_NODE: TestNode,
+  OPERATION_NODE: OperationNode,
   GRAPH_NODE: GraphNode,
-  SCOPE_NODE: ScopeCardNode,
-  SUBGRAPH_NODE: SubgraphCardNode,
+  SUBGRAPH_NODE: GraphNode,
+  SCOPE_CARD_NODE: ScopeCardNode,
+  SUBGRAPH_CARD_NODE: SubgraphCardNode,
   HIDDEN_NODE: HiddenNode,
 };
 
 const edgeTypes = {
   BUTTON_EDGE: ButtonEdge,
+  HEADING_EDGE: ButtonEdge, // This is functionally the same as a button edge
   // ONLY_EDGE: undefined,
   HIDDEN_EDGE: HiddenEdge,
 };

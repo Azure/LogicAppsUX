@@ -1,11 +1,10 @@
 import { isWorkflowGraph, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode, WorkflowEdgeType, WorkflowNodeType } from '../parsers/models/workflowNode';
-import type { NodesMetadata } from '../state/workflowSlice';
-import { equals } from '@microsoft-logic-apps/utils';
+import type { NodesMetadata } from '../state/workflow/workflowSlice';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
 
-export const isRootNode = (graph: WorkflowNode, nodeId: string, nodesMetadata: NodesMetadata) => {
-  return nodesMetadata[nodeId]?.graphId === graph.id && !graph.edges?.some((edge) => equals(edge.target, nodeId));
+export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
+  return !!nodesMetadata[nodeId]?.isRoot;
 };
 
 export const isLeafNodeFromEdges = (edges: WorkflowEdge[]) => {
@@ -23,14 +22,14 @@ const DEFAULT_NODE_SIZE = {
 export const createWorkflowNode = (id: string, type?: WorkflowNodeType): WorkflowNode => ({
   id,
   ...DEFAULT_NODE_SIZE,
-  type: type ?? WORKFLOW_NODE_TYPES.TEST_NODE,
+  type: type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE,
 });
 
 export const createElkNode = (id: string, type?: WorkflowNodeType): ElkNode => ({
   id,
   ...DEFAULT_NODE_SIZE,
   layoutOptions: {
-    nodeType: type ?? WORKFLOW_NODE_TYPES.TEST_NODE,
+    nodeType: type ?? WORKFLOW_NODE_TYPES.OPERATION_NODE,
   },
 });
 

@@ -6,7 +6,7 @@ import { css, Icon, Spinner, SpinnerSize, TooltipHost } from '@fluentui/react';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
-  onCollapse?: (event: { currentTarget: any }) => void;
+  handleCollapse?: () => void;
 }
 
 export const ScopeCard: React.FC<ScopeCardProps> = ({
@@ -23,19 +23,11 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   isLoading,
   title,
   onClick,
-  onCollapse,
+  handleCollapse,
   selected,
 }) => {
   const handleClick: React.MouseEventHandler<HTMLElement> = () => {
     onClick?.();
-  };
-
-  const handleCollapse = (): void => {
-    if (onCollapse) {
-      onCollapse({
-        currentTarget: undefined,
-      });
-    }
   };
 
   const badges = [
@@ -54,17 +46,11 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div aria-describedby={describedBy} className={'msla-content-fit'} aria-label={title}>
-        <div
-          ref={drag}
-          className="msla-scope-v2--header msla-scope-card-wrapper"
-          draggable={draggable}
-          style={colorVars}
-          onClick={handleClick}
-        >
+        <div ref={drag} className="msla-scope-v2--header msla-scope-card-wrapper" draggable={draggable} style={colorVars}>
           {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
           <div className="msla-scope-card-content">
             <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} />
-            <button className="msla-scope-card-title-box">
+            <button className="msla-scope-card-title-box" onClick={handleClick}>
               <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
               {cardIcon}
               <div className="msla-scope-title">{title}</div>
