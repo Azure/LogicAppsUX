@@ -1,5 +1,5 @@
 import { ResourceType } from '../types';
-import type { ArmResources, IApiService, Workflows } from '../types';
+import type { IApiService, Workflows } from '../types';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
@@ -57,6 +57,10 @@ export class ApiService implements IApiService {
     }
   };
 
+  private getWorkflowsUri = (subscriptionId: string, iseId: string) => {
+    return `https://management.azure.com/subscriptions/${subscriptionId}/providers/Microsoft.Logic/workflows?api-version=2018-07-01-preview&$filter=properties/integrationServiceEnvironmentResourceId  eq '${iseId}'`;
+  };
+
   private getPayload = (resourceType: string, properties?: any) => {
     const skipToken = properties?.skipToken;
 
@@ -80,32 +84,19 @@ export class ApiService implements IApiService {
     };
   };
 
-  async getMoreWorkflows(continuationToken: string): Promise<any> {
+  async getWorkflows(subscriptionId: string, iseId: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const payload = this.getPayload(ResourceType.workflows);
-    const response = await fetch(continuationToken, { headers, method: 'POST', body: JSON.stringify(payload) });
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-
-    const { nextLink, value: runs }: ArmResources<any> = await response.json();
-    return { nextLink, runs };
-  }
-
-  async getWorkflows(): Promise<any> {
-    const headers = this.getAccessTokenHeaders();
-    const payload = this.getPayload(ResourceType.workflows);
-
-    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const workflowsUri = this.getWorkflowsUri(subscriptionId, iseId);
+    const response = await fetch(workflowsUri, { headers, method: 'GET' });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
     const workflowsResponse: Workflows = await response.json();
-    const { $skipToken: nextLink, data: workflows } = workflowsResponse;
+    const { value: workflows } = workflowsResponse;
 
-    return { nextLink, workflows };
+    return { workflows };
   }
 
   async getSubscriptions(): Promise<any> {

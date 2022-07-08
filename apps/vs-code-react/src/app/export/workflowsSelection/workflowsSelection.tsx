@@ -1,18 +1,21 @@
 import { ApiService } from '../../../run-service/export/index';
 import { QueryKeys } from '../../../run-service/types';
-import type { AppDispatch } from '../../../state/store';
+import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
-import { useOutlet } from '../export';
+import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { getListColumns, parseWorkflowData } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useInfiniteQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useQuery } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const WorkflowsSelection: React.FC = () => {
-  const { baseUrl, accessToken, selectedWorkflows } = useOutlet();
+  const vscodeState = useSelector((state: RootState) => state.vscode);
+  const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
+  const { selectedSubscription, selectedIse } = exportData;
+
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
 
@@ -47,31 +50,35 @@ export const WorkflowsSelection: React.FC = () => {
     });
   }, [accessToken, baseUrl]);
 
-  const loadWorkflows = ({ pageParam }: { pageParam?: string }) => {
-    if (pageParam) {
-      return apiService.getMoreWorkflows(pageParam);
-    }
-    return apiService.getWorkflows();
+  const loadWorkflows = () => {
+    return apiService.getWorkflows(selectedSubscription, selectedIse);
   };
 
-  const { data } = useInfiniteQuery<any>(QueryKeys.workflowsData, loadWorkflows, {
-    getNextPageParam: (lastPage) => lastPage.nextLink,
-    refetchOnWindowFocus: false,
-  });
+  const { data: workflowsData, isLoading: isWorkflowsLoading } = useQuery<any>(
+    [QueryKeys.workflowsData, { iseId: selectedIse }],
+    loadWorkflows,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
 
-  const workflowItems = useMemo(() => {
-    return parseWorkflowData(data?.pages);
-  }, [data?.pages]);
+  const workflowItems: any = isWorkflowsLoading || !workflowsData ? [] : parseWorkflowData(workflowsData);
 
   const selection = new Selection({
     onSelectionChanged: () => {
+      const currentSelection = selection.getSelection();
       dispatch(
         updateSelectedWorkFlows({
-          selectedWorkflows: selection.getSelection(),
+          selectedWorkflows: currentSelection,
         })
       );
     },
+    items: workflowItems,
   });
+
+  /*const deselectItem = (itemKey: string) => {
+    selection.toggleKeySelected(itemKey);
+  };*/
 
   return (
     <div className="msla-export-workflows-panel">
@@ -84,20 +91,20 @@ export const WorkflowsSelection: React.FC = () => {
         </Text>
         <div className="msla-export-workflows-panel-list-workflows">
           <ShimmeredDetailsList
-            items={workflowItems ?? []}
+            items={workflowItems}
             columns={getListColumns()}
-            enableShimmer={!workflowItems}
+            setKey="set"
+            enableShimmer={isWorkflowsLoading}
             ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
             ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
             checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
-            selectionPreservedOnEmptyClick={true}
             selectionMode={SelectionMode.multiple}
             selection={selection}
           />
         </div>
       </div>
       <Separator vertical className="msla-export-workflows-panel-divider" />
-      <SelectedList selectedItems={selectedWorkflows} />
+      <SelectedList />
     </div>
   );
 };

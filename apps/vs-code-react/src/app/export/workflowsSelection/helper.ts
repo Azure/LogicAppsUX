@@ -1,18 +1,23 @@
 import type { WorkflowsList, WorkflowProperties } from '../../../run-service/types';
 
-export const parseWorkflowData = (workflowPages: any[] | undefined) => {
-  return workflowPages?.reduce<any[]>((acc: any, val: { workflows: WorkflowProperties[] }) => {
-    return [...acc, ...val.workflows.map(mapToWorkflowItem)];
-  }, []);
+export const parseWorkflowData = (workflowsData: { workflows: Array<WorkflowProperties> }): Array<WorkflowsList> => {
+  const { workflows } = workflowsData;
+
+  return workflows.map((workflow: WorkflowProperties) => {
+    const { name, id } = workflow;
+
+    return {
+      key: id,
+      name,
+      resourceGroup: getResourceGroup(id),
+    };
+  });
 };
 
-export const mapToWorkflowItem = (workflow: WorkflowProperties): WorkflowsList => {
-  const { name, resourceGroup, id } = workflow;
-  return {
-    key: id,
-    name,
-    resourceGroup,
-  };
+export const getResourceGroup = (workflowID: string): string => {
+  const separators = workflowID.split('/');
+  const resourceGroupLocation = 4;
+  return separators[resourceGroupLocation];
 };
 
 export const getListColumns = () => {
