@@ -105,7 +105,7 @@ export const WorkflowsSelection: React.FC = () => {
     selection.toggleKeySelected(itemKey);
   };
 
-  const detailList = useMemo(() => {
+  const workflowsList = useMemo(() => {
     return (
       <div className="msla-export-workflows-panel-list-workflows">
         <ShimmeredDetailsList
@@ -144,7 +144,7 @@ export const WorkflowsSelection: React.FC = () => {
           {intlText.SELECT_DESCRIPTION}
         </Text>
         {filters}
-        {detailList}
+        {workflowsList}
       </div>
       <Separator vertical className="msla-export-workflows-panel-divider" />
       <SelectedList deselectItem={deselectItem} />
