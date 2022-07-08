@@ -23,7 +23,7 @@ export const designerOptionsSlice = createSlice({
   name: 'designerOptions',
   initialState,
   reducers: {
-    initDesignerOptions: (state, action: PayloadAction<Omit<DesignerOptionsState, 'servicesInitialized'>>) => {
+    initDesignerOptions: (state: DesignerOptionsState, action: PayloadAction<Omit<DesignerOptionsState, 'servicesInitialized'>>) => {
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
     },
