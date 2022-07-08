@@ -1,4 +1,10 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -246,7 +252,7 @@
   "1X4U/1": [
     {
       "type": 0,
-      "value": "Show code view"
+      "value": "Mostrar vista de código"
     }
   ],
   "1ejxkP": [
@@ -415,6 +421,12 @@
     {
       "type": 0,
       "value": "Paseo o tutorial"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
     }
   ],
   "5J7j9k": [
@@ -869,6 +881,12 @@
       "value": "hours"
     }
   ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -1097,6 +1115,12 @@
       "value": "Devuelve el componente de día de la semana de la marca de tiempo de una cadena."
     }
   ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Warning"
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
@@ -1233,6 +1257,12 @@
     {
       "type": 0,
       "value": "Devuelve los resultados de las acciones de nivel superior en la acción con ámbito especificada, como una acción For_each, Until o Scope."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
     }
   ],
   "Oib1mL": [
@@ -1891,6 +1921,12 @@
     {
       "type": 0,
       "value": "Ya se eliminó la operación."
+    }
+  ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
     }
   ],
   "a64zhX": [
