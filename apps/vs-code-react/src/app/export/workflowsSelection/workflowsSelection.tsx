@@ -76,30 +76,19 @@ export const WorkflowsSelection: React.FC = () => {
     onSuccess: onWorkflowsSuccess,
   });
 
-  const onChangeDropdown = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
-    const updatedResourceGroups = [...resourceGroups];
-    updatedResourceGroups[index].selected = !updatedResourceGroups[index].selected;
-
-    setRenderWorkflows(filterWorkflows(allWorkflows, updatedResourceGroups, searchString));
-    setResourceGroups(updatedResourceGroups);
-  };
-
-  const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
-    setRenderWorkflows(filterWorkflows(allWorkflows, resourceGroups, newSearchString));
-    setSearchString(newSearchString);
-  };
-
-  const selection = new Selection({
-    onSelectionChanged: () => {
-      const currentSelection = selection.getSelection();
-      dispatch(
-        updateSelectedWorkFlows({
-          selectedWorkflows: currentSelection,
-        })
-      );
-    },
-    items: renderWorkflows as any,
-  });
+  const selection = useMemo(() => {
+    return new Selection({
+      onSelectionChanged: () => {
+        const currentSelection = selection.getSelection();
+        dispatch(
+          updateSelectedWorkFlows({
+            selectedWorkflows: currentSelection,
+          })
+        );
+      },
+      items: renderWorkflows as any,
+    });
+  }, [renderWorkflows, dispatch]);
 
   /*const deselectItem = (itemKey: string) => {
     selection.toggleKeySelected(itemKey);
@@ -124,6 +113,19 @@ export const WorkflowsSelection: React.FC = () => {
   }, [renderWorkflows, isWorkflowsLoading, selection, intlText.TOGGLE_SELECTION, intlText.TOGGLE_SELECTION_ALL, intlText.SELECT_WORKFLOW]);
 
   const filters = useMemo(() => {
+    const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
+      setRenderWorkflows(filterWorkflows(allWorkflows, resourceGroups, newSearchString));
+      setSearchString(newSearchString);
+    };
+
+    const onChangeDropdown = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
+      const updatedResourceGroups = [...resourceGroups];
+      updatedResourceGroups[index].selected = !updatedResourceGroups[index].selected;
+
+      setRenderWorkflows(filterWorkflows(allWorkflows, updatedResourceGroups, searchString));
+      setResourceGroups(updatedResourceGroups);
+    };
+
     return (
       <Filters
         dropdownOptions={resourceGroups}
@@ -132,7 +134,7 @@ export const WorkflowsSelection: React.FC = () => {
         isDataLoaded={isWorkflowsLoading}
       />
     );
-  }, [resourceGroups, isWorkflowsLoading, onChangeDropdown, onChangeSearch]);
+  }, [resourceGroups, isWorkflowsLoading, allWorkflows, searchString]);
 
   return (
     <div className="msla-export-workflows-panel">
