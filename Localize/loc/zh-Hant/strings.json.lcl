@@ -9,6 +9,15 @@
     <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
     <Item ItemId=";Strings" ItemType="0" PsrId="306" Leaf="false">
       <Disp Icon="Str" Disp="true" LocTbl="false" />
+      <Item ItemId=";+1GH4O" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[OK]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[確定]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+GSexV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Filters]]></Val>
@@ -372,6 +381,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";1X4U/1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Show code view]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[顯示程式碼檢視]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";1ejxkP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Secure Inputs]]></Val>
@@ -620,6 +638,15 @@
           <Val><![CDATA[Tour/Tutorial]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[導覽/教學課程]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";53PSgA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[將會取代輸入結構描述，而且您將無法回復到先前的變更。您要繼續變更輸入結構描述嗎?]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1302,6 +1329,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";FemgEF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cancel]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[取消]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Fgq3Db" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The collection to take the last object from.]]></Val>
@@ -1644,6 +1680,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";LCUU5q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[警告]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";LS8rfZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the scheme from a URI]]></Val>
@@ -1847,6 +1892,15 @@
           <Val><![CDATA[Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[傳回指定範圍動作內的最上層動作結果，例如 For_each、Until 或 Scope 動作。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OcJdKG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[All unsaved work will be gone. Do you want to proceed to discard everything?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[所有未儲存的工作都會消失。您要繼續捨棄所有專案嗎?]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2750,6 +2804,15 @@
           <Val><![CDATA[This operation has already been deleted.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[已刪除這項作業。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";a3QJzO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[將取代輸出結構描述，而且您將無法回復到先前的變更。您要繼續變更輸出結構描述嗎?]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

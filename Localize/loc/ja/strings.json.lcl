@@ -9,6 +9,15 @@
     <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
     <Item ItemId=";Strings" ItemType="0" PsrId="306" Leaf="false">
       <Disp Icon="Str" Disp="true" LocTbl="false" />
+      <Item ItemId=";+1GH4O" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[OK]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[OK]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+GSexV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Filters]]></Val>
@@ -629,6 +638,15 @@
           <Val><![CDATA[Tour/Tutorial]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[ツアーおよびチュートリアル]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";53PSgA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[入力スキーマが置き換えられ、以前の変更に戻ることはできなくなります。入力スキーマの変更を続行しますか?]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1311,6 +1329,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";FemgEF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cancel]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[キャンセル]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Fgq3Db" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The collection to take the last object from.]]></Val>
@@ -1653,6 +1680,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";LCUU5q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[警告]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";LS8rfZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the scheme from a URI]]></Val>
@@ -1856,6 +1892,15 @@
           <Val><![CDATA[Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[指定されたスコープ アクション内のトップレベルのアクション (For_each、Until、Scope のアクションなど) の結果を返します。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OcJdKG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[All unsaved work will be gone. Do you want to proceed to discard everything?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[未保存の作業はすべて失われます。すべて破棄する操作を続行しますか?]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2759,6 +2804,15 @@
           <Val><![CDATA[This operation has already been deleted.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[この操作は既に削除されています。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";a3QJzO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[出力スキーマが置き換えられ、以前の変更に戻ることはできなくなります。出力スキーマの変更を続行しますか?]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

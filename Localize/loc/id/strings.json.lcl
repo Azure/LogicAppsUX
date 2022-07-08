@@ -9,6 +9,15 @@
     <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
     <Item ItemId=";Strings" ItemType="0" PsrId="306" Leaf="false">
       <Disp Icon="Str" Disp="true" LocTbl="false" />
+      <Item ItemId=";+1GH4O" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[OK]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[OK]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+GSexV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Filters]]></Val>
@@ -629,6 +638,15 @@
           <Val><![CDATA[Tour/Tutorial]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tur/Tutorial]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";53PSgA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Skema input akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema input?]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1311,6 +1329,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";FemgEF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cancel]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Batal]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Fgq3Db" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The collection to take the last object from.]]></Val>
@@ -1653,6 +1680,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";LCUU5q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warning]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Peringatan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";LS8rfZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns the scheme from a URI]]></Val>
@@ -1856,6 +1892,15 @@
           <Val><![CDATA[Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Menghasilkan hasil dari tindakan tingkat atas dalam tindakan tercakup yang ditentukan, seperti tindakan For_each, Until, atau Scope.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OcJdKG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[All unsaved work will be gone. Do you want to proceed to discard everything?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Semua pekerjaan yang belum disimpan akan hilang. Ingin melanjutkan untuk membuang semuanya?]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2759,6 +2804,15 @@
           <Val><![CDATA[This operation has already been deleted.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Operasi ini sudah dihapus.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";a3QJzO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Skema output akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema output?]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
