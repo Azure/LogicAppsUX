@@ -5,7 +5,7 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { Filters } from './filters';
-import { filterByDropdown, getListColumns, parseResourceGroups, parseWorkflowData } from './helper';
+import { filterWorkflows, getListColumns, parseResourceGroups, parseWorkflowData } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
@@ -18,9 +18,11 @@ export const WorkflowsSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
   const { selectedSubscription, selectedIse } = exportData;
+
   const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList>>([]);
   const [allWorkflows, setAllWorkflows] = useState<Array<WorkflowsList>>([]);
   const [resourceGroups, setResourceGroups] = useState<IDropdownOption[]>([]);
+  const [searchString, setSearchString] = useState<string>('');
 
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
@@ -78,8 +80,13 @@ export const WorkflowsSelection: React.FC = () => {
     const updatedResourceGroups = [...resourceGroups];
     updatedResourceGroups[index].selected = !updatedResourceGroups[index].selected;
 
-    setRenderWorkflows(filterByDropdown(allWorkflows, updatedResourceGroups));
+    setRenderWorkflows(filterWorkflows(allWorkflows, updatedResourceGroups, searchString));
     setResourceGroups(updatedResourceGroups);
+  };
+
+  const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
+    setRenderWorkflows(filterWorkflows(allWorkflows, resourceGroups, newSearchString));
+    setSearchString(newSearchString);
   };
 
   const selection = new Selection({
@@ -117,8 +124,15 @@ export const WorkflowsSelection: React.FC = () => {
   }, [renderWorkflows, isWorkflowsLoading, selection, intlText.TOGGLE_SELECTION, intlText.TOGGLE_SELECTION_ALL, intlText.SELECT_WORKFLOW]);
 
   const filters = useMemo(() => {
-    return <Filters dropdownOptions={resourceGroups} onChangeDropdown={onChangeDropdown} isDataLoaded={isWorkflowsLoading} />;
-  }, [resourceGroups, isWorkflowsLoading, onChangeDropdown]);
+    return (
+      <Filters
+        dropdownOptions={resourceGroups}
+        onChangeDropdown={onChangeDropdown}
+        onChangeSearch={onChangeSearch}
+        isDataLoaded={isWorkflowsLoading}
+      />
+    );
+  }, [resourceGroups, isWorkflowsLoading, onChangeDropdown, onChangeSearch]);
 
   return (
     <div className="msla-export-workflows-panel">

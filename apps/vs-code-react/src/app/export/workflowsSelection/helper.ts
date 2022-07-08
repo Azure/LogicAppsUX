@@ -27,18 +27,22 @@ export const parseResourceGroups = (workflowItems: Array<WorkflowsList>): IDropd
   return dropdownGroups;
 };
 
-export const filterByDropdown = (workflowItems: Array<WorkflowsList>, test: any) => {
-  const selectedFilters: Array<string> = test
+export const filterWorkflows = (workflowItems: Array<WorkflowsList>, resourceGroups: IDropdownOption[], newSearchString: string) => {
+  const selectedFilters: Array<string | number> = resourceGroups
     .filter((resourceGroup: IDropdownOption) => resourceGroup.selected)
     .map((resourceGroup: IDropdownOption) => resourceGroup.key);
-  let selectedWorkflows;
-  if (selectedFilters.length > 0) {
-    selectedWorkflows = workflowItems.filter((workflowItem) => selectedFilters.includes(workflowItem.resourceGroup));
-  } else {
-    selectedWorkflows = [...workflowItems];
+
+  let renderWorkflows = [...workflowItems];
+
+  if (selectedFilters.length) {
+    renderWorkflows = renderWorkflows.filter((workflowItem) => selectedFilters.includes(workflowItem.resourceGroup));
   }
 
-  return selectedWorkflows;
+  if (newSearchString.length) {
+    renderWorkflows = renderWorkflows.filter((workflowItem) => workflowItem.name.includes(newSearchString));
+  }
+
+  return renderWorkflows;
 };
 
 export const getResourceGroup = (workflowID: string): string => {
