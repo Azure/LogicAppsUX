@@ -194,6 +194,7 @@ export type ExportData = {
   selectedWorkflows: Array<WorkflowsList>;
   selectedSubscription: string;
   selectedIse: string;
+  location: string;
 };
 
 export enum ResourceType {

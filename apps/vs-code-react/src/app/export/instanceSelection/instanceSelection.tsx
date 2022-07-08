@@ -95,6 +95,7 @@ export const InstanceSelection: React.FC = () => {
       dispatch(
         updateSelectedIse({
           selectedIse: selectedOption.key,
+          location: selectedOption.data,
         })
       );
     }
