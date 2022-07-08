@@ -1,11 +1,13 @@
 import { useLayout } from '../core/graphlayout';
 import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
 import { updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import Controls from './Controls';
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
 import OperationNode from './CustomNodes/OperationCardNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
+import Minimap from './Minimap';
 import { ButtonEdge } from './connections/edge';
 // import { OnlyEdge } from './connections/onlyEdge';
 import { HiddenEdge } from './connections/hiddenEdge';
@@ -13,8 +15,8 @@ import { PanelRoot } from './panel/panelroot';
 import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
 import type { NodeChange } from 'react-flow-renderer';
-import ReactFlow, { Controls, ReactFlowProvider } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 
 export interface DesignerProps {
@@ -73,7 +75,10 @@ export const Designer = () => {
           >
             <PanelRoot />
           </ReactFlow>
-          <Controls showInteractive={false} />
+          <div className="msla-designer-tools">
+            <Minimap />
+            <Controls />
+          </div>
         </ReactFlowProvider>
       </div>
     </DndProvider>
