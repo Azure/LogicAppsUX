@@ -76,9 +76,9 @@ export const WorkflowsSelection: React.FC = () => {
     items: workflowItems,
   });
 
-  const deselectItem = (itemKey: string) => {
+  /*const deselectItem = (itemKey: string) => {
     selection.toggleKeySelected(itemKey);
-  };
+  };*/
 
   return (
     <div className="msla-export-workflows-panel">
@@ -104,7 +104,7 @@ export const WorkflowsSelection: React.FC = () => {
         </div>
       </div>
       <Separator vertical className="msla-export-workflows-panel-divider" />
-      <SelectedList deselectItem={deselectItem} />
+      <SelectedList />
     </div>
   );
 };
