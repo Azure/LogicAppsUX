@@ -2,7 +2,7 @@
   "+1GH4O": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "확인"
     }
   ],
   "+GSexV": [
@@ -394,6 +394,12 @@
       "value": "단계 입력을 편집하는 동안에만 주석을 추가할 수 있습니다."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Toggle Minimap"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -670,6 +676,35 @@
       "value": "필수 사항으로, base64 표현으로 인코딩할 문자열입니다."
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Actions"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
@@ -862,7 +897,7 @@
   "FemgEF": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "취소"
     }
   ],
   "Fgq3Db": [
@@ -1081,6 +1116,35 @@
       "value": "출력 스키마"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cases"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1096,7 +1160,7 @@
   "LCUU5q": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "경고"
     }
   ],
   "LS8rfZ": [
