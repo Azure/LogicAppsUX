@@ -3,6 +3,8 @@ import { openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/Pa
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
 import { SchemaTypes } from '../configPanel/EditorConfigPanel';
+import { ExpressionCard } from '../nodeCard/ExpressionCard';
+import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
 import { useMemo } from 'react';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
@@ -55,6 +57,12 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ inputSchema, outputSch
 
   return (
     <div className="msla-designer-canvas msla-panel-mode not-loaded" style={reactFlowStyle}>
+      {/* TODO: remove this - this is only for testing */}
+      <div>
+        <SchemaCard schemaType={SchemaTypes.Input} />
+        <SchemaCard schemaType={SchemaTypes.Output} isLeaf={true} />
+        <ExpressionCard />
+      </div>
       <div className="left">
         {inputSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Input} onClick={onInputSchemaClick} />}
       </div>

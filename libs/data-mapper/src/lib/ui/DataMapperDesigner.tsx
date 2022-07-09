@@ -4,9 +4,8 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import { EditorConfigPanel, SchemaTypes } from '../components/configPanel/EditorConfigPanel';
+import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
-import { SchemaCard } from '../components/schemaCard/SchemaCard';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
@@ -106,8 +105,6 @@ export const DataMapperDesigner = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
-        {/* TODO: remove this - this is only for testing */}
-        <SchemaCard schemaType={SchemaTypes.Input} />
         <EditorCommandBar />
         <EditorConfigPanel onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
         <EditorBreadcrumb />

@@ -38,6 +38,7 @@
   "dependencies": {
     "@fluentui/azure-themes": "8.2.33",
     "@fluentui/react": "8.68.2",
+    "@fluentui/react-components": "^9.0.1",
     "@fluentui/react-hooks": "8.5.5",
     "@fluentui/theme": "2.6.6",
     "@lexical/react": "^0.3.5",
