@@ -1,6 +1,6 @@
 import { NodeCard } from './NodeCard';
 import { Icon } from '@fluentui/react';
-import { makeStyles } from '@fluentui/react-components';
+import { createFocusOutlineStyle, makeStyles } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 
 interface ExpressionCardProps {
@@ -28,6 +28,12 @@ const useStyles = makeStyles({
       },
     },
   },
+  focusIndicator: createFocusOutlineStyle({
+    selector: 'focus-within',
+    style: {
+      outlineRadius: '100px',
+    },
+  }),
 });
 
 export const ExpressionCard: FunctionComponent<ExpressionCardProps> = ({ onClick, disabled }) => {

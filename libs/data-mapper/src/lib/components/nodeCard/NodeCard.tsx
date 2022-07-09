@@ -65,10 +65,11 @@ const useStyles = makeStyles({
 export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClasses, disabled, children }) => {
   const classes = useStyles();
   const mergedClasses = mergeClasses(classes.root, childClasses?.root);
+  const mergedFocusIndicator = mergeClasses(classes.focusIndicator, childClasses?.focusIndicator);
 
   return (
     <DefaultButton
-      className={`${mergedClasses} ${classes.focusIndicator} ${disabled && classes.disabled}`}
+      className={`${mergedClasses} ${mergedFocusIndicator} ${disabled && classes.disabled}`}
       toggle
       checked={true}
       onClick={onClick ?? undefined}
