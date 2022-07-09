@@ -1,3 +1,5 @@
+import { SchemaTypes } from './components/configPanel/EditorConfigPanel';
+import { SchemaCard } from './components/nodeCard/SchemaCard';
 import type { SchemaNodeExtended } from './models/Schema';
 import type { Node as ReactFlowNode } from 'react-flow-renderer';
 import { Position } from 'react-flow-renderer';
@@ -12,6 +14,11 @@ const rootOutputY = 0;
 const childOutputX = rootOutputX + 10;
 const childOutputYOffset = 50;
 
+const defaultStyle = {
+  padding: '0px',
+  border: 'none',
+};
+
 export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, outputSchemaNode?: SchemaNodeExtended): ReactFlowNode[] => {
   const reactFlowNodes: ReactFlowNode[] = [];
 
@@ -19,7 +26,7 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
     reactFlowNodes.push({
       id: `input-${inputSchemaNode.key}`,
       data: {
-        label: inputSchemaNode.name,
+        label: <SchemaCard schemaType={SchemaTypes.Input} label={inputSchemaNode.name} />,
       },
       type: 'input',
       sourcePosition: Position.Right,
@@ -27,13 +34,14 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
         x: rootInputX,
         y: rootInputY,
       },
+      style: defaultStyle,
     });
 
     inputSchemaNode.children?.forEach((childNode, index) => {
       reactFlowNodes.push({
         id: `input-${childNode.key}`,
         data: {
-          label: childNode.name,
+          label: <SchemaCard schemaType={SchemaTypes.Input} label={childNode.name} />,
         },
         type: 'input',
         sourcePosition: Position.Right,
@@ -41,6 +49,7 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
           x: childInputX,
           y: childInputYOffset * (index + 1),
         },
+        style: defaultStyle,
       });
     });
   }
@@ -49,7 +58,7 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
     reactFlowNodes.push({
       id: `output-${outputSchemaNode.key}`,
       data: {
-        label: outputSchemaNode.name,
+        label: <SchemaCard schemaType={SchemaTypes.Output} label={outputSchemaNode.name} />,
       },
       type: 'output',
       targetPosition: Position.Left,
@@ -57,13 +66,14 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
         x: rootOutputX,
         y: rootOutputY,
       },
+      style: defaultStyle,
     });
 
     outputSchemaNode.children?.forEach((childNode, index) => {
       reactFlowNodes.push({
         id: `output-${childNode.key}`,
         data: {
-          label: childNode.name,
+          label: <SchemaCard schemaType={SchemaTypes.Output} label={childNode.name} />,
         },
         type: 'output',
         targetPosition: Position.Left,
@@ -71,6 +81,7 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
           x: childOutputX,
           y: childOutputYOffset * (index + 1),
         },
+        style: defaultStyle,
       });
     });
   }

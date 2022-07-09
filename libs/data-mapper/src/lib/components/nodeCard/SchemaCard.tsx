@@ -3,9 +3,9 @@ import { NodeCard } from './NodeCard';
 import { Icon, Text } from '@fluentui/react';
 import { makeStyles, tokens } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
-import { useIntl } from 'react-intl';
 
 interface SchemaCardProps {
+  label: string;
   schemaType: SchemaTypes;
   isLeaf?: boolean;
   onClick?: () => void;
@@ -52,37 +52,16 @@ const useStyles = makeStyles({
   },
 });
 
-export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ schemaType, onClick, isLeaf, disabled }) => {
-  const intl = useIntl();
-
+export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ label, schemaType, onClick, isLeaf, disabled }) => {
   const classes = useStyles();
-
-  let selectSchemaMsg = '';
-
-  switch (schemaType) {
-    case SchemaTypes.Input:
-      selectSchemaMsg = intl.formatMessage({
-        defaultMessage: 'Input Schema Name',
-        description: 'label text displaying the name of the name of the current node',
-      });
-      break;
-    case SchemaTypes.Output:
-      selectSchemaMsg = intl.formatMessage({
-        defaultMessage: 'Output Schema Name',
-        description: 'label text displaying the name of the name of the current node',
-      });
-      break;
-    default:
-      break;
-  }
 
   return (
     <NodeCard onClick={onClick} disabled={disabled} childClasses={classes}>
       <Icon className={classes.cardIcon} iconName="Diamond" />
       <Text className={classes.cardText} block={true} nowrap={true}>
-        {selectSchemaMsg}
+        {label}
       </Text>
-      <div className={classes.cardChevron}>{isLeaf && <Icon iconName="ChevronRightMed" />}</div>
+      <div className={classes.cardChevron}>{schemaType === SchemaTypes.Output && isLeaf && <Icon iconName="ChevronRightMed" />}</div>
     </NodeCard>
   );
 };

@@ -59,12 +59,6 @@
       "value": "Required. The collection to join items from."
     }
   ],
-  "/ujp90": [
-    {
-      "type": 0,
-      "value": "Input Schema Name"
-    }
-  ],
   "/ut0u7": [
     {
       "type": 0,
@@ -2045,12 +2039,6 @@
     {
       "type": 0,
       "value": "Required. The collection to skip the first Count objects from."
-    }
-  ],
-  "d1fjUy": [
-    {
-      "type": 0,
-      "value": "Output Schema Name"
     }
   ],
   "d3bSQA": [
