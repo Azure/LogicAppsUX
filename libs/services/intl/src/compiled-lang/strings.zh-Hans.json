@@ -2,7 +2,7 @@
   "+1GH4O": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "确定"
     }
   ],
   "+GSexV": [
@@ -245,7 +245,7 @@
   "1X4U/1": [
     {
       "type": 0,
-      "value": "Show code view"
+      "value": "显示代码视图"
     }
   ],
   "1ejxkP": [
@@ -396,6 +396,12 @@
     {
       "type": 0,
       "value": "只可在编辑某步骤的输入时添加注释。"
+    }
+  ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Toggle Minimap"
     }
   ],
   "4vcnOA": [
@@ -674,6 +680,35 @@
       "value": "必需。要编码为 base64 表示形式的字符串。"
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Actions"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
@@ -866,7 +901,7 @@
   "FemgEF": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "Fgq3Db": [
@@ -1085,6 +1120,35 @@
       "value": "输出架构"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cases"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1100,7 +1164,7 @@
   "LCUU5q": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "警告"
     }
   ],
   "LS8rfZ": [

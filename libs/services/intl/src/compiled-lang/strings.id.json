@@ -394,6 +394,12 @@
       "value": "Komentar hanya dapat ditambahkan saat mengedit input langkah."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Toggle Minimap"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -415,7 +421,7 @@
   "53PSgA": [
     {
       "type": 0,
-      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+      "value": "Skema input akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema input?"
     }
   ],
   "5J7j9k": [
@@ -670,6 +676,35 @@
       "value": "Wajib. String yang dikodekan menjadi representasi base64."
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Actions"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
@@ -862,7 +897,7 @@
   "FemgEF": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Batal"
     }
   ],
   "Fgq3Db": [
@@ -1081,6 +1116,35 @@
       "value": "Skema Output"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cases"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1096,7 +1160,7 @@
   "LCUU5q": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Peringatan"
     }
   ],
   "LS8rfZ": [
@@ -1240,7 +1304,7 @@
   "OcJdKG": [
     {
       "type": 0,
-      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+      "value": "Semua pekerjaan yang belum disimpan akan hilang. Ingin melanjutkan untuk membuang semuanya?"
     }
   ],
   "Oib1mL": [
@@ -1893,7 +1957,7 @@
   "a3QJzO": [
     {
       "type": 0,
-      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+      "value": "Skema output akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema output?"
     }
   ],
   "a64zhX": [
