@@ -425,7 +425,7 @@
   "53PSgA": [
     {
       "type": 0,
-      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+      "value": "输入架构将被替换，并且你将无法返回到以前的更改。是否要继续更改输入架构?"
     }
   ],
   "5J7j9k": [
@@ -1308,7 +1308,7 @@
   "OcJdKG": [
     {
       "type": 0,
-      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+      "value": "所有未保存的工作都将消失。是否要继续放弃所有内容?"
     }
   ],
   "Oib1mL": [
@@ -1965,7 +1965,7 @@
   "a3QJzO": [
     {
       "type": 0,
-      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+      "value": "输出架构将被替换，并且你将无法返回到以前的更改。是否要继续更改输出架构?"
     }
   ],
   "a64zhX": [

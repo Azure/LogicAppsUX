@@ -432,7 +432,7 @@
   "53PSgA": [
     {
       "type": 0,
-      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+      "value": "Indataschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra indataschemat?"
     }
   ],
   "5J7j9k": [
@@ -1348,7 +1348,7 @@
   "OcJdKG": [
     {
       "type": 0,
-      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+      "value": "Allt arbete som inte har sparats kommer att försvinna. Vill du ta bort allt?"
     }
   ],
   "Oib1mL": [
@@ -2016,7 +2016,7 @@
   "a3QJzO": [
     {
       "type": 0,
-      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+      "value": "Utdataschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra utdataschemat?"
     }
   ],
   "a64zhX": [
