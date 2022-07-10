@@ -1,5 +1,5 @@
 import type { IHttpClient, QueryParameters } from '../httpClient';
-import type { ArmResource, Connection, Connector } from '@microsoft-logic-apps/utils';
+import type { Connection, Connector } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 
 interface StandardConnectionServiceArgs {
@@ -62,9 +62,9 @@ export class StandardConnectionService {
     };
 
     try {
-      const response = await httpClient.get<ArmResource<Connection>[]>({ uri, queryParameters });
-      const connections = response.map((armConnection) => armConnection.properties);
-      return connections.filter((connection: Connection) => {
+      const response = await httpClient.get<ConnectionsResponse>({ uri, queryParameters });
+      console.log(response);
+      return response.value.filter((connection: Connection) => {
         return filterByLocation ? equals(connection.location, locale) : true; // danielle test locale in unit and live
       });
     } catch {
@@ -72,6 +72,10 @@ export class StandardConnectionService {
     }
   }
 }
+
+type ConnectionsResponse = {
+  value: Connection[];
+};
 
 export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.startsWith('/subscriptions/') : false;
