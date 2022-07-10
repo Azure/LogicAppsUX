@@ -432,7 +432,7 @@
   "53PSgA": [
     {
       "type": 0,
-      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+      "value": "Le schéma d’entrée sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma d’entrée ?"
     }
   ],
   "5J7j9k": [
@@ -1348,7 +1348,7 @@
   "OcJdKG": [
     {
       "type": 0,
-      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+      "value": "Tous les travaux non enregistrés seront supprimés. Voulez-vous tout abandonner ?"
     }
   ],
   "Oib1mL": [
@@ -2012,7 +2012,7 @@
   "a3QJzO": [
     {
       "type": 0,
-      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+      "value": "Le schéma de sortie sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma de sortie ?"
     }
   ],
   "a64zhX": [
