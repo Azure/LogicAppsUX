@@ -7,7 +7,6 @@ export interface ConnectionReference {
   };
   authentication?: ApiHubAuthentication;
   connectionRuntimeUrl: string;
-  // danielle this might not be right
 }
 
 export interface ApiHubAuthentication {

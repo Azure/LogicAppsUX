@@ -36,6 +36,7 @@ export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
   if (manifest) {
     return isConnectionRequiredForOperation(result.data);
   }
+  // else case needs to be implemented: work item 14936435
   return true;
 };
 

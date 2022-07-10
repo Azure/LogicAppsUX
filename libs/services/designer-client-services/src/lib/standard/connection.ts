@@ -63,9 +63,8 @@ export class StandardConnectionService {
 
     try {
       const response = await httpClient.get<ConnectionsResponse>({ uri, queryParameters });
-      console.log(response);
       return response.value.filter((connection: Connection) => {
-        return filterByLocation ? equals(connection.location, locale) : true; // danielle test locale in unit and live
+        return filterByLocation ? equals(connection.location, locale) : true;
       });
     } catch {
       return [];
