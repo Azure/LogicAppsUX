@@ -1,3 +1,4 @@
+import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
 import { useConnectionByName } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
@@ -27,6 +28,15 @@ export const useNodeMetadata = (nodeId?: string) => {
     }
     return state.workflow.nodesMetadata[nodeId];
   });
+};
+
+export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
+  const result = useOperationManifest(operationInfo);
+  const manifest = result.data;
+  if (manifest) {
+    return isConnectionRequiredForOperation(result.data);
+  }
+  return true;
 };
 
 export const useNodeConnectionName = (nodeId: string) => {

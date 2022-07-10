@@ -5,7 +5,7 @@ import { initializeConnectionsMappings } from '../../state/connectionSlice';
 import type { Operations } from '../../state/workflowSlice';
 import type { RootState } from '../../store';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
+import type { Connector, OperationManifest } from '@microsoft-logic-apps/utils';
 import { equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -136,8 +136,13 @@ export async function getManifestBasedConnectionMapping(
   }
 }
 
-function isConnectionRequiredForOperation(manifest: OperationManifest): boolean {
-  return manifest.properties.connection?.required ?? false;
+export function isConnectionRequiredForOperation(manifest: OperationManifest): boolean {
+  return manifest.properties.connection ? manifest.properties.connection.required : needsConnection(manifest.properties.connector);
+}
+
+export function needsConnection(_connector: Connector | undefined): boolean {
+  // needs to be implemented: work item 14936435
+  return true;
 }
 
 function getConnectionReferenceKeyForManifest(referenceFormat: string, operationDefinition: LogicAppsV2.OperationDefinition): string {
