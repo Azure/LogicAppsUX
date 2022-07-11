@@ -39,7 +39,11 @@ export const filterWorkflows = (workflowItems: Array<WorkflowsList>, resourceGro
   }
 
   if (newSearchString.length) {
-    renderWorkflows = renderWorkflows.filter((workflowItem) => workflowItem.name.includes(newSearchString));
+    renderWorkflows = renderWorkflows.filter((workflowItem) => {
+      const lowerCaseName = workflowItem?.name.toLowerCase();
+      const lowerCaseSearch = newSearchString.toLowerCase();
+      return lowerCaseName.includes(lowerCaseSearch);
+    });
   }
 
   return renderWorkflows;

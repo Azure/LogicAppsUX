@@ -118,7 +118,7 @@ export const WorkflowsSelection: React.FC = () => {
       setSearchString(newSearchString);
     };
 
-    const onChangeDropdown = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
+    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
       const updatedResourceGroups = [...resourceGroups];
       updatedResourceGroups[index].selected = !updatedResourceGroups[index].selected;
 
@@ -129,9 +129,9 @@ export const WorkflowsSelection: React.FC = () => {
     return (
       <Filters
         dropdownOptions={resourceGroups}
-        onChangeDropdown={onChangeDropdown}
+        onChangeResourceGroup={onChangeResourceGroup}
         onChangeSearch={onChangeSearch}
-        isDataLoaded={isWorkflowsLoading}
+        isDataLoading={isWorkflowsLoading}
       />
     );
   }, [resourceGroups, isWorkflowsLoading, allWorkflows, searchString]);
