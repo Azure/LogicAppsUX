@@ -126,7 +126,7 @@ export const InstanceSelection: React.FC = () => {
         label={intlText.SELECTION_ISE}
         options={iseInstances}
         placeholder={iseInstances.length ? intlText.SELECT_OPTION : intlText.EMPTY_ISE}
-        disabled={isIseLoading || selectedSubscription === '' || !iseInstances.length}
+        disabled={isSubscriptionsLoading || isIseLoading || selectedSubscription === '' || !iseInstances.length}
         onChange={onChangeIse}
         selectedKey={selectedIse !== '' ? selectedIse : null}
         className="msla-export-instance-panel-dropdown"

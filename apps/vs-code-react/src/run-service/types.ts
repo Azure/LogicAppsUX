@@ -182,6 +182,7 @@ export enum QueryKeys {
   subscriptionData = 'subscriptionData',
   runsData = 'runsData',
   iseData = 'iseData',
+  validation = 'validation',
 }
 
 export interface ISubscription {
