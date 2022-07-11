@@ -397,7 +397,7 @@
   "4j2MEv": [
     {
       "type": 0,
-      "value": "Toggle Minimap"
+      "value": "Hidupkan/Matikan Peta Mini"
     }
   ],
   "4vcnOA": [
@@ -684,7 +684,7 @@
           "value": [
             {
               "type": 0,
-              "value": "0 Actions"
+              "value": "0 Tindakan"
             }
           ]
         },
@@ -695,7 +695,7 @@
             },
             {
               "type": 0,
-              "value": " Actions"
+              "value": " Tindakan"
             }
           ]
         }
@@ -1124,7 +1124,7 @@
           "value": [
             {
               "type": 0,
-              "value": "0 Cases"
+              "value": "0 Kasus"
             }
           ]
         },
@@ -1135,7 +1135,7 @@
             },
             {
               "type": 0,
-              "value": " Cases"
+              "value": " Kasus"
             }
           ]
         }

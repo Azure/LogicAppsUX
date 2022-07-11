@@ -408,7 +408,7 @@
   "4j2MEv": [
     {
       "type": 0,
-      "value": "Toggle Minimap"
+      "value": "Ativar/Desativar Minimapa"
     }
   ],
   "4vcnOA": [
@@ -432,7 +432,7 @@
   "53PSgA": [
     {
       "type": 0,
-      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+      "value": "O esquema de entrada será substituído e você não poderá voltar às alterações anteriores. Deseja prosseguir para alterar o esquema de entrada?"
     }
   ],
   "5J7j9k": [
@@ -1348,7 +1348,7 @@
   "OcJdKG": [
     {
       "type": 0,
-      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+      "value": "Todo o trabalho não salvo desaparecerá. Deseja prosseguir para descartar tudo?"
     }
   ],
   "Oib1mL": [
@@ -2012,7 +2012,7 @@
   "a3QJzO": [
     {
       "type": 0,
-      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+      "value": "O esquema de saída será substituído e você não poderá voltar às alterações anteriores. Deseja prosseguir para alterar o esquema de saída?"
     }
   ],
   "a64zhX": [

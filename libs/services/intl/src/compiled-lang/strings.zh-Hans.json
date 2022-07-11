@@ -401,7 +401,7 @@
   "4j2MEv": [
     {
       "type": 0,
-      "value": "Toggle Minimap"
+      "value": "切换缩略图"
     }
   ],
   "4vcnOA": [
@@ -688,7 +688,7 @@
           "value": [
             {
               "type": 0,
-              "value": "0 Actions"
+              "value": "0 个操作"
             }
           ]
         },
@@ -699,7 +699,7 @@
             },
             {
               "type": 0,
-              "value": " Actions"
+              "value": " 个操作"
             }
           ]
         }
@@ -1128,7 +1128,7 @@
           "value": [
             {
               "type": 0,
-              "value": "0 Cases"
+              "value": "0 个案例"
             }
           ]
         },
@@ -1139,7 +1139,7 @@
             },
             {
               "type": 0,
-              "value": " Cases"
+              "value": " 个案例"
             }
           ]
         }
