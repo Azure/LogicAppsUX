@@ -439,6 +439,12 @@
       "value": "Komentáře je možné přidávat jenom při úpravách vstupů kroku."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Přepnout minimapu"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -460,7 +466,7 @@
   "53PSgA": [
     {
       "type": 0,
-      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+      "value": "Vstupní schéma se nahradí a nebudete se moct vrátit k předchozím změnám. Chcete pokračovat ve změně vstupního schématu?"
     }
   ],
   "5J7j9k": [
@@ -715,6 +721,68 @@
       "value": "Povinný parametr. Řetězec, který se má kódovat do formátu base64."
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Actions"
+            }
+          ]
+        },
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Action"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
@@ -940,7 +1008,7 @@
   "FemgEF": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Zrušit"
     }
   ],
   "Fgq3Db": [
@@ -1159,6 +1227,68 @@
       "value": "Výstupní schéma"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cases"
+            }
+          ]
+        },
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Case"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1174,7 +1304,7 @@
   "LCUU5q": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Upozornění"
     }
   ],
   "LS8rfZ": [
@@ -1318,7 +1448,7 @@
   "OcJdKG": [
     {
       "type": 0,
-      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+      "value": "Přijdete o veškerou neuloženou práci. Chcete pokračovat a všechno zahodit?"
     }
   ],
   "Oib1mL": [
@@ -2004,7 +2134,7 @@
   "a3QJzO": [
     {
       "type": 0,
-      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+      "value": "Výstupní schéma se nahradí a nebudete se moct vrátit k předchozím změnám. Chcete pokračovat ve změně výstupního schématu?"
     }
   ],
   "a64zhX": [

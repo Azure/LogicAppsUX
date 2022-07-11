@@ -394,6 +394,12 @@
       "value": "コメントを追加できるのは、ステップの入力を編集している間だけです。"
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "ミニマップの表示/非表示"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -415,7 +421,7 @@
   "53PSgA": [
     {
       "type": 0,
-      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+      "value": "入力スキーマが置き換えられ、以前の変更に戻ることはできなくなります。入力スキーマの変更を続行しますか?"
     }
   ],
   "5J7j9k": [
@@ -670,6 +676,35 @@
       "value": "必須。base64 表現にエンコードする文字列。"
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Actions"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
@@ -862,7 +897,7 @@
   "FemgEF": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "キャンセル"
     }
   ],
   "Fgq3Db": [
@@ -1081,6 +1116,35 @@
       "value": "出力スキーマ"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cases"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1096,7 +1160,7 @@
   "LCUU5q": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "警告"
     }
   ],
   "LS8rfZ": [
@@ -1240,7 +1304,7 @@
   "OcJdKG": [
     {
       "type": 0,
-      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+      "value": "未保存の作業はすべて失われます。すべて破棄する操作を続行しますか?"
     }
   ],
   "Oib1mL": [
@@ -1893,7 +1957,7 @@
   "a3QJzO": [
     {
       "type": 0,
-      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+      "value": "出力スキーマが置き換えられ、以前の変更に戻ることはできなくなります。出力スキーマの変更を続行しますか?"
     }
   ],
   "a64zhX": [

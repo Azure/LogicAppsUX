@@ -2,7 +2,7 @@
   "+1GH4O": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "確定"
     }
   ],
   "+GSexV": [
@@ -241,7 +241,7 @@
   "1X4U/1": [
     {
       "type": 0,
-      "value": "Show code view"
+      "value": "顯示程式碼檢視"
     }
   ],
   "1ejxkP": [
@@ -394,6 +394,12 @@
       "value": "只能在編輯步驟的輸入時新增註解。"
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "切換縮圖"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -415,7 +421,7 @@
   "53PSgA": [
     {
       "type": 0,
-      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+      "value": "將會取代輸入結構描述，而且您將無法回復到先前的變更。您要繼續變更輸入結構描述嗎?"
     }
   ],
   "5J7j9k": [
@@ -670,6 +676,35 @@
       "value": "必要。要編碼成 base64 表示法的字串。"
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 個動作"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個動作"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
@@ -862,7 +897,7 @@
   "FemgEF": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "Fgq3Db": [
@@ -1081,6 +1116,35 @@
       "value": "輸出結構描述"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 個案例"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 個案例"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1096,7 +1160,7 @@
   "LCUU5q": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "警告"
     }
   ],
   "LS8rfZ": [
@@ -1240,7 +1304,7 @@
   "OcJdKG": [
     {
       "type": 0,
-      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+      "value": "所有未儲存的工作都會消失。您要繼續捨棄所有專案嗎?"
     }
   ],
   "Oib1mL": [
@@ -1893,7 +1957,7 @@
   "a3QJzO": [
     {
       "type": 0,
-      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+      "value": "將取代輸出結構描述，而且您將無法回復到先前的變更。您要繼續變更輸出結構描述嗎?"
     }
   ],
   "a64zhX": [
