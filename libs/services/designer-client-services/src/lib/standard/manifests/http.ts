@@ -209,7 +209,26 @@ export const httpWithSwaggerManifest = {
           type: 'string',
           title: 'Swagger Endpoint url',
           description: 'Example: https://myapi.azurewebsites.net/swagger/docs/v1',
-          'x-ms-serialization': 'uionly',
+          'x-ms-serialization': {
+            location: ['metadata', 'apiDefinitionUrl'],
+          },
+        },
+        operationId: {
+          type: 'string',
+          title: 'Swagger Operation',
+          'x-ms-dynamic-list': {
+            dynamicState: {
+              operationId: 'getSwaggerOperations',
+            },
+            parameters: {
+              endpoint: {
+                parameterReference: {
+                  name: 'swaggerEndpoint',
+                  required: true,
+                },
+              },
+            },
+          },
         },
         parameters: {
           title: 'Swagger Parameters',
@@ -217,7 +236,7 @@ export const httpWithSwaggerManifest = {
           'x-ms-dynamic-properties': {
             dynamicState: {
               extension: {
-                operationId: 'getHttpSwagger',
+                operationId: 'getSwaggerOperation',
               },
               isInput: true,
             },
@@ -225,6 +244,12 @@ export const httpWithSwaggerManifest = {
               uri: {
                 parameterReference: {
                   name: 'swaggerEndpoint',
+                  required: true,
+                },
+              },
+              operationId: {
+                parameterReference: {
+                  name: 'operationId',
                   required: true,
                 },
               },
@@ -246,13 +271,19 @@ export const httpWithSwaggerManifest = {
           'x-ms-dynamic-properties': {
             dynamicState: {
               extension: {
-                operationId: 'getHttpSwagger',
+                operationId: 'getSwaggerOperation',
               },
             },
             parameters: {
               uri: {
                 parameterReference: {
                   name: 'swaggerEndpoint',
+                  required: true,
+                },
+              },
+              operationId: {
+                parameterReference: {
+                  name: 'operationId',
                   required: true,
                 },
               },
