@@ -397,7 +397,7 @@
   "4j2MEv": [
     {
       "type": 0,
-      "value": "Toggle Minimap"
+      "value": "미니맵 토글"
     }
   ],
   "4vcnOA": [
@@ -684,7 +684,7 @@
           "value": [
             {
               "type": 0,
-              "value": "0 Actions"
+              "value": "0개의 작업"
             }
           ]
         },
@@ -695,7 +695,7 @@
             },
             {
               "type": 0,
-              "value": " Actions"
+              "value": "개의 작업"
             }
           ]
         }
@@ -1124,7 +1124,7 @@
           "value": [
             {
               "type": 0,
-              "value": "0 Cases"
+              "value": "0개의 사례"
             }
           ]
         },
@@ -1135,7 +1135,7 @@
             },
             {
               "type": 0,
-              "value": " Cases"
+              "value": "개의 사례"
             }
           ]
         }

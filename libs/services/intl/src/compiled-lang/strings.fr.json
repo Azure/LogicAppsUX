@@ -408,7 +408,7 @@
   "4j2MEv": [
     {
       "type": 0,
-      "value": "Toggle Minimap"
+      "value": "Activer/désactiver la minimap"
     }
   ],
   "4vcnOA": [
@@ -1157,7 +1157,7 @@
           "value": [
             {
               "type": 0,
-              "value": "0 Cases"
+              "value": "0 Cas"
             }
           ]
         },
@@ -1168,7 +1168,7 @@
             },
             {
               "type": 0,
-              "value": " Case"
+              "value": " Cas"
             }
           ]
         },
@@ -1179,7 +1179,7 @@
             },
             {
               "type": 0,
-              "value": " Cases"
+              "value": " Cas"
             }
           ]
         }

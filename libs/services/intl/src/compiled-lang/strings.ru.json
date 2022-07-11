@@ -430,7 +430,7 @@
   "4j2MEv": [
     {
       "type": 0,
-      "value": "Toggle Minimap"
+      "value": "Переключить мини-карту"
     }
   ],
   "4vcnOA": [
@@ -717,7 +717,7 @@
           "value": [
             {
               "type": 0,
-              "value": "0 Actions"
+              "value": "0 действий"
             }
           ]
         },
@@ -728,7 +728,7 @@
             },
             {
               "type": 0,
-              "value": " Actions"
+              "value": " действия"
             }
           ]
         },
@@ -739,7 +739,7 @@
             },
             {
               "type": 0,
-              "value": " Actions"
+              "value": " действий"
             }
           ]
         },
@@ -750,7 +750,7 @@
             },
             {
               "type": 0,
-              "value": " Action"
+              "value": " действие"
             }
           ]
         },
@@ -761,7 +761,7 @@
             },
             {
               "type": 0,
-              "value": " Actions"
+              "value": " действия"
             }
           ]
         }
@@ -1223,7 +1223,7 @@
           "value": [
             {
               "type": 0,
-              "value": "0 Cases"
+              "value": "0 случаев"
             }
           ]
         },
@@ -1234,7 +1234,7 @@
             },
             {
               "type": 0,
-              "value": " Cases"
+              "value": " случая"
             }
           ]
         },
@@ -1245,7 +1245,7 @@
             },
             {
               "type": 0,
-              "value": " Cases"
+              "value": " случаев"
             }
           ]
         },
@@ -1256,7 +1256,7 @@
             },
             {
               "type": 0,
-              "value": " Case"
+              "value": " случай"
             }
           ]
         },
@@ -1267,7 +1267,7 @@
             },
             {
               "type": 0,
-              "value": " Cases"
+              "value": " случая"
             }
           ]
         }
