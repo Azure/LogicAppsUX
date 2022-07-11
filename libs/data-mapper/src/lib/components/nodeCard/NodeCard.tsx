@@ -1,5 +1,5 @@
 import { DefaultButton } from '@fluentui/react';
-import { createFocusOutlineStyle, makeStyles, mergeClasses, tokens } from '@fluentui/react-components';
+import { createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 
 interface NodeCardProps {
@@ -35,6 +35,7 @@ const useStyles = makeStyles({
         borderInlineWidth: tokens.strokeWidthThick,
         borderInlineColor: tokens.colorCompoundBrandStroke,
         cursor: 'pointer',
+        ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorStrokeFocus2),
       },
     },
   },

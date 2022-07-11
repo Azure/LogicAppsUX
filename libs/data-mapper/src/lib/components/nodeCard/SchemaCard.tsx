@@ -21,7 +21,7 @@ const useStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'row',
-    width: '100%',
+    width: '200px',
     height: '44px',
     backgroundColor: tokens.colorNeutralBackground1,
     opacity: 1,
