@@ -1,7 +1,7 @@
 import { Dropdown, TextField } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
-export const Filters: React.FC<any> = ({ dropdownOptions, onChangeDropdown, onChangeSearch, isDataLoaded }) => {
+export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup, onChangeSearch, isDataLoading }) => {
   const intl = useIntl();
 
   const intlText = {
@@ -26,7 +26,7 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeDropdown, onCh
         placeholder={intlText.SEARCH}
         label={intlText.SEARCH_LOGIC_APP}
         onChange={onChangeSearch}
-        disabled={isDataLoaded}
+        disabled={isDataLoading}
       />
       <Dropdown
         className="msla-export-workflows-panel-filters-input"
@@ -34,8 +34,8 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeDropdown, onCh
         label={intlText.FILTER_RESOURCE_GROUPS}
         multiSelect
         options={dropdownOptions}
-        onChange={onChangeDropdown}
-        disabled={isDataLoaded || !dropdownOptions.length}
+        onChange={onChangeResourceGroup}
+        disabled={isDataLoading || !dropdownOptions.length}
       />
     </div>
   );

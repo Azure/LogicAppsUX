@@ -17,6 +17,12 @@
       "value": "Returns the body for a part in a multipart output of an action"
     }
   ],
+  "+iMTt7": [
+    {
+      "type": 0,
+      "value": "Check to select this connection"
+    }
+  ],
   "+lpuMl": [
     {
       "type": 0,
@@ -387,6 +393,12 @@
       "value": "Required. The number of days to add. Can be negative to subtract days."
     }
   ],
+  "4Q7WzU": [
+    {
+      "type": 0,
+      "value": "Add a new connection"
+    }
+  ],
   "4YKQAF": [
     {
       "type": 0,
@@ -403,6 +415,12 @@
     {
       "type": 0,
       "value": "Comments can only be added while editing the inputs of a step."
+    }
+  ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Toggle Minimap"
     }
   ],
   "4vcnOA": [
@@ -531,6 +549,12 @@
       "value": "Returns the number of ticks (100 nanoseconds interval) since 1 January 0001 00:00:00 UT of a string timestamp"
     }
   ],
+  "7lvqST": [
+    {
+      "type": 0,
+      "value": "Invalid"
+    }
+  ],
   "7yEdSt": [
     {
       "type": 0,
@@ -627,6 +651,12 @@
       "value": "Connector"
     }
   ],
+  "9EmN2M": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -679,6 +709,46 @@
     {
       "type": 0,
       "value": "Required. The string to encode into base64 representation."
+    }
+  ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Actions"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Action"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
     }
   ],
   "B2s0iG": [
@@ -787,6 +857,12 @@
     {
       "type": 0,
       "value": "Required. The index of where to start extracting the substring."
+    }
+  ],
+  "ExaACE": [
+    {
+      "type": 0,
+      "value": "Connection display name"
     }
   ],
   "F3IDl8": [
@@ -947,6 +1023,12 @@
       "value": "Enter parameter name."
     }
   ],
+  "GtDOFg": [
+    {
+      "type": 0,
+      "value": "Cancel the selection"
+    }
+  ],
   "GzQQqH": [
     {
       "type": 0,
@@ -1103,6 +1185,46 @@
       "value": "Output Schema"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cases"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Case"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1121,10 +1243,22 @@
       "value": "Warning"
     }
   ],
+  "LMB8am": [
+    {
+      "type": 0,
+      "value": "Creating..."
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Returns the scheme from a URI"
+    }
+  ],
+  "Lft/is": [
+    {
+      "type": 0,
+      "value": "Add new"
     }
   ],
   "LoGUT3": [
@@ -1143,6 +1277,12 @@
     {
       "type": 0,
       "value": "Required. The expressions that may be true."
+    }
+  ],
+  "LvpxiA": [
+    {
+      "type": 0,
+      "value": "Gateway"
     }
   ],
   "M0HMjE": [
@@ -1245,6 +1385,12 @@
     {
       "type": 0,
       "value": "Operation options:"
+    }
+  ],
+  "OKszbi": [
+    {
+      "type": 0,
+      "value": "Connection Name"
     }
   ],
   "OSHNZ2": [
@@ -1559,6 +1705,12 @@
       "value": "Set the tracking id for the run. For split-on this tracking id is for the initiating request."
     }
   ],
+  "T6VIym": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1593,6 +1745,12 @@
     {
       "type": 0,
       "value": "Enter a value"
+    }
+  ],
+  "TX4Kdr": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "TZv5JE": [
@@ -1649,10 +1807,22 @@
       "value": "Content not shown due to security configuration."
     }
   ],
+  "UkSZnQ": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
       "value": "Click to delete item"
+    }
+  ],
+  "UtyRCH": [
+    {
+      "type": 0,
+      "value": "Enter a name for the connection"
     }
   ],
   "V+/c21": [
@@ -2245,6 +2415,12 @@
       "value": "Required. A boolean value that determines which value the expression should return."
     }
   ],
+  "gIc0YJ": [
+    {
+      "type": 0,
+      "value": "Connection name"
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
@@ -2267,6 +2443,12 @@
     {
       "type": 0,
       "value": "Trigger Conditions"
+    }
+  ],
+  "gj+jEr": [
+    {
+      "type": 0,
+      "value": "Save the selected connection"
     }
   ],
   "gu9o9z": [
@@ -2429,6 +2611,12 @@
     {
       "type": 0,
       "value": "Required. The expression that will be negated."
+    }
+  ],
+  "jMLmag": [
+    {
+      "type": 0,
+      "value": "Create New"
     }
   ],
   "jQ0Aqj": [
@@ -2853,6 +3041,12 @@
       "value": "is successful"
     }
   ],
+  "qQoQFv": [
+    {
+      "type": 0,
+      "value": "Invalid connection."
+    }
+  ],
   "qSejoi": [
     {
       "type": 0,
@@ -2945,6 +3139,12 @@
       "value": "Card Title"
     }
   ],
+  "rDt4Iu": [
+    {
+      "type": 0,
+      "value": "Is connection invalid"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -2973,6 +3173,12 @@
     {
       "type": 0,
       "value": "Returns an array of values matching the key name from form-data or form-encoded trigger output"
+    }
+  ],
+  "sFwHQc": [
+    {
+      "type": 0,
+      "value": "Cancel creating a connection"
     }
   ],
   "sW47JR": [
@@ -3095,6 +3301,12 @@
       "value": "Required. The number of hours to add. Can be negative to subtract hours."
     }
   ],
+  "tsmuoF": [
+    {
+      "type": 0,
+      "value": "Display Name"
+    }
+  ],
   "tu8I7j": [
     {
       "type": 0,
@@ -3185,6 +3397,20 @@
       "value": "has timed out"
     }
   ],
+  "vr70Gn": [
+    {
+      "type": 0,
+      "value": "Create a connection for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -3201,6 +3427,12 @@
     {
       "type": 0,
       "value": "Subtracts an integer number of a specified unit of time from a string timestamp passed in"
+    }
+  ],
+  "wF7C+h": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "wFCkpM": [
@@ -3333,10 +3565,22 @@
       "value": "connectorName"
     }
   ],
+  "yoCi15": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one."
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
       "value": "Date and time functions"
+    }
+  ],
+  "yyYtZV": [
+    {
+      "type": 0,
+      "value": "Connection gateway"
     }
   ],
   "z4YYlQ": [

@@ -1,17 +1,20 @@
 import Constants from '../../../common/constants';
 import type { NodeDataWithManifest } from '../../actions/bjsworkflow/operationdeserializer';
 import type { OutputInfo } from '../../state/operationMetadataSlice';
-import type { Operations as Actions } from '../../state/workflowSlice';
+import type { Operations as Actions } from '../../state/workflow/workflowSlice';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../card';
 import { initializeArrayViewModel } from '../editors/array';
 import { hasSecureOutputs } from '../setting';
+import { addCastToExpression, addFoldingCastToExpression } from './casting';
 import {
   createLiteralValueSegment,
   isExpressionToken,
+  isFunctionValueSegment,
   isItemToken,
   isIterationIndexToken,
   isLiteralValueSegment,
   isOutputToken,
+  isOutputTokenValueSegment,
   isParameterToken,
   isTokenValueSegment,
   isVariableToken,
@@ -28,6 +31,7 @@ import type {
   Segment,
 } from '@microsoft-logic-apps/parsers';
 import {
+  ParameterLocations,
   ExpressionType,
   createEx,
   convertToStringLiteral,
@@ -43,9 +47,9 @@ import {
   SegmentType,
   Visibility,
 } from '@microsoft-logic-apps/parsers';
-import type {
-  OperationManifest} from '@microsoft-logic-apps/utils';
+import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import {
+  isUndefinedOrEmptyString,
   aggregate,
   clone,
   endsWith,
@@ -64,7 +68,7 @@ import {
   ValidationException,
 } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo, Token, ValueSegment } from '@microsoft/designer-ui';
-import { TokenType } from '@microsoft/designer-ui';
+import { ValueSegmentType, TokenType } from '@microsoft/designer-ui';
 
 const ParameterIcon =
   'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiA8cGF0aCBkPSJtMCAwaDMydjMyaC0zMnoiIGZpbGw9IiM5MTZmNmYiLz4NCiA8ZyBmaWxsPSIjZmZmIj4NCiAgPHBhdGggZD0ibTE2LjAyMyAxMS41cTAuOTQ1MzEgMCAxLjc3MzQgMC4yODkwNiAwLjgyODEyIDAuMjg5MDYgMS40NDUzIDAuODM1OTQgMC42MTcxOSAwLjU0Njg4IDAuOTY4NzUgMS4zMjgxIDAuMzU5MzggMC43ODEyNSAwLjM1OTM4IDEuNzY1NiAwIDAuNTE1NjItMC4xNDA2MiAxLjA3ODEtMC4xMzI4MSAwLjU1NDY5LTAuNDIxODggMS4wMTU2LTAuMjgxMjUgMC40NTMxMi0wLjcyNjU2IDAuNzUtMC40Mzc1IDAuMjk2ODgtMS4wNDY5IDAuMjk2ODgtMC42NzE4OCAwLTAuOTY4NzUtMC4zNjcxOS0wLjI5Njg4LTAuMzY3MTktMC4zMDQ2OS0xLjAwNzhoLTAuMDMxMjVxLTAuMTc5NjkgMC42MTcxOS0wLjU4NTk0IDEtMC4zOTg0NCAwLjM3NS0xLjA3MDMgMC4zNzUtMC40NjA5NCAwLTAuNzk2ODgtMC4xNzk2OS0wLjMyODEyLTAuMTg3NS0wLjU0Njg4LTAuNDg0MzgtMC4yMTA5NC0wLjMwNDY5LTAuMzEyNS0wLjY4NzUtMC4xMDE1Ni0wLjM5MDYyLTAuMTAxNTYtMC44MDQ2OSAwLTAuNTQ2ODggMC4xNDA2Mi0xLjA5MzggMC4xNDg0NC0wLjU0Njg4IDAuNDQ1MzEtMC45NzY1NiAwLjI5Njg4LTAuNDI5NjkgMC43NS0wLjY5NTMxIDAuNDYwOTQtMC4yNzM0NCAxLjA4NTktMC4yNzM0NCAwLjE3OTY5IDAgMC4zNTkzOCAwLjA0Njg3IDAuMTg3NSAwLjA0Njg3IDAuMzUxNTYgMC4xNDA2MiAwLjE2NDA2IDAuMDkzNzUgMC4yODkwNiAwLjIzNDM4dDAuMTg3NSAwLjMyODEydi0wLjAzOTA1OHEwLjAxNTYzLTAuMTU2MjUgMC4wMjM0NC0wLjMxMjUgMC4wMTU2My0wLjE1NjI1IDAuMDMxMjUtMC4zMTI1aDAuNzI2NTZsLTAuMTg3NSAyLjIzNDRxLTAuMDIzNDQgMC4yNS0wLjA1NDY5IDAuNTA3ODEtMC4wMzEyNTEgMC4yNTc4MS0wLjAzMTI1MSAwLjUwNzgxIDAgMC4xNzE4OCAwLjAxNTYzIDAuMzgyODEgMC4wMjM0NCAwLjIwMzEyIDAuMDkzNzUgMC4zOTA2MiAwLjA3MDMxIDAuMTc5NjkgMC4yMDMxMiAwLjMwNDY5IDAuMTQwNjIgMC4xMTcxOSAwLjM3NSAwLjExNzE5IDAuMjgxMjUgMCAwLjUtMC4xMTcxOSAwLjIxODc1LTAuMTI1IDAuMzc1LTAuMzIwMzEgMC4xNjQwNi0wLjE5NTMxIDAuMjczNDQtMC40NDUzMSAwLjEwOTM4LTAuMjU3ODEgMC4xNzk2OS0wLjUyMzQ0IDAuMDcwMzEtMC4yNzM0NCAwLjA5Mzc1LTAuNTM5MDYgMC4wMzEyNS0wLjI2NTYyIDAuMDMxMjUtMC40ODQzOCAwLTAuODU5MzgtMC4yODEyNS0xLjUzMTJ0LTAuNzg5MDYtMS4xMzI4cS0wLjUtMC40NjA5NC0xLjIwMzEtMC43MDMxMi0wLjY5NTMxLTAuMjQyMTktMS41MjM0LTAuMjQyMTktMC44OTg0NCAwLTEuNjMyOCAwLjMzNTk0LTAuNzI2NTYgMC4zMzU5NC0xLjI1IDAuOTE0MDYtMC41MTU2MiAwLjU3MDMxLTAuNzk2ODggMS4zMzU5dC0wLjI4MTI1IDEuNjMyOHEwIDAuODk4NDQgMC4yNzM0NCAxLjYzMjggMC4yODEyNSAwLjcyNjU2IDAuNzk2ODggMS4yNDIydDEuMjQyMiAwLjc5Njg4cTAuNzM0MzggMC4yODEyNSAxLjYzMjggMC4yODEyNSAwLjYzMjgxIDAgMS4yNS0wLjEwMTU2IDAuNjI1LTAuMTAxNTYgMS4xOTUzLTAuMzc1djAuNzE4NzVxLTAuNTg1OTQgMC4yNS0xLjIyNjYgMC4zNDM3NS0wLjY0MDYzIDAuMDg1OTM4LTEuMjczNCAwLjA4NTkzOC0xLjAzOTEgMC0xLjg5ODQtMC4zMjAzMS0wLjg1OTM4LTAuMzI4MTItMS40ODQ0LTAuOTIxODgtMC42MTcxOS0wLjYwMTU2LTAuOTYwOTQtMS40NTMxLTAuMzQzNzUtMC44NTE1Ni0wLjM0Mzc1LTEuODk4NCAwLTEuMDU0NyAwLjM1MTU2LTEuOTUzMSAwLjM1MTU2LTAuODk4NDQgMC45ODQzOC0xLjU1NDcgMC42MzI4MS0wLjY1NjI1IDEuNTE1Ni0xLjAyMzQgMC44ODI4MS0wLjM3NSAxLjk1MzEtMC4zNzV6bS0wLjYwOTM3IDYuNjc5N3EwLjQ3NjU2IDAgMC43ODEyNS0wLjI2NTYyIDAuMzA0NjktMC4yNzM0NCAwLjQ3NjU2LTAuNjcxODggMC4xNzE4OC0wLjM5ODQ0IDAuMjM0MzgtMC44NTE1NiAwLjA3MDMxLTAuNDUzMTIgMC4wNzAzMS0wLjgyMDMxIDAtMC4yNjU2Mi0wLjA1NDY5LTAuNDkyMTktMC4wNTQ2OS0wLjIyNjU2LTAuMTc5NjktMC4zOTA2Mi0wLjExNzE5LTAuMTY0MDYtMC4zMjAzMS0wLjI1NzgxdC0wLjQ5MjE5LTAuMDkzNzVxLTAuNDUzMTIgMC0wLjc1NzgxIDAuMjM0MzgtMC4zMDQ2OSAwLjIzNDM4LTAuNDkyMTkgMC41ODU5NC0wLjE4NzUgMC4zNTE1Ni0wLjI3MzQ0IDAuNzczNDQtMC4wNzgxMyAwLjQxNDA2LTAuMDc4MTMgMC43ODEyNSAwIDAuMjU3ODEgMC4wNTQ2OSAwLjUyMzQ0IDAuMDU0NjkgMC4yNTc4MSAwLjE3OTY5IDAuNDY4NzUgMC4xMjUgMC4yMTA5NCAwLjMzNTk0IDAuMzQzNzUgMC4yMTA5NCAwLjEzMjgxIDAuNTE1NjIgMC4xMzI4MXptLTcuNDE0MS04LjE3OTdoM3YxaC0ydjEwaDJ2MWgtM3ptMTYgMHYxMmgtM3YtMWgydi0xMGgtMnYtMXoiIHN0cm9rZS13aWR0aD0iLjQiLz4NCiA8L2c+DQo8L3N2Zz4NCg==';
@@ -150,6 +154,7 @@ export function createParameterInfo(
       in: parameter.in,
       isDynamic: !!parameter.isDynamic,
       isUnknown: parameter.isUnknown,
+      serialization: parameter.serialization,
     },
     hideInUI: parameter?.hideInUI ?? equals(parameter.visibility, 'hideInUI'),
     label: parameter.title || parameter.summary || parameter.name,
@@ -1105,7 +1110,7 @@ export function getNormalizedTokenName(tokenName: string): string {
 export function getRepetitionContext(_includeSelf?: boolean): RepetitionContext {
   const repetitionReferences: RepetitionReference[] = [];
   return {
-      repetitionReferences,
+    repetitionReferences,
   };
 }
 
@@ -1113,9 +1118,357 @@ export function getRepetitionValue(manifest: OperationManifest, nodeInputs: Para
   const loopParameter = manifest.properties.repetition?.loopParameter;
 
   if (loopParameter) {
-    const parameter = nodeInputs.find(input => input.parameterName === loopParameter);
+    const parameter = nodeInputs.find((input) => input.parameterName === loopParameter);
     return parameter ? parameter.value : undefined;
   }
 
   return undefined;
+}
+
+export function getInterpolatedExpression(expression: string, parameterType: string, parameterFormat: string): string {
+  if (isUndefinedOrEmptyString(expression)) {
+    return expression;
+  } else if (parameterType === Constants.SWAGGER.TYPE.STRING && parameterFormat !== Constants.SWAGGER.FORMAT.BINARY) {
+    return `@{${expression}}`;
+  } else {
+    return `@${expression}`;
+  }
+}
+
+export function parameterValueToString(parameterInfo: ParameterInfo, isDefinitionValue: boolean): string | undefined {
+  const preservedValue = parameterInfo.preservedValue;
+  if (preservedValue !== undefined && isDefinitionValue) {
+    switch (typeof preservedValue) {
+      case 'string':
+        return preservedValue;
+      default:
+        return JSON.stringify(preservedValue);
+    }
+  }
+
+  const parameter = { ...parameterInfo };
+  const isPathParameter = parameter.info.in === ParameterLocations.Path;
+  const value = parameter.value.filter((segment) => segment.value !== '');
+
+  if (!value || !value.length) {
+    if (isPathParameter && isDefinitionValue) {
+      if (parameter.required) {
+        return encodePathValueWithFunction("''", parameter.info.encode);
+      } else {
+        return '';
+      }
+    } else {
+      return parameter.required ? '' : undefined;
+    }
+  }
+
+  const parameterType = getInferredParameterType(value, parameter.type);
+  const parameterFormat = parameter.info.format ?? '';
+  const parameterSuppressesCasting = !!parameterInfo.suppressCasting;
+
+  const shouldCast = requiresCast(parameterType, parameterFormat, value, parameterSuppressesCasting);
+  if (!isPathParameter && shouldCast) {
+    return castParameterValueToString(value, parameterFormat, parameterType);
+  }
+
+  if (
+    parameterType === Constants.SWAGGER.TYPE.OBJECT ||
+    parameterType === Constants.SWAGGER.TYPE.ARRAY ||
+    (parameter.schema && parameter.schema['oneOf'])
+  ) {
+    return parameterValueToJSONString(value, /* applyCasting */ !parameterSuppressesCasting);
+  }
+
+  const segmentsAfterCasting = parameterInfo.suppressCasting ? value : castTokenSegmentsInValue(value, parameterType, parameterFormat);
+
+  // NOTE(psamband): Path parameter values are always enclosed inside encodeComponent function if specified.
+  if (isPathParameter && isDefinitionValue) {
+    const segmentValues = segmentsAfterCasting.map((segment) => {
+      if (!isTokenValueSegment(segment)) {
+        return convertToStringLiteral(segment.value);
+      } else {
+        return segment.value;
+      }
+    });
+
+    return encodePathValueWithFunction(fold(segmentValues, parameter.type) ?? '', parameter.info.encode);
+  }
+
+  const shouldInterpolate = value.length > 1;
+  return segmentsAfterCasting
+    .map((segment) => {
+      let expressionValue = segment.value;
+      if (isTokenValueSegment(segment)) {
+        if (shouldInterpolate) {
+          expressionValue = parameterType === Constants.SWAGGER.TYPE.STRING ? `@{${expressionValue}}` : `@${expressionValue}`;
+        } else {
+          if (!isUndefinedOrEmptyString(expressionValue)) {
+            // NOTE(psamband): Token segment should be auto casted using interpolation if token type is
+            // non string and referred in a string parameter.
+            expressionValue =
+              !parameterInfo.suppressCasting && parameterType === 'string' && segment.token?.type !== 'string'
+                ? `@{${expressionValue}}`
+                : `@${expressionValue}`;
+          }
+        }
+      }
+
+      return expressionValue;
+    })
+    .join('');
+}
+
+export function parameterValueToJSONString(parameterValue: ValueSegment[], applyCasting = true, forValidation = false): string {
+  let shouldInterpolate = false,
+    parameterValueString = '',
+    numberOfDoubleQuotes = 0;
+  const rawStringFormat = parameterValueToStringWithoutCasting(parameterValue, forValidation);
+  const updatedParameterValue: ValueSegment[] = parameterValue.map((expression) => ({ ...expression }));
+
+  // We return the raw stringified form, if value is not a valid json
+  if (!isValidJSONObjectFormat(rawStringFormat) && !isValidJSONArrayFormat(rawStringFormat)) {
+    return rawStringFormat;
+  }
+
+  for (let i = 0; i < updatedParameterValue.length; i++) {
+    const expression = updatedParameterValue[i];
+    let tokenExpression: string = expression.value;
+
+    if (isTokenValueSegment(expression)) {
+      // NOTE(joechung): Stringify the token expression to escape double quotes and other characters which must be escaped in JSON.
+      if (shouldInterpolate) {
+        if (applyCasting) {
+          tokenExpression = addCastToExpression(
+            expression.token?.format ?? '',
+            '',
+            tokenExpression,
+            expression.token?.type,
+            Constants.SWAGGER.TYPE.STRING
+          );
+        }
+
+        const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
+        tokenExpression = `@{${stringifiedTokenExpression}}`;
+      } else {
+        // Add quotes around tokens. Tokens directly after a literal need a leading quote, and those before another literal need an ending quote.
+        const lastExpressionWasLiteral = i > 0 && updatedParameterValue[i - 1].type !== ValueSegmentType.TOKEN;
+        const nextExpressionIsLiteral =
+          i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
+
+        const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
+        tokenExpression = `@${stringifiedTokenExpression}`;
+        // eslint-disable-next-line no-useless-escape
+        tokenExpression = lastExpressionWasLiteral ? `\"${tokenExpression}` : tokenExpression;
+        // eslint-disable-next-line no-useless-escape
+        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}\"` : `${tokenExpression}`;
+      }
+
+      parameterValueString += tokenExpression;
+    } else {
+      numberOfDoubleQuotes += (tokenExpression.replace(/\\"/g, '').match(/"/g) || []).length;
+
+      shouldInterpolate = numberOfDoubleQuotes % 2 === 1;
+      parameterValueString += expression.value;
+    }
+  }
+
+  try {
+    // This is to validate if this is a valid json, else we return the original raw stringified format to retain user input.
+    const jsonValue = JSON.parse(parameterValueString);
+    return JSON.stringify(jsonValue);
+  } catch {
+    return updatedParameterValue.length === 1 && isTokenValueSegment(updatedParameterValue[0]) ? parameterValueString : rawStringFormat;
+  }
+}
+
+export function getJSONValueFromString(value: any, type: string): any {
+  const canParse = !isNullOrUndefined(value);
+  let parameterValue: any;
+
+  if (canParse) {
+    try {
+      // The value is already a string. If the type is also a string, don't do any parsing
+      if (type !== Constants.SWAGGER.TYPE.STRING) {
+        parameterValue = JSON.parse(value);
+      } else {
+        parameterValue = value;
+      }
+    } catch {
+      parameterValue = value;
+    }
+  }
+
+  return parameterValue;
+}
+
+/**
+ * @arg {ValueSegment[]} value
+ * @arg {boolean} [forValidation=false]
+ * @return {string}
+ */
+function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false): string {
+  const shouldInterpolateTokens = value.length > 1 && value.some(isTokenValueSegment);
+
+  return value
+    .map((expression) => {
+      let expressionValue = !forValidation ? expression.value : expression.value || null;
+      if (isTokenValueSegment(expression)) {
+        expressionValue = shouldInterpolateTokens ? `@{${expressionValue}}` : `@${expressionValue}`;
+      }
+
+      return expressionValue;
+    })
+    .join('');
+}
+
+function castParameterValueToString(value: ValueSegment[], parameterFormat: string, parameterType: string): string | undefined {
+  // In case of only one token or only user entered text, we get the casting function from expression format.
+  if (value.length === 1) {
+    const [expression] = value;
+    const { value: tokenExpression } = expression;
+    const isTokenSegment = isTokenValueSegment(expression);
+    const uncastExpression = isTokenSegment ? tokenExpression : `'${tokenExpression}'`;
+    const valueType = expression.token?.type ?? '';
+    const segmentFormat = expression.token?.format ?? '';
+    const castExpression = addCastToExpression(segmentFormat, parameterFormat, uncastExpression, valueType, parameterType);
+
+    return getInterpolatedExpression(castExpression, parameterType, parameterFormat);
+  } else {
+    // TODO: We might need to revisit adding encodeURIComponent if path parameters contains format
+    return addFoldingCastToExpression(parameterFormat, value, parameterType, parameterFormat);
+  }
+}
+
+function castTokenSegmentsInValue(parameterValue: ValueSegment[], parameterType: string, parameterFormat: string): ValueSegment[] {
+  return parameterValue.map((segment) => {
+    const newSegment = { ...segment };
+    const segmentValue = newSegment.value;
+
+    if (isOutputTokenValueSegment(segment)) {
+      newSegment.value = addCastToExpression(
+        segment.token?.format ?? '',
+        parameterFormat,
+        segmentValue,
+        segment.token?.type,
+        parameterType
+      );
+    }
+
+    return newSegment;
+  });
+}
+
+function requiresCast(
+  parameterType: string,
+  parameterFormat: string,
+  parameterValue: ValueSegment[],
+  parameterSuppressesCasting: boolean
+): boolean {
+  if (parameterSuppressesCasting) {
+    return false;
+  }
+
+  const castFormats = [Constants.SWAGGER.FORMAT.BINARY, Constants.SWAGGER.FORMAT.BYTE, Constants.SWAGGER.FORMAT.DATAURI];
+
+  if (castFormats.indexOf(parameterFormat) > -1 || parameterType === Constants.SWAGGER.TYPE.FILE) {
+    if (parameterValue.length === 1) {
+      const firstValueSegment = parameterValue[0];
+      if (isFunctionValueSegment(firstValueSegment)) {
+        return false;
+      }
+
+      return !(
+        (parameterFormat === Constants.SWAGGER.FORMAT.BINARY || parameterType === Constants.SWAGGER.TYPE.FILE) &&
+        isLiteralValueSegment(firstValueSegment)
+      );
+    }
+
+    return true;
+  } else if (parameterValue.length === 1) {
+    const { token } = parameterValue[0];
+    return (
+      parameterType === Constants.SWAGGER.TYPE.STRING &&
+      !parameterFormat &&
+      isOutputTokenValueSegment(parameterValue[0]) &&
+      token?.type === Constants.SWAGGER.TYPE.STRING &&
+      token?.format === Constants.SWAGGER.FORMAT.BINARY
+    );
+  }
+
+  return false;
+}
+
+function getInferredParameterType(value: ValueSegment[], type: string): string {
+  let parameterType = type;
+
+  if (type === Constants.SWAGGER.TYPE.ANY || type === undefined) {
+    const stringValueWithoutCasting = parameterValueToStringWithoutCasting(value);
+    if (isValidJSONObjectFormat(stringValueWithoutCasting)) {
+      parameterType = Constants.SWAGGER.TYPE.OBJECT;
+    } else if (isValidJSONArrayFormat(stringValueWithoutCasting)) {
+      parameterType = Constants.SWAGGER.TYPE.ARRAY;
+    } else if (value.length > 1) {
+      // This is the case when there are mix of tokens
+      parameterType = Constants.SWAGGER.TYPE.STRING;
+    }
+  }
+
+  return parameterType;
+}
+
+function fold(expressions: string[], type: string): string | undefined {
+  if (expressions.length === 0) {
+    return type === Constants.SWAGGER.TYPE.STRING ? '' : undefined;
+  } else {
+    return expressions.join(',');
+  }
+}
+
+function isValidJSONObjectFormat(value: string): boolean {
+  const parameterValue = (value || '').trim();
+  return startsWith(parameterValue, '{') && endsWith(parameterValue, '}');
+}
+
+function isValidJSONArrayFormat(value: string): boolean {
+  const parameterValue = (value || '').trim();
+  return startsWith(parameterValue, '[') && endsWith(parameterValue, ']');
+}
+
+/**
+ * Encode the path value to the number of times specified in encodeValue
+ */
+function encodePathValueWithFunction(value: string, encodeValue?: string): string {
+  const encodeCount = getEncodeValue(encodeValue ?? '');
+  let encodedValue = value;
+
+  if (!isUndefinedOrEmptyString(encodedValue)) {
+    for (let i = 0; i < encodeCount; i++) {
+      encodedValue = `encodeURIComponent(${encodedValue})`;
+    }
+
+    return `@{${encodedValue}}`;
+  }
+
+  return '';
+}
+
+export function encodePathValue(pathValue: string, encodeCount: number): string {
+  let encodedValue = pathValue;
+
+  if (encodedValue) {
+    for (let i = 0; i < encodeCount; i++) {
+      encodedValue = encodeURIComponent(encodedValue);
+    }
+  }
+
+  return encodedValue;
+}
+
+export function getEncodeValue(value: string): number {
+  switch (value.toLowerCase()) {
+    case 'double':
+      return 2;
+    default:
+      return 1;
+  }
 }

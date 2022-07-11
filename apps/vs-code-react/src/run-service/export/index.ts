@@ -51,6 +51,10 @@ export class ApiService implements IApiService {
     }
   };
 
+  private getWorkflowsUri = (subscriptionId: string, iseId: string) => {
+    return `https://management.azure.com/subscriptions/${subscriptionId}/providers/Microsoft.Logic/workflows?api-version=2018-07-01-preview&$filter=properties/integrationServiceEnvironmentResourceId  eq '${iseId}'`;
+  };
+
   private getPayload = (resourceType: string, properties?: any) => {
     const skipToken = properties?.skipToken;
 
