@@ -3,8 +3,7 @@ import { ApiService } from '../../../run-service/export';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { getValidationColumns, parseValidationData } from './helper';
-import { DetailsRow, GroupedList } from '@fluentui/react';
-import { SelectionMode } from '@fluentui/react';
+import { DetailsRow, GroupedList, SelectionMode } from '@fluentui/react';
 import type { IGroup } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
@@ -50,7 +49,7 @@ export const Validation: React.FC = () => {
 
   return (
     <div className="msla-export-validation">
-      <GroupedList items={[]} onRenderCell={onRenderCell} selectionMode={SelectionMode.none} compact={true} />
+      <GroupedList items={validationItems} onRenderCell={onRenderCell} selectionMode={SelectionMode.none} compact={true} />
     </div>
   );
 };
