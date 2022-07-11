@@ -106,7 +106,7 @@ export function toParameterInfoMap(inputParameters: InputParameter[], stepDefini
   for (const inputParameter of inputParameters) {
     let repetitionContext: RepetitionContext | null;
     if (nodeId) {
-      repetitionContext = null; // TODO: Get repetition context from redux for this node
+      repetitionContext = getRepetitionContext(); // TODO: Get repetition context from redux for this node
     } else {
       repetitionContext = null;
     }
