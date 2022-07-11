@@ -6,6 +6,18 @@ export default {
     description: 'Create a connection for selected connector',
   },
 
+  // Configurable
+  INPUT_CONNECTION_NAME: {
+    id: 'input_connection_name',
+    defaultMessage: 'Connection Name',
+    description: 'Connection Name',
+  },
+  INPUT_CONNECTION_NAME_PLACEHOLDER: {
+    id: 'input_connection_name_placeholder',
+    defaultMessage: 'Enter connection name',
+    description: 'Enter connection name',
+  },
+
   // Create Button
   BUTTON_CREATE: {
     id: 'button_create',

@@ -15,7 +15,7 @@ export const CreateSimpleConnection = (props: CreateSimpleConnectionProps): JSX.
   const intl = useIntl();
 
   return (
-    <div className="msla-create-connection-simple-container">
+    <div className="msla-create-connection-container">
       <div>{intl.formatMessage(INTL_STRINGS.SIMPLE_CREATE_DESCRIPTION, { connectorName: connection.properties.api.displayName })}</div>
 
       <div className="msla-create-connection-actions-container">
