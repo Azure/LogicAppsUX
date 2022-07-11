@@ -1,3 +1,4 @@
+import type { SelectConnectionProps } from './';
 import { SelectConnection } from './';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -81,12 +82,12 @@ const mockConnections: Connection[] = [
   },
 ];
 
-export const Standard: ComponentStory<typeof SelectConnection> = () => (
-  <SelectConnection
-    connections={mockConnections}
-    isLoading={false}
-    saveSelectionCallback={(id?: string) => alert(`SAVED SELECTION: ${id}`)}
-    cancelSelectionCallback={() => alert('Cancel clicked')}
-    createNewConnectionCallback={() => alert('Adding new collection')}
-  />
-);
+export const Standard: ComponentStory<typeof SelectConnection> = (args: SelectConnectionProps) => <SelectConnection {...args} />;
+
+Standard.args = {
+  connections: mockConnections,
+  isLoading: false,
+  saveSelectionCallback: (id?: string) => alert(`SAVED SELECTION: ${id}`),
+  cancelSelectionCallback: () => alert('Cancel clicked'),
+  createNewConnectionCallback: () => alert('Adding new collection'),
+};
