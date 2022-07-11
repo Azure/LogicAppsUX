@@ -3,7 +3,10 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { CLEAR_EDITOR_COMMAND } from 'lexical';
 import { useIntl } from 'react-intl';
 
-export default function ClearEditor() {
+interface ClearEditorProps {
+  showButton: boolean;
+}
+export default function ClearEditor({ showButton }: ClearEditorProps) {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const text = intl.formatMessage({
@@ -11,15 +14,21 @@ export default function ClearEditor() {
     description: 'Label to clear editor',
   });
   return (
-    <button
-      title={'clear editor'}
-      onClick={() => {
-        editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-        editor.focus();
-      }}
-    >
-      {text}
-      <ClearEditorEnabled />
-    </button>
+    <>
+      {showButton ? (
+        <button
+          title={'clear editor'}
+          onClick={() => {
+            editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+            editor.focus();
+          }}
+        >
+          {text}
+          <ClearEditorEnabled />
+        </button>
+      ) : (
+        <ClearEditorEnabled />
+      )}
+    </>
   );
 }

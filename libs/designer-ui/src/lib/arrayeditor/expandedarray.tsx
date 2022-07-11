@@ -2,6 +2,7 @@ import type { ArrayEditorItemProps } from '.';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
+import { OnChange } from './plugins/OnChange';
 import type { IContextualMenuProps, IIconProps, IIconStyles } from '@fluentui/react';
 import { IconButton, TooltipHost, DefaultButton } from '@fluentui/react';
 import type { Dispatch, SetStateAction } from 'react';
@@ -44,14 +45,19 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
     const { text, isRequiredField } = labelProps;
     return (
       <div className="msla-array-editor-label">
-        <Label text={text + ' Item - ' + index} isRequiredField={isRequiredField} />
+        <Label text={text + ' Item - ' + (index + 1)} isRequiredField={isRequiredField} />
       </div>
     );
+  };
+
+  const deleteItem = (index: number): void => {
+    setItems(items.filter((_, i) => i !== index));
   };
 
   return (
     <div className="msla-array-container msla-array-item-container">
       {items.map((item, index) => {
+        console.log(item);
         return (
           <div key={index} className="msla-array-item">
             <div className="msla-array-item-header">
@@ -61,12 +67,17 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
                   disabled={readOnly}
                   itemKey={index}
                   visible={canDeleteLastItem || items.length > 1}
-                  onDeleteItem={(index) => setItems([...items.splice(index)])}
+                  onDeleteItem={(index) => deleteItem(index)}
                 />
               </div>
             </div>
-
-            <BaseEditor className="msla-array-editor-container-expanded" initialValue={item.content ?? []} BasePlugins={{ tokens: true }} />
+            <BaseEditor
+              className="msla-array-editor-container-expanded"
+              initialValue={item.content ?? []}
+              BasePlugins={{ tokens: true, clearEditor: true }}
+            >
+              <OnChange item={item.content ?? []} items={items} setItems={setItems} index={index} />
+            </BaseEditor>
           </div>
         );
       })}
@@ -75,7 +86,7 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
           className="msla-array-add-item-button"
           iconProps={addItemButtonIconProps}
           text={addItemButtonLabel}
-          onClick={() => setItems((items) => [...items, { content: null }])}
+          onClick={() => setItems((items) => [...items, { content: [] }])}
         />
       </div>
     </div>

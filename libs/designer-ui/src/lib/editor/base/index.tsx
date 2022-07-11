@@ -1,7 +1,7 @@
 import type { InputTokenProps } from '../../token/inputToken';
 import type { ValueSegmentType } from '../models/parameter';
-import { prepopulatedRichText } from './initialConfig';
 import { TokenNode } from './nodes/tokenNode';
+import { parseSegments } from './parsesegments';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
@@ -70,7 +70,7 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
     editorState:
       initialValue &&
       (() => {
-        prepopulatedRichText(initialValue, tokens);
+        parseSegments(initialValue, tokens);
       }),
   };
 
@@ -97,7 +97,7 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
           and is not needed for read only. Will revisit later.
         */}
         {/* {tokens ? <TokenPlugin data={[]} /> : null} */}
-        {clearEditor ? <ClearEditor /> : null}
+        {clearEditor ? <ClearEditor showButton={false} /> : null}
         {validation ? (
           <Validation
             type={validation.type}

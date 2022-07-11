@@ -3,7 +3,6 @@ import type { Segment } from '../../editor/base';
 import { $isTokenNode } from '../../editor/base/nodes/tokenNode';
 import { ValueSegmentType } from '../../editor/models/parameter';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { clone } from '@microsoft-logic-apps/utils';
 import type { ElementNode } from 'lexical';
 import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
@@ -52,13 +51,13 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
 
         text = splitChildNode[i].replace(/^[^"]*"(.*)"[^"]*$/, '$1').trim();
         if (text.length === 0) {
-          returnItems.push({ content: null });
+          returnItems.push({ content: [] });
           continue;
         }
         if (text.indexOf('"') >= 0) {
           currentSegments.push({ type: ValueSegmentType.LITERAL, value: text.replace('"', '') });
           if (inString) {
-            returnItems.push({ content: clone(currentSegments) });
+            returnItems.push({ content: currentSegments.slice(0) });
             while (currentSegments.length) {
               currentSegments.pop();
             }
@@ -68,7 +67,6 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
           if (inString) {
             currentSegments.push({ type: ValueSegmentType.LITERAL, value: text });
           } else {
-            console.log(text);
             returnItems.push({ content: [{ type: ValueSegmentType.LITERAL, value: text }] });
           }
         }
