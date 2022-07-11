@@ -1,3 +1,4 @@
+import type { CreateConfigurableConnectionProps } from '.';
 import { CreateConfigurableConnection } from '.';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -14,7 +15,7 @@ const mockSimpleConnection: Connection = {
   properties: {
     connectionParameters: {
       'connection-string': {
-        type: 'idk',
+        type: 'string',
         uiDefinition: {
           displayName: 'Connection String',
           tooltip: 'Provide Azure Service Bus Connection String. Parameter value will be saved in App Settings.',
@@ -26,7 +27,7 @@ const mockSimpleConnection: Connection = {
         },
       },
       'optional-param': {
-        type: 'idk',
+        type: 'string',
         uiDefinition: {
           displayName: 'Optional Parameter',
           tooltip: 'An optional parameter for testing',
@@ -55,12 +56,15 @@ const mockSimpleConnection: Connection = {
   },
 };
 
-export const SendMessageExample: ComponentStory<typeof CreateConfigurableConnection> = () => (
-  <CreateConfigurableConnection
-    connection={mockSimpleConnection}
-    isLoading={false}
-    createConnectionCallback={(values: Record<string, string | undefined>) =>
-      alert(`Creating Configurable connector: ${JSON.stringify(values)}`)
-    }
-  />
+const createConnectionCallback = (values: Record<string, string | undefined>) =>
+  alert(`Creating Configurable connector: ${JSON.stringify(values)}`);
+
+export const SendMessageExample: ComponentStory<typeof CreateConfigurableConnection> = (args: CreateConfigurableConnectionProps) => (
+  <CreateConfigurableConnection {...args} />
 );
+
+SendMessageExample.args = {
+  connection: mockSimpleConnection,
+  isLoading: false,
+  createConnectionCallback,
+};

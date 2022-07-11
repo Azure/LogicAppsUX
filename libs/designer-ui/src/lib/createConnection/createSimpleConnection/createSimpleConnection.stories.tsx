@@ -1,3 +1,4 @@
+import type { CreateSimpleConnectionProps } from '.';
 import { CreateSimpleConnection } from '.';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -29,10 +30,14 @@ const mockSimpleConnection: Connection = {
   },
 };
 
-export const WeatherExample: ComponentStory<typeof CreateSimpleConnection> = () => (
-  <CreateSimpleConnection
-    connection={mockSimpleConnection}
-    isLoading={false}
-    createConnectionCallback={() => alert('Creating simple connector')}
-  />
+const createConnectionCallback = () => alert('Creating Simple connector');
+
+export const WeatherExample: ComponentStory<typeof CreateSimpleConnection> = (args: CreateSimpleConnectionProps) => (
+  <CreateSimpleConnection {...args} />
 );
+
+WeatherExample.args = {
+  connection: mockSimpleConnection,
+  isLoading: false,
+  createConnectionCallback,
+};
