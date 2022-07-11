@@ -108,7 +108,7 @@
   "ANbEeQ": "Vereist. De naam van de actie met de gewenste waarden.",
   "AO6T9u": "Gereed",
   "ArTh0/": "Vereist. De tekenreeks die moet worden gecodeerd naar de Base 64-indeling.",
-  "B/JzwK": "{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}",
+  "B/JzwK": "{actionCount, plural, one {# Actie} =0 {0 Acties} other {# Acties}}",
   "B2s0iG": "Vereist. De index van het onderdeel dat moet worden opgehaald.",
   "BBD8Em": "Sleutel",
   "BCAnZP": "Eén teken voor aanduiding van de indeling of een aangepast indelingspatroon waarmee de indeling van de waarde voor dit tijdstempel wordt aangegeven. Als de indeling niet is opgegeven, wordt de ISO 8601-indeling ('o') gebruikt.",
