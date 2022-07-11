@@ -290,7 +290,7 @@
   "1X4U/1": [
     {
       "type": 0,
-      "value": "Show code view"
+      "value": "Pokaż widok kodu"
     }
   ],
   "1ejxkP": [
@@ -443,6 +443,12 @@
       "value": "Komentarze można dodawać tylko podczas edytowania danych wejściowych kroku."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Przełącz minimapę"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -464,7 +470,7 @@
   "53PSgA": [
     {
       "type": 0,
-      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+      "value": "Schemat wejściowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat wejściowy?"
     }
   ],
   "5J7j9k": [
@@ -719,6 +725,68 @@
       "value": "Wymagane. Ciąg do zakodowania do reprezentacji base64."
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Actions"
+            }
+          ]
+        },
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Action"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
@@ -944,7 +1012,7 @@
   "FemgEF": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Anuluj"
     }
   ],
   "Fgq3Db": [
@@ -1163,6 +1231,68 @@
       "value": "Schemat wyjściowy"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cases"
+            }
+          ]
+        },
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Case"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1178,7 +1308,7 @@
   "LCUU5q": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Ostrzeżenie"
     }
   ],
   "LS8rfZ": [
@@ -1322,7 +1452,7 @@
   "OcJdKG": [
     {
       "type": 0,
-      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+      "value": "Cała niezapisana praca zostanie usunięta. Czy chcesz nadal wszystko odrzucić?"
     }
   ],
   "Oib1mL": [
@@ -2008,7 +2138,7 @@
   "a3QJzO": [
     {
       "type": 0,
-      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+      "value": "Schemat wyjściowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat wyjściowy?"
     }
   ],
   "a64zhX": [

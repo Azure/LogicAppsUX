@@ -63,20 +63,20 @@ describe('Graph Utilities', () => {
   };
 
   const nodesMetadata = {
-    manual: { graphId: 'root' },
+    manual: { graphId: 'root', isRoot: true },
     Compose: { graphId: 'root' },
     Compose_11: { graphId: 'root' },
     Compose_2: { graphId: 'root' },
     Execute_a_navigation_plan: { graphId: 'root' },
     Response: { graphId: 'root' },
     Scope: { graphId: 'root' },
-    Compose_10: { graphId: 'Scope', parentNodeId: 'Scope' },
+    Compose_10: { graphId: 'Scope', parentNodeId: 'Scope', isRoot: true },
     Compose_3: { graphId: 'Scope', parentNodeId: 'Scope' },
     Compose_4: { graphId: 'Scope', parentNodeId: 'Scope' },
     Compose_5: { graphId: 'Scope', parentNodeId: 'Scope' },
     Compose_6: { graphId: 'Scope', parentNodeId: 'Scope' },
     Scope_2: { graphId: 'Scope', parentNodeId: 'Scope' },
-    Compose_7: { graphId: 'Scope_2', parentNodeId: 'Scope_2' },
+    Compose_7: { graphId: 'Scope_2', parentNodeId: 'Scope_2', isRoot: true },
     Compose_8: { graphId: 'Scope_2', parentNodeId: 'Scope_2' },
     Compose_9: { graphId: 'Scope_2', parentNodeId: 'Scope_2' },
   };
@@ -102,16 +102,16 @@ describe('Graph Utilities', () => {
 
   describe('isRootNode', () => {
     it('should return true for a trigger node in root graph', () => {
-      expect(isRootNode(graph, 'manual', nodesMetadata)).toBeTruthy();
+      expect(isRootNode('manual', nodesMetadata)).toBeTruthy();
     });
 
     it('should return false for any action node in root graph', () => {
-      expect(isRootNode(graph, 'Compose_2', nodesMetadata)).toBeFalsy();
+      expect(isRootNode('Compose_2', nodesMetadata)).toBeFalsy();
     });
 
-    it('should return false for any action node in any other nested graph', () => {
-      expect(isRootNode(graph, 'Compose_3', nodesMetadata)).toBeFalsy();
-      expect(isRootNode(graph, 'Compose_7', nodesMetadata)).toBeFalsy();
+    it('should return true for the first node in a graph', () => {
+      expect(isRootNode('Compose_10', nodesMetadata)).toBeTruthy();
+      expect(isRootNode('Compose_3', nodesMetadata)).toBeFalsy();
     });
   });
 

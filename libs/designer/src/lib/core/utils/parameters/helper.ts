@@ -1,7 +1,7 @@
 import Constants from '../../../common/constants';
 import type { NodeDataWithManifest } from '../../actions/bjsworkflow/operationdeserializer';
 import type { OutputInfo } from '../../state/operationMetadataSlice';
-import type { Operations as Actions } from '../../state/workflowSlice';
+import type { Operations as Actions } from '../../state/workflow/workflowSlice';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../card';
 import { initializeArrayViewModel } from '../editors/array';
 import { hasSecureOutputs } from '../setting';

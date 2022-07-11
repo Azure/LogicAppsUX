@@ -252,7 +252,7 @@
   "1X4U/1": [
     {
       "type": 0,
-      "value": "Show code view"
+      "value": "Codeansicht anzeigen"
     }
   ],
   "1ejxkP": [
@@ -405,6 +405,12 @@
       "value": "Kommentare können nur beim Bearbeiten der Eingaben für einen Schritt hinzugefügt werden."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Minimap umschalten"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -426,7 +432,7 @@
   "53PSgA": [
     {
       "type": 0,
-      "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
+      "value": "Das Eingabeschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Eingabeschemas fortfahren?"
     }
   ],
   "5J7j9k": [
@@ -681,6 +687,46 @@
       "value": "Erforderlich. Die Zeichenfolge, die als Base64-Darstellung codiert werden soll."
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Aktionen"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Aktion"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Aktionen"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
@@ -884,7 +930,7 @@
   "FemgEF": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Abbrechen"
     }
   ],
   "Fgq3Db": [
@@ -1103,6 +1149,46 @@
       "value": "Ausgabeschema"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Fälle"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Fall"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Fälle"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1118,7 +1204,7 @@
   "LCUU5q": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Warnung"
     }
   ],
   "LS8rfZ": [
@@ -1262,7 +1348,7 @@
   "OcJdKG": [
     {
       "type": 0,
-      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+      "value": "Alle nicht geretteten Arbeiten werden weg sein. Möchten Sie fortfahren, alles zu verwerfen?"
     }
   ],
   "Oib1mL": [
@@ -1930,7 +2016,7 @@
   "a3QJzO": [
     {
       "type": 0,
-      "value": "Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?"
+      "value": "Das Ausgabeschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Ausgabeschemas fortfahren?"
     }
   ],
   "a64zhX": [
