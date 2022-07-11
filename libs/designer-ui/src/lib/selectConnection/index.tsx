@@ -1,5 +1,4 @@
 import { getConnectionErrors } from '../helper';
-import INTL_STRINGS from './selectConnectionStrings';
 import type { IColumn } from '@fluentui/react';
 import {
   MessageBar,
@@ -71,16 +70,28 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   const columns: IColumn[] = [
     {
       key: 'invalid',
-      name: intl.formatMessage(INTL_STRINGS.COLUMN_INVALID),
-      ariaLabel: intl.formatMessage(INTL_STRINGS.COLUMN_INVALID_ARIA),
+      name: intl.formatMessage({
+        defaultMessage: 'Invalid',
+        description: 'Column header for invalid connections',
+      }),
+      ariaLabel: intl.formatMessage({
+        defaultMessage: 'Is connection invalid',
+        description: 'aria label description for invalid connections',
+      }),
       fieldName: 'invalid',
       minWidth: 50,
       maxWidth: 50,
     },
     {
       key: 'displayName',
-      name: intl.formatMessage(INTL_STRINGS.COLUMN_DISPLAY_NAME),
-      ariaLabel: intl.formatMessage(INTL_STRINGS.COLUMN_DISPLAY_NAME_ARIA),
+      name: intl.formatMessage({
+        defaultMessage: 'Display Name',
+        description: 'Column header for connection display name',
+      }),
+      ariaLabel: intl.formatMessage({
+        defaultMessage: 'Connection display name',
+        description: 'aria label description for connection display name',
+      }),
       fieldName: 'displayName',
       minWidth: 200,
       maxWidth: 200,
@@ -88,8 +99,14 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     },
     {
       key: 'name',
-      name: intl.formatMessage(INTL_STRINGS.COLUMN_NAME),
-      ariaLabel: intl.formatMessage(INTL_STRINGS.COLUMN_NAME_ARIA),
+      name: intl.formatMessage({
+        defaultMessage: 'Name',
+        description: 'Column header for connection name',
+      }),
+      ariaLabel: intl.formatMessage({
+        defaultMessage: 'Connection name',
+        description: 'aria label description for connection name',
+      }),
       fieldName: 'name',
       minWidth: 100,
       maxWidth: 100,
@@ -97,21 +114,70 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     },
     {
       key: 'gateway',
-      name: intl.formatMessage(INTL_STRINGS.COLUMN_GATEWAY),
-      ariaLabel: intl.formatMessage(INTL_STRINGS.COLUMN_GATEWAY_ARIA),
+      name: intl.formatMessage({
+        defaultMessage: 'Gateway',
+        description: 'Column header for connection gateway',
+      }),
+      ariaLabel: intl.formatMessage({
+        defaultMessage: 'Connection gateway',
+        description: 'aria label description for connection gateway',
+      }),
       fieldName: 'gateway',
       minWidth: 100,
       maxWidth: 100,
     },
   ];
 
+  const componentDescription = intl.formatMessage({
+    defaultMessage: 'Select an existing connection or create a new one.',
+    description: 'Select an existing connection or create a new one.',
+  });
+
+  const identityErrorText = intl.formatMessage({
+    defaultMessage: 'Invalid connection.',
+    description: 'Message shown when the current connection is invalid',
+  });
+
+  const checkButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Check to select this connection',
+    description: 'aria label description for check button',
+  });
+
+  const buttonAddText = intl.formatMessage({
+    defaultMessage: 'Add new',
+    description: 'Button to add a new connection',
+  });
+
+  const buttonAddAria = intl.formatMessage({
+    defaultMessage: 'Add a new connection',
+    description: 'Aria label description for add button',
+  });
+
+  const buttonSaveText = intl.formatMessage({
+    defaultMessage: 'Save',
+    description: 'Button to save a connection',
+  });
+
+  const buttonSaveAria = intl.formatMessage({
+    defaultMessage: 'Save the selected connection',
+    description: 'Aria label description for save button',
+  });
+
+  const buttonCancelText = intl.formatMessage({
+    defaultMessage: 'Cancel',
+    description: 'Button to cancel a connection',
+  });
+
+  const buttonCancelAria = intl.formatMessage({
+    defaultMessage: 'Cancel the selection',
+    description: 'Aria label description for cancel button',
+  });
+
   return (
     <div className="msla-select-connections-container">
-      {showIdentityErrorBanner ? (
-        <MessageBar messageBarType={MessageBarType.error}>{intl.formatMessage(INTL_STRINGS.IDENTITY_ERROR)}</MessageBar>
-      ) : null}
+      {showIdentityErrorBanner ? <MessageBar messageBarType={MessageBarType.error}>{identityErrorText}</MessageBar> : null}
 
-      <div>{intl.formatMessage(INTL_STRINGS.COMPONENT_DESCRIPTION)}</div>
+      <div>{componentDescription}</div>
 
       <MarqueeSelection selection={onSelect}>
         <DetailsList
@@ -126,27 +192,15 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
           selectionPreservedOnEmptyClick={true}
           onItemInvoked={(connection) => saveSelectionCallback(connection.id)}
           enterModalSelectionOnTouch={true}
-          checkButtonAriaLabel={intl.formatMessage(INTL_STRINGS.CHECK_BUTTON_ARIA)}
+          checkButtonAriaLabel={checkButtonAriaLabel}
         />
       </MarqueeSelection>
 
       <div className="msla-select-connection-actions-container">
-        <PrimaryButton
-          text={intl.formatMessage(INTL_STRINGS.BUTTON_ADD)}
-          ariaLabel={intl.formatMessage(INTL_STRINGS.BUTTON_ADD_ARIA)}
-          onClick={createNewConnectionCallback}
-        />
+        <PrimaryButton text={buttonAddText} ariaLabel={buttonAddAria} onClick={createNewConnectionCallback} />
         <div id="action-gap" style={{ flexGrow: 1 }} />
-        <PrimaryButton
-          text={intl.formatMessage(INTL_STRINGS.BUTTON_SAVE)}
-          ariaLabel={intl.formatMessage(INTL_STRINGS.BUTTON_SAVE_ARIA)}
-          onClick={() => saveSelectionCallback(selection?.id)}
-        />
-        <DefaultButton
-          text={intl.formatMessage(INTL_STRINGS.BUTTON_CANCEL)}
-          ariaLabel={intl.formatMessage(INTL_STRINGS.BUTTON_CANCEL_ARIA)}
-          onClick={cancelSelectionCallback}
-        />
+        <PrimaryButton text={buttonSaveText} ariaLabel={buttonSaveAria} onClick={() => saveSelectionCallback(selection?.id)} />
+        <DefaultButton text={buttonCancelText} ariaLabel={buttonCancelAria} onClick={cancelSelectionCallback} />
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-import INTL_STRINGS from '../createConnectionStrings';
 import { DefaultButton, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import { useState } from 'react';
@@ -30,19 +29,54 @@ export const CreateConfigurableConnection = (props: CreateConfigurableConnection
       );
     });
 
+  const inputConnectionNameLabel = intl.formatMessage({
+    defaultMessage: 'Connection Name',
+    description: 'Connection Name',
+  });
+
+  const inputConnectionNamePlaceholder = intl.formatMessage({
+    defaultMessage: 'Enter a name for the connection',
+    description: 'Placeholder text for connection name input',
+  });
+
+  const createButtonText = intl.formatMessage({
+    defaultMessage: 'Create New',
+    description: 'Button to add a new connection',
+  });
+
+  const createButtonLoadingText = intl.formatMessage({
+    defaultMessage: 'Creating...',
+    description: 'Button text to show a connection is being created',
+  });
+
+  const createButtonAria = intl.formatMessage({
+    defaultMessage: 'Create a new connection',
+    description: 'aria label description for create button',
+  });
+
+  const cancelButtonText = intl.formatMessage({
+    defaultMessage: 'Cancel',
+    description: 'Button to cancel creating a connection',
+  });
+
+  const cancelButtonAria = intl.formatMessage({
+    defaultMessage: 'Cancel creating a connection',
+    description: 'aria label description for cancel button',
+  });
+
   return (
     <div className="msla-create-connection-container">
       <div className="connection-params-container">
         <div className="param-row">
           <Label className="label" required htmlFor={'connection-name-input'} disabled={isLoading}>
-            {intl.formatMessage(INTL_STRINGS.INPUT_CONNECTION_NAME)}
+            {inputConnectionNameLabel}
           </Label>
           <TextField
             id={'connection-name-input'}
             className="textfield"
             disabled={isLoading}
             autoComplete="off"
-            placeholder={intl.formatMessage(INTL_STRINGS.INPUT_CONNECTION_NAME_PLACEHOLDER)}
+            placeholder={inputConnectionNamePlaceholder}
             value={configurationValues['connection-name'] ?? ''}
             onChange={(e: any, newValue?: string) => setConfigurationValues({ ...configurationValues, 'connection-name': newValue })}
           />
@@ -81,15 +115,11 @@ export const CreateConfigurableConnection = (props: CreateConfigurableConnection
       <div className="msla-create-connection-actions-container">
         <PrimaryButton
           disabled={!canSubmit}
-          text={intl.formatMessage(isLoading ? INTL_STRINGS.BUTTON_CREATE_LOADING : INTL_STRINGS.BUTTON_CREATE)}
-          ariaLabel={intl.formatMessage(INTL_STRINGS.BUTTON_CREATE_ARIA)}
+          text={isLoading ? createButtonLoadingText : createButtonText}
+          ariaLabel={createButtonAria}
           onClick={() => createConnectionCallback?.(configurationValues)}
         />
-        <DefaultButton
-          text={intl.formatMessage(INTL_STRINGS.BUTTON_CANCEL)}
-          ariaLabel={intl.formatMessage(INTL_STRINGS.BUTTON_CANCEL_ARIA)}
-          onClick={cancelCallback}
-        />
+        <DefaultButton disabled={isLoading} text={cancelButtonText} ariaLabel={cancelButtonAria} onClick={cancelCallback} />
       </div>
     </div>
   );

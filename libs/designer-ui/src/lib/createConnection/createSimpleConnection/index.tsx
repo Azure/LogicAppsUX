@@ -1,4 +1,3 @@
-import INTL_STRINGS from '../createConnectionStrings';
 import { PrimaryButton } from '@fluentui/react';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
@@ -14,15 +13,40 @@ export const CreateSimpleConnection = (props: CreateSimpleConnectionProps): JSX.
 
   const intl = useIntl();
 
+  const componentDescription = intl.formatMessage(
+    {
+      defaultMessage: 'Create a connection for {connectorName}.',
+      description: 'Create a connection for selected connector',
+    },
+    {
+      connectorName: connection.properties.api.displayName,
+    }
+  );
+
+  const createButtonText = intl.formatMessage({
+    defaultMessage: 'Create New',
+    description: 'Button to add a new connection',
+  });
+
+  const createButtonLoadingText = intl.formatMessage({
+    defaultMessage: 'Creating...',
+    description: 'Button text to show a connection is being created',
+  });
+
+  const createButtonAria = intl.formatMessage({
+    defaultMessage: 'Create a new connection',
+    description: 'aria label description for create button',
+  });
+
   return (
     <div className="msla-create-connection-container">
-      <div>{intl.formatMessage(INTL_STRINGS.SIMPLE_CREATE_DESCRIPTION, { connectorName: connection.properties.api.displayName })}</div>
+      <div>{componentDescription}</div>
 
       <div className="msla-create-connection-actions-container">
         <PrimaryButton
           disabled={isLoading}
-          text={intl.formatMessage(isLoading ? INTL_STRINGS.BUTTON_CREATE_LOADING : INTL_STRINGS.BUTTON_CREATE)}
-          ariaLabel={intl.formatMessage(INTL_STRINGS.BUTTON_CREATE_ARIA)}
+          text={isLoading ? createButtonLoadingText : createButtonText}
+          ariaLabel={createButtonAria}
           onClick={createConnectionCallback}
         />
       </div>
