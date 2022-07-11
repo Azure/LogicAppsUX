@@ -1,11 +1,12 @@
 import { checkerboardBackgroundImage } from '../Constants';
-import { convertToReactFlowNode } from '../ReactFlow';
+import { convertToReactFlowNode } from '../ReactFlowUtility';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
+import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
@@ -102,6 +103,8 @@ export const DataMapperDesigner = () => {
     yPos: '16px',
   };
 
+  const nodeTypes = useMemo(() => ({ schemaCard: SchemaCard }), []);
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
@@ -130,6 +133,7 @@ export const DataMapperDesigner = () => {
                     backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
                     height: '600px',
                   }}
+                  nodeTypes={nodeTypes}
                 ></ReactFlow>
               </ReactFlowProvider>
             </div>

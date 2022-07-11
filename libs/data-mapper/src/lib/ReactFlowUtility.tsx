@@ -1,5 +1,4 @@
 import { SchemaTypes } from './components/configPanel/EditorConfigPanel';
-import { SchemaCard } from './components/nodeCard/SchemaCard';
 import type { SchemaNodeExtended } from './models/Schema';
 import type { Node as ReactFlowNode } from 'react-flow-renderer';
 import { Position } from 'react-flow-renderer';
@@ -26,10 +25,10 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
     reactFlowNodes.push({
       id: `input-${inputSchemaNode.key}`,
       data: {
-        label: <SchemaCard schemaType={SchemaTypes.Input} label={inputSchemaNode.name} />,
+        label: inputSchemaNode.name,
+        schemaType: SchemaTypes.Input,
       },
-      type: 'input',
-      sourcePosition: Position.Right,
+      type: 'schemaCard',
       position: {
         x: rootInputX,
         y: rootInputY,
@@ -41,9 +40,10 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
       reactFlowNodes.push({
         id: `input-${childNode.key}`,
         data: {
-          label: <SchemaCard schemaType={SchemaTypes.Input} label={childNode.name} />,
+          label: childNode.name,
+          schemaType: SchemaTypes.Input,
         },
-        type: 'input',
+        type: 'schemaCard',
         sourcePosition: Position.Right,
         position: {
           x: childInputX,
@@ -58,9 +58,10 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
     reactFlowNodes.push({
       id: `output-${outputSchemaNode.key}`,
       data: {
-        label: <SchemaCard schemaType={SchemaTypes.Output} label={outputSchemaNode.name} />,
+        label: outputSchemaNode.name,
+        schemaType: SchemaTypes.Output,
       },
-      type: 'output',
+      type: 'schemaCard',
       targetPosition: Position.Left,
       position: {
         x: rootOutputX,
@@ -73,9 +74,10 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
       reactFlowNodes.push({
         id: `output-${childNode.key}`,
         data: {
-          label: <SchemaCard schemaType={SchemaTypes.Output} label={childNode.name} />,
+          label: childNode.name,
+          schemaType: SchemaTypes.Output,
         },
-        type: 'output',
+        type: 'schemaCard',
         targetPosition: Position.Left,
         position: {
           x: childOutputX,

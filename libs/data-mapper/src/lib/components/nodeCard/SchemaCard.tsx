@@ -3,8 +3,13 @@ import { NodeCard } from './NodeCard';
 import { Icon, Text } from '@fluentui/react';
 import { makeStyles, tokens } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
+import { Handle, Position } from 'react-flow-renderer';
 
 interface SchemaCardProps {
+  data: SchemaCardWrapperProps;
+}
+
+interface SchemaCardWrapperProps {
   label: string;
   schemaType: SchemaTypes;
   isLeaf?: boolean;
@@ -52,7 +57,24 @@ const useStyles = makeStyles({
   },
 });
 
-export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ label, schemaType, onClick, isLeaf, disabled }) => {
+const handleStyle = { color: 'red' };
+
+export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ data }) => {
+  return (
+    <>
+      <Handle type="target" position={data.schemaType === SchemaTypes.Input ? Position.Right : Position.Left} style={handleStyle} />
+      <SchemaCardWrapper
+        label={data.label}
+        schemaType={data.schemaType}
+        isLeaf={data?.isLeaf}
+        onClick={data?.onClick}
+        disabled={data?.disabled}
+      />
+    </>
+  );
+};
+
+export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ label, schemaType, isLeaf, onClick, disabled }) => {
   const classes = useStyles();
 
   return (
