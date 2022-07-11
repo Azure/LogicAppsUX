@@ -191,7 +191,7 @@ export interface ISubscription {
 }
 
 export type ExportData = {
-  selectedWorkflows: Array<any>;
+  selectedWorkflows: Array<WorkflowsList>;
   selectedSubscription: string;
   selectedIse: string;
 };
