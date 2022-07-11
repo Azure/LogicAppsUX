@@ -1,4 +1,4 @@
-import type { Expression } from '@microsoft-logic-apps/parsers';
+import type { Expression, ParameterSerializationOptions } from '@microsoft-logic-apps/parsers';
 import type { Exception } from '@microsoft-logic-apps/utils';
 
 export interface ParameterInfo {
@@ -40,6 +40,7 @@ export interface ParameterDetails {
   isEditorManagedItem?: boolean; // NOTE(johnwa): Flag to indicate whether this parameter is managed by a specific editor
   isUnknown?: boolean; // Whether the parameter is an unknown parameter (inferred to be 'any' type) sourced from the workflow definition
   parentProperty?: any;
+  serialization?: ParameterSerializationOptions;
 }
 
 export enum DynamicCallStatus {

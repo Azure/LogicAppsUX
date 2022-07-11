@@ -18,7 +18,9 @@ export default {
           description: 'URL will be generated after save',
           'x-ms-visiblity': 'important',
           'x-ms-editor': 'copyable',
-          'x-ms-serialization': 'uionly',
+          'x-ms-serialization': {
+            skip: true,
+          },
         },
         schema: {
           type: 'object',

@@ -11,7 +11,7 @@ import {
   isStringLiteral,
   isTemplateExpression,
 } from '@microsoft-logic-apps/parsers';
-import { clone, format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft-logic-apps/utils';
+import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft-logic-apps/utils';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
 
@@ -227,6 +227,12 @@ export function isTokenValueSegment(segment: ValueSegment): boolean {
   return segment.type === ValueSegmentType.TOKEN;
 }
 
+export function isOutputTokenValueSegment(segment: ValueSegment): boolean {
+  return (
+    segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.FX && segment.token?.tokenType !== TokenType.PARAMETER
+  );
+}
+
 export function isFunctionValueSegment(segment: ValueSegment): boolean {
   return segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType === TokenType.FX;
 }
@@ -380,41 +386,6 @@ export function createParameterToken(parameterName: string): Token {
     name: parameterName,
     key: parameterName,
   };
-}
-
-// TODO(tonytang): Add utility for item and legacy token once the type is refactored.
-
-/**
- * Normalize the ValueSegment[] array to add literal segments around tokens for older editors.
- * @arg {ValueSegment[]} valueSegments - The original value segments.
- * @return {ValueSegment[]} - The normalized value segments.
- */
-export function normalize(valueSegments: ValueSegment[]): ValueSegment[] {
-  const normalizedValueSegments: ValueSegment[] = [];
-  if (valueSegments.length === 0) {
-    return [createLiteralValueSegment('')];
-  }
-
-  for (let i = 0; i < valueSegments.length; i++) {
-    if (i === 0 && isTokenValueSegment(valueSegments[i])) {
-      normalizedValueSegments.push(createLiteralValueSegment(''));
-      normalizedValueSegments.push(valueSegments[i]);
-    } else if (i !== 0 && isTokenValueSegment(valueSegments[i]) && isTokenValueSegment(valueSegments[i - 1])) {
-      normalizedValueSegments.push(createLiteralValueSegment(''));
-      normalizedValueSegments.push(valueSegments[i]);
-    } else if (i !== 0 && isLiteralValueSegment(valueSegments[i]) && isLiteralValueSegment(valueSegments[i - 1])) {
-      const segment = clone(normalizedValueSegments[normalizedValueSegments.length - 1]);
-      segment.value = segment.value + valueSegments[i].value;
-      normalizedValueSegments[normalizedValueSegments.length - 1] = segment;
-    } else {
-      normalizedValueSegments.push(valueSegments[i]);
-    }
-  }
-  // NOTE(elcorn) If the last segment is token, add empty literal segment to the end
-  if (isTokenValueSegment(normalizedValueSegments[normalizedValueSegments.length - 1])) {
-    normalizedValueSegments.push(createLiteralValueSegment(''));
-  }
-  return normalizedValueSegments;
 }
 
 /**
