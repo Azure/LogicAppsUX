@@ -1,14 +1,38 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
       "value": "Filter"
     }
   ],
+  "+W9fkq": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+    }
+  ],
+  "+dlOgj": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Haiti"
+    }
+  ],
   "+g+mch": [
     {
       "type": 0,
       "value": "Menampilkan isi dari sebagian output beberapa bagian terkait tindakan"
+    }
+  ],
+  "+iMTt7": [
+    {
+      "type": 0,
+      "value": "Check to select this connection"
     }
   ],
   "+lpuMl": [
@@ -23,10 +47,28 @@
       "value": "Penomoran halaman"
     }
   ],
+  "/AtN16": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Darwin"
+    }
+  ],
+  "/B2CTz": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
       "value": "Isi"
+    }
+  ],
+  "/Igb36": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Brisbane"
     }
   ],
   "/NDLmg": [
@@ -59,6 +101,24 @@
       "value": "Harus diisi. Koleksi untuk menggabungkan item."
     }
   ],
+  "/qu3zt": [
+    {
+      "type": 0,
+      "value": "0"
+    }
+  ],
+  "/rjP4U": [
+    {
+      "type": 0,
+      "value": "(UTC) Coordinated Universal Time"
+    }
+  ],
+  "/sMQhI": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Indiana (East)"
+    }
+  ],
   "/ut0u7": [
     {
       "type": 0,
@@ -75,6 +135,12 @@
     {
       "type": 0,
       "value": "Mengembalikan URL untuk memanggil pemicu atau tindakan. Catatan: Fungsi ini hanya bisa digunakan di httpWebhook dan apiConnectionWebhook, bukan di manual, perulangan, http, atau apiConnection."
+    }
+  ],
+  "09oqLb": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Baku"
     }
   ],
   "0FzNJV": [
@@ -119,10 +185,22 @@
       "value": "Berhasil dengan percobaan ulang"
     }
   ],
+  "0hxr5j": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Chetumal"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
       "value": "Harus diisi. String untuk dikonversi ke huruf besar. Jika karakter dalam string tidak memiliki huruf besar yang ekuivalen, karakter meliputi string yang tidak berubah dalam string yang belum dikembalikan."
+    }
+  ],
+  "0meqK1": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
   "0p+pJq": [
@@ -161,6 +239,12 @@
       "value": "Menghasilkan port dari URI. Jika port tidak ditentukan, akan menghasilkan port default untuk protokol"
     }
   ],
+  "14lYtE": [
+    {
+      "type": 0,
+      "value": "18"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
@@ -189,6 +273,12 @@
     {
       "type": 0,
       "value": "Konversikan argumen parameter menjadi angka titik mengambang"
+    }
+  ],
+  "1Ogj/V": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Jerusalem"
     }
   ],
   "1R6Vaa": [
@@ -232,6 +322,12 @@
       "value": "Tentukan satu atau beberapa ekspresi yang harus benar untuk pemicu yang akan diaktifkan."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Tampilkan tampilan kode"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -250,10 +346,22 @@
       "value": "Harus diisi. Objek untuk diperiksa kurang dari nilai yang dibandingkan."
     }
   ],
+  "1uGBLP": [
+    {
+      "type": 0,
+      "value": "5"
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Tutup"
+    }
+  ],
+  "1zmMYu": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Caracas"
     }
   ],
   "23fENy": [
@@ -286,6 +394,24 @@
       "value": "Waktu berakhir"
     }
   ],
+  "2NYPLt": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30) Newfoundland"
+    }
+  ],
+  "2Noh96": [
+    {
+      "type": 0,
+      "value": "17"
+    }
+  ],
+  "2b1yD3": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Auckland, Wellington"
+    }
+  ],
   "2cVEMV": [
     {
       "type": 0,
@@ -298,10 +424,22 @@
       "value": "Wajib. Nama tindakan dengan data formulir atau respons dengan pengodean formulir."
     }
   ],
+  "2ri1Kf": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Damascus"
+    }
+  ],
   "2tTQ0A": [
     {
       "type": 0,
       "value": "Aktif"
+    }
+  ],
+  "2xhbE1": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Magadan"
     }
   ],
   "33+WHG": [
@@ -310,16 +448,46 @@
       "value": "Pengidentifikasi"
     }
   ],
+  "3FoqCK": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Tbilisi"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
       "value": "Diperlukan. Pemisah."
     }
   ],
+  "3PgHCT": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Chisinau"
+    }
+  ],
+  "3TD2V5": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Dhaka"
+    }
+  ],
   "3X/ZDK": [
     {
       "type": 0,
       "value": "Unggah atau pilih skema output yang akan digunakan untuk peta Anda."
+    }
+  ],
+  "3afjx+": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Chita"
+    }
+  ],
+  "3jlz+B": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30) Tehran"
     }
   ],
   "3kI7xF": [
@@ -346,10 +514,22 @@
       "value": "Wajib. Jumlah unit waktu yang ditentukan untuk mengurangi."
     }
   ],
+  "3vqfeV": [
+    {
+      "type": 0,
+      "value": "3"
+    }
+  ],
   "3wagjT": [
     {
       "type": 0,
       "value": "pilih input"
+    }
+  ],
+  "4/kJ8D": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Yerevan"
     }
   ],
   "47kOXr": [
@@ -362,6 +542,18 @@
     {
       "type": 0,
       "value": "Wajib. Jumlah hari yang akan ditambahkan. Dapat berupa nilai negatif untuk mengurangi hari."
+    }
+  ],
+  "4Q7WzU": [
+    {
+      "type": 0,
+      "value": "Add a new connection"
+    }
+  ],
+  "4XdZNj": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) West Central Africa"
     }
   ],
   "4YKQAF": [
@@ -382,6 +574,12 @@
       "value": "Komentar hanya dapat ditambahkan saat mengedit input langkah."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Hidupkan/Matikan Peta Mini"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -398,6 +596,18 @@
     {
       "type": 0,
       "value": "Tur/Tutorial"
+    }
+  ],
+  "4wjJs0": [
+    {
+      "type": 0,
+      "value": "14"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Skema input akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema input?"
     }
   ],
   "5J7j9k": [
@@ -442,6 +652,18 @@
       "value": "Harus diisi. Objek untuk diperiksa jika lebih besar dari nilai yang dibandingkan."
     }
   ],
+  "65FlWi": [
+    {
+      "type": 0,
+      "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6XR3FS": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Adelaide"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -466,6 +688,12 @@
       "value": "Sebelumnya"
     }
   ],
+  "6pd1bE": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Arizona"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
@@ -476,6 +704,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "7KxCGX": [
+    {
+      "type": 0,
+      "value": "(UTC+10:30) Lord Howe Island"
     }
   ],
   "7QymrD": [
@@ -500,6 +734,12 @@
     {
       "type": 0,
       "value": "Menampilkan jumlah tanda (interval 100 nanodetik) mulai tanggal 1 Januari 0001 00:00:00 UT dari tanda waktu string"
+    }
+  ],
+  "7lvqST": [
+    {
+      "type": 0,
+      "value": "Invalid"
     }
   ],
   "7yEdSt": [
@@ -538,6 +778,12 @@
       "value": "Harus diisi. Objek untuk diperiksa jika lebih dari atau sama dengan objek yang sedang dibandingkan."
     }
   ],
+  "8JEHiY": [
+    {
+      "type": 0,
+      "value": "Saturday"
+    }
+  ],
   "8JFxmV": [
     {
       "type": 0,
@@ -556,10 +802,22 @@
       "value": "Wajib. String dengan pengodean URI."
     }
   ],
+  "8Y5xpK": [
+    {
+      "type": 0,
+      "value": "Thursday"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
       "value": "Dengan pola asinkron, jika server jarak jauh menunjukkan bahwa permintaan diterima untuk diproses dengan respons 202 (Diterima), mesin Logic Apps akan terus membuat polling URL yang ditentukan di header lokasi respons hingga mencapai status terminal."
+    }
+  ],
+  "8pPivj": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Norfolk Island"
     }
   ],
   "8to63i": [
@@ -592,10 +850,28 @@
       "value": "Menampilkan array atau objek tunggal yang memiliki elemen umum antara array atau objek yang diberikan"
     }
   ],
+  "9/vdrb": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "949s+r": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Ulaanbaatar"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
       "value": "Konektor"
+    }
+  ],
+  "9EmN2M": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "9JuvQ4": [
@@ -608,6 +884,12 @@
     {
       "type": 0,
       "value": "Menghasilkan objek dengan pasangan nilai properti tambahan"
+    }
+  ],
+  "9SuA/E": [
+    {
+      "type": 0,
+      "value": "12"
     }
   ],
   "9b4xDa": [
@@ -628,10 +910,34 @@
       "value": "Pilih skema output"
     }
   ],
+  "9pdXmX": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+    }
+  ],
+  "9pl7QP": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Atlantic Time (Canada)"
+    }
+  ],
   "9u/Ae3": [
     {
       "type": 0,
       "value": "Menampilkan true jika kedua parameter benar"
+    }
+  ],
+  "AIL7WX": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "ALImBL": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Monrovia, Reykjavik"
     }
   ],
   "ANbEeQ": [
@@ -646,16 +952,57 @@
       "value": "Selesai"
     }
   ],
+  "AYaqW/": [
+    {
+      "type": 0,
+      "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
       "value": "Wajib. String yang dikodekan menjadi representasi base64."
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Tindakan"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Tindakan"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
       "value": "Wajib. Indeks bagian yang akan diambil."
+    }
+  ],
+  "BAgRzO": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Coordinated Universal Time-08"
     }
   ],
   "BBD8Em": [
@@ -688,6 +1035,18 @@
       "value": "Wajib. String untuk mengodekan karakter URL yang dapat berubah."
     }
   ],
+  "BSHFiw": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Perth"
+    }
+  ],
+  "BVOUxP": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Havana"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -718,6 +1077,12 @@
       "value": "Koneksi diperlukan"
     }
   ],
+  "Cy9qeQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -736,10 +1101,28 @@
       "value": "Durasi"
     }
   ],
+  "DfS13/": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Aleutian Islands"
+    }
+  ],
+  "DuXV2M": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Azores"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
       "value": "Ctrl + Y"
+    }
+  ],
+  "E9OS+9": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Coordinated Universal Time-09"
     }
   ],
   "ECZC6Y": [
@@ -754,16 +1137,46 @@
       "value": "Respons"
     }
   ],
+  "EYqGxA": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Athens, Bucharest"
+    }
+  ],
   "EZz5q7": [
     {
       "type": 0,
       "value": "Wajib. Indeks tempat untuk mulai mengekstrak substring."
     }
   ],
+  "EdzoIs": [
+    {
+      "type": 0,
+      "value": "1"
+    }
+  ],
+  "Eqgm4v": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+    }
+  ],
+  "ExaACE": [
+    {
+      "type": 0,
+      "value": "Connection display name"
+    }
+  ],
   "F3IDl8": [
     {
       "type": 0,
       "value": "Wajib. Jumlah unit waktu tertentu yang akan ditambahkan."
+    }
+  ],
+  "F489Vg": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Irkutsk"
     }
   ],
   "FDF4Qb": [
@@ -782,6 +1195,18 @@
     {
       "type": 0,
       "value": "gagal"
+    }
+  ],
+  "FHsP9y": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45) Kathmandu"
+    }
+  ],
+  "FIT7i0": [
+    {
+      "type": 0,
+      "value": "20"
     }
   ],
   "FN5zHQ": [
@@ -820,6 +1245,12 @@
       "value": "Menampilkan permulaan hari ke tanda waktu string yang diberikan"
     }
   ],
+  "FXC0Zi": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Baghdad"
+    }
+  ],
   "FXLR5M": [
     {
       "offset": 0,
@@ -841,6 +1272,12 @@
       "value": "hours"
     }
   ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Batal"
+    }
+  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -851,6 +1288,12 @@
     {
       "type": 0,
       "value": "Menghasilkan indeks pertama dari nilai dalam string (tidak peka huruf besar/kecil, kultur invarian)"
+    }
+  ],
+  "FiyQjU": [
+    {
+      "type": 0,
+      "value": "2"
     }
   ],
   "FslNgF": [
@@ -901,6 +1344,12 @@
       "value": "Masukkan nama parameter."
     }
   ],
+  "GtDOFg": [
+    {
+      "type": 0,
+      "value": "Cancel the selection"
+    }
+  ],
   "GzQQqH": [
     {
       "type": 0,
@@ -943,10 +1392,34 @@
       "value": "Pilih kartu untuk melihat konten"
     }
   ],
+  "IA+Ogm": [
+    {
+      "type": 0,
+      "value": "22"
+    }
+  ],
+  "IPbBB2": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Fiji"
+    }
+  ],
+  "IUE/lQ": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Cabo Verde Is."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
       "value": "Mengonversi tanda waktu string yang diberikan dari UTC ke zona waktu target"
+    }
+  ],
+  "IjZFjQ": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
   "IngtMG": [
@@ -1021,6 +1494,12 @@
       "value": "Nama:"
     }
   ],
+  "JpthWY": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Montevideo"
+    }
+  ],
   "Jq2Y/o": [
     {
       "type": 0,
@@ -1057,6 +1536,59 @@
       "value": "Skema Output"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Kasus"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Kasus"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "Khc8lS": [
+    {
+      "type": 0,
+      "value": "(UTC-09:30) Marquesas Islands"
+    }
+  ],
+  "KlvTze": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "KoBDbT": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Coordinated Universal Time-02"
+    }
+  ],
+  "Kw3bWO": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Istanbul"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1069,10 +1601,28 @@
       "value": "Menampilkan komponen jumlah hari dalam seminggu dari tanda waktu string"
     }
   ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Peringatan"
+    }
+  ],
+  "LMB8am": [
+    {
+      "type": 0,
+      "value": "Creating..."
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Menghasilkan skema dari URI"
+    }
+  ],
+  "Lft/is": [
+    {
+      "type": 0,
+      "value": "Add new"
     }
   ],
   "LoGUT3": [
@@ -1093,10 +1643,28 @@
       "value": "Diperlukan. Ekspresi pertama yang mungkin true."
     }
   ],
+  "LvpxiA": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
+  "Lwe7tQ": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+    }
+  ],
   "M0HMjE": [
     {
       "type": 0,
       "value": "Tambahkan komentar"
+    }
+  ],
+  "M48CGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Solomon Is., New Caledonia"
     }
   ],
   "M6U2LE": [
@@ -1171,6 +1739,30 @@
       "value": "Status"
     }
   ],
+  "NeyUAh": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) City of Buenos Aires"
+    }
+  ],
+  "NkUgXU": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "NvANon": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Alaska"
+    }
+  ],
+  "NvJDn/": [
+    {
+      "type": 0,
+      "value": "Tuesday"
+    }
+  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -1195,6 +1787,24 @@
       "value": "Opsi operasi:"
     }
   ],
+  "OGUVGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Bougainville Island"
+    }
+  ],
+  "OH9xlX": [
+    {
+      "type": 0,
+      "value": "10"
+    }
+  ],
+  "OKszbi": [
+    {
+      "type": 0,
+      "value": "Connection Name"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -1205,6 +1815,12 @@
     {
       "type": 0,
       "value": "Menghasilkan hasil dari tindakan tingkat atas dalam tindakan tercakup yang ditentukan, seperti tindakan For_each, Until, atau Scope."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "Semua pekerjaan yang belum disimpan akan hilang. Ingin melanjutkan untuk membuang semuanya?"
     }
   ],
   "Oib1mL": [
@@ -1261,6 +1877,12 @@
       "value": "Harus diisi. Koleksi untuk mengambil objek pertama."
     }
   ],
+  "PBvR9Q": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Araguaina"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -1303,16 +1925,34 @@
       "value": "Dibatalkan"
     }
   ],
+  "PeLrFb": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+    }
+  ],
   "PfCJlN": [
     {
       "type": 0,
       "value": "Fungsi alur kerja"
     }
   ],
+  "PmB0J7": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Turks and Caicos"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
       "value": "Menampilkan representasi base 64 dari string input"
+    }
+  ],
+  "Q+oELo": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Izhevsk, Samara"
     }
   ],
   "Q/7unA": [
@@ -1434,10 +2074,22 @@
       "value": "minutes"
     }
   ],
+  "RkgScy": [
+    {
+      "type": 0,
+      "value": "6"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
       "value": "Hapus"
+    }
+  ],
+  "SADSSs": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
     }
   ],
   "SKXopi": [
@@ -1486,6 +2138,12 @@
       "value": "Atur id pelacakan untuk dijalankan. Untuk pemisahan, id pelacakan ini untuk memulai permintaan."
     }
   ],
+  "T6VIym": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1510,6 +2168,18 @@
       "value": "Menampilkan string dengan setiap item dari array yang bergabung dengan pemisah"
     }
   ],
+  "TNEttQ": [
+    {
+      "type": 0,
+      "value": "Friday"
+    }
+  ],
+  "TNzcrv": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Vladivostok"
+    }
+  ],
   "TO7qos": [
     {
       "type": 0,
@@ -1520,6 +2190,12 @@
     {
       "type": 0,
       "value": "Masukkan nilai"
+    }
+  ],
+  "TX4Kdr": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "TZv5JE": [
@@ -1540,6 +2216,18 @@
       "value": "Tag"
     }
   ],
+  "ToPmjE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Cuiaba"
+    }
+  ],
+  "TqPfth": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -1552,10 +2240,22 @@
       "value": "Ciutkan/Luaskan"
     }
   ],
+  "U1NiVg": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Central America"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
       "value": "Menghasilkan array bilangan bulat yang dimulai dari angka tertentu"
+    }
+  ],
+  "U56j9a": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Easter Island"
     }
   ],
   "UCNM4L": [
@@ -1576,10 +2276,22 @@
       "value": "Konten tidak ditampilkan karena konfigurasi keamanan."
     }
   ],
+  "UkSZnQ": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
       "value": "Klik untuk menghapus item"
+    }
+  ],
+  "UtyRCH": [
+    {
+      "type": 0,
+      "value": "Enter a name for the connection"
     }
   ],
   "V+/c21": [
@@ -1594,10 +2306,22 @@
       "value": "Tampilkan lebih sedikit"
     }
   ],
+  "VE3cxq": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
       "value": "Nama eksekusi alur kerja yang diberikan tidak valid."
+    }
+  ],
+  "VUH9aj": [
+    {
+      "type": 0,
+      "value": "23"
     }
   ],
   "VVfYvq": [
@@ -1706,10 +2430,22 @@
       "value": "Coba lagi"
     }
   ],
+  "XN9RvJ": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Baja California"
+    }
+  ],
   "XOzn/3": [
     {
       "type": 0,
       "value": "Nama koneksi"
+    }
+  ],
+  "XTYYks": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Seoul"
     }
   ],
   "XTuxmH": [
@@ -1728,6 +2464,18 @@
     {
       "type": 0,
       "value": " detik"
+    }
+  ],
+  "XX1ioe": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Kuwait, Riyadh"
+    }
+  ],
+  "XaS4ds": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Pacific Time (US & Canada)"
     }
   ],
   "Xnn0uj": [
@@ -1836,6 +2584,12 @@
       "value": "Menampilkan komponen jumlah hari dalam sebulan dari tanda waktu string"
     }
   ],
+  "ZQ4lji": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -1854,6 +2608,18 @@
       "value": "Operasi ini sudah dihapus."
     }
   ],
+  "ZnGRMP": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Tomsk"
+    }
+  ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Skema output akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema output?"
+    }
+  ],
   "a64zhX": [
     {
       "type": 0,
@@ -1866,6 +2632,12 @@
       "value": "Wajib. Nomor yang akan dibagi Divisor."
     }
   ],
+  "a7x6VI": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Taipei"
+    }
+  ],
   "aAXnqw": [
     {
       "type": 0,
@@ -1876,6 +2648,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Jumlah objek untuk dihapus dari bagian depan Koleksi. Harus bilangan bulat positif."
+    }
+  ],
+  "aH9SV7": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ashgabat, Tashkent"
     }
   ],
   "aK4iLW": [
@@ -1902,6 +2680,12 @@
       "value": "Nilai"
     }
   ],
+  "bS5DyV": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kaliningrad"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1926,6 +2710,18 @@
       "value": "Menampilkan nilai maksimal dalam array input angka"
     }
   ],
+  "bnStSJ": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+    }
+  ],
+  "bx3qeC": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Brasilia"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -1936,6 +2732,12 @@
     {
       "type": 0,
       "value": "Lakukan"
+    }
+  ],
+  "c1XmvN": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Nuku'alofa"
     }
   ],
   "c2XklE": [
@@ -1974,6 +2776,18 @@
       "value": "Harus diisi. Nilai untuk mencari indeks."
     }
   ],
+  "cT2MlP": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Chokurdakh"
+    }
+  ],
+  "cVIZTQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Tripoli"
+    }
+  ],
   "ci6ex1": [
     {
       "type": 0,
@@ -1998,6 +2812,12 @@
       "value": "Waktu mulai"
     }
   ],
+  "cr0UnG": [
+    {
+      "type": 0,
+      "value": "9"
+    }
+  ],
   "cscezV": [
     {
       "type": 0,
@@ -2008,6 +2828,12 @@
     {
       "type": 0,
       "value": "Hapus komentar"
+    }
+  ],
+  "d4xMIx": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
   "dDYCuU": [
@@ -2028,6 +2854,12 @@
       "value": "Tentukan perilaku dan kemampuan untuk mentransfer konten melalui HTTP. Pesan berukuran besar dapat dibagi menjadi permintaan yang lebih kecil ke konektor untuk memungkinkan pengunggahan pesan berukuran besar. Detail dapat ditemukan di http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
+  "dUZi34": [
+    {
+      "type": 0,
+      "value": "(UTC+12:45) Chatham Islands"
+    }
+  ],
   "dWFyfN": [
     {
       "type": 0,
@@ -2038,6 +2870,18 @@
     {
       "type": 0,
       "value": "ikon pensil"
+    }
+  ],
+  "dWx21B": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Sakhalin"
+    }
+  ],
+  "dgAu27": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Greenland"
     }
   ],
   "dhvk0u": [
@@ -2064,10 +2908,22 @@
       "value": "Membagi string menggunakan pemisah"
     }
   ],
+  "e00zot": [
+    {
+      "type": 0,
+      "value": "How often do you want to check for items?"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Tidak ditentukan"
+    }
+  ],
+  "eGa1Wa": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ekaterinburg"
     }
   ],
   "eHgi14": [
@@ -2118,10 +2974,22 @@
       "value": "Menampilkan true jika argumen pertama lebih besar atau sama dengan yang kedua"
     }
   ],
+  "faSDuD": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Port Louis"
+    }
+  ],
   "fg/34o": [
     {
       "type": 0,
       "value": "Fungsi logis"
+    }
+  ],
+  "froV/0": [
+    {
+      "type": 0,
+      "value": "(UTC+04:30) Kabul"
     }
   ],
   "ftwXvc": [
@@ -2142,6 +3010,12 @@
       "value": "Terbitkan"
     }
   ],
+  "g5mMuM": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -2160,10 +3034,22 @@
       "value": "Menampilkan hasil pembagian dua angka tersebut"
     }
   ],
+  "gF+0/N": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Amman"
+    }
+  ],
   "gIK0WG": [
     {
       "type": 0,
       "value": "Harus diisi. Nilai boolean yang menentukan nilai ekspresi yang harus dikembalikan."
+    }
+  ],
+  "gIc0YJ": [
+    {
+      "type": 0,
+      "value": "Connection name"
     }
   ],
   "gKq3Jv": [
@@ -2190,10 +3076,28 @@
       "value": "Kondisi Pemicu"
     }
   ],
+  "gg0j4S": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gj+jEr": [
+    {
+      "type": 0,
+      "value": "Save the selected connection"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
       "value": "Ketika digunakan di dalam until loop, fungsi ini menghasilkan indeks perulangan saat ini dari perulangan yang ditentukan."
+    }
+  ],
+  "hBLPXK": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan"
     }
   ],
   "hN7iBP": [
@@ -2277,6 +3181,12 @@
       "value": "Diperlukan. URI untuk mengurai."
     }
   ],
+  "iRe/g7": [
+    {
+      "type": 0,
+      "value": "21"
+    }
+  ],
   "iRjBf4": [
     {
       "type": 0,
@@ -2301,6 +3211,12 @@
       "value": "Batalkan"
     }
   ],
+  "iq+tiv": [
+    {
+      "type": 0,
+      "value": "11"
+    }
+  ],
   "iql+jn": [
     {
       "type": 1,
@@ -2315,6 +3231,12 @@
     {
       "type": 0,
       "value": "Uji"
+    }
+  ],
+  "j1VU25": [
+    {
+      "type": 0,
+      "value": "(UTC+14:00) Kiritimati Island"
     }
   ],
   "j2MU0b": [
@@ -2339,6 +3261,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Ekspresi yang akan ditiadakan."
+    }
+  ],
+  "jMLmag": [
+    {
+      "type": 0,
+      "value": "Create New"
     }
   ],
   "jQ0Aqj": [
@@ -2401,6 +3329,12 @@
       "value": "Tambahkan Skema Input"
     }
   ],
+  "kDsud+": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Cayenne, Fortaleza"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -2431,16 +3365,34 @@
       "value": "Unduh (Alt/Option + klik)"
     }
   ],
+  "kZCX7t": [
+    {
+      "type": 0,
+      "value": "Monday"
+    }
+  ],
   "kZuYgD": [
     {
       "type": 0,
       "value": "Menampilkan true jika argumen pertama kurang dari yang kedua"
     }
   ],
+  "kc5Mui": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Mid-Atlantic - Old"
+    }
+  ],
   "keb4r1": [
     {
       "type": 0,
       "value": "Menampilkan true jika kedua nilai sama"
+    }
+  ],
+  "kneb9/": [
+    {
+      "type": 0,
+      "value": "(UTC-12:00) International Date Line West"
     }
   ],
   "knylNW": [
@@ -2465,6 +3417,18 @@
     {
       "type": 0,
       "value": " menit"
+    }
+  ],
+  "lFve22": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+    }
+  ],
+  "lIPWQ6": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
     }
   ],
   "lPTdSf": [
@@ -2545,6 +3509,12 @@
       "value": "Url mengkodekan string input"
     }
   ],
+  "mZCHKf": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+    }
+  ],
   "mZRMD9": [
     {
       "type": 0,
@@ -2555,6 +3525,24 @@
     {
       "type": 0,
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
+    }
+  ],
+  "mx2IMJ": [
+    {
+      "type": 0,
+      "value": "13"
+    }
+  ],
+  "n+F7e2": [
+    {
+      "type": 0,
+      "value": "15"
+    }
+  ],
+  "n20T2h": [
+    {
+      "type": 0,
+      "value": "7"
     }
   ],
   "n35O/+": [
@@ -2605,6 +3593,12 @@
       "value": "Tutup"
     }
   ],
+  "nx25nq": [
+    {
+      "type": 0,
+      "value": "19"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2643,16 +3637,34 @@
       "value": "Transfer Konten"
     }
   ],
+  "oRvVIW": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Krasnoyarsk"
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Masukkan pengidentifikasi eksekusi untuk membuka eksekusi"
     }
   ],
+  "ol+TkT": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Salvador"
+    }
+  ],
   "orhWzV": [
     {
       "type": 0,
       "value": "Gagal memuat skema. Coba lagi."
+    }
+  ],
+  "oxH1L/": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
     }
   ],
   "p/0r2N": [
@@ -2665,6 +3677,12 @@
     {
       "type": 0,
       "value": "Header"
+    }
+  ],
+  "p5tz8/": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Samoa"
     }
   ],
   "pIczsS": [
@@ -2683,6 +3701,12 @@
     {
       "type": 0,
       "value": "Parameter"
+    }
+  ],
+  "pUeUDw": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
     }
   ],
   "pXmFGf": [
@@ -2745,6 +3769,12 @@
       "value": "Menambahkan jumlah bilangan bulat detik ke tanda waktu string yang diberikan"
     }
   ],
+  "q9hf8i": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -2761,6 +3791,12 @@
     {
       "type": 0,
       "value": "berhasil"
+    }
+  ],
+  "qQoQFv": [
+    {
+      "type": 0,
+      "value": "Invalid connection."
     }
   ],
   "qSejoi": [
@@ -2808,10 +3844,22 @@
       "value": "Harus diisi. Nilai yang dikonversi ke bilangan bulat."
     }
   ],
+  "qq/bq0": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Yakutsk"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
       "value": "Respons asinkron memungkinkan Aplikasi Logika merespons dengan 202 (Diterima) untuk menunjukkan bahwa permintaan telah diterima untuk diproses. Header lokasi akan disediakan untuk menerima keadaan akhir."
+    }
+  ],
+  "r1FQhf": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Windhoek"
     }
   ],
   "r43nMc": [
@@ -2844,6 +3892,12 @@
       "value": "Judul Kartu"
     }
   ],
+  "rDt4Iu": [
+    {
+      "type": 0,
+      "value": "Is connection invalid"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -2854,6 +3908,12 @@
     {
       "type": 0,
       "value": "Menampilkan representasi dengan pengodean URI dari nilai"
+    }
+  ],
+  "rstpaK": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Central Time (US & Canada)"
     }
   ],
   "s5RV9B": [
@@ -2872,6 +3932,12 @@
     {
       "type": 0,
       "value": "Menampilkan array nilai yang cocok dengan nama kunci dari data formulir atau output pemicu dengan pengodean formulir"
+    }
+  ],
+  "sFwHQc": [
+    {
+      "type": 0,
+      "value": "Cancel creating a connection"
     }
   ],
   "sW47JR": [
@@ -2910,6 +3976,12 @@
       "value": "Kunci"
     }
   ],
+  "siYGSo": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Beirut"
+    }
+  ],
   "soqP+Z": [
     {
       "type": 0,
@@ -2938,6 +4010,12 @@
     {
       "type": 0,
       "value": "Menampilkan URL untuk memanggil pemicu atau tindakan"
+    }
+  ],
+  "tELkSC": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
   "tImHz/": [
@@ -2976,6 +4054,12 @@
       "value": "Tipe"
     }
   ],
+  "tP+5fA": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
   "tVmUCd": [
     {
       "type": 0,
@@ -2994,10 +4078,34 @@
       "value": "Wajib. Jumlah jam yang akan ditambahkan. Dapat berupa nilai negatif untuk mengurangi jam."
     }
   ],
+  "teZwo6": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "tsmuoF": [
+    {
+      "type": 0,
+      "value": "Display Name"
+    }
+  ],
   "tu8I7j": [
     {
       "type": 0,
       "value": "Operasi"
+    }
+  ],
+  "u/KSPz": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Santiago"
+    }
+  ],
+  "u6Gdft": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
   "uN4zFU": [
@@ -3010,6 +4118,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Koleksi untuk dievaluasi. Sebuah objek yang muncul di koleksi juga muncul dalam hasil."
+    }
+  ],
+  "uRurmg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Guam, Port Moresby"
     }
   ],
   "uUlBZ8": [
@@ -3036,6 +4150,24 @@
       "value": "Harus diisi. String yang dapat berisi nilai."
     }
   ],
+  "udNlco": [
+    {
+      "type": 0,
+      "value": "(UTC-11:00) Coordinated Universal Time-11"
+    }
+  ],
+  "ui7GCl": [
+    {
+      "type": 0,
+      "value": "16"
+    }
+  ],
+  "urAHv1": [
+    {
+      "type": 0,
+      "value": "4"
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
@@ -3052,6 +4184,12 @@
     {
       "type": 0,
       "value": "Menghasilkan string unik global (GUID)"
+    }
+  ],
+  "vD2lQy": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Asuncion"
     }
   ],
   "vEBhDX": [
@@ -3072,16 +4210,42 @@
       "value": "Hapus"
     }
   ],
+  "vXwYXe": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Astana"
+    }
+  ],
   "va40BJ": [
     {
       "type": 0,
       "value": "Wajib. Nama tindakan yang output isinya Anda inginkan."
     }
   ],
+  "vb/okJ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Cairo"
+    }
+  ],
   "vcBAuU": [
     {
       "type": 0,
       "value": "waktu telah habis"
+    }
+  ],
+  "vr70Gn": [
+    {
+      "type": 0,
+      "value": "Create a connection for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "vwH/XV": [
@@ -3096,10 +4260,22 @@
       "value": "Properti Alur Kerja"
     }
   ],
+  "w5Hhig": [
+    {
+      "type": 0,
+      "value": "Sunday"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
       "value": "Mengurangi bilangan bulat unit waktu yang ditentukan dari tanda waktu string yang diberikan"
+    }
+  ],
+  "wF7C+h": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "wFCkpM": [
@@ -3150,6 +4326,12 @@
       "value": "URL Panggilan Balik:"
     }
   ],
+  "x+6ccf": [
+    {
+      "type": 0,
+      "value": "Wednesday"
+    }
+  ],
   "x0or2o": [
     {
       "type": 0,
@@ -3192,6 +4374,18 @@
       "value": "Menghasilkan jalur dari URI. Jika jalur tidak ditentukan, akan menghasilkan '/'"
     }
   ],
+  "xZhieP": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Islamabad, Karachi"
+    }
+  ],
+  "xb/DIr": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Coordinated Universal Time+12"
+    }
+  ],
   "xt5TeT": [
     {
       "type": 0,
@@ -3222,6 +4416,12 @@
       "value": "Wajib. Nilai yang dikonversi menjadi array."
     }
   ],
+  "yIZP4R": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Hawaii"
+    }
+  ],
   "yOkPGx": [
     {
       "type": 0,
@@ -3232,10 +4432,40 @@
       "value": "connectorName"
     }
   ],
+  "yVh9kr": [
+    {
+      "type": 0,
+      "value": "8"
+    }
+  ],
+  "yoCi15": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one."
+    }
+  ],
+  "yph4eq": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
       "value": "Fungsi tanggal dan waktu"
+    }
+  ],
+  "yxsn7s": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Casablanca"
+    }
+  ],
+  "yyYtZV": [
+    {
+      "type": 0,
+      "value": "Connection gateway"
     }
   ],
   "z4YYlQ": [
@@ -3256,10 +4486,22 @@
       "value": "Harus diisi. String yang dikonversi ke nilai jenis asli."
     }
   ],
+  "zbtUQ/": [
+    {
+      "type": 0,
+      "value": "(UTC+08:30) Pyongyang"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "Mengonversi string, dengan secara opsional lokal dan format menjadi tanggal"
+    }
+  ],
+  "zggBvC": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Nairobi"
     }
   ],
   "ziYCiA": [

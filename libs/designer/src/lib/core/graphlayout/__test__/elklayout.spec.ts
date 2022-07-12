@@ -16,6 +16,12 @@ const elkGraphLayoutOptions = {
   nodeType: WORKFLOW_NODE_TYPES.GRAPH_NODE,
 };
 
+const elkSubgraphLayoutOptions = {
+  'elk.padding': '[top=0,left=16,bottom=48,right=16]',
+  'elk.position': '(0, 0)',
+  nodeType: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
+};
+
 const { convertWorkflowGraphToElkGraph, convertElkGraphToReactFlow, elkLayout } = exportForTesting;
 describe('elklayout', () => {
   describe('convertWorkflowGraphToElkGraph', () => {
@@ -48,11 +54,11 @@ describe('elklayout', () => {
             id: 'ActionIf',
             type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             children: [
-              createWorkflowNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
+              createWorkflowNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE),
               {
                 id: 'ActionIf-actions',
                 children: [
-                  createWorkflowNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE),
+                  createWorkflowNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
                   createWorkflowNode('Increment_variable2'),
                   createWorkflowNode('Increment_variable4'),
                 ],
@@ -60,16 +66,16 @@ describe('elklayout', () => {
                   createWorkflowEdge('ActionIf-actions-#subgraph', 'Increment_variable2'),
                   createWorkflowEdge('Increment_variable2', 'Increment_variable4'),
                 ],
-                type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+                type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
               },
               {
                 id: 'ActionIf-elseActions',
                 children: [
-                  createWorkflowNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE),
+                  createWorkflowNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
                   createWorkflowNode('Increment_variable3'),
                 ],
                 edges: [createWorkflowEdge('ActionIf-elseActions-#subgraph', 'Increment_variable3')],
-                type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+                type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
               },
             ],
             edges: [
@@ -97,12 +103,12 @@ describe('elklayout', () => {
             id: 'ActionIf',
             layoutOptions: elkGraphLayoutOptions,
             children: [
-              createElkNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE),
+              createElkNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE),
               {
                 id: 'ActionIf-actions',
-                layoutOptions: elkGraphLayoutOptions,
+                layoutOptions: elkSubgraphLayoutOptions,
                 children: [
-                  createElkNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE),
+                  createElkNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
                   createElkNode('Increment_variable2'),
                   createElkNode('Increment_variable4'),
                 ],
@@ -113,9 +119,9 @@ describe('elklayout', () => {
               },
               {
                 id: 'ActionIf-elseActions',
-                layoutOptions: elkGraphLayoutOptions,
+                layoutOptions: elkSubgraphLayoutOptions,
                 children: [
-                  createElkNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE),
+                  createElkNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
                   createElkNode('Increment_variable3'),
                 ],
                 edges: [createElkEdge('ActionIf-elseActions-#subgraph', 'Increment_variable3')],
@@ -156,7 +162,7 @@ describe('elklayout', () => {
         [
           {
             id: 'node1',
-            type: WORKFLOW_NODE_TYPES.TEST_NODE,
+            type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             parentNode: undefined,
             position: {
               x: 10,
@@ -168,7 +174,7 @@ describe('elklayout', () => {
           },
           {
             id: 'node2',
-            type: WORKFLOW_NODE_TYPES.TEST_NODE,
+            type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             parentNode: undefined,
             position: {
               x: 10,
@@ -209,12 +215,12 @@ describe('elklayout', () => {
             x: 307,
             y: 308,
             children: [
-              { ...createElkNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE), x: 307, y: 308 },
+              { ...createElkNode('ActionIf-#scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE), x: 307, y: 308 },
               {
                 id: 'ActionIf-actions',
-                layoutOptions: elkGraphLayoutOptions,
+                layoutOptions: elkSubgraphLayoutOptions,
                 children: [
-                  { ...createElkNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE), x: 50, y: 100 },
+                  { ...createElkNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE), x: 50, y: 100 },
                   { ...createElkNode('Increment_variable2'), x: 150, y: 200 },
                   { ...createElkNode('Increment_variable4'), x: 300, y: 301 },
                 ],
@@ -225,9 +231,9 @@ describe('elklayout', () => {
               },
               {
                 id: 'ActionIf-elseActions',
-                layoutOptions: elkGraphLayoutOptions,
+                layoutOptions: elkSubgraphLayoutOptions,
                 children: [
-                  { ...createElkNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_NODE), x: 0, y: 0 },
+                  { ...createElkNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE), x: 0, y: 0 },
                   { ...createElkNode('Increment_variable3'), x: 302, y: 303 },
                 ],
                 edges: [createElkEdge('ActionIf-elseActions-#subgraph', 'Increment_variable3')],
@@ -243,7 +249,7 @@ describe('elklayout', () => {
             layoutOptions: elkGraphLayoutOptions,
             x: 307,
             y: 308,
-            children: [createElkNode('EmptyScope-#scope', WORKFLOW_NODE_TYPES.SCOPE_NODE)],
+            children: [createElkNode('EmptyScope-#scope', WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE)],
             edges: [],
           },
           { ...createElkNode('Response'), x: 304, y: 305 },
@@ -264,17 +270,17 @@ describe('elklayout', () => {
             id: 'manual',
             position: { x: 50, y: 100 },
             data: { label: 'manual' },
-            type: WORKFLOW_NODE_TYPES.TEST_NODE,
+            type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
           },
           {
             id: 'Increment_variable',
-            type: WORKFLOW_NODE_TYPES.TEST_NODE,
+            type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 60, y: 80 },
             data: { label: 'Increment_variable' },
           },
           {
             id: 'Initialize_variable',
-            type: WORKFLOW_NODE_TYPES.TEST_NODE,
+            type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 70, y: 90 },
             data: { label: 'Initialize_variable' },
           },
@@ -286,56 +292,56 @@ describe('elklayout', () => {
           },
           {
             id: 'ActionIf-#scope',
-            type: WORKFLOW_NODE_TYPES.SCOPE_NODE,
+            type: WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE,
             position: { x: 307, y: 308 },
             data: { label: 'ActionIf-#scope' },
             parentNode: 'ActionIf',
           },
           {
             id: 'ActionIf-actions',
-            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+            type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
             position: { x: 0, y: 0 },
             data: { label: 'ActionIf-actions' },
             parentNode: 'ActionIf',
           },
           {
             id: 'ActionIf-actions-#subgraph',
-            type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
+            type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
             position: { x: 50, y: 100 },
             data: { label: 'ActionIf-actions-#subgraph' },
             parentNode: 'ActionIf-actions',
           },
           {
             id: 'Increment_variable2',
-            type: WORKFLOW_NODE_TYPES.TEST_NODE,
+            type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 150, y: 200 },
             data: { label: 'Increment_variable2' },
             parentNode: 'ActionIf-actions',
           },
           {
             id: 'Increment_variable4',
-            type: WORKFLOW_NODE_TYPES.TEST_NODE,
+            type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 300, y: 301 },
             data: { label: 'Increment_variable4' },
             parentNode: 'ActionIf-actions',
           },
           {
             id: 'ActionIf-elseActions',
-            type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
+            type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
             position: { x: 0, y: 0 },
             data: { label: 'ActionIf-elseActions' },
             parentNode: 'ActionIf',
           },
           {
             id: 'ActionIf-elseActions-#subgraph',
-            type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
+            type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
             position: { x: 0, y: 0 },
             data: { label: 'ActionIf-elseActions-#subgraph' },
             parentNode: 'ActionIf-elseActions',
           },
           {
             id: 'Increment_variable3',
-            type: WORKFLOW_NODE_TYPES.TEST_NODE,
+            type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 302, y: 303 },
             data: { label: 'Increment_variable3' },
             parentNode: 'ActionIf-elseActions',
@@ -348,14 +354,14 @@ describe('elklayout', () => {
           },
           {
             id: 'EmptyScope-#scope',
-            type: WORKFLOW_NODE_TYPES.SCOPE_NODE,
+            type: WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE,
             position: { x: 0, y: 0 },
             data: { label: 'EmptyScope-#scope' },
             parentNode: 'EmptyScope',
           },
           {
             id: 'Response',
-            type: WORKFLOW_NODE_TYPES.TEST_NODE,
+            type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 304, y: 305 },
             data: { label: 'Response' },
           },

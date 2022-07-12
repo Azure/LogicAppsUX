@@ -1,6 +1,6 @@
 import type { BaseEditorProps } from '../base';
 import { BaseEditor } from '../base';
-import SingleLinePlugin from './stringPlugins/SingleLinePlugin';
+import SingleLine from './stringPlugins/SingleLine';
 
 export interface StringEditorProps extends BaseEditorProps {
   singleLine?: boolean;
@@ -9,7 +9,7 @@ export interface StringEditorProps extends BaseEditorProps {
 export const StringEditor = ({ placeholder, className, singleLine }: StringEditorProps) => {
   return (
     <BaseEditor placeholder={placeholder} className={className}>
-      {singleLine ? <SingleLinePlugin /> : null}
+      {singleLine ? <SingleLine /> : null}
     </BaseEditor>
   );
 };

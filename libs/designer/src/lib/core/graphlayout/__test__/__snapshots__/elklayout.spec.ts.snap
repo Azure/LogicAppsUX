@@ -94,7 +94,7 @@ Object {
               "height": 40,
               "id": "Increment_variable3",
               "layoutOptions": Object {
-                "nodeType": "TEST_NODE",
+                "nodeType": "OPERATION_NODE",
               },
               "width": 200,
               "x": 16,

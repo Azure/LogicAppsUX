@@ -1,14 +1,38 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
       "value": "Filters"
     }
   ],
+  "+W9fkq": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+    }
+  ],
+  "+dlOgj": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Haiti"
+    }
+  ],
   "+g+mch": [
     {
       "type": 0,
       "value": "De hoofdtekst wordt gedeeltelijk geretourneerd in een uitvoer van meerdere delen van een actie"
+    }
+  ],
+  "+iMTt7": [
+    {
+      "type": 0,
+      "value": "Check to select this connection"
     }
   ],
   "+lpuMl": [
@@ -23,10 +47,28 @@
       "value": "Paginering"
     }
   ],
+  "/AtN16": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Darwin"
+    }
+  ],
+  "/B2CTz": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
       "value": "Hoofdtekst"
+    }
+  ],
+  "/Igb36": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Brisbane"
     }
   ],
   "/NDLmg": [
@@ -59,6 +101,24 @@
       "value": "Vereist. De verzameling waaruit items moeten worden samengevoegd."
     }
   ],
+  "/qu3zt": [
+    {
+      "type": 0,
+      "value": "0"
+    }
+  ],
+  "/rjP4U": [
+    {
+      "type": 0,
+      "value": "(UTC) Coordinated Universal Time"
+    }
+  ],
+  "/sMQhI": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Indiana (East)"
+    }
+  ],
   "/ut0u7": [
     {
       "type": 0,
@@ -75,6 +135,12 @@
     {
       "type": 0,
       "value": "Hiermee wordt de URL geretourneerd om de trigger of actie aan te roepen. Opmerking: deze functie kan alleen worden gebruikt in een httpWebhook en een apiConnectionWebhook en niet in een handmatige apiConnection, een apiConnection met een terugkeerpatroon of een apiConnection met http."
+    }
+  ],
+  "09oqLb": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Baku"
     }
   ],
   "0FzNJV": [
@@ -119,10 +185,22 @@
       "value": "Voltooid met nieuwe pogingen"
     }
   ],
+  "0hxr5j": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Chetumal"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
       "value": "Vereist. De tekenreeks die moet worden geconverteerd naar hoofdletters. Als een teken in de tekenreeks geen equivalent voor kleine letters heeft, wordt het teken ongewijzigd opgenomen in de geretourneerde tekenreeks."
+    }
+  ],
+  "0meqK1": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
   "0p+pJq": [
@@ -161,6 +239,12 @@
       "value": "Hiermee wordt de poort van een URI geretourneerd. Als de poort niet is opgegeven, wordt de standaardpoort voor het protocol geretourneerd"
     }
   ],
+  "14lYtE": [
+    {
+      "type": 0,
+      "value": "18"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
@@ -189,6 +273,12 @@
     {
       "type": 0,
       "value": "Het parameterargument naar een drijvend-kommagetal converteren"
+    }
+  ],
+  "1Ogj/V": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Jerusalem"
     }
   ],
   "1R6Vaa": [
@@ -243,6 +333,12 @@
       "value": "Geef een of meer expressies op die waar moeten zijn om de trigger te activeren."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Codeweergave weergeven"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -261,10 +357,22 @@
       "value": "Vereist. Het object dat moet worden gecontroleerd als dit kleiner is dan de vergelijkingswaarde."
     }
   ],
+  "1uGBLP": [
+    {
+      "type": 0,
+      "value": "5"
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Sluiten"
+    }
+  ],
+  "1zmMYu": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Caracas"
     }
   ],
   "23fENy": [
@@ -297,6 +405,24 @@
       "value": "Eindtijd"
     }
   ],
+  "2NYPLt": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30) Newfoundland"
+    }
+  ],
+  "2Noh96": [
+    {
+      "type": 0,
+      "value": "17"
+    }
+  ],
+  "2b1yD3": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Auckland, Wellington"
+    }
+  ],
   "2cVEMV": [
     {
       "type": 0,
@@ -309,10 +435,22 @@
       "value": "Vereist. De naam van de actie met een antwoord met formuliergegevens of -codes."
     }
   ],
+  "2ri1Kf": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Damascus"
+    }
+  ],
   "2tTQ0A": [
     {
       "type": 0,
       "value": "Aan"
+    }
+  ],
+  "2xhbE1": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Magadan"
     }
   ],
   "33+WHG": [
@@ -321,16 +459,46 @@
       "value": "Id"
     }
   ],
+  "3FoqCK": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Tbilisi"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
       "value": "Vereist. Het scheidingsteken."
     }
   ],
+  "3PgHCT": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Chisinau"
+    }
+  ],
+  "3TD2V5": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Dhaka"
+    }
+  ],
   "3X/ZDK": [
     {
       "type": 0,
       "value": "Upload of selecteer een uitvoerschema dat voor uw toewijzing moet worden gebruikt."
+    }
+  ],
+  "3afjx+": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Chita"
+    }
+  ],
+  "3jlz+B": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30) Tehran"
     }
   ],
   "3kI7xF": [
@@ -357,10 +525,22 @@
       "value": "Vereist. Het aantal van een opgegeven tijdseenheid dat moet worden afgetrokken."
     }
   ],
+  "3vqfeV": [
+    {
+      "type": 0,
+      "value": "3"
+    }
+  ],
   "3wagjT": [
     {
       "type": 0,
       "value": "invoer selecteren"
+    }
+  ],
+  "4/kJ8D": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Yerevan"
     }
   ],
   "47kOXr": [
@@ -373,6 +553,18 @@
     {
       "type": 0,
       "value": "Vereist. Het aantal dagen dat moet worden opgeteld. Kan negatief zijn om dagen af te trekken."
+    }
+  ],
+  "4Q7WzU": [
+    {
+      "type": 0,
+      "value": "Add a new connection"
+    }
+  ],
+  "4XdZNj": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) West Central Africa"
     }
   ],
   "4YKQAF": [
@@ -393,6 +585,12 @@
       "value": "Opmerkingen kunnen alleen worden toegevoegd tijdens de invoerfasen van een stap."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Toggle Minimap"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -409,6 +607,18 @@
     {
       "type": 0,
       "value": "Rondleiding/zelfstudie"
+    }
+  ],
+  "4wjJs0": [
+    {
+      "type": 0,
+      "value": "14"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Het invoerschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het invoerschema?"
     }
   ],
   "5J7j9k": [
@@ -453,6 +663,18 @@
       "value": "Vereist. Het object dat moet worden gecontroleerd als dit groter is dan de vergelijkingswaarde."
     }
   ],
+  "65FlWi": [
+    {
+      "type": 0,
+      "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6XR3FS": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Adelaide"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -477,6 +699,12 @@
       "value": "Vorige"
     }
   ],
+  "6pd1bE": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Arizona"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
@@ -487,6 +715,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "7KxCGX": [
+    {
+      "type": 0,
+      "value": "(UTC+10:30) Lord Howe Island"
     }
   ],
   "7QymrD": [
@@ -511,6 +745,12 @@
     {
       "type": 0,
       "value": "Hiermee wordt het aantal tikken (met een interval van 100 nanoseconden) sinds 1 januari 0001 00:00:00 UT geretourneerd van een tijdstempel voor een tekenreeks"
+    }
+  ],
+  "7lvqST": [
+    {
+      "type": 0,
+      "value": "Invalid"
     }
   ],
   "7yEdSt": [
@@ -549,6 +789,12 @@
       "value": "Vereist. Het object dat moet worden gecontroleerd als dit groter dan of gelijk is aan de waarde van het vergelijkingsobject."
     }
   ],
+  "8JEHiY": [
+    {
+      "type": 0,
+      "value": "Saturday"
+    }
+  ],
   "8JFxmV": [
     {
       "type": 0,
@@ -567,10 +813,22 @@
       "value": "Vereist. De tekenreeks die van URI-codering moeten worden voorzien."
     }
   ],
+  "8Y5xpK": [
+    {
+      "type": 0,
+      "value": "Thursday"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
       "value": "Met het asynchrone patroon blijft de Logic Apps-engine navragen bij de URL die is opgegeven in de locatieheader van het antwoord tot een definitieve status wordt bereikt, als door de externe server wordt aangegeven dat de aanvraag is geaccepteerd voor verwerking met een 202 (Accepted)-antwoord."
+    }
+  ],
+  "8pPivj": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Norfolk Island"
     }
   ],
   "8to63i": [
@@ -603,10 +861,28 @@
       "value": "Er wordt een enkelvoudige matrix of enkelvoudig object geretourneerd waarvoor gemeenschappelijke elementen in matrixen of objecten zijn ingevoerd"
     }
   ],
+  "9/vdrb": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "949s+r": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Ulaanbaatar"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
       "value": "Connector"
+    }
+  ],
+  "9EmN2M": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "9JuvQ4": [
@@ -619,6 +895,12 @@
     {
       "type": 0,
       "value": "Geeft als resultaat een object met een extra eigenschapwaardepaar"
+    }
+  ],
+  "9SuA/E": [
+    {
+      "type": 0,
+      "value": "12"
     }
   ],
   "9b4xDa": [
@@ -639,10 +921,34 @@
       "value": "Een uitvoerschema selecteren"
     }
   ],
+  "9pdXmX": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+    }
+  ],
+  "9pl7QP": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Atlantic Time (Canada)"
+    }
+  ],
   "9u/Ae3": [
     {
       "type": 0,
       "value": "Indien beide parameters waar zijn, wordt Waar geretourneerd"
+    }
+  ],
+  "AIL7WX": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "ALImBL": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Monrovia, Reykjavik"
     }
   ],
   "ANbEeQ": [
@@ -657,16 +963,68 @@
       "value": "Gereed"
     }
   ],
+  "AYaqW/": [
+    {
+      "type": 0,
+      "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
       "value": "Vereist. De tekenreeks die moet worden gecodeerd naar de Base 64-indeling."
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Acties"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actie"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Acties"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
       "value": "Vereist. De index van het onderdeel dat moet worden opgehaald."
+    }
+  ],
+  "BAgRzO": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Coordinated Universal Time-08"
     }
   ],
   "BBD8Em": [
@@ -699,6 +1057,18 @@
       "value": "Vereist. De tekenreeks waaruit de onveilige tekens voor URL's moeten worden gedecodeerd."
     }
   ],
+  "BSHFiw": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Perth"
+    }
+  ],
+  "BVOUxP": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Havana"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -729,6 +1099,12 @@
       "value": "Een verbinding is vereist"
     }
   ],
+  "Cy9qeQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -747,10 +1123,28 @@
       "value": "Duur"
     }
   ],
+  "DfS13/": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Aleutian Islands"
+    }
+  ],
+  "DuXV2M": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Azores"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
       "value": "Ctrl + Y"
+    }
+  ],
+  "E9OS+9": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Coordinated Universal Time-09"
     }
   ],
   "ECZC6Y": [
@@ -765,16 +1159,46 @@
       "value": "Antwoord"
     }
   ],
+  "EYqGxA": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Athens, Bucharest"
+    }
+  ],
   "EZz5q7": [
     {
       "type": 0,
       "value": "Vereist. De index van waar de subtekenreeks moet worden geëxtraheerd."
     }
   ],
+  "EdzoIs": [
+    {
+      "type": 0,
+      "value": "1"
+    }
+  ],
+  "Eqgm4v": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+    }
+  ],
+  "ExaACE": [
+    {
+      "type": 0,
+      "value": "Connection display name"
+    }
+  ],
   "F3IDl8": [
     {
       "type": 0,
       "value": "Vereist. Het aantal van een opgegeven tijdseenheid dat moet worden opgeteld."
+    }
+  ],
+  "F489Vg": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Irkutsk"
     }
   ],
   "FDF4Qb": [
@@ -793,6 +1217,18 @@
     {
       "type": 0,
       "value": "is mislukt"
+    }
+  ],
+  "FHsP9y": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45) Kathmandu"
+    }
+  ],
+  "FIT7i0": [
+    {
+      "type": 0,
+      "value": "20"
     }
   ],
   "FN5zHQ": [
@@ -831,6 +1267,12 @@
       "value": "Het begin van de dag van een ingevoerd tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
+  "FXC0Zi": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Baghdad"
+    }
+  ],
   "FXLR5M": [
     {
       "offset": 0,
@@ -863,6 +1305,12 @@
       "value": "hours"
     }
   ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Annuleren"
+    }
+  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -873,6 +1321,12 @@
     {
       "type": 0,
       "value": "De eerste index van een waarde van een tekenreeks wordt geretourneerd (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
+    }
+  ],
+  "FiyQjU": [
+    {
+      "type": 0,
+      "value": "2"
     }
   ],
   "FslNgF": [
@@ -923,6 +1377,12 @@
       "value": "Voer een parameternaam in."
     }
   ],
+  "GtDOFg": [
+    {
+      "type": 0,
+      "value": "Cancel the selection"
+    }
+  ],
   "GzQQqH": [
     {
       "type": 0,
@@ -965,10 +1425,34 @@
       "value": "Selecteer een kaart om de inhoud weer te geven"
     }
   ],
+  "IA+Ogm": [
+    {
+      "type": 0,
+      "value": "22"
+    }
+  ],
+  "IPbBB2": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Fiji"
+    }
+  ],
+  "IUE/lQ": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Cabo Verde Is."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
       "value": "Hiermee wordt een tekenreekstijdstempel die is ingevoerd vanuit een UTC-tijdzone geconverteerd naar een doeltijdzone"
+    }
+  ],
+  "IjZFjQ": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
   "IngtMG": [
@@ -1043,6 +1527,12 @@
       "value": "Naam:"
     }
   ],
+  "JpthWY": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Montevideo"
+    }
+  ],
   "Jq2Y/o": [
     {
       "type": 0,
@@ -1079,6 +1569,70 @@
       "value": "Uitvoerschema"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cases"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Case"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "Khc8lS": [
+    {
+      "type": 0,
+      "value": "(UTC-09:30) Marquesas Islands"
+    }
+  ],
+  "KlvTze": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "KoBDbT": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Coordinated Universal Time-02"
+    }
+  ],
+  "Kw3bWO": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Istanbul"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1091,10 +1645,28 @@
       "value": "Het onderdeel dag van de week van een tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Waarschuwing"
+    }
+  ],
+  "LMB8am": [
+    {
+      "type": 0,
+      "value": "Creating..."
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Hiermee wordt het schema van een URI geretourneerd"
+    }
+  ],
+  "Lft/is": [
+    {
+      "type": 0,
+      "value": "Add new"
     }
   ],
   "LoGUT3": [
@@ -1115,10 +1687,28 @@
       "value": "Vereist. De expressies die waar kunnen zijn."
     }
   ],
+  "LvpxiA": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
+  "Lwe7tQ": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+    }
+  ],
   "M0HMjE": [
     {
       "type": 0,
       "value": "Opmerking toevoegen"
+    }
+  ],
+  "M48CGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Solomon Is., New Caledonia"
     }
   ],
   "M6U2LE": [
@@ -1193,6 +1783,30 @@
       "value": "Status"
     }
   ],
+  "NeyUAh": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) City of Buenos Aires"
+    }
+  ],
+  "NkUgXU": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "NvANon": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Alaska"
+    }
+  ],
+  "NvJDn/": [
+    {
+      "type": 0,
+      "value": "Tuesday"
+    }
+  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -1217,6 +1831,24 @@
       "value": "Bewerkingsopties:"
     }
   ],
+  "OGUVGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Bougainville Island"
+    }
+  ],
+  "OH9xlX": [
+    {
+      "type": 0,
+      "value": "10"
+    }
+  ],
+  "OKszbi": [
+    {
+      "type": 0,
+      "value": "Connection Name"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -1227,6 +1859,12 @@
     {
       "type": 0,
       "value": "Hiermee worden de resultaten geretourneerd van de acties op het hoogste niveau in de opgegeven actie met bereik, zoals een For_each-, Until- of Scope-actie."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "Al het niet-opgeslagen werk gaat verloren. Wilt u doorgaan met het verwijderen van alles?"
     }
   ],
   "Oib1mL": [
@@ -1283,6 +1921,12 @@
       "value": "Vereist. De verzameling waaruit het eerste object moet worden gehaald."
     }
   ],
+  "PBvR9Q": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Araguaina"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -1325,16 +1969,34 @@
       "value": "Afgebroken"
     }
   ],
+  "PeLrFb": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+    }
+  ],
   "PfCJlN": [
     {
       "type": 0,
       "value": "Werkstroomfuncties"
     }
   ],
+  "PmB0J7": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Turks and Caicos"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
       "value": "Er wordt een base 64-weergave van de ingevoerde tekenreeks geretourneerd"
+    }
+  ],
+  "Q+oELo": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Izhevsk, Samara"
     }
   ],
   "Q/7unA": [
@@ -1471,10 +2133,22 @@
       "value": "minutes"
     }
   ],
+  "RkgScy": [
+    {
+      "type": 0,
+      "value": "6"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
       "value": "Verwijderen"
+    }
+  ],
+  "SADSSs": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
     }
   ],
   "SKXopi": [
@@ -1523,6 +2197,12 @@
       "value": "Stel de tracerings-id voor de uitvoering in. Bij splitOn is deze tracerings-id is voor de initiatie-aanvraag."
     }
   ],
+  "T6VIym": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1547,6 +2227,18 @@
       "value": "Er wordt een tekenreeks voor elk item van een matrix geretourneerd, gekoppeld door een scheidingsteken"
     }
   ],
+  "TNEttQ": [
+    {
+      "type": 0,
+      "value": "Friday"
+    }
+  ],
+  "TNzcrv": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Vladivostok"
+    }
+  ],
   "TO7qos": [
     {
       "type": 0,
@@ -1557,6 +2249,12 @@
     {
       "type": 0,
       "value": "Een waarde invoeren"
+    }
+  ],
+  "TX4Kdr": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "TZv5JE": [
@@ -1577,6 +2275,18 @@
       "value": "Tags"
     }
   ],
+  "ToPmjE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Cuiaba"
+    }
+  ],
+  "TqPfth": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -1589,10 +2299,22 @@
       "value": "Samenvouwen/uitvouwen"
     }
   ],
+  "U1NiVg": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Central America"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
       "value": "Er wordt een matrix van gehele getallen gegenereerd dat begint bij een bepaald getal"
+    }
+  ],
+  "U56j9a": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Easter Island"
     }
   ],
   "UCNM4L": [
@@ -1613,10 +2335,22 @@
       "value": "Kan de inhoud niet weergegeven vanwege de beveiligingsconfiguratie."
     }
   ],
+  "UkSZnQ": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
       "value": "Klik om het item te verwijderen"
+    }
+  ],
+  "UtyRCH": [
+    {
+      "type": 0,
+      "value": "Enter a name for the connection"
     }
   ],
   "V+/c21": [
@@ -1631,10 +2365,22 @@
       "value": "Minder weergeven"
     }
   ],
+  "VE3cxq": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
       "value": "De opgegeven naam van de werkstroomuitvoering is niet geldig."
+    }
+  ],
+  "VUH9aj": [
+    {
+      "type": 0,
+      "value": "23"
     }
   ],
   "VVfYvq": [
@@ -1743,10 +2489,22 @@
       "value": "Opnieuw proberen"
     }
   ],
+  "XN9RvJ": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Baja California"
+    }
+  ],
   "XOzn/3": [
     {
       "type": 0,
       "value": "Verbindingsnaam"
+    }
+  ],
+  "XTYYks": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Seoul"
     }
   ],
   "XTuxmH": [
@@ -1765,6 +2523,18 @@
     {
       "type": 0,
       "value": " seconden"
+    }
+  ],
+  "XX1ioe": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Kuwait, Riyadh"
+    }
+  ],
+  "XaS4ds": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Pacific Time (US & Canada)"
     }
   ],
   "Xnn0uj": [
@@ -1873,6 +2643,12 @@
       "value": "Het onderdeel dag van de maand van een tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
+  "ZQ4lji": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -1891,6 +2667,18 @@
       "value": "Deze bewerking is al verwijderd."
     }
   ],
+  "ZnGRMP": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Tomsk"
+    }
+  ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Het uitvoerschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het uitvoerschema?"
+    }
+  ],
   "a64zhX": [
     {
       "type": 0,
@@ -1903,6 +2691,12 @@
       "value": "Vereist. Het getal dat moet worden gedeeld door de deler."
     }
   ],
+  "a7x6VI": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Taipei"
+    }
+  ],
   "aAXnqw": [
     {
       "type": 0,
@@ -1913,6 +2707,12 @@
     {
       "type": 0,
       "value": "Vereist. Het aantal objecten dat moet worden verwijderd uit het voorste deel van de verzameling. Dit aantal moet een geheel getal zijn."
+    }
+  ],
+  "aH9SV7": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ashgabat, Tashkent"
     }
   ],
   "aK4iLW": [
@@ -1939,6 +2739,12 @@
       "value": "Waarde"
     }
   ],
+  "bS5DyV": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kaliningrad"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1963,6 +2769,18 @@
       "value": "De maximumwaarde in de invoermatrix van getallen wordt geretourneerd"
     }
   ],
+  "bnStSJ": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+    }
+  ],
+  "bx3qeC": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Brasilia"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -1973,6 +2791,12 @@
     {
       "type": 0,
       "value": "Doen"
+    }
+  ],
+  "c1XmvN": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Nuku'alofa"
     }
   ],
   "c2XklE": [
@@ -2011,6 +2835,18 @@
       "value": "Vereist. De waarde waarvan de index moet worden doorzocht."
     }
   ],
+  "cT2MlP": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Chokurdakh"
+    }
+  ],
+  "cVIZTQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Tripoli"
+    }
+  ],
   "ci6ex1": [
     {
       "type": 0,
@@ -2035,6 +2871,12 @@
       "value": "Begintijd"
     }
   ],
+  "cr0UnG": [
+    {
+      "type": 0,
+      "value": "9"
+    }
+  ],
   "cscezV": [
     {
       "type": 0,
@@ -2045,6 +2887,12 @@
     {
       "type": 0,
       "value": "Opmerking verwijderen"
+    }
+  ],
+  "d4xMIx": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
   "dDYCuU": [
@@ -2065,6 +2913,12 @@
       "value": "Geef het gedrag en de mogelijkheden op voor het overbrengen van inhoud via HTTP. Grote berichten worden mogelijk opgesplitst in kleinere aanvragen aan de connector, om het uploaden van grote berichten toe te staan. Meer informatie vindt u op http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
+  "dUZi34": [
+    {
+      "type": 0,
+      "value": "(UTC+12:45) Chatham Islands"
+    }
+  ],
   "dWFyfN": [
     {
       "type": 0,
@@ -2075,6 +2929,18 @@
     {
       "type": 0,
       "value": "potloodpictogram"
+    }
+  ],
+  "dWx21B": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Sakhalin"
+    }
+  ],
+  "dgAu27": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Greenland"
     }
   ],
   "dhvk0u": [
@@ -2101,10 +2967,22 @@
       "value": "De tekenreeks wordt met een scheidingsteken gesplitst"
     }
   ],
+  "e00zot": [
+    {
+      "type": 0,
+      "value": "How often do you want to check for items?"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Niet opgegeven"
+    }
+  ],
+  "eGa1Wa": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ekaterinburg"
     }
   ],
   "eHgi14": [
@@ -2155,10 +3033,22 @@
       "value": "Indien het eerste argument groter dan of gelijk aan het tweede is, wordt Waar geretourneerd"
     }
   ],
+  "faSDuD": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Port Louis"
+    }
+  ],
   "fg/34o": [
     {
       "type": 0,
       "value": "Logische functies"
+    }
+  ],
+  "froV/0": [
+    {
+      "type": 0,
+      "value": "(UTC+04:30) Kabul"
     }
   ],
   "ftwXvc": [
@@ -2179,6 +3069,12 @@
       "value": "Publiceren"
     }
   ],
+  "g5mMuM": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -2197,10 +3093,22 @@
       "value": "Het resultaat van het delen van de twee getallen wordt geretourneerd"
     }
   ],
+  "gF+0/N": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Amman"
+    }
+  ],
   "gIK0WG": [
     {
       "type": 0,
       "value": "Vereist. Een booleaanse waarde waarmee wordt bepaald welke waarde door de expressie moet worden opgehaald."
+    }
+  ],
+  "gIc0YJ": [
+    {
+      "type": 0,
+      "value": "Connection name"
     }
   ],
   "gKq3Jv": [
@@ -2227,10 +3135,28 @@
       "value": "Triggervoorwaarden"
     }
   ],
+  "gg0j4S": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gj+jEr": [
+    {
+      "type": 0,
+      "value": "Save the selected connection"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
       "value": "Bij gebruik in de Until-lus retourneert deze functie de huidige iteratie-index van de opgegeven lus."
+    }
+  ],
+  "hBLPXK": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan"
     }
   ],
   "hN7iBP": [
@@ -2333,6 +3259,12 @@
       "value": "Vereist. De URI die moet worden geparseerd."
     }
   ],
+  "iRe/g7": [
+    {
+      "type": 0,
+      "value": "21"
+    }
+  ],
   "iRjBf4": [
     {
       "type": 0,
@@ -2357,6 +3289,12 @@
       "value": "Annuleren"
     }
   ],
+  "iq+tiv": [
+    {
+      "type": 0,
+      "value": "11"
+    }
+  ],
   "iql+jn": [
     {
       "type": 1,
@@ -2371,6 +3309,12 @@
     {
       "type": 0,
       "value": "Testen"
+    }
+  ],
+  "j1VU25": [
+    {
+      "type": 0,
+      "value": "(UTC+14:00) Kiritimati Island"
     }
   ],
   "j2MU0b": [
@@ -2395,6 +3339,12 @@
     {
       "type": 0,
       "value": "Vereist. De expressie die negatief wordt gemaakt."
+    }
+  ],
+  "jMLmag": [
+    {
+      "type": 0,
+      "value": "Create New"
     }
   ],
   "jQ0Aqj": [
@@ -2457,6 +3407,12 @@
       "value": "Voeg invoerschema toe"
     }
   ],
+  "kDsud+": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Cayenne, Fortaleza"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -2487,16 +3443,34 @@
       "value": "Downloaden (Alt/Option + klikken)"
     }
   ],
+  "kZCX7t": [
+    {
+      "type": 0,
+      "value": "Monday"
+    }
+  ],
   "kZuYgD": [
     {
       "type": 0,
       "value": "Indien het eerste argument kleiner dan het tweede is, wordt Waar geretourneerd"
     }
   ],
+  "kc5Mui": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Mid-Atlantic - Old"
+    }
+  ],
   "keb4r1": [
     {
       "type": 0,
       "value": "Indien twee waarden gelijk zijn, wordt Waar geretourneerd"
+    }
+  ],
+  "kneb9/": [
+    {
+      "type": 0,
+      "value": "(UTC-12:00) International Date Line West"
     }
   ],
   "knylNW": [
@@ -2521,6 +3495,18 @@
     {
       "type": 0,
       "value": " minuten"
+    }
+  ],
+  "lFve22": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+    }
+  ],
+  "lIPWQ6": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
     }
   ],
   "lPTdSf": [
@@ -2601,6 +3587,12 @@
       "value": "De invoertekensreeks wordt door URL gecodeerd"
     }
   ],
+  "mZCHKf": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+    }
+  ],
   "mZRMD9": [
     {
       "type": 0,
@@ -2611,6 +3603,24 @@
     {
       "type": 0,
       "value": "Een beperking voor Logic Apps instellen om te voorkomen dat de uitgaande aanvraag headers met metagegevens van de werkstroom bevat."
+    }
+  ],
+  "mx2IMJ": [
+    {
+      "type": 0,
+      "value": "13"
+    }
+  ],
+  "n+F7e2": [
+    {
+      "type": 0,
+      "value": "15"
+    }
+  ],
+  "n20T2h": [
+    {
+      "type": 0,
+      "value": "7"
     }
   ],
   "n35O/+": [
@@ -2661,6 +3671,12 @@
       "value": "Sluiten"
     }
   ],
+  "nx25nq": [
+    {
+      "type": 0,
+      "value": "19"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2699,16 +3715,34 @@
       "value": "Inhoudsoverdracht"
     }
   ],
+  "oRvVIW": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Krasnoyarsk"
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Voer de uitvoerings-id in om de uitvoering te openen"
     }
   ],
+  "ol+TkT": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Salvador"
+    }
+  ],
   "orhWzV": [
     {
       "type": 0,
       "value": "Kan het schema niet laden. Probeer het opnieuw."
+    }
+  ],
+  "oxH1L/": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
     }
   ],
   "p/0r2N": [
@@ -2721,6 +3755,12 @@
     {
       "type": 0,
       "value": "Kopteksten"
+    }
+  ],
+  "p5tz8/": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Samoa"
     }
   ],
   "pIczsS": [
@@ -2739,6 +3779,12 @@
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "pUeUDw": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
     }
   ],
   "pXmFGf": [
@@ -2801,6 +3847,12 @@
       "value": "Er wordt een geheel getal in seconden aan een ingevoerd tijdstempel als tekenreeks toegevoegd"
     }
   ],
+  "q9hf8i": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -2817,6 +3869,12 @@
     {
       "type": 0,
       "value": "is voltooid"
+    }
+  ],
+  "qQoQFv": [
+    {
+      "type": 0,
+      "value": "Invalid connection."
     }
   ],
   "qSejoi": [
@@ -2875,10 +3933,22 @@
       "value": "Vereist. De waarde die wordt geconverteerd naar een geheel getal."
     }
   ],
+  "qq/bq0": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Yakutsk"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
       "value": "Met een asynchroon antwoord kan de logische app antwoorden met een 202-melding (Geaccepteerd) om aan te geven dat het verzoek wordt verwerkt. Er wordt een locatieheader verstrekt om de eindstatus op te halen."
+    }
+  ],
+  "r1FQhf": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Windhoek"
     }
   ],
   "r43nMc": [
@@ -2911,6 +3981,12 @@
       "value": "Kaarttitel"
     }
   ],
+  "rDt4Iu": [
+    {
+      "type": 0,
+      "value": "Is connection invalid"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -2921,6 +3997,12 @@
     {
       "type": 0,
       "value": "Er wordt een weergave met URI-codering van een waarde geretourneerd"
+    }
+  ],
+  "rstpaK": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Central Time (US & Canada)"
     }
   ],
   "s5RV9B": [
@@ -2939,6 +4021,12 @@
     {
       "type": 0,
       "value": "Er wordt een matrix van waarden geretourneerd die overeenkomen met de sleutelnaam van de triggeruitvoer van formuliergegevens of formuliercodes"
+    }
+  ],
+  "sFwHQc": [
+    {
+      "type": 0,
+      "value": "Cancel creating a connection"
     }
   ],
   "sW47JR": [
@@ -2977,6 +4065,12 @@
       "value": "Sleutel"
     }
   ],
+  "siYGSo": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Beirut"
+    }
+  ],
   "soqP+Z": [
     {
       "type": 0,
@@ -3005,6 +4099,12 @@
     {
       "type": 0,
       "value": "De URL wordt geretourneerd om de trigger of actie aan te roepen"
+    }
+  ],
+  "tELkSC": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
   "tImHz/": [
@@ -3043,6 +4143,12 @@
       "value": "Type"
     }
   ],
+  "tP+5fA": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
   "tVmUCd": [
     {
       "type": 0,
@@ -3061,10 +4167,34 @@
       "value": "Vereist. Het aantal uren dat moet worden opgeteld. Kan negatief zijn om uren af te trekken."
     }
   ],
+  "teZwo6": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "tsmuoF": [
+    {
+      "type": 0,
+      "value": "Display Name"
+    }
+  ],
   "tu8I7j": [
     {
       "type": 0,
       "value": "Bewerkingen"
+    }
+  ],
+  "u/KSPz": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Santiago"
+    }
+  ],
+  "u6Gdft": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
   "uN4zFU": [
@@ -3077,6 +4207,12 @@
     {
       "type": 0,
       "value": "Vereist. De verzamelingen die moeten worden geëvalueerd. Een object dat in een van de verzamelingen wordt weergegeven, wordt ook in het resultaat weergegeven."
+    }
+  ],
+  "uRurmg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Guam, Port Moresby"
     }
   ],
   "uUlBZ8": [
@@ -3103,6 +4239,24 @@
       "value": "Vereist. De tekenreeks die de waarde mag bevatten."
     }
   ],
+  "udNlco": [
+    {
+      "type": 0,
+      "value": "(UTC-11:00) Coordinated Universal Time-11"
+    }
+  ],
+  "ui7GCl": [
+    {
+      "type": 0,
+      "value": "16"
+    }
+  ],
+  "urAHv1": [
+    {
+      "type": 0,
+      "value": "4"
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
@@ -3119,6 +4273,12 @@
     {
       "type": 0,
       "value": "Er wordt een wereldwijd unieke tekenreeks gegenereerd (GUID)"
+    }
+  ],
+  "vD2lQy": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Asuncion"
     }
   ],
   "vEBhDX": [
@@ -3139,16 +4299,42 @@
       "value": "Verwijderen"
     }
   ],
+  "vXwYXe": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Astana"
+    }
+  ],
   "va40BJ": [
     {
       "type": 0,
       "value": "Vereist. De naam van de actie met de gewenste uitvoer."
     }
   ],
+  "vb/okJ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Cairo"
+    }
+  ],
   "vcBAuU": [
     {
       "type": 0,
       "value": "heeft een time-out gehad"
+    }
+  ],
+  "vr70Gn": [
+    {
+      "type": 0,
+      "value": "Create a connection for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "vwH/XV": [
@@ -3163,10 +4349,22 @@
       "value": "Werkstroomeigenschappen"
     }
   ],
+  "w5Hhig": [
+    {
+      "type": 0,
+      "value": "Sunday"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
       "value": "Hiermee wordt een geheel getal van een opgegeven tijdseenheid afgetrokken van een ingevoerd tijdstempel"
+    }
+  ],
+  "wF7C+h": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "wFCkpM": [
@@ -3217,6 +4415,12 @@
       "value": "Callback-URL:"
     }
   ],
+  "x+6ccf": [
+    {
+      "type": 0,
+      "value": "Wednesday"
+    }
+  ],
   "x0or2o": [
     {
       "type": 0,
@@ -3259,6 +4463,18 @@
       "value": "Hiermee wordt het pad van een URI geretourneerd. Als het pad niet is opgegeven, wordt / geretourneerd"
     }
   ],
+  "xZhieP": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Islamabad, Karachi"
+    }
+  ],
+  "xb/DIr": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Coordinated Universal Time+12"
+    }
+  ],
   "xt5TeT": [
     {
       "type": 0,
@@ -3289,6 +4505,12 @@
       "value": "Vereist. De waarde die wordt geconverteerd naar een matrix."
     }
   ],
+  "yIZP4R": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Hawaii"
+    }
+  ],
   "yOkPGx": [
     {
       "type": 0,
@@ -3299,10 +4521,40 @@
       "value": "connectorName"
     }
   ],
+  "yVh9kr": [
+    {
+      "type": 0,
+      "value": "8"
+    }
+  ],
+  "yoCi15": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one."
+    }
+  ],
+  "yph4eq": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
       "value": "Datum- en tijdfuncties"
+    }
+  ],
+  "yxsn7s": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Casablanca"
+    }
+  ],
+  "yyYtZV": [
+    {
+      "type": 0,
+      "value": "Connection gateway"
     }
   ],
   "z4YYlQ": [
@@ -3323,10 +4575,22 @@
       "value": "Vereist. De tekenreeks die wordt geconverteerd naar een systeemeigen waarde."
     }
   ],
+  "zbtUQ/": [
+    {
+      "type": 0,
+      "value": "(UTC+08:30) Pyongyang"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "Converteert een tekenreeks, met optioneel een landinstelling en een notatie naar een datum"
+    }
+  ],
+  "zggBvC": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Nairobi"
     }
   ],
   "ziYCiA": [

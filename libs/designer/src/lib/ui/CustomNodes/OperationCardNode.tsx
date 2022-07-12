@@ -11,7 +11,7 @@ import {
   useNodeMetadata,
   useOperationInfo,
 } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesBySource } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
 import { isLeafNodeFromEdges } from '../../core/utils/graph';
 import { DropZone } from '../connections/dropzone';

@@ -32,7 +32,7 @@ export type PanelContainerProps = {
   layerProps?: ILayerProps;
   onDismissButtonClicked?(): void;
   trackEvent(data: PageActionTelemetryData): void;
-  setSelectedTab: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setSelectedTab: (tabName: string | undefined) => void;
   toggleCollapse: () => void;
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;

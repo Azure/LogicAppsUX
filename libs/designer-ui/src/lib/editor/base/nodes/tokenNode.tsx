@@ -1,8 +1,19 @@
 import { InputToken } from '../../../token/inputToken';
-import type { LexicalNode } from 'lexical';
+import type { LexicalNode, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
 import React from 'react';
 
+export type SerailizedTokenNode = Spread<
+  {
+    icon: string;
+    title: string;
+    description?: string;
+    brandColor?: string;
+    type: 'token';
+    version: 1;
+  },
+  SerializedLexicalNode
+>;
 export class TokenNode extends DecoratorNode<JSX.Element> {
   __brandColor?: string;
   __description?: string;
@@ -10,11 +21,31 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   __title: string;
 
   static getType() {
-    return 'inputToken';
+    return 'token';
   }
 
   static clone(node: TokenNode) {
     return new TokenNode(node.__icon, node.__title, node.__description, node.__brandColor, node.__key);
+  }
+
+  static importJSON(serializedTokenNode: SerailizedTokenNode): TokenNode {
+    return new TokenNode(
+      serializedTokenNode.icon,
+      serializedTokenNode.title,
+      serializedTokenNode.description,
+      serializedTokenNode.brandColor
+    );
+  }
+
+  exportJSON(): SerailizedTokenNode {
+    return {
+      title: this.__title,
+      icon: this.__icon,
+      description: this.__description,
+      brandColor: this.__brandColor,
+      type: 'token',
+      version: 1,
+    };
   }
 
   constructor(icon: string, title: string, description?: string, brandColor?: string, key?: string) {
@@ -43,6 +74,6 @@ export function $createTokenNode(icon: string, title: string, description?: stri
   return new TokenNode(icon, title, description, brandColor);
 }
 
-export function $isTokenNode(node: LexicalNode) {
+export function $isTokenNode(node: LexicalNode | null): node is TokenNode {
   return node instanceof TokenNode;
 }

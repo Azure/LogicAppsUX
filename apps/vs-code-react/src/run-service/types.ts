@@ -7,8 +7,9 @@ export interface IRunService {
 }
 
 export interface IApiService {
-  getMoreWorkflows(continuationToken: string): Promise<any>;
-  getWorkflows(): Promise<any>;
+  getWorkflows(subscriptionId: string, iseId: string): Promise<any>;
+  getSubscriptions(): Promise<any>;
+  getIse(selectedSubscription: string): Promise<any>;
 }
 
 export interface ArmResources<T> {
@@ -153,20 +154,15 @@ export enum ProjectName {
 
 export interface WorkflowProperties {
   id: string;
-  location: string;
   name: string;
-  resourceGroup: string;
-  subscriptionId: string;
   type: string;
+  location: string;
+  tags: Record<string, string>;
+  properties: Record<string, any>;
 }
 
 export interface Workflows {
-  $skipToken: string;
-  count: number;
-  data: Array<WorkflowProperties>;
-  facets: Record<string, string>;
-  resultTruncated: string;
-  totalRecords: number;
+  value: Array<WorkflowProperties>;
 }
 
 export interface WorkflowsList {
@@ -181,11 +177,47 @@ export interface OutletContext {
   selectedWorkflows: Array<WorkflowsList>;
 }
 
-export interface ISelectedListProps {
-  selectedItems: Array<WorkflowsList>;
-}
-
 export enum QueryKeys {
   workflowsData = 'workflowsData',
+  subscriptionData = 'subscriptionData',
   runsData = 'runsData',
+  iseData = 'iseData',
+}
+
+export interface ISubscription {
+  id: string;
+  subscriptionId: string;
+  subscriptionName: string;
+}
+
+export type ExportData = {
+  selectedWorkflows: Array<WorkflowsList>;
+  selectedSubscription: string;
+  selectedIse: string;
+};
+
+export enum ResourceType {
+  workflows = 'workflows',
+  subscriptions = 'subscriptions',
+  ise = 'ise',
+}
+
+export interface IIse {
+  id: string;
+  subscriptionId: string;
+  iseName: string;
+  location: string;
+  resourceGroup: string;
+}
+
+export interface IDropDownOption {
+  key: string;
+  text: string;
+}
+
+export enum RouteName {
+  export = 'export',
+  instance_selection = 'instance-selection',
+  workflows_selection = 'workflows-selection',
+  overview = 'overview',
 }

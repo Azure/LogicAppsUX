@@ -1,14 +1,38 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
       "value": "フィルター"
     }
   ],
+  "+W9fkq": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+    }
+  ],
+  "+dlOgj": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Haiti"
+    }
+  ],
   "+g+mch": [
     {
       "type": 0,
       "value": "アクションのマルチパート出力のパートの本文を返します"
+    }
+  ],
+  "+iMTt7": [
+    {
+      "type": 0,
+      "value": "Check to select this connection"
     }
   ],
   "+lpuMl": [
@@ -23,10 +47,28 @@
       "value": "改ページ"
     }
   ],
+  "/AtN16": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Darwin"
+    }
+  ],
+  "/B2CTz": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
       "value": "本文"
+    }
+  ],
+  "/Igb36": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Brisbane"
     }
   ],
   "/NDLmg": [
@@ -59,6 +101,24 @@
       "value": "必須。結合する項目が含まれているコレクション。"
     }
   ],
+  "/qu3zt": [
+    {
+      "type": 0,
+      "value": "0"
+    }
+  ],
+  "/rjP4U": [
+    {
+      "type": 0,
+      "value": "(UTC) Coordinated Universal Time"
+    }
+  ],
+  "/sMQhI": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Indiana (East)"
+    }
+  ],
   "/ut0u7": [
     {
       "type": 0,
@@ -75,6 +135,12 @@
     {
       "type": 0,
       "value": "トリガーまたはアクションを呼び出すための URL を返します。注: この関数は、httpWebhook と apiConnectionWebhook のみで使用できます。manual、recurrence、http、または apiConnection では使用できません。"
+    }
+  ],
+  "09oqLb": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Baku"
     }
   ],
   "0FzNJV": [
@@ -119,10 +185,22 @@
       "value": "再試行により成功"
     }
   ],
+  "0hxr5j": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Chetumal"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
       "value": "必須。大文字に変換する文字列。文字列に含まれる文字に大文字に相当するものがない場合、その文字は変更されないまま、返される文字列に含まれます。"
+    }
+  ],
+  "0meqK1": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
   "0p+pJq": [
@@ -161,6 +239,12 @@
       "value": "URI からポートを返します。ポートが指定されていない場合は、プロトコルの既定のポートを返します"
     }
   ],
+  "14lYtE": [
+    {
+      "type": 0,
+      "value": "18"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
@@ -189,6 +273,12 @@
     {
       "type": 0,
       "value": "パラメーターの引数を浮動小数点数に変換します"
+    }
+  ],
+  "1Ogj/V": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Jerusalem"
     }
   ],
   "1R6Vaa": [
@@ -232,6 +322,12 @@
       "value": "トリガーを起動するために true にすべき 1 つまたは複数の式を指定します。"
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "コード ビューの表示"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -250,10 +346,22 @@
       "value": "必須。比較される値より小さいかどうかを調べるオブジェクト。"
     }
   ],
+  "1uGBLP": [
+    {
+      "type": 0,
+      "value": "5"
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "無視"
+    }
+  ],
+  "1zmMYu": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Caracas"
     }
   ],
   "23fENy": [
@@ -286,6 +394,24 @@
       "value": "終了時刻"
     }
   ],
+  "2NYPLt": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30) Newfoundland"
+    }
+  ],
+  "2Noh96": [
+    {
+      "type": 0,
+      "value": "17"
+    }
+  ],
+  "2b1yD3": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Auckland, Wellington"
+    }
+  ],
   "2cVEMV": [
     {
       "type": 0,
@@ -298,10 +424,22 @@
       "value": "必須。form-data または form-encoded 応答を含むアクションの名前。"
     }
   ],
+  "2ri1Kf": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Damascus"
+    }
+  ],
   "2tTQ0A": [
     {
       "type": 0,
       "value": "オン"
+    }
+  ],
+  "2xhbE1": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Magadan"
     }
   ],
   "33+WHG": [
@@ -310,16 +448,46 @@
       "value": "識別子"
     }
   ],
+  "3FoqCK": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Tbilisi"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
       "value": "必須。区切り記号。"
     }
   ],
+  "3PgHCT": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Chisinau"
+    }
+  ],
+  "3TD2V5": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Dhaka"
+    }
+  ],
   "3X/ZDK": [
     {
       "type": 0,
       "value": "マップに使用する出力スキーマをアップロードまたは選択します。"
+    }
+  ],
+  "3afjx+": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Chita"
+    }
+  ],
+  "3jlz+B": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30) Tehran"
     }
   ],
   "3kI7xF": [
@@ -346,10 +514,22 @@
       "value": "必須。減算する、指定された時間単位の数です。"
     }
   ],
+  "3vqfeV": [
+    {
+      "type": 0,
+      "value": "3"
+    }
+  ],
   "3wagjT": [
     {
       "type": 0,
       "value": "入力の選択"
+    }
+  ],
+  "4/kJ8D": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Yerevan"
     }
   ],
   "47kOXr": [
@@ -362,6 +542,18 @@
     {
       "type": 0,
       "value": "必須。追加する日数。負の値を指定すると、日数を減算できます。"
+    }
+  ],
+  "4Q7WzU": [
+    {
+      "type": 0,
+      "value": "Add a new connection"
+    }
+  ],
+  "4XdZNj": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) West Central Africa"
     }
   ],
   "4YKQAF": [
@@ -382,6 +574,12 @@
       "value": "コメントを追加できるのは、ステップの入力を編集している間だけです。"
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "ミニマップの切り替え"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -398,6 +596,18 @@
     {
       "type": 0,
       "value": "ツアーおよびチュートリアル"
+    }
+  ],
+  "4wjJs0": [
+    {
+      "type": 0,
+      "value": "14"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "入力スキーマが置き換えられ、以前の変更に戻ることはできなくなります。入力スキーマの変更を続行しますか?"
     }
   ],
   "5J7j9k": [
@@ -442,6 +652,18 @@
       "value": "必須。比較される値より大きいかどうかを調べるオブジェクト。"
     }
   ],
+  "65FlWi": [
+    {
+      "type": 0,
+      "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6XR3FS": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Adelaide"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -466,6 +688,12 @@
       "value": "前へ"
     }
   ],
+  "6pd1bE": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Arizona"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
@@ -476,6 +704,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "7KxCGX": [
+    {
+      "type": 0,
+      "value": "(UTC+10:30) Lord Howe Island"
     }
   ],
   "7QymrD": [
@@ -500,6 +734,12 @@
     {
       "type": 0,
       "value": "文字列のタイムスタンプの、0001 年 1 月 1 日 00:00:00 UTC からのティック数 (100 ナノ秒間隔) を返します"
+    }
+  ],
+  "7lvqST": [
+    {
+      "type": 0,
+      "value": "Invalid"
     }
   ],
   "7yEdSt": [
@@ -538,6 +778,12 @@
       "value": "必須。比較するオブジェクト以上であるかどうかを調べるオブジェクト。"
     }
   ],
+  "8JEHiY": [
+    {
+      "type": 0,
+      "value": "Saturday"
+    }
+  ],
   "8JFxmV": [
     {
       "type": 0,
@@ -556,10 +802,22 @@
       "value": "必須。URI でエンコードする文字列。"
     }
   ],
+  "8Y5xpK": [
+    {
+      "type": 0,
+      "value": "Thursday"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
       "value": "非同期パターンでは、202 (Accepted) 応答で処理要求が受領されていることをリモート サーバーが示す場合、Logic Apps エンジンは、最終状態になるまで、応答の場所ヘッダーで指定された URL をポーリングし続けます。"
+    }
+  ],
+  "8pPivj": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Norfolk Island"
     }
   ],
   "8to63i": [
@@ -592,10 +850,28 @@
       "value": "渡されたアレイまたはオブジェクト間で共通の要素を含む単一のアレイまたはオブジェクトを返します"
     }
   ],
+  "9/vdrb": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "949s+r": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Ulaanbaatar"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
       "value": "コネクタ"
+    }
+  ],
+  "9EmN2M": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "9JuvQ4": [
@@ -608,6 +884,12 @@
     {
       "type": 0,
       "value": "追加のプロパティ値ペアが含まれるオブジェクトを返します"
+    }
+  ],
+  "9SuA/E": [
+    {
+      "type": 0,
+      "value": "12"
     }
   ],
   "9b4xDa": [
@@ -628,10 +910,34 @@
       "value": "出力スキーマの選択"
     }
   ],
+  "9pdXmX": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+    }
+  ],
+  "9pl7QP": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Atlantic Time (Canada)"
+    }
+  ],
   "9u/Ae3": [
     {
       "type": 0,
       "value": "両方のパラメーターが true の場合は true を返します"
+    }
+  ],
+  "AIL7WX": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "ALImBL": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Monrovia, Reykjavik"
     }
   ],
   "ANbEeQ": [
@@ -646,16 +952,57 @@
       "value": "完了"
     }
   ],
+  "AYaqW/": [
+    {
+      "type": 0,
+      "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
       "value": "必須。base64 表現にエンコードする文字列。"
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 件のアクション"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 件のアクション"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
       "value": "必須。取得するパートのインデックス。"
+    }
+  ],
+  "BAgRzO": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Coordinated Universal Time-08"
     }
   ],
   "BBD8Em": [
@@ -688,6 +1035,18 @@
       "value": "必須。URL の安全でない文字をデコードする文字列。"
     }
   ],
+  "BSHFiw": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Perth"
+    }
+  ],
+  "BVOUxP": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Havana"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -718,6 +1077,12 @@
       "value": "接続が必要"
     }
   ],
+  "Cy9qeQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -736,10 +1101,28 @@
       "value": "期間"
     }
   ],
+  "DfS13/": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Aleutian Islands"
+    }
+  ],
+  "DuXV2M": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Azores"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
       "value": "Ctrl + Y"
+    }
+  ],
+  "E9OS+9": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Coordinated Universal Time-09"
     }
   ],
   "ECZC6Y": [
@@ -754,16 +1137,46 @@
       "value": "応答"
     }
   ],
+  "EYqGxA": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Athens, Bucharest"
+    }
+  ],
   "EZz5q7": [
     {
       "type": 0,
       "value": "必須。部分文字列の抽出を開始する位置のインデックスです。"
     }
   ],
+  "EdzoIs": [
+    {
+      "type": 0,
+      "value": "1"
+    }
+  ],
+  "Eqgm4v": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+    }
+  ],
+  "ExaACE": [
+    {
+      "type": 0,
+      "value": "Connection display name"
+    }
+  ],
   "F3IDl8": [
     {
       "type": 0,
       "value": "必須。加算する、指定された時間単位の数です。"
+    }
+  ],
+  "F489Vg": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Irkutsk"
     }
   ],
   "FDF4Qb": [
@@ -782,6 +1195,18 @@
     {
       "type": 0,
       "value": "に失敗しました"
+    }
+  ],
+  "FHsP9y": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45) Kathmandu"
+    }
+  ],
+  "FIT7i0": [
+    {
+      "type": 0,
+      "value": "20"
     }
   ],
   "FN5zHQ": [
@@ -820,6 +1245,12 @@
       "value": "渡された文字列のタイムスタンプに 1日の開始を返します"
     }
   ],
+  "FXC0Zi": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Baghdad"
+    }
+  ],
   "FXLR5M": [
     {
       "offset": 0,
@@ -841,6 +1272,12 @@
       "value": "hours"
     }
   ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "キャンセル"
+    }
+  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -851,6 +1288,12 @@
     {
       "type": 0,
       "value": "文字列内の値の最初のインデックスを返します (大文字と小文字は区別されません、インバリアント カルチャ)"
+    }
+  ],
+  "FiyQjU": [
+    {
+      "type": 0,
+      "value": "2"
     }
   ],
   "FslNgF": [
@@ -901,6 +1344,12 @@
       "value": "パラメーター名を入力してください。"
     }
   ],
+  "GtDOFg": [
+    {
+      "type": 0,
+      "value": "Cancel the selection"
+    }
+  ],
   "GzQQqH": [
     {
       "type": 0,
@@ -943,10 +1392,34 @@
       "value": "コンテンツを表示するには、カードを選択してください"
     }
   ],
+  "IA+Ogm": [
+    {
+      "type": 0,
+      "value": "22"
+    }
+  ],
+  "IPbBB2": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Fiji"
+    }
+  ],
+  "IUE/lQ": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Cabo Verde Is."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
       "value": "渡される文字列タイムスタンプを UTC からターゲット タイム ゾーンに変換します"
+    }
+  ],
+  "IjZFjQ": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
   "IngtMG": [
@@ -1021,6 +1494,12 @@
       "value": "名前:"
     }
   ],
+  "JpthWY": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Montevideo"
+    }
+  ],
   "Jq2Y/o": [
     {
       "type": 0,
@@ -1057,6 +1536,59 @@
       "value": "出力スキーマ"
     }
   ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 件のケース"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 件のケース"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "Khc8lS": [
+    {
+      "type": 0,
+      "value": "(UTC-09:30) Marquesas Islands"
+    }
+  ],
+  "KlvTze": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "KoBDbT": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Coordinated Universal Time-02"
+    }
+  ],
+  "Kw3bWO": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Istanbul"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1069,10 +1601,28 @@
       "value": "文字列のタイムスタンプの曜日部分を返します"
     }
   ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "警告"
+    }
+  ],
+  "LMB8am": [
+    {
+      "type": 0,
+      "value": "Creating..."
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "URI からスキームを返します"
+    }
+  ],
+  "Lft/is": [
+    {
+      "type": 0,
+      "value": "Add new"
     }
   ],
   "LoGUT3": [
@@ -1093,10 +1643,28 @@
       "value": "必須。true となる可能性のある式です。"
     }
   ],
+  "LvpxiA": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
+  "Lwe7tQ": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+    }
+  ],
   "M0HMjE": [
     {
       "type": 0,
       "value": "コメントの追加"
+    }
+  ],
+  "M48CGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Solomon Is., New Caledonia"
     }
   ],
   "M6U2LE": [
@@ -1171,6 +1739,30 @@
       "value": "状態"
     }
   ],
+  "NeyUAh": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) City of Buenos Aires"
+    }
+  ],
+  "NkUgXU": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "NvANon": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Alaska"
+    }
+  ],
+  "NvJDn/": [
+    {
+      "type": 0,
+      "value": "Tuesday"
+    }
+  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -1195,6 +1787,24 @@
       "value": "操作オプション:"
     }
   ],
+  "OGUVGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Bougainville Island"
+    }
+  ],
+  "OH9xlX": [
+    {
+      "type": 0,
+      "value": "10"
+    }
+  ],
+  "OKszbi": [
+    {
+      "type": 0,
+      "value": "Connection Name"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -1205,6 +1815,12 @@
     {
       "type": 0,
       "value": "指定されたスコープ アクション内のトップレベルのアクション (For_each、Until、Scope のアクションなど) の結果を返します。"
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "未保存の作業はすべて失われます。すべて破棄する操作を続行しますか?"
     }
   ],
   "Oib1mL": [
@@ -1261,6 +1877,12 @@
       "value": "必須。最初のオブジェクトの取得元となるコレクション。"
     }
   ],
+  "PBvR9Q": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Araguaina"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -1303,16 +1925,34 @@
       "value": "中止"
     }
   ],
+  "PeLrFb": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+    }
+  ],
   "PfCJlN": [
     {
       "type": 0,
       "value": "ワークフロー関数"
     }
   ],
+  "PmB0J7": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Turks and Caicos"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
       "value": "入力文字列の Base 64 表現を返します"
+    }
+  ],
+  "Q+oELo": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Izhevsk, Samara"
     }
   ],
   "Q/7unA": [
@@ -1434,10 +2074,22 @@
       "value": "minutes"
     }
   ],
+  "RkgScy": [
+    {
+      "type": 0,
+      "value": "6"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
       "value": "削除"
+    }
+  ],
+  "SADSSs": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
     }
   ],
   "SKXopi": [
@@ -1486,6 +2138,12 @@
       "value": "実行の追跡 ID を設定します。分割の場合、この追跡 ID は開始要求用です。"
     }
   ],
+  "T6VIym": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1510,6 +2168,18 @@
       "value": "アレイの各項目が区切り記号で結合されている文字列を返します"
     }
   ],
+  "TNEttQ": [
+    {
+      "type": 0,
+      "value": "Friday"
+    }
+  ],
+  "TNzcrv": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Vladivostok"
+    }
+  ],
   "TO7qos": [
     {
       "type": 0,
@@ -1520,6 +2190,12 @@
     {
       "type": 0,
       "value": "値を入力してください"
+    }
+  ],
+  "TX4Kdr": [
+    {
+      "type": 0,
+      "value": "Create a new connection"
     }
   ],
   "TZv5JE": [
@@ -1540,6 +2216,18 @@
       "value": "タグ"
     }
   ],
+  "ToPmjE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Cuiaba"
+    }
+  ],
+  "TqPfth": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -1552,10 +2240,22 @@
       "value": "折りたたむまたは展開する"
     }
   ],
+  "U1NiVg": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Central America"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
       "value": "特定の数値から始まる整数のアレイを生成します"
+    }
+  ],
+  "U56j9a": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Easter Island"
     }
   ],
   "UCNM4L": [
@@ -1576,10 +2276,22 @@
       "value": "セキュリティ構成のため、コンテンツは表示されません。"
     }
   ],
+  "UkSZnQ": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
       "value": "クリックして項目を削除してください"
+    }
+  ],
+  "UtyRCH": [
+    {
+      "type": 0,
+      "value": "Enter a name for the connection"
     }
   ],
   "V+/c21": [
@@ -1594,10 +2306,22 @@
       "value": "表示数を少なくする"
     }
   ],
+  "VE3cxq": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
       "value": "指定されたワークフロー実行名が無効です。"
+    }
+  ],
+  "VUH9aj": [
+    {
+      "type": 0,
+      "value": "23"
     }
   ],
   "VVfYvq": [
@@ -1706,10 +2430,22 @@
       "value": "再試行"
     }
   ],
+  "XN9RvJ": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Baja California"
+    }
+  ],
   "XOzn/3": [
     {
       "type": 0,
       "value": "接続名"
+    }
+  ],
+  "XTYYks": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Seoul"
     }
   ],
   "XTuxmH": [
@@ -1728,6 +2464,18 @@
     {
       "type": 0,
       "value": " 秒"
+    }
+  ],
+  "XX1ioe": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Kuwait, Riyadh"
+    }
+  ],
+  "XaS4ds": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Pacific Time (US & Canada)"
     }
   ],
   "Xnn0uj": [
@@ -1836,6 +2584,12 @@
       "value": "文字列のタイムスタンプの日付部分を返します"
     }
   ],
+  "ZQ4lji": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -1854,6 +2608,18 @@
       "value": "この操作は既に削除されています。"
     }
   ],
+  "ZnGRMP": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Tomsk"
+    }
+  ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "出力スキーマが置き換えられ、以前の変更に戻ることはできなくなります。出力スキーマの変更を続行しますか?"
+    }
+  ],
   "a64zhX": [
     {
       "type": 0,
@@ -1866,6 +2632,12 @@
       "value": "必須。Divisor で除算される数値。"
     }
   ],
+  "a7x6VI": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Taipei"
+    }
+  ],
   "aAXnqw": [
     {
       "type": 0,
@@ -1876,6 +2648,12 @@
     {
       "type": 0,
       "value": "必須。Collection の先頭から除去するオブジェクトの数。正の整数にする必要があります。"
+    }
+  ],
+  "aH9SV7": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ashgabat, Tashkent"
     }
   ],
   "aK4iLW": [
@@ -1902,6 +2680,12 @@
       "value": "値"
     }
   ],
+  "bS5DyV": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kaliningrad"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -1926,6 +2710,18 @@
       "value": "入力された数値アレイ内の最大値を返します"
     }
   ],
+  "bnStSJ": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+    }
+  ],
+  "bx3qeC": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Brasilia"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -1936,6 +2732,12 @@
     {
       "type": 0,
       "value": "実行"
+    }
+  ],
+  "c1XmvN": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Nuku'alofa"
     }
   ],
   "c2XklE": [
@@ -1974,6 +2776,18 @@
       "value": "必須。インデックスを検索する値。"
     }
   ],
+  "cT2MlP": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Chokurdakh"
+    }
+  ],
+  "cVIZTQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Tripoli"
+    }
+  ],
   "ci6ex1": [
     {
       "type": 0,
@@ -1998,6 +2812,12 @@
       "value": "開始時刻"
     }
   ],
+  "cr0UnG": [
+    {
+      "type": 0,
+      "value": "9"
+    }
+  ],
   "cscezV": [
     {
       "type": 0,
@@ -2008,6 +2828,12 @@
     {
       "type": 0,
       "value": "コメントの削除"
+    }
+  ],
+  "d4xMIx": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
   "dDYCuU": [
@@ -2028,6 +2854,12 @@
       "value": "HTTP 経由でコンテンツを転送するための動作と機能を指定します。大きなメッセージは、大きなメッセージのアップロードを許可するために、コネクタに対する小さな要求に分割される可能性があります。詳細については、http://aka.ms/logicapps-chunk#upload-content-in-chunks を参照してください"
     }
   ],
+  "dUZi34": [
+    {
+      "type": 0,
+      "value": "(UTC+12:45) Chatham Islands"
+    }
+  ],
   "dWFyfN": [
     {
       "type": 0,
@@ -2038,6 +2870,18 @@
     {
       "type": 0,
       "value": "鉛筆のアイコン"
+    }
+  ],
+  "dWx21B": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Sakhalin"
+    }
+  ],
+  "dgAu27": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Greenland"
     }
   ],
   "dhvk0u": [
@@ -2064,10 +2908,22 @@
       "value": "区切り記号を使用して文字列を分割します"
     }
   ],
+  "e00zot": [
+    {
+      "type": 0,
+      "value": "How often do you want to check for items?"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "指定なし"
+    }
+  ],
+  "eGa1Wa": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ekaterinburg"
     }
   ],
   "eHgi14": [
@@ -2118,10 +2974,22 @@
       "value": "1 番目の引数が 2 番目の引数以上の場合は true を返します"
     }
   ],
+  "faSDuD": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Port Louis"
+    }
+  ],
   "fg/34o": [
     {
       "type": 0,
       "value": "論理関数"
+    }
+  ],
+  "froV/0": [
+    {
+      "type": 0,
+      "value": "(UTC+04:30) Kabul"
     }
   ],
   "ftwXvc": [
@@ -2142,6 +3010,12 @@
       "value": "公開"
     }
   ],
+  "g5mMuM": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -2160,10 +3034,22 @@
       "value": "2 つの数値を除算した結果を返します"
     }
   ],
+  "gF+0/N": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Amman"
+    }
+  ],
   "gIK0WG": [
     {
       "type": 0,
       "value": "必須。式がどちらの値を返す必要があるかを決定するブール値。"
+    }
+  ],
+  "gIc0YJ": [
+    {
+      "type": 0,
+      "value": "Connection name"
     }
   ],
   "gKq3Jv": [
@@ -2190,10 +3076,28 @@
       "value": "トリガー条件"
     }
   ],
+  "gg0j4S": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gj+jEr": [
+    {
+      "type": 0,
+      "value": "Save the selected connection"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
       "value": "until ループ内で使用すると、この関数は指定されたループの現在のイテレーション インデックスを返します。"
+    }
+  ],
+  "hBLPXK": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan"
     }
   ],
   "hN7iBP": [
@@ -2277,6 +3181,12 @@
       "value": "必須。解析対象の URI。"
     }
   ],
+  "iRe/g7": [
+    {
+      "type": 0,
+      "value": "21"
+    }
+  ],
   "iRjBf4": [
     {
       "type": 0,
@@ -2301,6 +3211,12 @@
       "value": "キャンセル"
     }
   ],
+  "iq+tiv": [
+    {
+      "type": 0,
+      "value": "11"
+    }
+  ],
   "iql+jn": [
     {
       "type": 1,
@@ -2315,6 +3231,12 @@
     {
       "type": 0,
       "value": "テスト"
+    }
+  ],
+  "j1VU25": [
+    {
+      "type": 0,
+      "value": "(UTC+14:00) Kiritimati Island"
     }
   ],
   "j2MU0b": [
@@ -2339,6 +3261,12 @@
     {
       "type": 0,
       "value": "必須。負数化される式。"
+    }
+  ],
+  "jMLmag": [
+    {
+      "type": 0,
+      "value": "Create New"
     }
   ],
   "jQ0Aqj": [
@@ -2401,6 +3329,12 @@
       "value": "入力スキーマの追加"
     }
   ],
+  "kDsud+": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Cayenne, Fortaleza"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -2431,16 +3365,34 @@
       "value": "ダウンロード (Alt/Option + クリック)"
     }
   ],
+  "kZCX7t": [
+    {
+      "type": 0,
+      "value": "Monday"
+    }
+  ],
   "kZuYgD": [
     {
       "type": 0,
       "value": "1 番目の引数が 2 番目の引数より小さい場合は true を返します"
     }
   ],
+  "kc5Mui": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Mid-Atlantic - Old"
+    }
+  ],
   "keb4r1": [
     {
       "type": 0,
       "value": "2 つの値が等しい場合は true を返します"
+    }
+  ],
+  "kneb9/": [
+    {
+      "type": 0,
+      "value": "(UTC-12:00) International Date Line West"
     }
   ],
   "knylNW": [
@@ -2465,6 +3417,18 @@
     {
       "type": 0,
       "value": " 分"
+    }
+  ],
+  "lFve22": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+    }
+  ],
+  "lIPWQ6": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
     }
   ],
   "lPTdSf": [
@@ -2545,6 +3509,12 @@
       "value": "URL で入力文字列をエンコードします"
     }
   ],
+  "mZCHKf": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+    }
+  ],
   "mZRMD9": [
     {
       "type": 0,
@@ -2555,6 +3525,24 @@
     {
       "type": 0,
       "value": "送信要求にワークフロー メタデータ ヘッダーを含めないように Logic Apps を制限します。"
+    }
+  ],
+  "mx2IMJ": [
+    {
+      "type": 0,
+      "value": "13"
+    }
+  ],
+  "n+F7e2": [
+    {
+      "type": 0,
+      "value": "15"
+    }
+  ],
+  "n20T2h": [
+    {
+      "type": 0,
+      "value": "7"
     }
   ],
   "n35O/+": [
@@ -2605,6 +3593,12 @@
       "value": "閉じる"
     }
   ],
+  "nx25nq": [
+    {
+      "type": 0,
+      "value": "19"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2643,16 +3637,34 @@
       "value": "コンテンツ転送"
     }
   ],
+  "oRvVIW": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Krasnoyarsk"
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "実行を開く実行識別子を入力してください"
     }
   ],
+  "ol+TkT": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Salvador"
+    }
+  ],
   "orhWzV": [
     {
       "type": 0,
       "value": "スキーマの読み込みに失敗しました。もう一度やり直してください。"
+    }
+  ],
+  "oxH1L/": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
     }
   ],
   "p/0r2N": [
@@ -2665,6 +3677,12 @@
     {
       "type": 0,
       "value": "ヘッダー"
+    }
+  ],
+  "p5tz8/": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Samoa"
     }
   ],
   "pIczsS": [
@@ -2683,6 +3701,12 @@
     {
       "type": 0,
       "value": "パラメーター"
+    }
+  ],
+  "pUeUDw": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
     }
   ],
   "pXmFGf": [
@@ -2745,6 +3769,12 @@
       "value": "渡された文字列のタイムスタンプに秒数を表す整数を加算します"
     }
   ],
+  "q9hf8i": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -2761,6 +3791,12 @@
     {
       "type": 0,
       "value": "に成功しました"
+    }
+  ],
+  "qQoQFv": [
+    {
+      "type": 0,
+      "value": "Invalid connection."
     }
   ],
   "qSejoi": [
@@ -2808,10 +3844,22 @@
       "value": "必須。整数に変換される値。"
     }
   ],
+  "qq/bq0": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Yakutsk"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
       "value": "非同期応答により、ロジック アプリは、処理要求が受理されたことを示す 202 (受理されました) で応答することができます。場所ヘッダーは、最終状態を取得するために提供されます。"
+    }
+  ],
+  "r1FQhf": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Windhoek"
     }
   ],
   "r43nMc": [
@@ -2844,6 +3892,12 @@
       "value": "カード タイトル"
     }
   ],
+  "rDt4Iu": [
+    {
+      "type": 0,
+      "value": "Is connection invalid"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -2854,6 +3908,12 @@
     {
       "type": 0,
       "value": "値の URI でエンコードされた表現を返します"
+    }
+  ],
+  "rstpaK": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Central Time (US & Canada)"
     }
   ],
   "s5RV9B": [
@@ -2872,6 +3932,12 @@
     {
       "type": 0,
       "value": "form-data または form-encoded トリガー出力のキー名と一致する値のアレイを返します"
+    }
+  ],
+  "sFwHQc": [
+    {
+      "type": 0,
+      "value": "Cancel creating a connection"
     }
   ],
   "sW47JR": [
@@ -2910,6 +3976,12 @@
       "value": "キー"
     }
   ],
+  "siYGSo": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Beirut"
+    }
+  ],
   "soqP+Z": [
     {
       "type": 0,
@@ -2938,6 +4010,12 @@
     {
       "type": 0,
       "value": "トリガーまたはアクションを呼び出すための URL を返します"
+    }
+  ],
+  "tELkSC": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
   "tImHz/": [
@@ -2976,6 +4054,12 @@
       "value": "タイプ"
     }
   ],
+  "tP+5fA": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
   "tVmUCd": [
     {
       "type": 0,
@@ -2994,10 +4078,34 @@
       "value": "必須。追加する時間数。負の値を指定すると、時間数を減算できます。"
     }
   ],
+  "teZwo6": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "tsmuoF": [
+    {
+      "type": 0,
+      "value": "Display Name"
+    }
+  ],
   "tu8I7j": [
     {
       "type": 0,
       "value": "操作"
+    }
+  ],
+  "u/KSPz": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Santiago"
+    }
+  ],
+  "u6Gdft": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
   "uN4zFU": [
@@ -3010,6 +4118,12 @@
     {
       "type": 0,
       "value": "必須。評価するコレクション。コレクションのいずれかに存在するオブジェクトは、結果にも含まれます。"
+    }
+  ],
+  "uRurmg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Guam, Port Moresby"
     }
   ],
   "uUlBZ8": [
@@ -3036,6 +4150,24 @@
       "value": "必須。その値が含まれている可能性のある文字列。"
     }
   ],
+  "udNlco": [
+    {
+      "type": 0,
+      "value": "(UTC-11:00) Coordinated Universal Time-11"
+    }
+  ],
+  "ui7GCl": [
+    {
+      "type": 0,
+      "value": "16"
+    }
+  ],
+  "urAHv1": [
+    {
+      "type": 0,
+      "value": "4"
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
@@ -3052,6 +4184,12 @@
     {
       "type": 0,
       "value": "グローバルに一意の文字列 (GUID) を生成します"
+    }
+  ],
+  "vD2lQy": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Asuncion"
     }
   ],
   "vEBhDX": [
@@ -3072,16 +4210,42 @@
       "value": "削除"
     }
   ],
+  "vXwYXe": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Astana"
+    }
+  ],
   "va40BJ": [
     {
       "type": 0,
       "value": "必須。出力を求める対象のアクションの名前。"
     }
   ],
+  "vb/okJ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Cairo"
+    }
+  ],
   "vcBAuU": [
     {
       "type": 0,
       "value": "がタイムアウトしました"
+    }
+  ],
+  "vr70Gn": [
+    {
+      "type": 0,
+      "value": "Create a connection for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "vwH/XV": [
@@ -3096,10 +4260,22 @@
       "value": "ワークフローのプロパティ"
     }
   ],
+  "w5Hhig": [
+    {
+      "type": 0,
+      "value": "Sunday"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
       "value": "渡される文字列タイムスタンプから、指定された時間単位の整数を減算します"
+    }
+  ],
+  "wF7C+h": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "wFCkpM": [
@@ -3150,6 +4326,12 @@
       "value": "コールバック URL"
     }
   ],
+  "x+6ccf": [
+    {
+      "type": 0,
+      "value": "Wednesday"
+    }
+  ],
   "x0or2o": [
     {
       "type": 0,
@@ -3192,6 +4374,18 @@
       "value": "URI からパスを返します。パスが指定されていない場合は、'/' を返します"
     }
   ],
+  "xZhieP": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Islamabad, Karachi"
+    }
+  ],
+  "xb/DIr": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Coordinated Universal Time+12"
+    }
+  ],
   "xt5TeT": [
     {
       "type": 0,
@@ -3222,6 +4416,12 @@
       "value": "必須。アレイに変換される値。"
     }
   ],
+  "yIZP4R": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Hawaii"
+    }
+  ],
   "yOkPGx": [
     {
       "type": 1,
@@ -3232,10 +4432,40 @@
       "value": " のロゴ"
     }
   ],
+  "yVh9kr": [
+    {
+      "type": 0,
+      "value": "8"
+    }
+  ],
+  "yoCi15": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one."
+    }
+  ],
+  "yph4eq": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
       "value": "日付と時刻関数"
+    }
+  ],
+  "yxsn7s": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Casablanca"
+    }
+  ],
+  "yyYtZV": [
+    {
+      "type": 0,
+      "value": "Connection gateway"
     }
   ],
   "z4YYlQ": [
@@ -3256,10 +4486,22 @@
       "value": "必須。ネイティブな型の値に変換される文字列。"
     }
   ],
+  "zbtUQ/": [
+    {
+      "type": 0,
+      "value": "(UTC+08:30) Pyongyang"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "文字列を日付に変換します。オプションで、ロケールと形式を指定できます"
+    }
+  ],
+  "zggBvC": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Nairobi"
     }
   ],
   "ziYCiA": [

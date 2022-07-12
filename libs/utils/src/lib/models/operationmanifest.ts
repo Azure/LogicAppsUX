@@ -91,6 +91,20 @@ export interface Badge {
   description: string;
 }
 
+export interface RepetitionInfo {
+  self?: {
+    parametersToExclude?: string[];
+  };
+  loopParameter?: string;
+}
+
+export interface BuiltInOutput {
+  name: string;
+  title: string;
+  type: string;
+  required: boolean;
+}
+
 export enum RecurrenceType {
   None = 'none',
   Basic = 'basic',
@@ -140,6 +154,13 @@ export interface OperationManifestProperties {
 
   statusBadge?: Badge;
   environmentBadge?: Badge;
+
+  outputTokens?: {
+    selfReference?: boolean;
+    builtIns: BuiltInOutput[];
+  };
+
+  repetition?: RepetitionInfo;
 
   recurrence?: RecurrenceSetting;
 

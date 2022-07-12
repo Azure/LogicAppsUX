@@ -12,7 +12,7 @@ import {
 } from './manifests/datetime';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
-import { httpManifest, httpWithSwaggerManifest, httpWebhookManifest } from './manifests/http';
+import { httpTriggerManifest, httpWithSwaggerManifest, httpWebhookManifest } from './manifests/http';
 import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
@@ -614,7 +614,7 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [getfuturetime, getFutureTimeManifest],
   [getpasttime, getPastTimeManifest],
   [htmltable, htmlManifest],
-  [http, httpManifest],
+  [http, httpTriggerManifest],
   [httpwebhook, httpWebhookManifest],
   [httpwithswagger, httpWithSwaggerManifest],
   [incrementvariable, incrementManifest],
