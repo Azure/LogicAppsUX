@@ -7,8 +7,11 @@ import {
 import type { OperationMetadataState } from '../../../state/operationMetadataSlice';
 import type { RootState } from '../../../store';
 import type { StandardOperationManifestServiceOptions, IHttpClient } from '@microsoft-logic-apps/designer-client-services';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import { InitOperationManifestService, StandardOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import {
+  InitOperationManifestService,
+  StandardOperationManifestService,
+  OperationManifestService,
+} from '@microsoft-logic-apps/designer-client-services';
 import { createItem } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import { ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';

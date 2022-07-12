@@ -44,7 +44,7 @@ export const useNodeConnectionName = (nodeId: string) => {
   const connectionId = useSelector((state: RootState) => {
     return nodeId ? state.connections.connectionsMapping[nodeId] : '';
   });
-  // dnaielle should I determine type here too???
+  // 14955807 task to investigate adding connection type to state to avoid checking in multiple places, or another strategy to avoid below way to find connection
   const connection = useConnectionByName(connectionId);
   const displayName = useSelector((state: RootState) => {
     const connectionReferences = state.connections.connectionReferences;
