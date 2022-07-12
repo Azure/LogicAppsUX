@@ -1,4 +1,10 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -243,6 +249,12 @@
       "value": "Ange ett eller flera uttryck som måste vara sanna för att utlösaren ska utlösas."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Visa kodvy"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -393,6 +405,12 @@
       "value": "Du kan bara lägga till kommentarer när du redigerar ett stegs indata."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Växla miniatyröversikt"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -409,6 +427,12 @@
     {
       "type": 0,
       "value": "Rundtur/självstudier"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Indataschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra indataschemat?"
     }
   ],
   "5J7j9k": [
@@ -552,7 +576,7 @@
   "8JFxmV": [
     {
       "type": 0,
-      "value": "Add Output Schema"
+      "value": "Lägg till utdataschema"
     }
   ],
   "8L+oIz": [
@@ -576,7 +600,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "Indataschema"
     }
   ],
   "8ubEPi": [
@@ -661,6 +685,46 @@
     {
       "type": 0,
       "value": "Krävs. Strängen som ska kodas till base64-representation."
+    }
+  ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 åtgärder"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " åtgärd"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " åtgärder"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
     }
   ],
   "B2s0iG": [
@@ -861,6 +925,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "hours"
+    }
+  ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Avbryt"
     }
   ],
   "Fgq3Db": [
@@ -1076,7 +1146,47 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "Utdataschema"
+    }
+  ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 ärenden"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ärende"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ärenden"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
     }
   ],
   "L+PY+j": [
@@ -1089,6 +1199,12 @@
     {
       "type": 0,
       "value": "Returnerar en strängtidsstämpels veckokomponent"
+    }
+  ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Varning"
     }
   ],
   "LS8rfZ": [
@@ -1227,6 +1343,12 @@
     {
       "type": 0,
       "value": "Returnerar resultaten från åtgärderna på toppnivå i den angivna omfångsdefinierade åtgärden, till exempel en For_each, Until eller Scope."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "Allt arbete som inte har sparats kommer att försvinna. Vill du ta bort allt?"
     }
   ],
   "Oib1mL": [
@@ -1704,7 +1826,7 @@
   "Wy/bhW": [
     {
       "type": 0,
-      "value": "Replace existing schema."
+      "value": "Ersätt befintligt schema."
     }
   ],
   "X8JjjT": [
@@ -1858,7 +1980,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfiguration"
     }
   ],
   "ZM1mRy": [
@@ -1891,10 +2013,16 @@
       "value": "Den här åtgärden har redan tagits bort."
     }
   ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Utdataschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra utdataschemat?"
+    }
+  ],
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Ignorera"
     }
   ],
   "a7j3gS": [
@@ -1919,6 +2047,12 @@
     {
       "type": 0,
       "value": "Datahantering"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Funktion"
     }
   ],
   "ajAro8": [
@@ -1961,6 +2095,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den samling som från vilken de första Count-objekten ska hämtas."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Gör"
     }
   ],
   "c2XklE": [
@@ -2062,7 +2202,7 @@
   "dWeRGU": [
     {
       "type": 0,
-      "value": "pencil icon"
+      "value": "pennsymbol"
     }
   ],
   "dhvk0u": [
@@ -2405,6 +2545,12 @@
       "value": "Redigera i JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Verktygslådan"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2432,7 +2578,7 @@
   "kBw1WQ": [
     {
       "type": 0,
-      "value": "Add Input Schema"
+      "value": "Lägg till indataschema"
     }
   ],
   "kHcCxH": [
@@ -2516,7 +2662,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "Tillbaka"
     }
   ],
   "lcVG4C": [
@@ -2636,7 +2782,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Stäng"
     }
   ],
   "o/0SEj": [

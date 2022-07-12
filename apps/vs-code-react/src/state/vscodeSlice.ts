@@ -1,4 +1,4 @@
-import type { ProjectName } from '../run-service';
+import type { ExportData, ProjectName } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -12,7 +12,7 @@ export interface InitializePayload {
   project: ProjectName;
 }
 
-interface initializedVscodeState {
+export interface InitializedVscodeState {
   initialized: true;
   accessToken?: string;
   corsNotice?: string;
@@ -20,14 +20,15 @@ interface initializedVscodeState {
   baseUrl: string;
   workflowProperties: OverviewPropertiesProps;
   project: ProjectName;
-  selectedWorkflows: Array<any>;
+  exportData: ExportData;
 }
 
-interface uninitializedVscodeState {
+interface UninitializedVscodeState {
   initialized: false;
   accessToken?: string;
 }
-export type VscodeState = uninitializedVscodeState | initializedVscodeState;
+
+export type VscodeState = UninitializedVscodeState | InitializedVscodeState;
 
 const initialState: VscodeState = {
   initialized: false,
@@ -40,25 +41,38 @@ export const vscodeSlice = createSlice({
     initialize: (state: VscodeState, action: PayloadAction<InitializePayload>) => {
       const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, project } = action.payload;
       state.initialized = true;
-      (state as initializedVscodeState).project = project;
-      (state as initializedVscodeState).accessToken = accessToken;
-      (state as initializedVscodeState).apiVersion = apiVersion;
-      (state as initializedVscodeState).baseUrl = baseUrl;
-      (state as initializedVscodeState).corsNotice = corsNotice;
-      (state as initializedVscodeState).workflowProperties = workflowProperties;
-      (state as initializedVscodeState).selectedWorkflows = [];
+      (state as InitializedVscodeState).project = project;
+      (state as InitializedVscodeState).accessToken = accessToken;
+      (state as InitializedVscodeState).apiVersion = apiVersion;
+      (state as InitializedVscodeState).baseUrl = baseUrl;
+      (state as InitializedVscodeState).corsNotice = corsNotice;
+      (state as InitializedVscodeState).workflowProperties = workflowProperties;
+      (state as InitializedVscodeState).exportData = {
+        selectedWorkflows: [],
+        selectedSubscription: '',
+        selectedIse: '',
+      };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
     },
     updateSelectedWorkFlows: (state: VscodeState, action: PayloadAction<any>) => {
       const { selectedWorkflows } = action.payload;
-      (state as initializedVscodeState).selectedWorkflows = selectedWorkflows;
+      (state as InitializedVscodeState).exportData.selectedWorkflows = selectedWorkflows;
+    },
+    updateSelectedSubscripton: (state: VscodeState, action: PayloadAction<any>) => {
+      const { selectedSubscription } = action.payload;
+      (state as InitializedVscodeState).exportData.selectedSubscription = selectedSubscription;
+      (state as InitializedVscodeState).exportData.selectedIse = '';
+    },
+    updateSelectedIse: (state: VscodeState, action: PayloadAction<any>) => {
+      const { selectedIse } = action.payload;
+      (state as InitializedVscodeState).exportData.selectedIse = selectedIse;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initialize, updateAccessToken, updateSelectedWorkFlows } = vscodeSlice.actions;
+export const { initialize, updateAccessToken, updateSelectedWorkFlows, updateSelectedSubscripton, updateSelectedIse } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;

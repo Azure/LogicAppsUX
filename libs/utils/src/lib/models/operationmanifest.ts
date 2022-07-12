@@ -91,6 +91,20 @@ export interface Badge {
   description: string;
 }
 
+export interface RepetitionInfo {
+  self?: {
+    parametersToExclude?: string[];
+  };
+  loopParameter?: string;
+}
+
+export interface BuiltInOutput {
+  name: string;
+  title: string;
+  type: string;
+  required: boolean;
+}
+
 export enum RecurrenceType {
   None = 'none',
   Basic = 'basic',
@@ -141,6 +155,13 @@ export interface OperationManifestProperties {
   statusBadge?: Badge;
   environmentBadge?: Badge;
 
+  outputTokens?: {
+    selfReference?: boolean;
+    builtIns: BuiltInOutput[];
+  };
+
+  repetition?: RepetitionInfo;
+
   recurrence?: RecurrenceSetting;
 
   inputs?: SwaggerSchema;
@@ -177,11 +198,12 @@ export interface OperationManifestProperties {
   externalDocs?: Documentation;
 }
 
-export type SubgraphType = 'CONDITIONAL_TRUE' | 'CONDITIONAL_FALSE' | 'SWITCH_CASE' | 'SWITCH_DEFAULT' | 'SWITCH_ADD_CASE';
+export type SubgraphType = 'CONDITIONAL_TRUE' | 'CONDITIONAL_FALSE' | 'SWITCH_CASE' | 'SWITCH_DEFAULT' | 'SWITCH_ADD_CASE' | 'UNTIL_DO';
 export const SUBGRAPH_TYPES: Record<string, SubgraphType> = {
   CONDITIONAL_TRUE: 'CONDITIONAL_TRUE',
   CONDITIONAL_FALSE: 'CONDITIONAL_FALSE',
   SWITCH_CASE: 'SWITCH_CASE',
   SWITCH_DEFAULT: 'SWITCH_DEFAULT',
   SWITCH_ADD_CASE: 'SWITCH_ADD_CASE',
+  UNTIL_DO: 'UNTIL_DO',
 };

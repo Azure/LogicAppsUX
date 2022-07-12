@@ -1,8 +1,10 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { useActionMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
+import { isLeafNodeFromEdges } from '../../core/utils/graph';
 import { DropZone } from '../connections/dropzone';
+import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
 import { memo } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
@@ -14,17 +16,19 @@ const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePositio
 
   const selected = useIsNodeSelected(id);
   const actionMetadata = useActionMetadata(id);
-  const childEdges = useEdgesByParent(id);
-  const showAddButton = !readOnly && actionMetadata?.type && childEdges.length === 0;
+  const edges = useEdgesBySource(id);
+
+  const showLeafComponents = !readOnly && actionMetadata?.type && isLeafNodeFromEdges(edges);
+  const hasFooter = actionMetadata?.type.toLowerCase() === 'until';
 
   return (
     <>
-      <div className="msla-graph-container-wrapper">
+      <div className={css('msla-graph-container-wrapper', hasFooter && 'has-footer')}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <GraphContainer selected={selected} />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
-      {showAddButton && (
+      {showLeafComponents && (
         <div className="edge-drop-zone-container">
           <DropZone graphId={id} parent={id} />
         </div>

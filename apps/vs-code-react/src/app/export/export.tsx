@@ -2,6 +2,7 @@ import messages from '../../../../../libs/services/intl/src/compiled-lang/string
 import type { OutletContext } from '../../run-service';
 import type { RootState } from '../../state/store';
 import './export.less';
+import { Navigation } from './navigation/navigation';
 import { Text } from '@fluentui/react';
 import type { OnErrorFn } from '@formatjs/intl';
 import { useCallback } from 'react';
@@ -32,9 +33,9 @@ export const ExportApp: React.FC = () => {
             context={{
               baseUrl: vscodeState.baseUrl,
               accessToken: vscodeState.accessToken,
-              selectedWorkflows: vscodeState.selectedWorkflows,
             }}
           />
+          <Navigation />
         </div>
       </QueryClientProvider>
     </IntlProvider>

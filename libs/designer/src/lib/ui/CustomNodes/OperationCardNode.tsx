@@ -10,12 +10,13 @@ import {
   useNodeMetadata,
   useOperationInfo,
 } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesByChild, useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
+import { isLeafNodeFromEdges } from '../../core/utils/graph';
 import { DropZone } from '../connections/dropzone';
 import { labelCase } from '@microsoft-logic-apps/utils';
 import { Card } from '@microsoft/designer-ui';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
@@ -30,10 +31,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
-      // "type" is required. It is used by the "accept" specification of drop targets.
       type: 'BOX',
-      // The collect function utilizes a "monitor" instance (see the Overview for what this is)
-      // to pull important pieces of state from the DnD system.
       end: (item, monitor) => {
         const dropResult = monitor.getDropResult<{ parent: string; child: string }>();
         if (item && dropResult) {
@@ -52,17 +50,13 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   );
 
   const selected = useIsNodeSelected(id);
-  const childEdges = useEdgesByParent(id);
-  const parentEdges = useEdgesByChild(id);
+  const edges = useEdgesBySource(id);
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
   const connectionName = useNodeConnectionName(id);
 
-  const [isFirstChild, setIsFirstChild] = useState(false);
-  useEffect(() => {
-    setIsFirstChild(metadata?.graphId !== 'root' && !parentEdges.length);
-  }, [metadata, parentEdges, setIsFirstChild]);
+  const showLeafComponents = !readOnly && isLeafNodeFromEdges(edges);
 
   const nodeClick = useCallback(() => {
     if (isCollapsed) {
@@ -73,15 +67,6 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
 
   const brandColorResult = useBrandColor(operationInfo);
   const iconUriResult = useIconUri(operationInfo);
-
-  if (metadata?.isPlaceholderNode) {
-    if (readOnly || !isFirstChild) return null;
-    return (
-      <div style={{ display: 'grid', placeItems: 'center', width: 200, height: 30, marginTop: '5px' }}>
-        <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
-      </div>
-    );
-  }
 
   const brandColor = brandColorResult.result;
   const comment = nodeComment
@@ -117,7 +102,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
         />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
-      {childEdges.length === 0 && !readOnly ? (
+      {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>
           <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
         </div>

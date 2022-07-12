@@ -1,8 +1,8 @@
-import { initializeGraphState } from '../parsers/ParseReduxAction';
-import type { AddNodePayload } from '../parsers/addNodeToWorkflow';
-import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../parsers/addNodeToWorkflow';
-import type { WorkflowNode } from '../parsers/models/workflowNode';
-import { isWorkflowNode } from '../parsers/models/workflowNode';
+import { initializeGraphState } from '../../parsers/ParseReduxAction';
+import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
+import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../../parsers/addNodeToWorkflow';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -13,8 +13,10 @@ type SpecTypes = 'BJS' | 'CNCF';
 export interface NodesMetadata {
   [nodeId: string]: {
     graphId: string;
-    isPlaceholderNode?: boolean;
+    parentNodeId?: string;
     subgraphType?: SubgraphType;
+    actionCount?: number;
+    isRoot?: boolean;
   };
 }
 
@@ -25,6 +27,7 @@ export interface WorkflowState {
   graph: WorkflowNode | null;
   operations: Operations;
   nodesMetadata: NodesMetadata;
+  collapsedGraphIds: Record<string, boolean>;
 }
 
 export const initialWorkflowState: WorkflowState = {
@@ -32,13 +35,14 @@ export const initialWorkflowState: WorkflowState = {
   graph: null,
   operations: {},
   nodesMetadata: {},
+  collapsedGraphIds: {},
 };
 
 export const workflowSlice = createSlice({
   name: 'workflow',
   initialState: initialWorkflowState,
   reducers: {
-    initWorkflowSpec: (state, action: PayloadAction<SpecTypes>) => {
+    initWorkflowSpec: (state: WorkflowState, action: PayloadAction<SpecTypes>) => {
       state.workflowSpec = action.payload;
     },
     setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
@@ -91,6 +95,13 @@ export const workflowSlice = createSlice({
         !!node?.children?.length && stack.push(...node.children);
       }
     },
+    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<Record<string, boolean>>) => {
+      state.collapsedGraphIds = action.payload;
+    },
+    toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
+      if (state.collapsedGraphIds?.[action.payload] === true) delete state.collapsedGraphIds[action.payload];
+      else state.collapsedGraphIds[action.payload] = true;
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -103,6 +114,7 @@ export const workflowSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initWorkflowSpec, addNode, updateNodeSizes, setNodeDescription } = workflowSlice.actions;
+export const { initWorkflowSpec, addNode, updateNodeSizes, setNodeDescription, setCollapsedGraphIds, toggleCollapsedGraphId } =
+  workflowSlice.actions;
 
 export default workflowSlice.reducer;

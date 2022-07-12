@@ -1,9 +1,17 @@
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, expandPanel } from '../../core/state/panel/panelSlice';
-import { useBrandColor, useIconUri, useActionMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import {
+  useBrandColor,
+  useIconUri,
+  useActionMetadata,
+  useOperationInfo,
+  useNodeMetadata,
+} from '../../core/state/selectors/actionMetadataSelector';
+import { useEdgesBySource, useIsGraphCollapsed } from '../../core/state/workflow/workflowSelectors';
+import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../core/store';
+import { isLeafNodeFromEdges } from '../../core/utils/graph';
 import { DropZone } from '../connections/dropzone';
 import { labelCase } from '@microsoft-logic-apps/utils';
 import { ScopeCard } from '@microsoft/designer-ui';
@@ -11,14 +19,16 @@ import { memo, useCallback } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const scopeId = id.split('-#')[0];
 
   const node = useActionMetadata(scopeId);
 
+  const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
@@ -45,10 +55,11 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
 
   // const graph = useWorkflowNode(scopeId) as WorkflowNode;
   const selected = useIsNodeSelected(scopeId);
+  const metadata = useNodeMetadata(scopeId);
   const operationInfo = useOperationInfo(scopeId);
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
-  const childEdges = useEdgesByParent(id);
+  const edges = useEdgesBySource(id);
 
   const isPanelCollapsed = useSelector((state: RootState) => state.panel.collapsed);
   const nodeClick = useCallback(() => {
@@ -58,15 +69,43 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
     dispatch(changePanelNode(scopeId));
   }, [dispatch, scopeId, isPanelCollapsed]);
 
+  const graphCollapsed = useIsGraphCollapsed(scopeId);
+  const handleGraphCollapse = useCallback(() => {
+    dispatch(toggleCollapsedGraphId(scopeId));
+  }, [dispatch, scopeId]);
+
   if (!node) {
     return null;
   }
 
-  const normalizedType = node.type.toLowerCase();
-
   const label = labelCase(scopeId);
 
-  const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope'];
+  const normalizedType = node.type.toLowerCase();
+  const actionCount = metadata?.actionCount ?? 0;
+
+  const actionString = intl.formatMessage(
+    {
+      defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
+      description: 'This is the number of actions to be completed in a group',
+    },
+    { actionCount }
+  );
+
+  const caseString = intl.formatMessage(
+    {
+      defaultMessage: '{actionCount, plural, one {# Case} =0 {0 Cases} other {# Cases}}',
+      description: 'This is the number of cases or options the program can take',
+    },
+    { actionCount }
+  );
+
+  const collapsedText = normalizedType === 'switch' || normalizedType === 'if' ? caseString : actionString;
+
+  const isEmpty = isLeafNodeFromEdges(edges);
+  const isFooter = id.endsWith('#footer');
+  const showEmptyGraphComponents = isEmpty && !graphCollapsed && !isFooter;
+
+  const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope', 'until'];
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <>
@@ -76,7 +115,8 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
             brandColor={brandColor.result}
             icon={iconUri.result}
             isLoading={iconUri.isLoading}
-            collapsed={false}
+            collapsed={graphCollapsed}
+            handleCollapse={handleGraphCollapse}
             drag={drag}
             draggable={!readOnly}
             dragPreview={dragPreview}
@@ -90,7 +130,8 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
-        {childEdges.length === 0 ? (
+        {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
+        {showEmptyGraphComponents ? (
           !readOnly ? (
             <div className={'edge-drop-zone-container'}>
               <DropZone graphId={scopeId} parent={scopeId} />
@@ -106,6 +147,6 @@ const ScopeHeaderNode = ({ data, targetPosition = Position.Top, sourcePosition =
   }
 };
 
-ScopeHeaderNode.displayName = 'ScopeNode';
+ScopeCardNode.displayName = 'ScopeNode';
 
-export default memo(ScopeHeaderNode);
+export default memo(ScopeCardNode);

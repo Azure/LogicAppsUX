@@ -1,7 +1,7 @@
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
-import { initWorkflowSpec } from './state/workflowSlice';
+import { initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from './store';
 import React, { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

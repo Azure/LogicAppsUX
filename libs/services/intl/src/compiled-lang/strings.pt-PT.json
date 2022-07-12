@@ -1,4 +1,10 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -243,6 +249,12 @@
       "value": "Especifique uma ou mais expressões que têm de ser verdadeiras para que o acionador seja acionado."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Mostrar vista de código"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -393,6 +405,12 @@
       "value": "Os comentários só podem ser adicionados durante a edição de entradas de um passo."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Toggle Minimap"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -409,6 +427,12 @@
     {
       "type": 0,
       "value": "Visita guiada/Tutorial"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "O esquema de entrada será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de entrada?"
     }
   ],
   "5J7j9k": [
@@ -552,7 +576,7 @@
   "8JFxmV": [
     {
       "type": 0,
-      "value": "Add Output Schema"
+      "value": "Adicionar Esquema de Saída"
     }
   ],
   "8L+oIz": [
@@ -576,7 +600,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "Esquema de Entrada"
     }
   ],
   "8ubEPi": [
@@ -661,6 +685,46 @@
     {
       "type": 0,
       "value": "Obrigatório. A cadeia a codificar numa representação base64."
+    }
+  ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Actions"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Action"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
     }
   ],
   "B2s0iG": [
@@ -861,6 +925,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "hours"
+    }
+  ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Cancelar"
     }
   ],
   "Fgq3Db": [
@@ -1076,7 +1146,47 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "Esquema de Saída"
+    }
+  ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cases"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Case"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
     }
   ],
   "L+PY+j": [
@@ -1089,6 +1199,12 @@
     {
       "type": 0,
       "value": "Devolve o dia do componente da semana de um carimbo de data/hora de cadeia"
+    }
+  ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Aviso"
     }
   ],
   "LS8rfZ": [
@@ -1227,6 +1343,12 @@
     {
       "type": 0,
       "value": "Devolve os resultados das ações de nível superior na ação com âmbito especificada, como uma ação For_each, Até ou Âmbito."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "Todo o trabalho não guardado será perdido. Pretende continuar para eliminar tudo?"
     }
   ],
   "Oib1mL": [
@@ -1700,7 +1822,7 @@
   "Wy/bhW": [
     {
       "type": 0,
-      "value": "Replace existing schema."
+      "value": "Substituir esquema existente."
     }
   ],
   "X8JjjT": [
@@ -1854,7 +1976,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Configuração"
     }
   ],
   "ZM1mRy": [
@@ -1887,10 +2009,16 @@
       "value": "Esta operação já foi eliminada."
     }
   ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "O esquema de saída será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de saída?"
+    }
+  ],
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Eliminar"
     }
   ],
   "a7j3gS": [
@@ -1915,6 +2043,12 @@
     {
       "type": 0,
       "value": "Processamento de Dados"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Função"
     }
   ],
   "ajAro8": [
@@ -1957,6 +2091,12 @@
     {
       "type": 0,
       "value": "Obrigatório. A cadeia da qual se deve retirar os primeiros objetos de Contagem."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Fazer"
     }
   ],
   "c2XklE": [
@@ -2058,7 +2198,7 @@
   "dWeRGU": [
     {
       "type": 0,
-      "value": "pencil icon"
+      "value": "ícone de lápis"
     }
   ],
   "dhvk0u": [
@@ -2405,6 +2545,12 @@
       "value": "Editar em JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Caixa de Ferramentas"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2432,7 +2578,7 @@
   "kBw1WQ": [
     {
       "type": 0,
-      "value": "Add Input Schema"
+      "value": "Adicionar Esquema de Entrada"
     }
   ],
   "kHcCxH": [
@@ -2516,7 +2662,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "Anterior"
     }
   ],
   "lcVG4C": [
@@ -2636,7 +2782,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Fechar"
     }
   ],
   "o/0SEj": [

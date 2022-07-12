@@ -1,4 +1,10 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -243,6 +249,12 @@
       "value": "Spécifiez une ou plusieurs expressions qui doivent être vraies pour que le déclencheur se déclenche."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Afficher la vue de code"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -393,6 +405,12 @@
       "value": "Des commentaires ne peuvent être ajoutés que lors de la modification des entrées d'une étape."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Activer/désactiver la minimap"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -409,6 +427,12 @@
     {
       "type": 0,
       "value": "Visite guidée/didacticiel"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Le schéma d’entrée sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma d’entrée ?"
     }
   ],
   "5J7j9k": [
@@ -552,7 +576,7 @@
   "8JFxmV": [
     {
       "type": 0,
-      "value": "Add Output Schema"
+      "value": "Ajouter un schéma de sortie"
     }
   ],
   "8L+oIz": [
@@ -576,7 +600,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "Schéma d’entrée"
     }
   ],
   "8ubEPi": [
@@ -661,6 +685,46 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne à encoder dans une représentation en base64."
+    }
+  ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Actions"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Action"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
     }
   ],
   "B2s0iG": [
@@ -861,6 +925,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "hours"
+    }
+  ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Annuler"
     }
   ],
   "Fgq3Db": [
@@ -1076,7 +1146,47 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "Schéma de sortie"
+    }
+  ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cas"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cas"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cas"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
     }
   ],
   "L+PY+j": [
@@ -1089,6 +1199,12 @@
     {
       "type": 0,
       "value": "Retourne le jour du composant Semaine d'un horodateur de chaîne"
+    }
+  ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Avertissement"
     }
   ],
   "LS8rfZ": [
@@ -1227,6 +1343,12 @@
     {
       "type": 0,
       "value": "Retourne les résultats des actions de niveau supérieur dans l'action délimitée spécifiée, par exemple, une action For_each, Until ou Scope."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "Tous les travaux non enregistrés seront supprimés. Voulez-vous tout abandonner ?"
     }
   ],
   "Oib1mL": [
@@ -1700,7 +1822,7 @@
   "Wy/bhW": [
     {
       "type": 0,
-      "value": "Replace existing schema."
+      "value": "Remplacez le schéma existant."
     }
   ],
   "X8JjjT": [
@@ -1887,10 +2009,16 @@
       "value": "Cette opération a déjà été supprimée."
     }
   ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Le schéma de sortie sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma de sortie ?"
+    }
+  ],
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Abandonner"
     }
   ],
   "a7j3gS": [
@@ -1915,6 +2043,12 @@
     {
       "type": 0,
       "value": "Gestion des données"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Fonction"
     }
   ],
   "ajAro8": [
@@ -1957,6 +2091,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Collection à partir de laquelle prendre les premiers objets Count."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Faire"
     }
   ],
   "c2XklE": [
@@ -2058,7 +2198,7 @@
   "dWeRGU": [
     {
       "type": 0,
-      "value": "pencil icon"
+      "value": "icône crayon"
     }
   ],
   "dhvk0u": [
@@ -2405,6 +2545,12 @@
       "value": "Modifier dans JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Boîte à outils"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2432,7 +2578,7 @@
   "kBw1WQ": [
     {
       "type": 0,
-      "value": "Add Input Schema"
+      "value": "Ajouter un schéma d’entrée"
     }
   ],
   "kHcCxH": [
@@ -2516,7 +2662,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "Précédent"
     }
   ],
   "lcVG4C": [
@@ -2636,7 +2782,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Fermer"
     }
   ],
   "o/0SEj": [

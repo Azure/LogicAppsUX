@@ -1,4 +1,10 @@
 {
+  "+1GH4O": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -281,6 +287,12 @@
       "value": "Określ co najmniej jedno wyrażenie, które musi być prawdziwe, aby wyzwalacz został uruchomiony."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Pokaż widok kodu"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -431,6 +443,12 @@
       "value": "Komentarze można dodawać tylko podczas edytowania danych wejściowych kroku."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Przełącz minimapę"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -447,6 +465,12 @@
     {
       "type": 0,
       "value": "Przewodnik/samouczek"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Schemat wejściowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat wejściowy?"
     }
   ],
   "5J7j9k": [
@@ -590,7 +614,7 @@
   "8JFxmV": [
     {
       "type": 0,
-      "value": "Add Output Schema"
+      "value": "Dodaj schemat danych wyjściowych"
     }
   ],
   "8L+oIz": [
@@ -614,7 +638,7 @@
   "8to63i": [
     {
       "type": 0,
-      "value": "Input Schema"
+      "value": "Schemat wejściowy"
     }
   ],
   "8ubEPi": [
@@ -699,6 +723,68 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg do zakodowania do reprezentacji base64."
+    }
+  ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Actions"
+            }
+          ]
+        },
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Action"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
     }
   ],
   "B2s0iG": [
@@ -923,6 +1009,12 @@
       "value": "hours"
     }
   ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Anuluj"
+    }
+  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -1136,7 +1228,69 @@
   "KUw9iC": [
     {
       "type": 0,
-      "value": "Output Schema"
+      "value": "Schemat wyjściowy"
+    }
+  ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Cases"
+            }
+          ]
+        },
+        "few": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Case"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
     }
   ],
   "L+PY+j": [
@@ -1149,6 +1303,12 @@
     {
       "type": 0,
       "value": "Zwraca składnik dnia tygodnia z sygnatury czasowej ciągu"
+    }
+  ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Ostrzeżenie"
     }
   ],
   "LS8rfZ": [
@@ -1287,6 +1447,12 @@
     {
       "type": 0,
       "value": "Zwraca wyniki z akcji najwyższego poziomu w podanej akcji o określonym zakresie takiej jak For_each, Until lub Scope."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "Cała niezapisana praca zostanie usunięta. Czy chcesz nadal wszystko odrzucić?"
     }
   ],
   "Oib1mL": [
@@ -1782,7 +1948,7 @@
   "Wy/bhW": [
     {
       "type": 0,
-      "value": "Replace existing schema."
+      "value": "Zamień istniejący schemat."
     }
   ],
   "X8JjjT": [
@@ -1936,7 +2102,7 @@
   "Z4QLEf": [
     {
       "type": 0,
-      "value": "Configuration"
+      "value": "Konfiguracja"
     }
   ],
   "ZM1mRy": [
@@ -1969,10 +2135,16 @@
       "value": "Ta operacja została już usunięta."
     }
   ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Schemat wyjściowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat wyjściowy?"
+    }
+  ],
   "a64zhX": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Odrzuć"
     }
   ],
   "a7j3gS": [
@@ -1997,6 +2169,12 @@
     {
       "type": 0,
       "value": "Obsługa danych"
+    }
+  ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Funkcja"
     }
   ],
   "ajAro8": [
@@ -2039,6 +2217,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Kolekcja, z której należy pobrać pierwsze obiekty (liczba)."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Wykonaj"
     }
   ],
   "c2XklE": [
@@ -2140,7 +2324,7 @@
   "dWeRGU": [
     {
       "type": 0,
-      "value": "pencil icon"
+      "value": "ikona ołówka"
     }
   ],
   "dhvk0u": [
@@ -2509,6 +2693,12 @@
       "value": "Edytuj w pliku JSON"
     }
   ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Zestaw narzędzi"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -2536,7 +2726,7 @@
   "kBw1WQ": [
     {
       "type": 0,
-      "value": "Add Input Schema"
+      "value": "Dodaj schemat danych wejściowych"
     }
   ],
   "kHcCxH": [
@@ -2620,7 +2810,7 @@
   "lWjfm3": [
     {
       "type": 0,
-      "value": "Back"
+      "value": "Wstecz"
     }
   ],
   "lcVG4C": [
@@ -2740,7 +2930,7 @@
   "ntiOaL": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Zamknij"
     }
   ],
   "o/0SEj": [

@@ -2,29 +2,29 @@ import { ActionButtonV2 } from '../../actionbuttonv2';
 import CollapseToggle from '../../collapseToggle';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
-import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
+import { labelCase, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
-interface SubgraphHeaderProps {
+interface SubgraphCardProps {
+  id: string;
   parentId: string;
   subgraphType: SubgraphType;
-  title?: string;
   collapsed?: boolean;
+  handleCollapse?: (event: { currentTarget: any }) => void;
   selected?: boolean;
   readOnly?: boolean;
-  handleCollapse?: (event: { currentTarget: any }) => void;
   onClick?(id: string): void;
   showAddButton?: boolean;
 }
 
-export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
+export const SubgraphCard: React.FC<SubgraphCardProps> = ({
+  id,
   parentId,
   subgraphType,
-  title = 'undefined',
   collapsed,
+  handleCollapse,
   selected = false,
   readOnly = false,
-  handleCollapse,
   onClick,
 }) => {
   const intl = useIntl();
@@ -46,6 +46,7 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
         description: 'True',
       }),
       size: 'small',
+      id: parentId,
     },
     CONDITIONAL_FALSE: {
       color: '#A4262C',
@@ -54,11 +55,13 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
         description: 'False',
       }),
       size: 'small',
+      id: parentId,
     },
     SWITCH_CASE: {
       color: '#484F58',
-      title: title,
+      title: labelCase(id),
       size: 'large',
+      id: id,
     },
     SWITCH_DEFAULT: {
       color: '#484F58',
@@ -67,30 +70,36 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
         description: 'Default, the backup option if none other apply',
       }),
       size: 'small',
+      id: parentId,
+    },
+    UNTIL_DO: {
+      color: '#486991',
+      title: intl.formatMessage({
+        defaultMessage: 'Do',
+        description: 'Do, as in "to do an action"',
+      }),
+      size: 'small',
+      id: id,
     },
     SWITCH_ADD_CASE: {},
   };
 
-  const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
-    e.stopPropagation();
-    if (subgraphType !== SUBGRAPH_TYPES['SWITCH_CASE']) {
-      onClick?.(parentId);
-    } else {
-      onClick?.(title);
-    }
-  };
-
   const data = SubgraphTypeData[subgraphType];
+
+  const handleTitleClick: React.MouseEventHandler<HTMLElement> = (e) => {
+    e.stopPropagation();
+    onClick?.(data.id);
+  };
 
   if (data.size === 'large') {
     return (
       <div
-        className={css('msla-subgraph-header', data.size)}
+        className={css('msla-subgraph-card', data.size)}
         style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
         tabIndex={-1}
       >
         <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
-        <button className="msla-subgraph-title" onClick={handleClick}>
+        <button className="msla-subgraph-title" onClick={handleTitleClick}>
           {data.title}
         </button>
         <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
@@ -99,14 +108,19 @@ export const SubgraphHeader: React.FC<SubgraphHeaderProps> = ({
   } else if (data.size === 'small') {
     return (
       <div style={{ width: 200, display: 'grid', placeItems: 'center' }}>
-        <button
-          className={css('msla-subgraph-header', data.size)}
+        <div
+          tabIndex={0}
+          className={css('msla-subgraph-card', data.size)}
           style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
-          onClick={handleCollapse}
+          onClick={(e) => {
+            handleTitleClick(e);
+            handleCollapse?.(e);
+          }}
         >
+          <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
           <div className="msla-subgraph-title">{data.title}</div>
           <CollapseToggle disabled collapsed={collapsed} />
-        </button>
+        </div>
       </div>
     );
   } else return null;

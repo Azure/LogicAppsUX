@@ -2,7 +2,7 @@ import constants from '../../common/constants';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { collapsePanel, expandPanel } from '../../core/state/panel/panelSlice';
 import { useIconUri, useNodeDescription, useNodeMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
-import { setNodeDescription } from '../../core/state/workflowSlice';
+import { setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
@@ -66,15 +66,12 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
   }, [registeredTabs]);
 
   useEffect(() => {
-    if (nodeMetaData && nodeMetaData.subgraphType) {
+    if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
       setRegisteredTabs((currentTabs) =>
         updateTabs(currentTabs, (tab) => {
           return {
             ...tab,
-            visible:
-              tab.name === constants.PANEL_TAB_NAMES.MONITORING
-                ? tab.visible
-                : (nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE && tab.name === constants.PANEL_TAB_NAMES.PARAMETERS) ?? false,
+            visible: tab.name === constants.PANEL_TAB_NAMES.MONITORING ? tab.visible : tab.name === constants.PANEL_TAB_NAMES.PARAMETERS,
           };
         })
       );
