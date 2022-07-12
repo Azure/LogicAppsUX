@@ -14,11 +14,9 @@ const useStyles = makeStyles({
     boxShadow: tokens.shadow4,
     cursor: 'pointer',
     paddingInline: '0px',
-
-    ...shorthands.border('0px'),
-
     paddingLeft: 'none',
     marginLeft: 'none',
+    ...shorthands.border('0px'),
 
     '&:enabled': {
       '&:hover': {
@@ -29,11 +27,6 @@ const useStyles = makeStyles({
 
       '&:focus': {
         ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorCompoundBrandStroke),
-        cursor: 'pointer',
-      },
-
-      '&:selected': {
-        ...shorthands.outline(tokens.strokeWidthThick, 'solid', 'red'),
         cursor: 'pointer',
       },
     },
@@ -70,8 +63,7 @@ export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClass
     <DefaultButton
       className={`${mergedClasses} ${mergedFocusIndicator} ${disabled && classes.disabled}`}
       toggle
-      checked={true}
-      onClick={onClick ?? undefined}
+      onClick={onClick}
       allowDisabledFocus
       disabled={disabled}
     >

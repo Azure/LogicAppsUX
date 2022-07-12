@@ -1,5 +1,4 @@
 import { SchemaTypes } from '../configPanel/EditorConfigPanel';
-import { ExpressionCard } from './ExpressionCard';
 import { NodeCard } from './NodeCard';
 import { Icon, Text } from '@fluentui/react';
 import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
@@ -69,18 +68,18 @@ const handleStyle = { color: 'red' };
 
 export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ data }) => {
   return (
-    <>
+    <div>
+      {/* TODO: remove handle and make a part of card clickable and drawable instead (14957766) */}
       <Handle type="target" position={data.schemaType === SchemaTypes.Input ? Position.Right : Position.Left} style={handleStyle} />
-      <div>
-        <SchemaCardWrapper
-          label={data.label}
-          schemaType={data.schemaType}
-          isLeaf={data?.isLeaf}
-          onClick={data?.onClick}
-          disabled={data?.disabled}
-        />
-      </div>
-    </>
+
+      <SchemaCardWrapper
+        label={data.label}
+        schemaType={data.schemaType}
+        isLeaf={data?.isLeaf}
+        onClick={data?.onClick}
+        disabled={data?.disabled}
+      />
+    </div>
   );
 };
 
@@ -89,8 +88,6 @@ export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ l
 
   return (
     <div>
-      <ExpressionCard />
-
       <NodeCard onClick={onClick} disabled={disabled} childClasses={classes}>
         <Icon className={classes.cardIcon} iconName="Diamond" />
         <Text className={classes.cardText} block={true} nowrap={true}>

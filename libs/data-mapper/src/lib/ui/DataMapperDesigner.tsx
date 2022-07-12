@@ -29,7 +29,7 @@ export const DataMapperDesigner = () => {
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
     const schemaState = store.getState().schema;
-    if (node.type === 'input') {
+    if (node.data.schemaType === 'input') {
       const currentSchemaNode = schemaState.currentInputNode;
       if (currentSchemaNode) {
         const newCurrentSchemaNode =

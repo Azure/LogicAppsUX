@@ -24,7 +24,6 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
         schemaType: SchemaTypes.Input,
       },
       sourcePosition: Position.Right,
-      draggable: true,
       type: 'schemaCard',
       position: {
         x: rootInputX,
