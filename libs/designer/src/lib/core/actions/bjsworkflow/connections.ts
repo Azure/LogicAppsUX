@@ -4,47 +4,11 @@ import { getOperationManifest } from '../../queries/operation';
 import { initializeConnectionsMappings } from '../../state/connectionSlice';
 import type { Operations } from '../../state/workflowSlice';
 import type { RootState } from '../../store';
+import type { IOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connector, OperationManifest } from '@microsoft-logic-apps/utils';
 import { equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
-
-export async function getConnectionsMappingForNodesRefactor(
-  operations: Operations,
-  getState: () => RootState
-): Promise<Record<string, string>> {
-  let connectionsMapping: Record<string, string> = {};
-  const operationManifestService = OperationManifestService();
-
-  const tasks: Promise<Record<string, string> | undefined>[] = [];
-
-  for (const [nodeId, operation] of Object.entries(operations)) {
-    try {
-      if (operationManifestService.isSupported(operation.type, operation.kind)) {
-        tasks.push(getManifestBasedConnectionMapping(getState, nodeId, operation));
-      } else if (
-        isApiConnectionType(operation.type) ||
-        (equals(operation.type, Constants.NODE.TYPE.MANUAL) && equals(operation.kind, Constants.NODE.KIND.APICONNECTION))
-      ) {
-        const connectionReferenceKey = getLegacyConnectionReferenceKey(operation);
-
-        if (connectionReferenceKey !== undefined) {
-          connectionsMapping[nodeId] = connectionReferenceKey;
-        }
-      } else {
-        // no connection needed
-      }
-    } catch (exception) {
-      // log exception
-    }
-  }
-  const mappings = await Promise.all(tasks);
-  for (const mapping of mappings) {
-    connectionsMapping = { ...connectionsMapping, ...mapping };
-  }
-
-  return connectionsMapping;
-}
 
 export async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
   let connectionsMapping: Record<string, string> = {};
@@ -53,36 +17,43 @@ export async function getConnectionsMappingForNodes(operations: Operations, getS
   const tasks: Promise<Record<string, string> | undefined>[] = [];
 
   for (const [nodeId, operation] of Object.entries(operations)) {
-    try {
-      if (
-        operationManifestService.isSupported(operation.type, operation.kind) || // Danielle to refactor this logic to make it more clear no. 14723337
-        isApiConnectionType(operation.type) ||
-        (equals(operation.type, Constants.NODE.TYPE.MANUAL) && equals(operation.kind, Constants.NODE.KIND.APICONNECTION))
-      ) {
-        if (operationManifestService.isSupported(operation.type, operation.kind)) {
-          tasks.push(getManifestBasedConnectionMapping(getState, nodeId, operation));
-        } else {
-          const connectionReferenceKey = getLegacyConnectionReferenceKey(operation);
-
-          if (connectionReferenceKey !== undefined) {
-            connectionsMapping[nodeId] = connectionReferenceKey;
-          }
-        }
-      }
-    } catch (exception) {
-      // log exception
-    }
+    tasks.push(getConnectionMappingForNode(operation, nodeId, operationManifestService, getState));
   }
 
   const mappings = await Promise.all(tasks);
   for (const mapping of mappings) {
     connectionsMapping = { ...connectionsMapping, ...mapping };
   }
-
   return connectionsMapping;
 }
 
-const isApiConnectionType = (type: string): boolean => {
+export const getConnectionMappingForNode = (
+  operation: LogicAppsV2.OperationDefinition,
+  nodeId: string,
+  operationManifestService: IOperationManifestService,
+  getState: () => RootState
+): Promise<Record<string, string> | undefined> => {
+  try {
+    if (operationManifestService.isSupported(operation.type, operation.kind)) {
+      return getManifestBasedConnectionMapping(getState, nodeId, operation);
+    } else if (isApiConnectionType(operation.type, operation.kind)) {
+      const connectionReferenceKey = getLegacyConnectionReferenceKey(operation);
+      if (connectionReferenceKey !== undefined) {
+        const mapping = Promise.resolve({ [nodeId]: connectionReferenceKey });
+        return mapping;
+      }
+    }
+    return Promise.resolve(undefined);
+  } catch (exception) {
+    return Promise.resolve(undefined);
+    // log exception
+  }
+};
+
+const isApiConnectionType = (type: string, kind: string | undefined): boolean => {
+  if (equals(type, Constants.NODE.TYPE.MANUAL) && equals(kind, Constants.NODE.KIND.APICONNECTION)) {
+    return true;
+  }
   return (
     equals(type, Constants.NODE.TYPE.API_CONNECTION) ||
     equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ||
@@ -153,10 +124,9 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
     case ConnectionReferenceKeyFormat.ServiceProvider:
       return (operationDefinition as LogicAppsV2.ServiceProvider).inputs.serviceProviderConfiguration.connectionName;
 
-    case ConnectionReferenceKeyFormat.OpenApi:
+    default: // this is the case for ConnectionReferenceKeyFormat.OpenApi
       return getOpenApiConnectionReferenceKey((operationDefinition as LogicAppsV2.OpenApiOperationAction).inputs);
   }
-  return '';
 }
 
 function getOpenApiConnectionReferenceKey(operationDefinition: LogicAppsV2.OpenApiOperationInputs): string {
@@ -170,7 +140,7 @@ function getOpenApiConnectionReferenceKey(operationDefinition: LogicAppsV2.OpenA
 }
 
 export function getLegacyConnectionReferenceKey(operationDefinition: any): string | undefined {
-  // danielle how is open api different
+  // danielle how is open api different if logic is so similar
   let referenceKey: string;
   if (typeof operationDefinition.inputs.host.connection === 'string') {
     referenceKey = operationDefinition.inputs.host.connection;

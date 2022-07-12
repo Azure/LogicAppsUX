@@ -1,8 +1,13 @@
 import Constants from '../../../../common/constants';
-import { getLegacyConnectionReferenceKey, getManifestBasedConnectionMapping } from '../../../actions/bjsworkflow/connections';
+import {
+  getConnectionMappingForNode,
+  getLegacyConnectionReferenceKey,
+  getManifestBasedConnectionMapping,
+} from '../../../actions/bjsworkflow/connections';
 import type { OperationMetadataState } from '../../../state/operationMetadataSlice';
 import type { RootState } from '../../../store';
 import type { StandardOperationManifestServiceOptions, IHttpClient } from '@microsoft-logic-apps/designer-client-services';
+import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { InitOperationManifestService, StandardOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { createItem } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
@@ -36,16 +41,43 @@ describe('connection workflow mappings', () => {
     jest.clearAllMocks();
   });
 
+  it('should get the correct connectionId for OpenApi', async () => {
+    makeMockStdOperationManifestService(ConnectionReferenceKeyFormat.OpenApi);
+    const mockStdOperationManifestService = OperationManifestService();
+
+    const res = await getConnectionMappingForNode(mockApiConnection, nodeId, mockStdOperationManifestService, mockGetState);
+    if (res) {
+      expect(res[nodeId]).toEqual(connectionName);
+    } else {
+      throw Error();
+    }
+  });
+
+  it('should get the correct connectionId for manifest', async () => {
+    makeMockStdOperationManifestService(ConnectionReferenceKeyFormat.OpenApi);
+    const mockStdOperationManifestService = OperationManifestService();
+    jest.spyOn(StandardOperationManifestService.prototype, 'isSupported').mockImplementation((): boolean => {
+      return true;
+    });
+
+    const res = await getConnectionMappingForNode(mockApiConnection, nodeId, mockStdOperationManifestService, mockGetState);
+    if (res) {
+      expect(res[nodeId]).toEqual(connectionName);
+    } else {
+      throw Error();
+    }
+  });
+
   it('should return undefined when there is no referenceKeyFormat', async () => {
     makeMockStdOperationManifestService('');
-    const result = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockApiConnectionAction);
+    const result = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockOpenApiConnection);
     expect(result).toBeUndefined();
   });
 
-  it('should get the correct connectionId for the node', async () => {
+  it('should get the correct connectionId for the node with reference key', async () => {
     makeMockStdOperationManifestService(ConnectionReferenceKeyFormat.OpenApi);
 
-    const res = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockApiConnectionAction);
+    const res = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockOpenApiConnection);
     if (res) {
       expect(res[nodeId]).toEqual(connectionName);
     }
@@ -85,7 +117,20 @@ const mockGetState = (): RootState => {
   return { operations: state as OperationMetadataState } as RootState;
 };
 
-const mockApiConnectionAction: LogicAppsV2.OpenApiOperationAction = {
+const mockApiConnection: LogicAppsV2.OpenApiOperationAction = {
+  type: Constants.NODE.TYPE.API_CONNECTION,
+  inputs: {
+    host: {
+      apiId: '123',
+      operationId: '2',
+      connection: {
+        referenceName: connectionName,
+      },
+    },
+  },
+};
+
+const mockOpenApiConnection: LogicAppsV2.OpenApiOperationAction = {
   type: Constants.NODE.TYPE.OPEN_API_CONNECTION,
   inputs: {
     host: {
