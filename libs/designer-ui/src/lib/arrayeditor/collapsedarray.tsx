@@ -20,7 +20,7 @@ export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, se
   const intl = useIntl();
 
   const errorMessage = intl.formatMessage({
-    defaultMessage: 'Please Enter a Valid Array',
+    defaultMessage: 'Please Enter a valid array',
     description: 'Error Message for Invalid Array',
   });
   const renderLabel = (): JSX.Element => {

@@ -37,7 +37,7 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
   const intl = useIntl();
 
   const addItemButtonLabel = intl.formatMessage({
-    defaultMessage: 'Add new Item',
+    defaultMessage: 'Add new item',
     description: 'Label to add item to array editor',
   });
 
