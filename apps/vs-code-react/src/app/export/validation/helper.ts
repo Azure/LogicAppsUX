@@ -6,8 +6,12 @@ export const getValidationColumns = () => {
   ];
 };
 
-const getActionDetails = (_details: any) => {
-  return {};
+const getActionDetails = (itemsSchema: any, actionName: string) => {
+  const { details, validationState } = itemsSchema;
+  const errors = Object.values(details).map((detail: any) => {
+    return { action: actionName, status: validationState, message: detail.message };
+  });
+  return errors;
 };
 
 const getValidationGroup = (workflowSchema: any, groupName: string) => {
@@ -31,10 +35,12 @@ const getItemsValidation = (itemsSchema: any) => {
     const item = itemsSchema[workflowId];
     const actionName = item.displayName ?? workflowId;
     const actionStatus = item.validationState;
-    const actionMessage = item.details ? getActionDetails(item.details) : '';
 
-    const test = { action: actionName, status: actionStatus, message: actionMessage };
-    items.push(test);
+    if (actionStatus !== 'Succeeded' && item?.details) {
+      items.push(...getActionDetails(item, actionName));
+    } else {
+      items.push({ action: actionName, status: actionStatus, message: '' });
+    }
   });
 
   return items;
@@ -42,19 +48,20 @@ const getItemsValidation = (itemsSchema: any) => {
 
 export const parseValidationData = (validationData: any) => {
   const workflowsState = validationData?.properties?.workflows ?? {};
-  const validationGroups = [];
+  const validationGroups: any = [];
   const validationItems: any = [];
+
   const workflowsId = Object.keys(workflowsState);
 
   workflowsId.forEach((workflowId) => {
     const workflowSchema = workflowsState[workflowId];
     const workflowGroup = getValidationGroup(workflowSchema, workflowId);
 
-    validationItems.push(getItemsValidation(workflowSchema.workflowOperations));
-    validationItems.push(getItemsValidation(workflowSchema.connections));
-    validationItems.push(getItemsValidation(workflowSchema.parameters));
+    validationItems.push(...getItemsValidation(workflowSchema.workflowOperations));
+    validationItems.push(...getItemsValidation(workflowSchema.connections));
+    validationItems.push(...getItemsValidation(workflowSchema.parameters));
     validationGroups.push(workflowGroup);
   });
 
-  return validationItems;
+  return { validationItems, validationGroups };
 };

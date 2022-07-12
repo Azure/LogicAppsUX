@@ -29,7 +29,8 @@ export const Validation: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  const validationItems: any[] = isValidationLoading || !validationData ? [] : parseValidationData(validationData);
+  const { validationItems = [], validationGroups = [] }: any =
+    isValidationLoading || !validationData ? {} : parseValidationData(validationData);
 
   console.log(validationData, validationItems);
 
@@ -49,7 +50,13 @@ export const Validation: React.FC = () => {
 
   return (
     <div className="msla-export-validation">
-      <GroupedList items={validationItems} onRenderCell={onRenderCell} selectionMode={SelectionMode.none} compact={true} />
+      <GroupedList
+        items={validationItems}
+        groups={validationGroups}
+        onRenderCell={onRenderCell}
+        selectionMode={SelectionMode.none}
+        compact={true}
+      />
     </div>
   );
 };
