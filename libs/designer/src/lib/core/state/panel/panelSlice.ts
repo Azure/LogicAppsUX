@@ -1,4 +1,5 @@
 import type { PanelState } from './panelInterfaces';
+import type { PanelTab } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -6,6 +7,9 @@ const initialState: PanelState = {
   collapsed: true,
   selectedNode: '',
   isDiscovery: false,
+
+  registeredTabs: {},
+  selectedTabName: undefined,
 };
 
 export const panelSlice = createSlice({
@@ -38,10 +42,49 @@ export const panelSlice = createSlice({
       state.selectedNode = action.payload;
       state.isDiscovery = false;
     },
+
+    registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {
+      action.payload.forEach((tab) => {
+        state.registeredTabs[tab.name.toLowerCase()] = tab;
+      });
+    },
+    unregisterPanelTab: (state, action: PayloadAction<string>) => {
+      delete state.registeredTabs[action.payload];
+    },
+    showAllTabs: (state, action: PayloadAction<{ exclude: string[] }>) => {
+      Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {
+        if (!action.payload.exclude.includes(tab.name)) {
+          state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: true };
+        }
+      });
+    },
+    hideAllTabs: (state, action: PayloadAction<{ exclude: string[] }>) => {
+      Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {
+        if (!action.payload.exclude.includes(tab.name)) {
+          state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: false };
+        }
+      });
+    },
+
+    selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
+      state.selectedTabName = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { expandPanel, collapsePanel, clearPanel, changePanelNode, expandDiscoveryPanel, switchToOperationPanel } = panelSlice.actions;
+export const {
+  expandPanel,
+  collapsePanel,
+  clearPanel,
+  changePanelNode,
+  expandDiscoveryPanel,
+  switchToOperationPanel,
+  registerPanelTabs,
+  unregisterPanelTab,
+  showAllTabs,
+  hideAllTabs,
+  selectPanelTab,
+} = panelSlice.actions;
 
 export default panelSlice.reducer;
