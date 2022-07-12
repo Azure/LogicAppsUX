@@ -16,7 +16,8 @@ export const ParametersTab = () => {
     <>
       {Object.keys(parameters?.parameterGroups ?? {}).map((sectionName) => {
         const id = getId();
-        const settings: Settings[] = parameters.parameterGroups[sectionName]?.parameters
+        const parameterGroup = parameters.parameterGroups[sectionName];
+        const settings: Settings[] = parameterGroup?.parameters
           .filter((x) => !x.hideInUI)
           .map((param) => {
             return {
@@ -33,7 +34,12 @@ export const ParametersTab = () => {
           });
         return (
           <div key={id}>
-            <SettingsSection id={getId()} title={sectionName} settings={settings} showHeading={false} />
+            <SettingsSection
+              id={getId()}
+              title={parameterGroup.description}
+              settings={settings}
+              showHeading={!!parameterGroup.description}
+            />
           </div>
         );
       })}

@@ -111,10 +111,21 @@
     "contentVersion": "1.0.0.0",
     "outputs": {},
     "triggers": {
-      "manual": {
-        "inputs": {},
-        "kind": "Http",
-        "type": "Request"
+      "Http": {
+        "inputs": {
+          "body": "d",
+          "headers": {
+            "d": "d"
+          },
+          "method": "PUT",
+          "uri": "http://uri.com"
+        },
+        "recurrence": {
+          "frequency": "Hour",
+          "interval": 3,
+          "timeZone": "UTC-11"
+        },
+        "type": "Http"
       }
     }
   },

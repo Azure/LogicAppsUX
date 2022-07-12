@@ -11,6 +11,18 @@
       "value": "Filters"
     }
   ],
+  "+W9fkq": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+    }
+  ],
+  "+dlOgj": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Haiti"
+    }
+  ],
   "+g+mch": [
     {
       "type": 0,
@@ -35,10 +47,28 @@
       "value": "Pagination"
     }
   ],
+  "/AtN16": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Darwin"
+    }
+  ],
+  "/B2CTz": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
       "value": "Body"
+    }
+  ],
+  "/Igb36": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Brisbane"
     }
   ],
   "/NDLmg": [
@@ -71,6 +101,24 @@
       "value": "Required. The collection to join items from."
     }
   ],
+  "/qu3zt": [
+    {
+      "type": 0,
+      "value": "0"
+    }
+  ],
+  "/rjP4U": [
+    {
+      "type": 0,
+      "value": "(UTC) Coordinated Universal Time"
+    }
+  ],
+  "/sMQhI": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Indiana (East)"
+    }
+  ],
   "/ut0u7": [
     {
       "type": 0,
@@ -87,6 +135,12 @@
     {
       "type": 0,
       "value": "Returns the URL to invoke the trigger or action. Note: This function can only be used in an httpWebhook and apiConnectionWebhook, not in a manual, recurrence, http, or apiConnection."
+    }
+  ],
+  "09oqLb": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Baku"
     }
   ],
   "0FzNJV": [
@@ -131,10 +185,22 @@
       "value": "Succeeded with retries"
     }
   ],
+  "0hxr5j": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Chetumal"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
       "value": "Required. The string to convert to upper casing. If a character in the string does not have an uppercase equivalent, the character is included unchanged in the returned string."
+    }
+  ],
+  "0meqK1": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
   "0p+pJq": [
@@ -173,6 +239,12 @@
       "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
     }
   ],
+  "14lYtE": [
+    {
+      "type": 0,
+      "value": "18"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
@@ -201,6 +273,12 @@
     {
       "type": 0,
       "value": "Convert the parameter argument to a floating-point number"
+    }
+  ],
+  "1Ogj/V": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Jerusalem"
     }
   ],
   "1R6Vaa": [
@@ -279,10 +357,22 @@
       "value": "Required. The object to check if it is less than value being compared to."
     }
   ],
+  "1uGBLP": [
+    {
+      "type": 0,
+      "value": "5"
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Dismiss"
+    }
+  ],
+  "1zmMYu": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Caracas"
     }
   ],
   "23fENy": [
@@ -315,6 +405,24 @@
       "value": "End time"
     }
   ],
+  "2NYPLt": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30) Newfoundland"
+    }
+  ],
+  "2Noh96": [
+    {
+      "type": 0,
+      "value": "17"
+    }
+  ],
+  "2b1yD3": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Auckland, Wellington"
+    }
+  ],
   "2cVEMV": [
     {
       "type": 0,
@@ -327,10 +435,22 @@
       "value": "Required. The name of the action with a form-data or form-encoded response."
     }
   ],
+  "2ri1Kf": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Damascus"
+    }
+  ],
   "2tTQ0A": [
     {
       "type": 0,
       "value": "On"
+    }
+  ],
+  "2xhbE1": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Magadan"
     }
   ],
   "33+WHG": [
@@ -339,16 +459,46 @@
       "value": "Identifier"
     }
   ],
+  "3FoqCK": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Tbilisi"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
       "value": "Required. The separator."
     }
   ],
+  "3PgHCT": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Chisinau"
+    }
+  ],
+  "3TD2V5": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Dhaka"
+    }
+  ],
   "3X/ZDK": [
     {
       "type": 0,
       "value": "Upload or select an output schema to be used for your map."
+    }
+  ],
+  "3afjx+": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Chita"
+    }
+  ],
+  "3jlz+B": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30) Tehran"
     }
   ],
   "3kI7xF": [
@@ -375,10 +525,22 @@
       "value": "Required. The number of a specified time unit to subtract."
     }
   ],
+  "3vqfeV": [
+    {
+      "type": 0,
+      "value": "3"
+    }
+  ],
   "3wagjT": [
     {
       "type": 0,
       "value": "select input"
+    }
+  ],
+  "4/kJ8D": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Yerevan"
     }
   ],
   "47kOXr": [
@@ -397,6 +559,12 @@
     {
       "type": 0,
       "value": "Add a new connection"
+    }
+  ],
+  "4XdZNj": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) West Central Africa"
     }
   ],
   "4YKQAF": [
@@ -439,6 +607,12 @@
     {
       "type": 0,
       "value": "Tour/Tutorial"
+    }
+  ],
+  "4wjJs0": [
+    {
+      "type": 0,
+      "value": "14"
     }
   ],
   "53PSgA": [
@@ -489,6 +663,18 @@
       "value": "Required. The object to check if it is greater than value being compared to."
     }
   ],
+  "65FlWi": [
+    {
+      "type": 0,
+      "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6XR3FS": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Adelaide"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -513,6 +699,12 @@
       "value": "Previous"
     }
   ],
+  "6pd1bE": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Arizona"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
@@ -523,6 +715,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "7KxCGX": [
+    {
+      "type": 0,
+      "value": "(UTC+10:30) Lord Howe Island"
     }
   ],
   "7QymrD": [
@@ -591,6 +789,12 @@
       "value": "Required. The object to check if it is greater or equal to the comparing object."
     }
   ],
+  "8JEHiY": [
+    {
+      "type": 0,
+      "value": "Saturday"
+    }
+  ],
   "8JFxmV": [
     {
       "type": 0,
@@ -609,10 +813,22 @@
       "value": "Required. The string to be URI encoded."
     }
   ],
+  "8Y5xpK": [
+    {
+      "type": 0,
+      "value": "Thursday"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
       "value": "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state."
+    }
+  ],
+  "8pPivj": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Norfolk Island"
     }
   ],
   "8to63i": [
@@ -645,6 +861,18 @@
       "value": "Returns a single array or object that has common elements between arrays or objects passed in"
     }
   ],
+  "9/vdrb": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "949s+r": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Ulaanbaatar"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -669,6 +897,12 @@
       "value": "Returns an object with an additional property value pair"
     }
   ],
+  "9SuA/E": [
+    {
+      "type": 0,
+      "value": "12"
+    }
+  ],
   "9b4xDa": [
     {
       "type": 0,
@@ -687,10 +921,34 @@
       "value": "Select an output schema"
     }
   ],
+  "9pdXmX": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+    }
+  ],
+  "9pl7QP": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Atlantic Time (Canada)"
+    }
+  ],
   "9u/Ae3": [
     {
       "type": 0,
       "value": "Returns true if both parameters are true"
+    }
+  ],
+  "AIL7WX": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "ALImBL": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Monrovia, Reykjavik"
     }
   ],
   "ANbEeQ": [
@@ -703,6 +961,12 @@
     {
       "type": 0,
       "value": "Done"
+    }
+  ],
+  "AYaqW/": [
+    {
+      "type": 0,
+      "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
   "ArTh0/": [
@@ -757,6 +1021,12 @@
       "value": "Required. The index of the part to retrieve."
     }
   ],
+  "BAgRzO": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Coordinated Universal Time-08"
+    }
+  ],
   "BBD8Em": [
     {
       "type": 0,
@@ -785,6 +1055,18 @@
     {
       "type": 0,
       "value": "Required. The string to decode the URL-unsafe characters from."
+    }
+  ],
+  "BSHFiw": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Perth"
+    }
+  ],
+  "BVOUxP": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Havana"
     }
   ],
   "Bn8iTS": [
@@ -817,6 +1099,12 @@
       "value": "Connection required"
     }
   ],
+  "Cy9qeQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -835,10 +1123,28 @@
       "value": "Duration"
     }
   ],
+  "DfS13/": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Aleutian Islands"
+    }
+  ],
+  "DuXV2M": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Azores"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
       "value": "Ctrl + Y"
+    }
+  ],
+  "E9OS+9": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Coordinated Universal Time-09"
     }
   ],
   "ECZC6Y": [
@@ -853,10 +1159,28 @@
       "value": "Response"
     }
   ],
+  "EYqGxA": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Athens, Bucharest"
+    }
+  ],
   "EZz5q7": [
     {
       "type": 0,
       "value": "Required. The index of where to start extracting the substring."
+    }
+  ],
+  "EdzoIs": [
+    {
+      "type": 0,
+      "value": "1"
+    }
+  ],
+  "Eqgm4v": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Eastern Time (US & Canada)"
     }
   ],
   "ExaACE": [
@@ -869,6 +1193,12 @@
     {
       "type": 0,
       "value": "Required. The number of a specified time unit to add."
+    }
+  ],
+  "F489Vg": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Irkutsk"
     }
   ],
   "FDF4Qb": [
@@ -887,6 +1217,18 @@
     {
       "type": 0,
       "value": "has failed"
+    }
+  ],
+  "FHsP9y": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45) Kathmandu"
+    }
+  ],
+  "FIT7i0": [
+    {
+      "type": 0,
+      "value": "20"
     }
   ],
   "FN5zHQ": [
@@ -923,6 +1265,12 @@
     {
       "type": 0,
       "value": "Returns the start of the day to a string timestamp passed in"
+    }
+  ],
+  "FXC0Zi": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Baghdad"
     }
   ],
   "FXLR5M": [
@@ -973,6 +1321,12 @@
     {
       "type": 0,
       "value": "Returns the first index of a value within a string (case-insensitive, invariant culture)"
+    }
+  ],
+  "FiyQjU": [
+    {
+      "type": 0,
+      "value": "2"
     }
   ],
   "FslNgF": [
@@ -1071,10 +1425,34 @@
       "value": "Please select a card to see the content"
     }
   ],
+  "IA+Ogm": [
+    {
+      "type": 0,
+      "value": "22"
+    }
+  ],
+  "IPbBB2": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Fiji"
+    }
+  ],
+  "IUE/lQ": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Cabo Verde Is."
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
       "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+    }
+  ],
+  "IjZFjQ": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
   "IngtMG": [
@@ -1147,6 +1525,12 @@
     {
       "type": 0,
       "value": "Name:"
+    }
+  ],
+  "JpthWY": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Montevideo"
     }
   ],
   "Jq2Y/o": [
@@ -1225,6 +1609,30 @@
       "value": "actionCount"
     }
   ],
+  "Khc8lS": [
+    {
+      "type": 0,
+      "value": "(UTC-09:30) Marquesas Islands"
+    }
+  ],
+  "KlvTze": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "KoBDbT": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Coordinated Universal Time-02"
+    }
+  ],
+  "Kw3bWO": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Istanbul"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -1285,10 +1693,22 @@
       "value": "Gateway"
     }
   ],
+  "Lwe7tQ": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+    }
+  ],
   "M0HMjE": [
     {
       "type": 0,
       "value": "Add a comment"
+    }
+  ],
+  "M48CGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Solomon Is., New Caledonia"
     }
   ],
   "M6U2LE": [
@@ -1363,6 +1783,30 @@
       "value": "Status"
     }
   ],
+  "NeyUAh": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) City of Buenos Aires"
+    }
+  ],
+  "NkUgXU": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "NvANon": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Alaska"
+    }
+  ],
+  "NvJDn/": [
+    {
+      "type": 0,
+      "value": "Tuesday"
+    }
+  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -1385,6 +1829,18 @@
     {
       "type": 0,
       "value": "Operation options:"
+    }
+  ],
+  "OGUVGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Bougainville Island"
+    }
+  ],
+  "OH9xlX": [
+    {
+      "type": 0,
+      "value": "10"
     }
   ],
   "OKszbi": [
@@ -1465,6 +1921,12 @@
       "value": "Required. The collection to take the first object from."
     }
   ],
+  "PBvR9Q": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Araguaina"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -1507,16 +1969,34 @@
       "value": "Aborted"
     }
   ],
+  "PeLrFb": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+    }
+  ],
   "PfCJlN": [
     {
       "type": 0,
       "value": "Workflow functions"
     }
   ],
+  "PmB0J7": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Turks and Caicos"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
       "value": "Returns the base 64 representation of the input string"
+    }
+  ],
+  "Q+oELo": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Izhevsk, Samara"
     }
   ],
   "Q/7unA": [
@@ -1653,10 +2133,22 @@
       "value": "minutes"
     }
   ],
+  "RkgScy": [
+    {
+      "type": 0,
+      "value": "6"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
       "value": "Delete"
+    }
+  ],
+  "SADSSs": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
     }
   ],
   "SKXopi": [
@@ -1735,6 +2227,18 @@
       "value": "Returns a string with each item of an array joined by a delimiter"
     }
   ],
+  "TNEttQ": [
+    {
+      "type": 0,
+      "value": "Friday"
+    }
+  ],
+  "TNzcrv": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Vladivostok"
+    }
+  ],
   "TO7qos": [
     {
       "type": 0,
@@ -1771,6 +2275,18 @@
       "value": "Tags"
     }
   ],
+  "ToPmjE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Cuiaba"
+    }
+  ],
+  "TqPfth": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -1783,10 +2299,22 @@
       "value": "Collapse/Expand"
     }
   ],
+  "U1NiVg": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Central America"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
       "value": "Generates an array of integers starting from a certain number"
+    }
+  ],
+  "U56j9a": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Easter Island"
     }
   ],
   "UCNM4L": [
@@ -1837,10 +2365,22 @@
       "value": "Show less"
     }
   ],
+  "VE3cxq": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
       "value": "The provided workflow run name is not valid."
+    }
+  ],
+  "VUH9aj": [
+    {
+      "type": 0,
+      "value": "23"
     }
   ],
   "VVfYvq": [
@@ -1949,10 +2489,22 @@
       "value": "Retry"
     }
   ],
+  "XN9RvJ": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Baja California"
+    }
+  ],
   "XOzn/3": [
     {
       "type": 0,
       "value": "Connection name"
+    }
+  ],
+  "XTYYks": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Seoul"
     }
   ],
   "XTuxmH": [
@@ -1971,6 +2523,18 @@
     {
       "type": 0,
       "value": " seconds"
+    }
+  ],
+  "XX1ioe": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Kuwait, Riyadh"
+    }
+  ],
+  "XaS4ds": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Pacific Time (US & Canada)"
     }
   ],
   "Xnn0uj": [
@@ -2079,6 +2643,12 @@
       "value": "Returns the day of month component of a string timestamp"
     }
   ],
+  "ZQ4lji": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -2095,6 +2665,12 @@
     {
       "type": 0,
       "value": "This operation has already been deleted."
+    }
+  ],
+  "ZnGRMP": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Tomsk"
     }
   ],
   "a3QJzO": [
@@ -2115,6 +2691,12 @@
       "value": "Required. The number to divide by the Divisor."
     }
   ],
+  "a7x6VI": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Taipei"
+    }
+  ],
   "aAXnqw": [
     {
       "type": 0,
@@ -2125,6 +2707,12 @@
     {
       "type": 0,
       "value": "Required. The number of objects to remove from the front of Collection. Must be a positive integer."
+    }
+  ],
+  "aH9SV7": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ashgabat, Tashkent"
     }
   ],
   "aK4iLW": [
@@ -2151,6 +2739,12 @@
       "value": "Value"
     }
   ],
+  "bS5DyV": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kaliningrad"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -2175,6 +2769,18 @@
       "value": "Returns the maximum value in the input array of numbers"
     }
   ],
+  "bnStSJ": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+    }
+  ],
+  "bx3qeC": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Brasilia"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -2185,6 +2791,12 @@
     {
       "type": 0,
       "value": "Do"
+    }
+  ],
+  "c1XmvN": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Nuku'alofa"
     }
   ],
   "c2XklE": [
@@ -2223,6 +2835,18 @@
       "value": "Required. The value to search the index of."
     }
   ],
+  "cT2MlP": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Chokurdakh"
+    }
+  ],
+  "cVIZTQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Tripoli"
+    }
+  ],
   "ci6ex1": [
     {
       "type": 0,
@@ -2247,6 +2871,12 @@
       "value": "Start time"
     }
   ],
+  "cr0UnG": [
+    {
+      "type": 0,
+      "value": "9"
+    }
+  ],
   "cscezV": [
     {
       "type": 0,
@@ -2257,6 +2887,12 @@
     {
       "type": 0,
       "value": "Delete comment"
+    }
+  ],
+  "d4xMIx": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
   "dDYCuU": [
@@ -2277,6 +2913,12 @@
       "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
+  "dUZi34": [
+    {
+      "type": 0,
+      "value": "(UTC+12:45) Chatham Islands"
+    }
+  ],
   "dWFyfN": [
     {
       "type": 0,
@@ -2287,6 +2929,18 @@
     {
       "type": 0,
       "value": "pencil icon"
+    }
+  ],
+  "dWx21B": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Sakhalin"
+    }
+  ],
+  "dgAu27": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Greenland"
     }
   ],
   "dhvk0u": [
@@ -2313,10 +2967,22 @@
       "value": "Splits the string using a separator"
     }
   ],
+  "e00zot": [
+    {
+      "type": 0,
+      "value": "How often do you want to check for items?"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Not specified"
+    }
+  ],
+  "eGa1Wa": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ekaterinburg"
     }
   ],
   "eHgi14": [
@@ -2367,10 +3033,22 @@
       "value": "Returns true if the first argument is greater than or equal to the second"
     }
   ],
+  "faSDuD": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Port Louis"
+    }
+  ],
   "fg/34o": [
     {
       "type": 0,
       "value": "Logical functions"
+    }
+  ],
+  "froV/0": [
+    {
+      "type": 0,
+      "value": "(UTC+04:30) Kabul"
     }
   ],
   "ftwXvc": [
@@ -2391,6 +3069,12 @@
       "value": "Publish"
     }
   ],
+  "g5mMuM": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -2407,6 +3091,12 @@
     {
       "type": 0,
       "value": "Returns the result from dividing the two numbers"
+    }
+  ],
+  "gF+0/N": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Amman"
     }
   ],
   "gIK0WG": [
@@ -2445,6 +3135,12 @@
       "value": "Trigger Conditions"
     }
   ],
+  "gg0j4S": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
   "gj+jEr": [
     {
       "type": 0,
@@ -2455,6 +3151,12 @@
     {
       "type": 0,
       "value": "When used inside until loop, this function returns the current iteration index of the specified loop."
+    }
+  ],
+  "hBLPXK": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan"
     }
   ],
   "hN7iBP": [
@@ -2549,6 +3251,12 @@
       "value": "Required. The URI to parse."
     }
   ],
+  "iRe/g7": [
+    {
+      "type": 0,
+      "value": "21"
+    }
+  ],
   "iRjBf4": [
     {
       "type": 0,
@@ -2573,6 +3281,12 @@
       "value": "Cancel"
     }
   ],
+  "iq+tiv": [
+    {
+      "type": 0,
+      "value": "11"
+    }
+  ],
   "iql+jn": [
     {
       "type": 1,
@@ -2587,6 +3301,12 @@
     {
       "type": 0,
       "value": "Test"
+    }
+  ],
+  "j1VU25": [
+    {
+      "type": 0,
+      "value": "(UTC+14:00) Kiritimati Island"
     }
   ],
   "j2MU0b": [
@@ -2679,6 +3399,12 @@
       "value": "Add Input Schema"
     }
   ],
+  "kDsud+": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Cayenne, Fortaleza"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -2709,16 +3435,34 @@
       "value": "Download (Alt/Option + click)"
     }
   ],
+  "kZCX7t": [
+    {
+      "type": 0,
+      "value": "Monday"
+    }
+  ],
   "kZuYgD": [
     {
       "type": 0,
       "value": "Returns true if the first argument is less than the second"
     }
   ],
+  "kc5Mui": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Mid-Atlantic - Old"
+    }
+  ],
   "keb4r1": [
     {
       "type": 0,
       "value": "Returns true if two values are equal"
+    }
+  ],
+  "kneb9/": [
+    {
+      "type": 0,
+      "value": "(UTC-12:00) International Date Line West"
     }
   ],
   "knylNW": [
@@ -2743,6 +3487,18 @@
     {
       "type": 0,
       "value": " minutes"
+    }
+  ],
+  "lFve22": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+    }
+  ],
+  "lIPWQ6": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
     }
   ],
   "lPTdSf": [
@@ -2823,6 +3579,12 @@
       "value": "Url encodes the input string"
     }
   ],
+  "mZCHKf": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+    }
+  ],
   "mZRMD9": [
     {
       "type": 0,
@@ -2833,6 +3595,24 @@
     {
       "type": 0,
       "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+    }
+  ],
+  "mx2IMJ": [
+    {
+      "type": 0,
+      "value": "13"
+    }
+  ],
+  "n+F7e2": [
+    {
+      "type": 0,
+      "value": "15"
+    }
+  ],
+  "n20T2h": [
+    {
+      "type": 0,
+      "value": "7"
     }
   ],
   "n35O/+": [
@@ -2883,6 +3663,12 @@
       "value": "Close"
     }
   ],
+  "nx25nq": [
+    {
+      "type": 0,
+      "value": "19"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2921,16 +3707,34 @@
       "value": "Content Transfer"
     }
   ],
+  "oRvVIW": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Krasnoyarsk"
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Enter the run identifier to open the run"
     }
   ],
+  "ol+TkT": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Salvador"
+    }
+  ],
   "orhWzV": [
     {
       "type": 0,
       "value": "Failed loading the schema. Please try again."
+    }
+  ],
+  "oxH1L/": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
     }
   ],
   "p/0r2N": [
@@ -2943,6 +3747,12 @@
     {
       "type": 0,
       "value": "Headers"
+    }
+  ],
+  "p5tz8/": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Samoa"
     }
   ],
   "pIczsS": [
@@ -2961,6 +3771,12 @@
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "pUeUDw": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
     }
   ],
   "pXmFGf": [
@@ -3021,6 +3837,12 @@
     {
       "type": 0,
       "value": "Adds an integer number of seconds to a string timestamp passed in"
+    }
+  ],
+  "q9hf8i": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
     }
   ],
   "qGfwxW": [
@@ -3103,10 +3925,22 @@
       "value": "Required. The value that is converted to an integer."
     }
   ],
+  "qq/bq0": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Yakutsk"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
       "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
+    }
+  ],
+  "r1FQhf": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Windhoek"
     }
   ],
   "r43nMc": [
@@ -3155,6 +3989,12 @@
     {
       "type": 0,
       "value": "Returns a URI encoded representation of a value"
+    }
+  ],
+  "rstpaK": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Central Time (US & Canada)"
     }
   ],
   "s5RV9B": [
@@ -3217,6 +4057,12 @@
       "value": "Key"
     }
   ],
+  "siYGSo": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Beirut"
+    }
+  ],
   "soqP+Z": [
     {
       "type": 0,
@@ -3245,6 +4091,12 @@
     {
       "type": 0,
       "value": "Returns the URL to invoke the trigger or action"
+    }
+  ],
+  "tELkSC": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
   "tImHz/": [
@@ -3283,6 +4135,12 @@
       "value": "Type"
     }
   ],
+  "tP+5fA": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
   "tVmUCd": [
     {
       "type": 0,
@@ -3301,6 +4159,12 @@
       "value": "Required. The number of hours to add. Can be negative to subtract hours."
     }
   ],
+  "teZwo6": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Hobart"
+    }
+  ],
   "tsmuoF": [
     {
       "type": 0,
@@ -3313,6 +4177,18 @@
       "value": "Operations"
     }
   ],
+  "u/KSPz": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Santiago"
+    }
+  ],
+  "u6Gdft": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -3323,6 +4199,12 @@
     {
       "type": 0,
       "value": "Required. The collections to evaluate. An object that appears in any of the collections also appears in the result."
+    }
+  ],
+  "uRurmg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Guam, Port Moresby"
     }
   ],
   "uUlBZ8": [
@@ -3349,6 +4231,24 @@
       "value": "Required. The string that may contain the value."
     }
   ],
+  "udNlco": [
+    {
+      "type": 0,
+      "value": "(UTC-11:00) Coordinated Universal Time-11"
+    }
+  ],
+  "ui7GCl": [
+    {
+      "type": 0,
+      "value": "16"
+    }
+  ],
+  "urAHv1": [
+    {
+      "type": 0,
+      "value": "4"
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
@@ -3365,6 +4265,12 @@
     {
       "type": 0,
       "value": "Generates a globally unique string (GUID)"
+    }
+  ],
+  "vD2lQy": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Asuncion"
     }
   ],
   "vEBhDX": [
@@ -3385,10 +4291,22 @@
       "value": "Delete"
     }
   ],
+  "vXwYXe": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Astana"
+    }
+  ],
   "va40BJ": [
     {
       "type": 0,
       "value": "Required. The name of the action whose outputs you want."
+    }
+  ],
+  "vb/okJ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Cairo"
     }
   ],
   "vcBAuU": [
@@ -3421,6 +4339,12 @@
     {
       "type": 0,
       "value": "Workflow Properties"
+    }
+  ],
+  "w5Hhig": [
+    {
+      "type": 0,
+      "value": "Sunday"
     }
   ],
   "wEaGWn": [
@@ -3483,6 +4407,12 @@
       "value": "Callback URL:"
     }
   ],
+  "x+6ccf": [
+    {
+      "type": 0,
+      "value": "Wednesday"
+    }
+  ],
   "x0or2o": [
     {
       "type": 0,
@@ -3525,6 +4455,18 @@
       "value": "Returns the path from a URI. If path is not specified, returns '/'"
     }
   ],
+  "xZhieP": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Islamabad, Karachi"
+    }
+  ],
+  "xb/DIr": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Coordinated Universal Time+12"
+    }
+  ],
   "xt5TeT": [
     {
       "type": 0,
@@ -3555,6 +4497,12 @@
       "value": "Required. The value that is converted to an array."
     }
   ],
+  "yIZP4R": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Hawaii"
+    }
+  ],
   "yOkPGx": [
     {
       "type": 0,
@@ -3565,16 +4513,34 @@
       "value": "connectorName"
     }
   ],
+  "yVh9kr": [
+    {
+      "type": 0,
+      "value": "8"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
       "value": "Select an existing connection or create a new one."
     }
   ],
+  "yph4eq": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
       "value": "Date and time functions"
+    }
+  ],
+  "yxsn7s": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Casablanca"
     }
   ],
   "yyYtZV": [
@@ -3601,10 +4567,22 @@
       "value": "Required. The string that is converted to a native type value."
     }
   ],
+  "zbtUQ/": [
+    {
+      "type": 0,
+      "value": "(UTC+08:30) Pyongyang"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "Converts a string, with optionally a locale and a format to a date"
+    }
+  ],
+  "zggBvC": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Nairobi"
     }
   ],
   "ziYCiA": [
