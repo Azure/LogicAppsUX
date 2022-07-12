@@ -62,6 +62,38 @@
         }
       }
 
+      .msla-array-editor-container-collapsed {
+        width: 100%;
+        border-radius: 2px;
+
+        .editor-input {
+          outline: 1px solid @panel-mode-panel-border-color;
+          resize: none;
+          font-size: 15px;
+          tab-size: 1;
+          min-height: 75px;
+          line-height: 30px;
+          caret-color: #444;
+          padding-inline-start: 5px;
+          p {
+            margin: 0;
+            line-height: 1.5rem;
+          }
+        }
+        .editor-placeholder {
+          color: #696969;
+          overflow: hidden;
+          position: absolute;
+          text-overflow: ellipsis;
+          margin-top: -75px;
+          margin-left: 5px;
+          font-size: 15px;
+          user-select: none;
+          display: inline-block;
+          pointer-events: none;
+        }
+      }
+
       .msla-array-commands {
         margin-top: 0;
       }
@@ -71,6 +103,47 @@
   .msla-array-item-container {
     margin: @padding 0;
     padding: 0 @padding;
+
+    .msla-array-item {
+      padding-left: 6px;
+      .msla-array-item-header {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 4px;
+      }
+      .msla-array-editor-container-expanded {
+        width: 100%;
+        border-radius: 2px;
+        padding-bottom: 20px;
+
+        .editor-input {
+          outline: 1px solid @panel-mode-panel-border-color;
+          resize: none;
+          font-size: 15px;
+          tab-size: 1;
+          min-height: 20px;
+          line-height: 30px;
+          caret-color: #444;
+          padding-inline-start: 5px;
+          p {
+            margin: 0;
+            line-height: 1.5rem;
+          }
+        }
+        .editor-placeholder {
+          color: #696969;
+          overflow: hidden;
+          position: absolute;
+          text-overflow: ellipsis;
+          margin-top: -23px;
+          margin-left: 5px;
+          font-size: 15px;
+          user-select: none;
+          display: inline-block;
+          pointer-events: none;
+        }
+      }
+    }
 
     .msla-array-item-parameters {
       display: inline-block;
@@ -102,5 +175,11 @@
       height: @parameter-inputbox-height;
       font-size: @card-label-font-size;
     }
+  }
+  .msla-array-editor-validation {
+    position: relative;
+    color: rgb(224, 2, 2);
+    left: 4px;
+    font-size: 14px;
   }
 }
