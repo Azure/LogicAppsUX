@@ -65,7 +65,7 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
           continue;
         }
         if (text.indexOf('"') >= 0) {
-          currentSegments.push({ type: ValueSegmentType.LITERAL, value: text.replace('"', '') });
+          currentSegments.push({ type: ValueSegmentType.LITERAL, value: text.replace(/"/g, '') });
           if (inString) {
             returnItems.push({ content: currentSegments.slice(0) });
             while (currentSegments.length) {
