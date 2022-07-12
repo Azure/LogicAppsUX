@@ -15,34 +15,27 @@ const useStyles = makeStyles({
     cursor: 'pointer',
     paddingInline: '0px',
 
-    borderInlineColor: 'transparent',
-    borderBlockColor: 'transparent',
+    ...shorthands.border('0px'),
 
     paddingLeft: 'none',
     marginLeft: 'none',
 
     '&:enabled': {
       '&:hover': {
-        borderInlineColor: 'transparent',
-        borderBlockColor: 'transparent',
+        ...shorthands.border('0px'),
         boxShadow: tokens.shadow8,
         cursor: 'pointer',
       },
 
       '&:focus': {
-        borderBlockWidth: tokens.strokeWidthThick,
-        borderBlockColor: tokens.colorCompoundBrandStroke,
-        borderInlineWidth: tokens.strokeWidthThick,
-        borderInlineColor: tokens.colorCompoundBrandStroke,
+        ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorCompoundBrandStroke),
         cursor: 'pointer',
-        ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorStrokeFocus2),
       },
     },
   },
 
   error: {
-    outlineWidth: tokens.strokeWidthThick,
-    outlineColor: tokens.colorPaletteRedBackground3,
+    ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorPaletteRedBackground3),
     cursor: 'pointer',
   },
 

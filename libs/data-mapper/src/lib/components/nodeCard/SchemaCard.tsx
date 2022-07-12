@@ -1,4 +1,5 @@
 import { SchemaTypes } from '../configPanel/EditorConfigPanel';
+import { ExpressionCard } from './ExpressionCard';
 import { NodeCard } from './NodeCard';
 import { Icon, Text } from '@fluentui/react';
 import { makeStyles, tokens } from '@fluentui/react-components';
@@ -63,13 +64,15 @@ export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ data }) => {
   return (
     <>
       <Handle type="target" position={data.schemaType === SchemaTypes.Input ? Position.Right : Position.Left} style={handleStyle} />
-      <SchemaCardWrapper
-        label={data.label}
-        schemaType={data.schemaType}
-        isLeaf={data?.isLeaf}
-        onClick={data?.onClick}
-        disabled={data?.disabled}
-      />
+      <div>
+        <SchemaCardWrapper
+          label={data.label}
+          schemaType={data.schemaType}
+          isLeaf={data?.isLeaf}
+          onClick={data?.onClick}
+          disabled={data?.disabled}
+        />
+      </div>
     </>
   );
 };
@@ -78,12 +81,16 @@ export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ l
   const classes = useStyles();
 
   return (
-    <NodeCard onClick={onClick} disabled={disabled} childClasses={classes}>
-      <Icon className={classes.cardIcon} iconName="Diamond" />
-      <Text className={classes.cardText} block={true} nowrap={true}>
-        {label}
-      </Text>
-      <div className={classes.cardChevron}>{schemaType === SchemaTypes.Output && isLeaf && <Icon iconName="ChevronRightMed" />}</div>
-    </NodeCard>
+    <div>
+      <ExpressionCard />
+
+      <NodeCard onClick={onClick} disabled={disabled} childClasses={classes}>
+        <Icon className={classes.cardIcon} iconName="Diamond" />
+        <Text className={classes.cardText} block={true} nowrap={true}>
+          {label}
+        </Text>
+        <div className={classes.cardChevron}>{schemaType === SchemaTypes.Output && isLeaf && <Icon iconName="ChevronRightMed" />}</div>
+      </NodeCard>
+    </div>
   );
 };
