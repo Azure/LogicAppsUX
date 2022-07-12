@@ -40,7 +40,7 @@ const useStyles = makeStyles({
   },
 
   disabled: {
-    backgroundColor: tokens.colorNeutralBackgroundDisabled,
+    backgroundColor: tokens.colorNeutralBackground1,
     opacity: 0.38,
     shadow: tokens.shadow2,
     cursor: 'not-allowed',
@@ -62,14 +62,19 @@ export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClass
   const mergedFocusIndicator = mergeClasses(classes.focusIndicator, childClasses?.focusIndicator);
 
   return (
-    <DefaultButton
-      className={`${mergedClasses} ${mergedFocusIndicator} ${disabled && classes.disabled}`}
-      toggle
-      onClick={onClick}
-      allowDisabledFocus
-      disabled={disabled}
+    <div
+      style={{
+        backgroundColor: tokens.colorNeutralBackground1,
+      }}
     >
-      {children}
-    </DefaultButton>
+      <DefaultButton
+        className={`${mergedClasses} ${mergedFocusIndicator} ${disabled && classes.disabled}`}
+        toggle
+        onClick={onClick}
+        disabled={disabled}
+      >
+        {children}
+      </DefaultButton>
+    </div>
   );
 };
