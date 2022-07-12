@@ -50,7 +50,7 @@ validation.args = {
   BasePlugins: {
     validation: {
       type: 'ARRAY',
-      errorMessage: 'Please enter a valid array *Note this Story will always be invalid because it has no state',
+      errorMessage: 'Please enter a valid array - (storybook will always be invalid)',
       isValid: false,
     },
   },

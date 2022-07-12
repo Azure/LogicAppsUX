@@ -6,6 +6,7 @@ import { Label } from '../label';
 import type { LabelProps } from '../label';
 import { Serialize } from './plugins/Serialize';
 import type { Dispatch, SetStateAction } from 'react';
+import { useIntl } from 'react-intl';
 
 export interface CollapsedArrayProps {
   labelProps: LabelProps;
@@ -16,6 +17,12 @@ export interface CollapsedArrayProps {
 }
 
 export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, setIsValid }: CollapsedArrayProps): JSX.Element => {
+  const intl = useIntl();
+
+  const errorMessage = intl.formatMessage({
+    defaultMessage: 'Please Enter a Valid Array',
+    description: 'Error Message for Invalid Array',
+  });
   const renderLabel = (): JSX.Element => {
     const { text, isRequiredField } = labelProps;
     return (
@@ -37,7 +44,7 @@ export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, se
             tokens: true,
             validation: {
               type: 'ARRAY',
-              errorMessage: 'Please Enter a Valid Array',
+              errorMessage: errorMessage,
               className: 'msla-array-editor-validation',
               isValid,
               setIsValid,

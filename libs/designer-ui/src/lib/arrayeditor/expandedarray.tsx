@@ -57,7 +57,6 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
   return (
     <div className="msla-array-container msla-array-item-container">
       {items.map((item, index) => {
-        console.log(item);
         return (
           <div key={index} className="msla-array-item">
             <div className="msla-array-item-header">

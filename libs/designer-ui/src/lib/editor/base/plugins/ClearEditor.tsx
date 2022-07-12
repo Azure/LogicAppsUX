@@ -17,7 +17,7 @@ export default function ClearEditor({ showButton }: ClearEditorProps) {
     <>
       {showButton ? (
         <button
-          title={'clear editor'}
+          title={'Clear Editor'}
           onClick={() => {
             editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
             editor.focus();
