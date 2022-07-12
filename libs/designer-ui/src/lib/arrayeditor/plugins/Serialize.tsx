@@ -60,6 +60,9 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
         }
 
         text = splitChildNode[i].replace(/^[^"]*"(.*)"[^"]*$/, '$1').trim();
+        if (text === 'null') {
+          continue;
+        }
         if (text.length === 0) {
           returnItems.push({ content: [] });
           continue;

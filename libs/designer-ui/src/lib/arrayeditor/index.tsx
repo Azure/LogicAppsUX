@@ -7,7 +7,7 @@ import type { LabelProps } from '../label';
 import { isHighContrastBlack } from '../utils';
 import { CollapsedArray } from './collapsedarray';
 import { ExpandedArray } from './expandedarray';
-import type { ICalloutProps } from '@fluentui/react';
+import type { ICalloutProps, ITooltipHostStyles } from '@fluentui/react';
 import { IconButton, TooltipHost, DirectionalHint } from '@fluentui/react';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -35,6 +35,10 @@ export interface ArrayEditorProps extends BaseEditorProps {
 
 const calloutProps: ICalloutProps = {
   directionalHint: DirectionalHint.topCenter,
+};
+
+const inlineBlockStyle: Partial<ITooltipHostStyles> = {
+  root: { display: 'inline-block' },
 };
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
@@ -76,7 +80,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     const toggleText = collapsed ? PARAMETER_EXPAND_ICON_DESC : PARAMETER_COLLAPSE_ICON_DESC;
 
     return !disabledToggle ? (
-      <TooltipHost calloutProps={calloutProps} content={toggleText}>
+      <TooltipHost calloutProps={calloutProps} content={toggleText} styles={inlineBlockStyle}>
         <IconButton
           aria-label={toggleText}
           className="msla-button msla-array-toggle-button"

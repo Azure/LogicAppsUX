@@ -17,7 +17,7 @@ interface updateStateProps {
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
 }
 
-export const OnChange = ({ item, items, index, setItems }: updateStateProps) => {
+export const EditorChange = ({ item, items, index, setItems }: updateStateProps) => {
   const [editor] = useLexicalComposerContext();
   const [itemLength, setItemLength] = useState(items.length);
   useEffect(() => {
