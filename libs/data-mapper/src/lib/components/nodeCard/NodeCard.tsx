@@ -31,6 +31,11 @@ const useStyles = makeStyles({
         ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorCompoundBrandStroke),
         cursor: 'pointer',
       },
+
+      '&:selected': {
+        ...shorthands.outline(tokens.strokeWidthThick, 'solid', 'red'),
+        cursor: 'pointer',
+      },
     },
   },
 
@@ -51,7 +56,7 @@ const useStyles = makeStyles({
     style: {
       outlineWidth: tokens.strokeWidthThick,
       outlineColor: tokens.colorStrokeFocus2,
-      outlineOffset: '0px',
+      outlineOffset: '-1px',
     },
   }),
 });

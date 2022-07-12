@@ -2,7 +2,7 @@ import { SchemaTypes } from '../configPanel/EditorConfigPanel';
 import { ExpressionCard } from './ExpressionCard';
 import { NodeCard } from './NodeCard';
 import { Icon, Text } from '@fluentui/react';
-import { makeStyles, tokens } from '@fluentui/react-components';
+import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 
@@ -26,6 +26,7 @@ const useStyles = makeStyles({
     height: '44px',
     backgroundColor: tokens.colorNeutralBackground1,
     opacity: 1,
+    ...shorthands.borderRadius('5px'),
 
     '&:enabled': {
       '&:hover': {
@@ -56,6 +57,12 @@ const useStyles = makeStyles({
     height: '18px',
     paddingLeft: '12px',
   },
+
+  focusIndicator: createFocusOutlineStyle({
+    style: {
+      outlineRadius: '5px',
+    },
+  }),
 });
 
 const handleStyle = { color: 'red' };

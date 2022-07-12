@@ -1,6 +1,6 @@
 import { NodeCard } from './NodeCard';
 import { Icon } from '@fluentui/react';
-import { createFocusOutlineStyle, makeStyles } from '@fluentui/react-components';
+import { createFocusOutlineStyle, makeStyles, shorthands } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 
 interface ExpressionCardProps {
@@ -17,10 +17,8 @@ const useStyles = makeStyles({
     color: 'white',
     textAlign: 'center',
     lineHeight: '24px',
-    borderStartStartRadius: '100px',
-    borderStartEndRadius: '100px',
-    borderEndStartRadius: '100px',
-    borderEndEndRadius: '100px',
+    ...shorthands.borderRadius('100px'),
+
     '&:enabled': {
       '&:hover': {
         backgroundColor: '#8764b8',
@@ -28,6 +26,7 @@ const useStyles = makeStyles({
       },
     },
   },
+
   focusIndicator: createFocusOutlineStyle({
     selector: 'focus-within',
     style: {
