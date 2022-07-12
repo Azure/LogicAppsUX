@@ -2,7 +2,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { KEY_ENTER_COMMAND } from 'lexical';
 import { useEffect } from 'react';
 
-export default function SingleLinePlugin() {
+export default function SingleLine() {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     editor.registerCommand(

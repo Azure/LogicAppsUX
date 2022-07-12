@@ -9,6 +9,7 @@ import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
+import { scratchTab } from './panelTabs/scratchTab';
 import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
@@ -42,7 +43,9 @@ export const PanelRoot = (): JSX.Element => {
   const showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
-    dispatch(registerPanelTabs([{ ...monitoringTab, visible: !!isMonitoringView }, parametersTab, SettingsTab, codeViewTab, aboutTab]));
+    dispatch(
+      registerPanelTabs([{ ...monitoringTab, visible: !!isMonitoringView }, parametersTab, aboutTab, codeViewTab, SettingsTab, scratchTab])
+    );
   }, [dispatch, readOnly, isMonitoringView]);
 
   useEffect(() => {
