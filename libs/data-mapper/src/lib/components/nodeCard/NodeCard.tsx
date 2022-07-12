@@ -27,6 +27,7 @@ const useStyles = makeStyles({
 
       '&:focus': {
         ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorCompoundBrandStroke),
+        outlineOffset: '-1px',
         cursor: 'pointer',
       },
     },
@@ -34,6 +35,7 @@ const useStyles = makeStyles({
 
   error: {
     ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorPaletteRedBackground3),
+    outlineOffset: '-1px',
     cursor: 'pointer',
   },
 
