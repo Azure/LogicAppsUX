@@ -9,7 +9,7 @@ import { CollapsedArray } from './collapsedarray';
 import { ExpandedArray } from './expandedarray';
 import type { ICalloutProps } from '@fluentui/react';
 import { IconButton, TooltipHost, DirectionalHint } from '@fluentui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface IArrayEditorStyles {
@@ -48,6 +48,10 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const [collapsed, setCollapsed] = useState(false);
   const [items, setItems] = useState(initialItems);
   const [isValid, setIsValid] = useState(true);
+
+  useEffect(() => {
+    console.log(items);
+  }, [items]);
 
   const handleToggle = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.stopPropagation();

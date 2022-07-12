@@ -2,10 +2,12 @@ import type { ArrayEditorItemProps } from '..';
 import type { Segment } from '../../editor/base';
 import { $isTokenNode } from '../../editor/base/nodes/tokenNode';
 import { ValueSegmentType } from '../../editor/models/parameter';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import type { EditorState, ElementNode } from 'lexical';
+import type { ElementNode } from 'lexical';
 import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
+import { useCallback, useEffect } from 'react';
 
 export interface SerializeProps {
   isValid: boolean;
@@ -13,9 +15,11 @@ export interface SerializeProps {
 }
 
 export const Serialize = ({ isValid, setItems }: SerializeProps) => {
-  const onChange = (editorState: EditorState) => {
+  const [editor] = useLexicalComposerContext();
+
+  const updateItems = useCallback(() => {
     if (isValid) {
-      editorState.read(() => {
+      editor.getEditorState().read(() => {
         const paragraphNodes = $getRoot().__children.map((child) => {
           return $getNodeByKey(child);
         });
@@ -28,6 +32,14 @@ export const Serialize = ({ isValid, setItems }: SerializeProps) => {
         setItems(returnItems);
       });
     }
+  }, [editor, isValid, setItems]);
+
+  useEffect(() => {
+    updateItems();
+  }, [updateItems]);
+
+  const onChange = () => {
+    updateItems();
   };
 
   return <OnChangePlugin onChange={onChange} />;
