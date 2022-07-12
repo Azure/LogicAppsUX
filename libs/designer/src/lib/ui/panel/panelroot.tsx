@@ -1,6 +1,7 @@
 import constants from '../../common/constants';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { collapsePanel, expandPanel } from '../../core/state/panel/panelSlice';
+import { useRegisteredPanelTabs, useSelectedPanelTabName, useVisiblePanelTabs } from '../../core/state/panel/panelSelectors';
+import { collapsePanel, expandPanel, hideAllTabs, registerPanelTabs, selectPanelTab, showAllTabs } from '../../core/state/panel/panelSlice';
 import { useIconUri, useNodeDescription, useNodeMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../core/store';
@@ -11,27 +12,13 @@ import { parametersTab } from './panelTabs/parametersTab';
 import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
-import type { MenuItemOption, PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
-import {
-  updateTabs,
-  getTabs,
-  MenuItemType,
-  PanelContainer,
-  PanelHeaderControlType,
-  PanelLocation,
-  PanelScope,
-  PanelSize,
-  registerTabs,
-} from '@microsoft/designer-ui';
+import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
+import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export interface PanelRootProps {
-  selectedTabId?: string;
-}
-
-export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
+export const PanelRoot = (): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch();
 
@@ -42,10 +29,11 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
     return state.panel;
   });
 
-  const [selectedTab, setSelectedTab] = useState(selectedTabId);
   const [width, setWidth] = useState(PanelSize.Auto);
 
-  const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
+  const registeredTabs = useRegisteredPanelTabs();
+  const visibleTabs = useVisiblePanelTabs();
+  const selectedPanelTab = useSelectedPanelTabName();
 
   const comment = useNodeDescription(selectedNode);
   const operationInfo = useOperationInfo(selectedNode);
@@ -54,35 +42,25 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
   const showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
-    monitoringTab.visible = !!isMonitoringView;
-    setRegisteredTabs((currentTabs) => registerTabs([monitoringTab, parametersTab, SettingsTab, codeViewTab, aboutTab], currentTabs));
-  }, [readOnly, isMonitoringView]);
+    dispatch(registerPanelTabs([{ ...monitoringTab, visible: !!isMonitoringView }, parametersTab, SettingsTab, codeViewTab, aboutTab]));
+  }, [dispatch, readOnly, isMonitoringView]);
 
   useEffect(() => {
-    setSelectedTab(getTabs(true, registeredTabs)[0]?.name.toLowerCase());
-  }, [registeredTabs]);
+    if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))
+      dispatch(selectPanelTab(visibleTabs[0]?.name.toLowerCase()));
+  }, [dispatch, visibleTabs, selectedPanelTab]);
+
+  const setSelectedTab = (tabName: string | undefined) => {
+    dispatch(selectPanelTab(tabName));
+  };
 
   useEffect(() => {
     if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
-      setRegisteredTabs((currentTabs) =>
-        updateTabs(currentTabs, (tab) => {
-          return {
-            ...tab,
-            visible: tab.name === constants.PANEL_TAB_NAMES.MONITORING ? tab.visible : tab.name === constants.PANEL_TAB_NAMES.PARAMETERS,
-          };
-        })
-      );
+      dispatch(hideAllTabs({ exclude: [constants.PANEL_TAB_NAMES.MONITORING, constants.PANEL_TAB_NAMES.PARAMETERS] }));
     } else {
-      setRegisteredTabs((currentTabs) =>
-        updateTabs(currentTabs, (tab) => {
-          return {
-            ...tab,
-            visible: tab.name === constants.PANEL_TAB_NAMES.MONITORING ? tab.visible : true,
-          };
-        })
-      );
+      dispatch(showAllTabs({ exclude: [constants.PANEL_TAB_NAMES.MONITORING] }));
     }
-  }, [selectedNode, nodeMetaData]);
+  }, [dispatch, selectedNode, nodeMetaData]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -198,7 +176,7 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
       panelScope={PanelScope.CardLevel}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}
-      selectedTab={selectedTab}
+      selectedTab={selectedPanelTab}
       showCommentBox={showCommentBox}
       tabs={registeredTabs}
       width={width}
