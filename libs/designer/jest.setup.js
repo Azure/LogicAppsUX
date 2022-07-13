@@ -1,6 +1,7 @@
+import messages from '../services/intl/src/compiled-lang/strings.json';
+import { InitLoggerService } from '@microsoft-logic-apps/designer-client-services';
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';
-import messages from '../services/intl/src/compiled-lang/strings.json';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 class Worker {
@@ -29,4 +30,5 @@ const intl = createIntl(
   cache
 );
 
+InitLoggerService([]);
 jest.spyOn(Intl, 'useIntl').mockImplementation(() => intl);

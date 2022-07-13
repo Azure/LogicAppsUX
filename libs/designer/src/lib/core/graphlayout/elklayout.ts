@@ -2,6 +2,7 @@ import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
+import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useEffect, useState } from 'react';
@@ -146,15 +147,25 @@ export const useLayout = (): [Node[], Edge[]] => {
       return;
     }
     const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
+    const traceId = LoggerService().startTrace({
+      action: 'useLayout',
+      actionModifier: 'run Elk Layout',
+      name: 'Elk Layout',
+      source: 'elklayout.ts',
+    });
     elkLayout(elkGraph, readOnly)
       .then((g) => {
         const [n, e] = convertElkGraphToReactFlow(g);
         setReactFlowNodes(n);
         setReactFlowEdges(e);
+        LoggerService().endTrace(traceId);
       })
       .catch((err) => {
-        console.error(err);
-        //TODO: Appropriately log this when we have analytics
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'useLayout',
+          message: err,
+        });
       });
   }, [workflowGraph, readOnly]);
 

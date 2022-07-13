@@ -15,6 +15,10 @@ export const store = configureStore({
     designerOptions: designerOptionsReducer,
     designerView: designerViewReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

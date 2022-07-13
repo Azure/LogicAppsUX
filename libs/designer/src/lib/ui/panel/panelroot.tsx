@@ -155,7 +155,6 @@ export const PanelRoot = (): JSX.Element => {
   // TODO: 12798945? onClick for delete when node store gets built
   const handleDelete = (): void => {
     // TODO: 12798935 Analytics (event logging)
-    console.log('Node deleted!');
   };
 
   const togglePanel = (): void => {
@@ -197,6 +196,5 @@ export const PanelRoot = (): JSX.Element => {
 };
 
 // TODO: 12798935 Analytics (event logging)
-const handleTrackEvent = (_data: PageActionTelemetryData): void => {
-  console.log('Track Event');
-};
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const handleTrackEvent = (_data: PageActionTelemetryData): void => {};
