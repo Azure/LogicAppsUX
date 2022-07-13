@@ -1563,6 +1563,12 @@
       "value": "Převede řetězec na malá písmena pomocí pravidel pro používání velkých a malých písmen v invariantní jazykové verzi."
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1573,6 +1579,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Hodnota, která se má převést na logickou hodnotu."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -2197,6 +2209,12 @@
       "value": "Vyžadováno. Rozdělený řetězec."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -2513,6 +2531,12 @@
       "value": "Komentář"
     }
   ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
+    }
+  ],
   "VZHick": [
     {
       "type": 0,
@@ -2541,10 +2565,10 @@
       "value": "Povinné. Název nové vlastnosti"
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "Vymazat"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -3669,6 +3693,12 @@
       "value": "přeskočeno"
     }
   ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -4713,6 +4743,12 @@
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [

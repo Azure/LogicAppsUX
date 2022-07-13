@@ -1452,6 +1452,12 @@
       "value": "고정 문화권의 대/소문자 규칙을 사용하여 문자열을 소문자로 변환합니다."
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1462,6 +1468,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 부울로 변환되는 값입니다."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -2053,6 +2065,12 @@
       "value": "필수 항목으로, 분할된 문자열입니다."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -2336,6 +2354,12 @@
       "value": "메모"
     }
   ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
+    }
+  ],
   "VZHick": [
     {
       "type": 0,
@@ -2364,10 +2388,10 @@
       "value": "필수 항목으로, 새 속성의 이름입니다."
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "지우기"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -3455,6 +3479,12 @@
       "value": "건너뜀"
     }
   ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -4466,6 +4496,12 @@
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [

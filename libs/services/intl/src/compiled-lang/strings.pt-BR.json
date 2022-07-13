@@ -1485,6 +1485,12 @@
       "value": "Converte uma cadeia de caracteres em minúsculas usando as regras de uso de maiúsculas da cultura invariável"
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1495,6 +1501,12 @@
     {
       "type": 0,
       "value": "Necessário. O valor que é convertido em um booliano."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -2097,6 +2109,12 @@
       "value": "Necessário. A cadeia de caracteres que é dividida."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -2391,6 +2409,12 @@
       "value": "Comentar"
     }
   ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
+    }
+  ],
   "VZHick": [
     {
       "type": 0,
@@ -2419,10 +2443,10 @@
       "value": "Necessário. O nome da nova propriedade."
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "Limpar"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -3521,6 +3545,12 @@
       "value": "foi ignorado"
     }
   ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -4543,6 +4573,12 @@
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [

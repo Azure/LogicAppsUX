@@ -1485,6 +1485,12 @@
       "value": "Konverterar en sträng till gemena bokstäver med skiftlägesregler för den invarianta kulturen"
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1495,6 +1501,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Det värde som konverteras till ett booleskt värde."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -2101,6 +2113,12 @@
       "value": "Obligatoriskt. Den sträng som ska delas."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -2395,6 +2413,12 @@
       "value": "Kommentar"
     }
   ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
+    }
+  ],
   "VZHick": [
     {
       "type": 0,
@@ -2423,10 +2447,10 @@
       "value": "Obligatoriskt. Den nya egenskapens namn."
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "Rensa"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -3529,6 +3553,12 @@
       "value": "har hoppats över"
     }
   ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -4551,6 +4581,12 @@
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [

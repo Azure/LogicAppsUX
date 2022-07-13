@@ -1452,6 +1452,12 @@
       "value": "使用不因文化特性而異的大小寫規則，將字串轉換為小寫字串"
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1462,6 +1468,12 @@
     {
       "type": 0,
       "value": "必要。轉換為布林值的值。"
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -2053,6 +2065,12 @@
       "value": "必要。分割的字串。"
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -2336,6 +2354,12 @@
       "value": "註解"
     }
   ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
+    }
+  ],
   "VZHick": [
     {
       "type": 0,
@@ -2364,10 +2388,10 @@
       "value": "必要。新屬性的名稱。"
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "清除"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -3455,6 +3479,12 @@
       "value": "已跳過"
     }
   ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -4466,6 +4496,12 @@
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [

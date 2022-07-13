@@ -1567,6 +1567,12 @@
       "value": "Konwertuje ciąg na małe litery, używając reguł stosowania wielkości liter kultury niezmiennej"
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1577,6 +1583,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Wartość konwertowana na wartość logiczną."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -2201,6 +2213,12 @@
       "value": "Parametr wymagany. Podzielony ciąg."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -2517,6 +2535,12 @@
       "value": "Komentarz"
     }
   ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
+    }
+  ],
   "VZHick": [
     {
       "type": 0,
@@ -2545,10 +2569,10 @@
       "value": "Wymagane. Nazwa nowej właściwości."
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "Wyczyść"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -3677,6 +3701,12 @@
       "value": "pominięto"
     }
   ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -4721,6 +4751,12 @@
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [

@@ -1551,6 +1551,12 @@
       "value": "Преобразует строку в нижний регистр, используя правила использования регистра инвариантных языка и региональных параметров"
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1561,6 +1567,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Значение, которое преобразуется в логическое значение."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -2185,6 +2197,12 @@
       "value": "Обязательное поле. Строка, которая будет разделена."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -2501,6 +2519,12 @@
       "value": "Комментарий"
     }
   ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
+    }
+  ],
   "VZHick": [
     {
       "type": 0,
@@ -2529,10 +2553,10 @@
       "value": "Требуется. Имя нового свойства."
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "Очистить"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -3661,6 +3685,12 @@
       "value": "пропущен"
     }
   ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -4705,6 +4735,12 @@
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [
