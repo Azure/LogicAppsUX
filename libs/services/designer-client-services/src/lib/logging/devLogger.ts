@@ -7,7 +7,7 @@ export class DevLogger implements ILoggerService {
 
   public log = (entry: Omit<LogEntry, 'timestamp'>) => {
     BrowserReporter.log({
-      timestamp: new Date().getMilliseconds(),
+      timestamp: Date.now(),
       ...entry,
     });
   };
