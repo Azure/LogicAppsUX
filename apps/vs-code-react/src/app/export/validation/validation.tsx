@@ -2,7 +2,7 @@ import { QueryKeys } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
-import { getValidationColumns, parseValidationData } from './helper';
+import { getValidationListColumns, parseValidationData } from './helper';
 import { DetailsRow, GroupedList, SelectionMode } from '@fluentui/react';
 import type { IGroup } from '@fluentui/react';
 import { useMemo } from 'react';
@@ -32,12 +32,10 @@ export const Validation: React.FC = () => {
   const { validationItems = [], validationGroups = [] }: any =
     isValidationLoading || !validationData ? {} : parseValidationData(validationData);
 
-  console.log(validationData, validationItems);
-
   const onRenderCell = (nestingDepth?: number, item?: any, itemIndex?: number, group?: IGroup): React.ReactNode => {
     return item && typeof itemIndex === 'number' && itemIndex > -1 ? (
       <DetailsRow
-        columns={getValidationColumns()}
+        columns={getValidationListColumns()}
         groupNestingDepth={nestingDepth}
         item={item}
         itemIndex={itemIndex}

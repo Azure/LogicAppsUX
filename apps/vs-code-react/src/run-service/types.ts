@@ -224,3 +224,9 @@ export enum RouteName {
   validation = 'validation',
   overview = 'overview',
 }
+
+export enum ValidationStatus {
+  succeeded = 'Succeeded',
+  succeeded_with_warnings = 'SucceededWithWarnings',
+  failed = 'Failed',
+}
