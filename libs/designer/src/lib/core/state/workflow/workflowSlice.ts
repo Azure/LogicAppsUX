@@ -52,7 +52,7 @@ export const workflowSlice = createSlice({
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
       LoggerService().log({
-        level: LogEntryLevel.Verbose,
+        level: LogEntryLevel.Debug,
         area: 'Designer:Workflow Slice',
         message: 'New Action Node Added',
         args: [action.payload],

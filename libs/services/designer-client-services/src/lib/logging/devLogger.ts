@@ -17,6 +17,6 @@ export class DevLogger implements ILoggerService {
   };
 
   public endTrace = (_id: string, _eventData?: Pick<TelemetryEvent, 'data'> | undefined) => {
-    console.log('testtrace');
+    return;
   };
 }
