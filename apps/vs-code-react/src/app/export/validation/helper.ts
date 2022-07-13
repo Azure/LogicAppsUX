@@ -67,7 +67,11 @@ const getItemsValidation = (itemsSchema: any, innerStart: number) => {
 const getIndexStart = (workflowsGroups: Array<IGroupedGroup>, children: Array<IGroupedGroup>, groupIndex: number) => {
   const workflowsLength = workflowsGroups.length;
   const childrenLength = children.length;
-  let indexStart = workflowsLength > 0 && groupIndex < 2 ? workflowsGroups[workflowsLength - 1].count : 0;
+
+  let indexStart =
+    workflowsLength > 0 && groupIndex < 2
+      ? workflowsGroups[workflowsLength - 1].count + workflowsGroups[workflowsLength - 1].startIndex
+      : 0;
   indexStart += childrenLength > 0 ? children[childrenLength - 1].count : 0;
   indexStart += childrenLength > 0 && groupIndex >= 2 ? children[childrenLength - 1].startIndex : 0;
 
@@ -109,8 +113,11 @@ export const parseValidationData = (validationData: IValidationData) => {
     });
 
     const workflowsGroupsLength = workflowsGroups.length;
-    const startIndex = workflowsGroupsLength > 0 ? workflowsGroups[workflowsGroupsLength - 1].startIndex + detailsCount - 1 : 0;
-    const workflowGroup = getValidationGroup(workflowSchema, workflowId, 0, startIndex, detailsCount, children);
+    const outerIndexStart =
+      workflowsGroupsLength > 0
+        ? workflowsGroups[workflowsGroupsLength - 1].startIndex + workflowsGroups[workflowsGroupsLength - 1].count
+        : 0;
+    const workflowGroup = getValidationGroup(workflowSchema, workflowId, 0, outerIndexStart, detailsCount, children);
     workflowsGroups.push(workflowGroup);
   });
 
