@@ -1,5 +1,5 @@
 import { checkerboardBackgroundImage } from '../Constants';
-import { convertToReactFlowNode } from '../ReactFlow.Utils';
+import { convertToReactFlowNode } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';

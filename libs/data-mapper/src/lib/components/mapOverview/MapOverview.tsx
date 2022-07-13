@@ -1,4 +1,4 @@
-import { convertToReactFlowNode } from '../../ReactFlow.Utils';
+import { convertToReactFlowNode } from '../../ReactFlow.Util';
 import { openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
