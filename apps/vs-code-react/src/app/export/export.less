@@ -5,9 +5,36 @@
     padding: 15px 0;
   }
 
-  &-overview-panel {
+  &-instance-panel {
+    &-dropdown {
+      max-width: 350px;
+      margin: 16px 0;
+    }
+  }
+
+  &-navigation-panel {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+
+    &-button {
+      margin: 20px;
+    }
+  }
+
+  &-workflows-panel {
     display: flex;
     max-height: 60%;
+
+    &-filters {
+      display: flex;
+      margin-top: 15px;
+
+      &-input {
+        width: 25%;
+        margin-right: 10px;
+      }
+    }
 
     &-list {
       flex: 5 1 auto;
@@ -62,6 +89,7 @@
             display: flex;
             max-width: 45%;
             padding-left: 6px;
+            margin: 5px;
           }
         }
       }

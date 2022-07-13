@@ -7,6 +7,15 @@ import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
+import { WarningModal } from '../components/warningModal/WarningModal';
+import type { DataMapOperationState } from '../core/state/DataMapSlice';
+import {
+  changeInputSchemaOperation,
+  changeOutputSchemaOperation,
+  redoDataMapOperation,
+  saveDataMap,
+  undoDataMapOperation,
+} from '../core/state/DataMapSlice';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
@@ -20,11 +29,16 @@ import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const DataMapperDesigner = () => {
+export interface DataMapperDesignerProps {
+  saveStateCall: () => void;
+}
+
+export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
+  const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
   const [nodes, edges] = useLayout();
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
@@ -58,6 +72,19 @@ export const DataMapperDesigner = () => {
     const currentSchemaNode = schemaState.currentInputNode;
 
     dispatch(setCurrentInputNode(currentSchemaNode));
+
+    if (outputSchema) {
+      const dataMapOperationState: DataMapOperationState = {
+        curDataMap: {
+          srcSchemaName: inputSchema.name,
+          dstSchemaName: outputSchema.name,
+          mappings: { targetNodeKey: `ns0:${outputSchema.name}` },
+        },
+        currentInputNode: currentSchemaNode,
+        currentOutputNode: schemaState.currentOutputNode,
+      };
+      dispatch(changeInputSchemaOperation(dataMapOperationState));
+    }
   };
 
   const onSubmitOutput = (outputSchema: Schema) => {
@@ -67,6 +94,40 @@ export const DataMapperDesigner = () => {
     const currentSchemaNode = schemaState.currentOutputNode;
 
     dispatch(setCurrentOutputNode(currentSchemaNode));
+    if (inputSchema) {
+      const dataMapOperationState: DataMapOperationState = {
+        curDataMap: {
+          srcSchemaName: inputSchema.name,
+          dstSchemaName: outputSchema.name,
+          mappings: { targetNodeKey: `ns0:${outputSchema.name}` },
+        },
+        currentInputNode: schemaState.currentInputNode,
+        currentOutputNode: currentSchemaNode,
+      };
+      dispatch(changeOutputSchemaOperation(dataMapOperationState));
+    }
+  };
+
+  const onSaveClick = () => {
+    saveStateCall(); // TODO: do the next call only when this is successful
+    dispatch(
+      saveDataMap({
+        inputSchemaExtended: inputSchema,
+        outputSchemaExtended: outputSchema,
+      })
+    );
+  };
+
+  const onUndoClick = () => {
+    dispatch(undoDataMapOperation());
+    dispatch(setCurrentInputNode(curDataMapOperation?.currentInputNode));
+    dispatch(setCurrentOutputNode(curDataMapOperation?.currentOutputNode));
+  };
+
+  const onRedoClick = () => {
+    dispatch(redoDataMapOperation());
+    dispatch(setCurrentInputNode(curDataMapOperation?.currentInputNode));
+    dispatch(setCurrentOutputNode(curDataMapOperation?.currentOutputNode));
   };
 
   const toolboxLoc = intl.formatMessage({
@@ -108,7 +169,8 @@ export const DataMapperDesigner = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
-        <EditorCommandBar />
+        <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
+        <WarningModal />
         <EditorConfigPanel onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (

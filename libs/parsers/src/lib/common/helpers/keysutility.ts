@@ -123,6 +123,17 @@ export function containsWildIndexSegment(key: string): boolean {
   return key.split(_separator).filter(_isWildIndexSegment).length > 0;
 }
 
+export function cleanIndexedValue(key: string): string {
+  const segments = parseEx(key);
+  for (const segment of segments) {
+    if (segment.type === SegmentType.Index) {
+      segment.value = undefined;
+    }
+  }
+
+  return createEx(segments) as string;
+}
+
 function _decodeSegment(segment: string): Segment {
   if (_isIndexSegment(segment)) {
     return {
