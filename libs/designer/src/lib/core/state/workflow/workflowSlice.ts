@@ -3,6 +3,7 @@ import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../../parsers/addNodeToWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
+import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -50,6 +51,12 @@ export const workflowSlice = createSlice({
       state.operations[nodeId].description = description;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: 'New Action Node Added',
+        args: [action.payload],
+      });
       if (!state.graph) {
         return;
       }
