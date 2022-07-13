@@ -57,6 +57,11 @@ export const LogEntryLevel = {
    * Error level.
    */
   Error: 2,
+
+  /**
+   * Trace level.
+   */
+  Trace: 3,
 };
 
 /**

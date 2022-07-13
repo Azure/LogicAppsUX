@@ -1,7 +1,7 @@
 import type { LogEntry } from './logEntry';
 import { LogEntryLevel } from './logEntry';
 
-export type logType = 'error' | 'warn' | 'info' | 'debug' | 'verbose';
+export type logType = 'error' | 'warn' | 'info' | 'debug' | 'verbose' | 'trace';
 const convertLevelToType = (level: number): logType => {
   switch (level) {
     case LogEntryLevel.Debug:
@@ -12,6 +12,8 @@ const convertLevelToType = (level: number): logType => {
       return 'warn';
     case LogEntryLevel.Verbose:
       return 'verbose';
+    case LogEntryLevel.Trace:
+      return 'trace';
     default:
       return 'info';
   }
@@ -22,6 +24,7 @@ export class BrowserReporter {
     [LogEntryLevel.Error]: '#c0392b', // Red
     [LogEntryLevel.Warning]: '#f39c12', // Yellow
     [LogEntryLevel.Debug]: '#00BCD4', // Cyan
+    [LogEntryLevel.Trace]: '#2ecc71',
   };
 
   public static log(logObj: LogEntry) {
