@@ -62,11 +62,7 @@ export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClass
   const mergedFocusIndicator = mergeClasses(classes.focusIndicator, childClasses?.focusIndicator);
 
   return (
-    <div
-      style={{
-        backgroundColor: tokens.colorNeutralBackground1,
-      }}
-    >
+    <div className={mergedClasses}>
       <DefaultButton
         className={`${mergedClasses} ${mergedFocusIndicator} ${disabled && classes.disabled}`}
         toggle

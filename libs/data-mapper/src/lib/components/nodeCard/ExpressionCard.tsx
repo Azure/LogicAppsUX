@@ -24,6 +24,10 @@ const useStyles = makeStyles({
         backgroundColor: '#8764b8',
         color: 'white',
       },
+      '&:focus': {
+        backgroundColor: '#8764b8',
+        color: 'white',
+      },
     },
   },
 

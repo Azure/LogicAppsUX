@@ -59,7 +59,6 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ inputSchema, outputSch
 
   return (
     <div className="msla-designer-canvas msla-panel-mode not-loaded" style={reactFlowStyle}>
-      {/* <SchemaCard schemaType={SchemaTypes.Input} label={"childNode.name"} /> */}
       <div className="left">
         {inputSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Input} onClick={onInputSchemaClick} />}
       </div>
