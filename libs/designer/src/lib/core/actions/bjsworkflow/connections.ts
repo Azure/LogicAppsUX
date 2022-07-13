@@ -36,7 +36,7 @@ export const getConnectionMappingForNode = (
   try {
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
       return getManifestBasedConnectionMapping(getState, nodeId, operation);
-    } else if (isApiConnectionType(operation.type, operation.kind)) {
+    } else if (isApiConnectionType(operation.type)) {
       const connectionReferenceKey = getLegacyConnectionReferenceKey(operation);
       if (connectionReferenceKey !== undefined) {
         const mapping = Promise.resolve({ [nodeId]: connectionReferenceKey });
@@ -50,10 +50,7 @@ export const getConnectionMappingForNode = (
   }
 };
 
-const isApiConnectionType = (type: string, kind: string | undefined): boolean => {
-  if (equals(type, Constants.NODE.TYPE.MANUAL) && equals(kind, Constants.NODE.KIND.APICONNECTION)) {
-    return true;
-  }
+const isApiConnectionType = (type: string): boolean => {
   return (
     equals(type, Constants.NODE.TYPE.API_CONNECTION) ||
     equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ||
@@ -124,8 +121,10 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
     case ConnectionReferenceKeyFormat.ServiceProvider:
       return (operationDefinition as LogicAppsV2.ServiceProvider).inputs.serviceProviderConfiguration.connectionName;
 
-    default: // this is the case for ConnectionReferenceKeyFormat.OpenApi
+    case ConnectionReferenceKeyFormat.OpenApi:
       return getOpenApiConnectionReferenceKey((operationDefinition as LogicAppsV2.OpenApiOperationAction).inputs);
+    default:
+      throw Error('No known connection reference key type');
   }
 }
 
@@ -140,7 +139,6 @@ function getOpenApiConnectionReferenceKey(operationDefinition: LogicAppsV2.OpenA
 }
 
 export function getLegacyConnectionReferenceKey(operationDefinition: any): string | undefined {
-  // danielle how is open api different if logic is so similar
   let referenceKey: string;
   if (typeof operationDefinition.inputs.host.connection === 'string') {
     referenceKey = operationDefinition.inputs.host.connection;
