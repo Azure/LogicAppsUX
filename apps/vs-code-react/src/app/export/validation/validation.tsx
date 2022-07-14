@@ -3,9 +3,10 @@ import { ApiService } from '../../../run-service/export';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { getValidationListColumns, parseValidationData } from './helper';
-import { DetailsRow, GroupedList, SelectionMode } from '@fluentui/react';
+import { DetailsRow, GroupedList, SelectionMode, Text } from '@fluentui/react';
 import type { IGroup } from '@fluentui/react';
 import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
@@ -13,6 +14,14 @@ export const Validation: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
   const { selectedWorkflows, location, selectedSubscription } = exportData;
+  const intl = useIntl();
+
+  const intlText = {
+    VALIDATION_TITLE: intl.formatMessage({
+      defaultMessage: 'Validate exports',
+      description: 'Validate exports title',
+    }),
+  };
 
   const apiService = useMemo(() => {
     return new ApiService({
@@ -48,13 +57,18 @@ export const Validation: React.FC = () => {
 
   return (
     <div className="msla-export-validation">
-      <GroupedList
-        items={validationItems}
-        groups={validationGroups}
-        onRenderCell={onRenderCell}
-        selectionMode={SelectionMode.none}
-        compact={true}
-      />
+      <Text variant="xLarge" nowrap block>
+        {intlText.VALIDATION_TITLE}
+      </Text>
+      <div className="msla-export-validation-list">
+        <GroupedList
+          items={validationItems}
+          groups={validationGroups}
+          onRenderCell={onRenderCell}
+          selectionMode={SelectionMode.none}
+          compact={true}
+        />
+      </div>
     </div>
   );
 };

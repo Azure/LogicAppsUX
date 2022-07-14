@@ -97,16 +97,20 @@
   }
 
   &-validation {
-    max-height: 75%;
-    overflow: auto;
+    height: 80%;
 
-    .ms-DetailsRow-fields {
-      display: flex;
-      align-items: center;
+    &-list {
+      max-height: 90%;
+      overflow: auto;
 
-      .ms-DetailsRow-cell:nth-of-type(3) {
-        white-space: normal;
-        flex: 1 1;
+      .ms-DetailsRow-fields {
+        display: flex;
+        align-items: center;
+
+        .ms-DetailsRow-cell:nth-of-type(3) {
+          white-space: normal;
+          flex: 1 1;
+        }
       }
     }
   }
