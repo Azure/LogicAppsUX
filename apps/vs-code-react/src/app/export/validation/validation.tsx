@@ -41,8 +41,8 @@ export const Validation: React.FC = () => {
     return apiService.validateWorkflows(selectedWorkflows, selectedSubscription, location);
   };
 
-  const onValidationSuccess = (test: IValidationData) => {
-    const overallValidationStatus = getOverallValidationStatus(test);
+  const onValidationSuccess = (successData: IValidationData) => {
+    const overallValidationStatus = getOverallValidationStatus(successData);
     dispatch(
       updateValidationState({
         validationState: overallValidationStatus,
