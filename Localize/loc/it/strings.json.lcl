@@ -40,7 +40,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-05:00) Haiti]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC - 05.00) Haiti]]></Val>
+            <Val><![CDATA[(UTC-05:00) Haiti]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -57,6 +57,9 @@
       <Item ItemId=";+iMTt7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Check to select this connection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Selezionare questa connessione]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -82,7 +85,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+09:30) Darwin]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC + 09.30 h) Darwin]]></Val>
+            <Val><![CDATA[(UTC+09:30) Darwin]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -109,7 +112,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+10:00) Brisbane]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC + 10.00 h) Brisbane]]></Val>
+            <Val><![CDATA[(UTC+10:00) Brisbane]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -217,7 +220,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+04:00) Baku]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+4.00) Baku]]></Val>
+            <Val><![CDATA[(UTC+04:00) Baku]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -289,7 +292,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-05:00) Chetumal]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC - 05.00) Chetumal]]></Val>
+            <Val><![CDATA[(UTC-05:00) Chetumal]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -423,6 +426,9 @@
       <Item ItemId=";1Ogj/V" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Jerusalem]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+02:00) Gerusalemme]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -613,7 +619,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-03:30) Newfoundland]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-3.30) Terranova]]></Val>
+            <Val><![CDATA[(UTC-03:30) Terranova]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -658,7 +664,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Damascus]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+2.00) Damasco]]></Val>
+            <Val><![CDATA[(UTC+02:00) Damasco]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -694,7 +700,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+04:00) Tbilisi]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+4.00) Tbilisi]]></Val>
+            <Val><![CDATA[(UTC+04:00) Tbilisi]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -712,7 +718,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Chisinau]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC + 02.00) Chişinău]]></Val>
+            <Val><![CDATA[(UTC+02:00) Chişinău]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -721,7 +727,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+06:00) Dhaka]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+6.00) Dhaka]]></Val>
+            <Val><![CDATA[(UTC+06:00) Dacca]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -748,7 +754,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+03:30) Tehran]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+3.30) Teheran]]></Val>
+            <Val><![CDATA[(UTC+03:30) Teheran]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -811,7 +817,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+04:00) Yerevan]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+4.00) Erevan]]></Val>
+            <Val><![CDATA[(UTC+04:00) Erevan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1009,7 +1015,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+09:30) Adelaide]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+9.30) Adelaide]]></Val>
+            <Val><![CDATA[(UTC+09:30) Adelaide]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1054,7 +1060,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-07:00) Arizona]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-7.00) Arizona]]></Val>
+            <Val><![CDATA[(UTC-07:00) Arizona]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1306,7 +1312,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+08:00) Ulaanbaatar]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+8.00) Ulan-Bator]]></Val>
+            <Val><![CDATA[(UTC+08:00) Ulan-Bator]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1413,6 +1419,9 @@
       <Item ItemId=";AIL7WX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Gaza, Hebron]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC+02:00) Gaza, Hebron]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1585,7 +1594,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+08:00) Perth]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+8.00) Perth]]></Val>
+            <Val><![CDATA[(UTC+08:00) Perth]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1594,7 +1603,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-05:00) Havana]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC - 05.00) L'Avana]]></Val>
+            <Val><![CDATA[(UTC-05:00) L'Avana]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1693,7 +1702,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-01:00) Azores]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-1.00) Azzorre]]></Val>
+            <Val><![CDATA[(UTC-01:00) Azzorre]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1828,7 +1837,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+05:45) Kathmandu]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC + 5.45 h) Katmandu]]></Val>
+            <Val><![CDATA[(UTC+05:45) Katmandu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1900,7 +1909,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+03:00) Baghdad]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+3.00) Baghdad]]></Val>
+            <Val><![CDATA[(UTC+03:00) Baghdad]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2064,6 +2073,9 @@
       <Item ItemId=";GtDOFg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Cancel the selection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Annulla la selezione]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2143,7 +2155,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+12:00) Fiji]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+12.00) Figi]]></Val>
+            <Val><![CDATA[(UTC+12:00) Figi]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2220,6 +2232,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";JErLDT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Delete]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Elimina]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";JNQHws" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. A string that contains the time.]]></Val>
@@ -2234,6 +2255,15 @@
           <Val><![CDATA[Required. The value that is converted to a boolean.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Obbligatorio. Valore convertito in un valore booleano.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";JWl/LD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add new item]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aggiungi nuovo elemento]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2287,7 +2317,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-03:00) Montevideo]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-3.00) Montevideo]]></Val>
+            <Val><![CDATA[(UTC-03:00) Montevideo]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2434,7 +2464,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Istanbul]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+2.00) Istanbul]]></Val>
+            <Val><![CDATA[(UTC+02:00) Istanbul]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2677,7 +2707,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+03:00) Minsk]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC + 2.00 h) Minsk]]></Val>
+            <Val><![CDATA[(UTC+03:00) Minsk]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2686,7 +2716,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-09:00) Alaska]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-9.00) Alaska]]></Val>
+            <Val><![CDATA[(UTC-09:00) Alaska]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3105,6 +3135,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";RZ1MIN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to input entire array]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Passa all'input dell'intera matrice]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";RhH4pF#ExpandedPlural.0.few" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[# minutes]]></Val>
@@ -3364,7 +3403,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-04:00) Cuiaba]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-4.00) Cuiaba]]></Val>
+            <Val><![CDATA[(UTC-04:00) Cuiaba]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3399,6 +3438,9 @@
       <Item ItemId=";U1NiVg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-06:00) Central America]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[(UTC-06:00) America centrale]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3468,6 +3510,9 @@
       <Item ItemId=";UtyRCH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a name for the connection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Immettere un nome per la connessione]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3534,6 +3579,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";VXQbMw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Switch to detail inputs for array item]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Passa a input dettagli per l'elemento matrice]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";VZHick" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Duration]]></Val>
@@ -3570,7 +3624,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";W8cbO8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";WGwH45" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Clear]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -3673,7 +3727,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+09:00) Seoul]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+9.00) Seoul]]></Val>
+            <Val><![CDATA[(UTC+09:00) Seoul]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4060,7 +4114,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-03:00) Brasilia]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC - 3.00 h) Brasilia]]></Val>
+            <Val><![CDATA[(UTC-03:00) Brasilia]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4087,7 +4141,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+13:00) Nuku'alofa]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+13.00) Nuku'alofa]]></Val>
+            <Val><![CDATA[(UTC+13:00) Nuku'alofa]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4303,7 +4357,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-03:00) Greenland]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-3.00) Groenlandia]]></Val>
+            <Val><![CDATA[(UTC-03:00) Groenlandia]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4465,7 +4519,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+04:30) Kabul]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+4.30) Kabul]]></Val>
+            <Val><![CDATA[(UTC+04:30) Kabul]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4537,7 +4591,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Amman]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+2.00) Amman]]></Val>
+            <Val><![CDATA[(UTC+02:00) Amman]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4600,7 +4654,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-06:00) Saskatchewan]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-6.00) Saskatchewan]]></Val>
+            <Val><![CDATA[(UTC-06:00) Saskatchewan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4608,6 +4662,9 @@
       <Item ItemId=";gj+jEr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Save the selected connection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Salva la connessione selezionata]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5136,6 +5193,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";lfHj+F" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Please Enter a valid array]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Immettere un array valido]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";lgs5sf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Stateless run mode:]]></Val>
@@ -5419,7 +5485,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-03:00) Salvador]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-3.00) Salvador]]></Val>
+            <Val><![CDATA[(UTC-03:00) Salvador]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5464,7 +5530,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+13:00) Samoa]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+13.00) Samoa]]></Val>
+            <Val><![CDATA[(UTC+13:00) Samoa]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5746,7 +5812,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+01:00) Windhoek]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+1.00) Windhoek]]></Val>
+            <Val><![CDATA[(UTC+01:00) Windhoek]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5799,6 +5865,9 @@
       <Item ItemId=";rDt4Iu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Is connection invalid]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Connessione non valida]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5859,6 +5928,9 @@
       <Item ItemId=";sFwHQc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Cancel creating a connection]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Annulla la creazione di una connessione]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5920,7 +5992,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Beirut]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+2.00) Beirut]]></Val>
+            <Val><![CDATA[(UTC+02:00) Beirut]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6019,7 +6091,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+06:00) Novosibirsk]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC + 06.00) Novosibirsk]]></Val>
+            <Val><![CDATA[(UTC+06:00) Novosibirsk]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6055,7 +6127,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+10:00) Hobart]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+10.00) Hobart]]></Val>
+            <Val><![CDATA[(UTC+10:00) Hobart]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6082,7 +6154,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-04:00) Santiago]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-4.00) Santiago]]></Val>
+            <Val><![CDATA[(UTC-04:00) Santiago]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6217,7 +6289,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-04:00) Asuncion]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-4.00) Asuncion]]></Val>
+            <Val><![CDATA[(UTC-04:00) Asunción]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6253,7 +6325,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+06:00) Astana]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+6.00) Astana]]></Val>
+            <Val><![CDATA[(UTC+06:00) Astana]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6271,7 +6343,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Cairo]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC + 2.00 h) Il Cairo]]></Val>
+            <Val><![CDATA[(UTC+02:00) Il Cairo]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6288,6 +6360,9 @@
       <Item ItemId=";vr70Gn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Create a connection for {connectorName}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Crea una connessione per {connectorName}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6547,7 +6622,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-10:00) Hawaii]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC - 10.00 h) Hawaii]]></Val>
+            <Val><![CDATA[(UTC-10:00) Hawaii]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6573,6 +6648,9 @@
       <Item ItemId=";yoCi15" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Select an existing connection or create a new one.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Selezionare una connessione esistente o crearne una nuova.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6606,6 +6684,18 @@
       <Item ItemId=";yyYtZV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Connection gateway]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Gateway connessione]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";z3VuE+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Menu]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Menu]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6640,7 +6730,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+08:30) Pyongyang]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC + 08.30) Pyongyang]]></Val>
+            <Val><![CDATA[(UTC+08:30) Pyongyang]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6658,7 +6748,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+03:00) Nairobi]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+3.00) Nairobi]]></Val>
+            <Val><![CDATA[(UTC+03:00) Nairobi]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
