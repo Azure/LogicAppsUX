@@ -32,7 +32,7 @@ const customValueStyles: Partial<IComboBoxOptionStyles> = {
 
 const clearIcon: IIconProps = { iconName: 'Cancel' };
 const calloutProps = { gapSpace: 0 };
-const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block', position: 'absolute', right: '18px', top: '35px' } };
+const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
 const buttonStyles: Partial<IButtonStyles> = { root: { height: '22px', width: '30px' } };
 
 export interface ComboboxItem {
@@ -145,10 +145,10 @@ export const Combobox = ({
             initialValue={customVal}
           >
             <CustomValue setCustomVal={setCustomVal} />
-            <TooltipHost content={clearEditor} calloutProps={calloutProps} styles={hostStyles} setAriaDescribedBy={false}>
-              <IconButton styles={buttonStyles} iconProps={clearIcon} aria-label={clearEditor} onClick={() => handleClearClick()} />
-            </TooltipHost>
           </BaseEditor>
+          <TooltipHost content={clearEditor} calloutProps={calloutProps} styles={hostStyles} setAriaDescribedBy={false}>
+            <IconButton styles={buttonStyles} iconProps={clearIcon} aria-label={clearEditor} onClick={() => handleClearClick()} />
+          </TooltipHost>
         </div>
       ) : (
         <ComboBox
