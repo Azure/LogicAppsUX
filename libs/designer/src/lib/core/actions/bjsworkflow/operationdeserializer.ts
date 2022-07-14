@@ -21,7 +21,7 @@ import {
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getOperationSettings } from './settings';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
@@ -101,7 +101,11 @@ const initializeOperationDetailsForManifest = async (
     return;
   } catch (error) {
     const errorMessage = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
-    console.log(errorMessage);
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'operation deserializer',
+      message: errorMessage,
+    });
 
     return;
   }

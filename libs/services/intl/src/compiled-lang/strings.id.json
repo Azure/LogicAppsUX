@@ -1452,6 +1452,12 @@
       "value": "Mengonversi string ke huruf kecil menggunakan aturan huruf besar/kecil kultur invarian"
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1462,6 +1468,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Nilai dikonversi ke boolean."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -2053,6 +2065,12 @@
       "value": "Harus diisi. String yang dipisahkan."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -2336,6 +2354,12 @@
       "value": "Komentar"
     }
   ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
+    }
+  ],
   "VZHick": [
     {
       "type": 0,
@@ -2364,10 +2388,10 @@
       "value": "Diperlukan. Nama properti baru."
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "Bersihkan"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -3455,6 +3479,12 @@
       "value": "dilewati"
     }
   ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -4466,6 +4496,12 @@
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [

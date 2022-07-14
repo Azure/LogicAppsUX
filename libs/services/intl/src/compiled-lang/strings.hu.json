@@ -1485,6 +1485,12 @@
       "value": "Sztring átalakítása kisbetűssé az invariáns kulturális környezet kis- és nagybetű-használati szabályai alapján."
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1495,6 +1501,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A logikai értékké alakítandó érték."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -2101,6 +2113,12 @@
       "value": "Kötelező megadni. A szétvágandó sztring."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -2395,6 +2413,12 @@
       "value": "Megjegyzés"
     }
   ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
+    }
+  ],
   "VZHick": [
     {
       "type": 0,
@@ -2423,10 +2447,10 @@
       "value": "Kötelező megadni. Az új tulajdonság neve."
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "Törlés"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -3533,6 +3557,12 @@
       "value": "kihagyva"
     }
   ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -4555,6 +4585,12 @@
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [
