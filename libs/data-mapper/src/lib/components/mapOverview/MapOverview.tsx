@@ -3,6 +3,7 @@ import { openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/Pa
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
 import { SchemaTypes } from '../configPanel/EditorConfigPanel';
+import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
 import { useMemo } from 'react';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
@@ -32,6 +33,8 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ inputSchema, outputSch
     height: '600px',
   };
 
+  const nodeTypes = useMemo(() => ({ schemaCard: SchemaCard }), []);
+
   const layeredReactFlow = (
     <div className="msla-designer-canvas msla-panel-mode">
       <ReactFlowProvider>
@@ -47,6 +50,7 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ inputSchema, outputSch
             account: 'paid-sponsor',
             hideAttribution: true,
           }}
+          nodeTypes={nodeTypes}
           style={reactFlowStyle}
         ></ReactFlow>
       </ReactFlowProvider>

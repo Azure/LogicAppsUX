@@ -35,7 +35,7 @@ export const SelectSchemaCard: FunctionComponent<SelectSchemaCardProps> = ({ sch
   }
 
   return (
-    <div className="schema-card" onClick={onClick}>
+    <div className="schema-select-card" onClick={onClick}>
       <Image className="on-hover" src={stateImageOnHover} alt="select a schema - on hover" style={imageStyle} />
       <Image className="on-rest" src={stateImageOnRest} alt="select a schema - on rest" style={imageStyle} />
       {selectSchemaMsg}
