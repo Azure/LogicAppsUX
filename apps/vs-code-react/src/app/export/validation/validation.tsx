@@ -2,21 +2,25 @@ import WarningIcon from '../../../resources/Caution.svg';
 import ErrorICon from '../../../resources/Error.svg';
 import SuccessIcon from '../../../resources/Success.svg';
 import { QueryKeys, ValidationStatus } from '../../../run-service';
+import type { IValidationData } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
-import type { RootState } from '../../../state/store';
+import type { AppDispatch, RootState } from '../../../state/store';
+import { updateValidationState } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
-import { getValidationListColumns, parseValidationData } from './helper';
+import { getOverallValidationStatus, getValidationListColumns, parseValidationData } from './helper';
 import { DetailsRow, GroupedList, GroupHeader, SelectionMode, Text } from '@fluentui/react';
 import type { IGroup } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const Validation: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
   const { selectedWorkflows, location, selectedSubscription } = exportData;
+
+  const dispatch: AppDispatch = useDispatch();
   const intl = useIntl();
 
   const intlText = {
@@ -37,8 +41,18 @@ export const Validation: React.FC = () => {
     return apiService.validateWorkflows(selectedWorkflows, selectedSubscription, location);
   };
 
+  const onValidationSuccess = (test: IValidationData) => {
+    const overallValidationStatus = getOverallValidationStatus(test);
+    dispatch(
+      updateValidationState({
+        validationState: overallValidationStatus,
+      })
+    );
+  };
+
   const { data: validationData, isLoading: isValidationLoading } = useQuery<any>(QueryKeys.validation, validateWorkflows, {
     refetchOnWindowFocus: false,
+    onSuccess: onValidationSuccess,
   });
 
   const { validationItems = [], validationGroups = [] }: any =
@@ -78,7 +92,7 @@ export const Validation: React.FC = () => {
   const onRenderHeader = (props?: any): JSX.Element | null => {
     if (props) {
       const toggleCollapse = (): void => {
-        props.onToggleCollapse!(props.group!);
+        props.onToggleCollapse(props.group);
       };
 
       const headerCountStyle = { display: 'none' };

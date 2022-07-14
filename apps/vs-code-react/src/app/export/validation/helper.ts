@@ -158,3 +158,7 @@ export const parseValidationData = (validationData: IValidationData) => {
 
   return { validationItems: workflowsItems, validationGroups: workflowsGroups };
 };
+
+export const getOverallValidationStatus = (validationData: IValidationData) => {
+  return validationData?.properties?.validationState ?? '';
+};

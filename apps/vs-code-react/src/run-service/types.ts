@@ -196,6 +196,7 @@ export type ExportData = {
   selectedSubscription: string;
   selectedIse: string;
   location: string;
+  validationState: string;
 };
 
 export enum ResourceType {
