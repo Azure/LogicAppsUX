@@ -241,7 +241,7 @@ export interface IWorkflowValidation {
 export interface IValidationData {
   properties: {
     validationState: string;
-    workflows: Record<string, IWorkflowValidation>; /// update this
+    workflows: Record<string, IWorkflowValidation>;
   };
 }
 
