@@ -95,4 +95,26 @@
       }
     }
   }
+
+  &-validation {
+    display: flex;
+    flex-direction: column;
+    height: 75%;
+
+    &-list {
+      flex: 2;
+      overflow: auto;
+      margin-top: 10px;
+
+      .ms-DetailsRow-fields {
+        display: flex;
+        align-items: center;
+
+        .ms-DetailsRow-cell:nth-of-type(3) {
+          white-space: normal;
+          flex: 1 1;
+        }
+      }
+    }
+  }
 }

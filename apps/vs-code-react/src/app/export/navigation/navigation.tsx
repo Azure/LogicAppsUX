@@ -16,7 +16,7 @@ export const Navigation: React.FC = () => {
 
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse } = exportData;
+  const { selectedSubscription, selectedIse, selectedWorkflows } = exportData;
 
   const intlText = {
     NEXT: intl.formatMessage({
@@ -49,6 +49,11 @@ export const Navigation: React.FC = () => {
     switch (pathname) {
       case `/${RouteName.export}/${RouteName.instance_selection}`: {
         navigate(`/${RouteName.export}/${RouteName.workflows_selection}`);
+        break;
+      }
+      case `/${RouteName.export}/${RouteName.workflows_selection}`: {
+        navigate(`/${RouteName.export}/${RouteName.validation}`);
+        break;
       }
     }
   };
@@ -64,6 +69,9 @@ export const Navigation: React.FC = () => {
     switch (pathname) {
       case `/${RouteName.export}/${RouteName.instance_selection}`: {
         return selectedSubscription === '' || selectedIse === '';
+      }
+      case `/${RouteName.export}/${RouteName.workflows_selection}`: {
+        return selectedSubscription === '' || selectedIse === '' || selectedWorkflows.length === 0;
       }
       default: {
         return true;

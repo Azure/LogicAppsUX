@@ -182,6 +182,7 @@ export enum QueryKeys {
   subscriptionData = 'subscriptionData',
   runsData = 'runsData',
   iseData = 'iseData',
+  validation = 'validation',
 }
 
 export interface ISubscription {
@@ -194,6 +195,7 @@ export type ExportData = {
   selectedWorkflows: Array<WorkflowsList>;
   selectedSubscription: string;
   selectedIse: string;
+  location: string;
 };
 
 export enum ResourceType {
@@ -219,5 +221,42 @@ export enum RouteName {
   export = 'export',
   instance_selection = 'instance-selection',
   workflows_selection = 'workflows-selection',
+  validation = 'validation',
   overview = 'overview',
+}
+
+export enum ValidationStatus {
+  succeeded = 'Succeeded',
+  succeeded_with_warnings = 'SucceededWithWarnings',
+  failed = 'Failed',
+}
+
+export interface IWorkflowValidation {
+  validationState: string;
+  workflowOperations: Record<string, any>;
+  connections: Record<string, any>;
+  parameters: Record<string, any>;
+}
+
+export interface IValidationData {
+  properties: {
+    validationState: string;
+    workflows: Record<string, IWorkflowValidation>;
+  };
+}
+
+export interface IGroupedGroup {
+  children: Array<IGroupedGroup>;
+  isCollapsed: boolean;
+  key: string;
+  level: number;
+  count: number;
+  name: string;
+  startIndex: number;
+}
+
+export interface IGroupedItem {
+  action: string;
+  status: string;
+  message: string;
 }

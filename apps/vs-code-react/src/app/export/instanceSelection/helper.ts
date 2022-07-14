@@ -11,6 +11,6 @@ export const parseSubscriptionsData = (subscriptionsData: { subscriptions: Array
 export const parseIseData = (iseData: { ise: Array<IIse> }): Array<IDropDownOption> => {
   const { ise } = iseData;
   return ise.map((iseInstance: IIse) => {
-    return { key: iseInstance.id, text: iseInstance.iseName };
+    return { key: iseInstance.id, text: iseInstance.iseName, data: iseInstance.location };
   });
 };
