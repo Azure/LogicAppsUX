@@ -17,15 +17,30 @@ const getDetailsErrors = (itemsSchema: any, actionName: string): Array<IGroupedI
   return errors;
 };
 
+const getStatusFromChildren = (children: Array<IGroupedGroup>) => {
+  if (children.length) {
+    const hasWarning = children.find((item) => item?.status === ValidationStatus.succeeded_with_warnings);
+    const hasError = children.find((item) => item?.status === ValidationStatus.failed);
+
+    if (!hasWarning && !hasError) {
+      return ValidationStatus.succeeded;
+    } else {
+      return hasError ? ValidationStatus.failed : ValidationStatus.succeeded_with_warnings;
+    }
+  }
+
+  return undefined;
+};
+
 const getValidationGroup = (
   workflowSchema: any,
   groupName: string,
   level: number,
   startIndex: number,
   count: number,
-  children: any[]
+  children: Array<IGroupedGroup>
 ): IGroupedGroup => {
-  const status = workflowSchema?.validationState ?? undefined;
+  const status = workflowSchema?.validationState ?? getStatusFromChildren(children);
   const isCollapsed = status === ValidationStatus.succeeded ?? false;
 
   return {

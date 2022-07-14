@@ -61,13 +61,13 @@ export const Validation: React.FC = () => {
   const getGroupIcon = (groupStatus: string): JSX.Element | null => {
     switch (groupStatus) {
       case ValidationStatus.succeeded: {
-        return <img src={SuccessIcon} alt="Success" className="msla-export-validation-list-header-text-icon" />;
+        return <img src={SuccessIcon} alt="Success" />;
       }
       case ValidationStatus.succeeded_with_warnings: {
-        return <img src={WarningIcon} alt="Warnings" className="msla-export-validation-list-header-text-icon" />;
+        return <img src={WarningIcon} alt="Warnings" />;
       }
       case ValidationStatus.failed: {
-        return <img src={ErrorICon} alt="Fail" className="msla-export-validation-list-header-text-icon" />;
+        return <img src={ErrorICon} alt="Fail" />;
       }
       default: {
         return null;
