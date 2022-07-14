@@ -41,6 +41,14 @@ export class StandardConnectionService {
     return [];
   }
 
+  async getAllConnectors(): Promise<Connector[]> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const uri = `${baseUrl}/operationGroups?api-version=${apiVersion}`;
+    const response = await httpClient.get<{ value: Connector[] }>({ uri });
+    console.log(response);
+    return response.value;
+  }
+
   async getConnection(_connectionId: string): Promise<Connection | undefined> {
     throw new Error('Function not implemented.');
   }

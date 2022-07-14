@@ -2,8 +2,7 @@ import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
 import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import { addNode } from '../../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../../core/store';
-import { SearchService } from '@microsoft-logic-apps/designer-client-services';
-import { connectorsSearchResultsMock } from '@microsoft-logic-apps/utils';
+import { ConnectionService, SearchService } from '@microsoft-logic-apps/designer-client-services';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel } from '@microsoft/designer-ui';
 import React from 'react';
@@ -17,8 +16,9 @@ const getSearchResult = (term: string) => {
 };
 
 const getBrowseResult = () => {
-  const data = connectorsSearchResultsMock;
-  return data;
+  const connectionService = ConnectionService();
+  const connections = connectionService.getAllConnectors();
+  return connections;
 };
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
