@@ -227,7 +227,7 @@ export enum RouteName {
 
 export enum ValidationStatus {
   succeeded = 'Succeeded',
-  succeeded_with_warnings = 'SucceededWithWarnings',
+  succeeded_with_warnings = 'SucceededWithWarning',
   failed = 'Failed',
 }
 
@@ -253,6 +253,7 @@ export interface IGroupedGroup {
   count: number;
   name: string;
   startIndex: number;
+  status: string | undefined;
 }
 
 export interface IGroupedItem {

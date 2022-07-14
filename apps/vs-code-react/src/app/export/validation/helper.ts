@@ -25,7 +25,8 @@ const getValidationGroup = (
   count: number,
   children: any[]
 ): IGroupedGroup => {
-  const isCollapsed = (workflowSchema?.validationState && workflowSchema?.validationState === ValidationStatus.succeeded) ?? false;
+  const status = workflowSchema?.validationState ?? undefined;
+  const isCollapsed = status === ValidationStatus.succeeded ?? false;
 
   return {
     children,
@@ -35,6 +36,7 @@ const getValidationGroup = (
     count,
     name: groupName,
     startIndex,
+    status,
   };
 };
 

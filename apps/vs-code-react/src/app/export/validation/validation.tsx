@@ -1,9 +1,12 @@
-import { QueryKeys } from '../../../run-service';
+import WarningIcon from '../../../resources/Caution.svg';
+import ErrorICon from '../../../resources/Error.svg';
+import SuccessIcon from '../../../resources/Success.svg';
+import { QueryKeys, ValidationStatus } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { getValidationListColumns, parseValidationData } from './helper';
-import { DetailsRow, GroupedList, SelectionMode, Text } from '@fluentui/react';
+import { DetailsRow, GroupedList, GroupHeader, SelectionMode, Text } from '@fluentui/react';
 import type { IGroup } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -55,6 +58,52 @@ export const Validation: React.FC = () => {
     ) : null;
   };
 
+  const getGroupIcon = (groupStatus: string): JSX.Element | null => {
+    switch (groupStatus) {
+      case ValidationStatus.succeeded: {
+        return <img src={SuccessIcon} alt="Success" role="presentation" />;
+      }
+      case ValidationStatus.succeeded_with_warnings: {
+        return <img src={WarningIcon} alt="Warnings" role="presentation" />;
+      }
+      case ValidationStatus.failed: {
+        return <img src={ErrorICon} alt="Fail" role="presentation" />;
+      }
+      default: {
+        return null;
+      }
+    }
+  };
+
+  const onRenderHeader = (props?: any): JSX.Element | null => {
+    if (props) {
+      const toggleCollapse = (): void => {
+        props.onToggleCollapse!(props.group!);
+      };
+
+      const headerCountStyle = { display: 'none' };
+      const groupIcon = getGroupIcon(props?.group?.status);
+
+      return (
+        <div className="msla-export-validation-list-header">
+          <GroupHeader
+            className="msla-export-validation-list-header-text"
+            styles={{ headerCount: headerCountStyle }}
+            {...props}
+            onToggleSelectGroup={toggleCollapse}
+          />
+          {groupIcon}
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const groupedListProps = {
+    onRenderHeader,
+  };
+
   return (
     <div className="msla-export-validation">
       <Text variant="xLarge" nowrap block>
@@ -67,6 +116,7 @@ export const Validation: React.FC = () => {
           onRenderCell={onRenderCell}
           selectionMode={SelectionMode.none}
           compact={true}
+          groupProps={groupedListProps}
         />
       </div>
     </div>
