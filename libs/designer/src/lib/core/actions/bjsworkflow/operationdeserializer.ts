@@ -10,6 +10,7 @@ import type { AddTokensPayload, NodeTokens } from '../../state/tokensSlice';
 import { initializeTokens } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowSlice';
 import { isRootNode } from '../../utils/graph';
+import { getRecurrenceParameters } from '../../utils/parameters/builtins';
 import {
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
@@ -20,7 +21,8 @@ import {
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getOperationSettings } from './settings';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { getIntl } from '@microsoft-logic-apps/intl';
 import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import {
@@ -99,7 +101,11 @@ const initializeOperationDetailsForManifest = async (
     return;
   } catch (error) {
     const errorMessage = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
-    console.log(errorMessage);
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'operation deserializer',
+      message: errorMessage,
+    });
 
     return;
   }
@@ -185,6 +191,7 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
   }
 
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
+  const recurrenceParameters = getRecurrenceParameters(manifest.properties.recurrence, stepDefinition);
 
   // TODO(14490585)- Initialize editor view models
 
@@ -197,8 +204,23 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
     [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,
   };
 
+  if (recurrenceParameters.length) {
+    const intl = getIntl();
+    if (manifest.properties.recurrence?.useLegacyParameterGroup) {
+      defaultParameterGroup.parameters = recurrenceParameters;
+    } else {
+      parameterGroups[ParameterGroupKeys.RECURRENCE] = {
+        id: ParameterGroupKeys.RECURRENCE,
+        description: intl.formatMessage({
+          defaultMessage: 'How often do you want to check for items?',
+          description: 'Recurrence parameter group title',
+        }),
+        parameters: recurrenceParameters,
+      };
+    }
+  }
+
   // TODO(14490585)- Add enum parameters
-  // TODO(14490747)- Add recurrence parameters
   // TODO(14490691)- Initialize dynamic inputs.
 
   defaultParameterGroup.parameters = _getParametersSortedByVisibility(defaultParameterGroup.parameters);
