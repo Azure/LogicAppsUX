@@ -18,7 +18,7 @@ export default {
 };
 
 interface ComponentProps {
-  workflow: any;
+  workflow: Workflow;
   options?: Partial<DesignerOptionsState>;
 }
 
@@ -48,7 +48,7 @@ const RenderedComponent = (props: ComponentProps) => (
         },
       }}
     >
-      <BJSWorkflowProvider workflow={props.workflow.definition}>
+      <BJSWorkflowProvider workflow={props.workflow}>
         <Designer></Designer>
       </BJSWorkflowProvider>
     </DesignerProvider>
@@ -63,8 +63,6 @@ export const MonitoringViewExample = () => (
   <RenderedComponent workflow={SimpleWorkflow as Workflow} options={{ readOnly: true, isMonitoringView: true }} />
 );
 
-export const ConnectionsExample = () => (
-  <RenderedComponent workflow={ConnectionsWorkflow.files as Workflow} options={{ readOnly: true, isMonitoringView: true }} />
-);
+export const ConnectionsExample = () => <RenderedComponent workflow={ConnectionsWorkflow.files as Workflow} options={{}} />;
 
 export const ScopesExample = () => <RenderedComponent workflow={AllScopesWorkflow as Workflow} />;
