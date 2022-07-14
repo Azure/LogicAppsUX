@@ -261,3 +261,15 @@ export interface IGroupedItem {
   status: string;
   message: string;
 }
+
+export enum WorkflowPart {
+  workflowOperations = 'workflowOperations',
+  connections = 'connections',
+  parameters = 'parameters',
+}
+
+export enum StyledWorkflowPart {
+  workflowOperations = 'Operations',
+  connections = 'Connections',
+  parameters = 'Parameters',
+}

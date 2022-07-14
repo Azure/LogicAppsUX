@@ -1,4 +1,4 @@
-import { ValidationStatus } from '../../../run-service';
+import { StyledWorkflowPart, ValidationStatus, WorkflowPart } from '../../../run-service';
 import type { IValidationData, IGroupedItem, IGroupedGroup, IWorkflowValidation } from '../../../run-service';
 
 export const getValidationListColumns = () => {
@@ -32,6 +32,23 @@ const getStatusFromChildren = (children: Array<IGroupedGroup>) => {
   return undefined;
 };
 
+const getGroupName = (groupName: string): string => {
+  switch (groupName) {
+    case WorkflowPart.workflowOperations: {
+      return StyledWorkflowPart.workflowOperations;
+    }
+    case WorkflowPart.connections: {
+      return StyledWorkflowPart.connections;
+    }
+    case WorkflowPart.parameters: {
+      return StyledWorkflowPart.parameters;
+    }
+    default: {
+      return groupName;
+    }
+  }
+};
+
 const getValidationGroup = (
   workflowSchema: any,
   groupName: string,
@@ -42,6 +59,7 @@ const getValidationGroup = (
 ): IGroupedGroup => {
   const status = workflowSchema?.validationState ?? getStatusFromChildren(children);
   const isCollapsed = status === ValidationStatus.succeeded ?? false;
+  const styledGroupName = getGroupName(groupName);
 
   return {
     children,
@@ -49,7 +67,7 @@ const getValidationGroup = (
     key: groupName,
     level,
     count,
-    name: groupName,
+    name: styledGroupName,
     startIndex,
     status,
   };
