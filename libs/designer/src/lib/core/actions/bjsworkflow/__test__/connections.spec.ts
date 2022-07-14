@@ -71,10 +71,9 @@ describe('connection workflow mappings', () => {
     }
   });
 
-  it('should return undefined when there is no referenceKeyFormat', async () => {
+  it('should throw an error when there is no referenceKeyFormat', async () => {
     makeMockStdOperationManifestService('');
-    const result = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockOpenApiConnection);
-    expect(result).toBeUndefined();
+    expect(await getManifestBasedConnectionMapping(mockGetState, nodeId, mockOpenApiConnection)).toThrowError();
   });
 
   it('should get the correct connectionId for the node with reference key', async () => {

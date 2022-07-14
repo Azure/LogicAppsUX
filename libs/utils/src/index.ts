@@ -12,8 +12,6 @@ export * from './lib/models/connector';
 export * from './lib/models/connection';
 export * from './lib/models/operationmanifest';
 export * from './lib/models/operation';
-export * from './lib/models/connectionReferences';
-export * from './lib/models/workflow';
 
 export * from './lib/mocks/connectors';
 export * from './lib/mocks/connections';

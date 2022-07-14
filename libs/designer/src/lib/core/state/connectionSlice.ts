@@ -1,28 +1,26 @@
-import type { ConnectionsJSON } from '@microsoft-logic-apps/utils';
-import { emptyConnections } from '@microsoft-logic-apps/utils';
+import type { ConnectionReferences } from '../../common/models/workflow';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface ConnectionsStoreState {
   connectionsMapping: ConnectionMapping;
-  connectionReferences: ConnectionsJSON;
+  connectionReferences: ConnectionReferences;
 }
 
 type NodeId = string;
 type ReferenceKey = string;
-type ConnectionMapping = Record<NodeId, ReferenceKey>;
+export type ConnectionMapping = Record<NodeId, ReferenceKey>;
 
 export const initialConnectionsState: ConnectionsStoreState = {
   connectionsMapping: {},
-  connectionReferences: emptyConnections, // danielle can we simplify this by only storing certain values here
-  // maybe move all similar values to the same keys?
+  connectionReferences: {},
 };
 
 export const connectionSlice = createSlice({
   name: 'connections',
   initialState: initialConnectionsState,
   reducers: {
-    initializeConnectionReferences: (state, action: PayloadAction<ConnectionsJSON>) => {
+    initializeConnectionReferences: (state, action: PayloadAction<ConnectionReferences>) => {
       state.connectionReferences = action.payload;
     },
     initializeConnectionsMappings: (state, action: PayloadAction<ConnectionMapping>) => {

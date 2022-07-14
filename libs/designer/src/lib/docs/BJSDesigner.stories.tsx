@@ -1,6 +1,8 @@
+import type { Workflow } from '../common/models/workflow';
 import type { DesignerOptionsState } from '../core/state/designerOptions/designerOptionsInterfaces';
 import { BJSWorkflowProvider, Designer, DesignerProvider } from '../index';
 import AllScopesWorkflow from './storybookWorkflows/allScopesWorkflow.json';
+import ConnectionsWorkflow from './storybookWorkflows/connectionsWorkflow.json';
 import BigWorkflow from './storybookWorkflows/simpleBigworkflow.json';
 import SimpleWorkflow from './storybookWorkflows/simpleSmallWorkflow.json';
 import {
@@ -53,12 +55,16 @@ const RenderedComponent = (props: ComponentProps) => (
   </div>
 );
 
-export const SimpleButBigDefinition = () => <RenderedComponent workflow={BigWorkflow} options={{}} />;
+export const SimpleButBigDefinition = () => <RenderedComponent workflow={BigWorkflow as Workflow} options={{}} />;
 
-export const ReadOnlyExample = () => <RenderedComponent workflow={SimpleWorkflow} options={{ readOnly: true }} />;
+export const ReadOnlyExample = () => <RenderedComponent workflow={SimpleWorkflow as Workflow} options={{ readOnly: true }} />;
 
 export const MonitoringViewExample = () => (
-  <RenderedComponent workflow={SimpleWorkflow} options={{ readOnly: true, isMonitoringView: true }} />
+  <RenderedComponent workflow={SimpleWorkflow as Workflow} options={{ readOnly: true, isMonitoringView: true }} />
 );
 
-export const ScopesExample = () => <RenderedComponent workflow={AllScopesWorkflow} />;
+export const ConnectionsExample = () => (
+  <RenderedComponent workflow={ConnectionsWorkflow.files as Workflow} options={{ readOnly: true, isMonitoringView: true }} />
+);
+
+export const ScopesExample = () => <RenderedComponent workflow={AllScopesWorkflow as Workflow} />;

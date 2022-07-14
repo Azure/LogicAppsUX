@@ -1,0 +1,97 @@
+{
+  "files": {
+    "workflow": {
+      "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+          "Get_Hourly_Forecasts": {
+            "inputs": {
+              "host": {
+                "connection": {
+                  "referenceName": "accuweatherip"
+                }
+              },
+              "method": "get",
+              "path": "/forecasts/v1/hourly/@{encodeURIComponent('1')}hour/@{encodeURIComponent('')}"
+            },
+            "runAfter": {},
+            "type": "ApiConnection"
+          },
+          "Scope": {
+            "actions": {},
+            "runAfter": {
+              "Get_Hourly_Forecasts": ["Succeeded"]
+            },
+            "type": "Scope"
+          }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+          "When_a_blob_is_Added_or_Modified_in_Azure_Storage": {
+            "inputs": {
+              "parameters": {
+                "path": "="
+              },
+              "serviceProviderConfiguration": {
+                "connectionName": "AzureBlob-2",
+                "operationId": "whenABlobIsAddedOrModified",
+                "serviceProviderId": "/serviceProviders/AzureBlob"
+              }
+            },
+            "type": "ServiceProvider"
+          }
+        }
+      },
+      "kind": "Stateful"
+    },
+    "connectionReferences": {
+      "AzureBlob": {
+        "api": {
+          "id": "/serviceProviders/AzureBlob"
+        },
+        "connection": {
+          "id": "/serviceProviders/AzureBlob"
+        },
+        "connectionName": "blob 1"
+      },
+      "AzureBlob-2": {
+        "api": {
+          "id": "/serviceProviders/AzureBlob"
+        },
+        "connection": {
+          "id": "/serviceProviders/AzureBlob"
+        },
+        "connectionName": "blob 2"
+      }
+    },
+    "accuweatherip_1": {
+      "api": {
+        "id": "/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/accuweatherip"
+      },
+      "connection": {
+        "id": "/subscriptions/4201f397-837b-48ea-8943-980767f294ac/resourceGroups/LogicApps/providers/Microsoft.Web/connections/accuweatherip-2"
+      },
+      "connectionRuntimeUrl": "https://7fafb7985d027088.06.common.logic-centralus.azure-apihub.net/apim/accuweatherip/dd84e57b8dea4231adbe35c85690b839",
+      "authentication": {
+        "type": "ManagedServiceIdentity"
+      }
+    },
+    "accuweatherip": {
+      "api": {
+        "id": "/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/accuweatherip"
+      },
+      "connection": {
+        "id": "/subscriptions/4201f397-837b-48ea-8943-980767f294ac/resourceGroups/LogicApps/providers/Microsoft.Web/connections/accuweatherip"
+      },
+      "connectionRuntimeUrl": "https://7fafb7985d027088.06.common.logic-centralus.azure-apihub.net/apim/accuweatherip/546f166997e34c7a970fe7b2d95f60bd",
+      "authentication": {
+        "type": "ManagedServiceIdentity"
+      }
+    }
+  },
+  "flowState": "Enabled",
+  "health": {
+    "state": "Healthy"
+  }
+}

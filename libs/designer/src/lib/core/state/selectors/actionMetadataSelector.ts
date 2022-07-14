@@ -1,8 +1,9 @@
+import type { ConnectionReference } from '../../../common/models/workflow';
 import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
 import { useConnectionByName } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { FunctionsConnection, OperationInfo, ServiceProviderConnection } from '@microsoft-logic-apps/utils';
+import type { OperationInfo } from '@microsoft-logic-apps/utils';
 import { getObjectPropertyValue } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -48,16 +49,10 @@ export const useNodeConnectionName = (nodeId: string) => {
   const connection = useConnectionByName(connectionId);
   const displayName = useSelector((state: RootState) => {
     const connectionReferences = state.connections.connectionReferences;
-    const serviceProvider: ServiceProviderConnection | undefined =
-      connectionReferences.serviceProviderConnections && connectionReferences.serviceProviderConnections[connectionId];
-    const functionConnection: FunctionsConnection | undefined =
-      connectionReferences.functionConnections && connectionReferences.functionConnections[connectionId];
-    let displayName = serviceProvider?.displayName;
-    if (functionConnection) {
-      displayName = functionConnection.displayName;
-    }
-    return displayName;
+    const connectionReference: ConnectionReference | undefined = connectionReferences[connectionId];
+    return connectionReference ? connectionReference.connectionName : '';
   });
+  // do all connections have the name in references?
   return connection?.properties.displayName ?? displayName;
 };
 
