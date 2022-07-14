@@ -66,8 +66,14 @@ const isOpenApiConnectionType = (type: string): boolean => {
   );
 };
 
-export async function getConnectionsApiAndMapping(operations: Operations, getState: () => RootState, dispatch: Dispatch) {
+export async function getConnectionsApiAndMapping(
+  operations: Operations,
+  getState: () => RootState,
+  dispatch: Dispatch,
+  operationInfoPromise: Promise<void>
+) {
   getConnectionsQuery();
+  await operationInfoPromise;
   const connectionsMappings = await getConnectionsMappingForNodes(operations, getState);
   dispatch(initializeConnectionsMappings(connectionsMappings));
   return;
