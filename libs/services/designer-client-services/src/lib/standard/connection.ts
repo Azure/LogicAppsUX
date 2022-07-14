@@ -1,5 +1,5 @@
 import type { IHttpClient, QueryParameters } from '../httpClient';
-import type { ArmResources, Connection, Connector } from '@microsoft-logic-apps/utils';
+import type { Connection, Connector } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 
 interface StandardConnectionServiceArgs {
@@ -8,15 +8,6 @@ interface StandardConnectionServiceArgs {
   locale?: string;
   filterByLocation?: boolean;
   httpClient: IHttpClient;
-  apiHubServiceDetails?: {
-    apiVersion: string;
-    baseUrl: string;
-    subscriptionId: string;
-    resourceGroup: string;
-    locale?: string;
-    location: string;
-    getAccessToken: getAccessTokenType;
-  };
 }
 
 export type getAccessTokenType = () => Promise<string>;
@@ -46,9 +37,9 @@ export class StandardConnectionService {
   }
 
   private async getConnectionInApiHub(connectionId: string): Promise<Connection> {
-    const { apiHubServiceDetails, httpClient } = this.options;
+    const { apiVersion, httpClient } = this.options;
     const connection = await httpClient.get<Connection>({
-      uri: `${connectionId}/api-version=${apiHubServiceDetails?.apiVersion}`,
+      uri: `${connectionId}/api-version=${apiVersion}`,
     });
 
     return connection;
@@ -60,14 +51,9 @@ export class StandardConnectionService {
   }
 
   private async getConnectionsInApiHub(): Promise<Connection[]> {
-    const { apiHubServiceDetails, filterByLocation, httpClient, baseUrl } = this.options;
-    if (!apiHubServiceDetails) {
-      return [];
-    }
+    const { filterByLocation, httpClient, baseUrl, apiVersion, locale } = this.options;
 
-    const { subscriptionId, resourceGroup, location, apiVersion } = apiHubServiceDetails;
-
-    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`;
+    const uri = `${baseUrl}/connections`;
 
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
@@ -76,38 +62,19 @@ export class StandardConnectionService {
     };
 
     try {
-      const response = await httpClient.get<ArmResources<Connection>>({ uri, queryParameters });
-      const allConnections = await this._followContinuationTokens<Connection>(response);
-      return allConnections.filter((connection: Connection) => {
-        return filterByLocation ? equals(connection.location, location) : true;
+      const response = await httpClient.get<ConnectionsResponse>({ uri, queryParameters });
+      return response.value.filter((connection: Connection) => {
+        return filterByLocation ? equals(connection.location, locale) : true;
       });
     } catch {
       return [];
     }
   }
-
-  // this is used if there are more connections than the API can return
-  private async _followContinuationTokens<T>(response: ArmResources<T>): Promise<T[]> {
-    let { nextLink, value } = response;
-
-    while (nextLink) {
-      let connectors: T[];
-      try {
-        ({ nextLink, value: connectors } = await this._followContinuationToken<T>(nextLink));
-        value = [...value, ...connectors];
-      } catch {
-        nextLink = undefined;
-      }
-    }
-    return value;
-  }
-
-  private async _followContinuationToken<T>(continuationToken: string): Promise<ArmResources<T>> {
-    const response = await this.options.httpClient.get<ArmResources<T>>({ uri: continuationToken });
-
-    return response;
-  }
 }
+
+type ConnectionsResponse = {
+  value: Connection[];
+};
 
 export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.startsWith('/subscriptions/') : false;

@@ -32,7 +32,7 @@ export const App = () => {
       }}
     >
       {workflow ? (
-        <BJSWorkflowProvider workflow={workflow.definition}>
+        <BJSWorkflowProvider workflow={{ definition: workflow.definition, connectionReferences: {} }}>
           <Designer></Designer>
         </BJSWorkflowProvider>
       ) : null}

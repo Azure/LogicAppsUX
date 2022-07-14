@@ -1,3 +1,5 @@
+import type { ConnectionReference } from '../../../common/models/workflow';
+import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
 import { useConnectionByName } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
@@ -29,13 +31,29 @@ export const useNodeMetadata = (nodeId?: string) => {
   });
 };
 
+export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
+  const result = useOperationManifest(operationInfo);
+  const manifest = result.data;
+  if (manifest) {
+    return isConnectionRequiredForOperation(result.data);
+  }
+  // else case needs to be implemented: work item 14936435
+  return true;
+};
+
 export const useNodeConnectionName = (nodeId: string) => {
   const connectionId = useSelector((state: RootState) => {
-    // danielle test this live
     return nodeId ? state.connections.connectionsMapping[nodeId] : '';
   });
+  // 14955807 task to investigate adding connection type to state to avoid checking in multiple places, or another strategy to avoid below way to find connection
   const connection = useConnectionByName(connectionId);
-  return connection?.properties.displayName ?? '';
+  const displayName = useSelector((state: RootState) => {
+    const connectionReferences = state.connections.connectionReferences;
+    const connectionReference: ConnectionReference | undefined = connectionReferences[connectionId];
+    return connectionReference ? connectionReference.connectionName : '';
+  });
+  // do all connections have the name in references?
+  return connection?.properties.displayName ?? displayName;
 };
 
 export const useNodeDescription = (nodeId: string) => {

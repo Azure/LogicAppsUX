@@ -74,6 +74,7 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
   );
 
   dispatch(initializeTokens(initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata)));
+  return Promise.resolve();
 };
 
 const initializeOperationDetailsForManifest = async (
