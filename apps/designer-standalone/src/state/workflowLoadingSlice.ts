@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import type { ConnectionsJSON, FunctionsConnection, ServiceProviderConnection } from './connectionReferences';
 import type { RootState } from './store';
-import type { ConnectionsJSON } from '@microsoft-logic-apps/utils';
+import type { ConnectionReference, ConnectionReferences } from '@microsoft/logic-apps-designer';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
@@ -9,14 +10,14 @@ export interface WorkflowLoadingState {
   resourcePath?: string;
   loadingMethod: 'file' | 'arm';
   workflowDefinition: LogicAppsV2.WorkflowDefinition | null;
-  connections: ConnectionsJSON | null;
+  connections: ConnectionReferences;
   readOnly: boolean;
   monitoringView: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
   workflowDefinition: null,
-  connections: null,
+  connections: {},
   loadingMethod: 'file',
   resourcePath: 'simpleBigworkflow.json',
   readOnly: false,
@@ -25,7 +26,7 @@ const initialState: WorkflowLoadingState = {
 
 type WorkflowPayload = {
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
-  connections: ConnectionsJSON;
+  connectionReferences: ConnectionReferences;
 };
 
 export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: void, thunkAPI) => {
@@ -43,7 +44,8 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
       const wf = await results.json();
       const workflowDefinition = wf.properties.files['workflow.json'].definition;
       const connections = wf.properties.files['connections.json'] as ConnectionsJSON;
-      return { workflowDefinition, connections } as WorkflowPayload;
+      const connectionReferences: ConnectionReferences = convertToConnectionReferences(connections);
+      return { workflowDefinition, connectionReferences } as WorkflowPayload;
     } else {
       return null;
     }
@@ -56,6 +58,52 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
     }
   }
 });
+
+function convertToConnectionReferences(connectionData: ConnectionsJSON | undefined): ConnectionReferences {
+  if (!connectionData) {
+    return {};
+  }
+  const connectionReferences: ConnectionReferences = { ...connectionData.managedApiConnections };
+  convertToConnectionReferenceRefactor(connectionData.functionConnections, connectionReferences);
+  convertToConnectionReferenceRefactor(connectionData.serviceProviderConnections, connectionReferences);
+
+  console.log(connectionReferences);
+  return connectionReferences;
+}
+
+function convertToConnectionReferenceRefactor(
+  connections: Record<string, ServiceProviderConnection | FunctionsConnection> | undefined,
+  connectionReferences: ConnectionReferences
+) {
+  if (connections) {
+    for (const key of Object.keys(connections)) {
+      const connection = connections[key];
+      let mappedConnection: ConnectionReference;
+      if ('serviceProvider' in connection) {
+        mappedConnection = {
+          api: { id: connection.serviceProvider.id },
+          connectionName: connection.displayName,
+          connection: {
+            id: connection.serviceProvider.id,
+          },
+        };
+      } else {
+        mappedConnection = {
+          api: {
+            id: connection.function.id,
+          },
+          connection: {
+            id: connection.function.id,
+          },
+          connectionName: connection.displayName,
+        };
+      }
+      // eslint-disable-next-line no-param-reassign
+      connectionReferences[key] = mappedConnection;
+    }
+  }
+}
+
 export const workflowLoadingSlice = createSlice({
   name: 'workflowLoader',
   initialState,
@@ -82,7 +130,7 @@ export const workflowLoadingSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload>) => {
       state.workflowDefinition = action.payload?.workflowDefinition;
-      state.connections = action.payload?.connections;
+      state.connections = action.payload?.connectionReferences ? action.payload.connectionReferences : {};
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
