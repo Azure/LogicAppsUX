@@ -39,9 +39,17 @@ const serviceOptions: StandardOperationManifestServiceOptions = {
   httpClient: mockHttp,
 };
 
+let spy: any;
+
 describe('connection workflow mappings', () => {
-  beforeEach(() => {
+  afterEach(() => {
+    if (spy) {
+      spy.mockClear();
+    }
     jest.clearAllMocks();
+    jest.resetAllMocks();
+    jest.resetModules();
+    jest.restoreAllMocks();
   });
 
   it('should get the correct connectionId for OpenApi', async () => {
@@ -54,6 +62,12 @@ describe('connection workflow mappings', () => {
     } else {
       throw Error();
     }
+  });
+
+  it('should return undefined when there is no referenceKeyFormat', async () => {
+    makeMockStdOperationManifestService('');
+    const result = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockOpenApiConnection);
+    expect(result).toBeUndefined();
   });
 
   it('should get the correct connectionId for manifest', async () => {
@@ -69,12 +83,6 @@ describe('connection workflow mappings', () => {
     } else {
       throw Error();
     }
-  });
-
-  it('should return undefined when there is no referenceKeyFormat', async () => {
-    makeMockStdOperationManifestService('');
-    const result = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockOpenApiConnection);
-    expect(result).toBeUndefined();
   });
 
   it('should get the correct connectionId for the node with reference key', async () => {
@@ -147,7 +155,7 @@ const mockOpenApiConnection: LogicAppsV2.OpenApiOperationAction = {
 };
 
 function makeMockStdOperationManifestService(referenceKeyFormat: ConnectionReferenceKeyFormat | '') {
-  jest
+  spy = jest
     .spyOn(StandardOperationManifestService.prototype, 'getOperationManifest')
     .mockImplementation((_connectorId: string, _operationId: string): Promise<OperationManifest> => {
       const mockManifest = { ...createItem };
