@@ -11,10 +11,28 @@
       "value": "Filtreler"
     }
   ],
+  "+W9fkq": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Kuala Lumpur, Singapur"
+    }
+  ],
+  "+dlOgj": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Haiti"
+    }
+  ],
   "+g+mch": [
     {
       "type": 0,
       "value": "Bir eylemin çok parçalı çıkışında, bir parçanın gövdesini döndürür"
+    }
+  ],
+  "+iMTt7": [
+    {
+      "type": 0,
+      "value": "Check to select this connection"
     }
   ],
   "+lpuMl": [
@@ -29,10 +47,28 @@
       "value": "Sayfalandırma"
     }
   ],
+  "/AtN16": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Darwin"
+    }
+  ],
+  "/B2CTz": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
       "value": "Gövde"
+    }
+  ],
+  "/Igb36": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Brisbane"
     }
   ],
   "/NDLmg": [
@@ -65,6 +101,24 @@
       "value": "Gerekli. Birleştirilecek öğelerin ait olduğu koleksiyon."
     }
   ],
+  "/qu3zt": [
+    {
+      "type": 0,
+      "value": "0"
+    }
+  ],
+  "/rjP4U": [
+    {
+      "type": 0,
+      "value": "(UTC) Eşgüdümlü Evrensel Saat"
+    }
+  ],
+  "/sMQhI": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Indiana (Doğu)"
+    }
+  ],
   "/ut0u7": [
     {
       "type": 0,
@@ -81,6 +135,12 @@
     {
       "type": 0,
       "value": "Tetikleyici veya eylemi çağırmaya yönelik URL döndürülür. Not: Yalnızca bir httpWebhook ve apiConnectionWebhook'ta kullanılabilen bu işlev bir el ile, yinelenme, http veya apiConnection'da kullanılamaz."
+    }
+  ],
+  "09oqLb": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Bakü"
     }
   ],
   "0FzNJV": [
@@ -125,10 +185,22 @@
       "value": "Yeniden denemeler ile başarılı oldu"
     }
   ],
+  "0hxr5j": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Chetumal"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
       "value": "Gerekli. Büyük harfe dönüştürülecek dize. Dizedeki bir karakterin büyük harf eşdeğeri yoksa, karakter, döndürülen dizeye değiştirilmeden eklenir."
+    }
+  ],
+  "0meqK1": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
   "0p+pJq": [
@@ -167,6 +239,12 @@
       "value": "Bir URI'den bağlantı noktasını döndürür. Bağlantı noktası belirtilmezse, iletişim kuralı için varsayılan bağlantı noktasını döndürür"
     }
   ],
+  "14lYtE": [
+    {
+      "type": 0,
+      "value": "18"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
@@ -195,6 +273,12 @@
     {
       "type": 0,
       "value": "Parametre bağımsız değişkenini bir kayan noktalı sayıya dönüştürür"
+    }
+  ],
+  "1Ogj/V": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kudüs"
     }
   ],
   "1R6Vaa": [
@@ -273,10 +357,22 @@
       "value": "Gerekli. Karşılaştırılan değerden küçük olup olmadığı denetlenecek nesne."
     }
   ],
+  "1uGBLP": [
+    {
+      "type": 0,
+      "value": "5"
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Kapat"
+    }
+  ],
+  "1zmMYu": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Karakas"
     }
   ],
   "23fENy": [
@@ -309,6 +405,24 @@
       "value": "Bitiş zamanı"
     }
   ],
+  "2NYPLt": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30) Newfoundland"
+    }
+  ],
+  "2Noh96": [
+    {
+      "type": 0,
+      "value": "17"
+    }
+  ],
+  "2b1yD3": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Auckland, Wellington"
+    }
+  ],
   "2cVEMV": [
     {
       "type": 0,
@@ -321,10 +435,22 @@
       "value": "Gerekli. Form-data veya form-encoded yanıtı içeren eylemin adı."
     }
   ],
+  "2ri1Kf": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Şam"
+    }
+  ],
   "2tTQ0A": [
     {
       "type": 0,
       "value": "Açık"
+    }
+  ],
+  "2xhbE1": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Magadan"
     }
   ],
   "33+WHG": [
@@ -333,16 +459,46 @@
       "value": "Tanımlayıcı"
     }
   ],
+  "3FoqCK": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Tiflis"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
       "value": "Gerekli. Ayırıcı."
     }
   ],
+  "3PgHCT": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Chisinau"
+    }
+  ],
+  "3TD2V5": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Dakka"
+    }
+  ],
   "3X/ZDK": [
     {
       "type": 0,
       "value": "Eşlemeniz için kullanılacak bir çıkış şeması yükleyin veya seçin."
+    }
+  ],
+  "3afjx+": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Chita"
+    }
+  ],
+  "3jlz+B": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30) Tahran"
     }
   ],
   "3kI7xF": [
@@ -369,10 +525,22 @@
       "value": "Zorunlu. Çıkarmak için belirtilen zaman birimi sayısı."
     }
   ],
+  "3vqfeV": [
+    {
+      "type": 0,
+      "value": "3"
+    }
+  ],
   "3wagjT": [
     {
       "type": 0,
       "value": "giriş seçin"
+    }
+  ],
+  "4/kJ8D": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Erivan"
     }
   ],
   "47kOXr": [
@@ -385,6 +553,18 @@
     {
       "type": 0,
       "value": "Gerekli. Eklenecek gün sayısı. Gün sayısının çıkarılması için negatif olabilir."
+    }
+  ],
+  "4Q7WzU": [
+    {
+      "type": 0,
+      "value": "Yeni bağlantı ekle"
+    }
+  ],
+  "4XdZNj": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Orta Batı Afrika"
     }
   ],
   "4YKQAF": [
@@ -427,6 +607,12 @@
     {
       "type": 0,
       "value": "Tur/Öğretici"
+    }
+  ],
+  "4wjJs0": [
+    {
+      "type": 0,
+      "value": "14"
     }
   ],
   "53PSgA": [
@@ -477,6 +663,18 @@
       "value": "Gerekli. Karşılaştırılan değerden büyük olup olmadığı denetlenecek nesne."
     }
   ],
+  "65FlWi": [
+    {
+      "type": 0,
+      "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6XR3FS": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Adelaide"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -501,6 +699,12 @@
       "value": "Önceki"
     }
   ],
+  "6pd1bE": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Arizona"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
@@ -511,6 +715,12 @@
     {
       "type": 0,
       "value": "Tamam"
+    }
+  ],
+  "7KxCGX": [
+    {
+      "type": 0,
+      "value": "(UTC+10:30) Lord Howe Adası"
     }
   ],
   "7QymrD": [
@@ -535,6 +745,12 @@
     {
       "type": 0,
       "value": "Dize zaman damgasında 1 Ocak 0001 00:00:00 UTC tarihinden sonraki zaman aralığı sayısını (100 nanosaniyelik aralık) döndürür"
+    }
+  ],
+  "7lvqST": [
+    {
+      "type": 0,
+      "value": "Geçersiz"
     }
   ],
   "7yEdSt": [
@@ -573,6 +789,12 @@
       "value": "Gerekli. Karşılaştırma nesnesinden büyük veya bu nesneye eşit olup olmadığı denetlenecek nesne."
     }
   ],
+  "8JEHiY": [
+    {
+      "type": 0,
+      "value": "Cumartesi"
+    }
+  ],
   "8JFxmV": [
     {
       "type": 0,
@@ -591,10 +813,22 @@
       "value": "Gerekli. URI ile kodlanacak dize."
     }
   ],
+  "8Y5xpK": [
+    {
+      "type": 0,
+      "value": "Perşembe"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
       "value": "Zaman uyumsuz düzen seçildiğinde, uzak sunucu 202 (Kabul Edildi) yanıtı göndererek isteğin işlenmek üzere kabul edildiğini belirtirse Logic Apps altyapısı, bir sona erme durumuna ulaşılana kadar yanıtın konum üst bilgisinde belirtilen URL'yi yoklamayı sürdürür."
+    }
+  ],
+  "8pPivj": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Norfolk Adası"
     }
   ],
   "8to63i": [
@@ -627,10 +861,28 @@
       "value": "Geçirilen diziler veya nesneler arasında ortak öğeleri olan tek bir dizi veya nesne döndürür"
     }
   ],
+  "9/vdrb": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "949s+r": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Ulanbator"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
       "value": "Bağlayıcı"
+    }
+  ],
+  "9EmN2M": [
+    {
+      "type": 0,
+      "value": "İptal"
     }
   ],
   "9JuvQ4": [
@@ -643,6 +895,12 @@
     {
       "type": 0,
       "value": "Ek özellik-değer çifti içeren bir nesneyi döndürür"
+    }
+  ],
+  "9SuA/E": [
+    {
+      "type": 0,
+      "value": "12"
     }
   ],
   "9b4xDa": [
@@ -663,10 +921,34 @@
       "value": "Çıkış şeması seçin"
     }
   ],
+  "9pdXmX": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Roma, Stockholm, Viyana"
+    }
+  ],
+  "9pl7QP": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Atlantik Saati (Kanada)"
+    }
+  ],
   "9u/Ae3": [
     {
       "type": 0,
       "value": "İki parametre de true ise true döndürür"
+    }
+  ],
+  "AIL7WX": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "ALImBL": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Monrovia, Reykjavik"
     }
   ],
   "ANbEeQ": [
@@ -679,6 +961,12 @@
     {
       "type": 0,
       "value": "Bitti"
+    }
+  ],
+  "AYaqW/": [
+    {
+      "type": 0,
+      "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
   "ArTh0/": [
@@ -695,7 +983,7 @@
           "value": [
             {
               "type": 0,
-              "value": "0 Actions"
+              "value": "0 Eylem"
             }
           ]
         },
@@ -706,7 +994,7 @@
             },
             {
               "type": 0,
-              "value": " Action"
+              "value": " Eylem"
             }
           ]
         },
@@ -717,7 +1005,7 @@
             },
             {
               "type": 0,
-              "value": " Actions"
+              "value": " Eylem"
             }
           ]
         }
@@ -731,6 +1019,12 @@
     {
       "type": 0,
       "value": "Gerekli. Alınacak bölümün dizini."
+    }
+  ],
+  "BAgRzO": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Eşgüdümlü Evrensel Saat-08"
     }
   ],
   "BBD8Em": [
@@ -763,6 +1057,18 @@
       "value": "Gerekli. URL güvenli olmayan karakterlerin kodunun çözülmesi için kullanılacak dize."
     }
   ],
+  "BSHFiw": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Pert"
+    }
+  ],
+  "BVOUxP": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Havana"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -793,6 +1099,12 @@
       "value": "Bağlantı gerekli"
     }
   ],
+  "Cy9qeQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofya, Tallinn, Vilnius"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -811,10 +1123,28 @@
       "value": "Süre"
     }
   ],
+  "DfS13/": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Aleutian Adaları"
+    }
+  ],
+  "DuXV2M": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Azorlar"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
       "value": "Ctrl + Y"
+    }
+  ],
+  "E9OS+9": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Eşgüdümlü Evrensel Saat-09"
     }
   ],
   "ECZC6Y": [
@@ -829,16 +1159,46 @@
       "value": "Yanıt"
     }
   ],
+  "EYqGxA": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Atina, Bükreş"
+    }
+  ],
   "EZz5q7": [
     {
       "type": 0,
       "value": "Gerekli. Alt dizeyi ayıklama işleminin başlatılacağı yeri belirten dizin."
     }
   ],
+  "EdzoIs": [
+    {
+      "type": 0,
+      "value": "1"
+    }
+  ],
+  "Eqgm4v": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Doğu Saati (ABD ve Kanada)"
+    }
+  ],
+  "ExaACE": [
+    {
+      "type": 0,
+      "value": "Bağlantı görünen adı"
+    }
+  ],
   "F3IDl8": [
     {
       "type": 0,
       "value": "Zorunlu. Eklemek için belirtilen zaman birimi sayısı."
+    }
+  ],
+  "F489Vg": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Irkutsk"
     }
   ],
   "FDF4Qb": [
@@ -857,6 +1217,18 @@
     {
       "type": 0,
       "value": "başarısız oldu"
+    }
+  ],
+  "FHsP9y": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45) Kathmandu"
+    }
+  ],
+  "FIT7i0": [
+    {
+      "type": 0,
+      "value": "20"
     }
   ],
   "FN5zHQ": [
@@ -893,6 +1265,12 @@
     {
       "type": 0,
       "value": "Geçirilen bir dize zaman damgası için günün başlangıcını döndürür"
+    }
+  ],
+  "FXC0Zi": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Bağdat"
     }
   ],
   "FXLR5M": [
@@ -945,6 +1323,12 @@
       "value": "Bir dize içindeki bir değerin ilk dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)"
     }
   ],
+  "FiyQjU": [
+    {
+      "type": 0,
+      "value": "2"
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
@@ -993,6 +1377,12 @@
       "value": "Parametre adı girin."
     }
   ],
+  "GtDOFg": [
+    {
+      "type": 0,
+      "value": "Cancel the selection"
+    }
+  ],
   "GzQQqH": [
     {
       "type": 0,
@@ -1035,10 +1425,34 @@
       "value": "İçeriği görmek için lütfen bir kart seçin"
     }
   ],
+  "IA+Ogm": [
+    {
+      "type": 0,
+      "value": "22"
+    }
+  ],
+  "IPbBB2": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Fiji"
+    }
+  ],
+  "IUE/lQ": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Cabo Verde Adaları"
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
       "value": "Geçirilen bir dize zaman damgasını UTC'den hedef saat dilimine dönüştürür"
+    }
+  ],
+  "IjZFjQ": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
   "IngtMG": [
@@ -1071,6 +1485,12 @@
       "value": "Sabit kültürün büyük-küçük harf kurallarını kullanarak bir dizeyi küçük harfe dönüştürür"
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1081,6 +1501,12 @@
     {
       "type": 0,
       "value": "Gerekli. Boole'ye dönüştürülen değer."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -1111,6 +1537,12 @@
     {
       "type": 0,
       "value": "Ad:"
+    }
+  ],
+  "JpthWY": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Montevideo"
     }
   ],
   "Jq2Y/o": [
@@ -1157,7 +1589,7 @@
           "value": [
             {
               "type": 0,
-              "value": "0 Cases"
+              "value": "0 Durum"
             }
           ]
         },
@@ -1168,7 +1600,7 @@
             },
             {
               "type": 0,
-              "value": " Case"
+              "value": " Durum"
             }
           ]
         },
@@ -1179,7 +1611,7 @@
             },
             {
               "type": 0,
-              "value": " Cases"
+              "value": " Durum"
             }
           ]
         }
@@ -1187,6 +1619,30 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "actionCount"
+    }
+  ],
+  "Khc8lS": [
+    {
+      "type": 0,
+      "value": "(UTC-09:30) Marquesas Adaları"
+    }
+  ],
+  "KlvTze": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "KoBDbT": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Eşgüdümlü Evrensel Saat-02"
+    }
+  ],
+  "Kw3bWO": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) İstanbul"
     }
   ],
   "L+PY+j": [
@@ -1207,10 +1663,22 @@
       "value": "Uyarı"
     }
   ],
+  "LMB8am": [
+    {
+      "type": 0,
+      "value": "Oluşturuluyor..."
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Bir URI'den düzeni döndürür"
+    }
+  ],
+  "Lft/is": [
+    {
+      "type": 0,
+      "value": "Yeni ekle"
     }
   ],
   "LoGUT3": [
@@ -1231,10 +1699,28 @@
       "value": "Gerekli. Doğru olabilecek ifadeler."
     }
   ],
+  "LvpxiA": [
+    {
+      "type": 0,
+      "value": "Ağ Geçidi"
+    }
+  ],
+  "Lwe7tQ": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lizbon, Londra"
+    }
+  ],
   "M0HMjE": [
     {
       "type": 0,
       "value": "Yorum ekle"
+    }
+  ],
+  "M48CGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Solomon Adl., Yeni Kaledonya"
     }
   ],
   "M6U2LE": [
@@ -1309,6 +1795,30 @@
       "value": "Durum"
     }
   ],
+  "NeyUAh": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Buenos Aires"
+    }
+  ],
+  "NkUgXU": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "NvANon": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Alaska"
+    }
+  ],
+  "NvJDn/": [
+    {
+      "type": 0,
+      "value": "Salı"
+    }
+  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -1331,6 +1841,24 @@
     {
       "type": 0,
       "value": "İşlem seçenekleri:"
+    }
+  ],
+  "OGUVGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Bougainville Adası"
+    }
+  ],
+  "OH9xlX": [
+    {
+      "type": 0,
+      "value": "10"
+    }
+  ],
+  "OKszbi": [
+    {
+      "type": 0,
+      "value": "Bağlantı Adı"
     }
   ],
   "OSHNZ2": [
@@ -1405,6 +1933,12 @@
       "value": "Gerekli. İlk nesnenin alınacağı koleksiyon."
     }
   ],
+  "PBvR9Q": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Araguaina"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -1447,16 +1981,34 @@
       "value": "İptal edildi"
     }
   ],
+  "PeLrFb": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Moskova, St. Petersburg, Volgograd"
+    }
+  ],
   "PfCJlN": [
     {
       "type": 0,
       "value": "İş akışı işlevleri"
     }
   ],
+  "PmB0J7": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Turks ve Caicos"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
       "value": "Giriş dizesinin base 64 gösterimini döndürür"
+    }
+  ],
+  "Q+oELo": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Izhevsk, Samara"
     }
   ],
   "Q/7unA": [
@@ -1557,6 +2109,12 @@
       "value": "Gerekli. Bölünen dize."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -1589,10 +2147,22 @@
       "value": "minutes"
     }
   ],
+  "RkgScy": [
+    {
+      "type": 0,
+      "value": "6"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
       "value": "Sil"
+    }
+  ],
+  "SADSSs": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Eski"
     }
   ],
   "SKXopi": [
@@ -1641,6 +2211,12 @@
       "value": "Çalıştırmanın izleme kimliğini ayarlayın. Bölünmüş izleme için bu izleme kimliği isteği başlatmaya yarar."
     }
   ],
+  "T6VIym": [
+    {
+      "type": 0,
+      "value": "Ad"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -1665,6 +2241,18 @@
       "value": "Bir dizinin her öğesinin bir sınırlandırıcı ile birleştirildiği bir dize döndürür"
     }
   ],
+  "TNEttQ": [
+    {
+      "type": 0,
+      "value": "Cuma"
+    }
+  ],
+  "TNzcrv": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Vladivostok"
+    }
+  ],
   "TO7qos": [
     {
       "type": 0,
@@ -1675,6 +2263,12 @@
     {
       "type": 0,
       "value": "Bir değer girin"
+    }
+  ],
+  "TX4Kdr": [
+    {
+      "type": 0,
+      "value": "Yeni bağlantı oluştur"
     }
   ],
   "TZv5JE": [
@@ -1695,6 +2289,18 @@
       "value": "Etiketler"
     }
   ],
+  "ToPmjE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Cuiaba"
+    }
+  ],
+  "TqPfth": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Brüksel, Kopenhag, Madrid, Paris"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -1707,10 +2313,22 @@
       "value": "Daralt/Genişlet"
     }
   ],
+  "U1NiVg": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Orta Amerika"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
       "value": "Belirli bir sayıdan başlayan bir tamsayı dizisi üretir"
+    }
+  ],
+  "U56j9a": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Paskalya Adası"
     }
   ],
   "UCNM4L": [
@@ -1731,10 +2349,22 @@
       "value": "Güvenlik yapılandırması nedeniyle içerik gösterilmiyor."
     }
   ],
+  "UkSZnQ": [
+    {
+      "type": 0,
+      "value": "Kaydet"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
       "value": "Öğeyi silmek için tıklayın"
+    }
+  ],
+  "UtyRCH": [
+    {
+      "type": 0,
+      "value": "Enter a name for the connection"
     }
   ],
   "V+/c21": [
@@ -1749,10 +2379,22 @@
       "value": "Daha az göster"
     }
   ],
+  "VE3cxq": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Dağ Saati (ABD ve Kanada)"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
       "value": "Belirtilen iş akışı çalıştırma adı geçersiz."
+    }
+  ],
+  "VUH9aj": [
+    {
+      "type": 0,
+      "value": "23"
     }
   ],
   "VVfYvq": [
@@ -1765,6 +2407,12 @@
     {
       "type": 0,
       "value": "Yorum"
+    }
+  ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
     }
   ],
   "VZHick": [
@@ -1795,10 +2443,10 @@
       "value": "Gerekli. Yeni özelliğin adı."
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "Temizle"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -1861,10 +2509,22 @@
       "value": "Yeniden dene"
     }
   ],
+  "XN9RvJ": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Baja California"
+    }
+  ],
   "XOzn/3": [
     {
       "type": 0,
       "value": "Bağlantı adı"
+    }
+  ],
+  "XTYYks": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Seul"
     }
   ],
   "XTuxmH": [
@@ -1883,6 +2543,18 @@
     {
       "type": 0,
       "value": " saniye"
+    }
+  ],
+  "XX1ioe": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Kuveyt, Riyad"
+    }
+  ],
+  "XaS4ds": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Pasifik Saati (ABD ve Kanada)"
     }
   ],
   "Xnn0uj": [
@@ -1991,6 +2663,12 @@
       "value": "Bir dize zaman damgası için ayın günü bileşenini döndürür"
     }
   ],
+  "ZQ4lji": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Kanbera, Melbourne, Sidney"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -2007,6 +2685,12 @@
     {
       "type": 0,
       "value": "Bu işlem zaten silinmiş."
+    }
+  ],
+  "ZnGRMP": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Tomsk"
     }
   ],
   "a3QJzO": [
@@ -2027,6 +2711,12 @@
       "value": "Gerekli. Bölen tarafından bölünecek sayı."
     }
   ],
+  "a7x6VI": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Taipei"
+    }
+  ],
   "aAXnqw": [
     {
       "type": 0,
@@ -2037,6 +2727,12 @@
     {
       "type": 0,
       "value": "Gerekli. Koleksiyonun önünden kaldırılacak nesne sayısı. Pozitif bir tamsayı olmalıdır."
+    }
+  ],
+  "aH9SV7": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Aşkabad, Taşkent"
     }
   ],
   "aK4iLW": [
@@ -2063,6 +2759,12 @@
       "value": "Değer"
     }
   ],
+  "bS5DyV": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kaliningrad"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -2087,6 +2789,18 @@
       "value": "Sayılardan oluşan giriş dizisinin en büyük değerini döndürür"
     }
   ],
+  "bnStSJ": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Chennai, Kolkata (Calcutta), Mumbai, Yeni Delhi"
+    }
+  ],
+  "bx3qeC": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Brezilya"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -2097,6 +2811,12 @@
     {
       "type": 0,
       "value": "Yapın"
+    }
+  ],
+  "c1XmvN": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Nuku'alofa"
     }
   ],
   "c2XklE": [
@@ -2135,6 +2855,18 @@
       "value": "Gerekli. Dizini aranacak değer."
     }
   ],
+  "cT2MlP": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Chokurdakh"
+    }
+  ],
+  "cVIZTQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Tripoli"
+    }
+  ],
   "ci6ex1": [
     {
       "type": 0,
@@ -2159,6 +2891,12 @@
       "value": "Başlangıç zamanı"
     }
   ],
+  "cr0UnG": [
+    {
+      "type": 0,
+      "value": "9"
+    }
+  ],
   "cscezV": [
     {
       "type": 0,
@@ -2169,6 +2907,12 @@
     {
       "type": 0,
       "value": "Yorumu sil"
+    }
+  ],
+  "d4xMIx": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
   "dDYCuU": [
@@ -2189,6 +2933,12 @@
       "value": "HTTP üzerinden içerik aktarma davranışını ve özelliklerini belirtin. Büyük boyutlu iletilerin karşıya yüklenmesine olanak sağlamak için bu iletiler küçük isteklere bölünerek bağlayıcıya gönderilebilir. Ayrıntıları şu sayfada bulabilirsiniz: http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
+  "dUZi34": [
+    {
+      "type": 0,
+      "value": "(UTC+12:45) Chatham Adaları"
+    }
+  ],
   "dWFyfN": [
     {
       "type": 0,
@@ -2199,6 +2949,18 @@
     {
       "type": 0,
       "value": "kalem simgesi"
+    }
+  ],
+  "dWx21B": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Sakhalin"
+    }
+  ],
+  "dgAu27": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Grönland"
     }
   ],
   "dhvk0u": [
@@ -2225,10 +2987,22 @@
       "value": "Ayırıcı kullanarak dizeyi böler"
     }
   ],
+  "e00zot": [
+    {
+      "type": 0,
+      "value": "Öğeleri ne sıklıkta denetlemek istiyorsunuz?"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Belirtilmedi"
+    }
+  ],
+  "eGa1Wa": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ekaterinburg"
     }
   ],
   "eHgi14": [
@@ -2279,10 +3053,22 @@
       "value": "Birinci bağımsız değişken ikinciden büyük veya ikinciye eşitse true döndürür"
     }
   ],
+  "faSDuD": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Port Louis"
+    }
+  ],
   "fg/34o": [
     {
       "type": 0,
       "value": "Mantıksal işlevler"
+    }
+  ],
+  "froV/0": [
+    {
+      "type": 0,
+      "value": "(UTC+04:30) Kabil"
     }
   ],
   "ftwXvc": [
@@ -2303,6 +3089,12 @@
       "value": "Yayımla"
     }
   ],
+  "g5mMuM": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Saint Pierre ve Miquelon"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -2321,10 +3113,22 @@
       "value": "İki sayı arasındaki bölme işleminin sonucunu döndürür"
     }
   ],
+  "gF+0/N": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Amman"
+    }
+  ],
   "gIK0WG": [
     {
       "type": 0,
       "value": "Gerekli. İfadenin hangi değeri döndürmesi gerektiğini belirleyen bir boole değer."
+    }
+  ],
+  "gIc0YJ": [
+    {
+      "type": 0,
+      "value": "Bağlantı adı"
     }
   ],
   "gKq3Jv": [
@@ -2351,10 +3155,28 @@
       "value": "Tetikleyici Koşulları"
     }
   ],
+  "gg0j4S": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gj+jEr": [
+    {
+      "type": 0,
+      "value": "Save the selected connection"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
       "value": "Bir until döngüsünde kullanıldığında bu işlev belirtilen döngünün geçerli yineleme dizinini döndürür."
+    }
+  ],
+  "hBLPXK": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan"
     }
   ],
   "hN7iBP": [
@@ -2449,6 +3271,12 @@
       "value": "Gerekli. Ayrıştırılacak URI."
     }
   ],
+  "iRe/g7": [
+    {
+      "type": 0,
+      "value": "21"
+    }
+  ],
   "iRjBf4": [
     {
       "type": 0,
@@ -2473,6 +3301,12 @@
       "value": "İptal"
     }
   ],
+  "iq+tiv": [
+    {
+      "type": 0,
+      "value": "11"
+    }
+  ],
   "iql+jn": [
     {
       "type": 1,
@@ -2487,6 +3321,12 @@
     {
       "type": 0,
       "value": "Sına"
+    }
+  ],
+  "j1VU25": [
+    {
+      "type": 0,
+      "value": "(UTC+14:00) Kiritimati Adası"
     }
   ],
   "j2MU0b": [
@@ -2511,6 +3351,12 @@
     {
       "type": 0,
       "value": "Gerekli. Negatif yapılacak ifade."
+    }
+  ],
+  "jMLmag": [
+    {
+      "type": 0,
+      "value": "Yeni Oluştur"
     }
   ],
   "jQ0Aqj": [
@@ -2573,6 +3419,12 @@
       "value": "Giriş Şeması Ekle"
     }
   ],
+  "kDsud+": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Cayenne, Fortaleza"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -2603,16 +3455,34 @@
       "value": "İndir (Alt/Option + tıklama)"
     }
   ],
+  "kZCX7t": [
+    {
+      "type": 0,
+      "value": "Pazartesi"
+    }
+  ],
   "kZuYgD": [
     {
       "type": 0,
       "value": "Birinci bağımsız değişken ikinciden küçükse true döndürür"
     }
   ],
+  "kc5Mui": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Orta Atlantik - Eski"
+    }
+  ],
   "keb4r1": [
     {
       "type": 0,
       "value": "İki değer eşitse true döndürür"
+    }
+  ],
+  "kneb9/": [
+    {
+      "type": 0,
+      "value": "(UTC-12:00) Uluslararası Tarih Çizgisi Batı"
     }
   ],
   "knylNW": [
@@ -2639,6 +3509,18 @@
       "value": " dakika"
     }
   ],
+  "lFve22": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Saraybosna, Üsküp, Varşova, Zagreb"
+    }
+  ],
+  "lIPWQ6": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Bangkok, Hanoi, Cakarta"
+    }
+  ],
   "lPTdSf": [
     {
       "type": 0,
@@ -2661,6 +3543,12 @@
     {
       "type": 0,
       "value": "atlandı"
+    }
+  ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -2717,6 +3605,12 @@
       "value": "URL, giriş dizesini kodlar"
     }
   ],
+  "mZCHKf": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+    }
+  ],
   "mZRMD9": [
     {
       "type": 0,
@@ -2727,6 +3621,24 @@
     {
       "type": 0,
       "value": "Logic Apps'i giden isteklerde iş akışı meta veri üst bilgileri eklememek için sınırlandırın."
+    }
+  ],
+  "mx2IMJ": [
+    {
+      "type": 0,
+      "value": "13"
+    }
+  ],
+  "n+F7e2": [
+    {
+      "type": 0,
+      "value": "15"
+    }
+  ],
+  "n20T2h": [
+    {
+      "type": 0,
+      "value": "7"
     }
   ],
   "n35O/+": [
@@ -2777,6 +3689,12 @@
       "value": "Kapat"
     }
   ],
+  "nx25nq": [
+    {
+      "type": 0,
+      "value": "19"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2815,16 +3733,34 @@
       "value": "İçerik Aktarımı"
     }
   ],
+  "oRvVIW": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Krasnoyarsk"
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Çalıştırmayı açmak için çalıştırma tanımlayıcısını girin"
     }
   ],
+  "ol+TkT": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Salvador"
+    }
+  ],
   "orhWzV": [
     {
       "type": 0,
       "value": "Şema yüklenemedi. Lütfen yeniden deneyin."
+    }
+  ],
+  "oxH1L/": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
     }
   ],
   "p/0r2N": [
@@ -2837,6 +3773,12 @@
     {
       "type": 0,
       "value": "Üstbilgiler"
+    }
+  ],
+  "p5tz8/": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Samoa"
     }
   ],
   "pIczsS": [
@@ -2855,6 +3797,12 @@
     {
       "type": 0,
       "value": "Parametreler"
+    }
+  ],
+  "pUeUDw": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
     }
   ],
   "pXmFGf": [
@@ -2917,6 +3865,12 @@
       "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir saniye sayısı ekler"
     }
   ],
+  "q9hf8i": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -2933,6 +3887,12 @@
     {
       "type": 0,
       "value": "başarılı"
+    }
+  ],
+  "qQoQFv": [
+    {
+      "type": 0,
+      "value": "Geçersiz bağlantı."
     }
   ],
   "qSejoi": [
@@ -2991,10 +3951,22 @@
       "value": "Gerekli. Tamsayıya dönüştürülen değer."
     }
   ],
+  "qq/bq0": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Yakutsk"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
       "value": "Zaman uyumsuz yanıt, bir mantıksal uygulamanın, isteğin işlenmek üzere kabul edildiğini göstermek için 202 (Kabul Edildi) yanıtı göndermesine olanak sağlar. Son durumun alınması için bir konum üst bilgisi sağlanır."
+    }
+  ],
+  "r1FQhf": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Windhoek"
     }
   ],
   "r43nMc": [
@@ -3027,6 +3999,12 @@
       "value": "Kart Başlığı"
     }
   ],
+  "rDt4Iu": [
+    {
+      "type": 0,
+      "value": "Is connection invalid"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -3037,6 +4015,12 @@
     {
       "type": 0,
       "value": "Bir değerin URI ile kodlanmış gösterimini döndürür"
+    }
+  ],
+  "rstpaK": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Merkezi Saat (ABD ve Kanada)"
     }
   ],
   "s5RV9B": [
@@ -3055,6 +4039,12 @@
     {
       "type": 0,
       "value": "Form-data veya form-encoded tetikleyici çıkışındaki anahtar adı ile eşleşen değerlerin dizisini döndürür"
+    }
+  ],
+  "sFwHQc": [
+    {
+      "type": 0,
+      "value": "Cancel creating a connection"
     }
   ],
   "sW47JR": [
@@ -3093,6 +4083,12 @@
       "value": "Anahtar"
     }
   ],
+  "siYGSo": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Beyrut"
+    }
+  ],
   "soqP+Z": [
     {
       "type": 0,
@@ -3121,6 +4117,12 @@
     {
       "type": 0,
       "value": "Tetikleyici veya eylemi çağırmaya yönelik URL'yi döndürür"
+    }
+  ],
+  "tELkSC": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Guadalahara, Mexico City, Monterey"
     }
   ],
   "tImHz/": [
@@ -3159,6 +4161,12 @@
       "value": "Tür"
     }
   ],
+  "tP+5fA": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
   "tVmUCd": [
     {
       "type": 0,
@@ -3177,10 +4185,34 @@
       "value": "Gerekli. Eklenecek saat sayısı. Saat sayısının çıkarılması için negatif olabilir."
     }
   ],
+  "teZwo6": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "tsmuoF": [
+    {
+      "type": 0,
+      "value": "Görünen Ad"
+    }
+  ],
   "tu8I7j": [
     {
       "type": 0,
       "value": "İşlemler"
+    }
+  ],
+  "u/KSPz": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Santiago"
+    }
+  ],
+  "u6Gdft": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Abu Dabi, Muskat"
     }
   ],
   "uN4zFU": [
@@ -3193,6 +4225,12 @@
     {
       "type": 0,
       "value": "Gerekli. Değerlendirilecek koleksiyonlar. Koleksiyonların herhangi birinde görünen bir nesne sonuçta da görüntülenir."
+    }
+  ],
+  "uRurmg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Guam, Port Moresby"
     }
   ],
   "uUlBZ8": [
@@ -3219,6 +4257,24 @@
       "value": "Gerekli. Değeri içeriyor olabilecek dize."
     }
   ],
+  "udNlco": [
+    {
+      "type": 0,
+      "value": "(UTC-11:00) Eşgüdümlü Evrensel Saat-11"
+    }
+  ],
+  "ui7GCl": [
+    {
+      "type": 0,
+      "value": "16"
+    }
+  ],
+  "urAHv1": [
+    {
+      "type": 0,
+      "value": "4"
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
@@ -3235,6 +4291,12 @@
     {
       "type": 0,
       "value": "Genel benzersiz dize (GUID) oluşturur"
+    }
+  ],
+  "vD2lQy": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Asuncion"
     }
   ],
   "vEBhDX": [
@@ -3255,16 +4317,42 @@
       "value": "Sil"
     }
   ],
+  "vXwYXe": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Astana"
+    }
+  ],
   "va40BJ": [
     {
       "type": 0,
       "value": "Gerekli. Çıkışlarını istediğiniz eylemin adı."
     }
   ],
+  "vb/okJ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kahire"
+    }
+  ],
   "vcBAuU": [
     {
       "type": 0,
       "value": "zaman aşımına uğradı"
+    }
+  ],
+  "vr70Gn": [
+    {
+      "type": 0,
+      "value": "Create a connection for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "vwH/XV": [
@@ -3279,10 +4367,22 @@
       "value": "İş Akışı Özellikleri"
     }
   ],
+  "w5Hhig": [
+    {
+      "type": 0,
+      "value": "Pazar"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
       "value": "Geçirilen bir dize zaman damgasından belirtilen bir zaman biriminin tam sayı değerini çıkarır"
+    }
+  ],
+  "wF7C+h": [
+    {
+      "type": 0,
+      "value": "İptal"
     }
   ],
   "wFCkpM": [
@@ -3333,6 +4433,12 @@
       "value": "Geri çağırma URL’si:"
     }
   ],
+  "x+6ccf": [
+    {
+      "type": 0,
+      "value": "Çarşamba"
+    }
+  ],
   "x0or2o": [
     {
       "type": 0,
@@ -3375,6 +4481,18 @@
       "value": "Bir URI'den yolu döndürür. Yol belirtilmezse, '/' döndürür"
     }
   ],
+  "xZhieP": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) İslamabat, Karaçi"
+    }
+  ],
+  "xb/DIr": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Eşgüdümlü Evrensel Saat+12"
+    }
+  ],
   "xt5TeT": [
     {
       "type": 0,
@@ -3405,6 +4523,12 @@
       "value": "Gerekli. Diziye dönüştürülen değer."
     }
   ],
+  "yIZP4R": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Hawaii"
+    }
+  ],
   "yOkPGx": [
     {
       "type": 1,
@@ -3415,10 +4539,46 @@
       "value": " logosu"
     }
   ],
+  "yVh9kr": [
+    {
+      "type": 0,
+      "value": "8"
+    }
+  ],
+  "yoCi15": [
+    {
+      "type": 0,
+      "value": "Select an existing connection or create a new one."
+    }
+  ],
+  "yph4eq": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Belgrat, Bratislava, Budapeşte Ljubljana, Prag"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
       "value": "Tarih ve saat işlevleri"
+    }
+  ],
+  "yxsn7s": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Kazablanka"
+    }
+  ],
+  "yyYtZV": [
+    {
+      "type": 0,
+      "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [
@@ -3439,10 +4599,22 @@
       "value": "Gerekli. Yerel tür değerine dönüştürülen değer."
     }
   ],
+  "zbtUQ/": [
+    {
+      "type": 0,
+      "value": "(UTC+08:30) Pyongyang"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "Bir dizeyi dönüştürür, isteğe bağlı olarak bir yerel ayar ve bir tarih biçimi içerir"
+    }
+  ],
+  "zggBvC": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Nairobi"
     }
   ],
   "ziYCiA": [

@@ -18,7 +18,11 @@ export const Validation = ({ className, isValid, type, tokensEnabled = true, err
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), tokensEnabled);
       if (type === 'ARRAY' && setIsValid) {
-        setIsValid(validArray(editorString));
+        if (!editorString.trim().length || editorString === '[]') {
+          setIsValid(true);
+        } else {
+          setIsValid(validArray(editorString));
+        }
       }
     });
   };
@@ -54,6 +58,9 @@ const validateStrings = (s: string): boolean => {
   const splitStrings = s.split(',');
   for (let i = 0; i < splitStrings.length; i++) {
     const currentString = splitStrings[i].trim();
+    if (currentString === 'null') {
+      continue;
+    }
     if (
       !currentString.startsWith('"') ||
       !currentString.endsWith('"') ||

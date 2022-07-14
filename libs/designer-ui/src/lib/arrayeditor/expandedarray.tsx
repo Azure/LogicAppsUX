@@ -2,7 +2,7 @@ import type { ArrayEditorItemProps } from '.';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
-import { OnChange } from './plugins/OnChange';
+import { EditorChange } from './plugins/EditorChange';
 import type { IContextualMenuProps, IIconProps, IIconStyles } from '@fluentui/react';
 import { IconButton, TooltipHost, DefaultButton } from '@fluentui/react';
 import type { Dispatch, SetStateAction } from 'react';
@@ -37,7 +37,7 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
   const intl = useIntl();
 
   const addItemButtonLabel = intl.formatMessage({
-    defaultMessage: 'Add new Item',
+    defaultMessage: 'Add new item',
     description: 'Label to add item to array editor',
   });
 
@@ -75,7 +75,7 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
               initialValue={item.content ?? []}
               BasePlugins={{ tokens: true, clearEditor: true }}
             >
-              <OnChange item={item.content ?? []} items={items} setItems={setItems} index={index} />
+              <EditorChange item={item.content ?? []} items={items} setItems={setItems} index={index} />
             </BaseEditor>
           </div>
         );

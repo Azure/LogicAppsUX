@@ -37,7 +37,6 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   } else {
     try {
       const wf = await import(`../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath}`);
-      console.log(wf);
       return wf.definition;
     } catch {
       return null;

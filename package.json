@@ -1,6 +1,6 @@
 {
   "name": "microsoft-logic-apps",
-  "version": "0.0.52",
+  "version": "0.0.53",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -38,12 +38,14 @@
   "dependencies": {
     "@fluentui/azure-themes": "8.2.33",
     "@fluentui/react": "8.68.2",
+    "@fluentui/react-components": "^9.0.1",
     "@fluentui/react-hooks": "8.5.5",
     "@fluentui/theme": "2.6.6",
     "@lexical/react": "^0.3.5",
     "@monaco-editor/react": "4.4.5",
     "@reduxjs/toolkit": "1.8.1",
     "@use-it/event-listener": "0.1.7",
+    "consola": "^2.15.3",
     "core-js": "3.22.5",
     "d3-shape": "3.1.0",
     "elkjs": "0.7.3-dev",
@@ -73,6 +75,7 @@
     "regenerator-runtime": "^0.13.9",
     "tiny-invariant": "^1.2.0",
     "to-title-case": "^1.0.0",
+    "tracer": "^1.1.6",
     "tslib": "^2.0.0",
     "web-worker": "^1.2.0"
   },

@@ -1,6 +1,4 @@
 /* eslint-disable no-param-reassign */
-import { getPropertyValue } from '@microsoft-logic-apps/utils';
-
 export enum PanelLocation {
   Left = 'LEFT',
   Right = 'RIGHT',
@@ -33,54 +31,18 @@ export interface CommonPanelProps {
   width: string;
 }
 
+// Tab logic has been moved to redux in designer, but data-mapper still uses these
+
 export function registerTabs(tabsInfo: PanelTab[], registeredTabs: Record<string, PanelTab>): Record<string, PanelTab> {
   tabsInfo.forEach((tabInfo) => {
-    registerTab(tabInfo, registeredTabs);
+    registeredTabs[tabInfo.name.toLowerCase()] = tabInfo;
   });
 
   return { ...registeredTabs };
-}
-
-export function registerTab(tabInfo: PanelTab, registeredTabs: Record<string, PanelTab>): Record<string, PanelTab> {
-  // Commenting this out, if the tab is already registered, we might want to update it instead of error out
-  // We could possibly have a separate update method, but I think this is the simplest way to do it - Riley
-  /*
-    const intl = getIntl();
-    const tabAlreadyRegistered = intl.formatMessage(
-      {
-        defaultMessage: 'Tab with : {tabname} name is already registered',
-        description: 'This is the  message shown in case of an error of a tab already existing with the name.',
-      },
-      { tabname: tabInfo.name }
-    );
-    if (getTab(tabInfo.name, registeredTabs)) {
-      throw new ValidationException(ValidationErrorCode.UNSPECIFIED, format(tabAlreadyRegistered, tabInfo.name));
-    }
-  */
-  registeredTabs[tabInfo.name.toLowerCase()] = tabInfo;
-  return registeredTabs;
-}
-
-export function updateTabs(registeredTabs: Record<string, PanelTab>, updateFn: (tab: PanelTab) => PanelTab): Record<string, PanelTab> {
-  const updatedTabs: Record<string, PanelTab> = {};
-  for (const tabName of Object.keys(registeredTabs)) {
-    updatedTabs[tabName] = updateFn(registeredTabs[tabName]);
-  }
-  return updatedTabs;
-}
-
-export function unregisterTab(name: string, registeredTabs: Record<string, PanelTab>): void {
-  if (Object.keys(registeredTabs).some((registeredTabName) => registeredTabName === name)) {
-    delete registeredTabs[name];
-  }
 }
 
 export function getTabs(sort: boolean, registeredTabs: Record<string, PanelTab>): PanelTab[] {
   // Get all tabs not specifically defined as not enabled
   const enabledTabs = Object.values(registeredTabs).filter((tab) => tab.visible !== false);
   return sort ? enabledTabs.sort((a, b) => a.order - b.order) : enabledTabs;
-}
-
-export function getTab(name: string, registeredTabs: Record<string, PanelTab>): PanelTab {
-  return getPropertyValue(registeredTabs, name);
 }
