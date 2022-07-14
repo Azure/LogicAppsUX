@@ -14,13 +14,13 @@
   "+W9fkq": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+      "value": "(UTC+08:00) Kuala Lumpur, Singapur"
     }
   ],
   "+dlOgj": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Haiti"
+      "value": "(UTC-05:00) Haití"
     }
   ],
   "+g+mch": [
@@ -110,13 +110,13 @@
   "/rjP4U": [
     {
       "type": 0,
-      "value": "(UTC) Coordinated Universal Time"
+      "value": "(UTC) Hora universal coordinada"
     }
   ],
   "/sMQhI": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Indiana (East)"
+      "value": "(UTC-05:00) Indiana (este)"
     }
   ],
   "/ut0u7": [
@@ -140,7 +140,7 @@
   "09oqLb": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Baku"
+      "value": "(UTC+04:00) Bakú"
     }
   ],
   "0FzNJV": [
@@ -200,7 +200,7 @@
   "0meqK1": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+      "value": "(UTC-05:00) Bogotá, Lima, Quito, Río Branco"
     }
   ],
   "0p+pJq": [
@@ -278,7 +278,7 @@
   "1Ogj/V": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Jerusalén"
     }
   ],
   "1R6Vaa": [
@@ -408,7 +408,7 @@
   "2NYPLt": [
     {
       "type": 0,
-      "value": "(UTC-03:30) Newfoundland"
+      "value": "(UTC-03:30) Terranova"
     }
   ],
   "2Noh96": [
@@ -438,7 +438,7 @@
   "2ri1Kf": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Damascus"
+      "value": "(UTC+02:00) Damasco"
     }
   ],
   "2tTQ0A": [
@@ -450,7 +450,7 @@
   "2xhbE1": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Magadan"
+      "value": "(UTC+11:00) Magadán"
     }
   ],
   "33+WHG": [
@@ -462,7 +462,7 @@
   "3FoqCK": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Tbilisi"
+      "value": "(UTC+04:00) Tiflis"
     }
   ],
   "3NhwIJ": [
@@ -480,7 +480,7 @@
   "3TD2V5": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Dhaka"
+      "value": "(UTC+06:00) Dacca"
     }
   ],
   "3X/ZDK": [
@@ -498,7 +498,7 @@
   "3jlz+B": [
     {
       "type": 0,
-      "value": "(UTC+03:30) Tehran"
+      "value": "(UTC+03:30) Teherán"
     }
   ],
   "3kI7xF": [
@@ -540,7 +540,7 @@
   "4/kJ8D": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Yerevan"
+      "value": "(UTC+04:00) Ereván"
     }
   ],
   "47kOXr": [
@@ -558,13 +558,13 @@
   "4Q7WzU": [
     {
       "type": 0,
-      "value": "Add a new connection"
+      "value": "Agregar una nueva conexión"
     }
   ],
   "4XdZNj": [
     {
       "type": 0,
-      "value": "(UTC+01:00) West Central Africa"
+      "value": "(UTC+01:00) África Central Occidental"
     }
   ],
   "4YKQAF": [
@@ -672,7 +672,7 @@
   "6XR3FS": [
     {
       "type": 0,
-      "value": "(UTC+09:30) Adelaide"
+      "value": "(UTC+09:30) Adelaida"
     }
   ],
   "6jiO7t": [
@@ -720,7 +720,7 @@
   "7KxCGX": [
     {
       "type": 0,
-      "value": "(UTC+10:30) Lord Howe Island"
+      "value": "(UTC+10:30) Isla Lord Howe"
     }
   ],
   "7QymrD": [
@@ -750,7 +750,7 @@
   "7lvqST": [
     {
       "type": 0,
-      "value": "Invalid"
+      "value": "No válido"
     }
   ],
   "7yEdSt": [
@@ -792,7 +792,7 @@
   "8JEHiY": [
     {
       "type": 0,
-      "value": "Saturday"
+      "value": "Sábado"
     }
   ],
   "8JFxmV": [
@@ -816,7 +816,7 @@
   "8Y5xpK": [
     {
       "type": 0,
-      "value": "Thursday"
+      "value": "Jueves"
     }
   ],
   "8j+a0n": [
@@ -828,7 +828,7 @@
   "8pPivj": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Norfolk Island"
+      "value": "(UTC+11:00) Isla Norfolk"
     }
   ],
   "8to63i": [
@@ -870,7 +870,7 @@
   "949s+r": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Ulaanbaatar"
+      "value": "(UTC+08:00) Ulán Bator"
     }
   ],
   "99vsJy": [
@@ -882,7 +882,7 @@
   "9EmN2M": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Cancelar"
     }
   ],
   "9JuvQ4": [
@@ -924,13 +924,13 @@
   "9pdXmX": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+      "value": "(UTC+01:00) Ámsterdam, Berlín, Berna, Roma, Estocolmo, Viena"
     }
   ],
   "9pl7QP": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Atlantic Time (Canada)"
+      "value": "(UTC-04:00) Hora del Atlántico (Canadá)"
     }
   ],
   "9u/Ae3": [
@@ -942,13 +942,13 @@
   "AIL7WX": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Gaza, Hebron"
+      "value": "(UTC+02:00) Gaza, Hebrón"
     }
   ],
   "ALImBL": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Monrovia, Reykjavik"
+      "value": "(UTC+00:00) Monrovia, Reikiavik"
     }
   ],
   "ANbEeQ": [
@@ -966,7 +966,7 @@
   "AYaqW/": [
     {
       "type": 0,
-      "value": "(UTC+06:30) Yangon (Rangoon)"
+      "value": "(UTC+06:30) Yangón (Rangún)"
     }
   ],
   "ArTh0/": [
@@ -1024,7 +1024,7 @@
   "BAgRzO": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Coordinated Universal Time-08"
+      "value": "(UTC-08:00) Hora universal coordinada-08"
     }
   ],
   "BBD8Em": [
@@ -1066,7 +1066,7 @@
   "BVOUxP": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Havana"
+      "value": "(UTC-05:00) La Habana"
     }
   ],
   "Bn8iTS": [
@@ -1102,7 +1102,7 @@
   "Cy9qeQ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+      "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofía, Tallin, Vilna"
     }
   ],
   "D+Ptnq": [
@@ -1126,7 +1126,7 @@
   "DfS13/": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Aleutian Islands"
+      "value": "(UTC-10:00) Islas Aleutianas"
     }
   ],
   "DuXV2M": [
@@ -1144,7 +1144,7 @@
   "E9OS+9": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Coordinated Universal Time-09"
+      "value": "(UTC-09:00) Hora universal coordinada-09"
     }
   ],
   "ECZC6Y": [
@@ -1162,7 +1162,7 @@
   "EYqGxA": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Athens, Bucharest"
+      "value": "(UTC+02:00) Atenas, Bucarest"
     }
   ],
   "EZz5q7": [
@@ -1180,13 +1180,13 @@
   "Eqgm4v": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+      "value": "(UTC-05:00) Hora del Este (EE. UU. y Canadá)"
     }
   ],
   "ExaACE": [
     {
       "type": 0,
-      "value": "Connection display name"
+      "value": "Nombre para mostrar de la conexión"
     }
   ],
   "F3IDl8": [
@@ -1222,7 +1222,7 @@
   "FHsP9y": [
     {
       "type": 0,
-      "value": "(UTC+05:45) Kathmandu"
+      "value": "(UTC+05:45) Katmandú"
     }
   ],
   "FIT7i0": [
@@ -1270,7 +1270,7 @@
   "FXC0Zi": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Baghdad"
+      "value": "(UTC+03:00) Bagdad"
     }
   ],
   "FXLR5M": [
@@ -1434,13 +1434,13 @@
   "IPbBB2": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Fiji"
+      "value": "(UTC+12:00) Fiyi"
     }
   ],
   "IUE/lQ": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Cabo Verde Is."
+      "value": "(UTC-01:00) Islas de Cabo Verde"
     }
   ],
   "IW2MjQ": [
@@ -1624,25 +1624,25 @@
   "Khc8lS": [
     {
       "type": 0,
-      "value": "(UTC-09:30) Marquesas Islands"
+      "value": "(UTC-09:30) Islas Marquesas"
     }
   ],
   "KlvTze": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Sri Jayawardenepura"
+      "value": "(UTC+05:30) Sri Jayawardenapura"
     }
   ],
   "KoBDbT": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Coordinated Universal Time-02"
+      "value": "(UTC-02:00) Hora universal coordinada -02"
     }
   ],
   "Kw3bWO": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Istanbul"
+      "value": "(UTC+02:00) Estambul"
     }
   ],
   "L+PY+j": [
@@ -1666,7 +1666,7 @@
   "LMB8am": [
     {
       "type": 0,
-      "value": "Creating..."
+      "value": "Creando..."
     }
   ],
   "LS8rfZ": [
@@ -1678,7 +1678,7 @@
   "Lft/is": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Agregar nuevo"
     }
   ],
   "LoGUT3": [
@@ -1702,13 +1702,13 @@
   "LvpxiA": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "Puerta de enlace"
     }
   ],
   "Lwe7tQ": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+      "value": "(UTC+00:00) Dublín, Edimburgo, Lisboa, Londres"
     }
   ],
   "M0HMjE": [
@@ -1720,7 +1720,7 @@
   "M48CGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00) Islas Salomón, Nueva Caledonia"
     }
   ],
   "M6U2LE": [
@@ -1816,7 +1816,7 @@
   "NvJDn/": [
     {
       "type": 0,
-      "value": "Tuesday"
+      "value": "Martes"
     }
   ],
   "O+8vRv": [
@@ -1846,7 +1846,7 @@
   "OGUVGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Bougainville Island"
+      "value": "(UTC+11:00) Isla Bougainville"
     }
   ],
   "OH9xlX": [
@@ -1858,7 +1858,7 @@
   "OKszbi": [
     {
       "type": 0,
-      "value": "Connection Name"
+      "value": "Nombre de conexión"
     }
   ],
   "OSHNZ2": [
@@ -1936,7 +1936,7 @@
   "PBvR9Q": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Araguaina"
+      "value": "(UTC-03:00) Araguaína"
     }
   ],
   "PF87Ew": [
@@ -1984,7 +1984,7 @@
   "PeLrFb": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+      "value": "(UTC+03:00) Moscú, San Petersburgo, Volgogrado"
     }
   ],
   "PfCJlN": [
@@ -1996,7 +1996,7 @@
   "PmB0J7": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Turks and Caicos"
+      "value": "(UTC-04:00) Islas Turcas y Caicos"
     }
   ],
   "Pvm0xB": [
@@ -2162,7 +2162,7 @@
   "SADSSs": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+      "value": "(UTC+12:00) Petropávlovsk-Kamchatski - Antiguo"
     }
   ],
   "SKXopi": [
@@ -2214,7 +2214,7 @@
   "T6VIym": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nombre"
     }
   ],
   "T7zcR6": [
@@ -2244,7 +2244,7 @@
   "TNEttQ": [
     {
       "type": 0,
-      "value": "Friday"
+      "value": "Viernes"
     }
   ],
   "TNzcrv": [
@@ -2268,7 +2268,7 @@
   "TX4Kdr": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Crear una conexión nueva"
     }
   ],
   "TZv5JE": [
@@ -2298,7 +2298,7 @@
   "TqPfth": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+      "value": "(UTC+01:00) Bruselas, Copenhague, Madrid, París"
     }
   ],
   "Twfck/": [
@@ -2328,7 +2328,7 @@
   "U56j9a": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Easter Island"
+      "value": "(UTC-06:00) Isla de Pascua"
     }
   ],
   "UCNM4L": [
@@ -2352,7 +2352,7 @@
   "UkSZnQ": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Guardar"
     }
   ],
   "Ur+wph": [
@@ -2382,7 +2382,7 @@
   "VE3cxq": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+      "value": "(UTC-07:00) Hora de las Montañas Rocosas (EE. UU. y Canadá)"
     }
   ],
   "VKAk5g": [
@@ -2524,7 +2524,7 @@
   "XTYYks": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Seoul"
+      "value": "(UTC+09:00) Seúl"
     }
   ],
   "XTuxmH": [
@@ -2548,13 +2548,13 @@
   "XX1ioe": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Kuwait, Riyadh"
+      "value": "(UTC+03:00) Kuwait, Riad"
     }
   ],
   "XaS4ds": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Pacific Time (US & Canada)"
+      "value": "(UTC-08:00) Hora del Pacífico (EE. UU. y Canadá)"
     }
   ],
   "Xnn0uj": [
@@ -2666,7 +2666,7 @@
   "ZQ4lji": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
+      "value": "(UTC+10:00) Canberra, Melbourne, Sidney"
     }
   ],
   "ZUaz3Y": [
@@ -2714,7 +2714,7 @@
   "a7x6VI": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Taipei"
+      "value": "(UTC+08:00) Taipéi"
     }
   ],
   "aAXnqw": [
@@ -2732,7 +2732,7 @@
   "aH9SV7": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ashgabat, Tashkent"
+      "value": "(UTC+05:00) Asjabad, Tashkent"
     }
   ],
   "aK4iLW": [
@@ -2762,7 +2762,7 @@
   "bS5DyV": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Kaliningrad"
+      "value": "(UTC+02:00) Kaliningrado"
     }
   ],
   "bTrk+S": [
@@ -2816,7 +2816,7 @@
   "c1XmvN": [
     {
       "type": 0,
-      "value": "(UTC+13:00) Nuku'alofa"
+      "value": "(UTC+13:00) Nukualofa"
     }
   ],
   "c2XklE": [
@@ -2864,7 +2864,7 @@
   "cVIZTQ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Tripoli"
+      "value": "(UTC+02:00) Trípoli"
     }
   ],
   "ci6ex1": [
@@ -2936,7 +2936,7 @@
   "dUZi34": [
     {
       "type": 0,
-      "value": "(UTC+12:45) Chatham Islands"
+      "value": "(UTC+12:45) Islas Chatham"
     }
   ],
   "dWFyfN": [
@@ -2954,13 +2954,13 @@
   "dWx21B": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Sakhalin"
+      "value": "(UTC+11:00) Sajalín"
     }
   ],
   "dgAu27": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Greenland"
+      "value": "(UTC-03:00) Groenlandia"
     }
   ],
   "dhvk0u": [
@@ -2990,7 +2990,7 @@
   "e00zot": [
     {
       "type": 0,
-      "value": "How often do you want to check for items?"
+      "value": "¿Con qué frecuencia quiere comprobar elementos?"
     }
   ],
   "e4Onhn": [
@@ -3002,7 +3002,7 @@
   "eGa1Wa": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ekaterinburg"
+      "value": "(UTC+05:00) Ekaterimburgo"
     }
   ],
   "eHgi14": [
@@ -3092,7 +3092,7 @@
   "g5mMuM": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+      "value": "(UTC-03:00) San Pedro y Miquelón"
     }
   ],
   "gCXOd5": [
@@ -3116,7 +3116,7 @@
   "gF+0/N": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Amman"
+      "value": "(UTC+02:00) Ammán"
     }
   ],
   "gIK0WG": [
@@ -3128,7 +3128,7 @@
   "gIc0YJ": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Nombre de conexión"
     }
   ],
   "gKq3Jv": [
@@ -3334,7 +3334,7 @@
   "j1VU25": [
     {
       "type": 0,
-      "value": "(UTC+14:00) Kiritimati Island"
+      "value": "(UTC+14:00) Isla Kiritimati"
     }
   ],
   "j2MU0b": [
@@ -3364,7 +3364,7 @@
   "jMLmag": [
     {
       "type": 0,
-      "value": "Create New"
+      "value": "Crear nueva"
     }
   ],
   "jQ0Aqj": [
@@ -3430,7 +3430,7 @@
   "kDsud+": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Cayenne, Fortaleza"
+      "value": "(UTC-03:00) Cayena, Fortaleza"
     }
   ],
   "kHcCxH": [
@@ -3466,7 +3466,7 @@
   "kZCX7t": [
     {
       "type": 0,
-      "value": "Monday"
+      "value": "Lunes"
     }
   ],
   "kZuYgD": [
@@ -3478,7 +3478,7 @@
   "kc5Mui": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Mid-Atlantic - Old"
+      "value": "(UTC-02:00) Atlántico central - Antiguo"
     }
   ],
   "keb4r1": [
@@ -3490,7 +3490,7 @@
   "kneb9/": [
     {
       "type": 0,
-      "value": "(UTC-12:00) International Date Line West"
+      "value": "(UTC-12:00) Línea internacional de cambio de fecha oeste"
     }
   ],
   "knylNW": [
@@ -3520,13 +3520,13 @@
   "lFve22": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+      "value": "(UTC+01:00) Sarajevo, Skopie, Varsovia, Zagreb"
     }
   ],
   "lIPWQ6": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+      "value": "(UTC+07:00) Bangkok, Hanói, Yakarta"
     }
   ],
   "lPTdSf": [
@@ -3616,7 +3616,7 @@
   "mZCHKf": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+      "value": "(UTC+12:00) Anadyr, Petropávlovsk-Kamchatsky"
     }
   ],
   "mZRMD9": [
@@ -3768,7 +3768,7 @@
   "oxH1L/": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
+      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlán"
     }
   ],
   "p/0r2N": [
@@ -3810,7 +3810,7 @@
   "pUeUDw": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+      "value": "(UTC+09:00) Osaka, Sapporo, Tokio"
     }
   ],
   "pXmFGf": [
@@ -3900,7 +3900,7 @@
   "qQoQFv": [
     {
       "type": 0,
-      "value": "Invalid connection."
+      "value": "La conexión no es válida."
     }
   ],
   "qSejoi": [
@@ -4028,7 +4028,7 @@
   "rstpaK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central Time (US & Canada)"
+      "value": "(UTC-06:00) Hora central (EE. UU. y Canadá)"
     }
   ],
   "s5RV9B": [
@@ -4130,7 +4130,7 @@
   "tELkSC": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
+      "value": "(UTC-06:00) Guadalajara, Ciudad de México, Monterrey"
     }
   ],
   "tImHz/": [
@@ -4202,7 +4202,7 @@
   "tsmuoF": [
     {
       "type": 0,
-      "value": "Display Name"
+      "value": "Nombre para mostrar"
     }
   ],
   "tu8I7j": [
@@ -4220,7 +4220,7 @@
   "u6Gdft": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+      "value": "(UTC+04:00) Abu Dabi, Mascate"
     }
   ],
   "uN4zFU": [
@@ -4268,7 +4268,7 @@
   "udNlco": [
     {
       "type": 0,
-      "value": "(UTC-11:00) Coordinated Universal Time-11"
+      "value": "(UTC-11:00) Hora universal coordinada -11"
     }
   ],
   "ui7GCl": [
@@ -4304,7 +4304,7 @@
   "vD2lQy": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Asuncion"
+      "value": "(UTC-04:00) Asunción"
     }
   ],
   "vEBhDX": [
@@ -4328,7 +4328,7 @@
   "vXwYXe": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Astana"
+      "value": "(UTC+06:00) Astaná"
     }
   ],
   "va40BJ": [
@@ -4340,7 +4340,7 @@
   "vb/okJ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Cairo"
+      "value": "(UTC+02:00) El Cairo"
     }
   ],
   "vcBAuU": [
@@ -4378,7 +4378,7 @@
   "w5Hhig": [
     {
       "type": 0,
-      "value": "Sunday"
+      "value": "Domingo"
     }
   ],
   "wEaGWn": [
@@ -4390,7 +4390,7 @@
   "wF7C+h": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Cancelar"
     }
   ],
   "wFCkpM": [
@@ -4444,7 +4444,7 @@
   "x+6ccf": [
     {
       "type": 0,
-      "value": "Wednesday"
+      "value": "Miércoles"
     }
   ],
   "x0or2o": [
@@ -4498,7 +4498,7 @@
   "xb/DIr": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Coordinated Universal Time+12"
+      "value": "(UTC+12:00) Hora universal coordinada +12"
     }
   ],
   "xt5TeT": [
@@ -4534,7 +4534,7 @@
   "yIZP4R": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Hawaii"
+      "value": "(UTC-10:00) Hawái"
     }
   ],
   "yOkPGx": [
@@ -4562,7 +4562,7 @@
   "yph4eq": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+      "value": "(UTC+01:00) Belgrado, Bratislava, Budapest, Liubliana, Praga"
     }
   ],
   "yqRrQ/": [
