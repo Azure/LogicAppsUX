@@ -102,6 +102,14 @@
       overflow: auto;
       margin-top: 10px;
 
+      &-shimmer {
+        margin: 30px 0;
+
+        &-item {
+          margin-top: 25px;
+        }
+      }
+
       &-header {
         display: flex;
         align-items: center;
@@ -119,6 +127,10 @@
           white-space: normal;
           flex: 1 1;
         }
+      }
+
+      .ms-List-page .ms-List-cell:empty {
+        display: none;
       }
     }
   }
