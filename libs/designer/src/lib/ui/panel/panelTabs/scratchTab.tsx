@@ -53,11 +53,11 @@ export const ScratchTab = () => {
         />
         <Combobox
           options={[
-            { value: 'GET', key: 'GET', disabled: false },
-            { value: 'PUT', key: 'PUT', disabled: false },
-            { value: 'POST', key: 'POST', disabled: false },
-            { value: 'PATCH', key: 'PATCH', disabled: false },
-            { value: 'DELETE', key: 'DELETE', disabled: false },
+            { displayName: 'GET', value: 'GET', key: 'GET', disabled: false },
+            { displayName: 'PUT', value: 'PUT', key: 'PUT', disabled: false },
+            { displayName: 'POST', value: 'POST', key: 'POST', disabled: false },
+            { displayName: 'PATCH', value: 'PATCH', key: 'PATCH', disabled: false },
+            { displayName: 'DELETE', value: 'DELETE', key: 'DELETE', disabled: false },
           ]}
           placeholderText="Method is Required"
           label="Method"
