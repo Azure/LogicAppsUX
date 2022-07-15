@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Jelölje be a kapcsolat kijelöléséhez"
     }
   ],
   "+lpuMl": [
@@ -56,7 +56,7 @@
   "/B2CTz": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00) Peking, Csungking, Hongkong, Urumcsi"
     }
   ],
   "/I/U8L": [
@@ -966,7 +966,7 @@
   "AYaqW/": [
     {
       "type": 0,
-      "value": "(UTC+06:30) Yangon (Rangoon)"
+      "value": "(UTC+06:30) Yangon (Rangun)"
     }
   ],
   "ArTh0/": [
@@ -1380,7 +1380,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Kijelölés megszakítása"
     }
   ],
   "GzQQqH": [
@@ -1434,7 +1434,7 @@
   "IPbBB2": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Fidzsi-szigetek"
+      "value": "(UTC+12:00) Fidzsi"
     }
   ],
   "IUE/lQ": [
@@ -1488,7 +1488,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Törlés"
     }
   ],
   "JNQHws": [
@@ -1506,7 +1506,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Új elem hozzáadása"
     }
   ],
   "Jaz3EC": [
@@ -1720,7 +1720,7 @@
   "M48CGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00) Salamon-szigetek, Új-Kaledónia"
     }
   ],
   "M6U2LE": [
@@ -2116,7 +2116,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Váltás a teljes tömb bevitelére"
     }
   ],
   "RhH4pF": [
@@ -2368,7 +2368,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Adjon egy nevet a kapcsolatnak."
     }
   ],
   "V+/c21": [
@@ -2416,7 +2416,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Váltás a tömbelem részletes bemeneteire"
     }
   ],
   "VZHick": [
@@ -2450,7 +2450,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Törlés"
     }
   ],
   "WS9kXD": [
@@ -2796,7 +2796,7 @@
   "bnStSJ": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+      "value": "(UTC+05:30) Csennai, Kolkata (Kalkutta), Mumbai, Új-Delhi"
     }
   ],
   "bx3qeC": [
@@ -3120,7 +3120,7 @@
   "gF+0/N": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Amman"
+      "value": "(UTC+02:00) Ammán"
     }
   ],
   "gIK0WG": [
@@ -3168,7 +3168,7 @@
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "A kijelölt kapcsolat mentése"
     }
   ],
   "gu9o9z": [
@@ -3560,7 +3560,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Adjon meg egy érvényes tömböt."
     }
   ],
   "lgs5sf": [
@@ -4014,7 +4014,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Érvénytelen a kapcsolat?"
     }
   ],
   "raBiud": [
@@ -4056,7 +4056,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Kapcsolat létrehozásának megszakítása"
     }
   ],
   "sW47JR": [
@@ -4206,7 +4206,7 @@
   "tsmuoF": [
     {
       "type": 0,
-      "value": "Megjelenítendő név"
+      "value": "Megjelenített név"
     }
   ],
   "tu8I7j": [
@@ -4356,7 +4356,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Hozzon létre egy kapcsolatot a(z) "
     },
     {
       "type": 1,
@@ -4364,7 +4364,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " összekötő számára."
     }
   ],
   "vwH/XV": [
@@ -4560,7 +4560,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Válasszon ki egy meglévő kapcsolatot, vagy hozzon létre egy újat."
     }
   ],
   "yph4eq": [
@@ -4584,13 +4584,13 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Kapcsolódási átjáró"
     }
   ],
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "Menü"
     }
   ],
   "z4YYlQ": [

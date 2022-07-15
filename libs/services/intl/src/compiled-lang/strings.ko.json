@@ -1455,7 +1455,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "삭제"
     }
   ],
   "JNQHws": [
@@ -1473,7 +1473,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "새 항목 추가"
     }
   ],
   "Jaz3EC": [
@@ -2068,7 +2068,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "입력 전체 배열로 전환"
     }
   ],
   "RhH4pF": [
@@ -2357,7 +2357,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "배열 항목에 대한 상세 정보 입력으로 전환"
     }
   ],
   "VZHick": [
@@ -2391,7 +2391,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "지우기"
     }
   ],
   "WS9kXD": [
@@ -4497,7 +4497,7 @@
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "메뉴"
     }
   ],
   "z4YYlQ": [

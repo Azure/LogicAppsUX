@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Zaznacz, aby wybrać to połączenie"
     }
   ],
   "+lpuMl": [
@@ -1004,7 +1004,7 @@
   "AYaqW/": [
     {
       "type": 0,
-      "value": "(UTC+06:30) Yangon (Rangoon)"
+      "value": "(UTC+06:30) Yangon (Rangun)"
     }
   ],
   "ArTh0/": [
@@ -1462,7 +1462,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Anuluj zaznaczenie"
     }
   ],
   "GzQQqH": [
@@ -1570,7 +1570,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Usuń"
     }
   ],
   "JNQHws": [
@@ -1588,7 +1588,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Dodaj nowy element"
     }
   ],
   "Jaz3EC": [
@@ -1770,7 +1770,7 @@
   "LMB8am": [
     {
       "type": 0,
-      "value": "Tworzenie w toku..."
+      "value": "Tworzenie w toku..."
     }
   ],
   "LS8rfZ": [
@@ -2216,7 +2216,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Przełącz się na wprowadzanie całej tablicy"
     }
   ],
   "RhH4pF": [
@@ -2490,7 +2490,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Wprowadź nazwę połączenia"
     }
   ],
   "V+/c21": [
@@ -2538,7 +2538,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Przełącz się na szczegółowe dane wejściowe dla elementu tablicy"
     }
   ],
   "VZHick": [
@@ -2572,7 +2572,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Wyczyść"
     }
   ],
   "WS9kXD": [
@@ -2918,7 +2918,7 @@
   "bnStSJ": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+      "value": "(UTC+05:30) Chennai, Kolkata (Kalkuta), Mumbaj (Bombaj), Nowe Delhi"
     }
   ],
   "bx3qeC": [
@@ -3290,7 +3290,7 @@
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Zapisz wybrane połączenie"
     }
   ],
   "gu9o9z": [
@@ -4180,7 +4180,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Czy połączenie jest nieprawidłowe"
     }
   ],
   "raBiud": [
@@ -4222,7 +4222,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Anulowanie tworzenia połączenia"
     }
   ],
   "sW47JR": [
@@ -4522,7 +4522,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Utwórz połączenie dla łącznika "
     },
     {
       "type": 1,
@@ -4726,7 +4726,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Wybierz istniejące połączenie lub utwórz nowe."
     }
   ],
   "yph4eq": [
@@ -4750,7 +4750,7 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Brama połączeń"
     }
   ],
   "z3VuE+": [

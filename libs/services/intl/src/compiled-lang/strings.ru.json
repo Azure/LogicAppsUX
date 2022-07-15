@@ -1554,7 +1554,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Удалить"
     }
   ],
   "JNQHws": [
@@ -1572,7 +1572,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Добавить новый элемент"
     }
   ],
   "Jaz3EC": [
@@ -2200,7 +2200,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Переключиться на ввод всего массива"
     }
   ],
   "RhH4pF": [
@@ -2522,7 +2522,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Переключиться на подробные входные данные элемента массива"
     }
   ],
   "VZHick": [
@@ -2556,7 +2556,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Очистить"
     }
   ],
   "WS9kXD": [
@@ -3688,7 +3688,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Введите допустимый массив"
     }
   ],
   "lgs5sf": [
@@ -4740,7 +4740,7 @@
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "Меню"
     }
   ],
   "z4YYlQ": [
