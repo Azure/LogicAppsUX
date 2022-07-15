@@ -129,6 +129,13 @@ export interface Documentation {
   url: string;
 }
 
+export interface SubGraphDetail {
+  location?: string[];
+  inputs?: SwaggerSchema;
+  inputsLocation?: string[];
+  isAdditive?: boolean;
+}
+
 type SwaggerSchema = any;
 export interface OperationManifest {
   properties: OperationManifestProperties;
@@ -143,14 +150,7 @@ export interface OperationManifestProperties {
   allowChildOperations?: boolean;
   childOperationsLocation?: string[];
 
-  subGraphDetails?: {
-    [graphName: string]: {
-      location?: string[];
-      inputs?: SwaggerSchema;
-      inputsLocation?: string[];
-      isAdditive?: boolean;
-    };
-  };
+  subGraphDetails?: Record<string, SubGraphDetail>;
 
   statusBadge?: Badge;
   environmentBadge?: Badge;

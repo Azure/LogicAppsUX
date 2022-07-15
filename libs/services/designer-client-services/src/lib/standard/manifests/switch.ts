@@ -9,8 +9,10 @@ export default {
     description: 'Identifies a single case to execute based on the evaluation of switch input.',
 
     allowChildOperations: true,
-    childOperationsLocation: ['default', 'actions'],
     subGraphDetails: {
+      default: {
+        location: ['actions'],
+      },
       cases: {
         isAdditive: true,
         location: ['actions'],

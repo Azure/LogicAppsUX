@@ -11,6 +11,7 @@ export const WORKFLOW_NODE_TYPES: Record<string, WorkflowNodeType> = {
 export interface WorkflowNode {
   id: string;
   type: WorkflowNodeType;
+  subGraphLocation?: string;
   children?: WorkflowNode[];
   edges?: WorkflowEdge[]; // Graph nodes only
   height?: number; // Action nodes only

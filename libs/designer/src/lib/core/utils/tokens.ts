@@ -1,6 +1,6 @@
 import type { NodeDataWithManifest } from '../actions/bjsworkflow/operationdeserializer';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
-import type { OutputInfo } from '../state/operationMetadataSlice';
+import type { OutputInfo } from '../state/operation/operationMetadataSlice';
 import type { NodesMetadata } from '../state/workflow/workflowSlice';
 import { getAllNodesInsideNode, getUpstreamNodeIds } from './graph';
 import { getRepetitionContext, shouldIncludeSelfForRepetitionReference } from './parameters/helper';
