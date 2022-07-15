@@ -196,6 +196,7 @@ export type ExportData = {
   selectedSubscription: string;
   selectedIse: string;
   location: string;
+  validationState: string;
 };
 
 export enum ResourceType {
@@ -227,7 +228,7 @@ export enum RouteName {
 
 export enum ValidationStatus {
   succeeded = 'Succeeded',
-  succeeded_with_warnings = 'SucceededWithWarnings',
+  succeeded_with_warnings = 'SucceededWithWarning',
   failed = 'Failed',
 }
 
@@ -253,10 +254,23 @@ export interface IGroupedGroup {
   count: number;
   name: string;
   startIndex: number;
+  status: string | undefined;
 }
 
 export interface IGroupedItem {
   action: string;
   status: string;
   message: string;
+}
+
+export enum WorkflowPart {
+  workflowOperations = 'workflowOperations',
+  connections = 'connections',
+  parameters = 'parameters',
+}
+
+export enum StyledWorkflowPart {
+  workflowOperations = 'Operations',
+  connections = 'Connections',
+  parameters = 'Parameters',
 }

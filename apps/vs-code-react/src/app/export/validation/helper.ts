@@ -1,4 +1,4 @@
-import { ValidationStatus } from '../../../run-service';
+import { StyledWorkflowPart, ValidationStatus, WorkflowPart } from '../../../run-service';
 import type { IValidationData, IGroupedItem, IGroupedGroup, IWorkflowValidation } from '../../../run-service';
 
 export const getValidationListColumns = () => {
@@ -17,15 +17,49 @@ const getDetailsErrors = (itemsSchema: any, actionName: string): Array<IGroupedI
   return errors;
 };
 
+const getStatusFromChildren = (children: Array<IGroupedGroup>) => {
+  if (children.length) {
+    const hasWarning = children.find((item) => item?.status === ValidationStatus.succeeded_with_warnings);
+    const hasError = children.find((item) => item?.status === ValidationStatus.failed);
+
+    if (!hasWarning && !hasError) {
+      return ValidationStatus.succeeded;
+    } else {
+      return hasError ? ValidationStatus.failed : ValidationStatus.succeeded_with_warnings;
+    }
+  }
+
+  return undefined;
+};
+
+const getGroupName = (groupName: string): string => {
+  switch (groupName) {
+    case WorkflowPart.workflowOperations: {
+      return StyledWorkflowPart.workflowOperations;
+    }
+    case WorkflowPart.connections: {
+      return StyledWorkflowPart.connections;
+    }
+    case WorkflowPart.parameters: {
+      return StyledWorkflowPart.parameters;
+    }
+    default: {
+      return groupName;
+    }
+  }
+};
+
 const getValidationGroup = (
   workflowSchema: any,
   groupName: string,
   level: number,
   startIndex: number,
   count: number,
-  children: any[]
+  children: Array<IGroupedGroup>
 ): IGroupedGroup => {
-  const isCollapsed = (workflowSchema?.validationState && workflowSchema?.validationState === ValidationStatus.succeeded) ?? false;
+  const status = workflowSchema?.validationState ?? getStatusFromChildren(children);
+  const isCollapsed = status === ValidationStatus.succeeded ?? false;
+  const styledGroupName = getGroupName(groupName);
 
   return {
     children,
@@ -33,8 +67,9 @@ const getValidationGroup = (
     key: groupName,
     level,
     count,
-    name: groupName,
+    name: styledGroupName,
     startIndex,
+    status,
   };
 };
 
@@ -122,4 +157,8 @@ export const parseValidationData = (validationData: IValidationData) => {
   });
 
   return { validationItems: workflowsItems, validationGroups: workflowsGroups };
+};
+
+export const getOverallValidationStatus = (validationData: IValidationData) => {
+  return validationData?.properties?.validationState ?? '';
 };
