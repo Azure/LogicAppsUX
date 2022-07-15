@@ -115,6 +115,7 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
           {
             id: 'ActionIf-actions',
             type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
+            subGraphLocation: 'actions',
             children: [
               createWorkflowNode('ActionIf-actions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
               createWorkflowNode('Increment_variable2'),
@@ -128,6 +129,7 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
           {
             id: 'ActionIf-elseActions',
             type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
+            subGraphLocation: 'else',
             children: [
               createWorkflowNode('ActionIf-elseActions-#subgraph', WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE),
               createWorkflowNode('Increment_variable3'),
