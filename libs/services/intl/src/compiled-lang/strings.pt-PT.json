@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Verificar para selecionar esta ligação"
     }
   ],
   "+lpuMl": [
@@ -56,7 +56,7 @@
   "/B2CTz": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00) Pequim, Chongqing, Hong Kong, Urumqi"
     }
   ],
   "/I/U8L": [
@@ -278,7 +278,7 @@
   "1Ogj/V": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Jerusalém"
     }
   ],
   "1R6Vaa": [
@@ -1380,7 +1380,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Cancelar a seleção"
     }
   ],
   "GzQQqH": [
@@ -1488,7 +1488,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Eliminar"
     }
   ],
   "JNQHws": [
@@ -2112,7 +2112,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Mudar para entrada da matriz completa"
     }
   ],
   "RhH4pF": [
@@ -2364,7 +2364,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Insira um nome para a ligação"
     }
   ],
   "V+/c21": [
@@ -2412,7 +2412,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Mudar para entradas de detalhe do item de matriz"
     }
   ],
   "VZHick": [
@@ -2446,7 +2446,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Limpar"
     }
   ],
   "WS9kXD": [
@@ -2954,7 +2954,7 @@
   "dWx21B": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Sacalina"
+      "value": "(UTC+11:00) Sakhalin"
     }
   ],
   "dgAu27": [
@@ -3164,7 +3164,7 @@
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Guardar a ligação selecionada"
     }
   ],
   "gu9o9z": [
@@ -4010,7 +4010,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "A ligação é inválida"
     }
   ],
   "raBiud": [
@@ -4052,7 +4052,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Cancelar a criação de uma ligação"
     }
   ],
   "sW47JR": [
@@ -4352,7 +4352,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Crie uma ligação para "
     },
     {
       "type": 1,
@@ -4556,7 +4556,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Selecione uma ligação existente ou crie uma nova."
     }
   ],
   "yph4eq": [
@@ -4580,7 +4580,7 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Gateway de Ligação"
     }
   ],
   "z3VuE+": [

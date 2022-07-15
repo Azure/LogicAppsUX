@@ -20,7 +20,7 @@
   "+dlOgj": [
     {
       "type": 0,
-      "value": "(UTC - 05.00) Haiti"
+      "value": "(UTC-05:00) Haiti"
     }
   ],
   "+g+mch": [
@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Selezionare questa connessione"
     }
   ],
   "+lpuMl": [
@@ -50,7 +50,7 @@
   "/AtN16": [
     {
       "type": 0,
-      "value": "(UTC + 09.30 h) Darwin"
+      "value": "(UTC+09:30) Darwin"
     }
   ],
   "/B2CTz": [
@@ -68,7 +68,7 @@
   "/Igb36": [
     {
       "type": 0,
-      "value": "(UTC + 10.00 h) Brisbane"
+      "value": "(UTC+10:00) Brisbane"
     }
   ],
   "/NDLmg": [
@@ -140,7 +140,7 @@
   "09oqLb": [
     {
       "type": 0,
-      "value": "(UTC+4.00) Baku"
+      "value": "(UTC+04:00) Baku"
     }
   ],
   "0FzNJV": [
@@ -188,7 +188,7 @@
   "0hxr5j": [
     {
       "type": 0,
-      "value": "(UTC - 05.00) Chetumal"
+      "value": "(UTC-05:00) Chetumal"
     }
   ],
   "0i/6TR": [
@@ -278,7 +278,7 @@
   "1Ogj/V": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Gerusalemme"
     }
   ],
   "1R6Vaa": [
@@ -408,7 +408,7 @@
   "2NYPLt": [
     {
       "type": 0,
-      "value": "(UTC-3.30) Terranova"
+      "value": "(UTC-03:30) Terranova"
     }
   ],
   "2Noh96": [
@@ -438,7 +438,7 @@
   "2ri1Kf": [
     {
       "type": 0,
-      "value": "(UTC+2.00) Damasco"
+      "value": "(UTC+02:00) Damasco"
     }
   ],
   "2tTQ0A": [
@@ -462,7 +462,7 @@
   "3FoqCK": [
     {
       "type": 0,
-      "value": "(UTC+4.00) Tbilisi"
+      "value": "(UTC+04:00) Tbilisi"
     }
   ],
   "3NhwIJ": [
@@ -474,13 +474,13 @@
   "3PgHCT": [
     {
       "type": 0,
-      "value": "(UTC + 02.00) Chişinău"
+      "value": "(UTC+02:00) Chişinău"
     }
   ],
   "3TD2V5": [
     {
       "type": 0,
-      "value": "(UTC+6.00) Dhaka"
+      "value": "(UTC+06:00) Dacca"
     }
   ],
   "3X/ZDK": [
@@ -498,7 +498,7 @@
   "3jlz+B": [
     {
       "type": 0,
-      "value": "(UTC+3.30) Teheran"
+      "value": "(UTC+03:30) Teheran"
     }
   ],
   "3kI7xF": [
@@ -540,7 +540,7 @@
   "4/kJ8D": [
     {
       "type": 0,
-      "value": "(UTC+4.00) Erevan"
+      "value": "(UTC+04:00) Erevan"
     }
   ],
   "47kOXr": [
@@ -672,7 +672,7 @@
   "6XR3FS": [
     {
       "type": 0,
-      "value": "(UTC+9.30) Adelaide"
+      "value": "(UTC+09:30) Adelaide"
     }
   ],
   "6jiO7t": [
@@ -702,7 +702,7 @@
   "6pd1bE": [
     {
       "type": 0,
-      "value": "(UTC-7.00) Arizona"
+      "value": "(UTC-07:00) Arizona"
     }
   ],
   "6qkBwz": [
@@ -870,7 +870,7 @@
   "949s+r": [
     {
       "type": 0,
-      "value": "(UTC+8.00) Ulan-Bator"
+      "value": "(UTC+08:00) Ulan-Bator"
     }
   ],
   "99vsJy": [
@@ -1060,13 +1060,13 @@
   "BSHFiw": [
     {
       "type": 0,
-      "value": "(UTC+8.00) Perth"
+      "value": "(UTC+08:00) Perth"
     }
   ],
   "BVOUxP": [
     {
       "type": 0,
-      "value": "(UTC - 05.00) L'Avana"
+      "value": "(UTC-05:00) L'Avana"
     }
   ],
   "Bn8iTS": [
@@ -1132,7 +1132,7 @@
   "DuXV2M": [
     {
       "type": 0,
-      "value": "(UTC-1.00) Azzorre"
+      "value": "(UTC-01:00) Azzorre"
     }
   ],
   "DysO/Q": [
@@ -1222,7 +1222,7 @@
   "FHsP9y": [
     {
       "type": 0,
-      "value": "(UTC + 5.45 h) Katmandu"
+      "value": "(UTC+05:45) Katmandu"
     }
   ],
   "FIT7i0": [
@@ -1270,7 +1270,7 @@
   "FXC0Zi": [
     {
       "type": 0,
-      "value": "(UTC+3.00) Baghdad"
+      "value": "(UTC+03:00) Baghdad"
     }
   ],
   "FXLR5M": [
@@ -1380,7 +1380,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Annulla la selezione"
     }
   ],
   "GzQQqH": [
@@ -1434,7 +1434,7 @@
   "IPbBB2": [
     {
       "type": 0,
-      "value": "(UTC+12.00) Figi"
+      "value": "(UTC+12:00) Figi"
     }
   ],
   "IUE/lQ": [
@@ -1488,7 +1488,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Elimina"
     }
   ],
   "JNQHws": [
@@ -1506,7 +1506,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Aggiungi nuovo elemento"
     }
   ],
   "Jaz3EC": [
@@ -1542,7 +1542,7 @@
   "JpthWY": [
     {
       "type": 0,
-      "value": "(UTC-3.00) Montevideo"
+      "value": "(UTC-03:00) Montevideo"
     }
   ],
   "Jq2Y/o": [
@@ -1642,7 +1642,7 @@
   "Kw3bWO": [
     {
       "type": 0,
-      "value": "(UTC+2.00) Istanbul"
+      "value": "(UTC+02:00) Istanbul"
     }
   ],
   "L+PY+j": [
@@ -1804,13 +1804,13 @@
   "NkUgXU": [
     {
       "type": 0,
-      "value": "(UTC + 2.00 h) Minsk"
+      "value": "(UTC+03:00) Minsk"
     }
   ],
   "NvANon": [
     {
       "type": 0,
-      "value": "(UTC-9.00) Alaska"
+      "value": "(UTC-09:00) Alaska"
     }
   ],
   "NvJDn/": [
@@ -2120,7 +2120,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Passa all'input dell'intera matrice"
     }
   ],
   "RhH4pF": [
@@ -2300,7 +2300,7 @@
   "ToPmjE": [
     {
       "type": 0,
-      "value": "(UTC-4.00) Cuiaba"
+      "value": "(UTC-04:00) Cuiaba"
     }
   ],
   "TqPfth": [
@@ -2324,7 +2324,7 @@
   "U1NiVg": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central America"
+      "value": "(UTC-06:00) America centrale"
     }
   ],
   "U3iWVd": [
@@ -2372,7 +2372,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Immettere un nome per la connessione"
     }
   ],
   "V+/c21": [
@@ -2420,7 +2420,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Passa a input dettagli per l'elemento matrice"
     }
   ],
   "VZHick": [
@@ -2454,7 +2454,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Cancella"
     }
   ],
   "WS9kXD": [
@@ -2532,7 +2532,7 @@
   "XTYYks": [
     {
       "type": 0,
-      "value": "(UTC+9.00) Seoul"
+      "value": "(UTC+09:00) Seoul"
     }
   ],
   "XTuxmH": [
@@ -2806,7 +2806,7 @@
   "bx3qeC": [
     {
       "type": 0,
-      "value": "(UTC - 3.00 h) Brasilia"
+      "value": "(UTC-03:00) Brasilia"
     }
   ],
   "bzF/qn": [
@@ -2824,7 +2824,7 @@
   "c1XmvN": [
     {
       "type": 0,
-      "value": "(UTC+13.00) Nuku'alofa"
+      "value": "(UTC+13:00) Nuku'alofa"
     }
   ],
   "c2XklE": [
@@ -2968,7 +2968,7 @@
   "dgAu27": [
     {
       "type": 0,
-      "value": "(UTC-3.00) Groenlandia"
+      "value": "(UTC-03:00) Groenlandia"
     }
   ],
   "dhvk0u": [
@@ -3076,7 +3076,7 @@
   "froV/0": [
     {
       "type": 0,
-      "value": "(UTC+4.30) Kabul"
+      "value": "(UTC+04:30) Kabul"
     }
   ],
   "ftwXvc": [
@@ -3124,7 +3124,7 @@
   "gF+0/N": [
     {
       "type": 0,
-      "value": "(UTC+2.00) Amman"
+      "value": "(UTC+02:00) Amman"
     }
   ],
   "gIK0WG": [
@@ -3166,13 +3166,13 @@
   "gg0j4S": [
     {
       "type": 0,
-      "value": "(UTC-6.00) Saskatchewan"
+      "value": "(UTC-06:00) Saskatchewan"
     }
   ],
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Salva la connessione selezionata"
     }
   ],
   "gu9o9z": [
@@ -3556,7 +3556,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Immettere un array valido"
     }
   ],
   "lgs5sf": [
@@ -3756,7 +3756,7 @@
   "ol+TkT": [
     {
       "type": 0,
-      "value": "(UTC-3.00) Salvador"
+      "value": "(UTC-03:00) Salvador"
     }
   ],
   "orhWzV": [
@@ -3786,7 +3786,7 @@
   "p5tz8/": [
     {
       "type": 0,
-      "value": "(UTC+13.00) Samoa"
+      "value": "(UTC+13:00) Samoa"
     }
   ],
   "pIczsS": [
@@ -3974,7 +3974,7 @@
   "r1FQhf": [
     {
       "type": 0,
-      "value": "(UTC+1.00) Windhoek"
+      "value": "(UTC+01:00) Windhoek"
     }
   ],
   "r43nMc": [
@@ -4010,7 +4010,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Connessione non valida"
     }
   ],
   "raBiud": [
@@ -4052,7 +4052,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Annulla la creazione di una connessione"
     }
   ],
   "sW47JR": [
@@ -4094,7 +4094,7 @@
   "siYGSo": [
     {
       "type": 0,
-      "value": "(UTC+2.00) Beirut"
+      "value": "(UTC+02:00) Beirut"
     }
   ],
   "soqP+Z": [
@@ -4172,7 +4172,7 @@
   "tP+5fA": [
     {
       "type": 0,
-      "value": "(UTC + 06.00) Novosibirsk"
+      "value": "(UTC+06:00) Novosibirsk"
     }
   ],
   "tVmUCd": [
@@ -4196,7 +4196,7 @@
   "teZwo6": [
     {
       "type": 0,
-      "value": "(UTC+10.00) Hobart"
+      "value": "(UTC+10:00) Hobart"
     }
   ],
   "tsmuoF": [
@@ -4214,7 +4214,7 @@
   "u/KSPz": [
     {
       "type": 0,
-      "value": "(UTC-4.00) Santiago"
+      "value": "(UTC-04:00) Santiago"
     }
   ],
   "u6Gdft": [
@@ -4304,7 +4304,7 @@
   "vD2lQy": [
     {
       "type": 0,
-      "value": "(UTC-4.00) Asuncion"
+      "value": "(UTC-04:00) Asunción"
     }
   ],
   "vEBhDX": [
@@ -4328,7 +4328,7 @@
   "vXwYXe": [
     {
       "type": 0,
-      "value": "(UTC+6.00) Astana"
+      "value": "(UTC+06:00) Astana"
     }
   ],
   "va40BJ": [
@@ -4340,7 +4340,7 @@
   "vb/okJ": [
     {
       "type": 0,
-      "value": "(UTC + 2.00 h) Il Cairo"
+      "value": "(UTC+02:00) Il Cairo"
     }
   ],
   "vcBAuU": [
@@ -4352,7 +4352,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Crea una connessione per "
     },
     {
       "type": 1,
@@ -4534,7 +4534,7 @@
   "yIZP4R": [
     {
       "type": 0,
-      "value": "(UTC - 10.00 h) Hawaii"
+      "value": "(UTC-10:00) Hawaii"
     }
   ],
   "yOkPGx": [
@@ -4556,7 +4556,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Selezionare una connessione esistente o crearne una nuova."
     }
   ],
   "yph4eq": [
@@ -4580,7 +4580,7 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Gateway connessione"
     }
   ],
   "z3VuE+": [
@@ -4610,7 +4610,7 @@
   "zbtUQ/": [
     {
       "type": 0,
-      "value": "(UTC + 08.30) Pyongyang"
+      "value": "(UTC+08:30) Pyongyang"
     }
   ],
   "zcZpHT": [
@@ -4622,7 +4622,7 @@
   "zggBvC": [
     {
       "type": 0,
-      "value": "(UTC+3.00) Nairobi"
+      "value": "(UTC+03:00) Nairobi"
     }
   ],
   "ziYCiA": [

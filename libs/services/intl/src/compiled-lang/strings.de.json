@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Markieren, um diese Verbindung auszuwählen"
     }
   ],
   "+lpuMl": [
@@ -474,7 +474,7 @@
   "3PgHCT": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Chisinau"
+      "value": "(UTC+02:00) Chișinău"
     }
   ],
   "3TD2V5": [
@@ -540,7 +540,7 @@
   "4/kJ8D": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Jerewan"
+      "value": "(UTC+04:00) Eriwan"
     }
   ],
   "47kOXr": [
@@ -1380,7 +1380,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Auswahl abbrechen"
     }
   ],
   "GzQQqH": [
@@ -1488,7 +1488,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Löschen"
     }
   ],
   "JNQHws": [
@@ -1506,7 +1506,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Neues Element hinzufügen"
     }
   ],
   "Jaz3EC": [
@@ -2116,7 +2116,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Hiermit wird zur Eingabe für das gesamte Array gewechselt."
     }
   ],
   "RhH4pF": [
@@ -2368,7 +2368,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Geben Sie einen Namen für die Verbindung ein"
     }
   ],
   "V+/c21": [
@@ -2416,7 +2416,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Hiermit wird zu den Detaileingaben für ein Arrayelement gewechselt."
     }
   ],
   "VZHick": [
@@ -2450,7 +2450,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Löschen"
     }
   ],
   "WS9kXD": [
@@ -3168,7 +3168,7 @@
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Ausgewählte Verbindung speichern"
     }
   ],
   "gu9o9z": [
@@ -3552,7 +3552,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Geben Sie ein gültiges Array ein."
     }
   ],
   "lgs5sf": [
@@ -4006,7 +4006,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Verbindung ist ungültig"
     }
   ],
   "raBiud": [
@@ -4048,7 +4048,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Erstellen einer Verbindung abbrechen"
     }
   ],
   "sW47JR": [
@@ -4300,7 +4300,7 @@
   "vD2lQy": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Asuncion"
+      "value": "(UTC-04:00) Asunción"
     }
   ],
   "vEBhDX": [
@@ -4348,7 +4348,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Erstellen Sie eine Verbindung für "
     },
     {
       "type": 1,
@@ -4552,7 +4552,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Wählen Sie eine vorhandene Verbindung aus, oder erstellen Sie eine neue."
     }
   ],
   "yph4eq": [
@@ -4576,13 +4576,13 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Verbindungsgateway"
     }
   ],
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "Menü"
     }
   ],
   "z4YYlQ": [

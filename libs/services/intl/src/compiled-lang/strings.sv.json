@@ -1488,7 +1488,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Ta bort"
     }
   ],
   "JNQHws": [
@@ -1506,7 +1506,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Lägg till nytt objekt"
     }
   ],
   "Jaz3EC": [
@@ -2116,7 +2116,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Växla till indata för hela matrisen"
     }
   ],
   "RhH4pF": [
@@ -2416,7 +2416,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Växla till matrisobjektets detaljindata"
     }
   ],
   "VZHick": [
@@ -2450,7 +2450,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Rensa"
     }
   ],
   "WS9kXD": [
@@ -3556,7 +3556,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Ange en giltig matris"
     }
   ],
   "lgs5sf": [
@@ -4586,7 +4586,7 @@
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "Meny"
     }
   ],
   "z4YYlQ": [

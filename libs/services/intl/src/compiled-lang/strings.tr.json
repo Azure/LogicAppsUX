@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Bu bağlantıyı seçmek için işaretleyin"
     }
   ],
   "+lpuMl": [
@@ -56,7 +56,7 @@
   "/B2CTz": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00) Pekin, Çongçing, Hong Kong, Urumçi"
     }
   ],
   "/I/U8L": [
@@ -942,7 +942,7 @@
   "AIL7WX": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Gaza, Hebron"
+      "value": "(UTC+02:00) Gazze, Hebron"
     }
   ],
   "ALImBL": [
@@ -1380,7 +1380,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Seçimi iptal et"
     }
   ],
   "GzQQqH": [
@@ -1488,7 +1488,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Sil"
     }
   ],
   "JNQHws": [
@@ -1506,7 +1506,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Yeni öğe ekle"
     }
   ],
   "Jaz3EC": [
@@ -2112,7 +2112,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Tam dizi girişine geçiş yapın"
     }
   ],
   "RhH4pF": [
@@ -2364,7 +2364,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Bağlantı için bir ad girin"
     }
   ],
   "V+/c21": [
@@ -2412,7 +2412,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Dizi öğesi için ayrıntılı girişlere geçiş yapın"
     }
   ],
   "VZHick": [
@@ -2446,7 +2446,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Temizle"
     }
   ],
   "WS9kXD": [
@@ -3164,7 +3164,7 @@
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Seçili bağlantıyı kaydet"
     }
   ],
   "gu9o9z": [
@@ -3892,7 +3892,7 @@
   "qQoQFv": [
     {
       "type": 0,
-      "value": "Geçersiz bağlantı."
+      "value": "Bağlantı geçersiz."
     }
   ],
   "qSejoi": [
@@ -4002,7 +4002,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Bağlantı geçersiz"
     }
   ],
   "raBiud": [
@@ -4044,7 +4044,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Bağlantı oluşturmayı iptal et"
     }
   ],
   "sW47JR": [
@@ -4343,16 +4343,12 @@
   ],
   "vr70Gn": [
     {
-      "type": 0,
-      "value": "Create a connection for "
-    },
-    {
       "type": 1,
       "value": "connectorName"
     },
     {
       "type": 0,
-      "value": "."
+      "value": " için bir bağlantı oluşturun."
     }
   ],
   "vwH/XV": [
@@ -4548,7 +4544,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Mevcut bir bağlantıyı seçin veya yeni bağlantı oluşturun."
     }
   ],
   "yph4eq": [
@@ -4572,13 +4568,13 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Bağlantı ağ geçidi"
     }
   ],
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "Menü"
     }
   ],
   "z4YYlQ": [

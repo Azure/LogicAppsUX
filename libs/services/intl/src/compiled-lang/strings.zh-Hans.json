@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "选中以选择此连接"
     }
   ],
   "+lpuMl": [
@@ -242,7 +242,7 @@
   "14lYtE": [
     {
       "type": 0,
-      "value": "18"
+      "value": "18 "
     }
   ],
   "1A1P5b": [
@@ -278,7 +278,7 @@
   "1Ogj/V": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00)耶路撒冷"
     }
   ],
   "1R6Vaa": [
@@ -467,7 +467,7 @@
   "3PgHCT": [
     {
       "type": 0,
-      "value": "(UTC+02:00) 基希讷乌"
+      "value": "(UTC+02:00)基希讷乌"
     }
   ],
   "3TD2V5": [
@@ -605,7 +605,7 @@
   "4wjJs0": [
     {
       "type": 0,
-      "value": "14"
+      "value": "14 "
     }
   ],
   "53PSgA": [
@@ -935,7 +935,7 @@
   "AIL7WX": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Gaza, Hebron"
+      "value": "(UTC+02:00) 加沙，希伯伦"
     }
   ],
   "ALImBL": [
@@ -1351,7 +1351,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "取消所选内容"
     }
   ],
   "GzQQqH": [
@@ -1459,7 +1459,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "删除"
     }
   ],
   "JNQHws": [
@@ -1477,7 +1477,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "添加新项"
     }
   ],
   "Jaz3EC": [
@@ -2072,7 +2072,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "切换到输入整个数组"
     }
   ],
   "RhH4pF": [
@@ -2099,7 +2099,7 @@
   "RkgScy": [
     {
       "type": 0,
-      "value": "6"
+      "value": "6 "
     }
   ],
   "S8P4N5": [
@@ -2313,7 +2313,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "输入连接的名称"
     }
   ],
   "V+/c21": [
@@ -2361,7 +2361,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "切换到数组项的详细信息输入"
     }
   ],
   "VZHick": [
@@ -2399,7 +2399,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "清除"
     }
   ],
   "WS9kXD": [
@@ -2847,7 +2847,7 @@
   "cr0UnG": [
     {
       "type": 0,
-      "value": "9"
+      "value": "9 "
     }
   ],
   "cscezV": [
@@ -3117,7 +3117,7 @@
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "保存所选连接"
     }
   ],
   "gu9o9z": [
@@ -3588,7 +3588,7 @@
   "n20T2h": [
     {
       "type": 0,
-      "value": "7"
+      "value": "7 "
     }
   ],
   "n35O/+": [
@@ -3949,7 +3949,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "连接是否无效"
     }
   ],
   "raBiud": [
@@ -3991,7 +3991,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "取消创建连接"
     }
   ],
   "sW47JR": [
@@ -4291,7 +4291,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "为 "
     },
     {
       "type": 1,
@@ -4299,7 +4299,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " 创建连接。"
     }
   ],
   "vwH/XV": [
@@ -4495,7 +4495,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "选择现有连接或创建新连接。"
     }
   ],
   "yph4eq": [
@@ -4519,13 +4519,13 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "连接网关"
     }
   ],
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "菜单"
     }
   ],
   "z4YYlQ": [
@@ -4549,7 +4549,7 @@
   "zbtUQ/": [
     {
       "type": 0,
-      "value": "(UTC+08:30) 平壤"
+      "value": "(UTC+08:30)平壤"
     }
   ],
   "zcZpHT": [

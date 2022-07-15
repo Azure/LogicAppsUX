@@ -1488,7 +1488,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Excluir"
     }
   ],
   "JNQHws": [
@@ -1506,7 +1506,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Adicionar novo item"
     }
   ],
   "Jaz3EC": [
@@ -2112,7 +2112,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Mudar para a matriz de entrada integral"
     }
   ],
   "RhH4pF": [
@@ -2412,7 +2412,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Mudar para entradas detalhadas do item da matriz"
     }
   ],
   "VZHick": [
@@ -2446,7 +2446,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Claro"
     }
   ],
   "WS9kXD": [
@@ -3548,7 +3548,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Inserir uma matriz válida"
     }
   ],
   "lgs5sf": [

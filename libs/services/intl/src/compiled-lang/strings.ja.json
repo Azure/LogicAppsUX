@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "この接続を選択する場合にチェックします"
     }
   ],
   "+lpuMl": [
@@ -1347,7 +1347,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "選択を取り消します"
     }
   ],
   "GzQQqH": [
@@ -1455,7 +1455,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "削除"
     }
   ],
   "JNQHws": [
@@ -1473,7 +1473,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "新しい項目の追加"
     }
   ],
   "Jaz3EC": [
@@ -2068,7 +2068,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "アレイ全体の入力に切り替える"
     }
   ],
   "RhH4pF": [
@@ -2309,7 +2309,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "接続の名前を入力してください"
     }
   ],
   "V+/c21": [
@@ -2357,7 +2357,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "アレイ項目の詳細の入力に切り替える"
     }
   ],
   "VZHick": [
@@ -2391,7 +2391,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "クリア"
     }
   ],
   "WS9kXD": [
@@ -3109,7 +3109,7 @@
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "選択した接続を保存します"
     }
   ],
   "gu9o9z": [
@@ -3482,7 +3482,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "有効なアレイを入力してください"
     }
   ],
   "lgs5sf": [
@@ -3925,7 +3925,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "接続が無効です"
     }
   ],
   "raBiud": [
@@ -3967,7 +3967,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "接続の作成を取り消します"
     }
   ],
   "sW47JR": [
@@ -4266,16 +4266,12 @@
   ],
   "vr70Gn": [
     {
-      "type": 0,
-      "value": "Create a connection for "
-    },
-    {
       "type": 1,
       "value": "connectorName"
     },
     {
       "type": 0,
-      "value": "."
+      "value": " の接続を作成します。"
     }
   ],
   "vwH/XV": [
@@ -4471,7 +4467,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "既存の接続を選択するか、新規作成してください。"
     }
   ],
   "yph4eq": [
@@ -4495,13 +4491,13 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "接続ゲートウェイ"
     }
   ],
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "メニュー"
     }
   ],
   "z4YYlQ": [
