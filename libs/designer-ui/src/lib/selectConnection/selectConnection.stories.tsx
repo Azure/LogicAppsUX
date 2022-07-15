@@ -87,7 +87,7 @@ export const Standard: ComponentStory<typeof SelectConnection> = (args: SelectCo
 Standard.args = {
   connections: mockConnections,
   isLoading: false,
-  saveSelectionCallback: (id?: string) => alert(`SAVED SELECTION: ${id}`),
+  saveSelectionCallback: (connection?: Connection) => alert(`SAVED SELECTION: ${connection?.id}`),
   cancelSelectionCallback: () => alert('Cancel clicked'),
   createNewConnectionCallback: () => alert('Adding new collection'),
 };

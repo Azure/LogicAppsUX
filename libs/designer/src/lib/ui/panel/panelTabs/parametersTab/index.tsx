@@ -3,14 +3,18 @@ import { useReadOnly } from '../../../../core/state/designerOptions/designerOpti
 import type { RootState } from '../../../../core/store';
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
+import { ConnectionDisplay } from './connectionDisplay';
 import { getId } from '@fluentui/react';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
-  const selectedNode = useSelector((state: RootState) => state.panel.selectedNode);
-  const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
+  const selectedNodeId = useSelector((state: RootState) => state.panel.selectedNode);
+  const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const readOnly = useReadOnly();
+
+  const connectionRefKey = useSelector((state: RootState) => state.connections.connectionsMapping[selectedNodeId]);
+  // const connectionReference = useSelector((state: RootState) => state.connections.connectionReferences[connectionRefKey]);
 
   return (
     <>
@@ -43,6 +47,7 @@ export const ParametersTab = () => {
           </div>
         );
       })}
+      {connectionRefKey && <ConnectionDisplay connectionName={connectionRefKey} nodeId={selectedNodeId} />}
     </>
   );
 };

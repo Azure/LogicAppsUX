@@ -23,7 +23,7 @@ export interface SelectConnectionProps {
   connections: Connection[];
   isLoading?: boolean;
   showIdentityErrorBanner?: boolean;
-  saveSelectionCallback: (selectedConnection?: string) => void;
+  saveSelectionCallback: (connection?: Connection) => void;
   cancelSelectionCallback: () => void;
   createNewConnectionCallback: () => void;
 }
@@ -190,7 +190,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
           layoutMode={DetailsListLayoutMode.justified}
           isHeaderVisible={true}
           selectionPreservedOnEmptyClick={true}
-          onItemInvoked={(connection) => saveSelectionCallback(connection.id)}
+          onItemInvoked={(connection) => saveSelectionCallback(connection)}
           enterModalSelectionOnTouch={true}
           checkButtonAriaLabel={checkButtonAriaLabel}
         />
@@ -199,7 +199,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
       <div className="msla-select-connection-actions-container">
         <PrimaryButton text={buttonAddText} ariaLabel={buttonAddAria} onClick={createNewConnectionCallback} />
         <div id="action-gap" style={{ flexGrow: 1 }} />
-        <PrimaryButton text={buttonSaveText} ariaLabel={buttonSaveAria} onClick={() => saveSelectionCallback(selection?.id)} />
+        <PrimaryButton text={buttonSaveText} ariaLabel={buttonSaveAria} onClick={() => saveSelectionCallback(selection)} />
         <DefaultButton text={buttonCancelText} ariaLabel={buttonCancelAria} onClick={cancelSelectionCallback} />
       </div>
     </div>

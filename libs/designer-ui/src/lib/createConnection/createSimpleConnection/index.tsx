@@ -1,15 +1,15 @@
 import { PrimaryButton } from '@fluentui/react';
-import type { Connection } from '@microsoft-logic-apps/utils';
+import type { Connector } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 export interface CreateSimpleConnectionProps {
-  connection: Connection;
+  connector: Connector;
   isLoading?: boolean;
   createConnectionCallback?: () => void;
 }
 
 export const CreateSimpleConnection = (props: CreateSimpleConnectionProps): JSX.Element => {
-  const { connection, isLoading, createConnectionCallback } = props;
+  const { connector, isLoading, createConnectionCallback } = props;
 
   const intl = useIntl();
 
@@ -19,7 +19,7 @@ export const CreateSimpleConnection = (props: CreateSimpleConnectionProps): JSX.
       description: 'Create a connection for selected connector',
     },
     {
-      connectorName: connection.properties.api.displayName,
+      connectorName: connector.properties.displayName,
     }
   );
 

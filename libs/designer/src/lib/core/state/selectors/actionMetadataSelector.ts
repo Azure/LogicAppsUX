@@ -84,6 +84,10 @@ export const useConnector = (connectorId: string) => {
   });
 };
 
+export const useConnectorByNodeId = (nodeId: string) => {
+  return useConnector(useOperationInfo(nodeId)?.connectorId).data;
+};
+
 export const useOperationManifest = (operationInfo: OperationInfo) => {
   const operationManifestService = OperationManifestService();
   const connectorId = operationInfo?.connectorId?.toLowerCase();

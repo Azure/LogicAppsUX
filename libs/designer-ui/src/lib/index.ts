@@ -15,6 +15,7 @@ export * from './checkbox';
 // export * from './conditioncontrol';
 // export * from './configItem';
 export * from './copyinputcontrol';
+export * from './createConnection';
 export * from './createConnection/createConfigurableConnection';
 export * from './createConnection/createSimpleConnection';
 // export * from './datetimeeditor';

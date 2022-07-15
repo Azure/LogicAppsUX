@@ -1,3 +1,4 @@
+import constants from '../../../common/constants';
 import type { PanelState } from './panelInterfaces';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
@@ -51,19 +52,29 @@ export const panelSlice = createSlice({
     unregisterPanelTab: (state, action: PayloadAction<string>) => {
       delete state.registeredTabs[action.payload];
     },
-    showAllTabs: (state, action: PayloadAction<{ exclude: string[] }>) => {
+    setTabVisibility: (state, action: PayloadAction<{ tabName: string; visible?: boolean }>) => {
+      state.registeredTabs[action.payload.tabName.toLowerCase()] = {
+        ...state.registeredTabs[action.payload.tabName.toLowerCase()],
+        visible: !!action.payload.visible,
+      };
+    },
+    showDefaultTabs: (state) => {
+      const defaultTabs = [
+        constants.PANEL_TAB_NAMES.PARAMETERS,
+        constants.PANEL_TAB_NAMES.ABOUT,
+        constants.PANEL_TAB_NAMES.CODE_VIEW,
+        constants.PANEL_TAB_NAMES.SETTINGS,
+        constants.PANEL_TAB_NAMES.SCRATCH,
+      ];
       Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {
-        if (!action.payload.exclude.includes(tab.name)) {
-          state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: true };
-        }
+        state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: defaultTabs.includes(tab.name) };
       });
     },
-    hideAllTabs: (state, action: PayloadAction<{ exclude: string[] }>) => {
+    isolateTab: (state, action: PayloadAction<string>) => {
       Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {
-        if (!action.payload.exclude.includes(tab.name)) {
-          state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: false };
-        }
+        state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: tab.name === action.payload };
       });
+      state.selectedTabName = action.payload;
     },
 
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
@@ -82,8 +93,9 @@ export const {
   switchToOperationPanel,
   registerPanelTabs,
   unregisterPanelTab,
-  showAllTabs,
-  hideAllTabs,
+  showDefaultTabs,
+  setTabVisibility,
+  isolateTab,
   selectPanelTab,
 } = panelSlice.actions;
 

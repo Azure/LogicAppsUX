@@ -1,33 +1,46 @@
-import { DefaultButton, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
-import type { Connection } from '@microsoft-logic-apps/utils';
-import { useState } from 'react';
+import { DefaultButton, Dropdown, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
+import type { Connector } from '@microsoft-logic-apps/utils';
+import type { FormEvent } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface CreateConfigurableConnectionProps {
-  connection: Connection;
+  connector: Connector;
   isLoading?: boolean;
   createConnectionCallback?: (val: Record<string, string | undefined>) => void;
   cancelCallback?: () => void;
 }
 
 export const CreateConfigurableConnection = (props: CreateConfigurableConnectionProps): JSX.Element => {
-  const { connection, isLoading, createConnectionCallback, cancelCallback } = props;
+  const { connector, isLoading, createConnectionCallback, cancelCallback } = props;
 
   const intl = useIntl();
 
+  const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
+  const onDropdownChange = useCallback(
+    (_event: FormEvent<HTMLDivElement>, item: any): void => {
+      if (item.key !== selectedParamSetIndex) {
+        setSelectedParamSetIndex(item.key as number);
+        setConfigurationValues({}); // Clear out the config params from previous set
+      }
+    },
+    [selectedParamSetIndex]
+  );
+
+  const [connectionName, setConnectionName] = useState<string>('');
   const [configurationValues, setConfigurationValues] = useState<Record<string, string | undefined>>({});
 
-  const canSubmit =
-    !isLoading &&
-    !!configurationValues['connection-name'] && // has a name
-    connection.properties.connectionParameters &&
-    Object.values(connection.properties.connectionParameters).every((parameter) => {
-      // has all required parameters
-      return (
+  const singleAuthParams = connector.properties?.connectionParameters;
+  const multiAuthParams = connector.properties?.connectionParameterSets?.values[selectedParamSetIndex].parameters;
+
+  const validParams = useMemo(() => {
+    return Object.values(singleAuthParams ?? multiAuthParams ?? []).every(
+      (parameter) =>
         parameter.uiDefinition?.constraints?.required === 'false' ||
         !!configurationValues[parameter.uiDefinition?.displayName ?? 'UNDEFINED']
-      );
-    });
+    );
+  }, [singleAuthParams, multiAuthParams, configurationValues]);
+  const canSubmit = !isLoading && !!connectionName && validParams;
 
   const inputConnectionNameLabel = intl.formatMessage({
     defaultMessage: 'Connection Name',
@@ -73,43 +86,63 @@ export const CreateConfigurableConnection = (props: CreateConfigurableConnection
           </Label>
           <TextField
             id={'connection-name-input'}
-            className="textfield"
+            className="param-input"
             disabled={isLoading}
             autoComplete="off"
             placeholder={inputConnectionNamePlaceholder}
-            value={configurationValues['connection-name'] ?? ''}
-            onChange={(e: any, newValue?: string) => setConfigurationValues({ ...configurationValues, 'connection-name': newValue })}
+            value={connectionName}
+            onChange={(e: any, val?: string) => setConnectionName(val ?? '')}
           />
         </div>
-        {connection.properties.connectionParameters
-          ? Object.values(connection.properties.connectionParameters).map((parameter) => {
-              const data = parameter.uiDefinition;
-              const id = data?.displayName ?? 'UNDEFINED';
 
-              if (data?.constraints?.hidden === 'true') return null;
+        {connector.properties.connectionParameterSets && (
+          <div className="param-row">
+            <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
+              {connector.properties.connectionParameterSets.uiDefinition.displayName}
+            </Label>
+            <Dropdown
+              id="connection-param-set-select"
+              className="param-input"
+              selectedKey={selectedParamSetIndex}
+              onChange={onDropdownChange}
+              disabled={isLoading}
+              // placeholder={connector.properties.connectionParameterSets.uiDefinition?.description}
+              options={connector.properties.connectionParameterSets.values.map((paramSet, index) => ({
+                key: index,
+                text: paramSet.name,
+              }))}
+            />
+          </div>
+        )}
 
-              return (
-                <div key={id} className="param-row">
-                  <Label className="label" required={data?.constraints?.required === 'true'} htmlFor={id} disabled={isLoading}>
-                    {data?.displayName}
-                    <TooltipHost content={data?.tooltip}>
-                      <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
-                    </TooltipHost>
-                  </Label>
-                  <TextField
-                    id={id}
-                    className="textfield"
-                    disabled={isLoading}
-                    autoComplete="off"
-                    // onNotifyValidationResult
-                    placeholder={data?.description}
-                    value={configurationValues[id]}
-                    onChange={(e: any, newVal?: string) => setConfigurationValues({ ...configurationValues, [id]: newVal })}
-                  />
-                </div>
-              );
-            })
-          : null}
+        {/* CONNECTOR PARAMETERS RENDERED HERE */}
+        {Object.values(multiAuthParams ?? singleAuthParams ?? [])?.map((parameter) => {
+          const data = parameter.uiDefinition;
+          const id = data?.displayName ?? 'UNDEFINED';
+
+          if (data?.constraints?.hidden === 'true') return null;
+
+          return (
+            <div key={id} className="param-row">
+              <Label className="label" required={data?.constraints?.required === 'true'} htmlFor={id} disabled={isLoading}>
+                {data?.displayName}
+                <TooltipHost content={data?.tooltip}>
+                  <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
+                </TooltipHost>
+              </Label>
+              <TextField
+                id={id}
+                className="param-input"
+                disabled={isLoading}
+                autoComplete="off"
+                // onNotifyValidationResult
+                placeholder={data?.description}
+                value={configurationValues[id]}
+                onChange={(e: any, newVal?: string) => setConfigurationValues({ ...configurationValues, [id]: newVal })}
+              />
+            </div>
+          );
+        })}
       </div>
 
       <div className="msla-create-connection-actions-container">
