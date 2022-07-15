@@ -5232,6 +5232,9 @@
       <Item ItemId=";lfHj+F" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please Enter a valid array]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Wprowadź prawidłową tablicę]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
