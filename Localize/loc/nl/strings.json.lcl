@@ -2262,6 +2262,9 @@
       <Item ItemId=";JWl/LD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add new item]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nieuw item toevoegen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5193,6 +5196,9 @@
       <Item ItemId=";lfHj+F" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Please Enter a valid array]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Voer een geldige array in.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
