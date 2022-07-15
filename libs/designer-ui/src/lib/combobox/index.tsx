@@ -3,7 +3,6 @@ import type { Segment } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import { CustomValue } from './plugins/CustomValue';
-// import { CustomValue } from './plugins/CustomValue';
 import type {
   IButtonStyles,
   IComboBox,
@@ -39,8 +38,8 @@ export interface ComboboxItem {
   disabled?: boolean;
   key: string;
   value: string;
-  displayValue?: string;
-  data?: string;
+  displayName?: string;
+  data?: any;
 }
 export interface ComboboxProps {
   options: ComboboxItem[];
@@ -50,7 +49,8 @@ export interface ComboboxProps {
   allowFreeForm?: boolean;
   selectedKey?: string | number;
   required?: boolean;
-  setSelectedKey?: (key: Segment[]) => void;
+  setSelectedKey?: (key: string) => void;
+  setCustomValue?: (customVal: Segment[] | null) => void;
 }
 export const Combobox = ({
   customValue,
@@ -61,6 +61,7 @@ export const Combobox = ({
   required = true,
   selectedKey,
   setSelectedKey,
+  setCustomValue,
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
@@ -68,10 +69,10 @@ export const Combobox = ({
   const [comboboxOptions, setComboBoxOptions] = useState<IComboBoxOption[]>(getOptions(options));
 
   useEffect(() => {
-    if (setSelectedKey && customVal) {
-      setSelectedKey(customVal);
+    if (setCustomValue && customVal) {
+      setCustomValue(customVal);
     }
-  }, [customVal, setSelectedKey]);
+  }, [customVal, setCustomValue]);
 
   const toggleExpand = useCallback(() => {
     comboBoxRef.current?.focus(true);
@@ -118,7 +119,7 @@ export const Combobox = ({
       setCustomVal([{ type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
     } else {
       if (setSelectedKey && option?.key) {
-        setSelectedKey([{ type: ValueSegmentType.LITERAL, value: option.key.toString() }]);
+        setSelectedKey(option.key.toString());
       }
     }
   };
@@ -180,14 +181,14 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
 
   return [
     ...options.map((option: ComboboxItem) => {
-      const { key, displayValue, value, disabled, data } = option;
+      const { key, displayName, value, disabled, data } = option;
       switch (key) {
         case 'divider':
           return { key: key, text: value, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: data };
         case 'header':
           return { key: key, text: value, itemType: SelectableOptionMenuItemType.Header, data: data, disabed: disabled };
         default:
-          return { key: key, text: displayValue ?? value, disabled: disabled, data: data };
+          return { key: key, text: displayName ?? value, disabled: disabled, data: data };
       }
     }),
     { key: 'customValue', text: customValueLabel, styles: customValueStyles, data: 'customrender' },

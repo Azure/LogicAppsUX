@@ -22,7 +22,10 @@ Standard.args = {
   placeholderText: 'Method is Required',
   label: 'Method',
   selectedKey: 'PUT',
-  setSelectedKey: (key: Segment[]) => {
+  setSelectedKey: (key: string) => {
+    console.log(key);
+  },
+  setCustomValue: (key: Segment[] | null) => {
     console.log(key);
   },
 };

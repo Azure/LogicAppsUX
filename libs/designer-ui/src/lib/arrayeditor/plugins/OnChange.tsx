@@ -50,7 +50,7 @@ const notEqual = (a: Segment[], b: Segment[]): boolean => {
     if (a[i].type !== b[i].type) {
       return true;
     }
-    if (JSON.stringify(a[i]) !== JSON.stringify(b[i])) {
+    if (JSON.stringify(a[i], Object.keys(a[i]).sort()) !== JSON.stringify(b[i], Object.keys(b[i]).sort())) {
       return true;
     }
   }
