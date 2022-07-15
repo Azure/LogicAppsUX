@@ -5,6 +5,7 @@ import { parseSegments } from './parsesegments';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
+// import TokenPicker from './plugins/TokenPicker';
 import { TreeView } from './plugins/TreeView';
 import { Validation } from './plugins/Validation';
 import type { ValidationProps } from './plugins/Validation';
@@ -96,7 +97,7 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
           NOTE 14672766: Commenting out TokenPlugin because has a few issues
           and is not needed for read only. Will revisit later.
         */}
-        {/* {tokens ? <TokenPlugin data={[]} /> : null} */}
+        {/* {tokens ? <TokenPicker /> : null} */}
         {clearEditor ? <ClearEditor showButton={false} /> : null}
         {validation ? (
           <Validation
