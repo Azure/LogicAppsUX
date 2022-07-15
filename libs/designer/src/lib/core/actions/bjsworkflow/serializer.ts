@@ -1,5 +1,10 @@
 import type { Workflow } from '../../../common/models/workflow';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
+import { getOperationManifest } from '../../queries/operation';
+import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { RootState } from '../../store';
+import { getNode, isRootNode } from '../../utils/graph';
 import {
   encodePathValue,
   getAndEscapeSegment,
@@ -7,10 +12,22 @@ import {
   getJSONValueFromString,
   parameterValueToString,
 } from '../../utils/parameters/helper';
+import type { GraphEdge, Settings } from './settings';
+import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { getIntl } from '@microsoft-logic-apps/intl';
 import type { Segment } from '@microsoft-logic-apps/parsers';
 import { cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@microsoft-logic-apps/parsers';
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { first } from '@microsoft-logic-apps/utils';
+import type { OperationManifest, SubGraphDetail } from '@microsoft-logic-apps/utils';
+import {
+  safeSetObjectPropertyValue,
+  AssertionErrorCode,
+  AssertionException,
+  ConnectionReferenceKeyFormat,
+  optional,
+  RecurrenceType,
+  first,
+  isNullOrEmpty,
+} from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 
 export const serializeWorkflow = (_rootState: RootState): Workflow => {
@@ -21,16 +38,64 @@ export const serializeWorkflow = (_rootState: RootState): Workflow => {
   };
 };
 
-export const serializeOperationParameters = (inputs: ParameterInfo[], manifest: OperationManifest): Record<string, any> => {
-  const inputsToSerialize = inputs
+export const serializeOperation = async (rootState: RootState, operationId: string): Promise<LogicAppsV2.OperationDefinition> => {
+  const operation = rootState.operations.operationInfo[operationId];
+  if (OperationManifestService().isSupported(operation.type, operation.kind)) {
+    return serializeManifestBasedOperation(rootState, operationId);
+  } else {
+    // TODO - Implement for ApiConnection type operations [swagger based]
+    return rootState.workflow.operations[operationId] ?? {};
+  }
+};
+
+export const serializeManifestBasedOperation = async (
+  rootState: RootState,
+  operationId: string
+): Promise<LogicAppsV2.OperationDefinition> => {
+  const operation = rootState.operations.operationInfo[operationId];
+  const manifest = await getOperationManifest(operation);
+  const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
+  const nodeSettings = rootState.operations.settings[operationId] ?? {};
+  const inputPathValue = serializeOperationParameters(inputsToSerialize, manifest);
+  const hostInfo = serializeHost(operationId, manifest, rootState);
+  const inputs = hostInfo !== undefined ? { ...inputPathValue, ...hostInfo } : inputPathValue;
+  const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata) ? undefined : getRunAfter(nodeSettings);
+  const recurrence =
+    manifest.properties.recurrence && manifest.properties.recurrence.type !== RecurrenceType.None
+      ? constructInputValues('recurrence.$', inputsToSerialize, false /* encodePathComponents */)
+      : undefined;
+
+  const childOperations = manifest.properties.allowChildOperations
+    ? await serializeNestedOperations(operationId, manifest, rootState)
+    : undefined;
+
+  return {
+    type: operation.type,
+    ...optional('kind', operation.kind),
+    ...optional('inputs', inputs),
+    ...childOperations,
+    ...optional('runAfter', runAfter),
+    ...optional('recurrence', recurrence),
+  };
+};
+
+//#region Parameters Serialization
+export interface SerializedParameter extends ParameterInfo {
+  value: any;
+}
+
+const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
+  return getOperationInputParameters(rootState, operationId)
     .filter((input) => !input.info.serialization?.skip)
     .map((input) => ({
       ...input,
       value: parameterValueToString(input, true /* isDefinitionValue */),
     }));
+};
 
+const serializeOperationParameters = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
   const inputsLocation = (manifest.properties.inputsLocation ?? ['inputs']).slice(1);
-  const inputPathValue = constructInputValues('inputs.$', inputsToSerialize, true /* encodePathComponents */);
+  const inputPathValue = constructInputValues('inputs.$', inputs, false /* encodePathComponents */);
   let parametersValue: any = inputPathValue;
 
   while (inputsLocation.length) {
@@ -40,10 +105,6 @@ export const serializeOperationParameters = (inputs: ParameterInfo[], manifest: 
 
   return parametersValue;
 };
-
-export interface SerializedParameter extends ParameterInfo {
-  value: any;
-}
 
 export const constructInputValues = (key: string, inputs: SerializedParameter[], encodePathComponents: boolean): any => {
   let result: any;
@@ -122,4 +183,175 @@ const serializeParameterWithPath = (
   }
 
   return result;
+};
+
+//#endregion
+
+//#region Host Serialization
+interface FunctionConnectionInfo {
+  function: {
+    connectionName: string;
+  };
+}
+
+interface ServiceProviderConnectionConfigInfo {
+  serviceProviderConfiguration: {
+    connectionName: string;
+    operationId: string;
+    serviceProviderId: string;
+  };
+}
+
+const serializeHost = (
+  nodeId: string,
+  manifest: OperationManifest,
+  rootState: RootState
+): FunctionConnectionInfo | ServiceProviderConnectionConfigInfo | undefined => {
+  if (!manifest.properties.connectionReference) {
+    return undefined;
+  }
+
+  const intl = getIntl();
+  const { referenceKeyFormat } = manifest.properties.connectionReference;
+  const referenceKey = rootState.connections.connectionsMapping[nodeId];
+  const { connectorId, operationId } = rootState.operations.operationInfo[nodeId];
+
+  switch (referenceKeyFormat) {
+    case ConnectionReferenceKeyFormat.Function:
+      return {
+        function: {
+          connectionName: referenceKey,
+        },
+      };
+    case ConnectionReferenceKeyFormat.ServiceProvider:
+      return {
+        serviceProviderConfiguration: {
+          connectionName: referenceKey,
+          operationId,
+          serviceProviderId: connectorId,
+        },
+      };
+    default:
+      throw new AssertionException(
+        AssertionErrorCode.UNSUPPORTED_MANIFEST_CONNECTION_REFERENCE_FORMAT,
+        intl.formatMessage(
+          {
+            defaultMessage: `Unsupported manifest connection reference format: '{referenceKeyFormat}'`,
+            description:
+              'Error message to show when reference format is unsupported, {referenceKeyFormat} will be replaced based on action definition',
+          },
+          {
+            referenceKeyFormat,
+          }
+        )
+      );
+  }
+};
+
+//#endregion
+
+//#region Nested Operations Serialization
+const serializeNestedOperations = async (
+  nodeId: string,
+  manifest: OperationManifest,
+  rootState: RootState
+): Promise<Partial<LogicAppsV2.Action>> => {
+  const { childOperationsLocation, subGraphDetails } = manifest.properties;
+  const node = getNode(nodeId, rootState.workflow.graph as WorkflowNode) as WorkflowNode;
+  let result: Partial<LogicAppsV2.Action> = {};
+
+  if (childOperationsLocation) {
+    result = {
+      ...result,
+      ...(await serializeSubGraph(node, childOperationsLocation ?? [], [], rootState, {})),
+    };
+  }
+
+  if (subGraphDetails) {
+    const subGraphNodes = node.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) ?? [];
+    for (const subGraphLocation of Object.keys(subGraphDetails)) {
+      const subGraphDetail = subGraphDetails[subGraphLocation];
+      const subGraphs = subGraphNodes.filter((graph) => graph.subGraphLocation === subGraphLocation);
+
+      if (subGraphDetail.isAdditive) {
+        for (const subGraph of subGraphs) {
+          const subGraphId = subGraph.id;
+          result = {
+            ...result,
+            ...(await serializeSubGraph(
+              subGraph,
+              [subGraphLocation, subGraphId, ...(subGraphDetail.location ?? [])],
+              [subGraphLocation, subGraphId],
+              rootState,
+              subGraphDetail
+            )),
+          };
+        }
+      } else if (subGraphs.length === 1) {
+        result = {
+          ...result,
+          ...(await serializeSubGraph(
+            subGraphs[0],
+            [subGraphLocation, ...(subGraphDetail.location ?? [])],
+            [subGraphLocation],
+            rootState,
+            subGraphDetail
+          )),
+        };
+      }
+    }
+  }
+
+  return result;
+};
+
+const serializeSubGraph = async (
+  graph: WorkflowNode,
+  graphLocation: string[],
+  graphInputsLocation: string[],
+  rootState: RootState,
+  graphDetail: SubGraphDetail
+): Promise<Partial<LogicAppsV2.Action>> => {
+  const { id: graphId, children } = graph;
+  const result: Partial<LogicAppsV2.Action> = {};
+
+  const nestedNodes = children?.filter(isWorkflowOperationNode) ?? [];
+  const nestedActionsPromises = nestedNodes.map((nestedNode) =>
+    serializeOperation(rootState, nestedNode.id)
+  ) as Promise<LogicAppsV2.OperationDefinition>[];
+  const nestedActions = await Promise.all(nestedActionsPromises);
+
+  safeSetObjectPropertyValue(
+    result,
+    graphLocation,
+    nestedActions.reduce((actions: LogicAppsV2.Actions, action: LogicAppsV2.OperationDefinition, index: number) => {
+      if (!isNullOrEmpty(action)) {
+        // eslint-disable-next-line no-param-reassign
+        actions[nestedNodes[index].id] = action;
+      }
+
+      return actions;
+    }, {})
+  );
+
+  if (graphDetail.inputs && graphDetail.inputsLocation) {
+    const inputs = serializeOperationParameters(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
+    safeSetObjectPropertyValue(result, graphInputsLocation, inputs);
+  }
+
+  return result;
+};
+
+const isWorkflowOperationNode = (node: WorkflowNode) =>
+  node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE;
+//#endregion
+
+// TODO (Andrew) - To update from workflow graph when it stores the statuses.
+const getRunAfter = (settings: Settings): LogicAppsV2.RunAfter => {
+  const edges = settings.runAfter?.value ?? [];
+
+  return edges.reduce((previous: LogicAppsV2.RunAfter, edge: GraphEdge) => {
+    const { predecessorId, statuses } = edge;
+    return { ...previous, [predecessorId]: statuses };
+  }, {});
 };
