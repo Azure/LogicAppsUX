@@ -50,10 +50,14 @@ export const Validation: React.FC = () => {
     );
   };
 
-  const { data: validationData, isLoading: isValidationLoading } = useQuery<any>(QueryKeys.validation, validateWorkflows, {
-    refetchOnWindowFocus: false,
-    onSuccess: onValidationSuccess,
-  });
+  const { data: validationData, isLoading: isValidationLoading } = useQuery<any>(
+    [QueryKeys.validation, { selectedWorkflows: selectedWorkflows }],
+    validateWorkflows,
+    {
+      refetchOnWindowFocus: false,
+      onSuccess: onValidationSuccess,
+    }
+  );
 
   const { validationItems = [], validationGroups = [] }: any =
     isValidationLoading || !validationData ? {} : parseValidationData(validationData);
