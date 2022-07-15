@@ -37,16 +37,16 @@ const buttonStyles: Partial<IButtonStyles> = { root: { height: '22px', width: '3
 export interface ComboboxItem {
   disabled?: boolean;
   key: string;
-  value: string;
-  displayName?: string;
-  data?: any;
+  value: any;
+  displayName: string;
+  type?: string;
 }
 export interface ComboboxProps {
   options: ComboboxItem[];
   customValue: Segment[] | null;
   placeholderText?: string;
   label?: string;
-  allowFreeForm?: boolean;
+  useOption?: boolean;
   selectedKey?: string | number;
   required?: boolean;
   setSelectedKey?: (key: string) => void;
@@ -57,7 +57,7 @@ export const Combobox = ({
   options,
   placeholderText,
   label,
-  allowFreeForm = true,
+  useOption = true,
   required = true,
   selectedKey,
   setSelectedKey,
@@ -88,10 +88,10 @@ export const Combobox = ({
           defaultMessage: 'No values matching your search',
           description: 'Label for when no values match search value',
         });
-        newOptions.push({ key: 'header', value: noValuesLabel, disabled: true });
+        newOptions.push({ key: 'header', value: noValuesLabel, disabled: true, displayName: noValuesLabel });
       }
-      newOptions.push({ key: 'divider', value: '-' });
-      if (options.filter((option) => option.value === value).length === 0 && value !== '') {
+      newOptions.push({ key: 'divider', value: '-', displayName: '-' });
+      if (options.filter((option) => option.value === value).length === 0 && value !== '' && useOption) {
         const customValueLabel = intl.formatMessage(
           {
             defaultMessage: 'Use "{value}" as a custom value',
@@ -99,7 +99,7 @@ export const Combobox = ({
           },
           { value: value }
         );
-        newOptions.push({ key: value, value: customValueLabel, disabled: false, data: 'customrender' });
+        newOptions.push({ key: value, value: customValueLabel, displayName: customValueLabel, disabled: false, type: 'customrender' });
       }
       setComboBoxOptions(getOptions(newOptions));
     }
@@ -157,7 +157,7 @@ export const Combobox = ({
           defaultSelectedKey={selectedKey}
           componentRef={comboBoxRef}
           useComboBoxAsMenuWidth
-          allowFreeform={allowFreeForm}
+          allowFreeform
           autoComplete="off"
           placeholder={placeholderText}
           options={comboboxOptions}
@@ -181,14 +181,14 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
 
   return [
     ...options.map((option: ComboboxItem) => {
-      const { key, displayName, value, disabled, data } = option;
+      const { key, displayName, disabled, type } = option;
       switch (key) {
         case 'divider':
-          return { key: key, text: value, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: data };
+          return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: type };
         case 'header':
-          return { key: key, text: value, itemType: SelectableOptionMenuItemType.Header, data: data, disabed: disabled };
+          return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Header, data: type, disabed: disabled };
         default:
-          return { key: key, text: displayName ?? value, disabled: disabled, data: data };
+          return { key: key, text: displayName, disabled: disabled, data: type };
       }
     }),
     { key: 'customValue', text: customValueLabel, styles: customValueStyles, data: 'customrender' },
