@@ -5,6 +5,7 @@ import { expandPanel, changePanelNode } from '../../core/state/panel/panelSlice'
 import {
   useBrandColor,
   useIconUri,
+  useIsConnectionRequired,
   useNodeConnectionName,
   useNodeDescription,
   useNodeMetadata,
@@ -55,6 +56,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
   const connectionName = useNodeConnectionName(id);
+  const isConnectionRequired = useIsConnectionRequired(operationInfo);
 
   const showLeafComponents = !readOnly && isLeafNodeFromEdges(edges);
 
@@ -89,7 +91,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           draggable={!readOnly}
           brandColor={brandColor}
           id={id}
-          connectionRequired={false}
+          connectionRequired={isConnectionRequired}
           connectionDisplayName={connectionName}
           commentBox={comment}
           drag={drag}

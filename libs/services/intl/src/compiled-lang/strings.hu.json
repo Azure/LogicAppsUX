@@ -14,7 +14,7 @@
   "+W9fkq": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+      "value": "(UTC+08:00) Kuala Lumpur, Szingapúr"
     }
   ],
   "+dlOgj": [
@@ -110,13 +110,13 @@
   "/rjP4U": [
     {
       "type": 0,
-      "value": "(UTC) Coordinated Universal Time"
+      "value": "(UTC) Egyezményes világidő"
     }
   ],
   "/sMQhI": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Indiana (East)"
+      "value": "(UTC-05:00) Indiana (kelet)"
     }
   ],
   "/ut0u7": [
@@ -278,7 +278,7 @@
   "1Ogj/V": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Jeruzsálem"
     }
   ],
   "1R6Vaa": [
@@ -408,7 +408,7 @@
   "2NYPLt": [
     {
       "type": 0,
-      "value": "(UTC-03:30) Newfoundland"
+      "value": "(UTC-03:30) Új-Fundland"
     }
   ],
   "2Noh96": [
@@ -438,7 +438,7 @@
   "2ri1Kf": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Damascus"
+      "value": "(UTC+02:00) Damaszkusz"
     }
   ],
   "2tTQ0A": [
@@ -450,7 +450,7 @@
   "2xhbE1": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Magadan"
+      "value": "(UTC+11:00) Magadán"
     }
   ],
   "33+WHG": [
@@ -462,7 +462,7 @@
   "3FoqCK": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Tbilisi"
+      "value": "(UTC+04:00) Tbiliszi"
     }
   ],
   "3NhwIJ": [
@@ -480,7 +480,7 @@
   "3TD2V5": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Dhaka"
+      "value": "(UTC+06:00) Dakka"
     }
   ],
   "3X/ZDK": [
@@ -492,13 +492,13 @@
   "3afjx+": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Chita"
+      "value": "(UTC+09:00) Csita"
     }
   ],
   "3jlz+B": [
     {
       "type": 0,
-      "value": "(UTC+03:30) Tehran"
+      "value": "(UTC+03:30) Teherán"
     }
   ],
   "3kI7xF": [
@@ -540,7 +540,7 @@
   "4/kJ8D": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Yerevan"
+      "value": "(UTC+04:00) Jereván"
     }
   ],
   "47kOXr": [
@@ -558,13 +558,13 @@
   "4Q7WzU": [
     {
       "type": 0,
-      "value": "Add a new connection"
+      "value": "Új kapcsolat hozzáadása"
     }
   ],
   "4XdZNj": [
     {
       "type": 0,
-      "value": "(UTC+01:00) West Central Africa"
+      "value": "(UTC+01:00) Nyugat-Közép-Afrika"
     }
   ],
   "4YKQAF": [
@@ -720,7 +720,7 @@
   "7KxCGX": [
     {
       "type": 0,
-      "value": "(UTC+10:30) Lord Howe Island"
+      "value": "(UTC+10:30) Lord Howe-sziget"
     }
   ],
   "7QymrD": [
@@ -750,7 +750,7 @@
   "7lvqST": [
     {
       "type": 0,
-      "value": "Invalid"
+      "value": "Érvénytelen"
     }
   ],
   "7yEdSt": [
@@ -792,7 +792,7 @@
   "8JEHiY": [
     {
       "type": 0,
-      "value": "Saturday"
+      "value": "Szombat"
     }
   ],
   "8JFxmV": [
@@ -816,7 +816,7 @@
   "8Y5xpK": [
     {
       "type": 0,
-      "value": "Thursday"
+      "value": "Csütörtök"
     }
   ],
   "8j+a0n": [
@@ -828,7 +828,7 @@
   "8pPivj": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Norfolk Island"
+      "value": "(UTC+11:00) Norfolk-sziget"
     }
   ],
   "8to63i": [
@@ -870,7 +870,7 @@
   "949s+r": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Ulaanbaatar"
+      "value": "(UTC+08:00) Ulánbátor"
     }
   ],
   "99vsJy": [
@@ -882,7 +882,7 @@
   "9EmN2M": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Mégse"
     }
   ],
   "9JuvQ4": [
@@ -924,13 +924,13 @@
   "9pdXmX": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+      "value": "(UTC+01:00) Amszterdam, Berlin, Bern, Róma, Stockholm, Bécs"
     }
   ],
   "9pl7QP": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Atlantic Time (Canada)"
+      "value": "(UTC-04:00) Atlanti-óceáni idő (Kanada)"
     }
   ],
   "9u/Ae3": [
@@ -942,7 +942,7 @@
   "AIL7WX": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Gaza, Hebron"
+      "value": "(UTC+02:00) Gáza, Hebron"
     }
   ],
   "ALImBL": [
@@ -1024,7 +1024,7 @@
   "BAgRzO": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Coordinated Universal Time-08"
+      "value": "(UTC-08:00) Egyezményes világidő-08"
     }
   ],
   "BBD8Em": [
@@ -1066,7 +1066,7 @@
   "BVOUxP": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Havana"
+      "value": "(UTC-05:00) Havanna"
     }
   ],
   "Bn8iTS": [
@@ -1102,7 +1102,7 @@
   "Cy9qeQ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+      "value": "(UTC+02:00) Helsinki, Kijev, Riga, Szófia, Tallinn, Vilnius"
     }
   ],
   "D+Ptnq": [
@@ -1126,13 +1126,13 @@
   "DfS13/": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Aleutian Islands"
+      "value": "(UTC-10:00) Aleut-szigetek"
     }
   ],
   "DuXV2M": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Azores"
+      "value": "(UTC-01:00) Azori-szigetek"
     }
   ],
   "DysO/Q": [
@@ -1144,7 +1144,7 @@
   "E9OS+9": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Coordinated Universal Time-09"
+      "value": "(UTC-09:00) Egyezményes világidő-09"
     }
   ],
   "ECZC6Y": [
@@ -1162,7 +1162,7 @@
   "EYqGxA": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Athens, Bucharest"
+      "value": "(UTC+02:00) Athén, Bukarest"
     }
   ],
   "EZz5q7": [
@@ -1180,13 +1180,13 @@
   "Eqgm4v": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+      "value": "(UTC-05:00) Keleti idő (Amerikai Egyesült Államok és Kanada)"
     }
   ],
   "ExaACE": [
     {
       "type": 0,
-      "value": "Connection display name"
+      "value": "Kapcsolat megjelenített neve"
     }
   ],
   "F3IDl8": [
@@ -1198,7 +1198,7 @@
   "F489Vg": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Irkutsk"
+      "value": "(UTC+08:00) Irkutszk"
     }
   ],
   "FDF4Qb": [
@@ -1222,7 +1222,7 @@
   "FHsP9y": [
     {
       "type": 0,
-      "value": "(UTC+05:45) Kathmandu"
+      "value": "(UTC+05:45) Katmandu"
     }
   ],
   "FIT7i0": [
@@ -1270,7 +1270,7 @@
   "FXC0Zi": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Baghdad"
+      "value": "(UTC+03:00) Bagdad"
     }
   ],
   "FXLR5M": [
@@ -1434,13 +1434,13 @@
   "IPbBB2": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Fiji"
+      "value": "(UTC+12:00) Fidzsi-szigetek"
     }
   ],
   "IUE/lQ": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Cabo Verde Is."
+      "value": "(UTC-01:00) Cabo Verde"
     }
   ],
   "IW2MjQ": [
@@ -1452,7 +1452,7 @@
   "IjZFjQ": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+      "value": "(UTC+07:00) Barnaul, Gorno-Altajszk"
     }
   ],
   "IngtMG": [
@@ -1485,6 +1485,12 @@
       "value": "Sztring átalakítása kisbetűssé az invariáns kulturális környezet kis- és nagybetű-használati szabályai alapján."
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1495,6 +1501,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A logikai értékké alakítandó érték."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -1612,7 +1624,7 @@
   "Khc8lS": [
     {
       "type": 0,
-      "value": "(UTC-09:30) Marquesas Islands"
+      "value": "(UTC-09:30) Marquises-szigetek"
     }
   ],
   "KlvTze": [
@@ -1624,13 +1636,13 @@
   "KoBDbT": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Coordinated Universal Time-02"
+      "value": "(UTC-02:00) Egyezményes világidő-02"
     }
   ],
   "Kw3bWO": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Istanbul"
+      "value": "(UTC+02:00) Isztambul"
     }
   ],
   "L+PY+j": [
@@ -1654,7 +1666,7 @@
   "LMB8am": [
     {
       "type": 0,
-      "value": "Creating..."
+      "value": "Létrehozás..."
     }
   ],
   "LS8rfZ": [
@@ -1666,7 +1678,7 @@
   "Lft/is": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Új hozzáadása"
     }
   ],
   "LoGUT3": [
@@ -1690,13 +1702,13 @@
   "LvpxiA": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "Átjáró"
     }
   ],
   "Lwe7tQ": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lisszabon, London"
     }
   ],
   "M0HMjE": [
@@ -1786,25 +1798,25 @@
   "NeyUAh": [
     {
       "type": 0,
-      "value": "(UTC-03:00) City of Buenos Aires"
+      "value": "(UTC-03:00) Buenos Aires"
     }
   ],
   "NkUgXU": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Minsk"
+      "value": "(UTC+03:00) Minszk"
     }
   ],
   "NvANon": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Alaska"
+      "value": "(UTC-09:00) Alaszka"
     }
   ],
   "NvJDn/": [
     {
       "type": 0,
-      "value": "Tuesday"
+      "value": "Kedd"
     }
   ],
   "O+8vRv": [
@@ -1834,7 +1846,7 @@
   "OGUVGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Bougainville Island"
+      "value": "(UTC+11:00) Bougainville-sziget"
     }
   ],
   "OH9xlX": [
@@ -1846,7 +1858,7 @@
   "OKszbi": [
     {
       "type": 0,
-      "value": "Connection Name"
+      "value": "Kapcsolat neve"
     }
   ],
   "OSHNZ2": [
@@ -1972,7 +1984,7 @@
   "PeLrFb": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+      "value": "(UTC+03:00) Moszkva, Szentpétervár, Volgográd"
     }
   ],
   "PfCJlN": [
@@ -1984,7 +1996,7 @@
   "PmB0J7": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Turks and Caicos"
+      "value": "(UTC-04:00) Turks- és Caicos-szigetek"
     }
   ],
   "Pvm0xB": [
@@ -1996,7 +2008,7 @@
   "Q+oELo": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Izhevsk, Samara"
+      "value": "(UTC+04:00) Izsevszk, Szamara"
     }
   ],
   "Q/7unA": [
@@ -2101,6 +2113,12 @@
       "value": "Kötelező megadni. A szétvágandó sztring."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -2148,7 +2166,7 @@
   "SADSSs": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+      "value": "(UTC+12:00) Petropavlovszk-Kamcsatszkij – régi"
     }
   ],
   "SKXopi": [
@@ -2200,7 +2218,7 @@
   "T6VIym": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Név"
     }
   ],
   "T7zcR6": [
@@ -2230,13 +2248,13 @@
   "TNEttQ": [
     {
       "type": 0,
-      "value": "Friday"
+      "value": "Péntek"
     }
   ],
   "TNzcrv": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Vladivostok"
+      "value": "(UTC+10:00) Vlagyivosztok"
     }
   ],
   "TO7qos": [
@@ -2254,7 +2272,7 @@
   "TX4Kdr": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Új kapcsolat létrehozása"
     }
   ],
   "TZv5JE": [
@@ -2284,7 +2302,7 @@
   "TqPfth": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+      "value": "(UTC+01:00) Brüsszel, Koppenhága, Madrid, Párizs"
     }
   ],
   "Twfck/": [
@@ -2302,7 +2320,7 @@
   "U1NiVg": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central America"
+      "value": "(UTC-06:00) Közép-Amerika"
     }
   ],
   "U3iWVd": [
@@ -2314,7 +2332,7 @@
   "U56j9a": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Easter Island"
+      "value": "(UTC-06:00) Húsvét-sziget"
     }
   ],
   "UCNM4L": [
@@ -2338,7 +2356,7 @@
   "UkSZnQ": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Mentés"
     }
   ],
   "Ur+wph": [
@@ -2368,7 +2386,7 @@
   "VE3cxq": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+      "value": "(UTC-07:00) Hegyi idő (Amerikai Egyesült Államok és Kanada)"
     }
   ],
   "VKAk5g": [
@@ -2393,6 +2411,12 @@
     {
       "type": 0,
       "value": "Megjegyzés"
+    }
+  ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
     }
   ],
   "VZHick": [
@@ -2423,10 +2447,10 @@
       "value": "Kötelező megadni. Az új tulajdonság neve."
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "Törlés"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -2504,7 +2528,7 @@
   "XTYYks": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Seoul"
+      "value": "(UTC+09:00) Szöul"
     }
   ],
   "XTuxmH": [
@@ -2528,13 +2552,13 @@
   "XX1ioe": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Kuwait, Riyadh"
+      "value": "(UTC+03:00) Kuvait, Rijád"
     }
   ],
   "XaS4ds": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Pacific Time (US & Canada)"
+      "value": "(UTC-08:00) Csendes-óceáni idő (Amerikai Egyesült Államok és Kanada)"
     }
   ],
   "Xnn0uj": [
@@ -2670,7 +2694,7 @@
   "ZnGRMP": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Tomsk"
+      "value": "(UTC+07:00) Tomszk"
     }
   ],
   "a3QJzO": [
@@ -2694,7 +2718,7 @@
   "a7x6VI": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Taipei"
+      "value": "(UTC+08:00) Tajpej"
     }
   ],
   "aAXnqw": [
@@ -2712,7 +2736,7 @@
   "aH9SV7": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ashgabat, Tashkent"
+      "value": "(UTC+05:00) Asgabat, Taskent"
     }
   ],
   "aK4iLW": [
@@ -2742,7 +2766,7 @@
   "bS5DyV": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Kaliningrad"
+      "value": "(UTC+02:00) Kalinyingrád"
     }
   ],
   "bTrk+S": [
@@ -2778,7 +2802,7 @@
   "bx3qeC": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Brasilia"
+      "value": "(UTC-03:00) Brazíliaváros"
     }
   ],
   "bzF/qn": [
@@ -2838,7 +2862,7 @@
   "cT2MlP": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Chokurdakh"
+      "value": "(UTC+11:00) Csokurdah"
     }
   ],
   "cVIZTQ": [
@@ -2916,7 +2940,7 @@
   "dUZi34": [
     {
       "type": 0,
-      "value": "(UTC+12:45) Chatham Islands"
+      "value": "(UTC+12:45) Chatham-szigetek"
     }
   ],
   "dWFyfN": [
@@ -2934,13 +2958,13 @@
   "dWx21B": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Sakhalin"
+      "value": "(UTC+11:00) Szahalin"
     }
   ],
   "dgAu27": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Greenland"
+      "value": "(UTC-03:00) Grönland"
     }
   ],
   "dhvk0u": [
@@ -2970,7 +2994,7 @@
   "e00zot": [
     {
       "type": 0,
-      "value": "How often do you want to check for items?"
+      "value": "Milyen gyakran szeretne elemeket keresni?"
     }
   ],
   "e4Onhn": [
@@ -2982,7 +3006,7 @@
   "eGa1Wa": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ekaterinburg"
+      "value": "(UTC+05:00) Jekatyerinburg"
     }
   ],
   "eHgi14": [
@@ -3072,7 +3096,7 @@
   "g5mMuM": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+      "value": "(UTC-03:00) Saint-Pierre és Miquelon"
     }
   ],
   "gCXOd5": [
@@ -3108,7 +3132,7 @@
   "gIc0YJ": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Kapcsolat neve"
     }
   ],
   "gKq3Jv": [
@@ -3314,7 +3338,7 @@
   "j1VU25": [
     {
       "type": 0,
-      "value": "(UTC+14:00) Kiritimati Island"
+      "value": "(UTC+14:00) Karácsony-sziget"
     }
   ],
   "j2MU0b": [
@@ -3344,7 +3368,7 @@
   "jMLmag": [
     {
       "type": 0,
-      "value": "Create New"
+      "value": "Új létrehozása"
     }
   ],
   "jQ0Aqj": [
@@ -3446,7 +3470,7 @@
   "kZCX7t": [
     {
       "type": 0,
-      "value": "Monday"
+      "value": "Hétfő"
     }
   ],
   "kZuYgD": [
@@ -3458,7 +3482,7 @@
   "kc5Mui": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Mid-Atlantic - Old"
+      "value": "(UTC-02:00) Közép-atlanti időzóna – régi"
     }
   ],
   "keb4r1": [
@@ -3470,7 +3494,7 @@
   "kneb9/": [
     {
       "type": 0,
-      "value": "(UTC-12:00) International Date Line West"
+      "value": "(UTC-12:00) Nemzetközi dátumválasztó vonal – nyugat"
     }
   ],
   "knylNW": [
@@ -3500,13 +3524,13 @@
   "lFve22": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+      "value": "(UTC+01:00) Szarajevó, Szkopje, Varsó, Zágráb"
     }
   ],
   "lIPWQ6": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+      "value": "(UTC+07:00) Bangkok, Hanoi, Dzsakarta"
     }
   ],
   "lPTdSf": [
@@ -3531,6 +3555,12 @@
     {
       "type": 0,
       "value": "kihagyva"
+    }
+  ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3590,7 +3620,7 @@
   "mZCHKf": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+      "value": "(UTC+12:00) Anadir, Petropavlovszk-Kamcsatszkij"
     }
   ],
   "mZRMD9": [
@@ -3718,7 +3748,7 @@
   "oRvVIW": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Krasnoyarsk"
+      "value": "(UTC+07:00) Krasznojarszk"
     }
   ],
   "oV0xQ9": [
@@ -3760,7 +3790,7 @@
   "p5tz8/": [
     {
       "type": 0,
-      "value": "(UTC+13:00) Samoa"
+      "value": "(UTC+13:00) Szamoa"
     }
   ],
   "pIczsS": [
@@ -3784,7 +3814,7 @@
   "pUeUDw": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+      "value": "(UTC+09:00) Oszaka, Szapporó, Tokió"
     }
   ],
   "pXmFGf": [
@@ -3850,7 +3880,7 @@
   "q9hf8i": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+      "value": "(UTC+04:00) Asztrahán, Uljanovszk"
     }
   ],
   "qGfwxW": [
@@ -3874,7 +3904,7 @@
   "qQoQFv": [
     {
       "type": 0,
-      "value": "Invalid connection."
+      "value": "Érvénytelen kapcsolat."
     }
   ],
   "qSejoi": [
@@ -3936,7 +3966,7 @@
   "qq/bq0": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Yakutsk"
+      "value": "(UTC+09:00) Jakutszk"
     }
   ],
   "qrxi0L": [
@@ -4002,7 +4032,7 @@
   "rstpaK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central Time (US & Canada)"
+      "value": "(UTC-06:00) Amerikai középidő (Amerikai Egyesült Államok és Kanada)"
     }
   ],
   "s5RV9B": [
@@ -4068,7 +4098,7 @@
   "siYGSo": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Beirut"
+      "value": "(UTC+02:00) Bejrút"
     }
   ],
   "soqP+Z": [
@@ -4104,7 +4134,7 @@
   "tELkSC": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
+      "value": "(UTC-06:00) Guadalajara, Mexikóváros, Monterrey"
     }
   ],
   "tImHz/": [
@@ -4146,7 +4176,7 @@
   "tP+5fA": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Novosibirsk"
+      "value": "(UTC+06:00) Novoszibirszk"
     }
   ],
   "tVmUCd": [
@@ -4176,7 +4206,7 @@
   "tsmuoF": [
     {
       "type": 0,
-      "value": "Display Name"
+      "value": "Megjelenítendő név"
     }
   ],
   "tu8I7j": [
@@ -4194,7 +4224,7 @@
   "u6Gdft": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+      "value": "(UTC+04:00) Abu-Dzabi, Maszkat"
     }
   ],
   "uN4zFU": [
@@ -4242,7 +4272,7 @@
   "udNlco": [
     {
       "type": 0,
-      "value": "(UTC-11:00) Coordinated Universal Time-11"
+      "value": "(UTC-11:00) Egyezményes világidő-11"
     }
   ],
   "ui7GCl": [
@@ -4302,7 +4332,7 @@
   "vXwYXe": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Astana"
+      "value": "(UTC+06:00) Asztana"
     }
   ],
   "va40BJ": [
@@ -4314,7 +4344,7 @@
   "vb/okJ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Cairo"
+      "value": "(UTC+02:00) Kairó"
     }
   ],
   "vcBAuU": [
@@ -4352,7 +4382,7 @@
   "w5Hhig": [
     {
       "type": 0,
-      "value": "Sunday"
+      "value": "Vasárnap"
     }
   ],
   "wEaGWn": [
@@ -4364,7 +4394,7 @@
   "wF7C+h": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Mégse"
     }
   ],
   "wFCkpM": [
@@ -4418,7 +4448,7 @@
   "x+6ccf": [
     {
       "type": 0,
-      "value": "Wednesday"
+      "value": "Szerda"
     }
   ],
   "x0or2o": [
@@ -4466,13 +4496,13 @@
   "xZhieP": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Islamabad, Karachi"
+      "value": "(UTC+05:00) Iszlámábád, Karacsi"
     }
   ],
   "xb/DIr": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Coordinated Universal Time+12"
+      "value": "(UTC+12:00) Egyezményes világidő+12"
     }
   ],
   "xt5TeT": [
@@ -4536,7 +4566,7 @@
   "yph4eq": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+      "value": "(UTC+01:00) Belgrád, Pozsony, Budapest, Ljubljana, Prága"
     }
   ],
   "yqRrQ/": [
@@ -4555,6 +4585,12 @@
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [
@@ -4578,7 +4614,7 @@
   "zbtUQ/": [
     {
       "type": 0,
-      "value": "(UTC+08:30) Pyongyang"
+      "value": "(UTC+08:30) Phenjan"
     }
   ],
   "zcZpHT": [

@@ -6,14 +6,15 @@ import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
+import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import type { DataMapOperationState } from '../core/state/DataMapSlice';
 import {
-  saveDataMap,
-  redoDataMapOperation,
-  undoDataMapOperation,
   changeInputSchemaOperation,
   changeOutputSchemaOperation,
+  redoDataMapOperation,
+  saveDataMap,
+  undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
@@ -42,7 +43,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
     const schemaState = store.getState().schema;
-    if (node.type === 'input') {
+    if (node.data.schemaType === 'input') {
       const currentSchemaNode = schemaState.currentInputNode;
       if (currentSchemaNode) {
         const newCurrentSchemaNode =
@@ -163,6 +164,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     yPos: '16px',
   };
 
+  const nodeTypes = useMemo(() => ({ schemaCard: SchemaCard }), []);
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
@@ -192,6 +195,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                     backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
                     height: '600px',
                   }}
+                  nodeTypes={nodeTypes}
                 ></ReactFlow>
               </ReactFlowProvider>
             </div>

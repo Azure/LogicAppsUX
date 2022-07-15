@@ -51,6 +51,7 @@ export const vscodeSlice = createSlice({
         selectedWorkflows: [],
         selectedSubscription: '',
         selectedIse: '',
+        location: '',
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
@@ -66,8 +67,9 @@ export const vscodeSlice = createSlice({
       (state as InitializedVscodeState).exportData.selectedIse = '';
     },
     updateSelectedIse: (state: VscodeState, action: PayloadAction<any>) => {
-      const { selectedIse } = action.payload;
+      const { selectedIse, location } = action.payload;
       (state as InitializedVscodeState).exportData.selectedIse = selectedIse;
+      (state as InitializedVscodeState).exportData.location = location;
     },
   },
 });

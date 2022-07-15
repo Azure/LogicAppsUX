@@ -1,3 +1,4 @@
+import type { Workflow } from '../common/models/workflow';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
@@ -7,7 +8,7 @@ import React, { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
-  workflow: LogicAppsV2.WorkflowDefinition;
+  workflow: Workflow;
   children?: React.ReactNode;
 }
 

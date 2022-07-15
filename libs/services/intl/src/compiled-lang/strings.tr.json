@@ -14,7 +14,7 @@
   "+W9fkq": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+      "value": "(UTC+08:00) Kuala Lumpur, Singapur"
     }
   ],
   "+dlOgj": [
@@ -110,13 +110,13 @@
   "/rjP4U": [
     {
       "type": 0,
-      "value": "(UTC) Coordinated Universal Time"
+      "value": "(UTC) Eşgüdümlü Evrensel Saat"
     }
   ],
   "/sMQhI": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Indiana (East)"
+      "value": "(UTC-05:00) Indiana (Doğu)"
     }
   ],
   "/ut0u7": [
@@ -140,7 +140,7 @@
   "09oqLb": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Baku"
+      "value": "(UTC+04:00) Bakü"
     }
   ],
   "0FzNJV": [
@@ -278,7 +278,7 @@
   "1Ogj/V": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Kudüs"
     }
   ],
   "1R6Vaa": [
@@ -372,7 +372,7 @@
   "1zmMYu": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Caracas"
+      "value": "(UTC-04:00) Karakas"
     }
   ],
   "23fENy": [
@@ -438,7 +438,7 @@
   "2ri1Kf": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Damascus"
+      "value": "(UTC+02:00) Şam"
     }
   ],
   "2tTQ0A": [
@@ -462,7 +462,7 @@
   "3FoqCK": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Tbilisi"
+      "value": "(UTC+04:00) Tiflis"
     }
   ],
   "3NhwIJ": [
@@ -480,7 +480,7 @@
   "3TD2V5": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Dhaka"
+      "value": "(UTC+06:00) Dakka"
     }
   ],
   "3X/ZDK": [
@@ -498,7 +498,7 @@
   "3jlz+B": [
     {
       "type": 0,
-      "value": "(UTC+03:30) Tehran"
+      "value": "(UTC+03:30) Tahran"
     }
   ],
   "3kI7xF": [
@@ -540,7 +540,7 @@
   "4/kJ8D": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Yerevan"
+      "value": "(UTC+04:00) Erivan"
     }
   ],
   "47kOXr": [
@@ -558,13 +558,13 @@
   "4Q7WzU": [
     {
       "type": 0,
-      "value": "Add a new connection"
+      "value": "Yeni bağlantı ekle"
     }
   ],
   "4XdZNj": [
     {
       "type": 0,
-      "value": "(UTC+01:00) West Central Africa"
+      "value": "(UTC+01:00) Orta Batı Afrika"
     }
   ],
   "4YKQAF": [
@@ -720,7 +720,7 @@
   "7KxCGX": [
     {
       "type": 0,
-      "value": "(UTC+10:30) Lord Howe Island"
+      "value": "(UTC+10:30) Lord Howe Adası"
     }
   ],
   "7QymrD": [
@@ -750,7 +750,7 @@
   "7lvqST": [
     {
       "type": 0,
-      "value": "Invalid"
+      "value": "Geçersiz"
     }
   ],
   "7yEdSt": [
@@ -792,7 +792,7 @@
   "8JEHiY": [
     {
       "type": 0,
-      "value": "Saturday"
+      "value": "Cumartesi"
     }
   ],
   "8JFxmV": [
@@ -816,7 +816,7 @@
   "8Y5xpK": [
     {
       "type": 0,
-      "value": "Thursday"
+      "value": "Perşembe"
     }
   ],
   "8j+a0n": [
@@ -828,7 +828,7 @@
   "8pPivj": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Norfolk Island"
+      "value": "(UTC+11:00) Norfolk Adası"
     }
   ],
   "8to63i": [
@@ -870,7 +870,7 @@
   "949s+r": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Ulaanbaatar"
+      "value": "(UTC+08:00) Ulanbator"
     }
   ],
   "99vsJy": [
@@ -882,7 +882,7 @@
   "9EmN2M": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "İptal"
     }
   ],
   "9JuvQ4": [
@@ -924,13 +924,13 @@
   "9pdXmX": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Roma, Stockholm, Viyana"
     }
   ],
   "9pl7QP": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Atlantic Time (Canada)"
+      "value": "(UTC-04:00) Atlantik Saati (Kanada)"
     }
   ],
   "9u/Ae3": [
@@ -1024,7 +1024,7 @@
   "BAgRzO": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Coordinated Universal Time-08"
+      "value": "(UTC-08:00) Eşgüdümlü Evrensel Saat-08"
     }
   ],
   "BBD8Em": [
@@ -1060,7 +1060,7 @@
   "BSHFiw": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Perth"
+      "value": "(UTC+08:00) Pert"
     }
   ],
   "BVOUxP": [
@@ -1102,7 +1102,7 @@
   "Cy9qeQ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+      "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofya, Tallinn, Vilnius"
     }
   ],
   "D+Ptnq": [
@@ -1126,13 +1126,13 @@
   "DfS13/": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Aleutian Islands"
+      "value": "(UTC-10:00) Aleutian Adaları"
     }
   ],
   "DuXV2M": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Azores"
+      "value": "(UTC-01:00) Azorlar"
     }
   ],
   "DysO/Q": [
@@ -1144,7 +1144,7 @@
   "E9OS+9": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Coordinated Universal Time-09"
+      "value": "(UTC-09:00) Eşgüdümlü Evrensel Saat-09"
     }
   ],
   "ECZC6Y": [
@@ -1162,7 +1162,7 @@
   "EYqGxA": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Athens, Bucharest"
+      "value": "(UTC+02:00) Atina, Bükreş"
     }
   ],
   "EZz5q7": [
@@ -1180,13 +1180,13 @@
   "Eqgm4v": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+      "value": "(UTC-05:00) Doğu Saati (ABD ve Kanada)"
     }
   ],
   "ExaACE": [
     {
       "type": 0,
-      "value": "Connection display name"
+      "value": "Bağlantı görünen adı"
     }
   ],
   "F3IDl8": [
@@ -1270,7 +1270,7 @@
   "FXC0Zi": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Baghdad"
+      "value": "(UTC+03:00) Bağdat"
     }
   ],
   "FXLR5M": [
@@ -1440,7 +1440,7 @@
   "IUE/lQ": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Cabo Verde Is."
+      "value": "(UTC-01:00) Cabo Verde Adaları"
     }
   ],
   "IW2MjQ": [
@@ -1485,6 +1485,12 @@
       "value": "Sabit kültürün büyük-küçük harf kurallarını kullanarak bir dizeyi küçük harfe dönüştürür"
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -1495,6 +1501,12 @@
     {
       "type": 0,
       "value": "Gerekli. Boole'ye dönüştürülen değer."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "Jaz3EC": [
@@ -1612,7 +1624,7 @@
   "Khc8lS": [
     {
       "type": 0,
-      "value": "(UTC-09:30) Marquesas Islands"
+      "value": "(UTC-09:30) Marquesas Adaları"
     }
   ],
   "KlvTze": [
@@ -1624,13 +1636,13 @@
   "KoBDbT": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Coordinated Universal Time-02"
+      "value": "(UTC-02:00) Eşgüdümlü Evrensel Saat-02"
     }
   ],
   "Kw3bWO": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Istanbul"
+      "value": "(UTC+02:00) İstanbul"
     }
   ],
   "L+PY+j": [
@@ -1654,7 +1666,7 @@
   "LMB8am": [
     {
       "type": 0,
-      "value": "Creating..."
+      "value": "Oluşturuluyor..."
     }
   ],
   "LS8rfZ": [
@@ -1666,7 +1678,7 @@
   "Lft/is": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Yeni ekle"
     }
   ],
   "LoGUT3": [
@@ -1690,13 +1702,13 @@
   "LvpxiA": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "Ağ Geçidi"
     }
   ],
   "Lwe7tQ": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lizbon, Londra"
     }
   ],
   "M0HMjE": [
@@ -1708,7 +1720,7 @@
   "M48CGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00) Solomon Adl., Yeni Kaledonya"
     }
   ],
   "M6U2LE": [
@@ -1786,7 +1798,7 @@
   "NeyUAh": [
     {
       "type": 0,
-      "value": "(UTC-03:00) City of Buenos Aires"
+      "value": "(UTC-03:00) Buenos Aires"
     }
   ],
   "NkUgXU": [
@@ -1804,7 +1816,7 @@
   "NvJDn/": [
     {
       "type": 0,
-      "value": "Tuesday"
+      "value": "Salı"
     }
   ],
   "O+8vRv": [
@@ -1834,7 +1846,7 @@
   "OGUVGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Bougainville Island"
+      "value": "(UTC+11:00) Bougainville Adası"
     }
   ],
   "OH9xlX": [
@@ -1846,7 +1858,7 @@
   "OKszbi": [
     {
       "type": 0,
-      "value": "Connection Name"
+      "value": "Bağlantı Adı"
     }
   ],
   "OSHNZ2": [
@@ -1972,7 +1984,7 @@
   "PeLrFb": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+      "value": "(UTC+03:00) Moskova, St. Petersburg, Volgograd"
     }
   ],
   "PfCJlN": [
@@ -1984,7 +1996,7 @@
   "PmB0J7": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Turks and Caicos"
+      "value": "(UTC-04:00) Turks ve Caicos"
     }
   ],
   "Pvm0xB": [
@@ -2097,6 +2109,12 @@
       "value": "Gerekli. Bölünen dize."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Switch to input entire array"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -2144,7 +2162,7 @@
   "SADSSs": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Eski"
     }
   ],
   "SKXopi": [
@@ -2196,7 +2214,7 @@
   "T6VIym": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Ad"
     }
   ],
   "T7zcR6": [
@@ -2226,7 +2244,7 @@
   "TNEttQ": [
     {
       "type": 0,
-      "value": "Friday"
+      "value": "Cuma"
     }
   ],
   "TNzcrv": [
@@ -2250,7 +2268,7 @@
   "TX4Kdr": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Yeni bağlantı oluştur"
     }
   ],
   "TZv5JE": [
@@ -2280,7 +2298,7 @@
   "TqPfth": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+      "value": "(UTC+01:00) Brüksel, Kopenhag, Madrid, Paris"
     }
   ],
   "Twfck/": [
@@ -2298,7 +2316,7 @@
   "U1NiVg": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central America"
+      "value": "(UTC-06:00) Orta Amerika"
     }
   ],
   "U3iWVd": [
@@ -2310,7 +2328,7 @@
   "U56j9a": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Easter Island"
+      "value": "(UTC-06:00) Paskalya Adası"
     }
   ],
   "UCNM4L": [
@@ -2334,7 +2352,7 @@
   "UkSZnQ": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Kaydet"
     }
   ],
   "Ur+wph": [
@@ -2364,7 +2382,7 @@
   "VE3cxq": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+      "value": "(UTC-07:00) Dağ Saati (ABD ve Kanada)"
     }
   ],
   "VKAk5g": [
@@ -2389,6 +2407,12 @@
     {
       "type": 0,
       "value": "Yorum"
+    }
+  ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Switch to detail inputs for array item"
     }
   ],
   "VZHick": [
@@ -2419,10 +2443,10 @@
       "value": "Gerekli. Yeni özelliğin adı."
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
-      "value": "Temizle"
+      "value": "Clear"
     }
   ],
   "WS9kXD": [
@@ -2500,7 +2524,7 @@
   "XTYYks": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Seoul"
+      "value": "(UTC+09:00) Seul"
     }
   ],
   "XTuxmH": [
@@ -2524,13 +2548,13 @@
   "XX1ioe": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Kuwait, Riyadh"
+      "value": "(UTC+03:00) Kuveyt, Riyad"
     }
   ],
   "XaS4ds": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Pacific Time (US & Canada)"
+      "value": "(UTC-08:00) Pasifik Saati (ABD ve Kanada)"
     }
   ],
   "Xnn0uj": [
@@ -2642,7 +2666,7 @@
   "ZQ4lji": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
+      "value": "(UTC+10:00) Kanbera, Melbourne, Sidney"
     }
   ],
   "ZUaz3Y": [
@@ -2708,7 +2732,7 @@
   "aH9SV7": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ashgabat, Tashkent"
+      "value": "(UTC+05:00) Aşkabad, Taşkent"
     }
   ],
   "aK4iLW": [
@@ -2768,13 +2792,13 @@
   "bnStSJ": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+      "value": "(UTC+05:30) Chennai, Kolkata (Calcutta), Mumbai, Yeni Delhi"
     }
   ],
   "bx3qeC": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Brasilia"
+      "value": "(UTC-03:00) Brezilya"
     }
   ],
   "bzF/qn": [
@@ -2912,7 +2936,7 @@
   "dUZi34": [
     {
       "type": 0,
-      "value": "(UTC+12:45) Chatham Islands"
+      "value": "(UTC+12:45) Chatham Adaları"
     }
   ],
   "dWFyfN": [
@@ -2936,7 +2960,7 @@
   "dgAu27": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Greenland"
+      "value": "(UTC-03:00) Grönland"
     }
   ],
   "dhvk0u": [
@@ -2966,7 +2990,7 @@
   "e00zot": [
     {
       "type": 0,
-      "value": "How often do you want to check for items?"
+      "value": "Öğeleri ne sıklıkta denetlemek istiyorsunuz?"
     }
   ],
   "e4Onhn": [
@@ -3044,7 +3068,7 @@
   "froV/0": [
     {
       "type": 0,
-      "value": "(UTC+04:30) Kabul"
+      "value": "(UTC+04:30) Kabil"
     }
   ],
   "ftwXvc": [
@@ -3068,7 +3092,7 @@
   "g5mMuM": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+      "value": "(UTC-03:00) Saint Pierre ve Miquelon"
     }
   ],
   "gCXOd5": [
@@ -3104,7 +3128,7 @@
   "gIc0YJ": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Bağlantı adı"
     }
   ],
   "gKq3Jv": [
@@ -3302,7 +3326,7 @@
   "j1VU25": [
     {
       "type": 0,
-      "value": "(UTC+14:00) Kiritimati Island"
+      "value": "(UTC+14:00) Kiritimati Adası"
     }
   ],
   "j2MU0b": [
@@ -3332,7 +3356,7 @@
   "jMLmag": [
     {
       "type": 0,
-      "value": "Create New"
+      "value": "Yeni Oluştur"
     }
   ],
   "jQ0Aqj": [
@@ -3434,7 +3458,7 @@
   "kZCX7t": [
     {
       "type": 0,
-      "value": "Monday"
+      "value": "Pazartesi"
     }
   ],
   "kZuYgD": [
@@ -3446,7 +3470,7 @@
   "kc5Mui": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Mid-Atlantic - Old"
+      "value": "(UTC-02:00) Orta Atlantik - Eski"
     }
   ],
   "keb4r1": [
@@ -3458,7 +3482,7 @@
   "kneb9/": [
     {
       "type": 0,
-      "value": "(UTC-12:00) International Date Line West"
+      "value": "(UTC-12:00) Uluslararası Tarih Çizgisi Batı"
     }
   ],
   "knylNW": [
@@ -3488,13 +3512,13 @@
   "lFve22": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+      "value": "(UTC+01:00) Saraybosna, Üsküp, Varşova, Zagreb"
     }
   ],
   "lIPWQ6": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+      "value": "(UTC+07:00) Bangkok, Hanoi, Cakarta"
     }
   ],
   "lPTdSf": [
@@ -3519,6 +3543,12 @@
     {
       "type": 0,
       "value": "atlandı"
+    }
+  ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Please Enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3862,7 +3892,7 @@
   "qQoQFv": [
     {
       "type": 0,
-      "value": "Invalid connection."
+      "value": "Geçersiz bağlantı."
     }
   ],
   "qSejoi": [
@@ -3990,7 +4020,7 @@
   "rstpaK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central Time (US & Canada)"
+      "value": "(UTC-06:00) Merkezi Saat (ABD ve Kanada)"
     }
   ],
   "s5RV9B": [
@@ -4056,7 +4086,7 @@
   "siYGSo": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Beirut"
+      "value": "(UTC+02:00) Beyrut"
     }
   ],
   "soqP+Z": [
@@ -4092,7 +4122,7 @@
   "tELkSC": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
+      "value": "(UTC-06:00) Guadalahara, Mexico City, Monterey"
     }
   ],
   "tImHz/": [
@@ -4164,7 +4194,7 @@
   "tsmuoF": [
     {
       "type": 0,
-      "value": "Display Name"
+      "value": "Görünen Ad"
     }
   ],
   "tu8I7j": [
@@ -4182,7 +4212,7 @@
   "u6Gdft": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+      "value": "(UTC+04:00) Abu Dabi, Muskat"
     }
   ],
   "uN4zFU": [
@@ -4230,7 +4260,7 @@
   "udNlco": [
     {
       "type": 0,
-      "value": "(UTC-11:00) Coordinated Universal Time-11"
+      "value": "(UTC-11:00) Eşgüdümlü Evrensel Saat-11"
     }
   ],
   "ui7GCl": [
@@ -4302,7 +4332,7 @@
   "vb/okJ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Cairo"
+      "value": "(UTC+02:00) Kahire"
     }
   ],
   "vcBAuU": [
@@ -4340,7 +4370,7 @@
   "w5Hhig": [
     {
       "type": 0,
-      "value": "Sunday"
+      "value": "Pazar"
     }
   ],
   "wEaGWn": [
@@ -4352,7 +4382,7 @@
   "wF7C+h": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "İptal"
     }
   ],
   "wFCkpM": [
@@ -4406,7 +4436,7 @@
   "x+6ccf": [
     {
       "type": 0,
-      "value": "Wednesday"
+      "value": "Çarşamba"
     }
   ],
   "x0or2o": [
@@ -4454,13 +4484,13 @@
   "xZhieP": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Islamabad, Karachi"
+      "value": "(UTC+05:00) İslamabat, Karaçi"
     }
   ],
   "xb/DIr": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Coordinated Universal Time+12"
+      "value": "(UTC+12:00) Eşgüdümlü Evrensel Saat+12"
     }
   ],
   "xt5TeT": [
@@ -4524,7 +4554,7 @@
   "yph4eq": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+      "value": "(UTC+01:00) Belgrat, Bratislava, Budapeşte Ljubljana, Prag"
     }
   ],
   "yqRrQ/": [
@@ -4536,13 +4566,19 @@
   "yxsn7s": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Casablanca"
+      "value": "(UTC+00:00) Kazablanka"
     }
   ],
   "yyYtZV": [
     {
       "type": 0,
       "value": "Connection gateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "z4YYlQ": [

@@ -1,5 +1,6 @@
 import { ResourceType } from '../types';
-import type { IApiService, Workflows } from '../types';
+import type { IApiService, Workflows, WorkflowsList } from '../types';
+import { getValidationPayload, getValidationUri, getWorkflowsUri } from './helper';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
@@ -30,13 +31,6 @@ export class ApiService implements IApiService {
 
   private getResourceOptions = (resourceType: string, properties?: any) => {
     switch (resourceType) {
-      case ResourceType.workflows: {
-        return {
-          query:
-            "resources|where type =~ 'microsoft.logic/workflows' or (type =~ 'microsoft.web/sites' and kind contains 'workflowapp')\r\n| project name,resourceGroup,id,type,location,subscriptionId|sort by (tolower(tostring(name))) asc",
-          subscriptions: [],
-        };
-      }
       case ResourceType.subscriptions: {
         return {
           query:
@@ -86,7 +80,7 @@ export class ApiService implements IApiService {
 
   async getWorkflows(subscriptionId: string, iseId: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const workflowsUri = this.getWorkflowsUri(subscriptionId, iseId);
+    const workflowsUri = getWorkflowsUri(subscriptionId, iseId);
     const response = await fetch(workflowsUri, { headers, method: 'GET' });
 
     if (!response.ok) {
@@ -127,5 +121,21 @@ export class ApiService implements IApiService {
     const { data: ise } = iseResponse;
 
     return { ise };
+  }
+
+  async validateWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string) {
+    const headers = this.getAccessTokenHeaders();
+    const validationUri = getValidationUri(selectedSubscription, selectedLocation);
+    const validationPayload = getValidationPayload(selectedWorkflows);
+    const response = await fetch(validationUri, { headers, method: 'POST', body: JSON.stringify(validationPayload) });
+
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    const validationResponse: any = await response.json();
+    const data = validationResponse;
+
+    return data;
   }
 }
