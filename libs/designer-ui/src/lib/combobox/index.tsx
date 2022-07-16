@@ -47,7 +47,7 @@ export interface ComboboxProps {
   placeholderText?: string;
   label?: string;
   useOption?: boolean;
-  selectedKey?: string | number;
+  selectedKey?: string;
   required?: boolean;
   setSelectedKey?: (key: string) => void;
   setCustomValue?: (customVal: Segment[] | null) => void;
