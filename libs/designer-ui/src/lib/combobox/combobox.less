@@ -1,299 +1,75 @@
 @import (reference) '../variables.less';
 
-@optionDisabledColor: rgb(128, 128, 128);
-@dropDownColor: rgba(255, 255, 255, 0.4);
-@dividerColor: rgba(191, 191, 191, 0.8);
-@dropdownMaxHeight: 300px;
-@comboboxItemPadding: 5px 5px 5px 11px; /* Left padding 10px like the input textfield, plus 1px to align with draft.js border added  */
-
-.msla-combobox {
-  position: relative;
-  width: 100%;
-}
-
-.msla-combobox-input {
-  position: relative;
-
-  .msla-editor-input-control {
-    width: calc(100% - 42px);
-    padding: 0 0 0 10px; /* This removes the default 10px right padding since padding is already built into the chervon */
-    display: inline-block;
+@comboboxItemPadding: 5px 0px 5px 15px;
+.msla-combobox-container {
+  .msla-combobox-label {
+    font-size: 14px;
+    padding-left: 5px;
   }
-
-  .msla-combobox-button {
-    height: 26px;
-    vertical-align: bottom;
-  }
-}
-
-.msla-combobox-icon-image {
-  height: 18px;
-  width: 18px;
-  color: #000000;
-}
-
-.msla-combobox-input-value {
-  width: calc(100% ~'-' 40px);
-  display: inline-block;
-}
-
-.msla-combobox-input-value-full-width {
-  width: 100%;
-  display: inline-block;
-}
-
-.msla-combobox-options {
-  background-color: @card-background-color;
-  border: @defaultBorder;
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.35);
-  font-family: @font-family;
-  font-size: @parameter-value-font-size;
-  left: -1px;
-  max-height: @dropdownMaxHeight;
-  overflow-y: auto;
-  position: absolute;
-  top: (@parameter-inputbox-height + 1px);
-  width: 100%;
-  z-index: 100;
-}
-
-.msla-combobox-loading-text {
-  display: block;
-  padding: @comboboxItemPadding;
-  text-align: left;
-}
-
-.msla-combobox-noitems {
-  display: flex;
-  padding: @comboboxItemPadding;
-  text-align: left;
-  width: calc(100% - 16px);
-}
-
-.msla-combobox-error {
-  display: flex;
-  padding: @comboboxItemPadding;
-  text-align: left;
-  width: calc(100% - 16px);
-
-  .msla-combobox-error-clipped {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-
-  .msla-combobox-error-showMore {
-    vertical-align: top;
-    margin-right: 5px;
-    width: 16px;
-    height: 16px;
-  }
-}
-
-.msla-combobox-error-callout {
-  max-width: 340px;
-
-  .msla-combobox-error-text {
-    font-size: 12px;
-    padding: 10px 10px 0 10px;
-    overflow-x: auto;
-  }
-
-  .msla-combobox-error-copy {
-    text-decoration: none;
-    font-size: 12px;
-    padding: 10px 0 10px 10px;
-    display: inline-block;
-  }
-}
-
-.msla-combobox-option-custom,
-.msla-combobox-custom-input {
-  cursor: pointer;
-  padding: @comboboxItemPadding;
-  border: none;
-  display: flex;
-  font-family: @font-family;
-  outline: none;
-  forced-color-adjust: none;
-
-  &:focus,
-  &:hover,
-  &:active {
-    background-color: @hoverColor;
-    -webkit-transition: background-color 0.5s ease;
-    -moz-transition: background-color 0.5s ease;
-    transition: background-color 0.5s ease;
-
-    @media (forced-colors: active) {
-      background-color: highlight;
-      color: highlightText;
+  .msla-combobox {
+    input {
+      padding: 5px;
+      font-family: @font-family;
+      outline: none;
+      forced-color-adjust: none;
+      &:hover {
+        cursor: pointer;
+      }
     }
-  }
-}
-
-.msla-combobox-custom-input {
-  text-align: left;
-  word-break: break-all;
-}
-
-.msla-combobox-option {
-  cursor: pointer;
-  word-wrap: break-word;
-  text-align: left;
-}
-
-.msla-combobox-options-enums {
-  border-bottom: 1px solid @dividerColor;
-}
-
-.msla-recommendation-suggestion {
-  .msla-no-match-text {
-    padding: @comboboxItemPadding;
-  }
-}
-
-a.msla-combobox-option-text {
-  padding: @comboboxItemPadding;
-  border: none;
-  color: inherit;
-  display: flex;
-  font-family: @font-family;
-  outline: none;
-  position: relative;
-  white-space: nowrap;
-  min-height: 16px;
-  forced-color-adjust: none;
-
-  &.highlighted,
-  &:focus,
-  &:hover,
-  &:active {
-    background-color: @hoverColor;
-    -webkit-transition: background-color 0.5s ease;
-    -moz-transition: background-color 0.5s ease;
-    transition: background-color 0.5s ease;
-
-    @media (forced-colors: active) {
-      background-color: highlight;
-      color: highlightText;
-    }
-  }
-
-  &[data-disabled='true'] {
-    cursor: default;
-    color: @optionDisabledColor;
-    pointer-events: none;
-
-    &:focus,
-    &:hover,
-    &:active {
-      background-color: @dropDownColor;
-    }
-
     button {
-      pointer-events: all;
-    }
-  }
-
-  .msla-combobox-option-flyout {
-    position: absolute;
-    right: 3%;
-    width: 18px;
-    height: 18px;
-
-    .msla-flyout {
-      padding: 0;
-      line-height: 0;
-
-      .msla-flyout-icon {
-        width: 15px;
-        height: 15px;
-        margin: 2px;
+      &:hover {
+        cursor: pointer;
       }
     }
   }
-}
 
-a.msla-combobox-option-people-picker-text {
-  padding: @comboboxItemPadding;
-  border: none;
-  color: inherit;
-  display: inline-block;
-  font-family: @font-family;
-  outline: none;
-  position: relative;
-  white-space: nowrap;
-  min-height: 16px;
-  width: 100%;
+  .msla-combobox-editor-container {
+    outline: 1px solid @panel-mode-panel-border-color;
+    margin: 1px;
+    border-radius: 2px;
+    resize: none;
+    text-overflow: ellipsis;
+    display: flex;
 
-  &:focus,
-  &:hover,
-  &:active {
-    background-color: @hoverColor;
-    -webkit-transition: background-color 0.5s ease;
-    -moz-transition: background-color 0.5s ease;
-    transition: background-color 0.5s ease;
-  }
-
-  &[aria-disabled='true'] {
-    cursor: default;
-    color: @optionDisabledColor;
-    pointer-events: none;
-
-    &:focus,
-    &:hover,
-    &:active {
-      background-color: @dropDownColor;
-    }
-  }
-}
-
-.msla-combobox-option-title {
-  font-size: @card-header-font-size;
-}
-
-.msla-combobox-option-description {
-  font-size: @card-body-font-size;
-}
-
-body.dark {
-  .msla-combobox-icon-image {
-    color: @ms-color-black;
-  }
-
-  .msla-combobox-options {
-    background-color: @ms-color-white;
-    box-shadow: 0 5px 12px rgba(255, 255, 255, 0.35);
-  }
-
-  .msla-combobox-option-custom,
-  .msla-combobox-custom-input {
-    color: @ms-color-themePrimary;
-
-    &:focus,
-    &:hover,
-    &:active {
-      background-color: @ms-color-neutralTertiaryAlt;
-    }
-  }
-
-  a.msla-combobox-option-text {
-    &.highlighted,
-    &:focus,
-    &:hover,
-    &:active {
-      background-color: @ms-color-neutralTertiaryAlt;
-    }
-
-    &[data-disabled='true'] {
-      color: @ms-color-neutralTertiary;
-
-      &:focus,
-      &:hover,
-      &:active {
-        background-color: @ms-color-neutralTertiaryAlt;
+    .msla-combobox-editor {
+      width: calc(100% - 30px);
+      .editor-input {
+        outline: none;
+        resize: none;
+        font-size: 13px;
+        font-weight: 400;
+        min-height: 22px;
+        text-overflow: ellipsis;
+        position: relative;
+        padding-inline-start: 10px;
+        box-sizing: border-box;
+        p {
+          margin: 0;
+          padding-top: 1px;
+          line-height: 22px;
+          margin-inline-start: 2px;
+        }
+      }
+      .editor-placeholder {
+        color: #696969;
+        overflow: hidden;
+        position: absolute;
+        text-overflow: ellipsis;
+        margin-top: -21px;
+        margin-left: 13px;
+        font-size: 13px;
+        font-weight: 400;
+        font-style: italic;
+        user-select: none;
+        display: inline-block;
+        pointer-events: none;
       }
     }
   }
+  .msla-combobox-editor-container:focus-within {
+    outline: 1px solid rgb(0, 120, 212);
+  }
+}
+.msla-combobox-custom-option {
+  color: rgb(0, 120, 212);
 }

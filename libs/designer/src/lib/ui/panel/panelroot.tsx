@@ -43,9 +43,11 @@ export const PanelRoot = (): JSX.Element => {
   const showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
-    dispatch(
-      registerPanelTabs([{ ...monitoringTab, visible: !!isMonitoringView }, parametersTab, aboutTab, codeViewTab, SettingsTab, scratchTab])
-    );
+    const tabs = [{ ...monitoringTab, visible: !!isMonitoringView }, parametersTab, aboutTab, codeViewTab, SettingsTab];
+    if (process.env.NODE_ENV !== 'production') {
+      tabs.push(scratchTab);
+    }
+    dispatch(registerPanelTabs(tabs));
   }, [dispatch, readOnly, isMonitoringView]);
 
   useEffect(() => {
