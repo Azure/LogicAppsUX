@@ -2549,6 +2549,20 @@
       "value": "Historie spuštění"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -3151,6 +3165,12 @@
       "value": "Vyžadováno. Index určující, kde začíná v parametru 1 podřetězec."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "No values matching your search"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3531,6 +3551,12 @@
       "value": "Upravit ve formátu JSON"
     }
   ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+    }
+  ],
   "jsEMSu": [
     {
       "type": 0,
@@ -3696,7 +3722,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Zadejte platné pole."
     }
   ],
   "lgs5sf": [
@@ -4525,6 +4551,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4767,6 +4799,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který se převede na hodnotu nativního typu."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
     }
   ],
   "zbtUQ/": [

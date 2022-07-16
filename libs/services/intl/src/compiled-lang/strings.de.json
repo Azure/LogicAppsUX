@@ -2431,6 +2431,20 @@
       "value": "Ausführungsverlauf"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -3033,6 +3047,12 @@
       "value": "Erforderlich. Der Index, bei dem die Teilzeichenfolge in Parameter 1 beginnt."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "No values matching your search"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3385,6 +3405,12 @@
     {
       "type": 0,
       "value": "In JSON bearbeiten"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4359,6 +4385,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4601,6 +4633,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Wert, der in einen nativen Typwert konvertiert wird."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
     }
   ],
   "zbtUQ/": [

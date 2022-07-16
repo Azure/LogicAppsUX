@@ -2427,6 +2427,20 @@
       "value": "Historial de ejecución"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -3029,6 +3043,12 @@
       "value": "Obligatorio. El índice a partir del cual empieza la subcadena en el parámetro 1."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "No values matching your search"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3389,6 +3409,12 @@
     {
       "type": 0,
       "value": "Editar en JSON"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4363,6 +4389,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4605,6 +4637,12 @@
     {
       "type": 0,
       "value": "Obligatorio. La cadena que se convierte a un valor de tipo nativo."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
     }
   ],
   "zbtUQ/": [

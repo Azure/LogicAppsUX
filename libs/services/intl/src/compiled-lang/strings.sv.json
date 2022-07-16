@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Markera om du vill välja den här anslutningen"
     }
   ],
   "+lpuMl": [
@@ -56,7 +56,7 @@
   "/B2CTz": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00) Beijing, Chongqing, Hongkong, Urumqi"
     }
   ],
   "/I/U8L": [
@@ -1380,7 +1380,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Avbryt markeringen"
     }
   ],
   "GzQQqH": [
@@ -2368,7 +2368,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Ange ett namn för anslutningen."
     }
   ],
   "V+/c21": [
@@ -2429,6 +2429,20 @@
     {
       "type": 0,
       "value": "Körningshistorik"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
     }
   ],
   "W070M2": [
@@ -3033,6 +3047,12 @@
       "value": "Obligatoriskt. Det index i vilket delsträngen börjar i parameter 1."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "No values matching your search"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3168,7 +3188,7 @@
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Spara den markerade anslutningen"
     }
   ],
   "gu9o9z": [
@@ -3389,6 +3409,12 @@
     {
       "type": 0,
       "value": "Redigera i JSON"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4010,7 +4036,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Är anslutningen ogiltig"
     }
   ],
   "raBiud": [
@@ -4052,7 +4078,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Avbryt skapande av en anslutning"
     }
   ],
   "sW47JR": [
@@ -4352,7 +4378,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Skapa en anslutning för "
     },
     {
       "type": 1,
@@ -4361,6 +4387,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
     }
   ],
   "vwH/XV": [
@@ -4556,7 +4588,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Välj en befintlig anslutning eller skapa en ny."
     }
   ],
   "yph4eq": [
@@ -4580,7 +4612,7 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Anslutningsgateway"
     }
   ],
   "z3VuE+": [
@@ -4605,6 +4637,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den sträng som konverteras till ett värde av ursprunglig typ."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
     }
   ],
   "zbtUQ/": [
