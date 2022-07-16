@@ -2372,6 +2372,20 @@
       "value": "実行履歴"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -2974,6 +2988,12 @@
       "value": "必須。パラメーター 1 で部分文字列の開始位置を示すインデックス。"
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "No values matching your search"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3315,6 +3335,12 @@
     {
       "type": 0,
       "value": "JSON 内で編集"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4274,6 +4300,12 @@
       "value": " の接続を作成します。"
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4516,6 +4548,12 @@
     {
       "type": 0,
       "value": "必須。ネイティブな型の値に変換される文字列。"
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
     }
   ],
   "zbtUQ/": [
