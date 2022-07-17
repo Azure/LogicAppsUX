@@ -5,7 +5,7 @@ import { parseSegments } from './parsesegments';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
-// import TokenPicker from './plugins/TokenPicker';
+import TokenPicker from './plugins/TokenPicker';
 import { TreeView } from './plugins/TreeView';
 import { Validation } from './plugins/Validation';
 import type { ValidationProps } from './plugins/Validation';
@@ -36,6 +36,7 @@ export interface BaseEditorProps {
   placeholder?: string;
   BasePlugins?: BasePlugins;
   initialValue?: Segment[];
+  tokenPickerClassName?: string;
   children?: React.ReactNode;
 }
 
@@ -60,7 +61,15 @@ const onError = (error: Error) => {
   console.error(error);
 };
 
-export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugins = {}, initialValue, children }: BaseEditorProps) => {
+export const BaseEditor = ({
+  className,
+  readonly = false,
+  placeholder,
+  BasePlugins = {},
+  initialValue,
+  tokenPickerClassName,
+  children,
+}: BaseEditorProps) => {
   const intl = useIntl();
   const initialConfig = {
     theme: defaultTheme,
@@ -97,7 +106,7 @@ export const BaseEditor = ({ className, readonly = false, placeholder, BasePlugi
           NOTE 14672766: Commenting out TokenPlugin because has a few issues
           and is not needed for read only. Will revisit later.
         */}
-        {/* {tokens ? <TokenPicker /> : null} */}
+        {tokens ? <TokenPicker buttonClassName={tokenPickerClassName} /> : null}
         {clearEditor ? <ClearEditor showButton={false} /> : null}
         {validation ? (
           <Validation

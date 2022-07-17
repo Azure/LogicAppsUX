@@ -459,6 +459,12 @@
       "value": "Identifier"
     }
   ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Add dynamic content"
+    }
+  ],
   "3FoqCK": [
     {
       "type": 0,
@@ -3405,6 +3411,12 @@
     {
       "type": 0,
       "value": "Edit in JSON"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [

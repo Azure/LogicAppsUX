@@ -3,8 +3,8 @@ import Constants from '../../../common/constants';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
-import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
-import { initializeOperationInfo, initializeNodes } from '../../state/operationMetadataSlice';
+import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
+import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import type { AddTokensPayload, NodeTokens } from '../../state/tokensSlice';
 import { initializeTokens } from '../../state/tokensSlice';
@@ -89,7 +89,7 @@ const initializeOperationDetailsForManifest = async (
     if (operationInfo) {
       const manifest = await getOperationManifest(operationInfo);
 
-      dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
+      dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo, type: operation.type, kind: operation.kind }));
 
       const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
       const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);

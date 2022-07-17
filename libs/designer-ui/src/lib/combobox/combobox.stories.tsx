@@ -13,11 +13,11 @@ export const Standard = Template.bind({});
 
 Standard.args = {
   options: [
-    { value: 'GET', key: 'GET', disabled: false },
-    { value: 'PUT', key: 'PUT', disabled: false },
-    { value: 'POST', key: 'POST', disabled: false },
-    { value: 'PATCH', key: 'PATCH', disabled: false },
-    { value: 'DELETE', key: 'DELETE', disabled: false },
+    { value: 'GET', key: 'GET', displayName: 'GET', disabled: false },
+    { value: 'PUT', key: 'PUT', displayName: 'PUT', disabled: false },
+    { value: 'POST', key: 'POST', displayName: 'POST', disabled: false },
+    { value: 'PATCH', key: 'PATCH', displayName: 'PATCH', disabled: false },
+    { value: 'DELETE', key: 'DELETE', displayName: 'DELETE', disabled: false },
   ],
   placeholderText: 'Method is Required',
   label: 'Method',

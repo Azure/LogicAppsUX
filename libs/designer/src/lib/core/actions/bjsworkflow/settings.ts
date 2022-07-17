@@ -60,7 +60,7 @@ export interface GraphEdge {
   predecessorId: string;
   successorId?: string;
   metadata?: string;
-  statuses?: string[];
+  statuses: string[];
 }
 interface SettingData<T> {
   isSupported: boolean;
