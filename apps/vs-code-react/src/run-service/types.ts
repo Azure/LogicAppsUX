@@ -224,6 +224,7 @@ export enum RouteName {
   workflows_selection = 'workflows-selection',
   validation = 'validation',
   overview = 'overview',
+  summary = 'summary',
 }
 
 export enum ValidationStatus {

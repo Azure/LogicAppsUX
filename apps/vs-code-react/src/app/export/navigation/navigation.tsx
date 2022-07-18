@@ -39,6 +39,10 @@ export const Navigation: React.FC = () => {
       defaultMessage: 'Export with warnings',
       description: 'Export with warnings button',
     }),
+    FINISH: intl.formatMessage({
+      defaultMessage: 'FINISH',
+      description: 'FINISH',
+    }),
   };
 
   const onClickCancel = () => {
@@ -61,6 +65,10 @@ export const Navigation: React.FC = () => {
       }
       case `/${RouteName.export}/${RouteName.workflows_selection}`: {
         navigate(`/${RouteName.export}/${RouteName.validation}`);
+        break;
+      }
+      case `/${RouteName.export}/${RouteName.validation}`: {
+        navigate(`/${RouteName.export}/${RouteName.summary}`);
         break;
       }
     }
@@ -96,6 +104,11 @@ export const Navigation: React.FC = () => {
     switch (pathname) {
       case `/${RouteName.export}/${RouteName.validation}`: {
         return validationState === ValidationStatus.succeeded_with_warnings ? intlText.EXPORT_WITH_WARNINGS : intlText.EXPORT;
+      }
+      case `/${RouteName.export}/${RouteName.summary}`: {
+        const validationText =
+          validationState === ValidationStatus.succeeded_with_warnings ? intlText.EXPORT_WITH_WARNINGS : intlText.EXPORT;
+        return `${validationText} and ${intlText.FINISH}`;
       }
       default: {
         return intlText.NEXT;
