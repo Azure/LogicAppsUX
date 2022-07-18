@@ -1,5 +1,7 @@
 import { StyledWorkflowPart, ValidationStatus, WorkflowPart } from '../../../run-service';
 import type { IValidationData, IGroupedItem, IGroupedGroup, IWorkflowValidation } from '../../../run-service';
+import type { IShimmerElement } from '@fluentui/react';
+import { ShimmerElementType } from '@fluentui/react';
 
 export const getValidationListColumns = () => {
   return [
@@ -159,6 +161,19 @@ export const parseValidationData = (validationData: IValidationData) => {
   return { validationItems: workflowsItems, validationGroups: workflowsGroups };
 };
 
-export const getOverallValidationStatus = (validationData: IValidationData) => {
+export const getOverallValidationStatus = (validationData: IValidationData): string => {
   return validationData?.properties?.validationState ?? '';
+};
+
+export const getShimmerElements = () => {
+  const shimmerFirstRow: IShimmerElement[] = [
+    { type: ShimmerElementType.gap, width: '15%' },
+    { type: ShimmerElementType.line, width: '100%' },
+  ];
+
+  const shimmerSecondRow = [
+    { type: ShimmerElementType.gap, width: '35%' },
+    { type: ShimmerElementType.line, width: '100%' },
+  ];
+  return { firstRow: shimmerFirstRow, secondRow: shimmerSecondRow };
 };
