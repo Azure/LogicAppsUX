@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
-import { useConnectorByNodeId } from '../../../core/state/selectors/actionMetadataSelector';
+import { useConnectorByNodeId, useNodeConnectionName } from '../../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../../core/store';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
@@ -13,6 +13,7 @@ export const SelectConnectionTab = () => {
   const dispatch = useDispatch();
 
   const selectedNodeId = useSelector((state: RootState) => state.panel.selectedNode);
+  const currentConnectionName = useNodeConnectionName(selectedNodeId);
 
   const hideConnectionTabs = useCallback(() => {
     dispatch(showDefaultTabs());
@@ -24,6 +25,7 @@ export const SelectConnectionTab = () => {
 
   const connector = useConnectorByNodeId(selectedNodeId);
   const connections = useConnectionsForConnector(connector?.id ?? '').data ?? [];
+  const currentConnection = connections.find((c) => c.properties.displayName === currentConnectionName.result);
 
   const saveSelectionCallback = useCallback(
     (_connection?: Connection) => {
@@ -42,6 +44,7 @@ export const SelectConnectionTab = () => {
   return (
     <SelectConnection
       connections={connections}
+      currentConnection={currentConnection}
       saveSelectionCallback={saveSelectionCallback}
       cancelSelectionCallback={cancelSelectionCallback}
       createNewConnectionCallback={createNewConnectionCallback}

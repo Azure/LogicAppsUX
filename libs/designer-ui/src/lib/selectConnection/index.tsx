@@ -16,11 +16,12 @@ import {
   Selection,
 } from '@fluentui/react';
 import type { Connection } from '@microsoft-logic-apps/utils';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SelectConnectionProps {
   connections: Connection[];
+  currentConnection?: Connection;
   isLoading?: boolean;
   showIdentityErrorBanner?: boolean;
   saveSelectionCallback: (connection?: Connection) => void;
@@ -29,8 +30,15 @@ export interface SelectConnectionProps {
 }
 
 export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
-  const { connections, isLoading, showIdentityErrorBanner, saveSelectionCallback, cancelSelectionCallback, createNewConnectionCallback } =
-    props;
+  const {
+    connections,
+    currentConnection,
+    isLoading,
+    showIdentityErrorBanner,
+    saveSelectionCallback,
+    cancelSelectionCallback,
+    createNewConnectionCallback,
+  } = props;
 
   const intl = useIntl();
 
@@ -52,12 +60,26 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   });
 
   const [selection, setSelection] = useState<Connection>();
-  const onSelect: Selection = new Selection({
-    onSelectionChanged: () => {
-      const newSelection = onSelect.getSelection()[0] as any;
-      setSelection(newSelection as Connection);
-    },
-  });
+  const onSelect: Selection = useMemo(
+    () =>
+      new Selection({
+        onSelectionChanged: () => {
+          const newSelection = onSelect.getSelection()[0] as any;
+          if (!newSelection && selection) {
+            onSelect.setIndexSelected(connections.indexOf(selection), true, false);
+          } else {
+            setSelection(newSelection as Connection);
+          }
+        },
+      }),
+    []
+  );
+
+  useEffect(() => {
+    if (currentConnection) {
+      onSelect.setIndexSelected(connections.indexOf(currentConnection), true, false);
+    }
+  }, [connections, currentConnection, onSelect]);
 
   if (isLoading) {
     return (

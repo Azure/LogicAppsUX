@@ -85,7 +85,7 @@ export const useConnector = (connectorId: string) => {
   });
 };
 
-export const useConnectorByNodeId = (nodeId: string) => {
+export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   return useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
 };
 
