@@ -228,7 +228,7 @@ function convertServiceProviderConnectionDataToConnection(
 
   return {
     name: connectionKey,
-    id: `/${apiId}/connections/${connectionKey}`,
+    id: `${apiId}/connections/${connectionKey}`,
     type: 'connections',
     properties: {
       api: { id: apiId } as any,
@@ -247,7 +247,7 @@ function convertFunctionsConnectionDataToConnection(connectionKey: string, conne
 
   return {
     name: connectionKey,
-    id: `/${azureFunctionConnectorId}/connections/${connectionKey}`,
+    id: `${azureFunctionConnectorId}/connections/${connectionKey}`,
     type: 'connections',
     properties: {
       api: { id: azureFunctionConnectorId } as any,
