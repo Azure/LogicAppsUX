@@ -40,8 +40,8 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   });
 
   const browseResponse = useQuery(['browseResult'], () => getBrowseResult(), {
-    staleTime: 100000,
-    cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
+    staleTime: 1000000,
+    cacheTime: 10000 * 60 * 5, // Danielle this is temporary, will move to config
   });
   const searchResults = searchResponse.data;
   const browseResults = browseResponse.data;

@@ -2,7 +2,7 @@ import { OperationCard } from '../../actionsummarycard/card';
 import { ConnectorSummaryCard } from '../../connectorsummarycard/connectorsummarycard';
 import { DesignerSearchBox } from '../../searchbox';
 import type { CommonPanelProps } from '../panelUtil';
-import { Text, List, Panel, DefaultButton } from '@fluentui/react';
+import { Text, List, Panel, DefaultButton, PanelType, Pivot, PivotItem } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { Connector, OperationSearchResult } from '@microsoft-logic-apps/utils';
 import React from 'react';
@@ -98,16 +98,32 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     description: 'Header to show that users can select below filters to narrow down results',
   });
 
+  const browseConnectorsPivotText = intl.formatMessage({
+    defaultMessage: 'Connectors',
+    description: 'Selected view connector for browse',
+  });
+
   return (
     <Panel
       headerText={header}
       aria-label={panelLabel}
-      customWidth={props.width}
+      type={PanelType.medium}
       isOpen={!props.isCollapsed}
       onDismiss={props.toggleCollapse}
       closeButtonAriaLabel="close"
     >
       <DesignerSearchBox onSearch={props.onSearch}></DesignerSearchBox>
+      <Pivot aria-label="Choose which view to browse from">
+        <PivotItem
+          headerText={browseConnectorsPivotText}
+          headerButtonProps={{
+            'data-order': 1,
+            'data-title': 'My Files Title',
+          }}
+        >
+          <List items={props.connectorBrowse} onRenderCell={onRenderConnectorCell}></List>
+        </PivotItem>
+      </Pivot>
       <div className="msla-result-list">
         <div>
           <div className="msla-filter-container">
@@ -120,9 +136,7 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
         </div>
         {props.operationSearchResults.length !== 0 ? (
           <List items={operationSearchResults} onRenderCell={onRenderOperationCell}></List>
-        ) : (
-          <List items={props.connectorBrowse} onRenderCell={onRenderConnectorCell}></List>
-        )}
+        ) : null}
       </div>
     </Panel>
   );
