@@ -3,6 +3,13 @@ import type { LexicalNode, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
 import React from 'react';
 
+export interface TokenNodeProps {
+  brandColor?: string;
+  description?: string;
+  icon: string;
+  title: string;
+}
+
 export type SerailizedTokenNode = Spread<
   {
     icon: string;
@@ -70,7 +77,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 }
 
-export function $createTokenNode(icon: string, title: string, description?: string, brandColor?: string) {
+export function $createTokenNode({ icon, title, description, brandColor }: TokenNodeProps) {
   return new TokenNode(icon, title, description, brandColor);
 }
 

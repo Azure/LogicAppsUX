@@ -50,6 +50,7 @@ export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, se
               setIsValid,
             },
           }}
+          tokenPickerClassName={'msla-collapsed-array-editor-tokenpicker'}
           placeholder={'Enter an Array'}
           initialValue={parseInitialValue(items)}
         >

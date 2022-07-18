@@ -17,7 +17,7 @@ export const parseSegments = (value: Segment[], tokensEnabled?: boolean) => {
   value.forEach((segment) => {
     if (segment.type === ValueSegmentType.TOKEN) {
       const { brandColor, description, icon, title } = segment.token;
-      tokensEnabled && paragraph.append($createTokenNode(icon, title, description, brandColor));
+      tokensEnabled && paragraph.append($createTokenNode({ icon, title, description, brandColor }));
     } else {
       const splitSegment = segment.value.split('\n');
       paragraph.append($createTextNode(splitSegment[0]));

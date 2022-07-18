@@ -39,6 +39,7 @@ export const ParametersTab = () => {
               title={parameterGroup.description}
               settings={settings}
               showHeading={!!parameterGroup.description}
+              showSeparator={false}
             />
           </div>
         );
