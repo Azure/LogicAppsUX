@@ -1,4 +1,3 @@
-import type { ConnectionReference } from '../../../common/models/workflow';
 import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
 import { useConnectionById } from '../../queries/connections';
 import type { RootState } from '../../store';
