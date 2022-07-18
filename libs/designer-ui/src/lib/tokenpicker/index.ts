@@ -1,1 +1,1 @@
-export { Token as OutputToken } from './models/token';
+export type { Token as OutputToken } from './models/token';
