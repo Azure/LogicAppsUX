@@ -1,6 +1,6 @@
 import { ExtensionCommand } from '../../../run-service';
 import { VSCodeContext } from '../../../webviewCommunication';
-import { PrimaryButton, Text } from '@fluentui/react';
+import { PrimaryButton, Text, TextField } from '@fluentui/react';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -21,6 +21,10 @@ export const Summary: React.FC = () => {
       defaultMessage: 'Open file explorer',
       description: 'Open file explorer text',
     }),
+    EXPORT_LOCATION: intl.formatMessage({
+      defaultMessage: 'Export location',
+      description: 'Export location text',
+    }),
   };
 
   const onOpenExplorer = () => {
@@ -30,19 +34,17 @@ export const Summary: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="msla-export-summary">
       <Text variant="xLarge" nowrap block>
         {intlText.COMPLETE_EXPORT_TITLE}
       </Text>
       <Text variant="large" nowrap block>
         {intlText.SELECT_LOCATION}
       </Text>
-      <PrimaryButton
-        className="msla-export-navigation-panel-button"
-        text={intlText.OPEN_FILE_EXPLORER}
-        ariaLabel={intlText.OPEN_FILE_EXPLORER}
-        onClick={onOpenExplorer}
-      />
-    </>
+      <div className="msla-export-summary">
+        <TextField label={intlText.EXPORT_LOCATION} disabled />
+        <PrimaryButton text={intlText.OPEN_FILE_EXPLORER} ariaLabel={intlText.OPEN_FILE_EXPLORER} onClick={onOpenExplorer} />
+      </div>
+    </div>
   );
 };
