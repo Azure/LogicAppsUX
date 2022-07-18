@@ -15,7 +15,6 @@ export const ParametersTab = () => {
   const readOnly = useReadOnly();
 
   const connectionName = useNodeConnectionName(selectedNodeId);
-  // const connectionReference = useSelector((state: RootState) => state.connections.connectionReferences[connectionRefKey]);
 
   return (
     <>
@@ -48,7 +47,7 @@ export const ParametersTab = () => {
           </div>
         );
       })}
-      {connectionName && <ConnectionDisplay connectionName={connectionName} nodeId={selectedNodeId} />}
+      {connectionName && <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />}
     </>
   );
 };
