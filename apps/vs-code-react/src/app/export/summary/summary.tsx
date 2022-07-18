@@ -1,18 +1,21 @@
-import { ExtensionCommand } from '../../../run-service';
+import { ExtensionCommand, QueryKeys } from '../../../run-service';
+import { ApiService } from '../../../run-service/export';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
-import { PrimaryButton, Text, TextField } from '@fluentui/react';
+import { getListColumns, getSummaryData } from './helper';
+import { PrimaryButton, SelectionMode, ShimmeredDetailsList, Text, TextField } from '@fluentui/react';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 export const Summary: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { exportData } = vscodeState as InitializedVscodeState;
-  const { exportPath } = exportData;
+  const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
+  const { selectedWorkflows, location, selectedSubscription, exportPath } = exportData;
 
   const intlText = {
     COMPLETE_EXPORT_TITLE: intl.formatMessage({
@@ -33,6 +36,29 @@ export const Summary: React.FC = () => {
     }),
   };
 
+  const apiService = useMemo(() => {
+    return new ApiService({
+      baseUrl,
+      accessToken,
+    });
+  }, [accessToken, baseUrl]);
+
+  const exportWorkflows = () => {
+    return apiService.exportWorkflows(selectedWorkflows, selectedSubscription, location);
+  };
+
+  const { data: summaryData, isLoading: isSummaryLoading } = useQuery<any>(
+    [QueryKeys.summary, { selectedWorkflows: selectedWorkflows }],
+    exportWorkflows,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const { packageLink = '', exportDetails = [] }: any = isSummaryLoading || !summaryData ? {} : getSummaryData(summaryData);
+
+  console.log(packageLink);
+
   const onOpenExplorer = () => {
     vscode.postMessage({
       command: ExtensionCommand.select_folder,
@@ -41,9 +67,23 @@ export const Summary: React.FC = () => {
 
   const locationText = useMemo(() => {
     return (
-      <TextField label={intlText.EXPORT_LOCATION} placeholder={exportPath} disabled className="msla-export-summary-file-location-button" />
+      <TextField label={intlText.EXPORT_LOCATION} placeholder={exportPath} disabled className="msla-export-summary-file-location-text" />
     );
   }, [exportPath]);
+
+  const detailsList = useMemo(() => {
+    return (
+      <div className="msla-export-summary-detail-list">
+        <ShimmeredDetailsList
+          items={exportDetails}
+          columns={getListColumns()}
+          setKey="set"
+          enableShimmer={isSummaryLoading}
+          selectionMode={SelectionMode.none}
+        />
+      </div>
+    );
+  }, [exportDetails]);
 
   return (
     <div className="msla-export-summary">
@@ -55,8 +95,14 @@ export const Summary: React.FC = () => {
       </Text>
       <div className="msla-export-summary-file-location">
         {locationText}
-        <PrimaryButton text={intlText.OPEN_FILE_EXPLORER} ariaLabel={intlText.OPEN_FILE_EXPLORER} onClick={onOpenExplorer} />
+        <PrimaryButton
+          className="msla-export-summary-file-location-button"
+          text={intlText.OPEN_FILE_EXPLORER}
+          ariaLabel={intlText.OPEN_FILE_EXPLORER}
+          onClick={onOpenExplorer}
+        />
       </div>
+      {detailsList}
     </div>
   );
 };

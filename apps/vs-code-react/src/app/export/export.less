@@ -134,6 +134,7 @@
       }
     }
   }
+
   &-summary {
     &-file-location {
       margin-top: 10px;
@@ -148,6 +149,17 @@
 
       display: flex;
       align-items: flex-end;
+    }
+
+    &-detail-list {
+      .ms-DetailsRow-fields {
+        display: flex;
+        align-items: center;
+
+        .ms-DetailsRow-cell {
+          white-space: normal;
+        }
+      }
     }
   }
 }

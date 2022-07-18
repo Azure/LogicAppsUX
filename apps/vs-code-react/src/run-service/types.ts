@@ -12,6 +12,7 @@ export interface IApiService {
   getWorkflows(subscriptionId: string, iseId: string): Promise<any>;
   getSubscriptions(): Promise<any>;
   getIse(selectedSubscription: string): Promise<any>;
+  validateWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string): Promise<any>;
 }
 
 export interface ArmResources<T> {
@@ -185,6 +186,7 @@ export enum QueryKeys {
   runsData = 'runsData',
   iseData = 'iseData',
   validation = 'validation',
+  summary = 'summary',
 }
 
 export interface ISubscription {
