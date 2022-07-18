@@ -2375,7 +2375,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "使用 \""
     },
     {
       "type": 1,
@@ -2383,7 +2383,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "\" 為自訂值"
     }
   ],
   "W070M2": [
@@ -2991,7 +2991,7 @@
   "esOQ5p": [
     {
       "type": 0,
-      "value": "No values matching your search"
+      "value": "沒有值符合您的搜尋"
     }
   ],
   "euC/DV": [
@@ -3340,7 +3340,7 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "不支援的資訊清單連線參考格式: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4307,7 +4307,7 @@
   "vrYqUF": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "輸入自訂值"
     }
   ],
   "vwH/XV": [
@@ -4557,7 +4557,7 @@
   "zUgja+": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "清除自訂值"
     }
   ],
   "zbtUQ/": [

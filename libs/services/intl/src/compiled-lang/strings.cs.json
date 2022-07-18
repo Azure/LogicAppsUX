@@ -2552,7 +2552,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "Použít „"
     },
     {
       "type": 1,
@@ -2560,7 +2560,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "“ jako vlastní hodnotu"
     }
   ],
   "W070M2": [
@@ -3168,7 +3168,7 @@
   "esOQ5p": [
     {
       "type": 0,
-      "value": "No values matching your search"
+      "value": "Vašemu hledání neodpovídají žádné hodnoty."
     }
   ],
   "euC/DV": [
@@ -3554,7 +3554,11 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "Nepodporovaný formát odkazu na připojení manifestu: "
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
     }
   ],
   "jsEMSu": [
@@ -4554,7 +4558,7 @@
   "vrYqUF": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "Zadat vlastní hodnotu"
     }
   ],
   "vwH/XV": [
@@ -4804,7 +4808,7 @@
   "zUgja+": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "Vymazat vlastní hodnotu"
     }
   ],
   "zbtUQ/": [

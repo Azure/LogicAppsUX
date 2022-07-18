@@ -2375,7 +2375,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "\""
     },
     {
       "type": 1,
@@ -2383,7 +2383,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "\" をカスタム値として使用する"
     }
   ],
   "W070M2": [
@@ -2991,7 +2991,7 @@
   "esOQ5p": [
     {
       "type": 0,
-      "value": "No values matching your search"
+      "value": "検索に一致する値がありません"
     }
   ],
   "euC/DV": [
@@ -3340,7 +3340,7 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "サポートされていないマニフェスト接続参照形式: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4303,7 +4303,7 @@
   "vrYqUF": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "カスタム値の入力"
     }
   ],
   "vwH/XV": [
@@ -4553,7 +4553,7 @@
   "zUgja+": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "カスタム値のクリア"
     }
   ],
   "zbtUQ/": [
