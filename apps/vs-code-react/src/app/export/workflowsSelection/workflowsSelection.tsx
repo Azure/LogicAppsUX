@@ -101,7 +101,7 @@ export const WorkflowsSelection: React.FC = () => {
           items={renderWorkflows}
           columns={getListColumns()}
           setKey="set"
-          enableShimmer={isWorkflowsLoading}
+          enableShimmer={isWorkflowsLoading || !renderWorkflows.length}
           ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
           ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
           checkButtonAriaLabel={intlText.SELECT_WORKFLOW}

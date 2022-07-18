@@ -2435,6 +2435,20 @@
       "value": "Cronologia esecuzioni"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Usa \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" come valore personalizzato"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -3037,6 +3051,12 @@
       "value": "Obbligatorio. Indice della posizione di inizio della sottostringa nel parametro 1."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Nessun valore corrispondente alla ricerca"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3389,6 +3409,12 @@
     {
       "type": 0,
       "value": "Modificare in JSON"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Formato riferimento della connessione del manifesto non supportato: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4363,6 +4389,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Immetti valore personalizzato"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4605,6 +4637,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa convertita in un valore di tipo nativo."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Cancella valore personalizzato"
     }
   ],
   "zbtUQ/": [

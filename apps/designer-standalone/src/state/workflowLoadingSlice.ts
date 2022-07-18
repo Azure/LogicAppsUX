@@ -128,9 +128,10 @@ export const workflowLoadingSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload>) => {
+    builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
+      if (!action.payload) return;
       state.workflowDefinition = action.payload?.workflowDefinition;
-      state.connections = action.payload?.connectionReferences ? action.payload.connectionReferences : {};
+      state.connections = action.payload?.connectionReferences ?? {};
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;

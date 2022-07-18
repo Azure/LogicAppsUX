@@ -2431,6 +2431,20 @@
       "value": "Ausführungsverlauf"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Verwenden Sie „"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "“ als benutzerdefinierter Wert"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -3033,6 +3047,12 @@
       "value": "Erforderlich. Der Index, bei dem die Teilzeichenfolge in Parameter 1 beginnt."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Es sind keine Werte vorhanden, die mit Ihrer Suche übereinstimmen."
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3385,6 +3405,20 @@
     {
       "type": 0,
       "value": "In JSON bearbeiten"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Nicht unterstütztes Referenzformat für Manifestverbindung: „"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "“"
     }
   ],
   "jsEMSu": [
@@ -4359,6 +4393,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Benutzerdefinierten Wert eingeben"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4601,6 +4641,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Wert, der in einen nativen Typwert konvertiert wird."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Benutzerdefinierten Wert löschen"
     }
   ],
   "zbtUQ/": [
