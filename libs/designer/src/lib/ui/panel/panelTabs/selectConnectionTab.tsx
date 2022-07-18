@@ -23,7 +23,7 @@ export const SelectConnectionTab = () => {
   }, [dispatch]);
 
   const connector = useConnectorByNodeId(selectedNodeId);
-  const connections = useConnectionsForConnector(connector?.id ?? '');
+  const connections = useConnectionsForConnector(connector?.id ?? '').data ?? [];
 
   const saveSelectionCallback = useCallback(
     (_connection?: Connection) => {
