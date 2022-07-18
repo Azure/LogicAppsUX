@@ -14,6 +14,10 @@ export const getConnectionsQuery = async (): Promise<void> => {
 export const useConnectionById = (connectionId: string, connectorId: string) => {
   const { data: connections, isLoading } = useConnectionsForConnector(connectorId);
 
+  if (!connectionId) {
+    return { isLoading: false, result: undefined };
+  }
+
   if (connections) {
     return {
       isLoading,
@@ -39,10 +43,11 @@ export const useAllConnections = () => {
 
 export const useConnectionsForConnector = (connectorId: string) => {
   return useQuery(
-    [connectionKey, connectorId.toLowerCase()],
+    [connectionKey, connectorId?.toLowerCase()],
     () => {
       const connectionService = ConnectionService();
       return connectionService.getConnections(connectorId);
-    }
+    },
+    { enabled: !!connectorId }
   );
 }

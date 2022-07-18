@@ -46,13 +46,14 @@ export const useNodeConnectionName = (nodeId: string): QueryResult => {
       ? { connectionId: state.connections.connectionsMapping[nodeId], connectorId: state.operations.operationInfo[nodeId]?.connectorId }
       : { connectionId: '', connectorId: '' };
   });
+
   // 14955807 task to investigate adding connection type to state to avoid checking in multiple places, or another strategy to avoid below way to find connection
   const { result: connection, isLoading } = useConnectionById(connectionId, connectorId);
 
   return {
     isLoading,
-    result: !isLoading ? connection?.properties.displayName ?? connectionId.split('/').slice(-1)[0] : ''
-  }
+    result: !isLoading && connectionId ? connection?.properties.displayName ?? connectionId.split('/').slice(-1)[0] : ''
+  };
 };
 
 export const useNodeDescription = (nodeId: string) => {
