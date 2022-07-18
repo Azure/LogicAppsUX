@@ -1,8 +1,12 @@
-import { Text } from '@fluentui/react';
+import { ExtensionCommand } from '../../../run-service';
+import { VSCodeContext } from '../../../webviewCommunication';
+import { PrimaryButton, Text } from '@fluentui/react';
+import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 
 export const Summary: React.FC = () => {
   const intl = useIntl();
+  const vscode = useContext(VSCodeContext);
 
   const intlText = {
     COMPLETE_EXPORT_TITLE: intl.formatMessage({
@@ -13,6 +17,16 @@ export const Summary: React.FC = () => {
       defaultMessage: 'Select a location to export your logic apps to',
       description: 'Select a location description',
     }),
+    OPEN_FILE_EXPLORER: intl.formatMessage({
+      defaultMessage: 'Open file explorer',
+      description: 'Open file explorer text',
+    }),
+  };
+
+  const onOpenExplorer = () => {
+    vscode.postMessage({
+      command: ExtensionCommand.select_folder,
+    });
   };
 
   return (
@@ -23,6 +37,12 @@ export const Summary: React.FC = () => {
       <Text variant="large" nowrap block>
         {intlText.SELECT_LOCATION}
       </Text>
+      <PrimaryButton
+        className="msla-export-navigation-panel-button"
+        text={intlText.OPEN_FILE_EXPLORER}
+        ariaLabel={intlText.OPEN_FILE_EXPLORER}
+        onClick={onOpenExplorer}
+      />
     </>
   );
 };

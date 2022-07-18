@@ -1,4 +1,4 @@
-import { RouteName, ValidationStatus } from '../../../run-service';
+import { ExtensionCommand, RouteName, ValidationStatus } from '../../../run-service';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
@@ -40,14 +40,14 @@ export const Navigation: React.FC = () => {
       description: 'Export with warnings button',
     }),
     FINISH: intl.formatMessage({
-      defaultMessage: 'FINISH',
-      description: 'FINISH',
+      defaultMessage: 'Finish',
+      description: 'Finish  button',
     }),
   };
 
   const onClickCancel = () => {
     vscode.postMessage({
-      command: 'dispose',
+      command: ExtensionCommand.dispose,
     });
   };
 

@@ -1,3 +1,4 @@
+import { ExtensionCommand } from '../../run-service';
 import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
@@ -15,7 +16,7 @@ export const OverviewApp: React.FC = () => {
       baseUrl={vscodeState.baseUrl}
       onOpenRun={(run: RunDisplayItem) => {
         vscode.postMessage({
-          command: 'LoadRun',
+          command: ExtensionCommand.loadRun,
           item: run,
         });
       }}

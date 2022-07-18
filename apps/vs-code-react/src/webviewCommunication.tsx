@@ -1,3 +1,4 @@
+import { ExtensionCommand } from './run-service';
 import type { AppDispatch } from './state/store';
 import type { InitializePayload } from './state/vscodeSlice';
 import { initialize, updateAccessToken } from './state/vscodeSlice';
@@ -7,16 +8,17 @@ import { useDispatch } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 
 interface InjectValuesMessage {
-  command: 'initialize-frame';
+  command: ExtensionCommand.initialize_frame;
   data: InitializePayload;
 }
 
 interface UpdateAccessTokenMessage {
-  command: 'update-access-token';
+  command: ExtensionCommand.update_access_token;
   data: {
     accessToken?: string;
   };
 }
+
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
 
@@ -39,7 +41,7 @@ export const WebViewCommunication: React.FC = ({ children }) => {
   });
   useEffect(() => {
     vscode.postMessage({
-      command: 'initialize',
+      command: ExtensionCommand.initialize,
     });
   }, []);
   return <VSCodeContext.Provider value={vscode}>{children}</VSCodeContext.Provider>;
