@@ -52,7 +52,7 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   } else {
     try {
       const wf = await import(`../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath}`);
-      return wf.definition;
+      return { workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition, connectionReferences: {}} as WorkflowPayload;
     } catch {
       return null;
     }
