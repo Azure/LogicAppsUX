@@ -24,7 +24,7 @@ export const WebViewCommunication: React.FC = ({ children }) => {
         dispatch(updateAccessToken(message.data.accessToken));
         break;
       case ExtensionCommand.update_export_path:
-        dispatch(updateExportPath(message.data.exportPath));
+        dispatch(updateExportPath(message.data));
         break;
       default:
         throw new Error('Unknown post message recieved');

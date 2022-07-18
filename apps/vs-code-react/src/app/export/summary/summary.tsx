@@ -3,7 +3,7 @@ import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { PrimaryButton, Text, TextField } from '@fluentui/react';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
@@ -39,6 +39,12 @@ export const Summary: React.FC = () => {
     });
   };
 
+  const locationText = useMemo(() => {
+    return (
+      <TextField label={intlText.EXPORT_LOCATION} placeholder={exportPath} disabled className="msla-export-summary-file-location-button" />
+    );
+  }, [exportPath]);
+
   return (
     <div className="msla-export-summary">
       <Text variant="xLarge" nowrap block>
@@ -48,7 +54,7 @@ export const Summary: React.FC = () => {
         {intlText.SELECT_LOCATION}
       </Text>
       <div className="msla-export-summary-file-location">
-        <TextField label={intlText.EXPORT_LOCATION} placeholder={exportPath} disabled className="msla-export-summary-file-location-text" />
+        {locationText}
         <PrimaryButton text={intlText.OPEN_FILE_EXPLORER} ariaLabel={intlText.OPEN_FILE_EXPLORER} onClick={onOpenExplorer} />
       </div>
     </div>
