@@ -32,6 +32,10 @@ export default function TokenPicker({ buttonClassName }: TokenPickerProps) {
     defaultMessage: 'Add dynamic content',
     description: 'Label for button to open token picker',
   });
+  const addContentAltText = intl.formatMessage({
+    defaultMessage: 'Button to add dynamic content',
+    description: 'Text for if image does not show up',
+  });
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -55,7 +59,7 @@ export default function TokenPicker({ buttonClassName }: TokenPickerProps) {
           <img
             src="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxMyI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMwMDU4YWQ7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5jbGlja2VkIHN0YXRlX2R5bmFtaWMgY29udGVudDwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMCwxLjV2MTNIMTJWMS41SDBabTksN0g3djJINnYtMkg0di0xSDZ2LTJIN3YySDl2MVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTEuNSkiLz48cmVjdCBjbGFzcz0iY2xzLTEiIHg9IjEzIiB3aWR0aD0iMyIgaGVpZ2h0PSIxMyIvPjwvc3ZnPg=="
             height="13px"
-            alt={addContent}
+            alt={addContentAltText}
           />
         </button>
       ) : null}
