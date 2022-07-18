@@ -52,7 +52,7 @@ export const useNodeConnectionName = (nodeId: string): QueryResult => {
 
   return {
     isLoading,
-    result: !isLoading && connectionId ? connection?.properties.displayName ?? connectionId.split('/').slice(-1)[0] : ''
+    result: !isLoading && connectionId ? connection?.properties.displayName ?? connectionId.split('/').at(-1) : '',
   };
 };
 
