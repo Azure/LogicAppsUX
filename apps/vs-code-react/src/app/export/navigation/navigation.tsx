@@ -31,6 +31,14 @@ export const Navigation: React.FC = () => {
       defaultMessage: 'Cancel',
       description: 'Cancel button',
     }),
+    EXPORT: intl.formatMessage({
+      defaultMessage: 'Export',
+      description: 'Export button',
+    }),
+    EXPORT_WITH_WARNINGS: intl.formatMessage({
+      defaultMessage: 'Export with warnings',
+      description: 'Export with warnings button',
+    }),
   };
 
   const onClickCancel = () => {
@@ -82,6 +90,21 @@ export const Navigation: React.FC = () => {
     }
   };
 
+  const getNextText = (): string => {
+    const { pathname } = location;
+
+    switch (pathname) {
+      case `/${RouteName.export}/${RouteName.validation}`: {
+        return validationState === ValidationStatus.succeeded_with_warnings ? intlText.EXPORT_WITH_WARNINGS : intlText.EXPORT;
+      }
+      default: {
+        return intlText.NEXT;
+      }
+    }
+  };
+
+  const nextText = getNextText();
+
   return (
     <div className="msla-export-navigation-panel">
       <PrimaryButton
@@ -99,8 +122,8 @@ export const Navigation: React.FC = () => {
       />
       <PrimaryButton
         className="msla-export-navigation-panel-button"
-        text={intlText.NEXT}
-        ariaLabel={intlText.NEXT}
+        text={nextText}
+        ariaLabel={nextText}
         onClick={onClickNext}
         disabled={isNextDisabled()}
       />
