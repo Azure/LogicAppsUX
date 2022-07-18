@@ -3609,6 +3609,9 @@
       <Item ItemId=";VptXzY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Use "{value}" as a custom value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Utiliser "{value}" comme valeur personnalisée]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5004,6 +5007,9 @@
       <Item ItemId=";jjYA4u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported manifest connection reference format: '{referenceKeyFormat}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Format de référence de connexion de manifeste non pris en charge : '{referenceKeyFormat}']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

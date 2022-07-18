@@ -3609,6 +3609,9 @@
       <Item ItemId=";VptXzY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Use "{value}" as a custom value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[„{value}“ használata egyéni értékként]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5004,6 +5007,9 @@
       <Item ItemId=";jjYA4u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported manifest connection reference format: '{referenceKeyFormat}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nem támogatott jegyzékfájlkapcsolat hivatkozásának formátuma: {referenceKeyFormat}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
