@@ -55,7 +55,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
-  const connectionName = useNodeConnectionName(id);
+  const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
 
   const showLeafComponents = !readOnly && isLeafNodeFromEdges(edges);
@@ -92,11 +92,12 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
           brandColor={brandColor}
           id={id}
           connectionRequired={isConnectionRequired}
-          connectionDisplayName={connectionName}
+          connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
           commentBox={comment}
           drag={drag}
           dragPreview={dragPreview}
           isDragging={isDragging}
+          isLoading={iconUriResult.isLoading}
           isMonitoringView={isMonitoringView}
           readOnly={readOnly}
           onClick={nodeClick}

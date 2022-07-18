@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import { useConnectionsByConnector } from '../../../core/queries/connections';
+import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useConnectorByNodeId } from '../../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../../core/store';
@@ -23,7 +23,7 @@ export const SelectConnectionTab = () => {
   }, [dispatch]);
 
   const connector = useConnectorByNodeId(selectedNodeId);
-  const connections = useConnectionsByConnector(connector);
+  const connections = useConnectionsForConnector(connector?.id ?? '');
 
   const saveSelectionCallback = useCallback(
     (_connection?: Connection) => {
