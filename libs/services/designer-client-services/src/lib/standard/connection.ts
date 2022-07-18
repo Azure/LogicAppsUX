@@ -5,7 +5,7 @@ import type { Connection, Connector } from '@microsoft-logic-apps/utils';
 import { ArgumentException, equals } from '@microsoft-logic-apps/utils';
 
 interface ServiceProviderConnectionModel {
-  parameterValues: Record<string, any>; // tslint:disable-line: no-any
+  parameterValues: Record<string, any>;
   serviceProvider: {
     id: string;
   };
@@ -61,8 +61,15 @@ interface StandardConnectionServiceArgs {
 }
 
 export type getAccessTokenType = () => Promise<string>;
+
+interface ConnectionsData {
+  managedApiConnections?: any;
+  serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
+  functionConnections?: Record<string, FunctionsConnectionModel>;
+}
+
 type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnectionModel | APIManagementConnectionModel;
-type ReadConnectionsFunc = () => Promise<Record<string, Record<string, LocalConnectionModel>>>;
+type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
 
 const serviceProviderLocation = 'serviceProviderConnections';
@@ -91,9 +98,9 @@ export class StandardConnectionService implements IConnectionService {
   async getConnector(connectorId: string): Promise<Connector> {
     if (!isArmResourceId(connectorId)) {
       const { apiVersion, baseUrl, httpClient } = this.options;
-      const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}?api-version=${apiVersion}`;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      return httpClient.get<Connector>({ uri });
+      return httpClient.get<Connector>({
+        uri: `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}?api-version=${apiVersion}`,
+      });
     } else {
       const {
         apiHubServiceDetails: { apiVersion },
