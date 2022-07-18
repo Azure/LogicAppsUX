@@ -2379,7 +2379,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "使用“"
     },
     {
       "type": 1,
@@ -2387,7 +2387,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "”作为自定义值"
     }
   ],
   "W070M2": [
@@ -2999,7 +2999,7 @@
   "esOQ5p": [
     {
       "type": 0,
-      "value": "No values matching your search"
+      "value": "没有与搜索匹配的值"
     }
   ],
   "euC/DV": [
@@ -3356,7 +3356,15 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "清单连接引用格式“"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "”不受支持"
     }
   ],
   "jsEMSu": [
@@ -4331,7 +4339,7 @@
   "vrYqUF": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "输入自定义值"
     }
   ],
   "vwH/XV": [
@@ -4581,7 +4589,7 @@
   "zUgja+": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "清除自定义值"
     }
   ],
   "zbtUQ/": [

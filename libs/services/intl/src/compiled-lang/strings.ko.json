@@ -2375,7 +2375,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "사용자 지정 값으로 \""
     },
     {
       "type": 1,
@@ -2383,7 +2383,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "\" 사용"
     }
   ],
   "W070M2": [
@@ -2991,7 +2991,7 @@
   "esOQ5p": [
     {
       "type": 0,
-      "value": "No values matching your search"
+      "value": "검색과 일치하는 값 없음"
     }
   ],
   "euC/DV": [
@@ -3340,7 +3340,7 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "지원되지 않는 매니페스트 연결 참조 형식: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4303,7 +4303,7 @@
   "vrYqUF": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "사용자 지정 값 입력"
     }
   ],
   "vwH/XV": [
@@ -4553,7 +4553,7 @@
   "zUgja+": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "사용자 지정 값 지우기"
     }
   ],
   "zbtUQ/": [

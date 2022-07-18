@@ -2540,7 +2540,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "Использовать \""
     },
     {
       "type": 1,
@@ -2548,7 +2548,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "\" как пользовательское значение"
     }
   ],
   "W070M2": [
@@ -3156,7 +3156,7 @@
   "esOQ5p": [
     {
       "type": 0,
-      "value": "No values matching your search"
+      "value": "Нет значений, отвечающих условиям поиска"
     }
   ],
   "euC/DV": [
@@ -3546,7 +3546,15 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "Неподдерживаемый формат ссылки подключения манифеста: \""
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "jsEMSu": [
@@ -4546,7 +4554,7 @@
   "vrYqUF": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "Введите пользовательское значение"
     }
   ],
   "vwH/XV": [
@@ -4796,7 +4804,7 @@
   "zUgja+": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "Удалить пользовательское значение"
     }
   ],
   "zbtUQ/": [

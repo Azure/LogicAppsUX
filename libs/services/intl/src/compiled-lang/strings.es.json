@@ -2430,7 +2430,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "Usar \""
     },
     {
       "type": 1,
@@ -2438,7 +2438,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "\" como un valor personalizado"
     }
   ],
   "W070M2": [
@@ -3046,7 +3046,7 @@
   "esOQ5p": [
     {
       "type": 0,
-      "value": "No values matching your search"
+      "value": "No hay valores que coincidan con su búsqueda."
     }
   ],
   "euC/DV": [
@@ -3414,7 +3414,15 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "Formato de referencia de conexión de manifiesto no admitido: \""
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "jsEMSu": [
@@ -4392,7 +4400,7 @@
   "vrYqUF": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "Escribir un valor personalizado"
     }
   ],
   "vwH/XV": [
@@ -4642,7 +4650,7 @@
   "zUgja+": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "Borrar valor personalizado"
     }
   ],
   "zbtUQ/": [
