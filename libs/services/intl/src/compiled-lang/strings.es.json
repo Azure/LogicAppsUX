@@ -2427,6 +2427,20 @@
       "value": "Historial de ejecución"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Usar \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" como un valor personalizado"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -3029,6 +3043,12 @@
       "value": "Obligatorio. El índice a partir del cual empieza la subcadena en el parámetro 1."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "No hay valores que coincidan con su búsqueda."
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3389,6 +3409,20 @@
     {
       "type": 0,
       "value": "Editar en JSON"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Formato de referencia de conexión de manifiesto no admitido: \""
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "jsEMSu": [
@@ -4363,6 +4397,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Escribir un valor personalizado"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4605,6 +4645,12 @@
     {
       "type": 0,
       "value": "Obligatorio. La cadena que se convierte a un valor de tipo nativo."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Borrar valor personalizado"
     }
   ],
   "zbtUQ/": [

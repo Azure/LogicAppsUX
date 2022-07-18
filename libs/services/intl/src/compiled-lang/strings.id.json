@@ -2372,6 +2372,20 @@
       "value": "Riwayat Eksekusi"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Gunakan \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" sebagai nilai kustom"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -2974,6 +2988,12 @@
       "value": "Harus diisi. Indeks substring awal dalam parameter 1."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Tidak ada nilai yang cocok dengan pencarian Anda"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3315,6 +3335,12 @@
     {
       "type": 0,
       "value": "Edit di JSON"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Format referensi koneksi manifes tidak didukung: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4278,6 +4304,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Masukkan nama kustom"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4520,6 +4552,12 @@
     {
       "type": 0,
       "value": "Harus diisi. String yang dikonversi ke nilai jenis asli."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Hapus nilai kustom"
     }
   ],
   "zbtUQ/": [

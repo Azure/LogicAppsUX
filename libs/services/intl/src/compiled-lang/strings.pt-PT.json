@@ -1506,7 +1506,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Adicionar novo item"
     }
   ],
   "Jaz3EC": [
@@ -2427,6 +2427,20 @@
       "value": "Histórico de Execuções"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Utilizar \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" como valor personalizado"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -3029,6 +3043,12 @@
       "value": "Obrigatório. O índice a partir do qual a subcadeia começa no parâmetro 1."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Não existem valores correspondentes à pesquisa"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3391,6 +3411,20 @@
       "value": "Editar em JSON"
     }
   ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Formato de referência de ligação de manifesto não compatível: \""
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
   "jsEMSu": [
     {
       "type": 0,
@@ -3556,7 +3590,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Introduza uma matriz válida"
     }
   ],
   "lgs5sf": [
@@ -4363,6 +4397,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Introduzir valor personalizado"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4605,6 +4645,12 @@
     {
       "type": 0,
       "value": "Obrigatório. A cadeia que é convertida num valor de tipo nativo."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Limpar valor personalizado"
     }
   ],
   "zbtUQ/": [
