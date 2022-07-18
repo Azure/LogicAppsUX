@@ -1,12 +1,18 @@
 import { ExtensionCommand } from '../../../run-service';
+import type { RootState } from '../../../state/store';
+import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { PrimaryButton, Text, TextField } from '@fluentui/react';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
 export const Summary: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
+  const vscodeState = useSelector((state: RootState) => state.vscode);
+  const { exportData } = vscodeState as InitializedVscodeState;
+  const { exportPath } = exportData;
 
   const intlText = {
     COMPLETE_EXPORT_TITLE: intl.formatMessage({
@@ -42,7 +48,7 @@ export const Summary: React.FC = () => {
         {intlText.SELECT_LOCATION}
       </Text>
       <div className="msla-export-summary-file-location">
-        <TextField label={intlText.EXPORT_LOCATION} disabled className="msla-export-summary-file-location-text" />
+        <TextField label={intlText.EXPORT_LOCATION} placeholder={exportPath} disabled className="msla-export-summary-file-location-text" />
         <PrimaryButton text={intlText.OPEN_FILE_EXPLORER} ariaLabel={intlText.OPEN_FILE_EXPLORER} onClick={onOpenExplorer} />
       </div>
     </div>
