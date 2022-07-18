@@ -1,6 +1,5 @@
 import constants from '../../../../common/constants';
 import { isConnectionRequiredForOperation } from '../../../../core/actions/bjsworkflow/connections';
-import { useConnectionByName } from '../../../../core/queries/connections';
 import { isolateTab } from '../../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
 import { Label, Link } from '@fluentui/react';
@@ -18,10 +17,9 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
 
   const intl = useIntl();
   const dispatch = useDispatch();
-  const connection = useConnectionByName(connectionName);
 
   const openChangeConnectionCallback = useCallback(() => {
-    dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
+    dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR));
   }, [dispatch]);
 
   const operationInfo = useOperationInfo(nodeId);
@@ -30,10 +28,10 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   const requiresConnection = operationManifest && isConnectionRequiredForOperation(operationManifest);
 
   useEffect(() => {
-    if (requiresConnection && !connection) {
+    if (requiresConnection && !connectionName) {
       openChangeConnectionCallback();
     }
-  }, [connection, connectionName, openChangeConnectionCallback, requiresConnection]);
+  }, [connectionName, openChangeConnectionCallback, requiresConnection]);
 
   const connectionDisplayText = intl.formatMessage(
     {

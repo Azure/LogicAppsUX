@@ -3,7 +3,7 @@ import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/conn
 import { useConnectionByName } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { OperationInfo } from '@microsoft-logic-apps/utils';
+import type { Connector, OperationInfo } from '@microsoft-logic-apps/utils';
 import { getObjectPropertyValue } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -85,7 +85,12 @@ export const useConnector = (connectorId: string) => {
 };
 
 export const useConnectorByNodeId = (nodeId: string) => {
-  return useConnector(useOperationInfo(nodeId)?.connectorId).data;
+  return useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
+};
+
+export const useConnectionRefsByConnector = (connector?: Connector) => {
+  const allConnections = useSelector((state: RootState) => Object.values(state.connections.connectionReferences));
+  return allConnections.filter((ref: ConnectionReference) => ref.api.id === connector?.id);
 };
 
 export const useOperationManifest = (operationInfo: OperationInfo) => {

@@ -1,5 +1,6 @@
 import constants from '../../../../common/constants';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useNodeConnectionName } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../../../core/store';
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
@@ -13,7 +14,7 @@ export const ParametersTab = () => {
   const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const readOnly = useReadOnly();
 
-  const connectionRefKey = useSelector((state: RootState) => state.connections.connectionsMapping[selectedNodeId]);
+  const connectionName = useNodeConnectionName(selectedNodeId);
   // const connectionReference = useSelector((state: RootState) => state.connections.connectionReferences[connectionRefKey]);
 
   return (
@@ -47,7 +48,7 @@ export const ParametersTab = () => {
           </div>
         );
       })}
-      {connectionRefKey && <ConnectionDisplay connectionName={connectionRefKey} nodeId={selectedNodeId} />}
+      {connectionName && <ConnectionDisplay connectionName={connectionName} nodeId={selectedNodeId} />}
     </>
   );
 };
