@@ -1488,7 +1488,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Excluir"
     }
   ],
   "JNQHws": [
@@ -1506,7 +1506,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Adicionar novo item"
     }
   ],
   "Jaz3EC": [
@@ -2112,7 +2112,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Mudar para a matriz de entrada integral"
     }
   ],
   "RhH4pF": [
@@ -2412,7 +2412,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Mudar para entradas detalhadas do item da matriz"
     }
   ],
   "VZHick": [
@@ -2425,6 +2425,20 @@
     {
       "type": 0,
       "value": "Histórico de Execução"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
     }
   ],
   "W070M2": [
@@ -2446,7 +2460,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Claro"
     }
   ],
   "WS9kXD": [
@@ -3029,6 +3043,12 @@
       "value": "Necessário. O índice de onde a subcadeia de caracteres começa no parâmetro 1."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Nenhum valor correspondeu à sua pesquisa"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3383,6 +3403,12 @@
       "value": "Editar no JSON"
     }
   ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+    }
+  ],
   "jsEMSu": [
     {
       "type": 0,
@@ -3548,7 +3574,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Inserir uma matriz válida"
     }
   ],
   "lgs5sf": [
@@ -4355,6 +4381,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Inserir um valor personalizado"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4597,6 +4629,12 @@
     {
       "type": 0,
       "value": "Necessário. A cadeia de caracteres que é convertida em um valor de tipo nativo."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Desmarcar valor personalizado"
     }
   ],
   "zbtUQ/": [

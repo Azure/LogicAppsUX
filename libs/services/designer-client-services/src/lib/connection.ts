@@ -4,6 +4,7 @@ import type { Connector, Connection } from '@microsoft-logic-apps/utils';
 export interface IConnectionService {
   dispose(): void;
   getConnector(connectorId: string): Promise<Connector>;
+  getConnection(connectionId: string): Promise<Connection>;
   getConnections(connectorId?: string): Promise<Connection[]>; // Batching can be addressed with future workitem no. 14703398
   getAllConnectors(): Promise<Connector[]>;
 }

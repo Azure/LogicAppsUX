@@ -1,4 +1,5 @@
-import { useConnectionByName } from '../../queries/connections';
+import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
+import { useConnectionById } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { OperationInfo } from '@microsoft-logic-apps/utils';
@@ -29,13 +30,30 @@ export const useNodeMetadata = (nodeId?: string) => {
   });
 };
 
-export const useNodeConnectionName = (nodeId: string) => {
-  const connectionId = useSelector((state: RootState) => {
-    // danielle test this live
-    return nodeId ? state.connections.connectionsMapping[nodeId] : '';
+export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
+  const result = useOperationManifest(operationInfo);
+  const manifest = result.data;
+  if (manifest) {
+    return isConnectionRequiredForOperation(result.data);
+  }
+  // else case needs to be implemented: work item 14936435
+  return true;
+};
+
+export const useNodeConnectionName = (nodeId: string): QueryResult => {
+  const { connectionId, connectorId } = useSelector((state: RootState) => {
+    return nodeId
+      ? { connectionId: state.connections.connectionsMapping[nodeId], connectorId: state.operations.operationInfo[nodeId]?.connectorId }
+      : { connectionId: '', connectorId: '' };
   });
-  const connection = useConnectionByName(connectionId);
-  return connection?.properties.displayName ?? '';
+
+  // 14955807 task to investigate adding connection type to state to avoid checking in multiple places, or another strategy to avoid below way to find connection
+  const { result: connection, isLoading } = useConnectionById(connectionId, connectorId);
+
+  return {
+    isLoading,
+    result: !isLoading && connectionId ? connection?.properties.displayName ?? connectionId.split('/').at(-1) : '',
+  };
 };
 
 export const useNodeDescription = (nodeId: string) => {

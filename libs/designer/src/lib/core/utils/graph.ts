@@ -69,7 +69,7 @@ export const getUpstreamNodeIds = (
   return sourceNodeIds;
 };
 
-const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | undefined => {
+export const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | undefined => {
   if (currentNode.id === nodeId) {
     return currentNode;
   } else {
@@ -86,11 +86,11 @@ const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | unde
   }
 };
 
-const getGraphNode = (nodeId: string, node: WorkflowNode, nodesMetadata: NodesMetadata): WorkflowNode | undefined => {
+export const getGraphNode = (nodeId: string, node: WorkflowNode, nodesMetadata: NodesMetadata): WorkflowNode | undefined => {
   return getNode(nodesMetadata[nodeId].graphId, node);
 };
 
-const getImmediateSourceNodeIds = (graph: WorkflowNode, nodeId: string): string[] => {
+export const getImmediateSourceNodeIds = (graph: WorkflowNode, nodeId: string): string[] => {
   return (graph.edges ?? []).filter((edge) => edge.target === nodeId && !edge.id.includes('#')).map((edge) => edge.source);
 };
 

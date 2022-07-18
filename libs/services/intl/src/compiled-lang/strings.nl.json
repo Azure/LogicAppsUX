@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Controleren om deze verbinding te selecteren"
     }
   ],
   "+lpuMl": [
@@ -56,7 +56,7 @@
   "/B2CTz": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00) Beijing, Chongqing, Hongkong, Urumqi"
     }
   ],
   "/I/U8L": [
@@ -278,7 +278,7 @@
   "1Ogj/V": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Jeruzalem"
     }
   ],
   "1R6Vaa": [
@@ -450,7 +450,7 @@
   "2xhbE1": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Magadan"
+      "value": "(UTC+11:00) Magadan"
     }
   ],
   "33+WHG": [
@@ -540,7 +540,7 @@
   "4/kJ8D": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Jerevan "
+      "value": "(UTC+04:00) Jerevan"
     }
   ],
   "47kOXr": [
@@ -1380,7 +1380,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Annuleer de selectie"
     }
   ],
   "GzQQqH": [
@@ -1488,7 +1488,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Verwijderen"
     }
   ],
   "JNQHws": [
@@ -1506,7 +1506,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Nieuw item toevoegen"
     }
   ],
   "Jaz3EC": [
@@ -1720,7 +1720,7 @@
   "M48CGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00) Salomonseilanden, Nieuw-Caledonië"
     }
   ],
   "M6U2LE": [
@@ -2116,7 +2116,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Overschakelen naar de volledige matrix invoeren"
     }
   ],
   "RhH4pF": [
@@ -2368,7 +2368,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Voer een naam in voor de verbinding"
     }
   ],
   "V+/c21": [
@@ -2416,7 +2416,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Overschakelen naar detailinvoer voor het matrixobject"
     }
   ],
   "VZHick": [
@@ -2429,6 +2429,20 @@
     {
       "type": 0,
       "value": "Uitvoeringsgeschiedenis"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
     }
   ],
   "W070M2": [
@@ -2450,7 +2464,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Wissen"
     }
   ],
   "WS9kXD": [
@@ -2958,7 +2972,7 @@
   "dWx21B": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Sakhalin"
+      "value": "(UTC+11:00) Sakhalin"
     }
   ],
   "dgAu27": [
@@ -3031,6 +3045,12 @@
     {
       "type": 0,
       "value": "Vereist. De index van waar de subtekenreeks begint in parameter 1."
+    }
+  ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Er zijn geen waarden die overeenkomen met uw zoekopdracht"
     }
   ],
   "euC/DV": [
@@ -3168,7 +3188,7 @@
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "De geselecteerde verbinding opslaan"
     }
   ],
   "gu9o9z": [
@@ -3395,6 +3415,12 @@
       "value": "In JSON bewerken"
     }
   ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+    }
+  ],
   "jsEMSu": [
     {
       "type": 0,
@@ -3560,7 +3586,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Voer een geldige array in."
     }
   ],
   "lgs5sf": [
@@ -3904,7 +3930,7 @@
   "qQoQFv": [
     {
       "type": 0,
-      "value": "Ongeldige verbinding"
+      "value": "Ongeldige verbinding."
     }
   ],
   "qSejoi": [
@@ -4014,7 +4040,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Is niet geldig voor verbinding"
     }
   ],
   "raBiud": [
@@ -4056,7 +4082,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Het maken van een verbinding annuleren"
     }
   ],
   "sW47JR": [
@@ -4356,7 +4382,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Maak een verbinding voor "
     },
     {
       "type": 1,
@@ -4365,6 +4391,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Een aangepaste waarde invoeren"
     }
   ],
   "vwH/XV": [
@@ -4560,7 +4592,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Selecteer een bestaande verbinding of maak een nieuwe."
     }
   ],
   "yph4eq": [
@@ -4584,7 +4616,7 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Verbindingsgateway"
     }
   ],
   "z3VuE+": [
@@ -4609,6 +4641,12 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks die wordt geconverteerd naar een systeemeigen waarde."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Aangepaste waarde wissen"
     }
   ],
   "zbtUQ/": [

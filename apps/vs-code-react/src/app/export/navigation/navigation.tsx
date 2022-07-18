@@ -1,4 +1,4 @@
-import { RouteName } from '../../../run-service';
+import { RouteName, ValidationStatus } from '../../../run-service';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
@@ -16,7 +16,7 @@ export const Navigation: React.FC = () => {
 
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse } = exportData;
+  const { selectedSubscription, selectedIse, selectedWorkflows, validationState } = exportData;
 
   const intlText = {
     NEXT: intl.formatMessage({
@@ -30,6 +30,14 @@ export const Navigation: React.FC = () => {
     CANCEL: intl.formatMessage({
       defaultMessage: 'Cancel',
       description: 'Cancel button',
+    }),
+    EXPORT: intl.formatMessage({
+      defaultMessage: 'Export',
+      description: 'Export button',
+    }),
+    EXPORT_WITH_WARNINGS: intl.formatMessage({
+      defaultMessage: 'Export with warnings',
+      description: 'Export with warnings button',
     }),
   };
 
@@ -49,6 +57,11 @@ export const Navigation: React.FC = () => {
     switch (pathname) {
       case `/${RouteName.export}/${RouteName.instance_selection}`: {
         navigate(`/${RouteName.export}/${RouteName.workflows_selection}`);
+        break;
+      }
+      case `/${RouteName.export}/${RouteName.workflows_selection}`: {
+        navigate(`/${RouteName.export}/${RouteName.validation}`);
+        break;
       }
     }
   };
@@ -65,11 +78,32 @@ export const Navigation: React.FC = () => {
       case `/${RouteName.export}/${RouteName.instance_selection}`: {
         return selectedSubscription === '' || selectedIse === '';
       }
+      case `/${RouteName.export}/${RouteName.workflows_selection}`: {
+        return selectedSubscription === '' || selectedIse === '' || selectedWorkflows.length === 0;
+      }
+      case `/${RouteName.export}/${RouteName.validation}`: {
+        return validationState === '' || validationState === ValidationStatus.failed;
+      }
       default: {
         return true;
       }
     }
   };
+
+  const getNextText = (): string => {
+    const { pathname } = location;
+
+    switch (pathname) {
+      case `/${RouteName.export}/${RouteName.validation}`: {
+        return validationState === ValidationStatus.succeeded_with_warnings ? intlText.EXPORT_WITH_WARNINGS : intlText.EXPORT;
+      }
+      default: {
+        return intlText.NEXT;
+      }
+    }
+  };
+
+  const nextText = getNextText();
 
   return (
     <div className="msla-export-navigation-panel">
@@ -88,8 +122,8 @@ export const Navigation: React.FC = () => {
       />
       <PrimaryButton
         className="msla-export-navigation-panel-button"
-        text={intlText.NEXT}
-        ariaLabel={intlText.NEXT}
+        text={nextText}
+        ariaLabel={nextText}
         onClick={onClickNext}
         disabled={isNextDisabled()}
       />

@@ -20,7 +20,7 @@
   "+dlOgj": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Haiti"
+      "value": "(UTC-05.00) Haiti"
     }
   ],
   "+g+mch": [
@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Centang untuk memilih koneksi ini"
     }
   ],
   "+lpuMl": [
@@ -50,7 +50,7 @@
   "/AtN16": [
     {
       "type": 0,
-      "value": "(UTC+09:30) Darwin"
+      "value": "(UTC+09.30) Darwin"
     }
   ],
   "/B2CTz": [
@@ -68,7 +68,7 @@
   "/Igb36": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Brisbane"
+      "value": "(UTC+10.00) Brisbane"
     }
   ],
   "/NDLmg": [
@@ -140,7 +140,7 @@
   "09oqLb": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Baku"
+      "value": "(UTC+04.00) Baku"
     }
   ],
   "0FzNJV": [
@@ -188,7 +188,7 @@
   "0hxr5j": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Chetumal"
+      "value": "(UTC-05.00) Chetumal"
     }
   ],
   "0i/6TR": [
@@ -278,7 +278,7 @@
   "1Ogj/V": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Yerusalem"
+      "value": "(UTC+02.00) Yerusalem"
     }
   ],
   "1R6Vaa": [
@@ -361,7 +361,7 @@
   "1zmMYu": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Caracas"
+      "value": "(UTC-04.00) Caracas"
     }
   ],
   "23fENy": [
@@ -397,7 +397,7 @@
   "2NYPLt": [
     {
       "type": 0,
-      "value": "(UTC-03:30) Newfoundland"
+      "value": "(UTC-03.30) Newfoundland"
     }
   ],
   "2Noh96": [
@@ -427,7 +427,7 @@
   "2ri1Kf": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Damaskus"
+      "value": "(UTC+02.00) Damaskus"
     }
   ],
   "2tTQ0A": [
@@ -439,7 +439,7 @@
   "2xhbE1": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Magadan"
+      "value": "(UTC+11.00) Magadan"
     }
   ],
   "33+WHG": [
@@ -451,7 +451,7 @@
   "3FoqCK": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Tbilisi"
+      "value": "(UTC+04.00) Tbilisi"
     }
   ],
   "3NhwIJ": [
@@ -463,13 +463,13 @@
   "3PgHCT": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Chisinau"
+      "value": "(UTC+02.00) Chisinau"
     }
   ],
   "3TD2V5": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Dhaka"
+      "value": "(UTC+06.00) Dhaka"
     }
   ],
   "3X/ZDK": [
@@ -481,13 +481,13 @@
   "3afjx+": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Chita"
+      "value": "(UTC+09.00) Chita"
     }
   ],
   "3jlz+B": [
     {
       "type": 0,
-      "value": "(UTC+03:30) Teheran"
+      "value": "(UTC+03.30) Tehran"
     }
   ],
   "3kI7xF": [
@@ -529,7 +529,7 @@
   "4/kJ8D": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Yerevan"
+      "value": "(UTC+04.00) Yerevan"
     }
   ],
   "47kOXr": [
@@ -547,7 +547,7 @@
   "4Q7WzU": [
     {
       "type": 0,
-      "value": "Add a new connection"
+      "value": "Tambahkan koneksi baru"
     }
   ],
   "4XdZNj": [
@@ -655,13 +655,13 @@
   "65FlWi": [
     {
       "type": 0,
-      "value": "(UTC+08:45) Eucla"
+      "value": "(UTC+08.45) Eucla"
     }
   ],
   "6XR3FS": [
     {
       "type": 0,
-      "value": "(UTC+09:30) Adelaide"
+      "value": "(UTC+09.30) Adelaide"
     }
   ],
   "6jiO7t": [
@@ -691,7 +691,7 @@
   "6pd1bE": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Arizona"
+      "value": "(UTC-07.00) Arizona"
     }
   ],
   "6qkBwz": [
@@ -853,13 +853,13 @@
   "9/vdrb": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Hovd"
+      "value": "(UTC+07.00) Hovd"
     }
   ],
   "949s+r": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Ulaanbaatar"
+      "value": "(UTC+08.00) Ulaanbaatar"
     }
   ],
   "99vsJy": [
@@ -871,7 +871,7 @@
   "9EmN2M": [
     {
       "type": 0,
-      "value": "Batal"
+      "value": "Batalkan"
     }
   ],
   "9JuvQ4": [
@@ -1038,13 +1038,13 @@
   "BSHFiw": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Perth"
+      "value": "(UTC+08.00) Perth"
     }
   ],
   "BVOUxP": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Havana"
+      "value": "(UTC-05.00) Havana"
     }
   ],
   "Bn8iTS": [
@@ -1110,7 +1110,7 @@
   "DuXV2M": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Azores"
+      "value": "(UTC-01.00) Azores"
     }
   ],
   "DysO/Q": [
@@ -1164,7 +1164,7 @@
   "ExaACE": [
     {
       "type": 0,
-      "value": "Connection display name"
+      "value": "Nama tampilan koneksi"
     }
   ],
   "F3IDl8": [
@@ -1176,7 +1176,7 @@
   "F489Vg": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Irkutsk"
+      "value": "(UTC+08.00) Irkutsk"
     }
   ],
   "FDF4Qb": [
@@ -1200,7 +1200,7 @@
   "FHsP9y": [
     {
       "type": 0,
-      "value": "(UTC+05:45) Kathmandu"
+      "value": "(UTC+05.45) Kathmandu"
     }
   ],
   "FIT7i0": [
@@ -1248,7 +1248,7 @@
   "FXC0Zi": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Baghdad"
+      "value": "(UTC+03.00) Baghdad"
     }
   ],
   "FXLR5M": [
@@ -1347,7 +1347,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Batalkan pilihan"
     }
   ],
   "GzQQqH": [
@@ -1401,7 +1401,7 @@
   "IPbBB2": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Fiji"
+      "value": "(UTC+12.00) Fiji"
     }
   ],
   "IUE/lQ": [
@@ -1455,7 +1455,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Hapus"
     }
   ],
   "JNQHws": [
@@ -1473,7 +1473,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Tambahkan item baru"
     }
   ],
   "Jaz3EC": [
@@ -1509,7 +1509,7 @@
   "JpthWY": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Montevideo"
+      "value": "(UTC-03.00) Montevideo"
     }
   ],
   "Jq2Y/o": [
@@ -1598,7 +1598,7 @@
   "Kw3bWO": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Istanbul"
+      "value": "(UTC+02.00) Istanbul"
     }
   ],
   "L+PY+j": [
@@ -1760,13 +1760,13 @@
   "NkUgXU": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Minsk"
+      "value": "(UTC+03.00) Minsk"
     }
   ],
   "NvANon": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Alaska"
+      "value": "(UTC-09.00) Alaska"
     }
   ],
   "NvJDn/": [
@@ -1892,7 +1892,7 @@
   "PBvR9Q": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Araguaina"
+      "value": "(UTC-03.00) Araguaina"
     }
   ],
   "PF87Ew": [
@@ -2068,7 +2068,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Beralih ke input seluruh array"
     }
   ],
   "RhH4pF": [
@@ -2195,7 +2195,7 @@
   "TNzcrv": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Vladivostok"
+      "value": "(UTC+10.00) Vladivostok"
     }
   ],
   "TO7qos": [
@@ -2237,7 +2237,7 @@
   "ToPmjE": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Cuiaba"
+      "value": "(UTC-04.00) Cuiaba"
     }
   ],
   "TqPfth": [
@@ -2309,7 +2309,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Masukkan nama untuk koneksi"
     }
   ],
   "V+/c21": [
@@ -2357,7 +2357,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Beralih ke input detail untuk item array"
     }
   ],
   "VZHick": [
@@ -2370,6 +2370,20 @@
     {
       "type": 0,
       "value": "Riwayat Eksekusi"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Gunakan \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" sebagai nilai kustom"
     }
   ],
   "W070M2": [
@@ -2391,7 +2405,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Bersihkan"
     }
   ],
   "WS9kXD": [
@@ -2469,7 +2483,7 @@
   "XTYYks": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Seoul"
+      "value": "(UTC+09.00) Seoul"
     }
   ],
   "XTuxmH": [
@@ -2635,7 +2649,7 @@
   "ZnGRMP": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Tomsk"
+      "value": "(UTC+07.00) Tomsk"
     }
   ],
   "a3QJzO": [
@@ -2659,7 +2673,7 @@
   "a7x6VI": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Taipei"
+      "value": "(UTC+08.00) Taipei"
     }
   ],
   "aAXnqw": [
@@ -2707,7 +2721,7 @@
   "bS5DyV": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Kaliningrad"
+      "value": "(UTC+02.00) Kaliningrad"
     }
   ],
   "bTrk+S": [
@@ -2743,7 +2757,7 @@
   "bx3qeC": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Brasilia"
+      "value": "(UTC-03.00) Brasilia"
     }
   ],
   "bzF/qn": [
@@ -2761,7 +2775,7 @@
   "c1XmvN": [
     {
       "type": 0,
-      "value": "(UTC+13:00) Nuku'alofa"
+      "value": "(UTC+13.00) Nuku'alofa"
     }
   ],
   "c2XklE": [
@@ -2803,13 +2817,13 @@
   "cT2MlP": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Chokurdakh"
+      "value": "(UTC+11.00) Chokurdakh"
     }
   ],
   "cVIZTQ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Tripoli"
+      "value": "(UTC+02.00) Tripoli"
     }
   ],
   "ci6ex1": [
@@ -2899,13 +2913,13 @@
   "dWx21B": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Sakhalin"
+      "value": "(UTC+11.00) Sakhalin"
     }
   ],
   "dgAu27": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Greenland"
+      "value": "(UTC-03.00) Greenland"
     }
   ],
   "dhvk0u": [
@@ -2947,7 +2961,7 @@
   "eGa1Wa": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ekaterinburg"
+      "value": "(UTC+05.00) Ekaterinburg"
     }
   ],
   "eHgi14": [
@@ -2972,6 +2986,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Indeks substring awal dalam parameter 1."
+    }
+  ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Tidak ada nilai yang cocok dengan pencarian Anda"
     }
   ],
   "euC/DV": [
@@ -3013,7 +3033,7 @@
   "froV/0": [
     {
       "type": 0,
-      "value": "(UTC+04:30) Kabul"
+      "value": "(UTC+04.30) Kabul"
     }
   ],
   "ftwXvc": [
@@ -3061,7 +3081,7 @@
   "gF+0/N": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Amman"
+      "value": "(UTC+02.00) Amman"
     }
   ],
   "gIK0WG": [
@@ -3103,13 +3123,13 @@
   "gg0j4S": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Saskatchewan"
+      "value": "(UTC-06.00) Saskatchewan"
     }
   ],
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Simpan koneksi yang dipilih"
     }
   ],
   "gu9o9z": [
@@ -3317,6 +3337,12 @@
       "value": "Edit di JSON"
     }
   ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Format referensi koneksi manifes tidak didukung: {referenceKeyFormat}"
+    }
+  ],
   "jsEMSu": [
     {
       "type": 0,
@@ -3482,7 +3508,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Masukkan array yang valid"
     }
   ],
   "lgs5sf": [
@@ -3670,7 +3696,7 @@
   "oRvVIW": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Krasnoyarsk"
+      "value": "(UTC+07.00) Krasnoyarsk"
     }
   ],
   "oV0xQ9": [
@@ -3682,7 +3708,7 @@
   "ol+TkT": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Salvador"
+      "value": "(UTC-03.00) Salvador"
     }
   ],
   "orhWzV": [
@@ -3712,7 +3738,7 @@
   "p5tz8/": [
     {
       "type": 0,
-      "value": "(UTC+13:00) Samoa"
+      "value": "(UTC+13.00) Samoa"
     }
   ],
   "pIczsS": [
@@ -3826,7 +3852,7 @@
   "qQoQFv": [
     {
       "type": 0,
-      "value": "Sambungan tidak valid."
+      "value": "Koneksi tidak valid."
     }
   ],
   "qSejoi": [
@@ -3877,7 +3903,7 @@
   "qq/bq0": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Yakutsk"
+      "value": "(UTC+09.00) Yakutsk"
     }
   ],
   "qrxi0L": [
@@ -3889,7 +3915,7 @@
   "r1FQhf": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Windhoek"
+      "value": "(UTC+01.00) Windhoek"
     }
   ],
   "r43nMc": [
@@ -3925,7 +3951,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Apakah koneksi tidak valid"
     }
   ],
   "raBiud": [
@@ -3967,7 +3993,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Batalkan pembuatan koneksi"
     }
   ],
   "sW47JR": [
@@ -4009,7 +4035,7 @@
   "siYGSo": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Beirut"
+      "value": "(UTC+02.00) Beirut"
     }
   ],
   "soqP+Z": [
@@ -4087,7 +4113,7 @@
   "tP+5fA": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Novosibirsk"
+      "value": "(UTC+06.00) Novosibirsk"
     }
   ],
   "tVmUCd": [
@@ -4111,7 +4137,7 @@
   "teZwo6": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Hobart"
+      "value": "(UTC+10.00) Hobart"
     }
   ],
   "tsmuoF": [
@@ -4129,7 +4155,7 @@
   "u/KSPz": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Santiago"
+      "value": "(UTC-04.00) Santiago"
     }
   ],
   "u6Gdft": [
@@ -4219,7 +4245,7 @@
   "vD2lQy": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Asuncion"
+      "value": "(UTC-04.00) Asuncion"
     }
   ],
   "vEBhDX": [
@@ -4243,7 +4269,7 @@
   "vXwYXe": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Astana"
+      "value": "(UTC+06.00) Astana"
     }
   ],
   "va40BJ": [
@@ -4255,7 +4281,7 @@
   "vb/okJ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Kairo"
+      "value": "(UTC+02.00) Kairo"
     }
   ],
   "vcBAuU": [
@@ -4267,7 +4293,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Buat koneksi untuk "
     },
     {
       "type": 1,
@@ -4276,6 +4302,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Masukkan nama kustom"
     }
   ],
   "vwH/XV": [
@@ -4305,7 +4337,7 @@
   "wF7C+h": [
     {
       "type": 0,
-      "value": "Batal"
+      "value": "Batalkan"
     }
   ],
   "wFCkpM": [
@@ -4449,7 +4481,7 @@
   "yIZP4R": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Hawaii"
+      "value": "(UTC-10.00) Hawaii"
     }
   ],
   "yOkPGx": [
@@ -4471,7 +4503,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Pilih koneksi yang sudah ada atau buat yang baru."
     }
   ],
   "yph4eq": [
@@ -4489,13 +4521,13 @@
   "yxsn7s": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Casablanca"
+      "value": "(UTC+00.00) Casablanca"
     }
   ],
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Gateway koneksi"
     }
   ],
   "z3VuE+": [
@@ -4522,10 +4554,16 @@
       "value": "Harus diisi. String yang dikonversi ke nilai jenis asli."
     }
   ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Hapus nilai kustom"
+    }
+  ],
   "zbtUQ/": [
     {
       "type": 0,
-      "value": "(UTC+08:30) Pyongyang"
+      "value": "(UTC+08.30) Pyongyang"
     }
   ],
   "zcZpHT": [
@@ -4537,7 +4575,7 @@
   "zggBvC": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Nairobi"
+      "value": "(UTC+03.00) Nairobi"
     }
   ],
   "ziYCiA": [

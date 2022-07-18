@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Zaškrtnutím toto připojení vyberete."
     }
   ],
   "+lpuMl": [
@@ -56,7 +56,7 @@
   "/B2CTz": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00) Peking, Čchung-čching, Hongkong, Urumqi"
     }
   ],
   "/I/U8L": [
@@ -1000,7 +1000,7 @@
   "AYaqW/": [
     {
       "type": 0,
-      "value": "(UTC+06:30) Yangon (Rangoon)"
+      "value": "(UTC+06:30) Yangon (Rangún)"
     }
   ],
   "ArTh0/": [
@@ -1458,7 +1458,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Zrušit výběr"
     }
   ],
   "GzQQqH": [
@@ -1566,7 +1566,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Odstranit"
     }
   ],
   "JNQHws": [
@@ -1584,7 +1584,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Přidat novou položku"
     }
   ],
   "Jaz3EC": [
@@ -1766,7 +1766,7 @@
   "LMB8am": [
     {
       "type": 0,
-      "value": "Probíhá vytváření…"
+      "value": "Vytváření…"
     }
   ],
   "LS8rfZ": [
@@ -1820,7 +1820,7 @@
   "M48CGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00) Šalamounovy ostrovy, Nová Kaledonie"
     }
   ],
   "M6U2LE": [
@@ -2212,7 +2212,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Přepne na vstup celého pole."
     }
   ],
   "RhH4pF": [
@@ -2486,7 +2486,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Zadejte název připojení."
     }
   ],
   "V+/c21": [
@@ -2534,7 +2534,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Přepne na vstupy podrobností pro položku pole."
     }
   ],
   "VZHick": [
@@ -2547,6 +2547,20 @@
     {
       "type": 0,
       "value": "Historie spuštění"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Použít „"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "“ jako vlastní hodnotu"
     }
   ],
   "W070M2": [
@@ -2568,7 +2582,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Vymazat"
     }
   ],
   "WS9kXD": [
@@ -2914,7 +2928,7 @@
   "bnStSJ": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+      "value": "(UTC+05:30) Čennaj, Kolkata (Kalkata), Mumbaí (Bombaj), Dillí"
     }
   ],
   "bx3qeC": [
@@ -3151,6 +3165,12 @@
       "value": "Vyžadováno. Index určující, kde začíná v parametru 1 podřetězec."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Vašemu hledání neodpovídají žádné hodnoty."
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3286,7 +3306,7 @@
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Uložit vybrané připojení"
     }
   ],
   "gu9o9z": [
@@ -3531,6 +3551,16 @@
       "value": "Upravit ve formátu JSON"
     }
   ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Nepodporovaný formát odkazu na připojení manifestu: "
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    }
+  ],
   "jsEMSu": [
     {
       "type": 0,
@@ -3696,7 +3726,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Zadejte platné pole."
     }
   ],
   "lgs5sf": [
@@ -4172,7 +4202,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Připojení je neplatné"
     }
   ],
   "raBiud": [
@@ -4214,7 +4244,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Zrušit vytváření připojení"
     }
   ],
   "sW47JR": [
@@ -4514,7 +4544,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Vytvořte připojení pro "
     },
     {
       "type": 1,
@@ -4523,6 +4553,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Zadat vlastní hodnotu"
     }
   ],
   "vwH/XV": [
@@ -4718,7 +4754,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Vyberte existující připojení nebo vytvořte nové."
     }
   ],
   "yph4eq": [
@@ -4742,13 +4778,13 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Brána připojení"
     }
   ],
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "Nabídka"
     }
   ],
   "z4YYlQ": [
@@ -4767,6 +4803,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který se převede na hodnotu nativního typu."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Vymazat vlastní hodnotu"
     }
   ],
   "zbtUQ/": [

@@ -32,7 +32,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Zaznacz, aby wybrać to połączenie"
     }
   ],
   "+lpuMl": [
@@ -1004,7 +1004,7 @@
   "AYaqW/": [
     {
       "type": 0,
-      "value": "(UTC+06:30) Yangon (Rangoon)"
+      "value": "(UTC+06:30) Yangon (Rangun)"
     }
   ],
   "ArTh0/": [
@@ -1462,7 +1462,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Anuluj zaznaczenie"
     }
   ],
   "GzQQqH": [
@@ -1570,7 +1570,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Usuń"
     }
   ],
   "JNQHws": [
@@ -1588,7 +1588,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Dodaj nowy element"
     }
   ],
   "Jaz3EC": [
@@ -1770,7 +1770,7 @@
   "LMB8am": [
     {
       "type": 0,
-      "value": "Tworzenie w toku..."
+      "value": "Tworzenie w toku..."
     }
   ],
   "LS8rfZ": [
@@ -2216,7 +2216,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Przełącz się na wprowadzanie całej tablicy"
     }
   ],
   "RhH4pF": [
@@ -2490,7 +2490,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Wprowadź nazwę połączenia"
     }
   ],
   "V+/c21": [
@@ -2538,7 +2538,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Przełącz się na szczegółowe dane wejściowe dla elementu tablicy"
     }
   ],
   "VZHick": [
@@ -2551,6 +2551,20 @@
     {
       "type": 0,
       "value": "Historia uruchamiania"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
     }
   ],
   "W070M2": [
@@ -2572,7 +2586,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Wyczyść"
     }
   ],
   "WS9kXD": [
@@ -2918,7 +2932,7 @@
   "bnStSJ": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+      "value": "(UTC+05:30) Chennai, Kolkata (Kalkuta), Mumbaj (Bombaj), Nowe Delhi"
     }
   ],
   "bx3qeC": [
@@ -3155,6 +3169,12 @@
       "value": "Parametr wymagany. Indeks, w którym podciąg rozpoczyna się w parametrze 1."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Brak wartości spełniających kryteria wyszukiwania"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3290,7 +3310,7 @@
   "gj+jEr": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Zapisz wybrane połączenie"
     }
   ],
   "gu9o9z": [
@@ -3539,6 +3559,12 @@
       "value": "Edytuj w pliku JSON"
     }
   ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+    }
+  ],
   "jsEMSu": [
     {
       "type": 0,
@@ -3704,7 +3730,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Wprowadź prawidłową tablicę"
     }
   ],
   "lgs5sf": [
@@ -4180,7 +4206,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Czy połączenie jest nieprawidłowe"
     }
   ],
   "raBiud": [
@@ -4222,7 +4248,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Anulowanie tworzenia połączenia"
     }
   ],
   "sW47JR": [
@@ -4522,7 +4548,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Utwórz połączenie dla łącznika "
     },
     {
       "type": 1,
@@ -4531,6 +4557,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Wprowadź wartość niestandardową"
     }
   ],
   "vwH/XV": [
@@ -4726,7 +4758,7 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Wybierz istniejące połączenie lub utwórz nowe."
     }
   ],
   "yph4eq": [
@@ -4750,7 +4782,7 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Brama połączeń"
     }
   ],
   "z3VuE+": [
@@ -4775,6 +4807,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Ciąg przekonwertowany na wartość typu natywnego."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Wyczyść wartość niestandardową"
     }
   ],
   "zbtUQ/": [

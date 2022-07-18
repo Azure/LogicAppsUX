@@ -1,81 +1,203 @@
+import type { IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
-import type { ArmResources, Connection, Connector } from '@microsoft-logic-apps/utils';
-import { equals } from '@microsoft-logic-apps/utils';
+import { azureFunctionConnectorId } from './operationmanifest';
+import type { Connection, Connector } from '@microsoft-logic-apps/utils';
+import { ArgumentException, equals } from '@microsoft-logic-apps/utils';
+
+interface ServiceProviderConnectionModel {
+  parameterValues: Record<string, any>;
+  serviceProvider: {
+    id: string;
+  };
+  displayName?: string;
+}
+
+interface FunctionsConnectionModel {
+  function: {
+    id: string;
+  };
+  triggerUrl: string;
+  authentication: {
+    type: string;
+    name: string;
+    value: string;
+  };
+  displayName?: string;
+}
+
+interface APIManagementConnectionModel {
+  apiId: string;
+  baseUrl: string;
+  subscriptionKey: string;
+  authentication?: {
+    type: string;
+    name: string;
+    value: string;
+  };
+  displayName?: string;
+}
+
+interface ConnectionAndAppSetting<T> {
+  connectionKey: string;
+  connectionData: T;
+  settings: Record<string, string>;
+  pathLocation: string[];
+}
 
 interface StandardConnectionServiceArgs {
   apiVersion: string;
   baseUrl: string;
   locale?: string;
   filterByLocation?: boolean;
-  httpClient: IHttpClient;
-  apiHubServiceDetails?: {
+  readConnections: ReadConnectionsFunc;
+  writeConnection?: WriteConnectionFunc;
+  apiHubServiceDetails: {
     apiVersion: string;
-    baseUrl: string;
     subscriptionId: string;
     resourceGroup: string;
-    locale?: string;
     location: string;
-    getAccessToken: getAccessTokenType;
   };
+  httpClient: IHttpClient;
 }
 
 export type getAccessTokenType = () => Promise<string>;
 
-export class StandardConnectionService {
-  constructor(public readonly options: StandardConnectionServiceArgs) {}
+interface ConnectionsData {
+  managedApiConnections?: any;
+  serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
+  functionConnections?: Record<string, FunctionsConnectionModel>;
+}
+
+type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnectionModel | APIManagementConnectionModel;
+type ReadConnectionsFunc = () => Promise<ConnectionsData>;
+type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
+
+const serviceProviderLocation = 'serviceProviderConnections';
+const functionsLocation = 'functionConnections';
+
+export class StandardConnectionService implements IConnectionService {
+  private _connections: Record<string, Connection> = {};
+
+  constructor(public readonly options: StandardConnectionServiceArgs) {
+    const { apiHubServiceDetails, apiVersion, baseUrl, readConnections } = options;
+    if (!baseUrl) {
+      throw new ArgumentException('baseUrl required');
+    } else if (!apiVersion) {
+      throw new ArgumentException('apiVersion required');
+    } else if (!readConnections) {
+      throw new ArgumentException('readConnections required');
+    } else if (!apiHubServiceDetails) {
+      throw new ArgumentException('apiHubServiceDetails required for workflow app');
+    }
+  }
 
   dispose(): void {
     return;
   }
 
   async getConnector(connectorId: string): Promise<Connector> {
-    const { apiVersion, baseUrl, httpClient } = this.options;
-    const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}?api-version=${apiVersion}`;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const response = await httpClient.get<Connector>({ uri });
-    //return response;
-    return {} as any;
+    if (!isArmResourceId(connectorId)) {
+      const { apiVersion, baseUrl, httpClient } = this.options;
+      return httpClient.get<Connector>({
+        uri: `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}?api-version=${apiVersion}`,
+      });
+    } else {
+      const {
+        apiHubServiceDetails: { apiVersion },
+        httpClient,
+      } = this.options;
+      const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters: { 'api-version': apiVersion } });
+      return {
+        ...response,
+        properties: {
+          ...response.properties,
+          ...response.properties.generalInformation,
+        },
+      };
+    }
   }
 
-  async getConnectors(): Promise<Connector[]> {
-    return [];
+  async getConnection(connectionId: string): Promise<Connection> {
+    if (isArmResourceId(connectionId)) {
+      return this.getConnectionInApiHub(connectionId);
+    }
+
+    let connection = this._connections[connectionId];
+    if (!connection) {
+      await this.getConnections();
+      connection = this._connections[connectionId];
+    }
+
+    return connection;
   }
 
-  async getAllConnectors(): Promise<Connector[]> {
-    const { apiVersion, baseUrl, httpClient } = this.options;
-    const uri = `${baseUrl}/operationGroups?api-version=${apiVersion}`;
-    const response = await httpClient.get<{ value: Connector[] }>({ uri });
-    console.log(response);
-    return response.value;
+  async getConnections(connectorId?: string): Promise<Connection[]> {
+    if (connectorId) {
+      return this.getConnectionsForConnector(connectorId);
+    }
+
+    const [localConnections, apiHubConnections] = await Promise.all([this.options.readConnections(), this.getConnectionsInApiHub()]);
+    const serviceProviderConnections = (localConnections[serviceProviderLocation] || {}) as Record<string, ServiceProviderConnectionModel>;
+    const functionConnections = (localConnections[functionsLocation] || {}) as Record<string, FunctionsConnectionModel>;
+
+    return [
+      ...Object.keys(serviceProviderConnections).map((key) => {
+        const connection = convertServiceProviderConnectionDataToConnection(key, serviceProviderConnections[key]);
+        this._connections[connection.id] = connection;
+        return connection;
+      }),
+      ...Object.keys(functionConnections).map((key) => {
+        const connection = convertFunctionsConnectionDataToConnection(key, functionConnections[key]);
+        this._connections[connection.id] = connection;
+        return connection;
+      }),
+      ...apiHubConnections,
+    ];
   }
 
-  async getConnection(_connectionId: string): Promise<Connection | undefined> {
-    throw new Error('Function not implemented.');
+  private async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
+    if (isArmResourceId(connectorId)) {
+      const {
+        apiHubServiceDetails: { location, subscriptionId, resourceGroup, apiVersion },
+        httpClient,
+      } = this.options;
+      const response = await httpClient.get<ConnectionsResponse>({
+        uri: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`,
+        queryParameters: {
+          'api-version': apiVersion,
+          $filter: `Location eq '${location}' and ManagedApiName eq '${connectorId.split('/').slice(-1)[0]}' and Kind eq 'V2'`,
+        },
+      });
+      return response.value;
+    } else {
+      return Object.keys(this._connections)
+        .filter((connectionId) => equals(this._connections[connectionId].properties.api.id, connectorId))
+        .map((connectionId) => this._connections[connectionId]);
+    }
   }
 
   private async getConnectionInApiHub(connectionId: string): Promise<Connection> {
-    const { apiHubServiceDetails, httpClient } = this.options;
+    const {
+      apiHubServiceDetails: { apiVersion },
+      httpClient,
+    } = this.options;
     const connection = await httpClient.get<Connection>({
-      uri: `${connectionId}/api-version=${apiHubServiceDetails?.apiVersion}`,
+      uri: connectionId,
+      queryParameters: { 'api-version': apiVersion },
     });
 
     return connection;
   }
 
-  async getConnections(): Promise<Connection[]> {
-    const response = await this.getConnectionsInApiHub();
-    return response;
-  }
-
   private async getConnectionsInApiHub(): Promise<Connection[]> {
-    const { apiHubServiceDetails, filterByLocation, httpClient, baseUrl } = this.options;
-    if (!apiHubServiceDetails) {
-      return [];
-    }
+    const {
+      filterByLocation,
+      httpClient,
+      apiHubServiceDetails: { apiVersion, subscriptionId, resourceGroup },
+      locale,
+    } = this.options;
 
-    const { subscriptionId, resourceGroup, location, apiVersion } = apiHubServiceDetails;
-
-    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`;
+    const uri = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`;
 
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
@@ -84,39 +206,64 @@ export class StandardConnectionService {
     };
 
     try {
-      const response = await httpClient.get<ArmResources<Connection>>({ uri, queryParameters });
-      const allConnections = await this._followContinuationTokens<Connection>(response);
-      return allConnections.filter((connection: Connection) => {
-        return filterByLocation ? equals(connection.location, location) : true;
+      const response = await httpClient.get<ConnectionsResponse>({ uri, queryParameters });
+      return response.value.filter((connection: Connection) => {
+        return filterByLocation ? equals(connection.location, locale) : true;
       });
     } catch {
       return [];
     }
   }
-
-  // this is used if there are more connections than the API can return
-  private async _followContinuationTokens<T>(response: ArmResources<T>): Promise<T[]> {
-    let { nextLink, value } = response;
-
-    while (nextLink) {
-      let connectors: T[];
-      try {
-        ({ nextLink, value: connectors } = await this._followContinuationToken<T>(nextLink));
-        value = [...value, ...connectors];
-      } catch {
-        nextLink = undefined;
-      }
-    }
-    return value;
-  }
-
-  private async _followContinuationToken<T>(continuationToken: string): Promise<ArmResources<T>> {
-    const response = await this.options.httpClient.get<ArmResources<T>>({ uri: continuationToken });
-
-    return response;
-  }
 }
+
+type ConnectionsResponse = {
+  value: Connection[];
+};
 
 export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.startsWith('/subscriptions/') : false;
+}
+
+function convertServiceProviderConnectionDataToConnection(
+  connectionKey: string,
+  connectionData: ServiceProviderConnectionModel
+): Connection {
+  const {
+    displayName,
+    serviceProvider: { id: apiId },
+  } = connectionData;
+
+  return {
+    name: connectionKey,
+    id: `${apiId}/connections/${connectionKey}`,
+    type: 'connections',
+    properties: {
+      api: { id: apiId } as any,
+      createdTime: '',
+      connectionParameters: {},
+      displayName: displayName as string,
+      statuses: [{ status: 'Connected' }],
+      overallStatus: 'Connected',
+      testLinks: [],
+    },
+  };
+}
+
+function convertFunctionsConnectionDataToConnection(connectionKey: string, connectionData: FunctionsConnectionModel): Connection {
+  const { displayName } = connectionData;
+
+  return {
+    name: connectionKey,
+    id: `${azureFunctionConnectorId}/connections/${connectionKey}`,
+    type: 'connections',
+    properties: {
+      api: { id: azureFunctionConnectorId } as any,
+      createdTime: '',
+      connectionParameters: {},
+      displayName: displayName as string,
+      overallStatus: 'Connected',
+      statuses: [{ status: 'Connected' }],
+      testLinks: [],
+    },
+  };
 }

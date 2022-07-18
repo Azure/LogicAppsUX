@@ -100,12 +100,20 @@ export interface SettingSectionProps {
   id?: string;
   title?: string;
   showHeading?: boolean;
+  showSeparator?: boolean;
   expanded?: boolean;
   settings: Settings[];
   isReadOnly?: boolean;
 }
 
-export const SettingsSection: FC<SettingSectionProps> = ({ title = 'Settings', showHeading = true, expanded, isReadOnly, settings }) => {
+export const SettingsSection: FC<SettingSectionProps> = ({
+  title = 'Settings',
+  showHeading = true,
+  showSeparator = true,
+  expanded,
+  isReadOnly,
+  settings,
+}) => {
   const [expandedState, setExpanded] = useState(!!expanded);
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
@@ -131,7 +139,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({ title = 'Settings', s
   const internalSettings = (
     <>
       {expandedState || !showHeading ? renderSettings(settings, isReadOnly) : null}
-      <Separator className="msla-setting-section-separator" styles={separatorStyles} />
+      {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
     </>
   );
   if (!showHeading) {

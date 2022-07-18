@@ -27,7 +27,7 @@ export const ExportApp: React.FC = () => {
       <QueryClientProvider client={queryClient}>
         <div className="msla-export">
           <Text variant="xxLarge" className="msla-export-title" nowrap block>
-            Export Logic App
+            Export logic app
           </Text>
           <Outlet
             context={{

@@ -1488,7 +1488,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Supprimer"
     }
   ],
   "JNQHws": [
@@ -1506,7 +1506,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Ajouter un nouvel élément"
     }
   ],
   "Jaz3EC": [
@@ -2112,7 +2112,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Basculer vers le tableau d'entrées dans son intégralité"
     }
   ],
   "RhH4pF": [
@@ -2412,7 +2412,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Basculer vers les entrées de détail pour l'élément de tableau"
     }
   ],
   "VZHick": [
@@ -2425,6 +2425,20 @@
     {
       "type": 0,
       "value": "Historique d’exécution"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
     }
   ],
   "W070M2": [
@@ -2446,7 +2460,7 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Effacer"
     }
   ],
   "WS9kXD": [
@@ -3029,6 +3043,12 @@
       "value": "Obligatoire. Index d'où la sous-chaîne commence dans le paramètre 1."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Aucune valeur ne correspond à votre recherche"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3391,6 +3411,12 @@
       "value": "Modifier dans JSON"
     }
   ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+    }
+  ],
   "jsEMSu": [
     {
       "type": 0,
@@ -3556,7 +3582,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Entrez un groupe valide"
     }
   ],
   "lgs5sf": [
@@ -4363,6 +4389,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Entrer une valeur personnalisée"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4605,6 +4637,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne convertie en une valeur de type native."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Effacer la valeur par défaut"
     }
   ],
   "zbtUQ/": [

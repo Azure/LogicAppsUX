@@ -1,6 +1,8 @@
+import type { Workflow } from '../common/models/workflow';
 import type { DesignerOptionsState } from '../core/state/designerOptions/designerOptionsInterfaces';
 import { BJSWorkflowProvider, Designer, DesignerProvider } from '../index';
 import AllScopesWorkflow from './storybookWorkflows/allScopesWorkflow.json';
+import ConnectionsWorkflow from './storybookWorkflows/connectionsWorkflow.json';
 import BigWorkflow from './storybookWorkflows/simpleBigworkflow.json';
 import SimpleWorkflow from './storybookWorkflows/simpleSmallWorkflow.json';
 import {
@@ -16,7 +18,7 @@ export default {
 };
 
 interface ComponentProps {
-  workflow: any;
+  workflow: Workflow;
   options?: Partial<DesignerOptionsState>;
 }
 
@@ -36,6 +38,13 @@ const RenderedComponent = (props: ComponentProps) => (
             baseUrl: '/url',
             apiVersion: '2018-11-01',
             httpClient,
+            apiHubServiceDetails: {
+              apiVersion: '2018-07-01-preview',
+              subscriptionId: '',
+              resourceGroup: '',
+              location: '',
+            },
+            readConnections: () => Promise.resolve({}),
           }),
           operationManifestService: new StandardOperationManifestService({
             apiVersion: '2018-11-01',
@@ -46,19 +55,21 @@ const RenderedComponent = (props: ComponentProps) => (
         },
       }}
     >
-      <BJSWorkflowProvider workflow={props.workflow.definition}>
+      <BJSWorkflowProvider workflow={props.workflow}>
         <Designer></Designer>
       </BJSWorkflowProvider>
     </DesignerProvider>
   </div>
 );
 
-export const SimpleButBigDefinition = () => <RenderedComponent workflow={BigWorkflow} options={{}} />;
+export const SimpleButBigDefinition = () => <RenderedComponent workflow={BigWorkflow as Workflow} options={{}} />;
 
-export const ReadOnlyExample = () => <RenderedComponent workflow={SimpleWorkflow} options={{ readOnly: true }} />;
+export const ReadOnlyExample = () => <RenderedComponent workflow={SimpleWorkflow as Workflow} options={{ readOnly: true }} />;
 
 export const MonitoringViewExample = () => (
-  <RenderedComponent workflow={SimpleWorkflow} options={{ readOnly: true, isMonitoringView: true }} />
+  <RenderedComponent workflow={SimpleWorkflow as Workflow} options={{ readOnly: true, isMonitoringView: true }} />
 );
 
-export const ScopesExample = () => <RenderedComponent workflow={AllScopesWorkflow} />;
+export const ConnectionsExample = () => <RenderedComponent workflow={ConnectionsWorkflow.files as Workflow} options={{}} />;
+
+export const ScopesExample = () => <RenderedComponent workflow={AllScopesWorkflow as Workflow} />;
