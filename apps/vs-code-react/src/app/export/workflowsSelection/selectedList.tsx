@@ -29,9 +29,9 @@ export const SelectedList: React.FC<any> = () => {
         <Text variant="large" nowrap block className="msla-export-workflows-panel-selected-list-item-text">
           {name + ' '}
         </Text>
-        <div className="msla-export-workflows-panel-selected-list-item-subtext subtext-color">
+        <div className="msla-export-workflows-panel-selected-list-item-subtext">
           (
-          <Text variant="medium" nowrap block className="subtext-color">
+          <Text variant="medium" nowrap block>
             {resourceGroup}
           </Text>
           )

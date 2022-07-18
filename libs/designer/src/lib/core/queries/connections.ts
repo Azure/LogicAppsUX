@@ -1,6 +1,7 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import { useQuery } from 'react-query';
+import { equals } from '@microsoft-logic-apps/utils';
 
 const connectionKey = 'connections';
 
@@ -10,17 +11,43 @@ export const getConnectionsQuery = async (): Promise<void> => {
   return await queryClient.prefetchQuery([connectionKey], () => connectionService.getConnections());
 };
 
-export const useConnectionByName = (connectionName: string) => {
-  const connectionsQuery = useQuery(
+export const useConnectionById = (connectionId: string, connectorId: string) => {
+  const { data: connections, isLoading } = useConnectionsForConnector(connectorId);
+
+  if (!connectionId) {
+    return { isLoading: false, result: undefined };
+  }
+
+  if (connections) {
+    return {
+      isLoading,
+      result: connections && connections.find((connection) => equals(connection.id, connectionId))
+    };
+  }
+
+  return {
+    isLoading,
+    result: undefined
+  };
+};
+
+export const useAllConnections = () => {
+  return useQuery(
     [connectionKey],
     () => {
       const connectionService = ConnectionService();
       return connectionService.getConnections();
-    },
-    { staleTime: 1000 * 6 * 5 }
+    }
   );
+}
 
-  const connections = connectionsQuery.data;
-  const connectionForConnector = connections && connections.find((connection) => connection.name === connectionName);
-  return connectionForConnector;
-};
+export const useConnectionsForConnector = (connectorId: string) => {
+  return useQuery(
+    [connectionKey, connectorId?.toLowerCase()],
+    () => {
+      const connectionService = ConnectionService();
+      return connectionService.getConnections(connectorId);
+    },
+    { enabled: !!connectorId }
+  );
+}

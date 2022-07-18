@@ -2427,6 +2427,20 @@
       "value": "Historique d’exécution"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -3029,6 +3043,12 @@
       "value": "Obligatoire. Index d'où la sous-chaîne commence dans le paramètre 1."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Aucune valeur ne correspond à votre recherche"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3389,6 +3409,12 @@
     {
       "type": 0,
       "value": "Modifier dans JSON"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4363,6 +4389,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Entrer une valeur personnalisée"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4605,6 +4637,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne convertie en une valeur de type native."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Effacer la valeur par défaut"
     }
   ],
   "zbtUQ/": [
