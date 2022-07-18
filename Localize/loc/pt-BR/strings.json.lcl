@@ -3609,6 +3609,9 @@
       <Item ItemId=";VptXzY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Use "{value}" as a custom value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Usar "{value}" como um valor personalizado]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5004,6 +5007,9 @@
       <Item ItemId=";jjYA4u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported manifest connection reference format: '{referenceKeyFormat}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Formato de referência de conexão de manifesto sem suporte: '{referenceKeyFormat}']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6391,7 +6397,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter custom value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Inserir um valor personalizado]]></Val>
+            <Val><![CDATA[Inserir valor personalizado]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6760,7 +6766,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Clear custom value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Desmarcar valor personalizado]]></Val>
+            <Val><![CDATA[Limpar valor personalizado]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
