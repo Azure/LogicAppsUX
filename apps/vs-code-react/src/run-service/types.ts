@@ -1,3 +1,5 @@
+import type { InitializePayload } from '../state/vscodeSlice';
+
 export interface IRunService {
   getContent(contentLink: ContentLink): Promise<any>;
   getMoreRuns(continuationToken: string): Promise<Runs>;
@@ -197,6 +199,7 @@ export type ExportData = {
   selectedIse: string;
   location: string;
   validationState: string;
+  exportPath: string;
 };
 
 export enum ResourceType {
@@ -283,4 +286,24 @@ export enum ExtensionCommand {
   dispose = 'dispose',
   initialize_frame = 'initialize-frame',
   update_access_token = 'update-access-token',
+  update_export_path = 'update-export-path',
+}
+
+export interface InjectValuesMessage {
+  command: ExtensionCommand.initialize_frame;
+  data: InitializePayload;
+}
+
+export interface UpdateAccessTokenMessage {
+  command: ExtensionCommand.update_access_token;
+  data: {
+    accessToken?: string;
+  };
+}
+
+export interface UpdateExportPathMessage {
+  command: ExtensionCommand.update_export_path;
+  data: {
+    exportPath?: string;
+  };
 }

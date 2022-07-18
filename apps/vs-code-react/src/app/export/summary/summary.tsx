@@ -41,8 +41,8 @@ export const Summary: React.FC = () => {
       <Text variant="large" nowrap block>
         {intlText.SELECT_LOCATION}
       </Text>
-      <div className="msla-export-summary">
-        <TextField label={intlText.EXPORT_LOCATION} disabled />
+      <div className="msla-export-summary-file-location">
+        <TextField label={intlText.EXPORT_LOCATION} disabled className="msla-export-summary-file-location-text" />
         <PrimaryButton text={intlText.OPEN_FILE_EXPLORER} ariaLabel={intlText.OPEN_FILE_EXPLORER} onClick={onOpenExplorer} />
       </div>
     </div>

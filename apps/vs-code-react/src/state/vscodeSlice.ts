@@ -53,6 +53,7 @@ export const vscodeSlice = createSlice({
         selectedIse: '',
         location: '',
         validationState: '',
+        exportPath: '',
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
@@ -76,6 +77,10 @@ export const vscodeSlice = createSlice({
       const { validationState } = action.payload;
       (state as InitializedVscodeState).exportData.validationState = validationState;
     },
+    updateExportPath: (state: VscodeState, action: PayloadAction<any>) => {
+      const { exportPath } = action.payload;
+      (state as InitializedVscodeState).exportData.exportPath = exportPath;
+    },
   },
 });
 
@@ -87,6 +92,7 @@ export const {
   updateSelectedSubscripton,
   updateSelectedIse,
   updateValidationState,
+  updateExportPath,
 } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;
