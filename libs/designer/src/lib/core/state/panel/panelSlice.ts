@@ -53,10 +53,12 @@ export const panelSlice = createSlice({
       delete state.registeredTabs[action.payload];
     },
     setTabVisibility: (state, action: PayloadAction<{ tabName: string; visible?: boolean }>) => {
-      state.registeredTabs[action.payload.tabName.toLowerCase()] = {
-        ...state.registeredTabs[action.payload.tabName.toLowerCase()],
-        visible: !!action.payload.visible,
-      };
+      if (state.registeredTabs[action.payload.tabName.toLowerCase()]) {
+        state.registeredTabs[action.payload.tabName.toLowerCase()] = {
+          ...state.registeredTabs[action.payload.tabName.toLowerCase()],
+          visible: !!action.payload.visible,
+        };
+      }
     },
     showDefaultTabs: (state) => {
       const defaultTabs = [
@@ -67,7 +69,9 @@ export const panelSlice = createSlice({
         constants.PANEL_TAB_NAMES.SCRATCH,
       ];
       Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {
-        state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: defaultTabs.includes(tab.name) };
+        if (state.registeredTabs[tab.name.toLowerCase()]) {
+          state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: defaultTabs.includes(tab.name) };
+        }
       });
     },
     isolateTab: (state, action: PayloadAction<string>) => {

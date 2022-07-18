@@ -2427,6 +2427,20 @@
       "value": "Çalıştırma Geçmişi"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -3029,6 +3043,12 @@
       "value": "Gerekli. Parametre 1'de alt dizenin başladığı konumun dizini."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Aramanızla eşleşen değer yok"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -3383,6 +3403,12 @@
       "value": "JSON dosyasında düzenle"
     }
   ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+    }
+  ],
   "jsEMSu": [
     {
       "type": 0,
@@ -3548,7 +3574,7 @@
   "lfHj+F": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Lütfen geçerli bir dizi Girin"
     }
   ],
   "lgs5sf": [
@@ -4351,6 +4377,12 @@
       "value": " için bir bağlantı oluşturun."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Özel değer girin"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4593,6 +4625,12 @@
     {
       "type": 0,
       "value": "Gerekli. Yerel tür değerine dönüştürülen değer."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Özel değeri temizle"
     }
   ],
   "zbtUQ/": [

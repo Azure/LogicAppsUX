@@ -2431,6 +2431,20 @@
       "value": "Run History"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -3045,6 +3059,12 @@
     {
       "type": 0,
       "value": "Required. The index of where the substring begins in parameter 1."
+    }
+  ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "No values matching your search"
     }
   ],
   "euC/DV": [
@@ -4379,6 +4399,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4627,6 +4653,12 @@
     {
       "type": 0,
       "value": "Required. The string that is converted to a native type value."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
     }
   ],
   "zbtUQ/": [
