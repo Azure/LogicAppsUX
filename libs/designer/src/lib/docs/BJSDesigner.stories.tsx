@@ -38,6 +38,13 @@ const RenderedComponent = (props: ComponentProps) => (
             baseUrl: '/url',
             apiVersion: '2018-11-01',
             httpClient,
+            apiHubServiceDetails: {
+              apiVersion: '2018-07-01-preview',
+              subscriptionId: '',
+              resourceGroup: '',
+              location: '',
+            },
+            readConnections: () => Promise.resolve({}),
           }),
           operationManifestService: new StandardOperationManifestService({
             apiVersion: '2018-11-01',

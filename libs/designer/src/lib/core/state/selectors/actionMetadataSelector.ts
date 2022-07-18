@@ -1,6 +1,5 @@
-import type { ConnectionReference } from '../../../common/models/workflow';
 import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
-import { useConnectionByName } from '../../queries/connections';
+import { useConnectionById } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { OperationInfo } from '@microsoft-logic-apps/utils';
@@ -41,19 +40,20 @@ export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
   return true;
 };
 
-export const useNodeConnectionName = (nodeId: string) => {
-  const connectionId = useSelector((state: RootState) => {
-    return nodeId ? state.connections.connectionsMapping[nodeId] : '';
+export const useNodeConnectionName = (nodeId: string): QueryResult => {
+  const { connectionId, connectorId } = useSelector((state: RootState) => {
+    return nodeId
+      ? { connectionId: state.connections.connectionsMapping[nodeId], connectorId: state.operations.operationInfo[nodeId]?.connectorId }
+      : { connectionId: '', connectorId: '' };
   });
+
   // 14955807 task to investigate adding connection type to state to avoid checking in multiple places, or another strategy to avoid below way to find connection
-  const connection = useConnectionByName(connectionId);
-  const displayName = useSelector((state: RootState) => {
-    const connectionReferences = state.connections.connectionReferences;
-    const connectionReference: ConnectionReference | undefined = connectionReferences[connectionId];
-    return connectionReference ? connectionReference.connectionName : '';
-  });
-  // do all connections have the name in references?
-  return connection?.properties.displayName ?? displayName;
+  const { result: connection, isLoading } = useConnectionById(connectionId, connectorId);
+
+  return {
+    isLoading,
+    result: !isLoading && connectionId ? connection?.properties.displayName ?? connectionId.split('/').at(-1) : '',
+  };
 };
 
 export const useNodeDescription = (nodeId: string) => {
