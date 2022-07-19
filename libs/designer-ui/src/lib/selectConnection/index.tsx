@@ -16,7 +16,7 @@ import {
   Selection,
 } from '@fluentui/react';
 import type { Connection } from '@microsoft-logic-apps/utils';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SelectConnectionProps {
@@ -59,27 +59,32 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     };
   });
 
-  const [selection, setSelection] = useState<Connection>();
-  const onSelect: Selection = useMemo(
-    () =>
-      new Selection({
-        onSelectionChanged: () => {
-          const newSelection = onSelect.getSelection()[0] as any;
-          if (!newSelection && selection) {
-            onSelect.setIndexSelected(connections.indexOf(selection), true, false);
-          } else {
-            setSelection(newSelection as Connection);
-          }
-        },
-      }),
-    []
+  const [selectedConnection, setSelectedConnection] = useState<Connection>();
+
+  const [select, setSelect] = useState<Selection>(
+    new Selection({
+      onSelectionChanged: () => {
+        const newSelection = select.getSelection()[0] as any;
+        setSelectedConnection(newSelection as Connection);
+      },
+    })
   );
 
+  const forceSelectConnection = useCallback(
+    (connection: Connection) => {
+      const newOnSelect = select;
+      const connIndex = connections.indexOf(connection);
+      newOnSelect.setIndexSelected(connIndex, true, false);
+      setSelectedConnection(connection);
+      setSelect(newOnSelect);
+    },
+    [connections, selectedConnection]
+  );
+
+  // Assign connection on initial load
   useEffect(() => {
-    if (currentConnection) {
-      onSelect.setIndexSelected(connections.indexOf(currentConnection), true, false);
-    }
-  }, [connections, currentConnection, onSelect]);
+    if (currentConnection) forceSelectConnection(currentConnection);
+  }, [connections, currentConnection]);
 
   if (isLoading) {
     return (
@@ -201,13 +206,13 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
 
       <div>{componentDescription}</div>
 
-      <MarqueeSelection selection={onSelect}>
+      <MarqueeSelection selection={select}>
         <DetailsList
           className="msla-connections-list"
           items={flattenedConnections}
           columns={columns}
-          setKey="single"
-          selection={onSelect}
+          setKey="set"
+          selection={select}
           selectionMode={SelectionMode.single}
           layoutMode={DetailsListLayoutMode.justified}
           isHeaderVisible={true}
@@ -221,7 +226,12 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
       <div className="msla-select-connection-actions-container">
         <PrimaryButton text={buttonAddText} ariaLabel={buttonAddAria} onClick={createNewConnectionCallback} />
         <div id="action-gap" style={{ flexGrow: 1 }} />
-        <PrimaryButton text={buttonSaveText} ariaLabel={buttonSaveAria} onClick={() => saveSelectionCallback(selection)} />
+        <PrimaryButton
+          text={buttonSaveText}
+          ariaLabel={buttonSaveAria}
+          onClick={() => saveSelectionCallback(selectedConnection)}
+          disabled={!selectedConnection}
+        />
         <DefaultButton text={buttonCancelText} ariaLabel={buttonCancelAria} onClick={cancelSelectionCallback} />
       </div>
     </div>
