@@ -3,9 +3,8 @@ import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse
 import type { IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { azureFunctionConnectorId } from './operationmanifest';
-import type { Connection, Connector } from '@microsoft-logic-apps/utils';
-import { connectorsSearchResultsMock } from '@microsoft-logic-apps/utils';
-import { ArgumentException, equals } from '@microsoft-logic-apps/utils';
+import type { Connection, Connector, OperationDiscoveryResult } from '@microsoft-logic-apps/utils';
+import { MockSearchOperations, connectorsSearchResultsMock, ArgumentException, equals } from '@microsoft-logic-apps/utils';
 
 interface ServiceProviderConnectionModel {
   parameterValues: Record<string, any>;
@@ -145,6 +144,25 @@ export class StandardConnectionService implements IConnectionService {
       }
     });
     return connectors;
+  }
+
+  public async getAllOperationsForGroup(_connectorId: string): Promise<OperationDiscoveryResult[]> {
+    // if (!isArmResourceId(connectorId)) {
+    //   const { apiVersion, baseUrl, httpClient } = this.options;
+    //   return httpClient.get<OperationDiscoveryResult>({
+    //     uri: `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}/operations?api-version=${apiVersion}`, // danielle to test
+    //   });
+    // } else {
+    //   const {
+    //     apiHubServiceDetails: { apiVersion },
+    //     httpClient,
+    //   } = this.options;
+    //   const response = await httpClient.get<OperationDiscoveryResult>({ uri: `${connectorId}/apiOperations`, queryParameters: { 'api-version': apiVersion } }); // danielle this could be wrong
+    //   return {
+    //     ...response
+    //   };
+    // }
+    return Promise.resolve(MockSearchOperations);
   }
 
   async getConnector(connectorId: string): Promise<Connector> {

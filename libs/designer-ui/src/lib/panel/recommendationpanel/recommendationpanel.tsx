@@ -3,7 +3,7 @@ import { DesignerSearchBox } from '../../searchbox';
 import type { CommonPanelProps } from '../panelUtil';
 import { List, Panel, PanelType, Pivot, PivotItem } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import type { OperationSearchResult } from '@microsoft-logic-apps/utils';
+import type { OperationDiscoveryResult } from '@microsoft-logic-apps/utils';
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 
@@ -11,7 +11,7 @@ export type RecommendationPanelProps = {
   placeholder: string;
   onSearch: (term: string) => void;
   toggleCollapse: () => void;
-  operationSearchResults: OperationSearchResult[];
+  operationSearchResults: OperationDiscoveryResult[];
   onOperationClick: (id: string) => void;
 } & CommonPanelProps;
 
@@ -34,7 +34,7 @@ export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanel
   });
 
   const onRenderOperationCell = React.useCallback(
-    (operation: OperationSearchResult | undefined, _index: number | undefined) => {
+    (operation: OperationDiscoveryResult | undefined, _index: number | undefined) => {
       if (!operation) return;
       const properties = operation.properties;
 
