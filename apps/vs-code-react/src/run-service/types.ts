@@ -309,3 +309,21 @@ export interface UpdateExportPathMessage {
     exportPath?: string;
   };
 }
+
+export interface IExportDetails {
+  exportDetailCategory: string;
+  exportDetailCode: string;
+  exportDetailMessage: string;
+}
+
+export interface IExportDetailsList {
+  type: string;
+  message: string;
+}
+
+export interface IExportData {
+  properties: {
+    packageLink: Record<string, string>;
+    details: Array<IExportDetails>;
+  };
+}

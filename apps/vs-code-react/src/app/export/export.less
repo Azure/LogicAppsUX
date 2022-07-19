@@ -136,6 +136,10 @@
   }
 
   &-summary {
+    display: flex;
+    flex-direction: column;
+    height: 75%;
+
     &-file-location {
       margin-top: 10px;
 
@@ -152,6 +156,10 @@
     }
 
     &-detail-list {
+      overflow: auto;
+      margin-top: 10px;
+      flex: 2;
+
       .ms-DetailsRow-fields {
         display: flex;
         align-items: center;

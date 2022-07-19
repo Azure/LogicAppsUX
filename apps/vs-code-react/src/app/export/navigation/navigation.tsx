@@ -40,7 +40,7 @@ export const Navigation: React.FC = () => {
       description: 'Export with warnings button',
     }),
     FINISH: intl.formatMessage({
-      defaultMessage: 'Finish',
+      defaultMessage: 'finish',
       description: 'Finish  button',
     }),
   };
