@@ -34,6 +34,10 @@ export const Summary: React.FC = () => {
       defaultMessage: 'Export location',
       description: 'Export location text',
     }),
+    NO_DETAILS: intl.formatMessage({
+      defaultMessage: 'No further details',
+      description: 'No further details text',
+    }),
   };
 
   const apiService = useMemo(() => {
@@ -55,9 +59,7 @@ export const Summary: React.FC = () => {
     }
   );
 
-  const { packageLink = '', exportDetails = [] }: any = isSummaryLoading || !summaryData ? {} : getSummaryData(summaryData);
-
-  console.log(packageLink);
+  const { exportDetails = [] }: any = isSummaryLoading || !summaryData ? {} : getSummaryData(summaryData);
 
   const onOpenExplorer = () => {
     vscode.postMessage({
@@ -72,6 +74,13 @@ export const Summary: React.FC = () => {
   }, [exportPath]);
 
   const detailsList = useMemo(() => {
+    const emptyText = (
+      <Text variant="large" nowrap block className="msla-export-summary-detail-list-empty">
+        {intlText.NO_DETAILS}
+      </Text>
+    );
+    const noDetails = exportDetails === [] && !isSummaryLoading ? emptyText : null;
+
     return (
       <div className="msla-export-summary-detail-list">
         <ShimmeredDetailsList
@@ -81,6 +90,7 @@ export const Summary: React.FC = () => {
           enableShimmer={isSummaryLoading}
           selectionMode={SelectionMode.none}
         />
+        {noDetails}
       </div>
     );
   }, [exportDetails]);
