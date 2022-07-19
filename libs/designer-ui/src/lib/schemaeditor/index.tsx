@@ -30,12 +30,13 @@
 //   const intl = useIntl();
 //   const [errorMessage, setErrorMessage] = useState('');
 //   const [modalOpen, setModalOpen] = useState(false);
-//   const [value, setValue] = useState(value);
+//   const [currentValue, setCurrentValue] = useState(value);
+//   const [editorStyle, setEditorStyle] = useState(0);
 
 //   let prettyInput: string;
 //   useEffect(() => {
-//     // setEditorStyle(getEditorStyle(input));
-//   }, [input]);
+//     setEditorStyle(getEditorStyle(currentValue));
+//   }, [currentValue]);
 
 //   const parameterOptions = {
 //     contextmenu: false,
@@ -52,15 +53,14 @@
 //   return (
 //     <div className="msla-schema-editor-body">
 //       <MonacoEditor
-//         defaultValue=""
-//         value={input}
+//         value={currentValue}
 //         fontSize={parameterOptions.fontSize}
 //         readOnly={parameterOptions.readOnly}
 //         language={EditorLanguage.json}
 //         height={editorStyle}
 //       />
 //       <div className="msla-card-config-button-container msla-code-view-done-button">
-//         <PrimaryButton className="msla-card-button-primary" onClick={onOKClick}>
+//         <PrimaryButton className="msla-card-button-primary" onClick={onFocus}>
 //           {doneLabel}
 //         </PrimaryButton>
 //       </div>
