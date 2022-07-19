@@ -1,5 +1,6 @@
 import type { IButtonProps } from '@fluentui/react';
 import { IconButton, Stack, StackItem } from '@fluentui/react';
+import { makeStyles } from '@fluentui/react-components';
 
 export interface ButtonContainerProps {
   xPos: string;
@@ -8,11 +9,29 @@ export interface ButtonContainerProps {
   horizontal: boolean;
 }
 
+const styling = makeStyles({
+  root: {
+    color: '#000',
+    backgroundColor: '#fff',
+    '&:hover': {
+      backgroundColor: '#F5F5F5',
+    },
+    '&:active': {
+      backgroundColor: '#E0E0E0',
+    },
+  },
+});
+
 export const ButtonContainer: React.FC<ButtonContainerProps> = ({ buttons, horizontal, xPos, yPos }: ButtonContainerProps) => {
   const stackItems = buttons.map((buttonProps, index) => {
+    const mergedProps = {
+      ...buttonProps,
+      className: styling().root,
+    };
+
     return (
       <StackItem key={index}>
-        <IconButton {...buttonProps} style={{ color: '#000', background: '#fff' }} />
+        <IconButton {...mergedProps} />
       </StackItem>
     );
   });

@@ -21,11 +21,11 @@ import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema } from '../models';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
-import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
+import ReactFlow, { MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -140,7 +140,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     description: 'Label to open the Function card',
   });
 
-  const buttonContainerProps: ButtonContainerProps = {
+  const toolBoxButtonContainerProps: ButtonContainerProps = {
     buttons: [
       {
         iconProps: { iconName: 'BranchFork2' },
@@ -164,7 +164,119 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     yPos: '16px',
   };
 
-  const nodeTypes = useMemo(() => ({ schemaCard: SchemaCard }), []);
+  // ReactFlow must be wrapped if we want to access the internal state of ReactFlow
+  const ReactFlowWrapper = () => {
+    const { fitView, zoomIn, zoomOut } = useReactFlow();
+    const [displayMiniMap, setDisplayMiniMap] = useState<boolean>(false);
+
+    const zoomOutLoc = intl.formatMessage({
+      defaultMessage: 'Zoom out',
+      description: 'Label to zoom the canvas out',
+    });
+
+    const zoomInLoc = intl.formatMessage({
+      defaultMessage: 'Zoom in',
+      description: 'Label to zoom the canvas in',
+    });
+
+    const fitViewLoc = intl.formatMessage({
+      defaultMessage: 'Page fit',
+      description: 'Label to fit the whole canvas in view',
+    });
+
+    const displayMiniMapLoc = intl.formatMessage({
+      defaultMessage: 'Display mini map',
+      description: 'Label to toggle the mini map',
+    });
+
+    const mapControlsButtonContainerProps: ButtonContainerProps = {
+      buttons: [
+        {
+          iconProps: { iconName: 'ZoomOut' },
+          title: zoomOutLoc,
+          ariaLabel: zoomOutLoc,
+          onClick: () => {
+            zoomOut();
+          },
+        },
+        {
+          iconProps: { iconName: 'ZoomIn' },
+          title: zoomInLoc,
+          ariaLabel: zoomInLoc,
+          onClick: () => {
+            zoomIn();
+          },
+        },
+        {
+          iconProps: { iconName: 'FitPage' },
+          title: fitViewLoc,
+          ariaLabel: fitViewLoc,
+          onClick: () => {
+            fitView();
+          },
+        },
+        {
+          // TODO need to swap whole icon when selected
+          iconProps: { iconName: 'Nav2DMapView' },
+          title: displayMiniMapLoc,
+          ariaLabel: displayMiniMapLoc,
+          onClick: () => {
+            setDisplayMiniMap(!displayMiniMap);
+          },
+        },
+      ],
+      horizontal: true,
+      xPos: '16px',
+      yPos: '556px',
+    };
+
+    return (
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodeDoubleClick={onNodeDoubleClick}
+        minZoom={0}
+        nodesDraggable={false}
+        fitView
+        proOptions={{
+          account: 'paid-sponsor',
+          hideAttribution: true,
+        }}
+        style={{
+          backgroundImage: checkerboardBackgroundImage,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+          height: '600px',
+        }}
+        nodeTypes={nodeTypes}
+      >
+        <ButtonContainer {...mapControlsButtonContainerProps} />
+        {displayMiniMap ? (
+          <MiniMap
+            nodeStrokeColor={(node) => {
+              if (node.style?.backgroundColor) {
+                return node.style.backgroundColor;
+              }
+              return '#F3F2F1';
+            }}
+            nodeColor={(node) => {
+              if (node.style?.backgroundColor) {
+                return node.style.backgroundColor;
+              }
+              return '#F3F2F1';
+            }}
+            style={{
+              left: '16px',
+              bottom: '56px',
+              // TODO resize smaller to match the width of the buttons (128px wide)
+            }}
+          />
+        ) : null}
+      </ReactFlow>
+    );
+  };
+
+  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -175,28 +287,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
-            <ButtonContainer {...buttonContainerProps} />
+            <ButtonContainer {...toolBoxButtonContainerProps} />
             <div className="msla-designer-canvas msla-panel-mode">
               <ReactFlowProvider>
-                <ReactFlow
-                  nodes={nodes}
-                  edges={edges}
-                  onNodeDoubleClick={onNodeDoubleClick}
-                  minZoom={0}
-                  nodesDraggable={false}
-                  fitView
-                  proOptions={{
-                    account: 'paid-sponsor',
-                    hideAttribution: true,
-                  }}
-                  style={{
-                    backgroundImage: checkerboardBackgroundImage,
-                    backgroundSize: '20px 20px',
-                    backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-                    height: '600px',
-                  }}
-                  nodeTypes={nodeTypes}
-                ></ReactFlow>
+                <ReactFlowWrapper />
               </ReactFlowProvider>
             </div>
           </>
