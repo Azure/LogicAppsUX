@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+Bh3Qk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -491,6 +497,12 @@
     {
       "type": 0,
       "value": "Identifikátor"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Add dynamic content"
     }
   ],
   "3FoqCK": [

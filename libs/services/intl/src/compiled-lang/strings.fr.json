@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+Bh3Qk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -457,6 +463,12 @@
     {
       "type": 0,
       "value": "Identificateur"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Add dynamic content"
     }
   ],
   "3FoqCK": [
@@ -2430,7 +2442,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "Utiliser \""
     },
     {
       "type": 1,
@@ -2438,7 +2450,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "\" comme valeur personnalisée"
     }
   ],
   "W070M2": [
@@ -3414,7 +3426,7 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "Format de référence de connexion de manifeste non pris en charge : {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
