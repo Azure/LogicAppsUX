@@ -1,6 +1,6 @@
 import { ResourceType } from '../types';
-import type { IApiService, Workflows, WorkflowsList } from '../types';
-import { getValidationPayload, getValidationUri, getWorkflowsUri } from './helper';
+import type { IApiService, Workflows, WorkflowsList, IExportData } from '../types';
+import { getValidationPayload, getExportUri, getWorkflowsUri } from './helper';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
@@ -125,7 +125,7 @@ export class ApiService implements IApiService {
 
   async validateWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string) {
     const headers = this.getAccessTokenHeaders();
-    const validationUri = getValidationUri(selectedSubscription, selectedLocation);
+    const validationUri = getExportUri(selectedSubscription, selectedLocation, true);
     const validationPayload = getValidationPayload(selectedWorkflows);
     const response = await fetch(validationUri, { headers, method: 'POST', body: JSON.stringify(validationPayload) });
 
@@ -134,8 +134,20 @@ export class ApiService implements IApiService {
     }
 
     const validationResponse: any = await response.json();
-    const data = validationResponse;
+    return validationResponse;
+  }
 
-    return data;
+  async exportWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string) {
+    const headers = this.getAccessTokenHeaders();
+    const exportUri = getExportUri(selectedSubscription, selectedLocation, false);
+    const exportPayload = getValidationPayload(selectedWorkflows);
+    const response = await fetch(exportUri, { headers, method: 'POST', body: JSON.stringify(exportPayload) });
+
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    const exportResponse: IExportData = await response.json();
+    return exportResponse;
   }
 }

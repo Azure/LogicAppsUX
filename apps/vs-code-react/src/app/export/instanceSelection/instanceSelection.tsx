@@ -81,9 +81,10 @@ export const InstanceSelection: React.FC = () => {
 
   const onChangeSubscriptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
     if (selectedOption && selectedSubscription !== selectedOption.key) {
+      const subscriptionId = selectedOption.key as string;
       dispatch(
         updateSelectedSubscripton({
-          selectedSubscription: selectedOption.key,
+          selectedSubscription: subscriptionId,
         })
       );
       refetchIse();
@@ -92,9 +93,10 @@ export const InstanceSelection: React.FC = () => {
 
   const onChangeIse = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
     if (selectedOption) {
+      const iseId = selectedOption.key as string;
       dispatch(
         updateSelectedIse({
-          selectedIse: selectedOption.key,
+          selectedIse: iseId,
           location: selectedOption.data,
         })
       );
