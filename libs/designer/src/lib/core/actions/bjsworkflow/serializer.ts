@@ -1,3 +1,4 @@
+import Constants from '../../../common/constants';
 import type { Workflow } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
@@ -19,6 +20,8 @@ import type { Segment } from '@microsoft-logic-apps/parsers';
 import { cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest, SubGraphDetail } from '@microsoft-logic-apps/utils';
 import {
+  equals,
+  isNullOrUndefined,
   safeSetObjectPropertyValue,
   AssertionErrorCode,
   AssertionException,
@@ -69,6 +72,11 @@ export const serializeManifestBasedOperation = async (
     ? await serializeNestedOperations(operationId, manifest, rootState)
     : undefined;
 
+  const retryPolicy = getRetryPolicy(nodeSettings);
+  if (retryPolicy) {
+    inputs.retryPolicy = retryPolicy;
+  }
+
   return {
     type: operation.type,
     ...optional('kind', operation.kind),
@@ -76,6 +84,7 @@ export const serializeManifestBasedOperation = async (
     ...childOperations,
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
+    ...serializeSettings(operationId, nodeSettings, rootState),
   };
 };
 
@@ -344,6 +353,114 @@ const serializeSubGraph = async (
 
 const isWorkflowOperationNode = (node: WorkflowNode) =>
   node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE;
+//#endregion
+
+//#region Settings Serialization
+const serializeSettings = (
+  operationId: string,
+  settings: Settings,
+  rootState: RootState
+): Partial<LogicAppsV2.Action | LogicAppsV2.Trigger> => {
+  const conditionExpressions = settings.conditionExpressions;
+  const conditions = conditionExpressions
+    ? conditionExpressions.value?.filter((expression) => !!expression).map((expression) => ({ expression }))
+    : undefined;
+
+  return {
+    ...optional('correlation', settings.correlation?.value),
+    ...optional('conditions', conditions),
+    ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
+  };
+};
+
+const getSerializedOperationOptions = (operationId: string, settings: Settings, rootState: RootState): string | undefined => {
+  const originalDefinition = rootState.workflow.operations[operationId];
+  const originalOptions = originalDefinition.operationOptions;
+  const deserializedOptions = isNullOrUndefined(originalOptions) ? [] : originalOptions.split(',').map((option) => option.trim());
+
+  updateOperationOptions(Constants.SETTINGS.OPERATION_OPTIONS.SINGLE_INSTANCE, true, !!settings.singleInstance, deserializedOptions);
+  updateOperationOptions(Constants.SETTINGS.OPERATION_OPTIONS.SEQUENTIAL, true, !!settings.sequential, deserializedOptions);
+  updateOperationOptions(
+    Constants.SETTINGS.OPERATION_OPTIONS.ASYNCHRONOUS,
+    !!settings.asynchronous?.isSupported,
+    !!settings.asynchronous?.value,
+    deserializedOptions
+  );
+  updateOperationOptions(
+    Constants.SETTINGS.OPERATION_OPTIONS.DISABLE_ASYNC,
+    !!settings.disableAsyncPattern?.isSupported,
+    !!settings.disableAsyncPattern?.value,
+    deserializedOptions
+  );
+  updateOperationOptions(
+    Constants.SETTINGS.OPERATION_OPTIONS.DISABLE_AUTOMATIC_DECOMPRESSION,
+    !!settings.disableAutomaticDecompression?.isSupported,
+    !!settings.disableAutomaticDecompression?.value,
+    deserializedOptions
+  );
+  updateOperationOptions(
+    Constants.SETTINGS.OPERATION_OPTIONS.SUPPRESS_WORKFLOW_HEADERS,
+    !!settings.suppressWorkflowHeaders?.isSupported,
+    !!settings.suppressWorkflowHeaders?.value,
+    deserializedOptions
+  );
+  updateOperationOptions(
+    Constants.SETTINGS.OPERATION_OPTIONS.SUPPRESS_WORKFLOW_HEADERS_ON_RESPONSE,
+    !!settings.suppressWorkflowHeadersOnResponse?.isSupported,
+    !!settings.suppressWorkflowHeadersOnResponse?.value,
+    deserializedOptions
+  );
+  updateOperationOptions(
+    Constants.SETTINGS.OPERATION_OPTIONS.REQUEST_SCHEMA_VALIDATION,
+    !!settings.requestSchemaValidation?.isSupported,
+    !!settings.requestSchemaValidation?.value,
+    deserializedOptions
+  );
+
+  return deserializedOptions.length ? deserializedOptions.join(', ') : undefined;
+};
+
+const updateOperationOptions = (
+  operationOption: string,
+  isOptionSupported: boolean,
+  isOptionSet: boolean,
+  existingOperationOptions: string[]
+): void => {
+  if (isOptionSupported) {
+    const optionIndex = existingOperationOptions.findIndex((option) => equals(option, operationOption));
+    if (isOptionSet && optionIndex === -1) {
+      existingOperationOptions.push(operationOption);
+    }
+
+    if (!isOptionSet && optionIndex !== -1) {
+      existingOperationOptions.splice(optionIndex, 1);
+    }
+  }
+};
+
+const getRetryPolicy = (settings: Settings): LogicAppsV2.RetryPolicy | undefined => {
+  const retryPolicy = settings.retryPolicy?.value;
+  if (!retryPolicy) {
+    return undefined;
+  }
+
+  const retryPolicyType = retryPolicy.type && retryPolicy.type.toLowerCase();
+  switch (retryPolicyType) {
+    case Constants.RETRY_POLICY_TYPE.DEFAULT:
+      return undefined;
+
+    case Constants.RETRY_POLICY_TYPE.FIXED:
+    case Constants.RETRY_POLICY_TYPE.EXPONENTIAL:
+      return { ...retryPolicy, type: retryPolicyType };
+
+    case Constants.RETRY_POLICY_TYPE.NONE:
+      return { type: Constants.RETRY_POLICY_TYPE.NONE };
+
+    default:
+      throw new Error(`Unable to serialize retry policy with type ${retryPolicyType}`);
+  }
+};
+
 //#endregion
 
 // TODO (Andrew) - To update from workflow graph when it stores the statuses.
