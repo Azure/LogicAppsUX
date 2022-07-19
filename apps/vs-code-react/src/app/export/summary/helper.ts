@@ -1,4 +1,19 @@
+import { DetailCategory, StyledDetailCategory } from '../../../run-service';
 import type { IExportData, IExportDetails, IExportDetailsList } from '../../../run-service';
+
+const getTypeName = (typeName: string): string => {
+  switch (typeName) {
+    case DetailCategory.requiredStep: {
+      return StyledDetailCategory.requiredStep;
+    }
+    case DetailCategory.information: {
+      return StyledDetailCategory.information;
+    }
+    default: {
+      return typeName;
+    }
+  }
+};
 
 export const getListColumns = () => {
   return [
@@ -11,7 +26,7 @@ export const getExportDetails = (details: Array<IExportDetails>): Array<IExportD
   return details.map((detail) => {
     const { exportDetailCategory, exportDetailMessage } = detail;
 
-    return { type: exportDetailCategory, message: exportDetailMessage };
+    return { type: getTypeName(exportDetailCategory), message: exportDetailMessage };
   });
 };
 

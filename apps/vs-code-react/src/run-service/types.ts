@@ -327,3 +327,13 @@ export interface IExportData {
     details: Array<IExportDetails>;
   };
 }
+
+export enum DetailCategory {
+  requiredStep = 'RequiredStep',
+  information = 'Information',
+}
+
+export enum StyledDetailCategory {
+  requiredStep = 'Required Step',
+  information = 'Information',
+}
