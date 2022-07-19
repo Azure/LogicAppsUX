@@ -1,7 +1,10 @@
+/* eslint-disable no-param-reassign */
+import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import type { IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { azureFunctionConnectorId } from './operationmanifest';
 import type { Connection, Connector } from '@microsoft-logic-apps/utils';
+import { connectorsSearchResultsMock } from '@microsoft-logic-apps/utils';
 import { ArgumentException, equals } from '@microsoft-logic-apps/utils';
 
 interface ServiceProviderConnectionModel {
@@ -93,6 +96,55 @@ export class StandardConnectionService implements IConnectionService {
 
   dispose(): void {
     return;
+  }
+
+  async getAllConnectors(): Promise<Connector[]> {
+    const allBuiltInConnectorsPromise = this.getAllBuiltInConnectors();
+    const allAzureConnectorsPromise = this.getAllAzureConnectors();
+    return Promise.all([allBuiltInConnectorsPromise, allAzureConnectorsPromise]).then((values) => {
+      const builtInResults = values[0];
+      const azureResults = values[1];
+      // possibly tag built in vs azure
+      return [...builtInResults, ...azureResults];
+    });
+  }
+
+  private async getAllBuiltInConnectors(): Promise<Connector[]> {
+    // const { apiVersion, baseUrl, httpClient } = this.options;
+    // const uri = `${baseUrl}/operationGroups`;
+    // const queryParameters: QueryParameters = {
+    //   'api-version': apiVersion,
+    //   // 'skiptoken': 250
+    // }
+    // const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
+    // console.log(response);
+    // return response.value;
+    return Promise.resolve(connectorsSearchResultsMock);
+  }
+
+  private async getAllAzureConnectors(): Promise<Connector[]> {
+    // const { apiHubServiceDetails: { location, subscriptionId, resourceGroup, apiVersion }, httpClient } = this.options;
+    // const uri = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/locations/${location}/managedApis`;
+    // const queryParameters: QueryParameters = {
+    //   'api-version': apiVersion,
+    //   // 'skiptoken': 250
+    // }
+    // const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
+    // console.log(response);
+    // return response.value;
+    const connectors = AzureConnectorMock.value as Connector[];
+    const formattedConnectors = this.moveGeneralInformation(connectors);
+    return Promise.resolve(formattedConnectors);
+  }
+
+  private moveGeneralInformation(connectors: Connector[]): Connector[] {
+    connectors.forEach((connector) => {
+      if (connector.properties.generalInformation) {
+        connector.properties.displayName = connector.properties.generalInformation.displayName ?? '';
+        connector.properties.iconUri = connector.properties.generalInformation.iconUrl ?? '';
+      }
+    });
+    return connectors;
   }
 
   async getConnector(connectorId: string): Promise<Connector> {

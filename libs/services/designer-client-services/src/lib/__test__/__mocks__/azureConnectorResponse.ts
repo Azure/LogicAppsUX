@@ -1,6 +1,4 @@
-
-
-export const AzureConnectorMock= {
+export const AzureConnectorMock: { value: any[] } = {
   value: [
     {
       properties: {
@@ -44,7 +42,7 @@ export const AzureConnectorMock= {
           description:
             'Eduframe is a complete solution for commercial training providers & business schools to attract more students, manage & automate the course administration, and deliver the ultimate learning experience. Eduframe seamlessly integrates with Canvas LMS. The connector opens up the opportunity to easily integrate your existing software applications with Eduframe, like your CRM and accounting software.',
           //releaseTag: 'Preview', // danielle can we use this
-        //   tier: 'Premium',
+          //   tier: 'Premium',
         },
         capabilities: ['actions'],
         isExportSupported: false,
@@ -70,24 +68,24 @@ export const AzureConnectorMock= {
                 IsFirstParty: 'False',
                 // IsOnbehalfofLoginSupported: false,
               },
-            //   customParameters: {
-            //     authorizationUrl: {
-            //       value: 'https://us-partner-integrations.egnyte.com/ms-flow/oauth/code',
-            //     },
-            //     refreshUrl: {
-            //       value: 'https://us-partner-integrations.egnyte.com/ms-flow/oauth/token',
-            //     },
-            //     tokenUrl: {
-            //       value: 'https://us-partner-integrations.egnyte.com/ms-flow/oauth/token',
-            //     },
-            //   },
+              //   customParameters: {
+              //     authorizationUrl: {
+              //       value: 'https://us-partner-integrations.egnyte.com/ms-flow/oauth/code',
+              //     },
+              //     refreshUrl: {
+              //       value: 'https://us-partner-integrations.egnyte.com/ms-flow/oauth/token',
+              //     },
+              //     tokenUrl: {
+              //       value: 'https://us-partner-integrations.egnyte.com/ms-flow/oauth/token',
+              //     },
+              //   },
             },
           },
         },
         metadata: {
           source: 'marketplace',
           brandColor: '#3DBAB4',
-         // useNewApimVersion: true,
+          // useNewApimVersion: true,
         },
         runtimeUrls: ['https://logic-apis-centralus.azure-apim.net/apim/egnyte'],
         generalInformation: {
@@ -96,7 +94,7 @@ export const AzureConnectorMock= {
           description:
             'Egnyte is a service that keeps your files safe, synced, and easy to share. Connect to Egnyte to manage your files. You can perform various actions such as upload, update, get, and delete files in Egnyte.',
           // releaseTag: 'Preview',
-        //   tier: 'Premium',
+          //   tier: 'Premium',
         },
         capabilities: ['actions'],
         isExportSupported: false,
@@ -185,7 +183,7 @@ export const AzureConnectorMock= {
           description:
             'Provides events from Ingenuity for use as flow triggers. You can use this connector to start flows whenever a selected event completes in the Eigen Ingenuity System',
           // releaseTag: 'Preview',
-        //   tier: 'Premium',
+          //   tier: 'Premium',
         },
         capabilities: ['actions'],
         isExportSupported: true,

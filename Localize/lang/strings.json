@@ -1,7 +1,6 @@
 {
   "+1GH4O": "OK",
   "+Bh3Qk": "Button to add dynamic content",
-  "+GSexV": "Filters",
   "+W9fkq": "(UTC+08:00) Kuala Lumpur, Singapore",
   "+dlOgj": "(UTC-05:00) Haiti",
   "+g+mch": "Returns the body for a part in a multipart output of an action",
@@ -419,7 +418,6 @@
   "ZnGRMP": "(UTC+07:00) Tomsk",
   "_+1GH4O.comment": "Button text for OK to proceed with agreeing to the warning displayed",
   "_+Bh3Qk.comment": "Text for if image does not show up",
-  "_+GSexV.comment": "Header to show that users can select below filters to narrow down results",
   "_+W9fkq.comment": "Timezone value ",
   "_+dlOgj.comment": "Timezone value ",
   "_+g+mch.comment": "Label for description of custom multipartBody Function",

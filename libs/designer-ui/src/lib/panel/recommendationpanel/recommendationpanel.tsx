@@ -1,10 +1,10 @@
 import { OperationCard } from '../../actionsummarycard/card';
-import { ConnectorSummaryCard } from '../../connectorsummarycard/connectorsummarycard';
 import { DesignerSearchBox } from '../../searchbox';
 import type { CommonPanelProps } from '../panelUtil';
-import { Text, List, Panel, DefaultButton, PanelType, Pivot, PivotItem } from '@fluentui/react';
+import { List, Panel, PanelType, Pivot, PivotItem } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import type { Connector, OperationSearchResult } from '@microsoft-logic-apps/utils';
+import type { OperationSearchResult } from '@microsoft-logic-apps/utils';
+import type { PropsWithChildren } from 'react';
 import React from 'react';
 
 export type RecommendationPanelProps = {
@@ -12,14 +12,10 @@ export type RecommendationPanelProps = {
   onSearch: (term: string) => void;
   toggleCollapse: () => void;
   operationSearchResults: OperationSearchResult[];
-  connectorBrowse: Connector[];
   onOperationClick: (id: string) => void;
 } & CommonPanelProps;
 
-export const RecommendationPanel = (props: RecommendationPanelProps) => {
-  type Filter = 'Built-in' | 'Azure' | '';
-  const [filter, setFilter] = React.useState<Filter>('');
-
+export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanelProps>> = (props) => {
   const [operationSearchResults, setOperationSearchResults] = React.useState([...props.operationSearchResults]);
 
   React.useEffect(() => {
@@ -58,46 +54,6 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
     [props.onOperationClick]
   );
 
-  const onRenderConnectorCell = React.useCallback((connector: Connector | undefined, _index: number | undefined) => {
-    if (!connector) return;
-    const properties = connector.properties;
-
-    return (
-      <ConnectorSummaryCard
-        connectorName={properties.displayName}
-        description={properties['description'] || ''}
-        id={connector.id}
-        iconUrl={properties.iconUri}
-        brandColor={properties.brandColor}
-      ></ConnectorSummaryCard>
-    );
-  }, []);
-
-  const callSetFilter = (term: Filter) => {
-    setFilter(term);
-    const filteredResult = props.operationSearchResults.filter((op) => {
-      const category = op.properties.category;
-      if (term && category !== term) {
-        return false;
-      }
-      return true;
-    });
-    setOperationSearchResults(filteredResult);
-  };
-
-  const filterButton = (text: Filter) => {
-    return (
-      <DefaultButton onClick={() => callSetFilter(text)} className={`msla-filter-btn ${filter === text ? 'msla-filter-selected' : ''}`}>
-        {text}
-      </DefaultButton>
-    );
-  };
-
-  const filterHeader = intl.formatMessage({
-    defaultMessage: 'Filters',
-    description: 'Header to show that users can select below filters to narrow down results',
-  });
-
   const browseConnectorsPivotText = intl.formatMessage({
     defaultMessage: 'Connectors',
     description: 'Selected view connector for browse',
@@ -120,24 +76,13 @@ export const RecommendationPanel = (props: RecommendationPanelProps) => {
             'data-order': 1,
             'data-title': 'My Files Title',
           }}
-        >
-          <List items={props.connectorBrowse} onRenderCell={onRenderConnectorCell}></List>
-        </PivotItem>
+        ></PivotItem>
       </Pivot>
-      <div className="msla-result-list">
-        <div>
-          <div className="msla-filter-container">
-            <Text className="msla-block">{filterHeader}</Text>
-            <div className="msla-block">
-              {filterButton('Built-in')}
-              {filterButton('Azure')}
-            </div>
-          </div>
-        </div>
-        {props.operationSearchResults.length !== 0 ? (
-          <List items={operationSearchResults} onRenderCell={onRenderOperationCell}></List>
-        ) : null}
-      </div>
+      {props.operationSearchResults.length !== 0 ? (
+        <List items={operationSearchResults} onRenderCell={onRenderOperationCell}></List>
+      ) : (
+        props.children
+      )}
     </Panel>
   );
 };

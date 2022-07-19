@@ -2,6 +2,7 @@ import { Text, Image, ImageFit } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
 
 export type ConnectorSummaryCardProps = {
+  onConnectorSelected: (connectorId: string) => void;
   connectorName: string;
   description?: string;
   id: string;
@@ -25,8 +26,17 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
     }
   );
 
+  const onConnectorCardClicked = () => {
+    props.onConnectorSelected(props.id);
+  };
+
   return (
-    <div className="msla-connector-card">
+    <button
+      className="msla-connector-card"
+      onClick={() => {
+        onConnectorCardClicked();
+      }}
+    >
       <div>
         <div className="msla-card-title-container">
           <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={logoAltText}></Image>
@@ -36,6 +46,6 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
         </div>
       </div>
       <Text className="msla-card-description">{props.description}</Text>
-    </div>
+    </button>
   );
 };
