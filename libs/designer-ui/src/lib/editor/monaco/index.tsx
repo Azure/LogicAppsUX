@@ -23,6 +23,7 @@ export enum EditorLanguage {
 }
 
 export interface MonacoProps extends MonacoOptions {
+  className?: string;
   defaultValue?: string;
   height?: number | string;
   language?: EditorLanguage;
@@ -42,13 +43,14 @@ export interface MonacoOptions {
 }
 
 export const MonacoEditor: React.FC<MonacoProps> = ({
+  className = 'msla-monaco',
   height,
   width,
   folding = false,
   minimapEnabled = false,
   value,
   language,
-  defaultValue,
+  defaultValue = '',
   scrollBeyondLastLine = false,
   ...options
 }): JSX.Element => {
@@ -88,7 +90,7 @@ export const MonacoEditor: React.FC<MonacoProps> = ({
   return (
     <div className="msla-monaco-container" style={{ height: height ?? 380, width }}>
       <Editor
-        className="msla-monaco"
+        className={className}
         options={{
           ...options,
           minimap: { enabled: minimapEnabled },
