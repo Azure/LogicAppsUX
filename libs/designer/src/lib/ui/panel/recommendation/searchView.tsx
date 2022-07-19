@@ -2,11 +2,8 @@ import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
 import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import { addNode } from '../../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../../core/store';
-import { BrowseView } from './browseView';
-import { SearchView } from './searchView';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
-import type { CommonPanelProps } from '@microsoft/designer-ui';
-import { RecommendationPanel } from '@microsoft/designer-ui';
+import { SearchResultsGrid } from '@microsoft/designer-ui';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,20 +14,19 @@ const getSearchResult = (term: string) => {
   return data;
 };
 
-export const RecommendationPanelContext = (props: CommonPanelProps) => {
+type SearchViewProps = {
+  searchTerm: string;
+};
+
+export const SearchView: React.FC<SearchViewProps> = (props) => {
   const dispatch = useDispatch();
 
   const { childId, parentId, selectedNode } = useSelector((state: RootState) => {
     return state.panel;
   });
 
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const search = (term: string) => {
-    setSearchTerm(term);
-  };
-
-  const searchResponse = useQuery(['searchResult', { searchTerm }], () => getSearchResult(searchTerm), {
-    enabled: !!searchTerm,
+  const searchResponse = useQuery(['searchResult', props.searchTerm], () => getSearchResult(props.searchTerm), {
+    enabled: !!props.searchTerm,
     staleTime: 100000,
     cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
   });
@@ -50,14 +46,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   };
 
   return (
-    <RecommendationPanel
+    <SearchResultsGrid
       onOperationClick={onOperationClick}
       operationSearchResults={searchResults?.searchOperations || []}
-      placeholder={''}
-      {...props}
-      onSearch={search}
-    >
-      {searchTerm ? <SearchView searchTerm={searchTerm}></SearchView> : <BrowseView></BrowseView>}
-    </RecommendationPanel>
+    ></SearchResultsGrid>
   );
 };

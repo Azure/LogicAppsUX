@@ -17,6 +17,7 @@ export const BrowseView: React.FC = () => {
   const browseResults = browseResponse.data;
 
   const onConnectorCardSelected = (id: string): void => {
+    // Danielle how do I not pass this down so many components
     console.log(id);
   };
 

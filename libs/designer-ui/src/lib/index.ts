@@ -50,6 +50,7 @@ export * from './panel/panelUtil';
 export * from './panel/panelheader/panelheader';
 export * from './panel/recommendationpanel/recommendationpanel';
 export * from './panel/recommendationpanel/browseResults';
+export * from './panel/recommendationpanel/searchResult';
 export * from './scratch';
 // export * from './picker';
 // export * from './rulescontrol';
