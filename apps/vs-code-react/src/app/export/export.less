@@ -134,4 +134,46 @@
       }
     }
   }
+
+  &-summary {
+    display: flex;
+    flex-direction: column;
+    height: 75%;
+
+    &-file-location {
+      margin-top: 10px;
+
+      &-text {
+        width: 40%;
+      }
+
+      &-button {
+        margin: 0 10px;
+      }
+
+      display: flex;
+      align-items: flex-end;
+    }
+
+    &-detail-list {
+      overflow: auto;
+      margin-top: 10px;
+      flex: 2;
+
+      .ms-DetailsRow-fields {
+        display: flex;
+        align-items: center;
+
+        .ms-DetailsRow-cell {
+          white-space: normal;
+        }
+      }
+
+      &-empty {
+        display: inline-flex;
+        justify-content: center;
+        width: 100%;
+      }
+    }
+  }
 }

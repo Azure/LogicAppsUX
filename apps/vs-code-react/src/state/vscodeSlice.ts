@@ -1,4 +1,4 @@
-import type { ExportData, ProjectName } from '../run-service';
+import type { ExportData, ProjectName, WorkflowsList } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -53,28 +53,33 @@ export const vscodeSlice = createSlice({
         selectedIse: '',
         location: '',
         validationState: '',
+        exportPath: '',
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
     },
-    updateSelectedWorkFlows: (state: VscodeState, action: PayloadAction<any>) => {
+    updateSelectedWorkFlows: (state: VscodeState, action: PayloadAction<{ selectedWorkflows: Array<WorkflowsList> }>) => {
       const { selectedWorkflows } = action.payload;
       (state as InitializedVscodeState).exportData.selectedWorkflows = selectedWorkflows;
     },
-    updateSelectedSubscripton: (state: VscodeState, action: PayloadAction<any>) => {
+    updateSelectedSubscripton: (state: VscodeState, action: PayloadAction<{ selectedSubscription: string }>) => {
       const { selectedSubscription } = action.payload;
       (state as InitializedVscodeState).exportData.selectedSubscription = selectedSubscription;
       (state as InitializedVscodeState).exportData.selectedIse = '';
     },
-    updateSelectedIse: (state: VscodeState, action: PayloadAction<any>) => {
+    updateSelectedIse: (state: VscodeState, action: PayloadAction<{ selectedIse: string; location: string }>) => {
       const { selectedIse, location } = action.payload;
       (state as InitializedVscodeState).exportData.selectedIse = selectedIse;
       (state as InitializedVscodeState).exportData.location = location;
     },
-    updateValidationState: (state: VscodeState, action: PayloadAction<any>) => {
+    updateValidationState: (state: VscodeState, action: PayloadAction<{ validationState: string }>) => {
       const { validationState } = action.payload;
       (state as InitializedVscodeState).exportData.validationState = validationState;
+    },
+    updateExportPath: (state: VscodeState, action: PayloadAction<{ exportPath: string }>) => {
+      const { exportPath } = action.payload;
+      (state as InitializedVscodeState).exportData.exportPath = exportPath;
     },
   },
 });
@@ -87,6 +92,7 @@ export const {
   updateSelectedSubscripton,
   updateSelectedIse,
   updateValidationState,
+  updateExportPath,
 } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;

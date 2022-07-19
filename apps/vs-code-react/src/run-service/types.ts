@@ -1,3 +1,6 @@
+import type { InitializePayload } from '../state/vscodeSlice';
+import type { ExtensionCommand } from '@microsoft-logic-apps/utils';
+
 export interface IRunService {
   getContent(contentLink: ContentLink): Promise<any>;
   getMoreRuns(continuationToken: string): Promise<Runs>;
@@ -10,6 +13,7 @@ export interface IApiService {
   getWorkflows(subscriptionId: string, iseId: string): Promise<any>;
   getSubscriptions(): Promise<any>;
   getIse(selectedSubscription: string): Promise<any>;
+  validateWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string): Promise<any>;
 }
 
 export interface ArmResources<T> {
@@ -183,6 +187,7 @@ export enum QueryKeys {
   runsData = 'runsData',
   iseData = 'iseData',
   validation = 'validation',
+  summary = 'summary',
 }
 
 export interface ISubscription {
@@ -197,6 +202,7 @@ export type ExportData = {
   selectedIse: string;
   location: string;
   validationState: string;
+  exportPath: string;
 };
 
 export enum ResourceType {
@@ -224,6 +230,7 @@ export enum RouteName {
   workflows_selection = 'workflows-selection',
   validation = 'validation',
   overview = 'overview',
+  summary = 'summary',
 }
 
 export enum ValidationStatus {
@@ -273,4 +280,51 @@ export enum StyledWorkflowPart {
   workflowOperations = 'Operations',
   connections = 'Connections',
   parameters = 'Parameters',
+}
+
+export interface InjectValuesMessage {
+  command: ExtensionCommand.initialize_frame;
+  data: InitializePayload;
+}
+
+export interface UpdateAccessTokenMessage {
+  command: ExtensionCommand.update_access_token;
+  data: {
+    accessToken?: string;
+  };
+}
+
+export interface UpdateExportPathMessage {
+  command: ExtensionCommand.update_export_path;
+  data: {
+    exportPath: string;
+  };
+}
+
+export interface IExportDetails {
+  exportDetailCategory: string;
+  exportDetailCode: string;
+  exportDetailMessage: string;
+}
+
+export interface IExportDetailsList {
+  type: string;
+  message: string;
+}
+
+export interface IExportData {
+  properties: {
+    packageLink: Record<string, string>;
+    details: Array<IExportDetails>;
+  };
+}
+
+export enum DetailCategory {
+  requiredStep = 'RequiredStep',
+  information = 'Information',
+}
+
+export enum StyledDetailCategory {
+  requiredStep = 'Required Step',
+  information = 'Information',
 }

@@ -79,7 +79,7 @@ export const WorkflowsSelection: React.FC = () => {
   const selection = useMemo(() => {
     return new Selection({
       onSelectionChanged: () => {
-        const currentSelection = selection.getSelection();
+        const currentSelection = selection.getSelection() as Array<WorkflowsList>;
         dispatch(
           updateSelectedWorkFlows({
             selectedWorkflows: currentSelection,

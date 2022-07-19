@@ -3,6 +3,7 @@ import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { PrimaryButton } from '@fluentui/react';
+import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -16,7 +17,7 @@ export const Navigation: React.FC = () => {
 
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse, selectedWorkflows, validationState } = exportData;
+  const { selectedSubscription, selectedIse, selectedWorkflows, validationState, exportPath } = exportData;
 
   const intlText = {
     NEXT: intl.formatMessage({
@@ -39,11 +40,15 @@ export const Navigation: React.FC = () => {
       defaultMessage: 'Export with warnings',
       description: 'Export with warnings button',
     }),
+    FINISH: intl.formatMessage({
+      defaultMessage: 'finish',
+      description: 'Finish  button',
+    }),
   };
 
   const onClickCancel = () => {
     vscode.postMessage({
-      command: 'dispose',
+      command: ExtensionCommand.dispose,
     });
   };
 
@@ -61,6 +66,10 @@ export const Navigation: React.FC = () => {
       }
       case `/${RouteName.export}/${RouteName.workflows_selection}`: {
         navigate(`/${RouteName.export}/${RouteName.validation}`);
+        break;
+      }
+      case `/${RouteName.export}/${RouteName.validation}`: {
+        navigate(`/${RouteName.export}/${RouteName.summary}`);
         break;
       }
     }
@@ -84,6 +93,9 @@ export const Navigation: React.FC = () => {
       case `/${RouteName.export}/${RouteName.validation}`: {
         return validationState === '' || validationState === ValidationStatus.failed;
       }
+      case `/${RouteName.export}/${RouteName.summary}`: {
+        return exportPath === '';
+      }
       default: {
         return true;
       }
@@ -96,6 +108,11 @@ export const Navigation: React.FC = () => {
     switch (pathname) {
       case `/${RouteName.export}/${RouteName.validation}`: {
         return validationState === ValidationStatus.succeeded_with_warnings ? intlText.EXPORT_WITH_WARNINGS : intlText.EXPORT;
+      }
+      case `/${RouteName.export}/${RouteName.summary}`: {
+        const validationText =
+          validationState === ValidationStatus.succeeded_with_warnings ? intlText.EXPORT_WITH_WARNINGS : intlText.EXPORT;
+        return `${validationText} and ${intlText.FINISH}`;
       }
       default: {
         return intlText.NEXT;
