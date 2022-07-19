@@ -1,5 +1,5 @@
 import { ResourceType } from '../types';
-import type { IApiService, Workflows, WorkflowsList } from '../types';
+import type { IApiService, Workflows, WorkflowsList, IExportData } from '../types';
 import { getValidationPayload, getExportUri, getWorkflowsUri } from './helper';
 
 export interface ApiServiceOptions {
@@ -134,9 +134,7 @@ export class ApiService implements IApiService {
     }
 
     const validationResponse: any = await response.json();
-    const data = validationResponse;
-
-    return data;
+    return validationResponse;
   }
 
   async exportWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string) {
@@ -149,9 +147,7 @@ export class ApiService implements IApiService {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
-    const exportResponse: any = await response.json();
-    const data = exportResponse;
-
-    return data;
+    const exportResponse: IExportData = await response.json();
+    return exportResponse;
   }
 }

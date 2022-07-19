@@ -1,10 +1,11 @@
-import { ExtensionCommand, QueryKeys } from '../../../run-service';
+import { QueryKeys } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { getListColumns, getSummaryData } from './helper';
 import { PrimaryButton, SelectionMode, ShimmeredDetailsList, Text, TextField } from '@fluentui/react';
+import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -19,24 +20,24 @@ export const Summary: React.FC = () => {
 
   const intlText = {
     COMPLETE_EXPORT_TITLE: intl.formatMessage({
-      defaultMessage: 'Complete Export',
-      description: 'Complete export title',
+      defaultMessage: 'Finish export',
+      description: 'Finish export title',
     }),
     SELECT_LOCATION: intl.formatMessage({
-      defaultMessage: 'Select a location to export your logic apps to',
+      defaultMessage: 'Select a destination to export your logic apps',
       description: 'Select a location description',
     }),
     OPEN_FILE_EXPLORER: intl.formatMessage({
-      defaultMessage: 'Open file explorer',
-      description: 'Open file explorer text',
+      defaultMessage: 'Browse',
+      description: 'Browse with file explorer text',
     }),
     EXPORT_LOCATION: intl.formatMessage({
       defaultMessage: 'Export location',
       description: 'Export location text',
     }),
     NO_DETAILS: intl.formatMessage({
-      defaultMessage: 'No further details',
-      description: 'No further details text',
+      defaultMessage: 'No more details',
+      description: 'No more details text',
     }),
   };
 
@@ -59,7 +60,7 @@ export const Summary: React.FC = () => {
     }
   );
 
-  const { exportDetails = [] }: any = isSummaryLoading || !summaryData ? {} : getSummaryData(summaryData);
+  const { exportDetails = [] } = isSummaryLoading || !summaryData ? {} : getSummaryData(summaryData);
 
   const onOpenExplorer = () => {
     vscode.postMessage({
@@ -71,7 +72,7 @@ export const Summary: React.FC = () => {
     return (
       <TextField label={intlText.EXPORT_LOCATION} placeholder={exportPath} disabled className="msla-export-summary-file-location-text" />
     );
-  }, [exportPath]);
+  }, [exportPath, intlText.EXPORT_LOCATION]);
 
   const detailsList = useMemo(() => {
     const emptyText = (
@@ -93,7 +94,7 @@ export const Summary: React.FC = () => {
         {noDetails}
       </div>
     );
-  }, [exportDetails]);
+  }, [exportDetails, isSummaryLoading, intlText.NO_DETAILS]);
 
   return (
     <div className="msla-export-summary">

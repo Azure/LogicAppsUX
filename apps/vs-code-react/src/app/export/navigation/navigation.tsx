@@ -1,8 +1,9 @@
-import { ExtensionCommand, RouteName, ValidationStatus } from '../../../run-service';
+import { RouteName, ValidationStatus } from '../../../run-service';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { PrimaryButton } from '@fluentui/react';
+import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';

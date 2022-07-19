@@ -1,4 +1,5 @@
 import type { InitializePayload } from '../state/vscodeSlice';
+import type { ExtensionCommand } from '@microsoft-logic-apps/utils';
 
 export interface IRunService {
   getContent(contentLink: ContentLink): Promise<any>;
@@ -281,16 +282,6 @@ export enum StyledWorkflowPart {
   parameters = 'Parameters',
 }
 
-export enum ExtensionCommand {
-  select_folder = 'select-folder',
-  initialize = 'initialize',
-  loadRun = 'LoadRun',
-  dispose = 'dispose',
-  initialize_frame = 'initialize-frame',
-  update_access_token = 'update-access-token',
-  update_export_path = 'update-export-path',
-}
-
 export interface InjectValuesMessage {
   command: ExtensionCommand.initialize_frame;
   data: InitializePayload;
@@ -306,7 +297,7 @@ export interface UpdateAccessTokenMessage {
 export interface UpdateExportPathMessage {
   command: ExtensionCommand.update_export_path;
   data: {
-    exportPath?: string;
+    exportPath: string;
   };
 }
 

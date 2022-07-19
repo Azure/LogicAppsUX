@@ -1,7 +1,7 @@
-import { ExtensionCommand } from './run-service';
 import type { InjectValuesMessage, UpdateAccessTokenMessage, UpdateExportPathMessage } from './run-service';
 import type { AppDispatch } from './state/store';
 import { initialize, updateAccessToken, updateExportPath } from './state/vscodeSlice';
+import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import useEventListener from '@use-it/event-listener';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
