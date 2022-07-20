@@ -12,10 +12,14 @@ import { ChangeSchemaView } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
+import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
+
+// import XMLParser from 'react-xml-parser';
 
 export enum SchemaTypes {
   Input = 'input',
@@ -26,6 +30,8 @@ export interface EditorConfigPanelProps {
   onSubmitInputSchema: (schema: Schema) => void;
   onSubmitOutputSchema: (schema: Schema) => void;
 }
+
+const authToken = 'bearer ...';
 
 export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ onSubmitInputSchema, onSubmitOutputSchema }) => {
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
@@ -40,6 +46,9 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
   );
   const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
   const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
+
+  const [downloadedSchema, setDownloadedSchema] = useState();
+
   const [errorMessage, setErrorMessage] = useState('');
 
   const dispatch = useDispatch<AppDispatch>();
@@ -89,9 +98,13 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
   }, [dispatch, setErrorMessage]);
 
   const editInputSchema = useCallback(() => {
+    const selectedInputSchema = downloadedSchema;
+
+    console.log('in editInputSchema ', selectedInputSchema);
+
     setErrorMessage('');
     if (selectedInputSchema) {
-      onSubmitInputSchema(selectedInputSchema.data);
+      onSubmitInputSchema(selectedInputSchema);
       closeSchemaPanel();
     } else {
       setErrorMessage(genericErrMsg);
@@ -99,9 +112,10 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
   }, [closeSchemaPanel, onSubmitInputSchema, selectedInputSchema, genericErrMsg]);
 
   const editOutputSchema = useCallback(() => {
+    const selectedOutputSchema = downloadedSchema;
     setErrorMessage('');
     if (selectedOutputSchema) {
-      onSubmitOutputSchema(selectedOutputSchema.data);
+      onSubmitOutputSchema(selectedOutputSchema);
       closeSchemaPanel();
     } else {
       setErrorMessage(genericErrMsg);
@@ -136,15 +150,29 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
         {isChangeSchemaPanelOpen && (
           <PrimaryButton
             className="panel-button-left"
-            onClick={
+            onClick={async () => {
+              const newDownloadedSchema = await axios.get(
+                'https://management.azure.com/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}/hostruntime/admin/vfs/Artifacts/Schemas/{SchemaName}?api-version=2018-11-01&relativepath=1',
+                {
+                  headers: {
+                    Authorization: authToken,
+                  },
+                }
+              );
+
+              //  const schemaInJson = new XMLParser().parseFromString(newDownloadedSchema.data);
+              const schemaInJson = newDownloadedSchema.data; //TODO: parse it like above
+
+              setDownloadedSchema(schemaInJson.data);
+
               schemaType === SchemaTypes.Input
                 ? curDataMapOperation
-                  ? () => dispatch(openChangeInputWarning())
-                  : editInputSchema
+                  ? dispatch(openChangeInputWarning())
+                  : editInputSchema()
                 : curDataMapOperation
-                ? () => dispatch(openChangeOutputWarning())
-                : editOutputSchema
-            }
+                ? dispatch(openChangeOutputWarning())
+                : editOutputSchema();
+            }}
             disabled={
               schemaType === SchemaTypes.Input
                 ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation?.curDataMap.srcSchemaName
@@ -213,6 +241,22 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
     ]
   );
 
+  const getSchemaList = async () => {
+    const { data } = await axios.get(
+      'https://management.azure.com/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}/hostruntime/admin/vfs/Artifacts/Schemas/?api-version=2018-11-01&relativepath=1',
+      {
+        headers: {
+          Authorization: authToken,
+        },
+      }
+    );
+    return data;
+  };
+
+  const schemaListQuery = useQuery(['schemaList'], () => getSchemaList(), {});
+
+  const schemaList = schemaListQuery.data;
+
   return (
     <div>
       <Panel
@@ -228,6 +272,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
         <div>
           {isChangeSchemaPanelOpen ? (
             <ChangeSchemaView
+              schemaList={schemaList}
               schemaType={schemaType}
               selectedSchema={schemaType === SchemaTypes.Input ? selectedInputSchema : selectedOutputSchema}
               setSelectedSchema={schemaType === SchemaTypes.Input ? setSelectedInputSchema : setSelectedOutputSchema}

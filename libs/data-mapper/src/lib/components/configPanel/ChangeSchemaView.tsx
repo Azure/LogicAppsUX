@@ -1,12 +1,9 @@
-import type { RootState } from '../../core/state/Store';
-import type { Schema } from '../../models';
 import { SchemaTypes } from './EditorConfigPanel';
 import { ChoiceGroup, Dropdown, PrimaryButton, TextField } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
 
 export enum UploadSchemaTypes {
   UploadNew = 'upload-new',
@@ -14,10 +11,16 @@ export enum UploadSchemaTypes {
 }
 
 export interface ChangeSchemaView {
+  schemaList: SchemaInfo[] | any;
   schemaType?: SchemaTypes;
   selectedSchema?: IDropdownOption;
   setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
   errorMessage: string;
+}
+
+export interface SchemaInfo {
+  name: string;
+  href: string;
 }
 
 const uploadSchemaOptions: IChoiceGroupOption[] = [
@@ -25,11 +28,18 @@ const uploadSchemaOptions: IChoiceGroupOption[] = [
   { key: UploadSchemaTypes.SelectFrom, text: 'Select from existing' },
 ];
 
-export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({ schemaType, selectedSchema, setSelectedSchema, errorMessage }) => {
-  const schemaFilesList = useSelector((state: RootState) => state.schema.availableSchemas);
+export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
+  schemaList,
+  schemaType,
+  selectedSchema,
+  setSelectedSchema,
+  errorMessage,
+}) => {
+  // const schemaFilesList = useSelector((state: RootState) => state.schema.availableSchemas);
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
 
-  const dataMapDropdownOptions = schemaFilesList?.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
+  // const dataMapDropdownOptions = schemaFilesList?.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
+  const dataMapDropdownOptions = schemaList?.map((file: SchemaInfo) => ({ key: file.name, text: file.name, href: file.href }));
 
   const intl = useIntl();
 
