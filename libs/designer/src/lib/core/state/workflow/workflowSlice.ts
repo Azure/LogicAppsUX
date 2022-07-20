@@ -109,6 +109,14 @@ export const workflowSlice = createSlice({
       if (state.collapsedGraphIds?.[action.payload] === true) delete state.collapsedGraphIds[action.payload];
       else state.collapsedGraphIds[action.payload] = true;
     },
+    discardAllChanges: (_state: WorkflowState) => {
+      // Will implement later, currently here to test host dispatch
+      LoggerService().log({
+        message: 'Changes Discarded',
+        level: LogEntryLevel.Verbose,
+        area: 'workflowSlice.ts',
+      });
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -121,7 +129,14 @@ export const workflowSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initWorkflowSpec, addNode, updateNodeSizes, setNodeDescription, setCollapsedGraphIds, toggleCollapsedGraphId } =
-  workflowSlice.actions;
+export const {
+  initWorkflowSpec,
+  addNode,
+  updateNodeSizes,
+  setNodeDescription,
+  setCollapsedGraphIds,
+  toggleCollapsedGraphId,
+  discardAllChanges,
+} = workflowSlice.actions;
 
 export default workflowSlice.reducer;
