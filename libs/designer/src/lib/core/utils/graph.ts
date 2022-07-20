@@ -3,6 +3,10 @@ import type { WorkflowEdge, WorkflowNode, WorkflowEdgeType, WorkflowNodeType } f
 import type { NodesMetadata } from '../state/workflow/workflowSlice';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
 
+export const isRootNodeInGraph = (nodeId: string, graphId: string, nodesMetadata: NodesMetadata): boolean => {
+  return nodesMetadata[nodeId]?.graphId === graphId && !!nodesMetadata[nodeId]?.isRoot;
+};
+
 export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
   return !!nodesMetadata[nodeId]?.isRoot;
 };

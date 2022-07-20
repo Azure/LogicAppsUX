@@ -1,11 +1,11 @@
 import Constants from '../../../common/constants';
-import type { Workflow } from '../../../common/models/workflow';
+import type { ConnectionReferences, Workflow } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
 import { getOperationManifest } from '../../queries/operation';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { RootState } from '../../store';
-import { getNode, isRootNode } from '../../utils/graph';
+import { getNode, isRootNode, isRootNodeInGraph } from '../../utils/graph';
 import {
   encodePathValue,
   getAndEscapeSegment,
@@ -33,28 +33,96 @@ import {
 } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 
-export const serializeWorkflow = (_rootState: RootState): Workflow => {
+export interface SerializeOptions {
+  skipValidation: boolean;
+  ignoreNonCriticalErrors?: boolean;
+}
+
+export const serializeWorkflow = async (rootState: RootState, options?: SerializeOptions): Promise<Workflow> => {
+  const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
+  const connectionReferences = Object.keys(connectionsMapping).reduce((references: ConnectionReferences, nodeId: string) => {
+    const referenceKey = connectionsMapping[nodeId];
+    const reference = referencesObject[referenceKey];
+    
+    if (reference) {
+      // eslint-disable-next-line no-param-reassign
+      references[referenceKey] = reference;
+    }
+
+    return references;
+  },
+  {});
+
   return {
-    definition: {} as any,
-    connectionReferences: {},
+    definition: {
+      $schema: Constants.SCHEMA.GA_20160601.URL,
+      actions: await getActions(rootState, options),
+      contentVersion: '1.0.0.0',
+      outputs: {}, // TODO - Should get this from original definition
+      triggers: await getTrigger(rootState, options),
+    },
+    connectionReferences,
     parameters: {},
   };
 };
 
-export const serializeOperation = async (rootState: RootState, operationId: string): Promise<LogicAppsV2.OperationDefinition> => {
-  const operation = rootState.operations.operationInfo[operationId];
-  if (OperationManifestService().isSupported(operation.type, operation.kind)) {
-    return serializeManifestBasedOperation(rootState, operationId);
-  } else {
-    // TODO - Implement for ApiConnection type operations [swagger based]
-    return rootState.workflow.operations[operationId] ?? {};
+const getActions = async (rootState: RootState, options?: SerializeOptions): Promise<LogicAppsV2.Actions> => {
+  const rootGraph = rootState.workflow.graph as WorkflowNode;
+  const actionsInRootGraph = rootGraph.children?.filter(
+    (child) => !isRootNode(child.id, rootState.workflow.nodesMetadata)
+  ) as WorkflowNode[];
+  const promises: Promise<LogicAppsV2.ActionDefinition | null>[] = [];
+
+  for (const action of actionsInRootGraph) {
+    promises.push(serializeOperation(rootState, action.id, options));
   }
+
+  return (await Promise.all(promises)).reduce(
+    (actions: LogicAppsV2.Actions, action: LogicAppsV2.ActionDefinition | null, index: number) => {
+      if (!isNullOrEmpty(action)) {
+        // eslint-disable-next-line no-param-reassign
+        actions[actionsInRootGraph[index].id] = action as LogicAppsV2.ActionDefinition;
+      }
+
+      return actions;
+    },
+    {}
+  );
 };
 
-export const serializeManifestBasedOperation = async (
+const getTrigger = async (rootState: RootState, options?: SerializeOptions): Promise<LogicAppsV2.Triggers> => {
+  const rootGraph = rootState.workflow.graph as WorkflowNode;
+  const rootNode = rootGraph.children?.find((child) => isRootNode(child.id, rootState.workflow.nodesMetadata)) as WorkflowNode;
+
+  return rootNode
+    ? { [rootNode.id]: ((await serializeOperation(rootState, rootNode.id, options)) ?? {}) as LogicAppsV2.TriggerDefinition }
+    : {};
+};
+
+export const serializeOperation = async (
   rootState: RootState,
-  operationId: string
-): Promise<LogicAppsV2.OperationDefinition> => {
+  operationId: string,
+  _options?: SerializeOptions
+): Promise<LogicAppsV2.OperationDefinition | null> => {
+  const operation = rootState.operations.operationInfo[operationId];
+
+  // TODO (Danielle): Add logic to identify if this operation is in Recommendation phase.
+  // If in recommendation phase then return null;
+
+  let serializedOperation: LogicAppsV2.OperationDefinition;
+  if (OperationManifestService().isSupported(operation.type, operation.kind)) {
+    serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
+  } else {
+    // TODO - Implement for ApiConnection type operations [swagger based]
+    serializedOperation = rootState.workflow.operations[operationId] ?? {};
+  }
+
+  // TODO - We might have to just serialize bare minimum data for partially loaded node.
+  // TODO - Serialize metadata for each operation.
+  return serializedOperation;
+};
+
+const serializeManifestBasedOperation = async (rootState: RootState, operationId: string): Promise<LogicAppsV2.OperationDefinition> => {
   const operation = rootState.operations.operationInfo[operationId];
   const manifest = await getOperationManifest(operation);
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
@@ -365,12 +433,112 @@ const serializeSettings = (
   const conditions = conditionExpressions
     ? conditionExpressions.value?.filter((expression) => !!expression).map((expression) => ({ expression }))
     : undefined;
+  const timeout = settings.timeout?.isSupported ? { timeout: settings.timeout.value } : undefined;
+  const trackedProperties = settings.trackedProperties?.value;
 
   return {
     ...optional('correlation', settings.correlation?.value),
     ...optional('conditions', conditions),
+    ...optional('limit', timeout),
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
+    ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(operationId, settings, rootState)),
+    ...optional('trackedProperties', trackedProperties),
   };
+};
+
+const getSerializedRuntimeConfiguration = (
+  operationId: string,
+  settings: Settings,
+  rootState: RootState
+): LogicAppsV2.RuntimeConfiguration | undefined => {
+  const runtimeConfiguration: LogicAppsV2.RuntimeConfiguration = {};
+  const isTrigger = isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata);
+
+  const transferMode = settings.uploadChunk?.value?.transferMode;
+  const uploadChunkSize = settings.uploadChunk?.value?.uploadChunkSize;
+  const downloadChunkSize = settings.downloadChunkSize?.value;
+  const pagingItemCount = settings.paging?.value?.enabled ? settings.paging.value.value : undefined;
+
+  if (transferMode) {
+    safeSetObjectPropertyValue(
+      runtimeConfiguration,
+      [Constants.SETTINGS.PROPERTY_NAMES.CONTENT_TRANSFER, Constants.SETTINGS.PROPERTY_NAMES.TRANSFER_MODE],
+      transferMode
+    );
+  }
+
+  if (uploadChunkSize !== undefined) {
+    safeSetObjectPropertyValue(
+      runtimeConfiguration,
+      [Constants.SETTINGS.PROPERTY_NAMES.CONTENT_TRANSFER, Constants.SETTINGS.PROPERTY_NAMES.UPLOAD_CHUNK_SIZE],
+      uploadChunkSize
+    );
+  }
+
+  if (downloadChunkSize !== undefined) {
+    safeSetObjectPropertyValue(
+      runtimeConfiguration,
+      [Constants.SETTINGS.PROPERTY_NAMES.CONTENT_TRANSFER, Constants.SETTINGS.PROPERTY_NAMES.DOWNLOAD_CHUNK_SIZE],
+      downloadChunkSize
+    );
+  }
+
+  if (pagingItemCount !== undefined) {
+    safeSetObjectPropertyValue(
+      runtimeConfiguration,
+      [Constants.SETTINGS.PROPERTY_NAMES.PAGINATION_POLICY, Constants.SETTINGS.PROPERTY_NAMES.MINIMUM_ITEM_COUNT],
+      pagingItemCount
+    );
+  }
+
+  if (!isTrigger) {
+    if (!settings.sequential) {
+      const repetitions = settings.concurrency?.value?.enabled ? settings.concurrency.value.value : undefined;
+
+      if (repetitions !== undefined) {
+        safeSetObjectPropertyValue(
+          runtimeConfiguration,
+          [Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY, Constants.SETTINGS.PROPERTY_NAMES.REPETITIONS],
+          repetitions
+        );
+      }
+    }
+  } else {
+    if (!settings.singleInstance) {
+      const runs = settings.concurrency?.value?.enabled ? settings.concurrency.value.value : undefined;
+
+      if (runs !== undefined) {
+        safeSetObjectPropertyValue(
+          runtimeConfiguration,
+          [Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY, Constants.SETTINGS.PROPERTY_NAMES.RUNS],
+          runs
+        );
+      }
+    }
+  }
+
+  const isSecureInputsSet = settings.secureInputs?.value;
+  const isSecureOutputsSet = settings.secureOutputs?.value;
+
+  if (isSecureInputsSet || isSecureOutputsSet) {
+    const secureData: LogicAppsV2.SecureData = {
+      properties: [
+        ...(isSecureInputsSet ? Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.INPUTS : []),
+        ...(isSecureOutputsSet ? Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS : []),
+      ],
+    };
+
+    safeSetObjectPropertyValue(runtimeConfiguration, [Constants.SETTINGS.PROPERTY_NAMES.SECURE_DATA], secureData);
+  }
+
+  const requestOptions = settings.requestOptions?.value;
+  if (requestOptions?.timeout) {
+    safeSetObjectPropertyValue(runtimeConfiguration, ['requestOptions'], requestOptions);
+  }
+
+  // TODO - Might need to add for Static results
+
+  return runtimeConfiguration && !Object.keys(runtimeConfiguration).length ? undefined : runtimeConfiguration;
 };
 
 const getSerializedOperationOptions = (operationId: string, settings: Settings, rootState: RootState): string | undefined => {
