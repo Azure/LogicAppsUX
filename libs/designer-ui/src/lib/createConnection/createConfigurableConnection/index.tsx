@@ -89,6 +89,7 @@ export const CreateConfigurableConnection = (props: CreateConfigurableConnection
             className="param-input"
             disabled={isLoading}
             autoComplete="off"
+            aria-label={inputConnectionNamePlaceholder}
             placeholder={inputConnectionNamePlaceholder}
             value={connectionName}
             onChange={(e: any, val?: string) => setConnectionName(val ?? '')}
@@ -106,7 +107,8 @@ export const CreateConfigurableConnection = (props: CreateConfigurableConnection
               selectedKey={selectedParamSetIndex}
               onChange={onDropdownChange}
               disabled={isLoading}
-              // placeholder={connector.properties.connectionParameterSets.uiDefinition?.description}
+              ariaLabel={connector.properties.connectionParameterSets.uiDefinition?.description}
+              placeholder={connector.properties.connectionParameterSets.uiDefinition?.description}
               options={connector.properties.connectionParameterSets.values.map((paramSet, index) => ({
                 key: index,
                 text: paramSet.name,
