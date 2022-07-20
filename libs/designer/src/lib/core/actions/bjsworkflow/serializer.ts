@@ -44,12 +44,10 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     const referenceKey = connectionsMapping[nodeId];
     const reference = referencesObject[referenceKey];
     
-    if (reference) {
-      // eslint-disable-next-line no-param-reassign
-      references[referenceKey] = reference;
-    }
-
-    return references;
+    return {
+      ...references,
+      [referenceKey]: reference
+    };
   },
   {});
 
@@ -80,8 +78,10 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
   return (await Promise.all(promises)).reduce(
     (actions: LogicAppsV2.Actions, action: LogicAppsV2.ActionDefinition | null, index: number) => {
       if (!isNullOrEmpty(action)) {
-        // eslint-disable-next-line no-param-reassign
-        actions[actionsInRootGraph[index].id] = action as LogicAppsV2.ActionDefinition;
+        return {
+          ...actions,
+          [actionsInRootGraph[index].id]: action as LogicAppsV2.ActionDefinition
+        }
       }
 
       return actions;
@@ -403,8 +403,10 @@ const serializeSubGraph = async (
     graphLocation,
     nestedActions.reduce((actions: LogicAppsV2.Actions, action: LogicAppsV2.OperationDefinition, index: number) => {
       if (!isNullOrEmpty(action)) {
-        // eslint-disable-next-line no-param-reassign
-        actions[nestedNodes[index].id] = action;
+        return {
+          ...actions,
+          [nestedNodes[index].id]: action
+        };
       }
 
       return actions;
