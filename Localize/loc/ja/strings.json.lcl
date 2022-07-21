@@ -21,6 +21,9 @@
       <Item ItemId=";+Bh3Qk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Button to add dynamic content]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[動的なコンテンツを追加するボタン]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
