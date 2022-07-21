@@ -17,7 +17,7 @@ export const Navigation: React.FC = () => {
 
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse, selectedWorkflows, validationState, exportPath } = exportData;
+  const { selectedSubscription, selectedIse, selectedWorkflows, validationState, targetDirectory } = exportData;
 
   const intlText = {
     NEXT: intl.formatMessage({
@@ -72,6 +72,13 @@ export const Navigation: React.FC = () => {
         navigate(`/${RouteName.export}/${RouteName.summary}`);
         break;
       }
+      case `/${RouteName.export}/${RouteName.summary}`: {
+        vscode.postMessage({
+          command: ExtensionCommand.export_package,
+          targetDirectory,
+        });
+        break;
+      }
     }
   };
 
@@ -94,7 +101,7 @@ export const Navigation: React.FC = () => {
         return validationState === '' || validationState === ValidationStatus.failed;
       }
       case `/${RouteName.export}/${RouteName.summary}`: {
-        return exportPath === '';
+        return targetDirectory.path === '';
       }
       default: {
         return true;

@@ -24,6 +24,7 @@ export const WebViewCommunication: React.FC = ({ children }) => {
         dispatch(updateAccessToken(message.data.accessToken));
         break;
       case ExtensionCommand.update_export_path:
+        console.log('test,data', message.data);
         dispatch(updateExportPath(message.data));
         break;
       default:

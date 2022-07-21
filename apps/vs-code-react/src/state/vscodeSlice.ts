@@ -1,4 +1,4 @@
-import type { ExportData, ProjectName, WorkflowsList } from '../run-service';
+import type { ExportData, ITargetDirectory, ProjectName, WorkflowsList } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -53,7 +53,14 @@ export const vscodeSlice = createSlice({
         selectedIse: '',
         location: '',
         validationState: '',
-        exportPath: '',
+        targetDirectory: {
+          authority: '',
+          fragment: '',
+          fsPath: '',
+          path: '',
+          query: '',
+          scheme: '',
+        },
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
@@ -77,9 +84,9 @@ export const vscodeSlice = createSlice({
       const { validationState } = action.payload;
       (state as InitializedVscodeState).exportData.validationState = validationState;
     },
-    updateExportPath: (state: VscodeState, action: PayloadAction<{ exportPath: string }>) => {
-      const { exportPath } = action.payload;
-      (state as InitializedVscodeState).exportData.exportPath = exportPath;
+    updateExportPath: (state: VscodeState, action: PayloadAction<{ targetDirectory: ITargetDirectory }>) => {
+      const { targetDirectory } = action.payload;
+      (state as InitializedVscodeState).exportData.targetDirectory = targetDirectory;
     },
   },
 });

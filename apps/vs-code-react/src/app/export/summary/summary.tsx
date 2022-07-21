@@ -16,7 +16,7 @@ export const Summary: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
-  const { selectedWorkflows, location, selectedSubscription, exportPath } = exportData;
+  const { selectedWorkflows, location, selectedSubscription, targetDirectory } = exportData;
 
   const intlText = {
     COMPLETE_EXPORT_TITLE: intl.formatMessage({
@@ -70,9 +70,14 @@ export const Summary: React.FC = () => {
 
   const locationText = useMemo(() => {
     return (
-      <TextField label={intlText.EXPORT_LOCATION} placeholder={exportPath} disabled className="msla-export-summary-file-location-text" />
+      <TextField
+        label={intlText.EXPORT_LOCATION}
+        placeholder={targetDirectory.path}
+        disabled
+        className="msla-export-summary-file-location-text"
+      />
     );
-  }, [exportPath, intlText.EXPORT_LOCATION]);
+  }, [targetDirectory, intlText.EXPORT_LOCATION]);
 
   const detailsList = useMemo(() => {
     const emptyText = (
