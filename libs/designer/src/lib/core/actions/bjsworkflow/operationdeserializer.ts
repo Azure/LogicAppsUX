@@ -9,7 +9,7 @@ import { clearPanel } from '../../state/panel/panelSlice';
 import type { AddTokensPayload, NodeTokens } from '../../state/tokensSlice';
 import { initializeTokens } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowSlice';
-import { isRootNode } from '../../utils/graph';
+import { isRootNodeInGraph } from '../../utils/graph';
 import { getRecurrenceParameters } from '../../utils/parameters/builtins';
 import {
   loadParameterValuesFromDefault,
@@ -48,7 +48,7 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
   let triggerNodeId = '';
 
   for (const [operationId, operation] of Object.entries(operations)) {
-    const isTrigger = isRootNode(operationId, nodesMetadata);
+    const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
 
     if (isTrigger) {
       triggerNodeId = operationId;
