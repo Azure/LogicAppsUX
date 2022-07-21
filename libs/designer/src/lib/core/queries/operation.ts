@@ -11,7 +11,7 @@ export const getOperationInfo = async (
   const operationManifestService = OperationManifestService();
 
   nodeId = nodeId.toLowerCase();
-  return queryClient.fetchQuery<OperationInfo>(['operationIds', { nodeId }], () =>
+  return queryClient.fetchQuery<OperationInfo>(['operationInfo', { nodeId }], () =>
     // this is sync
     operationManifestService.getOperationInfo(operation)
   );

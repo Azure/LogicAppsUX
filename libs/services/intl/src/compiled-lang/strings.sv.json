@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+Bh3Qk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -457,6 +463,12 @@
     {
       "type": 0,
       "value": "Identifierare"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Lägg till dynamiskt innehåll"
     }
   ],
   "3FoqCK": [

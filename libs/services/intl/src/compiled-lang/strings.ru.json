@@ -5,6 +5,12 @@
       "value": "ОК"
     }
   ],
+  "+Bh3Qk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -479,6 +485,12 @@
     {
       "type": 0,
       "value": "Идентификатор"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Добавить динамическое содержимое"
     }
   ],
   "3FoqCK": [

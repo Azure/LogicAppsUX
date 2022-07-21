@@ -5,6 +5,12 @@
       "value": "Aceptar"
     }
   ],
+  "+Bh3Qk": [
+    {
+      "type": 0,
+      "value": "Botón para agregar contenido dinámico"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -457,6 +463,12 @@
     {
       "type": 0,
       "value": "Identificador"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Agregar contenido dinámico"
     }
   ],
   "3FoqCK": [

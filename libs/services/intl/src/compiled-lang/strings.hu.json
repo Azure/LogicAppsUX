@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+Bh3Qk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -457,6 +463,12 @@
     {
       "type": 0,
       "value": "Azonosító"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Dinamikus tartalom hozzáadása"
     }
   ],
   "3FoqCK": [
@@ -2434,7 +2446,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "„"
     },
     {
       "type": 1,
@@ -2442,7 +2454,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "“ használata egyéni értékként"
     }
   ],
   "W070M2": [
@@ -3418,7 +3430,11 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "Nem támogatott jegyzékfájlkapcsolat hivatkozásának formátuma: "
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
     }
   ],
   "jsEMSu": [

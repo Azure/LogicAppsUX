@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+Bh3Qk": [
+    {
+      "type": 0,
+      "value": "Tlačítko pro přidání dynamického obsahu"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -491,6 +497,12 @@
     {
       "type": 0,
       "value": "Identifikátor"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Přidat dynamický obsah"
     }
   ],
   "3FoqCK": [

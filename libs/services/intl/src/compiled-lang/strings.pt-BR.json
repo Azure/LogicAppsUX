@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+Bh3Qk": [
+    {
+      "type": 0,
+      "value": "Botão para adicionar o conteúdo dinâmico"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -457,6 +463,12 @@
     {
       "type": 0,
       "value": "Identificador"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Adicionar conteúdo dinâmico"
     }
   ],
   "3FoqCK": [
@@ -2430,7 +2442,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "Usar \""
     },
     {
       "type": 1,
@@ -2438,7 +2450,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "\" como um valor personalizado"
     }
   ],
   "W070M2": [
@@ -3406,7 +3418,7 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "Formato de referência de conexão de manifesto sem suporte: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4384,7 +4396,7 @@
   "vrYqUF": [
     {
       "type": 0,
-      "value": "Inserir um valor personalizado"
+      "value": "Inserir valor personalizado"
     }
   ],
   "vwH/XV": [
@@ -4634,7 +4646,7 @@
   "zUgja+": [
     {
       "type": 0,
-      "value": "Desmarcar valor personalizado"
+      "value": "Limpar valor personalizado"
     }
   ],
   "zbtUQ/": [

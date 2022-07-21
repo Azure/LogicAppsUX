@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+Bh3Qk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content"
+    }
+  ],
   "+GSexV": [
     {
       "type": 0,
@@ -457,6 +463,12 @@
     {
       "type": 0,
       "value": "Id"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Dynamische inhoud toevoegen"
     }
   ],
   "3FoqCK": [
@@ -2434,7 +2446,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "Gebruik \""
     },
     {
       "type": 1,
@@ -2442,7 +2454,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "\" als een aangepaste waarde"
     }
   ],
   "W070M2": [
@@ -3418,7 +3430,7 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "Niet-ondersteunde verwijzingsindeling voor manifestverbinding: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
@@ -4396,7 +4408,7 @@
   "vrYqUF": [
     {
       "type": 0,
-      "value": "Een aangepaste waarde invoeren"
+      "value": "Aangepaste waarde invoeren"
     }
   ],
   "vwH/XV": [
