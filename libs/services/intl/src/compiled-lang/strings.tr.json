@@ -468,7 +468,7 @@
   "3BZnxY": [
     {
       "type": 0,
-      "value": "Add dynamic content"
+      "value": "Dinamik içerik ekle"
     }
   ],
   "3FoqCK": [
@@ -2442,7 +2442,7 @@
   "VptXzY": [
     {
       "type": 0,
-      "value": "Use \""
+      "value": "\""
     },
     {
       "type": 1,
@@ -2450,7 +2450,7 @@
     },
     {
       "type": 0,
-      "value": "\" as a custom value"
+      "value": "\" değerini özel değer olarak kullan"
     }
   ],
   "W070M2": [
@@ -3418,7 +3418,7 @@
   "jjYA4u": [
     {
       "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+      "value": "Desteklenmeyen bildirim bağlantısı başvuru biçimi: {referenceKeyFormat}"
     }
   ],
   "jsEMSu": [
