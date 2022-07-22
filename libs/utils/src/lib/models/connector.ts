@@ -71,10 +71,10 @@ export interface ConnectionParameterUIDefinitionBase {
     location?: string;
     propertyPath?: string[];
     hideInUI?: string;
-    default?: any /* tslint:disable-line: no-any */;
+    default?: any;
     dependentParameter?: {
       parameter: string;
-      value: any; // tslint:disable-line: no-any
+      value: any;
     };
     requiresConnectionNamePrefix?: string;
   };

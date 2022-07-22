@@ -1,4 +1,4 @@
-import type { ConnectionInfo, ConnectionParametersMetadata, IConnectionService } from '../connection';
+import type { ConnectionCreationInfo, ConnectionParametersMetadata, IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { azureFunctionConnectorId } from './operationmanifest';
 import type { Connection, ConnectionParameter, Connector } from '@microsoft-logic-apps/utils';
@@ -166,7 +166,7 @@ export class StandardConnectionService implements IConnectionService {
   async createConnection(
     connectionId: string,
     connectorId: string,
-    connectionInfo: ConnectionInfo,
+    connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<Connection> {
     const connectionName = connectionId.split('/').at(-1) as string;
@@ -180,7 +180,7 @@ export class StandardConnectionService implements IConnectionService {
   private async createConnectionInApiHub(
     _connectionName: string,
     _connectorId: string,
-    _connectionInfo: ConnectionInfo
+    _connectionInfo: ConnectionCreationInfo
   ): Promise<Connection> {
     throw new Error('Not implemented for Azure connections yet');
   }
@@ -188,7 +188,7 @@ export class StandardConnectionService implements IConnectionService {
   private async createConnectionInLocal(
     connectionName: string,
     connectorId: string,
-    connectionInfo: ConnectionInfo,
+    connectionInfo: ConnectionCreationInfo,
     parametersMetadata: ConnectionParametersMetadata
   ): Promise<Connection> {
     const { connectionsData, connection } = this.getConnectionsConfiguration(
@@ -211,7 +211,7 @@ export class StandardConnectionService implements IConnectionService {
 
   private getConnectionsConfiguration(
     connectionName: string,
-    connectionInfo: ConnectionInfo,
+    connectionInfo: ConnectionCreationInfo,
     connectorId: string,
     parametersMetadata: ConnectionParametersMetadata
   ): {
@@ -339,7 +339,7 @@ function convertServiceProviderConnectionDataToConnection(
 function convertToServiceProviderConnectionsData(
   connectionKey: string,
   connectorId: string,
-  connectionInfo: ConnectionInfo,
+  connectionInfo: ConnectionCreationInfo,
   connectionParameterMetadata: ConnectionParametersMetadata
 ): ConnectionAndAppSetting<ServiceProviderConnectionModel> {
   const {
@@ -353,7 +353,6 @@ function convertToServiceProviderConnectionsData(
   const parameterValues = connectionParametersSetValues
     ? Object.keys(connectionParametersSetValues.values).reduce(
         (result: Record<string, any>, currentKey: string) => ({
-          // tslint:disable-line: no-any
           ...result,
           [currentKey]: connectionParametersSetValues.values[currentKey].value,
         }),
@@ -394,7 +393,7 @@ function convertToServiceProviderConnectionsData(
 
 function convertToFunctionsConnectionsData(
   connectionKey: string,
-  connectionInfo: ConnectionInfo
+  connectionInfo: ConnectionCreationInfo
 ): ConnectionAndAppSetting<FunctionsConnectionModel> {
   const { displayName, connectionParameters } = connectionInfo;
   const authentication = connectionParameters?.['authentication'];

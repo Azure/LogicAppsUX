@@ -36,7 +36,7 @@ export interface ConnectionParameterSetValues {
 }
 
 export interface ValueObject {
-  value: any; // tslint:disable-line: no-any
+  value: any;
 }
 
 export interface ConnectionProperties {

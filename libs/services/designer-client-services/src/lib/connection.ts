@@ -8,11 +8,11 @@ import type {
   ConnectionType,
 } from '@microsoft-logic-apps/utils';
 
-export interface ConnectionInfo {
+export interface ConnectionCreationInfo {
   connectionParametersSet?: ConnectionParameterSetValues;
-  connectionParameters?: Record<string, any>; // tslint:disable-line: no-any
-  internalAlternativeParameterValues?: Record<string, any>; // tslint:disable-line: no-any
-  externalAlternativeParameterValues?: Record<string, any>; // tslint:disable-line: no-any
+  connectionParameters?: Record<string, any>;
+  internalAlternativeParameterValues?: Record<string, any>;
+  externalAlternativeParameterValues?: Record<string, any>;
   displayName?: string;
   parameterName?: string;
 }
@@ -31,7 +31,7 @@ export interface IConnectionService {
   createConnection(
     connectionId: string,
     connectorId: string,
-    connectionInfo: ConnectionInfo,
+    connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<Connection>;
 }
