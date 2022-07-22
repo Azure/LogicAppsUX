@@ -6,7 +6,6 @@ import {
   Icon,
   TooltipHost,
   MarqueeSelection,
-  PrimaryButton,
   DefaultButton,
   Spinner,
   SpinnerSize,
@@ -16,7 +15,7 @@ import {
   Selection,
 } from '@fluentui/react';
 import type { Connection } from '@microsoft-logic-apps/utils';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SelectConnectionProps {
@@ -59,31 +58,25 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     };
   });
 
-  const [selectedConnection, setSelectedConnection] = useState<Connection>();
-
-  const [select, setSelect] = useState<Selection>(
+  const [select, setSelect] = useState(
     new Selection({
       onSelectionChanged: () => {
         const newSelection = select.getSelection()[0] as any;
-        setSelectedConnection(newSelection as Connection);
+        if (newSelection) {
+          // This if statement avoids the initial selection in the details list
+          if (newSelection?.id !== currentConnection?.id) saveSelectionCallback(newSelection);
+        } else cancelSelectionCallback(); // User clicked the existing connection, keep selection the same and return
       },
     })
   );
 
-  const forceSelectConnection = useCallback(
-    (connection: Connection) => {
-      const newOnSelect = select;
-      const connIndex = connections.indexOf(connection);
-      newOnSelect.setIndexSelected(connIndex, true, false);
-      setSelectedConnection(connection);
-      setSelect(newOnSelect);
-    },
-    [connections, selectedConnection]
-  );
-
   // Assign connection on initial load
   useEffect(() => {
-    if (currentConnection) forceSelectConnection(currentConnection);
+    if (currentConnection) {
+      const newSelect = select;
+      newSelect.setIndexSelected(connections.indexOf(currentConnection), true, false);
+      setSelect(newSelect);
+    }
   }, [connections, currentConnection]);
 
   if (isLoading) {
@@ -180,16 +173,6 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     description: 'Aria label description for add button',
   });
 
-  const buttonSaveText = intl.formatMessage({
-    defaultMessage: 'Save',
-    description: 'Button to save a connection',
-  });
-
-  const buttonSaveAria = intl.formatMessage({
-    defaultMessage: 'Save the selected connection',
-    description: 'Aria label description for save button',
-  });
-
   const buttonCancelText = intl.formatMessage({
     defaultMessage: 'Cancel',
     description: 'Button to cancel a connection',
@@ -217,21 +200,13 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
           layoutMode={DetailsListLayoutMode.justified}
           isHeaderVisible={true}
           selectionPreservedOnEmptyClick={true}
-          onItemInvoked={(connection) => saveSelectionCallback(connection)}
           enterModalSelectionOnTouch={true}
           checkButtonAriaLabel={checkButtonAriaLabel}
         />
       </MarqueeSelection>
 
       <div className="msla-select-connection-actions-container">
-        <PrimaryButton text={buttonAddText} ariaLabel={buttonAddAria} onClick={createConnectionCallback} />
-        <div id="action-gap" style={{ flexGrow: 1 }} />
-        <PrimaryButton
-          text={buttonSaveText}
-          ariaLabel={buttonSaveAria}
-          onClick={() => saveSelectionCallback(selectedConnection)}
-          disabled={!selectedConnection}
-        />
+        <DefaultButton text={buttonAddText} ariaLabel={buttonAddAria} onClick={createConnectionCallback} />
         <DefaultButton text={buttonCancelText} ariaLabel={buttonCancelAria} onClick={cancelSelectionCallback} />
       </div>
     </div>

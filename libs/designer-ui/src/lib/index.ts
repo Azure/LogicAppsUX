@@ -16,8 +16,6 @@ export * from './combobox';
 // export * from './configItem';
 export * from './copyinputcontrol';
 export * from './createConnection';
-export * from './createConnection/createConfigurableConnection';
-export * from './createConnection/createSimpleConnection';
 // export * from './datetimeeditor';
 export * from './dialogs';
 // export * from './dictionary';

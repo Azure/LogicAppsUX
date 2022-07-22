@@ -1,12 +1,12 @@
-import type { CreateConfigurableConnectionProps } from '.';
-import { CreateConfigurableConnection } from '.';
+import type { CreateConnectionProps } from '.';
+import { CreateConnection } from '.';
 import type { Connector } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
-  component: CreateConfigurableConnection,
-  title: 'Components/CreateConnection/CreateConfigurableConnection',
-} as ComponentMeta<typeof CreateConfigurableConnection>;
+  component: CreateConnection,
+  title: 'Components/CreateConnection/CreateConnection',
+} as ComponentMeta<typeof CreateConnection>;
 
 const mockMultiAuthConnector: Connector = {
   id: '/providers/Microsoft.PowerApps/apis/sql',
@@ -90,9 +90,7 @@ const mockMultiAuthConnector: Connector = {
 const createConnectionCallback = (values: Record<string, string | undefined>) =>
   alert(`Creating Multi Auth connector: ${JSON.stringify(values)}`);
 
-export const MultiAuthExample: ComponentStory<typeof CreateConfigurableConnection> = (args: CreateConfigurableConnectionProps) => (
-  <CreateConfigurableConnection {...args} />
-);
+export const MultiAuthExample: ComponentStory<typeof CreateConnection> = (args: CreateConnectionProps) => <CreateConnection {...args} />;
 
 MultiAuthExample.args = {
   connector: mockMultiAuthConnector,

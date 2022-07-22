@@ -86,12 +86,16 @@ export const useConnector = (connectorId: string) => {
 };
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
-  return useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
+  // TODO: Revisit trying to conditionally ask for the connector from the service
+  const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
+  const storeConnectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId].connectorId);
+  const connectorFromService = useConnector(storeConnectorId)?.data;
+  return connectorFromManifest ?? connectorFromService;
 };
 
-export const useConnectionRefsByConnector = (connector?: Connector) => {
+export const useConnectionRefsByConnectorId = (connectorId?: string) => {
   const allConnections = useSelector((state: RootState) => Object.values(state.connections.connectionReferences));
-  return allConnections.filter((ref: ConnectionReference) => ref.api.id === connector?.id);
+  return allConnections.filter((ref: ConnectionReference) => ref.api.id === connectorId);
 };
 
 export const useOperationManifest = (operationInfo: OperationInfo) => {

@@ -1,12 +1,12 @@
-import type { CreateConfigurableConnectionProps } from '.';
-import { CreateConfigurableConnection } from '.';
+import type { CreateConnectionProps } from '.';
+import { CreateConnection } from '.';
 import type { Connector } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
-  component: CreateConfigurableConnection,
-  title: 'Components/CreateConnection/CreateConfigurableConnection',
-} as ComponentMeta<typeof CreateConfigurableConnection>;
+  component: CreateConnection,
+  title: 'Components/CreateConnection/CreateConnection',
+} as ComponentMeta<typeof CreateConnection>;
 
 const mockSingleAuthConnector: Connector = {
   id: '/providers/Microsoft.PowerApps/apis/arm',
@@ -49,9 +49,7 @@ const mockSingleAuthConnector: Connector = {
 const createConnectionCallback = (values: Record<string, string | undefined>) =>
   alert(`Creating Single Auth connector: ${JSON.stringify(values)}`);
 
-export const SingleAuthExample: ComponentStory<typeof CreateConfigurableConnection> = (args: CreateConfigurableConnectionProps) => (
-  <CreateConfigurableConnection {...args} />
-);
+export const SingleAuthExample: ComponentStory<typeof CreateConnection> = (args: CreateConnectionProps) => <CreateConnection {...args} />;
 
 SingleAuthExample.args = {
   connector: mockSingleAuthConnector,
