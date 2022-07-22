@@ -1,6 +1,5 @@
 import { MonacoEditor, EditorLanguage } from '../editor/monaco';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
-import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface PeekProps {
@@ -10,17 +9,15 @@ export interface PeekProps {
 
 export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
   const intl = useIntl();
-  const [editorStyle, setEditorStyle] = useState(getEditorStyle(input));
-
-  useEffect(() => {
-    setEditorStyle(getEditorStyle(input));
-  }, [input]);
 
   const options = {
+    contextmenu: false,
     fontSize: 13,
+    lineNumbers: 'off',
     readOnly: true,
     scrollBeyondLastLine: false,
     wordWrap: 'on',
+    defaultValue: '',
   };
 
   const doneLabel = intl.formatMessage({ defaultMessage: 'Done', description: 'Done Label for button' });
@@ -28,13 +25,7 @@ export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
   return (
     <div className="msla-card-inner-body msla-peek">
       <div className="msla-peek-json">
-        <MonacoEditor
-          value={input}
-          fontSize={options.fontSize}
-          readOnly={options.readOnly}
-          language={EditorLanguage.json}
-          height={editorStyle}
-        />
+        <MonacoEditor value={input} fontSize={options.fontSize} readOnly={options.readOnly} language={EditorLanguage.json} />
       </div>
       <div className="msla-card-config-button-container msla-code-view-done-button">
         <PrimaryButton className="msla-card-button-primary" onClick={onOKClick}>
@@ -43,9 +34,4 @@ export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
       </div>
     </div>
   );
-}
-
-// Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
-function getEditorStyle(input = ''): number {
-  return Math.min(Math.max(input?.split('\n').length * 19, 57), 380);
 }
