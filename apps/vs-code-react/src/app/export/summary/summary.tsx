@@ -6,6 +6,7 @@ import { updatePackageUrl } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { getListColumns, getSummaryData } from './helper';
+import { ManagedConnections } from './managedConnections';
 import { PrimaryButton, SelectionMode, ShimmeredDetailsList, Text, TextField } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import { useContext, useMemo } from 'react';
@@ -41,6 +42,15 @@ export const Summary: React.FC = () => {
     NO_DETAILS: intl.formatMessage({
       defaultMessage: 'No more details',
       description: 'No more details text',
+    }),
+    AFTER_EXPORT: intl.formatMessage({
+      defaultMessage: 'After export',
+      description: 'After export title',
+    }),
+    ADDITIONAL_STEPS: intl.formatMessage({
+      defaultMessage:
+        'For the following workflows, there are additional steps required after export to re-establish connections. These steps can also be found by exploring the README file exported with the package, or by reading',
+      description: 'Additional steps text',
     }),
   };
 
@@ -103,16 +113,24 @@ export const Summary: React.FC = () => {
     const noDetails = exportDetails === [] && !isSummaryLoading ? emptyText : null;
 
     return (
-      <div className="msla-export-summary-detail-list">
-        <ShimmeredDetailsList
-          items={exportDetails}
-          columns={getListColumns()}
-          setKey="set"
-          enableShimmer={isSummaryLoading}
-          selectionMode={SelectionMode.none}
-        />
-        {noDetails}
-      </div>
+      <>
+        <Text variant="xLarge" nowrap block>
+          {intlText.AFTER_EXPORT}
+        </Text>
+        <Text variant="large" nowrap block>
+          {intlText.ADDITIONAL_STEPS}
+        </Text>
+        <div className="msla-export-summary-detail-list">
+          <ShimmeredDetailsList
+            items={exportDetails}
+            columns={getListColumns()}
+            setKey="set"
+            enableShimmer={isSummaryLoading}
+            selectionMode={SelectionMode.none}
+          />
+          {noDetails}
+        </div>
+      </>
     );
   }, [exportDetails, isSummaryLoading, intlText.NO_DETAILS]);
 
@@ -133,6 +151,7 @@ export const Summary: React.FC = () => {
           onClick={onOpenExplorer}
         />
       </div>
+      {ManagedConnections}
       {detailsList}
     </div>
   );
