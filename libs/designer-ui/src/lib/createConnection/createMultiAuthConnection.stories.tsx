@@ -93,7 +93,9 @@ const createConnectionCallback = (values: Record<string, string | undefined>) =>
 export const MultiAuthExample: ComponentStory<typeof CreateConnection> = (args: CreateConnectionProps) => <CreateConnection {...args} />;
 
 MultiAuthExample.args = {
-  connector: mockMultiAuthConnector,
+  connectorDisplayName: mockMultiAuthConnector.properties.displayName,
+  connectionParameters: mockMultiAuthConnector.properties.connectionParameters,
+  connectionParameterSets: mockMultiAuthConnector.properties.connectionParameterSets,
   isLoading: false,
   createConnectionCallback,
   cancelCallback: () => alert('Cancelled'),

@@ -27,7 +27,9 @@ const createConnectionCallback = () => alert('Creating Simple connector');
 export const SimpleExample: ComponentStory<typeof CreateConnection> = (args: CreateConnectionProps) => <CreateConnection {...args} />;
 
 SimpleExample.args = {
-  connector: mockSimpleConnector,
+  connectorDisplayName: mockSimpleConnector.properties.displayName,
+  connectionParameters: mockSimpleConnector.properties.connectionParameters,
+  connectionParameterSets: mockSimpleConnector.properties.connectionParameterSets,
   isLoading: false,
   createConnectionCallback,
 };

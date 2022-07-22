@@ -52,7 +52,9 @@ const createConnectionCallback = (values: Record<string, string | undefined>) =>
 export const SingleAuthExample: ComponentStory<typeof CreateConnection> = (args: CreateConnectionProps) => <CreateConnection {...args} />;
 
 SingleAuthExample.args = {
-  connector: mockSingleAuthConnector,
+  connectorDisplayName: mockSingleAuthConnector.properties.displayName,
+  connectionParameters: mockSingleAuthConnector.properties.connectionParameters,
+  connectionParameterSets: mockSingleAuthConnector.properties.connectionParameterSets,
   isLoading: false,
   createConnectionCallback,
   cancelCallback: () => alert('Cancelled'),
