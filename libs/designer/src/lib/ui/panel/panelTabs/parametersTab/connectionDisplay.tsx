@@ -43,7 +43,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   );
 
   const openChangeConnectionText = intl.formatMessage({
-    defaultMessage: 'Change connection.',
+    defaultMessage: 'Change connection',
     description: "Button text to take the user to the 'change connection' component",
   });
 
