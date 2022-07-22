@@ -65,10 +65,18 @@ export interface ConnectionParameterUIDefinitionBase {
     tabIndex?: number;
     clearText?: boolean;
     /**
-     * @member {'true' | 'false'} [required='false'] - 'true' if the parameter's value is hidden and should be hidden/ignored from UI.
+     * @member {'true' | 'false'} [required='false'] - 'true' if the parameter's value is hidden and should be hidden/ignored from UI and connection creation payload.
      */
     hidden?: LiteralBoolean;
     location?: string;
+    propertyPath?: string[];
+    hideInUI?: string;
+    default?: any /* tslint:disable-line: no-any */;
+    dependentParameter?: {
+      parameter: string;
+      value: any; // tslint:disable-line: no-any
+    };
+    requiresConnectionNamePrefix?: string;
   };
   tooltip?: string;
 }
