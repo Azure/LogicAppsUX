@@ -1,5 +1,5 @@
 import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
-import { createWorkflowEdge, createWorkflowNode, isRootNode, getAllNodesInsideNode, getUpstreamNodeIds } from '../graph';
+import { createWorkflowEdge, createWorkflowNode, isRootNode, getAllNodesInsideNode, getUpstreamNodeIds, isRootNodeInGraph } from '../graph';
 
 describe('Graph Utilities', () => {
   const graph = {
@@ -112,6 +112,18 @@ describe('Graph Utilities', () => {
     it('should return true for the first node in a graph', () => {
       expect(isRootNode('Compose_10', nodesMetadata)).toBeTruthy();
       expect(isRootNode('Compose_3', nodesMetadata)).toBeFalsy();
+    });
+  });
+
+  describe('isRootNodeInGraph', () => {
+    it('should return true for a trigger node in root graph', () => {
+      expect(isRootNodeInGraph('manual', 'root', nodesMetadata)).toBeTruthy();
+    });
+
+    it('should return false for any action node in root graph or any root node in nested graph', () => {
+      expect(isRootNodeInGraph('Compose_2', 'root', nodesMetadata)).toBeFalsy();
+      expect(isRootNodeInGraph('Compose_10', 'root', nodesMetadata)).toBeFalsy();
+      expect(isRootNodeInGraph('Compose_3', 'root', nodesMetadata)).toBeFalsy();
     });
   });
 
