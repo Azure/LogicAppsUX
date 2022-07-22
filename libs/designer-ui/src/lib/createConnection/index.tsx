@@ -1,18 +1,21 @@
 import { DefaultButton, Dropdown, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
-import type { Connector } from '@microsoft-logic-apps/utils';
+import type { ConnectionParameter, ConnectionParameterSets } from '@microsoft-logic-apps/utils';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface CreateConnectionProps {
-  connector: Connector;
+  connectorDisplayName: string;
+  connectionParameters?: Record<string, ConnectionParameter>;
+  connectionParameterSets?: ConnectionParameterSets;
   isLoading?: boolean;
   createConnectionCallback?: (val: Record<string, string | undefined>) => void;
   cancelCallback?: () => void;
 }
 
 export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
-  const { connector, isLoading, createConnectionCallback, cancelCallback } = props;
+  const { connectorDisplayName, connectionParameters, connectionParameterSets, isLoading, createConnectionCallback, cancelCallback } =
+    props;
 
   const intl = useIntl();
 
@@ -30,8 +33,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
   const [configurationValues, setConfigurationValues] = useState<Record<string, string | undefined>>({});
 
-  const singleAuthParams = connector.properties?.connectionParameters;
-  const multiAuthParams = connector.properties?.connectionParameterSets?.values[selectedParamSetIndex].parameters;
+  const singleAuthParams = connectionParameters;
+  const multiAuthParams = connectionParameterSets?.values[selectedParamSetIndex].parameters;
 
   const validParams = useMemo(() => {
     return Object.values(singleAuthParams ?? multiAuthParams ?? []).every(
@@ -83,11 +86,11 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       description: 'Create a connection for selected connector',
     },
     {
-      connectorName: connector.properties.displayName,
+      connectorName: connectorDisplayName,
     }
   );
 
-  if (connector.properties?.connectionParameters || connector.properties?.connectionParameterSets) {
+  if (Object.keys(singleAuthParams ?? {}).length > 0 || Object.keys(multiAuthParams ?? {}).length > 0) {
     // Configurable connector component
     return (
       <div className="msla-create-connection-container">
@@ -108,10 +111,10 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             />
           </div>
 
-          {connector.properties.connectionParameterSets && (
+          {Object.keys(multiAuthParams ?? {}).length > 0 && multiAuthParams && (
             <div className="param-row">
               <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
-                {connector.properties.connectionParameterSets.uiDefinition.displayName}
+                {connectionParameterSets.uiDefinition.displayName}
               </Label>
               <Dropdown
                 id="connection-param-set-select"
@@ -119,9 +122,9 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
                 selectedKey={selectedParamSetIndex}
                 onChange={onDropdownChange}
                 disabled={isLoading}
-                ariaLabel={connector.properties.connectionParameterSets.uiDefinition?.description}
-                placeholder={connector.properties.connectionParameterSets.uiDefinition?.description}
-                options={connector.properties.connectionParameterSets.values.map((paramSet, index) => ({
+                ariaLabel={connectionParameterSets.uiDefinition?.description}
+                placeholder={connectionParameterSets.uiDefinition?.description}
+                options={connectionParameterSets.values.map((paramSet, index) => ({
                   key: index,
                   text: paramSet.name,
                 }))}

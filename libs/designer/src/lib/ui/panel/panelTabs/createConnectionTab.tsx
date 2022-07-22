@@ -28,7 +28,15 @@ const CreateConnectionTab = () => {
     return <p></p>;
   }
 
-  return <CreateConnection connector={connector} createConnectionCallback={createConnectionCallback} cancelCallback={cancelCallback} />;
+  return (
+    <CreateConnection
+      connectorDisplayName={connector.properties.displayName}
+      connectionParameters={connector.properties.connectionParameters}
+      connectionParameterSets={connector.properties.connectionParameterSets}
+      createConnectionCallback={createConnectionCallback}
+      cancelCallback={cancelCallback}
+    />
+  );
 };
 
 export const createConnectionTab: PanelTab = {

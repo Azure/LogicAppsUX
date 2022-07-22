@@ -94,8 +94,8 @@ export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
 };
 
 export const useConnectionRefsByConnectorId = (connectorId?: string) => {
-  const allConnections = useSelector((state: RootState) => Object.values(state.connections.connectionReferences));
-  return allConnections.filter((ref: ConnectionReference) => ref.api.id === connectorId);
+  const allConnectonReferences = useSelector((state: RootState) => Object.values(state.connections.connectionReferences));
+  return allConnectonReferences.filter((ref: ConnectionReference) => ref.api.id === connectorId);
 };
 
 export const useOperationManifest = (operationInfo: OperationInfo) => {
