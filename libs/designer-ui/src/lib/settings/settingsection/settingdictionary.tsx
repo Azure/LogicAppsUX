@@ -8,7 +8,7 @@ import { isObject } from '@microsoft-logic-apps/utils';
 export type InputChangeHandler = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => void;
 
 export interface SettingDictionaryProps extends SettingProps {
-  values: any | Record<string, any> /* tslint:disable-line: no-any */;
+  values: any | Record<string, any>;
   onDictionaryChange?: EventHandler<Record<string, string> | undefined>;
   onTextFieldChange?: InputChangeHandler;
   label?: string;
