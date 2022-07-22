@@ -1,6 +1,8 @@
 import { QueryKeys } from '../../../run-service';
+import type { ISummaryData } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
-import type { RootState } from '../../../state/store';
+import type { AppDispatch, RootState } from '../../../state/store';
+import { updatePackageUrl } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { getListColumns, getSummaryData } from './helper';
@@ -9,14 +11,15 @@ import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const Summary: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
+  const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
-  const { selectedWorkflows, location, selectedSubscription, exportPath } = exportData;
+  const { selectedWorkflows, location, selectedSubscription, targetDirectory } = exportData;
 
   const intlText = {
     COMPLETE_EXPORT_TITLE: intl.formatMessage({
@@ -52,11 +55,23 @@ export const Summary: React.FC = () => {
     return apiService.exportWorkflows(selectedWorkflows, selectedSubscription, location);
   };
 
+  const onSummarySuccess = (summaryData: ISummaryData) => {
+    const exportSchema: Record<string, any> = summaryData?.properties ?? {};
+    const packageLink: string = exportSchema?.packageLink?.uri;
+
+    dispatch(
+      updatePackageUrl({
+        packageUrl: packageLink,
+      })
+    );
+  };
+
   const { data: summaryData, isLoading: isSummaryLoading } = useQuery<any>(
     [QueryKeys.summary, { selectedWorkflows: selectedWorkflows }],
     exportWorkflows,
     {
       refetchOnWindowFocus: false,
+      onSuccess: onSummarySuccess,
     }
   );
 
@@ -70,9 +85,14 @@ export const Summary: React.FC = () => {
 
   const locationText = useMemo(() => {
     return (
-      <TextField label={intlText.EXPORT_LOCATION} placeholder={exportPath} disabled className="msla-export-summary-file-location-text" />
+      <TextField
+        label={intlText.EXPORT_LOCATION}
+        placeholder={targetDirectory.path}
+        disabled
+        className="msla-export-summary-file-location-text"
+      />
     );
-  }, [exportPath, intlText.EXPORT_LOCATION]);
+  }, [targetDirectory, intlText.EXPORT_LOCATION]);
 
   const detailsList = useMemo(() => {
     const emptyText = (

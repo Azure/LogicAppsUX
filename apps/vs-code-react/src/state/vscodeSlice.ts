@@ -1,4 +1,4 @@
-import type { ExportData, ProjectName, WorkflowsList } from '../run-service';
+import type { ExportData, ITargetDirectory, ProjectName, WorkflowsList } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -53,7 +53,11 @@ export const vscodeSlice = createSlice({
         selectedIse: '',
         location: '',
         validationState: '',
-        exportPath: '',
+        targetDirectory: {
+          fsPath: '',
+          path: '',
+        },
+        packageUrl: '',
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
@@ -77,9 +81,13 @@ export const vscodeSlice = createSlice({
       const { validationState } = action.payload;
       (state as InitializedVscodeState).exportData.validationState = validationState;
     },
-    updateExportPath: (state: VscodeState, action: PayloadAction<{ exportPath: string }>) => {
-      const { exportPath } = action.payload;
-      (state as InitializedVscodeState).exportData.exportPath = exportPath;
+    updateTargetDirectory: (state: VscodeState, action: PayloadAction<{ targetDirectory: ITargetDirectory }>) => {
+      const { targetDirectory } = action.payload;
+      (state as InitializedVscodeState).exportData.targetDirectory = targetDirectory;
+    },
+    updatePackageUrl: (state: VscodeState, action: PayloadAction<{ packageUrl: string }>) => {
+      const { packageUrl } = action.payload;
+      (state as InitializedVscodeState).exportData.packageUrl = packageUrl;
     },
   },
 });
@@ -92,7 +100,8 @@ export const {
   updateSelectedSubscripton,
   updateSelectedIse,
   updateValidationState,
-  updateExportPath,
+  updateTargetDirectory,
+  updatePackageUrl,
 } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;

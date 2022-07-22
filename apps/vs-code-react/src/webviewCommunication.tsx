@@ -1,6 +1,6 @@
 import type { InjectValuesMessage, UpdateAccessTokenMessage, UpdateExportPathMessage } from './run-service';
 import type { AppDispatch } from './state/store';
-import { initialize, updateAccessToken, updateExportPath } from './state/vscodeSlice';
+import { initialize, updateAccessToken, updateTargetDirectory } from './state/vscodeSlice';
 import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import useEventListener from '@use-it/event-listener';
 import React, { useEffect } from 'react';
@@ -24,7 +24,7 @@ export const WebViewCommunication: React.FC = ({ children }) => {
         dispatch(updateAccessToken(message.data.accessToken));
         break;
       case ExtensionCommand.update_export_path:
-        dispatch(updateExportPath(message.data));
+        dispatch(updateTargetDirectory(message.data));
         break;
       default:
         throw new Error('Unknown post message recieved');

@@ -202,7 +202,8 @@ export type ExportData = {
   selectedIse: string;
   location: string;
   validationState: string;
-  exportPath: string;
+  targetDirectory: ITargetDirectory;
+  packageUrl: string;
 };
 
 export enum ResourceType {
@@ -297,7 +298,7 @@ export interface UpdateAccessTokenMessage {
 export interface UpdateExportPathMessage {
   command: ExtensionCommand.update_export_path;
   data: {
-    exportPath: string;
+    targetDirectory: ITargetDirectory;
   };
 }
 
@@ -312,7 +313,7 @@ export interface IExportDetailsList {
   message: string;
 }
 
-export interface IExportData {
+export interface ISummaryData {
   properties: {
     packageLink: Record<string, string>;
     details: Array<IExportDetails>;
@@ -327,4 +328,9 @@ export enum DetailCategory {
 export enum StyledDetailCategory {
   requiredStep = 'Required Step',
   information = 'Information',
+}
+
+export interface ITargetDirectory {
+  fsPath: string;
+  path: string;
 }

@@ -1,5 +1,5 @@
 import { DetailCategory, StyledDetailCategory } from '../../../run-service';
-import type { IExportData, IExportDetails, IExportDetailsList } from '../../../run-service';
+import type { ISummaryData, IExportDetails, IExportDetailsList } from '../../../run-service';
 
 const getTypeName = (typeName: string): string => {
   switch (typeName) {
@@ -30,11 +30,9 @@ export const getExportDetails = (details: Array<IExportDetails>): Array<IExportD
   });
 };
 
-export const getSummaryData = (summaryData: IExportData) => {
+export const getSummaryData = (summaryData: ISummaryData) => {
   const exportSchema: Record<string, any> = summaryData?.properties ?? {};
-
-  const packageLink: string = exportSchema?.packageLink?.uri;
   const exportDetails = getExportDetails(exportSchema?.details);
 
-  return { packageLink, exportDetails };
+  return { exportDetails };
 };
