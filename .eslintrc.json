@@ -31,6 +31,12 @@
         "plugin:import/typescript"
       ],
       "rules": {
+        "react-hooks/exhaustive-deps": [
+          "warn",
+          {
+            "additionalHooks": "useDebouncedEffect"
+          }
+        ],
         "react/jsx-no-useless-fragment": [
           1,
           {

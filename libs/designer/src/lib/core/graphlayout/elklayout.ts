@@ -3,9 +3,10 @@ import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, isWorkflowNode } from '../par
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
+import { useDebouncedEffect } from '@react-hookz/web';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { Edge, Node } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 
@@ -38,12 +39,11 @@ const readOnlyOptions: Record<string, string> = {
   'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.readOnly,
 };
 
+const elk = new ELK();
 const defaultEdgeType = WORKFLOW_EDGE_TYPES.BUTTON_EDGE;
 const defaultNodeType = WORKFLOW_NODE_TYPES.OPERATION_NODE;
 
 const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
-  const elk = new ELK();
-
   const layout = await elk.layout(JSON.parse(JSON.stringify(graph)), {
     layoutOptions: {
       ...defaultLayoutOptions,
@@ -142,32 +142,37 @@ export const useLayout = (): [Node[], Edge[]] => {
 
   const readOnly = useReadOnly();
 
-  useEffect(() => {
-    if (!workflowGraph) {
-      return;
-    }
-    const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
-    const traceId = LoggerService().startTrace({
-      action: 'useLayout',
-      actionModifier: 'run Elk Layout',
-      name: 'Elk Layout',
-      source: 'elklayout.ts',
-    });
-    elkLayout(elkGraph, readOnly)
-      .then((g) => {
-        const [n, e] = convertElkGraphToReactFlow(g);
-        setReactFlowNodes(n);
-        setReactFlowEdges(e);
-        LoggerService().endTrace(traceId);
-      })
-      .catch((err) => {
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: 'useLayout',
-          message: err,
-        });
+  useDebouncedEffect(
+    () => {
+      if (!workflowGraph) {
+        return;
+      }
+      const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
+      const traceId = LoggerService().startTrace({
+        action: 'useLayout',
+        actionModifier: 'run Elk Layout',
+        name: 'Elk Layout',
+        source: 'elklayout.ts',
       });
-  }, [workflowGraph, readOnly]);
+      elkLayout(elkGraph, readOnly)
+        .then((g) => {
+          const [n, e] = convertElkGraphToReactFlow(g);
+          setReactFlowNodes(n);
+          setReactFlowEdges(e);
+          LoggerService().endTrace(traceId);
+        })
+        .catch((err) => {
+          LoggerService().log({
+            level: LogEntryLevel.Error,
+            area: 'useLayout',
+            message: err,
+          });
+        });
+    },
+    [readOnly, workflowGraph],
+    600,
+    5000
+  );
 
   return [reactFlowNodes, reactFlowEdges];
 };
