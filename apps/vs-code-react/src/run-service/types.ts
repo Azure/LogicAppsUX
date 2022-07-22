@@ -203,6 +203,7 @@ export type ExportData = {
   location: string;
   validationState: string;
   targetDirectory: ITargetDirectory;
+  packageUrl: string;
 };
 
 export enum ResourceType {
@@ -312,7 +313,7 @@ export interface IExportDetailsList {
   message: string;
 }
 
-export interface IExportData {
+export interface ISummaryData {
   properties: {
     packageLink: Record<string, string>;
     details: Array<IExportDetails>;
@@ -330,10 +331,6 @@ export enum StyledDetailCategory {
 }
 
 export interface ITargetDirectory {
-  authority: string;
-  fragment: string;
   fsPath: string;
   path: string;
-  query: string;
-  scheme: string;
 }

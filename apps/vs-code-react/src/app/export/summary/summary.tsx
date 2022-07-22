@@ -1,6 +1,8 @@
 import { QueryKeys } from '../../../run-service';
+import type { ISummaryData } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
-import type { RootState } from '../../../state/store';
+import type { AppDispatch, RootState } from '../../../state/store';
+import { updatePackageUrl } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { getListColumns, getSummaryData } from './helper';
@@ -9,11 +11,12 @@ import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const Summary: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
+  const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
   const { selectedWorkflows, location, selectedSubscription, targetDirectory } = exportData;
@@ -52,11 +55,23 @@ export const Summary: React.FC = () => {
     return apiService.exportWorkflows(selectedWorkflows, selectedSubscription, location);
   };
 
+  const onSummarySuccess = (summaryData: ISummaryData) => {
+    const exportSchema: Record<string, any> = summaryData?.properties ?? {};
+    const packageLink: string = exportSchema?.packageLink?.uri;
+
+    dispatch(
+      updatePackageUrl({
+        packageUrl: packageLink,
+      })
+    );
+  };
+
   const { data: summaryData, isLoading: isSummaryLoading } = useQuery<any>(
     [QueryKeys.summary, { selectedWorkflows: selectedWorkflows }],
     exportWorkflows,
     {
       refetchOnWindowFocus: false,
+      onSuccess: onSummarySuccess,
     }
   );
 

@@ -17,7 +17,7 @@ export const Navigation: React.FC = () => {
 
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse, selectedWorkflows, validationState, targetDirectory } = exportData;
+  const { selectedSubscription, selectedIse, selectedWorkflows, validationState, targetDirectory, packageUrl } = exportData;
 
   const intlText = {
     NEXT: intl.formatMessage({
@@ -76,6 +76,7 @@ export const Navigation: React.FC = () => {
         vscode.postMessage({
           command: ExtensionCommand.export_package,
           targetDirectory,
+          packageUrl,
         });
         break;
       }

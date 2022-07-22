@@ -54,13 +54,10 @@ export const vscodeSlice = createSlice({
         location: '',
         validationState: '',
         targetDirectory: {
-          authority: '',
-          fragment: '',
           fsPath: '',
           path: '',
-          query: '',
-          scheme: '',
         },
+        packageUrl: '',
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
@@ -84,9 +81,13 @@ export const vscodeSlice = createSlice({
       const { validationState } = action.payload;
       (state as InitializedVscodeState).exportData.validationState = validationState;
     },
-    updateExportPath: (state: VscodeState, action: PayloadAction<{ targetDirectory: ITargetDirectory }>) => {
+    updateTargetDirectory: (state: VscodeState, action: PayloadAction<{ targetDirectory: ITargetDirectory }>) => {
       const { targetDirectory } = action.payload;
       (state as InitializedVscodeState).exportData.targetDirectory = targetDirectory;
+    },
+    updatePackageUrl: (state: VscodeState, action: PayloadAction<{ packageUrl: string }>) => {
+      const { packageUrl } = action.payload;
+      (state as InitializedVscodeState).exportData.packageUrl = packageUrl;
     },
   },
 });
@@ -99,7 +100,8 @@ export const {
   updateSelectedSubscripton,
   updateSelectedIse,
   updateValidationState,
-  updateExportPath,
+  updateTargetDirectory,
+  updatePackageUrl,
 } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;
