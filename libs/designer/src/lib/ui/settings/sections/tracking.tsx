@@ -38,11 +38,11 @@ export const Tracking = ({ readOnly, correlation, trackedProperties }: SectionPr
   };
 
   const onTrackedPropertiesDictionaryValueChanged = (newValue: Record<string, string>): void => {
-    let trackedProperties: Record<string, any> = {}; // tslint:disable-line: no-any
+    let trackedProperties: Record<string, any> = {};
     if (isObject(newValue) && Object.keys(newValue).length > 0 && Object.keys(newValue).some((key) => newValue[key] !== undefined)) {
       trackedProperties = {};
       for (const key of Object.keys(newValue)) {
-        let propertyValue: any; // tslint:disable-line: no-any
+        let propertyValue: any;
         try {
           propertyValue = JSON.parse(newValue[key]);
         } catch {
@@ -56,7 +56,7 @@ export const Tracking = ({ readOnly, correlation, trackedProperties }: SectionPr
   };
 
   const onTrackedPropertiesStringValueChange = (newValue: string): void => {
-    let trackedProperties: any = ''; // tslint:disable-line: no-any
+    let trackedProperties: any = '';
     if (newValue) {
       try {
         trackedProperties = JSON.parse(newValue);

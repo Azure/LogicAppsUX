@@ -49,6 +49,7 @@ export enum OperationOptions {
 export enum ConnectionType {
   Function = 'function',
   ServiceProvider = 'serviceprovider',
+  ApiManagement = 'ApiManagement',
 }
 
 export enum ConnectionReferenceKeyFormat {
