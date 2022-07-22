@@ -1,18 +1,17 @@
 import { CreateConfigurableConnection } from './createConfigurableConnection';
 import { CreateSimpleConnection } from './createSimpleConnection';
-import { DefaultButton } from '@fluentui/react';
+import type { Connector } from '@microsoft-logic-apps/utils';
 
-export const CreateConnection = (props: any) => {
+interface CreateConnectionProps {
+  connector: Connector;
+  createConnectionCallback: () => void;
+  cancelCallback: () => void;
+}
+
+export const CreateConnection = (props: CreateConnectionProps) => {
   const { connector, createConnectionCallback, cancelCallback } = props;
 
-  if (!connector)
-    return (
-      <div>
-        <p>{'Connector is undefined'}</p>
-        <DefaultButton text={'Return'} onClick={cancelCallback} />
-      </div>
-    );
-  if (connector.properties?.connectionParameters || connector.properties?.connectionParametersSet)
+  if (connector.properties?.connectionParameters || connector.properties?.['connectionParametersSet'])
     return (
       <CreateConfigurableConnection
         connector={connector}

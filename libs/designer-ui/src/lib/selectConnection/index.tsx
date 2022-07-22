@@ -26,7 +26,7 @@ export interface SelectConnectionProps {
   showIdentityErrorBanner?: boolean;
   saveSelectionCallback: (connection?: Connection) => void;
   cancelSelectionCallback: () => void;
-  createNewConnectionCallback: () => void;
+  createConnectionCallback: () => void;
 }
 
 export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
@@ -37,7 +37,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     showIdentityErrorBanner,
     saveSelectionCallback,
     cancelSelectionCallback,
-    createNewConnectionCallback,
+    createConnectionCallback,
   } = props;
 
   const intl = useIntl();
@@ -224,7 +224,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
       </MarqueeSelection>
 
       <div className="msla-select-connection-actions-container">
-        <PrimaryButton text={buttonAddText} ariaLabel={buttonAddAria} onClick={createNewConnectionCallback} />
+        <PrimaryButton text={buttonAddText} ariaLabel={buttonAddAria} onClick={createConnectionCallback} />
         <div id="action-gap" style={{ flexGrow: 1 }} />
         <PrimaryButton
           text={buttonSaveText}

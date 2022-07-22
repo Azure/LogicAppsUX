@@ -23,8 +23,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   }, [dispatch]);
 
   const operationInfo = useOperationInfo(nodeId);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data: operationManifest, isLoading: loadingOpMan } = useOperationManifest(operationInfo);
+  const { data: operationManifest } = useOperationManifest(operationInfo);
   const requiresConnection = operationManifest && isConnectionRequiredForOperation(operationManifest);
 
   useEffect(() => {
@@ -48,8 +47,10 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
     description: "Button text to take the user to the 'change connection' component",
   });
 
+  if (!requiresConnection && !connectionName) return null;
+
   return (
-    <div className="connection-info" style={{ display: 'flex', padding: '8px 0px', gap: '16px' }}>
+    <div className="connection-info">
       <Label className="label">{connectionDisplayText}</Label>
       <Link id="change-connection-button" onClick={openChangeConnectionCallback}>
         {openChangeConnectionText}

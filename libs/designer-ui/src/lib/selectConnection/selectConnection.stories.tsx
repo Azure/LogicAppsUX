@@ -92,5 +92,5 @@ Standard.args = {
   currentConnection: mockConn1,
   saveSelectionCallback: (connection?: Connection) => alert(`SAVED SELECTION: ${connection?.id}`),
   cancelSelectionCallback: () => alert('Cancel clicked'),
-  createNewConnectionCallback: () => alert('Adding new collection'),
+  createConnectionCallback: () => alert('Adding new collection'),
 };

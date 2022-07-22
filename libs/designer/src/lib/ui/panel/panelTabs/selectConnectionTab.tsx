@@ -6,7 +6,7 @@ import type { RootState } from '../../../core/store';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { SelectConnection } from '@microsoft/designer-ui';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const SelectConnectionTab = () => {
@@ -17,29 +17,33 @@ export const SelectConnectionTab = () => {
 
   const hideConnectionTabs = useCallback(() => {
     dispatch(showDefaultTabs());
+    dispatch(selectPanelTab(constants.PANEL_TAB_NAMES.PARAMETERS));
   }, [dispatch]);
 
-  const createNewConnectionCallback = useCallback(() => {
+  const createConnectionCallback = useCallback(() => {
     dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }, [dispatch]);
 
   const connector = useConnectorByNodeId(selectedNodeId);
-  const connections = useConnectionsForConnector(connector?.id ?? '').data ?? [];
+  const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
+  const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
   const currentConnection = connections.find((c) => c.properties.displayName === currentConnectionName.result);
+
+  useEffect(() => {
+    if (connections.length === 0) createConnectionCallback();
+  }, [connections, createConnectionCallback]);
 
   const saveSelectionCallback = useCallback(
     (_connection?: Connection) => {
       // TODO: Send the actual connection selection to backend
       hideConnectionTabs();
-      dispatch(selectPanelTab(constants.PANEL_TAB_NAMES.PARAMETERS));
     },
-    [dispatch, hideConnectionTabs]
+    [hideConnectionTabs]
   );
 
   const cancelSelectionCallback = useCallback(() => {
     hideConnectionTabs();
-    dispatch(selectPanelTab(constants.PANEL_TAB_NAMES.PARAMETERS));
-  }, [dispatch, hideConnectionTabs]);
+  }, [hideConnectionTabs]);
 
   return (
     <SelectConnection
@@ -47,7 +51,7 @@ export const SelectConnectionTab = () => {
       currentConnection={currentConnection}
       saveSelectionCallback={saveSelectionCallback}
       cancelSelectionCallback={cancelSelectionCallback}
-      createNewConnectionCallback={createNewConnectionCallback}
+      createConnectionCallback={createConnectionCallback}
     />
   );
 };

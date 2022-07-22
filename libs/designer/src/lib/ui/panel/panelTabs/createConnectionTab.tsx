@@ -13,7 +13,7 @@ const CreateConnectionTab = () => {
   const nodeId = useSelectedNodeId();
   const connector = useConnectorByNodeId(nodeId);
 
-  const createCallback = useCallback(() => {
+  const createConnectionCallback = useCallback(() => {
     // TODO: Create the connection and select it
     dispatch(showDefaultTabs());
   }, [dispatch]);
@@ -22,7 +22,13 @@ const CreateConnectionTab = () => {
     dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR));
   }, [dispatch]);
 
-  return <CreateConnection connector={connector} createCallback={createCallback} cancelCallback={cancelCallback} />;
+  // By the time you get to this component, there should always be a connector associated
+  if (connector === undefined) {
+    dispatch(showDefaultTabs());
+    return <p></p>;
+  }
+
+  return <CreateConnection connector={connector} createConnectionCallback={createConnectionCallback} cancelCallback={cancelCallback} />;
 };
 
 export const createConnectionTab: PanelTab = {
