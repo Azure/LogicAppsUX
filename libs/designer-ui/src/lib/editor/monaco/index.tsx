@@ -32,6 +32,7 @@ export interface MonacoProps extends MonacoOptions {
   language?: EditorLanguage;
   value?: string;
   editorRef?: editor.IStandaloneCodeEditor;
+  height?: string;
 
   onBlur?(): void;
   onBlurText?(): void;
@@ -77,6 +78,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       minimapEnabled = false,
       value,
       scrollBeyondLastLine = false,
+      height,
       onBlur,
       onBlurText,
       onChanged,
@@ -277,6 +279,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
           defaultLanguage={language ? language.toString() : undefined}
           theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : isHighContrastBlack() ? 'vs-dark' : 'vs'}
           onMount={handleEditorMounted}
+          height={height}
         />
       </div>
     );
