@@ -1,10 +1,24 @@
 @import (reference) '../variables.less';
 
 .msla-schema-editor-body {
+  .msla-schema-editor-title {
+    font-size: 18px;
+    padding-bottom: 8px;
+    color: @profile-text-color;
+  }
   .msla-monaco {
     border: 1px solid @defaultBorderColor;
-    min-height: 170px;
+    min-height: 120px;
     width: 100%;
+  }
+  .msla-schema-editor-operations {
+    display: flex;
+    align-items: center;
+    .msla-schema-editor-error-message {
+      margin-left: auto;
+      color: rgb(224, 2, 2);
+      font-size: 14px;
+    }
   }
 }
 

@@ -11,4 +11,5 @@ const Template: ComponentStory<typeof SchemaEditor> = (args: SchemaEditorProps) 
 export const Standard = Template.bind({});
 Standard.args = {
   value: '{\n"test": true,\n"test2" : \n\t{\n\t\t"object" : "value"\n\t}\n}',
+  title: 'Request Body JSON Schema',
 };

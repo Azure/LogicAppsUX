@@ -7,7 +7,7 @@ import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { ActionButton } from '@fluentui/react/lib/Button';
 import { FontSizes } from '@fluentui/theme';
 import type { editor } from 'monaco-editor';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SchemaChangedEvent {
@@ -15,11 +15,9 @@ export interface SchemaChangedEvent {
 }
 
 export interface SchemaEditorProps {
-  ariaLabelledBy?: string;
-  disabled: boolean;
-  placeholder: string;
-  required?: boolean;
-  value: string;
+  disabled?: boolean;
+  value?: string;
+  title?: string;
   onChange?(e: SchemaChangedEvent): void;
   onFocus?(): void;
 }
@@ -38,17 +36,13 @@ const buttonStyles: IButtonStyles = {
   rootPressed: removeStyle,
 };
 
-export function SchemaEditor({ disabled, value, onChange, onFocus }: SchemaEditorProps): JSX.Element {
+export function SchemaEditor({ disabled = false, title, value = '', onChange, onFocus }: SchemaEditorProps): JSX.Element {
   const intl = useIntl();
   const [errorMessage, setErrorMessage] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [currentValue, setCurrentValue] = useState(formatValue(value));
   const [samplePayload, setSamplePayload] = useState<string | undefined>('');
   const modalEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-
-  useEffect(() => {
-    console.log(modalEditorRef);
-  }, [modalEditorRef]);
 
   const getStyles = (): Partial<IDialogStyles> => {
     return {
@@ -89,6 +83,8 @@ export function SchemaEditor({ disabled, value, onChange, onFocus }: SchemaEdito
 
   const openModal = () => {
     setModalOpen(true);
+    setSamplePayload('{}');
+    setErrorMessage('');
   };
 
   const handleConfirm = () => {
@@ -118,6 +114,7 @@ export function SchemaEditor({ disabled, value, onChange, onFocus }: SchemaEdito
 
   return (
     <div className="msla-schema-editor-body">
+      <div className="msla-schema-editor-title">{title}</div>
       <Editor
         value={currentValue}
         fontSize={13}
@@ -127,9 +124,12 @@ export function SchemaEditor({ disabled, value, onChange, onFocus }: SchemaEdito
         onContentChanged={handleContentChanged}
         onFocus={handleFocus}
       />
-      <ActionButton className="msla-schema-card-button" disabled={disabled} styles={buttonStyles} onClick={openModal}>
-        {schemaEditorLabel}
-      </ActionButton>
+      <div className="msla-schema-editor-operations">
+        <ActionButton className="msla-schema-card-button" disabled={disabled} styles={buttonStyles} onClick={openModal}>
+          {schemaEditorLabel}
+        </ActionButton>
+        <div className="msla-schema-editor-error-message">{errorMessage}</div>
+      </div>
       <ModalDialog
         confirmText={DONE_TEXT}
         getStyles={getStyles}
@@ -139,8 +139,13 @@ export function SchemaEditor({ disabled, value, onChange, onFocus }: SchemaEdito
         onDismiss={closeModal}
       >
         <div className="msla-schema-editor-modal-body">
-          <span>{errorMessage}</span>
-          <Editor ref={modalEditorRef} fontSize={13} language={EditorLanguage.json} onContentChanged={handleSamplePayloadChanged} />
+          <Editor
+            ref={modalEditorRef}
+            fontSize={13}
+            language={EditorLanguage.json}
+            onContentChanged={handleSamplePayloadChanged}
+            defaultValue={'{}'}
+          />
         </div>
       </ModalDialog>
     </div>

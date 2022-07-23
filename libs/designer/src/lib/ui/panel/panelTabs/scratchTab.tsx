@@ -1,6 +1,6 @@
 import constants from '../../../common/constants';
 import type { PanelTab } from '@microsoft/designer-ui';
-import { Combobox, ValueSegmentType, ArrayEditor, Scratch } from '@microsoft/designer-ui';
+import { SchemaEditor, Combobox, ValueSegmentType, ArrayEditor, Scratch } from '@microsoft/designer-ui';
 
 export const ScratchTab = () => {
   const children = (): React.ReactNode => {
@@ -64,6 +64,7 @@ export const ScratchTab = () => {
           selectedKey="PUT"
           customValue={null}
         />
+        <SchemaEditor value={'{\n"type": "object",\n"properties" : {}\n}'} title="Request Body JSON Schema" />
       </>
     );
   };

@@ -26,6 +26,7 @@ export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
     <div className="msla-card-inner-body msla-peek">
       <div className="msla-peek-json">
         <Editor
+          className={'msla-monaco-peek'}
           value={input}
           fontSize={options.fontSize}
           readOnly={options.readOnly}

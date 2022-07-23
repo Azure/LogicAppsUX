@@ -2,8 +2,6 @@ import { InvalidJsonSchemaTypeException } from '../exceptions/invalidjsonschemat
 import { isTemplateExpression } from '@microsoft-logic-apps/parsers';
 import { createCopy, clone } from '@microsoft-logic-apps/utils';
 
-export type Schema = Swagger.Schema;
-
 export const Types = {
   object: 'object',
   number: 'number',
@@ -14,19 +12,20 @@ export const Types = {
   null: 'null',
 };
 
+type SchemaObject = OpenAPIV2.SchemaObject;
 /**
  * Generates a JSON schema based on a JSON string.
  * ASSUMPTION: The input string is valid JSON. If not, an error will be thrown. This means
  * that decimal notations that are not '.' are not accepted.
  * @arg {string} jsonString - A stringified JSON value.
- * @return {Schema}
+ * @return {Swagger.Schema}
  */
-export function generateSchemaFromJsonString(jsonString: string): Schema {
+export function generateSchemaFromJsonString(jsonString: string): SchemaObject {
   const value = JSON.parse(jsonString);
   return generateSchemaFromValue(value);
 }
 
-function generateSchemaFromValue(value: any): Schema {
+function generateSchemaFromValue(value: any): SchemaObject {
   const type = typeof value;
   let valueType;
   switch (type) {
@@ -62,8 +61,8 @@ function generateSchemaFromValue(value: any): Schema {
   }
 }
 
-function generateSchemaFromArray(jsonArray: any): Schema {
-  const schema: Schema = {
+function generateSchemaFromArray(jsonArray: any): SchemaObject {
+  const schema: SchemaObject = {
     type: Types.array,
   };
 
@@ -108,8 +107,8 @@ function generateSchemaFromArray(jsonArray: any): Schema {
   return schema;
 }
 
-function generateSchemaForObject(obj: any): Schema {
-  const schema: Schema = {
+function generateSchemaForObject(obj: any): SchemaObject {
+  const schema: SchemaObject = {
     type: Types.object,
     properties: {},
   };
