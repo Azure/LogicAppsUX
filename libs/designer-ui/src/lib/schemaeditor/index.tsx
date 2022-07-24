@@ -7,7 +7,7 @@ import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { ActionButton } from '@fluentui/react/lib/Button';
 import { FontSizes } from '@fluentui/theme';
 import type { editor } from 'monaco-editor';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SchemaChangedEvent {
@@ -43,6 +43,11 @@ export function SchemaEditor({ disabled = false, title, value = '{}', onChange, 
   const [currentValue, setCurrentValue] = useState(formatValue(value));
   const [samplePayload, setSamplePayload] = useState<string | undefined>('');
   const modalEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const [editorHeight, setEditorHeight] = useState('');
+
+  useEffect(() => {
+    setEditorHeight(getEditorHeight(currentValue));
+  }, [currentValue]);
 
   const getStyles = (): Partial<IDialogStyles> => {
     return {
@@ -116,6 +121,7 @@ export function SchemaEditor({ disabled = false, title, value = '{}', onChange, 
     <div className="msla-schema-editor-body">
       <div className="msla-schema-editor-title">{title}</div>
       <Editor
+        height={editorHeight}
         value={currentValue}
         fontSize={13}
         readOnly={disabled}
@@ -159,3 +165,8 @@ const formatValue = (input: string): string => {
     return input;
   }
 };
+
+// Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
+function getEditorHeight(input = ''): string {
+  return Math.min(Math.max(input?.split('\n').length * 20, 57), 380) + 'px';
+}
