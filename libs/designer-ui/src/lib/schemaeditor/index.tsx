@@ -36,7 +36,7 @@ const buttonStyles: IButtonStyles = {
   rootPressed: removeStyle,
 };
 
-export function SchemaEditor({ disabled = false, title, value = '', onChange, onFocus }: SchemaEditorProps): JSX.Element {
+export function SchemaEditor({ disabled = false, title, value = '{}', onChange, onFocus }: SchemaEditorProps): JSX.Element {
   const intl = useIntl();
   const [errorMessage, setErrorMessage] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
