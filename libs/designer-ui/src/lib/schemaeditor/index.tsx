@@ -83,7 +83,7 @@ export function SchemaEditor({ disabled = false, title, value = '{}', onChange, 
 
   const openModal = () => {
     setModalOpen(true);
-    setSamplePayload('{}');
+    setSamplePayload('');
     setErrorMessage('');
   };
 
@@ -92,7 +92,7 @@ export function SchemaEditor({ disabled = false, title, value = '{}', onChange, 
       try {
         const jsonSchema = generateSchemaFromJsonString(samplePayload);
         const stringifiedJsonSchema = JSON.stringify(jsonSchema, null, 4);
-        setCurrentValue(stringifiedJsonSchema);
+        setCurrentValue(formatValue(stringifiedJsonSchema));
       } catch (ex) {
         const error = intl.formatMessage({
           defaultMessage: 'Unable to generate schema',
@@ -144,7 +144,7 @@ export function SchemaEditor({ disabled = false, title, value = '{}', onChange, 
             fontSize={13}
             language={EditorLanguage.json}
             onContentChanged={handleSamplePayloadChanged}
-            defaultValue={'{}'}
+            defaultValue={''}
           />
         </div>
       </ModalDialog>
