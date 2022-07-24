@@ -43,7 +43,7 @@ export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, se
           BasePlugins={{
             tokens: true,
             validation: {
-              type: 'ARRAY',
+              type: 'COLLAPSED_ARRAY',
               errorMessage: errorMessage,
               className: 'msla-array-editor-validation',
               isValid,
