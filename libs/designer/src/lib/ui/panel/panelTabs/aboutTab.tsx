@@ -1,4 +1,5 @@
 import constants from '../../../common/constants';
+import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import {
   useConnectorDescription,
   useConnectorDocumentation,
@@ -7,13 +8,11 @@ import {
   useConnectorStatusBadge,
   useOperationInfo,
 } from '../../../core/state/selectors/actionMetadataSelector';
-import type { RootState } from '../../../core/store';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { About } from '@microsoft/designer-ui';
-import { useSelector } from 'react-redux';
 
 export const AboutTab = () => {
-  const nodeId = useSelector((state: RootState) => state.panel.selectedNode);
+  const nodeId = useSelectedNodeId();
   const operationInfo = useOperationInfo(nodeId);
   const displayNameResult = useConnectorName(operationInfo);
   const { result: description } = useConnectorDescription(operationInfo);

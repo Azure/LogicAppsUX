@@ -93,7 +93,7 @@ const buildGraphFromActions = (
 
     allActions[actionName] = { ...action };
 
-    const isRoot = Object.keys(action.runAfter ?? {}).length === 0;
+    const isRoot = Object.keys(action.runAfter ?? {}).length === 0 && parentNodeId;
     nodesMetadata[actionName] = { graphId, parentNodeId };
 
     if (isScopeAction(action)) {

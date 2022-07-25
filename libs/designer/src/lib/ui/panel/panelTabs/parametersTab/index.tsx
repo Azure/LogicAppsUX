@@ -1,16 +1,20 @@
 import constants from '../../../../common/constants';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useNodeConnectionName } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../../../core/store';
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
+import { ConnectionDisplay } from './connectionDisplay';
 import { getId } from '@fluentui/react';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
-  const selectedNode = useSelector((state: RootState) => state.panel.selectedNode);
-  const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
+  const selectedNodeId = useSelector((state: RootState) => state.panel.selectedNode);
+  const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const readOnly = useReadOnly();
+
+  const connectionName = useNodeConnectionName(selectedNodeId);
 
   return (
     <>
@@ -44,6 +48,7 @@ export const ParametersTab = () => {
           </div>
         );
       })}
+      {connectionName && <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />}
     </>
   );
 };

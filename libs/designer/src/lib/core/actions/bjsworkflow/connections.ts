@@ -116,7 +116,7 @@ export function isConnectionRequiredForOperation(manifest: OperationManifest): b
 
 export function needsConnection(_connector: Connector | undefined): boolean {
   // needs to be implemented: work item 14936435
-  return true;
+  return false;
 }
 
 function getConnectionReferenceKeyForManifest(referenceFormat: string, operationDefinition: LogicAppsV2.OperationDefinition): string {

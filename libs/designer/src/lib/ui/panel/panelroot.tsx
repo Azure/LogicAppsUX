@@ -1,15 +1,25 @@
 import constants from '../../common/constants';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useRegisteredPanelTabs, useSelectedPanelTabName, useVisiblePanelTabs } from '../../core/state/panel/panelSelectors';
-import { collapsePanel, expandPanel, hideAllTabs, registerPanelTabs, selectPanelTab, showAllTabs } from '../../core/state/panel/panelSlice';
+import {
+  collapsePanel,
+  expandPanel,
+  isolateTab,
+  registerPanelTabs,
+  selectPanelTab,
+  setTabVisibility,
+  showDefaultTabs,
+} from '../../core/state/panel/panelSlice';
 import { useIconUri, useNodeDescription, useNodeMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
+import { createConnectionTab } from './panelTabs/createConnectionTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
+import { selectConnectionTab } from './panelTabs/selectConnectionTab';
 import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
@@ -43,12 +53,21 @@ export const PanelRoot = (): JSX.Element => {
   const showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
-    const tabs = [{ ...monitoringTab, visible: !!isMonitoringView }, parametersTab, aboutTab, codeViewTab, SettingsTab];
+    const tabs = [monitoringTab, parametersTab, aboutTab, codeViewTab, SettingsTab, scratchTab, createConnectionTab, selectConnectionTab];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
-  }, [dispatch, readOnly, isMonitoringView]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.MONITORING,
+        visible: isMonitoringView,
+      })
+    );
+  }, [dispatch, isMonitoringView]);
 
   useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))
@@ -61,11 +80,17 @@ export const PanelRoot = (): JSX.Element => {
 
   useEffect(() => {
     if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
-      dispatch(hideAllTabs({ exclude: [constants.PANEL_TAB_NAMES.MONITORING, constants.PANEL_TAB_NAMES.PARAMETERS] }));
+      dispatch(isolateTab(constants.PANEL_TAB_NAMES.PARAMETERS));
     } else {
-      dispatch(showAllTabs({ exclude: [constants.PANEL_TAB_NAMES.MONITORING] }));
+      dispatch(showDefaultTabs());
     }
-  }, [dispatch, selectedNode, nodeMetaData]);
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.MONITORING,
+        visible: isMonitoringView,
+      })
+    );
+  }, [dispatch, selectedNode, nodeMetaData, isMonitoringView]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);

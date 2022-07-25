@@ -10,8 +10,8 @@ module.exports = {
     '../src/lib/docs/**/*.stories.@(js|jsx|ts|tsx)', // This makes sure any Designer Docs are ordered before others
     '../../../apps/**/*.stories.@(js|jsx|ts|tsx)',
     // Moving Editor story to end to address https://github.com/microsoft/monaco-editor/issues/2448
-    '../../**/!(editor).stories.@(js|jsx|ts|tsx)',
-    '../../**/editor.stories.@(js|jsx|ts|tsx)',
+    '../../**/!(editor|peek|schemaeditor).stories.@(js|jsx|ts|tsx)',
+    '../../**/(editor|peek|schemaeditor).stories.@(js|jsx|ts|tsx)',
   ],
   addons: [...rootMain.addons, '@nrwl/react/plugins/storybook'],
   webpackFinal: async (config, { configType }) => {

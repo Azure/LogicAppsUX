@@ -18,9 +18,9 @@ const connectionService = new StandardConnectionService({
     apiVersion: '2018-07-01-preview',
     subscriptionId: '',
     resourceGroup: '',
-    location: ''
+    location: '',
   },
-  readConnections: () => Promise.resolve({})
+  readConnections: () => Promise.resolve({}),
 });
 const operationManifestService = new StandardOperationManifestService({
   apiVersion: '2018-11-01',
