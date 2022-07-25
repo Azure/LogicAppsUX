@@ -1,7 +1,6 @@
 import { ConnectorSummaryCard } from '../../connectorsummarycard/connectorsummarycard';
 import { Stack } from '@fluentui/react';
 import type { Connector } from '@microsoft-logic-apps/utils';
-import React from 'react';
 
 export type BrowseGridProps = {
   onConnectorSelected: (connectorId: string) => void;
@@ -13,7 +12,6 @@ export const BrowseGrid = (props: BrowseGridProps) => {
     <div className="msla-result-list">
       <Stack horizontal wrap>
         {props.connectorBrowse.map((connector) => {
-          if (!connector) return null;
           const properties = connector.properties;
 
           return (

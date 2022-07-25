@@ -16,21 +16,27 @@ export type RecommendationPanelProps = {
 } & CommonPanelProps;
 
 export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanelProps>> = (props) => {
+  const intl = getIntl();
+
   const [operationSearchResults, setOperationSearchResults] = React.useState([...props.operationSearchResults]);
 
   React.useEffect(() => {
     setOperationSearchResults([...props.operationSearchResults]);
   }, [props.operationSearchResults]);
 
-  const intl = getIntl();
-
   const panelLabel = intl.formatMessage({
     defaultMessage: 'panel',
     description: 'recommendation panel',
   });
+
   const header = intl.formatMessage({
     defaultMessage: 'Operations',
     description: 'Operations in search panel',
+  });
+
+  const browsePivotAriaLabel = intl.formatMessage({
+    defaultMessage: 'Choose which view to browse from',
+    description: 'Aria label for pivot to determine browse view',
   });
 
   const onRenderOperationCell = React.useCallback(
@@ -69,7 +75,7 @@ export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanel
       closeButtonAriaLabel="close"
     >
       <DesignerSearchBox onSearch={props.onSearch}></DesignerSearchBox>
-      <Pivot aria-label="Choose which view to browse from">
+      <Pivot aria-label={browsePivotAriaLabel}>
         <PivotItem
           headerText={browseConnectorsPivotText}
           headerButtonProps={{

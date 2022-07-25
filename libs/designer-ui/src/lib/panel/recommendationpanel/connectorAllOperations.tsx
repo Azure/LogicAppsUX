@@ -10,8 +10,6 @@ export type ConnectorAllOperationsSummaryProps = {
 export const ConnectorAllOperationsSummary = (props: ConnectorAllOperationsSummaryProps) => {
   const onRenderOperationCells = () => {
     return props.operations.map((operation) => {
-      if (!operation) return null;
-
       return (
         <button key={operation.id} style={{ minHeight: '40px', border: '1px solid black' }}>
           <div>{operation.properties.summary}</div>
