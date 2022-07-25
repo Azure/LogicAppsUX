@@ -8,7 +8,7 @@
   "+Bh3Qk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content"
+      "value": "Кнопка для добавления динамического содержимого"
     }
   ],
   "+GSexV": [
@@ -1173,6 +1173,12 @@
       "value": "Требуется. Строка, из которой необходимо удалить пробел в начале и конце."
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -2327,6 +2333,12 @@
       "value": "Настраиваемый ИД отслеживания"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3315,6 +3327,12 @@
       "value": "При использовании внутри цикла until эта функция возвращает текущий индекс итерации указанного цикла."
     }
   ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -3553,6 +3571,12 @@
     {
       "type": 0,
       "value": "Изменить в JSON"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
     }
   ],
   "jjYA4u": [

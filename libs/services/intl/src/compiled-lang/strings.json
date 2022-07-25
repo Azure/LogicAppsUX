@@ -83,6 +83,12 @@
       "value": "Returns the elements in the array starting at index Count"
     }
   ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Change connection"
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -1133,6 +1139,12 @@
     {
       "type": 0,
       "value": "Required. The string from which to remove leading and trailing whitespace."
+    }
+  ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
     }
   ],
   "DZZ3fj": [
@@ -2227,6 +2239,12 @@
       "value": "Custom Tracking Id"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2369,12 +2387,6 @@
     {
       "type": 0,
       "value": "Content not shown due to security configuration."
-    }
-  ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "Ur+wph": [
@@ -2993,6 +3005,20 @@
       "value": "(UTC+11:00) Sakhalin"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3203,16 +3229,16 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "Save the selected connection"
-    }
-  ],
   "gu9o9z": [
     {
       "type": 0,
       "value": "When used inside until loop, this function returns the current iteration index of the specified loop."
+    }
+  ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
     }
   ],
   "hBLPXK": [
@@ -3423,6 +3449,12 @@
     {
       "type": 0,
       "value": "Edit in JSON"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
     }
   ],
   "jjYA4u": [

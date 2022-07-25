@@ -8,7 +8,7 @@
   "+Bh3Qk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content"
+      "value": "Knop om dynamische inhoud toe te voegen"
     }
   ],
   "+GSexV": [
@@ -1129,6 +1129,12 @@
       "value": "Vereist. De tekenreeks waaruit u voorloopspaties en volgspaties wilt verwijderen."
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -2221,6 +2227,12 @@
       "value": "Aangepaste tracerings-id"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3209,6 +3221,12 @@
       "value": "Bij gebruik in de Until-lus retourneert deze functie de huidige iteratie-index van de opgegeven lus."
     }
   ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -3425,6 +3443,12 @@
     {
       "type": 0,
       "value": "In JSON bewerken"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
     }
   ],
   "jjYA4u": [

@@ -3,7 +3,7 @@ import { Dropdown } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 
 export interface SelectionChangedEvent {
-  currentTarget: any; // tslint:disable-line: no-any
+  currentTarget: any;
   value: string;
 }
 

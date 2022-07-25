@@ -1,10 +1,19 @@
 /* eslint-disable no-param-reassign */
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
-import type { IConnectionService } from '../connection';
+import type { ConnectionCreationInfo, ConnectionParametersMetadata, IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { azureFunctionConnectorId } from './operationmanifest';
-import type { Connection, Connector, OperationDiscoveryResult } from '@microsoft-logic-apps/utils';
-import { ArgumentException, equals, connectorsSearchResultsMock } from '@microsoft-logic-apps/utils';
+import type { Connection, ConnectionParameter, Connector, OperationDiscoveryResult } from '@microsoft-logic-apps/utils';
+import {
+  AssertionErrorCode,
+  AssertionException,
+  ConnectionParameterSource,
+  ConnectionType,
+  safeSetObjectPropertyValue,
+  ArgumentException,
+  equals,
+  connectorsSearchResultsMock,
+} from '@microsoft-logic-apps/utils';
 
 interface ServiceProviderConnectionModel {
   parameterValues: Record<string, any>;
@@ -178,7 +187,7 @@ export class StandardConnectionService implements IConnectionService {
     if (!isArmResourceId(connectorId)) {
       const { apiVersion, baseUrl, httpClient } = this.options;
       return httpClient.get<Connector>({
-        uri: `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}?api-version=${apiVersion}`,
+        uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
       });
     } else {
       const {
@@ -234,6 +243,85 @@ export class StandardConnectionService implements IConnectionService {
     ];
   }
 
+  async createConnection(
+    connectionId: string,
+    connectorId: string,
+    connectionInfo: ConnectionCreationInfo,
+    parametersMetadata?: ConnectionParametersMetadata
+  ): Promise<Connection> {
+    const connectionName = connectionId.split('/').at(-1) as string;
+    const connection = isArmResourceId(connectorId)
+      ? await this.createConnectionInApiHub(connectionName, connectorId, connectionInfo)
+      : await this.createConnectionInLocal(connectionName, connectorId, connectionInfo, parametersMetadata as ConnectionParametersMetadata);
+
+    return connection;
+  }
+
+  private async createConnectionInApiHub(
+    _connectionName: string,
+    _connectorId: string,
+    _connectionInfo: ConnectionCreationInfo
+  ): Promise<Connection> {
+    throw new Error('Not implemented for Azure connections yet');
+  }
+
+  private async createConnectionInLocal(
+    connectionName: string,
+    connectorId: string,
+    connectionInfo: ConnectionCreationInfo,
+    parametersMetadata: ConnectionParametersMetadata
+  ): Promise<Connection> {
+    const { connectionsData, connection } = this.getConnectionsConfiguration(
+      connectionName,
+      connectionInfo,
+      connectorId,
+      parametersMetadata
+    );
+
+    const { writeConnection } = this.options;
+    if (!writeConnection) {
+      throw new AssertionException(AssertionErrorCode.CALLBACK_NOTREGISTERED, 'Callback for write connection is not passed in service.');
+    }
+
+    await this.options.writeConnection?.(connectionsData);
+    this._connections[connection.id] = connection;
+
+    return connection;
+  }
+
+  private getConnectionsConfiguration(
+    connectionName: string,
+    connectionInfo: ConnectionCreationInfo,
+    connectorId: string,
+    parametersMetadata: ConnectionParametersMetadata
+  ): {
+    connectionsData: ConnectionAndAppSetting<LocalConnectionModel>;
+    connection: Connection;
+  } {
+    const { connectionType } = parametersMetadata;
+    let connectionsData;
+    let connection;
+    switch (connectionType) {
+      case ConnectionType.Function: {
+        connectionsData = convertToFunctionsConnectionsData(connectionName, connectionInfo);
+        connection = convertFunctionsConnectionDataToConnection(
+          connectionsData.connectionKey,
+          connectionsData.connectionData as FunctionsConnectionModel
+        );
+        break;
+      }
+      default: {
+        connectionsData = convertToServiceProviderConnectionsData(connectionName, connectorId, connectionInfo, parametersMetadata);
+        connection = convertServiceProviderConnectionDataToConnection(
+          connectionsData.connectionKey,
+          connectionsData.connectionData as ServiceProviderConnectionModel
+        );
+        break;
+      }
+    }
+    return { connectionsData, connection };
+  }
+
   private async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
     if (isArmResourceId(connectorId)) {
       const {
@@ -244,7 +332,7 @@ export class StandardConnectionService implements IConnectionService {
         uri: `${this._subscriptionResourceGroupWebUrl}/connections`,
         queryParameters: {
           'api-version': apiVersion,
-          $filter: `Location eq '${location}' and ManagedApiName eq '${connectorId.split('/').slice(-1)[0]}' and Kind eq 'V2'`,
+          $filter: `Location eq '${location}' and ManagedApiName eq '${connectorId.split('/').at(-1)}' and Kind eq 'V2'`,
         },
       });
       return response.value;
@@ -328,6 +416,85 @@ function convertServiceProviderConnectionDataToConnection(
   };
 }
 
+function convertToServiceProviderConnectionsData(
+  connectionKey: string,
+  connectorId: string,
+  connectionInfo: ConnectionCreationInfo,
+  connectionParameterMetadata: ConnectionParametersMetadata
+): ConnectionAndAppSetting<ServiceProviderConnectionModel> {
+  const {
+    displayName,
+    connectionParameters: connectionParameterValues,
+    connectionParametersSet: connectionParametersSetValues,
+  } = connectionInfo;
+  const connectionParameters = connectionParametersSetValues
+    ? connectionParameterMetadata.connectionParameterSet?.parameters
+    : (connectionParameterMetadata.connectionParameters as Record<string, ConnectionParameter>);
+  const parameterValues = connectionParametersSetValues
+    ? Object.keys(connectionParametersSetValues.values).reduce(
+        (result: Record<string, any>, currentKey: string) => ({
+          ...result,
+          [currentKey]: connectionParametersSetValues.values[currentKey].value,
+        }),
+        {}
+      )
+    : (connectionParameterValues as Record<string, any>);
+
+  const connectionsData: ConnectionAndAppSetting<ServiceProviderConnectionModel> = {
+    connectionKey,
+    connectionData: {
+      parameterValues: {},
+      serviceProvider: { id: connectorId },
+      displayName,
+    },
+    settings: {},
+    pathLocation: [serviceProviderLocation],
+  };
+
+  for (const parameterKey of Object.keys(parameterValues)) {
+    const connectionParameter = connectionParameters?.[parameterKey] as ConnectionParameter;
+    let parameterValue = parameterValues[parameterKey];
+    if (connectionParameter.parameterSource === ConnectionParameterSource.AppConfiguration) {
+      const appSettingName = `${escapeSpecialChars(connectionKey)}_${escapeSpecialChars(parameterKey)}`;
+      connectionsData.settings[appSettingName] = parameterValues[parameterKey];
+
+      parameterValue = `@appsetting('${appSettingName}')`;
+    }
+
+    safeSetObjectPropertyValue(
+      connectionsData.connectionData.parameterValues,
+      [...(connectionParameter.uiDefinition?.constraints?.propertyPath ?? []), parameterKey],
+      parameterValue
+    );
+  }
+
+  return connectionsData;
+}
+
+function convertToFunctionsConnectionsData(
+  connectionKey: string,
+  connectionInfo: ConnectionCreationInfo
+): ConnectionAndAppSetting<FunctionsConnectionModel> {
+  const { displayName, connectionParameters } = connectionInfo;
+  const authentication = connectionParameters?.['authentication'];
+  const functionAppKey = authentication.value;
+  const appSettingName = `${escapeSpecialChars(connectionKey)}_functionAppKey`;
+
+  authentication.value = `@appsetting('${appSettingName}')`;
+
+  return {
+    connectionKey,
+    connectionData: {
+      function: connectionParameters?.['function'],
+      triggerUrl: connectionParameters?.['triggerUrl'],
+      authentication,
+      displayName,
+    },
+    settings: { [appSettingName]: functionAppKey },
+    pathLocation: [functionsLocation],
+  };
+}
+
 function convertFunctionsConnectionDataToConnection(connectionKey: string, connectionData: FunctionsConnectionModel): Connection {
   const { displayName } = connectionData;
 
@@ -345,4 +512,9 @@ function convertFunctionsConnectionDataToConnection(connectionKey: string, conne
       testLinks: [],
     },
   };
+}
+
+function escapeSpecialChars(value: string): string {
+  const escapedUnderscore = value.replace(/_/g, '__');
+  return escapedUnderscore.replace(/-/g, '_1');
 }

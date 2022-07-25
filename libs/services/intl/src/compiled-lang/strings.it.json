@@ -8,7 +8,7 @@
   "+Bh3Qk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content"
+      "value": "Pulsante per aggiungere contenuto dinamico"
     }
   ],
   "+GSexV": [
@@ -1129,6 +1129,12 @@
       "value": "Obbligatorio. Stringa da cui rimuovere lo spazio vuoto iniziale e finale."
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -2225,6 +2231,12 @@
       "value": "ID di traccia personalizzato"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3213,6 +3225,12 @@
       "value": "Quando usata all'interno di un ciclo until, questa funzione restituisce l'indice dell'iterazione corrente del ciclo specificato."
     }
   ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -3421,6 +3439,12 @@
     {
       "type": 0,
       "value": "Modificare in JSON"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
     }
   ],
   "jjYA4u": [
