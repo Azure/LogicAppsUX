@@ -1107,6 +1107,12 @@
       "value": "必須。先頭と末尾の空白が削除される文字列です。"
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -2162,6 +2168,12 @@
       "value": "カスタムの追跡 ID"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3150,6 +3162,12 @@
       "value": "until ループ内で使用すると、この関数は指定されたループの現在のイテレーション インデックスを返します。"
     }
   ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -3347,6 +3365,12 @@
     {
       "type": 0,
       "value": "JSON 内で編集"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
     }
   ],
   "jjYA4u": [
