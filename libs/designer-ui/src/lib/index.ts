@@ -51,7 +51,7 @@ export * from './panel/recommendationpanel/recommendationpanel';
 export * from './scratch';
 // export * from './picker';
 // export * from './rulescontrol';
-export * from './schemaeditor';
+export * from './schema';
 // export * from './selector';
 // export * from './selector2';
 export * from './selectConnection';
