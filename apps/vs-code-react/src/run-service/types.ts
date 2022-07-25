@@ -199,7 +199,8 @@ export interface ISubscription {
 
 export interface ManagedConnections {
   isManaged: boolean;
-  resourceGroup: string;
+  resourceGroup: string | undefined;
+  resourceGroupLocation: string | undefined;
 }
 
 export type ExportData = {

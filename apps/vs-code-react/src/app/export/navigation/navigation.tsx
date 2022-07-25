@@ -19,7 +19,7 @@ export const Navigation: React.FC = () => {
   const { exportData } = vscodeState as InitializedVscodeState;
   const { selectedSubscription, selectedIse, selectedWorkflows, validationState, targetDirectory, packageUrl, managedConnections } =
     exportData;
-  const { isManaged, resourceGroup } = managedConnections;
+  const { isManaged, resourceGroup, resourceGroupLocation } = managedConnections;
 
   const intlText = {
     NEXT: intl.formatMessage({
@@ -79,6 +79,9 @@ export const Navigation: React.FC = () => {
           command: ExtensionCommand.export_package,
           targetDirectory,
           packageUrl,
+          selectedSubscription,
+          resourceGroupName: isManaged ? resourceGroup : undefined,
+          location: isManaged ? resourceGroupLocation : undefined,
         });
         break;
       }

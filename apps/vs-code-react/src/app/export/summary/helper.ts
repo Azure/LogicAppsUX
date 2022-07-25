@@ -43,6 +43,6 @@ export const parseResourceGroupsData = (resourceGroupsData: { resourceGroups: Ar
   const { resourceGroups } = resourceGroupsData;
 
   return resourceGroups.map((resourceGroup: any) => {
-    return { key: resourceGroup.id, text: resourceGroup.name };
+    return { key: resourceGroup.name, text: resourceGroup.name, data: resourceGroup.location };
   });
 };

@@ -60,7 +60,8 @@ export const vscodeSlice = createSlice({
         packageUrl: '',
         managedConnections: {
           isManaged: false,
-          resourceGroup: '',
+          resourceGroup: undefined,
+          resourceGroupLocation: undefined,
         },
       };
     },

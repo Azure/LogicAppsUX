@@ -18,7 +18,7 @@ export const ManagedConnections: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
   const { selectedSubscription, managedConnections } = exportData;
-  const { isManaged, resourceGroup: selectedResourceGroup } = managedConnections;
+  const { isManaged, resourceGroup: selectedResourceGroup, resourceGroupLocation } = managedConnections;
 
   const intlText = {
     DEPLOY_MANAGED_CONNECTIONS: intl.formatMessage({
@@ -69,6 +69,7 @@ export const ManagedConnections: React.FC = () => {
           updateManagedConnections({
             isManaged: isManaged,
             resourceGroup: resourceGroupId,
+            resourceGroupLocation: selectedOption.data,
           })
         );
       }
@@ -103,6 +104,7 @@ export const ManagedConnections: React.FC = () => {
         updateManagedConnections({
           isManaged: isChecked,
           resourceGroup: selectedResourceGroup,
+          resourceGroupLocation,
         })
       );
       setConnectionsChecked(isChecked);
