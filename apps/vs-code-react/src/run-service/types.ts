@@ -188,6 +188,7 @@ export enum QueryKeys {
   iseData = 'iseData',
   validation = 'validation',
   summary = 'summary',
+  resourceGroupsData = 'resourceGroupsData',
 }
 
 export interface ISubscription {

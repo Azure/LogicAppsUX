@@ -150,4 +150,19 @@ export class ApiService implements IApiService {
     const exportResponse: ISummaryData = await response.json();
     return exportResponse;
   }
+
+  async getResourceGroups(_selectedSubscription: string): Promise<any> {
+    const headers = this.getAccessTokenHeaders();
+    const payload = this.getPayload(ResourceType.subscriptions);
+    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    const subscriptionsResponse: any = await response.json();
+    const { data: subscriptions } = subscriptionsResponse;
+
+    return { subscriptions };
+  }
 }

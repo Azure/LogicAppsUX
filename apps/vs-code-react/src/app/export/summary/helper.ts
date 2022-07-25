@@ -1,5 +1,5 @@
 import { DetailCategory, StyledDetailCategory } from '../../../run-service';
-import type { ISummaryData, IExportDetails, IExportDetailsList } from '../../../run-service';
+import type { ISummaryData, IExportDetails, IExportDetailsList, IDropDownOption } from '../../../run-service';
 
 const getTypeName = (typeName: string): string => {
   switch (typeName) {
@@ -35,4 +35,12 @@ export const getSummaryData = (summaryData: ISummaryData) => {
   const exportDetails = getExportDetails(exportSchema?.details);
 
   return { exportDetails };
+};
+
+export const parseResourceGroupsData = (resourceGroupsData: { resourceGroups: Array<any> }): Array<IDropDownOption> => {
+  const { resourceGroups } = resourceGroupsData;
+
+  return resourceGroups.map((resourceGroup: any) => {
+    return { key: resourceGroup.id, text: resourceGroup.name };
+  });
 };

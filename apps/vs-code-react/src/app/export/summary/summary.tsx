@@ -132,7 +132,7 @@ export const Summary: React.FC = () => {
         </div>
       </>
     );
-  }, [exportDetails, isSummaryLoading, intlText.NO_DETAILS]);
+  }, [exportDetails, isSummaryLoading, intlText.NO_DETAILS, intlText.ADDITIONAL_STEPS, intlText.AFTER_EXPORT]);
 
   return (
     <div className="msla-export-summary">
