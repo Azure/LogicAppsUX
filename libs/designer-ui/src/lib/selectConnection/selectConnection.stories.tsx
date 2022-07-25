@@ -8,28 +8,30 @@ export default {
   title: 'Components/SelectConnection',
 } as ComponentMeta<typeof SelectConnection>;
 
-const mockConnections: Connection[] = [
-  {
-    id: 'connection1',
-    name: 'Connection 1',
-    type: 'connection',
-    properties: {
-      displayName: 'Connection 1',
-      overallStatus: 'good i guess',
-      statuses: [],
-      createdTime: '2020-01-01T00:00:00.000Z',
-      api: {
-        id: 'api1',
-        name: 'api1',
-        displayName: 'API 1',
-        description: 'API 1 description',
-        iconUri: 'https://example.com/api1.png',
-        brandColor: '#cc3333',
-        category: 'api',
-        type: 'api',
-      },
+const mockConn1: Connection = {
+  id: 'connection1',
+  name: 'Connection 1',
+  type: 'connection',
+  properties: {
+    displayName: 'Connection 1',
+    overallStatus: 'good i guess',
+    statuses: [],
+    createdTime: '2020-01-01T00:00:00.000Z',
+    api: {
+      id: 'api1',
+      name: 'api1',
+      displayName: 'API 1',
+      description: 'API 1 description',
+      iconUri: 'https://example.com/api1.png',
+      brandColor: '#cc3333',
+      category: 'api',
+      type: 'api',
     },
   },
+};
+
+const mockConnections: Connection[] = [
+  mockConn1,
   {
     id: 'connection2',
     name: 'Connection 2',
@@ -87,7 +89,8 @@ export const Standard: ComponentStory<typeof SelectConnection> = (args: SelectCo
 Standard.args = {
   connections: mockConnections,
   isLoading: false,
-  saveSelectionCallback: (id?: string) => alert(`SAVED SELECTION: ${id}`),
-  cancelSelectionCallback: () => alert('Cancel clicked'),
-  createNewConnectionCallback: () => alert('Adding new collection'),
+  currentConnection: mockConn1,
+  saveSelectionCallback: (connection?: Connection) => alert(`SAVED SELECTION: ${connection?.id}`),
+  cancelSelectionCallback: () => alert('Cancel callback'),
+  createConnectionCallback: () => alert('Adding new collection'),
 };

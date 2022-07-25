@@ -35,6 +35,7 @@ junit.xml
 testem.log
 /typings
 **/dist
+debug.log
 
 # System Files
 .DS_Store

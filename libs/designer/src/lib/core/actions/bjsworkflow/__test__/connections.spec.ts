@@ -4,7 +4,7 @@ import {
   getLegacyConnectionReferenceKey,
   getManifestBasedConnectionMapping,
 } from '../../../actions/bjsworkflow/connections';
-import type { OperationMetadataState } from '../../../state/operationMetadataSlice';
+import type { OperationMetadataState } from '../../../state/operation/operationMetadataSlice';
 import type { RootState } from '../../../store';
 import type { StandardOperationManifestServiceOptions, IHttpClient } from '@microsoft-logic-apps/designer-client-services';
 import {
@@ -123,7 +123,7 @@ describe('connection workflow mappings', () => {
 
 const mockGetState = (): RootState => {
   const state: Partial<OperationMetadataState> = {
-    operationInfo: { [nodeId]: { connectorId: '1', operationId: '2' } },
+    operationInfo: { [nodeId]: { type: 'TODO:', connectorId: '1', operationId: '2' } },
   };
   return { operations: state as OperationMetadataState } as RootState;
 };

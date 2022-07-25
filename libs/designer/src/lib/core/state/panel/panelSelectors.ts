@@ -1,6 +1,10 @@
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 
+export const useSelectedNodeId = () => {
+  return useSelector((state: RootState) => state.panel.selectedNode);
+};
+
 export const useIsNodeSelected = (nodeId: string) => {
   return useSelector((state: RootState) => state.panel.selectedNode === nodeId);
 };
