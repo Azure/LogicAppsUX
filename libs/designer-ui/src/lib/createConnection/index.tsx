@@ -1,5 +1,5 @@
 import { DefaultButton, Dropdown, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
-import type { ConnectionParameter, ConnectionParameterSets } from '@microsoft-logic-apps/utils';
+import type { ConnectionParameter, ConnectionParameterSet, ConnectionParameterSets } from '@microsoft-logic-apps/utils';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -9,7 +9,7 @@ export interface CreateConnectionProps {
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSets?: ConnectionParameterSets;
   isLoading?: boolean;
-  createConnectionCallback?: (val: Record<string, string | undefined>) => void;
+  createConnectionCallback?: (id: string, selectedParameterSet?: ConnectionParameterSet, parameterValues?: Record<string, any>) => void;
   cancelCallback?: () => void;
 }
 
@@ -24,14 +24,14 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     (_event: FormEvent<HTMLDivElement>, item: any): void => {
       if (item.key !== selectedParamSetIndex) {
         setSelectedParamSetIndex(item.key as number);
-        setConfigurationValues({}); // Clear out the config params from previous set
+        setParameterValues({}); // Clear out the config params from previous set
       }
     },
     [selectedParamSetIndex]
   );
 
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
-  const [configurationValues, setConfigurationValues] = useState<Record<string, string | undefined>>({});
+  const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
 
   const singleAuthParams = connectionParameters;
   const multiAuthParams = connectionParameterSets?.values[selectedParamSetIndex].parameters;
@@ -39,10 +39,9 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const validParams = useMemo(() => {
     return Object.values(singleAuthParams ?? multiAuthParams ?? []).every(
       (parameter) =>
-        parameter.uiDefinition?.constraints?.required === 'false' ||
-        !!configurationValues[parameter.uiDefinition?.displayName ?? 'UNDEFINED']
+        parameter.uiDefinition?.constraints?.required === 'false' || !!parameterValues[parameter.uiDefinition?.displayName ?? 'UNDEFINED']
     );
-  }, [singleAuthParams, multiAuthParams, configurationValues]);
+  }, [singleAuthParams, multiAuthParams, parameterValues]);
   const canSubmit = !isLoading && !!connectionDisplayName && validParams;
 
   const inputConnectionDisplayNameLabel = intl.formatMessage({
@@ -89,6 +88,10 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       connectorName: connectorDisplayName,
     }
   );
+
+  const submitCallback = useCallback(() => {
+    return createConnectionCallback?.(connectionDisplayName, connectionParameterSets?.values[selectedParamSetIndex], parameterValues);
+  }, [parameterValues, connectionDisplayName, connectionParameterSets?.values, createConnectionCallback, selectedParamSetIndex]);
 
   if (Object.keys(singleAuthParams ?? {}).length > 0 || Object.keys(multiAuthParams ?? {}).length > 0) {
     // Configurable connector component
@@ -154,8 +157,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
                   autoComplete="off"
                   // onNotifyValidationResult
                   placeholder={data?.description}
-                  value={configurationValues[id]}
-                  onChange={(e: any, newVal?: string) => setConfigurationValues({ ...configurationValues, [id]: newVal })}
+                  value={parameterValues[id]}
+                  onChange={(e: any, newVal?: string) => setParameterValues({ ...parameterValues, [id]: newVal })}
                 />
               </div>
             );
@@ -167,7 +170,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             disabled={!canSubmit}
             text={isLoading ? createButtonLoadingText : createButtonText}
             ariaLabel={createButtonAria}
-            onClick={() => createConnectionCallback?.(configurationValues)}
+            onClick={submitCallback}
           />
           <DefaultButton disabled={isLoading} text={cancelButtonText} ariaLabel={cancelButtonAria} onClick={cancelCallback} />
         </div>
@@ -184,7 +187,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             disabled={isLoading}
             text={isLoading ? createButtonLoadingText : createButtonText}
             ariaLabel={createButtonAria}
-            onClick={() => createConnectionCallback?.({})}
+            onClick={submitCallback}
           />
         </div>
       </div>

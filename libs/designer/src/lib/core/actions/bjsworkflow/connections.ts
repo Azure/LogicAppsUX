@@ -114,6 +114,10 @@ export function isConnectionRequiredForOperation(manifest: OperationManifest): b
   return manifest.properties.connection ? manifest.properties.connection.required : needsConnection(manifest.properties.connector);
 }
 
+export function getConnectionMetadata(manifest?: OperationManifest) {
+  return manifest?.properties.connection;
+}
+
 export function needsConnection(_connector: Connector | undefined): boolean {
   // needs to be implemented: work item 14936435
   return false;

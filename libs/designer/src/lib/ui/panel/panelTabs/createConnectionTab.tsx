@@ -1,7 +1,11 @@
 import constants from '../../../common/constants';
+import { getConnectionMetadata } from '../../../core/actions/bjsworkflow/connections';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
-import { useConnectorByNodeId } from '../../../core/state/selectors/actionMetadataSelector';
+import { useConnectorByNodeId, useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
+import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft-logic-apps/designer-client-services';
+import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
+import type { ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { CreateConnection } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
@@ -10,13 +14,44 @@ import { useDispatch } from 'react-redux';
 const CreateConnectionTab = () => {
   const dispatch = useDispatch();
 
-  const nodeId = useSelectedNodeId();
+  const nodeId: string = useSelectedNodeId();
   const connector = useConnectorByNodeId(nodeId);
+  const operationInfo = useOperationInfo(nodeId);
+  const { data: operationManifest } = useOperationManifest(operationInfo);
+  const connectionMetadata = getConnectionMetadata(operationManifest);
 
-  const createConnectionCallback = useCallback(() => {
-    // TODO: Create the connection and select it
-    dispatch(showDefaultTabs());
-  }, [dispatch]);
+  const createConnectionCallback = useCallback(
+    async (id: string, selectedParameterSet?: ConnectionParameterSet, parameterValues?: Record<string, any>) => {
+      // Create the connection
+
+      const connectionParameterSetValues: ConnectionParameterSetValues = {
+        name: selectedParameterSet?.name ?? '',
+        values: Object.keys(parameterValues ?? {}).reduce((acc: any, key) => {
+          // eslint-disable-next-line no-param-reassign
+          acc[key] = { value: parameterValues?.[key] };
+          return acc;
+        }, {}),
+      };
+      const connectionInfo: ConnectionCreationInfo = {
+        displayName: id,
+        connectionParametersSet: selectedParameterSet ? connectionParameterSetValues : undefined,
+        connectionParameters: parameterValues,
+      };
+
+      const parametersMetadata: ConnectionParametersMetadata = {
+        connectionType: connectionMetadata?.type as ConnectionType,
+        connectionParameterSet: selectedParameterSet,
+        connectionParameters: selectedParameterSet?.parameters ?? connector?.properties.connectionParameters,
+      };
+
+      await ConnectionService().createConnection(id, connector?.id ?? '', connectionInfo, parametersMetadata);
+
+      // TODO: Select the connection
+
+      dispatch(showDefaultTabs());
+    },
+    [connector, dispatch]
+  );
 
   const cancelCallback = useCallback(() => {
     dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR));
