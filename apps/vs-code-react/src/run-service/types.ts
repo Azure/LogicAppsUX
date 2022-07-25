@@ -211,6 +211,7 @@ export enum ResourceType {
   workflows = 'workflows',
   subscriptions = 'subscriptions',
   ise = 'ise',
+  resourcegroups = 'resourcegroups',
 }
 
 export interface IIse {

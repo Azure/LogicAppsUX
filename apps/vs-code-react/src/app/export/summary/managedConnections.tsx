@@ -65,7 +65,8 @@ export const ManagedConnections: React.FC = () => {
         placeholder={intlText.SELECT_OPTION}
         label={intlText.RESOURCE_GROUP}
         disabled={isResourceGroupsLoading || !resourceGroups.length}
-        options={[]}
+        options={resourceGroups}
+        className="msla-export-summary-connections-dropdown"
       />
     ) : null;
   }, [isConnectionsChecked, apiService, selectedSubscription, intlText.SELECT_OPTION, intlText.RESOURCE_GROUP]);
@@ -75,11 +76,16 @@ export const ManagedConnections: React.FC = () => {
   }, []);
 
   return (
-    <div className="">
+    <div className="msla-export-summary-connections">
       <Text variant="large" nowrap block>
         {intlText.MANAGED_CONNECTIONS}
       </Text>
-      <Checkbox label={intlText.DEPLOY_MANAGED_CONNECTIONS} checked={isConnectionsChecked} onChange={onChangeConnections} />
+      <Checkbox
+        label={intlText.DEPLOY_MANAGED_CONNECTIONS}
+        checked={isConnectionsChecked}
+        onChange={onChangeConnections}
+        className="msla-export-summary-connections-checkbox"
+      />
       {resourceGroups}
     </div>
   );

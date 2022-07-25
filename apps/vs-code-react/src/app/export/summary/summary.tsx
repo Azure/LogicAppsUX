@@ -151,7 +151,7 @@ export const Summary: React.FC = () => {
           onClick={onOpenExplorer}
         />
       </div>
-      {ManagedConnections}
+      <ManagedConnections />
       {detailsList}
     </div>
   );
