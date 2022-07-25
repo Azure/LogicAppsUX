@@ -45,7 +45,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
           <Text className="msla-card-title">{props.connectorName}</Text>
         </div>
       </div>
-      <Text className="msla-card-description">{props.description}</Text>
+      {/* <Text className="msla-card-description">{props.description}</Text> */}
     </button>
   );
 };

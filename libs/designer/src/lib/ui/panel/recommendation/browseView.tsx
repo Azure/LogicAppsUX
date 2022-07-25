@@ -1,4 +1,4 @@
-import { getAllOperationsForGroup } from '../../../core/queries/browse';
+//import { getAllOperationsForGroup } from '../../../core/queries/browse';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import { BrowseGrid, ConnectorAllOperationsSummary } from '@microsoft/designer-ui';
 import React from 'react';
@@ -18,15 +18,15 @@ export const BrowseView: React.FC = () => {
   });
   const browseResults = browseResponse.data;
 
-  const allOperationsForGroup = useQuery(
-    ['browseViewOperationsForGroup', selectedConnectorId],
-    () => getAllOperationsForGroup(selectedConnectorId),
-    {
-      enabled: selectedConnectorId !== '',
-      staleTime: 100000,
-      cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
-    }
-  );
+  // const allOperationsForGroup = useQuery(
+  //   ['browseViewOperationsForGroup', selectedConnectorId],
+  //   () => getAllOperationsForGroup(selectedConnectorId),
+  //   {
+  //     enabled: selectedConnectorId !== '',
+  //     staleTime: 100000,
+  //     cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
+  //   }
+  // );
 
   const onConnectorCardSelected = (id: string): void => {
     setSelectedConnectorId(id);
@@ -37,7 +37,7 @@ export const BrowseView: React.FC = () => {
   return (
     <>
       {selectedConnectorId !== '' ? (
-        <ConnectorAllOperationsSummary operations={allOperationsForGroup.data ?? []}></ConnectorAllOperationsSummary>
+        <ConnectorAllOperationsSummary operations={[]}></ConnectorAllOperationsSummary>
       ) : (
         <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectorBrowse={browseResults || []}></BrowseGrid>
       )}
