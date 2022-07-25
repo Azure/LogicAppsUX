@@ -8,15 +8,23 @@ export interface InputTokenProps {
   icon: string;
   isAdvanced?: boolean;
   isSecure?: boolean;
-  key?: string;
   readOnly?: boolean;
   required?: boolean;
   title: string;
-  handleTokenDeleteClicked?(): (e: any) => void;
+  handleTokenDeleteClicked?: () => void;
+  DeleteButton?: JSX.Element;
 }
 
 export const DELETE = '\u00D7';
-export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor, icon, readOnly, title, handleTokenDeleteClicked }) => {
+export const InputToken: React.FC<InputTokenProps> = ({
+  description,
+  brandColor,
+  icon,
+  readOnly,
+  title,
+  handleTokenDeleteClicked,
+  DeleteButton,
+}) => {
   const intl = useIntl();
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -50,6 +58,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor,
         {title}
       </div>
       {renderTokenDeleteButton()}
+      {DeleteButton}
     </div>
   );
 };
