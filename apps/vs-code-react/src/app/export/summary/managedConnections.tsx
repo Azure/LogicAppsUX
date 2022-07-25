@@ -82,6 +82,7 @@ export const ManagedConnections: React.FC = () => {
         options={resourceGroups}
         className="msla-export-summary-connections-dropdown"
         onChange={onChangeResourceGroup}
+        selectedKey={selectedResourceGroup !== '' ? selectedResourceGroup : null}
       />
     ) : null;
   }, [
