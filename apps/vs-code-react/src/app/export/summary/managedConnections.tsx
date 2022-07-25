@@ -109,7 +109,7 @@ export const ManagedConnections: React.FC = () => {
       );
       setConnectionsChecked(isChecked);
     },
-    [dispatch, selectedResourceGroup]
+    [dispatch, selectedResourceGroup, resourceGroupLocation]
   );
 
   return (
