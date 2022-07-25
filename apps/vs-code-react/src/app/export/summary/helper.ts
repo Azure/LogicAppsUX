@@ -23,11 +23,13 @@ export const getListColumns = () => {
 };
 
 export const getExportDetails = (details: Array<IExportDetails>): Array<IExportDetailsList> => {
-  return details.map((detail) => {
+  const listDetails = details.map((detail) => {
     const { exportDetailCategory, exportDetailMessage } = detail;
 
     return { type: getTypeName(exportDetailCategory), message: exportDetailMessage };
   });
+
+  return listDetails.sort((previous, next) => (previous.type > next.type ? -1 : next.type > previous.type ? 1 : 0));
 };
 
 export const getSummaryData = (summaryData: ISummaryData) => {
