@@ -47,6 +47,8 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
     description: "Button text to take the user to the 'change connection' component",
   });
 
+  if (!requiresConnection && !connectionName) return null;
+
   return (
     <div className="connection-info">
       {connectionName && <Label className="label">{connectionDisplayText}</Label>}
