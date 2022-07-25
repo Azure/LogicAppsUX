@@ -1,6 +1,7 @@
 import { QueryKeys } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
-import type { RootState } from '../../../state/store';
+import type { AppDispatch, RootState } from '../../../state/store';
+import { updateManagedConnections } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { parseResourceGroupsData } from './helper';
 import { Checkbox, Dropdown, Text } from '@fluentui/react';
@@ -8,14 +9,16 @@ import type { IDropdownOption } from '@fluentui/react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const ManagedConnections: React.FC = () => {
   const intl = useIntl();
+  const dispatch: AppDispatch = useDispatch();
   const [isConnectionsChecked, setConnectionsChecked] = useState(false);
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription } = exportData;
+  const { selectedSubscription, managedConnections } = exportData;
+  const { isManaged, resourceGroup: selectedResourceGroup } = managedConnections;
 
   const intlText = {
     DEPLOY_MANAGED_CONNECTIONS: intl.formatMessage({
@@ -23,8 +26,7 @@ export const ManagedConnections: React.FC = () => {
       description: 'Deploy managed connections text',
     }),
     MANAGED_CONNECTIONS: intl.formatMessage({
-      defaultMessage:
-        'Deploying Managed Connections will copy the credentials from original connections. This is not recommended for production environments.',
+      defaultMessage: 'Deploying Managed Connections. This is not recommended for production environments.',
       description: 'Managed Connections text',
     }),
     SELECT_OPTION: intl.formatMessage({
@@ -60,6 +62,18 @@ export const ManagedConnections: React.FC = () => {
     const resourceGroups: IDropdownOption[] =
       isResourceGroupsLoading || !resourceGroupsData ? [] : parseResourceGroupsData(resourceGroupsData);
 
+    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
+      if (selectedOption && selectedResourceGroup !== selectedOption.key) {
+        const resourceGroupId = selectedOption.key as string;
+        dispatch(
+          updateManagedConnections({
+            isManaged: isManaged,
+            resourceGroup: resourceGroupId,
+          })
+        );
+      }
+    };
+
     return isConnectionsChecked ? (
       <Dropdown
         placeholder={intlText.SELECT_OPTION}
@@ -67,13 +81,33 @@ export const ManagedConnections: React.FC = () => {
         disabled={isResourceGroupsLoading || !resourceGroups.length}
         options={resourceGroups}
         className="msla-export-summary-connections-dropdown"
+        onChange={onChangeResourceGroup}
       />
     ) : null;
-  }, [isConnectionsChecked, apiService, selectedSubscription, intlText.SELECT_OPTION, intlText.RESOURCE_GROUP]);
+  }, [
+    isConnectionsChecked,
+    intlText.SELECT_OPTION,
+    intlText.RESOURCE_GROUP,
+    isResourceGroupsLoading,
+    resourceGroupsData,
+    dispatch,
+    isManaged,
+    selectedResourceGroup,
+  ]);
 
-  const onChangeConnections = useCallback((_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean): void => {
-    setConnectionsChecked(!!checked);
-  }, []);
+  const onChangeConnections = useCallback(
+    (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean): void => {
+      const isChecked = !!checked;
+      dispatch(
+        updateManagedConnections({
+          isManaged: isChecked,
+          resourceGroup: selectedResourceGroup,
+        })
+      );
+      setConnectionsChecked(isChecked);
+    },
+    [dispatch, selectedResourceGroup]
+  );
 
   return (
     <div className="msla-export-summary-connections">

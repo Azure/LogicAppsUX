@@ -29,7 +29,7 @@ export class ApiService implements IApiService {
     });
   };
 
-  private getResourceOptions = (resourceType: string, properties?: any) => {
+  private getPayload = (resourceType: string, properties?: any) => {
     switch (resourceType) {
       case ResourceType.subscriptions: {
         return {
@@ -57,29 +57,6 @@ export class ApiService implements IApiService {
         return {};
       }
     }
-  };
-
-  private getPayload = (resourceType: string, properties?: any) => {
-    const skipToken = properties?.skipToken;
-
-    let options = {};
-    if (skipToken) {
-      options = {
-        $skipToken: skipToken,
-      };
-    } else {
-      options = {
-        $top: 100,
-        $skip: 0,
-      };
-    }
-
-    const resourceOptions = this.getResourceOptions(resourceType, properties);
-
-    return {
-      ...resourceOptions,
-      options,
-    };
   };
 
   async getWorkflows(subscriptionId: string, iseId: string): Promise<any> {

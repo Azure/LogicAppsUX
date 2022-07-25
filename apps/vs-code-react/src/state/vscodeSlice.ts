@@ -1,4 +1,4 @@
-import type { ExportData, ITargetDirectory, ProjectName, WorkflowsList } from '../run-service';
+import type { ExportData, ITargetDirectory, ManagedConnections, ProjectName, WorkflowsList } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -58,6 +58,10 @@ export const vscodeSlice = createSlice({
           path: '',
         },
         packageUrl: '',
+        managedConnections: {
+          isManaged: false,
+          resourceGroup: '',
+        },
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
@@ -89,6 +93,9 @@ export const vscodeSlice = createSlice({
       const { packageUrl } = action.payload;
       (state as InitializedVscodeState).exportData.packageUrl = packageUrl;
     },
+    updateManagedConnections: (state: VscodeState, action: PayloadAction<ManagedConnections>) => {
+      (state as InitializedVscodeState).exportData.managedConnections = action.payload;
+    },
   },
 });
 
@@ -102,6 +109,7 @@ export const {
   updateValidationState,
   updateTargetDirectory,
   updatePackageUrl,
+  updateManagedConnections,
 } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;

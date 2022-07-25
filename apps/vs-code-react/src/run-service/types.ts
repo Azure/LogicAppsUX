@@ -197,6 +197,11 @@ export interface ISubscription {
   subscriptionName: string;
 }
 
+export interface ManagedConnections {
+  isManaged: boolean;
+  resourceGroup: string;
+}
+
 export type ExportData = {
   selectedWorkflows: Array<WorkflowsList>;
   selectedSubscription: string;
@@ -205,6 +210,7 @@ export type ExportData = {
   validationState: string;
   targetDirectory: ITargetDirectory;
   packageUrl: string;
+  managedConnections: ManagedConnections;
 };
 
 export enum ResourceType {
