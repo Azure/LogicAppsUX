@@ -5,7 +5,7 @@ import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
 
 export interface ValidationProps {
-  type: 'ARRAY' | 'JSON';
+  type: 'EXPANDED_ARRAY' | 'COLLAPSED_ARRAY';
   className?: string;
   tokensEnabled?: boolean;
   errorMessage: string;
@@ -17,11 +17,22 @@ export const Validation = ({ className, isValid, type, tokensEnabled = true, err
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), tokensEnabled);
-      if (type === 'ARRAY' && setIsValid) {
-        if (!editorString.trim().length || editorString === '[]') {
-          setIsValid(true);
-        } else {
-          setIsValid(validArray(editorString));
+      if (setIsValid) {
+        switch (type) {
+          case 'COLLAPSED_ARRAY':
+            if (!editorString.trim().length || editorString === '[]') {
+              setIsValid(true);
+            } else {
+              setIsValid(validArray(editorString));
+            }
+            break;
+          case 'EXPANDED_ARRAY':
+            if (/"|\[|\]|,/.test(editorString)) {
+              setIsValid(false);
+            } else {
+              setIsValid(true);
+            }
+            break;
         }
       }
     });

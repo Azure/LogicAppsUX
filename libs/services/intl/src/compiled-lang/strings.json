@@ -1135,6 +1135,12 @@
       "value": "Required. The string from which to remove leading and trailing whitespace."
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -2227,6 +2233,12 @@
       "value": "Custom Tracking Id"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3217,6 +3229,12 @@
       "value": "When used inside until loop, this function returns the current iteration index of the specified loop."
     }
   ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -3425,6 +3443,12 @@
     {
       "type": 0,
       "value": "Edit in JSON"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
     }
   ],
   "jjYA4u": [
