@@ -1111,6 +1111,12 @@
       "value": "必填。要从中移除前导空格和尾随空格的字符串。"
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -2166,6 +2172,12 @@
       "value": "自定义跟踪 ID"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3158,6 +3170,12 @@
       "value": "在内部使用 until 循环时，此函数返回指定循环的当前迭代索引。"
     }
   ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -3363,6 +3381,12 @@
     {
       "type": 0,
       "value": "在 JSON 中编辑"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
     }
   ],
   "jjYA4u": [

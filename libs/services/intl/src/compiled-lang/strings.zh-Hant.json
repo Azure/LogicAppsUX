@@ -1107,6 +1107,12 @@
       "value": "必要。將移除其開頭及結尾空白字元的字串。"
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -2162,6 +2168,12 @@
       "value": "自訂追蹤 ID"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3150,6 +3162,12 @@
       "value": "若用於 until 迴圈中，此函式會傳回指定迴圈目前的反覆運算索引。"
     }
   ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -3347,6 +3365,12 @@
     {
       "type": 0,
       "value": "在 JSON 中編輯"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
     }
   ],
   "jjYA4u": [

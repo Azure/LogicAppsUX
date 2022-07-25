@@ -1185,6 +1185,12 @@
       "value": "Povinné. Řetězec, z jehož začátku a konce se odeberou prázdné znaky."
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -2339,6 +2345,12 @@
       "value": "Vlastní ID sledování"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3327,6 +3339,12 @@
       "value": "Když se tato funkce použije v rámci smyčky until, vrátí aktuální index iterace zadané smyčky."
     }
   ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -3561,6 +3579,12 @@
     {
       "type": 0,
       "value": "Upravit ve formátu JSON"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
     }
   ],
   "jjYA4u": [

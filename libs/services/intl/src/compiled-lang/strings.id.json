@@ -1107,6 +1107,12 @@
       "value": "Diperlukan. String untuk menghapus spasi awal dan akhir."
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -2162,6 +2168,12 @@
       "value": "Id Pelacakan Kustom"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3150,6 +3162,12 @@
       "value": "Ketika digunakan di dalam until loop, fungsi ini menghasilkan indeks perulangan saat ini dari perulangan yang ditentukan."
     }
   ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -3347,6 +3365,12 @@
     {
       "type": 0,
       "value": "Edit di JSON"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
     }
   ],
   "jjYA4u": [

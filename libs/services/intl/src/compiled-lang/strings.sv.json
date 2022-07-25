@@ -1129,6 +1129,12 @@
       "value": "Krävs. Den sträng som du vill ta bort inledande och efterföljande blanksteg från."
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -2221,6 +2227,12 @@
       "value": "Anpassat spårnings-ID"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3209,6 +3221,12 @@
       "value": "När den här funktionen används inuti fram till loopen returnerar den det aktuella iterationsindexet för den angivna loopen."
     }
   ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -3421,6 +3439,12 @@
     {
       "type": 0,
       "value": "Redigera i JSON"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
     }
   ],
   "jjYA4u": [
