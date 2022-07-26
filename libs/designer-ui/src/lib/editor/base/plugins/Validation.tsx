@@ -13,7 +13,7 @@ export interface ValidationProps {
   setIsValid?: Dispatch<SetStateAction<boolean>>;
 }
 
-export const Validation = ({ className, isValid, type, tokensEnabled = true, errorMessage, setIsValid }: ValidationProps) => {
+export const Validation = ({ className, isValid, type, tokensEnabled = true, errorMessage, setIsValid }: ValidationProps): JSX.Element => {
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), tokensEnabled);
