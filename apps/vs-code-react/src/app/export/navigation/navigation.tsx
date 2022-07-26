@@ -17,7 +17,9 @@ export const Navigation: React.FC = () => {
 
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse, selectedWorkflows, validationState, targetDirectory, packageUrl } = exportData;
+  const { selectedSubscription, selectedIse, selectedWorkflows, validationState, targetDirectory, packageUrl, managedConnections } =
+    exportData;
+  const { isManaged, resourceGroup, resourceGroupLocation } = managedConnections;
 
   const intlText = {
     NEXT: intl.formatMessage({
@@ -77,6 +79,9 @@ export const Navigation: React.FC = () => {
           command: ExtensionCommand.export_package,
           targetDirectory,
           packageUrl,
+          selectedSubscription,
+          resourceGroupName: isManaged ? resourceGroup : undefined,
+          location: isManaged ? resourceGroupLocation : undefined,
         });
         break;
       }
@@ -102,7 +107,7 @@ export const Navigation: React.FC = () => {
         return validationState === '' || validationState === ValidationStatus.failed;
       }
       case `/${RouteName.export}/${RouteName.summary}`: {
-        return targetDirectory.path === '';
+        return targetDirectory.path === '' || (isManaged && resourceGroup === '');
       }
       default: {
         return true;

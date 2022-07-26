@@ -1,5 +1,5 @@
 import { DetailCategory, StyledDetailCategory } from '../../../run-service';
-import type { ISummaryData, IExportDetails, IExportDetailsList } from '../../../run-service';
+import type { ISummaryData, IExportDetails, IExportDetailsList, IDropDownOption } from '../../../run-service';
 
 const getTypeName = (typeName: string): string => {
   switch (typeName) {
@@ -23,11 +23,13 @@ export const getListColumns = () => {
 };
 
 export const getExportDetails = (details: Array<IExportDetails>): Array<IExportDetailsList> => {
-  return details.map((detail) => {
+  const listDetails = details.map((detail) => {
     const { exportDetailCategory, exportDetailMessage } = detail;
 
     return { type: getTypeName(exportDetailCategory), message: exportDetailMessage };
   });
+
+  return listDetails.sort((previous, next) => (previous.type > next.type ? -1 : next.type > previous.type ? 1 : 0));
 };
 
 export const getSummaryData = (summaryData: ISummaryData) => {
@@ -35,4 +37,12 @@ export const getSummaryData = (summaryData: ISummaryData) => {
   const exportDetails = getExportDetails(exportSchema?.details);
 
   return { exportDetails };
+};
+
+export const parseResourceGroupsData = (resourceGroupsData: { resourceGroups: Array<any> }): Array<IDropDownOption> => {
+  const { resourceGroups } = resourceGroupsData;
+
+  return resourceGroups.map((resourceGroup: any) => {
+    return { key: resourceGroup.name, text: resourceGroup.name, data: resourceGroup.location };
+  });
 };
