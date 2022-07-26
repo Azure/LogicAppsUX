@@ -89,6 +89,12 @@
       "value": "Vrátí prvek pole, který začíná na indexu Počet."
     }
   ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Change connection"
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -2495,12 +2501,6 @@
       "value": "Kvůli konfiguraci zabezpečení se obsah nezobrazuje."
     }
   ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "Uložit"
-    }
-  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -3117,6 +3117,20 @@
       "value": "(UTC+11:00) Sachalin"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3325,12 +3339,6 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
-    }
-  ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "Uložit vybrané připojení"
     }
   ],
   "gu9o9z": [

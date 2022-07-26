@@ -89,6 +89,12 @@
       "value": "개수 인덱스부터 시작하여 배열의 요소를 반환합니다."
     }
   ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Change connection"
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -2318,12 +2324,6 @@
       "value": "보안 구성으로 인해 콘텐츠가 표시되지 않습니다."
     }
   ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "저장"
-    }
-  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2940,6 +2940,20 @@
       "value": "(UTC+11:00) 사할린"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3148,12 +3162,6 @@
     {
       "type": 0,
       "value": "(UTC-06:00) 서스캐처원"
-    }
-  ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "선택한 연결 저장"
     }
   ],
   "gu9o9z": [

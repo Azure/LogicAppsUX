@@ -89,6 +89,12 @@
       "value": "返回数组中从索引计数开始计起的元素"
     }
   ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Change connection"
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -2322,12 +2328,6 @@
       "value": "由于安全配置而未显示内容。"
     }
   ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "保存"
-    }
-  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2948,6 +2948,20 @@
       "value": "(UTC+11:00)库页岛"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3156,12 +3170,6 @@
     {
       "type": 0,
       "value": "(UTC-06:00)萨斯喀彻温"
-    }
-  ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "保存所选连接"
     }
   ],
   "gu9o9z": [

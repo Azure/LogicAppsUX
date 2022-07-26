@@ -89,6 +89,12 @@
       "value": "從索引計數開始，傳回陣列中的元素"
     }
   ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Change connection"
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -2318,12 +2324,6 @@
       "value": "因為安全性設定的緣故，所以未顯示內容。"
     }
   ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "儲存"
-    }
-  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2940,6 +2940,20 @@
       "value": "(UTC+11:00) 庫頁島"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3148,12 +3162,6 @@
     {
       "type": 0,
       "value": "(UTC-06:00) 薩克其萬"
-    }
-  ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "儲存選取的連線"
     }
   ],
   "gu9o9z": [
