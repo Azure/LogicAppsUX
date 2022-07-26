@@ -23,11 +23,11 @@ export const ManagedConnections: React.FC = () => {
   const intlText = {
     DEPLOY_MANAGED_CONNECTIONS: intl.formatMessage({
       defaultMessage: 'Deploy managed connections',
-      description: 'Deploy managed connections text',
+      description: 'Deploy managed connections warning text',
     }),
     MANAGED_CONNECTIONS: intl.formatMessage({
-      defaultMessage: 'Deploying Managed Connections. This is not recommended for production environments.',
-      description: 'Managed Connections text',
+      defaultMessage: 'Deploy managed connections (recommended only for preproduction environments)',
+      description: 'Deploy managed connections warning text',
     }),
     SELECT_OPTION: intl.formatMessage({
       defaultMessage: 'Select an option',

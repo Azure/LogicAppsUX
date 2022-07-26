@@ -44,13 +44,13 @@ export const Summary: React.FC = () => {
       description: 'No more details text',
     }),
     AFTER_EXPORT: intl.formatMessage({
-      defaultMessage: 'After export',
-      description: 'After export title',
+      defaultMessage: 'After export steps',
+      description: 'After export steps title',
     }),
     ADDITIONAL_STEPS: intl.formatMessage({
       defaultMessage:
-        'For the following workflows, there are additional steps required after export to re-establish connections. These steps can also be found by exploring the README file exported with the package, or by reading',
-      description: 'Additional steps text',
+        "After export, the following workflows require more steps to reestablish connections. You can find these steps in the following list or by reviewing the README file that's exported with the package.",
+      description: 'Post export required steps text',
     }),
   };
 
