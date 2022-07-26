@@ -1,5 +1,4 @@
 import { InputToken } from '../../../token/inputToken';
-import DeleteButton from '../plugins/DeleteButton';
 import type { LexicalNode, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
 
@@ -79,8 +78,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
         icon={this.__icon}
         title={this.__title}
         brandColor={this.__brandColor}
-        // handleTokenDeleteClicked={() => {deleteToken(this.__key)}}
-        DeleteButton={DeleteButton()}
+        nodeKey={this.__key}
       />
     );
   }
@@ -93,7 +91,3 @@ export function $createTokenNode({ icon, title, description, brandColor }: Token
 export function $isTokenNode(node: LexicalNode | null): node is TokenNode {
   return node instanceof TokenNode;
 }
-
-// function deleteToken(key: string) {
-//   console.log(key);
-// }
