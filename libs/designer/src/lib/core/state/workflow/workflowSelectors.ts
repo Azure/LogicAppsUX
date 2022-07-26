@@ -6,6 +6,8 @@ import type { WorkflowState } from './workflowSlice';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
+const selectWorkflow = (state: RootState): WorkflowState => state.workflow;
+
 export const getWorkflowData = (state: RootState): WorkflowState => state.workflow;
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowData, (data) => {
   const rootNode = data.graph;
@@ -58,44 +60,43 @@ export const getWorkflowNodeFromState = (state: RootState, actionId: string) => 
 };
 
 export const useWorkflowNode = (actionId?: string) => {
-  return useSelector((state: RootState) => {
-    if (!actionId) {
-      return undefined;
-    }
-    return getWorkflowNodeFromState(state, actionId);
-  });
+  return useSelector(
+    createSelector(
+      (state: RootState) => {
+        if (!actionId) return undefined;
+        return getWorkflowNodeFromState(state, actionId);
+      },
+      (node) => node
+    )
+  );
 };
 
-export const useEdgesBySource = (parentId?: string): WorkflowEdge[] => {
-  return useSelector((state: RootState) => {
-    if (!parentId) {
-      return [];
-    }
-    const edges: WorkflowEdge[] = [];
-    const traverseGraph = (graph: WorkflowNode): void => {
-      edges.push(...(graph?.edges ?? []));
-      graph.children?.forEach(traverseGraph);
-    };
-    if (state.workflow.graph) {
-      traverseGraph(state.workflow.graph);
-    }
-    return edges.filter((x) => x.source === parentId);
-  });
-};
+export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
+  useSelector(
+    createSelector(selectWorkflow, (state: WorkflowState) => {
+      if (!parentId || !state.graph) return [];
+      const reduceGraph = (graph: WorkflowNode, arr: WorkflowEdge[] = []): WorkflowEdge[] => {
+        const edges = (graph?.edges ?? []).filter((x) => x.source === parentId);
+        const childEdges = graph.children?.reduce((acc, child) => reduceGraph(child, acc), edges) ?? [];
+        return [...arr, ...childEdges];
+      };
+      return reduceGraph(state.graph);
+    })
+  );
 
-export const useEdgesByTarget = (childId?: string): WorkflowEdge[] => {
-  return useSelector((state: RootState) => {
-    if (!childId) {
-      return [];
-    }
-    const edges: WorkflowEdge[] = [];
-    const traverseGraph = (graph: WorkflowNode): void => {
-      edges.push(...(graph?.edges ?? []));
-      graph.children?.forEach(traverseGraph);
-    };
-    if (state.workflow.graph) {
-      traverseGraph(state.workflow.graph);
-    }
-    return edges.filter((x) => x.target === childId);
-  });
-};
+// export const useEdgesByTarget = (childId?: string): WorkflowEdge[] => {
+//   return useSelector((state: RootState) => {
+//     if (!childId) {
+//       return [];
+//     }
+//     const edges: WorkflowEdge[] = [];
+//     const traverseGraph = (graph: WorkflowNode): void => {
+//       edges.push(...(graph?.edges ?? []));
+//       graph.children?.forEach(traverseGraph);
+//     };
+//     if (state.workflow.graph) {
+//       traverseGraph(state.workflow.graph);
+//     }
+//     return edges.filter((x) => x.target === childId);
+//   });
+// };
