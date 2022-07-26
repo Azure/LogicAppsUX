@@ -1,5 +1,5 @@
 import { Stack, StackItem } from '@fluentui/react';
-import { Button } from '@fluentui/react-components';
+import { Button, Tooltip } from '@fluentui/react-components';
 import { bundleIcon } from '@fluentui/react-icons';
 import type { IconType } from 'react-icons/lib';
 
@@ -25,7 +25,9 @@ export const ButtonContainer: React.FC<ButtonContainerProps> = ({ buttons, horiz
     // TODO (refortie) - Theme buttons on hover
     return (
       <StackItem key={index}>
-        <Button style={{ border: '0px', borderRadius: '0px' }} icon={<BundledIcon filled={buttonProps.filled} />} {...buttonProps} />
+        <Tooltip content={buttonProps.tooltip} relationship="label">
+          <Button style={{ border: '0px', borderRadius: '0px' }} icon={<BundledIcon filled={buttonProps.filled} />} {...buttonProps} />
+        </Tooltip>
       </StackItem>
     );
   });
