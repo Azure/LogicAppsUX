@@ -31,12 +31,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   };
 
   return (
-    <button
-      className="msla-connector-card"
-      onClick={() => {
-        onConnectorCardClicked();
-      }}
-    >
+    <button className="msla-connector-card" onClick={onConnectorCardClicked}>
       <div>
         <div className="msla-card-title-container">
           <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={logoAltText}></Image>

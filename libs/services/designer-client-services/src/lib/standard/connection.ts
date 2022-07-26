@@ -133,13 +133,12 @@ export class StandardConnectionService implements IConnectionService {
 
   private async getAllAzureConnectors(): Promise<Connector[]> {
     // const {
-    //   apiHubServiceDetails: { location, apiVersion },
+    //   apiHubServiceDetails: { location, apiVersion, subscriptionId },
     //   httpClient,
     // } = this.options;
-    // const uri = `${this._subscriptionResourceGroupWebUrl}/locations/${location}/managedApis`;
+    // const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/locations/${location}/managedApis`;
     // const queryParameters: QueryParameters = {
     //   'api-version': apiVersion,
-    //   // 'skiptoken': 250
     // };
     // const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
     // const connectors = response.value;
