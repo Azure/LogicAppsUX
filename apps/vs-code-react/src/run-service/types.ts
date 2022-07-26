@@ -188,12 +188,19 @@ export enum QueryKeys {
   iseData = 'iseData',
   validation = 'validation',
   summary = 'summary',
+  resourceGroupsData = 'resourceGroupsData',
 }
 
 export interface ISubscription {
   id: string;
   subscriptionId: string;
   subscriptionName: string;
+}
+
+export interface ManagedConnections {
+  isManaged: boolean;
+  resourceGroup: string | undefined;
+  resourceGroupLocation: string | undefined;
 }
 
 export type ExportData = {
@@ -204,12 +211,14 @@ export type ExportData = {
   validationState: string;
   targetDirectory: ITargetDirectory;
   packageUrl: string;
+  managedConnections: ManagedConnections;
 };
 
 export enum ResourceType {
   workflows = 'workflows',
   subscriptions = 'subscriptions',
   ise = 'ise',
+  resourcegroups = 'resourcegroups',
 }
 
 export interface IIse {

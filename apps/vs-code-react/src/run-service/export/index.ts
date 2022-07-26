@@ -29,7 +29,7 @@ export class ApiService implements IApiService {
     });
   };
 
-  private getResourceOptions = (resourceType: string, properties?: any) => {
+  private getPayload = (resourceType: string, properties?: any) => {
     switch (resourceType) {
       case ResourceType.subscriptions: {
         return {
@@ -45,37 +45,18 @@ export class ApiService implements IApiService {
           subscriptions: [selectedSubscription],
         };
       }
+      case ResourceType.resourcegroups: {
+        const selectedSubscription = properties.selectedSubscription;
+        return {
+          query:
+            "(resourcecontainers|where type in~ ('microsoft.resources/subscriptions/resourcegroups'))|where type =~ 'microsoft.resources/subscriptions/resourcegroups'\r\n| project id,name,location,subscriptionId,resourceGroup\r\n|project name,id,location,subscriptionId,resourceGroup|sort by (tolower(tostring(name))) asc",
+          subscriptions: [selectedSubscription],
+        };
+      }
       default: {
         return {};
       }
     }
-  };
-
-  private getWorkflowsUri = (subscriptionId: string, iseId: string) => {
-    return `https://management.azure.com/subscriptions/${subscriptionId}/providers/Microsoft.Logic/workflows?api-version=2018-07-01-preview&$filter=properties/integrationServiceEnvironmentResourceId  eq '${iseId}'`;
-  };
-
-  private getPayload = (resourceType: string, properties?: any) => {
-    const skipToken = properties?.skipToken;
-
-    let options = {};
-    if (skipToken) {
-      options = {
-        $skipToken: skipToken,
-      };
-    } else {
-      options = {
-        $top: 100,
-        $skip: 0,
-      };
-    }
-
-    const resourceOptions = this.getResourceOptions(resourceType, properties);
-
-    return {
-      ...resourceOptions,
-      options,
-    };
   };
 
   async getWorkflows(subscriptionId: string, iseId: string): Promise<any> {
@@ -149,5 +130,20 @@ export class ApiService implements IApiService {
 
     const exportResponse: ISummaryData = await response.json();
     return exportResponse;
+  }
+
+  async getResourceGroups(selectedSubscription: string): Promise<any> {
+    const headers = this.getAccessTokenHeaders();
+    const payload = this.getPayload(ResourceType.resourcegroups, { selectedSubscription: selectedSubscription });
+    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    const resourceGroupsResponse: any = await response.json();
+    const { data: resourceGroups } = resourceGroupsResponse;
+
+    return { resourceGroups };
   }
 }
