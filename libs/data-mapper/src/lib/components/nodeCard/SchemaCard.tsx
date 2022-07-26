@@ -41,6 +41,8 @@ const useStyles = makeStyles({
     lineHeight: '44px',
     width: '44px',
     textAlign: 'center',
+    borderStartStartRadius: '5px',
+    borderEndStartRadius: '5px',
   },
   cardText: {
     fontStyle: 'normal',
