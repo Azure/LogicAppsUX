@@ -1,7 +1,6 @@
 import { InputToken } from '../../../token/inputToken';
 import type { LexicalNode, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
-import React from 'react';
 
 export interface TokenNodeProps {
   brandColor?: string;
@@ -73,7 +72,15 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 
   decorate() {
-    return <InputToken description={this.__description} icon={this.__icon} title={this.__title} brandColor={this.__brandColor} />;
+    return (
+      <InputToken
+        description={this.__description}
+        icon={this.__icon}
+        title={this.__title}
+        brandColor={this.__brandColor}
+        nodeKey={this.__key}
+      />
+    );
   }
 }
 
