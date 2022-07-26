@@ -45,7 +45,8 @@ export const addWorkflowNode = (node: WorkflowNode, graph: WorkflowNode): void =
 };
 
 const removeWorkflowEdge = (parent: string, child: string, edges: WorkflowEdge[]): WorkflowEdge[] => {
-  const parentEdge = edges.filter((edge) => edge.id !== getEdgeId(parent, child));
+  const edgeFromParentToOldChild = getEdgeId(parent, child);
+  const parentEdge = edges.filter((edge) => edge.id !== edgeFromParentToOldChild);
   return parentEdge;
 };
 

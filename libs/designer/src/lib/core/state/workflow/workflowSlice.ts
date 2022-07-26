@@ -37,26 +37,28 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
       if (!state.graph) {
-        return;
+        return; // log exception
       }
       const graph = getWorkflowNodeFromGraphState(state, action.payload.graphId);
-      // get correct graph
+      if (!graph) {
+        throw new Error('graph not set');
+      }
 
-      addNodeToWorkflow(action.payload, graph ?? state.graph, state.nodesMetadata);
+      addNodeToWorkflow(action.payload, graph, state.nodesMetadata);
 
       if (action.payload.parentId) {
         const newNodeId = action.payload.id;
         const childId = action.payload.childId;
         const parentId = action.payload.parentId;
 
-        setWorkflowEdge(parentId, newNodeId, state.graph);
+        setWorkflowEdge(parentId, newNodeId, graph);
 
         if (childId) {
-          insertMiddleWorkflowEdge(parentId, newNodeId, childId, state.graph);
+          insertMiddleWorkflowEdge(parentId, newNodeId, childId, graph);
         }
       }
 
-      // Danielle still need to add to Actions, will complete later in S10! https://msazure.visualstudio.com/DefaultCollection/One/_workitems/edit/14429900
+      // Danielle still need to add to OperationsState, will complete later in S10! https://msazure.visualstudio.com/DefaultCollection/One/_workitems/edit/14429900
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
       const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');

@@ -49,7 +49,12 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
     if (node.id === actionId) return node;
     else {
       let result;
-      for (const child of node.children ?? []) result = traverseGraph(child);
+      for (const child of node.children ?? []) {
+        const childRes = traverseGraph(child);
+        if (childRes) {
+          result = childRes;
+        }
+      }
       return result;
     }
   };
