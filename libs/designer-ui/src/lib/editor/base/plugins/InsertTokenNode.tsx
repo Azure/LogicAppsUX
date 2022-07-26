@@ -5,14 +5,14 @@ import type { LexicalCommand } from 'lexical';
 import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
 import { useEffect } from 'react';
 
-export const INSERT_TOKEN_NODE: LexicalCommand<string> = createCommand();
+export const INSERT_TOKEN_NODE: LexicalCommand<TokenNodeProps> = createCommand();
 
-export default function InsertTokenNode(): JSX.Element | null {
+export default function InsertTokenNode(): null {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
     if (!editor.hasNodes([TokenNode])) {
-      throw new Error('TwitterPlugin: TweetNode not registered on editor');
+      throw new Error('InsertTokenNodePlugin: TokenNode not registered on editor');
     }
 
     return editor.registerCommand<TokenNodeProps>(

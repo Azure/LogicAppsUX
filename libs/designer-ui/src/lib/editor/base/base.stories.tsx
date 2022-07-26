@@ -49,7 +49,7 @@ validation.args = {
   placeholder: 'Please enter a valid Array',
   BasePlugins: {
     validation: {
-      type: 'ARRAY',
+      type: 'COLLAPSED_ARRAY',
       errorMessage: 'Please enter a valid array - (storybook will always be invalid)',
       isValid: false,
     },

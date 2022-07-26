@@ -1,4 +1,5 @@
 import { TokenNode } from '../nodes/tokenNode';
+import DeleteTokenNode from './DeleteTokenNode';
 import InsertTokenNode, { INSERT_TOKEN_NODE } from './InsertTokenNode';
 import OnBlur from './OnBlur';
 import OnFocus from './OnFocus';
@@ -10,7 +11,7 @@ interface TokenPickerProps {
   buttonClassName?: string;
 }
 
-export default function TokenPicker({ buttonClassName }: TokenPickerProps) {
+export default function TokenPicker({ buttonClassName }: TokenPickerProps): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [focused, setIsFocused] = useState(false);
   const intl = useIntl();
@@ -49,6 +50,7 @@ export default function TokenPicker({ buttonClassName }: TokenPickerProps) {
       <OnFocus command={handleFocus} />
       <OnBlur command={handleBlur} />
       <InsertTokenNode />
+      <DeleteTokenNode />
       {focused ? (
         <button
           className={`msla-tokenpicker-button ${buttonClassName}`}
