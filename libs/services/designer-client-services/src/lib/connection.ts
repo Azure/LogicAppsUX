@@ -6,7 +6,6 @@ import type {
   ConnectionParameterSet as ParameterSet,
   ConnectionParameterSetValues,
   ConnectionType,
-  OperationDiscoveryResult,
 } from '@microsoft-logic-apps/utils';
 
 export interface ConnectionCreationInfo {
@@ -25,13 +24,10 @@ export interface ConnectionParametersMetadata {
 }
 
 export interface IConnectionService {
-  [x: string]: any;
   dispose(): void;
   getConnector(connectorId: string): Promise<Connector>;
   getConnection(connectionId: string): Promise<Connection>;
-  getConnections(connectorId?: string): Promise<Connection[]>;
-  getAllOperationsForGroup(connectorId: string): Promise<OperationDiscoveryResult[]>;
-  getAllConnectors(): Promise<Connector[]>;
+  getConnections(connectorId?: string): Promise<Connection[]>; // Batching can be addressed with future workitem no. 14703398
   createConnection(
     connectionId: string,
     connectorId: string,

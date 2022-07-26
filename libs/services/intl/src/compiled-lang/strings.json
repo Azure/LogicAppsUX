@@ -11,6 +11,12 @@
       "value": "Button to add dynamic content"
     }
   ],
+  "+GSexV": [
+    {
+      "type": 0,
+      "value": "Filters"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -573,12 +579,6 @@
       "value": "Add a new connection"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Choose which view to browse from"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,12 +643,6 @@
     {
       "type": 0,
       "value": "Required. The XPath expression to evaluate."
-    }
-  ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Connectors"
     }
   ],
   "5aa76N": [

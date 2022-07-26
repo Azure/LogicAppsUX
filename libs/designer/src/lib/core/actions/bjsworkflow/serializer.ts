@@ -43,12 +43,13 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   const connectionReferences = Object.keys(connectionsMapping).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = connectionsMapping[nodeId];
     const reference = referencesObject[referenceKey];
-
+    
     return {
       ...references,
-      [referenceKey]: reference,
+      [referenceKey]: reference
     };
-  }, {});
+  },
+  {});
 
   return {
     definition: {
@@ -79,8 +80,8 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
       if (!isNullOrEmpty(action)) {
         return {
           ...actions,
-          [actionsInRootGraph[index].id]: action as LogicAppsV2.ActionDefinition,
-        };
+          [actionsInRootGraph[index].id]: action as LogicAppsV2.ActionDefinition
+        }
       }
 
       return actions;
@@ -404,7 +405,7 @@ const serializeSubGraph = async (
       if (!isNullOrEmpty(action)) {
         return {
           ...actions,
-          [nestedNodes[index].id]: action,
+          [nestedNodes[index].id]: action
         };
       }
 
