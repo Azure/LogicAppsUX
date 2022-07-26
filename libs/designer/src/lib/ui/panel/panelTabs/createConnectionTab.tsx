@@ -8,7 +8,7 @@ import { ConnectionService } from '@microsoft-logic-apps/designer-client-service
 import type { ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { CreateConnection } from '@microsoft/designer-ui';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 const CreateConnectionTab = () => {
@@ -20,8 +20,10 @@ const CreateConnectionTab = () => {
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const createConnectionCallback = useCallback(
-    async (id: string, selectedParameterSet?: ConnectionParameterSet, parameterValues?: Record<string, any>) => {
+    (id: string, selectedParameterSet?: ConnectionParameterSet, parameterValues?: Record<string, any>) => {
       // Create the connection
 
       const connectionParameterSetValues: ConnectionParameterSetValues = {
@@ -44,11 +46,18 @@ const CreateConnectionTab = () => {
         connectionParameters: selectedParameterSet?.parameters ?? connector?.properties.connectionParameters,
       };
 
-      await ConnectionService().createConnection(id, connector?.id ?? '', connectionInfo, parametersMetadata);
-
-      // TODO: Select the connection
-
-      dispatch(showDefaultTabs());
+      setIsLoading(true);
+      ConnectionService()
+        .createConnection(id, connector?.id ?? '', connectionInfo, parametersMetadata)
+        .then(() => {
+          dispatch(showDefaultTabs());
+          setIsLoading(false);
+          // TODO: Select the connection
+        })
+        .catch(() => {
+          // TODO: Handle error from creation
+          setIsLoading(false);
+        });
     },
     [connector, dispatch]
   );
@@ -69,6 +78,7 @@ const CreateConnectionTab = () => {
       connectionParameters={connector.properties.connectionParameters}
       connectionParameterSets={connector.properties.connectionParameterSets}
       createConnectionCallback={createConnectionCallback}
+      isLoading={isLoading}
       cancelCallback={cancelCallback}
     />
   );
