@@ -1,7 +1,9 @@
+/* eslint-disable no-param-reassign */
+import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { azureFunctionConnectorId } from './operationmanifest';
-import type { Connection, ConnectionParameter, Connector } from '@microsoft-logic-apps/utils';
+import type { Connection, ConnectionParameter, Connector, OperationDiscoveryResult } from '@microsoft-logic-apps/utils';
 import {
   AssertionErrorCode,
   AssertionException,
@@ -10,6 +12,7 @@ import {
   safeSetObjectPropertyValue,
   ArgumentException,
   equals,
+  connectorsSearchResultsMock,
 } from '@microsoft-logic-apps/utils';
 
 interface ServiceProviderConnectionModel {
@@ -85,6 +88,7 @@ const functionsLocation = 'functionConnections';
 
 export class StandardConnectionService implements IConnectionService {
   private _connections: Record<string, Connection> = {};
+  private _subscriptionResourceGroupWebUrl = '';
 
   constructor(public readonly options: StandardConnectionServiceArgs) {
     const { apiHubServiceDetails, apiVersion, baseUrl, readConnections } = options;
@@ -97,10 +101,85 @@ export class StandardConnectionService implements IConnectionService {
     } else if (!apiHubServiceDetails) {
       throw new ArgumentException('apiHubServiceDetails required for workflow app');
     }
+    this._subscriptionResourceGroupWebUrl = `/subscriptions/${options.apiHubServiceDetails.subscriptionId}/resourceGroups/${options.apiHubServiceDetails.resourceGroup}/providers/Microsoft.Web`;
   }
 
   dispose(): void {
     return;
+  }
+
+  async getAllConnectors(): Promise<Connector[]> {
+    const allBuiltInConnectorsPromise = this.getAllBuiltInConnectors();
+    const allAzureConnectorsPromise = this.getAllAzureConnectors();
+    return Promise.all([allBuiltInConnectorsPromise, allAzureConnectorsPromise]).then((values) => {
+      const builtInResults = values[0];
+      const azureResults = values[1];
+      // danielle possibly tag built in vs azure
+      return [...builtInResults, ...azureResults];
+    });
+  }
+
+  private async getAllBuiltInConnectors(): Promise<Connector[]> {
+    // const { apiVersion, baseUrl, httpClient } = this.options;
+    // const uri = `${baseUrl}/operationGroups`;
+    // const queryParameters: QueryParameters = {
+    //   'api-version': apiVersion,
+    // };
+    // const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
+    // console.log(response);
+    // return response.value;
+    return Promise.resolve(connectorsSearchResultsMock);
+  }
+
+  private async getAllAzureConnectors(): Promise<Connector[]> {
+    // const {
+    //   apiHubServiceDetails: { location, apiVersion, subscriptionId },
+    //   httpClient,
+    // } = this.options;
+    // const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/locations/${location}/managedApis`;
+    // const queryParameters: QueryParameters = {
+    //   'api-version': apiVersion,
+    // };
+    // const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
+    // const connectors = response.value;
+    // const formattedConnectors = this.moveGeneralInformation(connectors);
+    // console.log(formattedConnectors);
+    // return formattedConnectors;
+    const connectors = AzureConnectorMock.value as Connector[];
+    const formattedConnectors = this.moveGeneralInformation(connectors);
+    return Promise.resolve(formattedConnectors);
+  }
+
+  private moveGeneralInformation(connectors: Connector[]): Connector[] {
+    connectors.forEach((connector) => {
+      if (connector.properties.generalInformation) {
+        connector.properties.displayName = connector.properties.generalInformation.displayName ?? '';
+        connector.properties.iconUri = connector.properties.generalInformation.iconUrl ?? '';
+      }
+    });
+    return connectors;
+  }
+
+  public async getAllOperationsForGroup(connectorId: string): Promise<OperationDiscoveryResult[]> {
+    if (!isArmResourceId(connectorId)) {
+      const { apiVersion, baseUrl, httpClient } = this.options;
+      return httpClient.get<OperationDiscoveryResult[]>({
+        uri: `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}/operations?api-version=${apiVersion}`, // danielle to test
+      }); // danielle this should work as it is same as priti
+    } else {
+      const {
+        apiHubServiceDetails: { apiVersion },
+        httpClient,
+      } = this.options;
+      const response = await httpClient.get<OperationDiscoveryResult[]>({
+        uri: `${connectorId}/apiOperations`,
+        queryParameters: { 'api-version': apiVersion },
+      }); // danielle this could be wrong
+      return {
+        ...response,
+      };
+    }
+    //return Promise.resolve(MockSearchOperations);
   }
 
   async getConnector(connectorId: string): Promise<Connector> {
@@ -245,11 +324,11 @@ export class StandardConnectionService implements IConnectionService {
   private async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
     if (isArmResourceId(connectorId)) {
       const {
-        apiHubServiceDetails: { location, subscriptionId, resourceGroup, apiVersion },
+        apiHubServiceDetails: { location, apiVersion },
         httpClient,
       } = this.options;
       const response = await httpClient.get<ConnectionsResponse>({
-        uri: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`,
+        uri: `${this._subscriptionResourceGroupWebUrl}/connections`,
         queryParameters: {
           'api-version': apiVersion,
           $filter: `Location eq '${location}' and ManagedApiName eq '${connectorId.split('/').at(-1)}' and Kind eq 'V2'`,
@@ -280,11 +359,11 @@ export class StandardConnectionService implements IConnectionService {
     const {
       filterByLocation,
       httpClient,
-      apiHubServiceDetails: { apiVersion, subscriptionId, resourceGroup },
+      apiHubServiceDetails: { apiVersion },
       locale,
     } = this.options;
 
-    const uri = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections`;
+    const uri = `${this._subscriptionResourceGroupWebUrl}/connections`;
 
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,

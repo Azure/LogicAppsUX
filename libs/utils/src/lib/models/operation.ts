@@ -25,7 +25,7 @@ export interface Operation {
 type TriggerTypes = 'batch' | 'single';
 type VisibilityTypes = 'important' | 'advanced';
 
-export interface OperationSearchResult {
+export interface OperationDiscoveryResult {
   properties: {
     category: 'Azure' | 'Built-in';
     summary: string;

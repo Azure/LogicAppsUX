@@ -189,7 +189,6 @@ export interface ConnectorProperty {
   integrationServiceEnvironment?: {
     id: string;
   };
-
   isCustomApi?: boolean;
 }
 
