@@ -20,8 +20,23 @@ import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSch
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema } from '../models';
+import { useBoolean } from '@fluentui/react-hooks';
+import {
+  CubeTree20Filled,
+  CubeTree20Regular,
+  Map20Filled,
+  Map20Regular,
+  MathFormula20Filled,
+  MathFormula20Regular,
+  PageFit20Filled,
+  PageFit20Regular,
+  ZoomIn20Filled,
+  ZoomIn20Regular,
+  ZoomOut20Filled,
+  ZoomOut20Regular,
+} from '@fluentui/react-icons';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
@@ -143,17 +158,17 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const toolBoxButtonContainerProps: ButtonContainerProps = {
     buttons: [
       {
-        iconProps: { iconName: 'BranchFork2' },
-        title: toolboxLoc,
-        ariaLabel: toolboxLoc,
+        tooltip: toolboxLoc,
+        regularIcon: CubeTree20Regular,
+        filledIcon: CubeTree20Filled,
         onClick: () => {
           // TODO - open input toolbox popup
         },
       },
       {
-        iconProps: { iconName: 'Variable' },
-        title: functionLoc,
-        ariaLabel: functionLoc,
+        tooltip: functionLoc,
+        regularIcon: MathFormula20Regular,
+        filledIcon: MathFormula20Filled,
         onClick: () => {
           // TODO - open functions popup
         },
@@ -167,7 +182,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   // ReactFlow must be wrapped if we want to access the internal state of ReactFlow
   const ReactFlowWrapper = () => {
     const { fitView, zoomIn, zoomOut } = useReactFlow();
-    const [displayMiniMap, setDisplayMiniMap] = useState<boolean>(false);
+    const [displayMiniMap, { toggle: setDisplayMiniMap }] = useBoolean(false);
 
     const zoomOutLoc = intl.formatMessage({
       defaultMessage: 'Zoom out',
@@ -192,37 +207,29 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     const mapControlsButtonContainerProps: ButtonContainerProps = {
       buttons: [
         {
-          iconProps: { iconName: 'ZoomOut' },
-          title: zoomOutLoc,
-          ariaLabel: zoomOutLoc,
-          onClick: () => {
-            zoomOut();
-          },
+          tooltip: zoomOutLoc,
+          regularIcon: ZoomOut20Regular,
+          filledIcon: ZoomOut20Filled,
+          onClick: zoomOut,
         },
         {
-          iconProps: { iconName: 'ZoomIn' },
-          title: zoomInLoc,
-          ariaLabel: zoomInLoc,
-          onClick: () => {
-            zoomIn();
-          },
+          tooltip: zoomInLoc,
+          regularIcon: ZoomIn20Regular,
+          filledIcon: ZoomIn20Filled,
+          onClick: zoomIn,
         },
         {
-          iconProps: { iconName: 'FitPage' },
-          title: fitViewLoc,
-          ariaLabel: fitViewLoc,
-          onClick: () => {
-            fitView();
-          },
+          tooltip: fitViewLoc,
+          regularIcon: PageFit20Regular,
+          filledIcon: PageFit20Filled,
+          onClick: fitView,
         },
         {
-          // TODO need to swap whole icon when selected
-          iconProps: { iconName: 'Nav2DMapView' },
-          title: displayMiniMapLoc,
-          ariaLabel: displayMiniMapLoc,
-          onClick: () => {
-            setDisplayMiniMap(!displayMiniMap);
-          },
+          tooltip: displayMiniMapLoc,
+          regularIcon: Map20Regular,
+          filledIcon: Map20Filled,
+          filled: displayMiniMap,
+          onClick: setDisplayMiniMap,
         },
       ],
       horizontal: true,
