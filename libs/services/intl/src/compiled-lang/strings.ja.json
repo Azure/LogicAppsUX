@@ -89,6 +89,12 @@
       "value": "アレイ内の指定したインデックス数以降の要素を返します"
     }
   ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Change connection"
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -2318,12 +2324,6 @@
       "value": "セキュリティ構成のため、コンテンツは表示されません。"
     }
   ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "保存"
-    }
-  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2940,6 +2940,20 @@
       "value": "(UTC+11:00) サハリン"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3148,12 +3162,6 @@
     {
       "type": 0,
       "value": "(UTC-06:00) サスカチェワン"
-    }
-  ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "選択した接続を保存します"
     }
   ],
   "gu9o9z": [

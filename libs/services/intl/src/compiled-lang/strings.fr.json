@@ -89,6 +89,12 @@
       "value": "Retourne les éléments du tableau en commençant au niveau du nombre d'index"
     }
   ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Change connection"
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -2373,12 +2379,6 @@
       "value": "Contenu non affiché en raison de la configuration de la sécurité."
     }
   ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "Enregistrer"
-    }
-  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2995,6 +2995,20 @@
       "value": "(UTC+11:00) Sakhaline"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3203,12 +3217,6 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
-    }
-  ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "Enregistrer la connexion sélectionnée"
     }
   ],
   "gu9o9z": [

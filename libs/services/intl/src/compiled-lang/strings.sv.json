@@ -89,6 +89,12 @@
       "value": "Returnerar elementen i den matris som börjar vid antalindexet"
     }
   ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Change connection"
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -2377,12 +2383,6 @@
       "value": "Innehållet visas inte på grund av säkerhetskonfigurationen."
     }
   ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "Spara"
-    }
-  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2999,6 +2999,20 @@
       "value": "(UTC+11:00) Sakhalin"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3207,12 +3221,6 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
-    }
-  ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "Spara den markerade anslutningen"
     }
   ],
   "gu9o9z": [
