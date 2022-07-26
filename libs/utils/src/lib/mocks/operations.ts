@@ -1,6 +1,6 @@
-import type { OperationDiscoveryResult } from '../models/operation';
+import type { OperationSearchResult } from '../models/operation';
 
-export const MockSearchOperations: OperationDiscoveryResult[] = [
+export const MockSearchOperations: OperationSearchResult[] = [
   {
     properties: {
       summary: 'When a blob is added or modified (properties only) (V2)',
