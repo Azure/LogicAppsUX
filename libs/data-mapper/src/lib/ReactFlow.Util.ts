@@ -13,6 +13,11 @@ const rootOutputY = 0;
 const childOutputX = rootOutputX + 30;
 const childOutputYOffset = 60;
 
+export enum ReactFlowNodeType {
+  SchemaNode = 'schemaNode',
+  ExpressionNode = 'expressionNode',
+}
+
 export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, outputSchemaNode?: SchemaNodeExtended): ReactFlowNode[] => {
   const reactFlowNodes: ReactFlowNode[] = [];
 
@@ -24,7 +29,7 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
         schemaType: SchemaTypes.Input,
       },
       sourcePosition: Position.Right,
-      type: 'schemaCard',
+      type: ReactFlowNodeType.SchemaNode,
       position: {
         x: rootInputX,
         y: rootInputY,
@@ -38,7 +43,7 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
           label: childNode.name,
           schemaType: SchemaTypes.Input,
         },
-        type: 'schemaCard',
+        type: ReactFlowNodeType.SchemaNode,
         sourcePosition: Position.Right,
         position: {
           x: childInputX,
@@ -55,7 +60,7 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
         label: outputSchemaNode.name,
         schemaType: SchemaTypes.Output,
       },
-      type: 'schemaCard',
+      type: ReactFlowNodeType.SchemaNode,
       targetPosition: Position.Left,
       position: {
         x: rootOutputX,
@@ -70,7 +75,7 @@ export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, out
           label: childNode.name,
           schemaType: SchemaTypes.Output,
         },
-        type: 'schemaCard',
+        type: ReactFlowNodeType.SchemaNode,
         targetPosition: Position.Left,
         position: {
           x: childOutputX,

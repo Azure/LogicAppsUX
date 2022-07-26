@@ -1,18 +1,33 @@
-import type { IButtonProps } from '@fluentui/react';
-import { IconButton, Stack, StackItem } from '@fluentui/react';
+import { Stack, StackItem } from '@fluentui/react';
+import { Button, Tooltip } from '@fluentui/react-components';
+import { bundleIcon } from '@fluentui/react-icons';
+import type { IconType } from 'react-icons/lib';
 
 export interface ButtonContainerProps {
   xPos: string;
   yPos: string;
-  buttons: IButtonProps[];
+  buttons: ButtonContainerButtonProps[];
   horizontal: boolean;
+}
+
+export interface ButtonContainerButtonProps {
+  regularIcon: IconType;
+  filledIcon: IconType;
+  tooltip: string;
+  filled?: boolean;
+  onClick: () => void;
 }
 
 export const ButtonContainer: React.FC<ButtonContainerProps> = ({ buttons, horizontal, xPos, yPos }: ButtonContainerProps) => {
   const stackItems = buttons.map((buttonProps, index) => {
+    const BundledIcon = bundleIcon(buttonProps.filledIcon, buttonProps.regularIcon);
+
+    // TODO (refortie) - Theme buttons on hover
     return (
       <StackItem key={index}>
-        <IconButton {...buttonProps} style={{ color: '#000', background: '#fff' }} />
+        <Tooltip content={buttonProps.tooltip} relationship="label">
+          <Button style={{ border: '0px', borderRadius: '0px' }} icon={<BundledIcon filled={buttonProps.filled} />} {...buttonProps} />
+        </Tooltip>
       </StackItem>
     );
   });

@@ -33,7 +33,7 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ inputSchema, outputSch
     height: '600px',
   };
 
-  const nodeTypes = useMemo(() => ({ schemaCard: SchemaCard }), []);
+  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
 
   const layeredReactFlow = (
     <div className="msla-designer-canvas msla-panel-mode">
