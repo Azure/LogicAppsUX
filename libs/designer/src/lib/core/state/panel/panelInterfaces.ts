@@ -4,8 +4,13 @@ export interface PanelState {
   collapsed: boolean;
   selectedNode: string;
   isDiscovery: boolean;
-  parentId?: string;
-  childId?: string;
+  discoveryIds: IdsForDiscovery;
   registeredTabs: Record<string, PanelTab>;
   selectedTabName: string | undefined;
+}
+
+export interface IdsForDiscovery {
+  parentId?: string;
+  childId?: string;
+  graphId: string;
 }

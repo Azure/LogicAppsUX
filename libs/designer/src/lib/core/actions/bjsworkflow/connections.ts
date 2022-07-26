@@ -2,7 +2,7 @@ import Constants from '../../../common/constants';
 import { getConnectionsQuery } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import { initializeConnectionsMappings } from '../../state/connectionSlice';
-import type { Operations } from '../../state/workflow/workflowSlice';
+import type { Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
 import type { IOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';

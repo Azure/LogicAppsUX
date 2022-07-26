@@ -1,8 +1,10 @@
 import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
+import { getOperationManifest } from '../../../core/queries/operation';
 import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import { addNode } from '../../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../../core/store';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
+import type { OperationDiscoveryResult } from '@microsoft-logic-apps/utils';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import React from 'react';
 import { useQuery } from 'react-query';
@@ -21,7 +23,7 @@ type SearchViewProps = {
 export const SearchView: React.FC<SearchViewProps> = (props) => {
   const dispatch = useDispatch();
 
-  const { childId, parentId, selectedNode } = useSelector((state: RootState) => {
+  const { discoveryIds, selectedNode } = useSelector((state: RootState) => {
     return state.panel;
   });
 
@@ -33,14 +35,16 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const searchResults = searchResponse.data;
 
-  const onOperationClick = (_typeId: string) => {
+  const onOperationClick = (operation: OperationDiscoveryResult) => {
     const addPayload: AddNodePayload = {
+      operation,
       id: selectedNode,
-      parentId: parentId,
-      childId: childId,
-      graphId: 'root',
+      parentId: discoveryIds?.parentId ?? '', // danielle to check upon recompile
+      childId: discoveryIds?.childId ?? '',
+      graphId: discoveryIds?.graphId ?? '',
     };
     dispatch(addNode(addPayload));
+    getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id }); // danielle this will probably need to change
     dispatch(switchToOperationPanel(selectedNode));
     return;
   };

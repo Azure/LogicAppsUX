@@ -6,7 +6,7 @@ import React from 'react';
 
 export type SearchResultsGridProps = {
   operationSearchResults: OperationDiscoveryResult[];
-  onOperationClick: (id: string) => void;
+  onOperationClick: (operation: OperationDiscoveryResult) => void;
 };
 
 export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProps>> = (props) => {
@@ -23,7 +23,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
       return (
         <OperationCard
-          onClick={props.onOperationClick}
+          onClick={() => props.onOperationClick(operation)}
           category={properties.category}
           iconUrl={properties.api.iconUri}
           title={properties.summary}
@@ -34,7 +34,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
         ></OperationCard>
       );
     },
-    [props.onOperationClick]
+    [props]
   );
 
   return (

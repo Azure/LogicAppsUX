@@ -3,33 +3,12 @@ import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../../parsers/addNodeToWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
+import type { SpecTypes, WorkflowState } from './workflowInterfaces';
+import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
-import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
-
-type SpecTypes = 'BJS' | 'CNCF';
-
-export interface NodesMetadata {
-  [nodeId: string]: {
-    graphId: string;
-    parentNodeId?: string;
-    subgraphType?: SubgraphType;
-    actionCount?: number;
-    isRoot?: boolean;
-  };
-}
-
-export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
-
-export interface WorkflowState {
-  workflowSpec?: SpecTypes;
-  graph: WorkflowNode | null;
-  operations: Operations;
-  nodesMetadata: NodesMetadata;
-  collapsedGraphIds: Record<string, boolean>;
-}
 
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
@@ -60,8 +39,10 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return;
       }
+      const graph = getWorkflowNodeFromGraphState(state, action.payload.graphId);
+      // get correct graph
 
-      addNodeToWorkflow(action.payload, state.graph, state.nodesMetadata);
+      addNodeToWorkflow(action.payload, graph ?? state.graph, state.nodesMetadata);
 
       if (action.payload.parentId) {
         const newNodeId = action.payload.id;
@@ -74,6 +55,7 @@ export const workflowSlice = createSlice({
           insertMiddleWorkflowEdge(parentId, newNodeId, childId, state.graph);
         }
       }
+
       // Danielle still need to add to Actions, will complete later in S10! https://msazure.visualstudio.com/DefaultCollection/One/_workitems/edit/14429900
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
