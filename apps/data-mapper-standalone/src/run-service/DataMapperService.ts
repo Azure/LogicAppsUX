@@ -1,11 +1,11 @@
-import type { IApiService, SchemaInfos } from "./types";
+import type { IDataMapperService, SchemaInfos } from './dataMapper';
 
 export interface DataMapperServiceOptions {
   baseUrl?: string;
   accessToken?: string;
 }
 
-export class DataMapperService implements IApiService {
+export class DataMapperService implements IDataMapperService {
   private options: DataMapperServiceOptions;
 
   constructor(options: DataMapperServiceOptions) {
@@ -25,18 +25,17 @@ export class DataMapperService implements IApiService {
     });
   };
 
-  private getSchemasUri = (subscriptionId: string, resourceGroupName: string, logicAppResource: string) => {
-    return `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/sites/${logicAppResource}/hostruntime/admin/vfs/Artifacts/Schemas/?api-version=2018-11-01&relativepath=1`;
-  }
+  private getSchemasUri = (resourceUrl: string) => {
+    return `${this.options.baseUrl}${resourceUrl}`;
+  };
 
-  private getSchemaFileUri = (subscriptionId: string, resourceGroupName: string, logicAppResource: string, schemaName: string) => {
-    return `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/sites/${logicAppResource}/hostruntime/admin/vfs/Artifacts/Schemas/${schemaName}?api-version=2018-11-01&relativepath=1`;
-  }
+  private getSchemaFileUri = (resourceUrl: string) => {
+    return `${this.options.baseUrl}${resourceUrl}`;
+  };
 
-
-  async getSchemas(subscriptionId: string, resourceGroupName: string, logicAppResource: string): Promise<any> {
+  async getSchemas(getSchemaRscUrl: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const schemaInfosUri = this.getSchemasUri(subscriptionId, resourceGroupName, logicAppResource);
+    const schemaInfosUri = this.getSchemasUri(getSchemaRscUrl);
     const response = await fetch(schemaInfosUri, { headers, method: 'GET' });
 
     if (!response.ok) {
@@ -49,9 +48,9 @@ export class DataMapperService implements IApiService {
     return { schemaInfos };
   }
 
-  async getSchemaFile(subscriptionId: string, resourceGroupName: string, logicAppResource: string, schemaName: string): Promise<any> {
+  async getSchemaFile(getSchemaFileRscUrl: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const schemaFileUri = this.getSchemaFileUri(subscriptionId, resourceGroupName, logicAppResource, schemaName);
+    const schemaFileUri = this.getSchemaFileUri(getSchemaFileRscUrl);
     const response = await fetch(schemaFileUri, { headers, method: 'GET' });
 
     if (!response.ok) {

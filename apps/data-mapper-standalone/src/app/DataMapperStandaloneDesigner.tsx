@@ -14,6 +14,8 @@ export const DataMapperStandaloneDesigner = () => {
     // console.log();
   };
 
+  // initDATamappersercie({baseurl, token})
+
   return (
     <>
       <DevToolbox />
