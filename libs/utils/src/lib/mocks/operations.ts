@@ -2,7 +2,30 @@ import type { OperationDiscoveryResult } from '../models/operation';
 
 export const MockSearchOperations: OperationDiscoveryResult[] = [
   {
+    name: 'blobExists',
+    id: 'blobExists',
+    type: 'blobExists',
     properties: {
+      api: {
+        id: '/serviceProviders/AzureBlob',
+        type: 'ServiceProvider',
+        name: 'AzureBlob',
+        displayName: 'Azure Blob',
+        iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1443/1.0.1443.2341/azureblob/icon.png',
+        brandColor: '#804998',
+        description: 'Connect to Azure Azure Blob Storage.',
+      },
+      summary: 'Checks if Blob exists in Azure Storage',
+      description: 'Checks if Blob exists in Azure Storage',
+      visibility: 'Important',
+      operationType: 'ServiceProvider',
+      brandColor: '#804998',
+      iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1443/1.0.1443.2341/azureblob/icon.png',
+    },
+  },
+  {
+    properties: {
+      // danielle I think these are actually all azure
       summary: 'When a blob is added or modified (properties only) (V2)',
       category: 'Azure',
       description:

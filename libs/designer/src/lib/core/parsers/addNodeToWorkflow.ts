@@ -19,6 +19,21 @@ export const createNodeWithDefaultSize = (id: string): WorkflowNode => {
 };
 
 export const addNodeToWorkflow = (payload: AddNodePayload, workflowGraph: WorkflowNode, nodesMetadata: NodesMetadata) => {
+  addNodeToWorkflowAnyLocation(payload, workflowGraph, nodesMetadata);
+  if (payload.parentId) {
+    const newNodeId = payload.id;
+    const childId = payload.childId;
+    const parentId = payload.parentId;
+
+    setWorkflowEdge(parentId, newNodeId, workflowGraph);
+
+    if (childId) {
+      insertMiddleWorkflowEdge(parentId, newNodeId, childId, workflowGraph);
+    }
+  }
+};
+
+export const addNodeToWorkflowAnyLocation = (payload: AddNodePayload, workflowGraph: WorkflowNode, nodesMetadata: NodesMetadata) => {
   addNodeMetadata(nodesMetadata, payload);
   const workflowNode: WorkflowNode = createNodeWithDefaultSize(payload.id);
   addWorkflowNode(workflowNode, workflowGraph);

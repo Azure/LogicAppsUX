@@ -1,6 +1,6 @@
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../../parsers/addNodeToWorkflow';
+import { addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
@@ -45,18 +45,6 @@ export const workflowSlice = createSlice({
       }
 
       addNodeToWorkflow(action.payload, graph, state.nodesMetadata);
-
-      if (action.payload.parentId) {
-        const newNodeId = action.payload.id;
-        const childId = action.payload.childId;
-        const parentId = action.payload.parentId;
-
-        setWorkflowEdge(parentId, newNodeId, graph);
-
-        if (childId) {
-          insertMiddleWorkflowEdge(parentId, newNodeId, childId, graph);
-        }
-      }
 
       // Danielle still need to add to OperationsState, will complete later in S10! https://msazure.visualstudio.com/DefaultCollection/One/_workitems/edit/14429900
     },

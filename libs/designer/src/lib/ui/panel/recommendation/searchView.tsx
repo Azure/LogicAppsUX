@@ -1,5 +1,7 @@
 import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
 import { getOperationManifest } from '../../../core/queries/operation';
+import type { AddNodeOperationPayload } from '../../../core/state/operation/operationMetadataSlice';
+import { initializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
 import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import { addNode } from '../../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../../core/store';
@@ -43,7 +45,16 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
       childId: discoveryIds?.childId ?? '',
       graphId: discoveryIds?.graphId ?? '',
     };
+    const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts'
+    const operationId = operation.id;
     dispatch(addNode(addPayload));
+    const operationPayload: AddNodeOperationPayload = {
+      id: selectedNode,
+      type: operation.properties.api.type,
+      connectorId,
+      operationId,
+    };
+    dispatch(initializeOperationInfo(operationPayload));
     getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id }); // danielle this will probably need to change
     dispatch(switchToOperationPanel(selectedNode));
     return;

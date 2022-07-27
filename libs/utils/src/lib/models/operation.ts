@@ -23,18 +23,20 @@ export interface Operation {
 }
 
 type TriggerTypes = 'batch' | 'single';
-type VisibilityTypes = 'important' | 'advanced';
+type VisibilityTypes = 'important' | 'Important' | 'advanced';
 
 export interface OperationDiscoveryResult {
+  // danielle move over types from bpmux
   properties: {
-    category: 'Azure' | 'Built-in';
+    category: 'Azure' | 'Built-in'; // danielle added this for demo purposes
     summary: string;
     description: string;
     visibility?: VisibilityTypes;
-    trigger: TriggerTypes;
+    operationType?: string;
+    trigger?: TriggerTypes;
     triggerHint?: string;
-    pageable: boolean;
-    isChunkingSupported: boolean;
+    pageable?: boolean;
+    isChunkingSupported?: boolean;
     annotation: { status: string; family: string; revision: number };
     api: {
       name: string;
@@ -42,13 +44,15 @@ export interface OperationDiscoveryResult {
       description: string;
       iconUri: string;
       brandColor: string;
-      category: 'Standard';
+      category?: 'Standard';
       id: string;
       type: string;
     };
     isWebhook: boolean;
     isNotification: boolean;
     externalDocs: { url: string };
+    brandColor?: string;
+    iconUri?: string;
   };
   id: string;
   name: string;
