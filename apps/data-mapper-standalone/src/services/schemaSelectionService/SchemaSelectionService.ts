@@ -1,8 +1,9 @@
 import type { ISchemaSelectionService, SchemaInfos } from '.';
 
 export interface SchemaSelectionServiceOptions {
-  baseUrl?: string;
+  baseUrl: string;
   accessToken?: string;
+  resourceUrl?: string;
 }
 
 export class SchemaSelectionService implements ISchemaSelectionService {
@@ -11,6 +12,14 @@ export class SchemaSelectionService implements ISchemaSelectionService {
   constructor(options: SchemaSelectionServiceOptions) {
     this.options = options;
   }
+
+  public setAccessToken = (accessToken: string) => {
+    this.options.accessToken = accessToken;
+  };
+
+  public setResourceURL = (resourceUrl: string) => {
+    this.options.resourceUrl = resourceUrl;
+  };
 
   private getAccessTokenHeaders = () => {
     const { accessToken } = this.options;
@@ -25,17 +34,17 @@ export class SchemaSelectionService implements ISchemaSelectionService {
     });
   };
 
-  private getSchemasUri = (resourceUrl: string) => {
-    return `${this.options.baseUrl}${resourceUrl}`;
+  private getSchemasUri = () => {
+    return `${this.options.baseUrl}${this.options.resourceUrl}/hostruntime/admin/vfs/Artifacts/Schemas?api-version=2018-11-01&relativepath=1`;
   };
 
-  private getSchemaFileUri = (resourceUrl: string) => {
-    return `${this.options.baseUrl}${resourceUrl}`;
+  private getSchemaFileUri = (xmlName: string) => {
+    return `${this.options.baseUrl}${this.options.resourceUrl}/hostruntime/admin/vfs/Artifacts/Schemas${xmlName}?api-version=2018-11-01&relativepath=1`;
   };
 
-  async getSchemas(getSchemaRscUrl: string): Promise<any> {
+  async getSchemas(): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const schemaInfosUri = this.getSchemasUri(getSchemaRscUrl);
+    const schemaInfosUri = this.getSchemasUri();
     const response = await fetch(schemaInfosUri, { headers, method: 'GET' });
 
     if (!response.ok) {
@@ -48,9 +57,9 @@ export class SchemaSelectionService implements ISchemaSelectionService {
     return { schemaInfos };
   }
 
-  async getSchemaFile(getSchemaFileRscUrl: string): Promise<any> {
+  async getSchemaFile(xmlName: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
-    const schemaFileUri = this.getSchemaFileUri(getSchemaFileRscUrl);
+    const schemaFileUri = this.getSchemaFileUri(xmlName);
     const response = await fetch(schemaFileUri, { headers, method: 'GET' });
 
     if (!response.ok) {
