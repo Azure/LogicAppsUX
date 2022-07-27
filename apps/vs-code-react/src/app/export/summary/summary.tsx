@@ -127,6 +127,7 @@ export const Summary: React.FC = () => {
             setKey="set"
             enableShimmer={isSummaryLoading}
             selectionMode={SelectionMode.none}
+            compact={true}
           />
           {noDetails}
         </div>

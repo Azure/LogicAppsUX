@@ -124,6 +124,7 @@ export const Validation: React.FC = () => {
               styles={{ headerCount: headerCountStyle }}
               {...props}
               onToggleSelectGroup={toggleCollapse}
+              compact={true}
             />
             {groupIcon}
           </div>

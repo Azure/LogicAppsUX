@@ -107,6 +107,7 @@ export const WorkflowsSelection: React.FC = () => {
           checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
           selectionMode={SelectionMode.multiple}
           selection={selection}
+          compact={true}
         />
       </div>
     );
