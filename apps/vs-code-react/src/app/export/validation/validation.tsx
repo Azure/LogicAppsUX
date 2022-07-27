@@ -24,9 +24,14 @@ export const Validation: React.FC = () => {
   const intl = useIntl();
 
   const intlText = {
-    VALIDATION_TITLE: intl.formatMessage({
-      defaultMessage: 'Validate exports',
-      description: 'Validate exports title',
+    REVIEW_TITLE: intl.formatMessage({
+      defaultMessage: 'Review export status',
+      description: 'Review export status title',
+    }),
+    REVIEW_DESCRIPTION: intl.formatMessage({
+      defaultMessage:
+        "This section shows the export status for elements in your selected logic apps. For example, some parameters types aren't supported, and some connections might not successfully export. For guidance to resolve these issues, review the following steps.",
+      description: 'Review export description',
     }),
   };
 
@@ -124,6 +129,7 @@ export const Validation: React.FC = () => {
               styles={{ headerCount: headerCountStyle }}
               {...props}
               onToggleSelectGroup={toggleCollapse}
+              compact={true}
             />
             {groupIcon}
           </div>
@@ -153,8 +159,11 @@ export const Validation: React.FC = () => {
 
   return (
     <div className="msla-export-validation">
-      <Text variant="xLarge" nowrap block>
-        {intlText.VALIDATION_TITLE}
+      <Text variant="xLarge" block>
+        {intlText.REVIEW_TITLE}
+      </Text>
+      <Text variant="large" block>
+        {intlText.REVIEW_DESCRIPTION}
       </Text>
       <div className="msla-export-validation-list">{validationList}</div>
     </div>

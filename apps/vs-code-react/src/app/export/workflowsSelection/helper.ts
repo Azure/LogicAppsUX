@@ -55,9 +55,9 @@ export const getResourceGroup = (workflowID: string): string => {
   return separators[resourceGroupLocation];
 };
 
-export const getListColumns = () => {
+export const getListColumns = (nameTitle: string, resourceGroupTitle: string) => {
   return [
-    { key: 'column1', name: 'Name', fieldName: 'name', minWidth: 170, maxWidth: 250, isResizable: true },
-    { key: 'column2', name: 'Resource Group', fieldName: 'resourceGroup', minWidth: 170, maxWidth: 250, isResizable: true },
+    { key: 'name', name: nameTitle, fieldName: 'name', minWidth: 170, maxWidth: 250, isResizable: true },
+    { key: 'resourceGroup', name: resourceGroupTitle, fieldName: 'resourceGroup', minWidth: 170, maxWidth: 250, isResizable: true },
   ];
 };

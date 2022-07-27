@@ -6,12 +6,12 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
 
   const intlText = {
     SEARCH_LOGIC_APP: intl.formatMessage({
-      defaultMessage: 'Search for Logic App',
+      defaultMessage: 'Search for logic app',
       description: 'Search for logic app',
     }),
     FILTER_RESOURCE_GROUPS: intl.formatMessage({
-      defaultMessage: 'Filter by Resource Groups',
-      description: 'Filter by resource groups',
+      defaultMessage: 'Filter by resource group',
+      description: 'Filter by resource group',
     }),
     SEARCH: intl.formatMessage({
       defaultMessage: 'Search...',

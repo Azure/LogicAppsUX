@@ -15,7 +15,7 @@ export const SelectedList: React.FC<any> = () => {
 
   const intlText = {
     SELECTED_APPS: intl.formatMessage({
-      defaultMessage: 'Selected Apps',
+      defaultMessage: 'Selected logic apps',
       description: 'Selected apps title',
     }),
   };
@@ -26,12 +26,12 @@ export const SelectedList: React.FC<any> = () => {
     const { name, resourceGroup } = workflow;
     return (
       <div key={workflow.key} className="msla-export-workflows-panel-selected-list-item">
-        <Text variant="large" nowrap block className="msla-export-workflows-panel-selected-list-item-text">
+        <Text variant="large" block className="msla-export-workflows-panel-selected-list-item-text">
           {name + ' '}
         </Text>
         <div className="msla-export-workflows-panel-selected-list-item-subtext">
           (
-          <Text variant="medium" nowrap block>
+          <Text variant="medium" block>
             {resourceGroup}
           </Text>
           )
@@ -42,7 +42,7 @@ export const SelectedList: React.FC<any> = () => {
 
   return (
     <div className="msla-export-workflows-panel-selected">
-      <Text variant="xLarge" nowrap block className="msla-export-workflows-panel-selected-title">
+      <Text variant="xLarge" block className="msla-export-workflows-panel-selected-title">
         {intlText.SELECTED_APPS}
       </Text>
       <div className="msla-export-workflows-panel-selected-list">{renderItems}</div>
