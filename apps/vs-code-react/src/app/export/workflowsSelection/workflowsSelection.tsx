@@ -49,6 +49,14 @@ export const WorkflowsSelection: React.FC = () => {
       defaultMessage: 'Select workflow',
       description: 'Select apps to export description',
     }),
+    NAME: intl.formatMessage({
+      defaultMessage: 'Name',
+      description: 'Name title',
+    }),
+    RESOURCE_GROUP: intl.formatMessage({
+      defaultMessage: 'Resource group',
+      description: 'Resource group title',
+    }),
   };
 
   const apiService = useMemo(() => {
@@ -99,7 +107,7 @@ export const WorkflowsSelection: React.FC = () => {
       <div className="msla-export-workflows-panel-list-workflows">
         <ShimmeredDetailsList
           items={renderWorkflows}
-          columns={getListColumns()}
+          columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
           setKey="set"
           enableShimmer={isWorkflowsLoading || !renderWorkflows.length}
           ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
