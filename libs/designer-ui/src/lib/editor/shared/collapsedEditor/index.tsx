@@ -24,16 +24,16 @@ export const CollapsedEditor = ({
 }: CollapsedEditorProps): JSX.Element => {
   return (
     <BaseEditor
-      className="msla-array-editor-container-collapsed"
+      className="msla-collapsed-editor-container"
       BasePlugins={{
         tokens: true,
       }}
-      tokenPickerClassName={'msla-collapsed-array-editor-tokenpicker'}
+      tokenPickerClassName={'msla-collapsed-editor-tokenpicker'}
       placeholder={'Enter an Array'}
       initialValue={initialValue}
     >
       <Serialize isValid={isValid} setItems={setItems} />
-      <Validation type={type} errorMessage={errorMessage} className={'msla-array-editor-validation'} isValid setIsValid={setIsValid} />
+      <Validation type={type} errorMessage={errorMessage} className={'msla-collapsed-editor-validation'} isValid setIsValid={setIsValid} />
     </BaseEditor>
   );
 };
