@@ -114,7 +114,7 @@ export const ManagedConnections: React.FC = () => {
 
   return (
     <div className="msla-export-summary-connections">
-      <Text variant="large" nowrap block>
+      <Text variant="large" block>
         {intlText.MANAGED_CONNECTIONS}
       </Text>
       <Checkbox

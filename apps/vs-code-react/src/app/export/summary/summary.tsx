@@ -106,7 +106,7 @@ export const Summary: React.FC = () => {
 
   const detailsList = useMemo(() => {
     const emptyText = (
-      <Text variant="large" nowrap block className="msla-export-summary-detail-list-empty">
+      <Text variant="large" block className="msla-export-summary-detail-list-empty">
         {intlText.NO_DETAILS}
       </Text>
     );
@@ -114,10 +114,10 @@ export const Summary: React.FC = () => {
 
     return (
       <>
-        <Text variant="xLarge" nowrap block>
+        <Text variant="xLarge" block>
           {intlText.AFTER_EXPORT}
         </Text>
-        <Text variant="large" nowrap block>
+        <Text variant="large" block>
           {intlText.ADDITIONAL_STEPS}
         </Text>
         <div className="msla-export-summary-detail-list">
@@ -127,6 +127,7 @@ export const Summary: React.FC = () => {
             setKey="set"
             enableShimmer={isSummaryLoading}
             selectionMode={SelectionMode.none}
+            compact={true}
           />
           {noDetails}
         </div>
@@ -136,10 +137,10 @@ export const Summary: React.FC = () => {
 
   return (
     <div className="msla-export-summary">
-      <Text variant="xLarge" nowrap block>
+      <Text variant="xLarge" block>
         {intlText.COMPLETE_EXPORT_TITLE}
       </Text>
-      <Text variant="large" nowrap block>
+      <Text variant="large" block>
         {intlText.SELECT_LOCATION}
       </Text>
       <div className="msla-export-summary-file-location">
