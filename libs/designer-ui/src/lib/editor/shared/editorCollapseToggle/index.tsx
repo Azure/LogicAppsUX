@@ -1,8 +1,8 @@
-import KeyValueMode from '../../card/images/key_value_mode.svg';
-import KeyValueModeInverted from '../../card/images/key_value_mode_inverted.svg';
-import TextMode from '../../card/images/text_mode.svg';
-import TextModeInverted from '../../card/images/text_mode_inverted.svg';
-import { isHighContrastBlack } from '../../utils';
+import KeyValueMode from '../../../card/images/key_value_mode.svg';
+import KeyValueModeInverted from '../../../card/images/key_value_mode_inverted.svg';
+import TextMode from '../../../card/images/text_mode.svg';
+import TextModeInverted from '../../../card/images/text_mode_inverted.svg';
+import { isHighContrastBlack } from '../../../utils';
 import type { ICalloutProps, ITooltipHostStyles } from '@fluentui/react';
 import { IconButton, TooltipHost, DirectionalHint } from '@fluentui/react';
 import { useIntl } from 'react-intl';

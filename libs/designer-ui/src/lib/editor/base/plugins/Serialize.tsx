@@ -1,7 +1,7 @@
-import type { ArrayEditorItemProps } from '..';
-import type { Segment } from '../../editor/base';
-import { $isTokenNode } from '../../editor/base/nodes/tokenNode';
-import { ValueSegmentType } from '../../editor/models/parameter';
+import type { Segment } from '..';
+import type { ArrayEditorItemProps } from '../../../arrayeditor';
+import { ValueSegmentType } from '../../models/parameter';
+import { $isTokenNode } from '../nodes/tokenNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { ElementNode } from 'lexical';

@@ -1,5 +1,5 @@
+import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps, Segment } from '../editor/base';
-import { EditorCollapseToggle } from '../editor/shared/editorCollapseToggle';
 import type { LabelProps } from '../label';
 import { CollapsedArray } from './collapsedarray';
 import { ExpandedArray } from './expandedarray';

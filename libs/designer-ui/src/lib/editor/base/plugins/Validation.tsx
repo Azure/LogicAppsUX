@@ -5,7 +5,7 @@ import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
 
 export interface ValidationProps {
-  type: 'EXPANDED_ARRAY' | 'COLLAPSED_ARRAY';
+  type: 'EXPANDED_ARRAY' | 'COLLAPSED_ARRAY' | 'DICTIONARY';
   className?: string;
   tokensEnabled?: boolean;
   errorMessage: string;
