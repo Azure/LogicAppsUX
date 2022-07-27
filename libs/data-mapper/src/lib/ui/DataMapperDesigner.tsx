@@ -5,8 +5,11 @@ import type { ButtonContainerProps } from '../components/buttonContainer/ButtonC
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
+import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
+import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
+import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import type { DataMapOperationState } from '../core/state/DataMapSlice';
 import {
@@ -54,6 +57,9 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
+  const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
+  const [displayToolbox, { toggle: toggleDisplayToolbox, setFalse: setDisplayToolboxFalse }] = useBoolean(false);
+  const [displayExpressions, { toggle: toggleDisplayExpressions, setFalse: setDisplayExpressionsFalse }] = useBoolean(false);
   const [nodes, edges] = useLayout();
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
@@ -155,22 +161,26 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     description: 'Label to open the Function card',
   });
 
-  const toolBoxButtonContainerProps: ButtonContainerProps = {
+  const toolboxButtonContainerProps: ButtonContainerProps = {
     buttons: [
       {
         tooltip: toolboxLoc,
         regularIcon: CubeTree20Regular,
         filledIcon: CubeTree20Filled,
+        filled: displayToolbox,
         onClick: () => {
-          // TODO - open input toolbox popup
+          setDisplayExpressionsFalse();
+          toggleDisplayToolbox();
         },
       },
       {
         tooltip: functionLoc,
         regularIcon: MathFormula20Regular,
         filledIcon: MathFormula20Filled,
+        filled: displayExpressions,
         onClick: () => {
-          // TODO - open functions popup
+          setDisplayToolboxFalse();
+          toggleDisplayExpressions();
         },
       },
     ],
@@ -179,10 +189,17 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     yPos: '16px',
   };
 
+  const toolboxPanelProps: FloatingPanelProps = {
+    xPos: '16px',
+    yPos: '56px',
+    width: '300px',
+    minHeight: '300px',
+    maxHeight: '450px',
+  };
+
   // ReactFlow must be wrapped if we want to access the internal state of ReactFlow
   const ReactFlowWrapper = () => {
     const { fitView, zoomIn, zoomOut } = useReactFlow();
-    const [displayMiniMap, { toggle: setDisplayMiniMap }] = useBoolean(false);
 
     const zoomOutLoc = intl.formatMessage({
       defaultMessage: 'Zoom out',
@@ -229,7 +246,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           regularIcon: Map20Regular,
           filledIcon: Map20Filled,
           filled: displayMiniMap,
-          onClick: setDisplayMiniMap,
+          onClick: toggleDisplayMiniMap,
         },
       ],
       horizontal: true,
@@ -294,7 +311,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
-            <ButtonContainer {...toolBoxButtonContainerProps} />
+            <ButtonContainer {...toolboxButtonContainerProps} />
+            {displayToolbox ? (
+              <FloatingPanel {...toolboxPanelProps}>
+                <SchemaTree schema={inputSchema} />
+              </FloatingPanel>
+            ) : null}
             <div className="msla-designer-canvas msla-panel-mode">
               <ReactFlowProvider>
                 <ReactFlowWrapper />
