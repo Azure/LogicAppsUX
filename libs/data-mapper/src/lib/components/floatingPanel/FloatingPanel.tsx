@@ -1,21 +1,30 @@
+import { tokens } from '@fluentui/react-components';
+
+const FLOATING_PANEL_Z = 10;
+
 export interface FloatingPanelProps {
   xPos: string;
   yPos: string;
   width: string;
-  height: string;
+  minHeight: string;
+  maxHeight?: string;
+  panelOrdering?: number;
 }
 
-export const FloatingPanel: React.FC<FloatingPanelProps> = ({ xPos, yPos, height, width, children }) => {
+export const FloatingPanel: React.FC<FloatingPanelProps> = ({ xPos, yPos, minHeight, maxHeight, width, panelOrdering, children }) => {
   const innerStyle: React.CSSProperties = {
     position: 'absolute',
-    zIndex: 10,
+    zIndex: panelOrdering ? FLOATING_PANEL_Z + panelOrdering : FLOATING_PANEL_Z,
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12)',
     borderRadius: '4px',
     padding: '12px',
     top: yPos,
     left: xPos,
     width,
-    height,
+    minHeight,
+    maxHeight,
+    backgroundColor: tokens.colorNeutralBackground1,
+    overflowY: 'auto',
   };
 
   return (

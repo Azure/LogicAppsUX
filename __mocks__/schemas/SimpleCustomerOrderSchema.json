@@ -1,63 +1,91 @@
 {
-  "name": "CustomerOrders.xsd",
+  "name": "InputSchema.xsd",
   "type": "XML",
-  "targetNamespace": "http://NewMapper.CustomerOrders",
-  "namespaces": {
-    "ns0": "http://NewMapper.CustomerOrders"
-  },
+  "targetNamespace": "http://InputSchema",
+  "namespaces": { "ns0": "http://InputSchema", "xs": "http://www.w3.org/2001/XMLSchema" },
   "schemaTreeRoot": {
-    "key": "/ns0:CustomerOrders",
-    "name": "CustomerOrders",
+    "key": "/ns0:InputRecord",
+    "name": "InputRecord",
     "namespacePrefix": "ns0",
-    "type": "ComplexType",
+    "namespaceUri": "http://InputSchema",
+    "schemaNodeDataType": "None",
+    "properties": "NotSpecified",
     "children": [
       {
-        "key": "/ns0:CustomerOrders/@OrderedItem",
-        "name": "OrderedItem",
-        "type": "string",
-        "attribute": true
+        "key": "/ns0:InputRecord/Identity",
+        "name": "Identity",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          { "key": "/ns0:InputRecord/Identity/UserID", "name": "UserID", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          {
+            "key": "/ns0:InputRecord/Identity/LastName",
+            "name": "LastName",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
+          },
+          {
+            "key": "/ns0:InputRecord/Identity/FirstName",
+            "name": "FirstName",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
+          },
+          { "key": "/ns0:InputRecord/Identity/Initial", "name": "Initial", "schemaNodeDataType": "String", "properties": "NotSpecified" }
+        ]
       },
       {
-        "key": "/ns0:CustomerOrders/Customer",
-        "name": "Customer",
-        "type": "ComplexType",
-        "repeating": true,
+        "key": "/ns0:InputRecord/Address",
+        "name": "Address",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
         "children": [
           {
-            "key": "/ns0:CustomerOrders/Customer/@Name",
-            "name": "Name",
-            "type": "string",
-            "attribute": true,
-            "children": null
+            "key": "/ns0:InputRecord/Address/AddressLine1",
+            "name": "AddressLine1",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
           },
           {
-            "key": "/ns0:CustomerOrders/Customer/@OrderNumber",
-            "name": "OrderNumber",
-            "type": "string",
-            "attribute": true
+            "key": "/ns0:InputRecord/Address/AddressLine2",
+            "name": "AddressLine2",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
+          },
+          { "key": "/ns0:InputRecord/Address/City", "name": "City", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          { "key": "/ns0:InputRecord/Address/State", "name": "State", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          { "key": "/ns0:InputRecord/Address/ZipCode", "name": "ZipCode", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          { "key": "/ns0:InputRecord/Address/Country", "name": "Country", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          {
+            "key": "/ns0:InputRecord/Address/CountryCode",
+            "name": "CountryCode",
+            "schemaNodeDataType": "Integer",
+            "properties": "NotSpecified"
+          }
+        ]
+      },
+      {
+        "key": "/ns0:InputRecord/ContactInfo",
+        "name": "ContactInfo",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:InputRecord/ContactInfo/HomePhone",
+            "name": "HomePhone",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
           },
           {
-            "key": "/ns0:CustomerOrders/Customer/@OrderValue",
-            "name": "OrderValue",
-            "type": "string",
-            "attribute": true
+            "key": "/ns0:InputRecord/ContactInfo/WorkPhone",
+            "name": "WorkPhone",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
           },
           {
-            "key": "/ns0:CustomerOrders/Customer/ShippingAddress",
-            "name": "ShippingAddress",
-            "type": "ComplexType",
-            "children": [
-              {
-                "key": "/ns0:CustomerOrders/Customer/ShippingAddress/Line1",
-                "name": "Line1",
-                "type": "string"
-              },
-              {
-                "key": "/ns0:CustomerOrders/Customer/ShippingAddress/Line2",
-                "name": "Line2",
-                "type": "string"
-              }
-            ]
+            "key": "/ns0:InputRecord/ContactInfo/CellPhone",
+            "name": "CellPhone",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
           }
         ]
       }
