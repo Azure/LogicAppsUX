@@ -11,12 +11,6 @@
       "value": "Knapp för att lägga till dynamiskt innehåll"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filter"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -579,6 +573,12 @@
       "value": "Lägg till en ny anslutning"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Det XPath-uttryck som ska utvärderas."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Generera schemat genom att använda en exempelnyttolast"
     }
   ],
   "DZZ3fj": [
@@ -2236,7 +2242,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Klart"
     }
   ],
   "T0BFpC": [
@@ -2685,6 +2691,12 @@
     {
       "type": 0,
       "value": "Inget"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -3145,6 +3157,12 @@
       "value": "Värde"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3232,7 +3250,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Ange eller klistra in en JSON-exempelnyttolast."
     }
   ],
   "hBLPXK": [
@@ -3529,6 +3547,12 @@
     {
       "type": 0,
       "value": "Returnerar en strängrepresentation av en indata-Base 64-sträng"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4459,6 +4483,12 @@
     {
       "type": 0,
       "value": "Söndag"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [

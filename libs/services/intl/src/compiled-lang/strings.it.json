@@ -11,12 +11,6 @@
       "value": "Pulsante per aggiungere contenuto dinamico"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtri"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -579,6 +573,12 @@
       "value": "Aggiungi una nuova connessione"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Espressione XPath da valutare."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Usare il payload di esempio per generare lo schema"
     }
   ],
   "DZZ3fj": [
@@ -2240,7 +2246,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Fine"
     }
   ],
   "T0BFpC": [
@@ -2689,6 +2695,12 @@
     {
       "type": 0,
       "value": "Nessuno"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -3149,6 +3161,12 @@
       "value": "Valore"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3236,7 +3254,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Immettere o incollare un payload JSON di esempio."
     }
   ],
   "hBLPXK": [
@@ -3525,6 +3543,12 @@
     {
       "type": 0,
       "value": "Restituisce una rappresentazione stringa di una stringa di input con codifica Base 64"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4455,6 +4479,12 @@
     {
       "type": 0,
       "value": "Domenica"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [

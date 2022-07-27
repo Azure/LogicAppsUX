@@ -11,12 +11,6 @@
       "value": "Tombol untuk menambahkan konten dinamis"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filter"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -568,6 +562,12 @@
       "value": "Tambahkan koneksi baru"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -632,6 +632,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Ekspresi Xpath untuk dievaluasi."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1116,7 +1122,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Gunakan payload contoh untuk membuat skema"
     }
   ],
   "DZZ3fj": [
@@ -2177,7 +2183,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Selesai"
     }
   ],
   "T0BFpC": [
@@ -2626,6 +2632,12 @@
     {
       "type": 0,
       "value": "Tidak ada"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -3086,6 +3098,12 @@
       "value": "Nilai"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3173,7 +3191,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Masukkan atau tempel payload JSON contoh."
     }
   ],
   "hBLPXK": [
@@ -3451,6 +3469,12 @@
     {
       "type": 0,
       "value": "Menampilkan representasi string dari string input base 64"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4370,6 +4394,12 @@
     {
       "type": 0,
       "value": "Minggu"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [
