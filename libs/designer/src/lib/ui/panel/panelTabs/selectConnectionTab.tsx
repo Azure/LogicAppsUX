@@ -1,7 +1,9 @@
 import constants from '../../../common/constants';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
+import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
+import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
-import { useConnectorByNodeId, useNodeConnectionName } from '../../../core/state/selectors/actionMetadataSelector';
+import { useNodeConnectionName } from '../../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../../core/store';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
@@ -34,8 +36,10 @@ export const SelectConnectionTab = () => {
   }, [connections, createConnectionCallback]);
 
   const saveSelectionCallback = useCallback(
-    (_connection?: Connection) => {
-      // TODO: Send the actual connection selection to backend
+    (connection?: Connection) => {
+      if (!connection) return;
+      // const referenceKey = connection.id
+      dispatch(changeConnectionMapping({ nodeId: selectedNodeId, connectionId: connection.id }));
       hideConnectionTabs();
     },
     [hideConnectionTabs]

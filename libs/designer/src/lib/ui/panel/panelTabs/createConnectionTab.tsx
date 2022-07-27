@@ -1,8 +1,10 @@
 import constants from '../../../common/constants';
 import { getConnectionMetadata } from '../../../core/actions/bjsworkflow/connections';
+import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
+import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
-import { useConnectorByNodeId, useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
+import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
@@ -23,7 +25,7 @@ const CreateConnectionTab = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const createConnectionCallback = useCallback(
-    (id: string, selectedParameterSet?: ConnectionParameterSet, parameterValues?: Record<string, any>) => {
+    async (id: string, selectedParameterSet?: ConnectionParameterSet, parameterValues?: Record<string, any>) => {
       // Create the connection
 
       const connectionParameterSetValues: ConnectionParameterSetValues = {
@@ -47,18 +49,13 @@ const CreateConnectionTab = () => {
       };
 
       setIsLoading(true);
-      ConnectionService()
-        .createConnection(id, connector?.id ?? '', connectionInfo, parametersMetadata)
-        .then(() => {
-          dispatch(showDefaultTabs());
-          setIsLoading(false);
-          // TODO: Select the connection
-        })
-        .catch(() => {
-          // TODO: Handle error from creation
-          setIsLoading(false);
-        });
+      const newConnection = await ConnectionService().createConnection(id, connector?.id ?? '', connectionInfo, parametersMetadata);
+
+      dispatch(changeConnectionMapping({ nodeId, connectionId: newConnection.id }));
+      dispatch(showDefaultTabs());
+      setIsLoading(false);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [connector, dispatch]
   );
 

@@ -1,4 +1,4 @@
-import type { ConnectionReferences } from '../../common/models/workflow';
+import type { ConnectionReferences } from '../../../common/models/workflow';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -26,10 +26,14 @@ export const connectionSlice = createSlice({
     initializeConnectionsMappings: (state, action: PayloadAction<ConnectionMapping>) => {
       state.connectionsMapping = action.payload;
     },
+    changeConnectionMapping: (state, action: PayloadAction<{ nodeId: NodeId; connectionId?: string; referenceKey?: ReferenceKey }>) => {
+      const { nodeId, referenceKey } = action.payload;
+      state.connectionsMapping[nodeId] = referenceKey;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeConnectionReferences, initializeConnectionsMappings } = connectionSlice.actions;
+export const { initializeConnectionReferences, initializeConnectionsMappings, changeConnectionMapping } = connectionSlice.actions;
 
 export default connectionSlice.reducer;

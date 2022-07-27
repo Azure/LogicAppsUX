@@ -44,7 +44,6 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   // We need to flatten the connection to allow the detail list access to nested props
   const flattenedConnections = connections.map((connection) => {
     const errors = getConnectionErrors(connection);
-
     return {
       ...connection,
       ...connection.properties,
@@ -73,6 +72,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   // Assign connection on initial load
   useEffect(() => {
     if (currentConnection) {
+      console.log('current', JSON.stringify(currentConnection));
       const newSelect = select;
       newSelect.setIndexSelected(connections.indexOf(currentConnection), true, false);
       setSelect(newSelect);
