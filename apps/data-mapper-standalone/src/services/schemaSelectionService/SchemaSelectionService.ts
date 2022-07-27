@@ -1,14 +1,14 @@
-import type { IDataMapperService, SchemaInfos } from './dataMapper';
+import type { ISchemaSelectionService, SchemaInfos } from '.';
 
-export interface DataMapperServiceOptions {
+export interface SchemaSelectionServiceOptions {
   baseUrl?: string;
   accessToken?: string;
 }
 
-export class DataMapperService implements IDataMapperService {
-  private options: DataMapperServiceOptions;
+export class SchemaSelectionService implements ISchemaSelectionService {
+  private options: SchemaSelectionServiceOptions;
 
-  constructor(options: DataMapperServiceOptions) {
+  constructor(options: SchemaSelectionServiceOptions) {
     this.options = options;
   }
 
