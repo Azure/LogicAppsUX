@@ -12,6 +12,7 @@ interface SchemaCardProps {
 interface SchemaCardWrapperProps {
   label: string;
   schemaType: SchemaTypes;
+  displayHandle: boolean;
   isLeaf?: boolean;
   onClick?: () => void;
   disabled?: boolean;
@@ -70,11 +71,17 @@ export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ data }) => {
   return (
     <div>
       {/* TODO: remove handle and make a part of card clickable and drawable instead (14957766) */}
-      <Handle type="target" position={data.schemaType === SchemaTypes.Input ? Position.Right : Position.Left} style={handleStyle} />
-
+      {data.displayHandle ? (
+        <Handle
+          type={data.schemaType === SchemaTypes.Input ? 'source' : 'target'}
+          position={data.schemaType === SchemaTypes.Input ? Position.Right : Position.Left}
+          style={handleStyle}
+        />
+      ) : null}
       <SchemaCardWrapper
         label={data.label}
         schemaType={data.schemaType}
+        displayHandle={data.displayHandle}
         isLeaf={data?.isLeaf}
         onClick={data?.onClick}
         disabled={data?.disabled}
