@@ -53,8 +53,7 @@ const CreateConnectionTab = () => {
       dispatch(showDefaultTabs());
       setIsLoading(false);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [connector, dispatch]
+    [connectionMetadata, connector, dispatch, nodeId]
   );
 
   const cancelCallback = useCallback(() => {

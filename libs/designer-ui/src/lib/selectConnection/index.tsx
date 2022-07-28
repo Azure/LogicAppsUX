@@ -81,7 +81,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
       setSelect(newSelect);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connections, currentConnectionId]);
+  }, [connections, currentConnectionId]); // Do not depend on `select` to avoid infinite loop
 
   if (isLoading) {
     return (

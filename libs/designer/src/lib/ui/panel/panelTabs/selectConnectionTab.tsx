@@ -40,7 +40,7 @@ export const SelectConnectionTab = () => {
       dispatch(changeConnectionMapping({ nodeId: selectedNodeId, connectionId: connection?.id }));
       hideConnectionTabs();
     },
-    [hideConnectionTabs]
+    [dispatch, selectedNodeId, hideConnectionTabs]
   );
 
   const cancelSelectionCallback = useCallback(() => {
