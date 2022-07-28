@@ -15,7 +15,7 @@ export interface DataMapOperationState {
   curDataMap: JsonInputStyle;
   currentInputSchemaExtended?: SchemaExtended;
   currentOutputSchemaExtended?: SchemaExtended;
-  currentInputNode?: SchemaNodeExtended;
+  currentInputNodes?: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
 }
 

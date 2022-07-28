@@ -11,12 +11,15 @@ export interface UpdateBreadcrumbAction {
 export interface SchemaState {
   inputSchema?: SchemaExtended;
   outputSchema?: SchemaExtended;
-  availableSchemas?: Schema[];
-  currentInputNode?: SchemaNodeExtended;
+  availableSchemas: Schema[];
+  currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
 }
 
-export const initialSchemaState: SchemaState = {};
+export const initialSchemaState: SchemaState = {
+  availableSchemas: [],
+  currentInputNodes: [],
+};
 
 export const schemaSlice = createSlice({
   name: 'schema',
@@ -27,12 +30,12 @@ export const schemaSlice = createSlice({
       if (incomingSchema) {
         const extendedSchema = convertSchemaToSchemaExtended(incomingSchema);
         state.inputSchema = extendedSchema;
-        state.currentInputNode = extendedSchema.schemaTreeRoot;
+        state.currentInputNodes = [];
       }
     },
     setInputSchemaExtended: (state, action: PayloadAction<SchemaExtended | undefined>) => {
       state.inputSchema = action.payload;
-      state.currentInputNode = action.payload?.schemaTreeRoot;
+      state.currentInputNodes = [];
     },
     setOutputSchema: (state, action: PayloadAction<Schema | undefined>) => {
       const incomingSchema = action.payload;
@@ -47,11 +50,27 @@ export const schemaSlice = createSlice({
       state.currentOutputNode = action.payload?.schemaTreeRoot;
     },
     setAvailableSchemas: (state, action: PayloadAction<Schema[] | undefined>) => {
-      state.availableSchemas = action.payload;
+      if (action.payload) {
+        state.availableSchemas = action.payload;
+      } else {
+        state.availableSchemas = [];
+      }
     },
-
-    setCurrentInputNode: (state, action: PayloadAction<SchemaNodeExtended | undefined>) => {
-      state.currentInputNode = action.payload;
+    setCurrentInputNodes: (state, action: PayloadAction<SchemaNodeExtended[] | undefined>) => {
+      if (action.payload) {
+        const uniqueNodes = state.currentInputNodes.concat(action.payload).filter((node, index, self) => {
+          return self.findIndex((subNode) => subNode.key === node.key) === index;
+        });
+        state.currentInputNodes = uniqueNodes;
+      } else {
+        state.currentInputNodes = [];
+      }
+    },
+    addCurrentInputNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
+      const uniqueNodes = state.currentInputNodes.concat(action.payload).filter((node, index, self) => {
+        return self.findIndex((subNode) => subNode.key === node.key) === index;
+      });
+      state.currentInputNodes = uniqueNodes;
     },
     setCurrentOutputNode: (state, action: PayloadAction<SchemaNodeExtended | undefined>) => {
       state.currentOutputNode = action.payload;
@@ -65,7 +84,8 @@ export const {
   setOutputSchema,
   setOutputSchemaExtended,
   setAvailableSchemas,
-  setCurrentInputNode,
+  setCurrentInputNodes,
+  addCurrentInputNodes,
   setCurrentOutputNode,
 } = schemaSlice.actions;
 

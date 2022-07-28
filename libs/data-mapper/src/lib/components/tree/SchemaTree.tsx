@@ -9,23 +9,33 @@ export const FastTreeItem = wrap(fastTreeItem());
 
 export interface SchemaTreeProps {
   schema: SchemaExtended;
+  onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
 }
 
-export const SchemaTree: React.FC<SchemaTreeProps> = ({ schema }: SchemaTreeProps) => {
-  return <FastTreeView>{convertToFastTreeItem(schema.schemaTreeRoot)}</FastTreeView>;
+export const SchemaTree: React.FC<SchemaTreeProps> = ({ schema, onLeafNodeClick }: SchemaTreeProps) => {
+  return <FastTreeView>{convertToFastTreeItem(schema.schemaTreeRoot, onLeafNodeClick)}</FastTreeView>;
 };
 
-const convertToFastTreeItem = (node: SchemaNodeExtended) => {
+const convertToFastTreeItem = (node: SchemaNodeExtended, onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void) => {
   return node.children.map((childNode) => {
     if (childNode.schemaNodeDataType === 'ComplexType' || childNode.schemaNodeDataType === 'None') {
       return (
-        <FastTreeItem>
+        <FastTreeItem key={childNode.key}>
           {childNode.name}
-          {convertToFastTreeItem(childNode)}
+          {convertToFastTreeItem(childNode, onLeafNodeClick)}
         </FastTreeItem>
       );
     } else {
-      return <FastTreeItem>{childNode.name}</FastTreeItem>;
+      return (
+        <FastTreeItem
+          key={childNode.key}
+          onClick={() => {
+            onLeafNodeClick(childNode);
+          }}
+        >
+          {childNode.name}
+        </FastTreeItem>
+      );
     }
   });
 };
