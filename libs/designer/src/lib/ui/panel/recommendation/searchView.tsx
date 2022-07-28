@@ -41,21 +41,21 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     const addPayload: AddNodePayload = {
       operation,
       id: selectedNode,
-      parentId: discoveryIds?.parentId ?? '', // danielle to check upon recompile
-      childId: discoveryIds?.childId ?? '',
-      graphId: discoveryIds?.graphId ?? '',
+      parentId: discoveryIds.parentId ?? '',
+      childId: discoveryIds.childId ?? '',
+      graphId: discoveryIds.graphId,
     };
-    const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts'
+    const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
     const operationId = operation.id;
     dispatch(addNode(addPayload));
     const operationPayload: AddNodeOperationPayload = {
       id: selectedNode,
-      type: operation.properties.api.type ?? 'nope', // danielle fix this lmao
+      type: operation.type,
       connectorId,
       operationId,
     };
     dispatch(initializeOperationInfo(operationPayload));
-    getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id }); // danielle this will probably need to change
+    getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
     dispatch(switchToOperationPanel(selectedNode));
     return;
   };

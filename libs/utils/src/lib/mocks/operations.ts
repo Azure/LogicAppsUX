@@ -6,7 +6,6 @@ import type {
 } from '../models/operationDiscoveryResults';
 
 export const MockSearchOperationsBuiltIn: DiscoveryOperation<BuiltInOperation>[] = [
-  // built in
   {
     name: 'blobExists',
     id: 'blobExists',
