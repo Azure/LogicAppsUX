@@ -11,12 +11,6 @@
       "value": "Bouton permettant d’ajouter du contenu dynamique"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtres"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Changer la connexion"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Ajouter une nouvelle connexion"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Expression XPath à évaluer."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Utiliser l'exemple de charge utile pour générer le schéma"
     }
   ],
   "DZZ3fj": [
@@ -2232,7 +2238,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Terminé"
     }
   ],
   "T0BFpC": [
@@ -2683,6 +2689,12 @@
       "value": "Aucun"
     }
   ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
+    }
+  ],
   "Z4QLEf": [
     {
       "type": 0,
@@ -2998,7 +3010,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Connecté à "
     },
     {
       "type": 1,
@@ -3141,6 +3153,12 @@
       "value": "Valeur"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3228,7 +3246,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Entrez ou collez un exemple de charge utile JSON."
     }
   ],
   "hBLPXK": [
@@ -3452,7 +3470,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Impossible de générer le schéma"
     }
   ],
   "jjYA4u": [
@@ -3525,6 +3543,12 @@
     {
       "type": 0,
       "value": "Retourne la représentation sous forme de chaîne d'une chaîne d'entrée en base 64"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4455,6 +4479,12 @@
     {
       "type": 0,
       "value": "Dimanche"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [

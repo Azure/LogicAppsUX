@@ -1,10 +1,8 @@
 import type { ArrayEditorItemProps } from '.';
-import { ValueSegmentType } from '../editor';
+import { ValueSegmentType, CollapsedEditor, CollapsedEditorType } from '../editor';
 import type { Segment } from '../editor/base';
-import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
-import { Serialize } from './plugins/Serialize';
 import type { Dispatch, SetStateAction } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -34,28 +32,22 @@ export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, se
     );
   };
 
+  const updateItems = (newItems: ArrayEditorItemProps[]) => {
+    setItems(newItems);
+  };
+
   return (
     <div className="msla-array-container msla-array-editor-collapsed">
       {renderLabel()}
       <div className="msla-array-content">
-        <BaseEditor
-          className="msla-array-editor-container-collapsed"
-          BasePlugins={{
-            tokens: true,
-            validation: {
-              type: 'COLLAPSED_ARRAY',
-              errorMessage: errorMessage,
-              className: 'msla-array-editor-validation',
-              isValid,
-              setIsValid,
-            },
-          }}
-          tokenPickerClassName={'msla-collapsed-array-editor-tokenpicker'}
-          placeholder={'Enter an Array'}
+        <CollapsedEditor
+          type={CollapsedEditorType.COLLAPSED_ARRAY}
+          isValid={isValid}
           initialValue={parseInitialValue(items)}
-        >
-          <Serialize isValid={isValid} setItems={setItems} />
-        </BaseEditor>
+          errorMessage={errorMessage}
+          setItems={updateItems}
+          setIsValid={setIsValid}
+        />
       </div>
     </div>
   );

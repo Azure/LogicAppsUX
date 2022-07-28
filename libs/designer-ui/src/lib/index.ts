@@ -18,7 +18,7 @@ export * from './copyinputcontrol';
 export * from './createConnection';
 // export * from './datetimeeditor';
 export * from './dialogs';
-// export * from './dictionary';
+export * from './dictionary';
 export * from './documentationlinkitem';
 // export * from './dropdown';
 export * from './editor/base';

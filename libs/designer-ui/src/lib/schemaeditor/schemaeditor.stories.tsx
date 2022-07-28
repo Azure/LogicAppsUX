@@ -1,5 +1,5 @@
-import { SchemaEditor } from './';
-import type { SchemaEditorProps } from './';
+import { SchemaEditor } from '.';
+import type { SchemaEditorProps } from '.';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {

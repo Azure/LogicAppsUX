@@ -1,12 +1,15 @@
 import { checkerboardBackgroundImage } from '../Constants';
-import { convertToReactFlowNode } from '../ReactFlow.Util';
+import { convertToReactFlowNodes } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
+import { EditorConfigPanel, SchemaTypes } from '../components/configPanel/EditorConfigPanel';
+import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
+import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
+import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import type { DataMapOperationState } from '../core/state/DataMapSlice';
 import {
@@ -16,10 +19,16 @@ import {
   saveDataMap,
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
-import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSchema } from '../core/state/SchemaSlice';
+import {
+  addCurrentInputNodes,
+  setCurrentInputNodes,
+  setCurrentOutputNode,
+  setInputSchema,
+  setOutputSchema,
+} from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
-import type { Schema } from '../models';
+import type { Schema, SchemaNodeExtended } from '../models';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -54,20 +63,18 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
+  const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
+  const [displayToolbox, { toggle: toggleDisplayToolbox, setFalse: setDisplayToolboxFalse }] = useBoolean(false);
+  const [displayExpressions, { toggle: toggleDisplayExpressions, setFalse: setDisplayExpressionsFalse }] = useBoolean(false);
   const [nodes, edges] = useLayout();
+
+  const onToolboxLeafItemClick = (selectedNode: SchemaNodeExtended) => {
+    dispatch(addCurrentInputNodes([selectedNode]));
+  };
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
     const schemaState = store.getState().schema;
-    if (node.data.schemaType === 'input') {
-      const currentSchemaNode = schemaState.currentInputNode;
-      if (currentSchemaNode) {
-        const newCurrentSchemaNode =
-          currentSchemaNode.key === node.id
-            ? currentSchemaNode
-            : currentSchemaNode.children.find((schemaNode) => schemaNode.key === node.id);
-        dispatch(setCurrentInputNode(newCurrentSchemaNode));
-      }
-    } else {
+    if (node.data.schemaType === SchemaTypes.Output) {
       const currentSchemaNode = schemaState.currentOutputNode;
       if (currentSchemaNode) {
         const trimmedNodeId = node.id.substring(7);
@@ -84,9 +91,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     dispatch(setInputSchema(inputSchema));
 
     const schemaState = store.getState().schema;
-    const currentSchemaNode = schemaState.currentInputNode;
-
-    dispatch(setCurrentInputNode(currentSchemaNode));
 
     if (outputSchema) {
       const dataMapOperationState: DataMapOperationState = {
@@ -95,7 +99,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           dstSchemaName: outputSchema.name,
           mappings: { targetNodeKey: `ns0:${outputSchema.name}` },
         },
-        currentInputNode: currentSchemaNode,
+        currentInputNodes: [],
         currentOutputNode: schemaState.currentOutputNode,
       };
       dispatch(changeInputSchemaOperation(dataMapOperationState));
@@ -116,7 +120,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           dstSchemaName: outputSchema.name,
           mappings: { targetNodeKey: `ns0:${outputSchema.name}` },
         },
-        currentInputNode: schemaState.currentInputNode,
+        currentInputNodes: [],
         currentOutputNode: currentSchemaNode,
       };
       dispatch(changeOutputSchemaOperation(dataMapOperationState));
@@ -135,13 +139,13 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const onUndoClick = () => {
     dispatch(undoDataMapOperation());
-    dispatch(setCurrentInputNode(curDataMapOperation?.currentInputNode));
+    dispatch(setCurrentInputNodes(curDataMapOperation?.currentInputNodes));
     dispatch(setCurrentOutputNode(curDataMapOperation?.currentOutputNode));
   };
 
   const onRedoClick = () => {
     dispatch(redoDataMapOperation());
-    dispatch(setCurrentInputNode(curDataMapOperation?.currentInputNode));
+    dispatch(setCurrentInputNodes(curDataMapOperation?.currentInputNodes));
     dispatch(setCurrentOutputNode(curDataMapOperation?.currentOutputNode));
   };
 
@@ -155,22 +159,26 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     description: 'Label to open the Function card',
   });
 
-  const toolBoxButtonContainerProps: ButtonContainerProps = {
+  const toolboxButtonContainerProps: ButtonContainerProps = {
     buttons: [
       {
         tooltip: toolboxLoc,
         regularIcon: CubeTree20Regular,
         filledIcon: CubeTree20Filled,
+        filled: displayToolbox,
         onClick: () => {
-          // TODO - open input toolbox popup
+          setDisplayExpressionsFalse();
+          toggleDisplayToolbox();
         },
       },
       {
         tooltip: functionLoc,
         regularIcon: MathFormula20Regular,
         filledIcon: MathFormula20Filled,
+        filled: displayExpressions,
         onClick: () => {
-          // TODO - open functions popup
+          setDisplayToolboxFalse();
+          toggleDisplayExpressions();
         },
       },
     ],
@@ -179,10 +187,17 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     yPos: '16px',
   };
 
+  const toolboxPanelProps: FloatingPanelProps = {
+    xPos: '16px',
+    yPos: '56px',
+    width: '300px',
+    minHeight: '300px',
+    maxHeight: '450px',
+  };
+
   // ReactFlow must be wrapped if we want to access the internal state of ReactFlow
   const ReactFlowWrapper = () => {
     const { fitView, zoomIn, zoomOut } = useReactFlow();
-    const [displayMiniMap, { toggle: setDisplayMiniMap }] = useBoolean(false);
 
     const zoomOutLoc = intl.formatMessage({
       defaultMessage: 'Zoom out',
@@ -229,7 +244,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           regularIcon: Map20Regular,
           filledIcon: Map20Filled,
           filled: displayMiniMap,
-          onClick: setDisplayMiniMap,
+          onClick: toggleDisplayMiniMap,
         },
       ],
       horizontal: true,
@@ -294,7 +309,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
-            <ButtonContainer {...toolBoxButtonContainerProps} />
+            <ButtonContainer {...toolboxButtonContainerProps} />
+            {displayToolbox ? (
+              <FloatingPanel {...toolboxPanelProps}>
+                <SchemaTree schema={inputSchema} onLeafNodeClick={onToolboxLeafItemClick} />
+              </FloatingPanel>
+            ) : null}
             <div className="msla-designer-canvas msla-panel-mode">
               <ReactFlowProvider>
                 <ReactFlowWrapper />
@@ -311,12 +331,16 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
 export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowEdges: ReactFlowEdge[] = [];
-  const inputSchemaNode = useSelector((state: RootState) => state.schema.currentInputNode);
+  const inputSchemaNodes = useSelector((state: RootState) => state.schema.currentInputNodes);
   const outputSchemaNode = useSelector((state: RootState) => state.schema.currentOutputNode);
 
   const reactFlowNodes = useMemo(() => {
-    return convertToReactFlowNode(inputSchemaNode, outputSchemaNode);
-  }, [inputSchemaNode, outputSchemaNode]);
+    if (outputSchemaNode) {
+      return convertToReactFlowNodes(Array.from(inputSchemaNodes), outputSchemaNode);
+    } else {
+      return [];
+    }
+  }, [inputSchemaNodes, outputSchemaNode]);
 
   return [reactFlowNodes, reactFlowEdges];
 };

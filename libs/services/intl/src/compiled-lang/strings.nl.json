@@ -11,12 +11,6 @@
       "value": "Knop om dynamische inhoud toe te voegen"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filters"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "De verbinding wijzigen"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Een nieuwe verbinding toevoegen"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Vereist. De XPath-expressie die moet worden geëvalueerd."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Voorbeeldnettolading gebruiken om een schema te genereren"
     }
   ],
   "DZZ3fj": [
@@ -2236,7 +2242,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Gereed"
     }
   ],
   "T0BFpC": [
@@ -2685,6 +2691,12 @@
     {
       "type": 0,
       "value": "Geen"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -3145,6 +3157,12 @@
       "value": "Waarde"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3232,7 +3250,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Plak of voer een voorbeeld-JSON-nettolading in."
     }
   ],
   "hBLPXK": [
@@ -3456,7 +3474,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Kan schema niet genereren"
     }
   ],
   "jjYA4u": [
@@ -3529,6 +3547,12 @@
     {
       "type": 0,
       "value": "Er wordt een tekenreeksweergave van een ingevoerde base 64-tekenreeks geretourneerd"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4459,6 +4483,12 @@
     {
       "type": 0,
       "value": "Zondag"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [

@@ -4,7 +4,7 @@ import { registerWorkflowLanguageProviders } from '../../workflow/languageservic
 import Editor, { loader } from '@monaco-editor/react';
 import type { IScrollEvent, editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
-import { useEffect, forwardRef, useRef } from 'react';
+import { useState, useEffect, forwardRef, useRef } from 'react';
 
 export interface EditorContentChangedEventArgs extends editor.IModelContentChangedEvent {
   value?: string;
@@ -92,18 +92,22 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     },
     ref
   ) => {
+    const [canRender, setCanRender] = useState(false);
     const currentRef = useRef<editor.IStandaloneCodeEditor>();
 
-    const initWorkflowLanguage = async () => {
+    const initTemplateLanguage = async () => {
       const { languages, editor } = await loader.init();
       if (!languages.getLanguages().some((lang: any) => lang.id === Constants.LANGUAGE_NAMES.WORKFLOW)) {
         registerWorkflowLanguageProviders(languages, editor);
       }
+      setCanRender(true);
     };
 
     useEffect(() => {
-      if (language === Constants.LANGUAGE_NAMES.WORKFLOW) {
-        initWorkflowLanguage();
+      if (language === EditorLanguage.templateExpressionLanguage) {
+        initTemplateLanguage();
+      } else {
+        setCanRender(true);
       }
     }, [language]);
 
@@ -242,22 +246,24 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
 
     return (
       <div className="msla-monaco-container">
-        <Editor
-          className={className}
-          options={{
-            contextmenu: contextMenu,
-            folding: folding,
-            minimap: { enabled: minimapEnabled },
-            scrollBeyondLastLine: scrollBeyondLastLine,
-            ...options,
-          }}
-          value={value}
-          defaultValue={defaultValue}
-          defaultLanguage={language ? language.toString() : undefined}
-          theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : isHighContrastBlack() ? 'vs-dark' : 'vs'}
-          onMount={handleEditorMounted}
-          height={height}
-        />
+        {canRender ? (
+          <Editor
+            className={className}
+            options={{
+              contextmenu: contextMenu,
+              folding: folding,
+              minimap: { enabled: minimapEnabled },
+              scrollBeyondLastLine: scrollBeyondLastLine,
+              ...options,
+            }}
+            value={value}
+            defaultValue={defaultValue}
+            defaultLanguage={language ? language.toString() : undefined}
+            theme={language === EditorLanguage.templateExpressionLanguage ? language : isHighContrastBlack() ? 'vs-dark' : 'vs'}
+            onMount={handleEditorMounted}
+            height={height}
+          />
+        ) : null}
       </div>
     );
   }

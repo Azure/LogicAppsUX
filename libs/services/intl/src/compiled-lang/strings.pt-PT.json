@@ -11,12 +11,6 @@
       "value": "Botão para adicionar conteúdo dinâmico"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtros"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Alterar ligação"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Adicionar uma nova ligação"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Obrigatório. A expressão XPath a avaliar."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Utilizar o payload de exemplo para gerar esquema"
     }
   ],
   "DZZ3fj": [
@@ -2232,7 +2238,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Concluído"
     }
   ],
   "T0BFpC": [
@@ -2683,6 +2689,12 @@
       "value": "Nenhuma"
     }
   ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
+    }
+  ],
   "Z4QLEf": [
     {
       "type": 0,
@@ -2998,7 +3010,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Ligada a "
     },
     {
       "type": 1,
@@ -3141,6 +3153,12 @@
       "value": "Valor"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3228,7 +3246,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Introduzir ou colar um payload JSON de exemplo."
     }
   ],
   "hBLPXK": [
@@ -3452,7 +3470,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Não é possível gerar o esquema"
     }
   ],
   "jjYA4u": [
@@ -3533,6 +3551,12 @@
     {
       "type": 0,
       "value": "Devolve uma representação de cadeia de uma cadeia based64 de entrada"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4463,6 +4487,12 @@
     {
       "type": 0,
       "value": "Domingo"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [
