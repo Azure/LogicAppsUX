@@ -1,3 +1,4 @@
+import WarningIcon from '../../../resources/Caution.svg';
 import { ApiService } from '../../../run-service/export/index';
 import { QueryKeys } from '../../../run-service/types';
 import type { WorkflowsList } from '../../../run-service/types';
@@ -7,7 +8,7 @@ import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { Filters } from './filters';
 import { filterWorkflows, getListColumns, parseResourceGroups, parseWorkflowData } from './helper';
 import { SelectedList } from './selectedList';
-import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
+import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -48,6 +49,14 @@ export const WorkflowsSelection: React.FC = () => {
     SELECT_WORKFLOW: intl.formatMessage({
       defaultMessage: 'Select workflow',
       description: 'Select apps to export description',
+    }),
+    LIMIT_INFO: intl.formatMessage({
+      defaultMessage: 'Please notice that selecting more than 15 workflows will affect the performance of the export experience.',
+      description: 'Limit selectuin warning text',
+    }),
+    NO_WORKFLOWS: intl.formatMessage({
+      defaultMessage: 'No workflows',
+      description: 'No workflows text',
     }),
   };
 
@@ -112,6 +121,25 @@ export const WorkflowsSelection: React.FC = () => {
     );
   }, [renderWorkflows, isWorkflowsLoading, selection, intlText.TOGGLE_SELECTION, intlText.TOGGLE_SELECTION_ALL, intlText.SELECT_WORKFLOW]);
 
+  const limitInfo = useMemo(() => {
+    return selection && selection.getSelectedCount() >= 15 ? (
+      <MessageBar
+        className="msla-export-workflows-panel-limit-selection"
+        messageBarType={MessageBarType.info}
+        isMultiline={false}
+        messageBarIconProps={{
+          imageProps: {
+            src: WarningIcon,
+            width: 15,
+            height: 15,
+          },
+        }}
+      >
+        {intlText.LIMIT_INFO}
+      </MessageBar>
+    ) : null;
+  }, [selection, intlText.LIMIT_INFO, WarningIcon]);
+
   const filters = useMemo(() => {
     const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
       setRenderWorkflows(filterWorkflows(allWorkflows, resourceGroups, newSearchString));
@@ -145,6 +173,7 @@ export const WorkflowsSelection: React.FC = () => {
         <Text variant="large" nowrap block>
           {intlText.SELECT_DESCRIPTION}
         </Text>
+        {limitInfo}
         {filters}
         {workflowsList}
       </div>
