@@ -1,18 +1,34 @@
 import type { ArrayEditorItemProps } from '../../../arrayeditor';
+import { SerializeArray } from '../../../arrayeditor/plugins/SerializeArray';
+import type { DictionaryEditorItemProps } from '../../../dictionary';
 import type { Segment } from '../../base';
 import { BaseEditor } from '../../base';
-import { Serialize } from '../../base/plugins/Serialize';
 import { Validation } from '../../base/plugins/Validation';
 import type { Dispatch, SetStateAction } from 'react';
 
-export interface CollapsedEditorProps {
+export enum CollapsedEditorType {
+  COLLAPSED_ARRAY = 'collapsed-array',
+  DICTIONARY = 'dictionary',
+}
+
+type CollapsedEditorBaseProps = {
   isValid?: boolean;
   initialValue?: Segment[];
-  type: 'EXPANDED_ARRAY' | 'COLLAPSED_ARRAY' | 'DICTIONARY';
   errorMessage: string;
-  setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
-}
+};
+
+export type CollapsedEditorProps = CollapsedEditorBaseProps &
+  (
+    | {
+        type: CollapsedEditorType.COLLAPSED_ARRAY;
+        setItems: (items: ArrayEditorItemProps[]) => void;
+      }
+    | {
+        type: CollapsedEditorType.DICTIONARY;
+        setItems: (items: DictionaryEditorItemProps[]) => void;
+      }
+  );
 
 export const CollapsedEditor = ({
   isValid = true,
@@ -28,11 +44,12 @@ export const CollapsedEditor = ({
       BasePlugins={{
         tokens: true,
       }}
-      tokenPickerClassName={'msla-collapsed-editor-tokenpicker'}
-      placeholder={'Enter an Array'}
+      tokenPickerClassName={`msla-${type}-editor-tokenpicker`}
+      placeholder={type === CollapsedEditorType.DICTIONARY ? 'Enter a Dictionary' : 'Enter an Array'}
       initialValue={initialValue}
     >
-      <Serialize isValid={isValid} setItems={setItems} />
+      {type === CollapsedEditorType.DICTIONARY ? null : <SerializeArray isValid={isValid} setItems={setItems} />}
+
       <Validation type={type} errorMessage={errorMessage} className={'msla-collapsed-editor-validation'} isValid setIsValid={setIsValid} />
     </BaseEditor>
   );

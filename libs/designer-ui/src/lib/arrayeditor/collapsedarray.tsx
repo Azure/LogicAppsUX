@@ -1,5 +1,5 @@
 import type { ArrayEditorItemProps } from '.';
-import { ValueSegmentType, CollapsedEditor } from '../editor';
+import { ValueSegmentType, CollapsedEditor, CollapsedEditorType } from '../editor';
 import type { Segment } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
@@ -32,16 +32,20 @@ export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, se
     );
   };
 
+  const updateItems = (newItems: ArrayEditorItemProps[]) => {
+    setItems(newItems);
+  };
+
   return (
     <div className="msla-array-container msla-array-editor-collapsed">
       {renderLabel()}
       <div className="msla-array-content">
         <CollapsedEditor
-          type={'COLLAPSED_ARRAY'}
+          type={CollapsedEditorType.COLLAPSED_ARRAY}
           isValid={isValid}
           initialValue={parseInitialValue(items)}
           errorMessage={errorMessage}
-          setItems={setItems}
+          setItems={updateItems}
           setIsValid={setIsValid}
         />
       </div>

@@ -1,3 +1,4 @@
+import { CollapsedEditorType } from '../../shared/collapsedEditor';
 import { $isTokenNode } from '../nodes/tokenNode';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, ElementNode } from 'lexical';
@@ -5,7 +6,7 @@ import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
 
 export interface ValidationProps {
-  type: 'EXPANDED_ARRAY' | 'COLLAPSED_ARRAY' | 'DICTIONARY';
+  type: CollapsedEditorType;
   className?: string;
   tokensEnabled?: boolean;
   errorMessage: string;
@@ -19,18 +20,11 @@ export const Validation = ({ className, isValid, type, tokensEnabled = true, err
       const editorString = getChildrenNodes($getRoot(), tokensEnabled);
       if (setIsValid) {
         switch (type) {
-          case 'COLLAPSED_ARRAY':
+          case CollapsedEditorType.COLLAPSED_ARRAY:
             if (!editorString.trim().length || editorString === '[]') {
               setIsValid(true);
             } else {
               setIsValid(validArray(editorString));
-            }
-            break;
-          case 'EXPANDED_ARRAY':
-            if (/"|\[|\]|,/.test(editorString)) {
-              setIsValid(false);
-            } else {
-              setIsValid(true);
             }
             break;
         }

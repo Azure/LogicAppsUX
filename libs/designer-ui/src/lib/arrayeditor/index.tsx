@@ -5,33 +5,25 @@ import { CollapsedArray } from './collapsedarray';
 import { ExpandedArray } from './expandedarray';
 import { useState } from 'react';
 
-export interface IArrayEditorStyles {
-  root?: React.CSSProperties;
-  itemContainer?: React.CSSProperties;
-  item?: React.CSSProperties;
-  commandContainer?: React.CSSProperties;
-}
-
 export interface ArrayEditorItemProps {
   key?: string;
   content: Segment[];
 }
 
 export interface ArrayEditorProps extends BaseEditorProps {
+  canDeleteLastItem?: boolean;
   disabledToggle?: boolean;
   initialItems?: ArrayEditorItemProps[];
-  canDeleteLastItem?: boolean;
-  styles?: IArrayEditorStyles;
-  readOnly?: boolean;
   labelProps: LabelProps;
+  readOnly?: boolean;
 }
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
-  readOnly = false,
-  disabledToggle = false,
   canDeleteLastItem = true,
+  disabledToggle = false,
   initialItems = [],
   labelProps,
+  readOnly = false,
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
   const [items, setItems] = useState(initialItems);
