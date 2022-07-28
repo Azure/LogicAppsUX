@@ -111,13 +111,21 @@ export const WorkflowsSelection: React.FC = () => {
   };*/
 
   const workflowsList = useMemo(() => {
+    const emptyText = (
+      <Text variant="large" block className="msla-export-workflows-panel-list-workflows-empty">
+        {intlText.NO_WORKFLOWS}
+      </Text>
+    );
+
+    const noWorkflows = renderWorkflows.length === 0 && !isWorkflowsLoading ? emptyText : null;
+
     return (
       <div className="msla-export-workflows-panel-list-workflows">
         <ShimmeredDetailsList
           items={renderWorkflows}
           columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
           setKey="set"
-          enableShimmer={isWorkflowsLoading || !renderWorkflows.length}
+          enableShimmer={isWorkflowsLoading}
           ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
           ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
           checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
@@ -125,9 +133,18 @@ export const WorkflowsSelection: React.FC = () => {
           selection={selection}
           compact={true}
         />
+        {noWorkflows}
       </div>
     );
-  }, [renderWorkflows, isWorkflowsLoading, selection, intlText.TOGGLE_SELECTION, intlText.TOGGLE_SELECTION_ALL, intlText.SELECT_WORKFLOW]);
+  }, [
+    renderWorkflows,
+    isWorkflowsLoading,
+    selection,
+    intlText.TOGGLE_SELECTION,
+    intlText.TOGGLE_SELECTION_ALL,
+    intlText.SELECT_WORKFLOW,
+    intlText.NO_WORKFLOWS,
+  ]);
 
   const limitInfo = useMemo(() => {
     return selection && selection.getSelectedCount() >= 15 ? (
