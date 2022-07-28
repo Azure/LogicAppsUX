@@ -11,12 +11,6 @@
       "value": "新增動態內容的按钮"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "篩選器"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -87,6 +81,12 @@
     {
       "type": 0,
       "value": "從索引計數開始，傳回陣列中的元素"
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "變更連線"
     }
   ],
   "/WW7If": [
@@ -562,6 +562,12 @@
       "value": "新增連線"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -626,6 +632,12 @@
     {
       "type": 0,
       "value": "必要。要評估的 XPath 運算式。"
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1110,7 +1122,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "請使用範例承載產生結構描述"
     }
   ],
   "DZZ3fj": [
@@ -2171,7 +2183,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "完成"
     }
   ],
   "T0BFpC": [
@@ -2316,12 +2328,6 @@
     {
       "type": 0,
       "value": "因為安全性設定的緣故，所以未顯示內容。"
-    }
-  ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "儲存"
     }
   ],
   "Ur+wph": [
@@ -2626,6 +2632,12 @@
     {
       "type": 0,
       "value": "無"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -2940,6 +2952,20 @@
       "value": "(UTC+11:00) 庫頁島"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "已連線至 "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "。"
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3072,6 +3098,12 @@
       "value": "值"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3150,12 +3182,6 @@
       "value": "(UTC-06:00) 薩克其萬"
     }
   ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "儲存選取的連線"
-    }
-  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3165,7 +3191,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "請輸入或貼上範例 JSON 承載。"
     }
   ],
   "hBLPXK": [
@@ -3370,7 +3396,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "無法產生結構描述"
     }
   ],
   "jjYA4u": [
@@ -3443,6 +3469,12 @@
     {
       "type": 0,
       "value": "傳回輸入 based64 字串的字串表示法"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4362,6 +4394,12 @@
     {
       "type": 0,
       "value": "星期日"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [

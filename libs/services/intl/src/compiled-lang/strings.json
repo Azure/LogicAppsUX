@@ -11,12 +11,6 @@
       "value": "Button to add dynamic content"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filters"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -579,6 +573,12 @@
       "value": "Add a new connection"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Required. The XPath expression to evaluate."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -2687,6 +2693,12 @@
       "value": "None"
     }
   ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
+    }
+  ],
   "Z4QLEf": [
     {
       "type": 0,
@@ -3145,6 +3157,12 @@
       "value": "Value"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3521,6 +3539,12 @@
     {
       "type": 0,
       "value": "Returns a string representation of an input based64 string"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4451,6 +4475,12 @@
     {
       "type": 0,
       "value": "Sunday"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [

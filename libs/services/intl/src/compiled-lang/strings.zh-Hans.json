@@ -11,12 +11,6 @@
       "value": "用于添加动态内容的按钮"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "筛选器"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -87,6 +81,12 @@
     {
       "type": 0,
       "value": "返回数组中从索引计数开始计起的元素"
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "更改连接"
     }
   ],
   "/WW7If": [
@@ -566,6 +566,12 @@
       "value": "添加新的连接"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -630,6 +636,12 @@
     {
       "type": 0,
       "value": "必需。要计算的 XPath 表达式。"
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1114,7 +1126,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "使用示例有效负载生成架构"
     }
   ],
   "DZZ3fj": [
@@ -2175,7 +2187,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "完成"
     }
   ],
   "T0BFpC": [
@@ -2320,12 +2332,6 @@
     {
       "type": 0,
       "value": "由于安全配置而未显示内容。"
-    }
-  ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "保存"
     }
   ],
   "Ur+wph": [
@@ -2634,6 +2640,12 @@
     {
       "type": 0,
       "value": "无"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -2948,6 +2960,20 @@
       "value": "(UTC+11:00)库页岛"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3080,6 +3106,12 @@
       "value": "值"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3158,12 +3190,6 @@
       "value": "(UTC-06:00)萨斯喀彻温"
     }
   ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "保存所选连接"
-    }
-  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3173,7 +3199,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "输入或粘贴示例 JSON 有效负载。"
     }
   ],
   "hBLPXK": [
@@ -3386,7 +3412,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "无法生成架构"
     }
   ],
   "jjYA4u": [
@@ -3467,6 +3493,12 @@
     {
       "type": 0,
       "value": "返回输入 based64 字符串的字符串表示形式"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4394,6 +4426,12 @@
     {
       "type": 0,
       "value": "星期日"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [

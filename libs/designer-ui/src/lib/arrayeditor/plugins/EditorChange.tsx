@@ -1,7 +1,7 @@
 import type { ArrayEditorItemProps } from '..';
 import type { Segment } from '../../editor/base';
-import { parseSegments } from '../../editor/base/parsesegments';
-import { serializeEditorState } from '../../editor/base/utils/serialize';
+import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
+import { parseSegments } from '../../editor/base/utils/parsesegments';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';

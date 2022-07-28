@@ -16,7 +16,6 @@ ReactDOM.render(
         <DataMapperStandaloneDesigner />
       </Provider>
     </FluentProvider>
-    ,
   </StrictMode>,
   document.getElementById('root')
 );

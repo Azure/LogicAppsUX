@@ -1,7 +1,6 @@
 import type { InputTokenProps } from '../../token/inputToken';
 import type { ValueSegmentType } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
-import { parseSegments } from './parsesegments';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
@@ -9,6 +8,7 @@ import TokenPicker from './plugins/TokenPicker';
 import { TreeView } from './plugins/TreeView';
 import { Validation } from './plugins/Validation';
 import type { ValidationProps } from './plugins/Validation';
+import { parseSegments } from './utils/parsesegments';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -17,6 +17,7 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { useIntl } from 'react-intl';
 
+export { testTokenSegment } from '../shared/testtokensegment';
 export type Segment = {
   segmentId?: string;
 } & (

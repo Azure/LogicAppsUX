@@ -6,8 +6,8 @@ import { getOperationInfo, getOperationManifest } from '../../queries/operation'
 import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
-import type { AddTokensPayload, NodeTokens } from '../../state/tokensSlice';
-import { initializeTokens } from '../../state/tokensSlice';
+import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
+import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getRecurrenceParameters } from '../../utils/parameters/builtins';
@@ -20,6 +20,7 @@ import {
 } from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
+import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { getOperationSettings } from './settings';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
@@ -73,8 +74,12 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
     )
   );
 
-  dispatch(initializeTokens(initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata)));
-  return Promise.resolve();
+  dispatch(
+    initializeTokensAndVariables({
+      outputTokens: initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata),
+      variables: initializeVariables(operations, allNodeData),
+    })
+  );
 };
 
 const initializeOperationDetailsForManifest = async (
@@ -313,14 +318,14 @@ const initializeOutputTokensForOperations = (
   operations: Operations,
   graph: WorkflowNode,
   nodesMetadata: NodesMetadata
-): AddTokensPayload => {
+): Record<string, NodeTokens> => {
   const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
   const nodesWithManifest = allNodesData.reduce(
     (actionNodes: Record<string, NodeDataWithManifest>, nodeData: NodeDataWithManifest) => ({ ...actionNodes, [nodeData.id]: nodeData }),
     {}
   );
 
-  const result: AddTokensPayload = {};
+  const result: Record<string, NodeTokens> = {};
 
   for (const operationId of Object.keys(operations)) {
     const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithManifest, nodeMap);
@@ -343,6 +348,28 @@ const initializeOutputTokensForOperations = (
   }
 
   return result;
+};
+
+const initializeVariables = (operations: Operations, allNodesData: NodeDataWithManifest[]): Record<string, VariableDeclaration[]> => {
+  const declarations: Record<string, VariableDeclaration[]> = {};
+  let detailsInitialized = false;
+
+  for (const nodeData of allNodesData) {
+    const { id, nodeInputs, manifest } = nodeData;
+    if (equals(operations[id].type, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+      if (!detailsInitialized && manifest) {
+        setVariableMetadata(manifest.properties.iconUri, manifest.properties.brandColor);
+        detailsInitialized = true;
+      }
+
+      const variables = getVariableDeclarations(nodeInputs);
+      if (variables.length) {
+        declarations[id] = variables;
+      }
+    }
+  }
+
+  return declarations;
 };
 
 const _getParametersSortedByVisibility = (parameters: ParameterInfo[]): ParameterInfo[] => {

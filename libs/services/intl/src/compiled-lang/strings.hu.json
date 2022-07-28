@@ -11,12 +11,6 @@
       "value": "Dinamikus tartalom hozzáadására szolgáló gomb"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Szűrők"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -87,6 +81,12 @@
     {
       "type": 0,
       "value": "A tömb elemeit adja vissza, az indexszámmal kezdve."
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Kapcsolat módosítása"
     }
   ],
   "/WW7If": [
@@ -573,6 +573,12 @@
       "value": "Új kapcsolat hozzáadása"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -637,6 +643,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A kiértékelendő XPath-kifejezés."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1132,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Hasznosadat-minta használata a séma generálásához"
     }
   ],
   "DZZ3fj": [
@@ -2230,7 +2242,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Kész"
     }
   ],
   "T0BFpC": [
@@ -2375,12 +2387,6 @@
     {
       "type": 0,
       "value": "A tartalom a biztonsági konfiguráció miatt nem jelenik meg."
-    }
-  ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "Mentés"
     }
   ],
   "Ur+wph": [
@@ -2685,6 +2691,12 @@
     {
       "type": 0,
       "value": "Nincs"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -2999,6 +3011,20 @@
       "value": "(UTC+11:00) Szahalin"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3131,6 +3157,12 @@
       "value": "Érték"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3209,12 +3241,6 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "A kijelölt kapcsolat mentése"
-    }
-  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3224,7 +3250,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "JSON-alapú hasznosadat-minta megadása vagy beillesztése."
     }
   ],
   "hBLPXK": [
@@ -3448,7 +3474,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Nem sikerült létrehozni a sémát"
     }
   ],
   "jjYA4u": [
@@ -3525,6 +3551,12 @@
     {
       "type": 0,
       "value": "Egy Base 64 kódolású bementi sztringet sztringként ad vissza."
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4455,6 +4487,12 @@
     {
       "type": 0,
       "value": "Vasárnap"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [
