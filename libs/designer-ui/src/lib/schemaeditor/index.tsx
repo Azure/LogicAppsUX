@@ -73,6 +73,7 @@ export function SchemaEditor({ disabled = false, title, value = '{}', onChange, 
     description: 'Modal Title text',
   });
   const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
+    setErrorMessage('');
     if (onChange && e.value) {
       onChange({
         value: e.value,

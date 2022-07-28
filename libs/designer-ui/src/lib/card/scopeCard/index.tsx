@@ -1,5 +1,5 @@
-import CollapseToggle from '../../collapseToggle';
 import { StatusPill } from '../../monitoring';
+import NodeCollapseToggle from '../../nodeCollapseToggle';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
 import { css, Icon, Spinner, SpinnerSize, TooltipHost } from '@fluentui/react';
@@ -55,7 +55,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
               {cardIcon}
               <div className="msla-scope-title">{title}</div>
             </button>
-            <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
+            <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
           </div>
           <div>
             <div className="msla-badges">

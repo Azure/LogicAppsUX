@@ -2,13 +2,13 @@ import { TooltipHost, DirectionalHint, Icon, css } from '@fluentui/react';
 import { FontSizes } from '@fluentui/theme';
 import { useIntl } from 'react-intl';
 
-interface CollapseToggleProps {
+interface NodeCollapseToggleProps {
   disabled?: boolean;
   collapsed?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
 }
 
-const CollapseToggle = (props: CollapseToggleProps) => {
+const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
   const { disabled = false, collapsed = false, handleCollapse } = props;
 
   const intl = useIntl();
@@ -39,4 +39,4 @@ const CollapseToggle = (props: CollapseToggleProps) => {
   );
 };
 
-export default CollapseToggle;
+export default NodeCollapseToggle;

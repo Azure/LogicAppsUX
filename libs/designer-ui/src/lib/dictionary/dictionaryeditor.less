@@ -3,9 +3,9 @@
 @command-icon-width: 16px;
 @padding: 5px;
 
-.msla-array-editor-container {
-  border: 1px dashed @defaultBorderColor;
+.msla-dictionary-editor-container {
   display: flex;
+  margin-top: 30px;
 
   .msla-array-commands {
     margin-top: @padding;
@@ -33,21 +33,21 @@
     }
   }
 
-  .msla-array-container {
+  .msla-dictionary-container {
     flex: 1 1 100%;
 
-    &.msla-array-editor-collapsed {
-      padding: 10px 0px 40px @padding;
+    &.msla-dictionary-editor-collapsed {
+      padding: 0px 0px 40px 0px;
       display: flex;
 
       .msla-input-parameter-label {
         align-self: center;
       }
 
-      .msla-array-content {
+      .msla-dictionary-content {
         display: inline-block;
         box-sizing: border-box;
-        width: calc(100% - @command-icon-width - @parameter-label-inputbox-margin);
+        width: calc(100% - @command-icon-width);
 
         .msla-input-parameter-box {
           width: calc(100% - @parameter-label-inputbox-margin);
@@ -59,11 +59,11 @@
       }
 
       .msla-collapsed-editor-container {
-        width: 98%;
+        width: 100%;
         border-radius: 2px;
 
         .editor-input {
-          outline: 1px solid @panel-mode-panel-border-color;
+          border: 1px solid @panel-mode-panel-border-color;
           resize: none;
           font-size: 15px;
           tab-size: 1;
@@ -89,15 +89,11 @@
           pointer-events: none;
         }
       }
-
-      .msla-array-commands {
-        margin-top: 0;
-      }
     }
   }
 
   .msla-array-item-container {
-    margin: 10px 0;
+    margin: @padding 0;
     padding: 0 @padding;
 
     .msla-array-item {
