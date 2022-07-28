@@ -1,17 +1,8 @@
 import Constants from '../../constants';
 import { isHighContrastBlack } from '../../utils/theme';
-import {
-  createCompletionItemProviderForFunctions,
-  createCompletionItemProviderForValues,
-  createSignatureHelpProvider,
-  createLanguageDefinition,
-  createThemeData,
-  createLanguageConfig,
-  getTemplateFunctions,
-} from '../../workflow/languageservice/workflowlanguageservice';
-import { map } from '@microsoft-logic-apps/utils';
+import { registerWorkflowLanguageProviders } from '../../workflow/languageservice/workflowlanguageservice';
 import Editor, { loader } from '@monaco-editor/react';
-import type { editor, IScrollEvent } from 'monaco-editor';
+import type { IScrollEvent, editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect, forwardRef, useRef } from 'react';
 
@@ -105,28 +96,11 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     const currentRef = useRef<editor.IStandaloneCodeEditor>();
 
     const initTemplateLanguage = async () => {
-      const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
-      const templateFunctions = getTemplateFunctions();
-      loader.init().then(({ languages, editor }) => {
-        if (!languages.getLanguages().some((lang: any) => lang.id === languageName)) {
-          // Register a new language
-          languages.register({ id: languageName });
-          // Register a tokens provider for the language
-          languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
-
-          // Register Suggestion text for the language
-          languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
-          languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
-
-          // Register Help Provider Text Field for the language
-          languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
-
-          languages.setLanguageConfiguration(languageName, createLanguageConfig());
-          // Define a new theme that contains only rules that match this language
-          editor.defineTheme(languageName, createThemeData(isHighContrastBlack()));
-        }
-        setCanRender(true);
-      });
+      const { languages, editor } = await loader.init();
+      if (!languages.getLanguages().some((lang: any) => lang.id === Constants.LANGUAGE_NAMES.WORKFLOW)) {
+        registerWorkflowLanguageProviders(languages, editor);
+      }
+      setCanRender(true);
     };
 
     useEffect(() => {

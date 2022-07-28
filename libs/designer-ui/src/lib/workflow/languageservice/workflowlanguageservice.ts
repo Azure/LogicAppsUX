@@ -1,8 +1,10 @@
+import Constants from '../../constants';
+import { isHighContrastBlack } from '../../utils';
 import type { FunctionDefinition, SignatureInfo } from './templatefunctions';
 import { FunctionGroupDefinitions } from './templatefunctions';
 import { ExpressionScanner, ExpressionTokenType } from '@microsoft-logic-apps/parsers';
 import type { ExpressionToken } from '@microsoft-logic-apps/parsers';
-import { first, getPropertyValue } from '@microsoft-logic-apps/utils';
+import { first, getPropertyValue, map } from '@microsoft-logic-apps/utils';
 import type { languages, editor, Position } from 'monaco-editor';
 
 type CompletionList = languages.CompletionList;
@@ -15,7 +17,6 @@ type ProviderResult<T> = languages.ProviderResult<T>;
 export type SignatureHelpProvider = languages.SignatureHelpProvider;
 type SignatureInformation = languages.SignatureInformation;
 type SignatureHelpResult = languages.SignatureHelpResult;
-type LanguageConfiguration = languages.LanguageConfiguration;
 
 const enum tokenNames {
   FUNCTION = 'function-name',
@@ -68,16 +69,27 @@ interface IdentifierTokenInfo {
   argumentsCovered: number;
 }
 
-export function createLanguageConfig(): LanguageConfiguration {
-  return {
+export function registerWorkflowLanguageProviders(monacoLanguages: typeof languages, monacoEditor: typeof editor): void {
+  const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
+  const templateFunctions = getTemplateFunctions();
+
+  monacoLanguages.register({ id: languageName });
+
+  // Register a tokens provider for the language
+  monacoLanguages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
+
+  // Register Suggestion text for the language
+  monacoLanguages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
+  monacoLanguages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
+
+  // Register Help Provider Text Field for the language
+  monacoLanguages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
+
+  monacoLanguages.setLanguageConfiguration(languageName, {
     autoClosingPairs: [
       {
         open: '(',
         close: ')',
-      },
-      {
-        open: '{',
-        close: '}',
       },
       {
         open: '[',
@@ -88,7 +100,10 @@ export function createLanguageConfig(): LanguageConfiguration {
         close: `'`,
       },
     ],
-  };
+  });
+
+  // Define a new theme that contains only rules that match this language
+  monacoEditor.defineTheme(languageName, createThemeData(isHighContrastBlack()));
 }
 
 export function createThemeData(isInverted: boolean): IStandaloneThemeData {
@@ -420,7 +435,7 @@ function parseExpression(value: string, position: Position, templateFunctions: R
 
 export function getTemplateFunctions(): FunctionDefinition[] {
   const templateFunctions: FunctionDefinition[] = [];
-  for (const functionGroup of FunctionGroupDefinitions()) {
+  for (const functionGroup of FunctionGroupDefinitions) {
     templateFunctions.push(...functionGroup.functions);
   }
 
