@@ -1,7 +1,9 @@
 import constants from '../../common/constants';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
+import { updateNodeSettings } from '../../core/state/operationMetadataSlice';
 import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import { setExpandedSections } from '../../core/state/settingSlice';
 import type { RootState } from '../../core/store';
 import { DataHandling } from './sections/datahandling';
 import type { DataHandlingSectionProps } from './sections/datahandling';
@@ -16,8 +18,7 @@ import { Tracking } from './sections/tracking';
 import type { TrackingSectionProps } from './sections/tracking';
 import type { IDropdownOption } from '@fluentui/react';
 import { equals, isObject } from '@microsoft-logic-apps/utils';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export type ToggleHandler = (checked: boolean) => void;
 export type TextChangeHandler = (newVal: string) => void;
@@ -26,7 +27,11 @@ export type NumberChangeHandler = (newVal: number) => void;
 export interface SectionProps extends Settings {
   readOnly: boolean | undefined;
   nodeId: string;
+  expanded: boolean;
+  onHeaderClick?: HeaderClickHandler;
 }
+
+export type HeaderClickHandler = (sectionName: string) => void;
 
 export const SettingsPanel = (): JSX.Element => {
   const nodeId = useSelector((state: RootState) => {
@@ -58,136 +63,133 @@ export const SettingsPanel = (): JSX.Element => {
     return state.operations.settings[nodeId] ?? {};
   });
 
-  const defaultState = {
-    isSupported: false,
-  };
-
-  const [settingsFromState, updateSettings] = useState({
-    concurrency: concurrency ?? { ...defaultState, value: { enabled: false, value: undefined } },
-    splitOn: splitOn ?? { ...defaultState, value: { enabled: false, value: undefined } },
-    conditionExpressions: conditionExpressions ?? { ...defaultState, value: undefined },
-    timeout: timeout ?? { ...defaultState, value: undefined },
-    splitOnConfiguration: splitOnConfiguration ?? { correlation: { clientTrackingId: '' } },
-    disableAutomaticDecompression: disableAutomaticDecompression ?? { ...defaultState, value: undefined },
-    requestSchemaValidation: requestSchemaValidation ?? { ...defaultState, value: undefined },
-    disableAsyncPattern: disableAsyncPattern ?? { ...defaultState, value: undefined },
-    asynchronous: asynchronous ?? { ...defaultState, value: undefined },
-    paging: paging ?? { ...defaultState, value: { enabled: false, value: undefined } },
-    requestOptions: requestOptions ?? { ...defaultState, value: { timeout: undefined } },
-    suppressWorkflowHeaders: suppressWorkflowHeaders ?? { ...defaultState, value: undefined },
-    suppressWorkflowHeadersOnResponse: suppressWorkflowHeadersOnResponse ?? { ...defaultState, value: undefined },
-    chunkedTransferMode: equals(uploadChunk?.value?.transferMode, constants.SETTINGS.TRANSFER_MODE.CHUNKED),
-    secureInputs: secureInputs ?? { ...defaultState, value: false },
-    secureOutputs: secureOutputs ?? { ...defaultState, value: undefined },
-    correlation: correlation ?? { ...defaultState, value: { clientTrackingId: undefined } },
-    trackedProperties: trackedProperties ?? { ...defaultState, value: undefined },
+  const expandedSections = useSelector((state: RootState) => {
+    return state.settings.expandedSections;
   });
+
+  const dispatch = useDispatch();
+  // const [ expandedSections, setExpandedSections ] = useState([] as SectionNames[]);
 
   // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
   const allEdges: WorkflowEdge[] = useEdgesByParent();
 
-  const renderGeneral = (): JSX.Element | null => {
-    const {
-      concurrency: concurrencyFromState,
-      splitOn: splitOnFromState,
-      timeout: timeoutFromState,
-      conditionExpressions: conditionExpressionsFromState,
-      splitOnConfiguration: splitOnConfigurationFromState,
-    } = settingsFromState;
+  const GeneralSettings = (): JSX.Element | null => {
     const onConcurrencyToggle = (checked: boolean): void => {
-      updateSettings({
-        ...settingsFromState,
-        concurrency: {
-          ...concurrencyFromState,
-          value: { ...concurrencyFromState.value, enabled: checked },
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            concurrency: {
+              isSupported: true,
+              value: { value: concurrency?.value?.value ?? undefined, enabled: checked },
+            },
+          },
+        })
+      );
     };
 
     const onConcurrencyValueChange = (value: number): void => {
-      updateSettings({
-        ...settingsFromState,
-        concurrency: {
-          ...concurrencyFromState,
-          value: {
-            enabled: concurrencyFromState.value?.enabled ?? true,
-            value,
-          },
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            concurrency: {
+              isSupported: true,
+              value: { enabled: true, value },
+            },
+          },
+        })
+      );
     };
 
     const onSplitOnToggle = (checked: boolean): void => {
-      updateSettings({
-        ...settingsFromState,
-        splitOn: {
-          ...splitOnFromState,
-          value: {
-            ...splitOnFromState.value,
-            enabled: checked,
-          },
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            splitOn: {
+              isSupported: !!splitOn?.isSupported,
+              value: {
+                enabled: checked,
+                value: splitOn?.value?.value ?? undefined,
+              },
+            },
+          },
+        })
+      );
     };
 
     const onTimeoutValueChange = (newVal: string): void => {
-      updateSettings({
-        ...settingsFromState,
-        timeout: {
-          ...timeoutFromState,
-          value: newVal,
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            timeout: {
+              isSupported: !!timeout?.isSupported,
+              value: newVal,
+            },
+          },
+        })
+      );
     };
 
     const onTriggerConditionsChange = (newExpressions: string[]): void => {
-      updateSettings({
-        ...settingsFromState,
-        conditionExpressions: {
-          ...conditionExpressionsFromState,
-          value: newExpressions,
-        },
-      });
+      // TODO (14427339): Setting Validation
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            conditionExpressions: {
+              isSupported: !!conditionExpressions?.isSupported,
+              value: newExpressions,
+            },
+          },
+        })
+      );
     };
 
     const onClientTrackingIdChange = (newVal: string): void => {
-      updateSettings({
-        ...settingsFromState,
-        splitOnConfiguration: {
-          correlation: { clientTrackingId: newVal },
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            splitOnConfiguration: {
+              correlation: { clientTrackingId: newVal },
+            },
+          },
+        })
+      );
     };
 
     const onSplitOnSelectionChanged = (selectedOption: IDropdownOption): void => {
-      updateSettings({
-        ...settingsFromState,
-        splitOn: {
-          ...splitOnFromState,
-          value: {
-            enabled: splitOnFromState.value?.enabled ?? true,
-            value: selectedOption.key.toString(),
+      // TODO (14427339): Setting Validation
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            splitOn: {
+              isSupported: !!splitOn?.isSupported,
+              value: {
+                enabled: splitOn?.value?.enabled ?? true,
+                value: selectedOption.key.toString(),
+              },
+            },
           },
-        },
-      });
+        })
+      );
     };
 
     const generalSectionProps: GeneralSectionProps = {
-      splitOn: splitOnFromState,
-      timeout: timeoutFromState,
-      concurrency: concurrencyFromState,
-      conditionExpressions: conditionExpressionsFromState,
-      splitOnConfiguration: splitOnConfigurationFromState,
+      splitOn,
+      timeout,
+      concurrency,
+      conditionExpressions,
+      splitOnConfiguration,
       readOnly: false,
       nodeId,
       onConcurrencyToggle,
@@ -197,44 +199,50 @@ export const SettingsPanel = (): JSX.Element => {
       onTimeoutValueChange,
       onTriggerConditionsChange,
       onClientTrackingIdChange,
+      onHeaderClick: handleSectionClick,
+      expanded: expandedSections.includes(constants.SETTINGSECTIONS.GENERAL),
     };
     if (splitOn?.isSupported || timeout?.isSupported || concurrency?.isSupported || conditionExpressions?.isSupported) {
       return <General {...generalSectionProps} />;
     } else return null;
   };
 
-  const renderDataHandling = (): JSX.Element | null => {
-    const {
-      disableAutomaticDecompression: disableAutomaticDecompressionFromState,
-      requestSchemaValidation: requestSchemaValidationFromState,
-    } = settingsFromState;
+  const DataHandlingSettings = (): JSX.Element | null => {
     const onAutomaticDecompressionChange = (checked: boolean): void => {
-      updateSettings({
-        ...settingsFromState,
-        disableAutomaticDecompression: {
-          ...disableAutomaticDecompressionFromState,
-          value: checked,
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            disableAutomaticDecompression: {
+              isSupported: !!disableAutomaticDecompression?.isSupported,
+              value: checked,
+            },
+          },
+        })
+      );
     };
     const onSchemaValidationChange = (checked: boolean): void => {
-      updateSettings({
-        ...settingsFromState,
-        requestSchemaValidation: {
-          ...requestSchemaValidationFromState,
-          value: checked,
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            requestSchemaValidation: {
+              isSupported: !!requestSchemaValidation?.isSupported,
+              value: checked,
+            },
+          },
+        })
+      );
     };
 
     const dataHandlingProps: DataHandlingSectionProps = {
-      requestSchemaValidation: requestSchemaValidationFromState,
-      disableAutomaticDecompression: disableAutomaticDecompressionFromState,
+      requestSchemaValidation,
+      disableAutomaticDecompression,
       readOnly: false,
+      expanded: expandedSections.includes(constants.SETTINGSECTIONS.DATAHANDLING),
+      onHeaderClick: handleSectionClick,
       nodeId,
       onAutomaticDecompressionChange,
       onSchemaValidationChange,
@@ -244,107 +252,129 @@ export const SettingsPanel = (): JSX.Element => {
     } else return null;
   };
 
-  const renderNetworking = (): JSX.Element | null => {
-    const {
-      disableAsyncPattern: disableAsyncPatternFromState,
-      asynchronous: asynchronousFromState,
-      requestOptions: requestOptionsFromState,
-      suppressWorkflowHeaders: suppressWorkflowHeadersFromState,
-      paging: pagingFromState,
-      suppressWorkflowHeadersOnResponse: suppressHeadersOnResponseFromState,
-      chunkedTransferMode: chunkedTransferModeFromState,
-    } = settingsFromState;
+  const NetworkingSettings = (): JSX.Element | null => {
     const onAsyncPatternToggle = (checked: boolean): void => {
-      updateSettings({
-        ...settingsFromState,
-        disableAsyncPattern: {
-          ...disableAsyncPatternFromState,
-          value: checked,
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            disableAsyncPattern: {
+              isSupported: !!disableAsyncPattern?.isSupported,
+              value: checked,
+            },
+          },
+        })
+      );
     };
 
     const onAsyncResponseToggle = (checked: boolean): void => {
-      updateSettings({
-        ...settingsFromState,
-        asynchronous: {
-          ...asynchronousFromState,
-          value: checked,
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            asynchronous: {
+              isSupported: !!asynchronous?.isSupported,
+              value: checked,
+            },
+          },
+        })
+      );
     };
 
     const onRequestOptionsChange = (newVal: string): void => {
-      updateSettings({
-        ...settingsFromState,
-        requestOptions: {
-          ...requestOptionsFromState,
-          value: { timeout: newVal },
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            requestOptions: {
+              isSupported: !!requestOptions?.isSupported,
+              value: { timeout: newVal },
+            },
+          },
+        })
+      );
     };
 
     const onSuppressHeadersToggle = (checked: boolean): void => {
-      updateSettings({
-        ...settingsFromState,
-        suppressWorkflowHeaders: {
-          ...suppressWorkflowHeadersFromState,
-          value: checked,
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            suppressWorkflowHeaders: {
+              isSupported: !!suppressWorkflowHeaders?.isSupported,
+              value: checked,
+            },
+          },
+        })
+      );
     };
 
     const onPaginationValueChange = (newVal: string): void => {
-      updateSettings({
-        ...settingsFromState,
-        paging: {
-          ...pagingFromState,
-          value: {
-            enabled: !!pagingFromState.value?.enabled,
-            value: Number(newVal),
-          },
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            paging: {
+              isSupported: !!paging?.isSupported,
+              value: {
+                enabled: !!paging?.value?.enabled,
+                value: Number(newVal),
+              },
+            },
+          },
+        })
+      );
     };
 
     const onHeadersOnResponseToggle = (checked: boolean): void => {
-      updateSettings({
-        ...settingsFromState,
-        suppressWorkflowHeadersOnResponse: {
-          ...suppressHeadersOnResponseFromState,
-          value: checked,
-        },
-      });
+      // TODO (14427339): Setting Validation
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            suppressWorkflowHeadersOnResponse: {
+              isSupported: !!suppressWorkflowHeadersOnResponse?.isSupported,
+              value: checked,
+            },
+          },
+        })
+      );
     };
 
     const onContentTransferToggle = (checked: boolean): void => {
-      updateSettings({
-        ...settingsFromState,
-        chunkedTransferMode: checked,
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            uploadChunk: {
+              isSupported: !uploadChunk?.isSupported,
+              value: {
+                ...uploadChunk?.value,
+                transferMode: checked ? constants.SETTINGS.TRANSFER_MODE.CHUNKED : undefined,
+              },
+            },
+          },
+        })
+      );
     };
 
     const networkingProps: NetworkingSectionProps = {
-      suppressWorkflowHeaders: suppressWorkflowHeadersFromState,
-      suppressWorkflowHeadersOnResponse: suppressHeadersOnResponseFromState,
-      paging: pagingFromState,
-      asynchronous: asynchronousFromState,
+      suppressWorkflowHeaders,
+      suppressWorkflowHeadersOnResponse,
+      paging,
+      asynchronous,
       readOnly: false,
-      requestOptions: requestOptionsFromState,
-      disableAsyncPattern: disableAsyncPatternFromState,
-      chunkedTransferMode: chunkedTransferModeFromState,
+      expanded: expandedSections.includes(constants.SETTINGSECTIONS.NETWORKING),
+      onHeaderClick: handleSectionClick,
+      requestOptions,
+      disableAsyncPattern,
+      chunkedTransferMode: equals(uploadChunk?.value?.transferMode, constants.SETTINGS.TRANSFER_MODE.CHUNKED),
       nodeId,
       retryPolicy,
       uploadChunk,
@@ -372,72 +402,77 @@ export const SettingsPanel = (): JSX.Element => {
     } else return null;
   };
 
-  const renderRunAfter = (): JSX.Element | null => {
+  const RunAfterSettings = (): JSX.Element | null => {
     const runAfterProps: SectionProps = {
       readOnly: false,
       nodeId,
       runAfter,
+      expanded: expandedSections.includes(constants.SETTINGSECTIONS.RUNAFTER),
+      onHeaderClick: handleSectionClick,
     };
     return runAfter?.isSupported ? <RunAfter allEdges={allEdges} {...runAfterProps} /> : null;
   };
 
-  const renderSecurity = (): JSX.Element | null => {
-    const { secureInputs: secureInputsFromState, secureOutputs: secureOutputsFromState } = settingsFromState;
+  const SecuritySettings = (): JSX.Element | null => {
     const onSecureInputsChange = (checked: boolean): void => {
-      updateSettings({
-        ...settingsFromState,
-        secureInputs: {
-          ...secureInputsFromState,
-          value: checked,
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            secureInputs: { isSupported: true, value: checked },
+          },
+        })
+      );
     };
 
     const onSecureOutputsChange = (checked: boolean): void => {
-      updateSettings({
-        ...settingsFromState,
-        secureOutputs: {
-          ...secureOutputsFromState,
-          value: checked,
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            secureOutputs: { isSupported: true, value: checked },
+          },
+        })
+      );
     };
 
     const securitySectionProps: SecuritySectionProps = {
-      secureInputs: secureInputsFromState,
-      secureOutputs: secureOutputsFromState,
+      secureInputs,
+      secureOutputs,
       readOnly: false,
       nodeId,
       onSecureInputsChange,
       onSecureOutputsChange,
+      expanded: expandedSections.includes(constants.SETTINGSECTIONS.SECURITY),
+      onHeaderClick: handleSectionClick,
     };
     return secureInputs?.isSupported || secureOutputs?.isSupported ? <Security {...securitySectionProps} /> : null;
   };
 
-  const renderTracking = (): JSX.Element | null => {
-    const { correlation: correlationFromState, trackedProperties: trackedPropertiesFromState } = settingsFromState;
+  const TrackingSettings = (): JSX.Element | null => {
     const onClientTrackingIdChange = (newValue: string): void => {
-      updateSettings({
-        ...settingsFromState,
-        correlation: {
-          ...correlationFromState,
-          value: {
-            clientTrackingId: newValue,
-          },
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            correlation: {
+              isSupported: !!correlation?.isSupported,
+              value: {
+                clientTrackingId: newValue,
+              },
+            },
+          },
+        })
+      );
     };
 
     const onTrackedPropertiesDictionaryValueChanged = (newValue: Record<string, string>): void => {
-      let trackedProperties: Record<string, any> = {}; // tslint:disable-line: no-any
+      let trackedPropertiesInput: Record<string, any> = {}; // tslint:disable-line: no-any
       if (isObject(newValue) && Object.keys(newValue).length > 0 && Object.keys(newValue).some((key) => newValue[key] !== undefined)) {
-        trackedProperties = {};
+        trackedPropertiesInput = {};
         for (const key of Object.keys(newValue)) {
           let propertyValue: any; // tslint:disable-line: no-any
           try {
@@ -446,44 +481,52 @@ export const SettingsPanel = (): JSX.Element => {
             propertyValue = newValue[key];
           }
 
-          trackedProperties[key] = propertyValue;
+          trackedPropertiesInput[key] = propertyValue;
         }
       }
-      updateSettings({
-        ...settingsFromState,
-        trackedProperties: {
-          ...trackedPropertiesFromState,
-          value: trackedProperties,
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            trackedProperties: {
+              isSupported: !!trackedProperties?.isSupported,
+              value: trackedPropertiesInput,
+            },
+          },
+        })
+      );
     };
 
     const onTrackedPropertiesStringValueChange = (newValue: string): void => {
-      let trackedProperties: any = ''; // tslint:disable-line: no-any
+      let trackedPropertiesInput: any = ''; // tslint:disable-line: no-any
       if (newValue) {
         try {
-          trackedProperties = JSON.parse(newValue);
+          trackedPropertiesInput = JSON.parse(newValue);
         } catch {
-          trackedProperties = newValue;
+          trackedPropertiesInput = newValue;
         }
       }
-      updateSettings({
-        ...settingsFromState,
-        trackedProperties: {
-          ...trackedPropertiesFromState,
-          value: trackedProperties,
-        },
-      });
       // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            trackedProperties: {
+              isSupported: !!trackedProperties?.isSupported,
+              value: trackedPropertiesInput,
+            },
+          },
+        })
+      );
     };
 
     const trackingProps: TrackingSectionProps = {
-      trackedProperties: trackedPropertiesFromState,
-      correlation: correlationFromState,
+      trackedProperties,
+      correlation,
       readOnly: false,
+      expanded: expandedSections.includes(constants.SETTINGSECTIONS.TRACKING),
+      onHeaderClick: handleSectionClick,
       nodeId,
       onClientTrackingIdChange,
       onTrackedPropertiesDictionaryValueChanged,
@@ -494,15 +537,19 @@ export const SettingsPanel = (): JSX.Element => {
     } else return null;
   };
 
+  const handleSectionClick = (sectionName: string): void => {
+    dispatch(setExpandedSections(sectionName));
+  };
+
   const renderAllSettingsSections = (): JSX.Element => {
     return (
       <>
-        {renderDataHandling()}
-        {renderGeneral()}
-        {renderNetworking()}
-        {renderRunAfter()}
-        {renderSecurity()}
-        {renderTracking()}
+        <DataHandlingSettings />
+        <GeneralSettings />
+        <NetworkingSettings />
+        <RunAfterSettings />
+        <SecuritySettings />
+        <TrackingSettings />
       </>
     );
   };

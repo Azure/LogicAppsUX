@@ -1,4 +1,5 @@
 import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandler } from '..';
+import constants from '../../../common/constants';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
 import type { DropdownSelectionChangeHandler, ExpressionChangeHandler } from '@microsoft/designer-ui';
@@ -28,15 +29,9 @@ export const General = ({
   onTimeoutValueChange,
   onTriggerConditionsChange,
   onClientTrackingIdChange,
+  expanded,
+  onHeaderClick,
 }: GeneralSectionProps): JSX.Element => {
-  // const [concurrencyFromState, setConcurrency] = useState(concurrency?.value ?? { enabled: false, value: undefined });
-  // const [splitOnFromState, setSplitOn] = useState(splitOn?.value ?? { enabled: false, value: undefined });
-  // const [conditionExpressionsFromState, setConditionExpressions] = useState(conditionExpressions?.value ?? []);
-  // const [timeoutFromState, setTimeout] = useState(timeout?.value ?? '');
-  // const [splitOnClientTrackingIdFromState, setSplitOnClientTrackingId] = useState(
-  //   splitOnConfiguration?.correlation?.clientTrackingId ?? ''
-  // );
-
   const intl = useIntl();
   const generalTitle = intl.formatMessage({
     defaultMessage: 'General',
@@ -115,7 +110,9 @@ export const General = ({
   const generalSectionProps: SettingSectionProps = {
     id: 'general',
     title: generalTitle,
-    expanded: false,
+    sectionName: constants.SETTINGSECTIONS.GENERAL,
+    expanded,
+    onHeaderClick,
     settings: [
       {
         settingType: 'SettingToggle',

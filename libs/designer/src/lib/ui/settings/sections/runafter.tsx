@@ -1,4 +1,5 @@
 import type { SectionProps } from '../';
+import constants from '../../../common/constants';
 import type { WorkflowEdge } from '../../../core/parsers/models/workflowNode';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
@@ -10,7 +11,7 @@ interface RunAfterProps extends SectionProps {
   allEdges: WorkflowEdge[];
 }
 
-export const RunAfter = ({ runAfter, readOnly = false }: RunAfterProps): JSX.Element | null => {
+export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick }: RunAfterProps): JSX.Element | null => {
   const [statuses, setStatuses] = useState<Record<string, string[]>>({});
   const graphEdges = runAfter?.value;
 
@@ -65,7 +66,9 @@ export const RunAfter = ({ runAfter, readOnly = false }: RunAfterProps): JSX.Ele
   const runAfterSectionProps: SettingSectionProps = {
     id: 'runAfter',
     title: 'Run After',
-    expanded: false,
+    sectionName: constants.SETTINGSECTIONS.RUNAFTER,
+    expanded,
+    onHeaderClick,
     settings: [
       {
         settingType: 'RunAfter',

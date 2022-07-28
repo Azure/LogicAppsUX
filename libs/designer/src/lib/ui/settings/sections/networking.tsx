@@ -1,4 +1,5 @@
 import type { SectionProps, TextChangeHandler, ToggleHandler } from '..';
+import constants from '../../../common/constants';
 import type { Settings, SettingSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
 import { useIntl } from 'react-intl';
@@ -32,6 +33,8 @@ export const Networking = ({
   onHeadersOnResponseToggle,
   onContentTransferToggle,
   chunkedTransferMode,
+  expanded,
+  onHeaderClick,
 }: NetworkingSectionProps): JSX.Element => {
   const intl = useIntl();
   const onText = intl.formatMessage({
@@ -250,7 +253,9 @@ export const Networking = ({
   const networkingSectionProps: SettingSectionProps = {
     id: 'networking',
     title: networking,
-    expanded: false,
+    sectionName: constants.SETTINGSECTIONS.NETWORKING,
+    expanded,
+    onHeaderClick,
     settings: [
       getAsyncPatternSetting(),
       getAsyncResponseSetting(),

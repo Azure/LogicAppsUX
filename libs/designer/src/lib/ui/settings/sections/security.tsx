@@ -1,4 +1,5 @@
 import type { SectionProps, ToggleHandler } from '..';
+import constants from '../../../common/constants';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
 import { useIntl } from 'react-intl';
@@ -14,6 +15,8 @@ export const Security = ({
   readOnly,
   onSecureInputsChange,
   onSecureOutputsChange,
+  expanded,
+  onHeaderClick,
 }: SecuritySectionProps): JSX.Element | null => {
   const intl = useIntl();
   const onText = intl.formatMessage({
@@ -51,7 +54,9 @@ export const Security = ({
   const securitySectionProps: SettingSectionProps = {
     id: 'security',
     title: securityTitle,
-    expanded: false,
+    sectionName: constants.SETTINGSECTIONS.SECURITY,
+    expanded,
+    onHeaderClick,
     settings: [
       {
         settingType: 'SettingToggle',

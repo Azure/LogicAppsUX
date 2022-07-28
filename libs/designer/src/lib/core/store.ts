@@ -2,6 +2,7 @@ import connectionsReducer from './state/connectionSlice';
 import designerOptionsReducer from './state/designerOptionsSlice';
 import operationMetadataReducer from './state/operationMetadataSlice';
 import panelReducer from './state/panelSlice';
+import settingsReducer from './state/settingSlice';
 import workflowReducer from './state/workflowSlice';
 import { configureStore } from '@reduxjs/toolkit';
 
@@ -11,6 +12,7 @@ export const store = configureStore({
     operations: operationMetadataReducer,
     panel: panelReducer,
     connections: connectionsReducer,
+    settings: settingsReducer,
     designerOptions: designerOptionsReducer,
   },
 });

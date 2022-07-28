@@ -1,4 +1,5 @@
 import type { SectionProps, ToggleHandler } from '..';
+import constants from '../../../common/constants';
 import { SettingLabel, SettingsSection } from '../settingsection';
 import type { SettingSectionProps } from '../settingsection';
 import { useIntl } from 'react-intl';
@@ -14,6 +15,8 @@ export const DataHandling = ({
   readOnly,
   onSchemaValidationChange,
   onAutomaticDecompressionChange,
+  expanded,
+  onHeaderClick,
 }: DataHandlingSectionProps): JSX.Element => {
   const requestSchemaValidationLabel = (
     <SettingLabel
@@ -44,7 +47,9 @@ export const DataHandling = ({
   const dataHandlingSectionProps: SettingSectionProps = {
     id: 'dataHandling',
     title: dataHandlingTitle,
-    expanded: false,
+    expanded,
+    sectionName: constants.SETTINGSECTIONS.DATAHANDLING,
+    onHeaderClick,
     settings: [
       {
         settingType: 'SettingToggle',

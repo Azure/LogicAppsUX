@@ -836,6 +836,14 @@ export default {
       OUTPUTS: 'outputs',
     },
   },
+  SETTINGSECTIONS: {
+    RUNAFTER: 'runafter',
+    NETWORKING: 'networking',
+    DATAHANDLING: 'datahandling',
+    SECURITY: 'security',
+    TRACKING: 'tracking',
+    GENERAL: 'general',
+  },
   SWAGGER,
   SYSTEM_ASSIGNED_MANAGED_IDENTITY: 'System-assigned managed identity',
   TIP_LOGGING_KEYS: {
