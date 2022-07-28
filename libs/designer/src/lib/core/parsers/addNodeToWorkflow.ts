@@ -2,12 +2,12 @@
 import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from './models/workflowNode';
-import type { OperationDiscoveryResult } from '@microsoft-logic-apps/utils';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 
 const getEdgeId = (parent: string, child: string) => `${parent}-${child}`;
 
 export interface AddNodePayload {
-  operation: OperationDiscoveryResult;
+  operation: DiscoveryOperation<DiscoveryResultTypes>;
   id: string;
   parentId?: string;
   childId?: string;

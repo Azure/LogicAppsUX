@@ -6,7 +6,7 @@ import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import { addNode } from '../../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../../core/store';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
-import type { OperationDiscoveryResult } from '@microsoft-logic-apps/utils';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import React from 'react';
 import { useQuery } from 'react-query';
@@ -37,7 +37,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const searchResults = searchResponse.data;
 
-  const onOperationClick = (operation: OperationDiscoveryResult) => {
+  const onOperationClick = (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
     const addPayload: AddNodePayload = {
       operation,
       id: selectedNode,
@@ -50,7 +50,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     dispatch(addNode(addPayload));
     const operationPayload: AddNodeOperationPayload = {
       id: selectedNode,
-      type: operation.properties.api.type,
+      type: operation.properties.api.type ?? 'nope', // danielle fix this lmao
       connectorId,
       operationId,
     };

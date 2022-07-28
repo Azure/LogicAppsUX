@@ -1,9 +1,9 @@
 import { Stack } from '@fluentui/react';
-import type { OperationDiscoveryResult } from '@microsoft-logic-apps/utils';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import React from 'react';
 
 export type ConnectorAllOperationsSummaryProps = {
-  operations: OperationDiscoveryResult[];
+  operations: DiscoveryOperation<DiscoveryResultTypes>[];
   // onOperationSelected: () => void;
 };
 
