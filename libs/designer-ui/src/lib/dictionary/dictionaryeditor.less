@@ -1,0 +1,176 @@
+@import (reference) '../variables.less';
+
+@command-icon-width: 16px;
+@padding: 5px;
+
+.msla-dictionary-editor-container {
+  display: flex;
+  margin-top: 30px;
+
+  .msla-array-commands {
+    margin-top: @padding;
+    vertical-align: top;
+    display: inline-block;
+    align-self: flex-start;
+
+    .msla-array-toggle-button {
+      vertical-align: top;
+      display: inline-block;
+      padding: 0;
+
+      img {
+        width: @command-icon-width;
+        height: @command-icon-width;
+        vertical-align: middle;
+      }
+
+      &[disabled] {
+        cursor: default;
+        img {
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+
+  .msla-dictionary-container {
+    flex: 1 1 100%;
+
+    &.msla-dictionary-editor-collapsed {
+      padding: 0px 0px 40px 0px;
+      display: flex;
+
+      .msla-input-parameter-label {
+        align-self: center;
+      }
+
+      .msla-dictionary-content {
+        display: inline-block;
+        box-sizing: border-box;
+        width: calc(100% - @command-icon-width);
+
+        .msla-input-parameter-box {
+          width: calc(100% - @parameter-label-inputbox-margin);
+        }
+
+        .msla-input-parameter-error {
+          margin-left: 0;
+        }
+      }
+
+      .msla-collapsed-editor-container {
+        width: 100%;
+        border-radius: 2px;
+
+        .editor-input {
+          border: 1px solid @panel-mode-panel-border-color;
+          resize: none;
+          font-size: 15px;
+          tab-size: 1;
+          min-height: 75px;
+          line-height: 30px;
+          caret-color: #444;
+          padding-inline-start: 5px;
+          p {
+            margin: 0;
+            line-height: 1.5rem;
+          }
+        }
+        .editor-placeholder {
+          color: #696969;
+          overflow: hidden;
+          position: absolute;
+          text-overflow: ellipsis;
+          margin-top: -75px;
+          margin-left: 5px;
+          font-size: 15px;
+          user-select: none;
+          display: inline-block;
+          pointer-events: none;
+        }
+      }
+    }
+  }
+
+  .msla-array-item-container {
+    margin: @padding 0;
+    padding: 0 @padding;
+
+    .msla-array-item {
+      padding-left: 6px;
+      .msla-array-item-header {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 4px;
+      }
+      .msla-array-editor-container-expanded {
+        width: 100%;
+        border-radius: 2px;
+        padding-bottom: 20px;
+
+        .editor-input {
+          outline: 1px solid @panel-mode-panel-border-color;
+          resize: none;
+          font-size: 15px;
+          tab-size: 1;
+          min-height: 30px;
+          line-height: 30px;
+          caret-color: #444;
+          padding-inline-start: 5px;
+          p {
+            margin: 0;
+          }
+        }
+        .editor-placeholder {
+          color: #696969;
+          overflow: hidden;
+          position: absolute;
+          text-overflow: ellipsis;
+          margin-top: -23px;
+          margin-left: 5px;
+          font-size: 15px;
+          user-select: none;
+          display: inline-block;
+          pointer-events: none;
+        }
+      }
+    }
+
+    .msla-array-item-parameters {
+      display: inline-block;
+      width: calc(100% - 30px);
+
+      .msla-input-parameter-array {
+        margin-bottom: @parameter-interval-margin;
+      }
+    }
+
+    .msla-array-item-commands {
+      display: inline-block;
+      width: 30px;
+      vertical-align: top;
+
+      .msla-array-item-contextbutton {
+        i[data-icon-name='ChevronDown'] {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .msla-array-toolbar {
+    display: flex;
+    margin: @padding;
+
+    .msla-array-add-item-button {
+      height: @parameter-inputbox-height;
+      font-size: @card-label-font-size;
+    }
+  }
+  .msla-collapsed-editor-validation {
+    position: relative;
+    color: rgb(224, 2, 2);
+    left: 4px;
+    font-size: 14px;
+  }
+}

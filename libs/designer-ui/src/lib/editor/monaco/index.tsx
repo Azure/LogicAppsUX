@@ -13,7 +13,7 @@ import { map } from '@microsoft-logic-apps/utils';
 import Editor, { loader } from '@monaco-editor/react';
 import type { editor, IScrollEvent } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
-import { useEffect, forwardRef, useRef } from 'react';
+import { useState, useEffect, forwardRef, useRef } from 'react';
 
 export interface EditorContentChangedEventArgs extends editor.IModelContentChangedEvent {
   value?: string;
@@ -101,34 +101,41 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     },
     ref
   ) => {
+    const [canRender, setCanRender] = useState(false);
     const currentRef = useRef<editor.IStandaloneCodeEditor>();
 
-    const initEditor = async () => {
+    const initTemplateLanguage = async () => {
       const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
       const templateFunctions = getTemplateFunctions();
-      const { languages, editor } = await loader.init();
-      if (!languages.getLanguages().some((lang: any) => lang.id === languageName)) {
-        // Register a new language
-        languages.register({ id: languageName });
-        // Register a tokens provider for the language
-        languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
+      loader.init().then(({ languages, editor }) => {
+        if (!languages.getLanguages().some((lang: any) => lang.id === languageName)) {
+          // Register a new language
+          languages.register({ id: languageName });
+          // Register a tokens provider for the language
+          languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
 
-        // Register Suggestion text for the language
-        languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
-        languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
+          // Register Suggestion text for the language
+          languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
+          languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
 
-        // Register Help Provider Text Field for the language
-        languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
+          // Register Help Provider Text Field for the language
+          languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
 
-        languages.setLanguageConfiguration(languageName, createLanguageConfig());
-        // Define a new theme that contains only rules that match this language
-        editor.defineTheme(languageName, createThemeData(isHighContrastBlack()));
-      }
+          languages.setLanguageConfiguration(languageName, createLanguageConfig());
+          // Define a new theme that contains only rules that match this language
+          editor.defineTheme(languageName, createThemeData(isHighContrastBlack()));
+        }
+        setCanRender(true);
+      });
     };
 
     useEffect(() => {
-      initEditor();
-    }, []);
+      if (language === EditorLanguage.templateExpressionLanguage) {
+        initTemplateLanguage();
+      } else {
+        setCanRender(true);
+      }
+    }, [language]);
 
     const handleContextMenu = (e: editor.IEditorMouseEvent) => {
       if (onContextMenu) {
@@ -265,22 +272,24 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
 
     return (
       <div className="msla-monaco-container">
-        <Editor
-          className={className}
-          options={{
-            contextmenu: contextMenu,
-            folding: folding,
-            minimap: { enabled: minimapEnabled },
-            scrollBeyondLastLine: scrollBeyondLastLine,
-            ...options,
-          }}
-          value={value}
-          defaultValue={defaultValue}
-          defaultLanguage={language ? language.toString() : undefined}
-          theme={language === Constants.LANGUAGE_NAMES.WORKFLOW ? language : isHighContrastBlack() ? 'vs-dark' : 'vs'}
-          onMount={handleEditorMounted}
-          height={height}
-        />
+        {canRender ? (
+          <Editor
+            className={className}
+            options={{
+              contextmenu: contextMenu,
+              folding: folding,
+              minimap: { enabled: minimapEnabled },
+              scrollBeyondLastLine: scrollBeyondLastLine,
+              ...options,
+            }}
+            value={value}
+            defaultValue={defaultValue}
+            defaultLanguage={language ? language.toString() : undefined}
+            theme={language === EditorLanguage.templateExpressionLanguage ? language : isHighContrastBlack() ? 'vs-dark' : 'vs'}
+            onMount={handleEditorMounted}
+            height={height}
+          />
+        ) : null}
       </div>
     );
   }

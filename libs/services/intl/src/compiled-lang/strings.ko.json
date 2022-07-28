@@ -11,12 +11,6 @@
       "value": "동적 콘텐츠를 추가하는 단추"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "필터"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -87,6 +81,12 @@
     {
       "type": 0,
       "value": "개수 인덱스부터 시작하여 배열의 요소를 반환합니다."
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "연결 변경"
     }
   ],
   "/WW7If": [
@@ -562,6 +562,12 @@
       "value": "새 연결 추가"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -626,6 +632,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 평가할 XPath 식입니다."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1110,7 +1122,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "샘플 페이로드를 사용하여 스키마 생성"
     }
   ],
   "DZZ3fj": [
@@ -2171,7 +2183,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "완료"
     }
   ],
   "T0BFpC": [
@@ -2316,12 +2328,6 @@
     {
       "type": 0,
       "value": "보안 구성으로 인해 콘텐츠가 표시되지 않습니다."
-    }
-  ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "저장"
     }
   ],
   "Ur+wph": [
@@ -2626,6 +2632,12 @@
     {
       "type": 0,
       "value": "없음"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -2940,6 +2952,20 @@
       "value": "(UTC+11:00) 사할린"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3072,6 +3098,12 @@
       "value": "값"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3150,12 +3182,6 @@
       "value": "(UTC-06:00) 서스캐처원"
     }
   ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "선택한 연결 저장"
-    }
-  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3165,7 +3191,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "샘플 JSON 페이로드를 입력하거나 붙여넣습니다."
     }
   ],
   "hBLPXK": [
@@ -3370,7 +3396,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "스키마를 생성할 수 없음"
     }
   ],
   "jjYA4u": [
@@ -3443,6 +3469,12 @@
     {
       "type": 0,
       "value": "입력 based64 문자열의 문자열 표현을 반환합니다."
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4358,6 +4390,12 @@
     {
       "type": 0,
       "value": "일요일"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [

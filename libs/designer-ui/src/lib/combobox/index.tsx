@@ -18,8 +18,14 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 const comboboxStyles: Partial<IComboBoxStyles> = {
+  root: {
+    minHeight: '30px',
+  },
   divider: {
     height: '2px',
+  },
+  input: {
+    fontSize: '14px',
   },
 };
 
@@ -32,7 +38,7 @@ const customValueStyles: Partial<IComboBoxOptionStyles> = {
 const clearIcon: IIconProps = { iconName: 'Cancel' };
 const calloutProps = { gapSpace: 0 };
 const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
-const buttonStyles: Partial<IButtonStyles> = { root: { height: '22px', width: '30px' } };
+const buttonStyles: Partial<IButtonStyles> = { root: { height: '28px', width: '30px' } };
 
 export interface ComboboxItem {
   disabled?: boolean;

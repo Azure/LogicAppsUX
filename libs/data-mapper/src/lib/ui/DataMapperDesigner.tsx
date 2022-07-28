@@ -5,8 +5,11 @@ import type { ButtonContainerProps } from '../components/buttonContainer/ButtonC
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
+import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
+import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
+import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import type { DataMapOperationState } from '../core/state/DataMapSlice';
 import {
@@ -20,12 +23,27 @@ import { setCurrentInputNode, setCurrentOutputNode, setInputSchema, setOutputSch
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema } from '../models';
+import { useBoolean } from '@fluentui/react-hooks';
+import {
+  CubeTree20Filled,
+  CubeTree20Regular,
+  Map20Filled,
+  Map20Regular,
+  MathFormula20Filled,
+  MathFormula20Regular,
+  PageFit20Filled,
+  PageFit20Regular,
+  ZoomIn20Filled,
+  ZoomIn20Regular,
+  ZoomOut20Filled,
+  ZoomOut20Regular,
+} from '@fluentui/react-icons';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useMemo } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
-import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
+import ReactFlow, { MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -39,6 +57,9 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
+  const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
+  const [displayToolbox, { toggle: toggleDisplayToolbox, setFalse: setDisplayToolboxFalse }] = useBoolean(false);
+  const [displayExpressions, { toggle: toggleDisplayExpressions, setFalse: setDisplayExpressionsFalse }] = useBoolean(false);
   const [nodes, edges] = useLayout();
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
@@ -140,22 +161,26 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     description: 'Label to open the Function card',
   });
 
-  const buttonContainerProps: ButtonContainerProps = {
+  const toolboxButtonContainerProps: ButtonContainerProps = {
     buttons: [
       {
-        iconProps: { iconName: 'BranchFork2' },
-        title: toolboxLoc,
-        ariaLabel: toolboxLoc,
+        tooltip: toolboxLoc,
+        regularIcon: CubeTree20Regular,
+        filledIcon: CubeTree20Filled,
+        filled: displayToolbox,
         onClick: () => {
-          // TODO - open input toolbox popup
+          setDisplayExpressionsFalse();
+          toggleDisplayToolbox();
         },
       },
       {
-        iconProps: { iconName: 'Variable' },
-        title: functionLoc,
-        ariaLabel: functionLoc,
+        tooltip: functionLoc,
+        regularIcon: MathFormula20Regular,
+        filledIcon: MathFormula20Filled,
+        filled: displayExpressions,
         onClick: () => {
-          // TODO - open functions popup
+          setDisplayToolboxFalse();
+          toggleDisplayExpressions();
         },
       },
     ],
@@ -164,7 +189,118 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     yPos: '16px',
   };
 
-  const nodeTypes = useMemo(() => ({ schemaCard: SchemaCard }), []);
+  const toolboxPanelProps: FloatingPanelProps = {
+    xPos: '16px',
+    yPos: '56px',
+    width: '300px',
+    minHeight: '300px',
+    maxHeight: '450px',
+  };
+
+  // ReactFlow must be wrapped if we want to access the internal state of ReactFlow
+  const ReactFlowWrapper = () => {
+    const { fitView, zoomIn, zoomOut } = useReactFlow();
+
+    const zoomOutLoc = intl.formatMessage({
+      defaultMessage: 'Zoom out',
+      description: 'Label to zoom the canvas out',
+    });
+
+    const zoomInLoc = intl.formatMessage({
+      defaultMessage: 'Zoom in',
+      description: 'Label to zoom the canvas in',
+    });
+
+    const fitViewLoc = intl.formatMessage({
+      defaultMessage: 'Page fit',
+      description: 'Label to fit the whole canvas in view',
+    });
+
+    const displayMiniMapLoc = intl.formatMessage({
+      defaultMessage: 'Display mini map',
+      description: 'Label to toggle the mini map',
+    });
+
+    const mapControlsButtonContainerProps: ButtonContainerProps = {
+      buttons: [
+        {
+          tooltip: zoomOutLoc,
+          regularIcon: ZoomOut20Regular,
+          filledIcon: ZoomOut20Filled,
+          onClick: zoomOut,
+        },
+        {
+          tooltip: zoomInLoc,
+          regularIcon: ZoomIn20Regular,
+          filledIcon: ZoomIn20Filled,
+          onClick: zoomIn,
+        },
+        {
+          tooltip: fitViewLoc,
+          regularIcon: PageFit20Regular,
+          filledIcon: PageFit20Filled,
+          onClick: fitView,
+        },
+        {
+          tooltip: displayMiniMapLoc,
+          regularIcon: Map20Regular,
+          filledIcon: Map20Filled,
+          filled: displayMiniMap,
+          onClick: toggleDisplayMiniMap,
+        },
+      ],
+      horizontal: true,
+      xPos: '16px',
+      yPos: '556px',
+    };
+
+    return (
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodeDoubleClick={onNodeDoubleClick}
+        minZoom={0}
+        nodesDraggable={false}
+        fitView
+        proOptions={{
+          account: 'paid-sponsor',
+          hideAttribution: true,
+        }}
+        style={{
+          backgroundImage: checkerboardBackgroundImage,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+          height: '600px',
+        }}
+        nodeTypes={nodeTypes}
+      >
+        <ButtonContainer {...mapControlsButtonContainerProps} />
+        {displayMiniMap ? (
+          <MiniMap
+            nodeStrokeColor={(node) => {
+              if (node.style?.backgroundColor) {
+                return node.style.backgroundColor;
+              }
+              return '#F3F2F1';
+            }}
+            nodeColor={(node) => {
+              if (node.style?.backgroundColor) {
+                return node.style.backgroundColor;
+              }
+              return '#F3F2F1';
+            }}
+            style={{
+              left: '16px',
+              bottom: '56px',
+              // TODO resize smaller to match the width of the buttons (128px wide)
+            }}
+          />
+        ) : null}
+      </ReactFlow>
+    );
+  };
+
+  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -175,28 +311,15 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
-            <ButtonContainer {...buttonContainerProps} />
+            <ButtonContainer {...toolboxButtonContainerProps} />
+            {displayToolbox ? (
+              <FloatingPanel {...toolboxPanelProps}>
+                <SchemaTree schema={inputSchema} />
+              </FloatingPanel>
+            ) : null}
             <div className="msla-designer-canvas msla-panel-mode">
               <ReactFlowProvider>
-                <ReactFlow
-                  nodes={nodes}
-                  edges={edges}
-                  onNodeDoubleClick={onNodeDoubleClick}
-                  minZoom={0}
-                  nodesDraggable={false}
-                  fitView
-                  proOptions={{
-                    account: 'paid-sponsor',
-                    hideAttribution: true,
-                  }}
-                  style={{
-                    backgroundImage: checkerboardBackgroundImage,
-                    backgroundSize: '20px 20px',
-                    backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-                    height: '600px',
-                  }}
-                  nodeTypes={nodeTypes}
-                ></ReactFlow>
+                <ReactFlowWrapper />
               </ReactFlowProvider>
             </div>
           </>

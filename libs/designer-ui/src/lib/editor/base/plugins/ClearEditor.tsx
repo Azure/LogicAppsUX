@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 interface ClearEditorProps {
   showButton: boolean;
 }
-export default function ClearEditor({ showButton }: ClearEditorProps) {
+export default function ClearEditor({ showButton }: ClearEditorProps): JSX.Element {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const text = intl.formatMessage({

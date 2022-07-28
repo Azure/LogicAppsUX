@@ -11,12 +11,6 @@
       "value": "Dinamik içerik ekleme düğmesi"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtreler"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -87,6 +81,12 @@
     {
       "type": 0,
       "value": "Dizideki öğeleri Sayı dizininden başlayarak döndürür"
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Bağlantıyı değiştir"
     }
   ],
   "/WW7If": [
@@ -573,6 +573,12 @@
       "value": "Yeni bağlantı ekle"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -637,6 +643,12 @@
     {
       "type": 0,
       "value": "Gerekli. Değerlendirilecek XPath ifadesi."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1132,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Şema oluşturmak için örnek yük kullanma"
     }
   ],
   "DZZ3fj": [
@@ -2226,7 +2238,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Bitti"
     }
   ],
   "T0BFpC": [
@@ -2371,12 +2383,6 @@
     {
       "type": 0,
       "value": "Güvenlik yapılandırması nedeniyle içerik gösterilmiyor."
-    }
-  ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "Kaydet"
     }
   ],
   "Ur+wph": [
@@ -2681,6 +2687,12 @@
     {
       "type": 0,
       "value": "Yok"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -2995,6 +3007,20 @@
       "value": "(UTC+11:00) Sakhalin"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3127,6 +3153,12 @@
       "value": "Değer"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3205,12 +3237,6 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "Seçili bağlantıyı kaydet"
-    }
-  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3220,7 +3246,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Örnek JSON yükü girin veya yapıştırın."
     }
   ],
   "hBLPXK": [
@@ -3436,7 +3462,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Şema oluşturulamıyor"
     }
   ],
   "jjYA4u": [
@@ -3509,6 +3535,12 @@
     {
       "type": 0,
       "value": "Giriş base 64 ile kodlanmış bir dizenin dize gösterimini döndürür"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4435,6 +4467,12 @@
     {
       "type": 0,
       "value": "Pazar"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [

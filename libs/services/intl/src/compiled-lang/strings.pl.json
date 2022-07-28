@@ -11,12 +11,6 @@
       "value": "Przycisk dodawania zawartości dynamicznej"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtry"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -87,6 +81,12 @@
     {
       "type": 0,
       "value": "Zwraca elementy w tablicy, zaczynając od indeksu Liczba"
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Zmień połączenie"
     }
   ],
   "/WW7If": [
@@ -611,6 +611,12 @@
       "value": "Dodaj nowe połączenie"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -675,6 +681,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Wyrażenie XPath do wyznaczenia wartości."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1192,7 +1204,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Użyj przykładowego ładunku do wygenerowania schematu"
     }
   ],
   "DZZ3fj": [
@@ -2352,7 +2364,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Gotowe"
     }
   ],
   "T0BFpC": [
@@ -2497,12 +2509,6 @@
     {
       "type": 0,
       "value": "Nie pokazano zawartości z powodu konfiguracji zabezpieczeń."
-    }
-  ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "Zapisz"
     }
   ],
   "Ur+wph": [
@@ -2807,6 +2813,12 @@
     {
       "type": 0,
       "value": "Brak"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -3121,6 +3133,20 @@
       "value": "(UTC+11:00) Sachalin"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -3253,6 +3279,12 @@
       "value": "Wartość"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3331,12 +3363,6 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
-  "gj+jEr": [
-    {
-      "type": 0,
-      "value": "Zapisz wybrane połączenie"
-    }
-  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3346,7 +3372,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Wpisz lub wklej przykładowy ładunek JSON."
     }
   ],
   "hBLPXK": [
@@ -3592,7 +3618,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Nie można wygenerować schematu"
     }
   ],
   "jjYA4u": [
@@ -3673,6 +3699,12 @@
     {
       "type": 0,
       "value": "Zwraca ciągową reprezentację wejściowego ciągu based64"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4625,6 +4657,12 @@
     {
       "type": 0,
       "value": "Niedziela"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [

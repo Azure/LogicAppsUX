@@ -21,20 +21,19 @@ export const InstanceSelection: React.FC = () => {
 
   const intlText = {
     SELECT_TITLE: intl.formatMessage({
-      defaultMessage: 'Select Logic App Instance',
+      defaultMessage: 'Select logic app instance',
       description: 'Select logic app instance title',
     }),
     SELECT_DESCRIPTION: intl.formatMessage({
-      defaultMessage:
-        'Here you are able to export a selection of Logic Apps into a code format for re-usage and integration into larger Logic App schemas',
+      defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
       description: 'Select apps to export description',
     }),
     SELECTION_SUBSCRIPTION: intl.formatMessage({
-      defaultMessage: 'Select a Subscription',
+      defaultMessage: 'Select a subscription',
       description: 'Select a subscription',
     }),
     SELECTION_ISE: intl.formatMessage({
-      defaultMessage: 'Select an ISE (Integration Service Environment) instance',
+      defaultMessage: 'Select an integration service environment (ISE) instance',
       description: 'Select an ISE instance',
     }),
     SELECT_OPTION: intl.formatMessage({
@@ -109,10 +108,10 @@ export const InstanceSelection: React.FC = () => {
 
   return (
     <div className="msla-export-instance-panel">
-      <Text variant="xLarge" nowrap block>
+      <Text variant="xLarge" block>
         {intlText.SELECT_TITLE}
       </Text>
-      <Text variant="large" nowrap block>
+      <Text variant="large" block>
         {intlText.SELECT_DESCRIPTION}
       </Text>
       <Dropdown
