@@ -24,26 +24,10 @@ export const DevToolbox: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const changeDataMapResourcePathCB = useCallback(
+  const changeResourcePathCB = useCallback(
     (_: unknown, newValue?: string) => {
       dispatch(dataMapDataLoaderSlice.actions.changeResourcePath(newValue ?? ''));
       dispatch(loadDataMap());
-    },
-    [dispatch]
-  );
-
-  const changeInputSchemaResourcePathCB = useCallback(
-    (_: unknown, newValue?: string) => {
-      dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath(newValue ?? ''));
-      dispatch(loadInputSchema());
-    },
-    [dispatch]
-  );
-
-  const changeOutputSchemaResourcePathCB = useCallback(
-    (_: unknown, newValue?: string) => {
-      dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath(newValue ?? ''));
-      dispatch(loadOutputSchema());
     },
     [dispatch]
   );
@@ -110,16 +94,15 @@ export const DevToolbox: React.FC = () => {
       {loadingMethod === 'arm' ? (
         <>
           <div>
-            <TextField label="Data Map Resource ID" onChange={changeDataMapResourcePathCB} value={resourcePath ?? ''} />
+            <TextField
+              label="Resource Uri"
+              description="/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}/hostruntime/admin/vfs/Artifacts/Schemas"
+              onChange={changeResourcePathCB}
+              value={resourcePath ?? ''}
+            />
           </div>
           <div>
-            <TextField label="Input Schema Resource ID" onChange={changeInputSchemaResourcePathCB} value={resourcePath ?? ''} />
-          </div>
-          <div>
-            <TextField label="Output Schema Resource ID" onChange={changeOutputSchemaResourcePathCB} value={resourcePath ?? ''} />
-          </div>
-          <div>
-            <TextField label="ARM Token" onChange={changeArmTokenCB} value={armToken ?? ''} />
+            <TextField label="ARM Token" description="bearer auth token" onChange={changeArmTokenCB} value={armToken ?? ''} />
           </div>
         </>
       ) : null}
