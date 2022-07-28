@@ -126,7 +126,7 @@ export const WorkflowsSelection: React.FC = () => {
       <MessageBar
         className="msla-export-workflows-panel-limit-selection"
         messageBarType={MessageBarType.info}
-        isMultiline={false}
+        isMultiline={true}
         messageBarIconProps={{
           imageProps: {
             src: WarningIcon,
@@ -138,7 +138,7 @@ export const WorkflowsSelection: React.FC = () => {
         {intlText.LIMIT_INFO}
       </MessageBar>
     ) : null;
-  }, [selection, intlText.LIMIT_INFO, WarningIcon]);
+  }, [selection, intlText.LIMIT_INFO]);
 
   const filters = useMemo(() => {
     const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
