@@ -81,7 +81,7 @@ export const SettingsPanel = (): JSX.Element => {
           id: nodeId,
           settings: {
             concurrency: {
-              isSupported: true,
+              isSupported: !!concurrency?.isSupported,
               value: { value: concurrency?.value?.value ?? undefined, enabled: checked },
             },
           },
@@ -96,7 +96,7 @@ export const SettingsPanel = (): JSX.Element => {
           id: nodeId,
           settings: {
             concurrency: {
-              isSupported: true,
+              isSupported: !!concurrency?.isSupported,
               value: { enabled: true, value },
             },
           },
@@ -420,7 +420,7 @@ export const SettingsPanel = (): JSX.Element => {
         updateNodeSettings({
           id: nodeId,
           settings: {
-            secureInputs: { isSupported: true, value: checked },
+            secureInputs: { isSupported: !!secureInputs?.isSupported, value: checked },
           },
         })
       );
@@ -432,7 +432,7 @@ export const SettingsPanel = (): JSX.Element => {
         updateNodeSettings({
           id: nodeId,
           settings: {
-            secureOutputs: { isSupported: true, value: checked },
+            secureOutputs: { isSupported: !!secureOutputs?.isSupported, value: checked },
           },
         })
       );

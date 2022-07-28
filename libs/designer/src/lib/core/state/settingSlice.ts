@@ -1,6 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-// import type { Settings } from "../actions/bjsworkflow/settings";
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 export enum ValidationErrorKeys {
   CHUNK_SIZE_INVALID = 'ChunkSizeInvalid',
@@ -28,7 +27,7 @@ export interface SettingsState {
 const initialState: SettingsState = {
   // settings: {},
   validationErrors: {},
-  expandedSections: []
+  expandedSections: [],
 };
 
 export const settingsSlice = createSlice({
@@ -42,21 +41,19 @@ export const settingsSlice = createSlice({
 
       state.validationErrors = {
         ...state.validationErrors,
-        [nodeId]: state.validationErrors[nodeId]
-          ? [ ...state.validationErrors[nodeId], ...payload[nodeId] ]
-          : payload[nodeId]
+        [nodeId]: state.validationErrors[nodeId] ? [...state.validationErrors[nodeId], ...payload[nodeId]] : payload[nodeId],
       };
     },
     setExpandedSections: (state: SettingsState, action: PayloadAction<string>) => {
       if (!action || !action.payload) return;
-      const {payload: sectionName} = action;
+      const { payload: sectionName } = action;
       if (state.expandedSections.includes(sectionName)) {
-        state.expandedSections = state.expandedSections.filter(cv => cv !== sectionName);
+        state.expandedSections = state.expandedSections.filter((cv) => cv !== sectionName);
       } else {
         state.expandedSections = [...state.expandedSections, sectionName];
       }
-    }
-  }
+    },
+  },
 });
 
 export const { setValidationError, setExpandedSections } = settingsSlice.actions;

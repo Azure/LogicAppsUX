@@ -68,7 +68,7 @@ export const Security = ({
           onText,
           offText,
         },
-        visible: secureInputs?.isSupported, //isSupported fn here
+        visible: secureInputs?.isSupported,
       },
       {
         settingType: 'SettingToggle',
@@ -80,7 +80,7 @@ export const Security = ({
           onText,
           offText,
         },
-        visible: secureOutputs?.isSupported, // IsSupported fn here
+        visible: secureOutputs?.isSupported,
       },
     ],
   };
