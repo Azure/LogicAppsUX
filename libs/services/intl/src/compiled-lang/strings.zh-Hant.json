@@ -86,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "變更連線"
     }
   ],
   "/WW7If": [
@@ -2955,7 +2955,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "已連線至 "
     },
     {
       "type": 1,
@@ -2963,7 +2963,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "。"
     }
   ],
   "dgAu27": [
