@@ -75,13 +75,13 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   // Assign connection on initial load
   useEffect(() => {
     if (currentConnectionId) {
-      const newSelect = select;
-      const index = connections.findIndex((conn) => areIdLeavesEqual(conn.id, currentConnectionId));
-      newSelect.setIndexSelected(index, true, false);
-      setSelect(newSelect);
+      setSelect((currentSelect) => {
+        const index = connections.findIndex((conn) => areIdLeavesEqual(conn.id, currentConnectionId));
+        currentSelect.setIndexSelected(index, true, false);
+        return currentSelect;
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connections, currentConnectionId]); // Do not depend on `select` to avoid infinite loop
+  }, [connections, currentConnectionId]);
 
   if (isLoading) {
     return (
