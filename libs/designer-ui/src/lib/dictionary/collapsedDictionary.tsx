@@ -11,12 +11,12 @@ export type CollapsedDictionaryProps = {
   setItems: (items: DictionaryEditorItemProps[]) => void;
 };
 
-export const CollapsedDictionary = ({ items, isValid = true, setItems, setIsValid }: CollapsedDictionaryProps): JSX.Element => {
+export const CollapsedDictionary = ({ items, isValid, setItems, setIsValid }: CollapsedDictionaryProps): JSX.Element => {
   const intl = useIntl();
 
   const errorMessage = intl.formatMessage({
-    defaultMessage: 'Please Enter a valid array',
-    description: 'Error Message for Invalid Array',
+    defaultMessage: 'Please Enter a valid dictionary',
+    description: 'Error Message for Invalid Dictionary',
   });
 
   return (
@@ -37,10 +37,10 @@ export const CollapsedDictionary = ({ items, isValid = true, setItems, setIsVali
 
 const parseInitialValue = (items: DictionaryEditorItemProps[]): Segment[] => {
   if (items.length === 0) {
-    return [{ type: ValueSegmentType.LITERAL, value: '[\n  null\n]' }];
+    return [{ type: ValueSegmentType.LITERAL, value: '{}' }];
   }
   const parsedItems: Segment[] = [];
-  parsedItems.push({ type: ValueSegmentType.LITERAL, value: '[\n  "' });
+  parsedItems.push({ type: ValueSegmentType.LITERAL, value: '{\n  "' });
   items.forEach((item, index) => {
     const { key, value } = item;
     key.forEach((segment) => {
@@ -50,7 +50,7 @@ const parseInitialValue = (items: DictionaryEditorItemProps[]): Segment[] => {
     value.forEach((segment) => {
       parsedItems.push(segment);
     });
-    parsedItems.push({ type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n]' });
+    parsedItems.push({ type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n}' });
   });
   return parsedItems;
 };

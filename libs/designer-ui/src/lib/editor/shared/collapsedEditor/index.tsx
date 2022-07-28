@@ -50,7 +50,13 @@ export const CollapsedEditor = ({
     >
       {type === CollapsedEditorType.DICTIONARY ? null : <SerializeArray isValid={isValid} setItems={setItems} />}
 
-      <Validation type={type} errorMessage={errorMessage} className={'msla-collapsed-editor-validation'} isValid setIsValid={setIsValid} />
+      <Validation
+        type={type}
+        errorMessage={errorMessage}
+        className={'msla-collapsed-editor-validation'}
+        isValid={isValid}
+        setIsValid={setIsValid}
+      />
     </BaseEditor>
   );
 };

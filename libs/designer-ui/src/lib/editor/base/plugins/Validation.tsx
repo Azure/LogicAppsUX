@@ -24,9 +24,15 @@ export const Validation = ({ className, isValid, type, tokensEnabled = true, err
             if (!editorString.trim().length || editorString === '[]') {
               setIsValid(true);
             } else {
-              setIsValid(validArray(editorString));
+              setIsValid(isValidArray(editorString));
             }
             break;
+          case CollapsedEditorType.DICTIONARY:
+            if (!editorString.trim().length || editorString === '[]') {
+              setIsValid(true);
+            } else {
+              setIsValid(isValidDictionary(editorString));
+            }
         }
       }
     });
@@ -56,10 +62,10 @@ const getChildrenNodes = (node: ElementNode, tokensEnabled: boolean): string => 
   return text;
 };
 
-const validArray = (s: string): boolean => {
-  return s.startsWith('[') && s.endsWith(']') && validateStrings(s.slice(1, s.length - 1));
+const isValidArray = (s: string): boolean => {
+  return s.startsWith('[') && s.endsWith(']') && validateArrayStrings(s.slice(1, s.length - 1));
 };
-const validateStrings = (s: string): boolean => {
+const validateArrayStrings = (s: string): boolean => {
   const splitStrings = s.split(',');
   for (let i = 0; i < splitStrings.length; i++) {
     const currentString = splitStrings[i].trim();
@@ -74,6 +80,18 @@ const validateStrings = (s: string): boolean => {
     ) {
       return false;
     }
+  }
+  return true;
+};
+
+const isValidDictionary = (s: string): boolean => {
+  return s.startsWith('{') && s.endsWith('}') && validateDictionaryStrings(s);
+};
+const validateDictionaryStrings = (s: string): boolean => {
+  try {
+    JSON.parse(s);
+  } catch (e) {
+    return false;
   }
   return true;
 };
