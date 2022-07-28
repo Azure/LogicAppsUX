@@ -1,5 +1,5 @@
 import { ActionButtonV2 } from '../../actionbuttonv2';
-import CollapseToggle from '../../collapseToggle';
+import NodeCollapseToggle from '../../nodeCollapseToggle';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { labelCase, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
@@ -102,7 +102,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         <button className="msla-subgraph-title" onClick={handleTitleClick}>
           {data.title}
         </button>
-        <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
+        <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
       </div>
     );
   } else if (data.size === 'small') {
@@ -119,7 +119,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         >
           <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
           <div className="msla-subgraph-title">{data.title}</div>
-          <CollapseToggle disabled collapsed={collapsed} />
+          <NodeCollapseToggle disabled collapsed={collapsed} />
         </div>
       </div>
     );
