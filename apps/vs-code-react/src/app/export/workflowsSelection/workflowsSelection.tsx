@@ -30,12 +30,11 @@ export const WorkflowsSelection: React.FC = () => {
 
   const intlText = {
     SELECT_TITLE: intl.formatMessage({
-      defaultMessage: 'Select Apps to Export',
+      defaultMessage: 'Select logic apps to export',
       description: 'Select apps to export title',
     }),
     SELECT_DESCRIPTION: intl.formatMessage({
-      defaultMessage:
-        'Here you are able to export a selection of Logic Apps into a code format for re-usage and integration into larger Logic App schemas',
+      defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
       description: 'Select apps to export description',
     }),
     TOGGLE_SELECTION: intl.formatMessage({
@@ -57,6 +56,14 @@ export const WorkflowsSelection: React.FC = () => {
     NO_WORKFLOWS: intl.formatMessage({
       defaultMessage: 'No workflows',
       description: 'No workflows text',
+    }),
+    NAME: intl.formatMessage({
+      defaultMessage: 'Name',
+      description: 'Name title',
+    }),
+    RESOURCE_GROUP: intl.formatMessage({
+      defaultMessage: 'Resource group',
+      description: 'Resource group title',
     }),
   };
 
@@ -108,7 +115,7 @@ export const WorkflowsSelection: React.FC = () => {
       <div className="msla-export-workflows-panel-list-workflows">
         <ShimmeredDetailsList
           items={renderWorkflows}
-          columns={getListColumns()}
+          columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
           setKey="set"
           enableShimmer={isWorkflowsLoading || !renderWorkflows.length}
           ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
@@ -116,6 +123,7 @@ export const WorkflowsSelection: React.FC = () => {
           checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
           selectionMode={SelectionMode.multiple}
           selection={selection}
+          compact={true}
         />
       </div>
     );
@@ -167,10 +175,10 @@ export const WorkflowsSelection: React.FC = () => {
   return (
     <div className="msla-export-workflows-panel">
       <div className="msla-export-workflows-panel-list">
-        <Text variant="xLarge" nowrap block>
+        <Text variant="xLarge" block>
           {intlText.SELECT_TITLE}
         </Text>
-        <Text variant="large" nowrap block>
+        <Text variant="large" block>
           {intlText.SELECT_DESCRIPTION}
         </Text>
         {limitInfo}

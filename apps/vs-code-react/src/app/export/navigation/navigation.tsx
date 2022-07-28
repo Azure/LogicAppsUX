@@ -30,10 +30,6 @@ export const Navigation: React.FC = () => {
       defaultMessage: 'Back',
       description: 'Back button',
     }),
-    CANCEL: intl.formatMessage({
-      defaultMessage: 'Cancel',
-      description: 'Cancel button',
-    }),
     EXPORT: intl.formatMessage({
       defaultMessage: 'Export',
       description: 'Export button',
@@ -46,12 +42,6 @@ export const Navigation: React.FC = () => {
       defaultMessage: 'finish',
       description: 'Finish  button',
     }),
-  };
-
-  const onClickCancel = () => {
-    vscode.postMessage({
-      command: ExtensionCommand.dispose,
-    });
   };
 
   const onClickBack = () => {
@@ -137,12 +127,6 @@ export const Navigation: React.FC = () => {
 
   return (
     <div className="msla-export-navigation-panel">
-      <PrimaryButton
-        className="msla-export-navigation-panel-button"
-        text={intlText.CANCEL}
-        ariaLabel={intlText.CANCEL}
-        onClick={onClickCancel}
-      />
       <PrimaryButton
         className="msla-export-navigation-panel-button"
         text={intlText.BACK}

@@ -86,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Cambiar conexión"
     }
   ],
   "/WW7If": [
@@ -3010,7 +3010,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Conectado a "
     },
     {
       "type": 1,
@@ -3470,7 +3470,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "No se puede generar el esquema"
     }
   ],
   "jjYA4u": [

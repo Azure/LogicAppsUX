@@ -1,5 +1,5 @@
 import type { Segment } from '../../editor/base';
-import { serializeEditorState } from '../../editor/base/utils/serialize';
+import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
 
