@@ -117,7 +117,7 @@ export const WorkflowsSelection: React.FC = () => {
       </Text>
     );
 
-    const noWorkflows = renderWorkflows.length === 0 && !isWorkflowsLoading ? emptyText : null;
+    const noWorkflows = !renderWorkflows.length && !isWorkflowsLoading ? emptyText : null;
 
     return (
       <div className="msla-export-workflows-panel-list-workflows">
@@ -125,7 +125,7 @@ export const WorkflowsSelection: React.FC = () => {
           items={renderWorkflows}
           columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
           setKey="set"
-          enableShimmer={isWorkflowsLoading}
+          enableShimmer={isWorkflowsLoading || !renderWorkflows.length}
           ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
           ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
           checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
@@ -144,6 +144,9 @@ export const WorkflowsSelection: React.FC = () => {
     intlText.TOGGLE_SELECTION_ALL,
     intlText.SELECT_WORKFLOW,
     intlText.NO_WORKFLOWS,
+    intlText.NAME,
+    intlText.RESOURCE_GROUP,
+    allWorkflows,
   ]);
 
   const limitInfo = useMemo(() => {
