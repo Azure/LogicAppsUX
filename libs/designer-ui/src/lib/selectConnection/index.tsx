@@ -1,4 +1,5 @@
 import { getConnectionErrors } from '../helper';
+import { getIdLeaf } from '../utils';
 import type { IColumn } from '@fluentui/react';
 import {
   MessageBar,
@@ -20,7 +21,7 @@ import { useIntl } from 'react-intl';
 
 export interface SelectConnectionProps {
   connections: Connection[];
-  currentConnection?: Connection;
+  currentConnectionId?: string;
   isLoading?: boolean;
   showIdentityErrorBanner?: boolean;
   saveSelectionCallback: (connection?: Connection) => void;
@@ -31,7 +32,7 @@ export interface SelectConnectionProps {
 export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   const {
     connections,
-    currentConnection,
+    currentConnectionId,
     isLoading,
     showIdentityErrorBanner,
     saveSelectionCallback,
@@ -57,13 +58,15 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     };
   });
 
+  const areIdLeavesEqual = (id1?: string, id2?: string): boolean => getIdLeaf(id1) === getIdLeaf(id2);
+
   const [select, setSelect] = useState(
     new Selection({
       onSelectionChanged: () => {
         const newSelection = select.getSelection()[0] as any;
         if (newSelection) {
           // This if statement avoids the initial selection in the details list
-          if (newSelection?.id !== currentConnection?.id) saveSelectionCallback(newSelection);
+          if (!areIdLeavesEqual(newSelection.id, currentConnectionId)) saveSelectionCallback(newSelection);
         } else cancelSelectionCallback(); // User clicked the existing connection, keep selection the same and return
       },
     })
@@ -71,13 +74,14 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
 
   // Assign connection on initial load
   useEffect(() => {
-    if (currentConnection) {
-      console.log('current', JSON.stringify(currentConnection));
+    if (currentConnectionId) {
       const newSelect = select;
-      newSelect.setIndexSelected(connections.indexOf(currentConnection), true, false);
+      const index = connections.findIndex((conn) => areIdLeavesEqual(conn.id, currentConnectionId));
+      newSelect.setIndexSelected(index, true, false);
       setSelect(newSelect);
     }
-  }, [connections, currentConnection]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connections, currentConnectionId]);
 
   if (isLoading) {
     return (

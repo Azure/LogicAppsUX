@@ -8,8 +8,8 @@ import { useOperationInfo, useOperationManifest } from '../../../core/state/sele
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
-import type { PanelTab } from '@microsoft/designer-ui';
 import { CreateConnection } from '@microsoft/designer-ui';
+import type { PanelTab } from '@microsoft/designer-ui';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -51,7 +51,7 @@ const CreateConnectionTab = () => {
       setIsLoading(true);
       const newConnection = await ConnectionService().createConnection(id, connector?.id ?? '', connectionInfo, parametersMetadata);
 
-      dispatch(changeConnectionMapping({ nodeId, connectionId: newConnection.id }));
+      dispatch(changeConnectionMapping({ nodeId, connectionId: newConnection?.id }));
       dispatch(showDefaultTabs());
       setIsLoading(false);
     },

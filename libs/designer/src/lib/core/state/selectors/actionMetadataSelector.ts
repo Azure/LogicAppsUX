@@ -41,6 +41,9 @@ export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
   return true;
 };
 
+export const useNodeConnectionId = (nodeId: string): string =>
+  useSelector((state: RootState) => state.connections.connectionsMapping[nodeId]);
+
 export const useNodeConnectionName = (nodeId: string): QueryResult => {
   const { connectionId, connectorId } = useSelector((state: RootState) => {
     return nodeId
