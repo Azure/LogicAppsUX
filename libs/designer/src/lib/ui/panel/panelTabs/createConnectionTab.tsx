@@ -26,8 +26,6 @@ const CreateConnectionTab = () => {
 
   const createConnectionCallback = useCallback(
     async (id: string, selectedParameterSet?: ConnectionParameterSet, parameterValues?: Record<string, any>) => {
-      // Create the connection
-
       const connectionParameterSetValues: ConnectionParameterSetValues = {
         name: selectedParameterSet?.name ?? '',
         values: Object.keys(parameterValues ?? {}).reduce((acc: any, key) => {

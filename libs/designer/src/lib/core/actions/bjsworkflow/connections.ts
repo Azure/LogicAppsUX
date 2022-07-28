@@ -119,9 +119,6 @@ export function getConnectionMetadata(manifest?: OperationManifest) {
 }
 
 export function needsConnection(connector: Connector | undefined): boolean {
-  // needs to be implemented: work item 14936435
-  // return false;
-
   if (!connector) return false;
   return (
     needsAuth(connector) || hasPrerequisiteConnection(connector) || needsSimpleConnection(connector) || needsConfigConnection(connector)
@@ -218,17 +215,6 @@ export function needsSimpleConnection(connector: Connector): boolean {
   return false;
 }
 
-export const SupportedConfigConnectionParameterTypes = [
-  ConnectionParameterTypes.array,
-  ConnectionParameterTypes.bool,
-  ConnectionParameterTypes.gatewaySetting,
-  ConnectionParameterTypes.int,
-  ConnectionParameterTypes.object,
-  ConnectionParameterTypes.secureObject,
-  ConnectionParameterTypes.secureString,
-  ConnectionParameterTypes.string,
-];
-
 export function needsConfigConnection(connector: Connector): boolean {
   if (connector && connector.properties && connector.properties.connectionParameters) {
     const connectionParameters = connector.properties.connectionParameters;
@@ -243,6 +229,17 @@ export function needsConfigConnection(connector: Connector): boolean {
   return false;
 }
 
+export const SupportedConfigConnectionParameterTypes = [
+  ConnectionParameterTypes.array,
+  ConnectionParameterTypes.bool,
+  ConnectionParameterTypes.gatewaySetting,
+  ConnectionParameterTypes.int,
+  ConnectionParameterTypes.object,
+  ConnectionParameterTypes.secureObject,
+  ConnectionParameterTypes.secureString,
+  ConnectionParameterTypes.string,
+];
+
 export function isConfigConnectionParameter(connectionParameter: ConnectionParameter): boolean {
   if (connectionParameter && connectionParameter.type) {
     return SupportedConfigConnectionParameterTypes.some((connectionParameterType) => {
@@ -253,30 +250,9 @@ export function isConfigConnectionParameter(connectionParameter: ConnectionParam
   return false;
 }
 
-export const builtInConnectorIds = {
-  APIMANAGEMENT: 'connectionProviders/apimanagement',
-  APPSERVICES: 'connectionProviders/appservice',
-  FUNCTION: 'connectionProviders/function',
-  WORKFLOW: 'connectionProviders/workflow',
-  BATCH_GROUP: 'connectionProviders/batch',
-  BUTTON_GROUP: 'connectionProviders/buttonGroup',
-  CONTROL_GROUP: 'connectionProviders/control',
-  DATA_OPERATIONS_GROUP: 'connectionProviders/dataOperation',
-  DATETIME_GROUP: 'connectionProviders/datetime',
-  GEOFENCE_GROUP: 'connectionProviders/geofenceGroup',
-  HTTP_GROUP: 'connectionProviders/http',
-  INTEGRATION_ACCOUNT_GROUP: 'connectionProviders/integrationAccount',
-  POWERAPPS_GROUP: 'connectionProviders/powerappsGroup',
-  REQUEST_RESPONSE_GROUP: 'connectionProviders/request',
-  SCHEDULE_GROUP: 'connectionProviders/schedule',
-  TEAMS_GROUP: 'connectionProviders/teams',
-  VARIABLE_GROUP: 'connectionProviders/variable',
-  VIRTUALAGENT_GROUP: 'connectionProviders/virtualagentGroup',
-};
-
 export function isBuiltInConnector(connectorId: string): boolean {
   return (
-    Object.keys(builtInConnectorIds).some((c) => equals(getPropertyValue(builtInConnectorIds, c), connectorId)) ||
+    Object.keys(Constants.BUILT_IN_CONNECTOR_IDS).some((c) => equals(getPropertyValue(Constants.BUILT_IN_CONNECTOR_IDS, c), connectorId)) ||
     isBuiltInSwaggerConnector(connectorId)
   );
 }
