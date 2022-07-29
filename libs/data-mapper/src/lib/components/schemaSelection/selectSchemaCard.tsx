@@ -5,7 +5,7 @@ import { Image } from '@fluentui/react/lib/Image';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 
-interface SelectSchemaCardProps {
+export interface SelectSchemaCardProps {
   schemaType: SchemaTypes;
   onClick: () => void;
 }

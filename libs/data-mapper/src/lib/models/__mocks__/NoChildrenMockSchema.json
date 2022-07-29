@@ -1,5 +1,5 @@
 {
-  "name": "CBRInputSchema.xsd",
+  "name": "CBRInputSchema2.xsd",
   "type": "XML",
   "targetNamespace": "http://CBR.CBRInputSchema",
   "namespaces": { "ns0": "http://CBR.CBRInputSchema", "xs": "http://www.w3.org/2001/XMLSchema" },

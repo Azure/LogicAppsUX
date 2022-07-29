@@ -3097,6 +3097,12 @@
       "value": "Required. The index of where the substring begins in parameter 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -4407,6 +4413,12 @@
     {
       "type": 0,
       "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [

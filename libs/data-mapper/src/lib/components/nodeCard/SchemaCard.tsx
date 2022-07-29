@@ -5,11 +5,11 @@ import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluent
 import type { FunctionComponent } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 
-interface SchemaCardProps {
+export interface SchemaCardProps {
   data: SchemaCardWrapperProps;
 }
 
-interface SchemaCardWrapperProps {
+export interface SchemaCardWrapperProps {
   label: string;
   schemaType: SchemaTypes;
   displayHandle: boolean;
@@ -42,6 +42,8 @@ const useStyles = makeStyles({
     lineHeight: '44px',
     width: '44px',
     textAlign: 'center',
+    borderStartStartRadius: '5px',
+    borderEndStartRadius: '5px',
   },
   cardText: {
     fontStyle: 'normal',
