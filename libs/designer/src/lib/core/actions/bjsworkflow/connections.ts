@@ -1,13 +1,13 @@
 import Constants from '../../../common/constants';
 import { getConnectionsQuery } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import { initializeConnectionsMappings } from '../../state/connectionSlice';
+import { initializeConnectionsMappings } from '../../state/connection/connectionSlice';
 import type { Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
 import type { IOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { Connector, OperationManifest } from '@microsoft-logic-apps/utils';
-import { equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
+import type { ConnectionParameter, Connector, OperationManifest } from '@microsoft-logic-apps/utils';
+import { ConnectionParameterTypes, getPropertyValue, hasProperty, equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
@@ -114,9 +114,157 @@ export function isConnectionRequiredForOperation(manifest: OperationManifest): b
   return manifest.properties.connection ? manifest.properties.connection.required : needsConnection(manifest.properties.connector);
 }
 
-export function needsConnection(_connector: Connector | undefined): boolean {
-  // needs to be implemented: work item 14936435
+export function getConnectionMetadata(manifest?: OperationManifest) {
+  return manifest?.properties.connection;
+}
+
+export function needsConnection(connector: Connector | undefined): boolean {
+  if (!connector) return false;
+  return (
+    needsAuth(connector) || hasPrerequisiteConnection(connector) || needsSimpleConnection(connector) || needsConfigConnection(connector)
+  );
+}
+
+export function needsAuth(connector: Connector): boolean {
+  return getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]).length > 0;
+}
+
+export function getConnectionParametersWithType(connector: Connector, connectionParameterType: string): ConnectionParameter[] {
+  if (connector && connector.properties) {
+    const connectionParameters =
+      connector.properties.connectionParameterSets !== undefined
+        ? _getConnectionParameterSetParametersUsingType(connector, connectionParameterType)
+        : connector.properties.connectionParameters;
+    if (!connectionParameters) return [];
+    return Object.keys(connectionParameters || {})
+      .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
+      .map((connectionParameterKey) => connectionParameters[connectionParameterKey])
+      .filter((connectionParameter) => equals(connectionParameter.type, connectionParameterType));
+  }
+
+  return [];
+}
+
+function _getConnectionParameterSetParametersUsingType(connector: Connector, parameterType: string): Record<string, ConnectionParameter> {
+  for (const parameterSet of connector.properties?.connectionParameterSets?.values ?? []) {
+    for (const parameterKey in parameterSet.parameters) {
+      if (parameterSet.parameters[parameterKey].type === parameterType) {
+        return parameterSet.parameters;
+      }
+    }
+  }
+  return {};
+}
+
+export function isHiddenConnectionParameter(
+  connectionParameters: Record<string, ConnectionParameter>,
+  connectionParameterKey: string
+): boolean {
+  return (
+    !(
+      _isServicePrinicipalConnectionParameter(connectionParameterKey) &&
+      _connectorContainsAllServicePrinicipalConnectionParameters(connectionParameters)
+    ) && _isConnectionParameterHidden(connectionParameters[connectionParameterKey])
+  );
+}
+
+function _isServicePrinicipalConnectionParameter(connectionParameterKey: string): boolean {
+  return (
+    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_ID) ||
+    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_SECRET) ||
+    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_RESOURCE_URI) ||
+    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE) ||
+    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
+  );
+}
+
+function _connectorContainsAllServicePrinicipalConnectionParameters(connectionParameters: Record<string, ConnectionParameter>): boolean {
+  return (
+    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_ID) &&
+    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_SECRET) &&
+    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_RESOURCE_URI) &&
+    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE) &&
+    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
+  );
+}
+
+function _isConnectionParameterHidden(connectionParameter: ConnectionParameter): boolean {
+  return connectionParameter?.uiDefinition?.constraints?.hidden === 'true';
+}
+
+export function hasPrerequisiteConnection(connector: Connector): boolean {
+  return getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.connection]).length > 0;
+}
+
+export function needsSimpleConnection(connector: Connector): boolean {
+  if (!connector) return false;
+  if (isBuiltInConnector(connector.id)) return false;
+  if (connector.properties) {
+    const connectionParameters = connector.properties.connectionParameters;
+    if (connectionParameters) {
+      return (
+        Object.keys(connectionParameters).filter(
+          (connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey)
+        ).length === 0
+      );
+    } else {
+      return true;
+    }
+  }
+
   return false;
+}
+
+export function needsConfigConnection(connector: Connector): boolean {
+  if (connector && connector.properties && connector.properties.connectionParameters) {
+    const connectionParameters = connector.properties.connectionParameters;
+    return Object.keys(connectionParameters)
+      .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
+      .some((connectionParameterKey) => {
+        const connectionParameter = connectionParameters[connectionParameterKey];
+        return isConfigConnectionParameter(connectionParameter);
+      });
+  }
+
+  return false;
+}
+
+export const SupportedConfigConnectionParameterTypes = [
+  ConnectionParameterTypes.array,
+  ConnectionParameterTypes.bool,
+  ConnectionParameterTypes.gatewaySetting,
+  ConnectionParameterTypes.int,
+  ConnectionParameterTypes.object,
+  ConnectionParameterTypes.secureObject,
+  ConnectionParameterTypes.secureString,
+  ConnectionParameterTypes.string,
+];
+
+export function isConfigConnectionParameter(connectionParameter: ConnectionParameter): boolean {
+  if (connectionParameter && connectionParameter.type) {
+    return SupportedConfigConnectionParameterTypes.some((connectionParameterType) => {
+      return equals(connectionParameter.type, ConnectionParameterTypes[connectionParameterType]);
+    });
+  }
+
+  return false;
+}
+
+export function isBuiltInConnector(connectorId: string): boolean {
+  return (
+    Object.keys(Constants.BUILT_IN_CONNECTOR_IDS).some((c) => equals(getPropertyValue(Constants.BUILT_IN_CONNECTOR_IDS, c), connectorId)) ||
+    isBuiltInSwaggerConnector(connectorId)
+  );
+}
+
+const builtInSwaggerConnectorIds = {
+  FLAT_FILE_GROUP: 'connectionProviders/flatFile',
+  LIQUID_GROUP: 'connectionProviders/liquid',
+  XML_GROUP: 'connectionProviders/xml',
+};
+
+export function isBuiltInSwaggerConnector(connectorId: string): boolean {
+  return Object.keys(builtInSwaggerConnectorIds).some((c) => equals(getPropertyValue(builtInSwaggerConnectorIds, c), connectorId));
 }
 
 function getConnectionReferenceKeyForManifest(referenceFormat: string, operationDefinition: LogicAppsV2.OperationDefinition): string {

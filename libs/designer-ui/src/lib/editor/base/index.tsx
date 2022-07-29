@@ -17,6 +17,7 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { useIntl } from 'react-intl';
 
+export { testTokenSegment } from '../shared/testtokensegment';
 export type Segment = {
   segmentId?: string;
 } & (

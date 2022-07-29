@@ -5,6 +5,7 @@ import { convertSchemaToSchemaExtended } from '../../models/Schema';
 import { simpleMockSchema } from '../../models/__mocks__';
 import { EditorBreadcrumb } from './EditorBreadcrumb';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
 import { Provider } from 'react-redux';
 
 interface MockStoreData {

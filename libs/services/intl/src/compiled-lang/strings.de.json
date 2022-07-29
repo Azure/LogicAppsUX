@@ -11,12 +11,6 @@
       "value": "Schaltfläche zum Hinzufügen von dynamischem Inhalt"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filter"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Verbindung ändern"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Neue Verbindung hinzufügen"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der XPath-Ausdruck, der ausgewertet werden soll."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Beispielnutzdaten zum Generieren eines Schemas verwenden"
     }
   ],
   "DZZ3fj": [
@@ -2236,7 +2242,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Fertig"
     }
   ],
   "T0BFpC": [
@@ -2687,6 +2693,12 @@
       "value": "Keine"
     }
   ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
+    }
+  ],
   "Z4QLEf": [
     {
       "type": 0,
@@ -3002,7 +3014,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Verbunden mit "
     },
     {
       "type": 1,
@@ -3145,6 +3157,12 @@
       "value": "Wert"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3232,7 +3250,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Geben oder fügen Sie JSON-Beispielnutzdaten ein."
     }
   ],
   "hBLPXK": [
@@ -3448,7 +3466,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Das Schema kann nicht generiert werden"
     }
   ],
   "jjYA4u": [
@@ -3529,6 +3547,12 @@
     {
       "type": 0,
       "value": "Gibt eine Zeichenfolgendarstellung einer Base64-Eingabezeichenfolge zurück."
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -4351,6 +4375,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variables"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4459,6 +4489,12 @@
     {
       "type": 0,
       "value": "Sonntag"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [

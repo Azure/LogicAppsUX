@@ -453,7 +453,7 @@ function convertToServiceProviderConnectionsData(
   for (const parameterKey of Object.keys(parameterValues)) {
     const connectionParameter = connectionParameters?.[parameterKey] as ConnectionParameter;
     let parameterValue = parameterValues[parameterKey];
-    if (connectionParameter.parameterSource === ConnectionParameterSource.AppConfiguration) {
+    if (connectionParameter?.parameterSource === ConnectionParameterSource.AppConfiguration) {
       const appSettingName = `${escapeSpecialChars(connectionKey)}_${escapeSpecialChars(parameterKey)}`;
       connectionsData.settings[appSettingName] = parameterValues[parameterKey];
 
@@ -462,7 +462,7 @@ function convertToServiceProviderConnectionsData(
 
     safeSetObjectPropertyValue(
       connectionsData.connectionData.parameterValues,
-      [...(connectionParameter.uiDefinition?.constraints?.propertyPath ?? []), parameterKey],
+      [...(connectionParameter?.uiDefinition?.constraints?.propertyPath ?? []), parameterKey],
       parameterValue
     );
   }

@@ -1,7 +1,7 @@
 import type { Workflow } from '../../common/models/workflow';
 import { getConnectionsApiAndMapping } from '../actions/bjsworkflow/connections';
 import { initializeOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
-import { initializeConnectionReferences } from '../state/connectionSlice';
+import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import type { WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { RootState } from '../store';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';

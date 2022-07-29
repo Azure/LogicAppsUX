@@ -13,7 +13,7 @@ Standard.args = {
   xPos: '16px',
   yPos: '16px',
   width: '50px',
-  height: '50px',
+  minHeight: '50px',
   children: <div>Hello!</div>,
 };
 
@@ -22,5 +22,5 @@ Empty.args = {
   xPos: '16px',
   yPos: '16px',
   width: '50px',
-  height: '50px',
+  minHeight: '50px',
 };
