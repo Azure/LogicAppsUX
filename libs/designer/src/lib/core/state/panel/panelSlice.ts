@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import type { PanelState } from './panelInterfaces';
+import type { IdsForDiscovery, PanelState } from './panelInterfaces';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -7,8 +7,10 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const initialState: PanelState = {
   collapsed: true,
   selectedNode: '',
+  discoveryIds: {
+    graphId: 'root',
+  },
   isDiscovery: false,
-
   registeredTabs: {},
   selectedTabName: undefined,
 };
@@ -32,11 +34,10 @@ export const panelSlice = createSlice({
       state.selectedNode = action.payload;
       state.isDiscovery = false;
     },
-    expandDiscoveryPanel: (state, action: PayloadAction<{ childId?: string; parentId?: string; nodeId: string }>) => {
+    expandDiscoveryPanel: (state, action: PayloadAction<{ discoveryIds: IdsForDiscovery; nodeId: string }>) => {
       state.collapsed = false;
       state.isDiscovery = true;
-      state.parentId = action.payload.parentId;
-      state.childId = action.payload.childId;
+      state.discoveryIds = action.payload.discoveryIds;
       state.selectedNode = action.payload.nodeId;
     },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {

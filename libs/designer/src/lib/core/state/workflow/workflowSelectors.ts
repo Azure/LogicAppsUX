@@ -2,7 +2,7 @@ import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNo
 import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { createWorkflowEdge } from '../../utils/graph';
-import type { WorkflowState } from './workflowSlice';
+import type { WorkflowState } from './workflowInterfaces';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
@@ -42,14 +42,19 @@ export const useAllCollapsedGraphs = createSelector(getWorkflowData, (data) => d
 export const useIsGraphCollapsed = (graphId: string): boolean =>
   useSelector((state: RootState): boolean => state.workflow.collapsedGraphIds?.[graphId]);
 
-export const getWorkflowNodeFromState = (state: RootState, actionId: string) => {
-  const graph = state.workflow.graph;
+export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: string) => {
+  const graph = state.graph;
 
   const traverseGraph = (node: WorkflowNode): WorkflowNode | undefined => {
     if (node.id === actionId) return node;
     else {
       let result;
-      for (const child of node.children ?? []) result = traverseGraph(child);
+      for (const child of node.children ?? []) {
+        const childRes = traverseGraph(child);
+        if (childRes) {
+          result = childRes;
+        }
+      }
       return result;
     }
   };
@@ -62,7 +67,7 @@ export const useWorkflowNode = (actionId?: string) => {
     if (!actionId) {
       return undefined;
     }
-    return getWorkflowNodeFromState(state, actionId);
+    return getWorkflowNodeFromGraphState(state.workflow, actionId);
   });
 };
 

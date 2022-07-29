@@ -6,7 +6,7 @@ import type {
   ConnectionParameterSet as ParameterSet,
   ConnectionParameterSetValues,
   ConnectionType,
-  OperationDiscoveryResult,
+  SomeKindOfAzureOperationDiscovery,
 } from '@microsoft-logic-apps/utils';
 
 export interface ConnectionCreationInfo {
@@ -30,7 +30,7 @@ export interface IConnectionService {
   getConnector(connectorId: string): Promise<Connector>;
   getConnection(connectionId: string): Promise<Connection>;
   getConnections(connectorId?: string): Promise<Connection[]>;
-  getAllOperationsForGroup(connectorId: string): Promise<OperationDiscoveryResult[]>;
+  getAllOperationsForGroup(connectorId: string): Promise<SomeKindOfAzureOperationDiscovery[]>;
   getAllConnectors(): Promise<Connector[]>;
   createConnection(
     connectionId: string,
