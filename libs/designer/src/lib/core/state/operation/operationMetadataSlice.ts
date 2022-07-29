@@ -52,7 +52,7 @@ const initialState: OperationMetadataState = {
   settings: {},
 };
 
-interface AddNodeOperationPayload extends NodeOperation {
+export interface AddNodeOperationPayload extends NodeOperation {
   id: string;
 }
 
