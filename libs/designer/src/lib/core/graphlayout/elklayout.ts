@@ -3,10 +3,9 @@ import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, isWorkflowNode } from '../par
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
-import { useDebouncedEffect } from '@react-hookz/web';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Edge, Node } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 
@@ -142,11 +141,9 @@ export const useLayout = (): [Node[], Edge[]] => {
 
   const readOnly = useReadOnly();
 
-  useDebouncedEffect(
+  useThrottledEffect(
     () => {
-      if (!workflowGraph) {
-        return;
-      }
+      if (!workflowGraph) return;
       const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
       const traceId = LoggerService().startTrace({
         action: 'useLayout',
@@ -170,8 +167,7 @@ export const useLayout = (): [Node[], Edge[]] => {
         });
     },
     [readOnly, workflowGraph],
-    600,
-    5000
+    600
   );
 
   return [reactFlowNodes, reactFlowEdges];
@@ -181,4 +177,19 @@ export const exportForTesting = {
   convertElkGraphToReactFlow,
   convertWorkflowGraphToElkGraph,
   elkLayout,
+};
+
+export const useThrottledEffect = (effect: () => void, deps: any[], delay: number) => {
+  const timestamp = useRef(Date.now());
+
+  useEffect(() => {
+    const timeoutFunc = () => {
+      if (Date.now() - timestamp.current >= delay) {
+        effect();
+        timestamp.current = Date.now();
+      }
+    };
+    const handler = setTimeout(timeoutFunc, delay - (Date.now() - timestamp.current));
+    return () => clearTimeout(handler);
+  }, [effect, ...deps, delay]);
 };
