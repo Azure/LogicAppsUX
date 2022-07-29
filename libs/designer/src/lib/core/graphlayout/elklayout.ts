@@ -167,7 +167,7 @@ export const useLayout = (): [Node[], Edge[]] => {
         });
     },
     [readOnly, workflowGraph],
-    600
+    200
   );
 
   return [reactFlowNodes, reactFlowEdges];

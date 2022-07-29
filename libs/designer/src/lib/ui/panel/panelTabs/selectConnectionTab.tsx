@@ -1,18 +1,18 @@
 import constants from '../../../common/constants';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
+import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useConnectorByNodeId, useNodeConnectionName } from '../../../core/state/selectors/actionMetadataSelector';
-import type { RootState } from '../../../core/store';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { SelectConnection } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export const SelectConnectionTab = () => {
   const dispatch = useDispatch();
 
-  const selectedNodeId = useSelector((state: RootState) => state.panel.selectedNode);
+  const selectedNodeId = useSelectedNodeId();
   const currentConnectionName = useNodeConnectionName(selectedNodeId);
 
   const hideConnectionTabs = useCallback(() => {

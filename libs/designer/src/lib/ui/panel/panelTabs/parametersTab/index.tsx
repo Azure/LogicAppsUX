@@ -1,5 +1,6 @@
 import constants from '../../../../common/constants';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeConnectionName } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../../../core/store';
 import { SettingsSection } from '../../../settings/settingsection';
@@ -10,7 +11,7 @@ import type { PanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
-  const selectedNodeId = useSelector((state: RootState) => state.panel.selectedNode);
+  const selectedNodeId = useSelectedNodeId();
   const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const readOnly = useReadOnly();
 

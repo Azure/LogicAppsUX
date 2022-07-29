@@ -1,6 +1,13 @@
 import constants from '../../common/constants';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useRegisteredPanelTabs, useSelectedPanelTabName, useVisiblePanelTabs } from '../../core/state/panel/panelSelectors';
+import {
+  useIsDiscovery,
+  useIsPanelCollapsed,
+  useRegisteredPanelTabs,
+  useSelectedNodeId,
+  useSelectedPanelTabName,
+  useVisiblePanelTabs,
+} from '../../core/state/panel/panelSelectors';
 import {
   collapsePanel,
   expandPanel,
@@ -12,7 +19,6 @@ import {
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useNodeDescription, useNodeMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { setNodeDescription } from '../../core/state/workflow/workflowSlice';
-import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { createConnectionTab } from './panelTabs/createConnectionTab';
@@ -27,7 +33,7 @@ import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designe
 import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export const PanelRoot = (): JSX.Element => {
   const intl = useIntl();
@@ -36,9 +42,9 @@ export const PanelRoot = (): JSX.Element => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
 
-  const { collapsed, selectedNode, isDiscovery } = useSelector((state: RootState) => {
-    return state.panel;
-  });
+  const collapsed = useIsPanelCollapsed();
+  const selectedNode = useSelectedNodeId();
+  const isDiscovery = useIsDiscovery();
 
   const [width, setWidth] = useState(PanelSize.Auto);
 
@@ -172,11 +178,7 @@ export const PanelRoot = (): JSX.Element => {
   };
 
   const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
-    if (showCommentBox) {
-      dispatch(setNodeDescription({ nodeId: selectedNode }));
-    } else {
-      dispatch(setNodeDescription({ nodeId: selectedNode, description: '' }));
-    }
+    dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
   };
 
   // TODO: 12798945? onClick for delete when node store gets built
@@ -184,13 +186,7 @@ export const PanelRoot = (): JSX.Element => {
     // TODO: 12798935 Analytics (event logging)
   };
 
-  const togglePanel = (): void => {
-    if (!collapsed) {
-      collapse();
-    } else {
-      expand();
-    }
-  };
+  const togglePanel = (): void => (!collapsed ? collapse() : expand());
 
   return isDiscovery ? (
     <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width}></RecommendationPanelContext>

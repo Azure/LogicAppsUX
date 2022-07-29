@@ -29,6 +29,7 @@ export const panelSlice = createSlice({
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
       if (!action) return;
+      if (state.collapsed) state.collapsed = false;
       state.selectedNode = action.payload;
       state.isDiscovery = false;
     },
@@ -53,9 +54,10 @@ export const panelSlice = createSlice({
       delete state.registeredTabs[action.payload];
     },
     setTabVisibility: (state, action: PayloadAction<{ tabName: string; visible?: boolean }>) => {
-      if (state.registeredTabs[action.payload.tabName.toLowerCase()]) {
-        state.registeredTabs[action.payload.tabName.toLowerCase()] = {
-          ...state.registeredTabs[action.payload.tabName.toLowerCase()],
+      const tabName = action.payload.tabName.toLowerCase();
+      if (tabName) {
+        state.registeredTabs[tabName] = {
+          ...state.registeredTabs[tabName],
           visible: !!action.payload.visible,
         };
       }

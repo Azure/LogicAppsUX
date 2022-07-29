@@ -1,5 +1,6 @@
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
+import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
 import { DataHandling } from './sections/datahandling';
@@ -16,9 +17,7 @@ export interface SectionProps extends Settings {
 }
 
 export const SettingsPanel = (): JSX.Element => {
-  const nodeId = useSelector((state: RootState) => {
-    return state.panel.selectedNode;
-  });
+  const nodeId = useSelectedNodeId();
   const {
     secureInputs,
     secureOutputs,

@@ -1,8 +1,7 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { useActionMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
-import { isLeafNodeFromEdges } from '../../core/utils/graph';
+import { useIsLeafNode } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
@@ -16,9 +15,8 @@ const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePositio
 
   const selected = useIsNodeSelected(id);
   const actionMetadata = useActionMetadata(id);
-  const edges = useEdgesBySource(id);
-
-  const showLeafComponents = !readOnly && actionMetadata?.type && isLeafNodeFromEdges(edges);
+  const isLeaf = useIsLeafNode(id);
+  const showLeafComponents = !readOnly && actionMetadata?.type && isLeaf;
   const hasFooter = actionMetadata?.type.toLowerCase() === 'until';
 
   return (
