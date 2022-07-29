@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 export const WorkflowsSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse } = exportData;
+  const { selectedSubscription, selectedIse, selectedWorkflows } = exportData;
 
   const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList> | null>(null);
   const [allWorkflows, setAllWorkflows] = useState<Array<WorkflowsList>>([]);
@@ -106,10 +106,6 @@ export const WorkflowsSelection: React.FC = () => {
     });
   }, [renderWorkflows, dispatch]);
 
-  /*const deselectItem = (itemKey: string) => {
-    selection.toggleKeySelected(itemKey);
-  };*/
-
   const workflowsList = useMemo(() => {
     const emptyText = (
       <Text variant="large" block className="msla-export-workflows-panel-list-workflows-empty">
@@ -146,11 +142,10 @@ export const WorkflowsSelection: React.FC = () => {
     intlText.NO_WORKFLOWS,
     intlText.NAME,
     intlText.RESOURCE_GROUP,
-    allWorkflows,
   ]);
 
   const limitInfo = useMemo(() => {
-    return selection && selection.getSelectedCount() >= 15 ? (
+    return selectedWorkflows.length >= 15 ? (
       <MessageBar
         className="msla-export-workflows-panel-limit-selection"
         messageBarType={MessageBarType.info}
@@ -166,7 +161,7 @@ export const WorkflowsSelection: React.FC = () => {
         {intlText.LIMIT_INFO}
       </MessageBar>
     ) : null;
-  }, [selection, intlText.LIMIT_INFO]);
+  }, [intlText.LIMIT_INFO, selectedWorkflows]);
 
   const filters = useMemo(() => {
     const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
