@@ -5,6 +5,7 @@ import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
 import { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 // TODO: 14714481 We need to support all incoming edges and runAfterConfigMenu
 interface RunAfterProps extends SectionProps {
@@ -62,10 +63,15 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick }
     });
     return items;
   };
+  const intl = useIntl();
+  const runAfterTitle = intl.formatMessage({
+    defaultMessage: 'Networking',
+    description: 'title for networking setting section',
+  });
 
   const runAfterSectionProps: SettingSectionProps = {
     id: 'runAfter',
-    title: 'Run After',
+    title: runAfterTitle,
     sectionName: constants.SETTINGSECTIONS.RUNAFTER,
     expanded,
     onHeaderClick,

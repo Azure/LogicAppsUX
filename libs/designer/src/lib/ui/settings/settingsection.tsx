@@ -98,7 +98,7 @@ export type Settings = SettingBase &
 
 export interface SettingSectionProps {
   id?: string;
-  title: string;
+  title?: string;
   sectionName?: string;
   showHeading?: boolean;
   showSeparator?: boolean;

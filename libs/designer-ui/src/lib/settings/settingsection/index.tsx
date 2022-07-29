@@ -20,6 +20,6 @@ export { SettingLabel } from './settinglabel';
 export { SettingDictionary } from './settingdictionary';
 export type { SettingDictionaryProps } from './settingdictionary';
 export { SettingTokenTextField } from './settingTokenTextField';
-export type { SettingTokenTextFieldProps, TextInputChangeHandler } from './settingTokenTextField';
+export type { SettingTokenTextFieldProps } from './settingTokenTextField';
 export { SettingDropdown } from './settingdropdown';
 export type { SettingDropdownProps, DropdownSelectionChangeHandler } from './settingdropdown';
