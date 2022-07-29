@@ -13,7 +13,7 @@ export enum UploadSchemaTypes {
   SelectFrom = 'select-from',
 }
 
-export interface ChangeSchemaView {
+export interface ChangeSchemaViewProps {
   schemaType?: SchemaTypes;
   selectedSchema?: IDropdownOption;
   setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
@@ -25,7 +25,12 @@ const uploadSchemaOptions: IChoiceGroupOption[] = [
   { key: UploadSchemaTypes.SelectFrom, text: 'Select from existing' },
 ];
 
-export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({ schemaType, selectedSchema, setSelectedSchema, errorMessage }) => {
+export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
+  schemaType,
+  selectedSchema,
+  setSelectedSchema,
+  errorMessage,
+}) => {
   const schemaFilesList = useSelector((state: RootState) => state.schema.availableSchemas);
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
 
