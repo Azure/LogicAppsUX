@@ -63,7 +63,8 @@ export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
       if (!parentId || !state.graph) return [];
 
       const reduceGraph = (graph: WorkflowNode, arr: WorkflowEdge[] = []): WorkflowEdge[] => {
-        const edges = (graph?.edges ?? []).filter((x) => x.source === parentId);
+        if (!graph.edges) return arr;
+        const edges = graph.edges.filter((x) => x.source === parentId);
         const childEdges = graph.children?.reduce((acc, child) => reduceGraph(child, acc), edges) ?? [];
         return [...arr, ...childEdges];
       };
