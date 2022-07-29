@@ -20,7 +20,7 @@ export const WorkflowsSelection: React.FC = () => {
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
   const { selectedSubscription, selectedIse } = exportData;
 
-  const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList>>([]);
+  const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList> | null>(null);
   const [allWorkflows, setAllWorkflows] = useState<Array<WorkflowsList>>([]);
   const [resourceGroups, setResourceGroups] = useState<IDropdownOption[]>([]);
   const [searchString, setSearchString] = useState<string>('');
@@ -117,15 +117,15 @@ export const WorkflowsSelection: React.FC = () => {
       </Text>
     );
 
-    const noWorkflows = !renderWorkflows.length && !isWorkflowsLoading ? emptyText : null;
+    const noWorkflows = renderWorkflows !== null && !renderWorkflows.length && !isWorkflowsLoading ? emptyText : null;
 
     return (
       <div className="msla-export-workflows-panel-list-workflows">
         <ShimmeredDetailsList
-          items={renderWorkflows}
+          items={renderWorkflows || []}
           columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
           setKey="set"
-          enableShimmer={isWorkflowsLoading || !renderWorkflows.length}
+          enableShimmer={isWorkflowsLoading || renderWorkflows === null}
           ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
           ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
           checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
