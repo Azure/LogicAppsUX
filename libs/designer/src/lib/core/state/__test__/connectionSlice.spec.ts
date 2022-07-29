@@ -1,4 +1,4 @@
-import reducer, { initialConnectionsState, initializeConnectionsMappings } from '../connectionSlice';
+import reducer, { initialConnectionsState, initializeConnectionsMappings } from '../connection/connectionSlice';
 
 describe('connection slice reducers', () => {
   it('should set node mappings when initialised', async () => {

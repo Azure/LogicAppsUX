@@ -1,5 +1,5 @@
-import { getIntl } from '@microsoft-logic-apps/intl';
 import Constants from '../constants';
+import { getIntl } from '@microsoft-logic-apps/intl';
 
 /**
  * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)
@@ -328,3 +328,5 @@ export function getStatusString(status: string, hasRetries: boolean): string {
       });
   }
 }
+
+export const getIdLeaf = (id?: string): string => id?.split('/').at(-1) ?? '';

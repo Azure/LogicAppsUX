@@ -1,4 +1,5 @@
 import { getConnectionErrors } from '../helper';
+import { getIdLeaf } from '../utils';
 import type { IColumn } from '@fluentui/react';
 import {
   MessageBar,
@@ -20,7 +21,7 @@ import { useIntl } from 'react-intl';
 
 export interface SelectConnectionProps {
   connections: Connection[];
-  currentConnection?: Connection;
+  currentConnectionId?: string;
   isLoading?: boolean;
   showIdentityErrorBanner?: boolean;
   saveSelectionCallback: (connection?: Connection) => void;
@@ -31,7 +32,7 @@ export interface SelectConnectionProps {
 export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   const {
     connections,
-    currentConnection,
+    currentConnectionId,
     isLoading,
     showIdentityErrorBanner,
     saveSelectionCallback,
@@ -44,7 +45,6 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   // We need to flatten the connection to allow the detail list access to nested props
   const flattenedConnections = connections.map((connection) => {
     const errors = getConnectionErrors(connection);
-
     return {
       ...connection,
       ...connection.properties,
@@ -58,13 +58,15 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     };
   });
 
+  const areIdLeavesEqual = (id1?: string, id2?: string): boolean => getIdLeaf(id1) === getIdLeaf(id2);
+
   const [select, setSelect] = useState(
     new Selection({
       onSelectionChanged: () => {
         const newSelection = select.getSelection()[0] as any;
         if (newSelection) {
           // This if statement avoids the initial selection in the details list
-          if (newSelection?.id !== currentConnection?.id) saveSelectionCallback(newSelection);
+          if (!areIdLeavesEqual(newSelection.id, currentConnectionId)) saveSelectionCallback(newSelection);
         } else cancelSelectionCallback(); // User clicked the existing connection, keep selection the same and return
       },
     })
@@ -72,12 +74,14 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
 
   // Assign connection on initial load
   useEffect(() => {
-    if (currentConnection) {
-      const newSelect = select;
-      newSelect.setIndexSelected(connections.indexOf(currentConnection), true, false);
-      setSelect(newSelect);
+    if (currentConnectionId) {
+      setSelect((currentSelect) => {
+        const index = connections.findIndex((conn) => areIdLeavesEqual(conn.id, currentConnectionId));
+        currentSelect.setIndexSelected(index, true, false);
+        return currentSelect;
+      });
     }
-  }, [connections, currentConnection]);
+  }, [connections, currentConnectionId]);
 
   if (isLoading) {
     return (

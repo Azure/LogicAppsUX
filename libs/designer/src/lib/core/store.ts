@@ -1,4 +1,4 @@
-import connectionsReducer from './state/connectionSlice';
+import connectionsReducer from './state/connection/connectionSlice';
 import designerOptionsReducer from './state/designerOptions/designerOptionsSlice';
 import designerViewReducer from './state/designerView/designerViewSlice';
 import operationMetadataReducer from './state/operation/operationMetadataSlice';
