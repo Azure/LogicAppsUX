@@ -1,11 +1,11 @@
 import type { SchemaExtended, SchemaNodeExtended } from '../../models';
-import { provideFASTDesignSystem, fastTreeView, fastTreeItem } from '@microsoft/fast-components';
+import { fluentTreeItem, fluentTreeView, provideFluentDesignSystem } from '@fluentui/web-components';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
 import React from 'react';
 
-const { wrap } = provideReactWrapper(React, provideFASTDesignSystem());
-export const FastTreeView = wrap(fastTreeView());
-export const FastTreeItem = wrap(fastTreeItem());
+const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
+export const FastTreeView = wrap(fluentTreeView());
+export const FastTreeItem = wrap(fluentTreeItem());
 
 export interface SchemaTreeProps {
   schema: SchemaExtended;
