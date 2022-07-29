@@ -31,12 +31,16 @@ export const ScratchTab = () => {
             { displayName: 'PATCH', value: 'PATCH', key: 'PATCH', disabled: false },
             { displayName: 'DELETE', value: 'DELETE', key: 'DELETE', disabled: false },
           ]}
-          placeholderText="Method is Required"
+          placeholder="Method is Required"
           label="Method"
           selectedKey="PUT"
           customValue={null}
+          initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
         />
-        <SchemaEditor value={'{\n"type": "object",\n"properties" : {}\n}'} title="Request Body JSON Schema" />
+        <SchemaEditor
+          initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
+          label="Request Body JSON Schema"
+        />
         <DictionaryEditor
           initialItems={[
             {

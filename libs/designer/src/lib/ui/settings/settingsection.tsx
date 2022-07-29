@@ -15,7 +15,7 @@ import {
   SettingTextField,
   SettingToggle,
   SettingDictionary,
-  SettingTokenTextField,
+  SettingTokenField,
   SettingDropdown,
 } from '@microsoft/designer-ui';
 import type {
@@ -83,7 +83,7 @@ export type Settings = SettingBase &
         settingProp: SettingDictionaryProps;
       }
     | {
-        settingType: 'SettingTokenTextField';
+        settingType: 'SettingTokenField';
         settingProp: SettingTokenTextFieldProps;
       }
     | {
@@ -204,8 +204,8 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
               return <SettingToggle {...settingProp} />;
             case 'SettingDictionary':
               return <SettingDictionary {...settingProp} />;
-            case 'SettingTokenTextField':
-              return <SettingTokenTextField {...settingProp} />;
+            case 'SettingTokenField':
+              return <SettingTokenField {...settingProp} />;
             case 'RunAfter':
               return <RunAfter {...settingProp} />;
             case 'SettingDropdown':

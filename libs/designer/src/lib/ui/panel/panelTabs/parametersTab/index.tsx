@@ -25,14 +25,17 @@ export const ParametersTab = () => {
           .filter((x) => !x.hideInUI)
           .map((param) => {
             return {
-              settingType: 'SettingTokenTextField',
+              settingType: 'SettingTokenField',
               settingProp: {
                 readOnly,
                 id: param.id,
                 label: param.label,
-                tokenEditor: true,
                 value: param.value,
                 required: param.required,
+                editor: param.editor,
+                editorOptions: param.editorOptions,
+                viewModel: param.viewModel,
+                tokenEditor: true,
               },
             };
           });

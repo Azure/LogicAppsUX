@@ -19,7 +19,7 @@ Standard.args = {
     { value: 'PATCH', key: 'PATCH', displayName: 'PATCH', disabled: false },
     { value: 'DELETE', key: 'DELETE', displayName: 'DELETE', disabled: false },
   ],
-  placeholderText: 'Method is Required',
+  placeholder: 'Method is Required',
   label: 'Method',
   selectedKey: 'PUT',
   setSelectedKey: (key: string) => {

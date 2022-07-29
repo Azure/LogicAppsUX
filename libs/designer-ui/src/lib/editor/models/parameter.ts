@@ -79,7 +79,7 @@ export interface Token {
   name?: string;
   required?: boolean;
   source?: string;
-  title?: string;
+  title: string;
   tokenType: TokenType;
   type?: string;
 }

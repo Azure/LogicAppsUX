@@ -42,7 +42,7 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
   });
 
   const renderLabel = (index: number): JSX.Element => {
-    const { text, isRequiredField } = labelProps;
+    const { text, isRequiredField } = labelProps as LabelProps;
     return (
       <div className="msla-array-editor-label">
         <Label text={text + ' Item - ' + (index + 1)} isRequiredField={isRequiredField} />

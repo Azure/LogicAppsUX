@@ -1,5 +1,5 @@
 import type { InputTokenProps } from '../../token/inputToken';
-import type { ValueSegmentType } from '../models/parameter';
+import type { ValueSegment, ValueSegmentType } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
@@ -31,6 +31,8 @@ export type Segment = {
     }
 );
 
+export type ChangeHandler = (newValue: ValueSegment[]) => void;
+
 export interface BaseEditorProps {
   className?: string;
   readonly?: boolean;
@@ -39,6 +41,7 @@ export interface BaseEditorProps {
   initialValue?: Segment[];
   tokenPickerClassName?: string;
   children?: React.ReactNode;
+  onChange?: ChangeHandler;
 }
 
 export interface BasePlugins {

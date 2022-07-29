@@ -49,6 +49,7 @@ import {
 } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import {
+  isNullOrEmpty,
   isUndefinedOrEmptyString,
   aggregate,
   clone,
@@ -67,7 +68,7 @@ import {
   ValidationErrorCode,
   ValidationException,
 } from '@microsoft-logic-apps/utils';
-import type { ParameterInfo, Token, ValueSegment } from '@microsoft/designer-ui';
+import type { DictionaryEditorItemProps, ParameterInfo, Token, ValueSegment } from '@microsoft/designer-ui';
 import { ValueSegmentType, TokenType } from '@microsoft/designer-ui';
 
 const ParameterIcon =
@@ -190,6 +191,8 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
     type = Constants.EDITOR.ARRAY;
     editorViewModel = initializeArrayViewModel(inputParameter, shouldIgnoreDefaultValue);
     schema = { ...schema, ...{ 'x-ms-editor': Constants.EDITOR.ARRAY } };
+  } else if (type === 'dictionary') {
+    editorViewModel = toDictionaryViewModel(inputParameter.value);
   }
 
   return {
@@ -198,6 +201,26 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
     viewModel: editorViewModel,
     schema,
   };
+}
+
+function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[] | undefined } {
+  let items: DictionaryEditorItemProps[] | undefined = [];
+  const canParseObject = !isNullOrEmpty(value) && !isNullOrUndefined(value) && isObject(value);
+
+  if (canParseObject) {
+    const keys = Object.keys(value);
+    for (const itemKey of keys) {
+      // TODO (Eric) - Remove the any once its changed to ValueSegments
+      items.push({
+        key: loadParameterValue({ value: itemKey } as any) as any,
+        value: loadParameterValue({ value: value[itemKey] } as any) as any,
+      });
+    }
+  } else {
+    items = undefined;
+  }
+
+  return { items };
 }
 
 interface ParameterEditorProps {
