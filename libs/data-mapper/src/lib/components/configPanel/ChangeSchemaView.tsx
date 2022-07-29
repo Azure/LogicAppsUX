@@ -46,6 +46,10 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
     defaultMessage: 'Select a file to upload',
     description: 'This is shown as a placeholder text for selecting a file to upload',
   });
+  const dropdownAriaLabel = intl.formatMessage({
+    defaultMessage: 'Select the schema for dropdown',
+    description: 'Dropdown for selecting or changing the input or output schema ',
+  });
 
   let uploadSelectLabelMessage = '';
   let selectSchemaPlaceholderMessage = '';
@@ -103,12 +107,15 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
       {uploadType === UploadSchemaTypes.UploadNew && (
         <div className="upload-new">
           <TextField placeholder={uploadMessage} />
-          <PrimaryButton className="panel-button-right">{browseMessage}</PrimaryButton>
+          <PrimaryButton className="panel-button-right" aria-label={browseMessage}>
+            {browseMessage}
+          </PrimaryButton>
         </div>
       )}
 
       {uploadType === UploadSchemaTypes.SelectFrom && (
         <Dropdown
+          aria-label={dropdownAriaLabel}
           selectedKey={selectedSchema ? selectedSchema.key : undefined}
           placeholder={selectSchemaPlaceholderMessage}
           options={dataMapDropdownOptions ?? []}
