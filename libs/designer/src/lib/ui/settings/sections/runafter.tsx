@@ -65,8 +65,8 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick }
   };
   const intl = useIntl();
   const runAfterTitle = intl.formatMessage({
-    defaultMessage: 'Networking',
-    description: 'title for networking setting section',
+    defaultMessage: 'Run After',
+    description: 'title for run after setting section',
   });
 
   const runAfterSectionProps: SettingSectionProps = {
