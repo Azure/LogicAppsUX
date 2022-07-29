@@ -11,7 +11,7 @@ export interface SchemaNode {
   name: string;
   namespacePrefix: string;
   namespaceUri: string;
-  schemaNodeDataType: string; // XmlTypeCode
+  schemaNodeDataType: 'ComplexType' | 'None' | 'String' | string; // XmlTypeCode
   properties: SchemaNodeProperties;
   optional?: boolean;
   repeating?: boolean;

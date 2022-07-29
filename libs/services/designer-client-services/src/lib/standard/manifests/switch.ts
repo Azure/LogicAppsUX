@@ -9,6 +9,28 @@ export default {
     description: 'Identifies a single case to execute based on the evaluation of switch input.',
 
     allowChildOperations: true,
+    subGraphDetails: {
+      default: {
+        location: ['actions'],
+      },
+      cases: {
+        isAdditive: true,
+        location: ['actions'],
+        inputs: {
+          required: true,
+          title: 'Equals',
+        },
+        inputsLocation: ['case'],
+      },
+    },
+
+    inputs: {
+      title: 'On',
+      description: 'Choose a value',
+      required: true,
+    },
+    inputsLocation: ['expression'],
+    isInputsOptional: false,
 
     connector: {
       id: 'connectionProviders/control',

@@ -9,13 +9,23 @@ export default {
     description: 'Executes a block of actions for each item in the input array.',
 
     allowChildOperations: true,
+    childOperationsLocation: ['actions'],
 
     inputs: {
-      type: 'array',
-      title: 'Select an output from previous steps',
+      type: 'object',
+      properties: {
+        foreach: {
+          type: 'array',
+          title: 'Select an output from previous steps',
+        },
+      },
     },
-    inputsLocation: ['foreach'],
+    inputsLocation: ['inputs'],
     isInputsOptional: false,
+
+    repetition: {
+      loopParameter: 'foreach',
+    },
 
     outputs: {},
     isOutputsOptional: false,

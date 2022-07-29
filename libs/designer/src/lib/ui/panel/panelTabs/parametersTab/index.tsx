@@ -1,22 +1,27 @@
 import constants from '../../../../common/constants';
-import { useReadOnly } from '../../../../core/state/selectors/designerOptionsSelector';
+import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useNodeConnectionName } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../../../core/store';
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
+import { ConnectionDisplay } from './connectionDisplay';
 import { getId } from '@fluentui/react';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
-  const selectedNode = useSelector((state: RootState) => state.panel.selectedNode);
-  const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
+  const selectedNodeId = useSelector((state: RootState) => state.panel.selectedNode);
+  const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const readOnly = useReadOnly();
+
+  const connectionName = useNodeConnectionName(selectedNodeId);
 
   return (
     <>
       {Object.keys(parameters?.parameterGroups ?? {}).map((sectionName) => {
         const id = getId();
-        const settings: Settings[] = parameters.parameterGroups[sectionName]?.parameters
+        const parameterGroup = parameters.parameterGroups[sectionName];
+        const settings: Settings[] = parameterGroup?.parameters
           .filter((x) => !x.hideInUI)
           .map((param) => {
             return {
@@ -33,10 +38,17 @@ export const ParametersTab = () => {
           });
         return (
           <div key={id}>
-            <SettingsSection id={getId()} title={sectionName} settings={settings} showHeading={false} />
+            <SettingsSection
+              id={getId()}
+              title={parameterGroup.description}
+              settings={settings}
+              showHeading={!!parameterGroup.description}
+              showSeparator={false}
+            />
           </div>
         );
       })}
+      {connectionName && <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />}
     </>
   );
 };
@@ -45,7 +57,7 @@ export const parametersTab: PanelTab = {
   title: 'Parameters',
   name: constants.PANEL_TAB_NAMES.PARAMETERS,
   description: 'Request History',
-  enabled: true,
+  visible: true,
   content: <ParametersTab />,
   order: 0,
   icon: 'Info',

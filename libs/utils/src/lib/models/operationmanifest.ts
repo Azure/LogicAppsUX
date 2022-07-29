@@ -49,6 +49,7 @@ export enum OperationOptions {
 export enum ConnectionType {
   Function = 'function',
   ServiceProvider = 'serviceprovider',
+  ApiManagement = 'ApiManagement',
 }
 
 export enum ConnectionReferenceKeyFormat {
@@ -79,6 +80,7 @@ export interface OperationManifestSettings {
   downloadChunking?: OperationManifestSetting<DownloadChunkMetadata>;
   operationOptions?: OperationManifestSetting<OperationOptions[]>;
   paging?: OperationManifestSetting<void>;
+  requestOptions?: OperationManifestSetting<void>;
   retryPolicy?: OperationManifestSetting<void>;
   secureData?: OperationManifestSetting<SecureDataOptions>;
   timeout?: OperationManifestSetting<void>;
@@ -88,6 +90,20 @@ export interface OperationManifestSettings {
 export interface Badge {
   name: string;
   description: string;
+}
+
+export interface RepetitionInfo {
+  self?: {
+    parametersToExclude?: string[];
+  };
+  loopParameter?: string;
+}
+
+export interface BuiltInOutput {
+  name: string;
+  title: string;
+  type: string;
+  required: boolean;
 }
 
 export enum RecurrenceType {
@@ -114,6 +130,13 @@ export interface Documentation {
   url: string;
 }
 
+export interface SubGraphDetail {
+  location?: string[];
+  inputs?: SwaggerSchema;
+  inputsLocation?: string[];
+  isAdditive?: boolean;
+}
+
 type SwaggerSchema = any;
 export interface OperationManifest {
   properties: OperationManifestProperties;
@@ -126,9 +149,19 @@ export interface OperationManifestProperties {
   summary?: string;
 
   allowChildOperations?: boolean;
+  childOperationsLocation?: string[];
+
+  subGraphDetails?: Record<string, SubGraphDetail>;
 
   statusBadge?: Badge;
   environmentBadge?: Badge;
+
+  outputTokens?: {
+    selfReference?: boolean;
+    builtIns: BuiltInOutput[];
+  };
+
+  repetition?: RepetitionInfo;
 
   recurrence?: RecurrenceSetting;
 
@@ -166,4 +199,12 @@ export interface OperationManifestProperties {
   externalDocs?: Documentation;
 }
 
-export type SubgraphType = 'CONDITIONAL-TRUE' | 'CONDITIONAL-FALSE' | 'SWITCH-CASE' | 'SWITCH-DEFAULT' | 'SWITCH-ADD-CASE';
+export type SubgraphType = 'CONDITIONAL_TRUE' | 'CONDITIONAL_FALSE' | 'SWITCH_CASE' | 'SWITCH_DEFAULT' | 'SWITCH_ADD_CASE' | 'UNTIL_DO';
+export const SUBGRAPH_TYPES: Record<string, SubgraphType> = {
+  CONDITIONAL_TRUE: 'CONDITIONAL_TRUE',
+  CONDITIONAL_FALSE: 'CONDITIONAL_FALSE',
+  SWITCH_CASE: 'SWITCH_CASE',
+  SWITCH_DEFAULT: 'SWITCH_DEFAULT',
+  SWITCH_ADD_CASE: 'SWITCH_ADD_CASE',
+  UNTIL_DO: 'UNTIL_DO',
+};

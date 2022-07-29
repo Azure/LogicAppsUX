@@ -1,12 +1,16 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
-import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operationMetadataSlice';
-import { initializeOperationInfo, initializeNodes } from '../../state/operationMetadataSlice';
-import { clearPanel } from '../../state/panelSlice';
-import type { Operations } from '../../state/workflowSlice';
-import { isRootNode } from '../../utils/graph';
+import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
+import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
+import { clearPanel } from '../../state/panel/panelSlice';
+import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
+import { initializeTokensAndVariables } from '../../state/tokensSlice';
+import type { NodesMetadata, Operations } from '../../state/workflow/workflowSlice';
+import { isRootNodeInGraph } from '../../utils/graph';
+import { getRecurrenceParameters } from '../../utils/parameters/builtins';
 import {
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
@@ -15,11 +19,22 @@ import {
   updateTokenMetadata,
 } from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
+import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
+import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { getOperationSettings } from './settings';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { getIntl } from '@microsoft-logic-apps/intl';
 import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { map, aggregate, ConnectionReferenceKeyFormat, equals, getObjectPropertyValue, unmap } from '@microsoft-logic-apps/utils';
+import {
+  getPropertyValue,
+  map,
+  aggregate,
+  ConnectionReferenceKeyFormat,
+  equals,
+  getObjectPropertyValue,
+  unmap,
+} from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -28,25 +43,25 @@ export interface NodeDataWithManifest extends NodeData {
 }
 
 export const initializeOperationMetadata = async (deserializedWorkflow: DeserializedWorkflow, dispatch: Dispatch): Promise<void> => {
-  const promises: Promise<NodeDataWithManifest | undefined>[] = [];
+  const promises: Promise<NodeDataWithManifest[] | undefined>[] = [];
   const { actionData: operations, graph, nodesMetadata } = deserializedWorkflow;
   const operationManifestService = OperationManifestService();
   let triggerNodeId = '';
 
   for (const [operationId, operation] of Object.entries(operations)) {
-    const isTrigger = isRootNode(graph, operationId, nodesMetadata);
+    const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
 
     if (isTrigger) {
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, isTrigger, dispatch));
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch));
     } else {
       // swagger case here
     }
   }
 
-  const allNodeData = (await Promise.all(promises)).filter((node) => !!node) as NodeDataWithManifest[];
+  const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithManifest[][]);
 
   updateTokenMetadataInParameters(allNodeData, operations, triggerNodeId);
   dispatch(clearPanel());
@@ -58,6 +73,13 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
       })
     )
   );
+
+  dispatch(
+    initializeTokensAndVariables({
+      outputTokens: initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata),
+      variables: initializeVariables(operations, allNodeData),
+    })
+  );
 };
 
 const initializeOperationDetailsForManifest = async (
@@ -65,28 +87,71 @@ const initializeOperationDetailsForManifest = async (
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
   dispatch: Dispatch
-): Promise<NodeDataWithManifest | undefined> => {
+): Promise<NodeDataWithManifest[] | undefined> => {
   try {
     const operationInfo = await getOperationInfo(nodeId, operation);
 
     if (operationInfo) {
       const manifest = await getOperationManifest(operationInfo);
 
-      dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
+      dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo, type: operation.type, kind: operation.kind }));
 
       const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
       const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);
       const settings = getOperationSettings(operation, isTrigger, operation.type, manifest);
-      return { id: nodeId, nodeInputs, nodeOutputs, settings, manifest };
+
+      const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
+      return [{ id: nodeId, nodeInputs, nodeOutputs, settings, manifest }, ...childGraphInputs];
     }
 
     return;
   } catch (error) {
     const errorMessage = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
-    console.log(errorMessage);
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'operation deserializer',
+      message: errorMessage,
+    });
 
     return;
   }
+};
+
+const processChildGraphAndItsInputs = (
+  manifest: OperationManifest,
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+): NodeDataWithManifest[] => {
+  const { subGraphDetails } = manifest.properties;
+  const nodesData: NodeDataWithManifest[] = [];
+
+  if (subGraphDetails) {
+    for (const subGraphKey of Object.keys(subGraphDetails)) {
+      const { inputs, inputsLocation, isAdditive } = subGraphDetails[subGraphKey];
+      const subOperation = getPropertyValue(operation, subGraphKey);
+      if (inputs) {
+        const subManifest = { properties: { inputs, inputsLocation } } as any;
+        if (isAdditive) {
+          for (const subNodeKey of Object.keys(subOperation)) {
+            nodesData.push({
+              id: subNodeKey,
+              nodeInputs: getInputParametersFromManifest(subNodeKey, subManifest, subOperation[subNodeKey]),
+              nodeOutputs: { outputs: {} },
+              manifest: subManifest,
+            });
+          }
+        }
+
+        nodesData.push({
+          id: subGraphKey,
+          nodeInputs: getInputParametersFromManifest(subGraphKey, subManifest, subOperation),
+          nodeOutputs: { outputs: {} },
+          manifest: subManifest,
+        });
+      }
+    }
+  }
+
+  return nodesData;
 };
 
 const getInputParametersFromManifest = (nodeId: string, manifest: OperationManifest, stepDefinition: any): NodeInputs => {
@@ -94,11 +159,9 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
     false /* includeParentObject */,
     0 /* expandArrayPropertiesDepth */
   );
-  let nodeType = '';
   let primaryInputParametersInArray = unmap(primaryInputParameters);
 
   if (stepDefinition) {
-    nodeType = stepDefinition.type;
     const { inputsLocation } = manifest.properties;
 
     // In the case of retry policy, it is treated as an input
@@ -133,7 +196,8 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
     loadParameterValuesFromDefault(primaryInputParameters);
   }
 
-  const allParametersAsArray = toParameterInfoMap(nodeType, primaryInputParametersInArray, stepDefinition, nodeId);
+  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
+  const recurrenceParameters = getRecurrenceParameters(manifest.properties.recurrence, stepDefinition);
 
   // TODO(14490585)- Initialize editor view models
 
@@ -146,8 +210,23 @@ const getInputParametersFromManifest = (nodeId: string, manifest: OperationManif
     [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,
   };
 
+  if (recurrenceParameters.length) {
+    const intl = getIntl();
+    if (manifest.properties.recurrence?.useLegacyParameterGroup) {
+      defaultParameterGroup.parameters = recurrenceParameters;
+    } else {
+      parameterGroups[ParameterGroupKeys.RECURRENCE] = {
+        id: ParameterGroupKeys.RECURRENCE,
+        description: intl.formatMessage({
+          defaultMessage: 'How often do you want to check for items?',
+          description: 'Recurrence parameter group title',
+        }),
+        parameters: recurrenceParameters,
+      };
+    }
+  }
+
   // TODO(14490585)- Add enum parameters
-  // TODO(14490747)- Add recurrence parameters
   // TODO(14490691)- Initialize dynamic inputs.
 
   defaultParameterGroup.parameters = _getParametersSortedByVisibility(defaultParameterGroup.parameters);
@@ -232,6 +311,65 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithManifest[], operatio
       }
     }
   }
+};
+
+const initializeOutputTokensForOperations = (
+  allNodesData: NodeDataWithManifest[],
+  operations: Operations,
+  graph: WorkflowNode,
+  nodesMetadata: NodesMetadata
+): Record<string, NodeTokens> => {
+  const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
+  const nodesWithManifest = allNodesData.reduce(
+    (actionNodes: Record<string, NodeDataWithManifest>, nodeData: NodeDataWithManifest) => ({ ...actionNodes, [nodeData.id]: nodeData }),
+    {}
+  );
+
+  const result: Record<string, NodeTokens> = {};
+
+  for (const operationId of Object.keys(operations)) {
+    const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithManifest, nodeMap);
+    const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds };
+    const nodeData = nodesWithManifest[operationId];
+    const nodeManifest = nodeData?.manifest;
+
+    nodeTokens.tokens.push(...getBuiltInTokens(nodeManifest));
+    nodeTokens.tokens.push(
+      ...convertOutputsToTokens(
+        operationId,
+        operations[operationId].type,
+        nodeData?.nodeOutputs.outputs ?? {},
+        nodeManifest,
+        nodesWithManifest
+      )
+    );
+
+    result[operationId] = nodeTokens;
+  }
+
+  return result;
+};
+
+const initializeVariables = (operations: Operations, allNodesData: NodeDataWithManifest[]): Record<string, VariableDeclaration[]> => {
+  const declarations: Record<string, VariableDeclaration[]> = {};
+  let detailsInitialized = false;
+
+  for (const nodeData of allNodesData) {
+    const { id, nodeInputs, manifest } = nodeData;
+    if (equals(operations[id].type, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+      if (!detailsInitialized && manifest) {
+        setVariableMetadata(manifest.properties.iconUri, manifest.properties.brandColor);
+        detailsInitialized = true;
+      }
+
+      const variables = getVariableDeclarations(nodeInputs);
+      if (variables.length) {
+        declarations[id] = variables;
+      }
+    }
+  }
+
+  return declarations;
 };
 
 const _getParametersSortedByVisibility = (parameters: ParameterInfo[]): ParameterInfo[] => {

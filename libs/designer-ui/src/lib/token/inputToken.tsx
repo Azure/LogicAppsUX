@@ -1,4 +1,7 @@
 import { getBrandColorRgbA } from '../card/utils';
+import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import type { NodeKey } from 'lexical';
 import { useIntl } from 'react-intl';
 
 export interface InputTokenProps {
@@ -8,16 +11,16 @@ export interface InputTokenProps {
   icon: string;
   isAdvanced?: boolean;
   isSecure?: boolean;
-  key?: string;
   readOnly?: boolean;
   required?: boolean;
   title: string;
-  handleTokenDeleteClicked?(): (e: any) => void;
+  nodeKey?: NodeKey;
 }
 
 export const DELETE = '\u00D7';
-export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor, icon, readOnly, title, handleTokenDeleteClicked }) => {
+export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor, icon, readOnly, title, nodeKey }) => {
   const intl = useIntl();
+  const [editor] = useLexicalComposerContext();
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
   };
@@ -31,6 +34,12 @@ export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor,
     defaultMessage: 'Delete',
     description: 'Label of Delete Token Button',
   });
+
+  const handleTokenDeleteClicked = () => {
+    if (nodeKey) {
+      editor.dispatchCommand(DELETE_TOKEN_NODE, nodeKey);
+    }
+  };
 
   const renderTokenDeleteButton = (): JSX.Element | null => {
     if (readOnly) {

@@ -1,5 +1,4 @@
 import type { DownloadChunkMetadata, UploadChunkMetadata } from '@microsoft-logic-apps/utils';
-import { equals } from '@microsoft-logic-apps/utils';
 
 export interface EnumObject {
   displayName: string;
@@ -18,7 +17,6 @@ export interface InputParameter extends ParameterBase {
   suppressCasting?: boolean;
   hideInUI?: boolean;
   alternativeKey?: string;
-  skipSerialization?: boolean;
 }
 
 export interface Annotation {
@@ -153,6 +151,11 @@ export interface DynamicProperties {
 
 export type ParameterDynamicSchema = LegacyDynamicSchema | DynamicProperties;
 
+export interface ParameterSerializationOptions {
+  skip?: boolean;
+  location?: string[];
+}
+
 export interface ParameterBase {
   key: string;
   name: string;
@@ -175,10 +178,11 @@ export interface ParameterBase {
   readOnly?: boolean;
   recommended?: any;
   required?: boolean;
-  serialization?: string;
+  serialization?: ParameterSerializationOptions;
   summary?: string;
   title?: string;
   visibility?: string;
+  groupName?: string;
 }
 
 export interface SchemaProperty extends ParameterBase {
@@ -277,7 +281,7 @@ export function toInputParameter(schemaProperty: SchemaProperty, suppressCasting
     recommended,
     required,
     schema,
-    skipSerialization: equals(serialization, 'uionly'),
+    serialization,
     summary,
     suppressCasting,
     title,

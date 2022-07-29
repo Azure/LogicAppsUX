@@ -1,9 +1,10 @@
 import connectionsReducer from './state/connectionSlice';
-import designerOptionsReducer from './state/designerOptionsSlice';
-import operationMetadataReducer from './state/operationMetadataSlice';
-import panelReducer from './state/panelSlice';
+import designerOptionsReducer from './state/designerOptions/designerOptionsSlice';
+import designerViewReducer from './state/designerView/designerViewSlice';
+import operationMetadataReducer from './state/operation/operationMetadataSlice';
+import panelReducer from './state/panel/panelSlice';
 import settingsReducer from './state/settingSlice';
-import workflowReducer from './state/workflowSlice';
+import workflowReducer from './state/workflow/workflowSlice';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
@@ -14,7 +15,12 @@ export const store = configureStore({
     connections: connectionsReducer,
     settings: settingsReducer,
     designerOptions: designerOptionsReducer,
+    designerView: designerViewReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

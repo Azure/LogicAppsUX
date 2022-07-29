@@ -1,0 +1,77 @@
+@import (reference) '../../mixins.less';
+
+.msla-scope-card {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+
+  .msla-scope-card-wrapper {
+    box-sizing: border-box;
+    color: @ms-color-white;
+    color: white;
+    cursor: pointer;
+    margin: 0 auto;
+    position: relative;
+    width: @card-v2-width;
+    z-index: 1;
+
+    border-radius: 2px;
+    background-color: var(--brand-color, black);
+
+    box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+
+    &:hover {
+      box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
+
+      .gripper-section {
+        visibility: visible;
+        &.draggable {
+          cursor: grab;
+        }
+      }
+    }
+  }
+
+  .msla-scope-card-content {
+    display: flex;
+    flex-wrap: nowrap;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .msla-scope-card-title-box {
+    border: none;
+    padding: 0px;
+    color: white;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--brand-color, black);
+    .node-button-interaction();
+  }
+
+  .gripper-section {
+    padding: 12px 6px 10px;
+    text-align: center;
+    visibility: hidden;
+    filter: brightness(0) invert(1); // This sets it to white
+  }
+
+  .scope-icon {
+    height: 24px;
+    width: 24px;
+    margin: 0px 2px 0px -6px;
+    z-index: 0;
+  }
+
+  .msla-scope-title {
+    flex-grow: 1;
+    align-self: center;
+    display: inline-block;
+    font: 14px/20px normal @semibold-font-family;
+    margin: 10px 8px 10px 0;
+    text-align: left;
+    word-break: break-word;
+  }
+}

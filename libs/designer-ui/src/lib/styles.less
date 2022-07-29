@@ -9,19 +9,15 @@
 @import './featurefeedback/featurefeedback.less';
 @import './codeeditor.less';
 @import './picker/picker.less';
-@import './collapseToggle/collapseToggle.less';
+@import './nodeCollapseToggle/nodeCollapseToggle.less';
 @import './card/batch.less';
 @import './card/card.less';
 @import './card/cardmonitor.less';
 @import './card/recurrence.less';
 @import './card/parametersmonitor/parametersmonitor.less';
 @import './card/triggerselector/triggerselector.less';
-@import './card/scope/scope.less';
 @import './card/foreach/foreach.less';
 @import './card/until/until.less';
-@import './card/switchbranch/switchbranch.less';
-@import './card/switch/switch.less';
-@import './card/switchmonitor/switchmonitor.less';
 @import './checkbox/checkbox.less';
 @import './colorizer/colorizer.less';
 @import './combobox/combobox.less';
@@ -29,7 +25,7 @@
 @import './datetimeeditor/datetimeeditor.less';
 @import './formfield/formfield.less';
 @import './formfieldgroup/formfieldgroup.less';
-@import './dictionary/dictionary.less';
+@import './dictionary/dictionaryeditor.less';
 @import './htmleditor.less';
 @import './htmlcodevieweditor.less';
 @import './htmlwysiwygeditor.less';
@@ -39,7 +35,7 @@
 @import './pager/pager.less';
 @import './panel/panel.less';
 @import './panel/recommendationpanel/recommendation.less';
-@import './schemaeditor2/schemaeditor.less';
+@import './schemaeditor/schemaeditor.less';
 @import './table/table.less';
 @import './textbox/textbox.less';
 @import './texteditor.less';
@@ -56,8 +52,10 @@
 @import './monitoring/statuspill/statuspill.less';
 @import './tip/tip.less';
 @import './arrayeditor/arrayeditor.less';
+@import './editor/shared/editorCollapseToggle.less';
 @import './fabric.less';
 @import './editor/monaco/monaco.less';
+@import './editor/base/tokenpicker.less';
 @import './editor/base/editor.less';
 @import './peek/peek.less';
 @import './intellisensecontrol/intellisensecontrol.less';
@@ -71,10 +69,11 @@
 @import './authentication/authentication.less';
 @import './workflowparameters/workflowparameters.less';
 @import './card/cardv2.less';
-@import './card/scope/scopev2.less';
-@import './card/subgraphHeader/subgraphHeader.less';
+@import './card/subgraphCard/subgraphCard.less';
 @import './overview/overview.less';
 @import './about/about.less';
+@import './selectConnection/selectConnection.less';
+@import './createConnection/createConnection.less';
 
 .msla-clear-both {
   clear: both;
@@ -392,8 +391,10 @@ body.dark {
   }
 }
 
-// There are some generated graph action nodes with no children, and they are blocking other elements
-//   This stops those empty positioning nodes from interfering with touch events
-.react-flow__node:empty {
+.react-flow__node {
+  cursor: default !important;
   pointer-events: none !important;
+  & > div {
+    pointer-events: initial;
+  }
 }

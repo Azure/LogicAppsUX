@@ -1,27 +1,45 @@
 import { useLayout } from '../core/graphlayout';
-import { updateNodeSizes } from '../core/state/workflowSlice';
-import GraphNode from './CustomNodes/GraphNode';
-import OperationCardNode from './CustomNodes/OperationCardNode';
-import { CustomEdge } from './connections/edge';
+import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
+import { updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import Controls from './Controls';
+import GraphNode from './CustomNodes/GraphContainerNode';
+import HiddenNode from './CustomNodes/HiddenNode';
+import OperationNode from './CustomNodes/OperationCardNode';
+import ScopeCardNode from './CustomNodes/ScopeCardNode';
+import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
+import Minimap from './Minimap';
+import { ButtonEdge } from './connections/edge';
+// import { OnlyEdge } from './connections/onlyEdge';
+import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
 import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import type { NodeChange } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
+import type { NodeChange } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 
 export interface DesignerProps {
   graphId?: string;
 }
 
-const nodeTypes = {
-  testNode: OperationCardNode,
-  graphNode: GraphNode,
+type NodeTypesObj = {
+  [key in WorkflowNodeType]: React.ComponentType<any>;
+};
+const nodeTypes: NodeTypesObj = {
+  OPERATION_NODE: OperationNode,
+  GRAPH_NODE: GraphNode,
+  SUBGRAPH_NODE: GraphNode,
+  SCOPE_CARD_NODE: ScopeCardNode,
+  SUBGRAPH_CARD_NODE: SubgraphCardNode,
+  HIDDEN_NODE: HiddenNode,
 };
 
 const edgeTypes = {
-  buttonedge: CustomEdge,
+  BUTTON_EDGE: ButtonEdge,
+  HEADING_EDGE: ButtonEdge, // This is functionally the same as a button edge
+  // ONLY_EDGE: undefined,
+  HIDDEN_EDGE: HiddenEdge,
 };
 
 export const Designer = () => {
@@ -47,6 +65,9 @@ export const Designer = () => {
             minZoom={0}
             nodesDraggable={false}
             edgeTypes={edgeTypes}
+            panOnScroll={true}
+            deleteKeyCode={['Backspace', 'Delete']}
+            zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,
@@ -54,6 +75,10 @@ export const Designer = () => {
           >
             <PanelRoot />
           </ReactFlow>
+          <div className="msla-designer-tools">
+            <Minimap />
+            <Controls />
+          </div>
         </ReactFlowProvider>
       </div>
     </DndProvider>

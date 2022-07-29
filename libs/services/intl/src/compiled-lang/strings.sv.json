@@ -1,14 +1,38 @@
 {
-  "+GSexV": [
+  "+1GH4O": [
     {
       "type": 0,
-      "value": "Filter"
+      "value": "OK"
+    }
+  ],
+  "+Bh3Qk": [
+    {
+      "type": 0,
+      "value": "Knapp för att lägga till dynamiskt innehåll"
+    }
+  ],
+  "+W9fkq": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+    }
+  ],
+  "+dlOgj": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Haiti"
     }
   ],
   "+g+mch": [
     {
       "type": 0,
       "value": "Returnerar brödtexten för en del i en åtgärds multipart-utdata"
+    }
+  ],
+  "+iMTt7": [
+    {
+      "type": 0,
+      "value": "Markera om du vill välja den här anslutningen"
     }
   ],
   "+lpuMl": [
@@ -23,10 +47,28 @@
       "value": "Sidnumrering"
     }
   ],
+  "/AtN16": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Darwin"
+    }
+  ],
+  "/B2CTz": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Beijing, Chongqing, Hongkong, Urumqi"
+    }
+  ],
   "/I/U8L": [
     {
       "type": 0,
       "value": "Innehåll"
+    }
+  ],
+  "/Igb36": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Brisbane"
     }
   ],
   "/NDLmg": [
@@ -39,6 +81,12 @@
     {
       "type": 0,
       "value": "Returnerar elementen i den matris som börjar vid antalindexet"
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Ändra anslutning"
     }
   ],
   "/WW7If": [
@@ -59,6 +107,24 @@
       "value": "Obligatoriskt. Den samling som objekt ska kopplas från."
     }
   ],
+  "/qu3zt": [
+    {
+      "type": 0,
+      "value": "0"
+    }
+  ],
+  "/rjP4U": [
+    {
+      "type": 0,
+      "value": "(UTC) Coordinated Universal Time"
+    }
+  ],
+  "/sMQhI": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Indiana (östra)"
+    }
+  ],
   "/ut0u7": [
     {
       "type": 0,
@@ -75,6 +141,12 @@
     {
       "type": 0,
       "value": "Returnerar URL:en för att anropa utlösaren eller åtgärden. OBS! Den här funktionen kan bara användas i httpWebhook eller apiConnectionWebhook, inte i manual, recurrence, http eller apiConnection."
+    }
+  ],
+  "09oqLb": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Baku"
     }
   ],
   "0FzNJV": [
@@ -119,10 +191,22 @@
       "value": "Lyckades med återförsök"
     }
   ],
+  "0hxr5j": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Chetumal"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
       "value": "Obligatoriskt. Den sträng som ska konverteras till versaler. Om ett tecken i strängen inte har någon versal motsvarighet, så inkluderas tecknet oförändrat i den returnerade strängen."
+    }
+  ],
+  "0meqK1": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
   "0p+pJq": [
@@ -161,6 +245,12 @@
       "value": "Returnerar porten från en URI. Om port inte anges, returneras standardporten för protokollet"
     }
   ],
+  "14lYtE": [
+    {
+      "type": 0,
+      "value": "18"
+    }
+  ],
   "1A1P5b": [
     {
       "type": 0,
@@ -189,6 +279,12 @@
     {
       "type": 0,
       "value": "Konverterar parameterargumentet till ett flyttalsnummer"
+    }
+  ],
+  "1Ogj/V": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Jerusalem"
     }
   ],
   "1R6Vaa": [
@@ -243,6 +339,12 @@
       "value": "Ange ett eller flera uttryck som måste vara sanna för att utlösaren ska utlösas."
     }
   ],
+  "1X4U/1": [
+    {
+      "type": 0,
+      "value": "Visa kodvy"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -261,10 +363,22 @@
       "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är mindre än det värde det jämförs med."
     }
   ],
+  "1uGBLP": [
+    {
+      "type": 0,
+      "value": "5"
+    }
+  ],
   "1zgFh1": [
     {
       "type": 0,
       "value": "Stäng"
+    }
+  ],
+  "1zmMYu": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Caracas"
     }
   ],
   "23fENy": [
@@ -297,6 +411,24 @@
       "value": "Sluttid"
     }
   ],
+  "2NYPLt": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30) Newfoundland"
+    }
+  ],
+  "2Noh96": [
+    {
+      "type": 0,
+      "value": "17"
+    }
+  ],
+  "2b1yD3": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Auckland, Wellington"
+    }
+  ],
   "2cVEMV": [
     {
       "type": 0,
@@ -309,10 +441,22 @@
       "value": "Krävs. Namnet på åtgärden med ett formulärdata- eller formulärkodat svar."
     }
   ],
+  "2ri1Kf": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Damaskus"
+    }
+  ],
   "2tTQ0A": [
     {
       "type": 0,
       "value": "På"
+    }
+  ],
+  "2xhbE1": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Magadan"
     }
   ],
   "33+WHG": [
@@ -321,10 +465,52 @@
       "value": "Identifierare"
     }
   ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Lägg till dynamiskt innehåll"
+    }
+  ],
+  "3FoqCK": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Tbilisi"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
       "value": "Obligatoriskt. Avgränsaren."
+    }
+  ],
+  "3PgHCT": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Chisinau"
+    }
+  ],
+  "3TD2V5": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Dhaka"
+    }
+  ],
+  "3X/ZDK": [
+    {
+      "type": 0,
+      "value": "Ladda upp eller välj ett utdataschema som ska användas för kartan."
+    }
+  ],
+  "3afjx+": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Chita"
+    }
+  ],
+  "3jlz+B": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30) Teheran"
     }
   ],
   "3kI7xF": [
@@ -351,6 +537,24 @@
       "value": "Krävs. Antalet angivna tidsenheter som ska subtraheras."
     }
   ],
+  "3vqfeV": [
+    {
+      "type": 0,
+      "value": "3"
+    }
+  ],
+  "3wagjT": [
+    {
+      "type": 0,
+      "value": "välj indata"
+    }
+  ],
+  "4/kJ8D": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Jerevan"
+    }
+  ],
   "47kOXr": [
     {
       "type": 0,
@@ -361,6 +565,24 @@
     {
       "type": 0,
       "value": "Krävs. Antalet dagar att lägga till. Kan vara negativt för att subtrahera dagar."
+    }
+  ],
+  "4Q7WzU": [
+    {
+      "type": 0,
+      "value": "Lägg till en ny anslutning"
+    }
+  ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
+  "4XdZNj": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Västra Centralafrika"
     }
   ],
   "4YKQAF": [
@@ -381,6 +603,12 @@
       "value": "Du kan bara lägga till kommentarer när du redigerar ett stegs indata."
     }
   ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Växla miniatyröversikt"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -399,10 +627,28 @@
       "value": "Rundtur/självstudier"
     }
   ],
+  "4wjJs0": [
+    {
+      "type": 0,
+      "value": "14"
+    }
+  ],
+  "53PSgA": [
+    {
+      "type": 0,
+      "value": "Indataschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra indataschemat?"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Obligatoriskt. Det XPath-uttryck som ska utvärderas."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -441,6 +687,18 @@
       "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är större än det värde det jämförs med."
     }
   ],
+  "65FlWi": [
+    {
+      "type": 0,
+      "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6XR3FS": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Adelaide"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -465,6 +723,12 @@
       "value": "Föregående"
     }
   ],
+  "6pd1bE": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Arizona"
+    }
+  ],
   "6qkBwz": [
     {
       "type": 0,
@@ -475,6 +739,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "7KxCGX": [
+    {
+      "type": 0,
+      "value": "(UTC+10:30) Lord Howeön"
     }
   ],
   "7QymrD": [
@@ -499,6 +769,12 @@
     {
       "type": 0,
       "value": "Returnerar antalet tick (100 nanosekunders intervall) sedan den 1 januari 0001 00:00:00 UT för en strängtidsstämpel"
+    }
+  ],
+  "7lvqST": [
+    {
+      "type": 0,
+      "value": "Ogiltigt"
     }
   ],
   "7yEdSt": [
@@ -537,6 +813,18 @@
       "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är större än eller lika med det objekt det jämförs med."
     }
   ],
+  "8JEHiY": [
+    {
+      "type": 0,
+      "value": "Lördag"
+    }
+  ],
+  "8JFxmV": [
+    {
+      "type": 0,
+      "value": "Lägg till utdataschema"
+    }
+  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -549,10 +837,28 @@
       "value": "Krävs. Strängen som ska URI-kodas."
     }
   ],
+  "8Y5xpK": [
+    {
+      "type": 0,
+      "value": "Torsdag"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
       "value": "Om fjärrservern, med asynkront mönster, indikerar att förfrågan har godkänts för bearbetning med ett 202-svar (godkänt), så fortsätter Logic Apps-motorn att söka av den URL som angetts i svarets platsrubrik till dess att ett avslutat tillstånd uppnåtts."
+    }
+  ],
+  "8pPivj": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Norfolköarna"
+    }
+  ],
+  "8to63i": [
+    {
+      "type": 0,
+      "value": "Indataschema"
     }
   ],
   "8ubEPi": [
@@ -579,10 +885,28 @@
       "value": "Returnerar en enskild matris eller ett objekt som har gemensamma objekt med matriser eller objekt som har skickats in"
     }
   ],
+  "9/vdrb": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "949s+r": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Ulan Bator"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
       "value": "Anslutning"
+    }
+  ],
+  "9EmN2M": [
+    {
+      "type": 0,
+      "value": "Avbryt"
     }
   ],
   "9JuvQ4": [
@@ -597,6 +921,12 @@
       "value": "Returnerar ett objekt med ett extra egenskapsvärdepar"
     }
   ],
+  "9SuA/E": [
+    {
+      "type": 0,
+      "value": "12"
+    }
+  ],
   "9b4xDa": [
     {
       "type": 0,
@@ -609,10 +939,40 @@
       "value": "Returnerar resultatet av att lägga till de två talen"
     }
   ],
+  "9mWdNA": [
+    {
+      "type": 0,
+      "value": "Välj ett utdataschema"
+    }
+  ],
+  "9pdXmX": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rom, Stockholm, Wien"
+    }
+  ],
+  "9pl7QP": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Atlantic Time (Kanada)"
+    }
+  ],
   "9u/Ae3": [
     {
       "type": 0,
       "value": "Returnerar sant om båda parametrarna är sanna"
+    }
+  ],
+  "AIL7WX": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "ALImBL": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Monrovia, Reykjavik"
     }
   ],
   "ANbEeQ": [
@@ -627,16 +987,68 @@
       "value": "Klart"
     }
   ],
+  "AYaqW/": [
+    {
+      "type": 0,
+      "value": "(UTC+06:30) Yangon"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
       "value": "Krävs. Strängen som ska kodas till base64-representation."
     }
   ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 åtgärder"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " åtgärd"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " åtgärder"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
       "value": "Krävs. Index för delen att hämta."
+    }
+  ],
+  "BAgRzO": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Koordinerad universaltid-08"
     }
   ],
   "BBD8Em": [
@@ -669,6 +1081,18 @@
       "value": "Krävs. Strängen att avkoda de URL-osäkra tecknen från."
     }
   ],
+  "BSHFiw": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Perth"
+    }
+  ],
+  "BVOUxP": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Havanna"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -699,6 +1123,12 @@
       "value": "Anslutning krävs"
     }
   ],
+  "Cy9qeQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Helsingfors, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -711,16 +1141,40 @@
       "value": "Krävs. Den sträng som du vill ta bort inledande och efterföljande blanksteg från."
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Generera schemat genom att använda en exempelnyttolast"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
       "value": "Varaktighet"
     }
   ],
+  "DfS13/": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Aleuterna"
+    }
+  ],
+  "DuXV2M": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Azorerna"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
       "value": "Ctrl + Y"
+    }
+  ],
+  "E9OS+9": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Koordinerad universell tid-09"
     }
   ],
   "ECZC6Y": [
@@ -735,16 +1189,46 @@
       "value": "Svar"
     }
   ],
+  "EYqGxA": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Aten, Bukarest"
+    }
+  ],
   "EZz5q7": [
     {
       "type": 0,
       "value": "Obligatoriskt. Indexet för var delsträngen ska börja extraheras."
     }
   ],
+  "EdzoIs": [
+    {
+      "type": 0,
+      "value": "1"
+    }
+  ],
+  "Eqgm4v": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Eastern Time (USA och Kanada)"
+    }
+  ],
+  "ExaACE": [
+    {
+      "type": 0,
+      "value": "Visningsnamn för anslutning"
+    }
+  ],
   "F3IDl8": [
     {
       "type": 0,
       "value": "Krävs. Antalet angivna tidsenheter som ska läggas till."
+    }
+  ],
+  "F489Vg": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Irkutsk"
     }
   ],
   "FDF4Qb": [
@@ -763,6 +1247,18 @@
     {
       "type": 0,
       "value": "har misslyckats"
+    }
+  ],
+  "FHsP9y": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45) Katmandu"
+    }
+  ],
+  "FIT7i0": [
+    {
+      "type": 0,
+      "value": "20"
     }
   ],
   "FN5zHQ": [
@@ -801,6 +1297,12 @@
       "value": "Returnerar en dags start till en strängtidsstämpel som skickats in"
     }
   ],
+  "FXC0Zi": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Bagdad"
+    }
+  ],
   "FXLR5M": [
     {
       "offset": 0,
@@ -833,6 +1335,12 @@
       "value": "hours"
     }
   ],
+  "FemgEF": [
+    {
+      "type": 0,
+      "value": "Avbryt"
+    }
+  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -843,6 +1351,12 @@
     {
       "type": 0,
       "value": "Returnerar det första indexet för ett värde i en sträng (skiftlägesokänslig, invariant kultur)"
+    }
+  ],
+  "FiyQjU": [
+    {
+      "type": 0,
+      "value": "2"
     }
   ],
   "FslNgF": [
@@ -893,6 +1407,12 @@
       "value": "Ange ett parameternamn."
     }
   ],
+  "GtDOFg": [
+    {
+      "type": 0,
+      "value": "Avbryt markeringen"
+    }
+  ],
   "GzQQqH": [
     {
       "type": 0,
@@ -935,10 +1455,40 @@
       "value": "Välj ett kort för att visa innehållet"
     }
   ],
+  "IA+Ogm": [
+    {
+      "type": 0,
+      "value": "22"
+    }
+  ],
+  "IPbBB2": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Fiji"
+    }
+  ],
+  "IUE/lQ": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Cabo Verde"
+    }
+  ],
   "IW2MjQ": [
     {
       "type": 0,
       "value": "Konverterar en inskickad tidsstämpelsträng från en UTC till en måltidszon"
+    }
+  ],
+  "IjZFjQ": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+    }
+  ],
+  "IngtMG": [
+    {
+      "type": 0,
+      "value": "Välj ett indataschema"
     }
   ],
   "Ip7Iax": [
@@ -965,6 +1515,12 @@
       "value": "Konverterar en sträng till gemena bokstäver med skiftlägesregler för den invarianta kulturen"
     }
   ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Ta bort"
+    }
+  ],
   "JNQHws": [
     {
       "type": 0,
@@ -975,6 +1531,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Det värde som konverteras till ett booleskt värde."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Lägg till nytt objekt"
     }
   ],
   "Jaz3EC": [
@@ -1007,6 +1569,12 @@
       "value": "Namn:"
     }
   ],
+  "JpthWY": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Montevideo"
+    }
+  ],
   "Jq2Y/o": [
     {
       "type": 0,
@@ -1025,10 +1593,86 @@
       "value": "Obligatoriskt. Det objekt till vilket en ny egenskap ska läggas till."
     }
   ],
+  "K5FFic": [
+    {
+      "type": 0,
+      "value": "Välj en fil att ladda upp"
+    }
+  ],
   "K90YEU": [
     {
       "type": 0,
       "value": "Returnerar en delmängd av tecken från en sträng"
+    }
+  ],
+  "KUw9iC": [
+    {
+      "type": 0,
+      "value": "Utdataschema"
+    }
+  ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 ärenden"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ärende"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ärenden"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "Khc8lS": [
+    {
+      "type": 0,
+      "value": "(UTC-09:30) Marquesasöarna"
+    }
+  ],
+  "KlvTze": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "KoBDbT": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Coordinated Universal Time-02"
+    }
+  ],
+  "Kw3bWO": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Istanbul"
     }
   ],
   "L+PY+j": [
@@ -1043,10 +1687,28 @@
       "value": "Returnerar en strängtidsstämpels veckokomponent"
     }
   ],
+  "LCUU5q": [
+    {
+      "type": 0,
+      "value": "Varning"
+    }
+  ],
+  "LMB8am": [
+    {
+      "type": 0,
+      "value": "Skapar..."
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Returnerar schemat från en URI"
+    }
+  ],
+  "Lft/is": [
+    {
+      "type": 0,
+      "value": "Lägg till nytt"
     }
   ],
   "LoGUT3": [
@@ -1067,10 +1729,28 @@
       "value": "Obligatoriskt. De uttryck som kan ha värdet sant."
     }
   ],
+  "LvpxiA": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
+  "Lwe7tQ": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lissabon, London"
+    }
+  ],
   "M0HMjE": [
     {
       "type": 0,
       "value": "Lägg till en kommentar"
+    }
+  ],
+  "M48CGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Salomonöarna, Nya Kaledonien"
     }
   ],
   "M6U2LE": [
@@ -1145,6 +1825,30 @@
       "value": "Status"
     }
   ],
+  "NeyUAh": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Buenos Aires"
+    }
+  ],
+  "NkUgXU": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "NvANon": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Alaska"
+    }
+  ],
+  "NvJDn/": [
+    {
+      "type": 0,
+      "value": "Tisdag"
+    }
+  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -1169,6 +1873,24 @@
       "value": "Åtgärdsalternativ:"
     }
   ],
+  "OGUVGd": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Bougainville"
+    }
+  ],
+  "OH9xlX": [
+    {
+      "type": 0,
+      "value": "10"
+    }
+  ],
+  "OKszbi": [
+    {
+      "type": 0,
+      "value": "Anslutningens namn"
+    }
+  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -1179,6 +1901,12 @@
     {
       "type": 0,
       "value": "Returnerar resultaten från åtgärderna på toppnivå i den angivna omfångsdefinierade åtgärden, till exempel en For_each, Until eller Scope."
+    }
+  ],
+  "OcJdKG": [
+    {
+      "type": 0,
+      "value": "Allt arbete som inte har sparats kommer att försvinna. Vill du ta bort allt?"
     }
   ],
   "Oib1mL": [
@@ -1235,6 +1963,12 @@
       "value": "Obligatoriskt. Den samling som det första objektet ska hämtas från."
     }
   ],
+  "PBvR9Q": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Araguaina"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -1277,16 +2011,34 @@
       "value": "Avbruten"
     }
   ],
+  "PeLrFb": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Moskva, St. Petersburg, Volgograd"
+    }
+  ],
   "PfCJlN": [
     {
       "type": 0,
       "value": "Arbetsflödesfunktioner"
     }
   ],
+  "PmB0J7": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Turks- och Caicosöarna"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
       "value": "Returnerar indatasträngens Base 64-representation"
+    }
+  ],
+  "Q+oELo": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Izhevsk, Samara"
     }
   ],
   "Q/7unA": [
@@ -1391,6 +2143,12 @@
       "value": "Obligatoriskt. Den sträng som ska delas."
     }
   ],
+  "RZ1MIN": [
+    {
+      "type": 0,
+      "value": "Växla till indata för hela matrisen"
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -1423,10 +2181,22 @@
       "value": "minutes"
     }
   ],
+  "RkgScy": [
+    {
+      "type": 0,
+      "value": "6"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
       "value": "Ta bort"
+    }
+  ],
+  "SADSSs": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Petropavlovsk-Kamtjatskij - gammal"
     }
   ],
   "SKXopi": [
@@ -1469,10 +2239,22 @@
       "value": "Anpassat spårnings-ID"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Klart"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
       "value": "Konfigurera körningens spårnings-ID. Delning för det här spårnings-ID:t för att initiera begäran."
+    }
+  ],
+  "T6VIym": [
+    {
+      "type": 0,
+      "value": "Namn"
     }
   ],
   "T7zcR6": [
@@ -1499,6 +2281,18 @@
       "value": "Returnerar en sträng med varje objekt i en matris som har kopplats med en avgränsare"
     }
   ],
+  "TNEttQ": [
+    {
+      "type": 0,
+      "value": "Fredag"
+    }
+  ],
+  "TNzcrv": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Vladivostok"
+    }
+  ],
   "TO7qos": [
     {
       "type": 0,
@@ -1509,6 +2303,12 @@
     {
       "type": 0,
       "value": "Ange ett värde"
+    }
+  ],
+  "TX4Kdr": [
+    {
+      "type": 0,
+      "value": "Skapa en ny anslutning"
     }
   ],
   "TZv5JE": [
@@ -1529,6 +2329,18 @@
       "value": "Taggar"
     }
   ],
+  "ToPmjE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Cuiaba"
+    }
+  ],
+  "TqPfth": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Bryssel, Köpenhamn, Madrid, Paris"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -1541,10 +2353,22 @@
       "value": "Minimera/expandera"
     }
   ],
+  "U1NiVg": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Centralamerika"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
       "value": "Genererar en matris av heltal med början från ett visst tal"
+    }
+  ],
+  "U56j9a": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Påskön"
     }
   ],
   "UCNM4L": [
@@ -1571,6 +2395,12 @@
       "value": "Klicka för att ta bort objektet"
     }
   ],
+  "UtyRCH": [
+    {
+      "type": 0,
+      "value": "Ange ett namn för anslutningen."
+    }
+  ],
   "V+/c21": [
     {
       "type": 0,
@@ -1583,10 +2413,22 @@
       "value": "Visa mindre"
     }
   ],
+  "VE3cxq": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Mountain Time (USA och Kanada)"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
       "value": "Angivet namn för arbetsflödeskörning är inte giltigt."
+    }
+  ],
+  "VUH9aj": [
+    {
+      "type": 0,
+      "value": "23"
     }
   ],
   "VVfYvq": [
@@ -1601,6 +2443,12 @@
       "value": "Kommentar"
     }
   ],
+  "VXQbMw": [
+    {
+      "type": 0,
+      "value": "Växla till matrisobjektets detaljindata"
+    }
+  ],
   "VZHick": [
     {
       "type": 0,
@@ -1611,6 +2459,20 @@
     {
       "type": 0,
       "value": "Körningshistorik"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Använd "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " som anpassat värde"
     }
   ],
   "W070M2": [
@@ -1629,7 +2491,7 @@
       "value": "Obligatoriskt. Den nya egenskapens namn."
     }
   ],
-  "W8cbO8": [
+  "WGwH45": [
     {
       "type": 0,
       "value": "Rensa"
@@ -1651,6 +2513,12 @@
     {
       "type": 0,
       "value": "Returnerar resultatet av att ha dividerat de två talen"
+    }
+  ],
+  "Wy/bhW": [
+    {
+      "type": 0,
+      "value": "Ersätt befintligt schema."
     }
   ],
   "X8JjjT": [
@@ -1689,10 +2557,22 @@
       "value": "Försök igen"
     }
   ],
+  "XN9RvJ": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Baja California"
+    }
+  ],
   "XOzn/3": [
     {
       "type": 0,
       "value": "Anslutningens namn"
+    }
+  ],
+  "XTYYks": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Söul"
     }
   ],
   "XTuxmH": [
@@ -1713,10 +2593,28 @@
       "value": " sekunder"
     }
   ],
+  "XX1ioe": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Kuwait, Riyad"
+    }
+  ],
+  "XaS4ds": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Pacific Time (USA och Kanada)"
+    }
+  ],
   "Xnn0uj": [
     {
       "type": 0,
       "value": "Förfrågan"
+    }
+  ],
+  "XoICyH": [
+    {
+      "type": 0,
+      "value": "Bläddra"
     }
   ],
   "XqamWZ": [
@@ -1795,6 +2693,18 @@
       "value": "Inget"
     }
   ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
+    }
+  ],
+  "Z4QLEf": [
+    {
+      "type": 0,
+      "value": "Konfiguration"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -1805,6 +2715,12 @@
     {
       "type": 0,
       "value": "Returnerar en strängtidsstämpels månadsdagskomponent"
+    }
+  ],
+  "ZQ4lji": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
     }
   ],
   "ZUaz3Y": [
@@ -1825,10 +2741,34 @@
       "value": "Den här åtgärden har redan tagits bort."
     }
   ],
+  "ZnGRMP": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Tomsk"
+    }
+  ],
+  "a3QJzO": [
+    {
+      "type": 0,
+      "value": "Utdataschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra utdataschemat?"
+    }
+  ],
+  "a64zhX": [
+    {
+      "type": 0,
+      "value": "Ignorera"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
       "value": "Krävs. Talet att dela med nämnaren."
+    }
+  ],
+  "a7x6VI": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Taipei"
     }
   ],
   "aAXnqw": [
@@ -1843,16 +2783,40 @@
       "value": "Obligatoriskt. Det antal objekt som ska tas bort från samlingens framsida. Det måste vara ett positivt heltal."
     }
   ],
+  "aH9SV7": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Asjchabad, Tasjkent"
+    }
+  ],
   "aK4iLW": [
     {
       "type": 0,
       "value": "Datahantering"
     }
   ],
+  "aL0Uut": [
+    {
+      "type": 0,
+      "value": "Funktion"
+    }
+  ],
+  "ajAro8": [
+    {
+      "type": 0,
+      "value": "Lägg till"
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
       "value": "Värde"
+    }
+  ],
+  "bS5DyV": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kaliningrad"
     }
   ],
   "bTrk+S": [
@@ -1879,10 +2843,34 @@
       "value": "Returnerar maxvärdet i indatamatrisen med tal"
     }
   ],
+  "bnStSJ": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+    }
+  ],
+  "bx3qeC": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Brasilia"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
       "value": "Obligatoriskt. Den samling som från vilken de första Count-objekten ska hämtas."
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Gör"
+    }
+  ],
+  "c1XmvN": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Nuku'alofa"
     }
   ],
   "c2XklE": [
@@ -1895,6 +2883,12 @@
     {
       "type": 0,
       "value": "Returnerar ett objekt med en egenskap som är inställd på det angivna värdet"
+    }
+  ],
+  "c5/wGq": [
+    {
+      "type": 0,
+      "value": "välj utdata"
     }
   ],
   "c6XbVI": [
@@ -1913,6 +2907,18 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Det värde det ska sökas efter i indexet."
+    }
+  ],
+  "cT2MlP": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Chokurdakh"
+    }
+  ],
+  "cVIZTQ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Tripoli"
     }
   ],
   "ci6ex1": [
@@ -1939,6 +2945,12 @@
       "value": "Starttid"
     }
   ],
+  "cr0UnG": [
+    {
+      "type": 0,
+      "value": "9"
+    }
+  ],
   "cscezV": [
     {
       "type": 0,
@@ -1949,6 +2961,12 @@
     {
       "type": 0,
       "value": "Ta bort kommentar"
+    }
+  ],
+  "d4xMIx": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
   "dDYCuU": [
@@ -1969,10 +2987,48 @@
       "value": "Ange beteende och funktioner för överföring av innehåll via HTTP. Stora meddelanden kan delas upp i mindre begäranden till anslutningen för att tillåta uppladdning av stora meddelanden. Information finns på http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
+  "dUZi34": [
+    {
+      "type": 0,
+      "value": "(UTC+12:45) Chathamöarna"
+    }
+  ],
   "dWFyfN": [
     {
       "type": 0,
       "value": "Säkra indata för åtgärden."
+    }
+  ],
+  "dWeRGU": [
+    {
+      "type": 0,
+      "value": "pennsymbol"
+    }
+  ],
+  "dWx21B": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Sakhalin"
+    }
+  ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "dgAu27": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Grönland"
     }
   ],
   "dhvk0u": [
@@ -1999,10 +3055,22 @@
       "value": "Delar strängen med hjälp av en avgränsare"
     }
   ],
+  "e00zot": [
+    {
+      "type": 0,
+      "value": "Hur ofta vill du kolla efter objekt?"
+    }
+  ],
   "e4Onhn": [
     {
       "type": 0,
       "value": "Inte angivet"
+    }
+  ],
+  "eGa1Wa": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ekaterinburg"
     }
   ],
   "eHgi14": [
@@ -2029,6 +3097,12 @@
       "value": "Obligatoriskt. Det index i vilket delsträngen börjar i parameter 1."
     }
   ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Inga värden matchar din sökning"
+    }
+  ],
   "euC/DV": [
     {
       "type": 0,
@@ -2053,10 +3127,22 @@
       "value": "Returnerar sant om det första argumentet är större än eller lika med det andra"
     }
   ],
+  "faSDuD": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Port Louis"
+    }
+  ],
   "fg/34o": [
     {
       "type": 0,
       "value": "Logiska funktioner"
+    }
+  ],
+  "froV/0": [
+    {
+      "type": 0,
+      "value": "(UTC+04:30) Kabul"
     }
   ],
   "ftwXvc": [
@@ -2071,10 +3157,22 @@
       "value": "Värde"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
       "value": "Publicera"
+    }
+  ],
+  "g5mMuM": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Saint-Pierre and Miquelon"
     }
   ],
   "gCXOd5": [
@@ -2095,10 +3193,22 @@
       "value": "Returnerar resultatet av att dividera de två talen"
     }
   ],
+  "gF+0/N": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Amman"
+    }
+  ],
   "gIK0WG": [
     {
       "type": 0,
       "value": "Obligatoriskt. A booleskt värde som bestämmer vilket värde uttrycket ska returnera."
+    }
+  ],
+  "gIc0YJ": [
+    {
+      "type": 0,
+      "value": "Anslutningens namn"
     }
   ],
   "gKq3Jv": [
@@ -2125,10 +3235,28 @@
       "value": "Utlösarvillkor"
     }
   ],
+  "gg0j4S": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
       "value": "När den här funktionen används inuti fram till loopen returnerar den det aktuella iterationsindexet för den angivna loopen."
+    }
+  ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Ange eller klistra in en JSON-exempelnyttolast."
+    }
+  ],
+  "hBLPXK": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan"
     }
   ],
   "hN7iBP": [
@@ -2227,6 +3355,12 @@
       "value": "Krävs. Den URI som ska parsas."
     }
   ],
+  "iRe/g7": [
+    {
+      "type": 0,
+      "value": "21"
+    }
+  ],
   "iRjBf4": [
     {
       "type": 0,
@@ -2251,6 +3385,12 @@
       "value": "Avbryt"
     }
   ],
+  "iq+tiv": [
+    {
+      "type": 0,
+      "value": "11"
+    }
+  ],
   "iql+jn": [
     {
       "type": 1,
@@ -2265,6 +3405,12 @@
     {
       "type": 0,
       "value": "Test"
+    }
+  ],
+  "j1VU25": [
+    {
+      "type": 0,
+      "value": "(UTC+14:00) Kiritimati (Julön)"
     }
   ],
   "j2MU0b": [
@@ -2291,6 +3437,12 @@
       "value": "Obligatoriskt. Det uttryck som ska negeras."
     }
   ],
+  "jMLmag": [
+    {
+      "type": 0,
+      "value": "Skapa nytt"
+    }
+  ],
   "jQ0Aqj": [
     {
       "type": 0,
@@ -2313,6 +3465,28 @@
     {
       "type": 0,
       "value": "Redigera i JSON"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Det går inte att skapa schema"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Formatet för manifestanslutningsreferensen stöds inte: "
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    }
+  ],
+  "jsEMSu": [
+    {
+      "type": 0,
+      "value": "Verktygslådan"
     }
   ],
   "juR40n": [
@@ -2339,6 +3513,18 @@
       "value": "Ja"
     }
   ],
+  "kBw1WQ": [
+    {
+      "type": 0,
+      "value": "Lägg till indataschema"
+    }
+  ],
+  "kDsud+": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Cayenne, Fortaleza"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -2363,10 +3549,22 @@
       "value": "Returnerar en strängrepresentation av en indata-Base 64-sträng"
     }
   ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
       "value": "Hämta (Alt/Option + klicka)"
+    }
+  ],
+  "kZCX7t": [
+    {
+      "type": 0,
+      "value": "Måndag"
     }
   ],
   "kZuYgD": [
@@ -2375,10 +3573,22 @@
       "value": "Returnerar sant om det första argumentet är mindre än det andra"
     }
   ],
+  "kc5Mui": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Mid-Atlantic - gammal"
+    }
+  ],
   "keb4r1": [
     {
       "type": 0,
       "value": "Returnerar sant om två värden är lika stora"
+    }
+  ],
+  "kneb9/": [
+    {
+      "type": 0,
+      "value": "(UTC-12:00) Internationella datumlinjen, väst"
     }
   ],
   "knylNW": [
@@ -2405,6 +3615,18 @@
       "value": " minuter"
     }
   ],
+  "lFve22": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Sarajevo, Skopje, Warszawa, Zagreb"
+    }
+  ],
+  "lIPWQ6": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+    }
+  ],
   "lPTdSf": [
     {
       "type": 0,
@@ -2417,10 +3639,22 @@
       "value": "Rubrik"
     }
   ],
+  "lWjfm3": [
+    {
+      "type": 0,
+      "value": "Tillbaka"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
       "value": "har hoppats över"
+    }
+  ],
+  "lfHj+F": [
+    {
+      "type": 0,
+      "value": "Ange en giltig matris"
     }
   ],
   "lgs5sf": [
@@ -2477,6 +3711,12 @@
       "value": "URL:en kodar indatasträngen"
     }
   ],
+  "mZCHKf": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+    }
+  ],
   "mZRMD9": [
     {
       "type": 0,
@@ -2487,6 +3727,24 @@
     {
       "type": 0,
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i utgående begäran."
+    }
+  ],
+  "mx2IMJ": [
+    {
+      "type": 0,
+      "value": "13"
+    }
+  ],
+  "n+F7e2": [
+    {
+      "type": 0,
+      "value": "15"
+    }
+  ],
+  "n20T2h": [
+    {
+      "type": 0,
+      "value": "7"
     }
   ],
   "n35O/+": [
@@ -2531,6 +3789,18 @@
       "value": "Lägger till ett heltalsvärde för det antal minuter för vilka en strängtidsstämpel skickas in"
     }
   ],
+  "ntiOaL": [
+    {
+      "type": 0,
+      "value": "Stäng"
+    }
+  ],
+  "nx25nq": [
+    {
+      "type": 0,
+      "value": "19"
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -2569,10 +3839,34 @@
       "value": "Innehållsöverföring"
     }
   ],
+  "oRvVIW": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Krasnoyarsk"
+    }
+  ],
   "oV0xQ9": [
     {
       "type": 0,
       "value": "Ange körningsidentifieraren för att öppna körningen"
+    }
+  ],
+  "ol+TkT": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "orhWzV": [
+    {
+      "type": 0,
+      "value": "Det gick inte att läsa in schemat. Försök igen."
+    }
+  ],
+  "oxH1L/": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
     }
   ],
   "p/0r2N": [
@@ -2585,6 +3879,12 @@
     {
       "type": 0,
       "value": "Rubriker"
+    }
+  ],
+  "p5tz8/": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Samoa"
     }
   ],
   "pIczsS": [
@@ -2603,6 +3903,12 @@
     {
       "type": 0,
       "value": "Parametrar"
+    }
+  ],
+  "pUeUDw": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
     }
   ],
   "pXmFGf": [
@@ -2665,6 +3971,12 @@
       "value": "Lägger till ett heltalsvärde för det antal sekunder för vilka en strängtidsstämpel skickas in"
     }
   ],
+  "q9hf8i": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -2681,6 +3993,12 @@
     {
       "type": 0,
       "value": "har lyckats"
+    }
+  ],
+  "qQoQFv": [
+    {
+      "type": 0,
+      "value": "Ogiltig anslutning."
     }
   ],
   "qSejoi": [
@@ -2739,10 +4057,22 @@
       "value": "Obligatoriskt. Det värde som konverteras till ett heltal."
     }
   ],
+  "qq/bq0": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Yakutsk"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
       "value": "Det asynkrona svaret tillåter en logikapp att svara med 202 (godkänd) för att indikera att förfrågan har godkänts för bearbetning. En platsrubrik kommer att tillhandahållas för att hämta den slutliga statusen."
+    }
+  ],
+  "r1FQhf": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Windhoek"
     }
   ],
   "r43nMc": [
@@ -2775,6 +4105,12 @@
       "value": "Kortrubrik"
     }
   ],
+  "rDt4Iu": [
+    {
+      "type": 0,
+      "value": "Är anslutningen ogiltig"
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -2785,6 +4121,12 @@
     {
       "type": 0,
       "value": "Returnerar en URI-kodad representation av ett värde"
+    }
+  ],
+  "rstpaK": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Central Time (USA och Kanada)"
     }
   ],
   "s5RV9B": [
@@ -2803,6 +4145,12 @@
     {
       "type": 0,
       "value": "Returnerar en matris med värden som matchar nyckelnamnen från formulärdata eller formulärkodade utlösarutdata"
+    }
+  ],
+  "sFwHQc": [
+    {
+      "type": 0,
+      "value": "Avbryt skapande av en anslutning"
     }
   ],
   "sW47JR": [
@@ -2841,6 +4189,12 @@
       "value": "Nyckel"
     }
   ],
+  "siYGSo": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Beirut"
+    }
+  ],
   "soqP+Z": [
     {
       "type": 0,
@@ -2859,10 +4213,22 @@
       "value": "Krävs. En sträng som innehåller tidszonnamnet för måltidszonen. Se https://msdn.microsoft.com/sv-se/library/gg154758.aspx för Information."
     }
   ],
+  "t5CdhT": [
+    {
+      "type": 0,
+      "value": "Ladda upp eller välj ett indataschema som ska användas för kartan."
+    }
+  ],
   "tE7Zam": [
     {
       "type": 0,
       "value": "Returnerar URL:en för att anropa utlösaren eller åtgärden"
+    }
+  ],
+  "tELkSC": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
   "tImHz/": [
@@ -2901,6 +4267,12 @@
       "value": "Typ"
     }
   ],
+  "tP+5fA": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
   "tVmUCd": [
     {
       "type": 0,
@@ -2919,10 +4291,34 @@
       "value": "Krävs. Antalet timmar att lägga till. Kan vara negativt för att subtrahera timmar."
     }
   ],
+  "teZwo6": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "tsmuoF": [
+    {
+      "type": 0,
+      "value": "Visningsnamn"
+    }
+  ],
   "tu8I7j": [
     {
       "type": 0,
       "value": "Åtgärder"
+    }
+  ],
+  "u/KSPz": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Santiago"
+    }
+  ],
+  "u6Gdft": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Abu Dhabi, Muskat"
     }
   ],
   "uN4zFU": [
@@ -2935,6 +4331,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. De samlingar som ska utvärderas. Ett objekt som visas i någon av samlingarna visas också i resultatet."
+    }
+  ],
+  "uRurmg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Guam, Port Moresby"
     }
   ],
   "uUlBZ8": [
@@ -2961,6 +4363,24 @@
       "value": "Obligatoriskt. Strängen kan innehålla värdet."
     }
   ],
+  "udNlco": [
+    {
+      "type": 0,
+      "value": "(UTC-11:00) Coordinated Universal Time-11"
+    }
+  ],
+  "ui7GCl": [
+    {
+      "type": 0,
+      "value": "16"
+    }
+  ],
+  "urAHv1": [
+    {
+      "type": 0,
+      "value": "4"
+    }
+  ],
   "ut5Med": [
     {
       "type": 0,
@@ -2977,6 +4397,12 @@
     {
       "type": 0,
       "value": "Genererar en globalt unik sträng (GUID)"
+    }
+  ],
+  "vD2lQy": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Asunción"
     }
   ],
   "vEBhDX": [
@@ -2997,16 +4423,48 @@
       "value": "Ta bort"
     }
   ],
+  "vXwYXe": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Astana"
+    }
+  ],
   "va40BJ": [
     {
       "type": 0,
       "value": "Krävs. Namnet på åtgärden vars utdata du vill ha."
     }
   ],
+  "vb/okJ": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kairo"
+    }
+  ],
   "vcBAuU": [
     {
       "type": 0,
       "value": "har uppnått tidsgränsen"
+    }
+  ],
+  "vr70Gn": [
+    {
+      "type": 0,
+      "value": "Skapa en anslutning för "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Ange ett anpassat värde"
     }
   ],
   "vwH/XV": [
@@ -3021,10 +4479,28 @@
       "value": "Arbetsflödesegenskaper"
     }
   ],
+  "w5Hhig": [
+    {
+      "type": 0,
+      "value": "Söndag"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
       "value": "Subtraherar ett heltal av en angiven tidsenhet från en inskickad tidsstämpelsträng"
+    }
+  ],
+  "wF7C+h": [
+    {
+      "type": 0,
+      "value": "Avbryt"
     }
   ],
   "wFCkpM": [
@@ -3075,6 +4551,12 @@
       "value": "Motringningsadress:"
     }
   ],
+  "x+6ccf": [
+    {
+      "type": 0,
+      "value": "Onsdag"
+    }
+  ],
   "x0or2o": [
     {
       "type": 0,
@@ -3117,6 +4599,18 @@
       "value": "Returnerar sökvägen från en URI. Om sökvägen inte anges, returneras /"
     }
   ],
+  "xZhieP": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Islamabad, Karachi"
+    }
+  ],
+  "xb/DIr": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Coordinated Universal Time+12"
+    }
+  ],
   "xt5TeT": [
     {
       "type": 0,
@@ -3147,6 +4641,12 @@
       "value": "Krävs. Värdet som konverteras till en matris."
     }
   ],
+  "yIZP4R": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Hawaii"
+    }
+  ],
   "yOkPGx": [
     {
       "type": 0,
@@ -3157,10 +4657,46 @@
       "value": "connectorName"
     }
   ],
+  "yVh9kr": [
+    {
+      "type": 0,
+      "value": "8"
+    }
+  ],
+  "yoCi15": [
+    {
+      "type": 0,
+      "value": "Välj en befintlig anslutning eller skapa en ny."
+    }
+  ],
+  "yph4eq": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Belgrad, Bratislava, Budapest, Ljubljana, Prag"
+    }
+  ],
   "yqRrQ/": [
     {
       "type": 0,
       "value": "Datum- och tidsfunktioner"
+    }
+  ],
+  "yxsn7s": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Casablanca"
+    }
+  ],
+  "yyYtZV": [
+    {
+      "type": 0,
+      "value": "Anslutningsgateway"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Meny"
     }
   ],
   "z4YYlQ": [
@@ -3181,10 +4717,28 @@
       "value": "Obligatoriskt. Den sträng som konverteras till ett värde av ursprunglig typ."
     }
   ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Rensa anpassat värde"
+    }
+  ],
+  "zbtUQ/": [
+    {
+      "type": 0,
+      "value": "(UTC+08:30) Pyongyang"
+    }
+  ],
   "zcZpHT": [
     {
       "type": 0,
       "value": "Konverterar en sträng, med alternativ för nationella inställningar och format, till ett datum"
+    }
+  ],
+  "zggBvC": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Nairobi"
     }
   ],
   "ziYCiA": [

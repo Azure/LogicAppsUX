@@ -17,6 +17,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
       tabs: {},
       title: 'test title',
       width: '630px',
+      onCommentChange: jest.fn(),
       trackEvent: jest.fn(),
       setSelectedTab: jest.fn(),
       toggleCollapse: jest.fn(),

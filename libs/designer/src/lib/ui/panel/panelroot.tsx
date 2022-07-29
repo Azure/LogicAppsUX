@@ -1,35 +1,35 @@
-import { collapsePanel, expandPanel } from '../../core/state/panelSlice';
-import { useIconUri, useNodeDescription, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
-import { useMonitoringView, useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
-import { setNodeDescription } from '../../core/state/workflowSlice';
+import constants from '../../common/constants';
+import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useRegisteredPanelTabs, useSelectedPanelTabName, useVisiblePanelTabs } from '../../core/state/panel/panelSelectors';
+import {
+  collapsePanel,
+  expandPanel,
+  isolateTab,
+  registerPanelTabs,
+  selectPanelTab,
+  setTabVisibility,
+  showDefaultTabs,
+} from '../../core/state/panel/panelSlice';
+import { useIconUri, useNodeDescription, useNodeMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
+import { createConnectionTab } from './panelTabs/createConnectionTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
+import { scratchTab } from './panelTabs/scratchTab';
+import { selectConnectionTab } from './panelTabs/selectConnectionTab';
 import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
-import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
-import type { MenuItemOption, PageActionTelemetryData, PanelTab } from '@microsoft/designer-ui';
-import {
-  getTabs,
-  MenuItemType,
-  PanelContainer,
-  PanelHeaderControlType,
-  PanelLocation,
-  PanelScope,
-  PanelSize,
-  registerTabs,
-} from '@microsoft/designer-ui';
+import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
+import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
+import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export interface PanelRootProps {
-  selectedTabId?: string;
-}
-
-export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
+export const PanelRoot = (): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch();
 
@@ -40,24 +40,57 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
     return state.panel;
   });
 
-  const [selectedTab, setSelectedTab] = useState(selectedTabId);
   const [width, setWidth] = useState(PanelSize.Auto);
 
-  const [registeredTabs, setRegisteredTabs] = useState<Record<string, PanelTab>>({});
+  const registeredTabs = useRegisteredPanelTabs();
+  const visibleTabs = useVisiblePanelTabs();
+  const selectedPanelTab = useSelectedPanelTabName();
 
   const comment = useNodeDescription(selectedNode);
   const operationInfo = useOperationInfo(selectedNode);
   const iconUriResult = useIconUri(operationInfo);
+  const nodeMetaData = useNodeMetadata(selectedNode);
   const showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
-    monitoringTab.enabled = !!isMonitoringView;
-    setRegisteredTabs((currentTabs) => registerTabs([monitoringTab, parametersTab, SettingsTab, codeViewTab, aboutTab], currentTabs));
-  }, [readOnly, isMonitoringView]);
+    const tabs = [monitoringTab, parametersTab, aboutTab, codeViewTab, SettingsTab, scratchTab, createConnectionTab, selectConnectionTab];
+    if (process.env.NODE_ENV !== 'production') {
+      tabs.push(scratchTab);
+    }
+    dispatch(registerPanelTabs(tabs));
+  }, [dispatch]);
 
   useEffect(() => {
-    setSelectedTab(getTabs(true, registeredTabs)[0]?.name.toLowerCase());
-  }, [registeredTabs]);
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.MONITORING,
+        visible: isMonitoringView,
+      })
+    );
+  }, [dispatch, isMonitoringView]);
+
+  useEffect(() => {
+    if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))
+      dispatch(selectPanelTab(visibleTabs[0]?.name.toLowerCase()));
+  }, [dispatch, visibleTabs, selectedPanelTab]);
+
+  const setSelectedTab = (tabName: string | undefined) => {
+    dispatch(selectPanelTab(tabName));
+  };
+
+  useEffect(() => {
+    if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
+      dispatch(isolateTab(constants.PANEL_TAB_NAMES.PARAMETERS));
+    } else {
+      dispatch(showDefaultTabs());
+    }
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.MONITORING,
+        visible: isMonitoringView,
+      })
+    );
+  }, [dispatch, selectedNode, nodeMetaData, isMonitoringView]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -149,7 +182,6 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
   // TODO: 12798945? onClick for delete when node store gets built
   const handleDelete = (): void => {
     // TODO: 12798935 Analytics (event logging)
-    console.log('Node deleted!');
   };
 
   const togglePanel = (): void => {
@@ -173,7 +205,7 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
       panelScope={PanelScope.CardLevel}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}
-      selectedTab={selectedTab}
+      selectedTab={selectedPanelTab}
       showCommentBox={showCommentBox}
       tabs={registeredTabs}
       width={width}
@@ -191,6 +223,5 @@ export const PanelRoot = ({ selectedTabId }: PanelRootProps): JSX.Element => {
 };
 
 // TODO: 12798935 Analytics (event logging)
-const handleTrackEvent = (_data: PageActionTelemetryData): void => {
-  console.log('Track Event');
-};
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const handleTrackEvent = (_data: PageActionTelemetryData): void => {};

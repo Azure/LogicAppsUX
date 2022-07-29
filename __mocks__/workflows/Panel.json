@@ -2,51 +2,132 @@
   "definition": {
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
-      "Fetch_From_Zen_API": {
+      "Compose": {
+        "inputs": "a",
+        "runAfter": {},
+        "type": "Compose"
+      },
+      "Compose_11": {
+        "inputs": "asdf",
+        "runAfter": {
+          "Scope": ["Succeeded"]
+        },
+        "type": "Compose"
+      },
+      "Compose_2": {
+        "inputs": "a",
+        "runAfter": {
+          "Compose": ["Succeeded"]
+        },
+        "type": "Compose"
+      },
+      "Execute_a_navigation_plan": {
         "inputs": {
-          "method": "GET",
-          "uri": "https://zenquotes.io/api/random"
+          "a": "A"
         },
         "runAfter": {},
-        "type": "ApiConnection"
-      },
-      "Join": {
-        "inputs": {
-          "from": "@triggerBody()",
-          "joinWith": ","
-        },
-        "runAfter": {
-          "Response": ["Succeeded"],
-          "Fetch_From_Zen_API": ["Succeeded", "Failed"]
-        },
-        "type": "Join"
+        "type": "Compose"
       },
       "Response": {
         "inputs": {
-          "body": "@body('Fetch_From_Zen_API')",
-          "headers": {
-            "content-type": "text/json"
-          },
+          "body": "@outputs('Execute_a_navigation_plan')?['outputParameters']?['balance']",
           "statusCode": 200
         },
         "kind": "http",
         "runAfter": {
-          "Fetch_From_Zen_API": ["Succeeded"]
+          "Execute_a_navigation_plan": ["Succeeded"]
         },
         "type": "Response"
+      },
+      "Scope": {
+        "actions": {
+          "Compose_10": {
+            "inputs": "njh",
+            "runAfter": {
+              "Scope_2": ["Succeeded"]
+            },
+            "type": "Compose"
+          },
+          "Compose_3": {
+            "inputs": "qq",
+            "runAfter": {},
+            "type": "Compose"
+          },
+          "Compose_4": {
+            "inputs": "q",
+            "runAfter": {
+              "Compose_3": ["Succeeded"]
+            },
+            "type": "Compose"
+          },
+          "Compose_5": {
+            "inputs": "q",
+            "runAfter": {
+              "Compose_3": ["Succeeded"]
+            },
+            "type": "Compose"
+          },
+          "Compose_6": {
+            "inputs": "hh",
+            "runAfter": {
+              "Compose_4": ["Succeeded"]
+            },
+            "type": "Compose"
+          },
+          "Scope_2": {
+            "actions": {
+              "Compose_7": {
+                "inputs": "ttt",
+                "runAfter": {},
+                "type": "Compose"
+              },
+              "Compose_8": {
+                "inputs": "rrrr",
+                "runAfter": {
+                  "Compose_7": ["Succeeded"]
+                },
+                "type": "Compose"
+              },
+              "Compose_9": {
+                "inputs": "tttt",
+                "runAfter": {
+                  "Compose_7": ["Succeeded"]
+                },
+                "type": "Compose"
+              }
+            },
+            "runAfter": {
+              "Compose_5": ["Succeeded"]
+            },
+            "type": "Scope"
+          }
+        },
+        "runAfter": {
+          "Response": ["Succeeded"]
+        },
+        "type": "Scope"
       }
     },
     "contentVersion": "1.0.0.0",
     "outputs": {},
     "triggers": {
-      "manual": {
+      "Http": {
         "inputs": {
-          "method": "GET"
+          "body": "d",
+          "headers": {
+            "d": "d"
+          },
+          "method": "PUT",
+          "uri": "http://uri.com"
         },
-        "kind": "Http",
-        "type": "Request"
+        "recurrence": {
+          "frequency": "Hour",
+          "interval": 3,
+          "timeZone": "UTC-11"
+        },
+        "type": "Http"
       }
     }
   },
-  "kind": "Stateless"
+  "kind": "Stateful"
 }

@@ -1,0 +1,46 @@
+.msla-create-connection-actions-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+
+  // Some styling gets messed up by Azure theming
+  *.ms-Button {
+    height: 32px;
+    font-size: 14px;
+  }
+}
+
+.msla-create-connection-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+
+  .connection-params-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .param-row {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+
+      .label {
+        max-width: 200px;
+        min-width: 200px;
+      }
+
+      .connection-parameter-input {
+        flex-grow: 1;
+      }
+    }
+  }
+}

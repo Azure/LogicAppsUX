@@ -9,12 +9,17 @@ export const DataMapperStandaloneDesigner = () => {
   const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
   const availableSchemas = useSelector((state: RootState) => state.schemaDataLoader.availableSchemas);
 
+  const saveStateCall = () => {
+    new Promise((resolve) => setTimeout(resolve, 10));
+    // console.log();
+  };
+
   return (
     <>
       <DevToolbox />
       <DataMapperDesignerProvider locale="en-US" options={{}}>
         <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={availableSchemas}>
-          <DataMapperDesigner />
+          <DataMapperDesigner saveStateCall={saveStateCall} />
         </DataMapDataProvider>
       </DataMapperDesignerProvider>
     </>

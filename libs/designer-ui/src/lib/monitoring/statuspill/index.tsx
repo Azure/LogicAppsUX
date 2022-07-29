@@ -1,6 +1,6 @@
 import { getStatusString } from '../../utils';
 import { StatusIcon } from './statusicon';
-import { TooltipHost } from '@fluentui/react';
+import { css, TooltipHost } from '@fluentui/react';
 
 export interface StatusPillProps {
   duration?: string;
@@ -12,26 +12,15 @@ export interface StatusPillProps {
 
 export const StatusPill: React.FC<StatusPillProps> = ({ duration, durationAnnounced, hasRetries = false, id, status }) => {
   const statusString = getStatusString(status, hasRetries);
-
-  if (!duration || duration === '--') {
-    return (
-      <div id={id} aria-label={statusString} role="status" className="msla-pill status-only">
-        <TooltipHost content={statusString}>
-          <div className="msla-pill--inner">
-            <StatusIcon hasRetries={hasRetries} status={status} />
-          </div>
-        </TooltipHost>
-      </div>
-    );
-  }
-
-  const ariaLabel = [durationAnnounced, statusString].join('. ');
+  const durationString = [durationAnnounced, statusString].join('. ');
+  const statusOnly = !duration || duration === '--';
+  const label = statusOnly ? statusString : durationString;
 
   return (
-    <div id={id} aria-label={ariaLabel} role="status" className="msla-pill">
-      <TooltipHost content={ariaLabel}>
+    <div id={id} aria-label={label} role="status" className={css('msla-pill', statusOnly && 'status-only')}>
+      <TooltipHost content={label}>
         <div className="msla-pill--inner">
-          <span aria-hidden={true}>{duration}</span>
+          {!statusOnly && <span aria-hidden={true}>{duration}</span>}
           <StatusIcon hasRetries={hasRetries} status={status} />
         </div>
       </TooltipHost>

@@ -1,9 +1,9 @@
 import constants from '../../common/constants';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
-import { updateNodeSettings } from '../../core/state/operationMetadataSlice';
-import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { setExpandedSections } from '../../core/state/settingSlice';
+import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
 import { DataHandling } from './sections/datahandling';
 import type { DataHandlingSectionProps } from './sections/datahandling';
@@ -71,7 +71,7 @@ export const SettingsPanel = (): JSX.Element => {
   // const [ expandedSections, setExpandedSections ] = useState([] as SectionNames[]);
 
   // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
-  const allEdges: WorkflowEdge[] = useEdgesByParent();
+  const allEdges: WorkflowEdge[] = useEdgesBySource();
 
   const GeneralSettings = (): JSX.Element | null => {
     const onConcurrencyToggle = (checked: boolean): void => {

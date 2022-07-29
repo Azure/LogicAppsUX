@@ -1,9 +1,19 @@
+import type { InitializePayload } from '../state/vscodeSlice';
+import type { ExtensionCommand } from '@microsoft-logic-apps/utils';
+
 export interface IRunService {
   getContent(contentLink: ContentLink): Promise<any>;
   getMoreRuns(continuationToken: string): Promise<Runs>;
   getRun(runId: string): Promise<Run | RunError>;
   getRuns(workflowId: string): Promise<Runs>;
   runTrigger(callbackInfo: CallbackInfo): Promise<any>;
+}
+
+export interface IApiService {
+  getWorkflows(subscriptionId: string, iseId: string): Promise<any>;
+  getSubscriptions(): Promise<any>;
+  getIse(selectedSubscription: string): Promise<any>;
+  validateWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string): Promise<any>;
 }
 
 export interface ArmResources<T> {
@@ -144,4 +154,192 @@ interface RunTriggerHistoryProperties {
 export enum ProjectName {
   export = 'export',
   overview = 'overview',
+}
+
+export interface WorkflowProperties {
+  id: string;
+  name: string;
+  type: string;
+  location: string;
+  tags: Record<string, string>;
+  properties: Record<string, any>;
+}
+
+export interface Workflows {
+  value: Array<WorkflowProperties>;
+}
+
+export interface WorkflowsList {
+  key: string;
+  name: string;
+  resourceGroup: string;
+}
+
+export interface OutletContext {
+  accessToken: string;
+  baseUrl: string;
+  selectedWorkflows: Array<WorkflowsList>;
+}
+
+export enum QueryKeys {
+  workflowsData = 'workflowsData',
+  subscriptionData = 'subscriptionData',
+  runsData = 'runsData',
+  iseData = 'iseData',
+  validation = 'validation',
+  summary = 'summary',
+  resourceGroupsData = 'resourceGroupsData',
+}
+
+export interface ISubscription {
+  id: string;
+  subscriptionId: string;
+  subscriptionName: string;
+}
+
+export interface ManagedConnections {
+  isManaged: boolean;
+  resourceGroup: string | undefined;
+  resourceGroupLocation: string | undefined;
+}
+
+export type ExportData = {
+  selectedWorkflows: Array<WorkflowsList>;
+  selectedSubscription: string;
+  selectedIse: string;
+  location: string;
+  validationState: string;
+  targetDirectory: ITargetDirectory;
+  packageUrl: string;
+  managedConnections: ManagedConnections;
+};
+
+export enum ResourceType {
+  workflows = 'workflows',
+  subscriptions = 'subscriptions',
+  ise = 'ise',
+  resourcegroups = 'resourcegroups',
+}
+
+export interface IIse {
+  id: string;
+  subscriptionId: string;
+  iseName: string;
+  location: string;
+  resourceGroup: string;
+}
+
+export interface IDropDownOption {
+  key: string;
+  text: string;
+}
+
+export enum RouteName {
+  export = 'export',
+  instance_selection = 'instance-selection',
+  workflows_selection = 'workflows-selection',
+  validation = 'validation',
+  overview = 'overview',
+  summary = 'summary',
+}
+
+export enum ValidationStatus {
+  succeeded = 'Succeeded',
+  succeeded_with_warnings = 'SucceededWithWarning',
+  failed = 'Failed',
+}
+
+export interface IWorkflowValidation {
+  validationState: string;
+  workflowOperations: Record<string, any>;
+  connections: Record<string, any>;
+  parameters: Record<string, any>;
+}
+
+export interface IValidationData {
+  properties: {
+    validationState: string;
+    workflows: Record<string, IWorkflowValidation>;
+  };
+}
+
+export interface IGroupedGroup {
+  children: Array<IGroupedGroup>;
+  isCollapsed: boolean;
+  key: string;
+  level: number;
+  count: number;
+  name: string;
+  startIndex: number;
+  status: string | undefined;
+}
+
+export interface IGroupedItem {
+  action: string;
+  status: string;
+  message: string;
+}
+
+export enum WorkflowPart {
+  workflowOperations = 'workflowOperations',
+  connections = 'connections',
+  parameters = 'parameters',
+}
+
+export enum StyledWorkflowPart {
+  workflowOperations = 'Operations',
+  connections = 'Connections',
+  parameters = 'Parameters',
+}
+
+export interface InjectValuesMessage {
+  command: ExtensionCommand.initialize_frame;
+  data: InitializePayload;
+}
+
+export interface UpdateAccessTokenMessage {
+  command: ExtensionCommand.update_access_token;
+  data: {
+    accessToken?: string;
+  };
+}
+
+export interface UpdateExportPathMessage {
+  command: ExtensionCommand.update_export_path;
+  data: {
+    targetDirectory: ITargetDirectory;
+  };
+}
+
+export interface IExportDetails {
+  exportDetailCategory: string;
+  exportDetailCode: string;
+  exportDetailMessage: string;
+}
+
+export interface IExportDetailsList {
+  type: string;
+  message: string;
+}
+
+export interface ISummaryData {
+  properties: {
+    packageLink: Record<string, string>;
+    details: Array<IExportDetails>;
+  };
+}
+
+export enum DetailCategory {
+  requiredStep = 'RequiredStep',
+  information = 'Information',
+}
+
+export enum StyledDetailCategory {
+  requiredStep = 'Required Step',
+  information = 'Information',
+}
+
+export interface ITargetDirectory {
+  fsPath: string;
+  path: string;
 }

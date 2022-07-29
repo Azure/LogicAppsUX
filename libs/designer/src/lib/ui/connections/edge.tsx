@@ -1,6 +1,6 @@
+import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useReadOnly } from '../../core/state/selectors/designerOptionsSelector';
-import { useEdgesByParent } from '../../core/state/selectors/workflowNodeSelector';
+import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import React, { useMemo } from 'react';
@@ -15,7 +15,7 @@ export interface LogicAppsEdgeProps {
 }
 const foreignObjectHeight = 30;
 const foreignObjectWidth = 200;
-export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
+export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   id,
   sourceX,
   sourceY,
@@ -29,7 +29,10 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 }) => {
   const readOnly = useReadOnly();
 
-  const allChildrenEdges = useEdgesByParent(source);
+  // Remove any added id-specifier to get the actual id
+  const sourceId = source.split('-#')[0];
+
+  const allChildrenEdges = useEdgesBySource(source);
   const nodeMetadata = useNodeMetadata(source);
   const [edgeCenterX, edgeCenterY] = getEdgeCenter({
     sourceX,
@@ -64,7 +67,7 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               requiredExtensions="http://www.w3.org/1999/xhtml"
             >
               <div style={{ padding: '4px' }}>
-                <DropZone parent={source} graphId={nodeMetadata?.graphId ?? ''} />
+                <DropZone graphId={nodeMetadata?.graphId ?? ''} parent={sourceId} />
               </div>
             </foreignObject>
           )}
@@ -77,7 +80,7 @@ export const CustomEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
             requiredExtensions="http://www.w3.org/1999/xhtml"
           >
             <div style={{ padding: '4px' }}>
-              <DropZone parent={source} child={target} graphId={nodeMetadata?.graphId ?? ''} />
+              <DropZone graphId={nodeMetadata?.graphId ?? ''} parent={sourceId} child={target} />
             </div>
           </foreignObject>
         </>

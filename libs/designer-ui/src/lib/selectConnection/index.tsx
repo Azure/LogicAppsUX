@@ -1,0 +1,214 @@
+import { getConnectionErrors } from '../helper';
+import type { IColumn } from '@fluentui/react';
+import {
+  MessageBar,
+  MessageBarType,
+  Icon,
+  TooltipHost,
+  MarqueeSelection,
+  DefaultButton,
+  Spinner,
+  SpinnerSize,
+  DetailsList,
+  SelectionMode,
+  DetailsListLayoutMode,
+  Selection,
+} from '@fluentui/react';
+import type { Connection } from '@microsoft-logic-apps/utils';
+import { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
+
+export interface SelectConnectionProps {
+  connections: Connection[];
+  currentConnection?: Connection;
+  isLoading?: boolean;
+  showIdentityErrorBanner?: boolean;
+  saveSelectionCallback: (connection?: Connection) => void;
+  cancelSelectionCallback: () => void;
+  createConnectionCallback: () => void;
+}
+
+export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
+  const {
+    connections,
+    currentConnection,
+    isLoading,
+    showIdentityErrorBanner,
+    saveSelectionCallback,
+    cancelSelectionCallback,
+    createConnectionCallback,
+  } = props;
+
+  const intl = useIntl();
+
+  // We need to flatten the connection to allow the detail list access to nested props
+  const flattenedConnections = connections.map((connection) => {
+    const errors = getConnectionErrors(connection);
+
+    return {
+      ...connection,
+      ...connection.properties,
+      invalid: errors.length ? (
+        <div className="msla-connection-error-icon-container">
+          <TooltipHost content={errors.map((error) => error.error?.message).join(', ')}>
+            <Icon iconName="Error" className="msla-connection-error-icon" />
+          </TooltipHost>
+        </div>
+      ) : null,
+    };
+  });
+
+  const [select, setSelect] = useState(
+    new Selection({
+      onSelectionChanged: () => {
+        const newSelection = select.getSelection()[0] as any;
+        if (newSelection) {
+          // This if statement avoids the initial selection in the details list
+          if (newSelection?.id !== currentConnection?.id) saveSelectionCallback(newSelection);
+        } else cancelSelectionCallback(); // User clicked the existing connection, keep selection the same and return
+      },
+    })
+  );
+
+  // Assign connection on initial load
+  useEffect(() => {
+    if (currentConnection) {
+      const newSelect = select;
+      newSelect.setIndexSelected(connections.indexOf(currentConnection), true, false);
+      setSelect(newSelect);
+    }
+  }, [connections, currentConnection]);
+
+  if (isLoading) {
+    return (
+      <div className="msla-panel-select-connection-container">
+        <Spinner size={SpinnerSize.large} />
+      </div>
+    );
+  }
+
+  const columns: IColumn[] = [
+    {
+      key: 'invalid',
+      name: intl.formatMessage({
+        defaultMessage: 'Invalid',
+        description: 'Column header for invalid connections',
+      }),
+      ariaLabel: intl.formatMessage({
+        defaultMessage: 'Is connection invalid',
+        description: 'aria label description for invalid connections',
+      }),
+      fieldName: 'invalid',
+      minWidth: 50,
+      maxWidth: 50,
+    },
+    {
+      key: 'displayName',
+      name: intl.formatMessage({
+        defaultMessage: 'Display Name',
+        description: 'Column header for connection display name',
+      }),
+      ariaLabel: intl.formatMessage({
+        defaultMessage: 'Connection display name',
+        description: 'aria label description for connection display name',
+      }),
+      fieldName: 'displayName',
+      minWidth: 200,
+      maxWidth: 200,
+      isResizable: true,
+    },
+    {
+      key: 'name',
+      name: intl.formatMessage({
+        defaultMessage: 'Name',
+        description: 'Column header for connection name',
+      }),
+      ariaLabel: intl.formatMessage({
+        defaultMessage: 'Connection name',
+        description: 'aria label description for connection name',
+      }),
+      fieldName: 'name',
+      minWidth: 100,
+      maxWidth: 100,
+      isResizable: true,
+    },
+    {
+      key: 'gateway',
+      name: intl.formatMessage({
+        defaultMessage: 'Gateway',
+        description: 'Column header for connection gateway',
+      }),
+      ariaLabel: intl.formatMessage({
+        defaultMessage: 'Connection gateway',
+        description: 'aria label description for connection gateway',
+      }),
+      fieldName: 'gateway',
+      minWidth: 100,
+      maxWidth: 100,
+    },
+  ];
+
+  const componentDescription = intl.formatMessage({
+    defaultMessage: 'Select an existing connection or create a new one.',
+    description: 'Select an existing connection or create a new one.',
+  });
+
+  const identityErrorText = intl.formatMessage({
+    defaultMessage: 'Invalid connection.',
+    description: 'Message shown when the current connection is invalid',
+  });
+
+  const checkButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Check to select this connection',
+    description: 'aria label description for check button',
+  });
+
+  const buttonAddText = intl.formatMessage({
+    defaultMessage: 'Add new',
+    description: 'Button to add a new connection',
+  });
+
+  const buttonAddAria = intl.formatMessage({
+    defaultMessage: 'Add a new connection',
+    description: 'Aria label description for add button',
+  });
+
+  const buttonCancelText = intl.formatMessage({
+    defaultMessage: 'Cancel',
+    description: 'Button to cancel a connection',
+  });
+
+  const buttonCancelAria = intl.formatMessage({
+    defaultMessage: 'Cancel the selection',
+    description: 'Aria label description for cancel button',
+  });
+
+  return (
+    <div className="msla-select-connections-container">
+      {showIdentityErrorBanner ? <MessageBar messageBarType={MessageBarType.error}>{identityErrorText}</MessageBar> : null}
+
+      <div>{componentDescription}</div>
+
+      <MarqueeSelection selection={select}>
+        <DetailsList
+          className="msla-connections-list"
+          items={flattenedConnections}
+          columns={columns}
+          setKey="set"
+          selection={select}
+          selectionMode={SelectionMode.single}
+          layoutMode={DetailsListLayoutMode.justified}
+          isHeaderVisible={true}
+          selectionPreservedOnEmptyClick={true}
+          enterModalSelectionOnTouch={true}
+          checkButtonAriaLabel={checkButtonAriaLabel}
+        />
+      </MarqueeSelection>
+
+      <div className="msla-select-connection-actions-container">
+        <DefaultButton text={buttonAddText} ariaLabel={buttonAddAria} onClick={createConnectionCallback} />
+        <DefaultButton text={buttonCancelText} ariaLabel={buttonCancelAria} onClick={cancelSelectionCallback} />
+      </div>
+    </div>
+  );
+};

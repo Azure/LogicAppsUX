@@ -101,6 +101,7 @@ export interface SettingSectionProps {
   title: string;
   sectionName?: string;
   showHeading?: boolean;
+  showSeparator?: boolean;
   expanded?: boolean;
   settings: Settings[];
   isReadOnly?: boolean;

@@ -13,7 +13,9 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
   onRenderHeader={[Function]}
   styles={
     Object {
-      "content": false,
+      "content": Object {
+        "padding": "1rem",
+      },
     }
   }
   type={7}

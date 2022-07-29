@@ -31,7 +31,7 @@ export const monitorRetryTab: PanelTab = {
   title: 'Retry',
   name: constants.PANEL_TAB_NAMES.RETRY_HISTORY,
   description: 'Retry History',
-  enabled: true,
+  visible: true,
   content: <RetryPanelTab />,
   order: 0,
   icon: 'Rerun',

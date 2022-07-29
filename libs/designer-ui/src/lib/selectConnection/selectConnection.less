@@ -1,0 +1,53 @@
+.msla-select-connections-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.msla-connections-list {
+  // Some styling gets messed up by Azure theming
+
+  *.ms-Check-circle {
+    font-size: 18px;
+    border-radius: 50%;
+    padding: 0px;
+    border-style: none;
+  }
+
+  *.ms-Check-check {
+    left: 0.5px;
+    top: -1px;
+  }
+
+  *:not(.is-checked) {
+    > .ms-Check-circle {
+      color: #605e5c;
+    }
+  }
+}
+
+.msla-connection-error-icon-container {
+  display: flex;
+  justify-content: center;
+}
+
+.msla-connection-error-icon {
+  font-size: 18px;
+  color: #e00202;
+}
+
+.msla-select-connection-actions-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  // Some styling gets messed up by Azure theming
+  *.ms-Button {
+    height: 32px;
+    font-size: 14px;
+  }
+}

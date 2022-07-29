@@ -6,13 +6,13 @@ import { useNavigate } from 'react-router-dom';
 
 export const StateWrapper: React.FC = () => {
   const navigate = useNavigate();
-  const overviewState = useSelector((state: RootState) => state.overview);
+  const vscodeState = useSelector((state: RootState) => state.vscode);
 
   useEffect(() => {
-    if (overviewState.initialized) {
-      switch (overviewState.project) {
+    if (vscodeState.initialized) {
+      switch (vscodeState.project) {
         case ProjectName.export: {
-          navigate(`/${ProjectName.export}/home`, { replace: true });
+          navigate(`/${ProjectName.export}/instance-selection`, { replace: true });
           break;
         }
         case ProjectName.overview: {
@@ -24,7 +24,7 @@ export const StateWrapper: React.FC = () => {
         }
       }
     }
-  }, [overviewState, navigate]);
+  }, [vscodeState, navigate]);
 
   return null;
 };

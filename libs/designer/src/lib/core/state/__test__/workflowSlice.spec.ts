@@ -1,6 +1,7 @@
 import { initialState } from '../../parsers/__test__/mocks/workflowMock';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import reducer, { addNode } from '../workflowSlice';
+import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
+import reducer, { addNode } from '../workflow/workflowSlice';
 
 describe('workflow slice reducers', () => {
   it('should add initial node to the workflow', () => {
@@ -11,9 +12,10 @@ describe('workflow slice reducers', () => {
     const state = reducer(initialState, addNode(mockAddNode));
     expect(state.graph?.children).toEqual([
       {
-        height: 67,
         id: '123',
+        height: 67,
         width: 200,
+        type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
       },
     ]);
     expect(state.nodesMetadata).toEqual({

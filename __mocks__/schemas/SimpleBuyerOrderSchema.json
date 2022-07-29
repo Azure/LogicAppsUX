@@ -1,0 +1,94 @@
+{
+  "name": "OutputSchema.xsd",
+  "type": "XML",
+  "targetNamespace": "http://OutputSchema",
+  "namespaces": { "ns0": "http://OutputSchema", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "schemaTreeRoot": {
+    "key": "/ns0:OutputRecord",
+    "name": "OutputRecord",
+    "namespacePrefix": "ns0",
+    "namespaceUri": "http://OutputSchema",
+    "schemaNodeDataType": "None",
+    "properties": "NotSpecified",
+    "children": [
+      {
+        "key": "/ns0:OutputRecord/Identity",
+        "name": "Identity",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          { "key": "/ns0:OutputRecord/Identity/UserID", "name": "UserID", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          {
+            "key": "/ns0:OutputRecord/Identity/LastName",
+            "name": "LastName",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
+          },
+          {
+            "key": "/ns0:OutputRecord/Identity/FirstName",
+            "name": "FirstName",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
+          },
+          { "key": "/ns0:OutputRecord/Identity/Initial", "name": "Initial", "schemaNodeDataType": "String", "properties": "NotSpecified" }
+        ]
+      },
+      {
+        "key": "/ns0:OutputRecord/Address",
+        "name": "Address",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:OutputRecord/Address/AddressLine1",
+            "name": "AddressLine1",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
+          },
+          {
+            "key": "/ns0:OutputRecord/Address/AddressLine2",
+            "name": "AddressLine2",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
+          },
+          { "key": "/ns0:OutputRecord/Address/City", "name": "City", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          { "key": "/ns0:OutputRecord/Address/State", "name": "State", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          { "key": "/ns0:OutputRecord/Address/ZipCode", "name": "ZipCode", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          { "key": "/ns0:OutputRecord/Address/Country", "name": "Country", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          {
+            "key": "/ns0:OutputRecord/Address/CountryCode",
+            "name": "CountryCode",
+            "schemaNodeDataType": "Integer",
+            "properties": "NotSpecified"
+          }
+        ]
+      },
+      {
+        "key": "/ns0:OutputRecord/ContactInfo",
+        "name": "ContactInfo",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:OutputRecord/ContactInfo/HomePhone",
+            "name": "HomePhone",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
+          },
+          {
+            "key": "/ns0:OutputRecord/ContactInfo/WorkPhone",
+            "name": "WorkPhone",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
+          },
+          {
+            "key": "/ns0:OutputRecord/ContactInfo/CellPhone",
+            "name": "CellPhone",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified"
+          }
+        ]
+      }
+    ]
+  }
+}

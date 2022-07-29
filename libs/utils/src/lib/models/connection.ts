@@ -30,6 +30,15 @@ interface Api {
   type: string;
 }
 
+export interface ConnectionParameterSetValues {
+  name: string;
+  values: Record<string, ValueObject>;
+}
+
+export interface ValueObject {
+  value: any;
+}
+
 export interface ConnectionProperties {
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParametersSet?: ConnectionParameterSet;
