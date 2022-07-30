@@ -576,7 +576,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Selecionar a vista a partir da qual navegar"
     }
   ],
   "4XdZNj": [
@@ -648,7 +648,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Conectores"
     }
   ],
   "5aa76N": [
@@ -2692,7 +2692,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Reduzir"
     }
   ],
   "Z4QLEf": [
@@ -3093,6 +3093,12 @@
       "value": "Obrigatório. O índice a partir do qual a subcadeia começa no parâmetro 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3156,7 +3162,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Ampliar"
     }
   ],
   "g4igOR": [
@@ -3556,7 +3562,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Apresentar mini mapa"
     }
   ],
   "kYivbS": [
@@ -4421,6 +4427,12 @@
       "value": "Devolve o último índice de um valor numa cadeia (sensível a maiúsculas e minúsculas, cultura invariante)"
     }
   ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
+    }
+  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4498,7 +4510,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Ajuste de página"
     }
   ],
   "wEaGWn": [

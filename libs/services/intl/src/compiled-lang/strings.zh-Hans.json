@@ -569,7 +569,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "选择要从中浏览的视图"
     }
   ],
   "4XdZNj": [
@@ -641,7 +641,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "连接器"
     }
   ],
   "5aa76N": [
@@ -2645,7 +2645,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "缩小"
     }
   ],
   "Z4QLEf": [
@@ -2963,7 +2963,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "已连接到 "
     },
     {
       "type": 1,
@@ -2971,7 +2971,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "。"
     }
   ],
   "dgAu27": [
@@ -3046,6 +3046,12 @@
       "value": "必需。其中子字符换以参数 1 开头的索引。"
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3109,7 +3115,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "放大"
     }
   ],
   "g4igOR": [
@@ -3498,7 +3504,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "显示缩略图"
     }
   ],
   "kYivbS": [
@@ -4360,6 +4366,12 @@
       "value": "返回字符串内某值的最后一个索引(区分大小写，固定区域性)"
     }
   ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
+    }
+  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4437,7 +4449,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "适应页面"
     }
   ],
   "wEaGWn": [
