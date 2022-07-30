@@ -576,7 +576,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Göz atılacak görünümü seçin"
     }
   ],
   "4XdZNj": [
@@ -648,7 +648,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Bağlayıcılar"
     }
   ],
   "5aa76N": [
@@ -2692,7 +2692,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Uzaklaştır"
     }
   ],
   "Z4QLEf": [
@@ -3009,16 +3009,12 @@
   ],
   "daoo3l": [
     {
-      "type": 0,
-      "value": "Connected to "
-    },
-    {
       "type": 1,
       "value": "connectionName"
     },
     {
       "type": 0,
-      "value": "."
+      "value": " ile bağlantı kuruldu."
     }
   ],
   "dgAu27": [
@@ -3093,6 +3089,12 @@
       "value": "Gerekli. Parametre 1'de alt dizenin başladığı konumun dizini."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3156,7 +3158,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Yakınlaştır"
     }
   ],
   "g4igOR": [
@@ -3540,7 +3542,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Mini haritayı görüntüle"
     }
   ],
   "kYivbS": [
@@ -4405,6 +4407,12 @@
       "value": "Bir dize içindeki bir değerin son dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)"
     }
   ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
+    }
+  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4478,7 +4486,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Sayfaya sığdır"
     }
   ],
   "wEaGWn": [

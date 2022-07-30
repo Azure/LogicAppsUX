@@ -686,7 +686,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Łączniki"
     }
   ],
   "5aa76N": [
@@ -2818,7 +2818,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Pomniejsz"
     }
   ],
   "Z4QLEf": [
@@ -3136,7 +3136,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Połączono z "
     },
     {
       "type": 1,
@@ -3219,6 +3219,12 @@
       "value": "Parametr wymagany. Indeks, w którym podciąg rozpoczyna się w parametrze 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3282,7 +3288,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Powiększ"
     }
   ],
   "g4igOR": [
@@ -3704,7 +3710,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Wyświetl minimapę"
     }
   ],
   "kYivbS": [
@@ -4589,6 +4595,12 @@
     {
       "type": 0,
       "value": "Zwraca ostatni indeks wartości w ciągu (bez uwzględniania wielkości liter, kultura niezmienna)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
