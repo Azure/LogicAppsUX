@@ -11,32 +11,32 @@ export enum CollapsedEditorType {
   DICTIONARY = 'dictionary',
 }
 
-type CollapsedEditorBaseProps = {
+interface CollapsedEditorBaseProps {
   isValid?: boolean;
   initialValue?: Segment[];
   errorMessage: string;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
-};
+}
 
-export type CollapsedEditorProps = CollapsedEditorBaseProps &
-  (
-    | {
-        type: CollapsedEditorType.COLLAPSED_ARRAY;
-        setItems: (items: ArrayEditorItemProps[]) => void;
-      }
-    | {
-        type: CollapsedEditorType.DICTIONARY;
-        setItems: (items: DictionaryEditorItemProps[]) => void;
-      }
-  );
+interface ColapsedEditorArrayProps {
+  type: CollapsedEditorType.COLLAPSED_ARRAY;
+  setItems: (items: ArrayEditorItemProps[]) => void;
+}
+
+interface CollapsedEditorDictionaryProps {
+  type: CollapsedEditorType.DICTIONARY;
+  setItems: (items: DictionaryEditorItemProps[]) => void;
+}
+
+type CollapsedEditorProps = CollapsedEditorBaseProps & (ColapsedEditorArrayProps | CollapsedEditorDictionaryProps);
 
 export const CollapsedEditor = ({
   isValid = true,
   errorMessage,
   initialValue,
   type,
-  setItems,
   setIsValid,
+  setItems,
 }: CollapsedEditorProps): JSX.Element => {
   return (
     <BaseEditor
@@ -56,6 +56,7 @@ export const CollapsedEditor = ({
         className={'msla-collapsed-editor-validation'}
         isValid={isValid}
         setIsValid={setIsValid}
+        setItems={type === CollapsedEditorType.DICTIONARY ? setItems : undefined}
       />
     </BaseEditor>
   );

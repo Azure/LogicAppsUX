@@ -1,5 +1,8 @@
+import type { DictionaryEditorItemProps } from '../../../dictionary';
+import { serializeDictionary } from '../../../dictionary/util/serializedictionary';
 import { CollapsedEditorType } from '../../shared/collapsedEditor';
 import { $isTokenNode } from '../nodes/tokenNode';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, ElementNode } from 'lexical';
 import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
@@ -12,26 +15,41 @@ export interface ValidationProps {
   errorMessage: string;
   isValid?: boolean;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
+  setItems?: (items: DictionaryEditorItemProps[]) => void;
 }
 
-export const Validation = ({ className, isValid, type, tokensEnabled = true, errorMessage, setIsValid }: ValidationProps): JSX.Element => {
+export const Validation = ({
+  className,
+  isValid,
+  type,
+  tokensEnabled = true,
+  errorMessage,
+  setIsValid,
+  setItems,
+}: ValidationProps): JSX.Element => {
+  const [editor] = useLexicalComposerContext();
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), tokensEnabled);
       if (setIsValid) {
+        let newValiditity = true;
         switch (type) {
           case CollapsedEditorType.COLLAPSED_ARRAY:
             if (!editorString.trim().length || editorString === '[]') {
-              setIsValid(true);
+              setIsValid(newValiditity);
             } else {
               setIsValid(isValidArray(editorString));
             }
             break;
           case CollapsedEditorType.DICTIONARY:
-            if (!editorString.trim().length || editorString === '[]') {
-              setIsValid(true);
+            if (!editorString.trim().length || editorString === '{}') {
+              setIsValid(newValiditity);
             } else {
-              setIsValid(isValidDictionary(editorString));
+              newValiditity = isValidDictionary(editorString);
+              setIsValid(newValiditity);
+              if (newValiditity && setItems) {
+                serializeDictionary(editor, setItems);
+              }
             }
         }
       }

@@ -4,22 +4,22 @@ import { $isTokenNode } from '../nodes/tokenNode';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isTextNode } from 'lexical';
 
-export function serializeEditorState(editorState: EditorState): Segment[] {
+export function serializeEditorState(editorState: EditorState, trimLiteral?: boolean): Segment[] {
   const segments: Segment[] = [];
   editorState.read(() => {
-    getChildrenNodes($getRoot(), segments);
+    getChildrenNodes($getRoot(), segments, trimLiteral ?? false);
   });
   return segments;
 }
 
-const getChildrenNodes = (node: ElementNode, segments: Segment[]): void => {
+const getChildrenNodes = (node: ElementNode, segments: Segment[], trimLiteral: boolean): void => {
   node.__children.forEach((child) => {
     const childNode = $getNodeByKey(child);
     if (childNode && $isElementNode(childNode)) {
-      return getChildrenNodes(childNode, segments);
+      return getChildrenNodes(childNode, segments, trimLiteral);
     }
     if ($isTextNode(childNode)) {
-      segments.push({ type: ValueSegmentType.LITERAL, value: childNode.__text });
+      segments.push({ type: ValueSegmentType.LITERAL, value: trimLiteral ? childNode.__text.trim() : childNode.__text });
     } else if ($isTokenNode(childNode)) {
       segments.push({
         type: ValueSegmentType.TOKEN,
@@ -32,4 +32,28 @@ const getChildrenNodes = (node: ElementNode, segments: Segment[]): void => {
       });
     }
   });
+};
+
+export const convertStringToSegments = (value: string, tokensEnabled?: boolean, nodeMap?: Map<string, Segment>): Segment[] => {
+  let currIndex = 0;
+  let prevIndex = 0;
+  const returnSegments: Segment[] = [];
+  while (currIndex < value.length) {
+    if (value.substring(currIndex - 2, currIndex) === '$(') {
+      if (value.substring(prevIndex, currIndex - 2)) {
+        returnSegments.push({ type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex - 2) });
+      }
+      const newIndex = value.indexOf(')', currIndex) + 1;
+      if (nodeMap && tokensEnabled) {
+        const token = nodeMap.get(value.substring(currIndex - 2, newIndex));
+        if (token) {
+          returnSegments.push(token);
+        }
+      }
+      prevIndex = currIndex = newIndex;
+    }
+    currIndex++;
+  }
+  returnSegments.push({ type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex) });
+  return returnSegments;
 };
