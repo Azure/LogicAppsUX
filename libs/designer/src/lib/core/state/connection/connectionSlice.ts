@@ -26,7 +26,7 @@ export const connectionSlice = createSlice({
     initializeConnectionsMappings: (state, action: PayloadAction<ConnectionMapping>) => {
       state.connectionsMapping = action.payload;
     },
-    changeConnectionMapping: (state, action: PayloadAction<{ nodeId: NodeId; connectionId?: string }>) => {
+    changeConnectionMapping: (state, action: PayloadAction<{ nodeId: NodeId; connectionId: string }>) => {
       const { nodeId, connectionId } = action.payload;
       state.connectionsMapping[nodeId] = connectionId;
     },
