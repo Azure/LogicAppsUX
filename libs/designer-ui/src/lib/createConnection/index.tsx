@@ -1,3 +1,4 @@
+import { filterRecord } from '../utils';
 import type { IDropdownOption } from '@fluentui/react';
 import { DefaultButton, Dropdown, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
 import type {
@@ -20,6 +21,8 @@ export interface CreateConnectionProps {
   cancelCallback?: () => void;
 }
 
+type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
+
 export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const { connectorDisplayName, connectionParameters, connectionParameterSets, isLoading, createConnectionCallback, cancelCallback } =
     props;
@@ -37,18 +40,30 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [selectedParamSetIndex]
   );
 
-  const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
-  const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
-
   const singleAuthParams = connectionParameters;
   const multiAuthParams = connectionParameterSets?.values[selectedParamSetIndex].parameters;
 
+  const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
+  const [parameterValues, setParameterValues] = useState<Record<string, string | undefined>>({});
+
+  const isParamVisible = useCallback(
+    (parameter: ParamType) => {
+      const data = parameter.uiDefinition;
+      if (data?.constraints?.hidden || data?.constraints?.hideInUI) return false;
+      const dependencyParam = data?.constraints?.dependentParameter;
+      if (dependencyParam && parameterValues[dependencyParam.parameter] !== dependencyParam.value) return false;
+      return true;
+    },
+    [parameterValues]
+  );
+
   const validParams = useMemo(() => {
-    return Object.values(singleAuthParams ?? multiAuthParams ?? []).every(
-      (parameter) =>
-        parameter.uiDefinition?.constraints?.required === 'false' || !!parameterValues[parameter.uiDefinition?.displayName ?? 'UNDEFINED']
+    return Object.entries(singleAuthParams ?? multiAuthParams ?? []).every(
+      ([key, parameter]) =>
+        parameter.uiDefinition?.constraints?.required === 'false' || !isParamVisible(parameter) || !!parameterValues[key]
     );
-  }, [singleAuthParams, multiAuthParams, parameterValues]);
+  }, [singleAuthParams, multiAuthParams, isParamVisible, parameterValues]);
+
   const canSubmit = !isLoading && !!connectionDisplayName && validParams;
 
   const inputConnectionDisplayNameLabel = intl.formatMessage({
@@ -96,9 +111,25 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     }
   );
 
+  const filterInvisibleParameters = useCallback(
+    (parameterValues: Record<string, ParamType>) => filterRecord(parameterValues, isParamVisible),
+    [isParamVisible]
+  );
+
   const submitCallback = useCallback(() => {
-    return createConnectionCallback?.(connectionDisplayName, connectionParameterSets?.values[selectedParamSetIndex], parameterValues);
-  }, [parameterValues, connectionDisplayName, connectionParameterSets?.values, createConnectionCallback, selectedParamSetIndex]);
+    return createConnectionCallback?.(
+      connectionDisplayName,
+      connectionParameterSets?.values[selectedParamSetIndex],
+      filterInvisibleParameters(parameterValues)
+    );
+  }, [
+    createConnectionCallback,
+    connectionDisplayName,
+    connectionParameterSets?.values,
+    selectedParamSetIndex,
+    filterInvisibleParameters,
+    parameterValues,
+  ]);
 
   if (Object.keys(singleAuthParams ?? {}).length > 0 || Object.keys(multiAuthParams ?? {}).length > 0) {
     // Configurable connector component
@@ -146,16 +177,9 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
           {/* Connector Parameters */}
           {Object.entries(multiAuthParams ?? singleAuthParams ?? [])?.map(
             ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
+              if (!isParamVisible(parameter)) return null;
+
               const data = parameter.uiDefinition;
-
-              if (data?.constraints?.hidden || data?.constraints?.hideInUI) return null;
-
-              const dependencyParam = data?.constraints?.dependentParameter;
-              if (dependencyParam) {
-                const dependencyValue = parameterValues[dependencyParam.parameter];
-                if (dependencyValue !== dependencyParam.value) return null;
-              }
-
               let inputComponent = undefined;
               if ((data?.constraints?.allowedValues?.length ?? 0) > 0) {
                 // Dropdown Parameter
