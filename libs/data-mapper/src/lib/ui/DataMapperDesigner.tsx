@@ -190,7 +190,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const toolboxPanelProps: FloatingPanelProps = {
     xPos: '16px',
     yPos: '56px',
-    width: '300px',
+    width: '250px',
     minHeight: '300px',
     maxHeight: '450px',
   };

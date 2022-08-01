@@ -1,4 +1,7 @@
-import type { SchemaExtended, SchemaNodeExtended } from '../../models';
+import type { SchemaExtended, SchemaNodeDataType, SchemaNodeExtended } from '../../models';
+import { icon16ForSchemaNodeType } from './SchemaTree.Utils';
+import { Button, tokens } from '@fluentui/react-components';
+import { bundleIcon, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
 import { fluentTreeItem, fluentTreeView, provideFluentDesignSystem } from '@fluentui/web-components';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
 import React from 'react';
@@ -13,6 +16,7 @@ export interface SchemaTreeProps {
 }
 
 export const SchemaTree: React.FC<SchemaTreeProps> = ({ schema, onLeafNodeClick }: SchemaTreeProps) => {
+  // TODO color tree background to tokens.colorNeutralBackground1
   return <FastTreeView>{convertToFastTreeItem(schema.schemaTreeRoot, onLeafNodeClick)}</FastTreeView>;
 };
 
@@ -21,21 +25,60 @@ const convertToFastTreeItem = (node: SchemaNodeExtended, onLeafNodeClick: (schem
     if (childNode.schemaNodeDataType === 'ComplexType' || childNode.schemaNodeDataType === 'None') {
       return (
         <FastTreeItem key={childNode.key}>
-          {childNode.name}
+          <TreeItemContent
+            nodeType={childNode.schemaNodeDataType}
+            onClick={() => {
+              onLeafNodeClick(childNode);
+            }}
+            includeAddButton={false}
+          >
+            {childNode.name}
+          </TreeItemContent>
           {convertToFastTreeItem(childNode, onLeafNodeClick)}
         </FastTreeItem>
       );
     } else {
       return (
-        <FastTreeItem
-          key={childNode.key}
-          onClick={() => {
-            onLeafNodeClick(childNode);
-          }}
-        >
-          {childNode.name}
+        <FastTreeItem key={childNode.key}>
+          <TreeItemContent
+            nodeType={childNode.schemaNodeDataType}
+            onClick={() => {
+              onLeafNodeClick(childNode);
+            }}
+            includeAddButton={true}
+          >
+            {childNode.name}
+          </TreeItemContent>
         </FastTreeItem>
       );
     }
   });
+};
+
+export interface SchemaNodeTreeItemContentProps {
+  nodeType: SchemaNodeDataType;
+  filled?: boolean;
+  includeAddButton: boolean;
+  onClick: () => void;
+}
+
+const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, filled, includeAddButton, children, onClick }) => {
+  const BundledTypeIcon = icon16ForSchemaNodeType(nodeType);
+  const BundledAddIcon = bundleIcon(CheckmarkCircle16Filled, Circle16Regular);
+
+  return (
+    <>
+      <Button
+        style={{ border: '0px', borderRadius: '0px', minWidth: '16px', backgroundColor: tokens.colorNeutralBackground2 }}
+        icon={<BundledTypeIcon />}
+      />
+      <span style={{ width: '100%' }}>{children}</span>
+      {includeAddButton ? (
+        <Button
+          style={{ border: '0px', borderRadius: '0px', float: 'right', minWidth: '16px', backgroundColor: tokens.colorNeutralBackground2 }}
+          icon={<BundledAddIcon filled={filled} onClick={onClick} />}
+        />
+      ) : null}
+    </>
+  );
 };
