@@ -1,5 +1,6 @@
 import type { DictionaryEditorItemProps } from '.';
 import { BaseEditor } from '../editor/base';
+import { HandleDelete } from './plugins/HandleDelete';
 import { SerializeExpandedDictionary } from './plugins/SerializeExpandedDictionary';
 import { isEmpty } from './util/helper';
 import type { IIconProps } from '@fluentui/react';
@@ -86,6 +87,7 @@ export const ExpandedDictionary = ({ items, setItems }: ExpandedDictionaryProps)
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary items={items} initialItem={item.key} index={index} type={'key'} setItems={setItems} />
+                <HandleDelete items={items} index={index} type={'key'} />
               </BaseEditor>
             </div>
             <div className="msla-dictionary-item-cell">
@@ -99,8 +101,9 @@ export const ExpandedDictionary = ({ items, setItems }: ExpandedDictionaryProps)
                   addDictionaryItem: { addItem: addItem, index: index },
                 }}
               >
-                <SerializeExpandedDictionary items={items} initialItem={item.value} index={index} type={'value'} setItems={setItems} />
                 <OnChangePlugin onChange={onChange} />
+                <SerializeExpandedDictionary items={items} initialItem={item.value} index={index} type={'value'} setItems={setItems} />
+                <HandleDelete items={items} index={index} type={'value'} />
               </BaseEditor>
             </div>
             {renderDelete(index)}
