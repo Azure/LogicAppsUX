@@ -40,6 +40,7 @@ export const CollapsedDictionary = ({ items, isValid, setItems, setIsValid }: Co
   );
 };
 
+// convert from DictionaryEditorItemProps array to Segment array
 const parseInitialValue = (items: DictionaryEditorItemProps[]): Segment[] => {
   items.filter((item) => {
     return !isEmpty(item);
