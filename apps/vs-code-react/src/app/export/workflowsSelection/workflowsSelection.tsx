@@ -39,11 +39,11 @@ export const WorkflowsSelection: React.FC = () => {
     }),
     SELECTION: intl.formatMessage({
       defaultMessage: 'Select',
-      description: 'Select apps to export description',
+      description: 'Select logic apps to export description',
     }),
     SELECTION_ALL: intl.formatMessage({
       defaultMessage: 'Select all',
-      description: 'Select apps to export description',
+      description: 'Select all logic apps to export description',
     }),
     SELECT_WORKFLOW: intl.formatMessage({
       defaultMessage: 'Select logic app',
