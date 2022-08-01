@@ -4,14 +4,14 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $setSelection, CLEAR_EDITOR_COMMAND } from 'lexical';
 import { useEffect, useState } from 'react';
 
-interface HandleDeleteProps {
+interface DeleteDictionaryItemProps {
   items: DictionaryEditorItemProps[];
   index: number;
   type: 'key' | 'value';
 }
 
-export const HandleDelete = ({ items, index, type }: HandleDeleteProps) => {
-  const [itemLength, setItemLength] = useState(50);
+export const DeleteDictionaryItem = ({ items, index, type }: DeleteDictionaryItemProps) => {
+  const [itemLength, setItemLength] = useState(0);
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     if (itemLength > items.length) {

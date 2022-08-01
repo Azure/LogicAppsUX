@@ -1,17 +1,13 @@
 import type { DictionaryEditorItemProps } from '.';
 import { BaseEditor } from '../editor/base';
-import { HandleDelete } from './plugins/HandleDelete';
+import { DictionaryDeleteButton } from './expandeddictionarydelete';
+import { DeleteDictionaryItem } from './plugins/DeleteDictionaryItem';
 import { SerializeExpandedDictionary } from './plugins/SerializeExpandedDictionary';
 import { isEmpty } from './util/helper';
-import type { IIconProps } from '@fluentui/react';
-import { css, IconButton, TooltipHost } from '@fluentui/react';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-const deleteButtonIconProps: IIconProps = {
-  iconName: 'Cancel',
-};
 export interface ExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
   setItems: (items: DictionaryEditorItemProps[]) => void;
@@ -48,27 +44,6 @@ export const ExpandedDictionary = ({ items, setItems }: ExpandedDictionaryProps)
       setItems([...items, { key: [], value: [] }]);
     }
   };
-
-  const renderDelete = (index: number): JSX.Element => {
-    const deleteLabel = intl.formatMessage({
-      defaultMessage: 'Click to delete item',
-      description: 'Label to delete dictionary item',
-    });
-    const handleDeleteItem = () => {
-      setItems(items.filter((_, i) => i !== index));
-    };
-    return (
-      <TooltipHost content={deleteLabel}>
-        <IconButton
-          aria-label={deleteLabel}
-          className={css('msla-button', 'msla-dictionary-item-delete', index === items.length - 1 ? 'msla-hidden' : undefined)}
-          iconProps={deleteButtonIconProps}
-          onClick={handleDeleteItem}
-        />
-      </TooltipHost>
-    );
-  };
-
   return (
     <div className="msla-dictionary-container msla-dictionary-item-container" ref={containerRef}>
       {items.map((item, index) => {
@@ -87,7 +62,7 @@ export const ExpandedDictionary = ({ items, setItems }: ExpandedDictionaryProps)
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary items={items} initialItem={item.key} index={index} type={'key'} setItems={setItems} />
-                <HandleDelete items={items} index={index} type={'key'} />
+                <DeleteDictionaryItem items={items} index={index} type={'key'} />
               </BaseEditor>
             </div>
             <div className="msla-dictionary-item-cell">
@@ -103,10 +78,10 @@ export const ExpandedDictionary = ({ items, setItems }: ExpandedDictionaryProps)
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary items={items} initialItem={item.value} index={index} type={'value'} setItems={setItems} />
-                <HandleDelete items={items} index={index} type={'value'} />
+                <DeleteDictionaryItem items={items} index={index} type={'value'} />
               </BaseEditor>
             </div>
-            {renderDelete(index)}
+            <DictionaryDeleteButton items={items} index={index} setItems={setItems} />
           </div>
         );
       })}
