@@ -11,27 +11,23 @@ export const SelectedList: React.FC<any> = () => {
   const { exportData } = vscodeState as InitializedVscodeState;
   const { selectedWorkflows: selectedItems } = exportData;
 
-  // const emojiIcon: IIconProps = { iconName: 'Cancel' };
-
   const intlText = {
     SELECTED_APPS: intl.formatMessage({
       defaultMessage: 'Selected logic apps',
-      description: 'Selected apps title',
+      description: 'Selected logic apps title',
     }),
   };
-
-  // const deselectButton = <IconButton iconProps={emojiIcon} aria-label="cancel" onClick={() => deselectItem(key)} />
 
   const renderItems = selectedItems.map((workflow: WorkflowsList) => {
     const { name, resourceGroup } = workflow;
     return (
       <div key={workflow.key} className="msla-export-workflows-panel-selected-list-item">
-        <Text variant="large" block className="msla-export-workflows-panel-selected-list-item-text">
+        <Text variant="large" nowrap block className="msla-export-workflows-panel-selected-list-item-text">
           {name + ' '}
         </Text>
         <div className="msla-export-workflows-panel-selected-list-item-subtext">
           (
-          <Text variant="medium" block>
+          <Text variant="medium" nowrap block>
             {resourceGroup}
           </Text>
           )

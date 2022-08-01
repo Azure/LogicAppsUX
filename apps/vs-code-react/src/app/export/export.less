@@ -40,6 +40,15 @@
       }
     }
 
+    &-limit-selection {
+      margin-top: 10px;
+
+      .ms-MessageBar-text {
+        display: inline-flex;
+        align-items: center;
+      }
+    }
+
     &-list {
       flex: 5 1 auto;
       display: flex;
@@ -50,6 +59,12 @@
         overflow: auto;
         margin: 15px 0;
         flex: 1;
+
+        &-empty {
+          display: inline-flex;
+          justify-content: center;
+          width: 100%;
+        }
       }
     }
 

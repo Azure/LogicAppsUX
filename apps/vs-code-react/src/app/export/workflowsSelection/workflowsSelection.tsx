@@ -1,3 +1,4 @@
+import WarningIcon from '../../../resources/Caution.svg';
 import { ApiService } from '../../../run-service/export/index';
 import { QueryKeys } from '../../../run-service/types';
 import type { WorkflowsList } from '../../../run-service/types';
@@ -7,7 +8,7 @@ import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { Filters } from './filters';
 import { filterWorkflows, getListColumns, parseResourceGroups, parseWorkflowData } from './helper';
 import { SelectedList } from './selectedList';
-import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection } from '@fluentui/react';
+import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -17,9 +18,9 @@ import { useDispatch, useSelector } from 'react-redux';
 export const WorkflowsSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse } = exportData;
+  const { selectedSubscription, selectedIse, selectedWorkflows } = exportData;
 
-  const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList>>([]);
+  const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList> | null>(null);
   const [allWorkflows, setAllWorkflows] = useState<Array<WorkflowsList>>([]);
   const [resourceGroups, setResourceGroups] = useState<IDropdownOption[]>([]);
   const [searchString, setSearchString] = useState<string>('');
@@ -34,7 +35,7 @@ export const WorkflowsSelection: React.FC = () => {
     }),
     SELECT_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
-      description: 'Select apps to export description',
+      description: 'Select logic apps to export description',
     }),
     TOGGLE_SELECTION: intl.formatMessage({
       defaultMessage: 'Toggle selection',
@@ -45,12 +46,20 @@ export const WorkflowsSelection: React.FC = () => {
       description: 'Select apps to export description',
     }),
     SELECT_WORKFLOW: intl.formatMessage({
-      defaultMessage: 'Select workflow',
-      description: 'Select apps to export description',
+      defaultMessage: 'Select logic app',
+      description: 'Select logic app to export description',
+    }),
+    LIMIT_INFO: intl.formatMessage({
+      defaultMessage: 'Selecting more than 15 logic apps affects the export experience performance.',
+      description: 'Limit on selected logic apps warning text',
+    }),
+    NO_WORKFLOWS: intl.formatMessage({
+      defaultMessage: 'No workflows',
+      description: 'No workflows text',
     }),
     NAME: intl.formatMessage({
-      defaultMessage: 'Name',
-      description: 'Name title',
+      defaultMessage: 'Resource name',
+      description: 'Resource name title',
     }),
     RESOURCE_GROUP: intl.formatMessage({
       defaultMessage: 'Resource group',
@@ -97,18 +106,22 @@ export const WorkflowsSelection: React.FC = () => {
     });
   }, [renderWorkflows, dispatch]);
 
-  /*const deselectItem = (itemKey: string) => {
-    selection.toggleKeySelected(itemKey);
-  };*/
-
   const workflowsList = useMemo(() => {
+    const emptyText = (
+      <Text variant="large" block className="msla-export-workflows-panel-list-workflows-empty">
+        {intlText.NO_WORKFLOWS}
+      </Text>
+    );
+
+    const noWorkflows = renderWorkflows !== null && !renderWorkflows.length && !isWorkflowsLoading ? emptyText : null;
+
     return (
       <div className="msla-export-workflows-panel-list-workflows">
         <ShimmeredDetailsList
-          items={renderWorkflows}
+          items={renderWorkflows || []}
           columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
           setKey="set"
-          enableShimmer={isWorkflowsLoading || !renderWorkflows.length}
+          enableShimmer={isWorkflowsLoading || renderWorkflows === null}
           ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
           ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
           checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
@@ -116,9 +129,39 @@ export const WorkflowsSelection: React.FC = () => {
           selection={selection}
           compact={true}
         />
+        {noWorkflows}
       </div>
     );
-  }, [renderWorkflows, isWorkflowsLoading, selection, intlText.TOGGLE_SELECTION, intlText.TOGGLE_SELECTION_ALL, intlText.SELECT_WORKFLOW]);
+  }, [
+    renderWorkflows,
+    isWorkflowsLoading,
+    selection,
+    intlText.TOGGLE_SELECTION,
+    intlText.TOGGLE_SELECTION_ALL,
+    intlText.SELECT_WORKFLOW,
+    intlText.NO_WORKFLOWS,
+    intlText.NAME,
+    intlText.RESOURCE_GROUP,
+  ]);
+
+  const limitInfo = useMemo(() => {
+    return selectedWorkflows.length >= 15 ? (
+      <MessageBar
+        className="msla-export-workflows-panel-limit-selection"
+        messageBarType={MessageBarType.info}
+        isMultiline={true}
+        messageBarIconProps={{
+          imageProps: {
+            src: WarningIcon,
+            width: 15,
+            height: 15,
+          },
+        }}
+      >
+        {intlText.LIMIT_INFO}
+      </MessageBar>
+    ) : null;
+  }, [intlText.LIMIT_INFO, selectedWorkflows]);
 
   const filters = useMemo(() => {
     const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
@@ -153,6 +196,7 @@ export const WorkflowsSelection: React.FC = () => {
         <Text variant="large" block>
           {intlText.SELECT_DESCRIPTION}
         </Text>
+        {limitInfo}
         {filters}
         {workflowsList}
       </div>
