@@ -14,7 +14,7 @@ export const SelectedList: React.FC<any> = () => {
   const intlText = {
     SELECTED_APPS: intl.formatMessage({
       defaultMessage: 'Selected logic apps',
-      description: 'Selected apps title',
+      description: 'Selected logic apps title',
     }),
   };
 

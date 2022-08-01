@@ -35,7 +35,7 @@ export const WorkflowsSelection: React.FC = () => {
     }),
     SELECT_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
-      description: 'Select apps to export description',
+      description: 'Select logic apps to export description',
     }),
     TOGGLE_SELECTION: intl.formatMessage({
       defaultMessage: 'Toggle selection',
@@ -46,20 +46,20 @@ export const WorkflowsSelection: React.FC = () => {
       description: 'Select apps to export description',
     }),
     SELECT_WORKFLOW: intl.formatMessage({
-      defaultMessage: 'Select workflow',
-      description: 'Select apps to export description',
+      defaultMessage: 'Select logic app',
+      description: 'Select logic app to export description',
     }),
     LIMIT_INFO: intl.formatMessage({
-      defaultMessage: 'Please notice that selecting more than 15 workflows will affect the performance of the export experience.',
-      description: 'Limit selectuin warning text',
+      defaultMessage: 'Selecting more than 15 logic apps affects the export experience performance.',
+      description: 'Limit on selected logic apps warning text',
     }),
     NO_WORKFLOWS: intl.formatMessage({
       defaultMessage: 'No workflows',
       description: 'No workflows text',
     }),
     NAME: intl.formatMessage({
-      defaultMessage: 'Name',
-      description: 'Name title',
+      defaultMessage: 'Resource name',
+      description: 'Resource name title',
     }),
     RESOURCE_GROUP: intl.formatMessage({
       defaultMessage: 'Resource group',
