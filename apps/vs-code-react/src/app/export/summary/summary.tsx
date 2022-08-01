@@ -110,7 +110,7 @@ export const Summary: React.FC = () => {
         {intlText.NO_DETAILS}
       </Text>
     );
-    const noDetails = exportDetails === [] && !isSummaryLoading ? emptyText : null;
+    const noDetails = exportDetails.length === 0 && !isSummaryLoading ? emptyText : null;
 
     return (
       <>
