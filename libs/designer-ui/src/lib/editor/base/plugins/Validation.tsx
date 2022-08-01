@@ -1,5 +1,5 @@
 import type { DictionaryEditorItemProps } from '../../../dictionary';
-import { serializeDictionary } from '../../../dictionary/util/serializedictionary';
+import { serializeDictionary } from '../../../dictionary/util/serializecollapeseddictionary';
 import { CollapsedEditorType } from '../../shared/collapsedEditor';
 import { $isTokenNode } from '../nodes/tokenNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';

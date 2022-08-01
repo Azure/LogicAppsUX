@@ -5,7 +5,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
 
-interface updateStateProps {
+interface SerializeExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
   initialItem: Segment[];
   index: number;
@@ -13,7 +13,7 @@ interface updateStateProps {
   setItems: (items: DictionaryEditorItemProps[]) => void;
 }
 
-export const EditorChange = ({ items, initialItem, index, type, setItems }: updateStateProps) => {
+export const SerializeExpandedDictionary = ({ items, initialItem, index, type, setItems }: SerializeExpandedDictionaryProps) => {
   const [editor] = useLexicalComposerContext();
 
   const onChange = (editorState: EditorState) => {

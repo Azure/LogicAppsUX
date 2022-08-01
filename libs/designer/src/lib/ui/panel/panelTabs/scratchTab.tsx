@@ -64,6 +64,7 @@ export const ScratchTab = () => {
               key: [testTokenSegment, testTokenSegment, { type: ValueSegmentType.LITERAL, value: 'Key2 Text' }],
               value: [testTokenSegment, testTokenSegment, { type: ValueSegmentType.LITERAL, value: 'Value2 Text' }],
             },
+            { key: [], value: [] },
           ]}
         />
       </>

@@ -1,6 +1,7 @@
 import type { DictionaryEditorItemProps } from '.';
 import { ValueSegmentType, CollapsedEditor, CollapsedEditorType } from '../editor';
 import type { Segment } from '../editor/base';
+import { isEmpty } from './util/helper';
 import type { Dispatch, SetStateAction } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -15,7 +16,7 @@ export const CollapsedDictionary = ({ items, isValid, setItems, setIsValid }: Co
   const intl = useIntl();
 
   const errorMessage = intl.formatMessage({
-    defaultMessage: 'Please Enter a valid dictionary',
+    defaultMessage: 'Please enter a valid dictionary',
     description: 'Error Message for Invalid Dictionary',
   });
 
@@ -25,7 +26,11 @@ export const CollapsedDictionary = ({ items, isValid, setItems, setIsValid }: Co
         <CollapsedEditor
           type={CollapsedEditorType.DICTIONARY}
           isValid={isValid}
-          initialValue={parseInitialValue(items)}
+          initialValue={parseInitialValue(
+            items.filter((item) => {
+              return !isEmpty(item);
+            })
+          )}
           errorMessage={errorMessage}
           setItems={setItems}
           setIsValid={setIsValid}
@@ -36,6 +41,9 @@ export const CollapsedDictionary = ({ items, isValid, setItems, setIsValid }: Co
 };
 
 const parseInitialValue = (items: DictionaryEditorItemProps[]): Segment[] => {
+  items.filter((item) => {
+    return !isEmpty(item);
+  });
   if (items.length === 0) {
     return [{ type: ValueSegmentType.LITERAL, value: '{}' }];
   }

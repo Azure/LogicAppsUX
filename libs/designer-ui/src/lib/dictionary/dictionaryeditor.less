@@ -94,7 +94,6 @@
 
   .msla-dictionary-item-container {
     margin: @padding 0;
-    padding: 0 @padding;
 
     .msla-dictionary-editor-item {
       width: 100%;
@@ -103,7 +102,7 @@
         border: 1px solid #989898;
         display: table-cell;
         vertical-align: top;
-        width: 47%;
+        width: 50%;
         padding-bottom: 5px;
         .editor-input {
           outline: none;
@@ -131,6 +130,11 @@
           pointer-events: none;
         }
       }
+      .msla-dictionary-item-delete {
+        width: 25px;
+        height: 25px;
+        display: table-cell;
+      }
     }
 
     .msla-array-item-parameters {
@@ -154,17 +158,8 @@
       }
     }
   }
-
-  .msla-array-toolbar {
-    display: flex;
-    margin: @padding;
-
-    .msla-array-add-item-button {
-      height: @parameter-inputbox-height;
-      font-size: @card-label-font-size;
-    }
-  }
   .msla-collapsed-editor-validation {
+    width: 50%;
     position: relative;
     color: rgb(224, 2, 2);
     left: 4px;

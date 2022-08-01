@@ -1,20 +1,18 @@
+import type { FocusTokenPickerProps } from '../../..';
 import { TokenNode } from '../nodes/tokenNode';
 import DeleteTokenNode from './DeleteTokenNode';
 import InsertTokenNode, { INSERT_TOKEN_NODE } from './InsertTokenNode';
-import OnBlur from './OnBlur';
-import OnFocus from './OnFocus';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
-interface TokenPickerProps {
-  buttonClassName?: string;
-  buttonHeight?: number;
+export interface TokenPickerProps extends FocusTokenPickerProps {
+  focused: boolean;
 }
 
-export default function TokenPicker({ buttonClassName, buttonHeight }: TokenPickerProps): JSX.Element {
+export default function TokenPicker({ focused, showTokenPicker = true, buttonClassName, buttonHeight }: TokenPickerProps): JSX.Element {
   const [editor] = useLexicalComposerContext();
-  const [focused, setIsFocused] = useState(false);
+
   const intl = useIntl();
   useEffect(() => {
     if (!editor.hasNodes([TokenNode])) {
@@ -39,33 +37,28 @@ export default function TokenPicker({ buttonClassName, buttonHeight }: TokenPick
     description: 'Text for if image does not show up',
   });
 
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-  const handleBlur = () => {
-    setIsFocused(false);
-  };
-
   return (
     <>
-      <OnFocus command={handleFocus} />
-      <OnBlur command={handleBlur} />
-      <InsertTokenNode />
-      <DeleteTokenNode />
-      {focused ? (
-        <button
-          className={`msla-tokenpicker-button ${buttonClassName}`}
-          onClick={handleOpenTokenPicker}
-          onMouseDown={(e) => e.preventDefault()}
-          style={{ top: `${buttonHeight}px` }}
-        >
-          <p className="msla-tokenpicker-button-text">{addContent}</p>
-          <img
-            src="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxMyI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMwMDU4YWQ7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5jbGlja2VkIHN0YXRlX2R5bmFtaWMgY29udGVudDwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMCwxLjV2MTNIMTJWMS41SDBabTksN0g3djJINnYtMkg0di0xSDZ2LTJIN3YySDl2MVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTEuNSkiLz48cmVjdCBjbGFzcz0iY2xzLTEiIHg9IjEzIiB3aWR0aD0iMyIgaGVpZ2h0PSIxMyIvPjwvc3ZnPg=="
-            height="13px"
-            alt={addContentAltText}
-          />
-        </button>
+      {showTokenPicker ? (
+        <>
+          <InsertTokenNode />
+          <DeleteTokenNode />
+          {focused ? (
+            <button
+              className={`msla-tokenpicker-button ${buttonClassName}`}
+              onClick={handleOpenTokenPicker}
+              onMouseDown={(e) => e.preventDefault()}
+              style={{ top: `${buttonHeight}px` }}
+            >
+              <p className="msla-tokenpicker-button-text">{addContent}</p>
+              <img
+                src="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxMyI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMwMDU4YWQ7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5jbGlja2VkIHN0YXRlX2R5bmFtaWMgY29udGVudDwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMCwxLjV2MTNIMTJWMS41SDBabTksN0g3djJINnYtMkg0di0xSDZ2LTJIN3YySDl2MVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTEuNSkiLz48cmVjdCBjbGFzcz0iY2xzLTEiIHg9IjEzIiB3aWR0aD0iMyIgaGVpZ2h0PSIxMyIvPjwvc3ZnPg=="
+                height="13px"
+                alt={addContentAltText}
+              />
+            </button>
+          ) : null}
+        </>
       ) : null}
     </>
   );
