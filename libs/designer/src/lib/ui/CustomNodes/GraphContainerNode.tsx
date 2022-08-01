@@ -1,6 +1,6 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { useActionMetadata } from '../../core/state/selectors/actionMetadataSelector';
+import { useActionMetadata, useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
 import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import { isLeafNodeFromEdges } from '../../core/utils/graph';
 import { DropZone } from '../connections/dropzone';
@@ -16,6 +16,7 @@ const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePositio
 
   const selected = useIsNodeSelected(id);
   const actionMetadata = useActionMetadata(id);
+  const nodeMetadata = useNodeMetadata(id);
   const edges = useEdgesBySource(id);
 
   const showLeafComponents = !readOnly && actionMetadata?.type && isLeafNodeFromEdges(edges);
@@ -30,7 +31,7 @@ const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePositio
       </div>
       {showLeafComponents && (
         <div className="edge-drop-zone-container">
-          <DropZone graphId={id} parent={id} />
+          <DropZone graphId={nodeMetadata?.graphId ?? ''} parent={id} />
         </div>
       )}
     </>
