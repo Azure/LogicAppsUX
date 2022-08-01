@@ -36,7 +36,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   return (
     <div className="msla-dictionary-editor-container">
       {collapsed || !initialItems ? (
-        <CollapsedDictionary items={items as DictionaryEditorItemProps[]} isValid={isValid} setItems={updateItems} setIsValid={setIsValid} />
+        <CollapsedDictionary items={items ?? []} isValid={isValid} setItems={updateItems} setIsValid={setIsValid} />
       ) : (
         <ExpandedDictionary items={items ?? []} setItems={updateItems} />
       )}
