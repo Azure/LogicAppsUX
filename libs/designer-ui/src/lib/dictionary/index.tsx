@@ -1,6 +1,6 @@
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps, Segment } from '../editor/base';
-import { CollapsedDictionary } from './collapseddictionary';
+import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
 import { useState } from 'react';
 
