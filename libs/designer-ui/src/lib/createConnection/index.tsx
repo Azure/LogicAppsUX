@@ -1,5 +1,12 @@
+import type { IDropdownOption } from '@fluentui/react';
 import { DefaultButton, Dropdown, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
-import type { ConnectionParameter, ConnectionParameterSet, ConnectionParameterSets } from '@microsoft-logic-apps/utils';
+import type {
+  ConnectionParameter,
+  ConnectionParameterAllowedValue,
+  ConnectionParameterSet,
+  ConnectionParameterSetParameter,
+  ConnectionParameterSets,
+} from '@microsoft-logic-apps/utils';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -20,7 +27,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const intl = useIntl();
 
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
-  const onDropdownChange = useCallback(
+  const onAuthDropdownChange = useCallback(
     (_event: FormEvent<HTMLDivElement>, item: any): void => {
       if (item.key !== selectedParamSetIndex) {
         setSelectedParamSetIndex(item.key as number);
@@ -114,6 +121,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             />
           </div>
 
+          {/* Authentication Selection */}
           {Object.keys(multiAuthParams ?? {}).length > 0 && multiAuthParams && (
             <div className="param-row">
               <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
@@ -123,48 +131,84 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
                 id="connection-param-set-select"
                 className="connection-parameter-input"
                 selectedKey={selectedParamSetIndex}
-                onChange={onDropdownChange}
+                onChange={onAuthDropdownChange}
                 disabled={isLoading}
                 ariaLabel={connectionParameterSets.uiDefinition?.description}
                 placeholder={connectionParameterSets.uiDefinition?.description}
                 options={connectionParameterSets.values.map((paramSet, index) => ({
                   key: index,
-                  text: paramSet.name,
+                  text: paramSet.uiDefinition?.displayName,
                 }))}
               />
             </div>
           )}
 
-          {/* CONNECTOR PARAMETERS RENDERED HERE */}
-          {Object.values(multiAuthParams ?? singleAuthParams ?? [])?.map((parameter) => {
-            const data = parameter.uiDefinition;
-            const id = data?.displayName;
+          {/* Connector Parameters */}
+          {Object.entries(multiAuthParams ?? singleAuthParams ?? [])?.map(
+            ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
+              const data = parameter.uiDefinition;
 
-            if (data?.constraints?.hidden === 'true') return null;
+              if (data?.constraints?.hidden || data?.constraints?.hideInUI) return null;
 
-            return (
-              <div key={id} className="param-row">
-                <Label className="label" required={data?.constraints?.required === 'true'} htmlFor={id} disabled={isLoading}>
-                  {data?.displayName}
-                  <TooltipHost content={data?.tooltip}>
-                    <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
-                  </TooltipHost>
-                </Label>
-                <TextField
-                  id={id}
-                  className="connection-parameter-input"
-                  disabled={isLoading}
-                  autoComplete="off"
-                  // onNotifyValidationResult
-                  placeholder={data?.description}
-                  value={parameterValues[id]}
-                  onChange={(e: any, newVal?: string) => setParameterValues({ ...parameterValues, [id]: newVal })}
-                />
-              </div>
-            );
-          })}
+              const dependencyParam = data?.constraints?.dependentParameter;
+              if (dependencyParam) {
+                const dependencyValue = parameterValues[dependencyParam.parameter];
+                if (dependencyValue !== dependencyParam.value) return null;
+              }
+
+              let inputComponent = undefined;
+              if ((data?.constraints?.allowedValues?.length ?? 0) > 0) {
+                // Dropdown Parameter
+                inputComponent = (
+                  <Dropdown
+                    id={`connection-param-${key}`}
+                    className="connection-parameter-input"
+                    selectedKey={data?.constraints?.allowedValues?.findIndex((value) => value.text === parameterValues[key])}
+                    onChange={(e: any, newVal?: IDropdownOption) => {
+                      setParameterValues({ ...parameterValues, [key]: newVal?.text });
+                    }}
+                    disabled={isLoading}
+                    ariaLabel={data?.description}
+                    placeholder={data?.description}
+                    options={(data?.constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
+                      key: index,
+                      text: allowedValue.text ?? '',
+                    }))}
+                  />
+                );
+              } else {
+                // Text Input Parameter
+                inputComponent = (
+                  <TextField
+                    id={key}
+                    className="connection-parameter-input"
+                    disabled={isLoading}
+                    autoComplete="off"
+                    // onNotifyValidationResult
+                    ariaLabel={data?.description}
+                    placeholder={data?.description}
+                    value={parameterValues[key]}
+                    onChange={(e: any, newVal?: string) => setParameterValues({ ...parameterValues, [key]: newVal })}
+                  />
+                );
+              }
+
+              return (
+                <div key={key} className="param-row">
+                  <Label className="label" required={data?.constraints?.required === 'true'} htmlFor={key} disabled={isLoading}>
+                    {data?.displayName}
+                    <TooltipHost content={data?.tooltip}>
+                      <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
+                    </TooltipHost>
+                  </Label>
+                  {inputComponent}
+                </div>
+              );
+            }
+          )}
         </div>
 
+        {/* Action Buttons */}
         <div className="msla-create-connection-actions-container">
           <PrimaryButton
             disabled={!canSubmit}
