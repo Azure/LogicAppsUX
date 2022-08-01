@@ -39,11 +39,11 @@ export const convertStringToSegments = (value: string, tokensEnabled?: boolean, 
   let prevIndex = 0;
   const returnSegments: Segment[] = [];
   while (currIndex < value.length) {
-    if (value.substring(currIndex - 2, currIndex) === '$(') {
+    if (value.substring(currIndex - 2, currIndex) === '$[') {
       if (value.substring(prevIndex, currIndex - 2)) {
         returnSegments.push({ type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex - 2) });
       }
-      const newIndex = value.indexOf(')', currIndex) + 1;
+      const newIndex = value.indexOf(']$', currIndex) + 2;
       if (nodeMap && tokensEnabled) {
         const token = nodeMap.get(value.substring(currIndex - 2, newIndex));
         if (token) {

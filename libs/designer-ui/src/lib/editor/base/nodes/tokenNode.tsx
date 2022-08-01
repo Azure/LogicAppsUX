@@ -57,7 +57,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 
   toString(): string {
-    return `$(${this.__title},${this.__description},${this.__brandColor})`;
+    return `$[${this.__title},${this.__description},${this.__brandColor}]$`;
   }
 
   convertToSegment(): Segment {

@@ -92,29 +92,26 @@
     }
   }
 
-  .msla-array-item-container {
+  .msla-dictionary-item-container {
     margin: @padding 0;
     padding: 0 @padding;
 
-    .msla-array-item {
-      padding-left: 6px;
-      .msla-array-item-header {
-        display: flex;
-        justify-content: space-between;
-        padding-bottom: 4px;
-      }
-      .msla-array-editor-container-expanded {
-        width: 100%;
-        border-radius: 2px;
-        padding-bottom: 20px;
-
+    .msla-dictionary-editor-item {
+      width: 100%;
+      display: table-row;
+      .msla-dictionary-item-cell {
+        border: 1px solid #989898;
+        display: table-cell;
+        vertical-align: top;
+        width: 47%;
+        padding-bottom: 5px;
         .editor-input {
-          outline: 1px solid @panel-mode-panel-border-color;
+          outline: none;
           resize: none;
           font-size: 15px;
           tab-size: 1;
           min-height: 30px;
-          line-height: 30px;
+          line-height: 26px;
           caret-color: #444;
           padding-inline-start: 5px;
           p {
@@ -126,7 +123,7 @@
           overflow: hidden;
           position: absolute;
           text-overflow: ellipsis;
-          margin-top: -23px;
+          margin-top: -30px;
           margin-left: 5px;
           font-size: 15px;
           user-select: none;

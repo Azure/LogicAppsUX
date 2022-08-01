@@ -44,7 +44,7 @@ export const CollapsedEditor = ({
       BasePlugins={{
         tokens: true,
       }}
-      tokenPickerClassName={`msla-${type}-editor-tokenpicker`}
+      tokenPickerProps={{ tokenPickerClassName: `msla-${type}-editor-tokenpicker` }}
       placeholder={type === CollapsedEditorType.DICTIONARY ? 'Enter a Dictionary' : 'Enter an Array'}
       initialValue={initialValue}
     >

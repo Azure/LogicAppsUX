@@ -9,9 +9,10 @@ import { useIntl } from 'react-intl';
 
 interface TokenPickerProps {
   buttonClassName?: string;
+  buttonHeight?: number;
 }
 
-export default function TokenPicker({ buttonClassName }: TokenPickerProps): JSX.Element {
+export default function TokenPicker({ buttonClassName, buttonHeight }: TokenPickerProps): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [focused, setIsFocused] = useState(false);
   const intl = useIntl();
@@ -56,6 +57,7 @@ export default function TokenPicker({ buttonClassName }: TokenPickerProps): JSX.
           className={`msla-tokenpicker-button ${buttonClassName}`}
           onClick={handleOpenTokenPicker}
           onMouseDown={(e) => e.preventDefault()}
+          style={{ top: `${buttonHeight}px` }}
         >
           <p className="msla-tokenpicker-button-text">{addContent}</p>
           <img

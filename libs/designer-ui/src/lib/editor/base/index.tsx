@@ -31,13 +31,18 @@ export type Segment = {
     }
 );
 
+interface TokenPickerPluginProps {
+  tokenPickerClassName?: string;
+  tokenPickerHeight?: number;
+}
+
 export interface BaseEditorProps {
   className?: string;
   readonly?: boolean;
   placeholder?: string;
   BasePlugins?: BasePlugins;
   initialValue?: Segment[];
-  tokenPickerClassName?: string;
+  tokenPickerProps?: TokenPickerPluginProps;
   children?: React.ReactNode;
 }
 
@@ -68,7 +73,7 @@ export const BaseEditor = ({
   placeholder,
   BasePlugins = {},
   initialValue,
-  tokenPickerClassName,
+  tokenPickerProps,
   children,
 }: BaseEditorProps) => {
   const intl = useIntl();
@@ -103,11 +108,9 @@ export const BaseEditor = ({
         {autoFocus ? <AutoFocus /> : null}
         {history ? <History /> : null}
         {autoLink ? <AutoLink /> : null}
-        {/* 
-          NOTE 14672766: Commenting out TokenPlugin because has a few issues
-          and is not needed for read only. Will revisit later.
-        */}
-        {tokens ? <TokenPicker buttonClassName={tokenPickerClassName} /> : null}
+        {tokens ? (
+          <TokenPicker buttonClassName={tokenPickerProps?.tokenPickerClassName} buttonHeight={tokenPickerProps?.tokenPickerHeight} />
+        ) : null}
         {clearEditor ? <ClearEditor showButton={false} /> : null}
         {validation ? (
           <Validation
