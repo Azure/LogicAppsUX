@@ -74,11 +74,17 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
   });
   const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
     setErrorMessage('');
-    if (onChange && e.value) {
-      // TODO - Debounce
-      onChange([{ id: 'key', type: ValueSegmentType.LITERAL, value: e.value }]);
+    if (e.value !== undefined) {
+      setCurrentValue(e.value);
     }
   };
+
+  const handleBlur = (): void => {
+    if (onChange) {
+      // TODO - Move this to onBlur
+      onChange({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: currentValue }] });
+    }
+  }
 
   const handleFocus = (): void => {
     if (onFocus) {
@@ -129,6 +135,7 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
         language={EditorLanguage.json}
         onContentChanged={handleContentChanged}
         onFocus={handleFocus}
+        onBlur={handleBlur}
       />
       <div className="msla-schema-editor-operations">
         <ActionButton className="msla-schema-card-button" disabled={disabled} styles={buttonStyles} onClick={openModal}>

@@ -4,11 +4,11 @@ import { DictionaryEditor } from '../../dictionary';
 import type { Token, ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import type { ChangeHandler, Segment } from '../../editor/base';
-import { BaseEditor } from '../../editor/base';
 import { SchemaEditor } from '../../schemaeditor';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
 import React from 'react';
+import { StringEditor } from '../../editor/string';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -63,7 +63,6 @@ const getEditor = ({ editor, editorOptions, placeholder, readOnly, value, viewMo
           readOnly={readOnly}
           initialValue={getSegments(value)}
           initialItems={viewModel.items}
-          type={editorOptions.valueType}
           onChange={onValueChange}
         />
       );
@@ -83,7 +82,7 @@ const getEditor = ({ editor, editorOptions, placeholder, readOnly, value, viewMo
     default:
       // TODO - Might need to create another editor which is just parsing the value here and calling onChange in store.
       return (
-        <BaseEditor
+        <StringEditor
           className="msla-setting-token-editor-container"
           placeholder={placeholder}
           BasePlugins={{ tokens: true }}
@@ -96,6 +95,7 @@ const getEditor = ({ editor, editorOptions, placeholder, readOnly, value, viewMo
 };
 
 const getSegments = (value: ValueSegment[]): Segment[] => {
+
   return value.map((x: ValueSegment) => {
     if (x.type === ValueSegmentType.TOKEN) {
       const { brandColor, description, icon, isSecure, name, required, title } = x.token as Token;

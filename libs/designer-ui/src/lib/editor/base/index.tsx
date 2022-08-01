@@ -32,8 +32,12 @@ export type Segment = {
       value: string;
     }
 );
+export interface ChangeState {
+  value: ValueSegment[],
+  viewModel?: any; // TODO - Should be strongly typed once updated for Array
+}
 
-export type ChangeHandler = (newValue: ValueSegment[]) => void;
+export type ChangeHandler = (newState: ChangeState) => void;
 
 interface FocusProps {
   addDictionaryItem?: dictionaryCallbackProps;
@@ -60,6 +64,7 @@ export interface BaseEditorProps {
   children?: React.ReactNode;
   onChange?: ChangeHandler;
   focusProps?: FocusProps;
+  onBlur?: () => void;
 }
 
 export interface BasePlugins {
@@ -91,6 +96,7 @@ export const BaseEditor = ({
   initialValue,
   children,
   focusProps,
+  onBlur,
 }: BaseEditorProps) => {
   const intl = useIntl();
   const [focused, setIsFocused] = useState(false);
@@ -119,6 +125,9 @@ export const BaseEditor = ({
   };
   const handleBlur = () => {
     setIsFocused(false);
+    if (onBlur) {
+      onBlur();
+    }
   };
 
   return (

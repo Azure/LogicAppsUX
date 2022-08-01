@@ -34,6 +34,7 @@ export const ParametersTab = () => {
                 required: param.required,
                 editor: param.editor,
                 editorOptions: param.editorOptions,
+                placeholder: param.placeholder,
                 viewModel: param.viewModel,
                 tokenEditor: true,
               },
