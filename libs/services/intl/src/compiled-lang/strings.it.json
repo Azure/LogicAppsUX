@@ -576,7 +576,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Scegliere la visualizzazione da cui esplorare"
     }
   ],
   "4XdZNj": [
@@ -648,7 +648,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Connettori"
     }
   ],
   "5aa76N": [
@@ -2700,7 +2700,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Zoom indietro"
     }
   ],
   "Z4QLEf": [
@@ -3018,7 +3018,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Connesso a "
     },
     {
       "type": 1,
@@ -3101,6 +3101,12 @@
       "value": "Obbligatorio. Indice della posizione di inizio della sottostringa nel parametro 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3164,7 +3170,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Zoom avanti"
     }
   ],
   "g4igOR": [
@@ -3548,7 +3554,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Visualizza minimappa"
     }
   ],
   "kYivbS": [
@@ -4371,6 +4377,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variabili"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4405,6 +4417,12 @@
     {
       "type": 0,
       "value": "Restituisce l'ultimo indice di un valore all'interno di una stringa (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4484,7 +4502,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Adattamento pagina"
     }
   ],
   "wEaGWn": [

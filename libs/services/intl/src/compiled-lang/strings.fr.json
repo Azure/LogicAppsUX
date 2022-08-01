@@ -576,7 +576,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Choisir l’affichage à partir duquel parcourir"
     }
   ],
   "4XdZNj": [
@@ -648,7 +648,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Connecteurs"
     }
   ],
   "5aa76N": [
@@ -2692,7 +2692,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Zoom arrière"
     }
   ],
   "Z4QLEf": [
@@ -3093,6 +3093,12 @@
       "value": "Obligatoire. Index d'où la sous-chaîne commence dans le paramètre 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3156,7 +3162,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Zoom avant"
     }
   ],
   "g4igOR": [
@@ -3548,7 +3554,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Afficher la minicarte"
     }
   ],
   "kYivbS": [
@@ -4371,6 +4377,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variables"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4405,6 +4417,12 @@
     {
       "type": 0,
       "value": "Retourne le dernier index d'une valeur au sein d'une chaîne (culture invariante qui ne respecte pas la casse)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4484,7 +4502,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Ajuster à la page"
     }
   ],
   "wEaGWn": [

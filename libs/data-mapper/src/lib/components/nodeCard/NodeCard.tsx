@@ -1,6 +1,7 @@
 import { DefaultButton } from '@fluentui/react';
 import { createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
+import { useIntl } from 'react-intl';
 
 interface NodeCardProps {
   onClick?: () => void;
@@ -57,13 +58,20 @@ const useStyles = makeStyles({
 });
 
 export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClasses, disabled, children }) => {
+  const intl = useIntl();
   const classes = useStyles();
   const mergedClasses = mergeClasses(classes.root, childClasses?.root);
   const mergedFocusIndicator = mergeClasses(classes.focusIndicator, childClasses?.focusIndicator);
 
+  const buttonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Button for managing toggle state',
+    description: 'This is a button for keeping toggle states that share the same border states',
+  });
+
   return (
     <div className={mergedClasses}>
       <DefaultButton
+        aria-label={buttonAriaLabel}
         className={`${mergedClasses} ${mergedFocusIndicator} ${disabled && classes.disabled}`}
         toggle
         onClick={onClick}

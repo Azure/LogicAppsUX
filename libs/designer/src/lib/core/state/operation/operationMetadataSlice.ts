@@ -52,7 +52,7 @@ const initialState: OperationMetadataState = {
   settings: {},
 };
 
-interface AddNodeOperationPayload extends NodeOperation {
+export interface AddNodeOperationPayload extends NodeOperation {
   id: string;
 }
 
@@ -104,6 +104,6 @@ export const operationMetadataSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeNodes, initializeOperationInfo } = operationMetadataSlice.actions;
+export const { initializeNodes, initializeOperationInfo, updateNodeSettings } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

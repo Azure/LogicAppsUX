@@ -1,11 +1,19 @@
-import type { SectionProps } from '..';
+import type { SectionProps, TextChangeHandler, ToggleHandler } from '..';
 import constants from '../../../common/constants';
 import type { Settings, SettingSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
-import { useBoolean } from '@fluentui/react-hooks';
-import { equals } from '@microsoft-logic-apps/utils';
-import { useState } from 'react';
 import { useIntl } from 'react-intl';
+
+export interface NetworkingSectionProps extends SectionProps {
+  onAsyncPatternToggle: ToggleHandler;
+  onAsyncResponseToggle: ToggleHandler;
+  onRequestOptionsChange: TextChangeHandler;
+  onSuppressHeadersToggle: ToggleHandler;
+  onPaginationValueChange: TextChangeHandler;
+  onHeadersOnResponseToggle: ToggleHandler;
+  onContentTransferToggle: ToggleHandler;
+  chunkedTransferMode: boolean;
+}
 
 export const Networking = ({
   readOnly,
@@ -17,17 +25,17 @@ export const Networking = ({
   asynchronous,
   disableAsyncPattern,
   requestOptions,
-}: SectionProps): JSX.Element => {
-  const [disableAsyncPatternFromState, toggleDisableAsyncPattern] = useBoolean(!!disableAsyncPattern?.value);
-  const [asyncResponseFromState, toggleAsyncResponse] = useBoolean(!!asynchronous?.value);
-  const [pagingFromState, setPaging] = useState(paging?.value ?? { enabled: false, value: undefined });
-  const [requestOptionsFromState, setRequestOptions] = useState(requestOptions?.value ?? { timeout: '' });
-  const [suppressWorkflowHeadersFromState, toggleSuppressWorkflowHeaders] = useBoolean(!!suppressWorkflowHeaders?.value);
-  const [workflowHeadersOnResponseFromState, toggleWorkflowHeadersOnResponse] = useBoolean(!!suppressWorkflowHeadersOnResponse?.value);
-  const [chunkedTransferModeFromState, setChunkedTransferMode] = useBoolean(
-    equals(uploadChunk?.value?.transferMode, constants.SETTINGS.TRANSFER_MODE.CHUNKED)
-  );
-
+  onAsyncPatternToggle,
+  onAsyncResponseToggle,
+  onRequestOptionsChange,
+  onSuppressHeadersToggle,
+  onPaginationValueChange,
+  onHeadersOnResponseToggle,
+  onContentTransferToggle,
+  chunkedTransferMode,
+  expanded,
+  onHeaderClick,
+}: NetworkingSectionProps): JSX.Element => {
   const intl = useIntl();
   const onText = intl.formatMessage({
     defaultMessage: 'On',
@@ -112,11 +120,6 @@ export const Networking = ({
   });
 
   const getAsyncPatternSetting = (): Settings => {
-    const onAsyncPatternToggle = (_checked: boolean): void => {
-      toggleDisableAsyncPattern.toggle();
-      // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
-    };
     const asyncPatternCustomLabel = (
       <SettingLabel labelText={asyncPatternTitle} infoTooltipText={asyncPatternTooltipText} isChild={false} />
     );
@@ -124,7 +127,7 @@ export const Networking = ({
       settingType: 'SettingToggle',
       settingProp: {
         readOnly,
-        checked: !disableAsyncPatternFromState,
+        checked: !disableAsyncPattern?.value,
         onToggleInputChange: (_, checked) => onAsyncPatternToggle(!!checked),
         customLabel: () => asyncPatternCustomLabel,
         inlineLabel: true,
@@ -136,11 +139,6 @@ export const Networking = ({
   };
 
   const getAsyncResponseSetting = (): Settings => {
-    const onAsyncResponseToggle = (_checked: boolean): void => {
-      toggleAsyncResponse.toggle();
-      // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
-    };
     const asyncResponseCustomLabel = (
       <SettingLabel labelText={asyncResponseTitle} infoTooltipText={asyncResponseTooltipText} isChild={false} />
     );
@@ -149,7 +147,7 @@ export const Networking = ({
       settingType: 'SettingToggle',
       settingProp: {
         readOnly,
-        checked: asyncResponseFromState,
+        checked: asynchronous?.value,
         onToggleInputChange: (_, checked) => onAsyncResponseToggle(!!checked),
         customLabel: () => asyncResponseCustomLabel,
         onText,
@@ -160,12 +158,6 @@ export const Networking = ({
   };
 
   const getRequestOptionSetting = (): Settings => {
-    const onRequestOptionsChange = (newVal: string): void => {
-      setRequestOptions({ timeout: newVal });
-      // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
-    };
-
     const requestOptionsCustomLabel = (
       <SettingLabel labelText={requestOptionsTitle} infoTooltipText={requestOptionsTooltipText} isChild={false} />
     );
@@ -174,7 +166,7 @@ export const Networking = ({
       settingType: 'SettingTextField',
       settingProp: {
         readOnly,
-        value: requestOptionsFromState?.timeout ?? '',
+        value: requestOptions?.value?.timeout ?? '',
         label: duration,
         placeholder: 'Example: PT1S',
         customLabel: () => requestOptionsCustomLabel,
@@ -189,21 +181,15 @@ export const Networking = ({
       <SettingLabel labelText={suppressWorkflowHeadersTitle} infoTooltipText={suppressWorkflowHeadersTooltipText} isChild={false} />
     );
 
-    const onSuppressHeadersToggle = (): void => {
-      toggleSuppressWorkflowHeaders.toggle();
-      // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
-    };
-
     return {
       settingType: 'SettingToggle',
       settingProp: {
         readOnly,
-        checked: suppressWorkflowHeadersFromState,
+        checked: suppressWorkflowHeaders?.value,
         customLabel: () => suppressWorkflowHeadersCustomlabel,
         onText,
         offText,
-        onToggleInputChange: () => onSuppressHeadersToggle(),
+        onToggleInputChange: (_, checked) => onSuppressHeadersToggle(!!checked),
       },
       visible: suppressWorkflowHeaders?.isSupported,
     };
@@ -211,18 +197,13 @@ export const Networking = ({
 
   const getPaginationSetting = (): Settings => {
     const pagingCustomLabel = <SettingLabel labelText={paginationTitle} infoTooltipText={paginationTooltipText} isChild={false} />;
-    const onPaginationValueChange = (newVal: string): void => {
-      setPaging({ enabled: !!pagingFromState?.enabled, value: Number(newVal) });
-      // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
-    };
     return {
       settingType: 'ReactiveToggle',
       settingProp: {
         readOnly,
         textFieldLabel: threshold,
-        textFieldValue: pagingFromState?.value?.toString() ?? '',
-        checked: pagingFromState?.enabled,
+        textFieldValue: paging?.value?.toString() ?? '',
+        checked: paging?.value?.enabled,
         onToggleLabel: onText,
         offToggleLabel: offText,
         onValueChange: (_, newVal) => onPaginationValueChange(newVal as string),
@@ -233,10 +214,6 @@ export const Networking = ({
   };
 
   const getWorkflowHeadersOnResponseSetting = (): Settings => {
-    const handleHeadersOnResponseToggle = (): void => {
-      toggleWorkflowHeadersOnResponse.toggle();
-    };
-
     const workflowHeadersOnResponseCustomLabel = (
       <SettingLabel labelText={workflowHeadersOnResponseTitle} infoTooltipText={workflowHeadersOnResponseTooltipText} isChild={false} />
     );
@@ -244,11 +221,11 @@ export const Networking = ({
       settingType: 'SettingToggle',
       settingProp: {
         readOnly,
-        checked: workflowHeadersOnResponseFromState,
+        checked: suppressWorkflowHeadersOnResponse?.value,
         customLabel: () => workflowHeadersOnResponseCustomLabel,
         onText,
         offText,
-        onToggleInputChange: () => handleHeadersOnResponseToggle(),
+        onToggleInputChange: (_, checked) => onHeadersOnResponseToggle(!!checked),
       },
       visible: suppressWorkflowHeadersOnResponse?.isSupported,
     };
@@ -258,20 +235,15 @@ export const Networking = ({
     const contentTransferLabel = (
       <SettingLabel labelText={contentTransferTitle} infoTooltipText={contentTransferDescription} isChild={false} />
     );
-    const onContentTransferToggle = (): void => {
-      setChunkedTransferMode.toggle();
-      // TODO (14427339): Setting Validation
-      // TODO (14427277): Write to Store
-    };
 
     return {
       settingType: 'SettingToggle',
       settingProp: {
-        checked: chunkedTransferModeFromState,
+        checked: chunkedTransferMode,
         readOnly,
         onText,
         offText,
-        onToggleInputChange: () => onContentTransferToggle(),
+        onToggleInputChange: (_, checked) => onContentTransferToggle(!!checked),
         customLabel: () => contentTransferLabel,
       },
       visible: uploadChunk?.isSupported || downloadChunkSize?.isSupported,
@@ -281,7 +253,9 @@ export const Networking = ({
   const networkingSectionProps: SettingSectionProps = {
     id: 'networking',
     title: networking,
-    expanded: false,
+    sectionName: constants.SETTINGSECTIONS.NETWORKING,
+    expanded,
+    onHeaderClick,
     settings: [
       getAsyncPatternSetting(),
       getAsyncResponseSetting(),

@@ -610,7 +610,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Zvolte zobrazení, ze kterého chcete procházet."
     }
   ],
   "4XdZNj": [
@@ -682,7 +682,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Konektory"
     }
   ],
   "5aa76N": [
@@ -2814,7 +2814,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Oddálit"
     }
   ],
   "Z4QLEf": [
@@ -3132,7 +3132,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Připojeno k: "
     },
     {
       "type": 1,
@@ -3215,6 +3215,12 @@
       "value": "Vyžadováno. Index určující, kde začíná v parametru 1 podřetězec."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3278,7 +3284,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Přiblížit"
     }
   ],
   "g4igOR": [
@@ -3692,7 +3698,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Zobrazit minimapu"
     }
   ],
   "kYivbS": [
@@ -4537,6 +4543,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Proměnné"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4571,6 +4583,12 @@
     {
       "type": 0,
       "value": "Vrátí poslední index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4650,7 +4668,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Přizpůsobení stránky"
     }
   ],
   "wEaGWn": [

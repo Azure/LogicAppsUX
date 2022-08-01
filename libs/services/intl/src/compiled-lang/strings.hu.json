@@ -576,7 +576,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Válassza ki, hogy melyik nézetből szeretne tallózni"
     }
   ],
   "4XdZNj": [
@@ -648,7 +648,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Összekötők"
     }
   ],
   "5aa76N": [
@@ -2696,7 +2696,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Kicsinyítés"
     }
   ],
   "Z4QLEf": [
@@ -3014,7 +3014,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Csatlakoztatva a következőhöz: "
     },
     {
       "type": 1,
@@ -3097,6 +3097,12 @@
       "value": "Kötelező megadni. A sztringrész kezdetének indexe az 1. paraméterben."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3160,7 +3166,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Nagyítás"
     }
   ],
   "g4igOR": [
@@ -3556,7 +3562,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Minitérkép megjelenítése"
     }
   ],
   "kYivbS": [
@@ -4379,6 +4385,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Változók"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4413,6 +4425,12 @@
     {
       "type": 0,
       "value": "Egy sztringbeli érték utolsó indexét adja vissza (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4492,7 +4510,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Oldal igazítása"
     }
   ],
   "wEaGWn": [

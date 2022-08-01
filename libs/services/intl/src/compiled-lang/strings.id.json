@@ -565,7 +565,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Pilih tampilan yang akan dijelajahi"
     }
   ],
   "4XdZNj": [
@@ -637,7 +637,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Konektor"
     }
   ],
   "5aa76N": [
@@ -2637,7 +2637,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Perkecil tampilan"
     }
   ],
   "Z4QLEf": [
@@ -3038,6 +3038,12 @@
       "value": "Harus diisi. Indeks substring awal dalam parameter 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3101,7 +3107,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Perbesar tampilan"
     }
   ],
   "g4igOR": [
@@ -3474,7 +3480,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Tampilkan peta mini"
     }
   ],
   "kYivbS": [
@@ -4286,6 +4292,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variabel"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4320,6 +4332,12 @@
     {
       "type": 0,
       "value": "Menghasilkan indeks terakhir dari nilai dalam string (tidak peka huruf besar/kecil, kultur invarian)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4399,7 +4417,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Paskan halaman"
     }
   ],
   "wEaGWn": [
