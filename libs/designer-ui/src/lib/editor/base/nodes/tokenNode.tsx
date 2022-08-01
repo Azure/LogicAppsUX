@@ -1,6 +1,7 @@
-import type { Segment } from '..';
 import { InputToken } from '../../../token/inputToken';
-import { ValueSegmentType } from '../../models/parameter';
+import type { ValueSegment } from '../../models/parameter';
+import { TokenType, ValueSegmentType } from '../../models/parameter';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { LexicalNode, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
 
@@ -60,16 +61,19 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     return `$[${this.__title},${this.__description},${this.__brandColor}]$`;
   }
 
-  convertToSegment(): Segment {
+  convertToSegment(): ValueSegment {
     return {
+      id: guid(),
       type: ValueSegmentType.TOKEN,
       token: {
-        nodeKey: this.__key,
+        tokenType: TokenType.OUTPUTS,
+        key: this.__key,
         brandColor: this.__brandColor,
         icon: this.__icon,
         description: this.__description,
         title: this.__title,
       },
+      value: 'triggerBody()',
     };
   }
 

@@ -1,9 +1,10 @@
-import type { Segment } from '../..';
 import type { ArrayEditorItemProps } from '../../arrayeditor';
-import { ValueSegmentType } from '../../editor';
+import type { ValueSegment } from '../../editor';
+import { TokenType, ValueSegmentType } from '../../editor';
 import { $isTokenNode } from '../../editor/base/nodes/tokenNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { ElementNode } from 'lexical';
 import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
 import { useCallback } from 'react';
@@ -39,7 +40,7 @@ export const SerializeArray = ({ isValid, setItems }: SerializeArrayProps) => {
   return <OnChangePlugin onChange={onChange} />;
 };
 
-const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[], currentSegments: Segment[]) => {
+const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[], currentSegments: ValueSegment[]) => {
   let inString = false;
   paragraphNode.__children.forEach((child) => {
     const childNode = $getNodeByKey(child);
@@ -61,7 +62,7 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
           continue;
         }
         if (text.indexOf('"') >= 0) {
-          currentSegments.push({ type: ValueSegmentType.LITERAL, value: text.replace(/"/g, '') });
+          currentSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: text.replace(/"/g, '') });
           if (inString) {
             returnItems.push({ content: currentSegments.slice(0) });
             while (currentSegments.length) {
@@ -71,21 +72,25 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
           inString = !inString;
         } else {
           if (inString) {
-            currentSegments.push({ type: ValueSegmentType.LITERAL, value: text });
+            currentSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: text });
           } else {
-            returnItems.push({ content: [{ type: ValueSegmentType.LITERAL, value: text }] });
+            returnItems.push({ content: [{ id: guid(), type: ValueSegmentType.LITERAL, value: text }] });
           }
         }
       }
     } else if ($isTokenNode(childNode)) {
       currentSegments.push({
+        id: guid(),
         type: ValueSegmentType.TOKEN,
         token: {
+          tokenType: TokenType.OUTPUTS,
+          key: childNode.__title,
           title: childNode.__title,
           icon: childNode.__icon,
           brandColor: childNode.__brandColor,
           description: childNode.__description,
         },
+        value: 'triggerBody()',
       });
       if (!inString) {
         returnItems.push({ content: currentSegments });

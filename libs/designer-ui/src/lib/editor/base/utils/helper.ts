@@ -1,7 +1,7 @@
-import type { Segment } from '../';
+import type { ValueSegment } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 
-export const removeFirstAndLast = (segments: Segment[], removeFirst?: string, removeLast?: string): Segment[] => {
+export const removeFirstAndLast = (segments: ValueSegment[], removeFirst?: string, removeLast?: string): ValueSegment[] => {
   const n = segments.length - 1;
   segments.forEach((segment, i) => {
     const currentSegment = segment;

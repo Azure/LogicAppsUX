@@ -1,9 +1,10 @@
 import type { Token, ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
+import { TokenType, ValueSegmentType } from '../../editor';
 import { BaseEditor } from '../../editor/base';
 import type { TextInputChangeHandler } from './settingtextfield';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
+import { guid } from '@microsoft-logic-apps/utils';
 import React from 'react';
 
 export interface SettingTokenTextFieldProps extends SettingProps {
@@ -34,8 +35,11 @@ export const SettingTokenTextField: React.FC<SettingTokenTextFieldProps> = ({ va
           if (x.type === ValueSegmentType.TOKEN) {
             const { brandColor, description, icon, isSecure, name, required, title } = x.token as Token;
             return {
+              id: guid(),
               type: x.type,
               token: {
+                key: title ?? name ?? '',
+                tokenType: TokenType.OUTPUTS,
                 brandColor,
                 description,
                 icon: `url("${icon}")`,
@@ -47,6 +51,7 @@ export const SettingTokenTextField: React.FC<SettingTokenTextFieldProps> = ({ va
             };
           } else {
             return {
+              id: guid(),
               type: ValueSegmentType.LITERAL,
               value: x.value,
             };
