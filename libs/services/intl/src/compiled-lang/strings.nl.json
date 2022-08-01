@@ -576,7 +576,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Kiezen vanuit welke weergave u wilt browsen"
     }
   ],
   "4XdZNj": [
@@ -2696,7 +2696,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Uitzoomen"
     }
   ],
   "Z4QLEf": [
@@ -3014,7 +3014,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Verbonden met "
     },
     {
       "type": 1,
@@ -3097,6 +3097,12 @@
       "value": "Vereist. De index van waar de subtekenreeks begint in parameter 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3160,7 +3166,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Inzoomen"
     }
   ],
   "g4igOR": [
@@ -3552,7 +3558,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Minikaart weergeven"
     }
   ],
   "kYivbS": [
@@ -4378,7 +4384,7 @@
   "unMaeV": [
     {
       "type": 0,
-      "value": "Variables"
+      "value": "Variabelen"
     }
   ],
   "urAHv1": [
@@ -4415,6 +4421,12 @@
     {
       "type": 0,
       "value": "De laatste index van een waarde van een tekenreeks wordt geretourneerd (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4494,7 +4506,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Pagina passend maken"
     }
   ],
   "wEaGWn": [

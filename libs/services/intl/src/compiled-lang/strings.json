@@ -1165,6 +1165,12 @@
       "value": "(UTC-01:00) Azores"
     }
   ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
@@ -2497,6 +2503,12 @@
       "value": "Clear"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -3097,6 +3109,12 @@
       "value": "Required. The index of where the substring begins in parameter 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3643,10 +3661,10 @@
       "value": "is skipped"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3877,6 +3895,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4409,6 +4433,12 @@
       "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
     }
   ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
+    }
+  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4523,6 +4553,12 @@
     {
       "type": 0,
       "value": "Required. The length of the substring."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4707,6 +4743,12 @@
     {
       "type": 0,
       "value": "Required. The value that is converted to a decimal number."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

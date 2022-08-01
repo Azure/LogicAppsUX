@@ -576,7 +576,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Escolha de qual exibição você deseja navegar"
     }
   ],
   "4XdZNj": [
@@ -648,7 +648,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Conectores"
     }
   ],
   "5aa76N": [
@@ -2692,7 +2692,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Reduzir"
     }
   ],
   "Z4QLEf": [
@@ -3093,6 +3093,12 @@
       "value": "Necessário. O índice de onde a subcadeia de caracteres começa no parâmetro 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3156,7 +3162,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Ampliar"
     }
   ],
   "g4igOR": [
@@ -3540,7 +3546,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Exibir minimapa"
     }
   ],
   "kYivbS": [
@@ -4366,7 +4372,7 @@
   "unMaeV": [
     {
       "type": 0,
-      "value": "Variables"
+      "value": "Variáveis"
     }
   ],
   "urAHv1": [
@@ -4403,6 +4409,12 @@
     {
       "type": 0,
       "value": "Retorna o último índice de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4482,7 +4494,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Ajuste de página"
     }
   ],
   "wEaGWn": [

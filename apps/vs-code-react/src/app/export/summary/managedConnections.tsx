@@ -6,7 +6,7 @@ import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { parseResourceGroupsData } from './helper';
 import { Checkbox, Dropdown, Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -38,6 +38,16 @@ export const ManagedConnections: React.FC = () => {
       description: 'Resource group title',
     }),
   };
+
+  useEffect(() => {
+    dispatch(
+      updateManagedConnections({
+        isManaged: false,
+        resourceGroup: undefined,
+        resourceGroupLocation: undefined,
+      })
+    );
+  }, [dispatch]);
 
   const apiService = useMemo(() => {
     return new ApiService({
@@ -83,7 +93,7 @@ export const ManagedConnections: React.FC = () => {
         options={resourceGroups}
         className="msla-export-summary-connections-dropdown"
         onChange={onChangeResourceGroup}
-        selectedKey={selectedResourceGroup !== '' ? selectedResourceGroup : null}
+        selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : null}
       />
     ) : null;
   }, [

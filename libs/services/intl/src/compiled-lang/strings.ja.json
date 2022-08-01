@@ -565,7 +565,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "参照元のビューを選択します"
     }
   ],
   "4XdZNj": [
@@ -637,7 +637,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "コネクタ"
     }
   ],
   "5aa76N": [
@@ -2637,7 +2637,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "縮小"
     }
   ],
   "Z4QLEf": [
@@ -2954,16 +2954,12 @@
   ],
   "daoo3l": [
     {
-      "type": 0,
-      "value": "Connected to "
-    },
-    {
       "type": 1,
       "value": "connectionName"
     },
     {
       "type": 0,
-      "value": "."
+      "value": " に接続しました。"
     }
   ],
   "dgAu27": [
@@ -3038,6 +3034,12 @@
       "value": "必須。パラメーター 1 で部分文字列の開始位置を示すインデックス。"
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3101,7 +3103,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "拡大"
     }
   ],
   "g4igOR": [
@@ -3474,7 +3476,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "ミニマップを表示する"
     }
   ],
   "kYivbS": [
@@ -4289,7 +4291,7 @@
   "unMaeV": [
     {
       "type": 0,
-      "value": "Variables"
+      "value": "変数"
     }
   ],
   "urAHv1": [
@@ -4326,6 +4328,12 @@
     {
       "type": 0,
       "value": "文字列内の値の最後のインデックスを返します (大文字と小文字は区別されません、インバリアント カルチャ)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4401,7 +4409,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "ページのサイズ調整"
     }
   ],
   "wEaGWn": [

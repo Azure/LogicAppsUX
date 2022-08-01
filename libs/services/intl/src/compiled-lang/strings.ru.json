@@ -598,7 +598,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Выберите представление для просмотра"
     }
   ],
   "4XdZNj": [
@@ -670,7 +670,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Соединители"
     }
   ],
   "5aa76N": [
@@ -2802,7 +2802,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Уменьшить"
     }
   ],
   "Z4QLEf": [
@@ -3120,7 +3120,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Подключено к "
     },
     {
       "type": 1,
@@ -3203,6 +3203,12 @@
       "value": "Обязательное поле. Индекс начала подстроки в параметре 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3266,7 +3272,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Увеличить"
     }
   ],
   "g4igOR": [
@@ -3688,7 +3694,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Показать мини-карту"
     }
   ],
   "kYivbS": [
@@ -4536,7 +4542,7 @@
   "unMaeV": [
     {
       "type": 0,
-      "value": "Variables"
+      "value": "Переменные"
     }
   ],
   "urAHv1": [
@@ -4573,6 +4579,12 @@
     {
       "type": 0,
       "value": "Возвращает последний индекс значения в строке (без учета регистра, инвариантные язык и региональные параметры)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4652,7 +4664,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "По размеру страницы"
     }
   ],
   "wEaGWn": [

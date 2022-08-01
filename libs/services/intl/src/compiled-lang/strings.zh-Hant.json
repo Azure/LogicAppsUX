@@ -565,7 +565,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "選擇要瀏覽的來源檢視"
     }
   ],
   "4XdZNj": [
@@ -637,7 +637,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "連接器"
     }
   ],
   "5aa76N": [
@@ -2637,7 +2637,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "縮小"
     }
   ],
   "Z4QLEf": [
@@ -3038,6 +3038,12 @@
       "value": "必要。參數 1 中子字串起始處的索引。"
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3101,7 +3107,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "放大"
     }
   ],
   "g4igOR": [
@@ -3474,7 +3480,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "顯示縮圖"
     }
   ],
   "kYivbS": [
@@ -4289,7 +4295,7 @@
   "unMaeV": [
     {
       "type": 0,
-      "value": "Variables"
+      "value": "變數"
     }
   ],
   "urAHv1": [
@@ -4326,6 +4332,12 @@
     {
       "type": 0,
       "value": "傳回字串內值的最後一個索引 (不區分大小寫，不因文化特性而異)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4405,7 +4417,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "網頁最適大小"
     }
   ],
   "wEaGWn": [

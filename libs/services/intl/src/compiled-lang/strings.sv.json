@@ -576,7 +576,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Välj vilken vy du vill bläddra från"
     }
   ],
   "4XdZNj": [
@@ -648,7 +648,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Anslutningsprogram"
     }
   ],
   "5aa76N": [
@@ -2696,7 +2696,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Zooma ut"
     }
   ],
   "Z4QLEf": [
@@ -3014,7 +3014,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Ansluten till "
     },
     {
       "type": 1,
@@ -3097,6 +3097,12 @@
       "value": "Obligatoriskt. Det index i vilket delsträngen börjar i parameter 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3160,7 +3166,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Zooma in"
     }
   ],
   "g4igOR": [
@@ -3552,7 +3558,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Visa miniatyrkarta"
     }
   ],
   "kYivbS": [
@@ -4378,7 +4384,7 @@
   "unMaeV": [
     {
       "type": 0,
-      "value": "Variables"
+      "value": "Variabler"
     }
   ],
   "urAHv1": [
@@ -4415,6 +4421,12 @@
     {
       "type": 0,
       "value": "Returnerar det sista indexet för ett värde i en sträng (skiftlägesokänslig, invariant kultur)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4494,7 +4506,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Sidpassning"
     }
   ],
   "wEaGWn": [
