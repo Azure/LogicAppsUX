@@ -41,7 +41,11 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   );
 
   const singleAuthParams = connectionParameters;
-  const multiAuthParams = connectionParameterSets?.values[selectedParamSetIndex].parameters;
+  const multiAuthParams = useMemo(
+    () => connectionParameterSets?.values[selectedParamSetIndex].parameters,
+    [connectionParameterSets, selectedParamSetIndex]
+  );
+  const parameters = useMemo(() => multiAuthParams ?? singleAuthParams ?? {}, [multiAuthParams, singleAuthParams]);
 
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
   const [parameterValues, setParameterValues] = useState<Record<string, string | undefined>>({});
@@ -58,11 +62,11 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   );
 
   const validParams = useMemo(() => {
-    return Object.entries(singleAuthParams ?? multiAuthParams ?? []).every(
+    return Object.entries(parameters).every(
       ([key, parameter]) =>
         parameter.uiDefinition?.constraints?.required === 'false' || !isParamVisible(parameter) || !!parameterValues[key]
     );
-  }, [singleAuthParams, multiAuthParams, isParamVisible, parameterValues]);
+  }, [isParamVisible, parameterValues, parameters]);
 
   const canSubmit = !isLoading && !!connectionDisplayName && validParams;
 
@@ -111,25 +115,17 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     }
   );
 
-  const filterInvisibleParameters = useCallback(
-    (parameterValues: Record<string, ParamType>) => filterRecord(parameterValues, isParamVisible),
-    [isParamVisible]
-  );
+  const getVisibleParameterValues = useCallback(() => {
+    return filterRecord(parameterValues, ([key]) => !isParamVisible(parameters[key]));
+  }, [isParamVisible, parameterValues, parameters]);
 
   const submitCallback = useCallback(() => {
     return createConnectionCallback?.(
       connectionDisplayName,
       connectionParameterSets?.values[selectedParamSetIndex],
-      filterInvisibleParameters(parameterValues)
+      getVisibleParameterValues()
     );
-  }, [
-    createConnectionCallback,
-    connectionDisplayName,
-    connectionParameterSets?.values,
-    selectedParamSetIndex,
-    filterInvisibleParameters,
-    parameterValues,
-  ]);
+  }, [createConnectionCallback, connectionDisplayName, connectionParameterSets?.values, selectedParamSetIndex, getVisibleParameterValues]);
 
   if (Object.keys(singleAuthParams ?? {}).length > 0 || Object.keys(multiAuthParams ?? {}).length > 0) {
     // Configurable connector component
@@ -156,7 +152,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
           {Object.keys(multiAuthParams ?? {}).length > 0 && multiAuthParams && (
             <div className="param-row">
               <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
-                {connectionParameterSets.uiDefinition.displayName}
+                {connectionParameterSets?.uiDefinition?.displayName}
               </Label>
               <Dropdown
                 id="connection-param-set-select"
@@ -164,12 +160,14 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
                 selectedKey={selectedParamSetIndex}
                 onChange={onAuthDropdownChange}
                 disabled={isLoading}
-                ariaLabel={connectionParameterSets.uiDefinition?.description}
-                placeholder={connectionParameterSets.uiDefinition?.description}
-                options={connectionParameterSets.values.map((paramSet, index) => ({
-                  key: index,
-                  text: paramSet.uiDefinition?.displayName,
-                }))}
+                ariaLabel={connectionParameterSets?.uiDefinition?.description}
+                placeholder={connectionParameterSets?.uiDefinition?.description}
+                options={
+                  connectionParameterSets?.values.map((paramSet, index) => ({
+                    key: index,
+                    text: paramSet.uiDefinition?.displayName,
+                  })) ?? []
+                }
               />
             </div>
           )}
