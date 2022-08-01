@@ -1,10 +1,10 @@
 import type { Segment } from '..';
 import { ValueSegmentType } from '../../models/parameter';
 import { $createTokenNode } from '../nodes/tokenNode';
-import type { ParagraphNode } from 'lexical';
+import type { ParagraphNode, RootNode } from 'lexical';
 import { $isParagraphNode, $createParagraphNode, $createTextNode, $getRoot } from 'lexical';
 
-export const parseSegments = (value: Segment[], tokensEnabled?: boolean) => {
+export const parseSegments = (value: Segment[], tokensEnabled?: boolean): RootNode => {
   const root = $getRoot();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode;
@@ -30,4 +30,5 @@ export const parseSegments = (value: Segment[], tokensEnabled?: boolean) => {
     }
   });
   root.append(paragraph);
+  return root;
 };

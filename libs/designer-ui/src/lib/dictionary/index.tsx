@@ -1,6 +1,7 @@
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps, Segment } from '../editor/base';
 import { CollapsedDictionary } from './collapsedDictionary';
+import { ExpandedDictionary } from './expandeddictionary';
 import { useState } from 'react';
 
 export interface DictionaryEditorItemProps {
@@ -36,7 +37,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
       {collapsed ? (
         <CollapsedDictionary items={items} isValid={isValid} setItems={updateItems} setIsValid={setIsValid} />
       ) : (
-        <CollapsedDictionary items={items} isValid={isValid} setItems={updateItems} setIsValid={setIsValid} />
+        <ExpandedDictionary items={items} setItems={updateItems} />
       )}
 
       <div className="msla-array-commands">

@@ -4,7 +4,8 @@ import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
-import TokenPicker from './plugins/TokenPicker';
+import OnBlur from './plugins/OnBlur';
+import OnFocus from './plugins/OnFocus';
 import { TreeView } from './plugins/TreeView';
 import { Validation } from './plugins/Validation';
 import type { ValidationProps } from './plugins/Validation';
@@ -15,6 +16,7 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export { testTokenSegment } from '../shared/testtokensegment';
@@ -31,14 +33,30 @@ export type Segment = {
     }
 );
 
+interface FocusProps {
+  addDictionaryItem?: dictionaryCallbackProps;
+  tokenPickerProps?: FocusTokenPickerProps;
+}
+
+export interface FocusTokenPickerProps {
+  showTokenPicker?: boolean;
+  buttonClassName?: string;
+  buttonHeight?: number;
+}
+
+export interface dictionaryCallbackProps {
+  addItem: (index: number) => void;
+  index: number;
+}
+
 export interface BaseEditorProps {
   className?: string;
   readonly?: boolean;
   placeholder?: string;
   BasePlugins?: BasePlugins;
   initialValue?: Segment[];
-  tokenPickerClassName?: string;
   children?: React.ReactNode;
+  focusProps?: FocusProps;
 }
 
 export interface BasePlugins {
@@ -68,10 +86,11 @@ export const BaseEditor = ({
   placeholder,
   BasePlugins = {},
   initialValue,
-  tokenPickerClassName,
   children,
+  focusProps,
 }: BaseEditorProps) => {
   const intl = useIntl();
+  const [focused, setIsFocused] = useState(false);
   const initialConfig = {
     theme: defaultTheme,
     onError,
@@ -92,6 +111,13 @@ export const BaseEditor = ({
     description: 'Label for input Field for String Editor',
   });
 
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className={className ?? 'msla-base-editor'}>
@@ -103,11 +129,6 @@ export const BaseEditor = ({
         {autoFocus ? <AutoFocus /> : null}
         {history ? <History /> : null}
         {autoLink ? <AutoLink /> : null}
-        {/* 
-          NOTE 14672766: Commenting out TokenPlugin because has a few issues
-          and is not needed for read only. Will revisit later.
-        */}
-        {tokens ? <TokenPicker buttonClassName={tokenPickerClassName} /> : null}
         {clearEditor ? <ClearEditor showButton={false} /> : null}
         {validation ? (
           <Validation
@@ -119,6 +140,13 @@ export const BaseEditor = ({
             setIsValid={validation.setIsValid}
           />
         ) : null}
+        <OnFocus
+          command={handleFocus}
+          focused={focused}
+          tokenPicker={focusProps?.tokenPickerProps}
+          addDictionaryItem={focusProps?.addDictionaryItem}
+        />
+        <OnBlur command={handleBlur} />
         {children}
       </div>
     </LexicalComposer>
