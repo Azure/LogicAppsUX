@@ -37,12 +37,12 @@ export const WorkflowsSelection: React.FC = () => {
       defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
       description: 'Select logic apps to export description',
     }),
-    TOGGLE_SELECTION: intl.formatMessage({
-      defaultMessage: 'Toggle selection',
+    SELECTION: intl.formatMessage({
+      defaultMessage: 'Select',
       description: 'Select apps to export description',
     }),
-    TOGGLE_SELECTION_ALL: intl.formatMessage({
-      defaultMessage: 'Toggle selection for all items',
+    SELECTION_ALL: intl.formatMessage({
+      defaultMessage: 'Select all',
       description: 'Select apps to export description',
     }),
     SELECT_WORKFLOW: intl.formatMessage({
@@ -115,15 +115,17 @@ export const WorkflowsSelection: React.FC = () => {
 
     const noWorkflows = renderWorkflows !== null && !renderWorkflows.length && !isWorkflowsLoading ? emptyText : null;
 
+    const enableShimmer = isWorkflowsLoading || renderWorkflows === null;
+
     return (
-      <div className="msla-export-workflows-panel-list-workflows">
+      <div className={`msla-export-workflows-panel-list-workflows ${enableShimmer ? 'loading' : ''}`}>
         <ShimmeredDetailsList
           items={renderWorkflows || []}
           columns={getListColumns(intlText.NAME, intlText.RESOURCE_GROUP)}
           setKey="set"
-          enableShimmer={isWorkflowsLoading || renderWorkflows === null}
-          ariaLabelForSelectionColumn={intlText.TOGGLE_SELECTION}
-          ariaLabelForSelectAllCheckbox={intlText.TOGGLE_SELECTION_ALL}
+          enableShimmer={enableShimmer}
+          ariaLabelForSelectionColumn={intlText.SELECTION}
+          ariaLabelForSelectAllCheckbox={intlText.SELECTION_ALL}
           checkButtonAriaLabel={intlText.SELECT_WORKFLOW}
           selectionMode={SelectionMode.multiple}
           selection={selection}
@@ -136,8 +138,8 @@ export const WorkflowsSelection: React.FC = () => {
     renderWorkflows,
     isWorkflowsLoading,
     selection,
-    intlText.TOGGLE_SELECTION,
-    intlText.TOGGLE_SELECTION_ALL,
+    intlText.SELECTION,
+    intlText.SELECTION_ALL,
     intlText.SELECT_WORKFLOW,
     intlText.NO_WORKFLOWS,
     intlText.NAME,
