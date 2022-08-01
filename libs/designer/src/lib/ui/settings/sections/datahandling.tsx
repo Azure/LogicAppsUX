@@ -1,12 +1,23 @@
-import type { SectionProps } from '..';
+import type { SectionProps, ToggleHandler } from '..';
+import constants from '../../../common/constants';
 import { SettingLabel, SettingsSection } from '../settingsection';
 import type { SettingSectionProps } from '../settingsection';
-import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompression, readOnly }: SectionProps): JSX.Element => {
-  const [automaticDecompression, setAutomaticDecompression] = useState(disableAutomaticDecompression?.value ?? false);
-  const [schemaValidation, setSchemaValidation] = useState(requestSchemaValidation?.value ?? false);
+export interface DataHandlingSectionProps extends SectionProps {
+  onAutomaticDecompressionChange: ToggleHandler;
+  onSchemaValidationChange: ToggleHandler;
+}
+
+export const DataHandling = ({
+  requestSchemaValidation,
+  disableAutomaticDecompression,
+  readOnly,
+  onSchemaValidationChange,
+  onAutomaticDecompressionChange,
+  expanded,
+  onHeaderClick,
+}: DataHandlingSectionProps): JSX.Element => {
   const requestSchemaValidationLabel = (
     <SettingLabel
       labelText="Schema Validation"
@@ -17,17 +28,6 @@ export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompre
   const automaticDecompressionLabel = (
     <SettingLabel labelText="Automatic Decompression" infoTooltipText="Automatically decompress gzip response." isChild={false} />
   );
-
-  const onAutomaticDecompressionChange = (checked: boolean): void => {
-    setAutomaticDecompression(checked);
-    // TODO (14427339): Setting Validation
-    // TODO (14427277): Write to Store
-  };
-  const onSchemaValidationChange = (checked: boolean): void => {
-    setSchemaValidation(checked);
-    // TODO (14427339): Setting Validation
-    // TODO (14427277): Write to Store
-  };
 
   const intl = useIntl();
 
@@ -47,13 +47,15 @@ export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompre
   const dataHandlingSectionProps: SettingSectionProps = {
     id: 'dataHandling',
     title: dataHandlingTitle,
-    expanded: false,
+    expanded,
+    sectionName: constants.SETTINGSECTIONS.DATAHANDLING,
+    onHeaderClick,
     settings: [
       {
         settingType: 'SettingToggle',
         settingProp: {
           readOnly,
-          checked: automaticDecompression,
+          checked: !disableAutomaticDecompression?.value,
           onToggleInputChange: (_, checked) => onAutomaticDecompressionChange(!!checked),
           customLabel: () => automaticDecompressionLabel,
           onText,
@@ -65,7 +67,7 @@ export const DataHandling = ({ requestSchemaValidation, disableAutomaticDecompre
         settingType: 'SettingToggle',
         settingProp: {
           readOnly,
-          checked: schemaValidation,
+          checked: requestSchemaValidation?.value,
           onToggleInputChange: (_, checked) => onSchemaValidationChange(!!checked),
           customLabel: () => requestSchemaValidationLabel,
           onText,
