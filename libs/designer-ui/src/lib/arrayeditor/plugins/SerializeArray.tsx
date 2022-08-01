@@ -52,7 +52,6 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
         if (text.length === 0) {
           continue;
         }
-
         text = splitChildNode[i].replace(/^[^"]*"(.*)"[^"]*$/, '$1').trim();
         if (text === 'null') {
           continue;
