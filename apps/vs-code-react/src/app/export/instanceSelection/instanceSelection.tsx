@@ -3,6 +3,7 @@ import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedIse, updateSelectedSubscripton } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
+import { SearchableDropdown } from '../components/searchableDropdown';
 import { parseIseData, parseSubscriptionsData } from './helper';
 import { Dropdown, Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
@@ -115,6 +116,15 @@ export const InstanceSelection: React.FC = () => {
         {intlText.SELECT_DESCRIPTION}
       </Text>
       <Dropdown
+        label={intlText.SELECTION_SUBSCRIPTION}
+        options={subscriptions}
+        placeholder={subscriptions.length ? intlText.SELECT_OPTION : intlText.EMPTY_SUBSCRIPTION}
+        disabled={isSubscriptionsLoading || !subscriptions.length}
+        onChange={onChangeSubscriptions}
+        selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
+        className="msla-export-instance-panel-dropdown"
+      />
+      <SearchableDropdown
         label={intlText.SELECTION_SUBSCRIPTION}
         options={subscriptions}
         placeholder={subscriptions.length ? intlText.SELECT_OPTION : intlText.EMPTY_SUBSCRIPTION}
