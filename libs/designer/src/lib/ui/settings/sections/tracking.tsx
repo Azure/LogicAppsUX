@@ -1,14 +1,26 @@
-import type { SectionProps } from '..';
+import type { SectionProps, TextChangeHandler } from '..';
+import constants from '../../../common/constants';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
-import { isObject } from '@microsoft-logic-apps/utils';
-import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export const Tracking = ({ readOnly, correlation, trackedProperties }: SectionProps): JSX.Element | null => {
-  const [correlationFromState, setCorrelation] = useState(correlation?.value ?? { clientTrackingId: '' });
-  const [trackedPropertiesFromState, setTrackedProperties] = useState(trackedProperties?.value);
+type DictionaryRecordChangeHandler = (newVal: Record<string, string>) => void;
+export interface TrackingSectionProps extends SectionProps {
+  onClientTrackingIdChange: TextChangeHandler;
+  onTrackedPropertiesDictionaryValueChanged: DictionaryRecordChangeHandler;
+  onTrackedPropertiesStringValueChange: TextChangeHandler;
+}
 
+export const Tracking = ({
+  readOnly,
+  correlation,
+  expanded,
+  onHeaderClick,
+  trackedProperties,
+  onClientTrackingIdChange,
+  onTrackedPropertiesDictionaryValueChanged,
+  onTrackedPropertiesStringValueChange,
+}: TrackingSectionProps): JSX.Element | null => {
   const intl = useIntl();
   const clientIdTrackingTitle = intl.formatMessage({
     defaultMessage: 'Custom Tracking Id',
@@ -31,55 +43,20 @@ export const Tracking = ({ readOnly, correlation, trackedProperties }: SectionPr
     <SettingLabel labelText={clientIdTrackingTitle} infoTooltipText={clientTrackingTootltipText} isChild={false} />
   );
 
-  const onClientTrackingIdChange = (newValue: string): void => {
-    setCorrelation({ clientTrackingId: newValue });
-    // TODO (14427339): Setting Validation
-    // TODO (14427277): Write to Store
-  };
-
-  const onTrackedPropertiesDictionaryValueChanged = (newValue: Record<string, string>): void => {
-    let trackedProperties: Record<string, any> = {};
-    if (isObject(newValue) && Object.keys(newValue).length > 0 && Object.keys(newValue).some((key) => newValue[key] !== undefined)) {
-      trackedProperties = {};
-      for (const key of Object.keys(newValue)) {
-        let propertyValue: any;
-        try {
-          propertyValue = JSON.parse(newValue[key]);
-        } catch {
-          propertyValue = newValue[key];
-        }
-
-        trackedProperties[key] = propertyValue;
-      }
-    }
-    setTrackedProperties(trackedProperties);
-  };
-
-  const onTrackedPropertiesStringValueChange = (newValue: string): void => {
-    let trackedProperties: any = '';
-    if (newValue) {
-      try {
-        trackedProperties = JSON.parse(newValue);
-      } catch {
-        trackedProperties = newValue;
-      }
-    }
-    setTrackedProperties(trackedProperties);
-    // TODO (14427339): Setting Validation
-    // TODO (14427277): Write to Store
-  };
-
   const trackedPropertiesLabel = <SettingLabel labelText={trackedPropertiesTitle} isChild={false} />;
 
   const trackingSectionProps: SettingSectionProps = {
     id: 'tracking',
     title: trackingTitle,
+    sectionName: constants.SETTINGSECTIONS.TRACKING,
+    expanded,
+    onHeaderClick,
     settings: [
       {
         settingType: 'SettingTextField',
         settingProp: {
           readOnly,
-          value: correlationFromState?.clientTrackingId ?? '',
+          value: correlation?.value?.clientTrackingId ?? '',
           customLabel: () => clientTrackingIdLabel,
           onValueChange: (_, newVal) => onClientTrackingIdChange(newVal as string),
         },
@@ -89,7 +66,7 @@ export const Tracking = ({ readOnly, correlation, trackedProperties }: SectionPr
         settingType: 'SettingDictionary',
         settingProp: {
           readOnly,
-          values: trackedPropertiesFromState,
+          values: trackedProperties?.value,
           onDictionaryChange: (newVal) => onTrackedPropertiesDictionaryValueChanged(newVal as Record<string, string>),
           onTextFieldChange: (_, newVal) => onTrackedPropertiesStringValueChange(newVal as string),
           customLabel: () => trackedPropertiesLabel,

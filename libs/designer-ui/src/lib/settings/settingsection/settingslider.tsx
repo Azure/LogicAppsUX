@@ -2,7 +2,7 @@ import type { SettingProps } from './settingtoggle';
 import { Slider } from '@fluentui/react';
 import React, { useState } from 'react';
 
-type ValueChangeHandler = (value: number) => void;
+export type ValueChangeHandler = (value: number) => void;
 export interface CustomValueSliderProps extends SettingProps {
   value: number;
   maxVal?: number;

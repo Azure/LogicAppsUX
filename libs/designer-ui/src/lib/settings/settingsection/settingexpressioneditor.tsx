@@ -7,7 +7,7 @@ import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import React, { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-type ExpressionChangeHandler = (updatedExpressions: string[]) => void;
+export type ExpressionChangeHandler = (updatedExpressions: string[]) => void;
 export interface MultiAddExpressionEditorProps extends SettingProps {
   initialExpressions?: string[];
   onExpressionsChange: ExpressionChangeHandler;

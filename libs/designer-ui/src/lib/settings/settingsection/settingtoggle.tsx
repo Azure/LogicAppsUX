@@ -1,7 +1,7 @@
 import type { IToggleProps } from '@fluentui/react';
 import { Toggle } from '@fluentui/react';
 
-type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
+export type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
 
 export interface SettingProps {
   readOnly?: boolean;
