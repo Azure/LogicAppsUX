@@ -236,7 +236,18 @@ export function expectOutputTokenSegment(
   expect(segment).toBeDefined();
   expect(segment).not.toBeNull();
   expect(segment?.type).toEqual(ValueSegmentType.TOKEN);
-  expect(segment?.token).toEqual({ actionName, source, name, required, key, format, tokenType: TokenType.OUTPUTS });
+
+  const matchingObject: any = { actionName, source, name, key, tokenType: TokenType.OUTPUTS };
+
+  if (format !== undefined) {
+    matchingObject.format = format;
+  }
+
+  if (required !== undefined) {
+    matchingObject.required = required;
+  }
+
+  expect(segment?.token).toMatchObject(matchingObject);
 }
 
 export function expectExpressionTokenSegment(segment: ValueSegment | undefined | null, value: string): void {

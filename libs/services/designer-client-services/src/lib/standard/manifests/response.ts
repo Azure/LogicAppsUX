@@ -15,6 +15,7 @@ export default {
         statusCode: {
           type: 'integer',
           title: 'Status Code',
+          description: 'Status Code',
           required: true,
           default: 200,
         },

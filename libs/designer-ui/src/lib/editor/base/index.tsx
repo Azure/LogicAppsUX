@@ -19,6 +19,14 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export { testTokenSegment } from '../shared/testtokensegment';
+
+export interface ChangeState {
+  value: ValueSegment[],
+  viewModel?: any; // TODO - Should be strongly typed once updated for Array
+}
+
+export type ChangeHandler = (newState: ChangeState) => void;
+
 interface FocusProps {
   addDictionaryItem?: dictionaryCallbackProps;
   tokenPickerProps?: FocusTokenPickerProps;
@@ -42,7 +50,9 @@ export interface BaseEditorProps {
   BasePlugins?: BasePlugins;
   initialValue?: ValueSegment[];
   children?: React.ReactNode;
+  onChange?: ChangeHandler;
   focusProps?: FocusProps;
+  onBlur?: () => void;
 }
 
 export interface BasePlugins {
@@ -74,6 +84,7 @@ export const BaseEditor = ({
   initialValue,
   children,
   focusProps,
+  onBlur,
 }: BaseEditorProps) => {
   const intl = useIntl();
   const [focused, setIsFocused] = useState(false);
@@ -102,6 +113,9 @@ export const BaseEditor = ({
   };
   const handleBlur = () => {
     setIsFocused(false);
+    if (onBlur) {
+      onBlur();
+    }
   };
 
   return (

@@ -8,7 +8,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface CollapsedArrayProps {
-  labelProps: LabelProps;
+  labelProps?: LabelProps;
   items: ArrayEditorItemProps[];
   isValid?: boolean;
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
@@ -23,7 +23,7 @@ export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, se
     description: 'Error Message for Invalid Array',
   });
   const renderLabel = (): JSX.Element => {
-    const { text, isRequiredField } = labelProps;
+    const { text, isRequiredField } = labelProps as LabelProps;
     return (
       <div className="msla-input-parameter-label">
         <div className="msla-array-editor-label">
@@ -39,7 +39,7 @@ export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, se
 
   return (
     <div className="msla-array-container msla-array-editor-collapsed">
-      {renderLabel()}
+      {labelProps ? renderLabel() : null}
       <div className="msla-array-content">
         <CollapsedEditor
           type={CollapsedEditorType.COLLAPSED_ARRAY}

@@ -1,5 +1,6 @@
 import { SchemaEditor } from '.';
 import type { SchemaEditorProps } from '.';
+import { ValueSegmentType } from '../editor';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
@@ -17,6 +18,7 @@ Standard.parameters = {
 };
 
 Standard.args = {
-  value: '{\n"test": true,\n"test2" : \n\t{\n\t\t"object" : "value"\n\t}\n}',
-  title: 'Request Body JSON Schema',
+  initialValue: [{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"test": true,\n"test2" : \n\t{\n\t\t"object" : "value"\n\t}\n}' }],
+  label: 'Request Body JSON Schema',
+  onChange: (segments) => console.log('Changed value to ', segments[0].value),
 };

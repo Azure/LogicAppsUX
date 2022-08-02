@@ -339,6 +339,7 @@ export function createOutputToken(key: string, actionName: string | undefined, s
     key,
     required,
     tokenType: TokenType.OUTPUTS,
+    title: name,
   };
 
   return token;
@@ -355,6 +356,7 @@ export function createExpressionToken(expression: Expression): Token {
     tokenType: TokenType.FX,
     expression,
     key: guid(),
+    title: (expression as ExpressionFunction).name,
   };
 }
 

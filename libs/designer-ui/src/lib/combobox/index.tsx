@@ -1,5 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
+import type { ChangeHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import { CustomValue } from './plugins/CustomValue';
@@ -50,29 +51,32 @@ export interface ComboboxItem {
 }
 export interface ComboboxProps {
   options: ComboboxItem[];
-  customValue: ValueSegment[] | null;
-  placeholderText?: string;
+  customValue?: ValueSegment[];
+  initialValue: ValueSegment[];
+  placeholder?: string;
   label?: string;
   useOption?: boolean;
-  selectedKey?: string;
+  selectedKey?: string; // Move to state
+  readOnly?: boolean; // TODO - Need to have readOnly version
   required?: boolean;
-  setSelectedKey?: (key: string) => void;
-  setCustomValue?: (customVal: ValueSegment[] | null) => void;
+  onChange?: ChangeHandler;
+  setSelectedKey?: (key: string) => void; // Move to state
+  setCustomValue?: (customVal: ValueSegment[] | null) => void; // Move to state
 }
 export const Combobox = ({
   customValue,
   options,
-  placeholderText,
+  placeholder,
   label,
   useOption = true,
-  required = true,
+  required,
   selectedKey,
   setSelectedKey,
   setCustomValue,
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
-  const [customVal, setCustomVal] = useState<ValueSegment[] | null>(customValue);
+  const [customVal, setCustomVal] = useState<ValueSegment[] | null>(customValue as ValueSegment[]);
   const [comboboxOptions, setComboBoxOptions] = useState<IComboBoxOption[]>(getOptions(options));
 
   useEffect(() => {
@@ -148,7 +152,7 @@ export const Combobox = ({
         <div className="msla-combobox-editor-container">
           <BaseEditor
             className="msla-combobox-editor"
-            placeholder={placeholderText}
+            placeholder={placeholder}
             BasePlugins={{ tokens: true, clearEditor: true }}
             initialValue={customVal}
           >
@@ -166,7 +170,7 @@ export const Combobox = ({
           useComboBoxAsMenuWidth
           allowFreeform
           autoComplete="off"
-          placeholder={placeholderText}
+          placeholder={placeholder}
           options={comboboxOptions}
           onInputValueChange={updateOptions}
           onClick={toggleExpand}
