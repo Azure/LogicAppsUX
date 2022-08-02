@@ -66,6 +66,7 @@ export const Combobox = ({
   label,
   useOption = true,
   required,
+  readOnly,
   onChange,
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
@@ -84,9 +85,6 @@ export const Combobox = ({
   }, [onChange, options, selectedKey]);
 
   useEffect(() => {
-    if (customValue) {
-      setSelectedKey('');
-    }
     if (onChange && customValue) {
       onChange({ value: customValue });
     }
@@ -135,6 +133,7 @@ export const Combobox = ({
   const handleCustomOptions = (option?: IComboBoxOption): void => {
     if (option?.data === 'customrender') {
       setCustomValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
+      setSelectedKey('');
     } else {
       if (setSelectedKey && option?.key) {
         setSelectedKey(option.key.toString());
@@ -158,6 +157,7 @@ export const Combobox = ({
       {customValue ? (
         <div className="msla-combobox-editor-container">
           <BaseEditor
+            readonly={readOnly}
             className="msla-combobox-editor"
             placeholder={placeholder}
             BasePlugins={{ tokens: true, clearEditor: true, autoFocus: true }}
@@ -171,6 +171,7 @@ export const Combobox = ({
         </div>
       ) : (
         <ComboBox
+          disabled={readOnly}
           className="msla-combobox"
           selectedKey={selectedKey}
           componentRef={comboBoxRef}
