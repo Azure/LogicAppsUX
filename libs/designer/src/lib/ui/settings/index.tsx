@@ -2,6 +2,7 @@ import constants from '../../common/constants';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
+import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { setExpandedSections } from '../../core/state/settingSlice';
 import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
@@ -34,9 +35,7 @@ export interface SectionProps extends Settings {
 export type HeaderClickHandler = (sectionName: string) => void;
 
 export const SettingsPanel = (): JSX.Element => {
-  const nodeId = useSelector((state: RootState) => {
-    return state.panel.selectedNode;
-  });
+  const nodeId = useSelectedNodeId();
   const {
     secureInputs,
     secureOutputs,

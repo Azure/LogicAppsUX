@@ -20,4 +20,5 @@ export interface WorkflowState {
   operations: Operations;
   nodesMetadata: NodesMetadata;
   collapsedGraphIds: Record<string, boolean>;
+  edgeIdsBySource: Record<string, string[]>;
 }

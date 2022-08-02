@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { expandPanel, changePanelNode } from '../../core/state/panel/panelSlice';
-import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesBySource, useIsGraphCollapsed } from '../../core/state/workflow/workflowSelectors';
+import { changePanelNode } from '../../core/state/panel/panelSlice';
+import { useIsGraphCollapsed, useIsLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
-import type { RootState } from '../../core/store';
-import { isLeafNodeFromEdges } from '../../core/utils/graph';
 import { DropZone } from '../connections/dropzone';
 import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { SubgraphCard } from '@microsoft/designer-ui';
@@ -14,7 +11,7 @@ import { memo, useCallback } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -24,31 +21,20 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const readOnly = useReadOnly();
   const dispatch = useDispatch();
 
-  const isCollapsed = useSelector((state: RootState) => state.panel.collapsed);
-
   const selected = useIsNodeSelected(subgraphId);
   const metadata = useNodeMetadata(subgraphId);
-  const edges = useEdgesBySource(id);
+  const isLeaf = useIsLeafNode(id);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
 
-  const subgraphClick = useCallback(
-    (_id: string) => {
-      if (isCollapsed) {
-        dispatch(expandPanel());
-      }
-      dispatch(changePanelNode(_id));
-    },
-    [dispatch, isCollapsed]
-  );
+  const subgraphClick = useCallback((_id: string) => dispatch(changePanelNode(_id)), [dispatch]);
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);
   const handleGraphCollapse = useCallback(() => {
     dispatch(toggleCollapsedGraphId(subgraphId));
   }, [dispatch, subgraphId]);
 
-  const isEmpty = isLeafNodeFromEdges(edges);
-  const showEmptyGraphComponents = isEmpty && !graphCollapsed && !isAddCase;
+  const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isAddCase;
 
   const actionCount = metadata?.actionCount ?? 0;
   const collapsedText = intl.formatMessage(

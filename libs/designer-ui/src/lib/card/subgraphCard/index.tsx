@@ -91,13 +91,11 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     onClick?.(data.id);
   };
 
+  const colorVars = { ['--brand-color' as any]: SubgraphTypeData[subgraphType].color };
+
   if (data.size === 'large') {
     return (
-      <div
-        className={css('msla-subgraph-card', data.size)}
-        style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
-        tabIndex={-1}
-      >
+      <div className={css('msla-subgraph-card', data.size)} style={colorVars} tabIndex={-1}>
         <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
         <button className="msla-subgraph-title" onClick={handleTitleClick}>
           {data.title}
@@ -111,7 +109,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         <div
           tabIndex={0}
           className={css('msla-subgraph-card', data.size)}
-          style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
+          style={colorVars}
           onClick={(e) => {
             handleTitleClick(e);
             handleCollapse?.(e);
