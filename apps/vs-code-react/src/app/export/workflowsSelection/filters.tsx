@@ -18,6 +18,10 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
       defaultMessage: 'Search...',
       description: 'Search placeholder',
     }),
+    SEARCH_RESOURCE_GROUP: intl.formatMessage({
+      defaultMessage: 'Search resource group',
+      description: 'Search resource group text',
+    }),
   };
 
   return (
@@ -37,6 +41,7 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
         options={dropdownOptions}
         onChange={onChangeResourceGroup}
         disabled={isDataLoading || !dropdownOptions.length}
+        searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
       />
     </div>
   );

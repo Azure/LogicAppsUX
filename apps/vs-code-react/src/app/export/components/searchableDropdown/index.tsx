@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 
 export interface ISearchableDropdownProps extends IDropdownProps {
   isLoading?: boolean;
+  searchBoxPlaceholder?: string;
 }
 
 export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) => {
@@ -33,7 +34,7 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
 
     const searchBox = (
       <div className="searchable-dropdown-searchbox">
-        <SearchBox showIcon underlined onChange={searchString} placeholder={intlText.SEARCH_OPTIONS} />
+        <SearchBox showIcon underlined onChange={searchString} placeholder={props.searchBoxPlaceholder ?? intlText.SEARCH_OPTIONS} />
       </div>
     );
 

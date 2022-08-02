@@ -38,6 +38,10 @@ export const ManagedConnections: React.FC = () => {
       defaultMessage: 'Resource group',
       description: 'Resource group title',
     }),
+    SEARCH_RESOURCE_GROUP: intl.formatMessage({
+      defaultMessage: 'Search resource group',
+      description: 'Search resource group text',
+    }),
   };
 
   useEffect(() => {
@@ -96,6 +100,7 @@ export const ManagedConnections: React.FC = () => {
         onChange={onChangeResourceGroup}
         selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : null}
         isLoading={isResourceGroupsLoading}
+        searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
       />
     ) : null;
   }, [
