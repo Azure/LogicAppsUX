@@ -217,7 +217,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       }
 
       if (!readOnly) {
-        editor.focus();
+        // editor.focus();
       }
 
       if (onEditorRef) {

@@ -1,4 +1,3 @@
-import type { ValueSegment } from '../editor';
 import { Combobox } from './';
 import type { ComboboxProps } from './';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -21,11 +20,4 @@ Standard.args = {
   ],
   placeholder: 'Method is Required',
   label: 'Method',
-  selectedKey: 'PUT',
-  setSelectedKey: (key: string) => {
-    console.log(key);
-  },
-  setCustomValue: (key: ValueSegment[] | null) => {
-    console.log(key);
-  },
 };

@@ -21,9 +21,11 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   readOnly = false,
   disableToggle = false,
   initialItems,
+  initialValue,
 }): JSX.Element => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(!initialItems ?? false);
   const [items, setItems] = useState(initialItems);
+  const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue ?? []);
   const [isValid, setIsValid] = useState(true);
 
   const toggleCollapsed = () => {
@@ -32,14 +34,27 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   const updateItems = (newItems: DictionaryEditorItemProps[]) => {
     setItems(newItems);
+    setCollapsedValue([]);
+  };
+
+  const updateCollapsedValue = (val: ValueSegment[]) => {
+    setCollapsedValue(val);
+    setItems([{ key: [], value: [] }]);
   };
 
   return (
     <div className="msla-dictionary-editor-container">
-      {collapsed || !initialItems ? (
-        <CollapsedDictionary items={items ?? []} isValid={isValid} setItems={updateItems} setIsValid={setIsValid} />
+      {collapsed ? (
+        <CollapsedDictionary
+          items={items ?? [{ key: [], value: [] }]}
+          isValid={isValid}
+          setItems={updateItems}
+          setIsValid={setIsValid}
+          collapsedValue={collapsedValue}
+          setCollapsedValue={updateCollapsedValue}
+        />
       ) : (
-        <ExpandedDictionary items={items ?? []} setItems={updateItems} />
+        <ExpandedDictionary items={items ?? [{ key: [], value: [] }]} setItems={updateItems} />
       )}
 
       <div className="msla-array-commands">

@@ -19,10 +19,11 @@ export const SerializeExpandedDictionary = ({ items, initialItem, index, type, s
   const onChange = (editorState: EditorState) => {
     const newValue = serializeEditorState(editorState);
     if (notEqual(initialItem, newValue)) {
-      const newItems = [...items];
+      const newItems = JSON.parse(JSON.stringify(items));
       if (type === 'key') {
         newItems[index].key = newValue;
       } else {
+        console.log(newItems[index].value);
         newItems[index].value = newValue;
       }
       setItems(newItems);

@@ -112,6 +112,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   title = 'Settings',
   sectionName,
   showHeading = true,
+  showSeparator = true,
   expanded,
   isReadOnly,
   settings,
@@ -137,7 +138,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   const internalSettings = (
     <>
       {expanded || !showHeading ? renderSettings(settings, isReadOnly) : null}
-      <Separator className="msla-setting-section-separator" styles={separatorStyles} />
+      {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
     </>
   );
   if (!showHeading) {

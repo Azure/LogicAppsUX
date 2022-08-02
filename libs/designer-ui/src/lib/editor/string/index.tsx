@@ -10,7 +10,7 @@ export interface StringEditorProps extends BaseEditorProps {
 }
 
 export const StringEditor = ({ placeholder, className, singleLine, initialValue }: StringEditorProps) => {
-  const [value, setValue] = useState(initialValue as ValueSegment[]);
+  const [value, setValue] = useState(initialValue);
   const onValueChange = (newValue: ValueSegment[]): void => setValue(newValue);
 
   return (

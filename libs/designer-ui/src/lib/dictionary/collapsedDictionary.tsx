@@ -11,9 +11,18 @@ export type CollapsedDictionaryProps = {
   isValid?: boolean;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   setItems: (items: DictionaryEditorItemProps[]) => void;
+  collapsedValue: ValueSegment[];
+  setCollapsedValue: (val: ValueSegment[]) => void;
 };
 
-export const CollapsedDictionary = ({ items, isValid, setItems, setIsValid }: CollapsedDictionaryProps): JSX.Element => {
+export const CollapsedDictionary = ({
+  items,
+  isValid,
+  setItems,
+  setIsValid,
+  collapsedValue,
+  setCollapsedValue,
+}: CollapsedDictionaryProps): JSX.Element => {
   const intl = useIntl();
 
   const errorMessage = intl.formatMessage({
@@ -35,6 +44,8 @@ export const CollapsedDictionary = ({ items, isValid, setItems, setIsValid }: Co
           errorMessage={errorMessage}
           setItems={setItems}
           setIsValid={setIsValid}
+          collapsedValue={collapsedValue}
+          setCollapsedValue={setCollapsedValue}
         />
       </div>
     </div>
@@ -42,12 +53,12 @@ export const CollapsedDictionary = ({ items, isValid, setItems, setIsValid }: Co
 };
 
 // convert from DictionaryEditorItemProps array to Segment array
-const parseInitialValue = (items: DictionaryEditorItemProps[]): ValueSegment[] => {
+const parseInitialValue = (items: DictionaryEditorItemProps[]): ValueSegment[] | undefined => {
   items.filter((item) => {
     return !isEmpty(item);
   });
   if (items.length === 0) {
-    return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '{}' }];
+    return;
   }
   const parsedItems: ValueSegment[] = [];
   parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '{\n  "' });

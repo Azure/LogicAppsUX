@@ -101,7 +101,7 @@ export const BaseEditor = ({
       }),
   };
 
-  const { autoFocus = true, autoLink, clearEditor, history = true, tokens, treeView, validation } = BasePlugins;
+  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, validation } = BasePlugins;
 
   const editorInputLabel = intl.formatMessage({
     defaultMessage: 'Editor Input',
