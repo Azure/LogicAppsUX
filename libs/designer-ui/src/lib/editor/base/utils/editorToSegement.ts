@@ -33,7 +33,7 @@ const getChildrenNodes = (node: ElementNode, segments: ValueSegment[], trimLiter
           description: childNode.__description,
           tokenType: TokenType.OUTPUTS,
         },
-        value: 'triggerBody()',
+        value: childNode.__title,
       });
     }
   });

@@ -90,7 +90,7 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
           brandColor: childNode.__brandColor,
           description: childNode.__description,
         },
-        value: 'triggerBody()',
+        value: childNode.__title,
       });
       if (!inString) {
         returnItems.push({ content: currentSegments });

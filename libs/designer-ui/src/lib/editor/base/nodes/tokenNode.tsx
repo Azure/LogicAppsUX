@@ -8,6 +8,7 @@ import { DecoratorNode } from 'lexical';
 export interface TokenNodeProps {
   brandColor?: string;
   description?: string;
+  data?: any;
   icon: string;
   title: string;
 }
@@ -18,6 +19,7 @@ export type SerailizedTokenNode = Spread<
     title: string;
     description?: string;
     brandColor?: string;
+    data?: any;
     type: 'token';
     version: 1;
   },
@@ -28,13 +30,14 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   __description?: string;
   __icon: string;
   __title: string;
+  __data?: any;
 
   static getType() {
     return 'token';
   }
 
   static clone(node: TokenNode) {
-    return new TokenNode(node.__icon, node.__title, node.__description, node.__brandColor, node.__key);
+    return new TokenNode(node.__icon, node.__title, node.__description, node.__brandColor, node.__data, node.__key);
   }
 
   static importJSON(serializedTokenNode: SerailizedTokenNode): TokenNode {
@@ -42,7 +45,8 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
       serializedTokenNode.icon,
       serializedTokenNode.title,
       serializedTokenNode.description,
-      serializedTokenNode.brandColor
+      serializedTokenNode.brandColor,
+      serializedTokenNode.data
     );
   }
 
@@ -52,6 +56,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
       icon: this.__icon,
       description: this.__description,
       brandColor: this.__brandColor,
+      data: this.__data,
       type: 'token',
       version: 1,
     };
@@ -72,17 +77,27 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
         icon: this.__icon,
         description: this.__description,
         title: this.__title,
+        actionName: this.__data?.actionName,
+        arrayDetails: this.__data?.arrayDetails,
+        expression: this.__data?.expression,
+        format: this.__data?.format,
+        isSecure: this.__data?.isSecure,
+        name: this.__data?.name,
+        required: this.__data?.required,
+        source: this.__data?.source,
+        type: this.__data?.type,
       },
-      value: 'triggerBody()',
+      value: this.__title,
     };
   }
 
-  constructor(icon: string, title: string, description?: string, brandColor?: string, key?: string) {
+  constructor(icon: string, title: string, description?: string, brandColor?: string, data?: any, key?: string) {
     super(key);
     this.__brandColor = brandColor;
     this.__description = description;
     this.__icon = icon;
     this.__title = title;
+    this.__data = data;
   }
 
   createDOM() {
@@ -107,8 +122,8 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 }
 
-export function $createTokenNode({ icon, title, description, brandColor }: TokenNodeProps) {
-  return new TokenNode(icon, title, description, brandColor);
+export function $createTokenNode({ icon, title, description, brandColor, data }: TokenNodeProps) {
+  return new TokenNode(icon, title, description, brandColor, data);
 }
 
 export function $isTokenNode(node: LexicalNode | null): node is TokenNode {

@@ -64,7 +64,7 @@ export const ScratchTab = () => {
                     title: 'TOKEN',
                     tokenType: TokenType.OUTPUTS,
                   },
-                  value: 'triggerBody()',
+                  value: 'TOKEN',
                 },
                 { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
               ],
