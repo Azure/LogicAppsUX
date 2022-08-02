@@ -17,7 +17,8 @@ import {
   setTabVisibility,
   showDefaultTabs,
 } from '../../core/state/panel/panelSlice';
-import { useIconUri, useNodeDescription, useNodeMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useNodeDescription, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';

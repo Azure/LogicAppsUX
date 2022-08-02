@@ -7,15 +7,13 @@ import {
   useIconUri,
   useIsConnectionRequired,
   useNodeConnectionName,
-  useNodeDescription,
-  useNodeMetadata,
   useOperationInfo,
 } from '../../core/state/selectors/actionMetadataSelector';
-import { useIsLeafNode } from '../../core/state/workflow/workflowSelectors';
+import { useIsLeafNode, useNodeDescription, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { labelCase } from '@microsoft-logic-apps/utils';
 import { Card } from '@microsoft/designer-ui';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
@@ -49,13 +47,13 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
 
   const selected = useIsNodeSelected(id);
   const metadata = useNodeMetadata(id);
-  const operationInfo = useOperationInfo(id);
   const nodeComment = useNodeDescription(id);
+  const operationInfo = useOperationInfo(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
   const isLeaf = useIsLeafNode(id);
 
-  const showLeafComponents = !readOnly && isLeaf;
+  const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
   const nodeClick = useCallback(() => dispatch(changePanelNode(id)), [dispatch, id]);
 
@@ -63,14 +61,18 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
   const iconUriResult = useIconUri(operationInfo);
 
   const brandColor = brandColorResult.result;
-  const comment = nodeComment
-    ? {
-        brandColor,
-        comment: nodeComment,
-        isDismissed: false,
-        isEditing: false,
-      }
-    : undefined;
+  const comment = useMemo(
+    () =>
+      nodeComment
+        ? {
+            brandColor,
+            comment: nodeComment,
+            isDismissed: false,
+            isEditing: false,
+          }
+        : undefined,
+    [brandColor, nodeComment]
+  );
 
   const label = labelCase(data.label);
   return (

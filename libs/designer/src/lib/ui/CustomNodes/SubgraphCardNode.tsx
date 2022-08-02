@@ -2,8 +2,7 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
-import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useIsGraphCollapsed, useIsLeafNode } from '../../core/state/workflow/workflowSelectors';
+import { useIsGraphCollapsed, useIsLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { DropZone } from '../connections/dropzone';
 import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';

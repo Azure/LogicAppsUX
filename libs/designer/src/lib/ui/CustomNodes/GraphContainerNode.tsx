@@ -1,7 +1,6 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { useActionMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useIsLeafNode } from '../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useIsLeafNode } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';

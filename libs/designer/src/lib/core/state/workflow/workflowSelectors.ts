@@ -8,6 +8,15 @@ import { useSelector } from 'react-redux';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
+export const useNodeMetadata = (id?: string) =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.nodesMetadata[id] : undefined)));
+
+export const useActionMetadata = (id?: string) =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.operations[id] : undefined)));
+
+export const useNodeDescription = (id: string) =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.operations[id]?.description : undefined)));
+
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
   const rootNode = data.graph;
   const collapsedIds = data.collapsedGraphIds;

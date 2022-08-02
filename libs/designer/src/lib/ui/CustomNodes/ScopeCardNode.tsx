@@ -1,14 +1,8 @@
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
-import {
-  useBrandColor,
-  useIconUri,
-  useActionMetadata,
-  useOperationInfo,
-  useNodeMetadata,
-} from '../../core/state/selectors/actionMetadataSelector';
-import { useIsGraphCollapsed, useIsLeafNode } from '../../core/state/workflow/workflowSelectors';
+import { useBrandColor, useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useActionMetadata, useIsGraphCollapsed, useIsLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
