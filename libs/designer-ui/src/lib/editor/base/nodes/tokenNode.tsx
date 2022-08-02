@@ -1,7 +1,5 @@
 import { InputToken } from '../../../token/inputToken';
 import type { ValueSegment } from '../../models/parameter';
-import { TokenType, ValueSegmentType } from '../../models/parameter';
-import { guid } from '@microsoft-logic-apps/utils';
 import type { LexicalNode, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
 
@@ -67,28 +65,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 
   convertToSegment(): ValueSegment {
-    return {
-      id: guid(),
-      type: ValueSegmentType.TOKEN,
-      token: {
-        tokenType: TokenType.OUTPUTS,
-        key: this.__key,
-        brandColor: this.__brandColor,
-        icon: this.__icon,
-        description: this.__description,
-        title: this.__title,
-        actionName: this.__data.token?.actionName,
-        arrayDetails: this.__data.token?.arrayDetails,
-        expression: this.__data.token?.expression,
-        format: this.__data.token?.format,
-        isSecure: this.__data.token?.isSecure,
-        name: this.__data.token?.name,
-        required: this.__data.token?.required,
-        source: this.__data.token?.source,
-        type: this.__data.token?.type,
-      },
-      value: this.__data.value,
-    };
+    return this.__data;
   }
 
   constructor(icon: string, title: string, data: ValueSegment, description?: string, brandColor?: string, key?: string) {
