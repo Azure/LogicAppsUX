@@ -1,7 +1,10 @@
+import type { ValueSegment } from '../..';
 import type { DictionaryEditorItemProps } from '../../../dictionary';
 import { serializeDictionary } from '../../../dictionary/util/serializecollapeseddictionary';
+import { ValueSegmentType } from '../../models/parameter';
 import { CollapsedEditorType } from '../../shared/collapsedEditor';
 import { $isTokenNode } from '../nodes/tokenNode';
+import { serializeEditorState } from '../utils/editorToSegement';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, ElementNode } from 'lexical';
@@ -16,6 +19,8 @@ export interface ValidationProps {
   isValid?: boolean;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   setItems?: (items: DictionaryEditorItemProps[]) => void;
+  collapsedValue?: ValueSegment[];
+  setCollapsedValue?: (val: ValueSegment[]) => void;
 }
 
 export const Validation = ({
@@ -26,6 +31,8 @@ export const Validation = ({
   errorMessage,
   setIsValid,
   setItems,
+  collapsedValue,
+  setCollapsedValue,
 }: ValidationProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const onChange = (editorState: EditorState) => {
@@ -47,8 +54,10 @@ export const Validation = ({
             } else {
               newValiditity = isValidDictionary(editorString);
               setIsValid(newValiditity);
-              if (newValiditity && setItems) {
+              if (setItems && newValiditity) {
                 serializeDictionary(editor, setItems);
+              } else if (setCollapsedValue) {
+                setCollapsedValue(serializeEditorState(editor.getEditorState()));
               }
             }
         }
@@ -58,7 +67,15 @@ export const Validation = ({
   return (
     <div className={className ?? 'msla-base-editor-validation'}>
       <OnChangePlugin onChange={onChange} />
-      {isValid ? null : errorMessage}
+      {isValid ||
+      (collapsedValue &&
+        collapsedValue.length === 1 &&
+        (collapsedValue[0].type === ValueSegmentType.TOKEN ||
+          (collapsedValue[0].type === ValueSegmentType.LITERAL &&
+            collapsedValue[0].value.trim().startsWith('"') &&
+            collapsedValue[0].value.trim().endsWith('"'))))
+        ? null
+        : errorMessage}
     </div>
   );
 };

@@ -76,7 +76,7 @@ export const Combobox = ({
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
-  const [customVal, setCustomVal] = useState<ValueSegment[] | null>(customValue as ValueSegment[]);
+  const [customVal, setCustomVal] = useState<ValueSegment[] | null>(customValue ?? null);
   const [comboboxOptions, setComboBoxOptions] = useState<IComboBoxOption[]>(getOptions(options));
 
   useEffect(() => {

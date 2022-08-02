@@ -64,6 +64,7 @@
 
         .editor-input {
           border: 1px solid @panel-mode-panel-border-color;
+          outline: none;
           resize: none;
           font-size: 15px;
           tab-size: 1;
@@ -71,6 +72,9 @@
           line-height: 30px;
           caret-color: #444;
           padding-inline-start: 5px;
+          &:focus {
+            border: 1px solid rgb(0, 120, 212);
+          }
           p {
             margin: 0;
             line-height: 1.5rem;
