@@ -95,6 +95,7 @@ export const ManagedConnections: React.FC = () => {
         className="msla-export-summary-connections-dropdown"
         onChange={onChangeResourceGroup}
         selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : null}
+        isLoading={isResourceGroupsLoading}
       />
     ) : null;
   }, [

@@ -30,7 +30,7 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
         disabled={isDataLoading}
       />
       <SearchableDropdown
-        className="msla-export-workflows-panel-filters-input"
+        className="msla-export-workflows-panel-filters-dropdown"
         placeholder={intlText.SEARCH}
         label={intlText.FILTER_RESOURCE_GROUPS}
         multiSelect

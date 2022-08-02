@@ -68,6 +68,7 @@ export const InstanceSelection: React.FC = () => {
 
   const { data: subscriptionsData, isLoading: isSubscriptionsLoading } = useQuery<any>(QueryKeys.subscriptionData, loadSubscriptions, {
     refetchOnWindowFocus: false,
+    retry: 4,
   });
 
   const {
@@ -123,6 +124,7 @@ export const InstanceSelection: React.FC = () => {
         onChange={onChangeSubscriptions}
         selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
         className="msla-export-instance-panel-dropdown"
+        isLoading={isSubscriptionsLoading}
       />
       <SearchableDropdown
         label={intlText.SELECTION_ISE}
@@ -132,6 +134,7 @@ export const InstanceSelection: React.FC = () => {
         onChange={onChangeIse}
         selectedKey={selectedIse !== '' ? selectedIse : null}
         className="msla-export-instance-panel-dropdown"
+        isLoading={selectedSubscription === '' ? false : isIseLoading}
       />
     </div>
   );
