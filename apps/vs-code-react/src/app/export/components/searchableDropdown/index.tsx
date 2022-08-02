@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl';
 export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
   const [searchText, setSearchText] = useState<string>('');
   const filterHeader = 'FilterHeader';
-  const dividerHeader = `Divider_f${filterHeader}`;
+  const dividerHeader = `Divider_${filterHeader}`;
 
   const intl = useIntl();
 
@@ -27,7 +27,11 @@ export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
 
     const isHeader = option.itemType === DropdownMenuItemType.Header && option.key === filterHeader;
 
-    const searchBox = <SearchBox showIcon underlined onChange={searchString} className="text" placeholder={intlText.SEARCH_OPTIONS} />;
+    const searchBox = (
+      <div className="searchable-dropdown">
+        <SearchBox showIcon underlined onChange={searchString} placeholder={intlText.SEARCH_OPTIONS} />
+      </div>
+    );
 
     return isHeader ? searchBox : <>{option.text}</>;
   };
@@ -51,7 +55,6 @@ export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
         gapSpace: 10,
         calloutMaxHeight: 400,
       }}
-      className={`${props.className} searchable-dropdown`}
       options={getOptions(props.options)}
       onRenderOption={renderOption}
       onDismiss={() => setSearchText('')}

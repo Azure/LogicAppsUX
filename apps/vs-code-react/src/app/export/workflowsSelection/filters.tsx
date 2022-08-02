@@ -1,15 +1,8 @@
-import { SearchableDropdown } from '../components/drop';
+import { SearchableDropdown } from '../components/searchableDropdown';
 import { TextField } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
-export interface IFiltersProps {
-  dropdownOptions: any;
-  onChangeResourceGroup: any;
-  onChangeSearch: any;
-  isDataLoading: boolean;
-}
-
-export const Filters: React.FC<IFiltersProps> = ({ dropdownOptions, onChangeResourceGroup, onChangeSearch, isDataLoading }) => {
+export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup, onChangeSearch, isDataLoading }) => {
   const intl = useIntl();
 
   const intlText = {

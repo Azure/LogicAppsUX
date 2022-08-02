@@ -3,7 +3,7 @@ import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateManagedConnections } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
-import { SearchableDropdown } from '../components/drop';
+import { SearchableDropdown } from '../components/searchableDropdown';
 import { parseResourceGroupsData } from './helper';
 import { Checkbox, Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
