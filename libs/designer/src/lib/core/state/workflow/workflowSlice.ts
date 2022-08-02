@@ -2,7 +2,7 @@ import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../../parsers/addNodeToWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { isWorkflowNode } from '../../parsers/models/workflowNode';
+import { WORKFLOW_EDGE_TYPES, isWorkflowNode } from '../../parsers/models/workflowNode';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
@@ -29,6 +29,7 @@ export interface WorkflowState {
   operations: Operations;
   nodesMetadata: NodesMetadata;
   collapsedGraphIds: Record<string, boolean>;
+  edgeIdsBySource: Record<string, string[]>;
 }
 
 export const initialWorkflowState: WorkflowState = {
@@ -37,6 +38,7 @@ export const initialWorkflowState: WorkflowState = {
   operations: {},
   nodesMetadata: {},
   collapsedGraphIds: {},
+  edgeIdsBySource: {},
 };
 
 export const workflowSlice = createSlice({
@@ -124,6 +126,18 @@ export const workflowSlice = createSlice({
       state.graph = action.payload.graph;
       state.operations = action.payload.actionData;
       state.nodesMetadata = action.payload.nodesMetadata;
+
+      const traverseGraph = (graph: WorkflowNode) => {
+        const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
+        if (edges) {
+          edges.forEach((edge) => {
+            if (!state.edgeIdsBySource[edge.source]) state.edgeIdsBySource[edge.source] = [];
+            state.edgeIdsBySource[edge.source].push(edge.target);
+          });
+        }
+        if (graph.children) graph.children.forEach((child) => traverseGraph(child));
+      };
+      traverseGraph(action.payload.graph);
     });
   },
 });

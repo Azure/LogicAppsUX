@@ -1,6 +1,6 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useNodeMetadata } from '../../core/state/selectors/actionMetadataSelector';
-import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
+import { useNodeEdgeTargets } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import React, { useMemo } from 'react';
@@ -32,7 +32,8 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   // Remove any added id-specifier to get the actual id
   const sourceId = source.split('-#')[0];
 
-  const allChildrenEdges = useEdgesBySource(source);
+  // const allChildrenEdges = useEdgesBySource(source);
+  const edgeTargets = useNodeEdgeTargets(source);
   const nodeMetadata = useNodeMetadata(source);
   const [edgeCenterX, edgeCenterY] = getEdgeCenter({
     sourceX,
@@ -51,13 +52,13 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     });
   }, [sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
-  const firstChild = allChildrenEdges[allChildrenEdges.length - 1]?.target === target;
+  const firstChild = edgeTargets[edgeTargets.length - 1] === target; // Gets the last rendered, on top
   return (
     <>
       <path id={id} style={style} className="react-flow__edge-path" d={d} />
       {!readOnly ? (
         <>
-          {firstChild && (allChildrenEdges.length ?? 0) > 1 && (
+          {firstChild && edgeTargets.length !== 1 && (
             <foreignObject
               width={foreignObjectWidth}
               height={foreignObjectHeight}
@@ -74,8 +75,8 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           <foreignObject
             width={foreignObjectWidth}
             height={foreignObjectHeight}
-            x={allChildrenEdges.length === 1 ? edgeCenterX - foreignObjectWidth / 2 : targetX - foreignObjectWidth / 2}
-            y={allChildrenEdges.length === 1 ? edgeCenterY - foreignObjectHeight / 2 : targetY - 20 - foreignObjectHeight / 2}
+            x={edgeTargets.length === 1 ? edgeCenterX - foreignObjectWidth / 2 : targetX - foreignObjectWidth / 2}
+            y={edgeTargets.length === 1 ? edgeCenterY - foreignObjectHeight / 2 : targetY - 20 - foreignObjectHeight / 2}
             className="edgebutton-foreignobject"
             requiredExtensions="http://www.w3.org/1999/xhtml"
           >

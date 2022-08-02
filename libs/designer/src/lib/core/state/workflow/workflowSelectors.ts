@@ -41,21 +41,21 @@ const reduceCollapsed =
 export const useIsGraphCollapsed = (graphId: string): boolean =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId]));
 
-export const useWorkflowNode = (actionId?: string) =>
-  useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      if (!actionId || !state?.graph) return undefined;
-      const traverseGraph = (node: WorkflowNode): WorkflowNode | undefined => {
-        if (node.id === actionId) return node;
-        else {
-          let result;
-          for (const child of node.children ?? []) result = traverseGraph(child);
-          return result;
-        }
-      };
-      return traverseGraph(state.graph);
-    })
-  );
+// export const useWorkflowNode = (actionId?: string) =>
+//   useSelector(
+//     createSelector(getWorkflowState, (state: WorkflowState) => {
+//       if (!actionId || !state?.graph) return undefined;
+//       const traverseGraph = (node: WorkflowNode): WorkflowNode | undefined => {
+//         if (node.id === actionId) return node;
+//         else {
+//           let result;
+//           for (const child of node.children ?? []) result = traverseGraph(child);
+//           return result;
+//         }
+//       };
+//       return traverseGraph(state.graph);
+//     })
+//   );
 
 export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
   useSelector(
@@ -72,22 +72,12 @@ export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
     })
   );
 
-// export const useEdgesByTarget = (childId?: string): WorkflowEdge[] => {
-//   return useSelector((state: RootState) => {
-//     if (!childId) {
-//       return [];
-//     }
-//     const edges: WorkflowEdge[] = [];
-//     const traverseGraph = (graph: WorkflowNode): void => {
-//       edges.push(...(graph?.edges ?? []));
-//       graph.children?.forEach(traverseGraph);
-//     };
-//     if (state.workflow.graph) {
-//       traverseGraph(state.workflow.graph);
-//     }
-//     return edges.filter((x) => x.target === childId);
-//   });
-// };
+export const useNodeEdgeTargets = (nodeId?: string): string[] =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (!nodeId || !state.graph) return [];
+      return state.edgeIdsBySource?.[nodeId] ?? [];
+    })
+  );
 
-export const useIsLeafNode = (nodeId: string): boolean =>
-  useEdgesBySource(nodeId).filter((edge) => edge.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE).length === 0;
+export const useIsLeafNode = (nodeId: string): boolean => useNodeEdgeTargets(nodeId).length === 0;
