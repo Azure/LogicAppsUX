@@ -5,7 +5,7 @@ import { updateSelectedIse, updateSelectedSubscripton } from '../../../state/vsc
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { SearchableDropdown } from '../components/searchableDropdown';
 import { parseIseData, parseSubscriptionsData } from './helper';
-import { Dropdown, Text } from '@fluentui/react';
+import { Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -115,15 +115,6 @@ export const InstanceSelection: React.FC = () => {
       <Text variant="large" block>
         {intlText.SELECT_DESCRIPTION}
       </Text>
-      <Dropdown
-        label={intlText.SELECTION_SUBSCRIPTION}
-        options={subscriptions}
-        placeholder={subscriptions.length ? intlText.SELECT_OPTION : intlText.EMPTY_SUBSCRIPTION}
-        disabled={isSubscriptionsLoading || !subscriptions.length}
-        onChange={onChangeSubscriptions}
-        selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
-        className="msla-export-instance-panel-dropdown"
-      />
       <SearchableDropdown
         label={intlText.SELECTION_SUBSCRIPTION}
         options={subscriptions}
@@ -133,7 +124,7 @@ export const InstanceSelection: React.FC = () => {
         selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
         className="msla-export-instance-panel-dropdown"
       />
-      <Dropdown
+      <SearchableDropdown
         label={intlText.SELECTION_ISE}
         options={iseInstances}
         placeholder={iseInstances.length ? intlText.SELECT_OPTION : intlText.EMPTY_ISE}

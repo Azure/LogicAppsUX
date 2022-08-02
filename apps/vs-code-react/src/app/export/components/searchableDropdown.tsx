@@ -2,10 +2,21 @@ import { Dropdown, DropdownMenuItemType, SearchBox } from '@fluentui/react';
 import type { IDropdownOption, IDropdownProps } from '@fluentui/react';
 import { useState } from 'react';
 import type { ChangeEvent } from 'react';
+import { useIntl } from 'react-intl';
 
 export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
   const [searchText, setSearchText] = useState<string>('');
   const filterHeader = 'FilterHeader';
+  const dividerHeader = `Divider_f${filterHeader}`;
+
+  const intl = useIntl();
+
+  const intlText = {
+    SEARCH_OPTIONS: intl.formatMessage({
+      defaultMessage: 'Search options',
+      description: 'Search options description',
+    }),
+  };
 
   const renderOption = (option: any): JSX.Element => {
     const searchString = (_event?: ChangeEvent<HTMLInputElement> | undefined, newValue?: string | undefined) => {
@@ -13,11 +24,13 @@ export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
       setSearchText(newString);
     };
 
-    return option.itemType === DropdownMenuItemType.Header && option.key === filterHeader ? (
-      <SearchBox showIcon onChange={searchString} underlined={true} placeholder="Search options" />
-    ) : (
-      <>{option.text}</>
+    const isHeader = option.itemType === DropdownMenuItemType.Header && option.key === filterHeader;
+
+    const searchBox = (
+      <SearchBox showIcon underlined onChange={searchString} style={{ paddingTop: 10 }} placeholder={intlText.SEARCH_OPTIONS} />
     );
+
+    return isHeader ? searchBox : <>{option.text}</>;
   };
 
   const getOptions = (options: IDropdownOption[]) => {
@@ -27,7 +40,7 @@ export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
 
     return [
       { key: filterHeader, text: '-', itemType: DropdownMenuItemType.Header },
-      { key: 'divider_filterHeader', text: '-', itemType: DropdownMenuItemType.Divider },
+      { key: dividerHeader, text: '-', itemType: DropdownMenuItemType.Divider },
       ...filterOptions,
     ];
   };
@@ -35,7 +48,10 @@ export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
   return (
     <Dropdown
       {...props}
-      className={`${props.className} searchable-dropdown`}
+      calloutProps={{
+        gapSpace: 10,
+        calloutMaxHeight: 400,
+      }}
       options={getOptions(props.options)}
       onRenderOption={renderOption}
       onDismiss={() => setSearchText('')}
