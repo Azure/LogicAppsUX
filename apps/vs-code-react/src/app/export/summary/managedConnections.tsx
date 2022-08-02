@@ -107,6 +107,7 @@ export const ManagedConnections: React.FC = () => {
     isConnectionsChecked,
     intlText.SELECT_OPTION,
     intlText.RESOURCE_GROUP,
+    intlText.SEARCH_RESOURCE_GROUP,
     isResourceGroupsLoading,
     resourceGroupsData,
     dispatch,
