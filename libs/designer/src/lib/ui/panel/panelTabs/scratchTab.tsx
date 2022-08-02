@@ -43,7 +43,6 @@ export const ScratchTab = () => {
           ]}
           placeholder="Method is Required"
           label="Method"
-          selectedKey="PUT"
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
         />
         <SchemaEditor
