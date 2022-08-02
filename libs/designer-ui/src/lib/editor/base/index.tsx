@@ -1,5 +1,4 @@
-import type { InputTokenProps } from '../../token/inputToken';
-import type { ValueSegmentType } from '../models/parameter';
+import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
@@ -20,18 +19,13 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export { testTokenSegment } from '../shared/testtokensegment';
-export type Segment = {
-  segmentId?: string;
-} & (
-  | {
-      type: ValueSegmentType.TOKEN;
-      token: InputTokenProps;
-    }
-  | {
-      type: ValueSegmentType.LITERAL;
-      value: string;
-    }
-);
+
+export interface ChangeState {
+  value: ValueSegment[],
+  viewModel?: any; // TODO - Should be strongly typed once updated for Array
+}
+
+export type ChangeHandler = (newState: ChangeState) => void;
 
 interface FocusProps {
   addDictionaryItem?: dictionaryCallbackProps;
@@ -54,9 +48,11 @@ export interface BaseEditorProps {
   readonly?: boolean;
   placeholder?: string;
   BasePlugins?: BasePlugins;
-  initialValue?: Segment[];
+  initialValue?: ValueSegment[];
   children?: React.ReactNode;
+  onChange?: ChangeHandler;
   focusProps?: FocusProps;
+  onBlur?: () => void;
 }
 
 export interface BasePlugins {
@@ -88,6 +84,7 @@ export const BaseEditor = ({
   initialValue,
   children,
   focusProps,
+  onBlur,
 }: BaseEditorProps) => {
   const intl = useIntl();
   const [focused, setIsFocused] = useState(false);
@@ -116,6 +113,9 @@ export const BaseEditor = ({
   };
   const handleBlur = () => {
     setIsFocused(false);
+    if (onBlur) {
+      onBlur();
+    }
   };
 
   return (

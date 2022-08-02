@@ -1165,6 +1165,12 @@
       "value": "(UTC-01:00) Açores"
     }
   ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
@@ -2493,6 +2499,12 @@
       "value": "Claro"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -3645,10 +3657,10 @@
       "value": "foi ignorado"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Inserir uma matriz válida"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3879,6 +3891,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4533,6 +4551,12 @@
       "value": "Necessário. O comprimento da subcadeia de caracteres."
     }
   ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
+    }
+  ],
   "wWVQuK": [
     {
       "type": 0,
@@ -4715,6 +4739,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O valor que é convertido em um número decimal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

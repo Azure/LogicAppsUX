@@ -63,6 +63,7 @@ export class TokenSegmentConvertor {
           tokenType: TokenType.ITERATIONINDEX,
           type: Constants.SWAGGER.TYPE.INTEGER,
           key: 'builtin.$.currentIterationIndexes',
+          title: 'Item',
         },
         value
       );

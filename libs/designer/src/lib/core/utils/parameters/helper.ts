@@ -49,6 +49,7 @@ import {
 } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import {
+  isNullOrEmpty,
   isUndefinedOrEmptyString,
   aggregate,
   clone,
@@ -67,7 +68,7 @@ import {
   ValidationErrorCode,
   ValidationException,
 } from '@microsoft-logic-apps/utils';
-import type { ParameterInfo, Token, ValueSegment } from '@microsoft/designer-ui';
+import type { DictionaryEditorItemProps, ParameterInfo, Token, ValueSegment } from '@microsoft/designer-ui';
 import { ValueSegmentType, TokenType } from '@microsoft/designer-ui';
 
 const ParameterIcon =
@@ -147,6 +148,7 @@ export function createParameterInfo(
     id: guid(),
     editor: editor.type,
     editorOptions: editor.options,
+    editorViewModel: editor.viewModel,
     info: {
       alias: parameter.alias,
       encode: parameter.encode,
@@ -169,7 +171,6 @@ export function createParameterInfo(
     suppressCasting: parameter.suppressCasting,
     type: parameter.type,
     value: loadParameterValue(parameter),
-    viewModel: editor.viewModel,
     visibility: parameter.visibility,
   };
 
@@ -190,6 +191,8 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
     type = Constants.EDITOR.ARRAY;
     editorViewModel = initializeArrayViewModel(inputParameter, shouldIgnoreDefaultValue);
     schema = { ...schema, ...{ 'x-ms-editor': Constants.EDITOR.ARRAY } };
+  } else if (type === 'dictionary') {
+    editorViewModel = toDictionaryViewModel(inputParameter.value);
   }
 
   return {
@@ -198,6 +201,25 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
     viewModel: editorViewModel,
     schema,
   };
+}
+
+function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[] | undefined } {
+  let items: DictionaryEditorItemProps[] | undefined = [];
+  const canParseObject = !isNullOrEmpty(value) && !isNullOrUndefined(value) && isObject(value);
+
+  if (canParseObject) {
+    const keys = Object.keys(value);
+    for (const itemKey of keys) {
+      items.push({
+        key: loadParameterValue({ value: itemKey } as any),
+        value: loadParameterValue({ value: value[itemKey] } as any),
+      });
+    }
+  } else {
+    items = undefined;
+  }
+
+  return { items };
 }
 
 interface ParameterEditorProps {
