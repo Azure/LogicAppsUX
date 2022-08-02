@@ -1,5 +1,4 @@
-import type { InputTokenProps } from '../../token/inputToken';
-import type { ValueSegment, ValueSegmentType } from '../models/parameter';
+import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
@@ -20,18 +19,7 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export { testTokenSegment } from '../shared/testtokensegment';
-export type Segment = {
-  segmentId?: string;
-} & (
-  | {
-      type: ValueSegmentType.TOKEN;
-      token: InputTokenProps;
-    }
-  | {
-      type: ValueSegmentType.LITERAL;
-      value: string;
-    }
-);
+
 export interface ChangeState {
   value: ValueSegment[],
   viewModel?: any; // TODO - Should be strongly typed once updated for Array
@@ -60,7 +48,7 @@ export interface BaseEditorProps {
   readonly?: boolean;
   placeholder?: string;
   BasePlugins?: BasePlugins;
-  initialValue?: Segment[];
+  initialValue?: ValueSegment[];
   children?: React.ReactNode;
   onChange?: ChangeHandler;
   focusProps?: FocusProps;

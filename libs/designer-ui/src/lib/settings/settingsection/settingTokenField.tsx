@@ -1,9 +1,8 @@
 import { ArrayEditor } from '../../arrayeditor';
 import { Combobox } from '../../combobox';
 import { DictionaryEditor } from '../../dictionary';
-import type { Token, ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
-import type { ChangeHandler, Segment } from '../../editor/base';
+import type { ValueSegment } from '../../editor';
+import type { ChangeHandler } from '../../editor/base';
 import { SchemaEditor } from '../../schemaeditor';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
@@ -24,6 +23,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   viewModel?: any;
   onValueChange?: ChangeHandler;
 }
+
 export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
   return (
     <>
@@ -61,7 +61,7 @@ const getEditor = ({ editor, editorOptions, placeholder, readOnly, value, viewMo
         <DictionaryEditor
           placeholder={placeholder}
           readOnly={readOnly}
-          initialValue={getSegments(value)}
+          initialValue={value}
           initialItems={viewModel.items}
           onChange={onValueChange}
         />
@@ -74,48 +74,21 @@ const getEditor = ({ editor, editorOptions, placeholder, readOnly, value, viewMo
           labelProps={{ text: '' }}
           placeholder={placeholder}
           readOnly={readOnly}
-          initialValue={getSegments(value)} // Need to update to use value segments directly
+          initialValue={value}
           onChange={onValueChange}
         />
       );
 
     default:
-      // TODO - Might need to create another editor which is just parsing the value here and calling onChange in store.
       return (
         <StringEditor
           className="msla-setting-token-editor-container"
           placeholder={placeholder}
           BasePlugins={{ tokens: true }}
           readonly={readOnly}
-          initialValue={getSegments(value)} // TODO - Change Segment to ValueSegment here.
+          initialValue={value}
           onChange={onValueChange}
         />
       );
   }
-};
-
-const getSegments = (value: ValueSegment[]): Segment[] => {
-
-  return value.map((x: ValueSegment) => {
-    if (x.type === ValueSegmentType.TOKEN) {
-      const { brandColor, description, icon, isSecure, name, required, title } = x.token as Token;
-      return {
-        type: x.type,
-        token: {
-          brandColor,
-          description,
-          icon: `url("${icon}")`,
-          isSecure,
-          required,
-          title: title ?? name ?? '',
-        },
-        value: x.value,
-      };
-    } else {
-      return {
-        type: ValueSegmentType.LITERAL,
-        value: x.value,
-      };
-    }
-  });
 };
