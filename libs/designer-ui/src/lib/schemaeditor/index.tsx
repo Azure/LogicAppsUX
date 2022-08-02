@@ -175,5 +175,5 @@ const formatValue = (input: string): string => {
 
 // Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
 function getEditorHeight(input = ''): string {
-  return Math.min(Math.max(input?.split('\n').length * 20, 57), 380) + 'px';
+  return Math.min(Math.max(input?.split('\n').length * 20, 120), 380) + 'px';
 }
