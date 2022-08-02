@@ -80,6 +80,7 @@ export const InstanceSelection: React.FC = () => {
 
   const { data: subscriptionsData, isLoading: isSubscriptionsLoading } = useQuery<any>(QueryKeys.subscriptionData, loadSubscriptions, {
     refetchOnWindowFocus: false,
+    enabled: accessToken !== undefined,
     retry: 4,
   });
 
@@ -120,8 +121,9 @@ export const InstanceSelection: React.FC = () => {
 
   const iseInstances: IDropdownOption[] = isIseLoading || selectedSubscription === '' || !iseData ? [] : parseIseData(iseData);
 
+  const subscriptionLoading = accessToken === undefined ? true : isSubscriptionsLoading;
   const subscriptionPlaceholder = getDropdownPlaceholder(
-    isSubscriptionsLoading,
+    subscriptionLoading,
     subscriptions.length,
     intlText.SELECT_OPTION,
     intlText.EMPTY_SUBSCRIPTION,
@@ -153,7 +155,7 @@ export const InstanceSelection: React.FC = () => {
         onChange={onChangeSubscriptions}
         selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
         className="msla-export-instance-panel-dropdown"
-        isLoading={isSubscriptionsLoading}
+        isLoading={subscriptionLoading}
         searchBoxPlaceholder={intlText.SEARCH_SUBSCRIPTION}
       />
       <SearchableDropdown
