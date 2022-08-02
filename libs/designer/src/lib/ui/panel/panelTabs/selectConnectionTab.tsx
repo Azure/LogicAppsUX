@@ -1,11 +1,13 @@
 import constants from '../../../common/constants';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
+import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
+import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
-import { useConnectorByNodeId, useNodeConnectionName } from '../../../core/state/selectors/actionMetadataSelector';
+import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
-import { SelectConnection } from '@microsoft/designer-ui';
+import { getIdLeaf, SelectConnection } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -13,7 +15,7 @@ export const SelectConnectionTab = () => {
   const dispatch = useDispatch();
 
   const selectedNodeId = useSelectedNodeId();
-  const currentConnectionName = useNodeConnectionName(selectedNodeId);
+  const currentConnectionId = useNodeConnectionId(selectedNodeId);
 
   const hideConnectionTabs = useCallback(() => {
     dispatch(showDefaultTabs());
@@ -27,18 +29,18 @@ export const SelectConnectionTab = () => {
   const connector = useConnectorByNodeId(selectedNodeId);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
-  const currentConnection = connections.find((c) => c.properties.displayName === currentConnectionName.result);
 
   useEffect(() => {
     if (connections.length === 0) createConnectionCallback();
   }, [connections, createConnectionCallback]);
 
   const saveSelectionCallback = useCallback(
-    (_connection?: Connection) => {
-      // TODO: Send the actual connection selection to backend
+    (connection?: Connection) => {
+      if (!connection) return;
+      dispatch(changeConnectionMapping({ nodeId: selectedNodeId, connectionId: getIdLeaf(connection?.id) }));
       hideConnectionTabs();
     },
-    [hideConnectionTabs]
+    [dispatch, selectedNodeId, hideConnectionTabs]
   );
 
   const cancelSelectionCallback = useCallback(() => {
@@ -48,7 +50,7 @@ export const SelectConnectionTab = () => {
   return (
     <SelectConnection
       connections={connections}
-      currentConnection={currentConnection}
+      currentConnectionId={currentConnectionId}
       saveSelectionCallback={saveSelectionCallback}
       cancelSelectionCallback={cancelSelectionCallback}
       createConnectionCallback={createConnectionCallback}

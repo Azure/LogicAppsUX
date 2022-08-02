@@ -52,7 +52,7 @@ const initialState: OperationMetadataState = {
   settings: {},
 };
 
-interface AddNodeOperationPayload extends NodeOperation {
+export interface AddNodeOperationPayload extends NodeOperation {
   id: string;
 }
 
@@ -72,6 +72,13 @@ interface AddSettingsPayload {
   settings: Settings;
 }
 
+interface UpdateParameterPayload {
+  nodeId: string;
+  groupId: string;
+  parameterId: string;
+  propertiesToUpdate: Partial<ParameterInfo>;
+}
+
 export const operationMetadataSlice = createSlice({
   name: 'operationMetadata',
   initialState,
@@ -80,7 +87,7 @@ export const operationMetadataSlice = createSlice({
       const { id, connectorId, operationId, type, kind } = action.payload;
       state.operationInfo[id] = { connectorId, operationId, type, kind };
     },
-    initializeNodes: (state: any, action: PayloadAction<(NodeData | undefined)[]>) => {
+    initializeNodes: (state, action: PayloadAction<(NodeData | undefined)[]>) => {
       for (const nodeData of action.payload) {
         if (!nodeData) {
           return;
@@ -89,10 +96,12 @@ export const operationMetadataSlice = createSlice({
         const { id, nodeInputs, nodeOutputs, settings } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
-        state.settings[id] = settings;
+        if (settings) {
+          state.settings[id] = settings;
+        }
       }
     },
-    updateNodeSettings: (state: any, action: PayloadAction<AddSettingsPayload>) => {
+    updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
       const { id, settings } = action.payload;
       if (!state.settings[id]) {
         state.settings[id] = {};
@@ -100,10 +109,23 @@ export const operationMetadataSlice = createSlice({
 
       state.settings[id] = { ...state.settings[id], ...settings };
     },
+    updateNodeParameter: (state, action: PayloadAction<UpdateParameterPayload>) => {
+      const { nodeId, groupId, parameterId, propertiesToUpdate } = action.payload;
+      const nodeInputs = state.inputParameters[nodeId];
+
+      if (nodeInputs) {
+        const parameterGroup = nodeInputs.parameterGroups[groupId];
+        const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
+        if (index > -1) {
+          parameterGroup.parameters[index] = { ...parameterGroup.parameters[index], ...propertiesToUpdate };
+          state.inputParameters[nodeId].parameterGroups[groupId] = parameterGroup;
+        }
+      }
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeNodes, initializeOperationInfo } = operationMetadataSlice.actions;
+export const { initializeNodes, initializeOperationInfo, updateNodeParameter, updateNodeSettings } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

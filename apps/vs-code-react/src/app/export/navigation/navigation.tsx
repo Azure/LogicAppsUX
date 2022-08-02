@@ -17,7 +17,9 @@ export const Navigation: React.FC = () => {
 
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse, selectedWorkflows, validationState, targetDirectory, packageUrl } = exportData;
+  const { selectedSubscription, selectedIse, selectedWorkflows, validationState, targetDirectory, packageUrl, managedConnections } =
+    exportData;
+  const { isManaged, resourceGroup, resourceGroupLocation } = managedConnections;
 
   const intlText = {
     NEXT: intl.formatMessage({
@@ -27,10 +29,6 @@ export const Navigation: React.FC = () => {
     BACK: intl.formatMessage({
       defaultMessage: 'Back',
       description: 'Back button',
-    }),
-    CANCEL: intl.formatMessage({
-      defaultMessage: 'Cancel',
-      description: 'Cancel button',
     }),
     EXPORT: intl.formatMessage({
       defaultMessage: 'Export',
@@ -44,12 +42,6 @@ export const Navigation: React.FC = () => {
       defaultMessage: 'finish',
       description: 'Finish  button',
     }),
-  };
-
-  const onClickCancel = () => {
-    vscode.postMessage({
-      command: ExtensionCommand.dispose,
-    });
   };
 
   const onClickBack = () => {
@@ -77,6 +69,9 @@ export const Navigation: React.FC = () => {
           command: ExtensionCommand.export_package,
           targetDirectory,
           packageUrl,
+          selectedSubscription,
+          resourceGroupName: isManaged ? resourceGroup : undefined,
+          location: isManaged ? resourceGroupLocation : undefined,
         });
         break;
       }
@@ -102,7 +97,7 @@ export const Navigation: React.FC = () => {
         return validationState === '' || validationState === ValidationStatus.failed;
       }
       case `/${RouteName.export}/${RouteName.summary}`: {
-        return targetDirectory.path === '';
+        return targetDirectory.path === '' || (targetDirectory.path !== '' && isManaged && resourceGroup === undefined);
       }
       default: {
         return true;
@@ -132,12 +127,6 @@ export const Navigation: React.FC = () => {
 
   return (
     <div className="msla-export-navigation-panel">
-      <PrimaryButton
-        className="msla-export-navigation-panel-button"
-        text={intlText.CANCEL}
-        ariaLabel={intlText.CANCEL}
-        onClick={onClickCancel}
-      />
       <PrimaryButton
         className="msla-export-navigation-panel-button"
         text={intlText.BACK}

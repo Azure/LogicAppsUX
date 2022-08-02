@@ -11,12 +11,6 @@
       "value": "Dinamik içerik ekleme düğmesi"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtreler"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Bağlantıyı değiştir"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Yeni bağlantı ekle"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Göz atılacak görünümü seçin"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Gerekli. Değerlendirilecek XPath ifadesi."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Bağlayıcılar"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Şema oluşturmak için örnek yük kullanma"
     }
   ],
   "DZZ3fj": [
@@ -1157,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azorlar"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2232,7 +2244,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Bitti"
     }
   ],
   "T0BFpC": [
@@ -2487,6 +2499,12 @@
       "value": "Temizle"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2681,6 +2699,12 @@
     {
       "type": 0,
       "value": "Yok"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Uzaklaştır"
     }
   ],
   "Z4QLEf": [
@@ -2997,16 +3021,12 @@
   ],
   "daoo3l": [
     {
-      "type": 0,
-      "value": "Connected to "
-    },
-    {
       "type": 1,
       "value": "connectionName"
     },
     {
       "type": 0,
-      "value": "."
+      "value": " ile bağlantı kuruldu."
     }
   ],
   "dgAu27": [
@@ -3081,6 +3101,12 @@
       "value": "Gerekli. Parametre 1'de alt dizenin başladığı konumun dizini."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3139,6 +3165,12 @@
     {
       "type": 0,
       "value": "Değer"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Yakınlaştır"
     }
   ],
   "g4igOR": [
@@ -3228,7 +3260,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Örnek JSON yükü girin veya yapıştırın."
     }
   ],
   "hBLPXK": [
@@ -3444,7 +3476,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Şema oluşturulamıyor"
     }
   ],
   "jjYA4u": [
@@ -3517,6 +3549,12 @@
     {
       "type": 0,
       "value": "Giriş base 64 ile kodlanmış bir dizenin dize gösterimini döndürür"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Mini haritayı görüntüle"
     }
   ],
   "kYivbS": [
@@ -3615,10 +3653,10 @@
       "value": "atlandı"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Lütfen geçerli bir dizi Girin"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3849,6 +3887,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4339,6 +4383,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Değişkenler"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4373,6 +4423,12 @@
     {
       "type": 0,
       "value": "Bir dize içindeki bir değerin son dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4445,6 +4501,12 @@
       "value": "Pazar"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Sayfaya sığdır"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4479,6 +4541,12 @@
     {
       "type": 0,
       "value": "Gerekli. Alt dizenin uzunluğu."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4663,6 +4731,12 @@
     {
       "type": 0,
       "value": "Gerekli. Ondalık sayıya dönüştürülen değer."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

@@ -11,12 +11,6 @@
       "value": "Knop om dynamische inhoud toe te voegen"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filters"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "De verbinding wijzigen"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Een nieuwe verbinding toevoegen"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Kiezen vanuit welke weergave u wilt browsen"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Vereist. De XPath-expressie die moet worden geëvalueerd."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Voorbeeldnettolading gebruiken om een schema te genereren"
     }
   ],
   "DZZ3fj": [
@@ -1157,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azoren"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2236,7 +2248,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Gereed"
     }
   ],
   "T0BFpC": [
@@ -2491,6 +2503,12 @@
       "value": "Wissen"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2685,6 +2703,12 @@
     {
       "type": 0,
       "value": "Geen"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Uitzoomen"
     }
   ],
   "Z4QLEf": [
@@ -3002,7 +3026,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Verbonden met "
     },
     {
       "type": 1,
@@ -3085,6 +3109,12 @@
       "value": "Vereist. De index van waar de subtekenreeks begint in parameter 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3143,6 +3173,12 @@
     {
       "type": 0,
       "value": "Waarde"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Inzoomen"
     }
   ],
   "g4igOR": [
@@ -3232,7 +3268,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Plak of voer een voorbeeld-JSON-nettolading in."
     }
   ],
   "hBLPXK": [
@@ -3456,7 +3492,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Kan schema niet genereren"
     }
   ],
   "jjYA4u": [
@@ -3529,6 +3565,12 @@
     {
       "type": 0,
       "value": "Er wordt een tekenreeksweergave van een ingevoerde base 64-tekenreeks geretourneerd"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Minikaart weergeven"
     }
   ],
   "kYivbS": [
@@ -3627,10 +3669,10 @@
       "value": "is overgeslagen"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Voer een geldige array in."
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3861,6 +3903,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4351,6 +4399,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variabelen"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4385,6 +4439,12 @@
     {
       "type": 0,
       "value": "De laatste index van een waarde van een tekenreeks wordt geretourneerd (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4461,6 +4521,12 @@
       "value": "Zondag"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Pagina passend maken"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4495,6 +4561,12 @@
     {
       "type": 0,
       "value": "Vereist. De lengte van de subtekenreeks."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4679,6 +4751,12 @@
     {
       "type": 0,
       "value": "Vereist. De waarde die wordt geconverteerd naar een decimaal getal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

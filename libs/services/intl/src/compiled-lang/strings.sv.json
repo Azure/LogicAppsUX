@@ -11,12 +11,6 @@
       "value": "Knapp för att lägga till dynamiskt innehåll"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filter"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Ändra anslutning"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Lägg till en ny anslutning"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Välj vilken vy du vill bläddra från"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Det XPath-uttryck som ska utvärderas."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Anslutningsprogram"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Generera schemat genom att använda en exempelnyttolast"
     }
   ],
   "DZZ3fj": [
@@ -1157,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azorerna"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2236,7 +2248,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Klart"
     }
   ],
   "T0BFpC": [
@@ -2491,6 +2503,12 @@
       "value": "Rensa"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2685,6 +2703,12 @@
     {
       "type": 0,
       "value": "Inget"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zooma ut"
     }
   ],
   "Z4QLEf": [
@@ -3002,7 +3026,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Ansluten till "
     },
     {
       "type": 1,
@@ -3085,6 +3109,12 @@
       "value": "Obligatoriskt. Det index i vilket delsträngen börjar i parameter 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3143,6 +3173,12 @@
     {
       "type": 0,
       "value": "Värde"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zooma in"
     }
   ],
   "g4igOR": [
@@ -3232,7 +3268,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Ange eller klistra in en JSON-exempelnyttolast."
     }
   ],
   "hBLPXK": [
@@ -3452,7 +3488,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Det går inte att skapa schema"
     }
   ],
   "jjYA4u": [
@@ -3529,6 +3565,12 @@
     {
       "type": 0,
       "value": "Returnerar en strängrepresentation av en indata-Base 64-sträng"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Visa miniatyrkarta"
     }
   ],
   "kYivbS": [
@@ -3627,10 +3669,10 @@
       "value": "har hoppats över"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Ange en giltig matris"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3861,6 +3903,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4351,6 +4399,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variabler"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4385,6 +4439,12 @@
     {
       "type": 0,
       "value": "Returnerar det sista indexet för ett värde i en sträng (skiftlägesokänslig, invariant kultur)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4461,6 +4521,12 @@
       "value": "Söndag"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Sidpassning"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4495,6 +4561,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Delsträngens längd."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4679,6 +4751,12 @@
     {
       "type": 0,
       "value": "Måste anges. Värdet som omvandlas till ett decimaltal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

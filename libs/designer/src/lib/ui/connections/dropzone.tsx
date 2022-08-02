@@ -13,12 +13,12 @@ export interface DropZoneProps {
   parent?: string;
   child?: string;
 }
-export const DropZone: React.FC<DropZoneProps> = ({ parent, child }) => {
+export const DropZone: React.FC<DropZoneProps> = ({ parent, child, graphId }) => {
   const dispatch = useDispatch();
   const onEdgeEndClick = (evt: any, parent?: string, child?: string) => {
     evt.stopPropagation();
     const newId = guid();
-    dispatch(expandDiscoveryPanel({ childId: child, parentId: parent, nodeId: newId }));
+    dispatch(expandDiscoveryPanel({ nodeId: newId, discoveryIds: { childId: child, parentId: parent, graphId } }));
   };
 
   const [{ isOver, canDrop }, drop] = useDrop(() => ({

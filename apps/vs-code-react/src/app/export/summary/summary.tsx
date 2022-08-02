@@ -6,6 +6,7 @@ import { updatePackageUrl } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { getListColumns, getSummaryData } from './helper';
+import { ManagedConnections } from './managedConnections';
 import { PrimaryButton, SelectionMode, ShimmeredDetailsList, Text, TextField } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import { useContext, useMemo } from 'react';
@@ -41,6 +42,15 @@ export const Summary: React.FC = () => {
     NO_DETAILS: intl.formatMessage({
       defaultMessage: 'No more details',
       description: 'No more details text',
+    }),
+    AFTER_EXPORT: intl.formatMessage({
+      defaultMessage: 'After export steps',
+      description: 'After export steps title',
+    }),
+    ADDITIONAL_STEPS: intl.formatMessage({
+      defaultMessage:
+        "After export, the following workflows require more steps to reestablish connections. You can find these steps in the following list or by reviewing the README file that's exported with the package.",
+      description: 'Post export required steps text',
     }),
   };
 
@@ -96,32 +106,41 @@ export const Summary: React.FC = () => {
 
   const detailsList = useMemo(() => {
     const emptyText = (
-      <Text variant="large" nowrap block className="msla-export-summary-detail-list-empty">
+      <Text variant="large" block className="msla-export-summary-detail-list-empty">
         {intlText.NO_DETAILS}
       </Text>
     );
-    const noDetails = exportDetails === [] && !isSummaryLoading ? emptyText : null;
+    const noDetails = exportDetails.length === 0 && !isSummaryLoading ? emptyText : null;
 
     return (
-      <div className="msla-export-summary-detail-list">
-        <ShimmeredDetailsList
-          items={exportDetails}
-          columns={getListColumns()}
-          setKey="set"
-          enableShimmer={isSummaryLoading}
-          selectionMode={SelectionMode.none}
-        />
-        {noDetails}
-      </div>
+      <>
+        <Text variant="xLarge" block>
+          {intlText.AFTER_EXPORT}
+        </Text>
+        <Text variant="large" block>
+          {intlText.ADDITIONAL_STEPS}
+        </Text>
+        <div className="msla-export-summary-detail-list">
+          <ShimmeredDetailsList
+            items={exportDetails}
+            columns={getListColumns()}
+            setKey="set"
+            enableShimmer={isSummaryLoading}
+            selectionMode={SelectionMode.none}
+            compact={true}
+          />
+          {noDetails}
+        </div>
+      </>
     );
-  }, [exportDetails, isSummaryLoading, intlText.NO_DETAILS]);
+  }, [exportDetails, isSummaryLoading, intlText.NO_DETAILS, intlText.ADDITIONAL_STEPS, intlText.AFTER_EXPORT]);
 
   return (
     <div className="msla-export-summary">
-      <Text variant="xLarge" nowrap block>
+      <Text variant="xLarge" block>
         {intlText.COMPLETE_EXPORT_TITLE}
       </Text>
-      <Text variant="large" nowrap block>
+      <Text variant="large" block>
         {intlText.SELECT_LOCATION}
       </Text>
       <div className="msla-export-summary-file-location">
@@ -133,6 +152,7 @@ export const Summary: React.FC = () => {
           onClick={onOpenExplorer}
         />
       </div>
+      <ManagedConnections />
       {detailsList}
     </div>
   );

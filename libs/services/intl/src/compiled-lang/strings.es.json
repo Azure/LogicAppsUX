@@ -11,12 +11,6 @@
       "value": "Botón para agregar contenido dinámico"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtros"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Cambiar conexión"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Agregar una nueva conexión"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Elegir la vista desde la que desea navegar"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Obligatorio. La expresión XPath que se evaluará."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Conectores"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Usar una carga de ejemplo para generar el esquema"
     }
   ],
   "DZZ3fj": [
@@ -1157,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azores"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2232,7 +2244,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Listo"
     }
   ],
   "T0BFpC": [
@@ -2487,6 +2499,12 @@
       "value": "Borrar"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2681,6 +2699,12 @@
     {
       "type": 0,
       "value": "Ninguno"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Alejar"
     }
   ],
   "Z4QLEf": [
@@ -2998,7 +3022,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Conectado a "
     },
     {
       "type": 1,
@@ -3081,6 +3105,12 @@
       "value": "Obligatorio. El índice a partir del cual empieza la subcadena en el parámetro 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3139,6 +3169,12 @@
     {
       "type": 0,
       "value": "Valor"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Acercar"
     }
   ],
   "g4igOR": [
@@ -3228,7 +3264,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Permite especificar o pegar una carga de JSON de ejemplo."
     }
   ],
   "hBLPXK": [
@@ -3452,7 +3488,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "No se puede generar el esquema"
     }
   ],
   "jjYA4u": [
@@ -3533,6 +3569,12 @@
     {
       "type": 0,
       "value": "Devuelve una representación de cadena de una cadena de base 64 de entrada."
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Minimapa de visualización"
     }
   ],
   "kYivbS": [
@@ -3631,10 +3673,10 @@
       "value": "se omitió"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Introduzca una matriz válida"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3865,6 +3907,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4355,6 +4403,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variables"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4389,6 +4443,12 @@
     {
       "type": 0,
       "value": "Devuelve el último índice de un valor de una cadena (no distingue entre mayúsculas y minúsculas; referencia cultural invariable)."
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4465,6 +4525,12 @@
       "value": "Domingo"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Ajuste de página"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4499,6 +4565,12 @@
     {
       "type": 0,
       "value": "Obligatorio. La longitud de la subcadena."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4683,6 +4755,12 @@
     {
       "type": 0,
       "value": "Obligatorio. El valor que se convierte a un número decimal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

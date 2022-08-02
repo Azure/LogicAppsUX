@@ -11,12 +11,6 @@
       "value": "Dinamikus tartalom hozzáadására szolgáló gomb"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Szűrők"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Kapcsolat módosítása"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Új kapcsolat hozzáadása"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Válassza ki, hogy melyik nézetből szeretne tallózni"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A kiértékelendő XPath-kifejezés."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Összekötők"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Hasznosadat-minta használata a séma generálásához"
     }
   ],
   "DZZ3fj": [
@@ -1157,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azori-szigetek"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2236,7 +2248,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Kész"
     }
   ],
   "T0BFpC": [
@@ -2491,6 +2503,12 @@
       "value": "Törlés"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2685,6 +2703,12 @@
     {
       "type": 0,
       "value": "Nincs"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Kicsinyítés"
     }
   ],
   "Z4QLEf": [
@@ -3002,7 +3026,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Csatlakoztatva a következőhöz: "
     },
     {
       "type": 1,
@@ -3085,6 +3109,12 @@
       "value": "Kötelező megadni. A sztringrész kezdetének indexe az 1. paraméterben."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3143,6 +3173,12 @@
     {
       "type": 0,
       "value": "Érték"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Nagyítás"
     }
   ],
   "g4igOR": [
@@ -3232,7 +3268,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "JSON-alapú hasznosadat-minta megadása vagy beillesztése."
     }
   ],
   "hBLPXK": [
@@ -3456,7 +3492,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Nem sikerült létrehozni a sémát"
     }
   ],
   "jjYA4u": [
@@ -3533,6 +3569,12 @@
     {
       "type": 0,
       "value": "Egy Base 64 kódolású bementi sztringet sztringként ad vissza."
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Minitérkép megjelenítése"
     }
   ],
   "kYivbS": [
@@ -3631,10 +3673,10 @@
       "value": "kihagyva"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Adjon meg egy érvényes tömböt."
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3865,6 +3907,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Szamoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4355,6 +4403,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Változók"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4389,6 +4443,12 @@
     {
       "type": 0,
       "value": "Egy sztringbeli érték utolsó indexét adja vissza (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4465,6 +4525,12 @@
       "value": "Vasárnap"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Oldal igazítása"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4499,6 +4565,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A sztring hossza."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4683,6 +4755,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A tizedestörtté alakítandó érték."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

@@ -11,12 +11,6 @@
       "value": "Tlačítko pro přidání dynamického obsahu"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtry"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Změnit připojení"
     }
   ],
   "/WW7If": [
@@ -613,6 +607,12 @@
       "value": "Přidat nové připojení"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Zvolte zobrazení, ze kterého chcete procházet."
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -677,6 +677,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Výraz jazyka XPath, který se má vyhodnotit."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Konektory"
     }
   ],
   "5aa76N": [
@@ -1194,7 +1200,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "K vygenerování schématu použijte ukázkovou datovou část."
     }
   ],
   "DZZ3fj": [
@@ -1213,6 +1219,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azory"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2354,7 +2366,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Hotovo"
     }
   ],
   "T0BFpC": [
@@ -2609,6 +2621,12 @@
       "value": "Vymazat"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2803,6 +2821,12 @@
     {
       "type": 0,
       "value": "Žádné"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Oddálit"
     }
   ],
   "Z4QLEf": [
@@ -3120,7 +3144,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Připojeno k: "
     },
     {
       "type": 1,
@@ -3203,6 +3227,12 @@
       "value": "Vyžadováno. Index určující, kde začíná v parametru 1 podřetězec."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3261,6 +3291,12 @@
     {
       "type": 0,
       "value": "Hodnota"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Přiblížit"
     }
   ],
   "g4igOR": [
@@ -3350,7 +3386,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Zadejte nebo vložte ukázkovou datovou část JSON."
     }
   ],
   "hBLPXK": [
@@ -3592,7 +3628,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Nepovedlo se vygenerovat schéma."
     }
   ],
   "jjYA4u": [
@@ -3669,6 +3705,12 @@
     {
       "type": 0,
       "value": "Vrátí řetězcovou reprezentaci vstupního řetězce Base 64."
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Zobrazit minimapu"
     }
   ],
   "kYivbS": [
@@ -3767,10 +3809,10 @@
       "value": "přeskočeno"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Zadejte platné pole."
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -4001,6 +4043,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4513,6 +4561,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Proměnné"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4547,6 +4601,12 @@
     {
       "type": 0,
       "value": "Vrátí poslední index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4623,6 +4683,12 @@
       "value": "Neděle"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Přizpůsobení stránky"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4657,6 +4723,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Délka podřetězce."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4841,6 +4913,12 @@
     {
       "type": 0,
       "value": "Povinné. Hodnota převedená na desetinné číslo."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

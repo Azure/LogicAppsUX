@@ -11,12 +11,6 @@
       "value": "Кнопка для добавления динамического содержимого"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Фильтры"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Изменить подключение"
     }
   ],
   "/WW7If": [
@@ -601,6 +595,12 @@
       "value": "Добавление нового подключения"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Выберите представление для просмотра"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -665,6 +665,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Выражение XPath для вычисления."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Соединители"
     }
   ],
   "5aa76N": [
@@ -1182,7 +1188,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Использовать пример полезной нагрузки, чтобы создать схему"
     }
   ],
   "DZZ3fj": [
@@ -1201,6 +1207,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Азорские острова"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2342,7 +2354,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Готово"
     }
   ],
   "T0BFpC": [
@@ -2597,6 +2609,12 @@
       "value": "Очистить"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2791,6 +2809,12 @@
     {
       "type": 0,
       "value": "Нет"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Уменьшить"
     }
   ],
   "Z4QLEf": [
@@ -3108,7 +3132,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Подключено к "
     },
     {
       "type": 1,
@@ -3191,6 +3215,12 @@
       "value": "Обязательное поле. Индекс начала подстроки в параметре 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3249,6 +3279,12 @@
     {
       "type": 0,
       "value": "Значение"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Увеличить"
     }
   ],
   "g4igOR": [
@@ -3338,7 +3374,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Введите или вставьте пример полезной нагрузки JSON."
     }
   ],
   "hBLPXK": [
@@ -3584,7 +3620,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Не удалось создать схему"
     }
   ],
   "jjYA4u": [
@@ -3665,6 +3701,12 @@
     {
       "type": 0,
       "value": "Возвращает строковое представление входной строки в формате Base 64"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Показать мини-карту"
     }
   ],
   "kYivbS": [
@@ -3763,10 +3805,10 @@
       "value": "пропущен"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Введите допустимый массив"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3997,6 +4039,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Самоа"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4509,6 +4557,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Переменные"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4543,6 +4597,12 @@
     {
       "type": 0,
       "value": "Возвращает последний индекс значения в строке (без учета регистра, инвариантные язык и региональные параметры)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4619,6 +4679,12 @@
       "value": "Воскресенье"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "По размеру страницы"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4653,6 +4719,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Длина подстроки."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4837,6 +4909,12 @@
     {
       "type": 0,
       "value": "Обязательно. Значение, преобразуемое в десятичное число."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

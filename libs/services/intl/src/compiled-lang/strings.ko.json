@@ -11,12 +11,6 @@
       "value": "동적 콘텐츠를 추가하는 단추"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "필터"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "연결 변경"
     }
   ],
   "/WW7If": [
@@ -568,6 +562,12 @@
       "value": "새 연결 추가"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "검색할 보기 선택"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -632,6 +632,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 평가할 XPath 식입니다."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "커넥터"
     }
   ],
   "5aa76N": [
@@ -1116,7 +1122,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "샘플 페이로드를 사용하여 스키마 생성"
     }
   ],
   "DZZ3fj": [
@@ -1135,6 +1141,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) 아조레스"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2177,7 +2189,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "완료"
     }
   ],
   "T0BFpC": [
@@ -2432,6 +2444,12 @@
       "value": "지우기"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2626,6 +2644,12 @@
     {
       "type": 0,
       "value": "없음"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "축소"
     }
   ],
   "Z4QLEf": [
@@ -2942,16 +2966,12 @@
   ],
   "daoo3l": [
     {
-      "type": 0,
-      "value": "Connected to "
-    },
-    {
       "type": 1,
       "value": "connectionName"
     },
     {
       "type": 0,
-      "value": "."
+      "value": "에 연결했습니다."
     }
   ],
   "dgAu27": [
@@ -3026,6 +3046,12 @@
       "value": "필수 항목으로, 하위 문자열이 매개 변수 1에서 시작하는 인덱스입니다."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3084,6 +3110,12 @@
     {
       "type": 0,
       "value": "값"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "확대"
     }
   ],
   "g4igOR": [
@@ -3173,7 +3205,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "샘플 JSON 페이로드를 입력하거나 붙여넣습니다."
     }
   ],
   "hBLPXK": [
@@ -3378,7 +3410,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "스키마를 생성할 수 없음"
     }
   ],
   "jjYA4u": [
@@ -3451,6 +3483,12 @@
     {
       "type": 0,
       "value": "입력 based64 문자열의 문자열 표현을 반환합니다."
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "미니맵 표시"
     }
   ],
   "kYivbS": [
@@ -3549,10 +3587,10 @@
       "value": "건너뜀"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "유효한 배열을 입력하세요."
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3783,6 +3821,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) 사모아"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4262,6 +4306,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "변수"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4296,6 +4346,12 @@
     {
       "type": 0,
       "value": "문자열 내에서 값의 마지막 인덱스를 반환합니다(대/소문자 구분 안 함, 고정 문화권)."
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4368,6 +4424,12 @@
       "value": "일요일"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "페이지 맞춤"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4402,6 +4464,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 하위 문자열의 길이입니다."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4586,6 +4654,12 @@
     {
       "type": 0,
       "value": "필수입니다. 10진수로 변환되는 값입니다."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

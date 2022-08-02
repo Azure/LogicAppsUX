@@ -11,12 +11,6 @@
       "value": "用于添加动态内容的按钮"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "筛选器"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "更改连接"
     }
   ],
   "/WW7If": [
@@ -572,6 +566,12 @@
       "value": "添加新的连接"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "选择要从中浏览的视图"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -636,6 +636,12 @@
     {
       "type": 0,
       "value": "必需。要计算的 XPath 表达式。"
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "连接器"
     }
   ],
   "5aa76N": [
@@ -1120,7 +1126,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "使用示例有效负载生成架构"
     }
   ],
   "DZZ3fj": [
@@ -1139,6 +1145,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00)亚速尔群岛"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2181,7 +2193,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "完成"
     }
   ],
   "T0BFpC": [
@@ -2440,6 +2452,12 @@
       "value": "清除"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2634,6 +2652,12 @@
     {
       "type": 0,
       "value": "无"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "缩小"
     }
   ],
   "Z4QLEf": [
@@ -2951,7 +2975,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "已连接到 "
     },
     {
       "type": 1,
@@ -2959,7 +2983,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "。"
     }
   ],
   "dgAu27": [
@@ -3034,6 +3058,12 @@
       "value": "必需。其中子字符换以参数 1 开头的索引。"
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3092,6 +3122,12 @@
     {
       "type": 0,
       "value": "值"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "放大"
     }
   ],
   "g4igOR": [
@@ -3181,7 +3217,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "输入或粘贴示例 JSON 有效负载。"
     }
   ],
   "hBLPXK": [
@@ -3394,7 +3430,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "无法生成架构"
     }
   ],
   "jjYA4u": [
@@ -3475,6 +3511,12 @@
     {
       "type": 0,
       "value": "返回输入 based64 字符串的字符串表示形式"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "显示缩略图"
     }
   ],
   "kYivbS": [
@@ -3573,10 +3615,10 @@
       "value": "已跳过"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "请输入有效的数组"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3815,6 +3857,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00)萨摩亚"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4294,6 +4342,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "变量"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4328,6 +4382,12 @@
     {
       "type": 0,
       "value": "返回字符串内某值的最后一个索引(区分大小写，固定区域性)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4404,6 +4464,12 @@
       "value": "星期日"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "适应页面"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4438,6 +4504,12 @@
     {
       "type": 0,
       "value": "必需。子字符串的长度。"
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4622,6 +4694,12 @@
     {
       "type": 0,
       "value": "必填。转换为小数的值。"
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

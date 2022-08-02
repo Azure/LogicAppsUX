@@ -11,12 +11,6 @@
       "value": "Button to add dynamic content"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filters"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -579,6 +573,12 @@
       "value": "Add a new connection"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choose which view to browse from"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Required. The XPath expression to evaluate."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connectors"
     }
   ],
   "5aa76N": [
@@ -1157,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azores"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2491,6 +2503,12 @@
       "value": "Clear"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2685,6 +2703,12 @@
     {
       "type": 0,
       "value": "None"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -3085,6 +3109,12 @@
       "value": "Required. The index of where the substring begins in parameter 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3143,6 +3173,12 @@
     {
       "type": 0,
       "value": "Value"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
     }
   ],
   "g4igOR": [
@@ -3523,6 +3559,12 @@
       "value": "Returns a string representation of an input based64 string"
     }
   ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
@@ -3619,10 +3661,10 @@
       "value": "is skipped"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3853,6 +3895,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4343,6 +4391,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variables"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4377,6 +4431,12 @@
     {
       "type": 0,
       "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4453,6 +4513,12 @@
       "value": "Sunday"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4487,6 +4553,12 @@
     {
       "type": 0,
       "value": "Required. The length of the substring."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4671,6 +4743,12 @@
     {
       "type": 0,
       "value": "Required. The value that is converted to a decimal number."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

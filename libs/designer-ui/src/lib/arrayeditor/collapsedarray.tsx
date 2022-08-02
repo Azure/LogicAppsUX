@@ -1,15 +1,14 @@
 import type { ArrayEditorItemProps } from '.';
-import { ValueSegmentType } from '../editor';
-import type { Segment } from '../editor/base';
-import { BaseEditor } from '../editor/base';
+import type { ValueSegment } from '../editor';
+import { ValueSegmentType, CollapsedEditor, CollapsedEditorType } from '../editor';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
-import { Serialize } from './plugins/Serialize';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { Dispatch, SetStateAction } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface CollapsedArrayProps {
-  labelProps: LabelProps;
+  labelProps?: LabelProps;
   items: ArrayEditorItemProps[];
   isValid?: boolean;
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
@@ -20,11 +19,11 @@ export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, se
   const intl = useIntl();
 
   const errorMessage = intl.formatMessage({
-    defaultMessage: 'Please Enter a valid array',
+    defaultMessage: 'Please enter a valid array',
     description: 'Error Message for Invalid Array',
   });
   const renderLabel = (): JSX.Element => {
-    const { text, isRequiredField } = labelProps;
+    const { text, isRequiredField } = labelProps as LabelProps;
     return (
       <div className="msla-input-parameter-label">
         <div className="msla-array-editor-label">
@@ -34,45 +33,39 @@ export const CollapsedArray = ({ labelProps, items, isValid = true, setItems, se
     );
   };
 
+  const updateItems = (newItems: ArrayEditorItemProps[]) => {
+    setItems(newItems);
+  };
+
   return (
     <div className="msla-array-container msla-array-editor-collapsed">
-      {renderLabel()}
+      {labelProps ? renderLabel() : null}
       <div className="msla-array-content">
-        <BaseEditor
-          className="msla-array-editor-container-collapsed"
-          BasePlugins={{
-            tokens: true,
-            validation: {
-              type: 'COLLAPSED_ARRAY',
-              errorMessage: errorMessage,
-              className: 'msla-array-editor-validation',
-              isValid,
-              setIsValid,
-            },
-          }}
-          tokenPickerClassName={'msla-collapsed-array-editor-tokenpicker'}
-          placeholder={'Enter an Array'}
+        <CollapsedEditor
+          type={CollapsedEditorType.COLLAPSED_ARRAY}
+          isValid={isValid}
           initialValue={parseInitialValue(items)}
-        >
-          <Serialize isValid={isValid} setItems={setItems} />
-        </BaseEditor>
+          errorMessage={errorMessage}
+          setItems={updateItems}
+          setIsValid={setIsValid}
+        />
       </div>
     </div>
   );
 };
 
-const parseInitialValue = (items: ArrayEditorItemProps[]): Segment[] => {
+const parseInitialValue = (items: ArrayEditorItemProps[]): ValueSegment[] => {
   if (items.length === 0) {
-    return [{ type: ValueSegmentType.LITERAL, value: '[\n  null\n]' }];
+    return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  null\n]' }];
   }
-  const parsedItems: Segment[] = [];
-  parsedItems.push({ type: ValueSegmentType.LITERAL, value: '[\n  "' });
+  const parsedItems: ValueSegment[] = [];
+  parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' });
   items.forEach((item, index) => {
     const { content } = item;
     content?.forEach((segment) => {
       parsedItems.push(segment);
     });
-    parsedItems.push({ type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n]' });
+    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n]' });
   });
   return parsedItems;
 };

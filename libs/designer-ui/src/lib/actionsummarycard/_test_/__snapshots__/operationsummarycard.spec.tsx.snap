@@ -9,10 +9,10 @@ exports[`recommendation panel renders operation card 1`] = `
       className="msla-card-title-container"
     >
       <Memo(Image)
-        alt="logo for Azure Blob Storage"
+        alt="logo for Azure Blob"
         className="msla-card-logo"
         imageFit={1}
-        src="https://connectoricons-prod.azureedge.net/releases/v1.0.1563/1.0.1563.2732/azureblob/icon.png"
+        src="https://connectoricons-prod.azureedge.net/releases/v1.0.1443/1.0.1443.2341/azureblob/icon.png"
       />
     </div>
     <div
@@ -21,7 +21,7 @@ exports[`recommendation panel renders operation card 1`] = `
       <Text
         className="msla-card-title"
       >
-        When a blob is added or modified (properties only) (V2)
+        Checks if Blob exists in Azure Storage
       </Text>
       <button
         onClick={[Function]}
@@ -33,7 +33,7 @@ exports[`recommendation panel renders operation card 1`] = `
   <Text
     className="msla-card-description"
   >
-    This operation triggers a flow when one or more blobs are added or modified in a container. This trigger will only fetch the file metadata. To get the file content, you can use the \\"Get file content\\" operation. The trigger does not fire if a file is added/updated in a subfolder. If it is required to trigger on subfolders, multiple triggers should be created.
+    Checks if Blob exists in Azure Storage
   </Text>
   <div
     className="msla-tag-container"
@@ -41,7 +41,7 @@ exports[`recommendation panel renders operation card 1`] = `
     <Text
       className="msla-tag"
     >
-      Azure Blob Storage
+      Azure Blob
     </Text>
     <Text
       className="msla-tag"
@@ -50,9 +50,7 @@ exports[`recommendation panel renders operation card 1`] = `
     </Text>
     <Text
       className="msla-tag"
-    >
-      Azure
-    </Text>
+    />
   </div>
 </div>
 `;

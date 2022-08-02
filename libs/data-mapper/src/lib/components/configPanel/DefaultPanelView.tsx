@@ -10,8 +10,8 @@ export interface DefaultPanelViewProps {
 }
 
 export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onInputSchemaClick, onOutputSchemaClick }) => {
-  const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
-  const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
+  const inputSchema = useSelector((state: RootState) => state.schema?.inputSchema);
+  const outputSchema = useSelector((state: RootState) => state.schema?.outputSchema);
   const intl = useIntl();
 
   const replaceMessage = intl.formatMessage({

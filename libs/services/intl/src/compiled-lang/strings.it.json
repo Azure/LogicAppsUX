@@ -11,12 +11,6 @@
       "value": "Pulsante per aggiungere contenuto dinamico"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtri"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Modifica connessione"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Aggiungi una nuova connessione"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Scegliere la visualizzazione da cui esplorare"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Espressione XPath da valutare."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connettori"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Usare il payload di esempio per generare lo schema"
     }
   ],
   "DZZ3fj": [
@@ -1157,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azzorre"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2240,7 +2252,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Fine"
     }
   ],
   "T0BFpC": [
@@ -2495,6 +2507,12 @@
       "value": "Cancella"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2689,6 +2707,12 @@
     {
       "type": 0,
       "value": "Nessuno"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom indietro"
     }
   ],
   "Z4QLEf": [
@@ -3006,7 +3030,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Connesso a "
     },
     {
       "type": 1,
@@ -3089,6 +3113,12 @@
       "value": "Obbligatorio. Indice della posizione di inizio della sottostringa nel parametro 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3147,6 +3177,12 @@
     {
       "type": 0,
       "value": "Valore"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom avanti"
     }
   ],
   "g4igOR": [
@@ -3236,7 +3272,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Immettere o incollare un payload JSON di esempio."
     }
   ],
   "hBLPXK": [
@@ -3452,7 +3488,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Non è possibile generare lo schema."
     }
   ],
   "jjYA4u": [
@@ -3525,6 +3561,12 @@
     {
       "type": 0,
       "value": "Restituisce una rappresentazione stringa di una stringa di input con codifica Base 64"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Visualizza minimappa"
     }
   ],
   "kYivbS": [
@@ -3623,10 +3665,10 @@
       "value": "è stato ignorato"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Immettere un array valido"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3857,6 +3899,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4347,6 +4395,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variabili"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4381,6 +4435,12 @@
     {
       "type": 0,
       "value": "Restituisce l'ultimo indice di un valore all'interno di una stringa (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4457,6 +4517,12 @@
       "value": "Domenica"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Adattamento pagina"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4491,6 +4557,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Lunghezza della sottostringa."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4675,6 +4747,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore convertito in un numero decimale."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

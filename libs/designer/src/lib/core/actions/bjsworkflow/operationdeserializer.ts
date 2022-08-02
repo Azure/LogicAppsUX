@@ -8,7 +8,7 @@ import { initializeOperationInfo, initializeNodes } from '../../state/operation/
 import { clearPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
-import type { NodesMetadata, Operations } from '../../state/workflow/workflowSlice';
+import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getRecurrenceParameters } from '../../utils/parameters/builtins';
 import {

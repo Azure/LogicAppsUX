@@ -11,12 +11,6 @@
       "value": "Bouton permettant d’ajouter du contenu dynamique"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtres"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Changer la connexion"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Ajouter une nouvelle connexion"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Choisir l’affichage à partir duquel parcourir"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Expression XPath à évaluer."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Connecteurs"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Utiliser l'exemple de charge utile pour générer le schéma"
     }
   ],
   "DZZ3fj": [
@@ -1157,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Les Açores"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2232,7 +2244,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Terminé"
     }
   ],
   "T0BFpC": [
@@ -2487,6 +2499,12 @@
       "value": "Effacer"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2681,6 +2699,12 @@
     {
       "type": 0,
       "value": "Aucun"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom arrière"
     }
   ],
   "Z4QLEf": [
@@ -2998,7 +3022,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Connecté à "
     },
     {
       "type": 1,
@@ -3081,6 +3105,12 @@
       "value": "Obligatoire. Index d'où la sous-chaîne commence dans le paramètre 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3139,6 +3169,12 @@
     {
       "type": 0,
       "value": "Valeur"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom avant"
     }
   ],
   "g4igOR": [
@@ -3228,7 +3264,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Entrez ou collez un exemple de charge utile JSON."
     }
   ],
   "hBLPXK": [
@@ -3452,7 +3488,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Impossible de générer le schéma"
     }
   ],
   "jjYA4u": [
@@ -3525,6 +3561,12 @@
     {
       "type": 0,
       "value": "Retourne la représentation sous forme de chaîne d'une chaîne d'entrée en base 64"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Afficher la minicarte"
     }
   ],
   "kYivbS": [
@@ -3623,10 +3665,10 @@
       "value": "est ignorée"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Entrez un groupe valide"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3857,6 +3899,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4347,6 +4395,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variables"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4381,6 +4435,12 @@
     {
       "type": 0,
       "value": "Retourne le dernier index d'une valeur au sein d'une chaîne (culture invariante qui ne respecte pas la casse)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4457,6 +4517,12 @@
       "value": "Dimanche"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Ajuster à la page"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4491,6 +4557,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Longueur de la sous-chaîne."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4675,6 +4747,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Valeur convertie en nombre à virgule décimal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

@@ -11,12 +11,6 @@
       "value": "Botão para adicionar o conteúdo dinâmico"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtros"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Alterar a conexão"
     }
   ],
   "/WW7If": [
@@ -579,6 +573,12 @@
       "value": "Adicionar uma conexão"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "Escolha de qual exibição você deseja navegar"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -643,6 +643,12 @@
     {
       "type": 0,
       "value": "Necessário. A expressão XPath a ser avaliada."
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "Conectores"
     }
   ],
   "5aa76N": [
@@ -1138,7 +1144,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "Use o conteúdo de amostra para gerar o esquema"
     }
   ],
   "DZZ3fj": [
@@ -1157,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Açores"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2232,7 +2244,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "Feito"
     }
   ],
   "T0BFpC": [
@@ -2487,6 +2499,12 @@
       "value": "Claro"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2681,6 +2699,12 @@
     {
       "type": 0,
       "value": "Nenhum"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Reduzir"
     }
   ],
   "Z4QLEf": [
@@ -2998,7 +3022,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Conectado a "
     },
     {
       "type": 1,
@@ -3081,6 +3105,12 @@
       "value": "Necessário. O índice de onde a subcadeia de caracteres começa no parâmetro 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3139,6 +3169,12 @@
     {
       "type": 0,
       "value": "Valor"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Ampliar"
     }
   ],
   "g4igOR": [
@@ -3228,7 +3264,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "Insira ou cole um conteúdo JSON de amostra."
     }
   ],
   "hBLPXK": [
@@ -3444,7 +3480,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "Não é possível gerar o esquema"
     }
   ],
   "jjYA4u": [
@@ -3517,6 +3553,12 @@
     {
       "type": 0,
       "value": "Retorna uma representação de cadeia de caracteres de uma cadeia de caracteres de base 64 de entrada"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Exibir minimapa"
     }
   ],
   "kYivbS": [
@@ -3615,10 +3657,10 @@
       "value": "foi ignorado"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Inserir uma matriz válida"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3849,6 +3891,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4339,6 +4387,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variáveis"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4373,6 +4427,12 @@
     {
       "type": 0,
       "value": "Retorna o último índice de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4449,6 +4509,12 @@
       "value": "Domingo"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Ajuste de página"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4483,6 +4549,12 @@
     {
       "type": 0,
       "value": "Necessário. O comprimento da subcadeia de caracteres."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4667,6 +4739,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O valor que é convertido em um número decimal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

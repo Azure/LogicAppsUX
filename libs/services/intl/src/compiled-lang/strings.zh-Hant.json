@@ -11,12 +11,6 @@
       "value": "新增動態內容的按钮"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "篩選器"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -92,7 +86,7 @@
   "/ULFwg": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "變更連線"
     }
   ],
   "/WW7If": [
@@ -568,6 +562,12 @@
       "value": "新增連線"
     }
   ],
+  "4RQAXv": [
+    {
+      "type": 0,
+      "value": "選擇要瀏覽的來源檢視"
+    }
+  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -632,6 +632,12 @@
     {
       "type": 0,
       "value": "必要。要評估的 XPath 運算式。"
+    }
+  ],
+  "5Yi8Jj": [
+    {
+      "type": 0,
+      "value": "連接器"
     }
   ],
   "5aa76N": [
@@ -1116,7 +1122,7 @@
   "DGMwU4": [
     {
       "type": 0,
-      "value": "Use sample payload to generate schema"
+      "value": "請使用範例承載產生結構描述"
     }
   ],
   "DZZ3fj": [
@@ -1135,6 +1141,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) 亞述群島"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2177,7 +2189,7 @@
   "SvQyvs": [
     {
       "type": 0,
-      "value": "Done"
+      "value": "完成"
     }
   ],
   "T0BFpC": [
@@ -2432,6 +2444,12 @@
       "value": "清除"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2626,6 +2644,12 @@
     {
       "type": 0,
       "value": "無"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "縮小"
     }
   ],
   "Z4QLEf": [
@@ -2943,7 +2967,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "已連線至 "
     },
     {
       "type": 1,
@@ -2951,7 +2975,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "。"
     }
   ],
   "dgAu27": [
@@ -3026,6 +3050,12 @@
       "value": "必要。參數 1 中子字串起始處的索引。"
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3084,6 +3114,12 @@
     {
       "type": 0,
       "value": "值"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "放大"
     }
   ],
   "g4igOR": [
@@ -3173,7 +3209,7 @@
   "h1lQDa": [
     {
       "type": 0,
-      "value": "Enter or paste a sample JSON payload."
+      "value": "請輸入或貼上範例 JSON 承載。"
     }
   ],
   "hBLPXK": [
@@ -3378,7 +3414,7 @@
   "jgOaTX": [
     {
       "type": 0,
-      "value": "Unable to generate schema"
+      "value": "無法產生結構描述"
     }
   ],
   "jjYA4u": [
@@ -3451,6 +3487,12 @@
     {
       "type": 0,
       "value": "傳回輸入 based64 字串的字串表示法"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "顯示縮圖"
     }
   ],
   "kYivbS": [
@@ -3549,10 +3591,10 @@
       "value": "已跳過"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "請輸入有效的陣列"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3783,6 +3825,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) 薩摩亞"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4262,6 +4310,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "變數"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4296,6 +4350,12 @@
     {
       "type": 0,
       "value": "傳回字串內值的最後一個索引 (不區分大小寫，不因文化特性而異)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
     }
   ],
   "vQcQkU": [
@@ -4372,6 +4432,12 @@
       "value": "星期日"
     }
   ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "網頁最適大小"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -4406,6 +4472,12 @@
     {
       "type": 0,
       "value": "必要。子字串的長度。"
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4590,6 +4662,12 @@
     {
       "type": 0,
       "value": "必要。轉換為十進位數字的值。"
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

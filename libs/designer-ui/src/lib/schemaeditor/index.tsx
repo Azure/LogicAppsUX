@@ -1,3 +1,6 @@
+import type { ValueSegment } from '../editor';
+import { ValueSegmentType } from '../editor';
+import type { ChangeHandler } from '../editor/base';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
 import { MonacoEditor as Editor, EditorLanguage } from '../editor/monaco';
 import { ModalDialog } from '../modaldialog';
@@ -10,15 +13,12 @@ import type { editor } from 'monaco-editor';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface SchemaChangedEvent {
-  value: string;
-}
-
 export interface SchemaEditorProps {
   disabled?: boolean;
-  value?: string;
-  title?: string;
-  onChange?(e: SchemaChangedEvent): void;
+  initialValue: ValueSegment[];
+  label?: string;
+  placeholder?: string; // TODO - Need to implement this.
+  onChange?: ChangeHandler;
   onFocus?(): void;
 }
 
@@ -36,11 +36,11 @@ const buttonStyles: IButtonStyles = {
   rootPressed: removeStyle,
 };
 
-export function SchemaEditor({ disabled = false, title, value = '{}', onChange, onFocus }: SchemaEditorProps): JSX.Element {
+export function SchemaEditor({ disabled = false, label, initialValue, onChange, onFocus }: SchemaEditorProps): JSX.Element {
   const intl = useIntl();
   const [errorMessage, setErrorMessage] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
-  const [currentValue, setCurrentValue] = useState(formatValue(value));
+  const [currentValue, setCurrentValue] = useState(formatValue(initialValue[0].value));
   const [samplePayload, setSamplePayload] = useState<string | undefined>('');
   const modalEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const [editorHeight, setEditorHeight] = useState('');
@@ -73,10 +73,16 @@ export function SchemaEditor({ disabled = false, title, value = '{}', onChange, 
     description: 'Modal Title text',
   });
   const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
-    if (onChange && e.value) {
-      onChange({
-        value: e.value,
-      });
+    setErrorMessage('');
+    if (e.value !== undefined) {
+      setCurrentValue(e.value);
+    }
+  };
+
+  const handleBlur = (): void => {
+    if (onChange) {
+      // TODO - Move this to onBlur
+      onChange({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: currentValue }] });
     }
   };
 
@@ -119,7 +125,7 @@ export function SchemaEditor({ disabled = false, title, value = '{}', onChange, 
 
   return (
     <div className="msla-schema-editor-body">
-      <div className="msla-schema-editor-title">{title}</div>
+      {label ? <div className="msla-schema-editor-title">{label}</div> : null}
       <Editor
         height={editorHeight}
         value={currentValue}
@@ -129,6 +135,7 @@ export function SchemaEditor({ disabled = false, title, value = '{}', onChange, 
         language={EditorLanguage.json}
         onContentChanged={handleContentChanged}
         onFocus={handleFocus}
+        onBlur={handleBlur}
       />
       <div className="msla-schema-editor-operations">
         <ActionButton className="msla-schema-card-button" disabled={disabled} styles={buttonStyles} onClick={openModal}>

@@ -1,20 +1,19 @@
-import type { ArrayEditorItemProps } from '..';
-import type { Segment } from '../../editor/base';
+import type { ArrayEditorItemProps } from '../../arrayeditor';
+import type { ValueSegment } from '../../editor';
+import { ValueSegmentType } from '../../editor';
 import { $isTokenNode } from '../../editor/base/nodes/tokenNode';
-import { ValueSegmentType } from '../../editor/models/parameter';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { ElementNode } from 'lexical';
 import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
-import type { Dispatch, SetStateAction } from 'react';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
-export interface SerializeProps {
+export interface SerializeArrayProps {
   isValid: boolean;
-  setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
+  setItems: (items: ArrayEditorItemProps[]) => void;
 }
-
-export const Serialize = ({ isValid, setItems }: SerializeProps) => {
+export const SerializeArray = ({ isValid, setItems }: SerializeArrayProps) => {
   const [editor] = useLexicalComposerContext();
 
   const updateItems = useCallback(() => {
@@ -34,10 +33,6 @@ export const Serialize = ({ isValid, setItems }: SerializeProps) => {
     }
   }, [editor, isValid, setItems]);
 
-  useEffect(() => {
-    updateItems();
-  }, [updateItems]);
-
   const onChange = () => {
     updateItems();
   };
@@ -45,7 +40,7 @@ export const Serialize = ({ isValid, setItems }: SerializeProps) => {
   return <OnChangePlugin onChange={onChange} />;
 };
 
-const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[], currentSegments: Segment[]) => {
+const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[], currentSegments: ValueSegment[]) => {
   let inString = false;
   paragraphNode.__children.forEach((child) => {
     const childNode = $getNodeByKey(child);
@@ -58,7 +53,6 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
         if (text.length === 0) {
           continue;
         }
-
         text = splitChildNode[i].replace(/^[^"]*"(.*)"[^"]*$/, '$1').trim();
         if (text === 'null') {
           continue;
@@ -68,7 +62,7 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
           continue;
         }
         if (text.indexOf('"') >= 0) {
-          currentSegments.push({ type: ValueSegmentType.LITERAL, value: text.replace(/"/g, '') });
+          currentSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: text.replace(/"/g, '') });
           if (inString) {
             returnItems.push({ content: currentSegments.slice(0) });
             while (currentSegments.length) {
@@ -78,22 +72,14 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
           inString = !inString;
         } else {
           if (inString) {
-            currentSegments.push({ type: ValueSegmentType.LITERAL, value: text });
+            currentSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: text });
           } else {
-            returnItems.push({ content: [{ type: ValueSegmentType.LITERAL, value: text }] });
+            returnItems.push({ content: [{ id: guid(), type: ValueSegmentType.LITERAL, value: text }] });
           }
         }
       }
     } else if ($isTokenNode(childNode)) {
-      currentSegments.push({
-        type: ValueSegmentType.TOKEN,
-        token: {
-          title: childNode.__title,
-          icon: childNode.__icon,
-          brandColor: childNode.__brandColor,
-          description: childNode.__description,
-        },
-      });
+      currentSegments.push(childNode.__data);
       if (!inString) {
         returnItems.push({ content: currentSegments });
         currentSegments.pop();
