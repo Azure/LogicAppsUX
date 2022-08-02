@@ -4533,6 +4533,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";er+4Cd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select the schema for dropdown]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Wählen Sie das Schema für die Dropdownliste aus.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";esOQ5p" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[No values matching your search]]></Val>
@@ -6425,6 +6434,15 @@
           <Val><![CDATA[Returns the last index of a value within a string (case-insensitive, invariant culture)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Gibt den letzten Index eines Werts innerhalb einer Zeichenfolge zurück (Groß-/Kleinschreibung nicht relevant, invariante Kultur).]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vLXCIR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Button for managing toggle state]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Schaltfläche zum Verwalten des Umschaltzustands]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
