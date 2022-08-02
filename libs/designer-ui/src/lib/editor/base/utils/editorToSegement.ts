@@ -1,5 +1,5 @@
 import type { ValueSegment } from '../../models/parameter';
-import { TokenType, ValueSegmentType } from '../../models/parameter';
+import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { EditorState, ElementNode } from 'lexical';
@@ -22,19 +22,7 @@ const getChildrenNodes = (node: ElementNode, segments: ValueSegment[], trimLiter
     if ($isTextNode(childNode)) {
       segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: trimLiteral ? childNode.__text.trim() : childNode.__text });
     } else if ($isTokenNode(childNode)) {
-      segments.push({
-        id: guid(),
-        type: ValueSegmentType.TOKEN,
-        token: {
-          key: childNode.__title,
-          title: childNode.__title,
-          icon: childNode.__icon,
-          brandColor: childNode.__brandColor,
-          description: childNode.__description,
-          tokenType: TokenType.OUTPUTS,
-        },
-        value: childNode.__data?.value ?? '',
-      });
+      segments.push(childNode.__data);
     }
   });
 };

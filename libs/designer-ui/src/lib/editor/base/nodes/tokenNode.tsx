@@ -8,7 +8,7 @@ import { DecoratorNode } from 'lexical';
 export interface TokenNodeProps {
   brandColor?: string;
   description?: string;
-  data?: ValueSegment;
+  data: ValueSegment;
   icon: string;
   title: string;
 }
@@ -17,9 +17,9 @@ export type SerailizedTokenNode = Spread<
   {
     icon: string;
     title: string;
+    data: ValueSegment;
     description?: string;
     brandColor?: string;
-    data?: ValueSegment;
     type: 'token';
     version: 1;
   },
@@ -30,23 +30,23 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   __description?: string;
   __icon: string;
   __title: string;
-  __data?: ValueSegment;
+  __data: ValueSegment;
 
   static getType() {
     return 'token';
   }
 
   static clone(node: TokenNode) {
-    return new TokenNode(node.__icon, node.__title, node.__description, node.__brandColor, node.__data, node.__key);
+    return new TokenNode(node.__icon, node.__title, node.__data, node.__description, node.__brandColor, node.__key);
   }
 
   static importJSON(serializedTokenNode: SerailizedTokenNode): TokenNode {
     return new TokenNode(
       serializedTokenNode.icon,
       serializedTokenNode.title,
+      serializedTokenNode.data,
       serializedTokenNode.description,
-      serializedTokenNode.brandColor,
-      serializedTokenNode.data
+      serializedTokenNode.brandColor
     );
   }
 
@@ -77,27 +77,27 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
         icon: this.__icon,
         description: this.__description,
         title: this.__title,
-        actionName: this.__data?.token?.actionName,
-        arrayDetails: this.__data?.token?.arrayDetails,
-        expression: this.__data?.token?.expression,
-        format: this.__data?.token?.format,
-        isSecure: this.__data?.token?.isSecure,
-        name: this.__data?.token?.name,
-        required: this.__data?.token?.required,
-        source: this.__data?.token?.source,
-        type: this.__data?.token?.type,
+        actionName: this.__data.token?.actionName,
+        arrayDetails: this.__data.token?.arrayDetails,
+        expression: this.__data.token?.expression,
+        format: this.__data.token?.format,
+        isSecure: this.__data.token?.isSecure,
+        name: this.__data.token?.name,
+        required: this.__data.token?.required,
+        source: this.__data.token?.source,
+        type: this.__data.token?.type,
       },
-      value: this.__data?.value ?? '',
+      value: this.__data.value,
     };
   }
 
-  constructor(icon: string, title: string, description?: string, brandColor?: string, data?: ValueSegment, key?: string) {
+  constructor(icon: string, title: string, data: ValueSegment, description?: string, brandColor?: string, key?: string) {
     super(key);
     this.__brandColor = brandColor;
     this.__description = description;
+    this.__data = data;
     this.__icon = icon;
     this.__title = title;
-    this.__data = data;
   }
 
   createDOM() {
@@ -122,8 +122,8 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 }
 
-export function $createTokenNode({ icon, title, description, brandColor, data }: TokenNodeProps) {
-  return new TokenNode(icon, title, description, brandColor, data);
+export function $createTokenNode({ icon, title, data, description, brandColor }: TokenNodeProps) {
+  return new TokenNode(icon, title, data, description, brandColor);
 }
 
 export function $isTokenNode(node: LexicalNode | null): node is TokenNode {

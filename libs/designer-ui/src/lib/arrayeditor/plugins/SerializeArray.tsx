@@ -79,12 +79,7 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
         }
       }
     } else if ($isTokenNode(childNode)) {
-      currentSegments.push({
-        id: guid(),
-        type: ValueSegmentType.TOKEN,
-        token: childNode.__data?.token,
-        value: childNode.__data?.value ?? '',
-      });
+      currentSegments.push(childNode.__data);
       if (!inString) {
         returnItems.push({ content: currentSegments });
         currentSegments.pop();
