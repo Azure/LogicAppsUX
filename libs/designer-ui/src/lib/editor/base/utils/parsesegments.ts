@@ -18,7 +18,7 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
       const { brandColor, description, icon, title } = segment.token;
       if (brandColor && description && icon && title) {
-        const token = $createTokenNode({ icon, title, description, brandColor, data: segment.token });
+        const token = $createTokenNode({ icon, title, description, brandColor, data: segment });
         tokensEnabled && paragraph.append(token);
       }
     } else {

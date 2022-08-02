@@ -1,6 +1,6 @@
 import type { ArrayEditorItemProps } from '../../arrayeditor';
 import type { ValueSegment } from '../../editor';
-import { TokenType, ValueSegmentType } from '../../editor';
+import { ValueSegmentType } from '../../editor';
 import { $isTokenNode } from '../../editor/base/nodes/tokenNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
@@ -82,15 +82,8 @@ const getItems = (paragraphNode: ElementNode, returnItems: ArrayEditorItemProps[
       currentSegments.push({
         id: guid(),
         type: ValueSegmentType.TOKEN,
-        token: {
-          tokenType: TokenType.OUTPUTS,
-          key: childNode.__title,
-          title: childNode.__title,
-          icon: childNode.__icon,
-          brandColor: childNode.__brandColor,
-          description: childNode.__description,
-        },
-        value: childNode.__title,
+        token: childNode.__data?.token,
+        value: childNode.__data?.value ?? '',
       });
       if (!inString) {
         returnItems.push({ content: currentSegments });

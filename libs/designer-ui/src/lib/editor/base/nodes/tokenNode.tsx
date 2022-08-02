@@ -8,7 +8,7 @@ import { DecoratorNode } from 'lexical';
 export interface TokenNodeProps {
   brandColor?: string;
   description?: string;
-  data?: any;
+  data?: ValueSegment;
   icon: string;
   title: string;
 }
@@ -19,7 +19,7 @@ export type SerailizedTokenNode = Spread<
     title: string;
     description?: string;
     brandColor?: string;
-    data?: any;
+    data?: ValueSegment;
     type: 'token';
     version: 1;
   },
@@ -30,7 +30,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   __description?: string;
   __icon: string;
   __title: string;
-  __data?: any;
+  __data?: ValueSegment;
 
   static getType() {
     return 'token';
@@ -77,21 +77,21 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
         icon: this.__icon,
         description: this.__description,
         title: this.__title,
-        actionName: this.__data?.actionName,
-        arrayDetails: this.__data?.arrayDetails,
-        expression: this.__data?.expression,
-        format: this.__data?.format,
-        isSecure: this.__data?.isSecure,
-        name: this.__data?.name,
-        required: this.__data?.required,
-        source: this.__data?.source,
-        type: this.__data?.type,
+        actionName: this.__data?.token?.actionName,
+        arrayDetails: this.__data?.token?.arrayDetails,
+        expression: this.__data?.token?.expression,
+        format: this.__data?.token?.format,
+        isSecure: this.__data?.token?.isSecure,
+        name: this.__data?.token?.name,
+        required: this.__data?.token?.required,
+        source: this.__data?.token?.source,
+        type: this.__data?.token?.type,
       },
-      value: this.__title,
+      value: this.__data?.value ?? '',
     };
   }
 
-  constructor(icon: string, title: string, description?: string, brandColor?: string, data?: any, key?: string) {
+  constructor(icon: string, title: string, description?: string, brandColor?: string, data?: ValueSegment, key?: string) {
     super(key);
     this.__brandColor = brandColor;
     this.__description = description;
