@@ -7,7 +7,7 @@ import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadat
 import type { RootState } from '../../../core/store';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
-import { SelectConnection } from '@microsoft/designer-ui';
+import { getIdLeaf, SelectConnection } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -37,7 +37,7 @@ export const SelectConnectionTab = () => {
   const saveSelectionCallback = useCallback(
     (connection?: Connection) => {
       if (!connection) return;
-      dispatch(changeConnectionMapping({ nodeId: selectedNodeId, connectionId: connection?.id }));
+      dispatch(changeConnectionMapping({ nodeId: selectedNodeId, connectionId: getIdLeaf(connection?.id) }));
       hideConnectionTabs();
     },
     [dispatch, selectedNodeId, hideConnectionTabs]

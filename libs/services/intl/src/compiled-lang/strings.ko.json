@@ -1143,6 +1143,12 @@
       "value": "(UTC-01:00) 아조레스"
     }
   ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
@@ -2438,6 +2444,12 @@
       "value": "지우기"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -3575,10 +3587,10 @@
       "value": "건너뜀"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "유효한 배열을 입력하세요."
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3809,6 +3821,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) 사모아"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4448,6 +4466,12 @@
       "value": "필수 항목으로, 하위 문자열의 길이입니다."
     }
   ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
+    }
+  ],
   "wWVQuK": [
     {
       "type": 0,
@@ -4630,6 +4654,12 @@
     {
       "type": 0,
       "value": "필수입니다. 10진수로 변환되는 값입니다."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

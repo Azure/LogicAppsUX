@@ -1,10 +1,10 @@
-import type { Segment } from '../../editor/base';
+import type { ValueSegment } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
 
 interface CustomValueProps {
-  setCustomVal: (newVal: Segment[] | null) => void;
+  setCustomVal: (newVal: ValueSegment[] | null) => void;
 }
 
 export const CustomValue = ({ setCustomVal }: CustomValueProps) => {

@@ -1,13 +1,16 @@
 import constants from '../../../../common/constants';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
+import { updateNodeParameter } from '../../../../core/state/operation/operationMetadataSlice';
 import { useNodeConnectionName } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../../../core/store';
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { getId } from '@fluentui/react';
-import type { PanelTab } from '@microsoft/designer-ui';
-import { useSelector } from 'react-redux';
+import type { ChangeState, PanelTab, ParameterInfo } from '@microsoft/designer-ui';
+import { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
   const selectedNodeId = useSelector((state: RootState) => state.panel.selectedNode);
@@ -18,38 +21,63 @@ export const ParametersTab = () => {
 
   return (
     <>
-      {Object.keys(parameters?.parameterGroups ?? {}).map((sectionName) => {
-        const id = getId();
-        const parameterGroup = parameters.parameterGroups[sectionName];
-        const settings: Settings[] = parameterGroup?.parameters
-          .filter((x) => !x.hideInUI)
-          .map((param) => {
-            return {
-              settingType: 'SettingTokenTextField',
-              settingProp: {
-                readOnly,
-                id: param.id,
-                label: param.label,
-                tokenEditor: true,
-                value: param.value,
-                required: param.required,
-              },
-            };
-          });
-        return (
-          <div key={id}>
-            <SettingsSection
-              id={getId()}
-              title={parameterGroup.description}
-              settings={settings}
-              showHeading={!!parameterGroup.description}
-              showSeparator={false}
-            />
-          </div>
-        );
-      })}
+      {Object.keys(parameters?.parameterGroups ?? {}).map((sectionName) => (
+        <div key={getId()}>
+          <ParameterSection nodeId={selectedNodeId} group={parameters.parameterGroups[sectionName]} readOnly={readOnly} />
+        </div>
+      ))}
       {connectionName && <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />}
     </>
+  );
+};
+
+const ParameterSection = ({ nodeId, group, readOnly }: { nodeId: string; group: ParameterGroup; readOnly: boolean | undefined }) => {
+  const dispatch = useDispatch();
+
+  const onValueChange = useCallback(
+    (id: string, newState: ChangeState) => {
+      const { value, viewModel } = newState;
+      const propertiesToUpdate = { value } as Partial<ParameterInfo>;
+
+      if (viewModel !== undefined) {
+        propertiesToUpdate.editorViewModel = viewModel;
+      }
+
+      dispatch(
+        updateNodeParameter({
+          nodeId,
+          groupId: group.id,
+          parameterId: id,
+          propertiesToUpdate,
+        })
+      );
+    },
+    [nodeId, group.id, dispatch]
+  );
+
+  const settings: Settings[] = group?.parameters
+    .filter((x) => !x.hideInUI)
+    .map((param) => {
+      return {
+        settingType: 'SettingTokenField',
+        settingProp: {
+          readOnly,
+          id: param.id,
+          label: param.label,
+          value: param.value,
+          required: param.required,
+          editor: param.editor,
+          editorOptions: param.editorOptions,
+          editorViewModel: param.editorViewModel,
+          placeholder: param.placeholder,
+          tokenEditor: true,
+          onValueChange: (newState: ChangeState) => onValueChange(param.id, newState),
+        },
+      };
+    });
+
+  return (
+    <SettingsSection id={getId()} title={group.description} settings={settings} showHeading={!!group.description} showSeparator={false} />
   );
 };
 

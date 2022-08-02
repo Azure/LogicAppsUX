@@ -1165,6 +1165,12 @@
       "value": "(UTC-01:00) Azoren"
     }
   ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
@@ -2497,6 +2503,12 @@
       "value": "Wissen"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -3657,10 +3669,10 @@
       "value": "is overgeslagen"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Voer een geldige array in."
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3891,6 +3903,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4545,6 +4563,12 @@
       "value": "Vereist. De lengte van de subtekenreeks."
     }
   ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
+    }
+  ],
   "wWVQuK": [
     {
       "type": 0,
@@ -4727,6 +4751,12 @@
     {
       "type": 0,
       "value": "Vereist. De waarde die wordt geconverteerd naar een decimaal getal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [
