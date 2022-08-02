@@ -1,5 +1,5 @@
+import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { Segment } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import { CustomValue } from './plugins/CustomValue';
@@ -14,6 +14,7 @@ import type {
 } from '@fluentui/react';
 import { IconButton, TooltipHost, SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
+import { guid } from '@microsoft-logic-apps/utils';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -49,14 +50,14 @@ export interface ComboboxItem {
 }
 export interface ComboboxProps {
   options: ComboboxItem[];
-  customValue: Segment[] | null;
+  customValue: ValueSegment[] | null;
   placeholderText?: string;
   label?: string;
   useOption?: boolean;
   selectedKey?: string;
   required?: boolean;
   setSelectedKey?: (key: string) => void;
-  setCustomValue?: (customVal: Segment[] | null) => void;
+  setCustomValue?: (customVal: ValueSegment[] | null) => void;
 }
 export const Combobox = ({
   customValue,
@@ -71,7 +72,7 @@ export const Combobox = ({
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
-  const [customVal, setCustomVal] = useState<Segment[] | null>(customValue);
+  const [customVal, setCustomVal] = useState<ValueSegment[] | null>(customValue);
   const [comboboxOptions, setComboBoxOptions] = useState<IComboBoxOption[]>(getOptions(options));
 
   useEffect(() => {
@@ -122,7 +123,7 @@ export const Combobox = ({
 
   const handleCustomOptions = (option?: IComboBoxOption): void => {
     if (option?.data === 'customrender') {
-      setCustomVal([{ type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
+      setCustomVal([{ id: guid(), type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
     } else {
       if (setSelectedKey && option?.key) {
         setSelectedKey(option.key.toString());

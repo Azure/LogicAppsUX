@@ -1,12 +1,13 @@
+import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
-import type { BaseEditorProps, Segment } from '../editor/base';
+import type { BaseEditorProps } from '../editor/base';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
 import { useState } from 'react';
 
 export interface DictionaryEditorItemProps {
-  key: Segment[];
-  value: Segment[];
+  key: ValueSegment[];
+  value: ValueSegment[];
 }
 
 export interface DictionaryEditorProps extends BaseEditorProps {
