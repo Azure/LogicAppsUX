@@ -3,24 +3,24 @@ import { Combobox } from '../../combobox';
 import { DictionaryEditor } from '../../dictionary';
 import type { ValueSegment } from '../../editor';
 import type { ChangeHandler } from '../../editor/base';
+import { StringEditor } from '../../editor/string';
 import { SchemaEditor } from '../../schemaeditor';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
 import React from 'react';
-import { StringEditor } from '../../editor/string';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
   value: ValueSegment[];
   editor?: string;
   editorOptions?: any;
+  editorViewModel?: any;
   defaultValue?: string;
   placeholder?: string;
   label: string;
   readOnly?: boolean;
   tokenEditor: true;
   required?: boolean;
-  viewModel?: any;
   onValueChange?: ChangeHandler;
 }
 
@@ -32,12 +32,12 @@ export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
           {props.label.toUpperCase()}
         </Label>
       </div>
-      {getEditor(props)}
+      <TokenField {...props} />
     </>
   );
 };
 
-const getEditor = ({ editor, editorOptions, placeholder, readOnly, value, viewModel, onValueChange }: SettingTokenFieldProps) => {
+const TokenField = ({ editor, editorOptions, editorViewModel, placeholder, readOnly, value, onValueChange }: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
     case 'combobox':
       // eslint-disable-next-line no-case-declarations
@@ -62,7 +62,7 @@ const getEditor = ({ editor, editorOptions, placeholder, readOnly, value, viewMo
           placeholder={placeholder}
           readOnly={readOnly}
           initialValue={value}
-          initialItems={viewModel.items}
+          initialItems={editorViewModel.items}
           onChange={onValueChange}
         />
       );

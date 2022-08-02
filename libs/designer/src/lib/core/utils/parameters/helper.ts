@@ -148,6 +148,7 @@ export function createParameterInfo(
     id: guid(),
     editor: editor.type,
     editorOptions: editor.options,
+    editorViewModel: editor.viewModel,
     info: {
       alias: parameter.alias,
       encode: parameter.encode,
@@ -170,7 +171,6 @@ export function createParameterInfo(
     suppressCasting: parameter.suppressCasting,
     type: parameter.type,
     value: loadParameterValue(parameter),
-    viewModel: editor.viewModel,
     visibility: parameter.visibility,
   };
 
@@ -210,10 +210,9 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
   if (canParseObject) {
     const keys = Object.keys(value);
     for (const itemKey of keys) {
-      // TODO (Eric) - Remove the any once its changed to ValueSegments
       items.push({
-        key: loadParameterValue({ value: itemKey } as any) as any,
-        value: loadParameterValue({ value: value[itemKey] } as any) as any,
+        key: loadParameterValue({ value: itemKey } as any),
+        value: loadParameterValue({ value: value[itemKey] } as any),
       });
     }
   } else {

@@ -26,7 +26,6 @@ export interface ParameterInfo {
   type: string;
   validationErrors?: string[];
   value: ValueSegment[];
-  viewModel?: any;
   visibility?: string;
 }
 
