@@ -31,15 +31,11 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   };
 
   return (
-    <button className="msla-connector-card" onClick={onConnectorCardClicked}>
-      <div>
-        <div className="msla-card-title-container">
-          <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={logoAltText}></Image>
-        </div>
-        <div className="msla-card-title-container">
-          <Text className="msla-card-title">{props.connectorName}</Text>
-        </div>
-      </div>
+    <button className="msla-connector-card ms-depth-4 msla-card-title-container" onClick={onConnectorCardClicked}>
+      <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={logoAltText}></Image>
+      <Text block className="msla-card-title">
+        {props.connectorName}
+      </Text>
       {/* <Text className="msla-card-description">{props.description}</Text> */}
     </button>
   );

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
+//import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { azureFunctionConnectorId } from './operationmanifest';
@@ -11,8 +11,7 @@ import {
   ConnectionType,
   safeSetObjectPropertyValue,
   ArgumentException,
-  equals,
-  connectorsSearchResultsMock,
+  equals, // connectorsSearchResultsMock,
 } from '@microsoft-logic-apps/utils';
 
 interface ServiceProviderConnectionModel {
@@ -120,34 +119,34 @@ export class StandardConnectionService implements IConnectionService {
   }
 
   private async getAllBuiltInConnectors(): Promise<Connector[]> {
-    // const { apiVersion, baseUrl, httpClient } = this.options;
-    // const uri = `${baseUrl}/operationGroups`;
-    // const queryParameters: QueryParameters = {
-    //   'api-version': apiVersion,
-    // };
-    // const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
-    // console.log(response);
-    // return response.value;
-    return Promise.resolve(connectorsSearchResultsMock);
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const uri = `${baseUrl}/operationGroups`;
+    const queryParameters: QueryParameters = {
+      'api-version': apiVersion,
+    };
+    const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
+    console.log(response);
+    return response.value;
+    // return Promise.resolve(connectorsSearchResultsMock);
   }
 
   private async getAllAzureConnectors(): Promise<Connector[]> {
-    // const {
-    //   apiHubServiceDetails: { location, apiVersion, subscriptionId },
-    //   httpClient,
-    // } = this.options;
-    // const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/locations/${location}/managedApis`;
-    // const queryParameters: QueryParameters = {
-    //   'api-version': apiVersion,
-    // };
-    // const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
-    // const connectors = response.value;
-    // const formattedConnectors = this.moveGeneralInformation(connectors);
-    // console.log(formattedConnectors);
-    // return formattedConnectors;
-    const connectors = AzureConnectorMock.value as Connector[];
+    const {
+      apiHubServiceDetails: { location, apiVersion, subscriptionId },
+      httpClient,
+    } = this.options;
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
+    const queryParameters: QueryParameters = {
+      'api-version': apiVersion,
+    };
+    const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
+    const connectors = response.value;
     const formattedConnectors = this.moveGeneralInformation(connectors);
-    return Promise.resolve(formattedConnectors);
+    console.log(formattedConnectors);
+    return formattedConnectors;
+    // const connectors = AzureConnectorMock.value as Connector[];
+    // const formattedConnectors = this.moveGeneralInformation(connectors);
+    // return Promise.resolve(formattedConnectors);
   }
 
   private moveGeneralInformation(connectors: Connector[]): Connector[] {
