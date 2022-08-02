@@ -53,12 +53,12 @@ export const CollapsedDictionary = ({
 };
 
 // convert from DictionaryEditorItemProps array to Segment array
-const parseInitialValue = (items: DictionaryEditorItemProps[]): ValueSegment[] => {
+const parseInitialValue = (items: DictionaryEditorItemProps[]): ValueSegment[] | undefined => {
   items.filter((item) => {
     return !isEmpty(item);
   });
   if (items.length === 0) {
-    return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '{}' }];
+    return;
   }
   const parsedItems: ValueSegment[] = [];
   parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '{\n  "' });

@@ -1,10 +1,10 @@
 import type { ValueSegment } from '../..';
 import type { DictionaryEditorItemProps } from '../../../dictionary';
 import { serializeDictionary } from '../../../dictionary/util/serializecollapeseddictionary';
-import { ValueSegmentType } from '../../models/parameter';
 import { CollapsedEditorType } from '../../shared/collapsedEditor';
 import { $isTokenNode } from '../nodes/tokenNode';
 import { serializeEditorState } from '../utils/editorToSegement';
+import { showCollapsedValidation } from '../utils/helper';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, ElementNode } from 'lexical';
@@ -51,6 +51,9 @@ export const Validation = ({
           case CollapsedEditorType.DICTIONARY:
             if (!editorString.trim().length || editorString === '{}') {
               setIsValid(newValiditity);
+              if (setCollapsedValue) {
+                setCollapsedValue([]);
+              }
             } else {
               newValiditity = isValidDictionary(editorString);
               setIsValid(newValiditity);
@@ -67,15 +70,7 @@ export const Validation = ({
   return (
     <div className={className ?? 'msla-base-editor-validation'}>
       <OnChangePlugin onChange={onChange} />
-      {isValid ||
-      (collapsedValue &&
-        collapsedValue.length === 1 &&
-        (collapsedValue[0].type === ValueSegmentType.TOKEN ||
-          (collapsedValue[0].type === ValueSegmentType.LITERAL &&
-            collapsedValue[0].value.trim().startsWith('"') &&
-            collapsedValue[0].value.trim().endsWith('"'))))
-        ? null
-        : errorMessage}
+      {isValid || (collapsedValue && showCollapsedValidation(collapsedValue)) ? null : errorMessage}
     </div>
   );
 };

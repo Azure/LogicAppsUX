@@ -39,6 +39,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   const updateCollapsedValue = (val: ValueSegment[]) => {
     setCollapsedValue(val);
+    setItems([{ key: [], value: [] }]);
   };
 
   return (

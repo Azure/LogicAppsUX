@@ -84,7 +84,6 @@ export const ScratchTab = () => {
             { key: [], value: [] },
           ]}
         />
-        <DictionaryEditor initialValue={[testTokenSegment]} />
       </>
     );
   };
