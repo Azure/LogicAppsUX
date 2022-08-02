@@ -17,7 +17,11 @@ export interface CreateConnectionProps {
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSets?: ConnectionParameterSets;
   isLoading?: boolean;
-  createConnectionCallback?: (id: string, selectedParameterSet?: ConnectionParameterSet, parameterValues?: Record<string, any>) => void;
+  createConnectionCallback?: (
+    newName: string,
+    selectedParameterSet?: ConnectionParameterSet,
+    parameterValues?: Record<string, any>
+  ) => void;
   cancelCallback?: () => void;
 }
 
@@ -52,7 +56,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
 
   const isParamVisible = useCallback(
     (parameter: ParamType) => {
-      const data = parameter.uiDefinition;
+      const data = parameter?.uiDefinition;
       if (data?.constraints?.hidden || data?.constraints?.hideInUI) return false;
       const dependencyParam = data?.constraints?.dependentParameter;
       if (dependencyParam && parameterValues[dependencyParam.parameter] !== dependencyParam.value) return false;
@@ -64,7 +68,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const validParams = useMemo(() => {
     return Object.entries(parameters).every(
       ([key, parameter]) =>
-        parameter.uiDefinition?.constraints?.required === 'false' || !isParamVisible(parameter) || !!parameterValues[key]
+        parameter?.uiDefinition?.constraints?.required === 'false' || !isParamVisible(parameter) || !!parameterValues[key]
     );
   }, [isParamVisible, parameterValues, parameters]);
 
@@ -116,7 +120,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   );
 
   const getVisibleParameterValues = useCallback(() => {
-    return filterRecord(parameterValues, ([key]) => !isParamVisible(parameters[key]));
+    return filterRecord(parameterValues, ([key]) => isParamVisible(parameters[key]));
   }, [isParamVisible, parameterValues, parameters]);
 
   const submitCallback = useCallback(() => {
@@ -165,7 +169,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
                 options={
                   connectionParameterSets?.values.map((paramSet, index) => ({
                     key: index,
-                    text: paramSet.uiDefinition?.displayName,
+                    text: paramSet?.uiDefinition?.displayName,
                   })) ?? []
                 }
               />
@@ -177,7 +181,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
               if (!isParamVisible(parameter)) return null;
 
-              const data = parameter.uiDefinition;
+              const data = parameter?.uiDefinition;
               let inputComponent = undefined;
               if ((data?.constraints?.allowedValues?.length ?? 0) > 0) {
                 // Dropdown Parameter
