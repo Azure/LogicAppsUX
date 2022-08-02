@@ -56,6 +56,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
+  const currentlySelectedInputNodes = useSelector((state: RootState) => state.schema.currentInputNodes);
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
@@ -307,7 +308,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
             <ButtonContainer {...toolboxButtonContainerProps} />
             {displayToolbox ? (
               <FloatingPanel {...toolboxPanelProps}>
-                <SchemaTree schema={inputSchema} onLeafNodeClick={onToolboxLeafItemClick} />
+                <SchemaTree
+                  schema={inputSchema}
+                  currentlySelectedNodes={currentlySelectedInputNodes}
+                  onLeafNodeClick={onToolboxLeafItemClick}
+                />
               </FloatingPanel>
             ) : null}
             <div className="msla-designer-canvas msla-panel-mode">
