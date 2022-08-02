@@ -1,3 +1,4 @@
+import './styles.less';
 import { Dropdown, DropdownMenuItemType, SearchBox } from '@fluentui/react';
 import type { IDropdownOption, IDropdownProps } from '@fluentui/react';
 import { useState } from 'react';
@@ -26,9 +27,7 @@ export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
 
     const isHeader = option.itemType === DropdownMenuItemType.Header && option.key === filterHeader;
 
-    const searchBox = (
-      <SearchBox showIcon underlined onChange={searchString} style={{ paddingTop: 10 }} placeholder={intlText.SEARCH_OPTIONS} />
-    );
+    const searchBox = <SearchBox showIcon underlined onChange={searchString} className="text" placeholder={intlText.SEARCH_OPTIONS} />;
 
     return isHeader ? searchBox : <>{option.text}</>;
   };
@@ -52,6 +51,7 @@ export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
         gapSpace: 10,
         calloutMaxHeight: 400,
       }}
+      className={`${props.className} searchable-dropdown`}
       options={getOptions(props.options)}
       onRenderOption={renderOption}
       onDismiss={() => setSearchText('')}
