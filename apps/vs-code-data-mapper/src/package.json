@@ -1,6 +1,6 @@
 {
   "name": "microsoft-data-mapper-vscode-extension",
-  "version": "0.0.58",
+  "version": "0.0.59",
   "main": "main.js",
   "engines": {
     "vscode": "^1.64.0"
