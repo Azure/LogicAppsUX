@@ -337,7 +337,7 @@ const initializeOutputTokensForOperations = (
     nodeTokens.tokens.push(
       ...convertOutputsToTokens(
         operationId,
-        operations[operationId].type,
+        operations[operationId]?.type,
         nodeData?.nodeOutputs.outputs ?? {},
         nodeManifest,
         nodesWithManifest
@@ -356,7 +356,7 @@ const initializeVariables = (operations: Operations, allNodesData: NodeDataWithM
 
   for (const nodeData of allNodesData) {
     const { id, nodeInputs, manifest } = nodeData;
-    if (equals(operations[id].type, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+    if (equals(operations[id]?.type, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
       if (!detailsInitialized && manifest) {
         setVariableMetadata(manifest.properties.iconUri, manifest.properties.brandColor);
         detailsInitialized = true;
