@@ -4,7 +4,7 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import { EditorConfigPanel, SchemaTypes } from '../components/configPanel/EditorConfigPanel';
+import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
@@ -19,16 +19,11 @@ import {
   saveDataMap,
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
-import {
-  addCurrentInputNodes,
-  setCurrentInputNodes,
-  setCurrentOutputNode,
-  setInputSchema,
-  setOutputSchema,
-} from '../core/state/SchemaSlice';
+import { setCurrentInputNodes, setCurrentOutputNode, setInputSchema, setOutputSchema, toggleInputNode } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema, SchemaNodeExtended } from '../models';
+import { SchemaTypes } from '../models';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -69,7 +64,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [nodes, edges] = useLayout();
 
   const onToolboxLeafItemClick = (selectedNode: SchemaNodeExtended) => {
-    dispatch(addCurrentInputNodes([selectedNode]));
+    dispatch(toggleInputNode(selectedNode));
   };
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {

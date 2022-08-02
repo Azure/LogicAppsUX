@@ -1,6 +1,7 @@
 import type { SchemaExtended, SchemaNodeDataType, SchemaNodeExtended } from '../../models';
 import { icon16ForSchemaNodeType } from './SchemaTree.Utils';
 import { Button, tokens } from '@fluentui/react-components';
+import { useBoolean } from '@fluentui/react-hooks';
 import { bundleIcon, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
 import { fluentTreeItem, fluentTreeView, provideFluentDesignSystem } from '@fluentui/web-components';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
@@ -57,14 +58,15 @@ const convertToFastTreeItem = (node: SchemaNodeExtended, onLeafNodeClick: (schem
 
 export interface SchemaNodeTreeItemContentProps {
   nodeType: SchemaNodeDataType;
-  filled?: boolean;
+  initialFilled?: boolean;
   includeAddButton: boolean;
   onClick: () => void;
 }
 
-const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, filled, includeAddButton, children, onClick }) => {
+const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, initialFilled, includeAddButton, children, onClick }) => {
   const BundledTypeIcon = icon16ForSchemaNodeType(nodeType);
   const BundledAddIcon = bundleIcon(CheckmarkCircle16Filled, Circle16Regular);
+  const [filled, { toggle: toggleFilled }] = useBoolean(initialFilled || false);
 
   return (
     <>
@@ -76,7 +78,15 @@ const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, f
       {includeAddButton ? (
         <Button
           style={{ border: '0px', borderRadius: '0px', float: 'right', minWidth: '16px', backgroundColor: tokens.colorNeutralBackground2 }}
-          icon={<BundledAddIcon filled={filled} onClick={onClick} />}
+          icon={
+            <BundledAddIcon
+              filled={filled}
+              onClick={() => {
+                toggleFilled();
+                onClick();
+              }}
+            />
+          }
         />
       ) : null}
     </>

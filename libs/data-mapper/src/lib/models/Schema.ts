@@ -96,6 +96,11 @@ export interface PathItem {
   name: string;
 }
 
+export enum SchemaTypes {
+  Input = 'input',
+  Output = 'output',
+}
+
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
     ...schema,
