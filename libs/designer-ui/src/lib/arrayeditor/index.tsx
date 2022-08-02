@@ -1,5 +1,6 @@
+import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
-import type { BaseEditorProps, Segment } from '../editor/base';
+import type { BaseEditorProps } from '../editor/base';
 import type { LabelProps } from '../label';
 import { CollapsedArray } from './collapsedarray';
 import { ExpandedArray } from './expandedarray';
@@ -7,7 +8,7 @@ import { useState } from 'react';
 
 export interface ArrayEditorItemProps {
   key?: string;
-  content: Segment[];
+  content: ValueSegment[];
 }
 
 export interface ArrayEditorProps extends BaseEditorProps {

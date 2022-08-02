@@ -1,5 +1,5 @@
 import type { DictionaryEditorItemProps } from '..';
-import type { Segment } from '../../editor/base';
+import type { ValueSegment } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
@@ -7,7 +7,7 @@ import type { EditorState } from 'lexical';
 
 interface SerializeExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
-  initialItem: Segment[];
+  initialItem: ValueSegment[];
   index: number;
   type: 'key' | 'value';
   setItems: (items: DictionaryEditorItemProps[]) => void;
@@ -32,15 +32,17 @@ export const SerializeExpandedDictionary = ({ items, initialItem, index, type, s
   return <OnChangePlugin onChange={onChange} />;
 };
 
-const notEqual = (a: Segment[], b: Segment[]): boolean => {
+const notEqual = (a: ValueSegment[], b: ValueSegment[]): boolean => {
   if (a.length !== b.length) {
     return true;
   }
   for (let i = 0; i < a.length; i++) {
+    const newA = { token: a[i].token, value: a[i].value };
+    const newB = { token: b[i].token, value: b[i].value };
     if (a[i].type !== b[i].type) {
       return true;
     }
-    if (JSON.stringify(a[i], Object.keys(a[i]).sort()) !== JSON.stringify(b[i], Object.keys(b[i]).sort())) {
+    if (JSON.stringify(newA, Object.keys(newA)) !== JSON.stringify(newB, Object.keys(newB))) {
       return true;
     }
   }

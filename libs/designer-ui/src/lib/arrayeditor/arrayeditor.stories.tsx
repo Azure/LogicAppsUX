@@ -3,6 +3,7 @@ import { ValueSegmentType } from '../editor/models/parameter';
 // import { testTokenSegment } from '../editor/shared/testtokensegment';
 import type { ArrayEditorProps } from './';
 import { ArrayEditor } from './';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
@@ -18,16 +19,16 @@ Standard.args = {
     {
       key: 'test',
       content: [
-        { type: ValueSegmentType.LITERAL, value: 'This is Text' },
+        { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
         // testTokenSegment,
-        { type: ValueSegmentType.LITERAL, value: 'More Text' },
+        { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
       ],
     },
     {
       key: 'test2',
       content: [
         // testTokenSegment, testTokenSegment,
-        { type: ValueSegmentType.LITERAL, value: 'More Text' },
+        { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
       ],
     },
   ],

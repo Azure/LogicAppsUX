@@ -1,10 +1,10 @@
-import type { Segment } from '..';
+import type { ValueSegment } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $createTokenNode } from '../nodes/tokenNode';
 import type { ParagraphNode, RootNode } from 'lexical';
 import { $isParagraphNode, $createParagraphNode, $createTextNode, $getRoot } from 'lexical';
 
-export const parseSegments = (value: Segment[], tokensEnabled?: boolean): RootNode => {
+export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): RootNode => {
   const root = $getRoot();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode;
@@ -15,10 +15,12 @@ export const parseSegments = (value: Segment[], tokensEnabled?: boolean): RootNo
   }
 
   value.forEach((segment) => {
-    if (segment.type === ValueSegmentType.TOKEN) {
+    if (segment.type === ValueSegmentType.TOKEN && segment.token) {
       const { brandColor, description, icon, title } = segment.token;
-      const token = $createTokenNode({ icon, title, description, brandColor });
-      tokensEnabled && paragraph.append(token);
+      if (brandColor && description && icon && title) {
+        const token = $createTokenNode({ icon, title, description, brandColor, data: segment });
+        tokensEnabled && paragraph.append(token);
+      }
     } else {
       const splitSegment = segment.value.split('\n');
       paragraph.append($createTextNode(splitSegment[0]));

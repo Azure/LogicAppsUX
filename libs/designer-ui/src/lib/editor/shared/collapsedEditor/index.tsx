@@ -1,9 +1,9 @@
 import type { ArrayEditorItemProps } from '../../../arrayeditor';
 import { SerializeArray } from '../../../arrayeditor/plugins/SerializeArray';
 import type { DictionaryEditorItemProps } from '../../../dictionary';
-import type { Segment } from '../../base';
 import { BaseEditor } from '../../base';
 import { Validation } from '../../base/plugins/Validation';
+import type { ValueSegment } from '../../models/parameter';
 import type { Dispatch, SetStateAction } from 'react';
 
 export enum CollapsedEditorType {
@@ -13,7 +13,7 @@ export enum CollapsedEditorType {
 
 interface CollapsedEditorBaseProps {
   isValid?: boolean;
-  initialValue?: Segment[];
+  initialValue?: ValueSegment[];
   errorMessage: string;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
 }

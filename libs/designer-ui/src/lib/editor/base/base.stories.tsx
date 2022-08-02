@@ -4,6 +4,7 @@ import { CollapsedEditorType } from '../shared/collapsedEditor';
 // import { testTokenSegment } from '../shared/testtokensegment';
 import type { BaseEditorProps } from './';
 import { BaseEditor } from './';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
@@ -24,8 +25,8 @@ plugins.args = {
     tokens: true,
   },
   initialValue: [
-    { type: ValueSegmentType.LITERAL, value: 'test\ntest' },
-    { type: ValueSegmentType.LITERAL, value: 'test\ntest' },
+    { id: guid(), type: ValueSegmentType.LITERAL, value: 'test\ntest' },
+    { id: guid(), type: ValueSegmentType.LITERAL, value: 'test\ntest' },
     // testTokenSegment,
   ],
 };
@@ -49,7 +50,7 @@ validation.args = {
     },
   },
   initialValue: [
-    { type: ValueSegmentType.LITERAL, value: 'test\ntest' },
-    { type: ValueSegmentType.LITERAL, value: 'test\ntest' },
+    { id: guid(), type: ValueSegmentType.LITERAL, value: 'test\ntest' },
+    { id: guid(), type: ValueSegmentType.LITERAL, value: 'test\ntest' },
   ],
 };

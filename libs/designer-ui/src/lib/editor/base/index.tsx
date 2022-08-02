@@ -1,5 +1,4 @@
-import type { InputTokenProps } from '../../token/inputToken';
-import type { ValueSegmentType } from '../models/parameter';
+import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
@@ -20,19 +19,6 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export { testTokenSegment } from '../shared/testtokensegment';
-export type Segment = {
-  segmentId?: string;
-} & (
-  | {
-      type: ValueSegmentType.TOKEN;
-      token: InputTokenProps;
-    }
-  | {
-      type: ValueSegmentType.LITERAL;
-      value: string;
-    }
-);
-
 interface FocusProps {
   addDictionaryItem?: dictionaryCallbackProps;
   tokenPickerProps?: FocusTokenPickerProps;
@@ -54,7 +40,7 @@ export interface BaseEditorProps {
   readonly?: boolean;
   placeholder?: string;
   BasePlugins?: BasePlugins;
-  initialValue?: Segment[];
+  initialValue?: ValueSegment[];
   children?: React.ReactNode;
   focusProps?: FocusProps;
 }

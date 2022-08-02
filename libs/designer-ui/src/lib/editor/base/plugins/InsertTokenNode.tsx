@@ -17,7 +17,7 @@ export default function InsertTokenNode(): null {
 
     return editor.registerCommand<TokenNodeProps>(
       INSERT_TOKEN_NODE,
-      (payload) => {
+      (payload: TokenNodeProps) => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
           const tokenNode = $createTokenNode(payload);

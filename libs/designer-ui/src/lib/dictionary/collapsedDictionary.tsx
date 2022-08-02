@@ -1,7 +1,8 @@
 import type { DictionaryEditorItemProps } from '.';
+import type { ValueSegment } from '../editor';
 import { ValueSegmentType, CollapsedEditor, CollapsedEditorType } from '../editor';
-import type { Segment } from '../editor/base';
 import { isEmpty } from './util/helper';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { Dispatch, SetStateAction } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -41,25 +42,25 @@ export const CollapsedDictionary = ({ items, isValid, setItems, setIsValid }: Co
 };
 
 // convert from DictionaryEditorItemProps array to Segment array
-const parseInitialValue = (items: DictionaryEditorItemProps[]): Segment[] => {
+const parseInitialValue = (items: DictionaryEditorItemProps[]): ValueSegment[] => {
   items.filter((item) => {
     return !isEmpty(item);
   });
   if (items.length === 0) {
-    return [{ type: ValueSegmentType.LITERAL, value: '{}' }];
+    return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '{}' }];
   }
-  const parsedItems: Segment[] = [];
-  parsedItems.push({ type: ValueSegmentType.LITERAL, value: '{\n  "' });
+  const parsedItems: ValueSegment[] = [];
+  parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '{\n  "' });
   items.forEach((item, index) => {
     const { key, value } = item;
     key.forEach((segment) => {
       parsedItems.push(segment);
     });
-    parsedItems.push({ type: ValueSegmentType.LITERAL, value: '" : "' });
+    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '" : "' });
     value.forEach((segment) => {
       parsedItems.push(segment);
     });
-    parsedItems.push({ type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n}' });
+    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n}' });
   });
   return parsedItems;
 };

@@ -1,47 +1,40 @@
-import type { Segment } from '..';
+import type { ValueSegment } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isTextNode } from 'lexical';
 
-export function serializeEditorState(editorState: EditorState, trimLiteral?: boolean): Segment[] {
-  const segments: Segment[] = [];
+export function serializeEditorState(editorState: EditorState, trimLiteral?: boolean): ValueSegment[] {
+  const segments: ValueSegment[] = [];
   editorState.read(() => {
     getChildrenNodes($getRoot(), segments, trimLiteral ?? false);
   });
   return segments;
 }
 
-const getChildrenNodes = (node: ElementNode, segments: Segment[], trimLiteral: boolean): void => {
+const getChildrenNodes = (node: ElementNode, segments: ValueSegment[], trimLiteral: boolean): void => {
   node.__children.forEach((child) => {
     const childNode = $getNodeByKey(child);
     if (childNode && $isElementNode(childNode)) {
       return getChildrenNodes(childNode, segments, trimLiteral);
     }
     if ($isTextNode(childNode)) {
-      segments.push({ type: ValueSegmentType.LITERAL, value: trimLiteral ? childNode.__text.trim() : childNode.__text });
+      segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: trimLiteral ? childNode.__text.trim() : childNode.__text });
     } else if ($isTokenNode(childNode)) {
-      segments.push({
-        type: ValueSegmentType.TOKEN,
-        token: {
-          title: childNode.__title,
-          icon: childNode.__icon,
-          brandColor: childNode.__brandColor,
-          description: childNode.__description,
-        },
-      });
+      segments.push(childNode.__data);
     }
   });
 };
 
-export const convertStringToSegments = (value: string, tokensEnabled?: boolean, nodeMap?: Map<string, Segment>): Segment[] => {
+export const convertStringToSegments = (value: string, tokensEnabled?: boolean, nodeMap?: Map<string, ValueSegment>): ValueSegment[] => {
   let currIndex = 0;
   let prevIndex = 0;
-  const returnSegments: Segment[] = [];
+  const returnSegments: ValueSegment[] = [];
   while (currIndex < value.length) {
     if (value.substring(currIndex - 2, currIndex) === '$[') {
       if (value.substring(prevIndex, currIndex - 2)) {
-        returnSegments.push({ type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex - 2) });
+        returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex - 2) });
       }
       const newIndex = value.indexOf(']$', currIndex) + 2;
       if (nodeMap && tokensEnabled) {
@@ -54,6 +47,6 @@ export const convertStringToSegments = (value: string, tokensEnabled?: boolean, 
     }
     currIndex++;
   }
-  returnSegments.push({ type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex) });
+  returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex) });
   return returnSegments;
 };
