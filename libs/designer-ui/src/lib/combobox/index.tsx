@@ -79,15 +79,15 @@ export const Combobox = ({
     if (selectedKey) {
       setCustomValue(null);
     }
-    if (onChange) {
-      onChange({ value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: getSelectedValue(options, selectedKey) }] });
-    }
+    // if (onChange) {
+    //   onChange({ value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: getSelectedValue(options, selectedKey) }] });
+    // }
   }, [onChange, options, selectedKey]);
 
   useEffect(() => {
-    if (onChange && customValue) {
-      onChange({ value: customValue });
-    }
+    // if (onChange && customValue) {
+    //   onChange({ value: customValue });
+    // }
   }, [customValue, onChange]);
 
   const toggleExpand = useCallback(() => {
@@ -225,8 +225,8 @@ const getSelectedKey = (options: ComboboxItem[], initialValue: ValueSegment[]): 
   return '';
 };
 
-const getSelectedValue = (options: ComboboxItem[], key: string): string => {
-  return options.find((option) => {
-    return option.key === key;
-  })?.value;
-};
+// const getSelectedValue = (options: ComboboxItem[], key: string): string => {
+//   return options.find((option) => {
+//     return option.key === key;
+//   })?.value;
+// };

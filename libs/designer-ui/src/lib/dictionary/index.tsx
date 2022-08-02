@@ -44,7 +44,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   return (
     <div className="msla-dictionary-editor-container">
-      {collapsed || collapsedValue.length > 0 ? (
+      {collapsed ? (
         <CollapsedDictionary
           items={items ?? [{ key: [], value: [] }]}
           isValid={isValid}
