@@ -13,24 +13,6 @@ interface QueryResult {
   result: any;
 }
 
-export const useActionMetadata = (actionId?: string) => {
-  return useSelector((state: RootState) => {
-    if (!actionId) {
-      return undefined;
-    }
-    return state.workflow.operations[actionId];
-  });
-};
-
-export const useNodeMetadata = (nodeId?: string) => {
-  return useSelector((state: RootState) => {
-    if (!nodeId) {
-      return undefined;
-    }
-    return state.workflow.nodesMetadata[nodeId];
-  });
-};
-
 export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
   const result = useOperationManifest(operationInfo);
   const manifest = result.data;
@@ -58,15 +40,6 @@ export const useNodeConnectionName = (nodeId: string): QueryResult => {
     isLoading,
     result: !isLoading && connectionId ? connection?.properties.displayName ?? connectionId.split('/').at(-1) : '',
   };
-};
-
-export const useNodeDescription = (nodeId: string) => {
-  return useSelector((state: RootState) => {
-    if (!nodeId) {
-      return undefined;
-    }
-    return state.workflow.operations[nodeId]?.description;
-  });
 };
 
 export const useOperationInfo = (nodeId: string) => {
