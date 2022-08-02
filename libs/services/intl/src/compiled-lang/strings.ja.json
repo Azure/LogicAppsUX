@@ -1143,6 +1143,12 @@
       "value": "(UTC-01:00) アゾレス諸島"
     }
   ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
@@ -2438,6 +2444,12 @@
       "value": "クリア"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -3575,10 +3587,10 @@
       "value": "がスキップされます"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "有効なアレイを入力してください"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3809,6 +3821,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) サモア"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4448,6 +4466,12 @@
       "value": "必須。部分文字列の長さ。"
     }
   ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
+    }
+  ],
   "wWVQuK": [
     {
       "type": 0,
@@ -4630,6 +4654,12 @@
     {
       "type": 0,
       "value": "必須。10 進数に変換される値。"
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [
