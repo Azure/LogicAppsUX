@@ -1,4 +1,4 @@
-import type { InitializePayload } from '../state/vscodeSlice';
+import type { InitializePayload, Status } from '../state/vscodeSlice';
 import type { ExtensionCommand } from '@microsoft-logic-apps/utils';
 
 export interface IRunService {
@@ -241,6 +241,7 @@ export enum RouteName {
   validation = 'validation',
   overview = 'overview',
   summary = 'summary',
+  status = 'status',
 }
 
 export enum ValidationStatus {
@@ -308,6 +309,20 @@ export interface UpdateExportPathMessage {
   command: ExtensionCommand.update_export_path;
   data: {
     targetDirectory: ITargetDirectory;
+  };
+}
+
+export interface AddStatusMessage {
+  command: ExtensionCommand.add_status;
+  data: {
+    status: string;
+  };
+}
+
+export interface SetFinalStatusMessage {
+  command: ExtensionCommand.set_final_status;
+  data: {
+    status: Status;
   };
 }
 

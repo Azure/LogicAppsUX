@@ -1,5 +1,6 @@
 import { ExportApp } from '../app/export/export';
 import { InstanceSelection } from '../app/export/instanceSelection/instanceSelection';
+import { Status } from '../app/export/status/status';
 import { Summary } from '../app/export/summary/summary';
 import { Validation } from '../app/export/validation/validation';
 import { WorkflowsSelection } from '../app/export/workflowsSelection/workflowsSelection';
@@ -18,6 +19,7 @@ export const Router: React.FC = () => {
           <Route path={`${RouteName.workflows_selection}`} element={<WorkflowsSelection />} />
           <Route path={`${RouteName.validation}`} element={<Validation />} />
           <Route path={`${RouteName.summary}`} element={<Summary />} />
+          <Route path={`${RouteName.status}`} element={<Status />} />
         </Route>
         <Route path={`/${RouteName.overview}`} element={<OverviewApp />} />
       </Routes>
