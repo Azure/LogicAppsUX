@@ -1165,6 +1165,12 @@
       "value": "(UTC-01:00) Azzorre"
     }
   ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
@@ -2501,6 +2507,12 @@
       "value": "Cancella"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -3104,7 +3116,7 @@
   "er+4Cd": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Selezionare lo schema per l'elenco a discesa"
     }
   ],
   "esOQ5p": [
@@ -3653,10 +3665,10 @@
       "value": "è stato ignorato"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Immettere un array valido"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3887,6 +3899,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4422,7 +4440,7 @@
   "vLXCIR": [
     {
       "type": 0,
-      "value": "Button for managing toggle state"
+      "value": "Pulsante per la gestione dello stato di attivazione/disattivazione"
     }
   ],
   "vQcQkU": [
@@ -4539,6 +4557,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Lunghezza della sottostringa."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4723,6 +4747,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore convertito in un numero decimale."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

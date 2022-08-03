@@ -1,5 +1,5 @@
 import type { DictionaryEditorItemProps } from '..';
-import type { Segment } from '../../editor/base';
+import type { ValueSegment } from '../../editor';
 import { $isTokenNode } from '../../editor/base/nodes/tokenNode';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
 import type { ElementNode, LexicalEditor } from 'lexical';
@@ -7,7 +7,7 @@ import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
 
 export const serializeDictionary = (editor: LexicalEditor, setItems: (items: DictionaryEditorItemProps[]) => void) => {
   editor.getEditorState().read(() => {
-    const nodeMap = new Map<string, Segment>();
+    const nodeMap = new Map<string, ValueSegment>();
     const editorString = getChildrenNodes($getRoot(), nodeMap);
     let jsonEditor;
     try {
@@ -27,7 +27,7 @@ export const serializeDictionary = (editor: LexicalEditor, setItems: (items: Dic
   });
 };
 
-const getChildrenNodes = (node: ElementNode, nodeMap: Map<string, Segment>): string => {
+const getChildrenNodes = (node: ElementNode, nodeMap: Map<string, ValueSegment>): string => {
   let text = '';
   node.__children.forEach((child) => {
     const childNode = $getNodeByKey(child);

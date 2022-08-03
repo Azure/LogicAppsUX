@@ -1147,6 +1147,12 @@
       "value": "(UTC-01:00)亚速尔群岛"
     }
   ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
@@ -2446,6 +2452,12 @@
       "value": "清除"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -3049,7 +3061,7 @@
   "er+4Cd": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "选择下拉列表的架构"
     }
   ],
   "esOQ5p": [
@@ -3603,10 +3615,10 @@
       "value": "已跳过"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "请输入有效的数组"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3845,6 +3857,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00)萨摩亚"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4369,7 +4387,7 @@
   "vLXCIR": [
     {
       "type": 0,
-      "value": "Button for managing toggle state"
+      "value": "用于管理切换状态的按钮"
     }
   ],
   "vQcQkU": [
@@ -4486,6 +4504,12 @@
     {
       "type": 0,
       "value": "必需。子字符串的长度。"
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4670,6 +4694,12 @@
     {
       "type": 0,
       "value": "必填。转换为小数的值。"
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

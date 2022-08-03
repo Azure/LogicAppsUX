@@ -1165,6 +1165,12 @@
       "value": "(UTC-01:00) Azori-szigetek"
     }
   ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
@@ -2497,6 +2503,12 @@
       "value": "Törlés"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -3100,7 +3112,7 @@
   "er+4Cd": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Válassza ki a sémát a legördülő listához."
     }
   ],
   "esOQ5p": [
@@ -3661,10 +3673,10 @@
       "value": "kihagyva"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Adjon meg egy érvényes tömböt."
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3895,6 +3907,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Szamoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4430,7 +4448,7 @@
   "vLXCIR": [
     {
       "type": 0,
-      "value": "Button for managing toggle state"
+      "value": "A kapcsoló állapotának kezelésére szolgáló gomb"
     }
   ],
   "vQcQkU": [
@@ -4547,6 +4565,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A sztring hossza."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4731,6 +4755,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A tizedestörtté alakítandó érték."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

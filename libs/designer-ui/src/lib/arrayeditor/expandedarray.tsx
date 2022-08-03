@@ -42,7 +42,7 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
   });
 
   const renderLabel = (index: number): JSX.Element => {
-    const { text, isRequiredField } = labelProps;
+    const { text, isRequiredField } = labelProps as LabelProps;
     return (
       <div className="msla-array-editor-label">
         <Label text={text + ' Item - ' + (index + 1)} isRequiredField={isRequiredField} />
@@ -74,7 +74,7 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
               className="msla-array-editor-container-expanded"
               initialValue={item.content ?? []}
               BasePlugins={{ tokens: true, clearEditor: true }}
-              focusProps={{ tokenPickerProps: { buttonClassName: 'msla-expanded-array-editor-tokenpicker' } }}
+              tokenPickerButtonProps={{ buttonClassName: 'msla-expanded-array-editor-tokenpicker' }}
             >
               <EditorChange item={item.content ?? []} items={items} setItems={setItems} index={index} />
             </BaseEditor>
