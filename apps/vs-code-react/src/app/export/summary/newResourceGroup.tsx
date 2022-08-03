@@ -29,13 +29,22 @@ export const NewResourceGroup: React.FC = () => {
     }),
   };
 
+  const linkClassName = 'msla-export-summary-connections-new-resource';
+
   return (
     <>
-      <Link className="msla-export-summary-connections-new-resource" onClick={toggleIsCalloutVisible}>
+      <Link className={linkClassName} onClick={toggleIsCalloutVisible}>
         {intlText.CREATE_NEW}
       </Link>
       {isCalloutVisible && (
-        <Callout role="dialog" gapSpace={8} target={'.msla-export-summary-connections-new-resource'} onDismiss={toggleIsCalloutVisible}>
+        <Callout
+          role="dialog"
+          gapSpace={8}
+          calloutMaxWidth={360}
+          style={{ padding: '20px 15px 0 15px' }}
+          target={`.${linkClassName}`}
+          onDismiss={toggleIsCalloutVisible}
+        >
           <Text variant="mediumPlus" block>
             {intlText.RESOURCE_GROUP_DESCRIPTION}
           </Text>
