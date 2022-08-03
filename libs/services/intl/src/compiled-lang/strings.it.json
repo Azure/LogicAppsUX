@@ -576,7 +576,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Scegliere la visualizzazione da cui esplorare"
     }
   ],
   "4XdZNj": [
@@ -648,7 +648,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Connettori"
     }
   ],
   "5aa76N": [
@@ -1163,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azzorre"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2501,6 +2507,12 @@
       "value": "Cancella"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2700,7 +2712,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Zoom indietro"
     }
   ],
   "Z4QLEf": [
@@ -3018,7 +3030,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Connesso a "
     },
     {
       "type": 1,
@@ -3101,6 +3113,12 @@
       "value": "Obbligatorio. Indice della posizione di inizio della sottostringa nel parametro 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Selezionare lo schema per l'elenco a discesa"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3164,7 +3182,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Zoom avanti"
     }
   ],
   "g4igOR": [
@@ -3548,7 +3566,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Visualizza minimappa"
     }
   ],
   "kYivbS": [
@@ -3647,10 +3665,10 @@
       "value": "è stato ignorato"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Immettere un array valido"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3881,6 +3899,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4371,6 +4395,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variabili"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4405,6 +4435,12 @@
     {
       "type": 0,
       "value": "Restituisce l'ultimo indice di un valore all'interno di una stringa (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Pulsante per la gestione dello stato di attivazione/disattivazione"
     }
   ],
   "vQcQkU": [
@@ -4484,7 +4520,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Adattamento pagina"
     }
   ],
   "wEaGWn": [
@@ -4521,6 +4557,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Lunghezza della sottostringa."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4705,6 +4747,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore convertito in un numero decimale."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

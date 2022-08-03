@@ -8,7 +8,7 @@ import { initializeOperationInfo, initializeNodes } from '../../state/operation/
 import { clearPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
-import type { NodesMetadata, Operations } from '../../state/workflow/workflowSlice';
+import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getRecurrenceParameters } from '../../utils/parameters/builtins';
 import {
@@ -337,7 +337,7 @@ const initializeOutputTokensForOperations = (
     nodeTokens.tokens.push(
       ...convertOutputsToTokens(
         operationId,
-        operations[operationId].type,
+        operations[operationId]?.type,
         nodeData?.nodeOutputs.outputs ?? {},
         nodeManifest,
         nodesWithManifest
@@ -356,7 +356,7 @@ const initializeVariables = (operations: Operations, allNodesData: NodeDataWithM
 
   for (const nodeData of allNodesData) {
     const { id, nodeInputs, manifest } = nodeData;
-    if (equals(operations[id].type, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+    if (equals(operations[id]?.type, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
       if (!detailsInitialized && manifest) {
         setVariableMetadata(manifest.properties.iconUri, manifest.properties.brandColor);
         detailsInitialized = true;

@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import type { PanelState } from './panelInterfaces';
+import type { IdsForDiscovery, PanelState } from './panelInterfaces';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -7,8 +7,10 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const initialState: PanelState = {
   collapsed: true,
   selectedNode: '',
+  discoveryIds: {
+    graphId: 'root',
+  },
   isDiscovery: false,
-
   registeredTabs: {},
   selectedTabName: undefined,
 };
@@ -29,14 +31,14 @@ export const panelSlice = createSlice({
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
       if (!action) return;
+      if (state.collapsed) state.collapsed = false;
       state.selectedNode = action.payload;
       state.isDiscovery = false;
     },
-    expandDiscoveryPanel: (state, action: PayloadAction<{ childId?: string; parentId?: string; nodeId: string }>) => {
+    expandDiscoveryPanel: (state, action: PayloadAction<{ discoveryIds: IdsForDiscovery; nodeId: string }>) => {
       state.collapsed = false;
       state.isDiscovery = true;
-      state.parentId = action.payload.parentId;
-      state.childId = action.payload.childId;
+      state.discoveryIds = action.payload.discoveryIds;
       state.selectedNode = action.payload.nodeId;
     },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
@@ -53,9 +55,10 @@ export const panelSlice = createSlice({
       delete state.registeredTabs[action.payload];
     },
     setTabVisibility: (state, action: PayloadAction<{ tabName: string; visible?: boolean }>) => {
-      if (state.registeredTabs[action.payload.tabName.toLowerCase()]) {
-        state.registeredTabs[action.payload.tabName.toLowerCase()] = {
-          ...state.registeredTabs[action.payload.tabName.toLowerCase()],
+      const tabName = action.payload.tabName.toLowerCase();
+      if (tabName) {
+        state.registeredTabs[tabName] = {
+          ...state.registeredTabs[tabName],
           visible: !!action.payload.visible,
         };
       }

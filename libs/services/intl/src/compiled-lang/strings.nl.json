@@ -576,7 +576,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Kiezen vanuit welke weergave u wilt browsen"
     }
   ],
   "4XdZNj": [
@@ -1163,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azoren"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2497,6 +2503,12 @@
       "value": "Wissen"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2696,7 +2708,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Uitzoomen"
     }
   ],
   "Z4QLEf": [
@@ -3014,7 +3026,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Verbonden met "
     },
     {
       "type": 1,
@@ -3097,6 +3109,12 @@
       "value": "Vereist. De index van waar de subtekenreeks begint in parameter 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Selecteer het schema voor de vervolgkeuzelijst"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3160,7 +3178,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Inzoomen"
     }
   ],
   "g4igOR": [
@@ -3552,7 +3570,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Minikaart weergeven"
     }
   ],
   "kYivbS": [
@@ -3651,10 +3669,10 @@
       "value": "is overgeslagen"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Voer een geldige array in."
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3885,6 +3903,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4375,6 +4399,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variabelen"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4409,6 +4439,12 @@
     {
       "type": 0,
       "value": "De laatste index van een waarde van een tekenreeks wordt geretourneerd (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Knop voor het beheren van de wisselstatus"
     }
   ],
   "vQcQkU": [
@@ -4488,7 +4524,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Pagina passend maken"
     }
   ],
   "wEaGWn": [
@@ -4525,6 +4561,12 @@
     {
       "type": 0,
       "value": "Vereist. De lengte van de subtekenreeks."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4709,6 +4751,12 @@
     {
       "type": 0,
       "value": "Vereist. De waarde die wordt geconverteerd naar een decimaal getal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

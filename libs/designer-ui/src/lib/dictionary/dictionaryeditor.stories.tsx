@@ -2,6 +2,7 @@ import { ValueSegmentType } from '../editor/models/parameter';
 // import { testTokenSegment } from '../editor/shared/testtokensegment';
 import type { DictionaryEditorProps } from './';
 import { DictionaryEditor } from './';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
@@ -15,24 +16,24 @@ Standard.args = {
   initialItems: [
     {
       key: [
-        { type: ValueSegmentType.LITERAL, value: 'Key Text' },
+        { id: guid(), type: ValueSegmentType.LITERAL, value: 'Key Text' },
         // testTokenSegment,
-        { type: ValueSegmentType.LITERAL, value: 'More Text' },
+        { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
       ],
       value: [
-        { type: ValueSegmentType.LITERAL, value: 'Value Text' },
+        { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value Text' },
         // testTokenSegment,
-        { type: ValueSegmentType.LITERAL, value: 'Additional Text' },
+        { id: guid(), type: ValueSegmentType.LITERAL, value: 'Additional Text' },
       ],
     },
     {
       key: [
         // testTokenSegment, testTokenSegment,
-        { type: ValueSegmentType.LITERAL, value: 'Key2 Text' },
+        { id: guid(), type: ValueSegmentType.LITERAL, value: 'Key2 Text' },
       ],
       value: [
         // testTokenSegment, testTokenSegment,
-        { type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
+        { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
       ],
     },
   ],

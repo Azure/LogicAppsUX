@@ -12,6 +12,12 @@ export interface InitializePayload {
   project: ProjectName;
 }
 
+export enum Status {
+  InProgress = 'InProgress',
+  Succeeded = 'Succeeded',
+  Failed = 'Failed',
+}
+
 export interface InitializedVscodeState {
   initialized: true;
   accessToken?: string;
@@ -21,6 +27,8 @@ export interface InitializedVscodeState {
   workflowProperties: OverviewPropertiesProps;
   project: ProjectName;
   exportData: ExportData;
+  statuses?: string[];
+  finalStatus?: Status;
 }
 
 interface UninitializedVscodeState {
@@ -41,13 +49,14 @@ export const vscodeSlice = createSlice({
     initialize: (state: VscodeState, action: PayloadAction<InitializePayload>) => {
       const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, project } = action.payload;
       state.initialized = true;
-      (state as InitializedVscodeState).project = project;
-      (state as InitializedVscodeState).accessToken = accessToken;
-      (state as InitializedVscodeState).apiVersion = apiVersion;
-      (state as InitializedVscodeState).baseUrl = baseUrl;
-      (state as InitializedVscodeState).corsNotice = corsNotice;
-      (state as InitializedVscodeState).workflowProperties = workflowProperties;
-      (state as InitializedVscodeState).exportData = {
+      const initializedState = state as InitializedVscodeState;
+      initializedState.project = project;
+      initializedState.accessToken = accessToken;
+      initializedState.apiVersion = apiVersion;
+      initializedState.baseUrl = baseUrl;
+      initializedState.corsNotice = corsNotice;
+      initializedState.workflowProperties = workflowProperties;
+      initializedState.exportData = {
         selectedWorkflows: [],
         selectedSubscription: '',
         selectedIse: '',
@@ -97,6 +106,16 @@ export const vscodeSlice = createSlice({
     updateManagedConnections: (state: VscodeState, action: PayloadAction<ManagedConnections>) => {
       (state as InitializedVscodeState).exportData.managedConnections = action.payload;
     },
+    addStatus: (state: VscodeState, action: PayloadAction<{ status: string }>): void => {
+      const { status } = action.payload;
+      const initializedState = state as InitializedVscodeState;
+      initializedState.statuses = [...(initializedState.statuses ?? []), status];
+    },
+    setFinalStatus: (state: VscodeState, action: PayloadAction<{ status: Status }>): void => {
+      const { status } = action.payload;
+      const initializedState = state as InitializedVscodeState;
+      initializedState.finalStatus = status;
+    },
   },
 });
 
@@ -111,6 +130,8 @@ export const {
   updateTargetDirectory,
   updatePackageUrl,
   updateManagedConnections,
+  addStatus,
+  setFinalStatus,
 } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;

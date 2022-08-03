@@ -4,7 +4,7 @@ import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { PrimaryButton } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft-logic-apps/utils';
-import { useContext } from 'react';
+import { Fragment, useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -65,6 +65,7 @@ export const Navigation: React.FC = () => {
         break;
       }
       case `/${RouteName.export}/${RouteName.summary}`: {
+        navigate(`/${RouteName.export}/${RouteName.status}`);
         vscode.postMessage({
           command: ExtensionCommand.export_package,
           targetDirectory,
@@ -80,7 +81,7 @@ export const Navigation: React.FC = () => {
 
   const isBackDisabled = (): boolean => {
     const { pathname } = location;
-    return pathname === `/${RouteName.export}/${RouteName.instance_selection}`;
+    return pathname === `/${RouteName.export}/${RouteName.instance_selection}` || pathname === `/${RouteName.export}/${RouteName.status}`;
   };
 
   const isNextDisabled = (): boolean => {
@@ -97,7 +98,7 @@ export const Navigation: React.FC = () => {
         return validationState === '' || validationState === ValidationStatus.failed;
       }
       case `/${RouteName.export}/${RouteName.summary}`: {
-        return targetDirectory.path === '' || (isManaged && resourceGroup === '');
+        return targetDirectory.path === '' || (targetDirectory.path !== '' && isManaged && resourceGroup === undefined);
       }
       default: {
         return true;
@@ -125,22 +126,28 @@ export const Navigation: React.FC = () => {
 
   const nextText = getNextText();
 
+  const isButtonsVisible = location.pathname !== `/${RouteName.export}/${RouteName.status}`;
+
   return (
     <div className="msla-export-navigation-panel">
-      <PrimaryButton
-        className="msla-export-navigation-panel-button"
-        text={intlText.BACK}
-        ariaLabel={intlText.BACK}
-        onClick={onClickBack}
-        disabled={isBackDisabled()}
-      />
-      <PrimaryButton
-        className="msla-export-navigation-panel-button"
-        text={nextText}
-        ariaLabel={nextText}
-        onClick={onClickNext}
-        disabled={isNextDisabled()}
-      />
+      {isButtonsVisible ? (
+        <>
+          <PrimaryButton
+            className="msla-export-navigation-panel-button"
+            text={intlText.BACK}
+            ariaLabel={intlText.BACK}
+            onClick={onClickBack}
+            disabled={isBackDisabled()}
+          />
+          <PrimaryButton
+            className="msla-export-navigation-panel-button"
+            text={nextText}
+            ariaLabel={nextText}
+            onClick={onClickNext}
+            disabled={isNextDisabled()}
+          />
+        </>
+      ) : null}
     </div>
   );
 };

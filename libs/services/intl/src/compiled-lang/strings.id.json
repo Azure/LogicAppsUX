@@ -565,7 +565,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Pilih tampilan yang akan dijelajahi"
     }
   ],
   "4XdZNj": [
@@ -637,7 +637,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Konektor"
     }
   ],
   "5aa76N": [
@@ -1141,6 +1141,12 @@
     {
       "type": 0,
       "value": "(UTC-01.00) Azores"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2438,6 +2444,12 @@
       "value": "Bersihkan"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2637,7 +2649,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Perkecil tampilan"
     }
   ],
   "Z4QLEf": [
@@ -3038,6 +3050,12 @@
       "value": "Harus diisi. Indeks substring awal dalam parameter 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Pilih skema untuk menu menurun"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3101,7 +3119,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Perbesar tampilan"
     }
   ],
   "g4igOR": [
@@ -3474,7 +3492,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Tampilkan peta mini"
     }
   ],
   "kYivbS": [
@@ -3573,10 +3591,10 @@
       "value": "dilewati"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Masukkan array yang valid"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3807,6 +3825,12 @@
     {
       "type": 0,
       "value": "(UTC+13.00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4286,6 +4310,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variabel"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4320,6 +4350,12 @@
     {
       "type": 0,
       "value": "Menghasilkan indeks terakhir dari nilai dalam string (tidak peka huruf besar/kecil, kultur invarian)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Tombol untuk mengelola status hidupkan/matikan"
     }
   ],
   "vQcQkU": [
@@ -4399,7 +4435,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Paskan halaman"
     }
   ],
   "wEaGWn": [
@@ -4436,6 +4472,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Panjang substring."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4620,6 +4662,12 @@
     {
       "type": 0,
       "value": "Wajib. Nilai yang dikonversi menjadi angka desimal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

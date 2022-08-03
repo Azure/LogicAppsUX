@@ -1,6 +1,6 @@
 import { isWorkflowGraph, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode, WorkflowEdgeType, WorkflowNodeType } from '../parsers/models/workflowNode';
-import type { NodesMetadata } from '../state/workflow/workflowSlice';
+import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
 
 export const isRootNodeInGraph = (nodeId: string, graphId: string, nodesMetadata: NodesMetadata): boolean => {
@@ -12,7 +12,7 @@ export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
 };
 
 export const isLeafNodeFromEdges = (edges: WorkflowEdge[]) => {
-  return edges.filter((edge) => !edge.target.endsWith('#footer')).length === 0;
+  return edges.filter((edge) => edge.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE).length === 0;
 };
 
 // This is the starting size for all nodes

@@ -598,7 +598,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Выберите представление для просмотра"
     }
   ],
   "4XdZNj": [
@@ -670,7 +670,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Соединители"
     }
   ],
   "5aa76N": [
@@ -1207,6 +1207,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Азорские острова"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2603,6 +2609,12 @@
       "value": "Очистить"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2802,7 +2814,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Уменьшить"
     }
   ],
   "Z4QLEf": [
@@ -3120,7 +3132,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Подключено к "
     },
     {
       "type": 1,
@@ -3203,6 +3215,12 @@
       "value": "Обязательное поле. Индекс начала подстроки в параметре 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Выберите схему для раскрывающегося списка"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3266,7 +3284,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Увеличить"
     }
   ],
   "g4igOR": [
@@ -3688,7 +3706,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Показать мини-карту"
     }
   ],
   "kYivbS": [
@@ -3787,10 +3805,10 @@
       "value": "пропущен"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Введите допустимый массив"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -4021,6 +4039,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Самоа"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4533,6 +4557,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Переменные"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4567,6 +4597,12 @@
     {
       "type": 0,
       "value": "Возвращает последний индекс значения в строке (без учета регистра, инвариантные язык и региональные параметры)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Кнопка для управления состоянием переключателя"
     }
   ],
   "vQcQkU": [
@@ -4646,7 +4682,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "По размеру страницы"
     }
   ],
   "wEaGWn": [
@@ -4683,6 +4719,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Длина подстроки."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4867,6 +4909,12 @@
     {
       "type": 0,
       "value": "Обязательно. Значение, преобразуемое в десятичное число."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

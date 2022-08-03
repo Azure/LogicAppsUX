@@ -565,7 +565,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "選擇要瀏覽的來源檢視"
     }
   ],
   "4XdZNj": [
@@ -637,7 +637,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "連接器"
     }
   ],
   "5aa76N": [
@@ -1141,6 +1141,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) 亞述群島"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2438,6 +2444,12 @@
       "value": "清除"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2637,7 +2649,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "縮小"
     }
   ],
   "Z4QLEf": [
@@ -3038,6 +3050,12 @@
       "value": "必要。參數 1 中子字串起始處的索引。"
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "選取下拉式清單的結構描述"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3101,7 +3119,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "放大"
     }
   ],
   "g4igOR": [
@@ -3474,7 +3492,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "顯示縮圖"
     }
   ],
   "kYivbS": [
@@ -3573,10 +3591,10 @@
       "value": "已跳過"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "請輸入有效的陣列"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3807,6 +3825,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) 薩摩亞"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4286,6 +4310,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "變數"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4320,6 +4350,12 @@
     {
       "type": 0,
       "value": "傳回字串內值的最後一個索引 (不區分大小寫，不因文化特性而異)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "用於管理切換狀態的按鈕"
     }
   ],
   "vQcQkU": [
@@ -4399,7 +4435,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "網頁最適大小"
     }
   ],
   "wEaGWn": [
@@ -4436,6 +4472,12 @@
     {
       "type": 0,
       "value": "必要。子字串的長度。"
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4620,6 +4662,12 @@
     {
       "type": 0,
       "value": "必要。轉換為十進位數字的值。"
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

@@ -13,6 +13,7 @@ export * from './lib/models/connection';
 export * from './lib/models/operationmanifest';
 export * from './lib/models/operation';
 export * from './lib/models/extensioncommand';
+export * from './lib/models/operationDiscoveryResults';
 
 export * from './lib/mocks/connectors';
 export * from './lib/mocks/connections';

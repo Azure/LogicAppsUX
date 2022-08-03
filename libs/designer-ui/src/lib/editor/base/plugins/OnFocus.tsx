@@ -2,7 +2,11 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { FOCUS_COMMAND, COMMAND_PRIORITY_NORMAL } from 'lexical';
 import { useEffect } from 'react';
 
-export default function OnFocus({ command }: { command: () => void }) {
+interface OnFocusProps {
+  command: () => void;
+}
+
+export default function OnFocus({ command }: OnFocusProps) {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {

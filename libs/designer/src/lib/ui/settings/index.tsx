@@ -2,6 +2,7 @@ import constants from '../../common/constants';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
+import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { setExpandedSections } from '../../core/state/settingSlice';
 import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
@@ -18,7 +19,6 @@ import { Tracking } from './sections/tracking';
 import type { TrackingSectionProps } from './sections/tracking';
 import type { IDropdownOption } from '@fluentui/react';
 import { equals, isObject } from '@microsoft-logic-apps/utils';
-import { useDebouncedCallback } from '@react-hookz/web';
 import { useDispatch, useSelector } from 'react-redux';
 
 export type ToggleHandler = (checked: boolean) => void;
@@ -30,7 +30,6 @@ export interface SectionProps extends Settings {
   nodeId: string;
   expanded: boolean;
   onHeaderClick?: HeaderClickHandler;
-  refs?: any;
 }
 
 export type HeaderClickHandler = (sectionName: string) => void;
@@ -51,7 +50,7 @@ export const SettingsPanel = (): JSX.Element => {
 function GeneralSettings(): JSX.Element | null {
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelector((state: RootState) => state.panel.selectedNode),
+    nodeId = useSelectedNodeId(),
     { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions } = useSelector(
       (state: RootState) => state.operations.settings[nodeId] ?? {}
     );
@@ -193,7 +192,7 @@ function GeneralSettings(): JSX.Element | null {
 function TrackingSettings(): JSX.Element | null {
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelector((state: RootState) => state.panel.selectedNode),
+    nodeId = useSelectedNodeId(),
     { trackedProperties, correlation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
 
   const onClientTrackingIdChange = (newValue: string): void => {
@@ -213,39 +212,34 @@ function TrackingSettings(): JSX.Element | null {
     );
   };
 
-  const onTrackedPropertiesDictionaryValueChanged = useDebouncedCallback(
-    (newValue: Record<string, string>): void => {
-      let trackedPropertiesInput: Record<string, any> = {}; // tslint:disable-line: no-any
-      if (isObject(newValue) && Object.keys(newValue).length > 0 && Object.keys(newValue).some((key) => newValue[key] !== undefined)) {
-        trackedPropertiesInput = {};
-        for (const key of Object.keys(newValue)) {
-          let propertyValue: any; // tslint:disable-line: no-any
-          try {
-            propertyValue = JSON.parse(newValue[key]);
-          } catch {
-            propertyValue = newValue[key];
-          }
-
-          trackedPropertiesInput[key] = propertyValue;
+  const onTrackedPropertiesDictionaryValueChanged = (newValue: Record<string, string>): void => {
+    let trackedPropertiesInput: Record<string, any> = {}; // tslint:disable-line: no-any
+    if (isObject(newValue) && Object.keys(newValue).length > 0 && Object.keys(newValue).some((key) => newValue[key] !== undefined)) {
+      trackedPropertiesInput = {};
+      for (const key of Object.keys(newValue)) {
+        let propertyValue: any; // tslint:disable-line: no-any
+        try {
+          propertyValue = JSON.parse(newValue[key]);
+        } catch {
+          propertyValue = newValue[key];
         }
+
+        trackedPropertiesInput[key] = propertyValue;
       }
-      // TODO (14427339): Setting Validation
-      dispatch(
-        updateNodeSettings({
-          id: nodeId,
-          settings: {
-            trackedProperties: {
-              isSupported: !!trackedProperties?.isSupported,
-              value: trackedPropertiesInput,
-            },
+    }
+    // TODO (14427339): Setting Validation
+    dispatch(
+      updateNodeSettings({
+        id: nodeId,
+        settings: {
+          trackedProperties: {
+            isSupported: !!trackedProperties?.isSupported,
+            value: trackedPropertiesInput,
           },
-        })
-      );
-    },
-    [],
-    0,
-    500
-  );
+        },
+      })
+    );
+  };
 
   const onTrackedPropertiesStringValueChange = (newValue: string): void => {
     let trackedPropertiesInput: any = ''; // tslint:disable-line: no-any
@@ -290,7 +284,7 @@ function TrackingSettings(): JSX.Element | null {
 function DataHandlingSettings(): JSX.Element | null {
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelector((state: RootState) => state.panel.selectedNode),
+    nodeId = useSelectedNodeId(),
     { disableAutomaticDecompression, requestSchemaValidation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
 
   const onAutomaticDecompressionChange = (checked: boolean): void => {
@@ -340,7 +334,7 @@ function DataHandlingSettings(): JSX.Element | null {
 function NetworkingSettings(): JSX.Element | null {
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelector((state: RootState) => state.panel.selectedNode),
+    nodeId = useSelectedNodeId(),
     {
       asynchronous,
       disableAsyncPattern,
@@ -505,7 +499,7 @@ function NetworkingSettings(): JSX.Element | null {
 function RunAfterSettings(): JSX.Element | null {
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelector((state: RootState) => state.panel.selectedNode),
+    nodeId = useSelectedNodeId(),
     { runAfter } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
 
   // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
@@ -524,7 +518,7 @@ function RunAfterSettings(): JSX.Element | null {
 function SecuritySettings(): JSX.Element | null {
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelector((state: RootState) => state.panel.selectedNode),
+    nodeId = useSelectedNodeId(),
     { secureInputs, secureOutputs } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
   const onSecureInputsChange = (checked: boolean): void => {
     // TODO (14427339): Setting Validation
