@@ -3,129 +3,77 @@
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
       "Compose": {
-        "inputs": "a",
+        "inputs": "@triggerOutputs()?['body']?['content']",
         "runAfter": {},
         "type": "Compose"
       },
-      "Compose_11": {
-        "inputs": "asdf",
-        "runAfter": {
-          "Scope": ["Succeeded"]
+      "Condition": {
+        "actions": {
+          "Compose_2": {
+            "inputs": "blah blue @{outputs('Compose')}",
+            "runAfter": {},
+            "type": "Compose"
+          }
         },
-        "type": "Compose"
-      },
-      "Compose_2": {
-        "inputs": "a",
+        "else": {
+          "actions": {
+            "Switch": {
+              "cases": {
+                "Case": {
+                  "actions": {
+                    "Compose_3": {
+                      "inputs": "hello @{triggerOutputs()?['body']?['fileMetadata']?['name']}",
+                      "runAfter": {},
+                      "type": "Compose"
+                    }
+                  },
+                  "case": "abc"
+                }
+              },
+              "default": {
+                "actions": {}
+              },
+              "expression": "@outputs('Compose')",
+              "runAfter": {},
+              "type": "Switch"
+            }
+          }
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": ["A", "A"]
+            }
+          ]
+        },
         "runAfter": {
           "Compose": ["Succeeded"]
         },
-        "type": "Compose"
-      },
-      "Execute_a_navigation_plan": {
-        "inputs": {
-          "a": "A"
-        },
-        "runAfter": {},
-        "type": "Compose"
-      },
-      "Response": {
-        "inputs": {
-          "body": "@outputs('Execute_a_navigation_plan')?['outputParameters']?['balance']",
-          "statusCode": 200
-        },
-        "kind": "http",
-        "runAfter": {
-          "Execute_a_navigation_plan": ["Succeeded"]
-        },
-        "type": "Response"
-      },
-      "Scope": {
-        "actions": {
-          "Compose_10": {
-            "inputs": "njh",
-            "runAfter": {
-              "Scope_2": ["Succeeded"]
-            },
-            "type": "Compose"
-          },
-          "Compose_3": {
-            "inputs": "qq",
-            "runAfter": {},
-            "type": "Compose"
-          },
-          "Compose_4": {
-            "inputs": "q",
-            "runAfter": {
-              "Compose_3": ["Succeeded"]
-            },
-            "type": "Compose"
-          },
-          "Compose_5": {
-            "inputs": "q",
-            "runAfter": {
-              "Compose_3": ["Succeeded"]
-            },
-            "type": "Compose"
-          },
-          "Compose_6": {
-            "inputs": "hh",
-            "runAfter": {
-              "Compose_4": ["Succeeded"]
-            },
-            "type": "Compose"
-          },
-          "Scope_2": {
-            "actions": {
-              "Compose_7": {
-                "inputs": "ttt",
-                "runAfter": {},
-                "type": "Compose"
-              },
-              "Compose_8": {
-                "inputs": "rrrr",
-                "runAfter": {
-                  "Compose_7": ["Succeeded"]
-                },
-                "type": "Compose"
-              },
-              "Compose_9": {
-                "inputs": "tttt",
-                "runAfter": {
-                  "Compose_7": ["Succeeded"]
-                },
-                "type": "Compose"
-              }
-            },
-            "runAfter": {
-              "Compose_5": ["Succeeded"]
-            },
-            "type": "Scope"
-          }
-        },
-        "runAfter": {
-          "Response": ["Succeeded"]
-        },
-        "type": "Scope"
+        "type": "If"
       }
     },
     "contentVersion": "1.0.0.0",
     "outputs": {},
     "triggers": {
-      "Http": {
+      "When_a_file_is_added_or_updated": {
         "inputs": {
-          "body": "d",
-          "headers": {
-            "d": "d"
+          "parameters": {
+            "folderPath": "/path",
+            "includeFileContent": false
           },
-          "method": "PUT",
-          "uri": "http://uri.com"
+          "serviceProviderConfiguration": {
+            "connectionName": "Sftp",
+            "operationId": "whenFilesAreAddedOrModified",
+            "serviceProviderId": "/serviceProviders/Sftp"
+          }
         },
+        "kind": "Polling",
         "recurrence": {
-          "frequency": "Hour",
-          "interval": 3,
-          "timeZone": "UTC-11"
+          "frequency": "Month",
+          "interval": 15
         },
-        "type": "Http"
+        "splitOn": "@triggerOutputs()?['body']",
+        "type": "ServiceProvider"
       }
     }
   },
