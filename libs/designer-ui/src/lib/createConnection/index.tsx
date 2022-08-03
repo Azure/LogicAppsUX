@@ -68,7 +68,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const validParams = useMemo(() => {
     return Object.entries(parameters).every(
       ([key, parameter]) =>
-        parameter?.uiDefinition?.constraints?.required === 'false' || !isParamVisible(parameter) || !!parameterValues[key]
+        parameter?.uiDefinition?.constraints?.required !== 'true' || !isParamVisible(parameter) || !!parameterValues[key]
     );
   }, [isParamVisible, parameterValues, parameters]);
 
