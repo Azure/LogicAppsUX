@@ -29,7 +29,7 @@ export interface ChangeState {
 
 export type ChangeHandler = (newState: ChangeState) => void;
 
-export interface dictionaryCallbackProps {
+export interface DictionaryCallbackProps {
   addItem: (index: number) => void;
   index: number;
 }
@@ -113,14 +113,10 @@ export const BaseEditor = ({
     if (tokens) {
       toggleShowTokenPickerButton();
     }
-    if (onFocus) {
-      onFocus();
-    }
+    onFocus?.();
   };
   const handleBlur = () => {
-    if (onBlur) {
-      onBlur();
-    }
+    onBlur?.();
     if (tokens) {
       toggleShowTokenPickerButton();
     }
