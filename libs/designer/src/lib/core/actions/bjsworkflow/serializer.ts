@@ -147,7 +147,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   return {
     type: operation.type,
     ...optional('kind', operation.kind),
-    ...optional('inputs', inputs),
+    ...optional((manifest.properties.inputsLocation ?? ['inputs'])[0], inputs),
     ...childOperations,
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
@@ -414,7 +414,7 @@ const serializeSubGraph = async (
 
   if (graphDetail.inputs && graphDetail.inputsLocation) {
     const inputs = serializeOperationParameters(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
-    safeSetObjectPropertyValue(result, graphInputsLocation, inputs);
+    safeSetObjectPropertyValue(result, [...graphInputsLocation, ...graphDetail.inputsLocation], inputs);
   }
 
   return result;
