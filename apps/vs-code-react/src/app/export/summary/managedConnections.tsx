@@ -39,8 +39,8 @@ export const ManagedConnections: React.FC = () => {
       description: 'Resource group title',
     }),
     SEARCH_RESOURCE_GROUP: intl.formatMessage({
-      defaultMessage: 'Search resource group',
-      description: 'Search resource group text',
+      defaultMessage: 'Find and select resource group',
+      description: 'Find and select resource group text',
     }),
   };
 

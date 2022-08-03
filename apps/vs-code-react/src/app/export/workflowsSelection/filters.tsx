@@ -19,8 +19,8 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
       description: 'Search placeholder',
     }),
     SEARCH_RESOURCE_GROUP: intl.formatMessage({
-      defaultMessage: 'Search resource group',
-      description: 'Search resource group text',
+      defaultMessage: 'Find and select resource group',
+      description: 'Find and select resource group text',
     }),
   };
 

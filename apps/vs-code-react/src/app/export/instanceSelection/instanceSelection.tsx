@@ -46,16 +46,16 @@ export const InstanceSelection: React.FC = () => {
       description: 'No subscriptions available',
     }),
     EMPTY_ISE: intl.formatMessage({
-      defaultMessage: 'No ISE instances available',
-      description: 'No ISE instances available',
+      defaultMessage: 'No integration service environment (ISE) instances available',
+      description: 'No ISE instances available text',
     }),
     SEARCH_SUBSCRIPTION: intl.formatMessage({
-      defaultMessage: 'Search subscription',
-      description: 'Search subscription text',
+      defaultMessage: 'Find and select subscription',
+      description: 'Find and select subscription text',
     }),
     SEARCH_ISE: intl.formatMessage({
-      defaultMessage: 'Search ISE',
-      description: 'Search ISE text',
+      defaultMessage: 'Find and select integration service environment (ISE)',
+      description: 'Find ISE text',
     }),
     LOADING: intl.formatMessage({
       defaultMessage: 'Loading...',
