@@ -10,7 +10,7 @@ import { filterWorkflows, getListColumns, parseResourceGroups, parseWorkflowData
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -105,6 +105,16 @@ export const WorkflowsSelection: React.FC = () => {
       items: renderWorkflows as any,
     });
   }, [renderWorkflows, dispatch]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (selection && selection.getItems().length > 0 && selectedWorkflows.length > 0) {
+        selectedWorkflows.forEach((workflow: WorkflowsList) => {
+          selection.setKeySelected(workflow.key, true, true);
+        });
+      }
+    }, 3000);
+  }, [selectedWorkflows, renderWorkflows, selection]);
 
   const workflowsList = useMemo(() => {
     const emptyText = (
@@ -203,7 +213,7 @@ export const WorkflowsSelection: React.FC = () => {
         {workflowsList}
       </div>
       <Separator vertical className="msla-export-workflows-panel-divider" />
-      <SelectedList />
+      <SelectedList isLoading={isWorkflowsLoading || renderWorkflows === null} />
     </div>
   );
 };
