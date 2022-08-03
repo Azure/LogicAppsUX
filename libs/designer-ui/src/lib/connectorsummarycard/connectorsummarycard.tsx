@@ -1,4 +1,5 @@
-import { Text, Image, ImageFit } from '@fluentui/react';
+import type { IStackTokens } from '@fluentui/react';
+import { Text, Image, ImageFit, Stack } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
 
 export type ConnectorSummaryCardProps = {
@@ -16,6 +17,10 @@ export interface CommonCardProps {
 export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   const intl = getIntl();
 
+  const token: IStackTokens = {
+    childrenGap: 3,
+  };
+
   const logoAltText = intl.formatMessage(
     {
       defaultMessage: 'logo for {connectorName}',
@@ -31,12 +36,12 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   };
 
   return (
-    <button className="msla-connector-card ms-depth-4 msla-card-title-container" onClick={onConnectorCardClicked}>
-      <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={logoAltText}></Image>
+    <Stack.Item tokens={token} grow className="msla-connector-card ms-depth-4" onClick={onConnectorCardClicked}>
+      <Image imageFit={ImageFit.contain} maximizeFrame={false} className="msla-card-logo" src={props.iconUrl} alt={logoAltText}></Image>
       <Text block className="msla-card-title">
         {props.connectorName}
       </Text>
       {/* <Text className="msla-card-description">{props.description}</Text> */}
-    </button>
+    </Stack.Item>
   );
 };

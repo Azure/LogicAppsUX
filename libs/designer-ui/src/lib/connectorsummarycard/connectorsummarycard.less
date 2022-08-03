@@ -8,15 +8,12 @@
 }
 
 .msla-connector-card {
-  width: 185px;
+  min-width: 130px;
   height: 38px;
   border: 1px solid @grey-card-border;
   background-color: white;
   text-align: left;
-
-  .msla-card-title-container {
-    display: inline-block;
-  }
+  display: inline-flex;
 
   .msla-card-logo {
     height: @med-logo-dimension;
@@ -26,6 +23,7 @@
 
   .msla-card-title {
     font-size: 14px;
+    padding-left: 6px;
     color: @card-title-color;
     font-weight: 600;
   }

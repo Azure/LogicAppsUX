@@ -70,6 +70,12 @@ interface StandardConnectionServiceArgs {
   httpClient: IHttpClient;
 }
 
+interface ContinuationTokenResponse {
+  // danielle to make generic and move
+  value: Connector[];
+  nextLink: string;
+}
+
 export type getAccessTokenType = () => Promise<string>;
 
 interface ConnectionsData {
@@ -139,7 +145,8 @@ export class StandardConnectionService implements IConnectionService {
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
     };
-    const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
+    const response = await httpClient.get<ContinuationTokenResponse>({ uri, queryParameters });
+    // need to save continuation token to store
     const connectors = response.value;
     const formattedConnectors = this.moveGeneralInformation(connectors);
     console.log(formattedConnectors);
