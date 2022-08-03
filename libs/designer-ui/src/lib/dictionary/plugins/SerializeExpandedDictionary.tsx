@@ -23,7 +23,6 @@ export const SerializeExpandedDictionary = ({ items, initialItem, index, type, s
       if (type === 'key') {
         newItems[index].key = newValue;
       } else {
-        console.log(newItems[index].value);
         newItems[index].value = newValue;
       }
       setItems(newItems);

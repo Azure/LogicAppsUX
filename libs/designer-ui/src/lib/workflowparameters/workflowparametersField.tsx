@@ -186,23 +186,20 @@ export const WorkflowparameterField = ({
   });
   const onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     setName(newValue);
-    if (onChange) {
-      onChange({
-        id: definition.id,
-        newDefinition: { ...definition, name: newValue },
-      });
-    }
+    onChange?.({
+      id: definition.id,
+      newDefinition: { ...definition, name: newValue },
+    });
   };
 
   const onTypeChange = (_event?: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
     const newType = item?.key.toString();
 
-    if (onChange) {
-      onChange({
-        id: definition.id,
-        newDefinition: { ...definition, type },
-      });
-    }
+    onChange?.({
+      id: definition.id,
+      newDefinition: { ...definition, type },
+    });
+
     setType(newType);
     setValueWarningMessage(getValueWarningMessage(defaultValue, newType));
   };
@@ -215,12 +212,10 @@ export const WorkflowparameterField = ({
     setDefaultValue(value);
     setValueWarningMessage(getValueWarningMessage(value, type));
 
-    if (onChange) {
-      onChange({
-        id: definition.id,
-        newDefinition: { ...definition, defaultValue: value },
-      });
-    }
+    onChange?.({
+      id: definition.id,
+      newDefinition: { ...definition, defaultValue: value },
+    });
   };
 
   const onRenderDescription = (props?: ITextFieldProps): JSX.Element => {
