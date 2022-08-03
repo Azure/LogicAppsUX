@@ -13,9 +13,9 @@ export interface InitializePayload {
 }
 
 export enum Status {
-  InProgress = "InProgress",
-  Succeeded = "Succeeded",
-  Failed = "Failed"
+  InProgress = 'InProgress',
+  Succeeded = 'Succeeded',
+  Failed = 'Failed',
 }
 
 export interface InitializedVscodeState {
@@ -115,6 +115,9 @@ export const vscodeSlice = createSlice({
       const { status } = action.payload;
       const initializedState = state as InitializedVscodeState;
       initializedState.finalStatus = status;
+      if (status === Status.InProgress) {
+        initializedState.statuses = [];
+      }
     },
   },
 });
