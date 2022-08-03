@@ -1,7 +1,7 @@
-import type { Segment } from '../';
+import type { ValueSegment } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 
-export const removeFirstAndLast = (segments: Segment[], removeFirst?: string, removeLast?: string): Segment[] => {
+export const removeFirstAndLast = (segments: ValueSegment[], removeFirst?: string, removeLast?: string): ValueSegment[] => {
   const n = segments.length - 1;
   segments.forEach((segment, i) => {
     const currentSegment = segment;
@@ -14,4 +14,14 @@ export const removeFirstAndLast = (segments: Segment[], removeFirst?: string, re
     }
   });
   return segments;
+};
+
+export const showCollapsedValidation = (collapsedValue: ValueSegment[]): boolean => {
+  return (
+    collapsedValue?.length === 1 &&
+    (collapsedValue[0].type === ValueSegmentType.TOKEN ||
+      (collapsedValue[0].type === ValueSegmentType.LITERAL &&
+        collapsedValue[0].value.trim().startsWith('"') &&
+        collapsedValue[0].value.trim().endsWith('"')))
+  );
 };

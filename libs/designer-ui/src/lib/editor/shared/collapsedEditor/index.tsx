@@ -1,9 +1,9 @@
 import type { ArrayEditorItemProps } from '../../../arrayeditor';
 import { SerializeArray } from '../../../arrayeditor/plugins/SerializeArray';
 import type { DictionaryEditorItemProps } from '../../../dictionary';
-import type { Segment } from '../../base';
 import { BaseEditor } from '../../base';
 import { Validation } from '../../base/plugins/Validation';
+import type { ValueSegment } from '../../models/parameter';
 import type { Dispatch, SetStateAction } from 'react';
 
 export enum CollapsedEditorType {
@@ -13,9 +13,11 @@ export enum CollapsedEditorType {
 
 interface CollapsedEditorBaseProps {
   isValid?: boolean;
-  initialValue?: Segment[];
+  initialValue?: ValueSegment[];
   errorMessage: string;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
+  collapsedValue?: ValueSegment[];
+  setCollapsedValue?: (val: ValueSegment[]) => void;
 }
 
 interface ColapsedEditorArrayProps {
@@ -37,6 +39,8 @@ export const CollapsedEditor = ({
   type,
   setIsValid,
   setItems,
+  collapsedValue,
+  setCollapsedValue,
 }: CollapsedEditorProps): JSX.Element => {
   return (
     <BaseEditor
@@ -44,9 +48,9 @@ export const CollapsedEditor = ({
       BasePlugins={{
         tokens: true,
       }}
-      focusProps={{ tokenPickerProps: { buttonClassName: `msla-${type}-editor-tokenpicker` } }}
+      tokenPickerButtonProps={{ buttonClassName: `msla-${type}-editor-tokenpicker` }}
       placeholder={type === CollapsedEditorType.DICTIONARY ? 'Enter a Dictionary' : 'Enter an Array'}
-      initialValue={initialValue}
+      initialValue={collapsedValue && collapsedValue.length > 0 ? collapsedValue : initialValue}
     >
       {type === CollapsedEditorType.DICTIONARY ? null : <SerializeArray isValid={isValid} setItems={setItems} />}
 
@@ -57,6 +61,8 @@ export const CollapsedEditor = ({
         isValid={isValid}
         setIsValid={setIsValid}
         setItems={type === CollapsedEditorType.DICTIONARY ? setItems : undefined}
+        collapsedValue={collapsedValue}
+        setCollapsedValue={setCollapsedValue}
       />
     </BaseEditor>
   );

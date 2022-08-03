@@ -3,9 +3,10 @@ import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateManagedConnections } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
+import { SearchableDropdown } from '../components/searchableDropdown';
 import { parseResourceGroupsData } from './helper';
 import { NewResourceGroup } from './newResourceGroup';
-import { Checkbox, Dropdown, Text } from '@fluentui/react';
+import { Checkbox, Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -37,6 +38,10 @@ export const ManagedConnections: React.FC = () => {
     RESOURCE_GROUP: intl.formatMessage({
       defaultMessage: 'Resource group',
       description: 'Resource group title',
+    }),
+    SEARCH_RESOURCE_GROUP: intl.formatMessage({
+      defaultMessage: 'Find and select resource group',
+      description: 'Find and select resource group text',
     }),
   };
 
@@ -88,7 +93,7 @@ export const ManagedConnections: React.FC = () => {
 
     return isConnectionsChecked ? (
       <>
-        <Dropdown
+        <SearchableDropdown
           placeholder={intlText.SELECT_OPTION}
           label={intlText.RESOURCE_GROUP}
           disabled={isResourceGroupsLoading || !resourceGroups.length}
@@ -96,6 +101,8 @@ export const ManagedConnections: React.FC = () => {
           className="msla-export-summary-connections-dropdown"
           onChange={onChangeResourceGroup}
           selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : null}
+          isLoading={isResourceGroupsLoading}
+          searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
         />
         <NewResourceGroup />
       </>
@@ -104,6 +111,7 @@ export const ManagedConnections: React.FC = () => {
     isConnectionsChecked,
     intlText.SELECT_OPTION,
     intlText.RESOURCE_GROUP,
+    intlText.SEARCH_RESOURCE_GROUP,
     isResourceGroupsLoading,
     resourceGroupsData,
     dispatch,

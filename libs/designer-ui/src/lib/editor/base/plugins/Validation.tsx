@@ -1,7 +1,10 @@
+import type { ValueSegment } from '../..';
 import type { DictionaryEditorItemProps } from '../../../dictionary';
 import { serializeDictionary } from '../../../dictionary/util/serializecollapeseddictionary';
 import { CollapsedEditorType } from '../../shared/collapsedEditor';
 import { $isTokenNode } from '../nodes/tokenNode';
+import { serializeEditorState } from '../utils/editorToSegement';
+import { showCollapsedValidation } from '../utils/helper';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, ElementNode } from 'lexical';
@@ -16,6 +19,8 @@ export interface ValidationProps {
   isValid?: boolean;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   setItems?: (items: DictionaryEditorItemProps[]) => void;
+  collapsedValue?: ValueSegment[];
+  setCollapsedValue?: (val: ValueSegment[]) => void;
 }
 
 export const Validation = ({
@@ -26,39 +31,42 @@ export const Validation = ({
   errorMessage,
   setIsValid,
   setItems,
+  collapsedValue,
+  setCollapsedValue,
 }: ValidationProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), tokensEnabled);
-      if (setIsValid) {
-        let newValiditity = true;
-        switch (type) {
-          case CollapsedEditorType.COLLAPSED_ARRAY:
-            if (!editorString.trim().length || editorString === '[]') {
-              setIsValid(newValiditity);
+      let newValiditity = true;
+      switch (type) {
+        case CollapsedEditorType.COLLAPSED_ARRAY:
+          if (!editorString.trim().length || editorString === '[]') {
+            setIsValid?.(newValiditity);
+          } else {
+            setIsValid?.(isValidArray(editorString));
+          }
+          break;
+        case CollapsedEditorType.DICTIONARY:
+          if (!editorString.trim().length || editorString === '{}') {
+            setIsValid?.(newValiditity);
+            setCollapsedValue?.([]);
+          } else {
+            newValiditity = isValidDictionary(editorString);
+            setIsValid?.(newValiditity);
+            if (setItems && newValiditity) {
+              serializeDictionary(editor, setItems);
             } else {
-              setIsValid(isValidArray(editorString));
+              setCollapsedValue?.(serializeEditorState(editor.getEditorState()));
             }
-            break;
-          case CollapsedEditorType.DICTIONARY:
-            if (!editorString.trim().length || editorString === '{}') {
-              setIsValid(newValiditity);
-            } else {
-              newValiditity = isValidDictionary(editorString);
-              setIsValid(newValiditity);
-              if (newValiditity && setItems) {
-                serializeDictionary(editor, setItems);
-              }
-            }
-        }
+          }
       }
     });
   };
   return (
     <div className={className ?? 'msla-base-editor-validation'}>
       <OnChangePlugin onChange={onChange} />
-      {isValid ? null : errorMessage}
+      {isValid || (collapsedValue && showCollapsedValidation(collapsedValue)) ? null : errorMessage}
     </div>
   );
 };

@@ -1165,6 +1165,12 @@
       "value": "(UTC-01:00) Azorerna"
     }
   ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
@@ -2497,6 +2503,12 @@
       "value": "Rensa"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -3100,7 +3112,7 @@
   "er+4Cd": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Välj schema för listrutan"
     }
   ],
   "esOQ5p": [
@@ -3657,10 +3669,10 @@
       "value": "har hoppats över"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Ange en giltig matris"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3891,6 +3903,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4426,7 +4444,7 @@
   "vLXCIR": [
     {
       "type": 0,
-      "value": "Button for managing toggle state"
+      "value": "Knapp för att hantera växlingstillstånd"
     }
   ],
   "vQcQkU": [
@@ -4543,6 +4561,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Delsträngens längd."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4727,6 +4751,12 @@
     {
       "type": 0,
       "value": "Måste anges. Värdet som omvandlas till ett decimaltal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

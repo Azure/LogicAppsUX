@@ -1209,6 +1209,12 @@
       "value": "(UTC-01:00) Азорские острова"
     }
   ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
+    }
+  ],
   "DysO/Q": [
     {
       "type": 0,
@@ -2603,6 +2609,12 @@
       "value": "Очистить"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -3206,7 +3218,7 @@
   "er+4Cd": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Выберите схему для раскрывающегося списка"
     }
   ],
   "esOQ5p": [
@@ -3793,10 +3805,10 @@
       "value": "пропущен"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Введите допустимый массив"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -4027,6 +4039,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Самоа"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4584,7 +4602,7 @@
   "vLXCIR": [
     {
       "type": 0,
-      "value": "Button for managing toggle state"
+      "value": "Кнопка для управления состоянием переключателя"
     }
   ],
   "vQcQkU": [
@@ -4701,6 +4719,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Длина подстроки."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4885,6 +4909,12 @@
     {
       "type": 0,
       "value": "Обязательно. Значение, преобразуемое в десятичное число."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

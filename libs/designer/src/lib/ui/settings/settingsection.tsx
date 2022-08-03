@@ -16,7 +16,7 @@ import {
   SettingTextField,
   SettingToggle,
   SettingDictionary,
-  SettingTokenTextField,
+  SettingTokenField,
   SettingDropdown,
 } from '@microsoft/designer-ui';
 import type {
@@ -83,7 +83,7 @@ export type Settings = SettingBase &
         settingProp: SettingDictionaryProps;
       }
     | {
-        settingType: 'SettingTokenTextField';
+        settingType: 'SettingTokenField';
         settingProp: SettingTokenTextFieldProps;
       }
     | {
@@ -112,6 +112,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   title = 'Settings',
   sectionName,
   showHeading = true,
+  showSeparator = true,
   expanded,
   isReadOnly,
   settings,
@@ -137,7 +138,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   const internalSettings = (
     <>
       {expanded || !showHeading ? renderSettings(settings, isReadOnly) : null}
-      <Separator className="msla-setting-section-separator" styles={separatorStyles} />
+      {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
     </>
   );
   if (!showHeading) {
@@ -208,8 +209,8 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
               return <SettingToggle {...settingProp} />;
             case 'SettingDictionary':
               return <SettingDictionary {...settingProp} />;
-            case 'SettingTokenTextField':
-              return <SettingTokenTextField {...settingProp} />;
+            case 'SettingTokenField':
+              return <SettingTokenField {...settingProp} />;
             case 'RunAfter':
               return <RunAfter {...settingProp} />;
             case 'SettingDropdown':

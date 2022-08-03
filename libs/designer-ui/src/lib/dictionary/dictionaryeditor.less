@@ -64,6 +64,7 @@
 
         .editor-input {
           border: 1px solid @panel-mode-panel-border-color;
+          outline: none;
           resize: none;
           font-size: 15px;
           tab-size: 1;
@@ -71,6 +72,9 @@
           line-height: 30px;
           caret-color: #444;
           padding-inline-start: 5px;
+          &:focus {
+            border: 1px solid rgb(0, 120, 212);
+          }
           p {
             margin: 0;
             line-height: 1.5rem;
@@ -102,7 +106,7 @@
         border: 1px solid #989898;
         display: table-cell;
         vertical-align: top;
-        width: 50%;
+        width: 48%;
         padding-bottom: 5px;
         .editor-input {
           outline: none;

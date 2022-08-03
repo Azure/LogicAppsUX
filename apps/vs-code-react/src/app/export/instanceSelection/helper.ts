@@ -14,3 +14,16 @@ export const parseIseData = (iseData: { ise: Array<IIse> }): Array<IDropDownOpti
     return { key: iseInstance.id, text: iseInstance.iseName, data: iseInstance.location };
   });
 };
+
+export const getDropdownPlaceholder = (
+  isLoading: boolean,
+  itemsLength: number,
+  defaultText: string,
+  emptyText: string,
+  loadingText: string
+): string => {
+  if (isLoading) {
+    return loadingText;
+  }
+  return itemsLength ? defaultText : emptyText;
+};
