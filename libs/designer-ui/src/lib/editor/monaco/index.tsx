@@ -112,45 +112,31 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     }, [language]);
 
     const handleContextMenu = (e: editor.IEditorMouseEvent) => {
-      if (onContextMenu) {
-        onContextMenu(e);
-      }
+      onContextMenu?.(e);
     };
 
     const handleDidBlurEditorText = (): void => {
-      if (onBlurText) {
-        onBlurText();
-      }
+      onBlurText?.();
     };
 
     const handleDidBlurEditorWidget = (): void => {
-      if (onBlur) {
-        onBlur();
-      }
+      onBlur?.();
     };
 
     const handleDidChangeConfiguration = (e: editor.ConfigurationChangedEvent): void => {
-      if (onConfigurationChanged) {
-        onConfigurationChanged(e);
-      }
+      onConfigurationChanged?.(e);
     };
 
     const handleDidChangeCursorPosition = (e: editor.ICursorPositionChangedEvent): void => {
-      if (onCursorPositionChanged) {
-        onCursorPositionChanged(e);
-      }
+      onCursorPositionChanged?.(e);
     };
 
     const handleDidChangeCursorSelection = (e: editor.ICursorSelectionChangedEvent): void => {
-      if (onCursorSelectionChanged) {
-        onCursorSelectionChanged(e);
-      }
+      onCursorSelectionChanged?.(e);
     };
 
     const handleDidChangeModel = (e: editor.IModelChangedEvent): void => {
-      if (onChanged) {
-        onChanged(e);
-      }
+      onChanged?.(e);
     };
 
     const handleDidChangeModelContent = (e: EditorContentChangedEventArgs, editor: editor.IStandaloneCodeEditor): void => {
@@ -161,51 +147,35 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     };
 
     const handleDidChangeModelDecorations = (e: editor.IModelDecorationsChangedEvent): void => {
-      if (onDecorationsChanged) {
-        onDecorationsChanged(e);
-      }
+      onDecorationsChanged?.(e);
     };
 
     const handleDidChangeModelLanguage = (e: editor.IModelLanguageChangedEvent): void => {
-      if (onLanguageChanged) {
-        onLanguageChanged(e);
-      }
+      onLanguageChanged?.(e);
     };
 
     const handleDidChangeModelOptions = (e: editor.IModelOptionsChangedEvent): void => {
-      if (onOptionsChanged) {
-        onOptionsChanged(e);
-      }
+      onOptionsChanged?.(e);
     };
 
     const handleDidFocusEditorText = (): void => {
-      if (onFocusText) {
-        onFocusText();
-      }
+      onFocusText?.();
     };
 
     const handleDidFocusEditorWidget = (): void => {
-      if (onFocus) {
-        onFocus();
-      }
+      onFocus?.();
     };
 
     const handleDisposed = (): void => {
-      if (onDisposed) {
-        onDisposed();
-      }
+      onDisposed?.();
     };
 
     const handleDidLayoutChange = (e: editor.EditorLayoutInfo): void => {
-      if (onLayoutChanged) {
-        onLayoutChanged(e);
-      }
+      onLayoutChanged?.(e);
     };
 
     const handleDidScrollChange = (e: IScrollEvent): void => {
-      if (onScrollChanged) {
-        onScrollChanged(e);
-      }
+      onScrollChanged?.(e);
     };
 
     const handleEditorMounted = (editor: editor.IStandaloneCodeEditor) => {
@@ -220,9 +190,8 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
         // editor.focus();
       }
 
-      if (onEditorRef) {
-        onEditorRef(editor);
-      }
+      onEditorRef?.(editor);
+
       editor.onContextMenu(handleContextMenu);
       editor.onDidBlurEditorText(handleDidBlurEditorText);
       editor.onDidBlurEditorWidget(handleDidBlurEditorWidget);
@@ -239,9 +208,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       editor.onDidFocusEditorWidget(handleDidFocusEditorWidget);
       editor.onDidLayoutChange(handleDidLayoutChange);
       editor.onDidScrollChange(handleDidScrollChange);
-      if (onEditorLoaded) {
-        onEditorLoaded();
-      }
+      onEditorLoaded?.();
     };
 
     return (
