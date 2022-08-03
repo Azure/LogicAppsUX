@@ -1752,6 +1752,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";DyYcJZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Run After]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Executar Após]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";DysO/Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Ctrl + Y]]></Val>
@@ -3687,6 +3696,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WLj8DH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Please enter a valid dictionary]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WS9kXD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The first integer in the array.]]></Val>
@@ -5319,12 +5334,9 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";lfHj+F" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";lcxLiq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Please Enter a valid array]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Inserir uma matriz válida]]></Val>
-          </Tgt>
+          <Val><![CDATA[Please enter a valid array]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5657,6 +5669,15 @@
           <Val><![CDATA[(UTC+13:00) Samoa]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+13:00) Samoa]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";pC2nr2" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter key]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Inserir chave]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6609,6 +6630,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";wV3Lmd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Click to delete item]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Clique para excluir o item]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";wWVQuK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns a specified value based on whether the expression resulted in true or false]]></Val>
@@ -6875,6 +6905,15 @@
           <Val><![CDATA[Required. The value that is converted to a decimal number.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Obrigatório. O valor que é convertido em um número decimal.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";zCsGWP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Inserir valor]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
