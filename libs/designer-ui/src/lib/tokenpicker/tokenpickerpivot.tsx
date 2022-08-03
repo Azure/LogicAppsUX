@@ -4,13 +4,14 @@ import { PivotItem, Pivot } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 const pivotStyles: Partial<IPivotStyles> = {
-  link: {
-    margin: '1px 24px 1px 1px',
-  },
   text: {
     '&:hover': {
       color: constants.PANEL_HIGHLIGHT_COLOR,
     },
+  },
+  link: {
+    fontSize: '16px',
+    padding: '10px 10px 0 10px',
   },
 };
 
@@ -35,7 +36,7 @@ export const TokenPickerPivot = ({ selectedKey, selectKey }: TokenPickerPivotPro
     description: 'Token picker mode to insert expressions',
   });
   return (
-    <Pivot styles={pivotStyles} selectedKey={selectedKey} className="msla-panel-menu" onLinkClick={selectKey}>
+    <Pivot styles={pivotStyles} selectedKey={selectedKey} className="msla-panel-menu" onLinkClick={selectKey} linkSize="large">
       <PivotItem key={TokenPickerMode.TOKEN} itemKey={TokenPickerMode.TOKEN} headerText={tokenMode} />
       <PivotItem key={TokenPickerMode.TOKEN} itemKey={TokenPickerMode.EXPRESSION} headerText={expressionMode} />
     </Pivot>
