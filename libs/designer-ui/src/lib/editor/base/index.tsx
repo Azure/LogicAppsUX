@@ -21,7 +21,7 @@ import { useIntl } from 'react-intl';
 export { testTokenSegment } from '../shared/testtokensegment';
 
 export interface ChangeState {
-  value: ValueSegment[],
+  value: ValueSegment[];
   viewModel?: any; // TODO - Should be strongly typed once updated for Array
 }
 
@@ -101,7 +101,7 @@ export const BaseEditor = ({
       }),
   };
 
-  const { autoFocus = true, autoLink, clearEditor, history = true, tokens, treeView, validation } = BasePlugins;
+  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, validation } = BasePlugins;
 
   const editorInputLabel = intl.formatMessage({
     defaultMessage: 'Editor Input',
