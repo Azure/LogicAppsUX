@@ -127,7 +127,7 @@ export const BaseEditor = ({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className={className ?? 'msla-base-editor'} id={editorId}>
+      <div className={className ?? 'msla-editor-container'} id={editorId}>
         <RichTextPlugin
           contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
           placeholder={<span className="editor-placeholder"> {placeholder} </span>}
