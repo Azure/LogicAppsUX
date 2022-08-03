@@ -98,6 +98,7 @@ export const workflowSlice = createSlice({
       state.operations = action.payload.actionData;
       state.nodesMetadata = action.payload.nodesMetadata;
 
+      state.edgeIdsBySource = {};
       const traverseGraph = (graph: WorkflowNode) => {
         const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
         if (edges) {
