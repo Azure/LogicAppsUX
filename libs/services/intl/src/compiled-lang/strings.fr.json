@@ -576,7 +576,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Choisir l’affichage à partir duquel parcourir"
     }
   ],
   "4XdZNj": [
@@ -648,7 +648,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Connecteurs"
     }
   ],
   "5aa76N": [
@@ -1163,6 +1163,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Les Açores"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2493,6 +2499,12 @@
       "value": "Effacer"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2692,7 +2704,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Zoom arrière"
     }
   ],
   "Z4QLEf": [
@@ -3093,6 +3105,12 @@
       "value": "Obligatoire. Index d'où la sous-chaîne commence dans le paramètre 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Sélectionner le schéma pour la liste déroulante"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3156,7 +3174,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Zoom avant"
     }
   ],
   "g4igOR": [
@@ -3548,7 +3566,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Afficher la minicarte"
     }
   ],
   "kYivbS": [
@@ -3647,10 +3665,10 @@
       "value": "est ignorée"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Entrez un groupe valide"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3881,6 +3899,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4371,6 +4395,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variables"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4405,6 +4435,12 @@
     {
       "type": 0,
       "value": "Retourne le dernier index d'une valeur au sein d'une chaîne (culture invariante qui ne respecte pas la casse)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Bouton permettant de gérer l’état du bouton bascule"
     }
   ],
   "vQcQkU": [
@@ -4484,7 +4520,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Ajuster à la page"
     }
   ],
   "wEaGWn": [
@@ -4521,6 +4557,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Longueur de la sous-chaîne."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4705,6 +4747,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Valeur convertie en nombre à virgule décimal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

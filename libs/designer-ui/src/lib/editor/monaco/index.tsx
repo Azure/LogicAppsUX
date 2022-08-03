@@ -1,17 +1,8 @@
 import Constants from '../../constants';
 import { isHighContrastBlack } from '../../utils/theme';
-import {
-  createCompletionItemProviderForFunctions,
-  createCompletionItemProviderForValues,
-  createSignatureHelpProvider,
-  createLanguageDefinition,
-  createThemeData,
-  createLanguageConfig,
-  getTemplateFunctions,
-} from '../../workflow/languageservice/workflowlanguageservice';
-import { map } from '@microsoft-logic-apps/utils';
+import { registerWorkflowLanguageProviders } from '../../workflow/languageservice/workflowlanguageservice';
 import Editor, { loader } from '@monaco-editor/react';
-import type { editor, IScrollEvent } from 'monaco-editor';
+import type { IScrollEvent, editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect, forwardRef, useRef } from 'react';
 
@@ -105,28 +96,11 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     const currentRef = useRef<editor.IStandaloneCodeEditor>();
 
     const initTemplateLanguage = async () => {
-      const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
-      const templateFunctions = getTemplateFunctions();
-      loader.init().then(({ languages, editor }) => {
-        if (!languages.getLanguages().some((lang: any) => lang.id === languageName)) {
-          // Register a new language
-          languages.register({ id: languageName });
-          // Register a tokens provider for the language
-          languages.setMonarchTokensProvider(languageName, createLanguageDefinition(templateFunctions));
-
-          // Register Suggestion text for the language
-          languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForFunctions(templateFunctions));
-          languages.registerCompletionItemProvider(languageName, createCompletionItemProviderForValues());
-
-          // Register Help Provider Text Field for the language
-          languages.registerSignatureHelpProvider(languageName, createSignatureHelpProvider(map(templateFunctions, 'name')));
-
-          languages.setLanguageConfiguration(languageName, createLanguageConfig());
-          // Define a new theme that contains only rules that match this language
-          editor.defineTheme(languageName, createThemeData(isHighContrastBlack()));
-        }
-        setCanRender(true);
-      });
+      const { languages, editor } = await loader.init();
+      if (!languages.getLanguages().some((lang: any) => lang.id === Constants.LANGUAGE_NAMES.WORKFLOW)) {
+        registerWorkflowLanguageProviders(languages, editor);
+      }
+      setCanRender(true);
     };
 
     useEffect(() => {
@@ -138,45 +112,31 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     }, [language]);
 
     const handleContextMenu = (e: editor.IEditorMouseEvent) => {
-      if (onContextMenu) {
-        onContextMenu(e);
-      }
+      onContextMenu?.(e);
     };
 
     const handleDidBlurEditorText = (): void => {
-      if (onBlurText) {
-        onBlurText();
-      }
+      onBlurText?.();
     };
 
     const handleDidBlurEditorWidget = (): void => {
-      if (onBlur) {
-        onBlur();
-      }
+      onBlur?.();
     };
 
     const handleDidChangeConfiguration = (e: editor.ConfigurationChangedEvent): void => {
-      if (onConfigurationChanged) {
-        onConfigurationChanged(e);
-      }
+      onConfigurationChanged?.(e);
     };
 
     const handleDidChangeCursorPosition = (e: editor.ICursorPositionChangedEvent): void => {
-      if (onCursorPositionChanged) {
-        onCursorPositionChanged(e);
-      }
+      onCursorPositionChanged?.(e);
     };
 
     const handleDidChangeCursorSelection = (e: editor.ICursorSelectionChangedEvent): void => {
-      if (onCursorSelectionChanged) {
-        onCursorSelectionChanged(e);
-      }
+      onCursorSelectionChanged?.(e);
     };
 
     const handleDidChangeModel = (e: editor.IModelChangedEvent): void => {
-      if (onChanged) {
-        onChanged(e);
-      }
+      onChanged?.(e);
     };
 
     const handleDidChangeModelContent = (e: EditorContentChangedEventArgs, editor: editor.IStandaloneCodeEditor): void => {
@@ -187,51 +147,35 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     };
 
     const handleDidChangeModelDecorations = (e: editor.IModelDecorationsChangedEvent): void => {
-      if (onDecorationsChanged) {
-        onDecorationsChanged(e);
-      }
+      onDecorationsChanged?.(e);
     };
 
     const handleDidChangeModelLanguage = (e: editor.IModelLanguageChangedEvent): void => {
-      if (onLanguageChanged) {
-        onLanguageChanged(e);
-      }
+      onLanguageChanged?.(e);
     };
 
     const handleDidChangeModelOptions = (e: editor.IModelOptionsChangedEvent): void => {
-      if (onOptionsChanged) {
-        onOptionsChanged(e);
-      }
+      onOptionsChanged?.(e);
     };
 
     const handleDidFocusEditorText = (): void => {
-      if (onFocusText) {
-        onFocusText();
-      }
+      onFocusText?.();
     };
 
     const handleDidFocusEditorWidget = (): void => {
-      if (onFocus) {
-        onFocus();
-      }
+      onFocus?.();
     };
 
     const handleDisposed = (): void => {
-      if (onDisposed) {
-        onDisposed();
-      }
+      onDisposed?.();
     };
 
     const handleDidLayoutChange = (e: editor.EditorLayoutInfo): void => {
-      if (onLayoutChanged) {
-        onLayoutChanged(e);
-      }
+      onLayoutChanged?.(e);
     };
 
     const handleDidScrollChange = (e: IScrollEvent): void => {
-      if (onScrollChanged) {
-        onScrollChanged(e);
-      }
+      onScrollChanged?.(e);
     };
 
     const handleEditorMounted = (editor: editor.IStandaloneCodeEditor) => {
@@ -243,12 +187,11 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       }
 
       if (!readOnly) {
-        editor.focus();
+        // editor.focus();
       }
 
-      if (onEditorRef) {
-        onEditorRef(editor);
-      }
+      onEditorRef?.(editor);
+
       editor.onContextMenu(handleContextMenu);
       editor.onDidBlurEditorText(handleDidBlurEditorText);
       editor.onDidBlurEditorWidget(handleDidBlurEditorWidget);
@@ -265,9 +208,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       editor.onDidFocusEditorWidget(handleDidFocusEditorWidget);
       editor.onDidLayoutChange(handleDidLayoutChange);
       editor.onDidScrollChange(handleDidScrollChange);
-      if (onEditorLoaded) {
-        onEditorLoaded();
-      }
+      onEditorLoaded?.();
     };
 
     return (

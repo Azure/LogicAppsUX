@@ -1,4 +1,3 @@
-import type { Segment } from '../editor/base';
 import { Combobox } from './';
 import type { ComboboxProps } from './';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -19,13 +18,6 @@ Standard.args = {
     { value: 'PATCH', key: 'PATCH', displayName: 'PATCH', disabled: false },
     { value: 'DELETE', key: 'DELETE', displayName: 'DELETE', disabled: false },
   ],
-  placeholderText: 'Method is Required',
+  placeholder: 'Method is Required',
   label: 'Method',
-  selectedKey: 'PUT',
-  setSelectedKey: (key: string) => {
-    console.log(key);
-  },
-  setCustomValue: (key: Segment[] | null) => {
-    console.log(key);
-  },
 };

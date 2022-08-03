@@ -610,7 +610,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Zvolte zobrazení, ze kterého chcete procházet."
     }
   ],
   "4XdZNj": [
@@ -682,7 +682,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Konektory"
     }
   ],
   "5aa76N": [
@@ -1219,6 +1219,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azory"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2615,6 +2621,12 @@
       "value": "Vymazat"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2814,7 +2826,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Oddálit"
     }
   ],
   "Z4QLEf": [
@@ -3132,7 +3144,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Připojeno k: "
     },
     {
       "type": 1,
@@ -3215,6 +3227,12 @@
       "value": "Vyžadováno. Index určující, kde začíná v parametru 1 podřetězec."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Vyberte schéma pro rozevírací nabídku"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3278,7 +3296,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Přiblížit"
     }
   ],
   "g4igOR": [
@@ -3692,7 +3710,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Zobrazit minimapu"
     }
   ],
   "kYivbS": [
@@ -3791,10 +3809,10 @@
       "value": "přeskočeno"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Zadejte platné pole."
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -4025,6 +4043,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4537,6 +4561,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Proměnné"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4571,6 +4601,12 @@
     {
       "type": 0,
       "value": "Vrátí poslední index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Tlačítko pro správu přepínacího stavu"
     }
   ],
   "vQcQkU": [
@@ -4650,7 +4686,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Přizpůsobení stránky"
     }
   ],
   "wEaGWn": [
@@ -4687,6 +4723,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Délka podřetězce."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4871,6 +4913,12 @@
     {
       "type": 0,
       "value": "Povinné. Hodnota převedená na desetinné číslo."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

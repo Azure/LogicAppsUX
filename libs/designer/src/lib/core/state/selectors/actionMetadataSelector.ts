@@ -1,9 +1,9 @@
-import type { ConnectionReference } from '../../../common/models/workflow';
 import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
 import { useConnectionById } from '../../queries/connections';
 import type { RootState } from '../../store';
-import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { Connector, OperationInfo } from '@microsoft-logic-apps/utils';
+import { useConnector } from '../connection/connectionSelector';
+import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import type { OperationInfo } from '@microsoft-logic-apps/utils';
 import { getObjectPropertyValue } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -12,24 +12,6 @@ interface QueryResult {
   isLoading?: boolean;
   result: any;
 }
-
-export const useActionMetadata = (actionId?: string) => {
-  return useSelector((state: RootState) => {
-    if (!actionId) {
-      return undefined;
-    }
-    return state.workflow.operations[actionId];
-  });
-};
-
-export const useNodeMetadata = (nodeId?: string) => {
-  return useSelector((state: RootState) => {
-    if (!nodeId) {
-      return undefined;
-    }
-    return state.workflow.nodesMetadata[nodeId];
-  });
-};
 
 export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
   const result = useOperationManifest(operationInfo);
@@ -40,6 +22,9 @@ export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
   // else case needs to be implemented: work item 14936435
   return true;
 };
+
+export const useNodeConnectionId = (nodeId: string): string =>
+  useSelector((state: RootState) => state.connections.connectionsMapping[nodeId]);
 
 export const useNodeConnectionName = (nodeId: string): QueryResult => {
   const { connectionId, connectorId } = useSelector((state: RootState) => {
@@ -57,15 +42,6 @@ export const useNodeConnectionName = (nodeId: string): QueryResult => {
   };
 };
 
-export const useNodeDescription = (nodeId: string) => {
-  return useSelector((state: RootState) => {
-    if (!nodeId) {
-      return undefined;
-    }
-    return state.workflow.operations[nodeId]?.description;
-  });
-};
-
 export const useOperationInfo = (nodeId: string) => {
   return useSelector((state: RootState) => {
     return state.operations.operationInfo[nodeId];
@@ -76,26 +52,6 @@ export const useAllOperations = () => {
   return useSelector((state: RootState) => {
     return state.operations.operationInfo;
   });
-};
-
-export const useConnector = (connectorId: string) => {
-  const connectionService = ConnectionService();
-  return useQuery(['connector', { connectorId }], () => connectionService.getConnector(connectorId), {
-    enabled: !!connectorId,
-  });
-};
-
-export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
-  // TODO: Revisit trying to conditionally ask for the connector from the service
-  const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
-  const storeConnectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId]?.connectorId);
-  const connectorFromService = useConnector(storeConnectorId)?.data;
-  return connectorFromManifest ?? connectorFromService;
-};
-
-export const useConnectionRefsByConnectorId = (connectorId?: string) => {
-  const allConnectonReferences = useSelector((state: RootState) => Object.values(state.connections.connectionReferences));
-  return allConnectonReferences.filter((ref: ConnectionReference) => ref.api.id === connectorId);
 };
 
 export const useOperationManifest = (operationInfo: OperationInfo) => {

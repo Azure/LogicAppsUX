@@ -7,7 +7,8 @@
 
   &-instance-panel {
     &-dropdown {
-      max-width: 350px;
+      width: 350px;
+      max-width: 400px;
       margin: 16px 0;
     }
   }
@@ -38,6 +39,20 @@
           font-style: normal;
         }
       }
+
+      &-dropdown {
+        width: 350px;
+        max-width: 400px;
+      }
+    }
+
+    &-limit-selection {
+      margin-top: 10px;
+
+      .ms-MessageBar-text {
+        display: inline-flex;
+        align-items: center;
+      }
     }
 
     &-list {
@@ -46,10 +61,22 @@
       flex-direction: column;
       max-width: 75%;
 
+      .loading {
+        .ms-DetailsHeader-cell {
+          pointer-events: none;
+        }
+      }
+
       &-workflows {
         overflow: auto;
         margin: 15px 0;
         flex: 1;
+
+        &-empty {
+          display: inline-flex;
+          justify-content: center;
+          width: 100%;
+        }
       }
     }
 

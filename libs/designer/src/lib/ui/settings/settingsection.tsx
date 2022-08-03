@@ -1,3 +1,4 @@
+import type { HeaderClickHandler } from '.';
 import constants from '../../common/constants';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
@@ -15,7 +16,7 @@ import {
   SettingTextField,
   SettingToggle,
   SettingDictionary,
-  SettingTokenTextField,
+  SettingTokenField,
   SettingDropdown,
 } from '@microsoft/designer-ui';
 import type {
@@ -33,7 +34,6 @@ import type {
   SettingDropdownProps,
 } from '@microsoft/designer-ui';
 import type { FC } from 'react';
-import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 type SettingBase = {
@@ -83,7 +83,7 @@ export type Settings = SettingBase &
         settingProp: SettingDictionaryProps;
       }
     | {
-        settingType: 'SettingTokenTextField';
+        settingType: 'SettingTokenField';
         settingProp: SettingTokenTextFieldProps;
       }
     | {
@@ -99,28 +99,27 @@ export type Settings = SettingBase &
 export interface SettingSectionProps {
   id?: string;
   title?: string;
+  sectionName?: string;
   showHeading?: boolean;
   showSeparator?: boolean;
   expanded?: boolean;
   settings: Settings[];
   isReadOnly?: boolean;
+  onHeaderClick?: HeaderClickHandler;
 }
 
 export const SettingsSection: FC<SettingSectionProps> = ({
   title = 'Settings',
+  sectionName,
   showHeading = true,
   showSeparator = true,
   expanded,
   isReadOnly,
   settings,
+  onHeaderClick,
 }) => {
-  const [expandedState, setExpanded] = useState(!!expanded);
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
-
-  const handleClick = useCallback(() => {
-    setExpanded(!expandedState);
-  }, [expandedState]);
 
   const separatorStyles = {
     root: { color: isInverted ? constants.Settings.SETTING_SEPARATOR_COLOR_DARK : constants.Settings.SETTING_SEPARATOR_COLOR_LIGHT },
@@ -138,21 +137,27 @@ export const SettingsSection: FC<SettingSectionProps> = ({
 
   const internalSettings = (
     <>
-      {expandedState || !showHeading ? renderSettings(settings, isReadOnly) : null}
+      {expanded || !showHeading ? renderSettings(settings, isReadOnly) : null}
       {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
     </>
   );
   if (!showHeading) {
     return internalSettings;
   }
+  const handleSectionClick = (sectionName: string | undefined): void => {
+    if (onHeaderClick && sectionName) {
+      onHeaderClick(sectionName);
+    }
+  };
+
   return (
     <div className="msla-setting-section">
       <div className="msla-setting-section-content">
-        <button className="msla-setting-section-header" onClick={handleClick}>
+        <button className="msla-setting-section-header" onClick={() => handleSectionClick(sectionName)}>
           <Icon
             className="msla-setting-section-header-icon"
-            ariaLabel={expandedState ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
-            iconName={expandedState ? 'ChevronDownMed' : 'ChevronRightMed'}
+            ariaLabel={expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
+            iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
             styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
           />
           <div className={headerTextClassName}>{title}</div>
@@ -204,8 +209,8 @@ const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element
               return <SettingToggle {...settingProp} />;
             case 'SettingDictionary':
               return <SettingDictionary {...settingProp} />;
-            case 'SettingTokenTextField':
-              return <SettingTokenTextField {...settingProp} />;
+            case 'SettingTokenField':
+              return <SettingTokenField {...settingProp} />;
             case 'RunAfter':
               return <RunAfter {...settingProp} />;
             case 'SettingDropdown':

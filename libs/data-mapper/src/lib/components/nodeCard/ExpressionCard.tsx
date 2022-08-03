@@ -3,7 +3,7 @@ import { Icon } from '@fluentui/react';
 import { createFocusOutlineStyle, makeStyles, shorthands } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 
-interface ExpressionCardProps {
+export interface ExpressionCardProps {
   onClick?: () => void;
   disabled?: boolean;
 }

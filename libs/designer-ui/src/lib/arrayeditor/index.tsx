@@ -1,5 +1,6 @@
+import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
-import type { BaseEditorProps, Segment } from '../editor/base';
+import type { BaseEditorProps } from '../editor/base';
 import type { LabelProps } from '../label';
 import { CollapsedArray } from './collapsedarray';
 import { ExpandedArray } from './expandedarray';
@@ -7,22 +8,24 @@ import { useState } from 'react';
 
 export interface ArrayEditorItemProps {
   key?: string;
-  content: Segment[];
+  content: ValueSegment[];
 }
 
 export interface ArrayEditorProps extends BaseEditorProps {
   canDeleteLastItem?: boolean;
-  disabledToggle?: boolean;
+  disableToggle?: boolean;
   initialItems?: ArrayEditorItemProps[];
   labelProps: LabelProps;
   readOnly?: boolean;
+  addArrayLabel?: boolean;
 }
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   canDeleteLastItem = true,
-  disabledToggle = false,
+  disableToggle = false,
   initialItems = [],
   labelProps,
+  addArrayLabel,
   readOnly = false,
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
@@ -35,8 +38,14 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
 
   return (
     <div className="msla-array-editor-container">
-      {collapsed ? (
-        <CollapsedArray labelProps={labelProps} items={items} isValid={isValid} setItems={setItems} setIsValid={setIsValid} />
+      {collapsed || !initialItems ? (
+        <CollapsedArray
+          labelProps={addArrayLabel ? labelProps : undefined}
+          items={items}
+          isValid={isValid}
+          setItems={setItems}
+          setIsValid={setIsValid}
+        />
       ) : (
         <ExpandedArray
           items={items}
@@ -47,7 +56,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
         />
       )}
       <div className="msla-array-commands">
-        {!disabledToggle ? (
+        {!disableToggle ? (
           <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || readOnly} toggleCollapsed={toggleCollapsed} />
         ) : null}
       </div>

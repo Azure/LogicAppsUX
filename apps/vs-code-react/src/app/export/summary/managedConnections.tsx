@@ -3,10 +3,11 @@ import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateManagedConnections } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
+import { SearchableDropdown } from '../components/searchableDropdown';
 import { parseResourceGroupsData } from './helper';
-import { Checkbox, Dropdown, Text } from '@fluentui/react';
+import { Checkbox, Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -37,7 +38,21 @@ export const ManagedConnections: React.FC = () => {
       defaultMessage: 'Resource group',
       description: 'Resource group title',
     }),
+    SEARCH_RESOURCE_GROUP: intl.formatMessage({
+      defaultMessage: 'Find and select resource group',
+      description: 'Find and select resource group text',
+    }),
   };
+
+  useEffect(() => {
+    dispatch(
+      updateManagedConnections({
+        isManaged: false,
+        resourceGroup: undefined,
+        resourceGroupLocation: undefined,
+      })
+    );
+  }, [dispatch]);
 
   const apiService = useMemo(() => {
     return new ApiService({
@@ -76,20 +91,23 @@ export const ManagedConnections: React.FC = () => {
     };
 
     return isConnectionsChecked ? (
-      <Dropdown
+      <SearchableDropdown
         placeholder={intlText.SELECT_OPTION}
         label={intlText.RESOURCE_GROUP}
         disabled={isResourceGroupsLoading || !resourceGroups.length}
         options={resourceGroups}
         className="msla-export-summary-connections-dropdown"
         onChange={onChangeResourceGroup}
-        selectedKey={selectedResourceGroup !== '' ? selectedResourceGroup : null}
+        selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : null}
+        isLoading={isResourceGroupsLoading}
+        searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
       />
     ) : null;
   }, [
     isConnectionsChecked,
     intlText.SELECT_OPTION,
     intlText.RESOURCE_GROUP,
+    intlText.SEARCH_RESOURCE_GROUP,
     isResourceGroupsLoading,
     resourceGroupsData,
     dispatch,

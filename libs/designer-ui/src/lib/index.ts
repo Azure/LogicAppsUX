@@ -66,3 +66,4 @@ export * from './tip';
 export * from './tokenpicker';
 export * from './utils';
 // export * from './workflowparameters';
+export { FunctionGroupDefinitions as TemplateFunctions, FunctionDefinition } from './workflow/languageservice/templatefunctions';

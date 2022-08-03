@@ -1,35 +1,14 @@
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { addNodeToWorkflow, insertMiddleWorkflowEdge, setWorkflowEdge } from '../../parsers/addNodeToWorkflow';
+import { addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { isWorkflowNode } from '../../parsers/models/workflowNode';
+import { WORKFLOW_EDGE_TYPES, isWorkflowNode } from '../../parsers/models/workflowNode';
+import type { SpecTypes, WorkflowState } from './workflowInterfaces';
+import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
-import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
-
-type SpecTypes = 'BJS' | 'CNCF';
-
-export interface NodesMetadata {
-  [nodeId: string]: {
-    graphId: string;
-    parentNodeId?: string;
-    subgraphType?: SubgraphType;
-    actionCount?: number;
-    isRoot?: boolean;
-  };
-}
-
-export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
-
-export interface WorkflowState {
-  workflowSpec?: SpecTypes;
-  graph: WorkflowNode | null;
-  operations: Operations;
-  nodesMetadata: NodesMetadata;
-  collapsedGraphIds: Record<string, boolean>;
-}
 
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
@@ -37,6 +16,7 @@ export const initialWorkflowState: WorkflowState = {
   operations: {},
   nodesMetadata: {},
   collapsedGraphIds: {},
+  edgeIdsBySource: {},
 };
 
 export const workflowSlice = createSlice({
@@ -58,23 +38,16 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
       if (!state.graph) {
-        return;
+        return; // log exception
+      }
+      const graph = getWorkflowNodeFromGraphState(state, action.payload.graphId);
+      if (!graph) {
+        throw new Error('graph not set');
       }
 
-      addNodeToWorkflow(action.payload, state.graph, state.nodesMetadata);
+      addNodeToWorkflow(action.payload, graph, state.nodesMetadata);
 
-      if (action.payload.parentId) {
-        const newNodeId = action.payload.id;
-        const childId = action.payload.childId;
-        const parentId = action.payload.parentId;
-
-        setWorkflowEdge(parentId, newNodeId, state.graph);
-
-        if (childId) {
-          insertMiddleWorkflowEdge(parentId, newNodeId, childId, state.graph);
-        }
-      }
-      // Danielle still need to add to Actions, will complete later in S10! https://msazure.visualstudio.com/DefaultCollection/One/_workitems/edit/14429900
+      // Danielle still need to add to OperationsState, will complete later in S10! https://msazure.visualstudio.com/DefaultCollection/One/_workitems/edit/14429900
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
       const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');
@@ -124,6 +97,18 @@ export const workflowSlice = createSlice({
       state.graph = action.payload.graph;
       state.operations = action.payload.actionData;
       state.nodesMetadata = action.payload.nodesMetadata;
+
+      const traverseGraph = (graph: WorkflowNode) => {
+        const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
+        if (edges) {
+          edges.forEach((edge) => {
+            if (!state.edgeIdsBySource[edge.source]) state.edgeIdsBySource[edge.source] = [];
+            state.edgeIdsBySource[edge.source].push(edge.target);
+          });
+        }
+        if (graph.children) graph.children.forEach((child) => traverseGraph(child));
+      };
+      traverseGraph(action.payload.graph);
     });
   },
 });

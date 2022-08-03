@@ -614,7 +614,7 @@
   "4RQAXv": [
     {
       "type": 0,
-      "value": "Choose which view to browse from"
+      "value": "Wybierz widok, z którego chcesz przeglądać"
     }
   ],
   "4XdZNj": [
@@ -686,7 +686,7 @@
   "5Yi8Jj": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Łączniki"
     }
   ],
   "5aa76N": [
@@ -1223,6 +1223,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azory"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -2619,6 +2625,12 @@
       "value": "Wyczyść"
     }
   ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -2818,7 +2830,7 @@
   "Yuu5CD": [
     {
       "type": 0,
-      "value": "Zoom out"
+      "value": "Pomniejsz"
     }
   ],
   "Z4QLEf": [
@@ -3136,7 +3148,7 @@
   "daoo3l": [
     {
       "type": 0,
-      "value": "Connected to "
+      "value": "Połączono z "
     },
     {
       "type": 1,
@@ -3219,6 +3231,12 @@
       "value": "Parametr wymagany. Indeks, w którym podciąg rozpoczyna się w parametrze 1."
     }
   ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Wybierz schemat z listy rozwijanej"
+    }
+  ],
   "esOQ5p": [
     {
       "type": 0,
@@ -3282,7 +3300,7 @@
   "g1zwch": [
     {
       "type": 0,
-      "value": "Zoom in"
+      "value": "Powiększ"
     }
   ],
   "g4igOR": [
@@ -3704,7 +3722,7 @@
   "kV/U0C": [
     {
       "type": 0,
-      "value": "Display mini map"
+      "value": "Wyświetl minimapę"
     }
   ],
   "kYivbS": [
@@ -3803,10 +3821,10 @@
       "value": "pominięto"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Wprowadź prawidłową tablicę"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -4037,6 +4055,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4549,6 +4573,12 @@
       "value": "16"
     }
   ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Zmienne"
+    }
+  ],
   "urAHv1": [
     {
       "type": 0,
@@ -4583,6 +4613,12 @@
     {
       "type": 0,
       "value": "Zwraca ostatni indeks wartości w ciągu (bez uwzględniania wielkości liter, kultura niezmienna)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Przycisk do zarządzania stanem przełączania"
     }
   ],
   "vQcQkU": [
@@ -4662,7 +4698,7 @@
   "w9OL8U": [
     {
       "type": 0,
-      "value": "Page fit"
+      "value": "Dopasowanie strony"
     }
   ],
   "wEaGWn": [
@@ -4699,6 +4735,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Długość podciągu."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4883,6 +4925,12 @@
     {
       "type": 0,
       "value": "Wymagane. Wartość konwertowana na liczbę dziesiętną."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
     }
   ],
   "zIDVd9": [

@@ -1,16 +1,18 @@
 import type { SectionProps } from '../';
+import constants from '../../../common/constants';
 import type { WorkflowEdge } from '../../../core/parsers/models/workflowNode';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
 import { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 // TODO: 14714481 We need to support all incoming edges and runAfterConfigMenu
 interface RunAfterProps extends SectionProps {
   allEdges: WorkflowEdge[];
 }
 
-export const RunAfter = ({ runAfter, readOnly = false }: RunAfterProps): JSX.Element | null => {
+export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick }: RunAfterProps): JSX.Element | null => {
   const [statuses, setStatuses] = useState<Record<string, string[]>>({});
   const graphEdges = runAfter?.value;
 
@@ -61,11 +63,18 @@ export const RunAfter = ({ runAfter, readOnly = false }: RunAfterProps): JSX.Ele
     });
     return items;
   };
+  const intl = useIntl();
+  const runAfterTitle = intl.formatMessage({
+    defaultMessage: 'Run After',
+    description: 'title for run after setting section',
+  });
 
   const runAfterSectionProps: SettingSectionProps = {
     id: 'runAfter',
-    title: 'Run After',
-    expanded: false,
+    title: runAfterTitle,
+    sectionName: constants.SETTINGSECTIONS.RUNAFTER,
+    expanded,
+    onHeaderClick,
     settings: [
       {
         settingType: 'RunAfter',

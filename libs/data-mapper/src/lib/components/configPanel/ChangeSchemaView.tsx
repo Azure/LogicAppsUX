@@ -13,7 +13,7 @@ export enum UploadSchemaTypes {
   SelectFrom = 'select-from',
 }
 
-export interface ChangeSchemaView {
+export interface ChangeSchemaViewProps {
   schemaType?: SchemaTypes;
   selectedSchema?: IDropdownOption;
   setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
@@ -25,7 +25,12 @@ const uploadSchemaOptions: IChoiceGroupOption[] = [
   { key: UploadSchemaTypes.SelectFrom, text: 'Select from existing' },
 ];
 
-export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({ schemaType, selectedSchema, setSelectedSchema, errorMessage }) => {
+export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
+  schemaType,
+  selectedSchema,
+  setSelectedSchema,
+  errorMessage,
+}) => {
   const schemaFilesList = useSelector((state: RootState) => state.schema.availableSchemas);
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
 
@@ -40,6 +45,10 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({ schemaTy
   const uploadMessage = intl.formatMessage({
     defaultMessage: 'Select a file to upload',
     description: 'This is shown as a placeholder text for selecting a file to upload',
+  });
+  const dropdownAriaLabel = intl.formatMessage({
+    defaultMessage: 'Select the schema for dropdown',
+    description: 'Dropdown for selecting or changing the input or output schema ',
   });
 
   let uploadSelectLabelMessage = '';
@@ -98,12 +107,15 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({ schemaTy
       {uploadType === UploadSchemaTypes.UploadNew && (
         <div className="upload-new">
           <TextField placeholder={uploadMessage} />
-          <PrimaryButton className="panel-button-right">{browseMessage}</PrimaryButton>
+          <PrimaryButton className="panel-button-right" aria-label={browseMessage}>
+            {browseMessage}
+          </PrimaryButton>
         </div>
       )}
 
       {uploadType === UploadSchemaTypes.SelectFrom && (
         <Dropdown
+          aria-label={dropdownAriaLabel}
           selectedKey={selectedSchema ? selectedSchema.key : undefined}
           placeholder={selectSchemaPlaceholderMessage}
           options={dataMapDropdownOptions ?? []}

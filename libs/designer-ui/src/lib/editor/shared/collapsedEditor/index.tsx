@@ -1,9 +1,9 @@
 import type { ArrayEditorItemProps } from '../../../arrayeditor';
 import { SerializeArray } from '../../../arrayeditor/plugins/SerializeArray';
 import type { DictionaryEditorItemProps } from '../../../dictionary';
-import type { Segment } from '../../base';
 import { BaseEditor } from '../../base';
 import { Validation } from '../../base/plugins/Validation';
+import type { ValueSegment } from '../../models/parameter';
 import type { Dispatch, SetStateAction } from 'react';
 
 export enum CollapsedEditorType {
@@ -11,32 +11,36 @@ export enum CollapsedEditorType {
   DICTIONARY = 'dictionary',
 }
 
-type CollapsedEditorBaseProps = {
+interface CollapsedEditorBaseProps {
   isValid?: boolean;
-  initialValue?: Segment[];
+  initialValue?: ValueSegment[];
   errorMessage: string;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
-};
+  collapsedValue?: ValueSegment[];
+  setCollapsedValue?: (val: ValueSegment[]) => void;
+}
 
-export type CollapsedEditorProps = CollapsedEditorBaseProps &
-  (
-    | {
-        type: CollapsedEditorType.COLLAPSED_ARRAY;
-        setItems: (items: ArrayEditorItemProps[]) => void;
-      }
-    | {
-        type: CollapsedEditorType.DICTIONARY;
-        setItems: (items: DictionaryEditorItemProps[]) => void;
-      }
-  );
+interface ColapsedEditorArrayProps {
+  type: CollapsedEditorType.COLLAPSED_ARRAY;
+  setItems: (items: ArrayEditorItemProps[]) => void;
+}
+
+interface CollapsedEditorDictionaryProps {
+  type: CollapsedEditorType.DICTIONARY;
+  setItems: (items: DictionaryEditorItemProps[]) => void;
+}
+
+type CollapsedEditorProps = CollapsedEditorBaseProps & (ColapsedEditorArrayProps | CollapsedEditorDictionaryProps);
 
 export const CollapsedEditor = ({
   isValid = true,
   errorMessage,
   initialValue,
   type,
-  setItems,
   setIsValid,
+  setItems,
+  collapsedValue,
+  setCollapsedValue,
 }: CollapsedEditorProps): JSX.Element => {
   return (
     <BaseEditor
@@ -44,13 +48,22 @@ export const CollapsedEditor = ({
       BasePlugins={{
         tokens: true,
       }}
-      tokenPickerClassName={`msla-${type}-editor-tokenpicker`}
+      tokenPickerButtonProps={{ buttonClassName: `msla-${type}-editor-tokenpicker` }}
       placeholder={type === CollapsedEditorType.DICTIONARY ? 'Enter a Dictionary' : 'Enter an Array'}
-      initialValue={initialValue}
+      initialValue={collapsedValue && collapsedValue.length > 0 ? collapsedValue : initialValue}
     >
       {type === CollapsedEditorType.DICTIONARY ? null : <SerializeArray isValid={isValid} setItems={setItems} />}
 
-      <Validation type={type} errorMessage={errorMessage} className={'msla-collapsed-editor-validation'} isValid setIsValid={setIsValid} />
+      <Validation
+        type={type}
+        errorMessage={errorMessage}
+        className={'msla-collapsed-editor-validation'}
+        isValid={isValid}
+        setIsValid={setIsValid}
+        setItems={type === CollapsedEditorType.DICTIONARY ? setItems : undefined}
+        collapsedValue={collapsedValue}
+        setCollapsedValue={setCollapsedValue}
+      />
     </BaseEditor>
   );
 };
