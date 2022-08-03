@@ -10,7 +10,7 @@ import { filterWorkflows, getListColumns, parseResourceGroups, parseWorkflowData
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -92,7 +92,15 @@ export const WorkflowsSelection: React.FC = () => {
     onSuccess: onWorkflowsSuccess,
   });
 
-  const selection = useMemo(() => {
+  const onItemsChange = useCallback(() => {
+    if (selection && selection.getItems().length > 0 && selectedWorkflows.length > 0) {
+      selectedWorkflows.forEach((workflow: WorkflowsList) => {
+        selection.setKeySelected(workflow.key, true, true);
+      });
+    }
+  }, [selectedWorkflows]);
+
+  const selection: Selection = useMemo(() => {
     return new Selection({
       onSelectionChanged: () => {
         const currentSelection = selection.getSelection() as Array<WorkflowsList>;
@@ -102,19 +110,9 @@ export const WorkflowsSelection: React.FC = () => {
           })
         );
       },
-      items: renderWorkflows as any,
+      onItemsChanged: onItemsChange,
     });
-  }, [renderWorkflows, dispatch]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (selection && selection.getItems().length > 0 && selectedWorkflows.length > 0) {
-        selectedWorkflows.forEach((workflow: WorkflowsList) => {
-          selection.setKeySelected(workflow.key, true, true);
-        });
-      }
-    }, 3000);
-  }, [selectedWorkflows, renderWorkflows, selection]);
+  }, [dispatch, onItemsChange]);
 
   const workflowsList = useMemo(() => {
     const emptyText = (
@@ -183,7 +181,7 @@ export const WorkflowsSelection: React.FC = () => {
 
     const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
       const updatedResourceGroups = [...resourceGroups];
-      updatedResourceGroups[index].selected = !updatedResourceGroups[index].selected;
+      updatedResourceGroups[index - 2].selected = !updatedResourceGroups[index - 2].selected;
 
       setRenderWorkflows(filterWorkflows(allWorkflows, updatedResourceGroups, searchString));
       setResourceGroups(updatedResourceGroups);
