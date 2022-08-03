@@ -1,7 +1,8 @@
-import { TokenNode } from '../editor/base/nodes/tokenNode';
+import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
+import type { PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useEffect } from 'react';
+// import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { useState } from 'react';
 
 export type { Token as OutputToken } from './models/token';
 
@@ -15,13 +16,14 @@ export interface TokenPickerProps {
 }
 
 export default function TokenPicker({ editorId, labelId }: TokenPickerProps): JSX.Element {
-  const [editor] = useLexicalComposerContext();
+  // const [editor] = useLexicalComposerContext();
+  const [selectedKey, setSelectedKey] = useState<string>(TokenPickerMode.TOKEN);
 
-  useEffect(() => {
-    if (!editor.hasNodes([TokenNode])) {
-      throw new Error('TokenPlugin: Register the TokenNode on editor');
+  const handleSelectKey = (item?: PivotItem) => {
+    if (item?.props?.itemKey) {
+      setSelectedKey(item.props.itemKey);
     }
-  }, [editor]);
+  };
 
   return (
     <Callout
@@ -32,9 +34,15 @@ export default function TokenPicker({ editorId, labelId }: TokenPickerProps): JS
       isBeakVisible={true}
       beakWidth={beakWidth}
       directionalHint={directionalHint}
-      setInitialFocus
+      onMouseDown={(e) => {
+        e.preventDefault();
+      }}
     >
-      <div style={{ width: '300px', color: 'blue', height: '300px' }}></div>
+      <div className="msla-token-picker-container">
+        <div className="msla-token-picker">
+          <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} />
+        </div>
+      </div>
     </Callout>
   );
 }

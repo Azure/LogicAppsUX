@@ -55,6 +55,7 @@ export * from './scratch';
 // export * from './picker';
 // export * from './rulescontrol';
 export * from './schemaeditor';
+export * from './editor/string';
 // export * from './selector';
 // export * from './selector2';
 export * from './selectConnection';

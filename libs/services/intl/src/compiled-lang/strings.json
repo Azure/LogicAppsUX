@@ -3363,6 +3363,12 @@
       "value": "Converts a string to uppercase using the casing rules of the invariant culture"
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamic content"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4143,6 +4149,12 @@
     {
       "type": 0,
       "value": "Returns a URI encoded representation of a value"
+    }
+  ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expression"
     }
   ],
   "rstpaK": [

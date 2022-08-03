@@ -4,6 +4,8 @@ import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
+import DeleteTokenNode from './plugins/DeleteTokenNode';
+import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
 import TokenPickerButton from './plugins/TokenPickerButton';
@@ -158,6 +160,8 @@ export const BaseEditor = ({
         {showTokenPickerButton && showTokenPicker ? <TokenPicker editorId={editorId} labelId={labelId} /> : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
+        <InsertTokenNode />
+        <DeleteTokenNode />
         {children}
       </div>
     </LexicalComposer>
