@@ -10,7 +10,7 @@ import { filterWorkflows, getListColumns, parseResourceGroups, parseWorkflowData
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -92,15 +92,15 @@ export const WorkflowsSelection: React.FC = () => {
     onSuccess: onWorkflowsSuccess,
   });
 
-  const onItemsChange = useCallback(() => {
-    if (selection && selection.getItems().length > 0 && selectedWorkflows.length > 0) {
-      selectedWorkflows.forEach((workflow: WorkflowsList) => {
-        selection.setKeySelected(workflow.key, true, true);
-      });
-    }
-  }, [selectedWorkflows]);
-
   const selection: Selection = useMemo(() => {
+    const onItemsChange = () => {
+      if (selection && selection.getItems().length > 0 && selectedWorkflows.length > 0) {
+        selectedWorkflows.forEach((workflow: WorkflowsList) => {
+          selection.setKeySelected(workflow.key, true, true);
+        });
+      }
+    };
+
     return new Selection({
       onSelectionChanged: () => {
         const currentSelection = selection.getSelection() as Array<WorkflowsList>;
@@ -112,7 +112,7 @@ export const WorkflowsSelection: React.FC = () => {
       },
       onItemsChanged: onItemsChange,
     });
-  }, [dispatch, onItemsChange]);
+  }, [dispatch, selectedWorkflows]);
 
   const workflowsList = useMemo(() => {
     const emptyText = (
