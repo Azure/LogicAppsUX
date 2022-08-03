@@ -87,6 +87,7 @@ export const BaseEditor = ({
 }: BaseEditorProps) => {
   const intl = useIntl();
   const editorId = useId('msla-tokenpicker-callout-location');
+  const labelId = useId('msla-tokenpicker-callout-label');
   const [showTokenPickerButton, { toggle: toggleShowTokenPickerButton }] = useBoolean(false);
   const [showTokenPicker, { toggle: toggleShowTokenPicker }] = useBoolean(true);
   const initialConfig = {
@@ -147,13 +148,14 @@ export const BaseEditor = ({
 
         {tokens && showTokenPickerButton ? (
           <TokenPickerButton
+            labelId={labelId}
             showTokenPicker={showTokenPicker}
             buttonClassName={tokenPickerButtonProps?.buttonClassName}
             buttonHeight={tokenPickerButtonProps?.buttonHeight}
             toggleTokenPicker={toggleShowTokenPicker}
           />
         ) : null}
-        {showTokenPickerButton && showTokenPicker ? <TokenPicker editorId={editorId} /> : null}
+        {showTokenPickerButton && showTokenPicker ? <TokenPicker editorId={editorId} labelId={labelId} /> : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
         {children}

@@ -1,6 +1,5 @@
 import { TokenNode } from '../editor/base/nodes/tokenNode';
 import { Callout, DirectionalHint } from '@fluentui/react';
-import { useId } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useEffect } from 'react';
 
@@ -12,12 +11,11 @@ const beakWidth = 20;
 
 export interface TokenPickerProps {
   editorId: string;
+  labelId: string;
 }
 
-export default function TokenPicker({ editorId }: TokenPickerProps): JSX.Element {
+export default function TokenPicker({ editorId, labelId }: TokenPickerProps): JSX.Element {
   const [editor] = useLexicalComposerContext();
-  const labelId = useId('msla-tokenpicker-callout-label');
-  const descriptionId = useId('msla-tokenpicker-callout-description');
 
   useEffect(() => {
     if (!editor.hasNodes([TokenNode])) {
@@ -27,9 +25,8 @@ export default function TokenPicker({ editorId }: TokenPickerProps): JSX.Element
 
   return (
     <Callout
-      ariaLabelledBy={labelId}
-      ariaDescribedBy={descriptionId}
       role="dialog"
+      ariaLabelledBy={labelId}
       gapSpace={gapSpace}
       target={`#${editorId}`}
       isBeakVisible={true}

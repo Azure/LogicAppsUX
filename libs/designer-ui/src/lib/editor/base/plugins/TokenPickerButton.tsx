@@ -8,8 +8,15 @@ import { useIntl } from 'react-intl';
 
 interface ButtonProps extends TokenPickerButtonProps {
   showTokenPicker: boolean;
+  labelId: string;
 }
-export default function TokenPickerButton({ showTokenPicker, buttonClassName, buttonHeight, toggleTokenPicker }: ButtonProps): JSX.Element {
+export default function TokenPickerButton({
+  showTokenPicker,
+  buttonClassName,
+  buttonHeight,
+  labelId,
+  toggleTokenPicker,
+}: ButtonProps): JSX.Element {
   const [editor] = useLexicalComposerContext();
 
   const intl = useIntl();
@@ -37,6 +44,7 @@ export default function TokenPickerButton({ showTokenPicker, buttonClassName, bu
       <InsertTokenNode />
       <DeleteTokenNode />
       <button
+        id={labelId}
         className={`msla-tokenpicker-button ${buttonClassName}`}
         onClick={toggleTokenPicker}
         onMouseDown={(e) => e.preventDefault()}
