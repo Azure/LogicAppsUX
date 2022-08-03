@@ -55,10 +55,8 @@ export const ExpandedDictionary = ({ items, setItems }: ExpandedDictionaryProps)
                 placeholder={keyPlaceholder}
                 initialValue={item.key ?? []}
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
-                focusProps={{
-                  tokenPickerProps: { buttonClassName: 'msla-expanded-dictionary-editor-tokenpicker', buttonHeight: pickerOffset },
-                  addDictionaryItem: { addItem: addItem, index: index },
-                }}
+                onFocus={() => addItem(index)}
+                tokenPickerButtonProps={{ buttonClassName: 'msla-expanded-dictionary-editor-tokenpicker', buttonHeight: pickerOffset }}
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary items={items} initialItem={item.key} index={index} type={'key'} setItems={setItems} />
@@ -71,10 +69,8 @@ export const ExpandedDictionary = ({ items, setItems }: ExpandedDictionaryProps)
                 placeholder={valuePlaceholder}
                 initialValue={item.value ?? []}
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
-                focusProps={{
-                  tokenPickerProps: { buttonClassName: 'msla-expanded-dictionary-editor-tokenpicker', buttonHeight: pickerOffset },
-                  addDictionaryItem: { addItem: addItem, index: index },
-                }}
+                tokenPickerButtonProps={{ buttonClassName: 'msla-expanded-dictionary-editor-tokenpicker', buttonHeight: pickerOffset }}
+                onFocus={() => addItem(index)}
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary items={items} initialItem={item.value} index={index} type={'value'} setItems={setItems} />

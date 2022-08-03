@@ -38,32 +38,28 @@ export const Validation = ({
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), tokensEnabled);
-      if (setIsValid) {
-        let newValiditity = true;
-        switch (type) {
-          case CollapsedEditorType.COLLAPSED_ARRAY:
-            if (!editorString.trim().length || editorString === '[]') {
-              setIsValid(newValiditity);
+      let newValiditity = true;
+      switch (type) {
+        case CollapsedEditorType.COLLAPSED_ARRAY:
+          if (!editorString.trim().length || editorString === '[]') {
+            setIsValid?.(newValiditity);
+          } else {
+            setIsValid?.(isValidArray(editorString));
+          }
+          break;
+        case CollapsedEditorType.DICTIONARY:
+          if (!editorString.trim().length || editorString === '{}') {
+            setIsValid?.(newValiditity);
+            setCollapsedValue?.([]);
+          } else {
+            newValiditity = isValidDictionary(editorString);
+            setIsValid?.(newValiditity);
+            if (setItems && newValiditity) {
+              serializeDictionary(editor, setItems);
             } else {
-              setIsValid(isValidArray(editorString));
+              setCollapsedValue?.(serializeEditorState(editor.getEditorState()));
             }
-            break;
-          case CollapsedEditorType.DICTIONARY:
-            if (!editorString.trim().length || editorString === '{}') {
-              setIsValid(newValiditity);
-              if (setCollapsedValue) {
-                setCollapsedValue([]);
-              }
-            } else {
-              newValiditity = isValidDictionary(editorString);
-              setIsValid(newValiditity);
-              if (setItems && newValiditity) {
-                serializeDictionary(editor, setItems);
-              } else if (setCollapsedValue) {
-                setCollapsedValue(serializeEditorState(editor.getEditorState()));
-              }
-            }
-        }
+          }
       }
     });
   };

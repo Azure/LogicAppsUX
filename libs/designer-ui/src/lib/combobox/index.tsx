@@ -160,7 +160,7 @@ export const Combobox = ({
             readonly={readOnly}
             className="msla-combobox-editor"
             placeholder={placeholder}
-            BasePlugins={{ tokens: true, clearEditor: true, autoFocus: true }}
+            BasePlugins={{ tokens: true, clearEditor: true }}
             initialValue={customValue}
           >
             <CustomValue setCustomVal={setCustomValue} />

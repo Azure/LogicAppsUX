@@ -18,9 +18,7 @@ export const DocumentationItem = ({ description, link, openWindow, onClick }: Do
       await openWindow(link.url);
     }
 
-    if (onClick) {
-      onClick();
-    }
+    onClick?.();
   };
   return (
     <div>

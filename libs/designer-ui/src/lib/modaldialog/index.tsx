@@ -25,14 +25,10 @@ const dialogContentProps: IDialogContentProps = {
 
 export const ModalDialog = ({ confirmText, isOpen, title, children, getStyles, onConfirm, onDismiss }: ModalDialogProps): JSX.Element => {
   const handleConfirm = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    if (onConfirm) {
-      onConfirm(e);
-    }
+    onConfirm(e);
   };
   const handleDismiss = () => {
-    if (onDismiss) {
-      onDismiss();
-    }
+    onDismiss();
   };
 
   const handleModalBodyClick = (e: { stopPropagation: () => void }) => {
