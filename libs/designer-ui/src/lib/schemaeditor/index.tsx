@@ -80,16 +80,11 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
   };
 
   const handleBlur = (): void => {
-    if (onChange) {
-      // TODO - Move this to onBlur
-      onChange({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: currentValue }] });
-    }
+    onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: currentValue }] });
   };
 
   const handleFocus = (): void => {
-    if (onFocus) {
-      onFocus();
-    }
+    onFocus?.();
   };
 
   const openModal = () => {

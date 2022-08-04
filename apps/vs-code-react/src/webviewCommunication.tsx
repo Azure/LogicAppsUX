@@ -1,4 +1,10 @@
-import type { InjectValuesMessage, UpdateAccessTokenMessage, UpdateExportPathMessage, AddStatusMessage, SetFinalStatusMessage } from './run-service';
+import type {
+  InjectValuesMessage,
+  UpdateAccessTokenMessage,
+  UpdateExportPathMessage,
+  AddStatusMessage,
+  SetFinalStatusMessage,
+} from './run-service';
 import type { AppDispatch } from './state/store';
 import { initialize, updateAccessToken, updateTargetDirectory, addStatus, setFinalStatus } from './state/vscodeSlice';
 import { ExtensionCommand } from '@microsoft-logic-apps/utils';

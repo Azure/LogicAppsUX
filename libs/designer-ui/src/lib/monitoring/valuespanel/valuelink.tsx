@@ -27,9 +27,7 @@ export const ValueLink: React.FC<ValueLinkProps> = ({ linkText, visible = false,
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.preventDefault();
 
-    if (onLinkClick) {
-      onLinkClick();
-    }
+    onLinkClick?.();
   };
 
   if (!visible) {

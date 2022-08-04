@@ -31,7 +31,8 @@
       "Response": {
         "inputs": {
           "body": "@outputs('Execute_a_navigation_plan')?['outputParameters']?['balance']",
-          "statusCode": 200
+          "statusCode": 200,
+          "headers": "@triggerBody()"
         },
         "kind": "http",
         "runAfter": {
