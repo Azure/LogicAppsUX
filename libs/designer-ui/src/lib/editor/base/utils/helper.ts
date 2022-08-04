@@ -30,20 +30,14 @@ export const showCollapsedValidation = (collapsedValue: ValueSegment[]): boolean
 };
 
 export const initializeValidation = (intialValue: ValueSegment[]): boolean => {
-  let editorString = '';
-  intialValue.forEach((segment) => {
-    if (segment.type === ValueSegmentType.LITERAL) {
-      editorString += segment.value;
-    } else if (segment.type === ValueSegmentType.TOKEN) {
-      editorString += segment.value;
-    }
-  });
-  return isValidDictionary(editorString);
+  const editorString = intialValue.map((segment) => segment.value).join('');
+  return !editorString || isValidDictionary(editorString);
 };
 
 export const isValidDictionary = (s: string): boolean => {
   return s.startsWith('{') && s.endsWith('}') && validateDictionaryStrings(s);
 };
+
 export const validateDictionaryStrings = (s: string): boolean => {
   try {
     JSON.parse(s);
