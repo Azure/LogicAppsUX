@@ -5,12 +5,6 @@
       "value": "OK"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "Botão para adicionar conteúdo dinâmico"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -609,6 +603,12 @@
       "value": "Alternar Minimap"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1168,7 +1168,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "Executar Após"
     }
   ],
   "DysO/Q": [
@@ -1447,6 +1447,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O nome da chave do valor dos dados de formulário a devolver."
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -2502,7 +2508,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Introduza um dicionário válido"
     }
   ],
   "WS9kXD": [
@@ -3676,7 +3682,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Introduza uma matriz válida"
     }
   ],
   "lgs5sf": [
@@ -3912,7 +3918,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "Introduzir chave"
     }
   ],
   "pIczsS": [
@@ -4570,7 +4576,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Clicar para eliminar o item"
     }
   ],
   "wWVQuK": [
@@ -4760,7 +4766,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "Introduzir valor"
     }
   ],
   "zIDVd9": [

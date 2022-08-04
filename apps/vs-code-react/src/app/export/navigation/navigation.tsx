@@ -130,26 +130,24 @@ export const Navigation: React.FC = () => {
 
   return (
     <div className="msla-export-navigation-panel">
-{
-      isButtonsVisible ?
-      <>
-      <PrimaryButton
-        className="msla-export-navigation-panel-button"
-        text={intlText.BACK}
-        ariaLabel={intlText.BACK}
-        onClick={onClickBack}
-        disabled={isBackDisabled()}
-      />
-      <PrimaryButton
-        className="msla-export-navigation-panel-button"
-        text={nextText}
-        ariaLabel={nextText}
-        onClick={onClickNext}
-        disabled={isNextDisabled()}
-      />
-      </>
-      : null
-}
+      {isButtonsVisible ? (
+        <>
+          <PrimaryButton
+            className="msla-export-navigation-panel-button"
+            text={intlText.BACK}
+            ariaLabel={intlText.BACK}
+            onClick={onClickBack}
+            disabled={isBackDisabled()}
+          />
+          <PrimaryButton
+            className="msla-export-navigation-panel-button"
+            text={nextText}
+            ariaLabel={nextText}
+            onClick={onClickNext}
+            disabled={isNextDisabled()}
+          />
+        </>
+      ) : null}
     </div>
   );
 };

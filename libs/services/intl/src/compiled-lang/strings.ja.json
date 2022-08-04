@@ -5,12 +5,6 @@
       "value": "OK"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "動的なコンテンツを追加するボタン"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -598,6 +592,12 @@
       "value": "ミニマップの切り替え"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1146,7 +1146,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "実行までの期間"
     }
   ],
   "DysO/Q": [
@@ -1414,6 +1414,12 @@
     {
       "type": 0,
       "value": "必須。取得するフォーム データ値のキー名。"
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -2447,7 +2453,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "有効な辞書を入力してください"
     }
   ],
   "WS9kXD": [
@@ -3590,7 +3596,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "有効なアレイを入力してください"
     }
   ],
   "lgs5sf": [
@@ -3826,7 +3832,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "キーの入力"
     }
   ],
   "pIczsS": [
@@ -4469,7 +4475,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "クリックして項目を削除してください"
     }
   ],
   "wWVQuK": [
@@ -4659,7 +4665,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "値の入力"
     }
   ],
   "zIDVd9": [

@@ -13,9 +13,9 @@ export interface InitializePayload {
 }
 
 export enum Status {
-  InProgress = "InProgress",
-  Succeeded = "Succeeded",
-  Failed = "Failed"
+  InProgress = 'InProgress',
+  Succeeded = 'Succeeded',
+  Failed = 'Failed',
 }
 
 export interface InitializedVscodeState {
@@ -85,11 +85,13 @@ export const vscodeSlice = createSlice({
       const { selectedSubscription } = action.payload;
       (state as InitializedVscodeState).exportData.selectedSubscription = selectedSubscription;
       (state as InitializedVscodeState).exportData.selectedIse = '';
+      (state as InitializedVscodeState).exportData.selectedWorkflows = [];
     },
     updateSelectedIse: (state: VscodeState, action: PayloadAction<{ selectedIse: string; location: string }>) => {
       const { selectedIse, location } = action.payload;
       (state as InitializedVscodeState).exportData.selectedIse = selectedIse;
       (state as InitializedVscodeState).exportData.location = location;
+      (state as InitializedVscodeState).exportData.selectedWorkflows = [];
     },
     updateValidationState: (state: VscodeState, action: PayloadAction<{ validationState: string }>) => {
       const { validationState } = action.payload;
