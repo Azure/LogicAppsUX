@@ -69,7 +69,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
         <ExpandedDictionary items={items ?? [{ key: [], value: [] }]} setItems={updateItems} />
       )}
 
-      <div className="msla-array-commands">
+      <div className="msla-dictionary-commands">
         {!disableToggle ? (
           <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || readOnly} toggleCollapsed={toggleCollapsed} />
         ) : null}
