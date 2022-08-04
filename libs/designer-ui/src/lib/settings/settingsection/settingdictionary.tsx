@@ -68,6 +68,12 @@ function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, l
   };
   // TODO (14725265) add check /support for ambiguous value types being passed in here
   const valuesInString = typeof values !== 'string' ? JSON.stringify(values) : values;
+  const handleTextFieldChange: InputChangeHandler = (ev, newVal) => {
+    if (newVal) {
+      onTextFieldChange?.(ev, newVal);
+    }
+  };
+
   return customLabel ? (
     <>
       {customLabel()}
@@ -86,7 +92,7 @@ function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, l
         className="msla-setting-row-text-input"
         disabled={readOnly}
         value={valuesInString}
-        onChange={onTextFieldChange}
+        onChange={handleTextFieldChange}
         styles={textFieldStyles}
       />
     </div>

@@ -14,7 +14,7 @@ export const Status: React.FC = () => {
     EXPORT_STATUS_TITLE: intl.formatMessage({
       defaultMessage: 'Export status',
       description: 'Export status title',
-    })
+    }),
   };
 
   const renderStatus = (status?: string): JSX.Element => {
@@ -37,18 +37,21 @@ const FinalStatusGadget: React.FC = () => {
   const intl = useIntl();
   const vscodeState = useSelector((state: RootState) => state.vscode) as InitializedVscodeState;
   const status = vscodeState.finalStatus;
-  const { targetDirectory } =  vscodeState.exportData;
+  const { targetDirectory } = vscodeState.exportData;
 
   const message = intl.formatMessage({
     defaultMessage: 'The selected workflows exported successfully. For next steps, review the ',
     description: 'The success message.',
   });
 
-  switch (status)
-  {
+  switch (status) {
     case FinalStatus.Succeeded:
-      return <Text block>{message} ${targetDirectory.path}/.logs/export/README.md</Text>;
+      return (
+        <Text block>
+          {message} ${targetDirectory.path}/.logs/export/README.md
+        </Text>
+      );
     default:
       return null;
-  }   
-}
+  }
+};
