@@ -5,33 +5,6 @@
 
 .msla-dictionary-editor-container {
   display: flex;
-  margin-top: 30px;
-
-  .msla-array-commands {
-    margin-top: @padding;
-    vertical-align: top;
-    display: inline-block;
-    align-self: flex-start;
-
-    .msla-array-toggle-button {
-      vertical-align: top;
-      display: inline-block;
-      padding: 0;
-
-      img {
-        width: @command-icon-width;
-        height: @command-icon-width;
-        vertical-align: middle;
-      }
-
-      &[disabled] {
-        cursor: default;
-        img {
-          opacity: 0.6;
-        }
-      }
-    }
-  }
 
   .msla-dictionary-container {
     flex: 1 1 100%;
@@ -138,27 +111,6 @@
         width: 25px;
         height: 25px;
         display: table-cell;
-      }
-    }
-
-    .msla-array-item-parameters {
-      display: inline-block;
-      width: calc(100% - 30px);
-
-      .msla-input-parameter-array {
-        margin-bottom: @parameter-interval-margin;
-      }
-    }
-
-    .msla-array-item-commands {
-      display: inline-block;
-      width: 30px;
-      vertical-align: top;
-
-      .msla-array-item-contextbutton {
-        i[data-icon-name='ChevronDown'] {
-          display: none;
-        }
       }
     }
   }
