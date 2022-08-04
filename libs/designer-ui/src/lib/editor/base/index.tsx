@@ -4,6 +4,8 @@ import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
+import DeleteTokenNode from './plugins/DeleteTokenNode';
+import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
 import TokenPickerButton from './plugins/TokenPickerButton';
@@ -11,13 +13,14 @@ import { TreeView } from './plugins/TreeView';
 import { Validation } from './plugins/Validation';
 import type { ValidationProps } from './plugins/Validation';
 import { parseSegments } from './utils/parsesegments';
-import { useBoolean, useId } from '@fluentui/react-hooks';
+import { useId } from '@fluentui/react-hooks';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export { testTokenSegment } from '../shared/testtokensegment';
@@ -37,7 +40,7 @@ export interface DictionaryCallbackProps {
 export interface TokenPickerButtonProps {
   buttonClassName?: string;
   buttonHeight?: number;
-  toggleTokenPicker?: () => void;
+  setShowTokenPicker?: () => void;
 }
 
 export interface BaseEditorProps {
@@ -88,8 +91,9 @@ export const BaseEditor = ({
   const intl = useIntl();
   const editorId = useId('msla-tokenpicker-callout-location');
   const labelId = useId('msla-tokenpicker-callout-label');
-  const [showTokenPickerButton, { toggle: toggleShowTokenPickerButton }] = useBoolean(false);
-  const [showTokenPicker, { toggle: toggleShowTokenPicker }] = useBoolean(true);
+  const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
+  const [showTokenPicker, setShowTokenPicker] = useState(true);
+  const [inTokenPicker, setInTokenPicker] = useState(false);
   const initialConfig = {
     theme: defaultTheme,
     onError,
@@ -112,20 +116,30 @@ export const BaseEditor = ({
 
   const handleFocus = () => {
     if (tokens) {
-      toggleShowTokenPickerButton();
+      setShowTokenPickerButton(true);
     }
+    setInTokenPicker(false);
     onFocus?.();
   };
   const handleBlur = () => {
-    onBlur?.();
-    if (tokens) {
-      toggleShowTokenPickerButton();
+    if (tokens && !inTokenPicker) {
+      setShowTokenPickerButton(false);
+    } else {
+      setInTokenPicker(false);
     }
+    onBlur?.();
+  };
+
+  const handleShowTokenPicker = () => {
+    if (showTokenPicker) {
+      setInTokenPicker(false);
+    }
+    setShowTokenPicker(!showTokenPicker);
   };
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className={className ?? 'msla-base-editor'} id={editorId}>
+      <div className={className ?? 'msla-editor-container'} id={editorId}>
         <RichTextPlugin
           contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
           placeholder={<span className="editor-placeholder"> {placeholder} </span>}
@@ -146,18 +160,22 @@ export const BaseEditor = ({
           />
         ) : null}
 
-        {tokens && showTokenPickerButton ? (
+        {(tokens && showTokenPickerButton) || inTokenPicker ? (
           <TokenPickerButton
             labelId={labelId}
             showTokenPicker={showTokenPicker}
             buttonClassName={tokenPickerButtonProps?.buttonClassName}
             buttonHeight={tokenPickerButtonProps?.buttonHeight}
-            toggleTokenPicker={toggleShowTokenPicker}
+            setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}
-        {showTokenPickerButton && showTokenPicker ? <TokenPicker editorId={editorId} labelId={labelId} /> : null}
+        {(showTokenPickerButton && showTokenPicker) || inTokenPicker ? (
+          <TokenPicker editorId={editorId} labelId={labelId} searchText="" setInTokenPicker={setInTokenPicker} />
+        ) : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
+        <InsertTokenNode />
+        <DeleteTokenNode />
         {children}
       </div>
     </LexicalComposer>

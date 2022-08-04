@@ -83,6 +83,7 @@ export const Combobox = ({
   const [mode, setMode] = useState<Mode>(getMode(initialValue, optionKey));
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
   const [comboboxOptions, setComboBoxOptions] = useState<IComboBoxOption[]>(getOptions(options));
+  const [canAutoFocus, setCanAutoFocus] = useState(false);
 
   useEffect(() => {
     onChange?.({
@@ -138,6 +139,7 @@ export const Combobox = ({
     if (option?.data === 'customrender') {
       setValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
       setMode(Mode.Custom);
+      setCanAutoFocus(true);
     } else {
       if (setSelectedKey && option?.key) {
         setSelectedKey(option.key.toString());
@@ -170,7 +172,7 @@ export const Combobox = ({
             readonly={readOnly}
             className="msla-combobox-editor"
             placeholder={placeholder}
-            BasePlugins={{ tokens: true, clearEditor: true }}
+            BasePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
             initialValue={value}
             onBlur={handleBlur}
           >

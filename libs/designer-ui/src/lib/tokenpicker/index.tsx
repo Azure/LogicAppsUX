@@ -1,7 +1,10 @@
-import { TokenNode } from '../editor/base/nodes/tokenNode';
-import { Callout, DirectionalHint } from '@fluentui/react';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useEffect } from 'react';
+import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
+import type { IIconStyles, ITextField, ITextFieldStyles, PivotItem } from '@fluentui/react';
+import { TextField, FontSizes, Icon, Callout, DirectionalHint } from '@fluentui/react';
+// import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import type { Dispatch, SetStateAction } from 'react';
+import { useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export type { Token as OutputToken } from './models/token';
 
@@ -9,19 +12,58 @@ const directionalHint = DirectionalHint.leftTopEdge;
 const gapSpace = 10;
 const beakWidth = 20;
 
+const iconStyles: Partial<IIconStyles> = {
+  root: {
+    fontSize: FontSizes.medium,
+  },
+};
+
+const textFieldStyles: Partial<ITextFieldStyles> = {
+  field: {
+    padding: '0 8px 0 26px',
+  },
+};
+
+export type SearchTextChangedEventHandler = (e: string) => void;
+
 export interface TokenPickerProps {
   editorId: string;
   labelId: string;
+  searchText: string;
+  setInTokenPicker?: Dispatch<SetStateAction<boolean>>;
+  onSearchTextChanged?: SearchTextChangedEventHandler;
 }
+export default function TokenPicker({
+  editorId,
+  labelId,
+  searchText,
+  setInTokenPicker,
+  onSearchTextChanged,
+}: TokenPickerProps): JSX.Element {
+  // const [editor] = useLexicalComposerContext();
+  const searchBoxRef = useRef<ITextField | null>(null);
+  const [searchQuery, setSearchQuery] = useState(searchText);
+  const intl = useIntl();
 
-export default function TokenPicker({ editorId, labelId }: TokenPickerProps): JSX.Element {
-  const [editor] = useLexicalComposerContext();
+  const [selectedKey, setSelectedKey] = useState<string>(TokenPickerMode.TOKEN);
 
-  useEffect(() => {
-    if (!editor.hasNodes([TokenNode])) {
-      throw new Error('TokenPlugin: Register the TokenNode on editor');
+  const handleSelectKey = (item?: PivotItem) => {
+    if (item?.props?.itemKey) {
+      setSelectedKey(item.props.itemKey);
     }
-  }, [editor]);
+  };
+
+  const handleSearchTextChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string): void => {
+    if (text != null) {
+      setSearchQuery(text);
+      onSearchTextChanged?.(text);
+    }
+  };
+
+  const tokenPickerPlaceHolderText = intl.formatMessage({
+    defaultMessage: 'Search dynamic content',
+    description: 'Placeholder text to search token picker',
+  });
 
   return (
     <Callout
@@ -32,9 +74,33 @@ export default function TokenPicker({ editorId, labelId }: TokenPickerProps): JS
       isBeakVisible={true}
       beakWidth={beakWidth}
       directionalHint={directionalHint}
-      setInitialFocus
+      onMouseDown={() => {
+        setInTokenPicker?.(true);
+      }}
+      onDismiss={() => {
+        setInTokenPicker?.(false);
+      }}
+      onRestoreFocus={() => {
+        return;
+      }}
     >
-      <div style={{ width: '300px', color: 'blue', height: '300px' }}></div>
+      <div className="msla-token-picker-container">
+        <div className="msla-token-picker">
+          <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} />
+          <div className="msla-token-picker-search">
+            <Icon className="msla-token-picker-search-icon" iconName="Search" styles={iconStyles} />
+            <TextField
+              styles={textFieldStyles}
+              componentRef={(c) => (searchBoxRef.current = c)}
+              maxLength={32}
+              placeholder={tokenPickerPlaceHolderText}
+              type="search"
+              value={searchQuery}
+              onChange={handleSearchTextChange}
+            />
+          </div>
+        </div>
+      </div>
     </Callout>
   );
 }
