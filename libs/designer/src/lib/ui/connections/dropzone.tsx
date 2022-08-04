@@ -13,9 +13,9 @@ export interface DropZoneProps {
   parent?: string;
   child?: string;
 }
-export const DropZone: React.FC<DropZoneProps> = ({ parent, child, graphId }) => {
+export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) => {
   const dispatch = useDispatch();
-  const onEdgeEndClick = (evt: any, parent?: string, child?: string) => {
+  const onEdgeEndClick = (evt: any, graphId: string, parent?: string, child?: string) => {
     evt.stopPropagation();
     const newId = guid();
     dispatch(expandDiscoveryPanel({ nodeId: newId, discoveryIds: { childId: child, parentId: parent, graphId } }));
@@ -24,7 +24,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ parent, child, graphId }) =>
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
     // The type (or types) to accept - strings or symbols
     accept: 'BOX',
-    drop: () => ({ child: child, parent: parent }),
+    drop: () => ({ child: child, parent: parent }), // danielle check this, graph id
     canDrop: (item) => {
       return (item as any).id !== child;
     },
@@ -45,7 +45,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ parent, child, graphId }) =>
           {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill="#797775" />}
         </div>
       )}
-      {!isOver && <ActionButtonV2 title={'Text'} onClick={(e) => onEdgeEndClick(e, parent, child)} />}
+      {!isOver && <ActionButtonV2 title={'Text'} onClick={(e) => onEdgeEndClick(e, graphId, parent, child)} />}
     </div>
   );
 };

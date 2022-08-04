@@ -120,7 +120,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         {showEmptyGraphComponents ? (
           !readOnly ? (
             <div className={'edge-drop-zone-container'}>
-              <DropZone graphId={scopeId} parent={scopeId} />
+              <DropZone graphId={id} parent={scopeId} />
             </div>
           ) : (
             <p className="no-actions-text">No Actions</p>
