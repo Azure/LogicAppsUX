@@ -53,7 +53,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     dispatch(addNode(addPayload));
     const operationPayload: AddNodeOperationPayload = {
       id: selectedNode,
-      type: operation.type,
+      type: operation.properties.operationType ?? '',
       connectorId,
       operationId,
     };
@@ -67,7 +67,6 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
   const setDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
     const connections = await getConnectionsForConnector(connectorId);
     if (connections.length !== 0) {
-      // danielle logic to determine which conn to use
       dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id }));
     }
   };
