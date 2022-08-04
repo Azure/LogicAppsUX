@@ -13,9 +13,9 @@ export interface InitializePayload {
 }
 
 export enum Status {
-  InProgress = "InProgress",
-  Succeeded = "Succeeded",
-  Failed = "Failed"
+  InProgress = 'InProgress',
+  Succeeded = 'Succeeded',
+  Failed = 'Failed',
 }
 
 export interface InitializedVscodeState {
