@@ -35,7 +35,7 @@ export const initializeValidation = (intialValue: ValueSegment[]): boolean => {
     if (segment.type === ValueSegmentType.LITERAL) {
       editorString += segment.value;
     } else if (segment.type === ValueSegmentType.TOKEN) {
-      editorString += segment.token?.title;
+      editorString += segment.value;
     }
   });
   return isValidDictionary(editorString);
