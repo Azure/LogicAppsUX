@@ -10,6 +10,7 @@ import {
   ValueSegmentType,
   ArrayEditor,
   Scratch,
+  StringEditor,
 } from '@microsoft/designer-ui';
 
 export const ScratchTab = () => {
@@ -118,6 +119,14 @@ export const ScratchTab = () => {
           ]}
         />
         <DictionaryEditor initialValue={[testTokenSegment]} />
+        <StringEditor
+          initialValue={[
+            testTokenSegment,
+            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
+            testTokenSegment,
+            testTokenSegment,
+          ]}
+        />
       </>
     );
   };

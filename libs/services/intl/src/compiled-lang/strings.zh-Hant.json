@@ -5,12 +5,6 @@
       "value": "確定"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "新增動態內容的按钮"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -598,6 +592,12 @@
       "value": "切換縮圖"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1146,7 +1146,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "執行時間點"
     }
   ],
   "DysO/Q": [
@@ -1414,6 +1414,12 @@
     {
       "type": 0,
       "value": "必要。要傳回之表單資料值的索引鍵名稱。"
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -2447,7 +2453,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "請輸入有效的字典"
     }
   ],
   "WS9kXD": [
@@ -3594,7 +3600,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "請輸入有效的陣列"
     }
   ],
   "lgs5sf": [
@@ -3830,7 +3836,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "輸入金鑰"
     }
   ],
   "pIczsS": [
@@ -4477,7 +4483,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "按一下可刪除項目"
     }
   ],
   "wWVQuK": [
@@ -4667,7 +4673,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "輸入值"
     }
   ],
   "zIDVd9": [
