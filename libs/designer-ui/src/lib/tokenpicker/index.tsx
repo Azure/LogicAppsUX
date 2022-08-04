@@ -1,4 +1,6 @@
+import type { TokenGroup } from './models/token';
 import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
+import { TokenPickerSection } from './tokenpickersection';
 import type { IIconStyles, ITextField, ITextFieldStyles, PivotItem } from '@fluentui/react';
 import { TextField, FontSizes, Icon, Callout, DirectionalHint } from '@fluentui/react';
 // import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -30,6 +32,7 @@ export interface TokenPickerProps {
   editorId: string;
   labelId: string;
   searchText: string;
+  tokenGroup?: TokenGroup[];
   setInTokenPicker?: Dispatch<SetStateAction<boolean>>;
   onSearchTextChanged?: SearchTextChangedEventHandler;
 }
@@ -37,6 +40,7 @@ export default function TokenPicker({
   editorId,
   labelId,
   searchText,
+  tokenGroup,
   setInTokenPicker,
   onSearchTextChanged,
 }: TokenPickerProps): JSX.Element {
@@ -87,18 +91,21 @@ export default function TokenPicker({
       <div className="msla-token-picker-container">
         <div className="msla-token-picker">
           <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} />
-          <div className="msla-token-picker-search">
-            <Icon className="msla-token-picker-search-icon" iconName="Search" styles={iconStyles} />
-            <TextField
-              styles={textFieldStyles}
-              componentRef={(c) => (searchBoxRef.current = c)}
-              maxLength={32}
-              placeholder={tokenPickerPlaceHolderText}
-              type="search"
-              value={searchQuery}
-              onChange={handleSearchTextChange}
-            />
-          </div>
+          {selectedKey === TokenPickerMode.TOKEN ? (
+            <div className="msla-token-picker-search">
+              <Icon className="msla-token-picker-search-icon" iconName="Search" styles={iconStyles} />
+              <TextField
+                styles={textFieldStyles}
+                componentRef={(c) => (searchBoxRef.current = c)}
+                maxLength={32}
+                placeholder={tokenPickerPlaceHolderText}
+                type="search"
+                value={searchQuery}
+                onChange={handleSearchTextChange}
+              />
+            </div>
+          ) : null}
+          <TokenPickerSection tokenGroup={tokenGroup ?? []} />
         </div>
       </div>
     </Callout>

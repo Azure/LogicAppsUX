@@ -1,6 +1,7 @@
 import type { ArrayEditorItemProps } from '../../../arrayeditor';
 import { SerializeArray } from '../../../arrayeditor/plugins/SerializeArray';
 import type { DictionaryEditorItemProps } from '../../../dictionary';
+import type { TokenGroup } from '../../../tokenpicker/models/token';
 import { BaseEditor } from '../../base';
 import { Validation } from '../../base/plugins/Validation';
 import type { ValueSegment } from '../../models/parameter';
@@ -15,8 +16,9 @@ interface CollapsedEditorBaseProps {
   isValid?: boolean;
   initialValue?: ValueSegment[];
   errorMessage: string;
-  setIsValid?: Dispatch<SetStateAction<boolean>>;
   collapsedValue?: ValueSegment[];
+  tokenGroup?: TokenGroup[];
+  setIsValid?: Dispatch<SetStateAction<boolean>>;
   setCollapsedValue?: (val: ValueSegment[]) => void;
 }
 
@@ -37,9 +39,10 @@ export const CollapsedEditor = ({
   errorMessage,
   initialValue,
   type,
+  collapsedValue,
+  tokenGroup,
   setIsValid,
   setItems,
-  collapsedValue,
   setCollapsedValue,
 }: CollapsedEditorProps): JSX.Element => {
   return (
@@ -51,6 +54,7 @@ export const CollapsedEditor = ({
       tokenPickerButtonProps={{ buttonClassName: `msla-${type}-editor-tokenpicker` }}
       placeholder={type === CollapsedEditorType.DICTIONARY ? 'Enter a Dictionary' : 'Enter an Array'}
       initialValue={collapsedValue && collapsedValue.length > 0 ? collapsedValue : initialValue}
+      tokenGroup={tokenGroup}
     >
       {type === CollapsedEditorType.DICTIONARY ? null : <SerializeArray isValid={isValid} setItems={setItems} />}
 

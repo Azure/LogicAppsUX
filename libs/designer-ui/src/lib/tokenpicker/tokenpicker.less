@@ -26,3 +26,95 @@
     z-index: 1;
   }
 }
+
+.msla-token-picker-sections {
+  box-sizing: border-box;
+  max-height: 550px;
+  overflow-y: auto;
+}
+
+.msla-token-picker-section-header {
+  background-color: #e8eae7;
+  display: flex;
+  padding: 0 12px;
+  align-items: center;
+  span {
+    color: #7a7574;
+    display: block;
+    flex: 1 1 auto;
+    font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+    font-size: 13px;
+    padding: 12px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .msla-token-picker-section-header-button {
+    background-color: #e8eae7;
+    border: none;
+    cursor: pointer;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    span {
+      color: rgba(0, 0, 0, 0.5);
+      display: inline-block;
+      font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+      font-size: 13px;
+    }
+  }
+}
+
+.msla-token-picker-section-options {
+  padding: 0 12px;
+  .msla-token-picker-section-option {
+    background-color: #fff;
+    border: none;
+    border-bottom: 1px solid #afacac;
+    cursor: pointer;
+    display: inline-block;
+    font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+    font-size: 13px;
+    padding: 5px 0;
+    position: relative;
+    text-align: left;
+    width: 100%;
+    img {
+      box-sizing: content-box;
+      display: inline-block;
+      margin: 5px 8px 0 0;
+      width: 24px;
+      height: 24px;
+    }
+    .msla-token-picker-section-option-text {
+      display: inline-block;
+      vertical-align: top;
+      width: calc(100% - 32px);
+      .msla-token-picker-option-inner {
+        align-content: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 34px;
+        .msla-token-picker-option-title {
+          color: #000;
+          font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+          font-size: 12px;
+          font-weight: 600;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .msla-token-picker-option-description {
+          color: #7a7574;
+          font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+          font-size: 12px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import type { DictionaryEditorItemProps } from '.';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType, CollapsedEditor, CollapsedEditorType } from '../editor';
+import type { TokenGroup } from '../tokenpicker/models/token';
 import { isEmpty } from './util/helper';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { Dispatch, SetStateAction } from 'react';
@@ -9,18 +10,20 @@ import { useIntl } from 'react-intl';
 export type CollapsedDictionaryProps = {
   items: DictionaryEditorItemProps[];
   isValid?: boolean;
+  collapsedValue: ValueSegment[];
+  tokenGroup?: TokenGroup[];
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   setItems: (items: DictionaryEditorItemProps[]) => void;
-  collapsedValue: ValueSegment[];
   setCollapsedValue: (val: ValueSegment[]) => void;
 };
 
 export const CollapsedDictionary = ({
   items,
   isValid,
+  collapsedValue,
+  tokenGroup,
   setItems,
   setIsValid,
-  collapsedValue,
   setCollapsedValue,
 }: CollapsedDictionaryProps): JSX.Element => {
   const intl = useIntl();
@@ -42,9 +45,10 @@ export const CollapsedDictionary = ({
             })
           )}
           errorMessage={errorMessage}
+          collapsedValue={collapsedValue}
+          tokenGroup={tokenGroup}
           setItems={setItems}
           setIsValid={setIsValid}
-          collapsedValue={collapsedValue}
           setCollapsedValue={setCollapsedValue}
         />
       </div>
