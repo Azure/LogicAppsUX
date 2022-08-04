@@ -7,7 +7,8 @@
 
   &-instance-panel {
     &-dropdown {
-      max-width: 350px;
+      width: 350px;
+      max-width: 400px;
       margin: 16px 0;
     }
   }
@@ -24,7 +25,7 @@
 
   &-workflows-panel {
     display: flex;
-    max-height: 60%;
+    max-height: 75%;
 
     &-filters {
       display: flex;
@@ -37,6 +38,11 @@
         input::placeholder {
           font-style: normal;
         }
+      }
+
+      &-dropdown {
+        width: 350px;
+        max-width: 400px;
       }
     }
 
@@ -101,6 +107,7 @@
         &-item {
           display: inline-flex;
           align-items: center;
+          margin-left: 10px;
 
           &-text {
             max-width: 45%;
@@ -112,6 +119,10 @@
             padding-left: 6px;
             margin: 5px;
           }
+        }
+
+        &-shimmer {
+          margin: 10px;
         }
       }
     }

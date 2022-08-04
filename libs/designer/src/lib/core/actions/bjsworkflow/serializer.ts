@@ -1,5 +1,6 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReferences, Workflow } from '../../../common/models/workflow';
+import { Status } from '../../../ui/settings/sections/runafterconfiguration';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
 import { getOperationManifest } from '../../queries/operation';
@@ -131,7 +132,9 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const inputs = hostInfo !== undefined ? { ...inputPathValue, ...hostInfo } : inputPathValue;
   const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata) ? undefined : getRunAfter(nodeSettings);
   const recurrence =
-    manifest.properties.recurrence && manifest.properties.recurrence.type !== RecurrenceType.None
+    isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata) &&
+    manifest.properties.recurrence &&
+    manifest.properties.recurrence.type !== RecurrenceType.None
       ? constructInputValues('recurrence.$', inputsToSerialize, false /* encodePathComponents */)
       : undefined;
 
@@ -147,7 +150,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   return {
     type: operation.type,
     ...optional('kind', operation.kind),
-    ...optional('inputs', inputs),
+    ...optional((manifest.properties.inputsLocation ?? ['inputs'])[0], inputs),
     ...childOperations,
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
@@ -414,7 +417,7 @@ const serializeSubGraph = async (
 
   if (graphDetail.inputs && graphDetail.inputsLocation) {
     const inputs = serializeOperationParameters(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
-    safeSetObjectPropertyValue(result, graphInputsLocation, inputs);
+    safeSetObjectPropertyValue(result, [...graphInputsLocation, ...graphDetail.inputsLocation], inputs);
   }
 
   return result;
@@ -524,8 +527,8 @@ const getSerializedRuntimeConfiguration = (
   if (isSecureInputsSet || isSecureOutputsSet) {
     const secureData: LogicAppsV2.SecureData = {
       properties: [
-        ...(isSecureInputsSet ? Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.INPUTS : []),
-        ...(isSecureOutputsSet ? Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS : []),
+        ...(isSecureInputsSet ? [Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.INPUTS] : []),
+        ...(isSecureOutputsSet ? [Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS] : []),
       ],
     };
 
@@ -636,8 +639,15 @@ const getRetryPolicy = (settings: Settings): LogicAppsV2.RetryPolicy | undefined
 const getRunAfter = (settings: Settings): LogicAppsV2.RunAfter => {
   const edges = settings.runAfter?.value ?? [];
 
+  const normalizeStatuses: Record<string, string> = {
+    [Status.SUCCEEDED]: Constants.FLOW_STATUS.SUCCEEDED,
+    [Status.FAILED]: Constants.FLOW_STATUS.FAILED,
+    [Status.SKIPPED]: Constants.FLOW_STATUS.SKIPPED,
+    [Status.TIMEDOUT]: Constants.FLOW_STATUS.TIMEDOUT,
+  };
+
   return edges.reduce((previous: LogicAppsV2.RunAfter, edge: GraphEdge) => {
     const { predecessorId, statuses } = edge;
-    return { ...previous, [predecessorId]: statuses };
+    return { ...previous, [predecessorId]: statuses.map((status) => normalizeStatuses[status.toUpperCase()]) };
   }, {});
 };

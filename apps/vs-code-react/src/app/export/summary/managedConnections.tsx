@@ -38,6 +38,10 @@ export const ManagedConnections: React.FC = () => {
       defaultMessage: 'Resource group',
       description: 'Resource group title',
     }),
+    SEARCH_RESOURCE_GROUP: intl.formatMessage({
+      defaultMessage: 'Find and select resource group',
+      description: 'Find and select resource group text',
+    }),
   };
 
   useEffect(() => {
@@ -95,12 +99,15 @@ export const ManagedConnections: React.FC = () => {
         className="msla-export-summary-connections-dropdown"
         onChange={onChangeResourceGroup}
         selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : null}
+        isLoading={isResourceGroupsLoading}
+        searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
       />
     ) : null;
   }, [
     isConnectionsChecked,
     intlText.SELECT_OPTION,
     intlText.RESOURCE_GROUP,
+    intlText.SEARCH_RESOURCE_GROUP,
     isResourceGroupsLoading,
     resourceGroupsData,
     dispatch,
