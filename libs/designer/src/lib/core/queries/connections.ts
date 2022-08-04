@@ -48,3 +48,11 @@ export const useConnectionsForConnector = (connectorId: string) => {
     { enabled: !!connectorId }
   );
 };
+
+export const getConnectionsForConnector = (connectorId: string) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery([connectionKey, connectorId?.toLowerCase()], () => {
+    const connectionService = ConnectionService();
+    return connectionService.getConnections(connectorId);
+  });
+};
