@@ -65,6 +65,7 @@ export const Flyout2: React.FC<Flyout2Props> = ({
         role="presentation"
         src={InformationImage}
         onDragStart={onDragStartWhenDisabled}
+        style={{ height: '16px', width: '16px' }}
       />
       <FlyoutBalloon
         flyoutExpanded={flyoutExpanded}
