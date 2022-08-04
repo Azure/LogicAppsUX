@@ -8,16 +8,16 @@ import { $getNodeByKey, $getRoot, $isElementNode, $isTextNode } from 'lexical';
 export function serializeEditorState(editorState: EditorState, trimLiteral?: boolean): ValueSegment[] {
   const segments: ValueSegment[] = [];
   editorState.read(() => {
-    getChildrenNodes($getRoot(), segments, trimLiteral ?? false);
+    getChildrenNodesToSegments($getRoot(), segments, trimLiteral ?? false);
   });
   return segments;
 }
 
-const getChildrenNodes = (node: ElementNode, segments: ValueSegment[], trimLiteral: boolean): void => {
+const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[], trimLiteral: boolean): void => {
   node.__children.forEach((child) => {
     const childNode = $getNodeByKey(child);
     if (childNode && $isElementNode(childNode)) {
-      return getChildrenNodes(childNode, segments, trimLiteral);
+      return getChildrenNodesToSegments(childNode, segments, trimLiteral);
     }
     if ($isTextNode(childNode)) {
       segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: trimLiteral ? childNode.__text.trim() : childNode.__text });
