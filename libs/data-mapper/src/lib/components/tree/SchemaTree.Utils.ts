@@ -1,13 +1,15 @@
-import { ReactComponent as Any16Filled } from '../../images/Any16Filled.svg';
-import { ReactComponent as Any16Regular } from '../../images/Any16Regular.svg';
-import { ReactComponent as Binary16Filled } from '../../images/Binary16Filled.svg';
-import { ReactComponent as Binary16Regular } from '../../images/Binary16Regular.svg';
-import { ReactComponent as Decimal16Filled } from '../../images/Decimal16Filled.svg';
-import { ReactComponent as Decimal16Regular } from '../../images/Decimal16Regular.svg';
-import { ReactComponent as Integer16Filled } from '../../images/Integer16Filled.svg';
-import { ReactComponent as Integer16Regular } from '../../images/Integer16Regular.svg';
-import { ReactComponent as String16Filled } from '../../images/String16Filled.svg';
-import { ReactComponent as String16Regular } from '../../images/String16Regular.svg';
+import {
+  Any16Filled,
+  Any16Regular,
+  Binary16Filled,
+  Binary16Regular,
+  Decimal16Filled,
+  Decimal16Regular,
+  Integer16Filled,
+  Integer16Regular,
+  String16Filled,
+  String16Regular,
+} from '../../images/DataType16Icons';
 import { SchemaNodeDataType } from '../../models/Schema';
 import {
   AddSubtractCircle16Filled,
