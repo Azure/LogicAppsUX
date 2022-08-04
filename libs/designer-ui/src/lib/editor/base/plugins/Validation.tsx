@@ -1,12 +1,14 @@
-import type { ValueSegment } from '../..';
 import type { DictionaryEditorItemProps } from '../../../dictionary';
 import { serializeDictionary } from '../../../dictionary/util/serializecollapeseddictionary';
+import type { ValueSegment } from '../../models/parameter';
+import { ValueSegmentType } from '../../models/parameter';
 import { CollapsedEditorType } from '../../shared/collapsedEditor';
 import { $isTokenNode } from '../nodes/tokenNode';
 import { serializeEditorState } from '../utils/editorToSegement';
 import { showCollapsedValidation } from '../utils/helper';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { EditorState, ElementNode } from 'lexical';
 import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
@@ -50,7 +52,7 @@ export const Validation = ({
         case CollapsedEditorType.DICTIONARY:
           if (!editorString.trim().length || editorString === '{}') {
             setIsValid?.(newValiditity);
-            setCollapsedValue?.([]);
+            setCollapsedValue?.([{ id: guid(), type: ValueSegmentType.LITERAL, value: editorString }]);
           } else {
             newValiditity = isValidDictionary(editorString);
             setIsValid?.(newValiditity);
