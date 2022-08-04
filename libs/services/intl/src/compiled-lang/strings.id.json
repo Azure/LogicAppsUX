@@ -5,12 +5,6 @@
       "value": "OK"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "Tombol untuk menambahkan konten dinamis"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -598,6 +592,12 @@
       "value": "Hidupkan/Matikan Peta Mini"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1146,7 +1146,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "Jalankan Setelah"
     }
   ],
   "DysO/Q": [
@@ -1414,6 +1414,12 @@
     {
       "type": 0,
       "value": "Wajib. Nama kunci nilai data formulir yang akan ditampilkan."
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -3830,7 +3836,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "Masukkan kunci"
     }
   ],
   "pIczsS": [
@@ -4477,7 +4483,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Klik untuk menghapus item"
     }
   ],
   "wWVQuK": [
@@ -4667,7 +4673,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "Masukkan nilai"
     }
   ],
   "zIDVd9": [

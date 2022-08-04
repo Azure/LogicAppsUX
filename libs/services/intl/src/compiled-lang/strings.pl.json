@@ -5,12 +5,6 @@
       "value": "OK"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "Przycisk dodawania zawartości dynamicznej"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -647,6 +641,12 @@
       "value": "Przełącz minimapę"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1228,7 +1228,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "Uruchom po"
     }
   ],
   "DysO/Q": [
@@ -1529,6 +1529,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa klucza zwracanej wartości danych formularza."
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -2628,7 +2634,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Wprowadź prawidłowy słownik"
     }
   ],
   "WS9kXD": [
@@ -3824,7 +3830,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Wprowadź prawidłową tablicę"
     }
   ],
   "lgs5sf": [
@@ -4060,7 +4066,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "Wprowadź klucz"
     }
   ],
   "pIczsS": [
@@ -4740,7 +4746,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Kliknij, aby usunąć element"
     }
   ],
   "wWVQuK": [
@@ -4930,7 +4936,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "Wprowadź wartość"
     }
   ],
   "zIDVd9": [

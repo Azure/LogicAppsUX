@@ -5,12 +5,6 @@
       "value": "OK"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "Knapp för att lägga till dynamiskt innehåll"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -609,6 +603,12 @@
       "value": "Växla miniatyröversikt"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1168,7 +1168,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "Kör efter"
     }
   ],
   "DysO/Q": [
@@ -1447,6 +1447,12 @@
     {
       "type": 0,
       "value": "Krävs. Nyckelnamnet för formulärdatavärdet att returnera."
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -2506,7 +2512,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Ange en giltig ordlista"
     }
   ],
   "WS9kXD": [
@@ -3672,7 +3678,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Ange en giltig matris"
     }
   ],
   "lgs5sf": [
@@ -3908,7 +3914,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "Ange nyckel"
     }
   ],
   "pIczsS": [
@@ -4566,7 +4572,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Klicka för att ta bort objektet"
     }
   ],
   "wWVQuK": [
@@ -4756,7 +4762,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "Ange värde"
     }
   ],
   "zIDVd9": [

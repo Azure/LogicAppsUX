@@ -5,12 +5,6 @@
       "value": "确定"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "用于添加动态内容的按钮"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -602,6 +596,12 @@
       "value": "切换缩略图"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1150,7 +1150,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "随后运行"
     }
   ],
   "DysO/Q": [
@@ -1418,6 +1418,12 @@
     {
       "type": 0,
       "value": "必需。要返回的表单数据值的键名称。"
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -2455,7 +2461,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "请输入有效的字典"
     }
   ],
   "WS9kXD": [
@@ -3618,7 +3624,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "请输入有效的数组"
     }
   ],
   "lgs5sf": [
@@ -3862,7 +3868,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "输入密钥"
     }
   ],
   "pIczsS": [
@@ -4509,7 +4515,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "单击此处可删除项"
     }
   ],
   "wWVQuK": [
@@ -4699,7 +4705,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "输入值"
     }
   ],
   "zIDVd9": [

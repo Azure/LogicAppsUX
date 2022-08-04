@@ -5,12 +5,6 @@
       "value": "OK"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "Pulsante per aggiungere contenuto dinamico"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -609,6 +603,12 @@
       "value": "Attiva/disattiva minimappa"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1168,7 +1168,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "Esegui dopo"
     }
   ],
   "DysO/Q": [
@@ -1447,6 +1447,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome della chiave del valore dei dati del modulo da restituire."
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -3904,7 +3910,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "Immettere la chiave"
     }
   ],
   "pIczsS": [
@@ -4562,7 +4568,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Fare clic per eliminare l'elemento"
     }
   ],
   "wWVQuK": [
@@ -4752,7 +4758,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "Immettere il valore"
     }
   ],
   "zIDVd9": [

@@ -5,12 +5,6 @@
       "value": "OK"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "Knop om dynamische inhoud toe te voegen"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -609,6 +603,12 @@
       "value": "Toggle Minimap"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1168,7 +1168,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "Uitvoeren na"
     }
   ],
   "DysO/Q": [
@@ -1447,6 +1447,12 @@
     {
       "type": 0,
       "value": "Vereist. De sleutelnaam van de formuliergegevenswaarde die moeten worden geretourneerd."
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -2506,7 +2512,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Voer een geldige woordenlijst in"
     }
   ],
   "WS9kXD": [
@@ -3672,7 +3678,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Voer een geldige matrix in"
     }
   ],
   "lgs5sf": [
@@ -3908,7 +3914,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "Sleutel invoeren"
     }
   ],
   "pIczsS": [
@@ -4566,7 +4572,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Klik om het item te verwijderen"
     }
   ],
   "wWVQuK": [
@@ -4756,7 +4762,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "Waarde invoeren"
     }
   ],
   "zIDVd9": [

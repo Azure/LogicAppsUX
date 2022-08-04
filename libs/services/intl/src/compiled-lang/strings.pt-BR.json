@@ -5,12 +5,6 @@
       "value": "OK"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "Botão para adicionar o conteúdo dinâmico"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -609,6 +603,12 @@
       "value": "Alternar Minimapa"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1168,7 +1168,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "Executar Após"
     }
   ],
   "DysO/Q": [
@@ -1447,6 +1447,12 @@
     {
       "type": 0,
       "value": "Necessário. O nome da chave do valor de dados do formulário a retornar."
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -3896,7 +3902,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "Inserir chave"
     }
   ],
   "pIczsS": [
@@ -4554,7 +4560,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Clique para excluir o item"
     }
   ],
   "wWVQuK": [
@@ -4744,7 +4750,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "Inserir valor"
     }
   ],
   "zIDVd9": [

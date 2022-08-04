@@ -5,12 +5,6 @@
       "value": "ОК"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "Кнопка для добавления динамического содержимого"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -631,6 +625,12 @@
       "value": "Переключить мини-карту"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1212,7 +1212,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "Запуск после"
     }
   ],
   "DysO/Q": [
@@ -1513,6 +1513,12 @@
     {
       "type": 0,
       "value": "Требуется. Имя ключа возвращаемого значения данных форм."
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -2612,7 +2618,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Введите допустимый словарь"
     }
   ],
   "WS9kXD": [
@@ -3808,7 +3814,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Введите допустимый массив"
     }
   ],
   "lgs5sf": [
@@ -4044,7 +4050,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "Введите ключ"
     }
   ],
   "pIczsS": [
@@ -4724,7 +4730,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Щелкните, чтобы удалить элемент"
     }
   ],
   "wWVQuK": [
@@ -4914,7 +4920,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "Введите значение"
     }
   ],
   "zIDVd9": [
