@@ -13,7 +13,7 @@ export default function TokenPickerButton({
   buttonClassName,
   buttonHeight,
   labelId,
-  toggleTokenPicker,
+  setShowTokenPicker,
 }: ButtonProps): JSX.Element {
   const [editor] = useLexicalComposerContext();
 
@@ -37,11 +37,18 @@ export default function TokenPickerButton({
     description: 'Text for if image does not show up',
   });
 
+  const handleClick = () => {
+    setShowTokenPicker?.();
+    editor.focus();
+  };
+
   return (
     <button
       id={labelId}
       className={`msla-tokenpicker-button ${buttonClassName}`}
-      onClick={toggleTokenPicker}
+      onClick={() => {
+        handleClick();
+      }}
       onMouseDown={(e) => e.preventDefault()}
       style={{ top: `${buttonHeight}px` }}
     >

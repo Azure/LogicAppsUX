@@ -8,10 +8,11 @@ const pivotStyles: Partial<IPivotStyles> = {
     '&:hover': {
       color: constants.PANEL_HIGHLIGHT_COLOR,
     },
-  },
-  link: {
     fontSize: '16px',
-    padding: '10px 10px 0 10px',
+    padding: '10px',
+  },
+  root: {
+    padding: '5px',
   },
 };
 
