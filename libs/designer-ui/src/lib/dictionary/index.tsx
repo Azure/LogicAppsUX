@@ -1,6 +1,7 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType, EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
+import { initializeValidation } from '../editor/base/utils/helper';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
 import { isEmpty } from './util/helper';
@@ -29,7 +30,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   const [collapsed, setCollapsed] = useState(!initialItems ?? false);
   const [items, setItems] = useState(initialItems);
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
-  const [isValid, setIsValid] = useState(true);
+  const [isValid, setIsValid] = useState(initialItems !== null ?? initializeValidation(initialValue));
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
