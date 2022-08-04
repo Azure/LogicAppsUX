@@ -1,5 +1,7 @@
 import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
+import { getConnectionsForConnector } from '../../../core/queries/connections';
 import { getOperationManifest } from '../../../core/queries/operation';
+import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import type { AddNodeOperationPayload } from '../../../core/state/operation/operationMetadataSlice';
 import { initializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
 import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
@@ -11,6 +13,7 @@ import { SearchResultsGrid } from '@microsoft/designer-ui';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 const getSearchResult = (term: string) => {
   const searchService = SearchService();
@@ -50,14 +53,22 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     dispatch(addNode(addPayload));
     const operationPayload: AddNodeOperationPayload = {
       id: selectedNode,
-      type: operation.type,
+      type: operation.properties.operationType ?? '',
       connectorId,
       operationId,
     };
     dispatch(initializeOperationInfo(operationPayload));
+    setDefaultConnectionForNode(selectedNode, connectorId, dispatch);
     getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
     dispatch(switchToOperationPanel(selectedNode));
     return;
+  };
+
+  const setDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
+    const connections = await getConnectionsForConnector(connectorId);
+    if (connections.length !== 0) {
+      dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id }));
+    }
   };
 
   return (
