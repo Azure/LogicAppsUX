@@ -117,6 +117,9 @@ export const vscodeSlice = createSlice({
       const { status } = action.payload;
       const initializedState = state as InitializedVscodeState;
       initializedState.finalStatus = status;
+      if (status === Status.InProgress) {
+        initializedState.statuses = [];
+      }
     },
   },
 });
