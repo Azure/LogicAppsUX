@@ -45,12 +45,12 @@ export const NewResourceGroup: React.FC = () => {
           target={`.${linkClassName}`}
           onDismiss={toggleIsCalloutVisible}
         >
-          <Text variant="mediumPlus" block>
+          <Text variant="medium" block>
             {intlText.RESOURCE_GROUP_DESCRIPTION}
           </Text>
           <TextField required label={intlText.NAME} />
-          <PrimaryButton className="msla-export-navigation-panel-button" text={intlText.OK} ariaLabel={intlText.OK} />
-          <PrimaryButton className="msla-export-navigation-panel-button" text={intlText.CANCEL} ariaLabel={intlText.CANCEL} />
+          <PrimaryButton className="msla-export-summary-connections-button" text={intlText.OK} ariaLabel={intlText.OK} />
+          <PrimaryButton className="msla-export-summary-connections-button" text={intlText.CANCEL} ariaLabel={intlText.CANCEL} />
         </Callout>
       )}
     </>
