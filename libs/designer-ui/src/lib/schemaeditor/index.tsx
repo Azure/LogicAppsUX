@@ -80,7 +80,6 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
   };
 
   const handleBlur = (): void => {
-    // TODO - Move this to onBlur
     onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: currentValue }] });
   };
 

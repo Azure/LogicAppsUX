@@ -3,11 +3,11 @@ import type { ValueSegment } from '../../models/parameter';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
 
-interface ValueProps {
+interface ChangeProps {
   setValue: (newVal: ValueSegment[]) => void;
 }
 
-export const Value = ({ setValue }: ValueProps) => {
+export const Change = ({ setValue }: ChangeProps) => {
   const onChange = (editorState: EditorState) => {
     const newValue = serializeEditorState(editorState);
     setValue(newValue);

@@ -2,8 +2,8 @@ import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
+import { Change } from '../editor/base/plugins/Change';
 import { Label } from '../label';
-import { CustomValue } from './plugins/CustomValue';
 import type {
   IButtonStyles,
   IComboBox,
@@ -18,6 +18,11 @@ import { getIntl } from '@microsoft-logic-apps/intl';
 import { guid } from '@microsoft-logic-apps/utils';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
+
+enum Mode {
+  Default,
+  Custom,
+}
 
 const comboboxStyles: Partial<IComboBoxStyles> = {
   root: {
@@ -49,6 +54,7 @@ export interface ComboboxItem {
   displayName: string;
   type?: string;
 }
+
 export interface ComboboxProps {
   options: ComboboxItem[];
   initialValue: ValueSegment[];
@@ -59,6 +65,7 @@ export interface ComboboxProps {
   required?: boolean;
   onChange?: ChangeHandler;
 }
+
 export const Combobox = ({
   options,
   initialValue,
@@ -71,24 +78,21 @@ export const Combobox = ({
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
-  const [customValue, setCustomValue] = useState<ValueSegment[] | null>(initialValue ?? null);
-  const [selectedKey, setSelectedKey] = useState<string>(getSelectedKey(options, initialValue));
+  const optionKey = getSelectedKey(options, initialValue);
+  const [value, setValue] = useState<ValueSegment[]>(initialValue);
+  const [mode, setMode] = useState<Mode>(getMode(initialValue, optionKey));
+  const [selectedKey, setSelectedKey] = useState<string>(optionKey);
   const [comboboxOptions, setComboBoxOptions] = useState<IComboBoxOption[]>(getOptions(options));
 
   useEffect(() => {
-    if (selectedKey) {
-      setCustomValue(null);
-    }
-    // if (onChange) {
-    //   onChange({ value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: getSelectedValue(options, selectedKey) }] });
-    // }
-  }, [onChange, options, selectedKey]);
-
-  useEffect(() => {
-    // if (onChange && customValue) {
-    //   onChange({ value: customValue });
-    // }
-  }, [customValue, onChange]);
+    onChange?.({
+      value:
+        mode === Mode.Custom
+          ? value
+          : [{ id: guid(), type: ValueSegmentType.LITERAL, value: selectedKey ? getSelectedValue(options, selectedKey).toString() : '' }],
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, selectedKey]);
 
   const toggleExpand = useCallback(() => {
     comboBoxRef.current?.focus(true);
@@ -130,13 +134,14 @@ export const Combobox = ({
     }
   };
 
-  const handleCustomOptions = (option?: IComboBoxOption): void => {
+  const handleOptionSelect = (option?: IComboBoxOption): void => {
     if (option?.data === 'customrender') {
-      setCustomValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
-      setSelectedKey('');
+      setValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
+      setMode(Mode.Custom);
     } else {
       if (setSelectedKey && option?.key) {
         setSelectedKey(option.key.toString());
+        setMode(Mode.Default);
       }
     }
   };
@@ -147,23 +152,29 @@ export const Combobox = ({
   });
 
   const handleClearClick = () => {
-    setCustomValue(null);
+    setSelectedKey('');
     updateOptions('');
+    setMode(Mode.Default);
+  };
+
+  const handleBlur = () => {
+    onChange?.({ value });
   };
 
   return (
     <div className="msla-combobox-container">
       {label ? <Label className="msla-combobox-label" text={label} isRequiredField={required} /> : null}
-      {customValue ? (
+      {mode === Mode.Custom ? (
         <div className="msla-combobox-editor-container">
           <BaseEditor
             readonly={readOnly}
             className="msla-combobox-editor"
             placeholder={placeholder}
             BasePlugins={{ tokens: true, clearEditor: true }}
-            initialValue={customValue}
+            initialValue={value}
+            onBlur={handleBlur}
           >
-            <CustomValue setCustomVal={setCustomValue} />
+            <Change setValue={setValue} />
           </BaseEditor>
           <TooltipHost content={clearEditor} calloutProps={calloutProps} styles={hostStyles} setAriaDescribedBy={false}>
             <IconButton styles={buttonStyles} iconProps={clearIcon} aria-label={clearEditor} onClick={() => handleClearClick()} />
@@ -184,7 +195,7 @@ export const Combobox = ({
           onClick={toggleExpand}
           onRenderOption={onRenderOption}
           styles={comboboxStyles}
-          onItemClick={(_, o) => handleCustomOptions(o)}
+          onItemClick={(_, o) => handleOptionSelect(o)}
         />
       )}
     </div>
@@ -214,6 +225,11 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
   ];
 };
 
+const getMode = (initialValue: ValueSegment[], selectedKey: string): Mode => {
+  const hasValue = initialValue.length > 0 && initialValue[0].value;
+  return hasValue ? (selectedKey ? Mode.Default : Mode.Custom) : Mode.Default;
+};
+
 const getSelectedKey = (options: ComboboxItem[], initialValue: ValueSegment[]): string => {
   if (initialValue.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
@@ -225,8 +241,8 @@ const getSelectedKey = (options: ComboboxItem[], initialValue: ValueSegment[]): 
   return '';
 };
 
-// const getSelectedValue = (options: ComboboxItem[], key: string): string => {
-//   return options.find((option) => {
-//     return option.key === key;
-//   })?.value;
-// };
+const getSelectedValue = (options: ComboboxItem[], key: string): any => {
+  return options.find((option) => {
+    return option.key === key;
+  })?.value;
+};

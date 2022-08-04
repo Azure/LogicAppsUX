@@ -8,7 +8,6 @@ import type { RootState } from '../../../../core/store';
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
-import { getId } from '@fluentui/react';
 import type { ChangeState, PanelTab, ParameterInfo } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,7 +22,7 @@ export const ParametersTab = () => {
   return (
     <>
       {Object.keys(parameters?.parameterGroups ?? {}).map((sectionName) => (
-        <div key={getId()}>
+        <div key={sectionName}>
           <ParameterSection nodeId={selectedNodeId} group={parameters.parameterGroups[sectionName]} readOnly={readOnly} />
         </div>
       ))}
@@ -38,7 +37,7 @@ const ParameterSection = ({ nodeId, group, readOnly }: { nodeId: string; group: 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
       const { value, viewModel } = newState;
-      const propertiesToUpdate = { value } as Partial<ParameterInfo>;
+      const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
 
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
@@ -78,7 +77,7 @@ const ParameterSection = ({ nodeId, group, readOnly }: { nodeId: string; group: 
     });
 
   return (
-    <SettingsSection id={getId()} title={group.description} settings={settings} showHeading={!!group.description} showSeparator={false} />
+    <SettingsSection id={group.id} title={group.description} settings={settings} showHeading={!!group.description} showSeparator={false} />
   );
 };
 
