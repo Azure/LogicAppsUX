@@ -1,0 +1,33 @@
+.msla-op-group-header {
+  display: flex;
+  gap: 8px;
+  max-height: 64px;
+  overflow: hidden;
+
+  .msla-op-group-image {
+    height: 64px;
+    min-width: 64px;
+    border-radius: 4px;
+  }
+
+  .msla-op-group-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .msla-op-group-title {
+      font: 16px/20px @semibold-font-family;
+      font-weight: 600;
+      text-align: left;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .msla-op-group-subtitle {
+      font-size: 14px;
+      max-height: 38px;
+      text-overflow: ellipsis;
+    }
+  }
+}

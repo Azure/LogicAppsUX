@@ -3,6 +3,18 @@ import type { Badge } from './operationmanifest';
 // type TriggerTypes = 'batch' | 'single';
 // type VisibilityTypes = 'important' | 'Important' | 'advanced';
 
+export interface OperationApi {
+  brandColor?: string;
+  description?: string;
+  displayName: string;
+  iconUri: string;
+  id: string;
+  location?: string;
+  name?: string;
+  tier?: string;
+  type?: string;
+}
+
 export interface SomeKindOfAzureOperationDiscovery {
   annotation?: {
     status: string;
@@ -10,17 +22,7 @@ export interface SomeKindOfAzureOperationDiscovery {
     revision?: number;
   };
   isNotification?: boolean;
-  api: {
-    brandColor?: string;
-    description?: string;
-    displayName: string;
-    iconUri: string;
-    id: string;
-    location?: string;
-    name?: string;
-    tier?: string;
-    type?: string;
-  };
+  api: OperationApi;
   description: string;
   operationType?: string;
   operationKind?: string;
@@ -43,17 +45,7 @@ export interface BuiltInOperation {
   annotation?: {
     status: string;
   };
-  api: {
-    description?: string;
-    displayName: string;
-    iconUri: string;
-    brandColor: string;
-    id: string;
-    location?: string;
-    name?: string;
-    tier?: string;
-    type?: string;
-  };
+  api: OperationApi;
   description: string;
   operationType: 'serviceProvider' | string;
   summary: string;

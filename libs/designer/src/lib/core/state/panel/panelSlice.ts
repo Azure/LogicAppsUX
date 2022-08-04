@@ -13,6 +13,7 @@ const initialState: PanelState = {
   isDiscovery: false,
   registeredTabs: {},
   selectedTabName: undefined,
+  selectedOperationGroupId: '',
 };
 
 export const panelSlice = createSlice({
@@ -24,6 +25,7 @@ export const panelSlice = createSlice({
     },
     collapsePanel: (state) => {
       state.collapsed = true;
+      state.selectedOperationGroupId = '';
     },
     clearPanel: (state) => {
       state.collapsed = true;
@@ -40,6 +42,9 @@ export const panelSlice = createSlice({
       state.isDiscovery = true;
       state.discoveryIds = action.payload.discoveryIds;
       state.selectedNode = action.payload.nodeId;
+    },
+    selectOperationGroupId: (state, action: PayloadAction<string>) => {
+      state.selectedOperationGroupId = action.payload;
     },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
       state.selectedNode = action.payload;
@@ -97,6 +102,7 @@ export const {
   clearPanel,
   changePanelNode,
   expandDiscoveryPanel,
+  selectOperationGroupId,
   switchToOperationPanel,
   registerPanelTabs,
   unregisterPanelTab,

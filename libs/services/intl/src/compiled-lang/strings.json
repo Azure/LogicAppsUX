@@ -573,12 +573,6 @@
       "value": "Add a new connection"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Choose which view to browse from"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -645,12 +639,6 @@
       "value": "Required. The XPath expression to evaluate."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Connectors"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -679,6 +667,12 @@
     {
       "type": 0,
       "value": "Delete Parameter"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -1859,6 +1853,12 @@
     {
       "type": 0,
       "value": "Returns a binary representation of a value"
+    }
+  ],
+  "O/uVlc": [
+    {
+      "type": 0,
+      "value": "This connector has multiple implementations, use built-in for the best performance, or hosted for I don’t know some other reason."
     }
   ],
   "O36+wl": [

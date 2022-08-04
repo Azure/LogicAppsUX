@@ -7,6 +7,7 @@ export interface PanelState {
   discoveryIds: IdsForDiscovery;
   registeredTabs: Record<string, PanelTab>;
   selectedTabName: string | undefined;
+  selectedOperationGroupId: string;
 }
 
 export interface IdsForDiscovery {

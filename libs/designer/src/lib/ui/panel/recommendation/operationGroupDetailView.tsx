@@ -5,39 +5,28 @@ import { initializeOperationInfo } from '../../../core/state/operation/operation
 import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import { addNode } from '../../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../../core/store';
-import { SearchService } from '@microsoft-logic-apps/designer-client-services';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { SearchResultsGrid } from '@microsoft/designer-ui';
+import type { DiscoveryOperation, DiscoveryResultTypes, OperationApi } from '@microsoft-logic-apps/utils';
+import type { OperationActionData } from '@microsoft/designer-ui';
+import { OperationGroupDetailsPage } from '@microsoft/designer-ui';
 import React from 'react';
-import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-const getSearchResult = (term: string) => {
-  const searchService = SearchService();
-  const data = searchService.search(term);
-  return data;
+type OperationGroupDetailViewProps = {
+  operationApi: OperationApi;
+  selectedSearchedOperations: DiscoveryOperation<DiscoveryResultTypes>[];
 };
 
-type SearchViewProps = {
-  searchTerm: string;
-};
-
-export const SearchView: React.FC<SearchViewProps> = (props) => {
+export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) => {
   const dispatch = useDispatch();
 
-  const { discoveryIds, selectedNode } = useSelector((state: RootState) => {
-    return state.panel;
-  });
+  const { operationApi, selectedSearchedOperations } = props;
 
-  const searchResponse = useQuery(['searchResult', props.searchTerm], () => getSearchResult(props.searchTerm), {
-    enabled: !!props.searchTerm,
-    staleTime: 100000,
-    cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
-  });
+  const { discoveryIds, selectedNode } = useSelector((state: RootState) => state.panel);
 
-  const searchResults = searchResponse.data;
+  const onOperationClick = (id: string) => {
+    const operation = selectedSearchedOperations.find((o) => o.id === id);
+    if (!operation) return; // Just an optional catch, should never happen
 
-  const onOperationClick = (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
     const addPayload: AddNodePayload = {
       operation,
       id: selectedNode,
@@ -60,10 +49,20 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     return;
   };
 
+  const operationGroupActions: OperationActionData[] = selectedSearchedOperations.map((operation) => {
+    return {
+      id: operation.id,
+      title: operation.name,
+      subtitle: operation.description,
+      category: '',
+    };
+  });
+
   return (
-    <SearchResultsGrid
-      onOperationClick={onOperationClick}
-      operationSearchResults={searchResults?.searchOperations || []}
-    ></SearchResultsGrid>
+    <OperationGroupDetailsPage
+      operationApi={operationApi}
+      operationActionsData={operationGroupActions}
+      onClickOperation={onOperationClick}
+    />
   );
 };
