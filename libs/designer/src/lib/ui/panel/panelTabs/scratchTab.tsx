@@ -85,7 +85,7 @@ export const ScratchTab = () => {
             { key: [], value: [] },
           ]}
           initialValue={[
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '{\n  "' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '{\n    "' },
             testTokenSegment,
             {
               id: guid(),
@@ -105,8 +105,8 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value Text' },
             testTokenSegment,
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Additional Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n  "' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '{\n  "' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n  ' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '  "' },
             testTokenSegment,
             testTokenSegment,
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Key2 Text' },
@@ -117,6 +117,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
         />
+        <DictionaryEditor initialValue={[testTokenSegment]} />
       </>
     );
   };

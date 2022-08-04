@@ -30,7 +30,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   const [collapsed, setCollapsed] = useState(!initialItems ?? false);
   const [items, setItems] = useState(initialItems);
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
-  const [isValid, setIsValid] = useState(initialItems !== null ?? initializeValidation(initialValue));
+  const [isValid, setIsValid] = useState(initializeValidation(initialValue));
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
