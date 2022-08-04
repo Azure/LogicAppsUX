@@ -48,7 +48,7 @@ const FinalStatusGadget: React.FC = () => {
     case FinalStatus.Succeeded:
       return (
         <Text block>
-          {message} ${targetDirectory.path}/.logs/export/README.md
+          {message} {targetDirectory.path}/.logs/export/README.md
         </Text>
       );
     default:
