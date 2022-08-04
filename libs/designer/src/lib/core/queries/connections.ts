@@ -51,8 +51,8 @@ export const useConnectionsForConnector = (connectorId: string) => {
 
 export const getConnectionsForConnector = (connectorId: string) => {
   const queryClient = getReactQueryClient();
-  return queryClient.fetchQuery([connectionKey, connectorId?.toLowerCase()], () => {
+  return queryClient.fetchQuery([connectionKey, connectorId?.toLowerCase()], async () => {
     const connectionService = ConnectionService();
-    return connectionService.getConnections(connectorId);
+    return await connectionService.getConnections(connectorId);
   });
 };
