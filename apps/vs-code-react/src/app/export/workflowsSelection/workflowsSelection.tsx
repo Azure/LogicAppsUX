@@ -92,7 +92,15 @@ export const WorkflowsSelection: React.FC = () => {
     onSuccess: onWorkflowsSuccess,
   });
 
-  const selection = useMemo(() => {
+  const selection: Selection = useMemo(() => {
+    const onItemsChange = () => {
+      if (selection && selection.getItems().length > 0 && selectedWorkflows.length > 0) {
+        selectedWorkflows.forEach((workflow: WorkflowsList) => {
+          selection.setKeySelected(workflow.key, true, true);
+        });
+      }
+    };
+
     return new Selection({
       onSelectionChanged: () => {
         const currentSelection = selection.getSelection() as Array<WorkflowsList>;
@@ -102,9 +110,9 @@ export const WorkflowsSelection: React.FC = () => {
           })
         );
       },
-      items: renderWorkflows as any,
+      onItemsChanged: onItemsChange,
     });
-  }, [renderWorkflows, dispatch]);
+  }, [dispatch, selectedWorkflows]);
 
   const workflowsList = useMemo(() => {
     const emptyText = (
@@ -173,7 +181,7 @@ export const WorkflowsSelection: React.FC = () => {
 
     const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
       const updatedResourceGroups = [...resourceGroups];
-      updatedResourceGroups[index].selected = !updatedResourceGroups[index].selected;
+      updatedResourceGroups[index - 2].selected = !updatedResourceGroups[index - 2].selected;
 
       setRenderWorkflows(filterWorkflows(allWorkflows, updatedResourceGroups, searchString));
       setResourceGroups(updatedResourceGroups);
@@ -203,7 +211,7 @@ export const WorkflowsSelection: React.FC = () => {
         {workflowsList}
       </div>
       <Separator vertical className="msla-export-workflows-panel-divider" />
-      <SelectedList />
+      <SelectedList isLoading={isWorkflowsLoading || renderWorkflows === null} />
     </div>
   );
 };
