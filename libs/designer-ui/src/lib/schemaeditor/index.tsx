@@ -9,6 +9,7 @@ import type { IDialogStyles, IStyle } from '@fluentui/react';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { ActionButton } from '@fluentui/react/lib/Button';
 import { FontSizes } from '@fluentui/theme';
+import { useFunctionalState } from '@react-hookz/web';
 import type { editor } from 'monaco-editor';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -40,14 +41,14 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
   const intl = useIntl();
   const [errorMessage, setErrorMessage] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
-  const [currentValue, setCurrentValue] = useState(formatValue(initialValue[0].value));
+  const [getCurrentValue, setCurrentValue] = useFunctionalState(formatValue(initialValue[0].value));
   const [samplePayload, setSamplePayload] = useState<string | undefined>('');
   const modalEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const [editorHeight, setEditorHeight] = useState('');
 
   useEffect(() => {
-    setEditorHeight(getEditorHeight(currentValue));
-  }, [currentValue]);
+    setEditorHeight(getEditorHeight(getCurrentValue()));
+  }, [getCurrentValue]);
 
   const getStyles = (): Partial<IDialogStyles> => {
     return {
@@ -80,8 +81,7 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
   };
 
   const handleBlur = (): void => {
-    // TODO - Move this to onBlur
-    onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: currentValue }] });
+    onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: getCurrentValue() }] });
   };
 
   const handleFocus = (): void => {
@@ -124,7 +124,7 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
       {label ? <div className="msla-schema-editor-title">{label}</div> : null}
       <Editor
         height={editorHeight}
-        value={currentValue}
+        value={getCurrentValue()}
         fontSize={13}
         readOnly={disabled}
         lineNumbers="off"

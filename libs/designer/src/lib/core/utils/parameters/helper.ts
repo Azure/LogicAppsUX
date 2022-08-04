@@ -49,7 +49,6 @@ import {
 } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import {
-  isNullOrEmpty,
   isUndefinedOrEmptyString,
   aggregate,
   clone,
@@ -205,15 +204,20 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
 
 function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[] | undefined } {
   let items: DictionaryEditorItemProps[] | undefined = [];
-  const canParseObject = !isNullOrEmpty(value) && !isNullOrUndefined(value) && isObject(value);
+  const valueToParse = value !== null ? value ?? {} : value;
+  const canParseObject = valueToParse !== null && isObject(valueToParse);
 
   if (canParseObject) {
-    const keys = Object.keys(value);
+    const keys = Object.keys(valueToParse);
     for (const itemKey of keys) {
       items.push({
         key: loadParameterValue({ value: itemKey } as any),
-        value: loadParameterValue({ value: value[itemKey] } as any),
+        value: loadParameterValue({ value: valueToParse[itemKey] } as any),
       });
+    }
+
+    if (!keys.length) {
+      items.push({ key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')] });
     }
   } else {
     items = undefined;
