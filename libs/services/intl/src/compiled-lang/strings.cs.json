@@ -5,12 +5,6 @@
       "value": "OK"
     }
   ],
-  "+Bh3Qk": [
-    {
-      "type": 0,
-      "value": "Tlačítko pro přidání dynamického obsahu"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -643,6 +637,12 @@
       "value": "Přepnout minimapu"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1224,7 +1224,7 @@
   "DyYcJZ": [
     {
       "type": 0,
-      "value": "Run After"
+      "value": "Spustit po"
     }
   ],
   "DysO/Q": [
@@ -1525,6 +1525,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název klíče datové hodnoty ve formuláři, která se má vrátit."
+    }
+  ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
   "HXLutF": [
@@ -2624,7 +2630,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Zadejte prosím platný slovník."
     }
   ],
   "WS9kXD": [
@@ -3812,7 +3818,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Zadejte prosím platné pole."
     }
   ],
   "lgs5sf": [
@@ -4048,7 +4054,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Enter key"
+      "value": "Zadejte kód."
     }
   ],
   "pIczsS": [
@@ -4728,7 +4734,7 @@
   "wV3Lmd": [
     {
       "type": 0,
-      "value": "Click to delete item"
+      "value": "Kliknutím odstraníte položku."
     }
   ],
   "wWVQuK": [
@@ -4918,7 +4924,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Enter value"
+      "value": "Zadejte hodnotu"
     }
   ],
   "zIDVd9": [
