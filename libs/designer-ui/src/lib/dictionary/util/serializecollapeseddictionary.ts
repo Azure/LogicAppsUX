@@ -1,9 +1,9 @@
 import type { DictionaryEditorItemProps } from '..';
 import type { ValueSegment } from '../../editor';
-import { $isTokenNode } from '../../editor/base/nodes/tokenNode';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
-import type { ElementNode, LexicalEditor } from 'lexical';
-import { $isTextNode, $isElementNode, $getNodeByKey, $getRoot } from 'lexical';
+import { getChildrenNodes } from '../../editor/base/utils/helper';
+import type { LexicalEditor } from 'lexical';
+import { $getRoot } from 'lexical';
 
 export const serializeDictionary = (editor: LexicalEditor, setItems: (items: DictionaryEditorItemProps[]) => void) => {
   editor.getEditorState().read(() => {
@@ -25,22 +25,4 @@ export const serializeDictionary = (editor: LexicalEditor, setItems: (items: Dic
     }
     setItems(returnItems);
   });
-};
-
-const getChildrenNodes = (node: ElementNode, nodeMap: Map<string, ValueSegment>): string => {
-  let text = '';
-  node.__children.forEach((child) => {
-    const childNode = $getNodeByKey(child);
-    if (childNode && $isElementNode(childNode)) {
-      return (text += getChildrenNodes(childNode, nodeMap));
-    }
-    if ($isTextNode(childNode)) {
-      text += childNode.__text.trim();
-    } else if ($isTokenNode(childNode)) {
-      text += childNode.toString();
-      nodeMap.set(childNode.toString(), childNode.convertToSegment());
-    }
-    return text;
-  });
-  return text;
 };
