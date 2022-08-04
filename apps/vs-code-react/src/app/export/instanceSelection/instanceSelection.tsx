@@ -4,7 +4,7 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedIse, updateSelectedSubscripton } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { SearchableDropdown } from '../components/searchableDropdown';
-import { parseIseData, parseSubscriptionsData } from './helper';
+import { getDropdownPlaceholder, parseIseData, parseSubscriptionsData } from './helper';
 import { Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useMemo } from 'react';
@@ -46,8 +46,20 @@ export const InstanceSelection: React.FC = () => {
       description: 'No subscriptions available',
     }),
     EMPTY_ISE: intl.formatMessage({
-      defaultMessage: 'No ISE instances available',
-      description: 'No ISE instances available',
+      defaultMessage: 'No integration service environment (ISE) instances available',
+      description: 'No ISE instances available text',
+    }),
+    SEARCH_SUBSCRIPTION: intl.formatMessage({
+      defaultMessage: 'Find and select subscription',
+      description: 'Find and select subscription text',
+    }),
+    SEARCH_ISE: intl.formatMessage({
+      defaultMessage: 'Find and select integration service environment (ISE)',
+      description: 'Find ISE text',
+    }),
+    LOADING: intl.formatMessage({
+      defaultMessage: 'Loading...',
+      description: 'Loading text',
     }),
   };
 
@@ -68,6 +80,8 @@ export const InstanceSelection: React.FC = () => {
 
   const { data: subscriptionsData, isLoading: isSubscriptionsLoading } = useQuery<any>(QueryKeys.subscriptionData, loadSubscriptions, {
     refetchOnWindowFocus: false,
+    enabled: accessToken !== undefined,
+    retry: 4,
   });
 
   const {
@@ -107,6 +121,24 @@ export const InstanceSelection: React.FC = () => {
 
   const iseInstances: IDropdownOption[] = isIseLoading || selectedSubscription === '' || !iseData ? [] : parseIseData(iseData);
 
+  const subscriptionLoading = accessToken === undefined ? true : isSubscriptionsLoading;
+  const subscriptionPlaceholder = getDropdownPlaceholder(
+    subscriptionLoading,
+    subscriptions.length,
+    intlText.SELECT_OPTION,
+    intlText.EMPTY_SUBSCRIPTION,
+    intlText.LOADING
+  );
+
+  const iseLoading = selectedSubscription === '' ? false : isIseLoading;
+  const isePlaceholder = getDropdownPlaceholder(
+    iseLoading,
+    iseInstances.length,
+    intlText.SELECT_OPTION,
+    intlText.EMPTY_ISE,
+    intlText.LOADING
+  );
+
   return (
     <div className="msla-export-instance-panel">
       <Text variant="xLarge" block>
@@ -118,20 +150,24 @@ export const InstanceSelection: React.FC = () => {
       <SearchableDropdown
         label={intlText.SELECTION_SUBSCRIPTION}
         options={subscriptions}
-        placeholder={subscriptions.length ? intlText.SELECT_OPTION : intlText.EMPTY_SUBSCRIPTION}
+        placeholder={subscriptionPlaceholder}
         disabled={isSubscriptionsLoading || !subscriptions.length}
         onChange={onChangeSubscriptions}
         selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
         className="msla-export-instance-panel-dropdown"
+        isLoading={subscriptionLoading}
+        searchBoxPlaceholder={intlText.SEARCH_SUBSCRIPTION}
       />
       <SearchableDropdown
         label={intlText.SELECTION_ISE}
         options={iseInstances}
-        placeholder={iseInstances.length ? intlText.SELECT_OPTION : intlText.EMPTY_ISE}
+        placeholder={isePlaceholder}
         disabled={isSubscriptionsLoading || isIseLoading || selectedSubscription === '' || !iseInstances.length}
         onChange={onChangeIse}
         selectedKey={selectedIse !== '' ? selectedIse : null}
         className="msla-export-instance-panel-dropdown"
+        isLoading={iseLoading}
+        searchBoxPlaceholder={intlText.SEARCH_ISE}
       />
     </div>
   );

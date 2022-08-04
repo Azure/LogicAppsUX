@@ -18,6 +18,7 @@ interface CollapsedEditorBaseProps {
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   collapsedValue?: ValueSegment[];
   setCollapsedValue?: (val: ValueSegment[]) => void;
+  onBlur?: () => void;
 }
 
 interface ColapsedEditorArrayProps {
@@ -41,6 +42,7 @@ export const CollapsedEditor = ({
   setItems,
   collapsedValue,
   setCollapsedValue,
+  onBlur,
 }: CollapsedEditorProps): JSX.Element => {
   return (
     <BaseEditor
@@ -48,9 +50,10 @@ export const CollapsedEditor = ({
       BasePlugins={{
         tokens: true,
       }}
-      focusProps={{ tokenPickerProps: { buttonClassName: `msla-${type}-editor-tokenpicker` } }}
+      tokenPickerButtonProps={{ buttonClassName: `msla-${type}-editor-tokenpicker` }}
       placeholder={type === CollapsedEditorType.DICTIONARY ? 'Enter a Dictionary' : 'Enter an Array'}
-      initialValue={collapsedValue && collapsedValue.length > 0 ? collapsedValue : initialValue}
+      initialValue={collapsedValue && collapsedValue.length > 0 ? collapsedValue : (initialValue as ValueSegment[])}
+      onBlur={onBlur}
     >
       {type === CollapsedEditorType.DICTIONARY ? null : <SerializeArray isValid={isValid} setItems={setItems} />}
 

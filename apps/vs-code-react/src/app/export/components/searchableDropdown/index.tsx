@@ -1,11 +1,16 @@
 import './styles.less';
-import { Dropdown, DropdownMenuItemType, SearchBox } from '@fluentui/react';
+import { Dropdown, DropdownMenuItemType, SearchBox, Spinner, SpinnerSize } from '@fluentui/react';
 import type { IDropdownOption, IDropdownProps } from '@fluentui/react';
 import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useIntl } from 'react-intl';
 
-export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
+export interface ISearchableDropdownProps extends IDropdownProps {
+  isLoading?: boolean;
+  searchBoxPlaceholder?: string;
+}
+
+export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) => {
   const [searchText, setSearchText] = useState<string>('');
   const filterHeader = 'FilterHeader';
   const dividerHeader = `Divider_${filterHeader}`;
@@ -28,8 +33,8 @@ export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
     const isHeader = option.itemType === DropdownMenuItemType.Header && option.key === filterHeader;
 
     const searchBox = (
-      <div className="searchable-dropdown">
-        <SearchBox showIcon underlined onChange={searchString} placeholder={intlText.SEARCH_OPTIONS} />
+      <div className="searchable-dropdown-searchbox">
+        <SearchBox showIcon underlined onChange={searchString} placeholder={props.searchBoxPlaceholder ?? intlText.SEARCH_OPTIONS} />
       </div>
     );
 
@@ -48,16 +53,21 @@ export const SearchableDropdown: React.FC<IDropdownProps> = (props) => {
     ];
   };
 
+  const spinnerLoader = props.isLoading ? <Spinner className="searchable-dropdown-spinner" size={SpinnerSize.xSmall} /> : null;
+
   return (
-    <Dropdown
-      {...props}
-      calloutProps={{
-        gapSpace: 10,
-        calloutMaxHeight: 400,
-      }}
-      options={getOptions(props.options)}
-      onRenderOption={renderOption}
-      onDismiss={() => setSearchText('')}
-    />
+    <div className="searchable-dropdown">
+      <Dropdown
+        {...props}
+        calloutProps={{
+          gapSpace: 10,
+          calloutMaxHeight: 400,
+        }}
+        options={getOptions(props.options)}
+        onRenderOption={renderOption}
+        onDismiss={() => setSearchText('')}
+      />
+      {spinnerLoader}
+    </div>
   );
 };

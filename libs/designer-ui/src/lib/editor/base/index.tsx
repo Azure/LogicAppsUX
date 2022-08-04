@@ -1,14 +1,19 @@
+import TokenPicker from '../../tokenpicker';
 import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
+import DeleteTokenNode from './plugins/DeleteTokenNode';
+import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
+import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
 import { Validation } from './plugins/Validation';
 import type { ValidationProps } from './plugins/Validation';
 import { parseSegments } from './utils/parsesegments';
+import { useId } from '@fluentui/react-hooks';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -27,20 +32,15 @@ export interface ChangeState {
 
 export type ChangeHandler = (newState: ChangeState) => void;
 
-interface FocusProps {
-  addDictionaryItem?: dictionaryCallbackProps;
-  tokenPickerProps?: FocusTokenPickerProps;
-}
-
-export interface FocusTokenPickerProps {
-  showTokenPicker?: boolean;
-  buttonClassName?: string;
-  buttonHeight?: number;
-}
-
-export interface dictionaryCallbackProps {
+export interface DictionaryCallbackProps {
   addItem: (index: number) => void;
   index: number;
+}
+
+export interface TokenPickerButtonProps {
+  buttonClassName?: string;
+  buttonHeight?: number;
+  setShowTokenPicker?: () => void;
 }
 
 export interface BaseEditorProps {
@@ -48,11 +48,12 @@ export interface BaseEditorProps {
   readonly?: boolean;
   placeholder?: string;
   BasePlugins?: BasePlugins;
-  initialValue?: ValueSegment[];
+  initialValue: ValueSegment[];
   children?: React.ReactNode;
+  tokenPickerButtonProps?: TokenPickerButtonProps;
   onChange?: ChangeHandler;
-  focusProps?: FocusProps;
   onBlur?: () => void;
+  onFocus?: () => void;
 }
 
 export interface BasePlugins {
@@ -83,11 +84,16 @@ export const BaseEditor = ({
   BasePlugins = {},
   initialValue,
   children,
-  focusProps,
+  tokenPickerButtonProps,
   onBlur,
+  onFocus,
 }: BaseEditorProps) => {
   const intl = useIntl();
-  const [focused, setIsFocused] = useState(false);
+  const editorId = useId('msla-tokenpicker-callout-location');
+  const labelId = useId('msla-tokenpicker-callout-label');
+  const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
+  const [showTokenPicker, setShowTokenPicker] = useState(true);
+  const [inTokenPicker, setInTokenPicker] = useState(false);
   const initialConfig = {
     theme: defaultTheme,
     onError,
@@ -109,18 +115,31 @@ export const BaseEditor = ({
   });
 
   const handleFocus = () => {
-    setIsFocused(true);
+    if (tokens) {
+      setShowTokenPickerButton(true);
+    }
+    setInTokenPicker(false);
+    onFocus?.();
   };
   const handleBlur = () => {
-    setIsFocused(false);
-    if (onBlur) {
-      onBlur();
+    if (tokens && !inTokenPicker) {
+      setShowTokenPickerButton(false);
+    } else {
+      setInTokenPicker(false);
     }
+    onBlur?.();
+  };
+
+  const handleShowTokenPicker = () => {
+    if (showTokenPicker) {
+      setInTokenPicker(false);
+    }
+    setShowTokenPicker(!showTokenPicker);
   };
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className={className ?? 'msla-base-editor'}>
+      <div className={className ?? 'msla-editor-container'} id={editorId}>
         <RichTextPlugin
           contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
           placeholder={<span className="editor-placeholder"> {placeholder} </span>}
@@ -140,13 +159,23 @@ export const BaseEditor = ({
             setIsValid={validation.setIsValid}
           />
         ) : null}
-        <OnFocus
-          command={handleFocus}
-          focused={focused}
-          tokenPicker={focusProps?.tokenPickerProps}
-          addDictionaryItem={focusProps?.addDictionaryItem}
-        />
+
+        {(tokens && showTokenPickerButton) || inTokenPicker ? (
+          <TokenPickerButton
+            labelId={labelId}
+            showTokenPicker={showTokenPicker}
+            buttonClassName={tokenPickerButtonProps?.buttonClassName}
+            buttonHeight={tokenPickerButtonProps?.buttonHeight}
+            setShowTokenPicker={handleShowTokenPicker}
+          />
+        ) : null}
+        {(showTokenPickerButton && showTokenPicker) || inTokenPicker ? (
+          <TokenPicker editorId={editorId} labelId={labelId} searchText="" setInTokenPicker={setInTokenPicker} />
+        ) : null}
         <OnBlur command={handleBlur} />
+        <OnFocus command={handleFocus} />
+        <InsertTokenNode />
+        <DeleteTokenNode />
         {children}
       </div>
     </LexicalComposer>
