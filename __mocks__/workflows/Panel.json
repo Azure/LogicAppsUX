@@ -29,16 +29,25 @@
         "type": "Compose"
       },
       "Response": {
-        "inputs": {
-          "body": "@outputs('Execute_a_navigation_plan')?['outputParameters']?['balance']",
-          "statusCode": 200,
-          "headers": "@triggerBody()"
-        },
+        "type": "Response",
         "kind": "http",
-        "runAfter": {
-          "Execute_a_navigation_plan": ["Succeeded"]
+        "inputs": {
+          "statusCode": 200,
+          "headers": "@triggerBody()",
+          "body": "@outputs('Execute_a_navigation_plan')?['outputParameters']?['balance']"
         },
-        "type": "Response"
+        "runAfter": {
+          "Execute_a_navigation_plan": ["Succeeded", "TimedOut", "Skipped"]
+        },
+        "operationOptions": "Asynchronous",
+        "runtimeConfiguration": {
+          "secureData": {
+            "properties": ["inputs"]
+          }
+        },
+        "trackedProperties": {
+          "dfd": "fdfdf"
+        }
       },
       "Scope": {
         "actions": {
