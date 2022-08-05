@@ -1,11 +1,12 @@
 import type { SchemaExtended, SchemaNodeDataType, SchemaNodeExtended } from '../../models';
 import { icon16ForSchemaNodeType } from './SchemaTree.Utils';
-import { Button } from '@fluentui/react-components';
+import { Button, Tooltip } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import { bundleIcon, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
 import { fluentTreeItem, fluentTreeView, provideFluentDesignSystem } from '@fluentui/web-components';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
 import React, { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
 export const FastTreeView = wrap(fluentTreeView());
@@ -75,32 +76,45 @@ export interface SchemaNodeTreeItemContentProps {
 }
 
 const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, initialFilled, includeAddButton, children, onClick }) => {
+  const intl = useIntl();
   const BundledTypeIcon = icon16ForSchemaNodeType(nodeType);
   const BundledAddIcon = bundleIcon(CheckmarkCircle16Filled, Circle16Regular);
   const [filled, { setFalse: setFilledFalse, setTrue: setFilledTrue }] = useBoolean(initialFilled);
 
+  const addNodeLoc = intl.formatMessage({
+    defaultMessage: 'Add',
+    description: 'Label to add a new node to the canvas',
+  });
+
+  const removeNodeLoc = intl.formatMessage({
+    defaultMessage: 'Remove',
+    description: 'Label to remove an existing node from the canvas',
+  });
+
   return (
     <>
-      <Button appearance="transparent" size="small" icon={<BundledTypeIcon />} />
+      <Button appearance="transparent" size="small" tabIndex={-1} icon={<BundledTypeIcon />} />
       <span style={{ width: '100%' }}>{children}</span>
       {includeAddButton ? (
-        <Button
-          appearance="transparent"
-          size="small"
-          icon={
-            <BundledAddIcon
-              filled={filled}
-              onClick={() => {
-                if (filled) {
-                  setFilledFalse();
-                } else {
-                  setFilledTrue();
-                }
-                onClick();
-              }}
-            />
-          }
-        />
+        <Tooltip content={filled ? removeNodeLoc : addNodeLoc} relationship={'label'}>
+          <Button
+            appearance="transparent"
+            size="small"
+            icon={
+              <BundledAddIcon
+                filled={filled}
+                onClick={() => {
+                  if (filled) {
+                    setFilledFalse();
+                  } else {
+                    setFilledTrue();
+                  }
+                  onClick();
+                }}
+              />
+            }
+          />
+        </Tooltip>
       ) : null}
     </>
   );
