@@ -38,3 +38,25 @@ export const outputToken: OutputToken = {
     functionArguments: undefined,
   },
 };
+
+export const outputToken2: OutputToken = {
+  key: 'Outputs',
+  brandColor: 'rgba(186, 93, 0, 0.15)',
+  icon: 'https://logicappsv2resources.blob.core.windows.net/icons/javascript.svg',
+  title: 'Outputs',
+  description: "Outputs('Execute_JavaScript_Code')",
+  name: 'Outputs',
+  type: 'token',
+  isAdvanced: false,
+  outputInfo: {
+    type: TokenType.OUTPUTS,
+    required: false,
+    format: undefined,
+    source: undefined,
+    isSecure: undefined,
+    arrayDetails: undefined,
+    actionName: undefined,
+    functionName: undefined,
+    functionArguments: undefined,
+  },
+};

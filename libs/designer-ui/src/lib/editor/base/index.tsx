@@ -24,7 +24,7 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export { testTokenSegment, outputToken } from '../shared/testtokensegment';
+export { testTokenSegment, outputToken, outputToken2 } from '../shared/testtokensegment';
 
 export interface ChangeState {
   value: ValueSegment[];

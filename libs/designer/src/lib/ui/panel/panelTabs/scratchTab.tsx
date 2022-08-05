@@ -13,11 +13,12 @@ import {
   Scratch,
   StringEditor,
   outputToken,
+  outputToken2,
 } from '@microsoft/designer-ui';
 
 const testTokenGroup: TokenGroup[] = [
-  { id: guid(), label: 'Checks if Blob exists in Azure Storage', tokens: [outputToken, outputToken] },
-  { id: guid(), label: 'Insert a row into a string array', tokens: [outputToken, outputToken] },
+  { id: guid(), label: 'Checks if Blob exists in Azure Storage', tokens: [outputToken, outputToken2] },
+  { id: guid(), label: 'Insert a row into a string array', tokens: [outputToken2, outputToken] },
 ];
 
 export const ScratchTab = () => {
