@@ -6,7 +6,6 @@ import type { PanelContainerProps } from './panelcontainer';
 import { PanelContainer } from './panelcontainer';
 import { PanelHeaderControlType } from './panelheader/panelheader';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
 
 export default {
   component: PanelContainer,

@@ -17,7 +17,7 @@ export interface CommonCardProps {
 }
 
 export const OperationGroupAction = (props: OperationGroupActionProps) => {
-  const { id, title, subtitle, connectorName, category, onClick, brandColor = '#000' } = props;
+  const { id, title, subtitle, category, onClick, brandColor = '#000' } = props;
 
   const handleClick = useCallback(() => onClick(id), [id, onClick]);
 
@@ -35,8 +35,9 @@ export const OperationGroupAction = (props: OperationGroupActionProps) => {
       <div className="msla-op-action-color-line" style={{ background: brandColor }} />
       <Text className="msla-op-action-name">{title}</Text>
 
-      {category ? <Text className="msla-op-action-chip">{category}</Text> : null}
-      {connectorName ? <Text className="msla-op-action-chip">{connectorName}</Text> : null}
+      {category ? <Text className="msla-op-action-badge">{category}</Text> : null}
+      {/* {connectorName ? <Text className="msla-op-action-chip">{connectorName}</Text> : null} */}
+      {/* TODO: Not sure if the above section needs to be said, it's already in the heading of the component and will be the same across each tile */}
 
       <TooltipHost tooltipProps={tooltipProps} content={subtitle}>
         <img className="msla-op-action-info" alt="" src={InformationImage} />

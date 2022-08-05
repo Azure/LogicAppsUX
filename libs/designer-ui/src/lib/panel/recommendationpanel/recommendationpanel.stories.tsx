@@ -1,7 +1,7 @@
 import { DesignerSearchBox } from '../../searchbox';
 import { BrowseGrid } from './browseResults';
+import { mockOperationApi, mockOperationActionsData } from './operationGroupDetails/mocks';
 import { OperationGroupDetailsPage } from './operationGroupDetails/operationGroupDetails';
-import { mockOperationApi, mockOperationActionsData } from './operationGroupDetails/operationGroupDetails.stories';
 import type { RecommendationPanelProps } from './recommendationpanel';
 import { RecommendationPanel } from './recommendationpanel';
 import { SearchResultsGrid } from './searchResult';

@@ -30,6 +30,7 @@ export const panelSlice = createSlice({
     clearPanel: (state) => {
       state.collapsed = true;
       state.selectedNode = '';
+      state.selectedOperationGroupId = '';
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
       if (!action) return;
@@ -49,6 +50,7 @@ export const panelSlice = createSlice({
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
       state.selectedNode = action.payload;
       state.isDiscovery = false;
+      state.selectedOperationGroupId = '';
     },
 
     registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {

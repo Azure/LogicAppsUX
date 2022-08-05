@@ -10,12 +10,10 @@
   display: flex;
   flex-wrap: nowrap;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 10px 8px 10px 16px;
   align-items: center;
   width: 100%;
   overflow: hidden;
-
-  transition: transform 0.2s ease-in-out;
 
   &:focus {
     outline: 0;
@@ -24,7 +22,6 @@
   &:focus,
   &:hover {
     box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
-    transform: translate(-12px, 0px);
   }
 
   .msla-op-action-color-line {
@@ -39,19 +36,21 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding-left: 4px;
 
     font: 13px/20px @semibold-font-family;
     text-align: left;
   }
 
-  .msla-op-action-chip {
+  .msla-op-action-badge {
     height: 18px;
-    line-height: 18px;
     border-radius: 64px;
-    padding: 0px 8px;
-    font: 11px/20px @semibold-font-family;
-    background: rgba(0, 120, 212, 0.1);
+    padding: 0px 6px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    background: rgb(235, 243, 252);
+    border: 1px solid rgb(180, 214, 250);
+    color: rgb(17, 94, 163);
     flex: 0 0 auto;
   }
 

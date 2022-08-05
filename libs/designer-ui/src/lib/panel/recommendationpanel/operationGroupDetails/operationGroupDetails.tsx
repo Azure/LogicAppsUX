@@ -22,7 +22,8 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
   const { operationApi, operationActionsData, onClickOperation } = props;
   const { id, displayName, description, iconUri, brandColor } = operationApi;
 
-  const isHybrid = true; // TODO: Set this as hybrid when true
+  const firstCategory = operationActionsData[0].category;
+  const isHybrid = operationActionsData.findIndex((action) => action.category !== firstCategory) !== -1;
 
   const HybridComponent = () => {
     const intl = useIntl();

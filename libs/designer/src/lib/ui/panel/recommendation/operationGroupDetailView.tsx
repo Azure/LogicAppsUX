@@ -1,3 +1,4 @@
+import { isBuiltInConnector } from '../../../core/actions/bjsworkflow/connections';
 import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
 import { getOperationManifest } from '../../../core/queries/operation';
 import type { AddNodeOperationPayload } from '../../../core/state/operation/operationMetadataSlice';
@@ -8,7 +9,6 @@ import type { RootState } from '../../../core/store';
 import type { DiscoveryOperation, DiscoveryResultTypes, OperationApi } from '@microsoft-logic-apps/utils';
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { OperationGroupDetailsPage } from '@microsoft/designer-ui';
-import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 type OperationGroupDetailViewProps = {
@@ -54,7 +54,8 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
       id: operation.id,
       title: operation.name,
       subtitle: operation.description,
-      category: '',
+      category: isBuiltInConnector(operation.properties.api.id) ? 'Built-in' : 'Azure',
+      connectorName: operation.properties.api.displayName,
     };
   });
 
