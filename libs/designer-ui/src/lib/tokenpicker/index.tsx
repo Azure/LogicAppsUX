@@ -102,6 +102,7 @@ export default function TokenPicker({
                 type="search"
                 value={searchQuery}
                 onChange={handleSearchTextChange}
+                autoComplete="off"
               />
             </div>
           ) : null}
