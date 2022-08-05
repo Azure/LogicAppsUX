@@ -20,6 +20,7 @@ interface CollapsedEditorBaseProps {
   tokenGroup?: TokenGroup[];
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   setCollapsedValue?: (val: ValueSegment[]) => void;
+  onBlur?: () => void;
 }
 
 interface ColapsedEditorArrayProps {
@@ -44,6 +45,7 @@ export const CollapsedEditor = ({
   setIsValid,
   setItems,
   setCollapsedValue,
+  onBlur,
 }: CollapsedEditorProps): JSX.Element => {
   return (
     <BaseEditor
@@ -53,7 +55,8 @@ export const CollapsedEditor = ({
       }}
       tokenPickerButtonProps={{ buttonClassName: `msla-${type}-editor-tokenpicker` }}
       placeholder={type === CollapsedEditorType.DICTIONARY ? 'Enter a Dictionary' : 'Enter an Array'}
-      initialValue={collapsedValue && collapsedValue.length > 0 ? collapsedValue : initialValue}
+      initialValue={collapsedValue && collapsedValue.length > 0 ? collapsedValue : (initialValue as ValueSegment[])}
+      onBlur={onBlur}
       tokenGroup={tokenGroup}
     >
       {type === CollapsedEditorType.DICTIONARY ? null : <SerializeArray isValid={isValid} setItems={setItems} />}

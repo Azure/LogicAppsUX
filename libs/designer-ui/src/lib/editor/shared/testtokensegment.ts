@@ -41,7 +41,7 @@ export const outputToken: OutputToken = {
 
 export const outputToken2: OutputToken = {
   key: 'Outputs',
-  brandColor: 'rgba(186, 93, 0, 0.15)',
+  brandColor: '#ba5d00',
   icon: 'https://logicappsv2resources.blob.core.windows.net/icons/javascript.svg',
   title: 'Outputs',
   description: "Outputs('Execute_JavaScript_Code')",

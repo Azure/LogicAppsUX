@@ -49,7 +49,7 @@ export interface BaseEditorProps {
   readonly?: boolean;
   placeholder?: string;
   BasePlugins?: BasePlugins;
-  initialValue?: ValueSegment[];
+  initialValue: ValueSegment[];
   children?: React.ReactNode;
   tokenPickerButtonProps?: TokenPickerButtonProps;
   tokenGroup?: TokenGroup[];
