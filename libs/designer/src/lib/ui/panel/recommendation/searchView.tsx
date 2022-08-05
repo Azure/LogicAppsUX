@@ -10,20 +10,17 @@ import type { RootState } from '../../../core/store';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
-import React from 'react';
+import Fuse from 'fuse.js';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-const getSearchResult = (term: string) => {
-  const searchService = SearchService();
-  const data = searchService.search(term);
-  return data;
-};
-
 type SearchViewProps = {
   searchTerm: string;
 };
+
+type SearchResults = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>[];
 
 export const SearchView: React.FC<SearchViewProps> = (props) => {
   const dispatch = useDispatch();
@@ -32,13 +29,25 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     return state.panel;
   });
 
-  const searchResponse = useQuery(['searchResult', props.searchTerm], () => getSearchResult(props.searchTerm), {
-    enabled: !!props.searchTerm,
-    staleTime: 100000,
-    cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
+  const [searchResults, setSearchResults] = useState<SearchResults>([]);
+
+  const searchTerms = useQuery(['allOperations'], () => {
+    const searchService = SearchService();
+    return searchService.preloadOperations();
   });
 
-  const searchResults = searchResponse.data;
+  useEffect(() => {
+    const options = {
+      includeScore: true,
+      keys: ['properties.summary', 'properties.description'],
+    };
+    if (searchTerms.data) {
+      const fuse = new Fuse(searchTerms.data, options);
+
+      setSearchResults(fuse.search(props.searchTerm));
+      console.log(searchResults);
+    }
+  }, [props.searchTerm, searchTerms, searchResults]);
 
   const onOperationClick = (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
     const addPayload: AddNodePayload = {
@@ -71,10 +80,5 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     }
   };
 
-  return (
-    <SearchResultsGrid
-      onOperationClick={onOperationClick}
-      operationSearchResults={searchResults?.searchOperations || []}
-    ></SearchResultsGrid>
-  );
+  return <SearchResultsGrid onOperationClick={onOperationClick} operationSearchResults={searchResults}></SearchResultsGrid>;
 };

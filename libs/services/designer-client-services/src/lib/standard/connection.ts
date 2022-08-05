@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-//import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
+import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { azureFunctionConnectorId } from './operationmanifest';
@@ -141,19 +141,23 @@ export class StandardConnectionService implements IConnectionService {
       apiHubServiceDetails: { location, apiVersion, subscriptionId },
       httpClient,
     } = this.options;
-    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
-    const queryParameters: QueryParameters = {
-      'api-version': apiVersion,
-    };
-    const response = await httpClient.get<ContinuationTokenResponse>({ uri, queryParameters });
-    // need to save continuation token to store
-    const connectors = response.value;
-    const formattedConnectors = this.moveGeneralInformation(connectors);
-    console.log(formattedConnectors);
-    return formattedConnectors;
-    // const connectors = AzureConnectorMock.value as Connector[];
-    // const formattedConnectors = this.moveGeneralInformation(connectors);
-    // return Promise.resolve(formattedConnectors);
+    const isStandalone = true;
+    if (isStandalone) {
+      const connectors = AzureConnectorMock.value as Connector[];
+      const formattedConnectors = this.moveGeneralInformation(connectors);
+      return Promise.resolve(formattedConnectors);
+    } else {
+      const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
+      const queryParameters: QueryParameters = {
+        'api-version': apiVersion,
+      };
+      const response = await httpClient.get<ContinuationTokenResponse>({ uri, queryParameters });
+      // need to save continuation token to store
+      const connectors = response.value;
+      const formattedConnectors = this.moveGeneralInformation(connectors);
+      console.log(formattedConnectors);
+      return formattedConnectors;
+    }
   }
 
   private moveGeneralInformation(connectors: Connector[]): Connector[] {
