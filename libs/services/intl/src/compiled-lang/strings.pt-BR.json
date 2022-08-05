@@ -3359,6 +3359,12 @@
       "value": "Converte uma cadeia de caracteres em maiúsculas usando as regras de uso de maiúsculas da cultura invariável"
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamic content"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4141,6 +4147,12 @@
       "value": "Retorna uma representação codificada no URI de um valor"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4361,6 +4373,12 @@
     {
       "type": 0,
       "value": "Adiciona um número inteiro de horas em um carimbo de data/hora de cadeia de caracteres passado"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Search dynamic content"
     }
   ],
   "uZH8Qs": [

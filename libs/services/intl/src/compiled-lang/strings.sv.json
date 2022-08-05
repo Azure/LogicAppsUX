@@ -3367,6 +3367,12 @@
       "value": "Konverterar en sträng till versala bokstäver med skiftlägesregler för den invarianta kulturen"
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamic content"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4153,6 +4159,12 @@
       "value": "Returnerar en URI-kodad representation av ett värde"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4373,6 +4385,12 @@
     {
       "type": 0,
       "value": "Lägger till ett heltalsvärde för det antal timmar för vilka en strängtidsstämpel skickas in"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Search dynamic content"
     }
   ],
   "uZH8Qs": [

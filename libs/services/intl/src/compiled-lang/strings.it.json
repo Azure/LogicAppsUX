@@ -3367,6 +3367,12 @@
       "value": "Converte una stringa in lettere maiuscole usando le regole per l'utilizzo di maiuscole e minuscole delle impostazioni cultura inglese non dipendenti da paese/area geografica"
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamic content"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4149,6 +4155,12 @@
       "value": "Restituisce una rappresentazione con codifica URI di un valore"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4369,6 +4381,12 @@
     {
       "type": 0,
       "value": "Aggiunge un numero intero di ore al timestamp in formato stringa passato"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Search dynamic content"
     }
   ],
   "uZH8Qs": [
