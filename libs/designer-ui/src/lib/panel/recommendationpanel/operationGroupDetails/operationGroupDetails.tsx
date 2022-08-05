@@ -13,14 +13,16 @@ export interface OperationGroupDetailsPageProps {
 export interface OperationActionData {
   id: string;
   title: string;
-  subtitle?: string;
+  description?: string;
+  summary?: string;
   category: 'Built-in' | 'Azure' | '';
   connectorName?: string;
+  brandColor?: string;
 }
 
 export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps> = (props) => {
   const { operationApi, operationActionsData, onClickOperation } = props;
-  const { id, displayName, description, iconUri, brandColor } = operationApi;
+  const { id, displayName, description, iconUri } = operationApi;
 
   const firstCategory = operationActionsData[0].category;
   const isHybrid = operationActionsData.findIndex((action) => action.category !== firstCategory) !== -1;
@@ -56,16 +58,7 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
       {isHybrid ? <HybridComponent /> : null}
       <div className="msla-op-group-item-container">
         {operationActionsData?.map((op) => (
-          <OperationGroupAction
-            key={op.id}
-            id={op.id}
-            title={op.title}
-            subtitle={op.subtitle}
-            brandColor={brandColor}
-            category={op.category}
-            onClick={onClickOperation}
-            connectorName={op.connectorName}
-          />
+          <OperationGroupAction key={op.id} operationActionData={op} onClick={onClickOperation} />
         ))}
       </div>
     </div>

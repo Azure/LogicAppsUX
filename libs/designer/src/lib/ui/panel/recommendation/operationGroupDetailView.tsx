@@ -53,9 +53,11 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
     return {
       id: operation.id,
       title: operation.name,
-      subtitle: operation.description,
+      description: operation.description ?? operation.properties.description,
+      summary: operation.properties.summary,
       category: isBuiltInConnector(operation.properties.api.id) ? 'Built-in' : 'Azure',
       connectorName: operation.properties.api.displayName,
+      brandColor: operation.properties.api.brandColor,
     };
   });
 

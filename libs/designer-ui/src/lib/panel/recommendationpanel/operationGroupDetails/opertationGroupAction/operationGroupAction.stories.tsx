@@ -1,5 +1,6 @@
 import type { OperationGroupActionProps } from '.';
 import { OperationGroupAction } from '.';
+import { mockOperationActionsData } from '../mocks';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
@@ -13,9 +14,6 @@ export const Action: ComponentStory<typeof OperationGroupAction> = (args: Operat
 );
 
 Action.args = {
-  id: 'id',
-  brandColor: '#770BD6',
-  title: 'Increment variable',
-  subtitle: 'Increment variable by 1',
-  connectorName: 'TestConnector',
+  operationActionData: mockOperationActionsData[0],
+  onClick: () => null,
 };
