@@ -1,5 +1,6 @@
 import Constants from '../../common/constants';
 import type { NodeDataWithManifest } from '../actions/bjsworkflow/operationdeserializer';
+import type { Settings } from '../actions/bjsworkflow/settings';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { OutputInfo } from '../state/operation/operationMetadataSlice';
 import type { TokensState } from '../state/tokensSlice';
@@ -87,7 +88,7 @@ export function convertOutputsToTokens(
   nodeType: string,
   outputs: Record<string, OutputInfo>,
   manifest: OperationManifest,
-  allNodesData: Record<string, NodeDataWithManifest>
+  settings: Settings | undefined
 ): OutputToken[] {
   if (!manifest) {
     return [];
@@ -95,7 +96,7 @@ export function convertOutputsToTokens(
 
   const icon = manifest.properties.iconUri;
   const brandColor = manifest.properties.brandColor;
-  const isSecure = hasSecureOutputs(nodeType, allNodesData[nodeId].settings);
+  const isSecure = hasSecureOutputs(nodeType, settings);
 
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
 
