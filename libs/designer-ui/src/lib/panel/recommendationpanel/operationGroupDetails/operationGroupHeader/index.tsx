@@ -1,4 +1,5 @@
-import { css, Image, ImageFit } from '@fluentui/react';
+import { css, Image, ImageFit, Link } from '@fluentui/react';
+import { useMeasure } from '@react-hookz/web';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -22,9 +23,9 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
   const ReadMoreButton = () => (
     <div className="msla-read-more-container">
       {'... '}
-      <span className="msla-read-button" onClick={() => setDescriptionExpanded(true)}>
+      <Link onClick={() => setDescriptionExpanded(true)} style={{ marginLeft: '4px' }}>
         {readMoreText}
-      </span>
+      </Link>
     </div>
   );
 
@@ -33,22 +34,22 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
     description: 'Text for read less button',
   });
   const ReadLessButton = () => (
-    <span className="msla-read-button" onClick={() => setDescriptionExpanded(false)}>
+    <Link onClick={() => setDescriptionExpanded(false)} style={{ marginLeft: '8px' }}>
       {readLessText}
-    </span>
+    </Link>
   );
 
-  const el = document.getElementById('msla-op-description');
-  console.log('height', el?.offsetHeight ?? 0);
-  console.log('lines', (el?.offsetHeight ?? 0) / 20);
-  const longDescription = useMemo(() => (el?.offsetHeight ?? 0) / 20 > 2, [el]);
+  const [descriptionMeasurements, descriptionRef] = useMeasure<HTMLDivElement>();
+  const longDescription = useMemo(() => {
+    return (descriptionMeasurements?.height ?? 0) / 20 > 2;
+  }, [descriptionMeasurements]);
 
   return (
     <div id={id} className="msla-op-group-header">
       <Image className="msla-op-group-image" alt={title} src={iconUrl} imageFit={ImageFit.contain} />
       <div className={css(`msla-op-group-info`, !descriptionExpanded && 'limited')}>
         <span className="msla-op-group-title">{title}</span>
-        <span id="msla-op-description" className="msla-op-group-subtitle">
+        <span ref={descriptionRef} className="msla-op-group-subtitle">
           {description}
           {longDescription && descriptionExpanded ? <ReadLessButton /> : null}
         </span>

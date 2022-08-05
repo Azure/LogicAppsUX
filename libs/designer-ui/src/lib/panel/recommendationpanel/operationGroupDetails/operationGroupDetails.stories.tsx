@@ -16,4 +16,10 @@ export const CompletePage: ComponentStory<typeof OperationGroupDetailsPage> = (a
 CompletePage.args = {
   operationApi: mockOperationApi,
   operationActionsData: mockOperationActionsData,
+  onClickOperation: (id: string) => {
+    alert(`Clicked operation : ${id}`);
+  },
+  onClickBack: () => {
+    alert('Clicked back');
+  },
 };

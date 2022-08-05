@@ -13,4 +13,9 @@ export const Header: ComponentStory<typeof OperationGroupHeader> = (args: Operat
   </div>
 );
 
-Header.args = mockOperationApi;
+Header.args = {
+  id: mockOperationApi.id,
+  title: mockOperationApi.displayName,
+  description: mockOperationApi.description,
+  iconUrl: mockOperationApi.iconUri,
+};

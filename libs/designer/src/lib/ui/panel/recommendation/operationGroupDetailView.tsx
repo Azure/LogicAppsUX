@@ -3,7 +3,7 @@ import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
 import { getOperationManifest } from '../../../core/queries/operation';
 import type { AddNodeOperationPayload } from '../../../core/state/operation/operationMetadataSlice';
 import { initializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
-import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
+import { selectOperationGroupId, switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import { addNode } from '../../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../../core/store';
 import type { DiscoveryOperation, DiscoveryResultTypes, OperationApi } from '@microsoft-logic-apps/utils';
@@ -49,6 +49,10 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
     return;
   };
 
+  const onClickBack = () => {
+    dispatch(selectOperationGroupId(''));
+  };
+
   const operationGroupActions: OperationActionData[] = selectedSearchedOperations.map((operation) => {
     return {
       id: operation.id,
@@ -66,6 +70,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
       operationApi={operationApi}
       operationActionsData={operationGroupActions}
       onClickOperation={onOperationClick}
+      onClickBack={onClickBack}
     />
   );
 };

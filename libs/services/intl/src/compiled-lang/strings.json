@@ -83,6 +83,12 @@
       "value": "Change connection"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -913,6 +919,12 @@
     {
       "type": 0,
       "value": "Returns an object with an additional property value pair"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1859,12 +1871,6 @@
     {
       "type": 0,
       "value": "Returns a binary representation of a value"
-    }
-  ],
-  "O/uVlc": [
-    {
-      "type": 0,
-      "value": "This connector has multiple implementations, use built-in for the best performance, or hosted for I don’t know some other reason."
     }
   ],
   "O36+wl": [
