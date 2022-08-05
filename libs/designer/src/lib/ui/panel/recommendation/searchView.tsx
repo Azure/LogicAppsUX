@@ -3,7 +3,9 @@ import { getInputParametersFromManifest, getOutputParametersFromManifest } from 
 import { getOperationSettings } from '../../../core/actions/bjsworkflow/settings';
 import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
 import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
+import { getConnectionsForConnector } from '../../../core/queries/connections';
 import { getOperationManifest } from '../../../core/queries/operation';
+import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import type { AddNodeOperationPayload } from '../../../core/state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
 import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
@@ -70,9 +72,17 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     };
     dispatch(initializeOperationInfo(operationPayload));
 
-    await initializeOperationDetails(selectedNode, { connectorId, operationId }, operationType, operationKind, rootState, dispatch);
+    initializeOperationDetails(selectedNode, { connectorId, operationId }, operationType, operationKind, rootState, dispatch);
+    setDefaultConnectionForNode(selectedNode, connectorId, dispatch);
 
     dispatch(switchToOperationPanel(selectedNode));
+  };
+
+  const setDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
+    const connections = await getConnectionsForConnector(connectorId);
+    if (connections.length !== 0) {
+      dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id }));
+    }
   };
 
   return (
