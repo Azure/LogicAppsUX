@@ -88,7 +88,7 @@ export function convertOutputsToTokens(
   nodeType: string,
   outputs: Record<string, OutputInfo>,
   manifest: OperationManifest,
-  settings: Settings | undefined
+  settings?: Settings
 ): OutputToken[] {
   if (!manifest) {
     return [];

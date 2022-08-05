@@ -1,5 +1,6 @@
 import Constants from '../../../common/constants';
 import { getInputParametersFromManifest, getOutputParametersFromManifest } from '../../../core/actions/bjsworkflow/initialize';
+import type { NodeDataWithManifest } from '../../../core/actions/bjsworkflow/operationdeserializer';
 import { getOperationSettings } from '../../../core/actions/bjsworkflow/settings';
 import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
 import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
@@ -111,40 +112,49 @@ const initializeOperationDetails = async (
 
     dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, settings }]));
 
-    const {
-      workflow: { graph, nodesMetadata, operations },
-    } = rootState;
-    const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
-    const upstreamNodeIds = getTokenNodeIds(
-      nodeId,
-      graph as WorkflowNode,
-      nodesMetadata,
-      { [nodeId]: { id: nodeId, nodeInputs, nodeOutputs, settings, manifest } },
-      nodeMap
-    );
-    const tokensAndVariables = {
-      outputTokens: {
-        [nodeId]: { tokens: [], upstreamNodeIds } as NodeTokens,
-      },
-      variables: {} as Record<string, VariableDeclaration[]>,
-    };
-
-    tokensAndVariables.outputTokens[nodeId].tokens.push(...getBuiltInTokens(manifest));
-    tokensAndVariables.outputTokens[nodeId].tokens.push(
-      ...convertOutputsToTokens(nodeId, operationType, nodeOutputs.outputs ?? {}, manifest, settings)
-    );
-
-    if (equals(operationType, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
-      setVariableMetadata(manifest.properties.iconUri, manifest.properties.brandColor);
-
-      const variables = getVariableDeclarations(nodeInputs);
-      if (variables.length) {
-        tokensAndVariables.variables[nodeId] = variables;
-      }
-    }
-
-    dispatch(initializeTokensAndVariables(tokensAndVariables));
+    // TODO (Danielle) - Please comment out the below part when state has updated graph and nodesMetadata.
+    // We need the graph and nodesMetadata updated with the newly added node for token dependencies to be calculated.
+    // addTokensAndVariables(nodeId, operationType, { id: nodeId, nodeInputs, nodeOutputs, settings, manifest }, rootState, dispatch);
   } else {
     // swagger case here
   }
+};
+
+export const addTokensAndVariables = (
+  nodeId: string,
+  operationType: string,
+  nodeData: NodeDataWithManifest,
+  rootState: RootState,
+  dispatch: Dispatch
+): void => {
+  const {
+    workflow: { graph, nodesMetadata, operations },
+  } = rootState;
+  const { nodeInputs, nodeOutputs, settings, manifest } = nodeData;
+  const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {
+    [nodeId]: nodeId,
+  });
+  const upstreamNodeIds = getTokenNodeIds(nodeId, graph as WorkflowNode, nodesMetadata, { [nodeId]: nodeData }, nodeMap);
+  const tokensAndVariables = {
+    outputTokens: {
+      [nodeId]: { tokens: [], upstreamNodeIds } as NodeTokens,
+    },
+    variables: {} as Record<string, VariableDeclaration[]>,
+  };
+
+  tokensAndVariables.outputTokens[nodeId].tokens.push(...getBuiltInTokens(manifest));
+  tokensAndVariables.outputTokens[nodeId].tokens.push(
+    ...convertOutputsToTokens(nodeId, operationType, nodeOutputs.outputs ?? {}, manifest, settings)
+  );
+
+  if (equals(operationType, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+    setVariableMetadata(manifest.properties.iconUri, manifest.properties.brandColor);
+
+    const variables = getVariableDeclarations(nodeInputs);
+    if (variables.length) {
+      tokensAndVariables.variables[nodeId] = variables;
+    }
+  }
+
+  dispatch(initializeTokensAndVariables(tokensAndVariables));
 };
