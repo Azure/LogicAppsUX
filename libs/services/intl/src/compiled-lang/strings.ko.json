@@ -3289,6 +3289,12 @@
       "value": "고정 문화권의 대/소문자 규칙을 사용하여 문자열을 대문자로 변환합니다."
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamic content"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4060,6 +4066,12 @@
       "value": "값의 URI로 인코딩된 표현을 반환합니다."
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4280,6 +4292,12 @@
     {
       "type": 0,
       "value": "전달된 문자열 타임스탬프에 정수 시간 수를 더합니다."
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Search dynamic content"
     }
   ],
   "uZH8Qs": [

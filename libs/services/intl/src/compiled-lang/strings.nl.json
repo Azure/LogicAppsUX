@@ -3371,6 +3371,12 @@
       "value": "Een tekenreeks wordt aan de hand van de regels voor hoofdlettergebruik van de cultuur geconverteerd naar hoofdletters"
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamic content"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4153,6 +4159,12 @@
       "value": "Er wordt een weergave met URI-codering van een waarde geretourneerd"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4373,6 +4385,12 @@
     {
       "type": 0,
       "value": "Er wordt een geheel getal in uren aan een ingevoerd tijdstempel als tekenreeks toegevoegd"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Search dynamic content"
     }
   ],
   "uZH8Qs": [

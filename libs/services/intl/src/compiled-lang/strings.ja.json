@@ -3289,6 +3289,12 @@
       "value": "インバリアント カルチャの大文字小文字の規則を使用して文字列を大文字に変換します"
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamic content"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4060,6 +4066,12 @@
       "value": "値の URI でエンコードされた表現を返します"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4280,6 +4292,12 @@
     {
       "type": 0,
       "value": "渡された文字列のタイムスタンプに時間数を表す整数を加算します"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Search dynamic content"
     }
   ],
   "uZH8Qs": [

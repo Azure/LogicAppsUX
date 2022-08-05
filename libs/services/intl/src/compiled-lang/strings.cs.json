@@ -3507,6 +3507,12 @@
       "value": "Převede řetězec na velká písmena pomocí pravidel pro používání velkých a malých písmen v invariantní jazykové verzi."
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamic content"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4315,6 +4321,12 @@
       "value": "Vrátí reprezentaci určité hodnoty zakódovanou jako identifikátor URI."
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4535,6 +4547,12 @@
     {
       "type": 0,
       "value": "Přidá celočíselný počet hodin do předaného řetězcového časového razítka."
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Search dynamic content"
     }
   ],
   "uZH8Qs": [
