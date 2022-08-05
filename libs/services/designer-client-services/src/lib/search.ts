@@ -3,7 +3,7 @@ import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/ut
 
 export interface ISearchService {
   search(term: string): Promise<SearchResult>;
-  preloadOperations(): DiscoveryOperation<DiscoveryResultTypes>[];
+  preloadOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
 }
 
 let service: ISearchService;

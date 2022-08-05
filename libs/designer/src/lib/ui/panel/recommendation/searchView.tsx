@@ -31,10 +31,17 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const [searchResults, setSearchResults] = useState<SearchResults>([]);
 
-  const searchTerms = useQuery(['allOperations'], () => {
-    const searchService = SearchService();
-    return searchService.preloadOperations();
-  });
+  const searchTerms = useQuery(
+    ['allOperations'],
+    () => {
+      const searchService = SearchService();
+      return searchService.preloadOperations();
+    },
+    {
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
+    }
+  );
 
   useEffect(() => {
     const options = {

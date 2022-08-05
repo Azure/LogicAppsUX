@@ -12,6 +12,7 @@ export interface SomeKindOfAzureOperationDiscovery {
   isNotification?: boolean;
   api: {
     brandColor?: string;
+    category?: 'Standard'; // could be consumption too
     description?: string;
     displayName: string;
     iconUri: string;

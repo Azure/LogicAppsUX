@@ -1,6 +1,6 @@
 import { SearchView } from '../searchView';
 import { InitSearchService, StandardSearchService } from '@microsoft-logic-apps/designer-client-services';
-import { store } from 'libs/designer/src/lib/core/store';
+import { store } from '@microsoft/logic-apps-designer';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import TestRenderer from 'react-test-renderer';

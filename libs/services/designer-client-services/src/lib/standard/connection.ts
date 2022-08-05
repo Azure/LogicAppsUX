@@ -1,9 +1,18 @@
 /* eslint-disable no-param-reassign */
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
+import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
+import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { azureFunctionConnectorId } from './operationmanifest';
-import type { Connection, ConnectionParameter, Connector, SomeKindOfAzureOperationDiscovery } from '@microsoft-logic-apps/utils';
+import type {
+  Connection,
+  ConnectionParameter,
+  Connector,
+  DiscoveryOperation,
+  DiscoveryResultTypes,
+  SomeKindOfAzureOperationDiscovery,
+} from '@microsoft-logic-apps/utils';
 import {
   AssertionErrorCode,
   AssertionException,
@@ -70,9 +79,9 @@ interface StandardConnectionServiceArgs {
   httpClient: IHttpClient;
 }
 
-interface ContinuationTokenResponse {
-  // danielle to make generic and move
-  value: Connector[];
+interface ContinuationTokenResponse<T> {
+  // danielle to move
+  value: T;
   nextLink: string;
 }
 
@@ -94,6 +103,7 @@ const functionsLocation = 'functionConnections';
 export class StandardConnectionService implements IConnectionService {
   private _connections: Record<string, Connection> = {};
   private _subscriptionResourceGroupWebUrl = '';
+  private isStandalone = true;
 
   constructor(public readonly options: StandardConnectionServiceArgs) {
     const { apiHubServiceDetails, apiVersion, baseUrl, readConnections } = options;
@@ -111,6 +121,42 @@ export class StandardConnectionService implements IConnectionService {
 
   dispose(): void {
     return;
+  }
+
+  public async getAllOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+    return [...(await this.getAllBuiltInOperations()), ...(await this.getAllAzureOperations())];
+  }
+
+  private async getAllBuiltInOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+    if (this.isStandalone) {
+      return Promise.resolve([...almostAllBuiltInOperations]);
+    }
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const uri = `${baseUrl}/operations`;
+    const queryParameters: QueryParameters = {
+      'api-version': apiVersion,
+      workflowKind: 'stateful',
+    };
+    const response = await httpClient.get<{ value: DiscoveryOperation<DiscoveryResultTypes>[] }>({ uri, queryParameters });
+    console.log(response);
+    return response.value;
+  }
+
+  private async getAllAzureOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+    const {
+      apiHubServiceDetails: { location, apiVersion, subscriptionId },
+      httpClient,
+    } = this.options;
+    if (this.isStandalone) {
+      return Promise.resolve(azureOperationsResponse);
+    }
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
+    const queryParameters: QueryParameters = {
+      'api-version': apiVersion,
+      $filter: "type eq 'Microsoft.Web/locations/managedApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null",
+    };
+    const response = await httpClient.get<{ value: DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[] }>({ uri, queryParameters });
+    return response.value;
   }
 
   async getAllConnectors(): Promise<Connector[]> {
@@ -141,8 +187,7 @@ export class StandardConnectionService implements IConnectionService {
       apiHubServiceDetails: { location, apiVersion, subscriptionId },
       httpClient,
     } = this.options;
-    const isStandalone = true;
-    if (isStandalone) {
+    if (this.isStandalone) {
       const connectors = AzureConnectorMock.value as Connector[];
       const formattedConnectors = this.moveGeneralInformation(connectors);
       return Promise.resolve(formattedConnectors);
@@ -151,7 +196,7 @@ export class StandardConnectionService implements IConnectionService {
       const queryParameters: QueryParameters = {
         'api-version': apiVersion,
       };
-      const response = await httpClient.get<ContinuationTokenResponse>({ uri, queryParameters });
+      const response = await httpClient.get<ContinuationTokenResponse<Connector[]>>({ uri, queryParameters });
       // need to save continuation token to store
       const connectors = response.value;
       const formattedConnectors = this.moveGeneralInformation(connectors);
