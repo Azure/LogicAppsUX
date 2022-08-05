@@ -21,8 +21,9 @@ const iconStyles: Partial<IIconStyles> = {
 };
 
 const textFieldStyles: Partial<ITextFieldStyles> = {
-  field: {
-    padding: '0 8px 0 26px',
+  fieldGroup: {
+    padding: '0 8px 0 24px',
+    height: 30,
   },
 };
 
