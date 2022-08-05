@@ -93,7 +93,7 @@ const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, i
 
   return (
     <>
-      <Button appearance="transparent" size="small" tabIndex={-1} icon={<BundledTypeIcon />} />
+      <Button role="presentation" appearance="transparent" size="small" tabIndex={-1} icon={<BundledTypeIcon />} />
       <span style={{ width: '100%' }}>{children}</span>
       {includeAddButton ? (
         <Tooltip content={filled ? removeNodeLoc : addNodeLoc} relationship={'label'}>
