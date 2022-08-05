@@ -1,5 +1,4 @@
 import Constants from '../../../common/constants';
-import { isBuiltInConnector } from '../../../core/actions/bjsworkflow/connections';
 import { getInputParametersFromManifest, getOutputParametersFromManifest } from '../../../core/actions/bjsworkflow/initialize';
 import type { NodeDataWithManifest } from '../../../core/actions/bjsworkflow/operationdeserializer';
 import { getOperationSettings } from '../../../core/actions/bjsworkflow/settings';
@@ -10,38 +9,49 @@ import { getOperationManifest } from '../../../core/queries/operation';
 import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import type { AddNodeOperationPayload } from '../../../core/state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../../core/state/operation/operationMetadataSlice';
-import { selectOperationGroupId, switchToOperationPanel } from '../../../core/state/panel/panelSlice';
+import { switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../../core/state/tokensSlice';
 import { initializeTokensAndVariables } from '../../../core/state/tokensSlice';
 import { addNode } from '../../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../../core/store';
-import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../../core/utils/tokens';
-import { setVariableMetadata, getVariableDeclarations } from '../../../core/utils/variables';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { DiscoveryOperation, DiscoveryResultTypes, OperationApi, OperationInfo } from '@microsoft-logic-apps/utils';
+import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../../core/utils/tokens';
+import { getVariableDeclarations, setVariableMetadata } from '../../../core/utils/variables';
+import { OperationManifestService, SearchService } from '@microsoft-logic-apps/designer-client-services';
+import type { DiscoveryOperation, DiscoveryResultTypes, OperationInfo } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
-import type { OperationActionData } from '@microsoft/designer-ui';
-import { OperationGroupDetailsPage } from '@microsoft/designer-ui';
+import { SearchResultsGrid } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
+import React from 'react';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-type OperationGroupDetailViewProps = {
-  operationApi: OperationApi;
-  selectedSearchedOperations: DiscoveryOperation<DiscoveryResultTypes>[];
+const getSearchResult = (term: string) => {
+  const searchService = SearchService();
+  const data = searchService.search(term);
+  return data;
 };
 
-export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) => {
+type SearchViewProps = {
+  searchTerm: string;
+};
+
+export const SearchView: React.FC<SearchViewProps> = (props) => {
   const dispatch = useDispatch();
 
-  const { operationApi, selectedSearchedOperations } = props;
-
   const rootState = useSelector((state: RootState) => state);
-  const { discoveryIds, selectedNode } = useSelector((state: RootState) => state.panel);
+  const { discoveryIds, selectedNode } = useSelector((state: RootState) => {
+    return state.panel;
+  });
 
-  const onOperationClick = (id: string) => {
-    const operation = selectedSearchedOperations.find((o) => o.id === id);
-    if (!operation) return; // Just an optional catch, should never happen
+  const searchResponse = useQuery(['searchResult', props.searchTerm], () => getSearchResult(props.searchTerm), {
+    enabled: !!props.searchTerm,
+    staleTime: 100000,
+    cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
+  });
 
+  const searchResults = searchResponse.data;
+
+  const onOperationClick = async (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
     const addPayload: AddNodePayload = {
       operation,
       id: selectedNode,
@@ -53,6 +63,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
     const operationId = operation.id;
     const operationType = operation.properties.operationType ?? '';
     const operationKind = operation.properties.operationKind ?? '';
+
     dispatch(addNode(addPayload));
     const operationPayload: AddNodeOperationPayload = {
       id: selectedNode,
@@ -65,9 +76,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
     initializeOperationDetails(selectedNode, { connectorId, operationId }, operationType, operationKind, rootState, dispatch);
     setDefaultConnectionForNode(selectedNode, connectorId, dispatch);
 
-    getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
     dispatch(switchToOperationPanel(selectedNode));
-    return;
   };
 
   const setDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
@@ -77,29 +86,11 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
     }
   };
 
-  const onClickBack = () => {
-    dispatch(selectOperationGroupId(''));
-  };
-
-  const operationGroupActions: OperationActionData[] = selectedSearchedOperations.map((operation) => {
-    return {
-      id: operation.id,
-      title: operation.name,
-      description: operation.description ?? operation.properties.description,
-      summary: operation.properties.summary,
-      category: isBuiltInConnector(operation.properties.api.id) ? 'Built-in' : 'Azure',
-      connectorName: operation.properties.api.displayName,
-      brandColor: operation.properties.api.brandColor,
-    };
-  });
-
   return (
-    <OperationGroupDetailsPage
-      operationApi={operationApi}
-      operationActionsData={operationGroupActions}
-      onClickOperation={onOperationClick}
-      onClickBack={onClickBack}
-    />
+    <SearchResultsGrid
+      onOperationClick={onOperationClick}
+      operationSearchResults={searchResults?.searchOperations || []}
+    ></SearchResultsGrid>
   );
 };
 

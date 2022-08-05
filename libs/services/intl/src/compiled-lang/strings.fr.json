@@ -3367,6 +3367,12 @@
       "value": "Convertit une chaîne en majuscules à l'aide des règles de casse de la culture invariante"
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamic content"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4149,6 +4155,12 @@
       "value": "Retourne la représentation encodée sous forme d'URI d'une valeur"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4369,6 +4381,12 @@
     {
       "type": 0,
       "value": "Ajoute un nombre entier d'heures à un horodateur de chaîne transmis"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Search dynamic content"
     }
   ],
   "uZH8Qs": [

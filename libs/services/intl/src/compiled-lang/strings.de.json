@@ -3363,6 +3363,12 @@
       "value": "Konvertiert eine Zeichenfolge anhand der Groß-/Kleinschreibregeln der invarianten Kultur in Großbuchstaben."
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamic content"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4153,6 +4159,12 @@
       "value": "Gibt eine URI-codierte Darstellung eines Werts zurück."
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4373,6 +4385,12 @@
     {
       "type": 0,
       "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Stunden hinzu."
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Search dynamic content"
     }
   ],
   "uZH8Qs": [

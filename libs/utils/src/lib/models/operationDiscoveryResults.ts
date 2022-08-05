@@ -48,6 +48,7 @@ export interface BuiltInOperation {
   api: OperationApi;
   description: string;
   operationType: 'serviceProvider' | string;
+  operationKind?: string;
   summary: string;
   brandColor: string;
   visibility: string;
