@@ -122,10 +122,17 @@ export const operationMetadataSlice = createSlice({
         }
       }
     },
+    updateOutputs: (state, action: PayloadAction<{ id: string; nodeOutputs: NodeOutputs }>) => {
+      const { id, nodeOutputs } = action.payload;
+      if (state.outputParameters[id]) {
+        state.outputParameters[id] = nodeOutputs;
+      }
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeNodes, initializeOperationInfo, updateNodeParameter, updateNodeSettings } = operationMetadataSlice.actions;
+export const { initializeNodes, initializeOperationInfo, updateNodeParameter, updateNodeSettings, updateOutputs } =
+  operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;
