@@ -137,7 +137,14 @@ export interface SubGraphDetail {
   isAdditive?: boolean;
 }
 
+export interface InputsDependency {
+  outputLocation: string[];
+  name: string;
+  schema: 'UriTemplate' | 'Value' | 'ValueSchema';
+}
+
 type SwaggerSchema = any;
+
 export interface OperationManifest {
   properties: OperationManifestProperties;
 }
@@ -170,6 +177,10 @@ export interface OperationManifestProperties {
   isInputsOptional?: boolean;
 
   outputs?: SwaggerSchema;
+  outputsSchema?: {
+    outputPaths: InputsDependency[];
+  };
+
   /*
    * NOTE(trbaratc): Output resolution takes place as follows. If no payload outputs are present, then use outputs.
    * If payload outputs are present then walk the path defined by alternativeOutputs.keyPath to find the outputsKey. If the outputsKey is not defined, use outputs.

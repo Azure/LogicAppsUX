@@ -36,10 +36,16 @@ export const tokensSlice = createSlice({
       state.outputTokens = { ...state.outputTokens, ...action.payload.outputTokens };
       state.variables = { ...state.variables, ...action.payload.variables };
     },
+    updateTokens: (state, action: PayloadAction<{ id: string; tokens: Token[] }>) => {
+      const { id, tokens } = action.payload;
+      if (state.outputTokens[id]) {
+        state.outputTokens[id].tokens = tokens;
+      }
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeTokensAndVariables } = tokensSlice.actions;
+export const { initializeTokensAndVariables, updateTokens } = tokensSlice.actions;
 
 export default tokensSlice.reducer;
