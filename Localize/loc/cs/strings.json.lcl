@@ -18,15 +18,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";+Bh3Qk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Button to add dynamic content]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tlačítko pro přidání dynamického obsahu]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";+W9fkq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+08:00) Kuala Lumpur, Singapore]]></Val>
@@ -923,6 +914,15 @@
           <Val><![CDATA[Toggle Minimap]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Přepnout minimapu]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";4pm5yw" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Button to add dynamic content if TokenPicker is hidden]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker skrytý]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2192,6 +2192,15 @@
           <Val><![CDATA[Required. The key name of the form data value to return.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Povinný parametr. Název klíče datové hodnoty ve formuláři, která se má vrátit.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";HQ8/tk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Button to add dynamic content if TokenPicker is shown]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker zobrazený]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4959,6 +4968,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";iEy9pT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Dynamic content]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dynamický obsah]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";iJOIca" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Next]]></Val>
@@ -6084,6 +6102,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";rjyBPU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Expression]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Výraz]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";rstpaK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-06:00) Central Time (US & Canada)]]></Val>
@@ -6395,6 +6422,15 @@
           <Val><![CDATA[Adds an integer number of hours to a string timestamp passed in]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Přidá celočíselný počet hodin do předaného řetězcového časového razítka.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";uXJdAh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Search dynamic content]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hledat v dynamickém obsahu]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
