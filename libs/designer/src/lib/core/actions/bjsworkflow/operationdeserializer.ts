@@ -10,7 +10,7 @@ import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import { isRootNodeInGraph } from '../../utils/graph';
-import { updateTokenMetadata } from '../../utils/parameters/helper';
+import { getAllInputParameters, updateTokenMetadata } from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
@@ -79,9 +79,9 @@ const initializeOperationDetailsForManifest = async (
 
       dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo, type: operation.type, kind: operation.kind }));
 
-      const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
-      const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);
       const settings = getOperationSettings(isTrigger, operation.type, operation.kind, manifest, operation);
+      const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
+      const nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs, settings.splitOn?.value?.value);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
       return [{ id: nodeId, nodeInputs, nodeOutputs, settings, manifest }, ...childGraphInputs];
@@ -145,10 +145,7 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithManifest[], operatio
     .reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
 
   for (const nodeData of nodes) {
-    const {
-      nodeInputs: { parameterGroups },
-    } = nodeData;
-    const allParameters = aggregate(Object.keys(parameterGroups).map((groupKey) => parameterGroups[groupKey].parameters));
+    const allParameters = getAllInputParameters(nodeData.nodeInputs);
     for (const parameter of allParameters) {
       const segments = parameter.value;
 

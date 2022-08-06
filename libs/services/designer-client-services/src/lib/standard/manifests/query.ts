@@ -43,6 +43,15 @@ export default {
         },
       },
     },
+    outputsSchema: {
+      outputPaths: [
+        {
+          outputLocation: ['properties', 'body'],
+          name: 'from',
+          schema: 'ValueSchema',
+        },
+      ],
+    },
     isOutputsOptional: false,
 
     repetition: {
