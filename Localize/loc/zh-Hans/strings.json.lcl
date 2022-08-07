@@ -6064,7 +6064,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Expression]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Expression]]></Val>
+            <Val><![CDATA[表达式]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

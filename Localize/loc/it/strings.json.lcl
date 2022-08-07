@@ -6388,7 +6388,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Search dynamic content]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Cerca contenuto dinamico]]></Val>
+            <Val><![CDATA[Cercare contenuto dinamico]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
