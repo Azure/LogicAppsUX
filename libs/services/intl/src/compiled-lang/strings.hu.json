@@ -606,7 +606,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a TokenPicker rejtett"
     }
   ],
   "4vcnOA": [
@@ -1371,6 +1371,12 @@
       "value": "Állapot"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1452,7 +1458,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a TokenPicker látható"
     }
   ],
   "HXLutF": [
@@ -1709,6 +1715,12 @@
     {
       "type": 0,
       "value": "Létrehozás..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -2512,7 +2524,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Adjon meg egy érvényes tulajdonságtárat"
     }
   ],
   "WS9kXD": [
@@ -3265,6 +3277,12 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3374,7 +3392,7 @@
   "iEy9pT": [
     {
       "type": 0,
-      "value": "Dynamic content"
+      "value": "Dinamikus tartalom"
     }
   ],
   "iJOIca": [
@@ -3688,7 +3706,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Adjon meg egy érvényes tömböt"
     }
   ],
   "lgs5sf": [
@@ -3924,7 +3942,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Kulcs megadása"
+      "value": "Adja meg a kulcsot"
     }
   ],
   "pIczsS": [
@@ -4166,7 +4184,7 @@
   "rjyBPU": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Kifejezés"
     }
   ],
   "rstpaK": [
@@ -4394,7 +4412,7 @@
   "uXJdAh": [
     {
       "type": 0,
-      "value": "Search dynamic content"
+      "value": "Dinamikus tartalom keresése"
     }
   ],
   "uZH8Qs": [
@@ -4784,7 +4802,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Adjon meg értéket"
+      "value": "Adjon meg egy értéket"
     }
   ],
   "zIDVd9": [
