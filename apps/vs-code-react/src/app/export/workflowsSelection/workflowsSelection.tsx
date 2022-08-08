@@ -138,6 +138,7 @@ export const WorkflowsSelection: React.FC = () => {
           selectionMode={SelectionMode.multiple}
           selection={selection}
           compact={true}
+          selectionPreservedOnEmptyClick={true}
         />
         {noWorkflows}
       </div>
@@ -211,7 +212,11 @@ export const WorkflowsSelection: React.FC = () => {
         {workflowsList}
       </div>
       <Separator vertical className="msla-export-workflows-panel-divider" />
-      <SelectedList isLoading={isWorkflowsLoading || renderWorkflows === null} />
+      <SelectedList
+        isLoading={isWorkflowsLoading || renderWorkflows === null}
+        allWorkflows={allWorkflows}
+        renderWorkflows={renderWorkflows}
+      />
     </div>
   );
 };
