@@ -628,7 +628,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Кнопка для добавления динамического содержимого, если параметр TokenPicker скрыт"
     }
   ],
   "4vcnOA": [
@@ -1437,6 +1437,12 @@
       "value": "Состояние"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1518,7 +1524,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Кнопка для добавления динамического содержимого, если параметр TokenPicker отображается"
     }
   ],
   "HXLutF": [
@@ -1797,6 +1803,12 @@
     {
       "type": 0,
       "value": "Создание..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -3371,6 +3383,12 @@
       "value": "(UTC-06:00) Саскачеван"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3502,7 +3520,7 @@
   "iEy9pT": [
     {
       "type": 0,
-      "value": "Dynamic content"
+      "value": "Динамическое содержимое"
     }
   ],
   "iJOIca": [
@@ -4320,7 +4338,7 @@
   "rjyBPU": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Выражение"
     }
   ],
   "rstpaK": [
@@ -4548,7 +4566,7 @@
   "uXJdAh": [
     {
       "type": 0,
-      "value": "Search dynamic content"
+      "value": "Поиск по динамическому содержимому"
     }
   ],
   "uZH8Qs": [

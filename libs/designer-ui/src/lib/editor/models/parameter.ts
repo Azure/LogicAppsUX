@@ -66,7 +66,7 @@ export interface Token {
     loopSource?: string;
     parentArrayName?: string;
     parentArrayKey?: string;
-    itemsSchema?: OpenAPIV2.SchemaObject;
+    itemSchema?: OpenAPIV2.SchemaObject;
   };
   brandColor?: string;
   description?: string;
