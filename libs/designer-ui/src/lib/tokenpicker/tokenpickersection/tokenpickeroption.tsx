@@ -6,14 +6,17 @@ import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { guid } from '@microsoft-logic-apps/utils';
 import Fuse from 'fuse.js';
+import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface TokenPickerOptionsProps {
   section: TokenGroup;
   searchQuery: string;
+  index: number;
+  setTokenLength: Dispatch<SetStateAction<number[]>>;
 }
-export const TokenPickerOptions = ({ section, searchQuery }: TokenPickerOptionsProps): JSX.Element => {
+export const TokenPickerOptions = ({ section, searchQuery, index, setTokenLength }: TokenPickerOptionsProps): JSX.Element => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const [moreOptions, { toggle: toggleMoreOptions }] = useBoolean(true);
@@ -23,9 +26,21 @@ export const TokenPickerOptions = ({ section, searchQuery }: TokenPickerOptionsP
     if (searchQuery) {
       const query = searchQuery.trim();
       const fuse = new Fuse(section.tokens, { keys: ['description', 'title'], threshold: 0.2 });
-      setFilteredTokens(fuse.search(query).map((token) => token.item));
+      const tokens = fuse.search(query).map((token) => token.item);
+      setFilteredTokens(tokens);
+      setTokenLength((prevTokens) => {
+        const newTokens = prevTokens;
+        newTokens[index] = tokens.length;
+        return newTokens;
+      });
+    } else {
+      setTokenLength((prevTokens) => {
+        const newTokens = prevTokens;
+        newTokens[index] = section.tokens.length;
+        return newTokens;
+      });
     }
-  }, [searchQuery, section.tokens]);
+  }, [index, searchQuery, section.tokens, setTokenLength]);
 
   const buttonTextMore = intl.formatMessage({
     defaultMessage: 'See More',
