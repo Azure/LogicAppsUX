@@ -2,6 +2,7 @@ import type { ArrayEditorItemProps } from '.';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
+import type { TokenGroup } from '../tokenpicker/models/token';
 import { EditorChange } from './plugins/EditorChange';
 import type { IContextualMenuProps, IIconProps, IIconStyles } from '@fluentui/react';
 import { IconButton, TooltipHost, DefaultButton } from '@fluentui/react';
@@ -13,6 +14,7 @@ export interface ExpandedArrayProps {
   items: ArrayEditorItemProps[];
   canDeleteLastItem: boolean;
   readOnly: boolean;
+  tokenGroup?: TokenGroup[];
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
 }
 
@@ -33,7 +35,14 @@ const menuButtonStyles: IIconStyles = {
   },
 };
 
-export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, setItems }: ExpandedArrayProps): JSX.Element => {
+export const ExpandedArray = ({
+  labelProps,
+  items,
+  canDeleteLastItem,
+  readOnly,
+  tokenGroup,
+  setItems,
+}: ExpandedArrayProps): JSX.Element => {
   const intl = useIntl();
 
   const addItemButtonLabel = intl.formatMessage({
@@ -75,6 +84,7 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
               initialValue={item.content ?? []}
               BasePlugins={{ tokens: true, clearEditor: true }}
               tokenPickerButtonProps={{ buttonClassName: 'msla-expanded-array-editor-tokenpicker' }}
+              tokenGroup={tokenGroup}
             >
               <EditorChange item={item.content ?? []} items={items} setItems={setItems} index={index} />
             </BaseEditor>

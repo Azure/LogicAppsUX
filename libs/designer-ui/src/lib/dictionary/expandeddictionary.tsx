@@ -1,5 +1,6 @@
 import type { DictionaryEditorItemProps } from '.';
 import { BaseEditor } from '../editor/base';
+import type { TokenGroup } from '../tokenpicker/models/token';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
 import { DeleteDictionaryItem } from './plugins/DeleteDictionaryItem';
 import { SerializeExpandedDictionary } from './plugins/SerializeExpandedDictionary';
@@ -11,9 +12,10 @@ import { useIntl } from 'react-intl';
 export interface ExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
   setItems: (items: DictionaryEditorItemProps[]) => void;
+  tokenGroup?: TokenGroup[];
 }
 
-export const ExpandedDictionary = ({ items, setItems }: ExpandedDictionaryProps): JSX.Element => {
+export const ExpandedDictionary = ({ items, tokenGroup, setItems }: ExpandedDictionaryProps): JSX.Element => {
   const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -57,6 +59,7 @@ export const ExpandedDictionary = ({ items, setItems }: ExpandedDictionaryProps)
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 onFocus={() => addItem(index)}
                 tokenPickerButtonProps={{ buttonClassName: 'msla-expanded-dictionary-editor-tokenpicker', buttonHeight: pickerOffset }}
+                tokenGroup={tokenGroup}
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary items={items} initialItem={item.key} index={index} type={'key'} setItems={setItems} />
@@ -71,6 +74,7 @@ export const ExpandedDictionary = ({ items, setItems }: ExpandedDictionaryProps)
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 tokenPickerButtonProps={{ buttonClassName: 'msla-expanded-dictionary-editor-tokenpicker', buttonHeight: pickerOffset }}
                 onFocus={() => addItem(index)}
+                tokenGroup={tokenGroup}
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary items={items} initialItem={item.value} index={index} type={'value'} setItems={setItems} />
