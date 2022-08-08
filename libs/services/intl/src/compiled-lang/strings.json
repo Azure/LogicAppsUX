@@ -405,12 +405,6 @@
       "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id."
     }
   ],
-  "2I5cxV": [
-    {
-      "type": 0,
-      "value": "Add"
-    }
-  ],
   "2K2fAj": [
     {
       "type": 0,
@@ -643,12 +637,6 @@
     {
       "type": 0,
       "value": "Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?"
-    }
-  ],
-  "5A83eE": [
-    {
-      "type": 0,
-      "value": "Remove"
     }
   ],
   "5J7j9k": [

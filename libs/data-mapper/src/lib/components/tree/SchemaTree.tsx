@@ -1,12 +1,9 @@
 import type { SchemaExtended, SchemaNodeDataType, SchemaNodeExtended } from '../../models';
 import { icon16ForSchemaNodeType } from './SchemaTree.Utils';
-import { Button, Tooltip } from '@fluentui/react-components';
-import { useBoolean } from '@fluentui/react-hooks';
 import { bundleIcon, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
 import { fluentTreeItem, fluentTreeView, provideFluentDesignSystem } from '@fluentui/web-components';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
 import React, { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 
 const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
 export const FastTreeView = wrap(fluentTreeView());
@@ -35,15 +32,9 @@ const convertToFastTreeItem = (
     const isNodeSelected = !!currentlySelectedNodes.find((currentlySelectedNode) => currentlySelectedNode.key === childNode.key);
     if (childNode.schemaNodeDataType === 'ComplexType' || childNode.schemaNodeDataType === 'None') {
       return (
+        // TODO onclick for object level adding
         <FastTreeItem key={childNode.key}>
-          <TreeItemContent
-            nodeType={childNode.schemaNodeDataType}
-            onClick={() => {
-              onLeafNodeClick(childNode);
-            }}
-            includeAddButton={false}
-            initialFilled={isNodeSelected}
-          >
+          <TreeItemContent nodeType={childNode.schemaNodeDataType} filled={isNodeSelected}>
             {childNode.name}
           </TreeItemContent>
           {convertToFastTreeItem(childNode, currentlySelectedNodes, onLeafNodeClick)}
@@ -51,15 +42,13 @@ const convertToFastTreeItem = (
       );
     } else {
       return (
-        <FastTreeItem key={childNode.key}>
-          <TreeItemContent
-            nodeType={childNode.schemaNodeDataType}
-            onClick={() => {
-              onLeafNodeClick(childNode);
-            }}
-            includeAddButton={true}
-            initialFilled={isNodeSelected}
-          >
+        <FastTreeItem
+          key={childNode.key}
+          onClick={() => {
+            onLeafNodeClick(childNode);
+          }}
+        >
+          <TreeItemContent nodeType={childNode.schemaNodeDataType} filled={isNodeSelected}>
             {childNode.name}
           </TreeItemContent>
         </FastTreeItem>
@@ -70,52 +59,22 @@ const convertToFastTreeItem = (
 
 export interface SchemaNodeTreeItemContentProps {
   nodeType: SchemaNodeDataType;
-  initialFilled: boolean;
-  includeAddButton: boolean;
-  onClick: () => void;
+  filled: boolean;
 }
 
-const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, initialFilled, includeAddButton, children, onClick }) => {
-  const intl = useIntl();
+const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, filled, children }) => {
   const BundledTypeIcon = icon16ForSchemaNodeType(nodeType);
   const BundledAddIcon = bundleIcon(CheckmarkCircle16Filled, Circle16Regular);
-  const [filled, { setFalse: setFilledFalse, setTrue: setFilledTrue }] = useBoolean(initialFilled);
-
-  const addNodeLoc = intl.formatMessage({
-    defaultMessage: 'Add',
-    description: 'Label to add a new node to the canvas',
-  });
-
-  const removeNodeLoc = intl.formatMessage({
-    defaultMessage: 'Remove',
-    description: 'Label to remove an existing node from the canvas',
-  });
 
   return (
     <>
-      <Button role="presentation" appearance="transparent" size="small" tabIndex={-1} icon={<BundledTypeIcon />} />
-      <span style={{ width: '100%' }}>{children}</span>
-      {includeAddButton ? (
-        <Tooltip content={filled ? removeNodeLoc : addNodeLoc} relationship={'label'}>
-          <Button
-            appearance="transparent"
-            size="small"
-            icon={
-              <BundledAddIcon
-                filled={filled}
-                onClick={() => {
-                  if (filled) {
-                    setFilledFalse();
-                  } else {
-                    setFilledTrue();
-                  }
-                  onClick();
-                }}
-              />
-            }
-          />
-        </Tooltip>
-      ) : null}
+      <span style={{ display: 'flex', marginRight: '4px' }} slot="start">
+        <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={filled} />
+      </span>
+      <span style={{ marginRight: '8px', width: '100%' }}>{children}</span>
+      <span style={{ display: 'flex', marginRight: '4px' }} slot="end">
+        <BundledAddIcon style={{ verticalAlign: 'middle' }} filled={filled} />
+      </span>
     </>
   );
 };
