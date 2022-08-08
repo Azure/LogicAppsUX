@@ -1,0 +1,71 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Delete_table": {
+        "inputs": {
+          "parameters": {
+            "tableName": "TEST"
+          },
+          "serviceProviderConfiguration": {
+            "connectionName": "azureTables",
+            "operationId": "deleteTable",
+            "serviceProviderId": "/serviceProviders/azureTables"
+          }
+        },
+        "runAfter": {
+          "Send_message": ["Succeeded", "TIMEDOUT", "SKIPPED", "FAILED"]
+        },
+        "type": "ServiceProvider"
+      },
+      "Deletes_a_Blob_from_Azure_Storage": {
+        "inputs": {
+          "parameters": {
+            "blobName": "adsf",
+            "containerName": "asdf"
+          },
+          "serviceProviderConfiguration": {
+            "connectionName": "AzureBlob",
+            "operationId": "deleteBlob",
+            "serviceProviderId": "/serviceProviders/AzureBlob"
+          }
+        },
+        "runAfter": {
+          "Send_message": ["Succeeded", "SKIPPED"]
+        },
+        "type": "ServiceProvider"
+      },
+      "Send_message": {
+        "description": "Testing",
+        "inputs": {
+          "parameters": {
+            "entityName": "Test Topic"
+          },
+          "serviceProviderConfiguration": {
+            "connectionName": "serviceBus-2",
+            "operationId": "sendMessage",
+            "serviceProviderId": "/serviceProviders/serviceBus"
+          }
+        },
+        "runAfter": {},
+        "type": "ServiceProvider"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "HTTP": {
+        "inputs": {
+          "method": "GET",
+          "uri": "http://test.uri"
+        },
+        "recurrence": {
+          "frequency": "Second",
+          "interval": 15
+        },
+        "type": "Http"
+      }
+    }
+  },
+  "kind": "Stateful"
+}
