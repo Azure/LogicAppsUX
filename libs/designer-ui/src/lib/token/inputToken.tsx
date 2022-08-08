@@ -47,7 +47,15 @@ export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor,
     }
 
     return (
-      <button title={tokenDelete} aria-label={tokenDelete} className="msla-button msla-token-delete" onClick={handleTokenDeleteClicked}>
+      <button
+        title={tokenDelete}
+        aria-label={tokenDelete}
+        className="msla-button msla-token-delete"
+        onClick={handleTokenDeleteClicked}
+        onMouseDown={(e) => {
+          e.preventDefault();
+        }}
+      >
         {DELETE}
       </button>
     );

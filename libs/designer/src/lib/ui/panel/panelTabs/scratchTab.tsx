@@ -1,4 +1,5 @@
 import constants from '../../../common/constants';
+import type { TokenGroup } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import {
@@ -11,13 +12,21 @@ import {
   ArrayEditor,
   Scratch,
   StringEditor,
+  outputToken,
+  outputToken2,
 } from '@microsoft/designer-ui';
+
+const testTokenGroup: TokenGroup[] = [
+  { id: guid(), label: 'Checks if Blob exists in Azure Storage', tokens: [outputToken, outputToken2] },
+  { id: guid(), label: 'Insert a row into a string array', tokens: [outputToken2, outputToken] },
+];
 
 export const ScratchTab = () => {
   const children = (): React.ReactNode => {
     return (
       <>
         <ArrayEditor
+          tokenGroup={testTokenGroup}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[
             {
@@ -46,6 +55,7 @@ export const ScratchTab = () => {
           placeholder="Method is Required"
           label="Method"
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
+          tokenGroup={testTokenGroup}
           // readOnly={true}
         />
         <SchemaEditor
@@ -85,6 +95,7 @@ export const ScratchTab = () => {
             },
             { key: [], value: [] },
           ]}
+          tokenGroup={testTokenGroup}
           initialValue={[
             { id: guid(), type: ValueSegmentType.LITERAL, value: '{\n    "' },
             testTokenSegment,
@@ -118,7 +129,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
         />
-        <DictionaryEditor initialValue={[testTokenSegment]} />
+        <DictionaryEditor initialValue={[testTokenSegment]} tokenGroup={testTokenGroup} />
         <StringEditor
           initialValue={[
             testTokenSegment,
@@ -126,6 +137,7 @@ export const ScratchTab = () => {
             testTokenSegment,
             testTokenSegment,
           ]}
+          tokenGroup={testTokenGroup}
         />
       </>
     );
