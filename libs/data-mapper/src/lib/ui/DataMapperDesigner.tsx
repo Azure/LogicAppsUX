@@ -257,9 +257,9 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         nodes={nodes}
         edges={edges}
         onNodeDoubleClick={onNodeDoubleClick}
-        minZoom={0}
+        defaultZoom={2}
         nodesDraggable={false}
-        fitView
+        fitView={false}
         proOptions={{
           account: 'paid-sponsor',
           hideAttribution: true,
