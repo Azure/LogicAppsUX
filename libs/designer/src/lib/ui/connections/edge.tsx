@@ -72,7 +72,13 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
   return (
     <>
-      <path id={id} style={style} className="react-flow__edge-path" d={d} strokeDasharray={showRunAfter ? '3' : '0'} />
+      <path
+        id={id}
+        style={{ ...style, strokeWidth: 2 }}
+        className="react-flow__edge-path"
+        d={d}
+        strokeDasharray={showRunAfter ? '3' : '0'}
+      />
 
       {!readOnly ? (
         <>
@@ -112,7 +118,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               x={targetX - runAfterWidth / 2}
               y={targetY - runAfterHeight}
             >
-              <RunAfterIndicator statuses={runAfterStatuses} />
+              <RunAfterIndicator statuses={runAfterStatuses} afterNodeName={Object.keys(operationData?.runAfter ?? {})?.[0] ?? ''} />
             </foreignObject>
           ) : null}
         </>
