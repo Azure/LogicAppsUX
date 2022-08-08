@@ -606,7 +606,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Pulsante per aggiungere contenuto dinamico se TokenPicker è nascosto"
     }
   ],
   "4vcnOA": [
@@ -1371,6 +1371,12 @@
       "value": "Stato"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1452,7 +1458,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Pulsante per aggiungere contenuto dinamico se TokenPicker è visualizzato"
     }
   ],
   "HXLutF": [
@@ -1709,6 +1715,12 @@
     {
       "type": 0,
       "value": "Creazione in corso..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -2516,7 +2528,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Immetti un dizionario valido"
     }
   ],
   "WS9kXD": [
@@ -3269,6 +3281,12 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3365,6 +3383,12 @@
     {
       "type": 0,
       "value": "Converte una stringa in lettere maiuscole usando le regole per l'utilizzo di maiuscole e minuscole delle impostazioni cultura inglese non dipendenti da paese/area geografica"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Contenuto dinamico"
     }
   ],
   "iJOIca": [
@@ -3674,7 +3698,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Immetti un array valido"
     }
   ],
   "lgs5sf": [
@@ -3910,7 +3934,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Immettere la chiave"
+      "value": "Immetti la chiave"
     }
   ],
   "pIczsS": [
@@ -4149,6 +4173,12 @@
       "value": "Restituisce una rappresentazione con codifica URI di un valore"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Espressione"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4369,6 +4399,12 @@
     {
       "type": 0,
       "value": "Aggiunge un numero intero di ore al timestamp in formato stringa passato"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Cercare contenuto dinamico"
     }
   ],
   "uZH8Qs": [
@@ -4758,7 +4794,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Immettere il valore"
+      "value": "Immetti il valore"
     }
   ],
   "zIDVd9": [

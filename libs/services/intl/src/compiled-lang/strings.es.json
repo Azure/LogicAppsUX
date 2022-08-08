@@ -606,7 +606,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Botón para agregar contenido dinámico si TokenPicker está oculto"
     }
   ],
   "4vcnOA": [
@@ -1371,6 +1371,12 @@
       "value": "Estado"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1452,7 +1458,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Botón para agregar contenido dinámico si se muestra TokenPicker"
     }
   ],
   "HXLutF": [
@@ -1709,6 +1715,12 @@
     {
       "type": 0,
       "value": "Creando..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -2508,7 +2520,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Escriba un diccionario válido"
     }
   ],
   "WS9kXD": [
@@ -3261,6 +3273,12 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3365,6 +3383,12 @@
     {
       "type": 0,
       "value": "Convierte una cadena a mayúsculas mediante las reglas de mayúsculas y minúsculas de la referencia cultural invariable."
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Contenido dinámico"
     }
   ],
   "iJOIca": [
@@ -3682,7 +3706,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Escriba una matriz válida"
     }
   ],
   "lgs5sf": [
@@ -3918,7 +3942,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Clave de introducción"
+      "value": "Escribir clave"
     }
   ],
   "pIczsS": [
@@ -4157,6 +4181,12 @@
       "value": "Devuelve una representación codificada de URI de un valor."
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expresión"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4377,6 +4407,12 @@
     {
       "type": 0,
       "value": "Agrega un número entero de horas a la marca de tiempo de una cadena pasada."
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Buscar contenido dinámico"
     }
   ],
   "uZH8Qs": [

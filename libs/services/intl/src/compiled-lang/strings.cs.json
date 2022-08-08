@@ -640,7 +640,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker skrytý"
     }
   ],
   "4vcnOA": [
@@ -1449,6 +1449,12 @@
       "value": "Stav"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1530,7 +1536,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker zobrazený"
     }
   ],
   "HXLutF": [
@@ -1809,6 +1815,12 @@
     {
       "type": 0,
       "value": "Vytváření…"
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -3383,6 +3395,12 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3505,6 +3523,12 @@
     {
       "type": 0,
       "value": "Převede řetězec na velká písmena pomocí pravidel pro používání velkých a malých písmen v invariantní jazykové verzi."
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamický obsah"
     }
   ],
   "iJOIca": [
@@ -4315,6 +4339,12 @@
       "value": "Vrátí reprezentaci určité hodnoty zakódovanou jako identifikátor URI."
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Výraz"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4535,6 +4565,12 @@
     {
       "type": 0,
       "value": "Přidá celočíselný počet hodin do předaného řetězcového časového razítka."
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Hledat v dynamickém obsahu"
     }
   ],
   "uZH8Qs": [

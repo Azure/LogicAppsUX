@@ -628,7 +628,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Кнопка для добавления динамического содержимого, если параметр TokenPicker скрыт"
     }
   ],
   "4vcnOA": [
@@ -1437,6 +1437,12 @@
       "value": "Состояние"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1518,7 +1524,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Кнопка для добавления динамического содержимого, если параметр TokenPicker отображается"
     }
   ],
   "HXLutF": [
@@ -1797,6 +1803,12 @@
     {
       "type": 0,
       "value": "Создание..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -3371,6 +3383,12 @@
       "value": "(UTC-06:00) Саскачеван"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3497,6 +3515,12 @@
     {
       "type": 0,
       "value": "Преобразует строку в верхний регистр, используя правила использования регистра инвариантных языка и региональных параметров"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Динамическое содержимое"
     }
   ],
   "iJOIca": [
@@ -4311,6 +4335,12 @@
       "value": "Возвращает представление значения в кодировке URI"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Выражение"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4531,6 +4561,12 @@
     {
       "type": 0,
       "value": "Добавляет целое число часов в метку времени строки, переданной в функцию"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Поиск по динамическому содержимому"
     }
   ],
   "uZH8Qs": [

@@ -606,7 +606,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Botão para adicionar conteúdo dinâmico se o Seletor de Token estiver oculto"
     }
   ],
   "4vcnOA": [
@@ -1371,6 +1371,12 @@
       "value": "Status"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1452,7 +1458,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Botão para adicionar conteúdo dinâmico se o Seletor de Token for mostrado"
     }
   ],
   "HXLutF": [
@@ -1709,6 +1715,12 @@
     {
       "type": 0,
       "value": "Criando..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -2508,7 +2520,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Insira um dicionário válido"
     }
   ],
   "WS9kXD": [
@@ -3261,6 +3273,12 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3357,6 +3375,12 @@
     {
       "type": 0,
       "value": "Converte uma cadeia de caracteres em maiúsculas usando as regras de uso de maiúsculas da cultura invariável"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Conteúdo dinâmico"
     }
   ],
   "iJOIca": [
@@ -3666,7 +3690,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Insira uma matriz válida"
     }
   ],
   "lgs5sf": [
@@ -4141,6 +4165,12 @@
       "value": "Retorna uma representação codificada no URI de um valor"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expressão"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4361,6 +4391,12 @@
     {
       "type": 0,
       "value": "Adiciona um número inteiro de horas em um carimbo de data/hora de cadeia de caracteres passado"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Pesquisar conteúdo dinâmico"
     }
   ],
   "uZH8Qs": [

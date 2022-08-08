@@ -644,7 +644,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Przycisk dodawania zawartości dynamicznej, jeśli platforma TokenPicker jest ukryta"
     }
   ],
   "4vcnOA": [
@@ -1453,6 +1453,12 @@
       "value": "Stan"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1534,7 +1540,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Przycisk dodawania zawartości dynamicznej, jeśli platforma TokenPicker jest wyświetlana"
     }
   ],
   "HXLutF": [
@@ -1813,6 +1819,12 @@
     {
       "type": 0,
       "value": "Tworzenie w toku..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -3387,6 +3399,12 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3513,6 +3531,12 @@
     {
       "type": 0,
       "value": "Konwertuje ciąg na wielkie litery, używając reguł stosowania wielkości liter kultury niezmiennej"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Zawartość dynamiczna"
     }
   ],
   "iJOIca": [
@@ -4327,6 +4351,12 @@
       "value": "Zwraca reprezentację wartości zakodowaną jako identyfikator URI"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Wyrażenie"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4547,6 +4577,12 @@
     {
       "type": 0,
       "value": "Dodaje liczbę całkowitą godzin do przekazanej sygnatury czasowej ciągu"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Wyszukaj zawartość dynamiczną"
     }
   ],
   "uZH8Qs": [

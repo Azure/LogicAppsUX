@@ -606,7 +606,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Botão para adicionar conteúdo dinâmico se TokenPicker estiver oculto"
     }
   ],
   "4vcnOA": [
@@ -1371,6 +1371,12 @@
       "value": "Estado"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1452,7 +1458,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Botão para adicionar conteúdo dinâmico se TokenPicker for apresentado"
     }
   ],
   "HXLutF": [
@@ -1709,6 +1715,12 @@
     {
       "type": 0,
       "value": "A criar..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -3261,6 +3273,12 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3365,6 +3383,12 @@
     {
       "type": 0,
       "value": "Converte uma cadeia em maiúsculas com as regras de sensível a maiúsculas/minúsculas da cultura invariante"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Conteúdo dinâmico"
     }
   ],
   "iJOIca": [
@@ -4157,6 +4181,12 @@
       "value": "Devolve uma representação codificada de URI de um valor"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expressão"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4377,6 +4407,12 @@
     {
       "type": 0,
       "value": "Adiciona um número inteiro de horas a um carimbo de data/hora de cadeia"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Pesquisar conteúdo dinâmico"
     }
   ],
   "uZH8Qs": [

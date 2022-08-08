@@ -606,7 +606,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "TokenPicker gizliyse dinamik içerik ekleme düğmesi"
     }
   ],
   "4vcnOA": [
@@ -1371,6 +1371,12 @@
       "value": "Durum"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1452,7 +1458,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "TokenPicker gösteriliyorsa dinamik içerik ekleme düğmesi"
     }
   ],
   "HXLutF": [
@@ -1709,6 +1715,12 @@
     {
       "type": 0,
       "value": "Oluşturuluyor..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -2508,7 +2520,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Lütfen geçerli bir sözlük girin"
     }
   ],
   "WS9kXD": [
@@ -3257,6 +3269,12 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3353,6 +3371,12 @@
     {
       "type": 0,
       "value": "Sabit kültürün büyük-küçük harf kurallarını kullanarak bir dizeyi büyük harfe dönüştürür"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dinamik içerik"
     }
   ],
   "iJOIca": [
@@ -3662,7 +3686,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Lütfen geçerli bir dizi girin"
     }
   ],
   "lgs5sf": [
@@ -3898,7 +3922,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Anahtarı girin"
+      "value": "Anahtar girin"
     }
   ],
   "pIczsS": [
@@ -4137,6 +4161,12 @@
       "value": "Bir değerin URI ile kodlanmış gösterimini döndürür"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "İfade"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4357,6 +4387,12 @@
     {
       "type": 0,
       "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir saat sayısı ekler"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Dinamik içerik ara"
     }
   ],
   "uZH8Qs": [

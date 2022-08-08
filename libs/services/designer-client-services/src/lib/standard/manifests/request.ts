@@ -89,6 +89,20 @@ export default {
         },
       },
     },
+    outputsSchema: {
+      outputPaths: [
+        {
+          outputLocation: ['properties', 'body'],
+          name: 'schema',
+          schema: 'Value',
+        },
+        {
+          outputLocation: ['properties', 'pathParameters'],
+          name: 'relativePath',
+          schema: 'UriTemplate',
+        },
+      ],
+    },
     isOutputsOptional: false,
 
     connector: {
