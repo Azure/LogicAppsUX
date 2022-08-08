@@ -1,5 +1,5 @@
 import type { OutputToken } from '.';
-import { ValueSegmentType, TokenType } from '../editor';
+import { ValueSegmentType } from '../editor';
 import { INSERT_TOKEN_NODE } from '../editor/base/plugins/InsertTokenNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -20,7 +20,7 @@ export const TokenPickerOptions = ({ tokens }: TokenPickerOptionsProps): JSX.Ele
         id: guid(),
         type: ValueSegmentType.TOKEN,
         value: token.title,
-        token: { ...token, tokenType: TokenType.OUTPUTS },
+        token: { ...token, tokenType: token.outputInfo.type },
       },
     });
   };
