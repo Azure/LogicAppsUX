@@ -173,7 +173,7 @@ export const BaseEditor = ({
           />
         ) : null}
         {(showTokenPickerButton && showTokenPicker) || inTokenPicker ? (
-          <TokenPicker editorId={editorId} labelId={labelId} searchText="" setInTokenPicker={setInTokenPicker} tokenGroup={tokenGroup} />
+          <TokenPicker editorId={editorId} labelId={labelId} setInTokenPicker={setInTokenPicker} tokenGroup={tokenGroup} />
         ) : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />

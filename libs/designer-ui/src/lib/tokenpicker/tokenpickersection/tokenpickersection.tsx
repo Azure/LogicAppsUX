@@ -1,18 +1,20 @@
-import type { TokenGroup } from './models/token';
-import { TokenPickerHeader } from './tokenpickerheader';
+// import { useState } from 'react';
+import type { TokenGroup } from '../models/token';
 import { TokenPickerOptions } from './tokenpickeroption';
 
 interface TokenPickerSectionProps {
   tokenGroup: TokenGroup[];
+  searchQuery: string;
 }
-export const TokenPickerSection = ({ tokenGroup }: TokenPickerSectionProps): JSX.Element => {
+export const TokenPickerSection = ({ tokenGroup, searchQuery }: TokenPickerSectionProps): JSX.Element => {
+  // const [noTokens, setNoTokens] = useState(false);
+
   return (
     <div className="msla-token-picker-sections">
       {tokenGroup.map((section, i) => {
         return (
           <div key={`token-picker-section-${i}`} className={'msla-token-picker-sections'}>
-            <TokenPickerHeader section={section} />
-            <TokenPickerOptions tokens={section.tokens} />
+            <TokenPickerOptions section={section} searchQuery={searchQuery} />
           </div>
         );
       })}
