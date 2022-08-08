@@ -677,7 +677,7 @@
   "uR9WuI": "Obbligatorio. Raccolte da valutare. Un oggetto presente in qualsiasi raccolta verrà visualizzato anche nel risultato.",
   "uRurmg": "(UTC + 10.00 h) Guam, Port Moresby",
   "uUlBZ8": "Aggiunge un numero intero di ore al timestamp in formato stringa passato",
-  "uXJdAh": "Cerca contenuto dinamico",
+  "uXJdAh": "Cercare contenuto dinamico",
   "uZH8Qs": "Limita la durata massima tra i tentativi e le risposte asincrone per questa azione. Nota: questo non modifica il timeout della richiesta di una singola richiesta.",
   "uc/PoD": "Obbligatorio. Numero di unità di tempo dell'ora desiderata nel passato.",
   "uczA5c": "Obbligatorio. Stringa che può contenere il valore.",
