@@ -1,4 +1,4 @@
-import { SchemaTypes } from '../../components/configPanel/EditorConfigPanel';
+import { SchemaTypes } from '../../models';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface PanelState {

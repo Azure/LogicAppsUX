@@ -1,10 +1,10 @@
 import type { RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
-import { SchemaTypes } from './EditorConfigPanel';
-import { ChoiceGroup, Dropdown, PrimaryButton, TextField } from '@fluentui/react';
+import { SchemaTypes } from '../../models';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
-import { useCallback, useState } from 'react';
+import { ChoiceGroup, Dropdown, PrimaryButton, TextField } from '@fluentui/react';
 import type { FunctionComponent } from 'react';
+import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 

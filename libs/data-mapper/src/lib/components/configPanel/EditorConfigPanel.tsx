@@ -8,19 +8,15 @@ import {
 import { closeDefaultConfigPanel, closeSchemaChangePanel, openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
+import { SchemaTypes } from '../../models';
 import { ChangeSchemaView } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
-import { useCallback, useEffect, useState } from 'react';
 import type { FunctionComponent } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-
-export enum SchemaTypes {
-  Input = 'input',
-  Output = 'output',
-}
 
 export interface EditorConfigPanelProps {
   onSubmitInputSchema: (schema: Schema) => void;

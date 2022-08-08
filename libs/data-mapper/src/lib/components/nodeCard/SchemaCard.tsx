@@ -1,4 +1,4 @@
-import { SchemaTypes } from '../configPanel/EditorConfigPanel';
+import { SchemaTypes } from '../../models';
 import { NodeCard } from './NodeCard';
 import { Icon, Text } from '@fluentui/react';
 import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';

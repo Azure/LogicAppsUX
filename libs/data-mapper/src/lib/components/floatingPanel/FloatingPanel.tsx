@@ -15,8 +15,8 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = ({ xPos, yPos, minHei
   const innerStyle: React.CSSProperties = {
     position: 'absolute',
     zIndex: panelOrdering ? FLOATING_PANEL_Z + panelOrdering : FLOATING_PANEL_Z,
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12)',
-    borderRadius: '4px',
+    boxShadow: tokens.shadow4,
+    borderRadius: tokens.borderRadiusMedium,
     padding: '12px',
     top: yPos,
     left: xPos,

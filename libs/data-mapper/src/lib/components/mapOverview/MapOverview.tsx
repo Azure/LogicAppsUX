@@ -2,12 +2,12 @@ import { convertToReactFlowParentAndChildNodes } from '../../ReactFlow.Util';
 import { openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
-import { SchemaTypes } from '../configPanel/EditorConfigPanel';
+import { SchemaTypes } from '../../models/';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
 import { useMemo } from 'react';
-import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
 import type { Node as ReactFlowNode } from 'react-flow-renderer';
+import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 
 export interface MapOverviewProps {
