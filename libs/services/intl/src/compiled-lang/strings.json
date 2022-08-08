@@ -1413,6 +1413,12 @@
       "value": "Returns true if the parameters are false"
     }
   ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -1715,6 +1721,12 @@
     {
       "type": 0,
       "value": "Warning"
+    }
+  ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
     }
   ],
   "LMB8am": [
@@ -3785,6 +3797,12 @@
     {
       "type": 0,
       "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
