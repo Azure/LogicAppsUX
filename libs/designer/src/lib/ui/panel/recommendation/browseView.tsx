@@ -37,9 +37,9 @@ export const BrowseView: React.FC = () => {
   return (
     <>
       {selectedConnectorId !== '' ? (
-        <ConnectorAllOperationsSummary operations={[]}></ConnectorAllOperationsSummary>
+        <ConnectorAllOperationsSummary operations={[]} />
       ) : (
-        <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectorBrowse={browseResults || []}></BrowseGrid>
+        <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectorBrowse={browseResults || []} />
       )}
     </>
   );

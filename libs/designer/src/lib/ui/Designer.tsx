@@ -1,6 +1,8 @@
 import { useLayout } from '../core/graphlayout';
+import { useThrottledEffect } from '../core/graphlayout/elklayout';
 import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
-import { updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import { buildEdgeIdsBySource, updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import type { RootState } from '../core/store';
 import Controls from './Controls';
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
@@ -17,7 +19,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
 import type { NodeChange } from 'react-flow-renderer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export interface DesignerProps {
   graphId?: string;
@@ -51,6 +53,15 @@ export const Designer = () => {
       dispatch(updateNodeSizes(changes));
     },
     [dispatch]
+  );
+
+  const graph = useSelector((state: RootState) => state.workflow.graph);
+  useThrottledEffect(
+    () => {
+      dispatch(buildEdgeIdsBySource());
+    },
+    [graph],
+    200
   );
 
   return (

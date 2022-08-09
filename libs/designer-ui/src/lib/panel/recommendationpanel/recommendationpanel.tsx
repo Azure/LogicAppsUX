@@ -1,13 +1,11 @@
-import { DesignerSearchBox } from '../../searchbox';
 import type { CommonPanelProps } from '../panelUtil';
-import { Panel, PanelType, Pivot, PivotItem } from '@fluentui/react';
+import { Panel, PanelType } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 
 export type RecommendationPanelProps = {
   placeholder: string;
-  onSearch: (term: string) => void;
   toggleCollapse: () => void;
 } & CommonPanelProps;
 
@@ -24,15 +22,15 @@ export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanel
     description: 'Operations in search panel',
   });
 
-  const browsePivotAriaLabel = intl.formatMessage({
-    defaultMessage: 'Choose which view to browse from',
-    description: 'Aria label for pivot to determine browse view',
-  });
+  // const browsePivotAriaLabel = intl.formatMessage({
+  //   defaultMessage: 'Choose which view to browse from',
+  //   description: 'Aria label for pivot to determine browse view',
+  // });
 
-  const browseConnectorsPivotText = intl.formatMessage({
-    defaultMessage: 'Connectors',
-    description: 'Selected view connector for browse',
-  });
+  // const browseConnectorsPivotText = intl.formatMessage({
+  //   defaultMessage: 'Connectors',
+  //   description: 'Selected view connector for browse',
+  // });
 
   return (
     <Panel
@@ -43,17 +41,16 @@ export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanel
       onDismiss={props.toggleCollapse}
       closeButtonAriaLabel="close"
     >
-      <DesignerSearchBox onSearch={props.onSearch}></DesignerSearchBox>
-      <Pivot aria-label={browsePivotAriaLabel}>
+      {/* <Pivot aria-label={browsePivotAriaLabel}>
         <PivotItem
           headerText={browseConnectorsPivotText}
           headerButtonProps={{
             'data-order': 1,
             'data-title': 'My Files Title',
           }}
-        ></PivotItem>
-      </Pivot>
-      {props.children}
+        />
+      </Pivot> */}
+      <div style={{ overflow: 'auto', margin: '0px -24px', padding: '0px 24px 16px' }}>{props.children}</div>
     </Panel>
   );
 };
