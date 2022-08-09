@@ -90,6 +90,23 @@ export const workflowSlice = createSlice({
         area: 'workflowSlice.ts',
       });
     },
+    buildEdgeIdsBySource: (state: WorkflowState) => {
+      if (!state.graph) return;
+
+      const output: Record<string, string[]> = {};
+      const traverseGraph = (graph: WorkflowNode) => {
+        const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
+        if (edges) {
+          edges.forEach((edge) => {
+            if (!output[edge.source]) output[edge.source] = [];
+            output[edge.source].push(edge.target);
+          });
+        }
+        if (graph.children) graph.children.forEach((child) => traverseGraph(child));
+      };
+      traverseGraph(state.graph);
+      state.edgeIdsBySource = output;
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -97,19 +114,6 @@ export const workflowSlice = createSlice({
       state.graph = action.payload.graph;
       state.operations = action.payload.actionData;
       state.nodesMetadata = action.payload.nodesMetadata;
-
-      state.edgeIdsBySource = {};
-      const traverseGraph = (graph: WorkflowNode) => {
-        const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
-        if (edges) {
-          edges.forEach((edge) => {
-            if (!state.edgeIdsBySource[edge.source]) state.edgeIdsBySource[edge.source] = [];
-            state.edgeIdsBySource[edge.source].push(edge.target);
-          });
-        }
-        if (graph.children) graph.children.forEach((child) => traverseGraph(child));
-      };
-      traverseGraph(action.payload.graph);
     });
   },
 });
@@ -123,6 +127,7 @@ export const {
   setCollapsedGraphIds,
   toggleCollapsedGraphId,
   discardAllChanges,
+  buildEdgeIdsBySource,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

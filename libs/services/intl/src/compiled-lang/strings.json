@@ -83,6 +83,12 @@
       "value": "Change connection"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -567,12 +573,6 @@
       "value": "Add a new connection"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Choose which view to browse from"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -645,12 +645,6 @@
       "value": "Required. The XPath expression to evaluate."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Connectors"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -679,6 +673,12 @@
     {
       "type": 0,
       "value": "Delete Parameter"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -919,6 +919,12 @@
     {
       "type": 0,
       "value": "Returns an object with an additional property value pair"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -2281,6 +2287,12 @@
       "value": "Done"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2775,6 +2787,12 @@
     {
       "type": 0,
       "value": "Required. The value the string may start with."
+    }
+  ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
     }
   ],
   "ZbX8xq": [
