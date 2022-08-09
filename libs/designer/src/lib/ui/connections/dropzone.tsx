@@ -1,11 +1,16 @@
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
+import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
+import AddNodeIcon from './edgeContextMenuSvgs/addnodeicon.svg';
+import { ActionButton, Callout, DirectionalHint } from '@fluentui/react';
+import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 import { guid } from '@microsoft-logic-apps/utils';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
-import * as React from 'react';
+import { useCallback } from 'react';
 import { useDrop } from 'react-dnd';
+import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
 export interface DropZoneProps {
@@ -14,26 +19,53 @@ export interface DropZoneProps {
   child?: string;
 }
 export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
-  const onEdgeEndClick = (evt: any, graphId: string, parent?: string, child?: string) => {
-    evt.stopPropagation();
+
+  const [showCallout, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
+
+  const newActionText = intl.formatMessage({
+    defaultMessage: 'Add an action',
+    description: 'Text for button to add a new action',
+  });
+
+  const newBranchText = intl.formatMessage({
+    defaultMessage: 'Add a parallel branch',
+    description: 'Text for button to add a parallel branch',
+  });
+
+  const openAddNodePanel = useCallback(() => {
     const newId = guid();
     dispatch(expandDiscoveryPanel({ nodeId: newId, discoveryIds: { childId: child, parentId: parent, graphId } }));
-  };
+  }, [child, dispatch, graphId, parent]);
+
+  const addParallelBranch = useCallback(() => {
+    // TODO: Implement parallel branching
+    alert('Add parallel branch');
+  }, []);
 
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
     // The type (or types) to accept - strings or symbols
     accept: 'BOX',
     drop: () => ({ child: child, parent: parent }), // danielle check this, graph id
-    canDrop: (item) => {
-      return (item as any).id !== child;
-    },
+    canDrop: (item) => (item as any).id !== child,
     // Props to collect
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
   }));
+
+  const tooltipText = intl.formatMessage({
+    defaultMessage: 'Insert a new step',
+    description: 'Tooltip for the button to add a new step (action or branch)',
+  });
+
+  const actionButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    toggleIsCalloutVisible();
+  };
+
   return (
     <div
       ref={drop}
@@ -45,7 +77,32 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) =>
           {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill="#797775" />}
         </div>
       )}
-      {!isOver && <ActionButtonV2 title={'Text'} onClick={(e) => onEdgeEndClick(e, graphId, parent, child)} />}
+      {!isOver && (
+        <>
+          <ActionButtonV2 id={`msla-edge-button-${parent}-${child}`} title={tooltipText} onClick={actionButtonClick} />
+          {showCallout && (
+            <Callout
+              role="dialog"
+              gapSpace={0}
+              target={`#msla-edge-button-${parent}-${child}`}
+              onDismiss={toggleIsCalloutVisible}
+              onMouseLeave={toggleIsCalloutVisible}
+              directionalHint={DirectionalHint.bottomCenter}
+            >
+              <div className="msla-add-context-menu">
+                <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
+                  {newActionText}
+                </ActionButton>
+                {child ? (
+                  <ActionButton iconProps={{ imageProps: { src: AddBranchIcon } }} onClick={addParallelBranch}>
+                    {newBranchText}
+                  </ActionButton>
+                ) : null}
+              </div>
+            </Callout>
+          )}
+        </>
+      )}
     </div>
   );
 };

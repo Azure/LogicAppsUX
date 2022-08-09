@@ -1741,6 +1741,12 @@
       "value": "Returns the scheme from a URI"
     }
   ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
+    }
+  ],
   "Lft/is": [
     {
       "type": 0,
@@ -2609,6 +2615,12 @@
     {
       "type": 0,
       "value": "Connection name"
+    }
+  ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
     }
   ],
   "XTYYks": [
@@ -3753,6 +3765,12 @@
     {
       "type": 0,
       "value": "Name"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "mGUdCO": [
