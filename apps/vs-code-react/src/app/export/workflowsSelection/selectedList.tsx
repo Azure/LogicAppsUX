@@ -1,17 +1,24 @@
 import type { SelectedWorkflowsList, WorkflowsList } from '../../../run-service';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
+import { updateSelectedItems } from './helper';
 import { Shimmer, Text } from '@fluentui/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
-export const SelectedList: React.FC<any> = ({ isLoading, allWorkflows, renderWorkflows }) => {
+export interface ISelectedListProps {
+  isLoading: boolean;
+  allWorkflows: WorkflowsList[];
+  renderWorkflows: WorkflowsList[] | null;
+}
+
+export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, allWorkflows, renderWorkflows }) => {
   const intl = useIntl();
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { exportData } = vscodeState as InitializedVscodeState;
   const { selectedWorkflows } = exportData;
-  const [allItems, setAllItems] = useState<SelectedWorkflowsList[]>(allWorkflows);
+  const [allItems, setAllItems] = useState<SelectedWorkflowsList[]>(allWorkflows as SelectedWorkflowsList[]);
 
   const intlText = {
     SELECTED_APPS: intl.formatMessage({
@@ -47,18 +54,10 @@ export const SelectedList: React.FC<any> = ({ isLoading, allWorkflows, renderWor
   };
 
   useEffect(() => {
-    const copySelectedItems = JSON.parse(JSON.stringify(!allItems.length ? allWorkflows : allItems));
+    const items = !allItems.length ? allWorkflows : allItems;
+    const updatedItems = updateSelectedItems(items, renderWorkflows, selectedWorkflows);
 
-    renderWorkflows?.forEach((workflow: WorkflowsList) => {
-      const isWorkflowInSelection = !!selectedWorkflows.find((selectedWorkflow: WorkflowsList) => selectedWorkflow.key === workflow.key);
-      const foundIndex = copySelectedItems.findIndex((selectedItem: any) => selectedItem.key === workflow.key);
-
-      if (foundIndex !== -1) {
-        copySelectedItems[foundIndex].selected = isWorkflowInSelection;
-      }
-    });
-
-    setAllItems(copySelectedItems);
+    setAllItems(updatedItems);
   }, [selectedWorkflows, renderWorkflows, allItems, allWorkflows]);
 
   const renderItems = useMemo(() => {

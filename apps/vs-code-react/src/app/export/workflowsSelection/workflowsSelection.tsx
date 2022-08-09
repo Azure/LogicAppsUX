@@ -6,7 +6,7 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { Filters } from './filters';
-import { filterWorkflows, getListColumns, parseResourceGroups, parseWorkflowData } from './helper';
+import { filterWorkflows, getListColumns, parseResourceGroups, parseWorkflowData, updateSelectedItems } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
@@ -86,7 +86,6 @@ export const WorkflowsSelection: React.FC = () => {
     setRenderWorkflows(workflowItems);
     setResourceGroups(resourceGroups);
     allWorkflows.current = workflowItems;
-    console.log('charlie3', allItemsSelected);
     allItemsSelected.current = workflowItems as SelectedWorkflowsList[];
   };
 
@@ -96,18 +95,9 @@ export const WorkflowsSelection: React.FC = () => {
   });
 
   useEffect(() => {
-    const copySelectedItems = JSON.parse(JSON.stringify(allItemsSelected.current));
+    const updatedItems = updateSelectedItems(allItemsSelected.current, renderWorkflows, selectedWorkflows);
 
-    renderWorkflows?.forEach((workflow: WorkflowsList) => {
-      const isWorkflowInSelection = !!selectedWorkflows.find((selectedWorkflow: WorkflowsList) => selectedWorkflow.key === workflow.key);
-      const foundIndex = copySelectedItems.findIndex((selectedItem: any) => selectedItem.key === workflow.key);
-
-      if (foundIndex !== -1) {
-        copySelectedItems[foundIndex].selected = isWorkflowInSelection;
-      }
-    });
-
-    allItemsSelected.current = copySelectedItems;
+    allItemsSelected.current = updatedItems;
   }, [selectedWorkflows, renderWorkflows, allWorkflows]);
 
   const selection = useMemo(() => {
