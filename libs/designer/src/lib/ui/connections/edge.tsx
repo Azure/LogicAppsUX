@@ -1,6 +1,7 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
+import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { RunAfterIndicator, RUN_AFTER_STATUS } from './runAfterIndicator';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import React, { useMemo } from 'react';
@@ -13,7 +14,15 @@ export interface LogicAppsEdgeProps {
   child: string;
   elkEdge?: ElkExtendedEdge;
 }
-const foreignObjectHeight = 30;
+
+interface EdgeContentProps {
+  x: number;
+  y: number;
+  parent: string | undefined;
+  child: string | undefined;
+}
+
+const foreignObjectHeight = 32;
 const foreignObjectWidth = 200;
 
 const runAfterWidth = 36;
@@ -44,18 +53,19 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     targetY,
   });
 
-  const runAfterStatuses = useMemo(() => {
-    const ra = operationData?.runAfter ?? ({} as Record<string, string[]>);
-    const raNodeEntries = Object.entries(ra);
-    const out: Record<string, any> = {};
-    // Gets statuses from all sources
-    raNodeEntries.forEach(([, conditions]) => conditions.forEach((c) => (out[c] = true)));
-    return Object.keys(out);
-  }, [operationData?.runAfter]);
+  const filteredRunAfters: Record<string, string[]> = useMemo(
+    () =>
+      Object.entries(operationData?.runAfter ?? {}).reduce(
+        (pv, [id, cv]) => (cv.some((status) => status.toUpperCase() !== RUN_AFTER_STATUS.SUCCEEDED) ? { ...pv, [id]: cv } : pv),
+        {}
+      ),
+    [operationData?.runAfter]
+  );
+  const numRunAfters = Object.keys(filteredRunAfters).length;
+  const raIndex = Object.entries(filteredRunAfters).findIndex(([key]) => key === source);
 
-  const showRunAfter = useMemo(() => {
-    return runAfterStatuses.filter((status) => status.toUpperCase() !== RUN_AFTER_STATUS.SUCCEEDED).length > 0;
-  }, [runAfterStatuses]);
+  const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
+  const showRunAfter = runAfterStatuses.length;
 
   const d = useMemo(() => {
     return getSmoothStepPath({
@@ -63,62 +73,93 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
       sourceY,
       sourcePosition,
       targetX,
-      targetY,
+      targetY: (numRunAfters !== 0 ? targetY - runAfterHeight : targetY) - 2, // move up to allow space for run after indicator
       targetPosition,
+      borderRadius: 8,
     });
-  }, [sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
+  }, [numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
-  const firstChild = edgeTargets[edgeTargets.length - 1] === target; // Gets the last rendered, on top
+  const showSourceButton = edgeTargets[edgeTargets.length - 1] === target;
+  const showTargetButton = Object.keys(operationData?.runAfter ?? {})?.[Object.keys(operationData?.runAfter ?? {}).length - 1] === source;
+
+  const multipleSources = Object.keys(operationData?.runAfter ?? {}).length > 1;
+  const multipleTargets = edgeTargets.length > 1;
+  const onlyEdge = !multipleSources && !multipleTargets;
+
+  const EdgeContent = (props: EdgeContentProps) => (
+    <foreignObject
+      width={foreignObjectWidth}
+      height={foreignObjectHeight}
+      x={props.x}
+      y={props.y}
+      className="edgebutton-foreignobject"
+      requiredExtensions="http://www.w3.org/1999/xhtml"
+    >
+      <div style={{ padding: '4px' }}>
+        <DropZone graphId={graphId} parent={props.parent} child={props.child} />
+      </div>
+    </foreignObject>
+  );
 
   return (
     <>
+      <defs>
+        <marker id="arrow-end" viewBox="0 0 20 20" refX="6" refY="4" markerWidth="10" markerHeight="10">
+          <ArrowCap />
+        </marker>
+      </defs>
+
       <path
         id={id}
-        style={{ ...style, strokeWidth: 2 }}
+        style={style}
         className="react-flow__edge-path"
         d={d}
-        strokeDasharray={showRunAfter ? '3' : '0'}
+        strokeDasharray={showRunAfter ? '4' : '0'}
+        markerEnd="url(#arrow-end)"
       />
 
       {!readOnly ? (
         <>
-          {firstChild && edgeTargets.length !== 1 && (
-            <foreignObject
-              width={foreignObjectWidth}
-              height={foreignObjectHeight}
+          {/* TOP BUTTON */}
+          {((multipleTargets && showSourceButton) || multipleSources) && (
+            <EdgeContent
               x={sourceX - foreignObjectWidth / 2}
-              y={sourceY + 30 - foreignObjectHeight / 2}
-              className="edgebutton-foreignobject"
-              requiredExtensions="http://www.w3.org/1999/xhtml"
-            >
-              <div style={{ padding: '4px' }}>
-                <DropZone graphId={graphId} parent={source} />
-              </div>
-            </foreignObject>
+              y={sourceY + 28 - foreignObjectHeight / 2}
+              parent={source}
+              child={!multipleTargets ? target : undefined}
+            />
           )}
-          <foreignObject
-            width={foreignObjectWidth}
-            height={foreignObjectHeight}
-            x={edgeTargets.length === 1 ? edgeCenterX - foreignObjectWidth / 2 : targetX - foreignObjectWidth / 2}
-            y={edgeTargets.length === 1 ? edgeCenterY - foreignObjectHeight / 2 : targetY - 30 - foreignObjectHeight / 2}
-            className="edgebutton-foreignobject"
-            requiredExtensions="http://www.w3.org/1999/xhtml"
-          >
-            <div style={{ padding: '4px' }}>
-              <DropZone graphId={graphId} parent={source} child={target} />
-            </div>
-          </foreignObject>
 
-          {/* TODO: riley - will need to alter for allowing multiple input edges */}
+          {/* MIDDLE BUTTON */}
+          {onlyEdge && (
+            <EdgeContent
+              x={edgeCenterX - foreignObjectWidth / 2}
+              y={edgeCenterY - foreignObjectHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
+              parent={source}
+              child={target}
+            />
+          )}
+
+          {/* BOTTOM BUTTOM */}
+          {((multipleSources && showTargetButton) || multipleTargets) && (
+            <EdgeContent
+              x={targetX - foreignObjectWidth / 2}
+              y={targetY - 32 - foreignObjectHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
+              parent={!multipleSources ? source : undefined}
+              child={target}
+            />
+          )}
+
+          {/* RUN AFTER INDICATOR */}
           {showRunAfter ? (
             <foreignObject
               id="msla-run-after-traffic-light"
               width={runAfterWidth}
               height={runAfterHeight}
-              x={targetX - runAfterWidth / 2}
+              x={targetX - runAfterWidth / 2 + (numRunAfters - 1 - raIndex * 2) * (runAfterWidth / 2 + 4)}
               y={targetY - runAfterHeight}
             >
-              <RunAfterIndicator statuses={runAfterStatuses} afterNodeName={Object.keys(operationData?.runAfter ?? {})?.[0] ?? ''} />
+              <RunAfterIndicator statuses={runAfterStatuses} sourceNodeId={source} />
             </foreignObject>
           ) : null}
         </>

@@ -2,66 +2,84 @@
   "definition": {
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
-      "Delete_table": {
-        "inputs": {
-          "parameters": {
-            "tableName": "TEST"
-          },
-          "serviceProviderConfiguration": {
-            "connectionName": "azureTables",
-            "operationId": "deleteTable",
-            "serviceProviderId": "/serviceProviders/azureTables"
-          }
-        },
-        "runAfter": {
-          "Send_message": ["Succeeded", "TIMEDOUT", "SKIPPED", "FAILED"]
-        },
-        "type": "ServiceProvider"
+      "Compose": {
+        "inputs": "a",
+        "runAfter": {},
+        "type": "Compose"
       },
-      "Deletes_a_Blob_from_Azure_Storage": {
+      "Execute_a_navigation_plan": {
         "inputs": {
-          "parameters": {
-            "blobName": "adsf",
-            "containerName": "asdf"
-          },
-          "serviceProviderConfiguration": {
-            "connectionName": "AzureBlob",
-            "operationId": "deleteBlob",
-            "serviceProviderId": "/serviceProviders/AzureBlob"
-          }
-        },
-        "runAfter": {
-          "Send_message": ["Succeeded", "SKIPPED"]
-        },
-        "type": "ServiceProvider"
-      },
-      "Send_message": {
-        "description": "Testing",
-        "inputs": {
-          "parameters": {
-            "entityName": "Test Topic"
-          },
-          "serviceProviderConfiguration": {
-            "connectionName": "serviceBus-2",
-            "operationId": "sendMessage",
-            "serviceProviderId": "/serviceProviders/serviceBus"
-          }
+          "a": "A"
         },
         "runAfter": {},
-        "type": "ServiceProvider"
+        "type": "Compose"
+      },
+      "Initialize_test_var": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "testVar",
+              "type": "string",
+              "value": "@{body('Create_a_goal')['id']},@{body('Create_a_goal_2')['id']},"
+            }
+          ]
+        },
+        "runAfter": {},
+        "type": "InitializeVariable"
+      },
+      "Response": {
+        "type": "Response",
+        "kind": "http",
+        "inputs": {
+          "statusCode": 200,
+          "headers": "@triggerBody()",
+          "body": "@outputs('Execute_a_navigation_plan')?['outputParameters']?['balance']"
+        },
+        "runAfter": {
+          "Compose": ["Succeeded"],
+          "Initialize_test_var": ["Succeeded", "Skipped"],
+          "Execute_a_navigation_plan": ["Succeeded", "TimedOut", "Skipped"]
+        },
+        "operationOptions": "Asynchronous",
+        "runtimeConfiguration": {
+          "secureData": {
+            "properties": ["inputs"]
+          }
+        },
+        "trackedProperties": {
+          "dfd": "fdfdf"
+        }
+      },
+      "Terminate_2": {
+        "inputs": {
+          "runError": {
+            "code": "CreateAndGetGoalFailed",
+            "message": "Created goal does not match expected goal"
+          },
+          "runStatus": "Failed"
+        },
+        "runAfter": {
+          "Response": ["Failed"]
+        },
+        "type": "Terminate"
       }
     },
     "contentVersion": "1.0.0.0",
     "outputs": {},
     "triggers": {
-      "HTTP": {
+      "Http": {
         "inputs": {
-          "method": "GET",
-          "uri": "http://test.uri"
+          "body": "d",
+          "headers": {
+            "d": "d"
+          },
+          "method": "PUT",
+          "uri": "http://uri.com"
         },
         "recurrence": {
-          "frequency": "Second",
-          "interval": 15
+          "frequency": "Hour",
+          "interval": 3,
+          "timeZone": "UTC-11"
         },
         "type": "Http"
       }

@@ -11,8 +11,8 @@ export enum RUN_AFTER_STATUS {
 }
 
 export interface RunAfterIndicatorProps {
-  afterNodeName: string;
   statuses: string[];
+  sourceNodeId: string;
 }
 
 interface DotProps {
@@ -20,7 +20,7 @@ interface DotProps {
   fill: string;
 }
 
-export function RunAfterIndicator({ statuses, afterNodeName }: RunAfterIndicatorProps): JSX.Element {
+export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorProps): JSX.Element {
   const intl = useIntl();
   const { isInverted } = useTheme();
   const normalizedStatuses = statuses.map((status) => status.toUpperCase()) as RUN_AFTER_STATUS[];
@@ -32,11 +32,11 @@ export function RunAfterIndicator({ statuses, afterNodeName }: RunAfterIndicator
 
   const tooltipHeaderText = intl.formatMessage(
     {
-      defaultMessage: 'Run after {afterNodeName}',
+      defaultMessage: 'Run after {sourceNodeId}',
       description: 'Text to show which node the target node is run after',
     },
     {
-      afterNodeName: <strong>{convertActionIDToTitleCase(afterNodeName)}</strong>,
+      sourceNodeId: <strong>{convertActionIDToTitleCase(sourceNodeId)}</strong>,
     }
   );
 
