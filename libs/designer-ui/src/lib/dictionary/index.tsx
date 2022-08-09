@@ -1,8 +1,11 @@
 import type { ValueSegment } from '../editor';
-import { EditorCollapseToggle } from '../editor';
+import { ValueSegmentType, EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
+import { initializeValidation } from '../editor/base/utils/helper';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
+import { isEmpty } from './util/helper';
+import { guid } from '@microsoft-logic-apps/utils';
 import { useState } from 'react';
 
 export interface DictionaryEditorItemProps {
@@ -22,11 +25,13 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   disableToggle = false,
   initialItems,
   initialValue,
+  tokenGroup,
+  onChange,
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState(!initialItems ?? false);
   const [items, setItems] = useState(initialItems);
-  const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue ?? []);
-  const [isValid, setIsValid] = useState(true);
+  const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
+  const [isValid, setIsValid] = useState(initializeValidation(initialValue));
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -34,34 +39,65 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   const updateItems = (newItems: DictionaryEditorItemProps[]) => {
     setItems(newItems);
-    setCollapsedValue([]);
+    const objectValue = convertItemsToSegments(newItems);
+    setCollapsedValue(objectValue);
+
+    if (!collapsed) {
+      onChange?.({ value: objectValue, viewModel: { items: newItems } });
+    }
   };
 
   const updateCollapsedValue = (val: ValueSegment[]) => {
     setCollapsedValue(val);
-    setItems([{ key: [], value: [] }]);
+  };
+
+  const handleBlur = (): void => {
+    onChange?.({ value: collapsedValue, viewModel: { items: isValid ? items : undefined } });
   };
 
   return (
     <div className="msla-dictionary-editor-container">
       {collapsed ? (
         <CollapsedDictionary
-          items={items ?? [{ key: [], value: [] }]}
           isValid={isValid}
+          tokenGroup={tokenGroup}
+          collapsedValue={collapsedValue}
           setItems={updateItems}
           setIsValid={setIsValid}
-          collapsedValue={collapsedValue}
           setCollapsedValue={updateCollapsedValue}
+          onBlur={handleBlur}
         />
       ) : (
-        <ExpandedDictionary items={items ?? [{ key: [], value: [] }]} setItems={updateItems} />
+        <ExpandedDictionary items={items ?? [{ key: [], value: [] }]} setItems={updateItems} tokenGroup={tokenGroup} />
       )}
 
-      <div className="msla-array-commands">
+      <div className="msla-dictionary-commands">
         {!disableToggle ? (
           <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || readOnly} toggleCollapsed={toggleCollapsed} />
         ) : null}
       </div>
     </div>
   );
+};
+
+const convertItemsToSegments = (items: DictionaryEditorItemProps[]): ValueSegment[] => {
+  const itemsToConvert = items.filter((item) => {
+    return !isEmpty(item);
+  });
+
+  if (itemsToConvert.length === 0) {
+    return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
+  }
+  const parsedItems: ValueSegment[] = [];
+  parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '{\n  "' });
+
+  for (let index = 0; index < itemsToConvert.length; index++) {
+    const { key, value } = itemsToConvert[index];
+    parsedItems.push(...key);
+    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '" : "' });
+    parsedItems.push(...value);
+    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < itemsToConvert.length - 1 ? '",\n  "' : '"\n}' });
+  }
+
+  return parsedItems;
 };

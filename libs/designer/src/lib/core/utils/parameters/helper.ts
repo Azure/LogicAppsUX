@@ -1,6 +1,6 @@
 import Constants from '../../../common/constants';
 import type { NodeDataWithManifest } from '../../actions/bjsworkflow/operationdeserializer';
-import type { OutputInfo } from '../../state/operation/operationMetadataSlice';
+import type { NodeInputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import type { Operations as Actions } from '../../state/workflow/workflowInterfaces';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../card';
 import { initializeArrayViewModel } from '../editors/array';
@@ -49,7 +49,6 @@ import {
 } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import {
-  isNullOrEmpty,
   isUndefinedOrEmptyString,
   aggregate,
   clone,
@@ -205,15 +204,20 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
 
 function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[] | undefined } {
   let items: DictionaryEditorItemProps[] | undefined = [];
-  const canParseObject = !isNullOrEmpty(value) && !isNullOrUndefined(value) && isObject(value);
+  const valueToParse = value !== null ? value ?? {} : value;
+  const canParseObject = valueToParse !== null && isObject(valueToParse);
 
   if (canParseObject) {
-    const keys = Object.keys(value);
+    const keys = Object.keys(valueToParse);
     for (const itemKey of keys) {
       items.push({
         key: loadParameterValue({ value: itemKey } as any),
-        value: loadParameterValue({ value: value[itemKey] } as any),
+        value: loadParameterValue({ value: valueToParse[itemKey] } as any),
       });
+    }
+
+    if (!keys.length) {
+      items.push({ key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')] });
     }
   } else {
     items = undefined;
@@ -311,6 +315,11 @@ export function convertToValueSegments(
   } catch {
     return [createLiteralValueSegment(typeof value === 'string' ? value : JSON.stringify(value, null, 2))];
   }
+}
+
+export function getAllInputParameters(nodeInputs: NodeInputs): ParameterInfo[] {
+  const { parameterGroups } = nodeInputs;
+  return aggregate(Object.keys(parameterGroups).map((groupKey) => parameterGroups[groupKey].parameters));
 }
 
 export function ensureExpressionValue(valueSegment: ValueSegment): void {
@@ -1010,7 +1019,7 @@ export function updateTokenMetadata(
       token.arrayDetails = {
         ...token.arrayDetails,
         parentArrayName: nodeOutputInfo.parentArray,
-        itemsSchema: nodeOutputInfo.itemSchema,
+        itemSchema: nodeOutputInfo.itemSchema,
       };
     }
 

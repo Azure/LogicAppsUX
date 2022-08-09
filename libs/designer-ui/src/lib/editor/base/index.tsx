@@ -1,4 +1,5 @@
 import TokenPicker from '../../tokenpicker';
+import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
@@ -23,7 +24,7 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export { testTokenSegment } from '../shared/testtokensegment';
+export { testTokenSegment, outputToken, outputToken2 } from '../shared/testtokensegment';
 
 export interface ChangeState {
   value: ValueSegment[];
@@ -48,9 +49,10 @@ export interface BaseEditorProps {
   readonly?: boolean;
   placeholder?: string;
   BasePlugins?: BasePlugins;
-  initialValue?: ValueSegment[];
+  initialValue: ValueSegment[];
   children?: React.ReactNode;
   tokenPickerButtonProps?: TokenPickerButtonProps;
+  tokenGroup?: TokenGroup[];
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -85,6 +87,7 @@ export const BaseEditor = ({
   initialValue,
   children,
   tokenPickerButtonProps,
+  tokenGroup,
   onBlur,
   onFocus,
 }: BaseEditorProps) => {
@@ -170,7 +173,7 @@ export const BaseEditor = ({
           />
         ) : null}
         {(showTokenPickerButton && showTokenPicker) || inTokenPicker ? (
-          <TokenPicker editorId={editorId} labelId={labelId} searchText="" setInTokenPicker={setInTokenPicker} />
+          <TokenPicker editorId={editorId} labelId={labelId} searchText="" setInTokenPicker={setInTokenPicker} tokenGroup={tokenGroup} />
         ) : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />

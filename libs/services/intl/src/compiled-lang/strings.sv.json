@@ -606,7 +606,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Knapp för att lägga till dynamiskt innehåll om TokenPicker är dolt"
     }
   ],
   "4vcnOA": [
@@ -1371,6 +1371,20 @@
       "value": "Status"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Ogiltigt delningsformat i "
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1399,6 +1413,12 @@
     {
       "type": 0,
       "value": "Returnerar sant om båda parametrarna är falsk"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1452,7 +1472,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Knapp för att lägga till dynamiskt innehåll om TokenPicker visas"
     }
   ],
   "HXLutF": [
@@ -1705,10 +1725,30 @@
       "value": "Varning"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
       "value": "Skapar..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Ogiltig typ av delningsvärde "
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": ", delning finns inte matrisen."
     }
   ],
   "LS8rfZ": [
@@ -3265,6 +3305,20 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Ogiltig delningsvärde "
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": ", finns inte i utdata."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3365,6 +3419,12 @@
     {
       "type": 0,
       "value": "Konverterar en sträng till versala bokstäver med skiftlägesregler för den invarianta kulturen"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamiskt innehåll"
     }
   ],
   "iJOIca": [
@@ -3751,6 +3811,12 @@
     {
       "type": 0,
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i utgående begäran."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -4153,6 +4219,12 @@
       "value": "Returnerar en URI-kodad representation av ett värde"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Uttryck"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4373,6 +4445,12 @@
     {
       "type": 0,
       "value": "Lägger till ett heltalsvärde för det antal timmar för vilka en strängtidsstämpel skickas in"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Sök efter dynamiskt innehåll"
     }
   ],
   "uZH8Qs": [

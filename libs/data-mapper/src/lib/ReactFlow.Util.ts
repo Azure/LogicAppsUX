@@ -1,16 +1,14 @@
-import { SchemaTypes } from './components/configPanel/EditorConfigPanel';
 import type { SchemaNodeExtended } from './models/Schema';
+import { SchemaTypes } from './models/Schema';
 import type { Node as ReactFlowNode } from 'react-flow-renderer';
 import { Position } from 'react-flow-renderer';
 
-const inputX = 0;
-const inputY = 0;
-const inputYOffset = 60;
-
+const inputX = 100;
 const rootOutputX = 500;
-const rootOutputY = 0;
 const childXOffSet = 30;
-const childYOffset = 60;
+
+const rootY = 30;
+const rootYOffset = 60;
 
 export enum ReactFlowNodeType {
   SchemaNode = 'schemaNode',
@@ -32,7 +30,7 @@ export const convertToReactFlowNodes = (inputSchemaNodes: SchemaNodeExtended[], 
       sourcePosition: Position.Right,
       position: {
         x: inputX,
-        y: inputYOffset * index,
+        y: rootY + rootYOffset * index,
       },
     });
   });
@@ -49,7 +47,6 @@ export const convertToReactFlowParentAndChildNodes = (
 ): ReactFlowNode[] => {
   const reactFlowNodes: ReactFlowNode[] = [];
   const rootX = schemaType === SchemaTypes.Input ? inputX : rootOutputX;
-  const rootY = schemaType === SchemaTypes.Input ? inputY : rootOutputY;
 
   reactFlowNodes.push({
     id: `${schemaType}-${parentSchemaNode.key}`,
@@ -78,7 +75,7 @@ export const convertToReactFlowParentAndChildNodes = (
       targetPosition: !displayTargets ? undefined : SchemaTypes.Input ? Position.Right : Position.Left,
       position: {
         x: rootX + childXOffSet,
-        y: childYOffset * (index + 1),
+        y: rootY + rootYOffset * (index + 1),
       },
     });
   });

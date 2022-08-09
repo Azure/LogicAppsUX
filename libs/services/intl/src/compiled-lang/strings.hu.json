@@ -606,7 +606,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a TokenPicker rejtett"
     }
   ],
   "4vcnOA": [
@@ -1371,6 +1371,20 @@
       "value": "Állapot"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Érvénytelen formátum szerinti felosztás a következőben: „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "”."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1399,6 +1413,12 @@
     {
       "type": 0,
       "value": "Igaz értéket ad vissza, ha a paraméterek hamisak."
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1452,7 +1472,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a TokenPicker látható"
     }
   ],
   "HXLutF": [
@@ -1705,10 +1725,30 @@
       "value": "Figyelmeztetés"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
       "value": "Létrehozás..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Érvénytelen típusú érték szerinti felosztás: „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "”. A felosztás nincs a tömbben."
     }
   ],
   "LS8rfZ": [
@@ -2512,7 +2552,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Adjon meg egy érvényes tulajdonságtárat"
     }
   ],
   "WS9kXD": [
@@ -3265,6 +3305,20 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Érvénytelen érték szerinti felosztás: „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "”. Nem található a kimenetekben."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3369,6 +3423,12 @@
     {
       "type": 0,
       "value": "Sztring átalakítása nagybetűssé az invariáns kulturális környezet kis- és nagybetű-használati szabályai alapján."
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dinamikus tartalom"
     }
   ],
   "iJOIca": [
@@ -3682,7 +3742,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Adjon meg egy érvényes tömböt"
     }
   ],
   "lgs5sf": [
@@ -3755,6 +3815,12 @@
     {
       "type": 0,
       "value": "A munkafolyamat-metaadatokat tartalmazó fejlécek a kimenő Logic Apps-kérelemben való megjelenítésének letiltása."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -3918,7 +3984,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Kulcs megadása"
+      "value": "Adja meg a kulcsot"
     }
   ],
   "pIczsS": [
@@ -4157,6 +4223,12 @@
       "value": "Egy értéket URI-ként kódolt értékként ad vissza."
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Kifejezés"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4377,6 +4449,12 @@
     {
       "type": 0,
       "value": "Egy egész számmal megadott óraszám hozzáadása az átadott sztring típusú időbélyeghez."
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Dinamikus tartalom keresése"
     }
   ],
   "uZH8Qs": [
@@ -4766,7 +4844,7 @@
   "zCsGWP": [
     {
       "type": 0,
-      "value": "Adjon meg értéket"
+      "value": "Adjon meg egy értéket"
     }
   ],
   "zIDVd9": [

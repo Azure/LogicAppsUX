@@ -640,7 +640,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker skrytý"
     }
   ],
   "4vcnOA": [
@@ -1449,6 +1449,20 @@
       "value": "Stav"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Neplatný formát rozdělení v „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1477,6 +1491,12 @@
     {
       "type": 0,
       "value": "Vrátí true, pokud jsou parametry false."
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1530,7 +1550,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker zobrazený"
     }
   ],
   "HXLutF": [
@@ -1805,10 +1825,30 @@
       "value": "Upozornění"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
       "value": "Vytváření…"
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Neplatný typ hodnoty rozdělení „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“ – rozdělení není v poli."
     }
   ],
   "LS8rfZ": [
@@ -3383,6 +3423,20 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Neplatná hodnota rozdělení „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“ – nelze najít ve výstupech."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3505,6 +3559,12 @@
     {
       "type": 0,
       "value": "Převede řetězec na velká písmena pomocí pravidel pro používání velkých a malých písmen v invariantní jazykové verzi."
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamický obsah"
     }
   ],
   "iJOIca": [
@@ -3891,6 +3951,12 @@
     {
       "type": 0,
       "value": "Omezí aplikace Logic Apps tak, aby do odchozích požadavků nezahrnovaly hlavičky metadat pracovních postupů."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -4315,6 +4381,12 @@
       "value": "Vrátí reprezentaci určité hodnoty zakódovanou jako identifikátor URI."
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Výraz"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4535,6 +4607,12 @@
     {
       "type": 0,
       "value": "Přidá celočíselný počet hodin do předaného řetězcového časového razítka."
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Hledat v dynamickém obsahu"
     }
   ],
   "uZH8Qs": [

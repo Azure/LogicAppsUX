@@ -3,39 +3,22 @@ import Constants from '../../../common/constants';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
-import type { NodeData, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
+import type { NodeData } from '../../state/operation/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import { isRootNodeInGraph } from '../../utils/graph';
-import { getRecurrenceParameters } from '../../utils/parameters/builtins';
-import {
-  loadParameterValuesFromDefault,
-  ParameterGroupKeys,
-  toParameterInfoMap,
-  updateParameterWithValues,
-  updateTokenMetadata,
-} from '../../utils/parameters/helper';
+import { getAllInputParameters, updateTokenMetadata } from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
+import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
 import { getOperationSettings } from './settings';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import {
-  getPropertyValue,
-  map,
-  aggregate,
-  ConnectionReferenceKeyFormat,
-  equals,
-  getObjectPropertyValue,
-  unmap,
-} from '@microsoft-logic-apps/utils';
-import type { ParameterInfo } from '@microsoft/designer-ui';
+import { getPropertyValue, map, aggregate, equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface NodeDataWithManifest extends NodeData {
@@ -96,9 +79,9 @@ const initializeOperationDetailsForManifest = async (
 
       dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo, type: operation.type, kind: operation.kind }));
 
+      const settings = getOperationSettings(isTrigger, operation.type, operation.kind, manifest, operation);
       const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
-      const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);
-      const settings = getOperationSettings(operation, isTrigger, operation.type, manifest);
+      const nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs, settings.splitOn?.value?.value);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
       return [{ id: nodeId, nodeInputs, nodeOutputs, settings, manifest }, ...childGraphInputs];
@@ -154,137 +137,6 @@ const processChildGraphAndItsInputs = (
   return nodesData;
 };
 
-const getInputParametersFromManifest = (nodeId: string, manifest: OperationManifest, stepDefinition: any): NodeInputs => {
-  const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
-    false /* includeParentObject */,
-    0 /* expandArrayPropertiesDepth */
-  );
-  let primaryInputParametersInArray = unmap(primaryInputParameters);
-
-  if (stepDefinition) {
-    const { inputsLocation } = manifest.properties;
-
-    // In the case of retry policy, it is treated as an input
-    // avoid pushing a parameter for it as it is already being
-    // handled in the settings store.
-    // NOTE: this could be expanded to more settings that are treated as inputs.
-    if (
-      manifest.properties.settings &&
-      manifest.properties.settings.retryPolicy &&
-      stepDefinition.inputs &&
-      stepDefinition.inputs[PropertyName.RETRYPOLICY]
-    ) {
-      delete stepDefinition.inputs.retryPolicy;
-    }
-
-    if (
-      manifest.properties.connectionReference &&
-      manifest.properties.connectionReference.referenceKeyFormat === ConnectionReferenceKeyFormat.Function
-    ) {
-      delete stepDefinition.inputs.function;
-    }
-
-    primaryInputParametersInArray = updateParameterWithValues(
-      'inputs.$',
-      inputsLocation ? getObjectPropertyValue(stepDefinition, inputsLocation) : stepDefinition.inputs,
-      '',
-      primaryInputParametersInArray,
-      true /* createInvisibleParameter */,
-      false /* useDefault */
-    );
-  } else {
-    loadParameterValuesFromDefault(primaryInputParameters);
-  }
-
-  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
-  const recurrenceParameters = getRecurrenceParameters(manifest.properties.recurrence, stepDefinition);
-
-  // TODO(14490585)- Initialize editor view models
-
-  const defaultParameterGroup = {
-    id: ParameterGroupKeys.DEFAULT,
-    description: '',
-    parameters: allParametersAsArray,
-  };
-  const parameterGroups = {
-    [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,
-  };
-
-  if (recurrenceParameters.length) {
-    const intl = getIntl();
-    if (manifest.properties.recurrence?.useLegacyParameterGroup) {
-      defaultParameterGroup.parameters = recurrenceParameters;
-    } else {
-      parameterGroups[ParameterGroupKeys.RECURRENCE] = {
-        id: ParameterGroupKeys.RECURRENCE,
-        description: intl.formatMessage({
-          defaultMessage: 'How often do you want to check for items?',
-          description: 'Recurrence parameter group title',
-        }),
-        parameters: recurrenceParameters,
-      };
-    }
-  }
-
-  // TODO(14490585)- Add enum parameters
-  // TODO(14490691)- Initialize dynamic inputs.
-
-  defaultParameterGroup.parameters = _getParametersSortedByVisibility(defaultParameterGroup.parameters);
-
-  return { parameterGroups };
-};
-
-const getOutputParametersFromManifest = (nodeId: string, manifest: OperationManifest): NodeOutputs => {
-  // TODO(14490747) - Update operation manifest for triggers with split on.
-
-  const operationOutputs = new ManifestParser(manifest).getOutputParameters(
-    true /* includeParentObject */,
-    Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
-    false /* expandOneOf */,
-    undefined /* data */,
-    true /* selectAllOneOfSchemas */
-  );
-
-  // TODO(14490691) - Get dynamic schema output
-
-  const nodeOutputs: Record<string, OutputInfo> = {};
-  for (const [key, output] of Object.entries(operationOutputs)) {
-    const {
-      format,
-      type,
-      isDynamic,
-      isInsideArray,
-      name,
-      itemSchema,
-      parentArray,
-      title,
-      summary,
-      description,
-      source,
-      required,
-      visibility,
-    } = output;
-
-    nodeOutputs[key] = {
-      key,
-      type,
-      format,
-      isAdvanced: equals(visibility, Constants.VISIBILITY.ADVANCED),
-      name,
-      isDynamic,
-      isInsideArray,
-      itemSchema,
-      parentArray,
-      title: title ?? summary ?? description ?? name,
-      source,
-      required,
-      description,
-    };
-  }
-
-  return { outputs: nodeOutputs };
-};
-
 const updateTokenMetadataInParameters = (nodes: NodeDataWithManifest[], operations: Operations, triggerNodeId: string) => {
   const nodesData = map(nodes, 'id');
   const actionNodes = nodes
@@ -293,10 +145,7 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithManifest[], operatio
     .reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
 
   for (const nodeData of nodes) {
-    const {
-      nodeInputs: { parameterGroups },
-    } = nodeData;
-    const allParameters = aggregate(Object.keys(parameterGroups).map((groupKey) => parameterGroups[groupKey].parameters));
+    const allParameters = getAllInputParameters(nodeData.nodeInputs);
     for (const parameter of allParameters) {
       const segments = parameter.value;
 
@@ -340,7 +189,7 @@ const initializeOutputTokensForOperations = (
         operations[operationId]?.type,
         nodeData?.nodeOutputs.outputs ?? {},
         nodeManifest,
-        nodesWithManifest
+        nodesWithManifest[operationId]?.settings
       )
     );
 
@@ -370,28 +219,4 @@ const initializeVariables = (operations: Operations, allNodesData: NodeDataWithM
   }
 
   return declarations;
-};
-
-const _getParametersSortedByVisibility = (parameters: ParameterInfo[]): ParameterInfo[] => {
-  const sortedParameters: ParameterInfo[] = parameters.filter((parameter) => parameter.required);
-
-  for (const parameter of parameters) {
-    if (!parameter.required && equals(parameter.visibility, Visibility.Important)) {
-      sortedParameters.push(parameter);
-    }
-  }
-
-  parameters.forEach((parameter) => {
-    if (!parameter.required && !equals(parameter.visibility, Visibility.Important) && !equals(parameter.visibility, Visibility.Advanced)) {
-      sortedParameters.push(parameter);
-    }
-  });
-
-  parameters.forEach((parameter) => {
-    if (!parameter.required && equals(parameter.visibility, Visibility.Advanced)) {
-      sortedParameters.push(parameter);
-    }
-  });
-
-  return sortedParameters;
 };

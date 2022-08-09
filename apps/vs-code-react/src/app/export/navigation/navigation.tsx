@@ -1,10 +1,11 @@
 import { RouteName, ValidationStatus } from '../../../run-service';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
+import { Status } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { PrimaryButton } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft-logic-apps/utils';
-import { Fragment, useContext } from 'react';
+import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -15,8 +16,9 @@ export const Navigation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { exportData } = vscodeState as InitializedVscodeState;
+  const vscodeState = useSelector((state: RootState) => state.vscode) as InitializedVscodeState;
+  const { exportData } = vscodeState;
+  const { finalStatus } = vscodeState;
   const { selectedSubscription, selectedIse, selectedWorkflows, validationState, targetDirectory, packageUrl, managedConnections } =
     exportData;
   const { isManaged, resourceGroup, resourceGroupLocation } = managedConnections;
@@ -81,7 +83,10 @@ export const Navigation: React.FC = () => {
 
   const isBackDisabled = (): boolean => {
     const { pathname } = location;
-    return pathname === `/${RouteName.export}/${RouteName.instance_selection}` || pathname === `/${RouteName.export}/${RouteName.status}`;
+    return (
+      pathname === `/${RouteName.export}/${RouteName.instance_selection}` ||
+      (pathname === `/${RouteName.export}/${RouteName.status}` && finalStatus !== Status.Succeeded && finalStatus !== Status.Failed)
+    );
   };
 
   const isNextDisabled = (): boolean => {
@@ -126,28 +131,22 @@ export const Navigation: React.FC = () => {
 
   const nextText = getNextText();
 
-  const isButtonsVisible = location.pathname !== `/${RouteName.export}/${RouteName.status}`;
-
   return (
     <div className="msla-export-navigation-panel">
-      {isButtonsVisible ? (
-        <>
-          <PrimaryButton
-            className="msla-export-navigation-panel-button"
-            text={intlText.BACK}
-            ariaLabel={intlText.BACK}
-            onClick={onClickBack}
-            disabled={isBackDisabled()}
-          />
-          <PrimaryButton
-            className="msla-export-navigation-panel-button"
-            text={nextText}
-            ariaLabel={nextText}
-            onClick={onClickNext}
-            disabled={isNextDisabled()}
-          />
-        </>
-      ) : null}
+      <PrimaryButton
+        className="msla-export-navigation-panel-button"
+        text={intlText.BACK}
+        ariaLabel={intlText.BACK}
+        onClick={onClickBack}
+        disabled={isBackDisabled()}
+      />
+      <PrimaryButton
+        className="msla-export-navigation-panel-button"
+        text={nextText}
+        ariaLabel={nextText}
+        onClick={onClickNext}
+        disabled={isNextDisabled()}
+      />
     </div>
   );
 };

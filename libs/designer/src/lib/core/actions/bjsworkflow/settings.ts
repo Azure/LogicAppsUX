@@ -34,7 +34,7 @@ interface RetryPolicy {
 /**
  * @interface SimpleSetting - A setting that has a value of some type that can be disabled or enabled.
  */
-interface SimpleSetting<T> {
+export interface SimpleSetting<T> {
   enabled: boolean;
   value?: T;
 }
@@ -62,7 +62,7 @@ export interface GraphEdge {
   metadata?: string;
   statuses: string[];
 }
-interface SettingData<T> {
+export interface SettingData<T> {
   isSupported: boolean;
   value?: T;
 }
@@ -95,17 +95,19 @@ export interface Settings {
 
 /**
  * Gets the operation options for the specified node based on the definition of the operation in a reload, or from swagger information.
- * @arg {LogicApps.OperationDefinition | LogicAppsV2.OperationDefinition} definition - The JSON from the definition for the given operation.
  * @arg {string} isTrigger - Specifies if this is trigger operation node.
- * @arg {string} [nodeType] - The node type. This parameter should be provided for authoring scenario.
+ * @arg {string} nodeType - The node type. This parameter should be provided for authoring scenario.
+ * @arg {string} [nodeKind] - The node kind. This parameter should be provided for authoring scenario.
  * @arg {OperationManifest} [manifest] - The operation manifest if node type supports.
+ * @arg {LogicApps.OperationDefinition | LogicAppsV2.OperationDefinition} [operation] - The JSON from the definition for the given operation.
  * @return {Settings}
  */
 export const getOperationSettings = (
-  operation: LogicAppsV2.OperationDefinition,
   isTrigger: boolean,
   nodeType: string,
-  manifest?: OperationManifest
+  nodeKind?: string,
+  manifest?: OperationManifest,
+  operation?: LogicAppsV2.OperationDefinition
 ): Settings => {
   return {
     asynchronous: { isSupported: isAsynchronousSupported(isTrigger, nodeType, manifest), value: getAsynchronous(operation) },
@@ -124,34 +126,37 @@ export const getOperationSettings = (
     },
     disableAutomaticDecompression: {
       isSupported: isDisableAutomaticDecompressionSupported(isTrigger, nodeType, manifest),
-      value: getDisableAutomaticDecompression(operation, isTrigger, nodeType, manifest),
+      value: getDisableAutomaticDecompression(isTrigger, nodeType, manifest, operation),
     },
-    splitOn: { isSupported: isSplitOnSupported(operation, isTrigger, nodeType, manifest), value: getSplitOn(operation, manifest) },
+    splitOn: { isSupported: isSplitOnSupported(isTrigger, nodeType, manifest, operation), value: getSplitOn(manifest, operation) },
     retryPolicy: {
-      isSupported: isRetryPolicySupported(operation, isTrigger, manifest),
-      value: getRetryPolicy(operation, isTrigger, manifest),
+      isSupported: isRetryPolicySupported(isTrigger, manifest, operation),
+      value: getRetryPolicy(isTrigger, manifest, operation),
     },
     requestOptions: { isSupported: areRequestOptionsSupported(isTrigger, nodeType), value: getRequestOptions(operation) },
     sequential: getSequential(operation),
     suppressWorkflowHeaders: {
       isSupported: isSuppressWorkflowHeadersSupported(isTrigger, nodeType, manifest),
-      value: getSuppressWorkflowHeaders(isTrigger, operation, nodeType, manifest),
+      value: getSuppressWorkflowHeaders(isTrigger, nodeType, manifest, operation),
     },
     suppressWorkflowHeadersOnResponse: {
-      isSupported: isSuppressWorklowHeadersOnResponseSupported(isTrigger, operation, nodeType, manifest),
+      isSupported: isSuppressWorklowHeadersOnResponseSupported(isTrigger, nodeType, nodeKind, manifest),
       value: getSuppressWorkflowHeadersOnResponse(operation),
     },
     concurrency: {
       isSupported: isConcurrencySupported(isTrigger, nodeType, manifest),
-      value: getConcurrency(operation, isTrigger, nodeType, manifest),
+      value: getConcurrency(isTrigger, nodeType, manifest, operation),
     },
     singleInstance: getSingleInstance(operation),
     splitOnConfiguration: getSplitOnConfiguration(operation),
-    timeout: { isSupported: isTimeoutSupported(isTrigger, operation, manifest), value: getTimeout(operation, isTrigger, manifest) },
+    timeout: {
+      isSupported: isTimeoutSupported(isTrigger, nodeType, manifest),
+      value: getTimeout(nodeType, isTrigger, manifest, operation),
+    },
     paging: { isSupported: isPagingSupported(isTrigger, nodeType, manifest), value: getPaging(operation) },
     uploadChunk: {
       isSupported: isChunkedTransferModeSupported(isTrigger, nodeType, manifest),
-      value: getUploadChunk(operation, isTrigger, nodeType, manifest),
+      value: getUploadChunk(isTrigger, nodeType, manifest, operation),
     },
     downloadChunkSize: {
       isSupported: isChunkedTransferModeSupported(isTrigger, nodeType, manifest),
@@ -159,10 +164,10 @@ export const getOperationSettings = (
     },
     trackedProperties: {
       isSupported: areTrackedPropertiesSupported(isTrigger, manifest),
-      value: getTrackedProperties(operation, isTrigger, manifest),
+      value: getTrackedProperties(isTrigger, manifest, operation),
     },
     requestSchemaValidation: {
-      isSupported: isRequestSchemaValidationSupported(isTrigger, nodeType, operation, manifest),
+      isSupported: isRequestSchemaValidationSupported(isTrigger, nodeType, nodeKind, manifest),
       value: getRequestSchemaValidation(operation),
     },
     conditionExpressions: { isSupported: isTrigger, value: getConditionExpressions(operation) },
@@ -185,7 +190,7 @@ const isOperationOptionSet = (operationOption: string, operationOptions: string 
   return deserializedOperationOptions.indexOf(operationOption.toLowerCase()) > -1;
 };
 
-const getAsynchronous = (definition: LogicAppsV2.OperationDefinition): boolean => {
+const getAsynchronous = (definition?: LogicAppsV2.OperationDefinition): boolean => {
   const operationOptions = definition && definition.operationOptions;
   return isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.ASYNCHRONOUS, operationOptions);
 };
@@ -206,11 +211,11 @@ const isAsynchronousSupported = (isTrigger: boolean, nodeType: string, manifest?
   }
 };
 
-const getSplitOnConfiguration = (definition: LogicAppsV2.TriggerDefinition): SplitOnConfiguration | undefined => {
+const getSplitOnConfiguration = (definition?: LogicAppsV2.TriggerDefinition): SplitOnConfiguration | undefined => {
   return definition ? definition.splitOnConfiguration : undefined;
 };
 
-const getCorrelationSettings = (definition: LogicAppsV2.TriggerDefinition): CorrelationSettings | undefined => {
+const getCorrelationSettings = (definition?: LogicAppsV2.TriggerDefinition): CorrelationSettings | undefined => {
   return definition ? definition.correlation : undefined;
 };
 
@@ -246,16 +251,16 @@ const isDisableAsyncPatternSupported = (isTrigger: boolean, nodeType: string, ma
   }
 };
 
-const getDisableAsyncPattern = (definition: LogicAppsV2.OperationDefinition): boolean => {
+const getDisableAsyncPattern = (definition?: LogicAppsV2.OperationDefinition): boolean => {
   const operationOptions = definition && definition.operationOptions;
   return isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.DISABLE_ASYNC, operationOptions);
 };
 
 const getDisableAutomaticDecompression = (
-  definition: LogicAppsV2.OperationDefinition,
   isTrigger: boolean,
   nodeType: string,
-  manifest?: OperationManifest
+  manifest?: OperationManifest,
+  definition?: LogicAppsV2.OperationDefinition
 ): boolean | undefined => {
   const supported = isDisableAutomaticDecompressionSupported(isTrigger, nodeType, manifest);
   const operationOptions = definition && definition.operationOptions;
@@ -288,9 +293,9 @@ const isDisableAutomaticDecompressionSupported = (isTrigger: boolean, nodeType: 
 
 const getSuppressWorkflowHeaders = (
   isTrigger: boolean,
-  definition: LogicAppsV2.OperationDefinition,
   nodeType: string,
-  manifest?: OperationManifest
+  manifest?: OperationManifest,
+  definition?: LogicAppsV2.OperationDefinition
 ): boolean | undefined => {
   const supported = isSuppressWorkflowHeadersSupported(isTrigger, nodeType, manifest);
   const operationOptions = definition && definition.operationOptions;
@@ -312,15 +317,15 @@ const isSuppressWorkflowHeadersSupported = (isTrigger: boolean, nodeType: string
   }
 };
 
-const getSuppressWorkflowHeadersOnResponse = (definition: LogicAppsV2.OperationDefinition): boolean | undefined => {
+const getSuppressWorkflowHeadersOnResponse = (definition?: LogicAppsV2.OperationDefinition): boolean | undefined => {
   const operationOptions = definition && definition.operationOptions;
   return isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SUPPRESS_WORKFLOW_HEADERS_ON_RESPONSE, operationOptions);
 };
 
 const isSuppressWorklowHeadersOnResponseSupported = (
   isTrigger: boolean,
-  operation: LogicAppsV2.OperationDefinition,
   nodeType: string,
+  nodeKind?: string,
   manifest?: OperationManifest
 ): boolean => {
   if (manifest) {
@@ -334,11 +339,11 @@ const isSuppressWorklowHeadersOnResponseSupported = (
         : false)
     );
   } else {
-    return isTrigger && equals(nodeType, Constants.NODE.TYPE.MANUAL) && equals(operation.kind, Constants.NODE.KIND.HTTP);
+    return isTrigger && equals(nodeType, Constants.NODE.TYPE.MANUAL) && equals(nodeKind, Constants.NODE.KIND.HTTP);
   }
 };
 
-const getRequestSchemaValidation = (definition: LogicAppsV2.OperationDefinition): boolean | undefined => {
+const getRequestSchemaValidation = (definition?: LogicAppsV2.OperationDefinition): boolean | undefined => {
   const operationOptions = definition && definition.operationOptions;
   return definition !== undefined
     ? isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.REQUEST_SCHEMA_VALIDATION, operationOptions)
@@ -348,7 +353,7 @@ const getRequestSchemaValidation = (definition: LogicAppsV2.OperationDefinition)
 const isRequestSchemaValidationSupported = (
   isTrigger: boolean,
   nodeType: string,
-  operation: LogicAppsV2.OperationDefinition,
+  nodeKind?: string,
   manifest?: OperationManifest
 ): boolean => {
   if (manifest) {
@@ -362,15 +367,15 @@ const isRequestSchemaValidationSupported = (
         : false)
     );
   } else {
-    return equals(nodeType, Constants.NODE.TYPE.MANUAL) && equals(operation.kind, Constants.NODE.KIND.HTTP);
+    return equals(nodeType, Constants.NODE.TYPE.MANUAL) && equals(nodeKind, Constants.NODE.KIND.HTTP);
   }
 };
 
 const getConcurrency = (
-  definition: LogicAppsV2.OperationDefinition,
   isTrigger: boolean,
   nodeType: string,
-  manifest?: OperationManifest
+  manifest?: OperationManifest,
+  definition?: LogicAppsV2.OperationDefinition
 ): SimpleSetting<number> | undefined => {
   if (!isConcurrencySupported(isTrigger, nodeType, manifest)) {
     return undefined;
@@ -440,9 +445,9 @@ const isConcurrencySupported = (isTrigger: boolean, nodeType: string, manifest?:
 };
 
 const getRetryPolicy = (
-  definition: LogicAppsV2.ActionDefinition,
   isTrigger: boolean,
-  manifest?: OperationManifest
+  manifest?: OperationManifest,
+  definition?: LogicAppsV2.ActionDefinition
 ): RetryPolicy | undefined => {
   if (definition) {
     const isRetryableAction = manifest
@@ -482,7 +487,7 @@ const getRetryPolicy = (
   }
 };
 
-const isRetryableOperation = (operation: LogicAppsV2.OperationDefinition): boolean => {
+const isRetryableOperation = (operation?: LogicAppsV2.OperationDefinition): boolean => {
   if (!operation) {
     return false;
   }
@@ -501,7 +506,11 @@ const isRetryableOperation = (operation: LogicAppsV2.OperationDefinition): boole
   return supportedTypes.indexOf(operation.type.toLowerCase()) > -1;
 };
 
-const isRetryPolicySupported = (definition: LogicAppsV2.OperationDefinition, isTrigger: boolean, manifest?: OperationManifest): boolean => {
+const isRetryPolicySupported = (
+  isTrigger: boolean,
+  manifest?: OperationManifest,
+  definition?: LogicAppsV2.OperationDefinition
+): boolean => {
   return manifest
     ? isSettingSupportedFromOperationManifest(
         getOperationSettingFromManifest(manifest, 'retryPolicy') as OperationManifestSetting<void>,
@@ -510,25 +519,25 @@ const isRetryPolicySupported = (definition: LogicAppsV2.OperationDefinition, isT
     : isRetryableOperation(definition);
 };
 
-const getSequential = (definition: LogicAppsV2.OperationDefinition): boolean => {
+const getSequential = (definition?: LogicAppsV2.OperationDefinition): boolean => {
   const operationOptions = definition && definition.operationOptions;
   return isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SEQUENTIAL, operationOptions);
 };
 
-const getSingleInstance = (definition: LogicAppsV2.OperationDefinition): boolean => {
+const getSingleInstance = (definition?: LogicAppsV2.OperationDefinition): boolean => {
   const operationOptions = definition && definition.operationOptions;
   return isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SINGLE_INSTANCE, operationOptions);
 };
 
-const getSplitOn = (definition: LogicAppsV2.OperationDefinition, manifest?: OperationManifest): SimpleSetting<string> => {
-  const splitOnValue = getSplitOnValue(definition, manifest);
+const getSplitOn = (manifest?: OperationManifest, definition?: LogicAppsV2.OperationDefinition): SimpleSetting<string> => {
+  const splitOnValue = getSplitOnValue(manifest, definition);
   return {
     enabled: !!splitOnValue,
     value: splitOnValue,
   };
 };
 
-const getSplitOnValue = (definition: LogicAppsV2.TriggerDefinition, manifest?: OperationManifest): string | undefined => {
+const getSplitOnValue = (manifest?: OperationManifest, definition?: LogicAppsV2.TriggerDefinition): string | undefined => {
   if (definition) {
     return definition.splitOn;
   } else {
@@ -552,22 +561,27 @@ const getSplitOnValue = (definition: LogicAppsV2.TriggerDefinition, manifest?: O
 };
 
 const isSplitOnSupported = (
-  definition: LogicAppsV2.OperationDefinition,
   isTrigger: boolean,
   nodeType: string,
-  manifest?: OperationManifest
+  manifest?: OperationManifest,
+  definition?: LogicAppsV2.OperationDefinition
 ): boolean => {
-  const existingSplitOn = getSplitOn(definition, manifest);
+  const existingSplitOn = getSplitOn(manifest, definition);
   return isTrigger && existingSplitOn.enabled;
 };
 
-const getTimeout = (definition: LogicAppsV2.ActionDefinition, isTrigger: boolean, manifest?: OperationManifest): string | undefined => {
+const getTimeout = (
+  nodeType: string,
+  isTrigger: boolean,
+  manifest?: OperationManifest,
+  definition?: LogicAppsV2.ActionDefinition
+): string | undefined => {
   const isTimeoutable = manifest
     ? isSettingSupportedFromOperationManifest(
         getOperationSettingFromManifest(manifest, 'timeout') as OperationManifestSetting<void>,
         isTrigger
       )
-    : isTimeoutableAction(definition);
+    : isTimeoutableAction(nodeType);
 
   if (isTimeoutable) {
     const timeoutableActionDefinition = definition as LogicAppsV2.TimeoutableActionDefinition;
@@ -577,11 +591,7 @@ const getTimeout = (definition: LogicAppsV2.ActionDefinition, isTrigger: boolean
   return undefined;
 };
 
-const isTimeoutableAction = (action: LogicAppsV2.ActionDefinition): boolean => {
-  if (!action) {
-    return false;
-  }
-
+const isTimeoutableAction = (operationType: string): boolean => {
   const supportedTypes = [
     Constants.NODE.TYPE.API_CONNECTION,
     Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
@@ -593,16 +603,16 @@ const isTimeoutableAction = (action: LogicAppsV2.ActionDefinition): boolean => {
     Constants.NODE.TYPE.HTTP_WEBHOOK,
     Constants.NODE.TYPE.WORKFLOW,
   ];
-  return supportedTypes.indexOf(action.type.toLowerCase()) > -1;
+  return supportedTypes.indexOf(operationType.toLowerCase()) > -1;
 };
 
-const isTimeoutSupported = (isTrigger: boolean, definition: LogicAppsV2.OperationDefinition, manifest?: OperationManifest): boolean => {
+const isTimeoutSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
   return manifest
     ? isSettingSupportedFromOperationManifest(
         getOperationSettingFromManifest(manifest, 'timeout') as OperationManifestSetting<void>,
         isTrigger
       )
-    : isTimeoutableAction(definition);
+    : isTimeoutableAction(nodeType);
 };
 
 const getOperationSettingFromManifest = (
@@ -612,7 +622,7 @@ const getOperationSettingFromManifest = (
   return manifest?.properties?.settings?.[operation];
 };
 
-const getRequestOptions = (definition: LogicApps.OperationDefinition | LogicAppsV2.OperationDefinition): RequestOptions | undefined => {
+const getRequestOptions = (definition?: LogicApps.OperationDefinition | LogicAppsV2.OperationDefinition): RequestOptions | undefined => {
   return definition ? getRuntimeConfiguration(definition)?.requestOptions : undefined;
 };
 
@@ -654,10 +664,10 @@ const isPagingSupported = (isTrigger: boolean, nodeType: string, manifest?: Oper
 };
 
 const getUploadChunk = (
-  definition: LogicAppsV2.OperationDefinition,
   isTrigger: boolean,
   nodeType: string,
-  manifest?: OperationManifest
+  manifest?: OperationManifest,
+  definition?: LogicAppsV2.OperationDefinition
 ): UploadChunk | undefined => {
   if (definition) {
     const runtimeConfiguration = getRuntimeConfiguration(definition);
@@ -703,7 +713,7 @@ export const isChunkedTransferModeSupported = (isTrigger: boolean, nodeType: str
   // add if check to implement swagger operation.
 };
 
-const getDownloadChunkSize = (definition: LogicAppsV2.OperationDefinition): number | undefined => {
+const getDownloadChunkSize = (definition?: LogicAppsV2.OperationDefinition): number | undefined => {
   return definition
     ? getObjectPropertyValue(getRuntimeConfiguration(definition), [
         Constants.SETTINGS.PROPERTY_NAMES.CONTENT_TRANSFER,
@@ -712,7 +722,7 @@ const getDownloadChunkSize = (definition: LogicAppsV2.OperationDefinition): numb
     : undefined;
 };
 
-const getTrackedProperties = (definition: LogicAppsV2.ActionDefinition, isTrigger: boolean, manifest?: OperationManifest): any => {
+const getTrackedProperties = (isTrigger: boolean, manifest?: OperationManifest, definition?: LogicAppsV2.ActionDefinition): any => {
   const supported = areTrackedPropertiesSupported(isTrigger, manifest);
   return supported && definition ? getPropertyValue(definition as any, 'trackedProperties') : undefined;
 };
@@ -726,7 +736,7 @@ const areTrackedPropertiesSupported = (isTrigger: boolean, manifest?: OperationM
   return !isTrigger;
 };
 
-const getSecureInputsSetting = (definition: LogicAppsV2.OperationDefinition): boolean => {
+const getSecureInputsSetting = (definition?: LogicAppsV2.OperationDefinition): boolean => {
   if (definition) {
     const secureData = getObjectPropertyValue(getRuntimeConfiguration(definition), [Constants.SETTINGS.PROPERTY_NAMES.SECURE_DATA]);
     return secureData && secureData.properties.indexOf(Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.INPUTS) > -1;
@@ -801,7 +811,7 @@ const isOutputsPropertySupportedInSecureDataSetting = (nodeType: string, manifes
   }
 };
 
-const getSecureOutputsSetting = (definition: LogicAppsV2.OperationDefinition): boolean => {
+const getSecureOutputsSetting = (definition?: LogicAppsV2.OperationDefinition): boolean => {
   if (definition) {
     const secureData = getObjectPropertyValue(getRuntimeConfiguration(definition), [Constants.SETTINGS.PROPERTY_NAMES.SECURE_DATA]);
     return secureData && secureData.properties.indexOf(Constants.SETTINGS.SECURE_DATA_PROPERTY_NAMES.OUTPUTS) > -1;
@@ -810,7 +820,7 @@ const getSecureOutputsSetting = (definition: LogicAppsV2.OperationDefinition): b
   return false;
 };
 
-const getConditionExpressions = (definition: LogicAppsV2.TriggerDefinition | undefined): string[] | undefined => {
+const getConditionExpressions = (definition?: LogicAppsV2.TriggerDefinition): string[] | undefined => {
   // NOTE: Operation definitions do not exist for newly added operations.
   if (!definition) {
     return undefined;
@@ -830,7 +840,7 @@ const getConditionExpressions = (definition: LogicAppsV2.TriggerDefinition | und
   return conditions.map((condition) => condition.expression as string);
 };
 
-const getRunAfter = (definition: LogicAppsV2.ActionDefinition | undefined): GraphEdge[] => {
+const getRunAfter = (definition?: LogicAppsV2.ActionDefinition): GraphEdge[] => {
   const graphEdges = [];
   if (definition?.runAfter) {
     for (const [predecessorId, statuses] of Object.entries(definition.runAfter)) {
