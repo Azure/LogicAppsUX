@@ -72,6 +72,14 @@ export const schemaSlice = createSlice({
       });
       state.currentInputNodes = uniqueNodes;
     },
+    toggleInputNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
+      const existingNode = state.currentInputNodes.find((currentNode) => currentNode.key === action.payload.key);
+      if (existingNode) {
+        state.currentInputNodes = state.currentInputNodes.filter((currentNode) => currentNode.key !== action.payload.key);
+      } else {
+        state.currentInputNodes.push(action.payload);
+      }
+    },
     setCurrentOutputNode: (state, action: PayloadAction<SchemaNodeExtended | undefined>) => {
       state.currentOutputNode = action.payload;
     },
@@ -86,6 +94,7 @@ export const {
   setAvailableSchemas,
   setCurrentInputNodes,
   addCurrentInputNodes,
+  toggleInputNode,
   setCurrentOutputNode,
 } = schemaSlice.actions;
 

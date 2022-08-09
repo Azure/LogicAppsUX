@@ -57,6 +57,7 @@ export interface BuiltInOperation {
   };
   description: string;
   operationType: 'serviceProvider' | string;
+  operationKind?: string;
   summary: string;
   brandColor: string;
   visibility: string;

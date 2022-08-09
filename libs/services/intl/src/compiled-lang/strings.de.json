@@ -606,7 +606,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Schaltfläche zum Hinzufügen dynamischer Inhalte, wenn TokenPicker ausgeblendet ist"
     }
   ],
   "4vcnOA": [
@@ -1371,6 +1371,20 @@
       "value": "Status"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Ungültiges „Aufteilung auf“-Format in „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1399,6 +1413,12 @@
     {
       "type": 0,
       "value": "Gibt TRUE zurück, wenn die Parameter FALSE sind."
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1452,7 +1472,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Schaltfläche zum Hinzufügen von dynamischem Inhalt, wenn TokenPicker angezeigt ist"
     }
   ],
   "HXLutF": [
@@ -1705,10 +1725,30 @@
       "value": "Warnung"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
       "value": "Wird erstellt..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Ungültiger Typ des „Aufteilung auf“-Werts „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“. „Aufteilung auf“ nicht in Array."
     }
   ],
   "LS8rfZ": [
@@ -2512,7 +2552,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Bitte geben Sie ein gültiges Wörterbuch ein"
     }
   ],
   "WS9kXD": [
@@ -3265,6 +3305,20 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Ungültiger „Aufteilung auf“-Wert „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“. Er kann nicht in den Ausgaben gefunden werden."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3361,6 +3415,12 @@
     {
       "type": 0,
       "value": "Konvertiert eine Zeichenfolge anhand der Groß-/Kleinschreibregeln der invarianten Kultur in Großbuchstaben."
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamischer Inhalt"
     }
   ],
   "iJOIca": [
@@ -3678,7 +3738,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Bitte geben Sie einen gültigen Array ein"
     }
   ],
   "lgs5sf": [
@@ -3751,6 +3811,12 @@
     {
       "type": 0,
       "value": "Durch diese Einstellung schließen Logik-Apps keine Workflow-Metadatenheader in ausgehenden Anforderungen ein."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -4153,6 +4219,12 @@
       "value": "Gibt eine URI-codierte Darstellung eines Werts zurück."
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Ausdruck"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4373,6 +4445,12 @@
     {
       "type": 0,
       "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Stunden hinzu."
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Dynamischen Inhalt durchsuchen"
     }
   ],
   "uZH8Qs": [

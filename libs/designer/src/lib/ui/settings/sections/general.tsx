@@ -1,9 +1,13 @@
 import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandler } from '..';
 import constants from '../../../common/constants';
+import type { RootState } from '../../../core';
+import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
+import { getSplitOnOptions } from '../../../core/utils/outputs';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
 import type { DropdownSelectionChangeHandler, ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
 export interface GeneralSectionProps extends SectionProps {
   onConcurrencyToggle: ToggleHandler;
@@ -33,6 +37,8 @@ export const General = ({
   onHeaderClick,
 }: GeneralSectionProps): JSX.Element => {
   const intl = useIntl();
+  const nodeId = useSelectedNodeId();
+  const nodeOutputs = useSelector((state: RootState) => state.operations.outputParameters[nodeId]);
   const generalTitle = intl.formatMessage({
     defaultMessage: 'General',
     description: 'title for general setting section',
@@ -131,7 +137,7 @@ export const General = ({
         settingProp: {
           id: 'arrayValue',
           readOnly,
-          items: [splitOn?.value?.value ? { title: splitOn.value.value, value: splitOn.value.value } : { title: '', value: '' }],
+          items: getSplitOnOptions(nodeOutputs).map((option) => ({ title: option, value: option })),
           selectedValue: splitOn?.value?.value,
           onSelectionChanged: onSplitOnSelectionChanged,
           customLabel: () => arrayDropdownLabel,
