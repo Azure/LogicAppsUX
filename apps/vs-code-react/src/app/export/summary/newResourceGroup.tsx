@@ -29,6 +29,16 @@ export const NewResourceGroup: React.FC = () => {
     }),
   };
 
+  const getErrorMessage = (value: string): string => {
+    return value.length < 3 ? '' : `Input value length must be less than 3. Actual length is ${value.length}.`;
+  };
+
+  const getErrorMessagePromise = (value: string): Promise<string> => {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(getErrorMessage(value)), 5000);
+    });
+  };
+
   const linkClassName = 'msla-export-summary-connections-new-resource';
 
   return (
@@ -48,7 +58,7 @@ export const NewResourceGroup: React.FC = () => {
           <Text variant="medium" block>
             {intlText.RESOURCE_GROUP_DESCRIPTION}
           </Text>
-          <TextField required label={intlText.NAME} />
+          <TextField required label={intlText.NAME} onGetErrorMessage={getErrorMessagePromise} autoFocus={true} />
           <PrimaryButton className="msla-export-summary-connections-button" text={intlText.OK} ariaLabel={intlText.OK} />
           <PrimaryButton className="msla-export-summary-connections-button" text={intlText.CANCEL} ariaLabel={intlText.CANCEL} />
         </Callout>
