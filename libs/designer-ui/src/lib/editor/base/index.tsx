@@ -1,4 +1,4 @@
-import TokenPicker from '../../tokenpicker';
+import { GetTokenPicker } from '../../tokenpicker/helper';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
@@ -140,6 +140,10 @@ export const BaseEditor = ({
     setShowTokenPicker(!showTokenPicker);
   };
 
+  const onClickTokenPicker = (b: boolean) => {
+    setInTokenPicker(b);
+  };
+
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className={className ?? 'msla-editor-container'} id={editorId}>
@@ -172,9 +176,9 @@ export const BaseEditor = ({
             setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}
-        {(showTokenPickerButton && showTokenPicker) || inTokenPicker ? (
-          <TokenPicker editorId={editorId} labelId={labelId} setInTokenPicker={setInTokenPicker} tokenGroup={tokenGroup} />
-        ) : null}
+        {(showTokenPickerButton && showTokenPicker) || inTokenPicker
+          ? GetTokenPicker(editorId, labelId, tokenGroup, onClickTokenPicker)
+          : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
         <InsertTokenNode />

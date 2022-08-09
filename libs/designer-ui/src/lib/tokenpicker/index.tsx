@@ -4,7 +4,6 @@ import { TokenPickerSearch } from './tokenpickersearch/tokenpickersearch';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
-import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 
 export type { Token as OutputToken } from './models/token';
@@ -19,7 +18,7 @@ export interface TokenPickerProps {
   editorId: string;
   labelId: string;
   tokenGroup?: TokenGroup[];
-  setInTokenPicker?: Dispatch<SetStateAction<boolean>>;
+  setInTokenPicker?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
 }
 export default function TokenPicker({

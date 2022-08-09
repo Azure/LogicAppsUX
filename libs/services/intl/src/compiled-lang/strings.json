@@ -1711,6 +1711,12 @@
       "value": "Returns the day of week component of a string timestamp"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -2599,6 +2605,12 @@
       "value": "Retry"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2727,6 +2739,12 @@
     {
       "type": 0,
       "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
+    }
+  ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
     }
   ],
   "YoQara": [
@@ -3809,6 +3827,12 @@
     {
       "type": 0,
       "value": "Required. The value that is converted to a floating-point number."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [

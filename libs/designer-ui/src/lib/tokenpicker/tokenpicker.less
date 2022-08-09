@@ -2,7 +2,6 @@
   max-height: 550px;
   min-height: 400px;
   width: 400px;
-  font-size: 12px;
 }
 
 .msla-token-picker {
@@ -150,5 +149,39 @@
         }
       }
     }
+  }
+}
+
+.msla-token-picker-no-matches {
+  font-family: @font-family;
+  padding: 0 12px;
+
+  div {
+    margin: 1em 0;
+
+    &.msla-token-picker-no-results {
+      font-weight: bold;
+    }
+
+    &.msla-token-picker-no-matches-header {
+      color: lightslategray;
+      text-transform: uppercase;
+    }
+
+    &.msla-token-picker-no-matches-tip {
+      img {
+        float: right;
+        margin: 3px 0 0 0;
+      }
+    }
+  }
+
+  hr {
+    color: #cac8c7;
+  }
+
+  img {
+    margin-right: 12px;
+    vertical-align: middle;
   }
 }
