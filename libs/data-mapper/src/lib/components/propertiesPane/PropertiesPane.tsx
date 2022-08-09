@@ -1,14 +1,17 @@
-import { InputSchemaCodeTab } from './tabComponents/InputSchemaCodeTab';
-import { InputSchemaPropertiesTab } from './tabComponents/InputSchemaPropertiesTab';
-import { OutputSchemaCodeTab } from './tabComponents/OutputSchemaCodeTab';
-import { OutputSchemaPropertiesTab } from './tabComponents/OutputSchemaPropertiesTab';
-import { OutputSchemaTestTab } from './tabComponents/OutputSchemaTestTab';
-import { CommandBarButton, IconButton, Separator, Stack, Text } from '@fluentui/react';
+import { ExpressionCodeTab } from './tabComponents/Expression/ExpressionCodeTab';
+import { ExpressionPropertiesTab } from './tabComponents/Expression/ExpressionPropertiesTab';
+import { InputSchemaNodeCodeTab } from './tabComponents/InputSchemaNode/InputSchemaNodeCodeTab';
+import { InputSchemaNodePropertiesTab } from './tabComponents/InputSchemaNode/InputSchemaNodePropertiesTab';
+import { OutputSchemaNodeCodeTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeCodeTab';
+import { OutputSchemaNodePropertiesTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodePropertiesTab';
+import { OutputSchemaNodeTestTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeTestTab';
+import { ActionButton, CommandBarButton, IconButton, Separator, Stack, Text } from '@fluentui/react';
 import { useEffect, useState } from 'react';
 
 enum PANEL_ITEM {
-  INPUT_SCHEMA = 0,
-  OUTPUT_SCHEMA = 1,
+  INPUT_SCHEMA_NODE = 0,
+  OUTPUT_SCHEMA_NODE = 1,
+  EXPRESSION = 2,
 }
 
 enum SELECTED_TAB {
@@ -17,52 +20,76 @@ enum SELECTED_TAB {
   TEST = 2,
 }
 
-// Consider using this as base styles, then appending selected styles if its selected
 const cmdBtnStyle = {
   border: 0,
   marginLeft: 16,
   height: 30,
   fontSize: 14,
+  borderBottom: 0, // You'd think border: 0 would do this...but nope
 };
 
 const selectedCmdBtnStyle = {
-  border: 0,
-  marginLeft: 16,
-  height: 30,
+  ...cmdBtnStyle,
   borderBottom: '2px solid #0F6CBD',
   fontWeight: 'bold',
-  fontSize: 14,
   backgroundColor: 'initial',
 };
 
+// TODO: waiting for more design/UX details before I dig myself into a deeper hole
+
 export const PropertiesPane = (): JSX.Element => {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [panelItem, setPanelItem] = useState(PANEL_ITEM.INPUT_SCHEMA);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [panelItem, setPanelItem] = useState(PANEL_ITEM.INPUT_SCHEMA_NODE);
   const [tabToDisplay, setTabToDisplay] = useState(SELECTED_TAB.PROPERTIES);
 
   const getPanelItemName = (): string | undefined => {
     switch (panelItem) {
-      case PANEL_ITEM.INPUT_SCHEMA:
-        return 'Input schema';
-      case PANEL_ITEM.OUTPUT_SCHEMA:
-        return 'Output schema';
+      case PANEL_ITEM.INPUT_SCHEMA_NODE:
+        return 'Input schema node';
+      case PANEL_ITEM.OUTPUT_SCHEMA_NODE:
+        return 'Output schema node';
+      case PANEL_ITEM.EXPRESSION:
+        return 'Expression';
       default:
-        console.log('Panel item hasnt been chosen.');
+        console.error("Panel item hasn't been chosen.");
         return;
     }
   };
 
-  const getSelectedContent = (): JSX.Element | undefined => {
+  const getPropertiesTab = (panelItem: PANEL_ITEM): JSX.Element => {
+    switch (panelItem) {
+      case PANEL_ITEM.INPUT_SCHEMA_NODE:
+        return <InputSchemaNodePropertiesTab />;
+      case PANEL_ITEM.OUTPUT_SCHEMA_NODE:
+        return <OutputSchemaNodePropertiesTab />;
+      case PANEL_ITEM.EXPRESSION:
+        return <ExpressionPropertiesTab />;
+    }
+  };
+
+  const getCodeTab = (panelItem: PANEL_ITEM): JSX.Element => {
+    switch (panelItem) {
+      case PANEL_ITEM.INPUT_SCHEMA_NODE:
+        return <InputSchemaNodeCodeTab />;
+      case PANEL_ITEM.OUTPUT_SCHEMA_NODE:
+        return <OutputSchemaNodeCodeTab />;
+      case PANEL_ITEM.EXPRESSION:
+        return <ExpressionCodeTab />;
+    }
+  };
+
+  const getTestTab = (): JSX.Element => {
+    return <OutputSchemaNodeTestTab />;
+  };
+
+  const getSelectedContent = (): JSX.Element => {
     switch (tabToDisplay) {
       case SELECTED_TAB.PROPERTIES:
-        return panelItem === PANEL_ITEM.INPUT_SCHEMA ? <InputSchemaPropertiesTab /> : <OutputSchemaPropertiesTab />;
+        return getPropertiesTab(panelItem);
       case SELECTED_TAB.CODE:
-        return panelItem === PANEL_ITEM.INPUT_SCHEMA ? <InputSchemaCodeTab /> : <OutputSchemaCodeTab />;
+        return getCodeTab(panelItem);
       case SELECTED_TAB.TEST:
-        return <OutputSchemaTestTab />;
-      default:
-        console.log('Content tab hasnt been chosen.');
-        return;
+        return getTestTab(); // Only retrieved if OutputSchemaNode
     }
   };
 
@@ -75,7 +102,7 @@ export const PropertiesPane = (): JSX.Element => {
     <div>
       <CommandBarButton
         text="TEST: Change panel item"
-        onClick={() => setPanelItem(panelItem === PANEL_ITEM.INPUT_SCHEMA ? PANEL_ITEM.OUTPUT_SCHEMA : PANEL_ITEM.INPUT_SCHEMA)}
+        onClick={() => setPanelItem(panelItem === PANEL_ITEM.EXPRESSION ? PANEL_ITEM.INPUT_SCHEMA_NODE : panelItem + 1)}
       />
       <Stack horizontal verticalAlign="center">
         <IconButton
@@ -90,26 +117,23 @@ export const PropertiesPane = (): JSX.Element => {
           {getPanelItemName()}
         </Text>
         <Separator vertical style={{ marginLeft: 13, marginRight: 20 }} />
-        <CommandBarButton
+        <ActionButton
           text="Properties"
           onClick={() => setTabToDisplay(SELECTED_TAB.PROPERTIES)}
           style={tabToDisplay === SELECTED_TAB.PROPERTIES ? selectedCmdBtnStyle : cmdBtnStyle}
         />
-        <CommandBarButton
+        <ActionButton
           text="Code"
           onClick={() => setTabToDisplay(SELECTED_TAB.CODE)}
           style={tabToDisplay === SELECTED_TAB.CODE ? selectedCmdBtnStyle : cmdBtnStyle}
         />
-        {panelItem === PANEL_ITEM.OUTPUT_SCHEMA && (
-          <CommandBarButton
+        {panelItem === PANEL_ITEM.OUTPUT_SCHEMA_NODE && (
+          <ActionButton
             text="Test"
             onClick={() => setTabToDisplay(SELECTED_TAB.TEST)}
             style={tabToDisplay === SELECTED_TAB.TEST ? selectedCmdBtnStyle : cmdBtnStyle}
           />
         )}
-
-        {/*<ActionButton iconProps={{ iconName: 'Delete' }} />
-                <ActionButton iconProps={{ iconName: '' }} />*/}
       </Stack>
 
       {isExpanded && getSelectedContent()}
