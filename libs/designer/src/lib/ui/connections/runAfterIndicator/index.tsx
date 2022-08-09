@@ -1,7 +1,8 @@
 import { convertActionIDToTitleCase } from '../../../common/utilities/Utils';
 import { Text, TooltipHost, useTheme } from '@fluentui/react';
-import { RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
+import { RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
 import { EmptyTrafficLightDot, Failed, Skipped, Succeeded, TimedOut, TrafficLightDot } from '@microsoft/designer-ui';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface RunAfterIndicatorProps {
@@ -9,19 +10,23 @@ export interface RunAfterIndicatorProps {
   sourceNodeId: string;
 }
 
-interface DotProps {
-  enabled: boolean;
-  fill: string;
-}
-
 export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorProps): JSX.Element {
   const intl = useIntl();
   const { isInverted } = useTheme();
+  const themeName = isInverted ? 'dark' : 'light';
   const normalizedStatuses = statuses.map((status) => status.toUpperCase()) as RUN_AFTER_STATUS[];
-  const EmptyTrafficLight = <EmptyTrafficLightDot fill={isInverted ? '#323130' : '#fff'} />;
 
-  const Dot = (props: DotProps) => (
-    <div className="msla-run-after-dot">{props.enabled ? <TrafficLightDot fill={props.fill} /> : EmptyTrafficLight}</div>
+  const Dot = useCallback(
+    (props: { status: RUN_AFTER_STATUS }) => (
+      <div className="msla-run-after-dot">
+        {normalizedStatuses.includes(props.status) ? (
+          <TrafficLightDot fill={RUN_AFTER_COLORS[themeName][props.status]} />
+        ) : (
+          <EmptyTrafficLightDot fill={RUN_AFTER_COLORS[themeName]['EMPTY']} />
+        )}
+      </div>
+    ),
+    [normalizedStatuses, themeName]
   );
 
   const tooltipHeaderText = intl.formatMessage(
@@ -81,10 +86,10 @@ export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorP
   return (
     <TooltipHost content={tooltipContent}>
       <div className="msla-run-after-dot-container">
-        <Dot enabled={normalizedStatuses.includes(RUN_AFTER_STATUS.SUCCEEDED)} fill={isInverted ? '#92C353' : '#428000'} />
-        <Dot enabled={normalizedStatuses.includes(RUN_AFTER_STATUS.TIMEDOUT)} fill={isInverted ? '#FCE100' : '#DB7500'} />
-        <Dot enabled={normalizedStatuses.includes(RUN_AFTER_STATUS.SKIPPED)} fill={isInverted ? '#A19F9D' : '#605E5C'} />
-        <Dot enabled={normalizedStatuses.includes(RUN_AFTER_STATUS.FAILED)} fill={isInverted ? '#F1707B' : '#A4262C'} />
+        <Dot status={RUN_AFTER_STATUS.SUCCEEDED} />
+        <Dot status={RUN_AFTER_STATUS.TIMEDOUT} />
+        <Dot status={RUN_AFTER_STATUS.SKIPPED} />
+        <Dot status={RUN_AFTER_STATUS.FAILED} />
       </div>
     </TooltipHost>
   );

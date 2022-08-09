@@ -120,6 +120,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
         markerEnd="url(#arrow-end)"
       />
 
+      {/* ADD ACTION / BRANCH BUTTONS */}
       {!readOnly ? (
         <>
           {/* TOP BUTTON */}
@@ -154,20 +155,20 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               child={target}
             />
           )}
-
-          {/* RUN AFTER INDICATOR */}
-          {showRunAfter ? (
-            <foreignObject
-              id="msla-run-after-traffic-light"
-              width={runAfterWidth}
-              height={runAfterHeight}
-              x={targetX - runAfterWidth / 2 + (numRunAfters - 1 - raIndex * 2) * (runAfterWidth / 2 + 4)}
-              y={targetY - runAfterHeight}
-            >
-              <RunAfterIndicator statuses={runAfterStatuses} sourceNodeId={source} />
-            </foreignObject>
-          ) : null}
         </>
+      ) : null}
+
+      {/* RUN AFTER INDICATOR */}
+      {showRunAfter ? (
+        <foreignObject
+          id="msla-run-after-traffic-light"
+          width={runAfterWidth}
+          height={runAfterHeight}
+          x={targetX - runAfterWidth / 2 + (numRunAfters - 1 - raIndex * 2) * (runAfterWidth / 2 + 4)}
+          y={targetY - runAfterHeight}
+        >
+          <RunAfterIndicator statuses={runAfterStatuses} sourceNodeId={source} />
+        </foreignObject>
       ) : null}
     </>
   );
