@@ -1,5 +1,6 @@
 import { OverviewCommandBar } from './overviewcommandbar';
-import { OverviewProperties, OverviewPropertiesProps } from './overviewproperties';
+import type { OverviewPropertiesProps } from './overviewproperties';
+import { OverviewProperties } from './overviewproperties';
 import { RunHistory } from './runhistory';
 import type { Run, RunDisplayItem, RunError } from './types';
 import { isRunError, mapToRunItem } from './utils';
@@ -161,4 +162,5 @@ export const Overview: React.FC<OverviewProps> = ({
   );
 };
 
-export { isRunError, OverviewPropertiesProps };
+export { isRunError };
+export type { OverviewPropertiesProps };
