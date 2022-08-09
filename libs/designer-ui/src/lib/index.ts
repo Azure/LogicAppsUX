@@ -70,4 +70,5 @@ export * from './tokenpicker';
 export * from './utils';
 export * from './workflow/schema/generator';
 // export * from './workflowparameters';
-export { FunctionGroupDefinitions as TemplateFunctions, FunctionDefinition } from './workflow/languageservice/templatefunctions';
+export { FunctionGroupDefinitions as TemplateFunctions } from './workflow/languageservice/templatefunctions';
+export type { FunctionDefinition } from './workflow/languageservice/templatefunctions';

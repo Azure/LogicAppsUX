@@ -1,6 +1,8 @@
 import type { ButtonContainerProps } from './ButtonContainer';
 import { ButtonContainer } from './ButtonContainer';
+import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
 
 export default {
   component: ButtonContainer,
@@ -11,14 +13,20 @@ export const Standard: ComponentStory<typeof ButtonContainer> = (args: ButtonCon
 Standard.args = {
   buttons: [
     {
-      iconProps: { iconName: 'BranchFork2' },
-      title: 'Toolbox',
-      ariaLabel: 'Toolbox',
+      tooltip: 'Toolbox',
+      regularIcon: CubeTree20Regular,
+      filledIcon: CubeTree20Filled,
+      onClick: () => {
+        // Empty
+      },
     },
     {
-      iconProps: { iconName: 'Variable' },
-      title: 'Function',
-      ariaLabel: 'Function',
+      tooltip: 'Function',
+      regularIcon: MathFormula20Regular,
+      filledIcon: MathFormula20Filled,
+      onClick: () => {
+        // Empty
+      },
     },
   ],
   horizontal: true,
@@ -30,14 +38,20 @@ export const Vertical: ComponentStory<typeof ButtonContainer> = (args: ButtonCon
 Vertical.args = {
   buttons: [
     {
-      iconProps: { iconName: 'BranchFork2' },
-      title: 'Toolbox',
-      ariaLabel: 'Toolbox',
+      tooltip: 'Toolbox',
+      regularIcon: CubeTree20Regular,
+      filledIcon: CubeTree20Filled,
+      onClick: () => {
+        // Empty
+      },
     },
     {
-      iconProps: { iconName: 'Variable' },
-      title: 'Function',
-      ariaLabel: 'Function',
+      tooltip: 'Function',
+      regularIcon: MathFormula20Regular,
+      filledIcon: MathFormula20Filled,
+      onClick: () => {
+        // Empty
+      },
     },
   ],
   horizontal: false,
