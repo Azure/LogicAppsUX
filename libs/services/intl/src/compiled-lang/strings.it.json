@@ -1374,7 +1374,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "Il formato dell'opzione SplitOn in {splitOn} non è valido."
     }
   ],
   "G0XYrd": [
@@ -1405,6 +1405,12 @@
     {
       "type": 0,
       "value": "Restituisce true se i parametri sono false"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1711,6 +1717,12 @@
       "value": "Avviso"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1720,7 +1732,7 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Tipo non valido per il valore SplitOn {splitOn}. Il valore SplitOn non è presente nella matrice."
     }
   ],
   "LS8rfZ": [
@@ -3284,7 +3296,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Il valore SplitOn {splitOn} non è valido. Non è stato trovato negli output."
     }
   ],
   "gu9o9z": [
@@ -3771,6 +3783,12 @@
     {
       "type": 0,
       "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella richiesta in uscita."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

@@ -1374,6 +1374,12 @@
       "value": "매개 변수가 false인 경우 true를 반환합니다."
     }
   ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -1665,6 +1671,12 @@
     {
       "type": 0,
       "value": "경고"
+    }
+  ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
     }
   ],
   "LMB8am": [
@@ -3693,6 +3705,12 @@
     {
       "type": 0,
       "value": "Logic Apps가 나가는 요청에 워크플로 메타데이터 헤더를 포함하지 않도록 제한합니다."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

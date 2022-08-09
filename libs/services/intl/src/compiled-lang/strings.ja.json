@@ -1341,7 +1341,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "{splitOn} の形式の分割が無効です。"
     }
   ],
   "G0XYrd": [
@@ -1372,6 +1372,12 @@
     {
       "type": 0,
       "value": "パラメーターが false の場合は true を返します"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1667,6 +1673,12 @@
       "value": "警告"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1676,7 +1688,7 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "値 {splitOn} の分割の種類が無効です。分割が配列にありません。"
     }
   ],
   "LS8rfZ": [
@@ -3217,7 +3229,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "値 {splitOn} の分割が無効です。出力で見つかりません。"
     }
   ],
   "gu9o9z": [
@@ -3693,6 +3705,12 @@
     {
       "type": 0,
       "value": "送信要求にワークフロー メタデータ ヘッダーを含めないように Logic Apps を制限します。"
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

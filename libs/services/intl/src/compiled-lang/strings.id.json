@@ -1374,6 +1374,12 @@
       "value": "Menampilkan true jika parameter salah"
     }
   ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -1665,6 +1671,12 @@
     {
       "type": 0,
       "value": "Peringatan"
+    }
+  ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
     }
   ],
   "LMB8am": [
@@ -3697,6 +3709,12 @@
     {
       "type": 0,
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
