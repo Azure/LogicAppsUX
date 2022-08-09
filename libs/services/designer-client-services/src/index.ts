@@ -6,6 +6,7 @@ export * from './lib/logger';
 export * from './lib/logging/devLogger';
 export * from './lib/logging/logEntry';
 export { StandardConnectionService } from './lib/standard/connection';
-export { StandardOperationManifestService, StandardOperationManifestServiceOptions } from './lib/standard/operationmanifest';
+export { StandardOperationManifestService } from './lib/standard/operationmanifest';
+export type { StandardOperationManifestServiceOptions } from './lib/standard/operationmanifest';
 export { StandardSearchService } from './lib/standard/search';
 export { frequencyValues } from './lib/standard/manifests/schedule';
