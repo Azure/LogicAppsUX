@@ -1440,7 +1440,15 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "Недопустимый формат разделения в \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "G0XYrd": [
@@ -1471,6 +1479,12 @@
     {
       "type": 0,
       "value": "Возвращает значение true, если параметры имеют значение false"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1799,6 +1813,12 @@
       "value": "Предупреждение"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1808,7 +1828,15 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Недопустимый тип значения разделения \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\". Разделение отсутствует в массиве."
     }
   ],
   "LS8rfZ": [
@@ -3386,7 +3414,15 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Недопустимое значение разделения \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\". Не удается найти его в выходных данных."
     }
   ],
   "gu9o9z": [
@@ -3911,6 +3947,12 @@
     {
       "type": 0,
       "value": "Запрет на включение в исходящий запрос заголовков метаданных по рабочим процессам в Logic Apps."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

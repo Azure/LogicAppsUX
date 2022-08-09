@@ -1374,7 +1374,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "Divisão inválida no formato em {splitOn}."
     }
   ],
   "G0XYrd": [
@@ -1405,6 +1405,12 @@
     {
       "type": 0,
       "value": "Retornará true se os parâmetros forem false"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1711,6 +1717,12 @@
       "value": "Aviso"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1720,7 +1732,7 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Tipo inválido na divisão do valor {splitOn}. SplitOn não está na matriz."
     }
   ],
   "LS8rfZ": [
@@ -3276,7 +3288,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Divisão inválida no valor {splitOn}. Não foi possível localizar nas saídas."
     }
   ],
   "gu9o9z": [
@@ -3763,6 +3775,12 @@
     {
       "type": 0,
       "value": "Limite os Aplicativos Lógicos para não incluir cabeçalhos de metadados de fluxo de trabalho na solicitação de saída."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
