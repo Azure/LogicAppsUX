@@ -219,3 +219,10 @@ export const SUBGRAPH_TYPES: Record<string, SubgraphType> = {
   SWITCH_ADD_CASE: 'SWITCH_ADD_CASE',
   UNTIL_DO: 'UNTIL_DO',
 };
+
+export enum RUN_AFTER_STATUS {
+  SUCCEEDED = 'SUCCEEDED',
+  FAILED = 'FAILED',
+  SKIPPED = 'SKIPPED',
+  TIMEDOUT = 'TIMEDOUT',
+}

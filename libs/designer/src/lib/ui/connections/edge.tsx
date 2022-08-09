@@ -2,24 +2,41 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
-import { RunAfterIndicator, RUN_AFTER_STATUS } from './runAfterIndicator';
+import { RunAfterIndicator } from './runAfterIndicator';
+import { RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import React, { useMemo } from 'react';
 import { getEdgeCenter, getSmoothStepPath } from 'react-flow-renderer';
 import type { EdgeProps } from 'react-flow-renderer';
+
+interface EdgeContentProps {
+  x: number;
+  y: number;
+  graphId: string;
+  parent: string | undefined;
+  child: string | undefined;
+}
+
+const EdgeContent = (props: EdgeContentProps) => (
+  <foreignObject
+    width={foreignObjectWidth}
+    height={foreignObjectHeight}
+    x={props.x}
+    y={props.y}
+    className="edgebutton-foreignobject"
+    requiredExtensions="http://www.w3.org/1999/xhtml"
+  >
+    <div style={{ padding: '4px' }}>
+      <DropZone graphId={props.graphId} parent={props.parent} child={props.child} />
+    </div>
+  </foreignObject>
+);
 
 export interface LogicAppsEdgeProps {
   id: string;
   parent: string;
   child: string;
   elkEdge?: ElkExtendedEdge;
-}
-
-interface EdgeContentProps {
-  x: number;
-  y: number;
-  parent: string | undefined;
-  child: string | undefined;
 }
 
 const foreignObjectHeight = 32;
@@ -62,7 +79,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     [operationData?.runAfter]
   );
   const numRunAfters = Object.keys(filteredRunAfters).length;
-  const raIndex = Object.entries(filteredRunAfters).findIndex(([key]) => key === source);
+  const raIndex = useMemo(() => Object.entries(filteredRunAfters).findIndex(([key]) => key === source), [filteredRunAfters, source]);
 
   const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
   const showRunAfter = runAfterStatuses.length;
@@ -85,21 +102,6 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const multipleSources = Object.keys(operationData?.runAfter ?? {}).length > 1;
   const multipleTargets = edgeTargets.length > 1;
   const onlyEdge = !multipleSources && !multipleTargets;
-
-  const EdgeContent = (props: EdgeContentProps) => (
-    <foreignObject
-      width={foreignObjectWidth}
-      height={foreignObjectHeight}
-      x={props.x}
-      y={props.y}
-      className="edgebutton-foreignobject"
-      requiredExtensions="http://www.w3.org/1999/xhtml"
-    >
-      <div style={{ padding: '4px' }}>
-        <DropZone graphId={graphId} parent={props.parent} child={props.child} />
-      </div>
-    </foreignObject>
-  );
 
   return (
     <>
@@ -125,6 +127,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
             <EdgeContent
               x={sourceX - foreignObjectWidth / 2}
               y={sourceY + 28 - foreignObjectHeight / 2}
+              graphId={graphId}
               parent={source}
               child={!multipleTargets ? target : undefined}
             />
@@ -135,6 +138,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
             <EdgeContent
               x={edgeCenterX - foreignObjectWidth / 2}
               y={edgeCenterY - foreignObjectHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
+              graphId={graphId}
               parent={source}
               child={target}
             />
@@ -145,6 +149,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
             <EdgeContent
               x={targetX - foreignObjectWidth / 2}
               y={targetY - 32 - foreignObjectHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
+              graphId={graphId}
               parent={!multipleSources ? source : undefined}
               child={target}
             />

@@ -1,14 +1,8 @@
 import { convertActionIDToTitleCase } from '../../../common/utilities/Utils';
 import { Text, TooltipHost, useTheme } from '@fluentui/react';
+import { RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
 import { EmptyTrafficLightDot, Failed, Skipped, Succeeded, TimedOut, TrafficLightDot } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
-
-export enum RUN_AFTER_STATUS {
-  SUCCEEDED = 'SUCCEEDED',
-  FAILED = 'FAILED',
-  SKIPPED = 'SKIPPED',
-  TIMEDOUT = 'TIMEDOUT',
-}
 
 export interface RunAfterIndicatorProps {
   statuses: string[];
