@@ -1489,6 +1489,12 @@
       "value": "Zwraca wartość true, jeśli parametry mają wartość false"
     }
   ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -1813,6 +1819,12 @@
     {
       "type": 0,
       "value": "Ostrzeżenie"
+    }
+  ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
     }
   ],
   "LMB8am": [
@@ -3927,6 +3939,12 @@
     {
       "type": 0,
       "value": "Ogranicz aplikacje usługi Logic Apps, aby nie dołączały nagłówków metadanych przepływu pracy do żądania wychodzącego."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

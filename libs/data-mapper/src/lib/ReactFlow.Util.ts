@@ -1,5 +1,5 @@
-import { SchemaTypes } from './components/configPanel/EditorConfigPanel';
 import type { SchemaNodeExtended } from './models/Schema';
+import { SchemaTypes } from './models/Schema';
 import type { Node as ReactFlowNode } from 'react-flow-renderer';
 import { Position } from 'react-flow-renderer';
 

@@ -1341,7 +1341,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "在 {splitOn} 中的格式分割無效。"
     }
   ],
   "G0XYrd": [
@@ -1372,6 +1372,12 @@
     {
       "type": 0,
       "value": "若參數皆為 False，則傳回 True"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1667,6 +1673,12 @@
       "value": "警告"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1676,7 +1688,7 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "在值 {splitOn} 上的分割類型無效，分割不在陣列中。"
     }
   ],
   "LS8rfZ": [
@@ -3221,7 +3233,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "值 {splitOn} 的分割無效，在輸出中找不到。"
     }
   ],
   "gu9o9z": [
@@ -3697,6 +3709,12 @@
     {
       "type": 0,
       "value": "限制 Logic Apps 不要在傳出要求中包含工作流程中繼資料標頭。"
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

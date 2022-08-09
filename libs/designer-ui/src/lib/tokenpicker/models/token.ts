@@ -24,3 +24,11 @@ export interface Token {
     functionArguments?: string[]; //For now, the only allowed values are 'variables' and 'parameters'.
   };
 }
+
+export interface TokenGroup {
+  id: string;
+  label: string;
+  tokens: Token[];
+  hasAdvanced?: boolean;
+  showAdvanced?: boolean;
+}
