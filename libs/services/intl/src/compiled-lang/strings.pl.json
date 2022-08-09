@@ -644,7 +644,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Przycisk dodawania zawartości dynamicznej, jeśli platforma TokenPicker jest ukryta"
     }
   ],
   "4vcnOA": [
@@ -1453,6 +1453,12 @@
       "value": "Stan"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1481,6 +1487,12 @@
     {
       "type": 0,
       "value": "Zwraca wartość true, jeśli parametry mają wartość false"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1534,7 +1546,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Przycisk dodawania zawartości dynamicznej, jeśli platforma TokenPicker jest wyświetlana"
     }
   ],
   "HXLutF": [
@@ -1809,10 +1821,22 @@
       "value": "Ostrzeżenie"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
       "value": "Tworzenie w toku..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -3387,6 +3411,12 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3518,7 +3548,7 @@
   "iEy9pT": [
     {
       "type": 0,
-      "value": "Dynamic content"
+      "value": "Zawartość dynamiczna"
     }
   ],
   "iJOIca": [
@@ -3909,6 +3939,12 @@
     {
       "type": 0,
       "value": "Ogranicz aplikacje usługi Logic Apps, aby nie dołączały nagłówków metadanych przepływu pracy do żądania wychodzącego."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -4336,7 +4372,7 @@
   "rjyBPU": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Wyrażenie"
     }
   ],
   "rstpaK": [
@@ -4564,7 +4600,7 @@
   "uXJdAh": [
     {
       "type": 0,
-      "value": "Search dynamic content"
+      "value": "Wyszukaj zawartość dynamiczną"
     }
   ],
   "uZH8Qs": [

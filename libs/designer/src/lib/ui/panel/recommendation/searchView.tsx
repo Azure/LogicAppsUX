@@ -106,17 +106,18 @@ const initializeOperationDetails = async (
   if (operationManifestService.isSupported(operationType)) {
     const manifest = await getOperationManifest(operationInfo);
 
-    const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
-    const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest);
+    // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
     const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest);
+    const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
+    const nodeOutputs = getOutputParametersFromManifest(manifest, false /* isTrigger */, nodeInputs, settings.splitOn?.value?.value);
 
     dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, settings }]));
 
-    // TODO (Danielle) - Please comment out the below part when state has updated graph and nodesMetadata.
+    // TODO(Danielle) - Please comment out the below part when state has updated graph and nodesMetadata.
     // We need the graph and nodesMetadata updated with the newly added node for token dependencies to be calculated.
     // addTokensAndVariables(nodeId, operationType, { id: nodeId, nodeInputs, nodeOutputs, settings, manifest }, rootState, dispatch);
   } else {
-    // swagger case here
+    // TODO - swagger case here
   }
 };
 

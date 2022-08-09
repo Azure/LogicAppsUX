@@ -1,11 +1,14 @@
 import constants from '../../common/constants';
+import { updateOutputsAndTokens } from '../../core/actions/bjsworkflow/initialize';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { useOperationManifest } from '../../core/state/selectors/actionMetadataSelector';
 import { setExpandedSections } from '../../core/state/settingSlice';
 import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
+import { isRootNodeInGraph } from '../../core/utils/graph';
 import { DataHandling } from './sections/datahandling';
 import type { DataHandlingSectionProps } from './sections/datahandling';
 import { General } from './sections/general';
@@ -18,6 +21,7 @@ import type { SecuritySectionProps } from './sections/security';
 import { Tracking } from './sections/tracking';
 import type { TrackingSectionProps } from './sections/tracking';
 import type { IDropdownOption } from '@fluentui/react';
+import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import { equals, isObject } from '@microsoft-logic-apps/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -49,11 +53,21 @@ export const SettingsPanel = (): JSX.Element => {
 
 function GeneralSettings(): JSX.Element | null {
   const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelectedNodeId(),
-    { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions } = useSelector(
-      (state: RootState) => state.operations.settings[nodeId] ?? {}
-    );
+  const nodeId = useSelectedNodeId();
+  const { expandedSections, isTrigger, nodeInputs, operationInfo, settings } = useSelector((state: RootState) => {
+    return {
+      expandedSections: state.settings.expandedSections,
+      isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
+      nodeInputs: state.operations.inputParameters[nodeId],
+      operationInfo: state.operations.operationInfo[nodeId],
+      settings: state.operations.settings[nodeId],
+    };
+  });
+  const { data: manifest } = useOperationManifest(operationInfo);
+
+  const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions } = useSelector(
+    (state: RootState) => state.operations.settings[nodeId] ?? {}
+  );
 
   const onConcurrencyToggle = (checked: boolean): void => {
     // TODO (14427339): Setting Validation
@@ -87,20 +101,27 @@ function GeneralSettings(): JSX.Element | null {
 
   const onSplitOnToggle = (checked: boolean): void => {
     // TODO (14427339): Setting Validation
+    const splitOnSetting = {
+      isSupported: !!splitOn?.isSupported,
+      value: {
+        enabled: checked,
+        value: splitOn?.value?.value ?? undefined,
+      },
+    };
+
     dispatch(
       updateNodeSettings({
         id: nodeId,
         settings: {
-          splitOn: {
-            isSupported: !!splitOn?.isSupported,
-            value: {
-              enabled: checked,
-              value: splitOn?.value?.value ?? undefined,
-            },
-          },
+          splitOn: splitOnSetting,
         },
       })
     );
+
+    updateOutputsAndTokens(nodeId, operationInfo.type, dispatch, manifest as OperationManifest, isTrigger, nodeInputs, {
+      ...settings,
+      splitOn: splitOnSetting,
+    });
   };
 
   const onTimeoutValueChange = (newVal: string): void => {
@@ -149,20 +170,27 @@ function GeneralSettings(): JSX.Element | null {
 
   const onSplitOnSelectionChanged = (selectedOption: IDropdownOption): void => {
     // TODO (14427339): Setting Validation
+    const splitOnSetting = {
+      isSupported: !!splitOn?.isSupported,
+      value: {
+        enabled: splitOn?.value?.enabled ?? true,
+        value: selectedOption.key.toString(),
+      },
+    };
+
     dispatch(
       updateNodeSettings({
         id: nodeId,
         settings: {
-          splitOn: {
-            isSupported: !!splitOn?.isSupported,
-            value: {
-              enabled: splitOn?.value?.enabled ?? true,
-              value: selectedOption.key.toString(),
-            },
-          },
+          splitOn: splitOnSetting,
         },
       })
     );
+
+    updateOutputsAndTokens(nodeId, operationInfo.type, dispatch, manifest as OperationManifest, isTrigger, nodeInputs, {
+      ...settings,
+      splitOn: splitOnSetting,
+    });
   };
 
   const generalSectionProps: GeneralSectionProps = {

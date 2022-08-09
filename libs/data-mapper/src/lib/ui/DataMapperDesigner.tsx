@@ -4,7 +4,7 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import { EditorConfigPanel, SchemaTypes } from '../components/configPanel/EditorConfigPanel';
+import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
@@ -20,16 +20,11 @@ import {
   saveDataMap,
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
-import {
-  addCurrentInputNodes,
-  setCurrentInputNodes,
-  setCurrentOutputNode,
-  setInputSchema,
-  setOutputSchema,
-} from '../core/state/SchemaSlice';
+import { setCurrentInputNodes, setCurrentOutputNode, setInputSchema, setOutputSchema, toggleInputNode } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema, SchemaNodeExtended } from '../models';
+import { SchemaTypes } from '../models';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -62,6 +57,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
+  const currentlySelectedInputNodes = useSelector((state: RootState) => state.schema.currentInputNodes);
   const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
@@ -70,7 +66,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [nodes, edges] = useLayout();
 
   const onToolboxLeafItemClick = (selectedNode: SchemaNodeExtended) => {
-    dispatch(addCurrentInputNodes([selectedNode]));
+    dispatch(toggleInputNode(selectedNode));
   };
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
@@ -191,7 +187,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const toolboxPanelProps: FloatingPanelProps = {
     xPos: '16px',
     yPos: '56px',
-    width: '300px',
+    width: '250px',
     minHeight: '300px',
     maxHeight: '450px',
   };
@@ -313,7 +309,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
             <ButtonContainer {...toolboxButtonContainerProps} />
             {displayToolbox ? (
               <FloatingPanel {...toolboxPanelProps}>
-                <SchemaTree schema={inputSchema} onLeafNodeClick={onToolboxLeafItemClick} />
+                <SchemaTree
+                  schema={inputSchema}
+                  currentlySelectedNodes={currentlySelectedInputNodes}
+                  onLeafNodeClick={onToolboxLeafItemClick}
+                />
               </FloatingPanel>
             ) : null}
             <div className="msla-designer-canvas msla-panel-mode">

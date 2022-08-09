@@ -595,7 +595,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "TokenPicker가 숨겨진 경우 동적 콘텐츠를 추가하는 버튼"
     }
   ],
   "4vcnOA": [
@@ -1338,6 +1338,12 @@
       "value": "상태"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1366,6 +1372,12 @@
     {
       "type": 0,
       "value": "매개 변수가 false인 경우 true를 반환합니다."
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1419,7 +1431,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "TokenPicker가 표시되는 경우 동적 콘텐츠를 추가하는 버튼"
     }
   ],
   "HXLutF": [
@@ -1661,10 +1673,22 @@
       "value": "경고"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
       "value": "만드는 중..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -3202,6 +3226,12 @@
       "value": "(UTC-06:00) 서스캐처원"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3292,7 +3322,7 @@
   "iEy9pT": [
     {
       "type": 0,
-      "value": "Dynamic content"
+      "value": "동적 콘텐츠"
     }
   ],
   "iJOIca": [
@@ -3675,6 +3705,12 @@
     {
       "type": 0,
       "value": "Logic Apps가 나가는 요청에 워크플로 메타데이터 헤더를 포함하지 않도록 제한합니다."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -4069,7 +4105,7 @@
   "rjyBPU": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "기본"
     }
   ],
   "rstpaK": [
@@ -4297,7 +4333,7 @@
   "uXJdAh": [
     {
       "type": 0,
-      "value": "Search dynamic content"
+      "value": "동적 콘텐츠 검색"
     }
   ],
   "uZH8Qs": [

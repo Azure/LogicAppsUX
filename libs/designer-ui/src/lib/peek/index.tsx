@@ -34,11 +34,13 @@ export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
           height={getEditorStyle(input)}
         />
       </div>
-      <div className="msla-card-config-button-container msla-code-view-done-button">
-        <PrimaryButton className="msla-card-button-primary" onClick={onOKClick}>
-          {doneLabel}
-        </PrimaryButton>
-      </div>
+      {onOKClick ? (
+        <div className="msla-card-config-button-container msla-code-view-done-button">
+          <PrimaryButton className="msla-card-button-primary" onClick={onOKClick}>
+            {doneLabel}
+          </PrimaryButton>
+        </div>
+      ) : null}
     </div>
   );
 }

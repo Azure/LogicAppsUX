@@ -606,7 +606,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Botón para agregar contenido dinámico si TokenPicker está oculto"
     }
   ],
   "4vcnOA": [
@@ -1371,6 +1371,12 @@
       "value": "Estado"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1399,6 +1405,12 @@
     {
       "type": 0,
       "value": "Devuelve true si los parámetros son falsos."
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1452,7 +1464,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Botón para agregar contenido dinámico si se muestra TokenPicker"
     }
   ],
   "HXLutF": [
@@ -1705,10 +1717,22 @@
       "value": "Advertencia"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
       "value": "Creando..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
     }
   ],
   "LS8rfZ": [
@@ -2508,7 +2532,7 @@
   "WLj8DH": [
     {
       "type": 0,
-      "value": "Please enter a valid dictionary"
+      "value": "Escriba un diccionario válido"
     }
   ],
   "WS9kXD": [
@@ -3261,6 +3285,12 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3370,7 +3400,7 @@
   "iEy9pT": [
     {
       "type": 0,
-      "value": "Dynamic content"
+      "value": "Contenido dinámico"
     }
   ],
   "iJOIca": [
@@ -3688,7 +3718,7 @@
   "lcxLiq": [
     {
       "type": 0,
-      "value": "Please enter a valid array"
+      "value": "Escriba una matriz válida"
     }
   ],
   "lgs5sf": [
@@ -3761,6 +3791,12 @@
     {
       "type": 0,
       "value": "Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la solicitud saliente."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -3924,7 +3960,7 @@
   "pC2nr2": [
     {
       "type": 0,
-      "value": "Clave de introducción"
+      "value": "Escribir clave"
     }
   ],
   "pIczsS": [
@@ -4166,7 +4202,7 @@
   "rjyBPU": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Expresión"
     }
   ],
   "rstpaK": [
@@ -4394,7 +4430,7 @@
   "uXJdAh": [
     {
       "type": 0,
-      "value": "Search dynamic content"
+      "value": "Buscar contenido dinámico"
     }
   ],
   "uZH8Qs": [

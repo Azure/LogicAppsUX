@@ -628,7 +628,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Кнопка для добавления динамического содержимого, если параметр TokenPicker скрыт"
     }
   ],
   "4vcnOA": [
@@ -1437,6 +1437,20 @@
       "value": "Состояние"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Недопустимый формат разделения в \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1465,6 +1479,12 @@
     {
       "type": 0,
       "value": "Возвращает значение true, если параметры имеют значение false"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1518,7 +1538,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Кнопка для добавления динамического содержимого, если параметр TokenPicker отображается"
     }
   ],
   "HXLutF": [
@@ -1793,10 +1813,30 @@
       "value": "Предупреждение"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
       "value": "Создание..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Недопустимый тип значения разделения \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\". Разделение отсутствует в массиве."
     }
   ],
   "LS8rfZ": [
@@ -3371,6 +3411,20 @@
       "value": "(UTC-06:00) Саскачеван"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Недопустимое значение разделения \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\". Не удается найти его в выходных данных."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3502,7 +3556,7 @@
   "iEy9pT": [
     {
       "type": 0,
-      "value": "Dynamic content"
+      "value": "Динамическое содержимое"
     }
   ],
   "iJOIca": [
@@ -3893,6 +3947,12 @@
     {
       "type": 0,
       "value": "Запрет на включение в исходящий запрос заголовков метаданных по рабочим процессам в Logic Apps."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -4320,7 +4380,7 @@
   "rjyBPU": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Выражение"
     }
   ],
   "rstpaK": [
@@ -4548,7 +4608,7 @@
   "uXJdAh": [
     {
       "type": 0,
-      "value": "Search dynamic content"
+      "value": "Поиск по динамическому содержимому"
     }
   ],
   "uZH8Qs": [

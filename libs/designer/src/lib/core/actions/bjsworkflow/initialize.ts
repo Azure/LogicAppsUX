@@ -1,6 +1,9 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { NodeInputs, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
+import { updateOutputs } from '../../state/operation/operationMetadataSlice';
+import { updateTokens } from '../../state/tokensSlice';
+import { getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn } from '../../utils/outputs';
 import { getRecurrenceParameters } from '../../utils/parameters/builtins';
 import {
   loadParameterValuesFromDefault,
@@ -8,6 +11,8 @@ import {
   toParameterInfoMap,
   updateParameterWithValues,
 } from '../../utils/parameters/helper';
+import { convertOutputsToTokens, getBuiltInTokens } from '../../utils/tokens';
+import type { Settings } from './settings';
 import type { IConnectionService, IOperationManifestService, ISearchService } from '@microsoft-logic-apps/designer-client-services';
 import { InitConnectionService, InitOperationManifestService, InitSearchService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
@@ -15,6 +20,7 @@ import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import { ConnectionReferenceKeyFormat, equals, getObjectPropertyValue, unmap } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
+import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
   connectionService: IConnectionService;
@@ -73,7 +79,7 @@ export const getInputParametersFromManifest = (nodeId: string, manifest: Operati
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
   const recurrenceParameters = getRecurrenceParameters(manifest.properties.recurrence, stepDefinition);
 
-  // TODO(14490585)- Initialize editor view models
+  // TODO(14490585)- Initialize editor view models for array
 
   const defaultParameterGroup = {
     id: ParameterGroupKeys.DEFAULT,
@@ -108,10 +114,23 @@ export const getInputParametersFromManifest = (nodeId: string, manifest: Operati
   return { parameterGroups };
 };
 
-export const getOutputParametersFromManifest = (nodeId: string, manifest: OperationManifest): NodeOutputs => {
-  // TODO(14490747) - Update operation manifest for triggers with split on.
+export const getOutputParametersFromManifest = (
+  manifest: OperationManifest,
+  isTrigger: boolean,
+  inputs: NodeInputs,
+  splitOnValue?: string
+): NodeOutputs => {
+  let manifestToParse = manifest;
 
-  const operationOutputs = new ManifestParser(manifest).getOutputParameters(
+  if (manifest.properties.outputsSchema) {
+    manifestToParse = getUpdatedManifestForSchemaDependency(manifest, inputs);
+  }
+
+  if (isTrigger) {
+    manifestToParse = getUpdatedManifestForSpiltOn(manifest, splitOnValue);
+  }
+
+  const operationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
     true /* includeParentObject */,
     Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
     false /* expandOneOf */,
@@ -157,6 +176,25 @@ export const getOutputParametersFromManifest = (nodeId: string, manifest: Operat
   }
 
   return { outputs: nodeOutputs };
+};
+
+export const updateOutputsAndTokens = (
+  nodeId: string,
+  operationType: string,
+  dispatch: Dispatch,
+  manifest: OperationManifest,
+  isTrigger: boolean,
+  inputs: NodeInputs,
+  settings: Settings
+): void => {
+  const nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, inputs, settings.splitOn?.value?.value);
+  dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
+
+  const tokens = [
+    ...getBuiltInTokens(manifest),
+    ...convertOutputsToTokens(nodeId, operationType, nodeOutputs.outputs ?? {}, manifest, settings),
+  ];
+  dispatch(updateTokens({ id: nodeId, tokens }));
 };
 
 const getParametersSortedByVisibility = (parameters: ParameterInfo[]): ParameterInfo[] => {

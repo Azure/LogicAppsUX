@@ -595,7 +595,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "當 TokenPicker 隱藏時新增動態內容的按鈕"
     }
   ],
   "4vcnOA": [
@@ -1338,6 +1338,12 @@
       "value": "狀態"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "在 {splitOn} 中的格式分割無效。"
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1366,6 +1372,12 @@
     {
       "type": 0,
       "value": "若參數皆為 False，則傳回 True"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1419,7 +1431,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "當 TokenPicker 顯示時新增動態內容的按鈕"
     }
   ],
   "HXLutF": [
@@ -1661,10 +1673,22 @@
       "value": "警告"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
       "value": "正在建立..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "在值 {splitOn} 上的分割類型無效，分割不在陣列中。"
     }
   ],
   "LS8rfZ": [
@@ -3206,6 +3230,12 @@
       "value": "(UTC-06:00) 薩克其萬"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "值 {splitOn} 的分割無效，在輸出中找不到。"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3296,7 +3326,7 @@
   "iEy9pT": [
     {
       "type": 0,
-      "value": "Dynamic content"
+      "value": "動態內容"
     }
   ],
   "iJOIca": [
@@ -3679,6 +3709,12 @@
     {
       "type": 0,
       "value": "限制 Logic Apps 不要在傳出要求中包含工作流程中繼資料標頭。"
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -4073,7 +4109,7 @@
   "rjyBPU": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "運算式"
     }
   ],
   "rstpaK": [
@@ -4301,7 +4337,7 @@
   "uXJdAh": [
     {
       "type": 0,
-      "value": "Search dynamic content"
+      "value": "搜尋動態內容"
     }
   ],
   "uZH8Qs": [

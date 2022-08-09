@@ -606,7 +606,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "Bouton permettant d’ajouter du contenu dynamique si TokenPicker est masqué"
     }
   ],
   "4vcnOA": [
@@ -1371,6 +1371,12 @@
       "value": "État"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Fractionnement non valide sur format dans {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1399,6 +1405,12 @@
     {
       "type": 0,
       "value": "Retourne true si les paramètres ont la valeur false"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1452,7 +1464,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "Bouton permettant d’ajouter du contenu dynamique si TokenPicker est affiché"
     }
   ],
   "HXLutF": [
@@ -1705,10 +1717,22 @@
       "value": "Avertissement"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
       "value": "Création en cours..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Type non valide sur la valeur fractionnée {splitOn}, fractionnée sur non dans le tableau."
     }
   ],
   "LS8rfZ": [
@@ -3261,6 +3285,12 @@
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "Fractionnement non valide sur la valeur {splitOn}, introuvable dans les sorties."
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3370,7 +3400,7 @@
   "iEy9pT": [
     {
       "type": 0,
-      "value": "Dynamic content"
+      "value": "Contenu dynamique"
     }
   ],
   "iJOIca": [
@@ -3753,6 +3783,12 @@
     {
       "type": 0,
       "value": "Limitez Logic Apps de sorte qu’aucun en-tête de métadonnées de workflow ne soit inclus dans la demande sortante."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -4386,7 +4422,7 @@
   "uXJdAh": [
     {
       "type": 0,
-      "value": "Search dynamic content"
+      "value": "Rechercher du contenu dynamique"
     }
   ],
   "uZH8Qs": [

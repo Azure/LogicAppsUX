@@ -34,7 +34,7 @@ interface RetryPolicy {
 /**
  * @interface SimpleSetting - A setting that has a value of some type that can be disabled or enabled.
  */
-interface SimpleSetting<T> {
+export interface SimpleSetting<T> {
   enabled: boolean;
   value?: T;
 }
@@ -62,7 +62,7 @@ export interface GraphEdge {
   metadata?: string;
   statuses: string[];
 }
-interface SettingData<T> {
+export interface SettingData<T> {
   isSupported: boolean;
   value?: T;
 }

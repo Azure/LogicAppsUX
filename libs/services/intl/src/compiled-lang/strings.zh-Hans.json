@@ -599,7 +599,7 @@
   "4pm5yw": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is hidden"
+      "value": "当 TokenPicker 隐藏时添加动态内容的按钮"
     }
   ],
   "4vcnOA": [
@@ -1342,6 +1342,12 @@
       "value": "状态"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "{splitOn} 中的拆分对象格式无效。"
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1370,6 +1376,12 @@
     {
       "type": 0,
       "value": "如果参数为 false，则返回 true"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1423,7 +1435,7 @@
   "HQ8/tk": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if TokenPicker is shown"
+      "value": "当 TokenPicker 显示时添加动态内容的按钮"
     }
   ],
   "HXLutF": [
@@ -1665,10 +1677,22 @@
       "value": "警告"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
       "value": "正在创建..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "拆分对象值 {splitOn} 的类型无效，拆分对象不在数组中。"
     }
   ],
   "LS8rfZ": [
@@ -3214,6 +3238,12 @@
       "value": "(UTC-06:00)萨斯喀彻温"
     }
   ],
+  "gpbgjJ": [
+    {
+      "type": 0,
+      "value": "拆分对象值 {splitOn} 无效，在输出中找不到它。"
+    }
+  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -3312,7 +3342,7 @@
   "iEy9pT": [
     {
       "type": 0,
-      "value": "Dynamic content"
+      "value": "动态内容"
     }
   ],
   "iJOIca": [
@@ -3703,6 +3733,12 @@
     {
       "type": 0,
       "value": "限制逻辑应用，使其不在传出请求中包含工作流元数据标头。"
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -4105,7 +4141,7 @@
   "rjyBPU": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "表达式"
     }
   ],
   "rstpaK": [
@@ -4333,7 +4369,7 @@
   "uXJdAh": [
     {
       "type": 0,
-      "value": "Search dynamic content"
+      "value": "搜索动态内容"
     }
   ],
   "uZH8Qs": [
