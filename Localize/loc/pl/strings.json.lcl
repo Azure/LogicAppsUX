@@ -2079,6 +2079,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";G/CC5/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid split on format in '{splitOn}'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nieprawidłowy podział formatu w „{splitOn}”.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";G0XYrd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The string that may contain the value.]]></Val>
@@ -2588,6 +2597,15 @@
           <Val><![CDATA[Creating...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tworzenie w toku...]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";LOwePI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid type on split on value '{splitOn}', split on not in array.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nieprawidłowy typ dla podzielonej wartości „{splitOn}”, dlatego brak podziału w tablicy.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4811,6 +4829,15 @@
           <Val><![CDATA[(UTC-06:00) Saskatchewan]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC-06:00) Saskatchewan]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";gpbgjJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid split on value '{splitOn}', cannot find in outputs.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nieprawidłowy podział wartości „{splitOn}”, dlatego nie można odnaleźć w danych wyjściowych.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
