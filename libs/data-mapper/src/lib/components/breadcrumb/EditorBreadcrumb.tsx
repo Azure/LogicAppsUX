@@ -2,7 +2,9 @@ import { setCurrentOutputNode } from '../../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import type { IBreadcrumbItem } from '@fluentui/react';
-import { ActionButton, Breadcrumb } from '@fluentui/react';
+import { Breadcrumb } from '@fluentui/react';
+import { Button } from '@fluentui/react-components';
+import { Code20Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,28 +30,30 @@ export const EditorBreadcrumb = (): JSX.Element => {
     // Breadcrumb doesn't display when empty, this is a breadcrumb space placeholder
     <div style={{ height: '40px', padding: '4px 8px' }}></div>
   ) : (
-    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '4px 8px', height: '40px' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '4px 8px',
+        height: '40px',
+      }}
+    >
       <Breadcrumb
         style={{
-          display: 'flex',
-          flexDirection: 'row',
           alignItems: 'flex-start',
           margin: '0px',
         }}
+        // Returning undefined here stops the breadcrumb from shrinking
+        onReduceData={() => undefined}
         items={breadcrumbItems}
         maxDisplayedItems={maxBreadcrumbItems}
         overflowIndex={overflowIndex}
       />
-      <ActionButton
-        style={{
-          width: '130px',
-          height: '32px',
-          padding: '0px',
-          border: '0px',
-          marginLeft: 'auto',
-          marginRight: '12px',
-        }}
-        iconProps={{ iconName: 'Embed' }}
+      <Button
+        appearance="transparent"
+        icon={<Code20Regular />}
         onClick={() => {
           // TODO (refortie) #14887351 - Create the code view
           console.log('Code view button clicked');
@@ -59,7 +63,7 @@ export const EditorBreadcrumb = (): JSX.Element => {
           defaultMessage: 'Show code view',
           description: 'Button to display the code view',
         })}
-      </ActionButton>
+      </Button>
     </div>
   );
 };
