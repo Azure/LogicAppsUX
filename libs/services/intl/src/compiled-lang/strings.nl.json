@@ -1407,6 +1407,12 @@
       "value": "Indien de parameters onwaar zijn, wordt Waar geretourneerd"
     }
   ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -1709,6 +1715,12 @@
     {
       "type": 0,
       "value": "Waarschuwing"
+    }
+  ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
     }
   ],
   "LMB8am": [
@@ -3775,6 +3787,12 @@
     {
       "type": 0,
       "value": "Een beperking voor Logic Apps instellen om te voorkomen dat de uitgaande aanvraag headers met metagegevens van de werkstroom bevat."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
