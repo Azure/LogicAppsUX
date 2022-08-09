@@ -13,6 +13,7 @@ export const fileOptions = [
   'Switch.json',
   'MoreComplex.json',
   'MultipleRunAftersBig.json',
+  'RunAfter.json',
   'Scoped.json',
   'simpleBigworkflow.json',
   'simpleScoped.json',

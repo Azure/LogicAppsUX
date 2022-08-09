@@ -1,7 +1,6 @@
 import type { onChangeHandler } from './runafteractiondetails';
-import { Status } from './runafteractiondetails';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
-import * as React from 'react';
+import { RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 export interface RunAfterActionStatusesProps {
@@ -38,38 +37,38 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange, o
     <div className="msla-run-after-statuses">
       <div className="msla-run-after-status-checkbox">
         <Checkbox
-          checked={normalizedStatuses.includes(Status.SUCCEEDED)}
+          checked={normalizedStatuses.includes(RUN_AFTER_STATUS.SUCCEEDED)}
           disabled={isReadOnly}
           label={Resources.RUN_AFTER_SUCCEEDED_STATUS}
-          onChange={(_, checked) => onStatusChange?.(Status.SUCCEEDED, checked)}
-          onRenderLabel={() => onRenderLabel(Status.SUCCEEDED, Resources.RUN_AFTER_SUCCEEDED_STATUS)}
+          onChange={(_, checked) => onStatusChange?.(RUN_AFTER_STATUS.SUCCEEDED, checked)}
+          onRenderLabel={() => onRenderLabel(RUN_AFTER_STATUS.SUCCEEDED, Resources.RUN_AFTER_SUCCEEDED_STATUS)}
         />
       </div>
       <div className="msla-run-after-status-checkbox">
         <Checkbox
-          checked={normalizedStatuses.includes(Status.TIMEDOUT)}
+          checked={normalizedStatuses.includes(RUN_AFTER_STATUS.TIMEDOUT)}
           disabled={isReadOnly}
           label={Resources.RUN_AFTER_TIMEDOUT_STATUS}
-          onChange={(_, checked) => onStatusChange?.(Status.TIMEDOUT, checked)}
-          onRenderLabel={() => onRenderLabel(Status.TIMEDOUT, Resources.RUN_AFTER_TIMEDOUT_STATUS)}
+          onChange={(_, checked) => onStatusChange?.(RUN_AFTER_STATUS.TIMEDOUT, checked)}
+          onRenderLabel={() => onRenderLabel(RUN_AFTER_STATUS.TIMEDOUT, Resources.RUN_AFTER_TIMEDOUT_STATUS)}
         />
       </div>
       <div className="msla-run-after-status-checkbox">
         <Checkbox
-          checked={normalizedStatuses.includes(Status.SKIPPED)}
+          checked={normalizedStatuses.includes(RUN_AFTER_STATUS.SKIPPED)}
           disabled={isReadOnly}
           label={Resources.RUN_AFTER_SKIPPED_STATUS}
-          onChange={(_, checked) => onStatusChange?.(Status.SKIPPED, checked)}
-          onRenderLabel={() => onRenderLabel(Status.SKIPPED, Resources.RUN_AFTER_SKIPPED_STATUS)}
+          onChange={(_, checked) => onStatusChange?.(RUN_AFTER_STATUS.SKIPPED, checked)}
+          onRenderLabel={() => onRenderLabel(RUN_AFTER_STATUS.SKIPPED, Resources.RUN_AFTER_SKIPPED_STATUS)}
         />
       </div>
       <div className="msla-run-after-status-checkbox">
         <Checkbox
-          checked={normalizedStatuses.includes(Status.FAILED)}
+          checked={normalizedStatuses.includes(RUN_AFTER_STATUS.FAILED)}
           disabled={isReadOnly}
           label={Resources.RUN_AFTER_FAILED_STATUS}
-          onChange={(_, checked) => onStatusChange?.(Status.FAILED, checked)}
-          onRenderLabel={() => onRenderLabel(Status.FAILED, Resources.RUN_AFTER_FAILED_STATUS)}
+          onChange={(_, checked) => onStatusChange?.(RUN_AFTER_STATUS.FAILED, checked)}
+          onRenderLabel={() => onRenderLabel(RUN_AFTER_STATUS.FAILED, Resources.RUN_AFTER_FAILED_STATUS)}
         />
       </div>
     </div>

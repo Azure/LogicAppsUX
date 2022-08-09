@@ -1,7 +1,7 @@
-import { Status } from './runafteractiondetails';
 import { useTheme } from '@fluentui/react';
+import { RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
 import { EmptyTrafficLightDot, TrafficLightDot } from '@microsoft/designer-ui';
-import * as React from 'react';
+import { useCallback } from 'react';
 
 export interface RunAfterTrafficLightsProps {
   statuses: string[];
@@ -9,22 +9,28 @@ export interface RunAfterTrafficLightsProps {
 
 export function RunAfterTrafficLights({ statuses }: RunAfterTrafficLightsProps): JSX.Element {
   const { isInverted } = useTheme();
+  const themeName = isInverted ? 'dark' : 'light';
   const normalizedStatuses = statuses.map((status) => status.toUpperCase());
-  const EmptyTrafficLight = <EmptyTrafficLightDot fill={isInverted ? '#323130' : '#fff'} />;
+
+  const Dot = useCallback(
+    (props: { status: RUN_AFTER_STATUS }) => (
+      <div className="msla-run-after-light">
+        {normalizedStatuses.includes(props.status) ? (
+          <TrafficLightDot fill={RUN_AFTER_COLORS[themeName][props.status]} />
+        ) : (
+          <EmptyTrafficLightDot fill={RUN_AFTER_COLORS[themeName]['EMPTY']} />
+        )}
+      </div>
+    ),
+    [normalizedStatuses, themeName]
+  );
+
   return (
     <div className="msla-run-after-traffic-lights">
-      <div className="msla-run-after-first-light">
-        {normalizedStatuses.includes(Status.SUCCEEDED) ? <TrafficLightDot fill={isInverted ? '#92C353' : '#428000'} /> : EmptyTrafficLight}
-      </div>
-      <div className="msla-run-after-light">
-        {normalizedStatuses.includes(Status.TIMEDOUT) ? <TrafficLightDot fill={isInverted ? '#FCE100' : '#DB7500'} /> : EmptyTrafficLight}
-      </div>
-      <div className="msla-run-after-light">
-        {normalizedStatuses.includes(Status.SKIPPED) ? <TrafficLightDot fill={isInverted ? '#A19F9D' : '#605E5C'} /> : EmptyTrafficLight}
-      </div>
-      <div className="msla-run-after-light">
-        {normalizedStatuses.includes(Status.FAILED) ? <TrafficLightDot fill={isInverted ? '#F1707B' : '#A4262C'} /> : EmptyTrafficLight}
-      </div>
+      <Dot status={RUN_AFTER_STATUS.SUCCEEDED} />
+      <Dot status={RUN_AFTER_STATUS.TIMEDOUT} />
+      <Dot status={RUN_AFTER_STATUS.SKIPPED} />
+      <Dot status={RUN_AFTER_STATUS.FAILED} />
     </div>
   );
 }
