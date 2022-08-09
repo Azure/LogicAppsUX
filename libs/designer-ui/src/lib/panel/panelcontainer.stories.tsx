@@ -6,13 +6,12 @@ import type { PanelContainerProps } from './panelcontainer';
 import { PanelContainer } from './panelcontainer';
 import { PanelHeaderControlType } from './panelheader/panelheader';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
 
 export default {
   component: PanelContainer,
   title: 'Components/Panel',
 } as ComponentMeta<typeof PanelContainer>;
-export const Container: ComponentStory<typeof PanelContainer> = (args: PanelContainerProps) => <PanelContainer {...args} />;
+export const NodeDetailsPanel: ComponentStory<typeof PanelContainer> = (args: PanelContainerProps) => <PanelContainer {...args} />;
 
 const aboutProps = {
   connectorDisplayName: 'Node Name',
@@ -46,7 +45,7 @@ const panelHeaderMenu = [
   },
 ];
 
-Container.args = {
+NodeDetailsPanel.args = {
   cardIcon: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1550/1.0.1550.2686/azureblob/icon.png',
   comment: 'This is a test commment',
   panelLocation: PanelLocation.Right,
