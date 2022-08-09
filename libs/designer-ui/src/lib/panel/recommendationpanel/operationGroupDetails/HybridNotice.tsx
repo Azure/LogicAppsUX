@@ -27,7 +27,7 @@ const HybridNotice = () => {
         <span className={'msla-op-group-heading-text'}>{hybridTitle}</span>
         <span className={'msla-op-group-subheading-text'}>
           {hybridBodyText}
-          <Link target="_blank" href="https://aka.ms/built-in-versus-azure-connector" underline style={{ marginLeft: '8px' }}>
+          <Link className="msla-hybrid-connectors-link" target="_blank" href="https://aka.ms/built-in-versus-azure-connector" underline>
             {learnMoreText}
           </Link>
         </span>
