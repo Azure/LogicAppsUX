@@ -1,7 +1,7 @@
 import WarningIcon from '../../../resources/Caution.svg';
 import { ApiService } from '../../../run-service/export/index';
 import { QueryKeys } from '../../../run-service/types';
-import type { WorkflowsList } from '../../../run-service/types';
+import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service/types';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
@@ -10,7 +10,7 @@ import { filterWorkflows, getListColumns, parseResourceGroups, parseWorkflowData
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,9 +21,10 @@ export const WorkflowsSelection: React.FC = () => {
   const { selectedSubscription, selectedIse, selectedWorkflows } = exportData;
 
   const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList> | null>(null);
-  const [allWorkflows, setAllWorkflows] = useState<Array<WorkflowsList>>([]);
   const [resourceGroups, setResourceGroups] = useState<IDropdownOption[]>([]);
   const [searchString, setSearchString] = useState<string>('');
+  const allWorkflows = useRef<Array<WorkflowsList>>([]);
+  const allItemsSelected = useRef<SelectedWorkflowsList[]>([]);
 
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
@@ -83,8 +84,10 @@ export const WorkflowsSelection: React.FC = () => {
     const resourceGroups: IDropdownOption[] = !workflowsData ? [] : parseResourceGroups(workflowItems);
 
     setRenderWorkflows(workflowItems);
-    setAllWorkflows(workflowItems);
     setResourceGroups(resourceGroups);
+    allWorkflows.current = workflowItems;
+    console.log('charlie3', allItemsSelected);
+    allItemsSelected.current = workflowItems as SelectedWorkflowsList[];
   };
 
   const { isLoading: isWorkflowsLoading } = useQuery<any>([QueryKeys.workflowsData, { iseId: selectedIse }], loadWorkflows, {
@@ -92,24 +95,42 @@ export const WorkflowsSelection: React.FC = () => {
     onSuccess: onWorkflowsSuccess,
   });
 
-  const selection: Selection = useMemo(() => {
+  useEffect(() => {
+    const copySelectedItems = JSON.parse(JSON.stringify(allItemsSelected.current));
+
+    renderWorkflows?.forEach((workflow: WorkflowsList) => {
+      const isWorkflowInSelection = !!selectedWorkflows.find((selectedWorkflow: WorkflowsList) => selectedWorkflow.key === workflow.key);
+      const foundIndex = copySelectedItems.findIndex((selectedItem: any) => selectedItem.key === workflow.key);
+
+      if (foundIndex !== -1) {
+        copySelectedItems[foundIndex].selected = isWorkflowInSelection;
+      }
+    });
+
+    allItemsSelected.current = copySelectedItems;
+  }, [selectedWorkflows, renderWorkflows, allWorkflows]);
+
+  const selection = useMemo(() => {
     const onItemsChange = () => {
-      if (selection && selection.getItems().length > 0 && selectedWorkflows.length > 0) {
-        selectedWorkflows.forEach((workflow: WorkflowsList) => {
+      const actualSelection = selectedWorkflows.length ? selectedWorkflows : [...allItemsSelected.current.filter((item) => item.selected)];
+      if (selection && selection.getItems().length > 0 && actualSelection.length > 0) {
+        actualSelection.forEach((workflow: WorkflowsList) => {
           selection.setKeySelected(workflow.key, true, true);
         });
       }
     };
 
+    const onSelectionChanged = () => {
+      const currentSelection = selection.getSelection() as Array<WorkflowsList>;
+      dispatch(
+        updateSelectedWorkFlows({
+          selectedWorkflows: currentSelection,
+        })
+      );
+    };
+
     return new Selection({
-      onSelectionChanged: () => {
-        const currentSelection = selection.getSelection() as Array<WorkflowsList>;
-        dispatch(
-          updateSelectedWorkFlows({
-            selectedWorkflows: currentSelection,
-          })
-        );
-      },
+      onSelectionChanged: onSelectionChanged,
       onItemsChanged: onItemsChange,
     });
   }, [dispatch, selectedWorkflows]);
@@ -176,7 +197,7 @@ export const WorkflowsSelection: React.FC = () => {
 
   const filters = useMemo(() => {
     const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
-      setRenderWorkflows(filterWorkflows(allWorkflows, resourceGroups, newSearchString));
+      setRenderWorkflows(filterWorkflows(allWorkflows.current, resourceGroups, newSearchString));
       setSearchString(newSearchString);
     };
 
@@ -184,7 +205,7 @@ export const WorkflowsSelection: React.FC = () => {
       const updatedResourceGroups = [...resourceGroups];
       updatedResourceGroups[index - 2].selected = !updatedResourceGroups[index - 2].selected;
 
-      setRenderWorkflows(filterWorkflows(allWorkflows, updatedResourceGroups, searchString));
+      setRenderWorkflows(filterWorkflows(allWorkflows.current, updatedResourceGroups, searchString));
       setResourceGroups(updatedResourceGroups);
     };
 
@@ -214,7 +235,7 @@ export const WorkflowsSelection: React.FC = () => {
       <Separator vertical className="msla-export-workflows-panel-divider" />
       <SelectedList
         isLoading={isWorkflowsLoading || renderWorkflows === null}
-        allWorkflows={allWorkflows}
+        allWorkflows={allWorkflows.current}
         renderWorkflows={renderWorkflows}
       />
     </div>
