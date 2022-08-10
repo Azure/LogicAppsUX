@@ -24,7 +24,9 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
 
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
-  const requiresConnection = operationManifest && isConnectionRequiredForOperation(operationManifest);
+  const requiresConnection = operationManifest
+    ? isConnectionRequiredForOperation(operationManifest)
+    : true; // TODO - Once swagger operations are implemented we should call needsConnection based on connector here.
 
   useEffect(() => {
     if (requiresConnection && !connectionName) {

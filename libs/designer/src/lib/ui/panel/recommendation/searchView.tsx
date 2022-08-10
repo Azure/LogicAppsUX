@@ -1,5 +1,9 @@
 import Constants from '../../../common/constants';
-import { getInputParametersFromManifest, getOutputParametersFromManifest } from '../../../core/actions/bjsworkflow/initialize';
+import {
+  getInputParametersFromManifest,
+  getOutputParametersFromManifest,
+  getParameterDependencies,
+} from '../../../core/actions/bjsworkflow/initialize';
 import type { NodeDataWithManifest } from '../../../core/actions/bjsworkflow/operationdeserializer';
 import { getOperationSettings } from '../../../core/actions/bjsworkflow/settings';
 import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
@@ -110,8 +114,9 @@ const initializeOperationDetails = async (
     const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest);
     const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
     const nodeOutputs = getOutputParametersFromManifest(manifest, false /* isTrigger */, nodeInputs, settings.splitOn?.value?.value);
+    const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs);
 
-    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, settings }]));
+    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
 
     // TODO(Danielle) - Please comment out the below part when state has updated graph and nodesMetadata.
     // We need the graph and nodesMetadata updated with the newly added node for token dependencies to be calculated.
