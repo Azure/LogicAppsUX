@@ -31,7 +31,7 @@ exports[`recommendation panel renders connector card 1`] = `
     }
     content="DropboxT is a service that keeps your files safe, synced, and easy to share. Connect to Dropbox to manage your files.
                         You can perform various actions such as upload, update, get, and delete files in Dropbox."
-    id="1"
+    id="/providers/Microsoft.PowerApps/apis/shared_dropbox-tooltip"
     setAriaDescribedBy={false}
   >
     <CustomizedIconButton
