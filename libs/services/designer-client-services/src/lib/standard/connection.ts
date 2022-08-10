@@ -20,7 +20,8 @@ import {
   ConnectionType,
   safeSetObjectPropertyValue,
   ArgumentException,
-  equals, // connectorsSearchResultsMock,
+  equals,
+  connectorsSearchResultsMock,
 } from '@microsoft-logic-apps/utils';
 
 interface ServiceProviderConnectionModel {
@@ -171,6 +172,9 @@ export class StandardConnectionService implements IConnectionService {
   }
 
   private async getAllBuiltInConnectors(): Promise<Connector[]> {
+    if (this.isStandalone) {
+      return Promise.resolve(connectorsSearchResultsMock);
+    }
     const { apiVersion, baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}/operationGroups`;
     const queryParameters: QueryParameters = {
@@ -179,7 +183,6 @@ export class StandardConnectionService implements IConnectionService {
     const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
     console.log(response);
     return response.value;
-    // return Promise.resolve(connectorsSearchResultsMock);
   }
 
   private async getAllAzureConnectors(): Promise<Connector[]> {
@@ -215,27 +218,27 @@ export class StandardConnectionService implements IConnectionService {
     return connectors;
   }
 
-  public async getAllOperationsForGroup(connectorId: string): Promise<SomeKindOfAzureOperationDiscovery[]> {
-    if (!isArmResourceId(connectorId)) {
-      const { apiVersion, baseUrl, httpClient } = this.options;
-      return httpClient.get<SomeKindOfAzureOperationDiscovery[]>({
-        uri: `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}/operations?api-version=${apiVersion}`, // danielle to test
-      }); // danielle this should work as it is same as priti
-    } else {
-      const {
-        apiHubServiceDetails: { apiVersion },
-        httpClient,
-      } = this.options;
-      const response = await httpClient.get<SomeKindOfAzureOperationDiscovery[]>({
-        uri: `${connectorId}/apiOperations`,
-        queryParameters: { 'api-version': apiVersion },
-      }); // danielle this could be wrong
-      return {
-        ...response,
-      };
-    }
-    //return Promise.resolve(MockSearchOperations);
-  }
+  // public async getAllOperationsForGroup(connectorId: string): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> { we will not need this while doing frontend search
+  //   if (!isArmResourceId(connectorId)) {
+  //     const { apiVersion, baseUrl, httpClient } = this.options;
+  //     return httpClient.get<DiscoveryOperation<DiscoveryResultTypes>[]>({
+  //       uri: `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}/operations?api-version=${apiVersion}`, // danielle to test
+  //     }); // danielle this should work as it is same as priti
+  //   } else {
+  //     const {
+  //       apiHubServiceDetails: { apiVersion },
+  //       httpClient,
+  //     } = this.options;
+  //     const response = await httpClient.get<DiscoveryOperation<DiscoveryResultTypes>[]>({
+  //       uri: `${connectorId}/apiOperations`,
+  //       queryParameters: { 'api-version': apiVersion },
+  //     }); // danielle this could be wrong
+  //     return {
+  //       ...response,
+  //     };
+  //   }
+  //   //return Promise.resolve(MockSearchOperations);
+  // }
 
   async getConnector(connectorId: string): Promise<Connector> {
     if (!isArmResourceId(connectorId)) {
