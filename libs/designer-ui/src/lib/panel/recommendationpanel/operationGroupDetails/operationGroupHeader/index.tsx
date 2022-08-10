@@ -8,11 +8,12 @@ export interface OperationGroupHeaderProps {
   title: string;
   description?: string;
   iconUrl: string;
+  docsUrl?: string;
 }
 
 export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
   const intl = useIntl();
-  const { id, title, description, iconUrl } = props;
+  const { id, title, description, iconUrl, docsUrl } = props;
 
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
@@ -39,6 +40,11 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
     </Link>
   );
 
+  const viewDocsText = intl.formatMessage({
+    defaultMessage: 'View Documentation',
+    description: 'Text for view docs button',
+  });
+
   const [descriptionMeasurements, descriptionRef] = useMeasure<HTMLDivElement>();
   const longDescription = useMemo(() => {
     return (descriptionMeasurements?.height ?? 0) / 20 > 2;
@@ -48,7 +54,14 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
     <div id={id} className="msla-op-group-header">
       <Image className="msla-op-group-image" alt={title} src={iconUrl} imageFit={ImageFit.contain} />
       <div className={css(`msla-op-group-info`, !descriptionExpanded && 'limited')}>
-        <span className="msla-op-group-title">{title}</span>
+        <div className="msla-op-group-title-row">
+          <span className="msla-op-group-title">{title}</span>
+          {docsUrl ? (
+            <Link href={docsUrl} target="_blank">
+              {viewDocsText}
+            </Link>
+          ) : null}
+        </div>
         <span ref={descriptionRef} className="msla-op-group-subtitle">
           {description}
           {longDescription && descriptionExpanded ? <ReadLessButton /> : null}

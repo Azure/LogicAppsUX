@@ -14,7 +14,7 @@ export interface OperationGroupDetailsPageProps {
 
 export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps> = (props) => {
   const { operationApi, operationActionsData, onClickOperation, onClickBack } = props;
-  const { id, displayName, description, iconUri } = operationApi;
+  const { id, displayName, description, iconUri, externalDocs } = operationApi;
 
   const firstCategory = operationActionsData[0].category;
   const isHybrid = operationActionsData.findIndex((action) => action.category !== firstCategory) !== -1;
@@ -22,7 +22,7 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
   return (
     <div className="msla-op-group-detail-page">
       <Link onClick={onClickBack}>{'< Return to search'}</Link>
-      <OperationGroupHeader id={id} title={displayName} description={description} iconUrl={iconUri} />
+      <OperationGroupHeader id={id} title={displayName} description={description} iconUrl={iconUri} docsUrl={externalDocs?.url} />
       {isHybrid ? <HybridNotice /> : null}
       <div className="msla-op-group-item-container">
         {operationActionsData?.map((op) => (

@@ -2,7 +2,7 @@ import InformationImage from './info.svg';
 import { Text, TooltipHost } from '@fluentui/react';
 
 export const InfoDot = (props: any) => {
-  const { alt = '', title, description } = props;
+  const { alt = '', title, description, style } = props;
 
   const tooltipProps = {
     onRenderContent: () => (
@@ -19,7 +19,7 @@ export const InfoDot = (props: any) => {
 
   return (
     <TooltipHost tooltipProps={tooltipProps}>
-      <img className="msla-info-dot" alt={alt} src={InformationImage} />
+      <img className="msla-info-dot" alt={alt} src={InformationImage} style={style} />
     </TooltipHost>
   );
 };

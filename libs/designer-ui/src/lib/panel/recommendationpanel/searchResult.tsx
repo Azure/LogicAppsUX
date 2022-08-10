@@ -34,7 +34,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
           operationActionData={OperationActionDataFromOperation(operation)}
           onClick={() => props.onOperationClick(operation)}
           showImage={true}
-          style={{ marginBottom: '4px' }}
+          style={{ marginBottom: '8px' }}
         />
       );
     },

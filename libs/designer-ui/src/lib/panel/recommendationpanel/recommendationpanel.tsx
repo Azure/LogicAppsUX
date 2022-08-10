@@ -4,6 +4,8 @@ import { getIntl } from '@microsoft-logic-apps/intl';
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 
+export * from './interfaces';
+
 export type RecommendationPanelProps = {
   placeholder: string;
   toggleCollapse: () => void;

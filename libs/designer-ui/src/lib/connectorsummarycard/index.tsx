@@ -31,7 +31,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
       <div className="msla-connector-summary-header">
         {isCard ? <ConnectorImage /> : null}
         <Text className="msla-connector-summary-title">{connectorName}</Text>
-        <InfoDot title={connectorName} description={description} />
+        <InfoDot title={connectorName} description={description} style={!isCard ? { marginRight: '8px' } : undefined} />
       </div>
       <div className="msla-connector-summary-labels">{category ? <Text className="msla-psuedo-badge">{category}</Text> : null}</div>
     </>

@@ -13,6 +13,11 @@ export interface OperationApi {
   name?: string;
   tier?: string;
   type?: string;
+  externalDocs?: ExternalDocs;
+}
+
+export interface ExternalDocs {
+  url: string;
 }
 
 export interface SomeKindOfAzureOperationDiscovery {
@@ -33,7 +38,7 @@ export interface SomeKindOfAzureOperationDiscovery {
   pageable: boolean;
   isWebhook: boolean;
   // infoMessage?: InfoMessage;
-  externalDocs: { url: string };
+  externalDocs: ExternalDocs;
   // swaggerExternalDocs?: Swagger.ExternalDocumentation;
   trigger?: string;
   triggerHint?: string;
