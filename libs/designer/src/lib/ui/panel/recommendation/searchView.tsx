@@ -1,9 +1,11 @@
+import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -12,6 +14,7 @@ type SearchViewProps = {
 type SearchResults = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>[];
 
 export const SearchView: React.FC<SearchViewProps> = (props) => {
+  const dispatch = useDispatch();
   // const rootState = useSelector((state: RootState) => state);
   // const { discoveryIds, selectedNode } = useSelector((state: RootState) => {
   //   return state.panel;
@@ -43,8 +46,9 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     }
   }, [props.searchTerm, searchTerms]);
 
-  const onOperationClick = (_operation: DiscoveryOperation<DiscoveryResultTypes>) => {
-    console.log('clicked');
+  const onOperationClick = (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
+    const apiId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
+    dispatch(selectOperationGroupId(apiId));
   };
 
   return <SearchResultsGrid onOperationClick={onOperationClick} operationSearchResults={searchResults}></SearchResultsGrid>;

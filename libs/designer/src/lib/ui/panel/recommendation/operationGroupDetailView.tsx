@@ -83,11 +83,17 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
   });
 
   return (
-    <OperationGroupDetailsPage
-      operationApi={selectedSearchedOperations[0].properties.api}
-      operationActionsData={operationGroupActions}
-      onClickOperation={onOperationClick}
-      onClickBack={onClickBack}
-    />
+    <>
+      {
+        selectedSearchedOperations.length > 0 ? (
+          <OperationGroupDetailsPage
+            operationApi={selectedSearchedOperations[0].properties.api}
+            operationActionsData={operationGroupActions}
+            onClickOperation={onOperationClick}
+            onClickBack={onClickBack}
+          />
+        ) : null // loading logic goes here
+      }
+    </>
   );
 };

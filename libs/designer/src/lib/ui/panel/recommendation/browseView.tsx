@@ -1,6 +1,7 @@
+import { OperationGroupDetailView } from './operationGroupDetailView';
 import { ConnectionService, SearchService } from '@microsoft-logic-apps/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { BrowseGrid, ConnectorAllOperationsSummary } from '@microsoft/designer-ui';
+import { BrowseGrid } from '@microsoft/designer-ui';
 import React, { useEffect } from 'react';
 import { useQuery } from 'react-query';
 
@@ -19,16 +20,6 @@ export const BrowseView: React.FC = () => {
     cacheTime: 10000 * 60 * 5, // Danielle this is temporary, will move to config
   });
   const browseResults = browseResponse.data;
-
-  // const allOperationsForGroup = useQuery(
-  //   ['browseViewOperationsForGroup', selectedConnectorId],
-  //   () => getAllOperationsForGroup(selectedConnectorId),
-  //   {
-  //     enabled: selectedConnectorId !== '',
-  //     staleTime: 100000,
-  //     cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
-  //   }
-  // );
 
   const allOperations = useQuery(
     ['allOperations'],
@@ -58,7 +49,7 @@ export const BrowseView: React.FC = () => {
   return (
     <>
       {selectedConnectorId !== '' ? (
-        <ConnectorAllOperationsSummary operations={allOperationsForGroup}></ConnectorAllOperationsSummary>
+        <OperationGroupDetailView selectedSearchedOperations={allOperationsForGroup}></OperationGroupDetailView>
       ) : (
         <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectorBrowse={browseResults || []} />
       )}
