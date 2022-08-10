@@ -59,6 +59,7 @@ export const RunAfterActionDetails = ({
   readOnly,
   statuses,
   title,
+  id,
   onDelete,
   onStatusChange,
   onRenderLabel,
@@ -88,6 +89,7 @@ export const RunAfterActionDetails = ({
     return onRenderLabel?.(props) ?? <Label {...props} />;
   };
 
+  const icon = useIcon(id) ?? '';
   return (
     <>
       <div className="msla-run-after-edge-header">
@@ -101,7 +103,7 @@ export const RunAfterActionDetails = ({
                 styles={{ root: { color: constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
               />
               <div className="msla-run-after-edge-header-logo">
-                <img alt="" className="msla-run-after-logo-image" role="presentation" src={useIcon(title) ?? ''} />
+                <img alt="" className="msla-run-after-logo-image" role="presentation" src={icon} />
               </div>
               <div className="msla-run-after-edge-header-text">{title}</div>
             </div>
