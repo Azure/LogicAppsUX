@@ -176,6 +176,8 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
           className={styles.chevron}
           style={{ marginLeft: 'auto' }}
           disabled={!panelItem}
+          title="Show/Hide"
+          aria-label="Show/Hide"
         />
       </Stack>
 
