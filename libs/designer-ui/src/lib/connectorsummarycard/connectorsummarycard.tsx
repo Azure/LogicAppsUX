@@ -54,13 +54,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
       <Text block className="msla-card-title">
         {props.connectorName}
       </Text>
-      <TooltipHost
-        content={props.description}
-        // danielle will pull this out to be reused
-        id="1"
-        calloutProps={calloutProps}
-        setAriaDescribedBy={false}
-      >
+      <TooltipHost content={props.description} id={props.id + '-tooltip'} calloutProps={calloutProps} setAriaDescribedBy={false}>
         <IconButton iconProps={emojiIcon} aria-label={infoButtonText} />
       </TooltipHost>
       {/* <Text className="msla-card-description">{props.description}</Text> */}
