@@ -5,15 +5,15 @@ import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: OperationSearchCard,
-  title: 'Components/OperationGroupDetails',
+  title: 'Components/OperationSearchCard',
 } as ComponentMeta<typeof OperationSearchCard>;
-export const Operation: ComponentStory<typeof OperationSearchCard> = (args: OperationSearchCardProps) => (
+export const Card: ComponentStory<typeof OperationSearchCard> = (args: OperationSearchCardProps) => (
   <div style={{ padding: '16px', width: '560px' }}>
     <OperationSearchCard {...args} />
   </div>
 );
 
-Operation.args = {
+Card.args = {
   operationActionData: mockOperationActionsData[0],
   onClick: () => null,
 };

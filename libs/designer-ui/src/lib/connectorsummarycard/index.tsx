@@ -8,14 +8,14 @@ export interface ConnectorSummaryCardProps {
   iconUrl: string;
   brandColor?: string;
   category: 'Built-in' | 'Azure' | '';
-  onClick: (id: string) => void;
+  onClick?: (id: string) => void;
   isCard?: boolean;
 }
 
 export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   const { id, connectorName, description, iconUrl, category, onClick, isCard = true } = props;
 
-  const handleClick = () => onClick(id);
+  const handleClick = () => onClick?.(id);
 
   const ConnectorImage = () => (
     <Image

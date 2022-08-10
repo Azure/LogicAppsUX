@@ -3057,12 +3057,6 @@
       "value": "Learn more"
     }
   ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "Select"
-    }
-  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -4395,12 +4389,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Trigger"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4791,16 +4779,6 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Hawaii"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "yVh9kr": [

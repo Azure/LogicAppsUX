@@ -7,6 +7,7 @@ export type OperationSearchCardProps = {
   operationActionData: OperationActionData;
   onClick: (id: string) => void;
   showImage?: boolean;
+  style?: any;
 } & CommonCardProps;
 
 export interface CommonCardProps {
@@ -14,13 +15,13 @@ export interface CommonCardProps {
 }
 
 export const OperationSearchCard = (props: OperationSearchCardProps) => {
-  const { onClick, showImage = false } = props;
+  const { onClick, showImage = false, style } = props;
   const { id, title, description, category, brandColor = '#000', iconUri } = props.operationActionData;
 
   const handleClick = useCallback(() => onClick(id), [id, onClick]);
 
   return (
-    <button className="msla-op-search-card-container" onClick={handleClick}>
+    <button className="msla-op-search-card-container" onClick={handleClick} style={style}>
       <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
       {showImage && iconUri ? <Image className="msla-op-search-card-image" alt={title} src={iconUri} /> : null}
       <Text className="msla-op-search-card-name">{title}</Text>

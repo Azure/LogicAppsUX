@@ -14,13 +14,17 @@ export default {
   title: 'Components/Panel/RecommendationPanel',
 } as ComponentMeta<typeof RecommendationPanel>;
 
-export const Search: ComponentStory<typeof RecommendationPanel> = (args: PropsWithChildren<RecommendationPanelProps>) => (
+export const Search: ComponentStory<typeof RecommendationPanel> = (args: any) => (
   <RecommendationPanel {...args}>
     <DesignerSearchBox onSearch={() => null} />
-    <SearchResultsGrid operationSearchResults={MockSearchOperations} onOperationClick={() => null} />
+    <SearchResultsGrid
+      operationSearchResults={MockSearchOperations}
+      onOperationClick={() => null}
+      groupByConnector={args.groupByConnector}
+    />
   </RecommendationPanel>
 );
-Search.args = { isCollapsed: false, width: '630px' };
+Search.args = { isCollapsed: false, width: '630px', groupByConnector: false } as any;
 
 export const Browse: ComponentStory<typeof RecommendationPanel> = (args: PropsWithChildren<RecommendationPanelProps>) => (
   <RecommendationPanel {...args}>
