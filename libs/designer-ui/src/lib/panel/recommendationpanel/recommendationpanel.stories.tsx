@@ -28,16 +28,15 @@ export const Browse: ComponentStory<typeof RecommendationPanel> = (args: PropsWi
     <BrowseGrid connectorBrowse={connectorsSearchResultsMock} onConnectorSelected={() => null} />
   </RecommendationPanel>
 );
-Search.args = { isCollapsed: false, width: '630px' };
+Browse.args = { isCollapsed: false, width: '630px' };
 
 export const OperationGroupDetails: ComponentStory<typeof RecommendationPanel> = (args: PropsWithChildren<RecommendationPanelProps>) => (
   <RecommendationPanel {...args}>
     <OperationGroupDetailsPage
       operationApi={mockOperationApi}
       operationActionsData={[...mockOperationActionsData, ...mockOperationActionsData, ...mockOperationActionsData]}
-      onClickOperation={(id: string) => {
-        alert('Adding node with ID: ' + id);
-      }}
+      onClickOperation={(id: string) => alert('Adding node with ID: ' + id)}
+      onClickBack={() => null}
     />
   </RecommendationPanel>
 );

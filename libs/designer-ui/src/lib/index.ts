@@ -35,6 +35,7 @@ export * from './flyout2';
 // export * from './formfieldgroup';
 export * from './identitydropdown';
 export * from './imagewithfallback';
+export * from './infoDot';
 // export * from './inputcontrol';
 // export * from './intellisensecontrol';
 // export * from './itemspicker';

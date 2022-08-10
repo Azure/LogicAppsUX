@@ -1,5 +1,4 @@
 import { initializeOperationDetails } from '../../../core/actions/bjsworkflow/add';
-import { isBuiltInConnector } from '../../../core/actions/bjsworkflow/connections';
 import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
 import { getConnectionsForConnector } from '../../../core/queries/connections';
 import { getOperationManifest } from '../../../core/queries/operation';
@@ -10,6 +9,7 @@ import { selectOperationGroupId, switchToOperationPanel } from '../../../core/st
 import { addNode } from '../../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../../core/store';
 import type { DiscoveryOperation, DiscoveryResultTypes, OperationApi } from '@microsoft-logic-apps/utils';
+import { isBuiltInConnector } from '@microsoft-logic-apps/utils';
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { OperationGroupDetailsPage } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';

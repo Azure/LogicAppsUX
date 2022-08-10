@@ -1,6 +1,6 @@
-import { ConnectorSummaryCard } from '../../connectorsummarycard/connectorsummarycard';
-import { Stack } from '@fluentui/react';
+import { ConnectorSummaryCard } from '../../connectorsummarycard';
 import type { Connector } from '@microsoft-logic-apps/utils';
+import { isBuiltInConnector } from '@microsoft-logic-apps/utils';
 
 export type BrowseGridProps = {
   onConnectorSelected: (connectorId: string) => void;
@@ -10,23 +10,24 @@ export type BrowseGridProps = {
 export const BrowseGrid = (props: BrowseGridProps) => {
   return (
     <div className="msla-result-list">
-      <Stack horizontal wrap>
+      <div className="msla-browse-results-container">
         {props.connectorBrowse.map((connector) => {
           const properties = connector.properties;
 
           return (
             <ConnectorSummaryCard
               key={connector.id}
-              onConnectorSelected={props.onConnectorSelected}
+              id={connector.id}
               connectorName={properties.displayName}
               description={properties['description'] || ''}
-              id={connector.id}
               iconUrl={properties.iconUri}
               brandColor={properties.brandColor}
-            ></ConnectorSummaryCard>
+              onClick={props.onConnectorSelected}
+              category={isBuiltInConnector(connector.id) ? 'Built-in' : 'Azure'}
+            />
           );
         })}
-      </Stack>
+      </div>
     </div>
   );
 };

@@ -1,56 +1,70 @@
-@med-logo-dimension: 60px;
-@grey-card-border: #bdbdbd;
-@card-title-color: #323130;
-@grey-card-description: #333333;
+.msla-connector-summary-card {
+  position: relative;
+  background-color: #fff;
+  border-radius: 2px;
+  border: none;
+  outline: none;
+  box-shadow: 0px 0.3px 4px 0px rgba(0, 0, 0, 0.1), 0px 1.6px 4px 0px rgba(0, 0, 0, 0.14);
+  color: #323130;
+  cursor: pointer;
+  align-items: center;
+  padding: 8px;
+  width: 100%;
+  overflow: hidden;
 
-.msla-action-header {
-  display: inline-block;
+  &:focus,
+  &:hover {
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
+  }
+
+  box-sizing: border-box;
+  border: 2px solid #ffffff00;
+  &:focus {
+    outline: 0;
+    border: 2px solid rgba(96, 94, 92, 1);
+  }
+
+  &:active {
+    border: 2px solid rgba(0, 120, 212, 1);
+  }
 }
 
-.msla-connector-card {
-  padding: 13px;
-  width: 200px;
-  height: 100px;
-  border: 1px solid @grey-card-border;
+.msla-connector-summary-display {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
 
-  .msla-card-title-container {
-    display: inline-block;
+.msla-connector-summary-image {
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+
+  &.large {
+    width: 48px;
+    height: 48px;
   }
+}
 
-  .msla-card-logo {
-    height: @med-logo-dimension;
-    width: @med-logo-dimension;
-    border-radius: 4px;
+.msla-connector-summary-header {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: center;
+
+  .msla-connector-summary-title {
+    font: 13px/20px @semibold-font-family;
+    flex-grow: 1;
+    text-align: left;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
+}
 
-  .msla-card-title {
-    font-size: 14px;
-    color: @card-title-color;
-    font-weight: 600;
-    margin-left: 13px;
-  }
-
-  .msla-card-description {
-    display: block;
-    font-size: 12px;
-    padding-top: 11px;
-    color: @grey-card-description;
-    line-height: 16px;
-  }
-
-  .msla-tag-container {
-    margin-top: 7px;
-
-    .msla-tag {
-      display: inline-block;
-      font-size: 12px;
-      line-height: 16px;
-      color: white;
-      // background-color: #949494; Danielle will fix after designs are updated, right now getting color contrast error
-      background-color: black;
-      border-radius: 12px;
-      padding: 1px 9px 1px;
-      margin-right: 4px;
-    }
-  }
+.msla-connector-summary-labels {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
 }

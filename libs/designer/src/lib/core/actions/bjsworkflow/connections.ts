@@ -7,7 +7,13 @@ import type { RootState } from '../../store';
 import type { IOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { ConnectionParameter, Connector, OperationManifest } from '@microsoft-logic-apps/utils';
-import { ConnectionParameterTypes, getPropertyValue, hasProperty, equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
+import {
+  isBuiltInConnector,
+  ConnectionParameterTypes,
+  hasProperty,
+  equals,
+  ConnectionReferenceKeyFormat,
+} from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
@@ -248,23 +254,6 @@ export function isConfigConnectionParameter(connectionParameter: ConnectionParam
   }
 
   return false;
-}
-
-export function isBuiltInConnector(connectorId: string): boolean {
-  return (
-    Object.keys(Constants.BUILT_IN_CONNECTOR_IDS).some((c) => equals(getPropertyValue(Constants.BUILT_IN_CONNECTOR_IDS, c), connectorId)) ||
-    isBuiltInSwaggerConnector(connectorId)
-  );
-}
-
-const builtInSwaggerConnectorIds = {
-  FLAT_FILE_GROUP: 'connectionProviders/flatFile',
-  LIQUID_GROUP: 'connectionProviders/liquid',
-  XML_GROUP: 'connectionProviders/xml',
-};
-
-export function isBuiltInSwaggerConnector(connectorId: string): boolean {
-  return Object.keys(builtInSwaggerConnectorIds).some((c) => equals(getPropertyValue(builtInSwaggerConnectorIds, c), connectorId));
 }
 
 function getConnectionReferenceKeyForManifest(referenceFormat: string, operationDefinition: LogicAppsV2.OperationDefinition): string {
