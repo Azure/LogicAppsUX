@@ -83,6 +83,12 @@
       "value": "更改连接"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -560,12 +566,6 @@
       "value": "添加新的连接"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "选择要从中浏览的视图"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -638,12 +638,6 @@
       "value": "必需。要计算的 XPath 表达式。"
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "连接器"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -672,6 +666,12 @@
     {
       "type": 0,
       "value": "删除参数"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -912,6 +912,12 @@
     {
       "type": 0,
       "value": "返回一个对象，此对象具有其他的属性值对"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1701,6 +1707,12 @@
       "value": "返回 URI 的方案"
     }
   ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
+    }
+  ],
   "Lft/is": [
     {
       "type": 0,
@@ -2226,6 +2238,12 @@
       "value": "完成"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2560,6 +2578,12 @@
       "value": "连接名称"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2726,6 +2750,12 @@
       "value": "必需。字符串可以其开头的值。"
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2838,6 +2868,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30)钦奈，加尔各答，孟买，新德里"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3044,6 +3084,12 @@
     {
       "type": 0,
       "value": "使用分隔符拆分字符串"
+    }
+  ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
     }
   ],
   "e00zot": [
@@ -3691,6 +3737,12 @@
     {
       "type": 0,
       "value": "名称"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "mGUdCO": [

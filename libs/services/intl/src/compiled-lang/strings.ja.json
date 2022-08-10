@@ -83,6 +83,12 @@
       "value": "接続の変更"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -556,12 +562,6 @@
       "value": "新しい接続の追加"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "参照元のビューを選択します"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -634,12 +634,6 @@
       "value": "必須。評価する XPath 式。"
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "コネクタ"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -668,6 +662,12 @@
     {
       "type": 0,
       "value": "パラメーターの削除"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -908,6 +908,12 @@
     {
       "type": 0,
       "value": "追加のプロパティ値ペアが含まれるオブジェクトを返します"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1697,6 +1703,12 @@
       "value": "URI からスキームを返します"
     }
   ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
+    }
+  ],
   "Lft/is": [
     {
       "type": 0,
@@ -2222,6 +2234,12 @@
       "value": "完了"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2552,6 +2570,12 @@
       "value": "接続名"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2718,6 +2742,12 @@
       "value": "必須。文字列の先頭に使用される可能性のある値。"
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2830,6 +2860,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30) チェンナイ、コルカタ、ムンバイ、ニューデリー"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3032,6 +3072,12 @@
     {
       "type": 0,
       "value": "区切り記号を使用して文字列を分割します"
+    }
+  ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
     }
   ],
   "e00zot": [
@@ -3663,6 +3709,12 @@
     {
       "type": 0,
       "value": "名前"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "mGUdCO": [
