@@ -9,21 +9,20 @@ import { initializeOperationInfo } from '../../../core/state/operation/operation
 import { selectOperationGroupId, switchToOperationPanel } from '../../../core/state/panel/panelSlice';
 import { addNode } from '../../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../../core/store';
-import type { DiscoveryOperation, DiscoveryResultTypes, OperationApi } from '@microsoft-logic-apps/utils';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { OperationGroupDetailsPage } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
 
 type OperationGroupDetailViewProps = {
-  operationApi: OperationApi;
   selectedSearchedOperations: DiscoveryOperation<DiscoveryResultTypes>[];
 };
 
 export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) => {
   const dispatch = useDispatch();
 
-  const { operationApi, selectedSearchedOperations } = props;
+  const { selectedSearchedOperations } = props;
 
   const rootState = useSelector((state: RootState) => state);
   const { discoveryIds, selectedNode } = useSelector((state: RootState) => state.panel);
@@ -85,7 +84,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
 
   return (
     <OperationGroupDetailsPage
-      operationApi={operationApi}
+      operationApi={selectedSearchedOperations[0].properties.api}
       operationActionsData={operationGroupActions}
       onClickOperation={onOperationClick}
       onClickBack={onClickBack}
