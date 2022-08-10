@@ -1,4 +1,5 @@
-import { Text, Image, ImageFit } from '@fluentui/react';
+import type { IIconProps, IStackTokens } from '@fluentui/react';
+import { Text, Image, ImageFit, Stack, TooltipHost, IconButton } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
 
 export type ConnectorSummaryCardProps = {
@@ -16,6 +17,10 @@ export interface CommonCardProps {
 export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   const intl = getIntl();
 
+  const token: IStackTokens = {
+    childrenGap: 3,
+  };
+
   const logoAltText = intl.formatMessage(
     {
       defaultMessage: 'logo for {connectorName}',
@@ -26,21 +31,33 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
     }
   );
 
+  const infoButtonText = intl.formatMessage(
+    {
+      defaultMessage: 'description for {connectorName}',
+      description: 'Alternate text for accessibility, describes that button shows description for connector',
+    },
+    {
+      connectorName: props.connectorName,
+    }
+  );
+
   const onConnectorCardClicked = () => {
     props.onConnectorSelected(props.id);
   };
 
+  const calloutProps = { gapSpace: 0 };
+  const emojiIcon: IIconProps = { iconName: 'info' };
+
   return (
-    <button className="msla-connector-card" onClick={onConnectorCardClicked}>
-      <div>
-        <div className="msla-card-title-container">
-          <Image imageFit={ImageFit.contain} className="msla-card-logo" src={props.iconUrl} alt={logoAltText}></Image>
-        </div>
-        <div className="msla-card-title-container">
-          <Text className="msla-card-title">{props.connectorName}</Text>
-        </div>
-      </div>
+    <Stack.Item tokens={token} className="msla-connector-card ms-depth-4" onClick={onConnectorCardClicked}>
+      <Image imageFit={ImageFit.contain} maximizeFrame={false} className="msla-card-logo" src={props.iconUrl} alt={logoAltText}></Image>
+      <Text block className="msla-card-title">
+        {props.connectorName}
+      </Text>
+      <TooltipHost content={props.description} id={props.id + '-tooltip'} calloutProps={calloutProps} setAriaDescribedBy={false}>
+        <IconButton iconProps={emojiIcon} aria-label={infoButtonText} />
+      </TooltipHost>
       {/* <Text className="msla-card-description">{props.description}</Text> */}
-    </button>
+    </Stack.Item>
   );
 };
