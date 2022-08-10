@@ -83,6 +83,12 @@
       "value": "Изменить подключение"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -589,12 +595,6 @@
       "value": "Добавление нового подключения"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Выберите представление для просмотра"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -667,12 +667,6 @@
       "value": "Обязательное поле. Выражение XPath для вычисления."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Соединители"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -701,6 +695,12 @@
     {
       "type": 0,
       "value": "Удалить параметр"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -941,6 +941,12 @@
     {
       "type": 0,
       "value": "Возвращает объект с дополнительной парой \"свойство-значение\""
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1845,6 +1851,12 @@
       "value": "Возвращает схему из URI"
     }
   ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
+    }
+  ],
   "Lft/is": [
     {
       "type": 0,
@@ -2403,6 +2415,12 @@
       "value": "Готово"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2733,6 +2751,12 @@
       "value": "Имя соединения"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2899,6 +2923,12 @@
       "value": "Обязательное поле. Значение, с которого может начинаться строка."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -3011,6 +3041,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Ченнаи, Колката, Мумбаи, Нью-Дели"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3217,6 +3257,12 @@
     {
       "type": 0,
       "value": "Разбивает строку с помощью разделителя"
+    }
+  ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
     }
   ],
   "e00zot": [
@@ -3905,6 +3951,12 @@
     {
       "type": 0,
       "value": "Имя"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "mGUdCO": [

@@ -83,6 +83,12 @@
       "value": "Kapcsolat módosítása"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -567,12 +573,6 @@
       "value": "Új kapcsolat hozzáadása"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Válassza ki, hogy melyik nézetből szeretne tallózni"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -645,12 +645,6 @@
       "value": "Kötelező megadni. A kiértékelendő XPath-kifejezés."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Összekötők"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -679,6 +673,12 @@
     {
       "type": 0,
       "value": "Paraméter törlése"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -919,6 +919,12 @@
     {
       "type": 0,
       "value": "Egy objektumot ad vissza, melyhez hozzá lett adva egy tulajdonság-érték pár"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1757,6 +1763,12 @@
       "value": "A séma visszaadása egy URI azonosítóból"
     }
   ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
+    }
+  ],
   "Lft/is": [
     {
       "type": 0,
@@ -2297,6 +2309,12 @@
       "value": "Kész"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2627,6 +2645,12 @@
       "value": "Kapcsolat neve"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2793,6 +2817,12 @@
       "value": "Kötelező megadni. Az érték, amellyel a sztring kezdődhet."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2905,6 +2935,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Csennai, Kolkata (Kalkutta), Mumbai, Új-Delhi"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3111,6 +3151,12 @@
     {
       "type": 0,
       "value": "Sztring kettéosztása elválasztóval."
+    }
+  ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
     }
   ],
   "e00zot": [
@@ -3773,6 +3819,12 @@
     {
       "type": 0,
       "value": "Név"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "mGUdCO": [

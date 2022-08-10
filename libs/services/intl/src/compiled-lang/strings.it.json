@@ -83,6 +83,12 @@
       "value": "Modifica connessione"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -567,12 +573,6 @@
       "value": "Aggiungi una nuova connessione"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Scegliere la visualizzazione da cui esplorare"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -645,12 +645,6 @@
       "value": "Obbligatorio. Espressione XPath da valutare."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Connettori"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -679,6 +673,12 @@
     {
       "type": 0,
       "value": "Elimina parametro"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -919,6 +919,12 @@
     {
       "type": 0,
       "value": "Restituisce un oggetto con una coppia proprietà-valore aggiuntiva"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1741,6 +1747,12 @@
       "value": "Restituisce lo schema da un URI"
     }
   ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
+    }
+  ],
   "Lft/is": [
     {
       "type": 0,
@@ -2285,6 +2297,12 @@
       "value": "Fine"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2615,6 +2633,12 @@
       "value": "Nome della connessione"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2781,6 +2805,12 @@
       "value": "Obbligatorio. Valore con cui può iniziare la stringa."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2893,6 +2923,16 @@
     {
       "type": 0,
       "value": "(UTC+5.30) Chennai, Kolkata (Calcutta), Mumbai, Nuova Delhi"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3099,6 +3139,12 @@
     {
       "type": 0,
       "value": "Divide la stringa usando un separatore"
+    }
+  ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
     }
   ],
   "e00zot": [
@@ -3741,6 +3787,12 @@
     {
       "type": 0,
       "value": "Nome"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "mGUdCO": [
