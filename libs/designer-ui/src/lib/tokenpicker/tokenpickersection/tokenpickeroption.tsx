@@ -59,14 +59,14 @@ export const TokenPickerOptions = ({ section, searchQuery, index, setTokenLength
   const handleCreateToken = (token: OutputToken) => {
     editor.dispatchCommand(INSERT_TOKEN_NODE, {
       brandColor: token.brandColor,
-      description: token.description,
+      description: token.description ?? token.key,
       title: token.title,
-      icon: token.icon ? `url("${token.icon}")` : 'url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")',
+      icon: token.icon ?? 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
       data: {
         id: guid(),
         type: ValueSegmentType.TOKEN,
         value: token.title,
-        token: { ...token, tokenType: token.outputInfo.type },
+        token: { ...token, tokenType: token.outputInfo.type, description: token.description ?? token.key },
       },
     });
   };

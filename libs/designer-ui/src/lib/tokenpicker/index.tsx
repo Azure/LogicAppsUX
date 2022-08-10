@@ -18,6 +18,7 @@ export interface TokenPickerProps {
   editorId: string;
   labelId: string;
   tokenGroup?: TokenGroup[];
+  expressionGroup?: TokenGroup[];
   setInTokenPicker?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
 }
@@ -25,6 +26,7 @@ export default function TokenPicker({
   editorId,
   labelId,
   tokenGroup,
+  expressionGroup,
   setInTokenPicker,
   onSearchTextChanged,
 }: TokenPickerProps): JSX.Element {
@@ -68,7 +70,10 @@ export default function TokenPicker({
           <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} />
           <TokenPickerSearch selectedKey={selectedKey} searchQuery={searchQuery} setSearchQuery={handleUpdateSearch} />
 
-          <TokenPickerSection tokenGroup={tokenGroup ?? []} searchQuery={searchQuery} />
+          <TokenPickerSection
+            tokenGroup={selectedKey === TokenPickerMode.TOKEN ? tokenGroup ?? [] : expressionGroup ?? []}
+            searchQuery={searchQuery}
+          />
         </div>
       </div>
     </Callout>

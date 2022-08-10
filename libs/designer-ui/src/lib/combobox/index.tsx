@@ -65,6 +65,7 @@ export interface ComboboxProps {
   readOnly?: boolean; // TODO - Need to have readOnly version
   required?: boolean;
   tokenGroup?: TokenGroup[];
+  expressionGroup?: TokenGroup[];
   onChange?: ChangeHandler;
 }
 
@@ -77,6 +78,7 @@ export const Combobox = ({
   required,
   readOnly,
   tokenGroup,
+  expressionGroup,
   onChange,
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
@@ -177,8 +179,9 @@ export const Combobox = ({
             placeholder={placeholder}
             BasePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
             initialValue={value}
-            onBlur={handleBlur}
             tokenGroup={tokenGroup}
+            expressionGroup={expressionGroup}
+            onBlur={handleBlur}
           >
             <Change setValue={setValue} />
           </BaseEditor>

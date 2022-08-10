@@ -13,9 +13,10 @@ export interface ExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
   setItems: (items: DictionaryEditorItemProps[]) => void;
   tokenGroup?: TokenGroup[];
+  expressionGroup?: TokenGroup[];
 }
 
-export const ExpandedDictionary = ({ items, tokenGroup, setItems }: ExpandedDictionaryProps): JSX.Element => {
+export const ExpandedDictionary = ({ items, tokenGroup, expressionGroup, setItems }: ExpandedDictionaryProps): JSX.Element => {
   const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -60,6 +61,7 @@ export const ExpandedDictionary = ({ items, tokenGroup, setItems }: ExpandedDict
                 onFocus={() => addItem(index)}
                 tokenPickerButtonProps={{ buttonClassName: 'msla-expanded-dictionary-editor-tokenpicker', buttonHeight: pickerOffset }}
                 tokenGroup={tokenGroup}
+                expressionGroup={expressionGroup}
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary items={items} initialItem={item.key} index={index} type={'key'} setItems={setItems} />
@@ -75,6 +77,7 @@ export const ExpandedDictionary = ({ items, tokenGroup, setItems }: ExpandedDict
                 tokenPickerButtonProps={{ buttonClassName: 'msla-expanded-dictionary-editor-tokenpicker', buttonHeight: pickerOffset }}
                 onFocus={() => addItem(index)}
                 tokenGroup={tokenGroup}
+                expressionGroup={expressionGroup}
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary items={items} initialItem={item.value} index={index} type={'value'} setItems={setItems} />

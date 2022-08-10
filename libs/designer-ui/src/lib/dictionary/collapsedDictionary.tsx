@@ -9,6 +9,7 @@ export type CollapsedDictionaryProps = {
   isValid?: boolean;
   collapsedValue: ValueSegment[];
   tokenGroup?: TokenGroup[];
+  expressionGroup?: TokenGroup[];
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   setCollapsedValue: (val: ValueSegment[]) => void;
@@ -19,6 +20,7 @@ export const CollapsedDictionary = ({
   isValid,
   collapsedValue,
   tokenGroup,
+  expressionGroup,
   setItems,
   setIsValid,
   setCollapsedValue,
@@ -40,6 +42,7 @@ export const CollapsedDictionary = ({
           errorMessage={errorMessage}
           collapsedValue={collapsedValue}
           tokenGroup={tokenGroup}
+          expressionGroup={expressionGroup}
           setItems={setItems}
           setIsValid={setIsValid}
           setCollapsedValue={setCollapsedValue}

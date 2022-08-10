@@ -13,6 +13,7 @@ export interface CollapsedArrayProps {
   items: ArrayEditorItemProps[];
   isValid?: boolean;
   tokenGroup?: TokenGroup[];
+  expressionGroup?: TokenGroup[];
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
 }
@@ -22,6 +23,7 @@ export const CollapsedArray = ({
   items,
   isValid = true,
   tokenGroup,
+  expressionGroup,
   setItems,
   setIsValid,
 }: CollapsedArrayProps): JSX.Element => {
@@ -58,6 +60,7 @@ export const CollapsedArray = ({
           setItems={updateItems}
           setIsValid={setIsValid}
           tokenGroup={tokenGroup}
+          expressionGroup={expressionGroup}
         />
       </div>
     </div>

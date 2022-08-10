@@ -15,6 +15,7 @@ export interface ExpandedArrayProps {
   canDeleteLastItem: boolean;
   readOnly: boolean;
   tokenGroup?: TokenGroup[];
+  expressionGroup?: TokenGroup[];
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
 }
 
@@ -41,6 +42,7 @@ export const ExpandedArray = ({
   canDeleteLastItem,
   readOnly,
   tokenGroup,
+  expressionGroup,
   setItems,
 }: ExpandedArrayProps): JSX.Element => {
   const intl = useIntl();
@@ -85,6 +87,7 @@ export const ExpandedArray = ({
               BasePlugins={{ tokens: true, clearEditor: true }}
               tokenPickerButtonProps={{ buttonClassName: 'msla-expanded-array-editor-tokenpicker' }}
               tokenGroup={tokenGroup}
+              expressionGroup={expressionGroup}
             >
               <EditorChange item={item.content ?? []} items={items} setItems={setItems} index={index} />
             </BaseEditor>

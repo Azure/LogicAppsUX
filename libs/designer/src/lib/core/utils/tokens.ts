@@ -132,7 +132,7 @@ export function getExpressionTokenSections(): TokenGroup[] {
     const tokens = functions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
       key: name,
       brandColor: '#AD008C',
-      iconUri: FxIcon,
+      icon: FxIcon,
       title: defaultSignature,
       name,
       type: Constants.SWAGGER.TYPE.ANY,

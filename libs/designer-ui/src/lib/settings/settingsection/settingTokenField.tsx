@@ -5,6 +5,7 @@ import type { ValueSegment } from '../../editor';
 import type { ChangeHandler } from '../../editor/base';
 import { StringEditor } from '../../editor/string';
 import { SchemaEditor } from '../../schemaeditor';
+import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
 import React from 'react';
@@ -21,6 +22,8 @@ export interface SettingTokenFieldProps extends SettingProps {
   readOnly?: boolean;
   tokenEditor: true;
   required?: boolean;
+  tokenGroup?: TokenGroup[];
+  expressionGroup?: TokenGroup[];
   onValueChange?: ChangeHandler;
 }
 
@@ -37,7 +40,17 @@ export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
   );
 };
 
-const TokenField = ({ editor, editorOptions, editorViewModel, placeholder, readOnly, value, onValueChange }: SettingTokenFieldProps) => {
+const TokenField = ({
+  editor,
+  editorOptions,
+  editorViewModel,
+  placeholder,
+  readOnly,
+  value,
+  tokenGroup,
+  expressionGroup,
+  onValueChange,
+}: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
     case 'combobox':
       // eslint-disable-next-line no-case-declarations
@@ -49,6 +62,8 @@ const TokenField = ({ editor, editorOptions, editorViewModel, placeholder, readO
           initialValue={value}
           options={options}
           useOption={true}
+          tokenGroup={tokenGroup}
+          expressionGroup={expressionGroup}
           onChange={onValueChange}
         />
       );
@@ -63,6 +78,8 @@ const TokenField = ({ editor, editorOptions, editorViewModel, placeholder, readO
           readOnly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
+          tokenGroup={tokenGroup}
+          expressionGroup={expressionGroup}
           onChange={onValueChange}
         />
       );
@@ -75,6 +92,8 @@ const TokenField = ({ editor, editorOptions, editorViewModel, placeholder, readO
           placeholder={placeholder}
           readOnly={readOnly}
           initialValue={value}
+          tokenGroup={tokenGroup}
+          expressionGroup={expressionGroup}
           onChange={onValueChange}
         />
       );
@@ -87,6 +106,8 @@ const TokenField = ({ editor, editorOptions, editorViewModel, placeholder, readO
           BasePlugins={{ tokens: true }}
           readonly={readOnly}
           initialValue={value}
+          tokenGroup={tokenGroup}
+          expressionGroup={expressionGroup}
           onChange={onValueChange}
         />
       );

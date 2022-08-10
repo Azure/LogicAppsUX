@@ -53,6 +53,7 @@ export interface BaseEditorProps {
   children?: React.ReactNode;
   tokenPickerButtonProps?: TokenPickerButtonProps;
   tokenGroup?: TokenGroup[];
+  expressionGroup?: TokenGroup[];
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -88,6 +89,7 @@ export const BaseEditor = ({
   children,
   tokenPickerButtonProps,
   tokenGroup,
+  expressionGroup,
   onBlur,
   onFocus,
 }: BaseEditorProps) => {
@@ -177,7 +179,7 @@ export const BaseEditor = ({
           />
         ) : null}
         {(showTokenPickerButton && showTokenPicker) || inTokenPicker
-          ? GetTokenPicker(editorId, labelId, tokenGroup, onClickTokenPicker)
+          ? GetTokenPicker(editorId, labelId, tokenGroup, expressionGroup, onClickTokenPicker)
           : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />

@@ -18,6 +18,7 @@ interface CollapsedEditorBaseProps {
   errorMessage: string;
   collapsedValue?: ValueSegment[];
   tokenGroup?: TokenGroup[];
+  expressionGroup?: TokenGroup[];
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   setCollapsedValue?: (val: ValueSegment[]) => void;
   onBlur?: () => void;
@@ -42,6 +43,7 @@ export const CollapsedEditor = ({
   type,
   collapsedValue,
   tokenGroup,
+  expressionGroup,
   setIsValid,
   setItems,
   setCollapsedValue,
@@ -58,6 +60,7 @@ export const CollapsedEditor = ({
       initialValue={collapsedValue && collapsedValue.length > 0 ? collapsedValue : (initialValue as ValueSegment[])}
       onBlur={onBlur}
       tokenGroup={tokenGroup}
+      expressionGroup={expressionGroup}
     >
       {type === CollapsedEditorType.DICTIONARY ? null : <SerializeArray isValid={isValid} setItems={setItems} />}
 

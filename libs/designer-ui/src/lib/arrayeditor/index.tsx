@@ -28,6 +28,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   addArrayLabel,
   readOnly = false,
   tokenGroup,
+  expressionGroup,
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
   const [items, setItems] = useState(initialItems);
@@ -47,6 +48,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           setItems={setItems}
           setIsValid={setIsValid}
           tokenGroup={tokenGroup}
+          expressionGroup={expressionGroup}
         />
       ) : (
         <ExpandedArray
@@ -56,6 +58,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           readOnly={readOnly}
           canDeleteLastItem={canDeleteLastItem}
           tokenGroup={tokenGroup}
+          expressionGroup={expressionGroup}
         />
       )}
       <div className="msla-array-commands">

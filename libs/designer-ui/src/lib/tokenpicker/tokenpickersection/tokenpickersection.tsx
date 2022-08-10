@@ -8,6 +8,7 @@ interface TokenPickerSectionProps {
   searchQuery: string;
 }
 export const TokenPickerSection = ({ tokenGroup, searchQuery }: TokenPickerSectionProps): JSX.Element => {
+  console.log(tokenGroup);
   const [tokenLength, setTokenLength] = useState(new Array<number>(tokenGroup.length));
   const [noItems, setNoItems] = useState(false);
 
@@ -17,13 +18,16 @@ export const TokenPickerSection = ({ tokenGroup, searchQuery }: TokenPickerSecti
 
   return (
     <div className="msla-token-picker-sections">
-      <TokenPickerNoMatches noItems={noItems} />
+      {searchQuery ? <TokenPickerNoMatches noItems={noItems} /> : null}
       {tokenGroup.map((section, i) => {
-        return (
-          <div key={`token-picker-section-${i}`} className={'msla-token-picker-sections'}>
-            <TokenPickerOptions section={section} searchQuery={searchQuery} index={i} setTokenLength={setTokenLength} />
-          </div>
-        );
+        if (section.tokens.length > 0) {
+          return (
+            <div key={`token-picker-section-${i}`} className={'msla-token-picker-section'}>
+              <TokenPickerOptions section={section} searchQuery={searchQuery} index={i} setTokenLength={setTokenLength} />
+            </div>
+          );
+        }
+        return null;
       })}
     </div>
   );
