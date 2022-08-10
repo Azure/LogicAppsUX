@@ -83,6 +83,12 @@
       "value": "Alterar a conexão"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -567,12 +573,6 @@
       "value": "Adicionar uma conexão"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Escolha de qual exibição você deseja navegar"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -645,12 +645,6 @@
       "value": "Necessário. A expressão XPath a ser avaliada."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Conectores"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -679,6 +673,12 @@
     {
       "type": 0,
       "value": "Excluir Parâmetro"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -919,6 +919,12 @@
     {
       "type": 0,
       "value": "Retorna um objeto com um par de valor de propriedade adicional"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1374,7 +1380,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "Divisão inválida no formato em {splitOn}."
     }
   ],
   "G0XYrd": [
@@ -1405,6 +1411,12 @@
     {
       "type": 0,
       "value": "Retornará true se os parâmetros forem false"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1711,6 +1723,12 @@
       "value": "Aviso"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1720,13 +1738,19 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Tipo inválido na divisão do valor {splitOn}. SplitOn não está na matriz."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Retorna o esquema de um URI"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2265,6 +2289,12 @@
       "value": "Feito"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2595,6 +2625,12 @@
       "value": "Nome da conexão"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2761,6 +2797,12 @@
       "value": "Necessário. O valor com o qual a cadeia de caracteres pode começar."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2873,6 +2915,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, Nova Délhi"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3081,6 +3133,12 @@
       "value": "Divide a cadeia de caracteres usando um separador"
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -3276,7 +3334,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Divisão inválida no valor {splitOn}. Não foi possível localizar nas saídas."
     }
   ],
   "gu9o9z": [
@@ -3723,6 +3781,12 @@
       "value": "Nome"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3763,6 +3827,12 @@
     {
       "type": 0,
       "value": "Limite os Aplicativos Lógicos para não incluir cabeçalhos de metadados de fluxo de trabalho na solicitação de saída."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

@@ -9,6 +9,9 @@ export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelStat
 
 export const useIsDiscovery = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.isDiscovery));
 
+export const useSelectedOperationGroupId = () =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedOperationGroupId));
+
 export const useSelectedNodeId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNode));
 
 export const useIsNodeSelected = (nodeId: string) =>

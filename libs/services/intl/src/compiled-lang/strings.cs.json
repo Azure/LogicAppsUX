@@ -83,6 +83,12 @@
       "value": "Změnit připojení"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -601,12 +607,6 @@
       "value": "Přidat nové připojení"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Zvolte zobrazení, ze kterého chcete procházet."
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -679,12 +679,6 @@
       "value": "Vyžadováno. Výraz jazyka XPath, který se má vyhodnotit."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Konektory"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -713,6 +707,12 @@
     {
       "type": 0,
       "value": "Odstranit parametr"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -953,6 +953,12 @@
     {
       "type": 0,
       "value": "Vrátí objekt s jedním párem vlastnost-hodnota navíc."
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1452,7 +1458,15 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "Neplatný formát rozdělení v „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“."
     }
   ],
   "G0XYrd": [
@@ -1483,6 +1497,12 @@
     {
       "type": 0,
       "value": "Vrátí true, pokud jsou parametry false."
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1811,6 +1831,12 @@
       "value": "Upozornění"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1820,13 +1846,27 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Neplatný typ hodnoty rozdělení „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“ – rozdělení není v poli."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Vrátí schéma z identifikátoru URI."
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2387,6 +2427,12 @@
       "value": "Hotovo"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2717,6 +2763,12 @@
       "value": "Název připojení"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2883,6 +2935,12 @@
       "value": "Vyžadováno. Hodnota, kterou může řetězec začínat."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2995,6 +3053,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Čennaj, Kolkata (Kalkata), Mumbaí (Bombaj), Dillí"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3203,6 +3271,12 @@
       "value": "Rozdělí řetězec pomocí oddělovače."
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -3398,7 +3472,15 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Neplatná hodnota rozdělení „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“ – nelze najít ve výstupech."
     }
   ],
   "gu9o9z": [
@@ -3875,6 +3957,12 @@
       "value": "Název"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3915,6 +4003,12 @@
     {
       "type": 0,
       "value": "Omezí aplikace Logic Apps tak, aby do odchozích požadavků nezahrnovaly hlavičky metadat pracovních postupů."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

@@ -3,6 +3,7 @@ import type { DesignerOptionsState } from '../core/state/designerOptions/designe
 import { BJSWorkflowProvider, Designer, DesignerProvider } from '../index';
 import AllScopesWorkflow from './storybookWorkflows/allScopesWorkflow.json';
 import ConnectionsWorkflow from './storybookWorkflows/connectionsWorkflow.json';
+import RunAfterWorkflow from './storybookWorkflows/runAfterWorkflow.json';
 import BigWorkflow from './storybookWorkflows/simpleBigworkflow.json';
 import SimpleWorkflow from './storybookWorkflows/simpleSmallWorkflow.json';
 import {
@@ -73,3 +74,5 @@ export const MonitoringViewExample = () => (
 export const ConnectionsExample = () => <RenderedComponent workflow={ConnectionsWorkflow.files as Workflow} options={{}} />;
 
 export const ScopesExample = () => <RenderedComponent workflow={AllScopesWorkflow as Workflow} />;
+
+export const RunAfterExample = () => <RenderedComponent workflow={RunAfterWorkflow as Workflow} />;

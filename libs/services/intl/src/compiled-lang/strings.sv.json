@@ -83,6 +83,12 @@
       "value": "Ändra anslutning"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -567,12 +573,6 @@
       "value": "Lägg till en ny anslutning"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Välj vilken vy du vill bläddra från"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -645,12 +645,6 @@
       "value": "Obligatoriskt. Det XPath-uttryck som ska utvärderas."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Anslutningsprogram"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -679,6 +673,12 @@
     {
       "type": 0,
       "value": "Ta bort parameter"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -919,6 +919,12 @@
     {
       "type": 0,
       "value": "Returnerar ett objekt med ett extra egenskapsvärdepar"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1374,7 +1380,15 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "Ogiltigt delningsformat i "
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "G0XYrd": [
@@ -1405,6 +1419,12 @@
     {
       "type": 0,
       "value": "Returnerar sant om båda parametrarna är falsk"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1711,6 +1731,12 @@
       "value": "Varning"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1720,13 +1746,27 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Ogiltig typ av delningsvärde "
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": ", delning finns inte matrisen."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Returnerar schemat från en URI"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2269,6 +2309,12 @@
       "value": "Klart"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2599,6 +2645,12 @@
       "value": "Anslutningens namn"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2765,6 +2817,12 @@
       "value": "Obligatoriskt. Det värde som strängen kan inledas med."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2877,6 +2935,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3085,6 +3153,12 @@
       "value": "Delar strängen med hjälp av en avgränsare"
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -3280,7 +3354,15 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Ogiltig delningsvärde "
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": ", finns inte i utdata."
     }
   ],
   "gu9o9z": [
@@ -3735,6 +3817,12 @@
       "value": "Namn"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3775,6 +3863,12 @@
     {
       "type": 0,
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i utgående begäran."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

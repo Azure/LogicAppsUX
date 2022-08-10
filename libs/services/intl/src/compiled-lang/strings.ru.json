@@ -83,6 +83,12 @@
       "value": "Изменить подключение"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -589,12 +595,6 @@
       "value": "Добавление нового подключения"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Выберите представление для просмотра"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -667,12 +667,6 @@
       "value": "Обязательное поле. Выражение XPath для вычисления."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Соединители"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -701,6 +695,12 @@
     {
       "type": 0,
       "value": "Удалить параметр"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -941,6 +941,12 @@
     {
       "type": 0,
       "value": "Возвращает объект с дополнительной парой \"свойство-значение\""
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1440,7 +1446,15 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "Недопустимый формат разделения в \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "G0XYrd": [
@@ -1471,6 +1485,12 @@
     {
       "type": 0,
       "value": "Возвращает значение true, если параметры имеют значение false"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1799,6 +1819,12 @@
       "value": "Предупреждение"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1808,13 +1834,27 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Недопустимый тип значения разделения \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\". Разделение отсутствует в массиве."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Возвращает схему из URI"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2375,6 +2415,12 @@
       "value": "Готово"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2705,6 +2751,12 @@
       "value": "Имя соединения"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2871,6 +2923,12 @@
       "value": "Обязательное поле. Значение, с которого может начинаться строка."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2983,6 +3041,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Ченнаи, Колката, Мумбаи, Нью-Дели"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3191,6 +3259,12 @@
       "value": "Разбивает строку с помощью разделителя"
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -3386,7 +3460,15 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Недопустимое значение разделения \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\". Не удается найти его в выходных данных."
     }
   ],
   "gu9o9z": [
@@ -3871,6 +3953,12 @@
       "value": "Имя"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3911,6 +3999,12 @@
     {
       "type": 0,
       "value": "Запрет на включение в исходящий запрос заголовков метаданных по рабочим процессам в Logic Apps."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

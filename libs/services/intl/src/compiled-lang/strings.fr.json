@@ -83,6 +83,12 @@
       "value": "Changer la connexion"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -567,12 +573,6 @@
       "value": "Ajouter une nouvelle connexion"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Choisir l’affichage à partir duquel parcourir"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -645,12 +645,6 @@
       "value": "Obligatoire. Expression XPath à évaluer."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Connecteurs"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -679,6 +673,12 @@
     {
       "type": 0,
       "value": "Supprimer un paramètre"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -919,6 +919,12 @@
     {
       "type": 0,
       "value": "Renvoie un objet avec une paire de valeurs de propriété supplémentaires"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1374,7 +1380,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "Fractionnement non valide sur format dans {splitOn}."
     }
   ],
   "G0XYrd": [
@@ -1405,6 +1411,12 @@
     {
       "type": 0,
       "value": "Retourne true si les paramètres ont la valeur false"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1711,6 +1723,12 @@
       "value": "Avertissement"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1720,13 +1738,19 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Type non valide sur la valeur fractionnée {splitOn}, fractionnée sur non dans le tableau."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Renvoie le schéma d’un URI"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2265,6 +2289,12 @@
       "value": "Terminé"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2595,6 +2625,12 @@
       "value": "Nom de la connexion"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2761,6 +2797,12 @@
       "value": "Obligatoire. Valeur avec laquelle la chaîne peut commencer."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2873,6 +2915,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3081,6 +3133,12 @@
       "value": "Fractionne la chaîne à l'aide d'un séparateur"
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -3276,7 +3334,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Fractionnement non valide sur la valeur {splitOn}, introuvable dans les sorties."
     }
   ],
   "gu9o9z": [
@@ -3731,6 +3789,12 @@
       "value": "Nom"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3771,6 +3835,12 @@
     {
       "type": 0,
       "value": "Limitez Logic Apps de sorte qu’aucun en-tête de métadonnées de workflow ne soit inclus dans la demande sortante."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

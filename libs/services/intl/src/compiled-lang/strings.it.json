@@ -83,6 +83,12 @@
       "value": "Modifica connessione"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -567,12 +573,6 @@
       "value": "Aggiungi una nuova connessione"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Scegliere la visualizzazione da cui esplorare"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -645,12 +645,6 @@
       "value": "Obbligatorio. Espressione XPath da valutare."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Connettori"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -679,6 +673,12 @@
     {
       "type": 0,
       "value": "Elimina parametro"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -919,6 +919,12 @@
     {
       "type": 0,
       "value": "Restituisce un oggetto con una coppia proprietà-valore aggiuntiva"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1374,7 +1380,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "Il formato dell'opzione SplitOn in {splitOn} non è valido."
     }
   ],
   "G0XYrd": [
@@ -1405,6 +1411,12 @@
     {
       "type": 0,
       "value": "Restituisce true se i parametri sono false"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1711,6 +1723,12 @@
       "value": "Avviso"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1720,13 +1738,19 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Tipo non valido per il valore SplitOn {splitOn}. Il valore SplitOn non è presente nella matrice."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Restituisce lo schema da un URI"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2273,6 +2297,12 @@
       "value": "Fine"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2603,6 +2633,12 @@
       "value": "Nome della connessione"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2769,6 +2805,12 @@
       "value": "Obbligatorio. Valore con cui può iniziare la stringa."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2881,6 +2923,16 @@
     {
       "type": 0,
       "value": "(UTC+5.30) Chennai, Kolkata (Calcutta), Mumbai, Nuova Delhi"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3089,6 +3141,12 @@
       "value": "Divide la stringa usando un separatore"
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -3284,7 +3342,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Il valore SplitOn {splitOn} non è valido. Non è stato trovato negli output."
     }
   ],
   "gu9o9z": [
@@ -3731,6 +3789,12 @@
       "value": "Nome"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3771,6 +3835,12 @@
     {
       "type": 0,
       "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella richiesta in uscita."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

@@ -83,6 +83,12 @@
       "value": "更改连接"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -560,12 +566,6 @@
       "value": "添加新的连接"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "选择要从中浏览的视图"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -638,12 +638,6 @@
       "value": "必需。要计算的 XPath 表达式。"
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "连接器"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -672,6 +666,12 @@
     {
       "type": 0,
       "value": "删除参数"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -912,6 +912,12 @@
     {
       "type": 0,
       "value": "返回一个对象，此对象具有其他的属性值对"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1345,7 +1351,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "{splitOn} 中的拆分对象格式无效。"
     }
   ],
   "G0XYrd": [
@@ -1376,6 +1382,12 @@
     {
       "type": 0,
       "value": "如果参数为 false，则返回 true"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1671,6 +1683,12 @@
       "value": "警告"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1680,13 +1698,19 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "拆分对象值 {splitOn} 的类型无效，拆分对象不在数组中。"
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "返回 URI 的方案"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2214,6 +2238,12 @@
       "value": "完成"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2548,6 +2578,12 @@
       "value": "连接名称"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2714,6 +2750,12 @@
       "value": "必需。字符串可以其开头的值。"
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2826,6 +2868,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30)钦奈，加尔各答，孟买，新德里"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3034,6 +3086,12 @@
       "value": "使用分隔符拆分字符串"
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -3229,7 +3287,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "拆分对象值 {splitOn} 无效，在输出中找不到它。"
     }
   ],
   "gu9o9z": [
@@ -3681,6 +3739,12 @@
       "value": "名称"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3721,6 +3785,12 @@
     {
       "type": 0,
       "value": "限制逻辑应用，使其不在传出请求中包含工作流元数据标头。"
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [

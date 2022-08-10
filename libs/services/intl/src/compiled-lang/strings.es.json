@@ -83,6 +83,12 @@
       "value": "Cambiar conexión"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -567,12 +573,6 @@
       "value": "Agregar una nueva conexión"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Elegir la vista desde la que desea navegar"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -645,12 +645,6 @@
       "value": "Obligatorio. La expresión XPath que se evaluará."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Conectores"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -679,6 +673,12 @@
     {
       "type": 0,
       "value": "Eliminar parámetro"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -919,6 +919,12 @@
     {
       "type": 0,
       "value": "Devuelve un objeto con un par de valor y propiedad adicional."
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1374,7 +1380,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "División no válida en formato en {splitOn}."
     }
   ],
   "G0XYrd": [
@@ -1405,6 +1411,12 @@
     {
       "type": 0,
       "value": "Devuelve true si los parámetros son falsos."
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1711,6 +1723,12 @@
       "value": "Advertencia"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
@@ -1720,13 +1738,19 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Tipo no válido al dividir en el valor {splitOn}, la división no está en la matriz."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Devuelve el esquema de un URI."
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2265,6 +2289,12 @@
       "value": "Listo"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2595,6 +2625,12 @@
       "value": "Nombre de conexión"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2761,6 +2797,12 @@
       "value": "Obligatorio. El valor con el cual podría empezar la cadena."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2873,6 +2915,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata (Calcuta), Mumbai (Bombay), Nueva Delhi"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3081,6 +3133,12 @@
       "value": "Divide la cadena mediante un separador."
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -3276,7 +3334,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "División no válida en el valor {splitOn}, no se encuentra en las salidas."
     }
   ],
   "gu9o9z": [
@@ -3739,6 +3797,12 @@
       "value": "Nombre"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3779,6 +3843,12 @@
     {
       "type": 0,
       "value": "Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la solicitud saliente."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
