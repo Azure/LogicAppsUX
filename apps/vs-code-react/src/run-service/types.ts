@@ -175,6 +175,10 @@ export interface WorkflowsList {
   resourceGroup: string;
 }
 
+export interface SelectedWorkflowsList extends WorkflowsList {
+  selected: boolean;
+}
+
 export interface OutletContext {
   accessToken: string;
   baseUrl: string;

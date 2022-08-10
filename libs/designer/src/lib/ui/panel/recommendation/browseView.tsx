@@ -60,7 +60,7 @@ export const BrowseView: React.FC = () => {
       {selectedConnectorId !== '' ? (
         <ConnectorAllOperationsSummary operations={allOperationsForGroup}></ConnectorAllOperationsSummary>
       ) : (
-        <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectorBrowse={browseResults || []}></BrowseGrid>
+        <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectorBrowse={browseResults || []} />
       )}
     </>
   );

@@ -32,7 +32,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
           id={operation.id}
           connectorName={properties.api.displayName}
           subtitle={properties.description}
-        ></OperationCard>
+        />
       );
     },
     [props]

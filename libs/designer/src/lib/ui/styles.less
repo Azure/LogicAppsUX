@@ -1,5 +1,7 @@
 @import '../../../../designer-ui/src/styles.less';
 @import './settings/sections/runafterconfiguration/runafterconfiguration.less';
+@import './connections/runAfterIndicator/styles.less';
+
 .msla-theme-provider {
   height: 100%;
   overflow: hidden;
@@ -92,4 +94,18 @@
   width: 20px !important;
   height: 20px !important;
   font-size: 16px;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2 !important;
+}
+
+.msla-add-context-menu {
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+
+  .ms-Button {
+    border: 0px !important;
+  }
 }
