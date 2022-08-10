@@ -6,6 +6,7 @@ import { WORKFLOW_EDGE_TYPES, isWorkflowNode } from '../../parsers/models/workfl
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
+import { equals, RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
@@ -90,6 +91,63 @@ export const workflowSlice = createSlice({
         area: 'workflowSlice.ts',
       });
     },
+    buildEdgeIdsBySource: (state: WorkflowState) => {
+      if (!state.graph) return;
+
+      const output: Record<string, string[]> = {};
+      const traverseGraph = (graph: WorkflowNode) => {
+        const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
+        if (edges) {
+          edges.forEach((edge) => {
+            if (!output[edge.source]) output[edge.source] = [];
+            output[edge.source].push(edge.target);
+          });
+        }
+        if (graph.children) graph.children.forEach((child) => traverseGraph(child));
+      };
+      traverseGraph(state.graph);
+      state.edgeIdsBySource = output;
+    },
+    addEdge: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
+      const { childOperationId, parentOperationId } = action.payload;
+      const parentOperation = state.operations[parentOperationId];
+      const childOperation: LogicAppsV2.ActionDefinition = state.operations[childOperationId];
+      if (!parentOperation || !childOperation) {
+        return;
+      }
+      childOperation.runAfter = { ...(childOperation.runAfter ?? {}), [parentOperationId]: [RUN_AFTER_STATUS.SUCCEEDED] };
+
+      const graphPath: string[] = [];
+      let operationGraph = state.nodesMetadata[childOperationId];
+
+      while (!equals(operationGraph.graphId, 'root')) {
+        graphPath.push(operationGraph.graphId);
+        operationGraph = state.nodesMetadata[operationGraph.graphId];
+      }
+      let graph = state.graph;
+      for (const id of graphPath.reverse()) {
+        graph = graph?.children?.find((x) => x.id === id) ?? null;
+      }
+      graph?.edges?.push({
+        id: `${parentOperationId}-${childOperationId}`,
+        source: parentOperationId,
+        target: childOperationId,
+        type: 'BUTTON_EDGE',
+      });
+    },
+    updateRunAfter: (
+      state: WorkflowState,
+      action: PayloadAction<{ childOperation: string; parentOperation: string; statuses: string[] }>
+    ) => {
+      const childOperation = state.operations[action.payload.childOperation] as LogicAppsV2.ActionDefinition;
+      if (!childOperation) {
+        return;
+      }
+      if (!childOperation.runAfter) {
+        childOperation.runAfter = {};
+      }
+      childOperation.runAfter[action.payload.parentOperation] = action.payload.statuses;
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -97,19 +155,6 @@ export const workflowSlice = createSlice({
       state.graph = action.payload.graph;
       state.operations = action.payload.actionData;
       state.nodesMetadata = action.payload.nodesMetadata;
-
-      state.edgeIdsBySource = {};
-      const traverseGraph = (graph: WorkflowNode) => {
-        const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
-        if (edges) {
-          edges.forEach((edge) => {
-            if (!state.edgeIdsBySource[edge.source]) state.edgeIdsBySource[edge.source] = [];
-            state.edgeIdsBySource[edge.source].push(edge.target);
-          });
-        }
-        if (graph.children) graph.children.forEach((child) => traverseGraph(child));
-      };
-      traverseGraph(action.payload.graph);
     });
   },
 });
@@ -123,6 +168,9 @@ export const {
   setCollapsedGraphIds,
   toggleCollapsedGraphId,
   discardAllChanges,
+  buildEdgeIdsBySource,
+  updateRunAfter,
+  addEdge,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

@@ -1,11 +1,12 @@
 import { OperationCard } from '../../actionsummarycard/card';
 import { List } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import type Fuse from 'fuse.js';
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 
 export type SearchResultsGridProps = {
-  operationSearchResults: DiscoveryOperation<DiscoveryResultTypes>[];
+  operationSearchResults: Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>[];
   onOperationClick: (operation: DiscoveryOperation<DiscoveryResultTypes>) => void;
 };
 
@@ -31,7 +32,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
           id={operation.id}
           connectorName={properties.api.displayName}
           subtitle={properties.description}
-        ></OperationCard>
+        />
       );
     },
     [props]
@@ -39,7 +40,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   return (
     <div className="msla-result-list">
-      <List items={operationSearchResults} onRenderCell={onRenderOperationCell}></List>
+      <List items={operationSearchResults.map((result) => result.item)} onRenderCell={onRenderOperationCell}></List>
     </div>
   );
 };

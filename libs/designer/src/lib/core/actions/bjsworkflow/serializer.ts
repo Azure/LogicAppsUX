@@ -1,6 +1,5 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReferences, Workflow } from '../../../common/models/workflow';
-import { Status } from '../../../ui/settings/sections/runafterconfiguration';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
 import { getOperationManifest } from '../../queries/operation';
@@ -21,6 +20,7 @@ import type { Segment } from '@microsoft-logic-apps/parsers';
 import { cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest, SubGraphDetail } from '@microsoft-logic-apps/utils';
 import {
+  RUN_AFTER_STATUS,
   equals,
   isNullOrUndefined,
   safeSetObjectPropertyValue,
@@ -640,10 +640,10 @@ const getRunAfter = (settings: Settings): LogicAppsV2.RunAfter => {
   const edges = settings.runAfter?.value ?? [];
 
   const normalizeStatuses: Record<string, string> = {
-    [Status.SUCCEEDED]: Constants.FLOW_STATUS.SUCCEEDED,
-    [Status.FAILED]: Constants.FLOW_STATUS.FAILED,
-    [Status.SKIPPED]: Constants.FLOW_STATUS.SKIPPED,
-    [Status.TIMEDOUT]: Constants.FLOW_STATUS.TIMEDOUT,
+    [RUN_AFTER_STATUS.SUCCEEDED]: Constants.FLOW_STATUS.SUCCEEDED,
+    [RUN_AFTER_STATUS.FAILED]: Constants.FLOW_STATUS.FAILED,
+    [RUN_AFTER_STATUS.SKIPPED]: Constants.FLOW_STATUS.SKIPPED,
+    [RUN_AFTER_STATUS.TIMEDOUT]: Constants.FLOW_STATUS.TIMEDOUT,
   };
 
   return edges.reduce((previous: LogicAppsV2.RunAfter, edge: GraphEdge) => {

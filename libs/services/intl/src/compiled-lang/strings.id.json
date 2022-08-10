@@ -83,6 +83,12 @@
       "value": "Ubah koneksi"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -556,12 +562,6 @@
       "value": "Tambahkan koneksi baru"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Pilih tampilan yang akan dijelajahi"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -634,12 +634,6 @@
       "value": "Harus diisi. Ekspresi Xpath untuk dievaluasi."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Konektor"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -668,6 +662,12 @@
     {
       "type": 0,
       "value": "Hapus Parameter"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -908,6 +908,12 @@
     {
       "type": 0,
       "value": "Menghasilkan objek dengan pasangan nilai properti tambahan"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1341,7 +1347,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "pemisahan tidak valid pada format {splitOn}."
     }
   ],
   "G0XYrd": [
@@ -1688,13 +1694,19 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Tipe pemisahan tidak valid pada nilai {splitOn}, pemisahan tidak dalam array."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Menghasilkan skema dari URI"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2222,6 +2234,12 @@
       "value": "Selesai"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2552,6 +2570,12 @@
       "value": "Nama koneksi"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2718,6 +2742,12 @@
       "value": "Harus diisi. Kemungkinan nilai awal string."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2830,6 +2860,16 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
@@ -3038,6 +3078,12 @@
       "value": "Membagi string menggunakan pemisah"
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -3233,7 +3279,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Pemisahan tidak valid pada nilai {splitOn}, tidak dapat menemukan dalam output."
     }
   ],
   "gu9o9z": [
@@ -3667,6 +3713,12 @@
     {
       "type": 0,
       "value": "Nama"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "mGUdCO": [
