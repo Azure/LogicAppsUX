@@ -1,4 +1,4 @@
-import { setInputSchema, setOutputSchema } from '../../core/state/SchemaSlice';
+import { setInitialInputSchema, setInitialOutputSchema } from '../../core/state/DataMapSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended } from '../../models/Schema';
 import { convertSchemaToSchemaExtended } from '../../models/Schema';
@@ -15,8 +15,8 @@ interface MockStoreData {
 }
 
 const MockStore = ({ mockState, children }) => {
-  store.dispatch(setInputSchema(mockState.inputSchema));
-  store.dispatch(setOutputSchema(mockState.outputSchema));
+  store.dispatch(setInitialInputSchema(mockState.inputSchema));
+  store.dispatch(setInitialOutputSchema(mockState.outputSchema));
 
   return <Provider store={store}>{children}</Provider>;
 };
