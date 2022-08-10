@@ -1,14 +1,13 @@
 import type { SectionProps } from '../';
 import constants from '../../../common/constants';
-import type { GraphEdge } from '../../../core/actions/bjsworkflow/settings';
+import type { AppDispatch, RootState } from '../../../core';
 import type { WorkflowEdge } from '../../../core/parsers/models/workflowNode';
-import { updateNodeSettings } from '../../../core/state/operation/operationMetadataSlice';
+import { addEdge, updateRunAfter } from '../../../core/state/workflow/workflowSlice';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
-import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // TODO: 14714481 We need to support all incoming edges and runAfterConfigMenu
 
@@ -17,73 +16,41 @@ interface RunAfterProps extends SectionProps {
 }
 
 export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, nodeId }: RunAfterProps): JSX.Element | null => {
-  const dispatch = useDispatch();
-  const [statuses, setStatuses] = useState<Record<string, string[]>>({});
-  const graphEdges = runAfter?.value;
-
-  useEffect(() => {
-    setStatuses((): Record<string, string[]> => {
-      const record: Record<string, string[]> = {};
-      if (graphEdges) {
-        graphEdges.forEach((edge) => {
-          record[edge.predecessorId] = edge.statuses ?? ['Succeeded'];
-        });
-      }
-      return record;
-    });
-  }, [graphEdges]);
-
-  const getGraphEdgesFromStatuses = (statuses: Record<string, string[]>, originalEdges?: GraphEdge[]): GraphEdge[] => {
-    if (!originalEdges) {
-      return [];
-    }
-    return originalEdges.map((edge) => {
-      return { ...edge, statuses: statuses[edge.predecessorId] };
-    });
-  };
+  const nodeData = useSelector((state: RootState) => state.workflow.operations[nodeId] as LogicAppsV2.ActionDefinition);
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleStatusChange = (predecessorId: string, status: string, checked?: boolean) => {
-    const updatedStatus: string[] = [...statuses[predecessorId]];
-
-    const index = updatedStatus?.findIndex((s) => s.toUpperCase() === status);
-    if (index !== -1 && updatedStatus.length > 1) {
-      // TODO (14427339): set validation here and alert user of last status
-      updatedStatus.splice(index, 1);
+    if (!nodeData.runAfter) {
+      return;
     }
+    const updatedStatus: string[] = [...nodeData.runAfter[predecessorId]].filter((x) => x !== status);
+
     if (checked) {
       updatedStatus.push(status);
     }
 
-    const updatedStatuses: Record<string, string[]> = { ...statuses };
-    updatedStatuses[predecessorId] = updatedStatus;
-    setStatuses(updatedStatuses);
     dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          runAfter: {
-            isSupported: !!runAfter?.isSupported,
-            value: getGraphEdgesFromStatuses(updatedStatuses, graphEdges),
-          },
-        },
+      updateRunAfter({
+        childOperation: nodeId,
+        parentOperation: predecessorId,
+        statuses: updatedStatus,
       })
     );
   };
 
   const GetRunAfterProps = (): RunAfterActionDetailsProps[] => {
     const items: RunAfterActionDetailsProps[] = [];
-    graphEdges?.forEach((edge) => {
-      const { predecessorId } = edge;
+    Object.entries(nodeData?.runAfter ?? {}).forEach(([id, value]) => {
       items.push({
         collapsible: true,
         expanded: false,
-        id: predecessorId,
+        id: id,
         isDeleteVisible: true,
         readOnly: readOnly,
-        title: predecessorId,
-        statuses: statuses[predecessorId] ?? ['Succeeded'],
+        title: id,
+        statuses: value,
         onStatusChange: (status, checked) => {
-          handleStatusChange(predecessorId, status, checked);
+          handleStatusChange(id, status, checked);
         },
       });
     });
@@ -106,6 +73,14 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, 
         settingType: 'RunAfter',
         settingProp: {
           items: GetRunAfterProps(),
+          onEdgeAddition: (parentNode: string) => {
+            dispatch(
+              addEdge({
+                parentOperationId: parentNode,
+                childOperationId: nodeId,
+              })
+            );
+          },
         },
         visible: runAfter?.isSupported,
       },
