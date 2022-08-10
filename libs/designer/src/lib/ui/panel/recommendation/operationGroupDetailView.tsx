@@ -1,5 +1,4 @@
 import { initializeOperationDetails } from '../../../core/actions/bjsworkflow/add';
-import { isBuiltInConnector } from '../../../core/actions/bjsworkflow/connections';
 import type { AddNodePayload } from '../../../core/parsers/addNodeToWorkflow';
 import { getConnectionsForConnector } from '../../../core/queries/connections';
 import { getOperationManifest } from '../../../core/queries/operation';
@@ -77,7 +76,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
       title: operation.name,
       description: operation.description ?? operation.properties.description,
       summary: operation.properties.summary,
-      category: isBuiltInConnector(operation.properties.api.id) ? 'Built-in' : 'Azure',
+      category: 'Built-in', // TODO - Look at category from operation properties [from backend]
       connectorName: operation.properties.api.displayName,
       brandColor: operation.properties.api.brandColor,
     };
