@@ -11,13 +11,13 @@ import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular } from '@fluentui/
 import { useEffect, useState } from 'react';
 
 export const enum PANEL_ITEM {
-  INPUT_SCHEMA_NODE,
+  INPUT_SCHEMA_NODE = 1, // Start from 1 to avoid returning true for null/undef check when 0
   OUTPUT_SCHEMA_NODE,
   EXPRESSION,
 }
 
 enum SELECTED_TAB {
-  PROPERTIES,
+  PROPERTIES = 1,
   CODE,
   TEST,
 }
