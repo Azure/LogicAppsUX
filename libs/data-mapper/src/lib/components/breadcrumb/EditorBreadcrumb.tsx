@@ -1,4 +1,4 @@
-import { setCurrentOutputNode } from '../../core/state/SchemaSlice';
+import { setCurrentOutputNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import type { IBreadcrumbItem } from '@fluentui/react';
@@ -15,8 +15,8 @@ const overflowIndex = 1;
 export const EditorBreadcrumb = (): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
-  const currentOutputNode = useSelector((state: RootState) => state.schema.currentOutputNode);
+  const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
+  const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
 
   const breadcrumbItems = useMemo<IBreadcrumbItem[]>(() => {
     if (outputSchema) {
@@ -49,7 +49,7 @@ export const EditorBreadcrumb = (): JSX.Element => {
         onReduceData={() => undefined}
         items={breadcrumbItems}
         maxDisplayedItems={maxBreadcrumbItems}
-        overflowIndex={overflowIndex}
+        overflowIndex={currentOutputNode ? overflowIndex : 0}
       />
       <Button
         appearance="transparent"
