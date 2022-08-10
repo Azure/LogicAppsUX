@@ -2115,6 +2115,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Gi72X5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[See Less]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[간단히 보기]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Gmya+V" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Not available]]></Val>
@@ -2564,6 +2573,15 @@
           <Val><![CDATA[Warning]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[경고]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";LJmfmK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[See More]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[자세히 보기]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5495,6 +5513,15 @@
           <Val><![CDATA[Limit Logic Apps to not include workflow metadata headers in the outgoing request.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Logic Apps가 나가는 요청에 워크플로 메타데이터 헤더를 포함하지 않도록 제한합니다.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";mmF/SW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[OK]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[확인]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
