@@ -1,3 +1,4 @@
+import { IntellisenseControl } from '../../intellisensecontrol';
 import FxTextBoxIconBlack from '../images/fx.svg';
 import FxTextBoxIcon from '../images/fx.white.svg';
 import { TokenPickerMode } from '../tokenpickerpivot';
@@ -62,7 +63,9 @@ export const TokenPickerSearch = ({ selectedKey, searchQuery, setSearchQuery }: 
       ) : (
         <div className="msla-token-picker-expression">
           <img src={isInverted ? FxTextBoxIconBlack : FxTextBoxIcon} role="presentation" alt="" height={32} width={32} />
-          <div className="msla-expression-editor">{/* TODO: Intellisense Editor */}</div>
+          <div className="msla-expression-editor">
+            <IntellisenseControl initialValue="" />
+          </div>
           <div className="msla-token-picker-action-bar">
             <PrimaryButton text={tokenPickerOK} onClick={onOKClicked} className={'msla-token-picker-OK'} />
           </div>

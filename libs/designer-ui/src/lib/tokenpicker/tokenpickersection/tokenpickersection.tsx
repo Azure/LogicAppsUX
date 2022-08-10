@@ -8,7 +8,6 @@ interface TokenPickerSectionProps {
   searchQuery: string;
 }
 export const TokenPickerSection = ({ tokenGroup, searchQuery }: TokenPickerSectionProps): JSX.Element => {
-  console.log(tokenGroup);
   const [tokenLength, setTokenLength] = useState(new Array<number>(tokenGroup.length));
   const [noItems, setNoItems] = useState(false);
 
