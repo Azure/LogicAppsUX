@@ -326,7 +326,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         ) : (
           <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
         )}
-        <PropertiesPane />
+        <PropertiesPane panelItem={undefined} />
       </div>
     </DndProvider>
   );

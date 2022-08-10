@@ -5,41 +5,68 @@ import { InputSchemaNodePropertiesTab } from './tabComponents/InputSchemaNode/In
 import { OutputSchemaNodeCodeTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeCodeTab';
 import { OutputSchemaNodePropertiesTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodePropertiesTab';
 import { OutputSchemaNodeTestTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeTestTab';
-import { ActionButton, CommandBarButton, IconButton, Separator, Stack, Text } from '@fluentui/react';
+import { Stack } from '@fluentui/react';
+import { Button, Divider, makeStyles, mergeClasses, shorthands, Text, tokens } from '@fluentui/react-components';
+import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
 
-enum PANEL_ITEM {
-  INPUT_SCHEMA_NODE = 0,
-  OUTPUT_SCHEMA_NODE = 1,
-  EXPRESSION = 2,
+export const enum PANEL_ITEM {
+  INPUT_SCHEMA_NODE,
+  OUTPUT_SCHEMA_NODE,
+  EXPRESSION,
 }
 
 enum SELECTED_TAB {
-  PROPERTIES = 0,
-  CODE = 1,
-  TEST = 2,
+  PROPERTIES,
+  CODE,
+  TEST,
 }
 
-const cmdBtnStyle = {
-  border: 0,
-  marginLeft: 16,
-  height: 30,
-  fontSize: 14,
-  borderBottom: 0, // You'd think border: 0 would do this...but nope
-};
+const useStyles = makeStyles({
+  topBar: {
+    height: '40px',
+    p: '4px',
+    marginLeft: '8px',
+    marginRight: '8px',
+    ...shorthands.borderRadius('medium'),
+  },
+  tabBtn: {
+    ...shorthands.border(0),
+    ...shorthands.borderBottom(0), // You'd think border: 0 would do this...but nope
+    ...shorthands.borderRadius(0),
+    marginLeft: '16px',
+    height: '30px',
+    fontSize: '14px',
+  },
+  selectedTabBtn: {
+    ...shorthands.borderBottom('2px', 'solid', tokens.colorBrandStroke1),
+    fontWeight: 'bold',
+    backgroundColor: 'initial',
+    ':hover': {
+      ...shorthands.borderBottom('2px', 'solid', tokens.colorBrandStroke1),
+    },
+  },
+  chevron: {
+    ...shorthands.margin('15px'),
+  },
+  paneContent: {
+    ...shorthands.padding('8px', '24px', '24px', '24px'),
+    height: '300px', // Arbitrary value for now
+  },
+  noItemSelectedText: {
+    color: tokens.colorNeutralForegroundDisabled,
+  },
+});
 
-const selectedCmdBtnStyle = {
-  ...cmdBtnStyle,
-  borderBottom: '2px solid #0F6CBD',
-  fontWeight: 'bold',
-  backgroundColor: 'initial',
-};
+export interface PropertiesPaneProps {
+  panelItem: PANEL_ITEM | undefined;
+}
 
-// TODO: waiting for more design/UX details before I dig myself into a deeper hole
+export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
+  const { panelItem } = props;
 
-export const PropertiesPane = (): JSX.Element => {
+  const styles = useStyles();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [panelItem, setPanelItem] = useState(PANEL_ITEM.INPUT_SCHEMA_NODE);
   const [tabToDisplay, setTabToDisplay] = useState(SELECTED_TAB.PROPERTIES);
 
   const getPanelItemName = (): string | undefined => {
@@ -82,7 +109,11 @@ export const PropertiesPane = (): JSX.Element => {
     return <OutputSchemaNodeTestTab />;
   };
 
-  const getSelectedContent = (): JSX.Element => {
+  const getSelectedContent = (): JSX.Element | null => {
+    if (!panelItem) {
+      return null;
+    }
+
     switch (tabToDisplay) {
       case SELECTED_TAB.PROPERTIES:
         return getPropertiesTab(panelItem);
@@ -93,50 +124,62 @@ export const PropertiesPane = (): JSX.Element => {
     }
   };
 
+  const getTabBtnStyles = (selTab: SELECTED_TAB) => {
+    return tabToDisplay === selTab ? mergeClasses(styles.tabBtn, styles.selectedTabBtn) : styles.tabBtn;
+  };
+
   useEffect(() => {
     // Set tab to first one anytime this panel displays a new item
     setTabToDisplay(0);
   }, [panelItem]);
 
+  const TopBarContent = () => (
+    <>
+      <Text as="h6" weight="medium" style={{ marginRight: 13 }}>
+        {getPanelItemName()}
+      </Text>
+      <Divider vertical style={{ maxWidth: 24 }} />
+      <Button
+        appearance="subtle"
+        onClick={() => setTabToDisplay(SELECTED_TAB.PROPERTIES)}
+        className={getTabBtnStyles(SELECTED_TAB.PROPERTIES)}
+      >
+        Properties
+      </Button>
+      <Button appearance="subtle" onClick={() => setTabToDisplay(SELECTED_TAB.CODE)} className={getTabBtnStyles(SELECTED_TAB.CODE)}>
+        Code
+      </Button>
+      {panelItem === PANEL_ITEM.OUTPUT_SCHEMA_NODE && (
+        <Button appearance="subtle" onClick={() => setTabToDisplay(SELECTED_TAB.TEST)} className={getTabBtnStyles(SELECTED_TAB.TEST)}>
+          Test
+        </Button>
+      )}
+    </>
+  );
+
   return (
     <div>
-      <CommandBarButton
-        text="TEST: Change panel item"
-        onClick={() => setPanelItem(panelItem === PANEL_ITEM.EXPRESSION ? PANEL_ITEM.INPUT_SCHEMA_NODE : panelItem + 1)}
-      />
-      <Stack horizontal verticalAlign="center">
-        <IconButton
-          title="Show/Hide"
-          iconProps={{ iconName: `DoubleChevron${isExpanded ? 'Down' : 'Up'}` }}
-          onClick={() => setIsExpanded(!isExpanded)}
-          style={{
-            margin: '15px',
-          }}
-        />
-        <Text variant="large" style={{ marginRight: 13, fontWeight: 'bold' }}>
-          {getPanelItemName()}
-        </Text>
-        <Separator vertical style={{ marginLeft: 13, marginRight: 20 }} />
-        <ActionButton
-          text="Properties"
-          onClick={() => setTabToDisplay(SELECTED_TAB.PROPERTIES)}
-          style={tabToDisplay === SELECTED_TAB.PROPERTIES ? selectedCmdBtnStyle : cmdBtnStyle}
-        />
-        <ActionButton
-          text="Code"
-          onClick={() => setTabToDisplay(SELECTED_TAB.CODE)}
-          style={tabToDisplay === SELECTED_TAB.CODE ? selectedCmdBtnStyle : cmdBtnStyle}
-        />
-        {panelItem === PANEL_ITEM.OUTPUT_SCHEMA_NODE && (
-          <ActionButton
-            text="Test"
-            onClick={() => setTabToDisplay(SELECTED_TAB.TEST)}
-            style={tabToDisplay === SELECTED_TAB.TEST ? selectedCmdBtnStyle : cmdBtnStyle}
-          />
+      <Stack horizontal verticalAlign="center" className={styles.topBar}>
+        {panelItem ? (
+          <TopBarContent />
+        ) : (
+          <Text as="h6" weight="medium" style={{ marginRight: 13 }} className={styles.noItemSelectedText}>
+            Select an element to start configuring
+          </Text>
         )}
+
+        <Button
+          appearance="subtle"
+          size="medium"
+          icon={isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={styles.chevron}
+          style={{ marginLeft: 'auto' }}
+          disabled={!panelItem}
+        />
       </Stack>
 
-      {isExpanded && getSelectedContent()}
+      {isExpanded && <div className={styles.paneContent}>{getSelectedContent()}</div>}
     </div>
   );
 };
