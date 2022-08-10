@@ -1,22 +1,40 @@
 import type { OutputToken } from '..';
 import { ValueSegmentType } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
+import type { IntellisenseControlEvent } from '../../intellisensecontrol';
 import type { TokenGroup } from '../models/token';
+import { TokenPickerMode } from '../tokenpickerpivot';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { guid } from '@microsoft-logic-apps/utils';
 import Fuse from 'fuse.js';
-import type { Dispatch, SetStateAction } from 'react';
+import type { editor } from 'monaco-editor';
+import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface TokenPickerOptionsProps {
+  selectedKey: TokenPickerMode;
   section: TokenGroup;
   searchQuery: string;
   index: number;
+  editMode: boolean;
+  expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
+  expression: IntellisenseControlEvent;
   setTokenLength: Dispatch<SetStateAction<number[]>>;
+  setExpression: Dispatch<SetStateAction<IntellisenseControlEvent>>;
 }
-export const TokenPickerOptions = ({ section, searchQuery, index, setTokenLength }: TokenPickerOptionsProps): JSX.Element => {
+export const TokenPickerOptions = ({
+  selectedKey,
+  section,
+  searchQuery,
+  index,
+  editMode,
+  expressionEditorRef,
+  setTokenLength,
+  expression,
+  setExpression,
+}: TokenPickerOptionsProps): JSX.Element => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const [moreOptions, { toggle: toggleMoreOptions }] = useBoolean(true);
@@ -56,6 +74,48 @@ export const TokenPickerOptions = ({ section, searchQuery, index, setTokenLength
     toggleMoreOptions();
   };
 
+  const handleTokenClicked = (token: OutputToken) => {
+    if (editMode) {
+      if (selectedKey === TokenPickerMode.TOKEN) {
+        handleExpressionTokenMode(token);
+      } else if (selectedKey === TokenPickerMode.EXPRESSION) {
+        handleExpressionTokenModeToken(token);
+      }
+    } else {
+      handleCreateToken(token);
+    }
+  };
+
+  const handleExpressionTokenMode = (token: OutputToken) => {
+    console.log(token);
+  };
+  const handleExpressionTokenModeToken = (token: OutputToken) => {
+    const expression = token.key;
+    insertExpressionText(`${expression}()`, -1);
+  };
+
+  const insertExpressionText = (text: string, caretOffset: number): void => {
+    if (expressionEditorRef.current) {
+      const oldExpression = expressionEditorRef.current.getValue();
+      const beforeSelection = oldExpression.substring(0, expression.selectionStart);
+      const afterSelection = oldExpression.substring(expression.selectionEnd);
+      const newExpression = `${beforeSelection}${text}${afterSelection}`;
+      const newSelection = newExpression.length - afterSelection.length + caretOffset;
+      setExpression({ value: newExpression, selectionStart: newSelection, selectionEnd: newSelection });
+
+      setTimeout(() => {
+        expressionEditorRef.current?.setValue(newExpression);
+        expressionEditorRef.current?.setSelection({
+          startLineNumber: 1,
+          startColumn: newSelection + 1,
+          endLineNumber: 1,
+          endColumn: newSelection + 1,
+        });
+        expressionEditorRef.current?.focus();
+      });
+    }
+  };
+
   const handleCreateToken = (token: OutputToken) => {
     editor.dispatchCommand(INSERT_TOKEN_NODE, {
       brandColor: token.brandColor,
@@ -89,7 +149,7 @@ export const TokenPickerOptions = ({ section, searchQuery, index, setTokenLength
                 <button
                   className="msla-token-picker-section-option"
                   key={`token-picker-option-${j}`}
-                  onClick={() => handleCreateToken(token)}
+                  onClick={() => handleTokenClicked(token)}
                 >
                   <img src={token.icon} alt="" />
                   <div className="msla-token-picker-section-option-text">

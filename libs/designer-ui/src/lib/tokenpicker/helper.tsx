@@ -16,6 +16,7 @@ export const GetTokenPicker = (
       tokenGroup={tokenGroup}
       expressionGroup={expressionGroup}
       setInTokenPicker={onClick}
+      initialExpression={''}
     />
   );
 };

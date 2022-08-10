@@ -1,9 +1,12 @@
+import type { IntellisenseControlEvent } from '../../intellisensecontrol';
 import { IntellisenseControl } from '../../intellisensecontrol';
 import FxTextBoxIconBlack from '../images/fx.svg';
 import FxTextBoxIcon from '../images/fx.white.svg';
 import { TokenPickerMode } from '../tokenpickerpivot';
 import type { IIconStyles, ITextField, ITextFieldStyles } from '@fluentui/react';
 import { PrimaryButton, FontSizes, Icon, TextField, useTheme } from '@fluentui/react';
+import type { editor } from 'monaco-editor';
+import type { MutableRefObject } from 'react';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -23,10 +26,18 @@ const textFieldStyles: Partial<ITextFieldStyles> = {
 interface TokenPickerSearchProps {
   selectedKey: TokenPickerMode;
   searchQuery: string;
+  expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   setSearchQuery: (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string) => void;
+  expressionEditorBlur: (e: IntellisenseControlEvent) => void;
 }
 
-export const TokenPickerSearch = ({ selectedKey, searchQuery, setSearchQuery }: TokenPickerSearchProps): JSX.Element => {
+export const TokenPickerSearch = ({
+  selectedKey,
+  searchQuery,
+  expressionEditorRef,
+  setSearchQuery,
+  expressionEditorBlur,
+}: TokenPickerSearchProps): JSX.Element => {
   const intl = useIntl();
   const { isInverted } = useTheme();
   const searchBoxRef = useRef<ITextField | null>(null);
@@ -64,7 +75,7 @@ export const TokenPickerSearch = ({ selectedKey, searchQuery, setSearchQuery }: 
         <div className="msla-token-picker-expression">
           <img src={isInverted ? FxTextBoxIconBlack : FxTextBoxIcon} role="presentation" alt="" height={32} width={32} />
           <div className="msla-expression-editor">
-            <IntellisenseControl initialValue="" />
+            <IntellisenseControl initialValue="" editorRef={expressionEditorRef} onBlur={expressionEditorBlur} />
           </div>
           <div className="msla-token-picker-action-bar">
             <PrimaryButton text={tokenPickerOK} onClick={onOKClicked} className={'msla-token-picker-OK'} />

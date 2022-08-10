@@ -1,10 +1,12 @@
+import type { IntellisenseControlEvent } from '../intellisensecontrol';
 import type { TokenGroup } from './models/token';
 import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
 import { TokenPickerSearch } from './tokenpickersearch/tokenpickersearch';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
-import { useState } from 'react';
+import type { editor } from 'monaco-editor';
+import { useRef, useState } from 'react';
 
 export type { Token as OutputToken } from './models/token';
 
@@ -19,6 +21,9 @@ export interface TokenPickerProps {
   labelId: string;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
+  initialMode?: TokenPickerMode;
+  initialExpression: string;
+  isEditing?: boolean /* TODO: add isEditing*/;
   setInTokenPicker?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
 }
@@ -27,11 +32,15 @@ export default function TokenPicker({
   labelId,
   tokenGroup,
   expressionGroup,
+  initialMode,
+  initialExpression,
   setInTokenPicker,
   onSearchTextChanged,
 }: TokenPickerProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(TokenPickerMode.TOKEN);
+  const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
+  const [expression, setExpression] = useState<IntellisenseControlEvent>({ value: initialExpression, selectionStart: 0, selectionEnd: 0 });
+  const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const handleSelectKey = (item?: PivotItem) => {
     if (item?.props?.itemKey) {
@@ -44,6 +53,11 @@ export default function TokenPicker({
       setSearchQuery(text);
       onSearchTextChanged?.(text);
     }
+  };
+
+  const onExpressionEditorBlur = (e: IntellisenseControlEvent): void => {
+    console.log(e);
+    setExpression(e);
   };
 
   return (
@@ -68,11 +82,22 @@ export default function TokenPicker({
       <div className="msla-token-picker-container">
         <div className="msla-token-picker">
           <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} />
-          <TokenPickerSearch selectedKey={selectedKey} searchQuery={searchQuery} setSearchQuery={handleUpdateSearch} />
+          <TokenPickerSearch
+            selectedKey={selectedKey}
+            searchQuery={searchQuery}
+            setSearchQuery={handleUpdateSearch}
+            expressionEditorRef={expressionEditorRef}
+            expressionEditorBlur={onExpressionEditorBlur}
+          />
 
           <TokenPickerSection
-            tokenGroup={selectedKey === TokenPickerMode.TOKEN ? tokenGroup ?? [] : expressionGroup ?? []}
+            expressionEditorRef={expressionEditorRef}
+            selectedKey={selectedKey}
+            tokenGroup={tokenGroup ?? []}
+            expressionGroup={expressionGroup ?? []}
             searchQuery={searchQuery}
+            expression={expression}
+            setExpression={setExpression}
           />
         </div>
       </div>
