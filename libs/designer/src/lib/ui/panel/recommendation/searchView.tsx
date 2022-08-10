@@ -15,10 +15,6 @@ type SearchResults = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>[]
 
 export const SearchView: React.FC<SearchViewProps> = (props) => {
   const dispatch = useDispatch();
-  // const rootState = useSelector((state: RootState) => state);
-  // const { discoveryIds, selectedNode } = useSelector((state: RootState) => {
-  //   return state.panel;
-  // });
 
   const [searchResults, setSearchResults] = useState<SearchResults>([]);
 

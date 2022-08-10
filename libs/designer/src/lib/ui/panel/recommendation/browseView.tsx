@@ -1,9 +1,9 @@
-import { OperationGroupDetailView } from './operationGroupDetailView';
-import { ConnectionService, SearchService } from '@microsoft-logic-apps/designer-client-services';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
+import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import { BrowseGrid } from '@microsoft/designer-ui';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
 
 const getBrowseResult = () => {
   const connectionService = ConnectionService();
@@ -12,8 +12,7 @@ const getBrowseResult = () => {
 };
 
 export const BrowseView: React.FC = () => {
-  const [selectedConnectorId, setSelectedConnectorId] = React.useState('');
-  const [allOperationsForGroup, setAllOperationsForGroup] = React.useState<DiscoveryOperation<DiscoveryResultTypes>[]>([]);
+  const dispatch = useDispatch();
 
   const browseResponse = useQuery(['browseResult'], () => getBrowseResult(), {
     staleTime: 1000000,
@@ -21,38 +20,9 @@ export const BrowseView: React.FC = () => {
   });
   const browseResults = browseResponse.data;
 
-  const allOperations = useQuery(
-    ['allOperations'],
-    () => {
-      const searchService = SearchService();
-      return searchService.preloadOperations();
-    },
-    {
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
-    }
-  );
-
-  useEffect(() => {
-    if (allOperations.data && selectedConnectorId) {
-      const filteredOps = allOperations.data.filter((operation) => operation.properties.api.id === selectedConnectorId);
-      setAllOperationsForGroup(filteredOps);
-    }
-  }, [selectedConnectorId, allOperations]);
-
   const onConnectorCardSelected = (id: string): void => {
-    setSelectedConnectorId(id);
-    // Danielle how do I not pass this down so many components
-    console.log(id);
+    dispatch(selectOperationGroupId(id));
   };
 
-  return (
-    <>
-      {selectedConnectorId !== '' ? (
-        <OperationGroupDetailView selectedSearchedOperations={allOperationsForGroup}></OperationGroupDetailView>
-      ) : (
-        <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectorBrowse={browseResults || []} />
-      )}
-    </>
-  );
+  return <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectorBrowse={browseResults || []} />;
 };
