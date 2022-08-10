@@ -1,10 +1,21 @@
+import type { INamingRules } from '../../../run-service';
+import { isNameValid } from './helper';
 import { Callout, Link, PrimaryButton, Text, TextField } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
+import { useState } from 'react';
+import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
+
+export const resourceGroupNamingRules: INamingRules = {
+  minLength: 1,
+  maxLength: 90,
+  invalidCharsRegExp: new RegExp(/[^a-zA-Z0-9._\-()]/, 'g'),
+};
 
 export const NewResourceGroup: React.FC = () => {
   const intl = useIntl();
   const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
+  const [name, setName] = useState<string>('');
 
   const intlText = {
     CREATE_NEW: intl.formatMessage({
@@ -27,19 +38,21 @@ export const NewResourceGroup: React.FC = () => {
       defaultMessage: 'Name',
       description: 'Name button',
     }),
-  };
-
-  const getErrorMessage = (value: string): string => {
-    return value.length < 3 ? '' : `Input value length must be less than 3. Actual length is ${value.length}.`;
-  };
-
-  const getErrorMessagePromise = (value: string): Promise<string> => {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(getErrorMessage(value)), 5000);
-    });
+    INVALID_CHARS: intl.formatMessage({
+      defaultMessage: 'The name can only contain alphanumeric characters or the symbols ._-()',
+      description: 'Resource group name invalid chars error',
+    }),
+    INVALID_ENDING_CHAR: intl.formatMessage({
+      defaultMessage: 'The name cannot end in a period.',
+      description: 'Resource group name ending error',
+    }),
   };
 
   const linkClassName = 'msla-export-summary-connections-new-resource';
+
+  const onChangeName = (_event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newName?: string | undefined) => {
+    setName(newName as string);
+  };
 
   return (
     <>
@@ -58,9 +71,25 @@ export const NewResourceGroup: React.FC = () => {
           <Text variant="medium" block>
             {intlText.RESOURCE_GROUP_DESCRIPTION}
           </Text>
-          <TextField required label={intlText.NAME} onGetErrorMessage={getErrorMessagePromise} autoFocus={true} />
-          <PrimaryButton className="msla-export-summary-connections-button" text={intlText.OK} ariaLabel={intlText.OK} />
-          <PrimaryButton className="msla-export-summary-connections-button" text={intlText.CANCEL} ariaLabel={intlText.CANCEL} />
+          <TextField
+            required
+            label={intlText.NAME}
+            onChange={onChangeName}
+            onGetErrorMessage={(newName) => isNameValid(newName, intlText).validationError}
+            autoFocus={true}
+          />
+          <PrimaryButton
+            className="msla-export-summary-connections-button"
+            text={intlText.OK}
+            ariaLabel={intlText.OK}
+            disabled={!isNameValid(name, intlText).validName}
+          />
+          <PrimaryButton
+            className="msla-export-summary-connections-button"
+            text={intlText.CANCEL}
+            ariaLabel={intlText.CANCEL}
+            onClick={toggleIsCalloutVisible}
+          />
         </Callout>
       )}
     </>

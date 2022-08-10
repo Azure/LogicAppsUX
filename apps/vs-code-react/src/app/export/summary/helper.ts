@@ -1,5 +1,6 @@
 import { DetailCategory, StyledDetailCategory } from '../../../run-service';
-import type { ISummaryData, IExportDetails, IExportDetailsList, IDropDownOption } from '../../../run-service';
+import type { INamingValidation, ISummaryData, IExportDetails, IExportDetailsList, IDropDownOption } from '../../../run-service';
+import { resourceGroupNamingRules } from './newResourceGroup';
 
 const getTypeName = (typeName: string): string => {
   switch (typeName) {
@@ -45,4 +46,21 @@ export const parseResourceGroupsData = (resourceGroupsData: { resourceGroups: Ar
   return resourceGroups.map((resourceGroup: any) => {
     return { key: resourceGroup.name, text: resourceGroup.name, data: resourceGroup.location };
   });
+};
+
+export const isNameValid = (name: string, intlText: any): INamingValidation => {
+  const trimmedName = name.trim();
+
+  let validName = false;
+
+  if (trimmedName.length < resourceGroupNamingRules.minLength || trimmedName.length > resourceGroupNamingRules.maxLength) {
+    return { validName, validationError: '' };
+  } else if (trimmedName.match(resourceGroupNamingRules.invalidCharsRegExp) !== null) {
+    return { validName, validationError: intlText.INVALID_CHARS };
+  } else if (trimmedName.endsWith('.')) {
+    return { validName, validationError: intlText.INVALID_ENDING_CHAR };
+  } else {
+    validName = true;
+    return { validName, validationError: '' };
+  }
 };

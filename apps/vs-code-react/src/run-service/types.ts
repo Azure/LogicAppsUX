@@ -362,3 +362,14 @@ export interface ITargetDirectory {
   fsPath: string;
   path: string;
 }
+
+export interface INamingRules {
+  minLength: number;
+  maxLength: number;
+  invalidCharsRegExp: RegExp;
+}
+
+export interface INamingValidation {
+  validationError: string;
+  validName: boolean;
+}
