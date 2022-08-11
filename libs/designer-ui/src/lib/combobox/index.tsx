@@ -234,12 +234,9 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
   ];
 };
 
-const getMode = (selectedKey: string, initialValue?: ValueSegment[]): Mode => {
-  if (initialValue) {
-    const hasValue = initialValue.length > 0 && initialValue[0].value;
-    return hasValue ? (selectedKey ? Mode.Default : Mode.Custom) : Mode.Default;
-  }
-  return Mode.Default;
+const getMode = (selectedKey: string, initialValue: ValueSegment[]): Mode => {
+  const hasValue = initialValue.length > 0 && initialValue[0].value;
+  return hasValue ? (selectedKey ? Mode.Default : Mode.Custom) : Mode.Default;
 };
 
 const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[]): string => {

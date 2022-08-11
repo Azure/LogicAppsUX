@@ -1,7 +1,7 @@
 import type { OutputToken } from '..';
 import { ValueSegmentType } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
-import type { IntellisenseControlEvent } from '../../intellisensecontrol';
+import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
 import { TokenPickerMode } from '../tokenpickerpivot';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -20,9 +20,9 @@ interface TokenPickerOptionsProps {
   index: number;
   editMode: boolean;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
-  expression: IntellisenseControlEvent;
+  expression: ExpressionEditorEvent;
   setTokenLength: Dispatch<SetStateAction<number[]>>;
-  setExpression: Dispatch<SetStateAction<IntellisenseControlEvent>>;
+  setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
 }
 export const TokenPickerOptions = ({
   selectedKey,

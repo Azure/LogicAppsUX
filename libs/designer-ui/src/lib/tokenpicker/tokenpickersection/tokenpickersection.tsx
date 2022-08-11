@@ -1,4 +1,4 @@
-import type { IntellisenseControlEvent } from '../../intellisensecontrol';
+import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
 import { TokenPickerMode } from '../tokenpickerpivot';
 import { TokenPickerNoMatches } from './tokenpickernomatches';
@@ -13,9 +13,9 @@ interface TokenPickerSectionProps {
   expressionGroup: TokenGroup[];
   searchQuery: string;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
-  expression: IntellisenseControlEvent;
+  expression: ExpressionEditorEvent;
   editMode: boolean;
-  setExpression: Dispatch<SetStateAction<IntellisenseControlEvent>>;
+  setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
 }
 export const TokenPickerSection = ({
   selectedKey,

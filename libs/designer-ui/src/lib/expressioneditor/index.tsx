@@ -4,19 +4,19 @@ import type { editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState } from 'react';
 
-export interface IntellisenseControlEvent {
+export interface ExpressionEditorEvent {
   value: string;
   selectionStart: number;
   selectionEnd: number;
 }
 
-export interface IntellisenseControlProps {
+export interface ExpressionEditorProps {
   initialValue: string;
   editorRef?: MutableRefObject<editor.IStandaloneCodeEditor | null>;
-  onBlur?: EventHandler<IntellisenseControlEvent>;
+  onBlur?: EventHandler<ExpressionEditorEvent>;
 }
 
-export function IntellisenseControl({ initialValue, editorRef, onBlur }: IntellisenseControlProps): JSX.Element {
+export function ExpressionEditor({ initialValue, editorRef, onBlur }: ExpressionEditorProps): JSX.Element {
   const [focused, setFocused] = useState(false);
 
   const handleBlur = (): void => {
@@ -70,10 +70,10 @@ export function IntellisenseControl({ initialValue, editorRef, onBlur }: Intelli
   };
 
   return (
-    <div className={focused ? 'msla-intellisense-editor-container msla-focused' : 'msla-intellisense-editor-container'}>
+    <div className={focused ? 'msla-expression-editor-container msla-focused' : 'msla-expression-editor-container'}>
       <Editor
         ref={editorRef}
-        className={'msla-intellisense-editor'}
+        className={'msla-expression-editor-main'}
         language={EditorLanguage.templateExpressionLanguage}
         folding={false}
         lineNumbers="off"

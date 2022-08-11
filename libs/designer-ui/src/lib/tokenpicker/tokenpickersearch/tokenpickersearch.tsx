@@ -1,8 +1,9 @@
+import constants from '../../constants';
 import type { Token } from '../../editor';
 import { TokenType, ValueSegmentType } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
-import type { IntellisenseControlEvent } from '../../intellisensecontrol';
-import { IntellisenseControl } from '../../intellisensecontrol';
+import type { ExpressionEditorEvent } from '../../expressioneditor';
+import { ExpressionEditor } from '../../expressioneditor';
 import FxTextBoxIconBlack from '../images/fx.svg';
 import FxTextBoxIcon from '../images/fx.white.svg';
 import { TokenPickerMode } from '../tokenpickerpivot';
@@ -37,13 +38,13 @@ interface TokenPickerSearchProps {
   selectedKey: TokenPickerMode;
   searchQuery: string;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
-  expression: IntellisenseControlEvent;
+  expression: ExpressionEditorEvent;
   updatingExpression?: boolean;
   isEditing: boolean;
   setIsEditing: Dispatch<SetStateAction<boolean>>;
   setSearchQuery: (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string) => void;
-  expressionEditorBlur: (e: IntellisenseControlEvent) => void;
-  setExpression: Dispatch<SetStateAction<IntellisenseControlEvent>>;
+  expressionEditorBlur: (e: ExpressionEditorEvent) => void;
+  setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
   setSelectedKey: Dispatch<SetStateAction<TokenPickerMode>>;
 }
 
@@ -75,6 +76,7 @@ export const TokenPickerSearch = ({
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
     } catch (ex) {
+      // TODO 15238735: handle invalid tokens in a better way
       alert(invalidExpression);
       return;
     }
@@ -83,7 +85,7 @@ export const TokenPickerSearch = ({
     const token: Token = {
       tokenType: TokenType.FX,
       expression: currExpression,
-      brandColor: '#AD008C',
+      brandColor: constants.FX_COLOR,
       icon: FxIcon,
       title: getExpressionTokenTitle(currExpression),
       description: expression.value,
@@ -139,7 +141,7 @@ export const TokenPickerSearch = ({
         <div className="msla-token-picker-expression">
           <img src={isInverted ? FxTextBoxIconBlack : FxTextBoxIcon} role="presentation" alt="" height={32} width={32} />
           <div className="msla-expression-editor">
-            <IntellisenseControl initialValue="" editorRef={expressionEditorRef} onBlur={expressionEditorBlur} />
+            <ExpressionEditor initialValue="" editorRef={expressionEditorRef} onBlur={expressionEditorBlur} />
           </div>
           <div className="msla-token-picker-action-bar">
             <PrimaryButton

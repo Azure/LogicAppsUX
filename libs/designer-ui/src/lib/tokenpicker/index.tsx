@@ -1,4 +1,4 @@
-import type { IntellisenseControlEvent } from '../intellisensecontrol';
+import type { ExpressionEditorEvent } from '../expressioneditor';
 import type { TokenGroup } from './models/token';
 import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
 import { TokenPickerSearch } from './tokenpickersearch/tokenpickersearch';
@@ -29,7 +29,6 @@ export interface TokenPickerProps {
   expressionGroup?: TokenGroup[];
   initialMode?: TokenPickerMode;
   initialExpression: string;
-  updatingExpression?: boolean;
   setInTokenPicker?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
 }
@@ -40,14 +39,13 @@ export default function TokenPicker({
   expressionGroup,
   initialMode,
   initialExpression,
-  updatingExpression,
   setInTokenPicker,
   onSearchTextChanged,
 }: TokenPickerProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
-  const [isEditing, setIsEditing] = useState<boolean>(updatingExpression ?? false);
-  const [expression, setExpression] = useState<IntellisenseControlEvent>({ value: initialExpression, selectionStart: 0, selectionEnd: 0 });
+  const [isEditing, setIsEditing] = useState<boolean>(initialExpression !== '' ?? false);
+  const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: initialExpression, selectionStart: 0, selectionEnd: 0 });
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const handleSelectKey = (item?: PivotItem) => {
@@ -69,7 +67,7 @@ export default function TokenPicker({
     }
   };
 
-  const onExpressionEditorBlur = (e: IntellisenseControlEvent): void => {
+  const onExpressionEditorBlur = (e: ExpressionEditorEvent): void => {
     setExpression(e);
   };
 
@@ -105,7 +103,7 @@ export default function TokenPicker({
             expression={expression}
             setExpression={setExpression}
             setSelectedKey={setSelectedKey}
-            updatingExpression={updatingExpression}
+            updatingExpression={initialExpression !== ''}
             isEditing={isEditing}
             setIsEditing={setIsEditing}
           />
@@ -117,7 +115,7 @@ export default function TokenPicker({
             expressionGroup={expressionGroup ?? []}
             searchQuery={searchQuery}
             expression={expression}
-            editMode={updatingExpression || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
+            editMode={initialExpression !== '' || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
             setExpression={setExpression}
           />
         </div>
