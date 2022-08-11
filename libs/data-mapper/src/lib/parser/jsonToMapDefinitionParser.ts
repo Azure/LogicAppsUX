@@ -1,8 +1,8 @@
-import type { JsonInputStyle, MapNode } from '../models/DataMap';
+import type { DataMap, MapNode } from '../models/DataMap';
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
 import { MapDefinitionProperties, MapNodeParams, YamlFormats } from './utils/constants';
 
-export function jsonToMapDefinition(inputJson: JsonInputStyle): string {
+export function jsonToMapDefinition(inputJson: DataMap): string {
   if (!inputJson?.srcSchemaName || !inputJson?.dstSchemaName) {
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME, InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
   } else if (!inputJson?.mappings) {

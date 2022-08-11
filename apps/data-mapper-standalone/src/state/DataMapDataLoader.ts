@@ -1,5 +1,5 @@
 import type { RootState } from './Store';
-import type { JsonInputStyle } from '@microsoft/logic-apps-data-mapper';
+import type { DataMap } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
@@ -7,7 +7,7 @@ export interface DataMapLoadingState {
   armToken?: string;
   resourcePath?: string;
   loadingMethod: 'file' | 'arm';
-  dataMap?: JsonInputStyle;
+  dataMap?: DataMap;
 }
 
 const initialState: DataMapLoadingState = {

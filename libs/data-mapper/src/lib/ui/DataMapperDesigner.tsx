@@ -12,19 +12,20 @@ import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
-import type { DataMapOperationState } from '../core/state/DataMapSlice';
 import {
-  changeInputSchemaOperation,
-  changeOutputSchemaOperation,
   redoDataMapOperation,
   saveDataMap,
+  setCurrentOutputNode,
+  setInitialDataMap,
+  setInitialInputSchema,
+  setInitialOutputSchema,
+  toggleInputNode,
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
-import { setCurrentInputNodes, setCurrentOutputNode, setInputSchema, setOutputSchema, toggleInputNode } from '../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema, SchemaNodeExtended } from '../models';
-import { SchemaTypes } from '../models';
+import { convertSchemaToSchemaExtended, SchemaTypes } from '../models';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -56,10 +57,11 @@ export interface DataMapperDesignerProps {
 export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const inputSchema = useSelector((state: RootState) => state.schema.inputSchema);
-  const currentlySelectedInputNodes = useSelector((state: RootState) => state.schema.currentInputNodes);
-  const outputSchema = useSelector((state: RootState) => state.schema.outputSchema);
-  const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
+
+  const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
+  const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
+  const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
+
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolbox, { toggle: toggleDisplayToolbox, setFalse: setDisplayToolboxFalse }] = useBoolean(false);
   const [displayExpressions, { toggle: toggleDisplayExpressions, setFalse: setDisplayExpressionsFalse }] = useBoolean(false);
@@ -70,58 +72,30 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
-    const schemaState = store.getState().schema;
+    const curDataMapState = store.getState().dataMap.curDataMapOperation;
     if (node.data.schemaType === SchemaTypes.Output) {
-      const currentSchemaNode = schemaState.currentOutputNode;
+      const currentSchemaNode = curDataMapState.currentOutputNode;
       if (currentSchemaNode) {
         const trimmedNodeId = node.id.substring(7);
         const newCurrentSchemaNode =
           currentSchemaNode.key === trimmedNodeId
             ? currentSchemaNode
-            : currentSchemaNode.children.find((schemaNode) => schemaNode.key === trimmedNodeId);
+            : currentSchemaNode.children.find((schemaNode) => schemaNode.key === trimmedNodeId) || currentSchemaNode;
         dispatch(setCurrentOutputNode(newCurrentSchemaNode));
       }
     }
   };
 
   const onSubmitInput = (inputSchema: Schema) => {
-    dispatch(setInputSchema(inputSchema));
-
-    const schemaState = store.getState().schema;
-
-    if (outputSchema) {
-      const dataMapOperationState: DataMapOperationState = {
-        curDataMap: {
-          srcSchemaName: inputSchema.name,
-          dstSchemaName: outputSchema.name,
-          mappings: { targetNodeKey: `ns0:${outputSchema.name}` },
-        },
-        currentInputNodes: [],
-        currentOutputNode: schemaState.currentOutputNode,
-      };
-      dispatch(changeInputSchemaOperation(dataMapOperationState));
-    }
+    const extendedSchema = convertSchemaToSchemaExtended(inputSchema);
+    dispatch(setInitialInputSchema(extendedSchema));
+    dispatch(setInitialDataMap());
   };
 
   const onSubmitOutput = (outputSchema: Schema) => {
-    dispatch(setOutputSchema(outputSchema));
-
-    const schemaState = store.getState().schema;
-    const currentSchemaNode = schemaState.currentOutputNode;
-
-    dispatch(setCurrentOutputNode(currentSchemaNode));
-    if (inputSchema) {
-      const dataMapOperationState: DataMapOperationState = {
-        curDataMap: {
-          srcSchemaName: inputSchema.name,
-          dstSchemaName: outputSchema.name,
-          mappings: { targetNodeKey: `ns0:${outputSchema.name}` },
-        },
-        currentInputNodes: [],
-        currentOutputNode: currentSchemaNode,
-      };
-      dispatch(changeOutputSchemaOperation(dataMapOperationState));
-    }
+    const extendedSchema = convertSchemaToSchemaExtended(outputSchema);
+    dispatch(setInitialOutputSchema(extendedSchema));
+    dispatch(setInitialDataMap());
   };
 
   const onSaveClick = () => {
@@ -136,14 +110,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const onUndoClick = () => {
     dispatch(undoDataMapOperation());
-    dispatch(setCurrentInputNodes(curDataMapOperation?.currentInputNodes));
-    dispatch(setCurrentOutputNode(curDataMapOperation?.currentOutputNode));
   };
 
   const onRedoClick = () => {
     dispatch(redoDataMapOperation());
-    dispatch(setCurrentInputNodes(curDataMapOperation?.currentInputNodes));
-    dispatch(setCurrentOutputNode(curDataMapOperation?.currentOutputNode));
   };
 
   const toolboxLoc = intl.formatMessage({
@@ -302,7 +272,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       <div className="data-mapper-shell">
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
         <WarningModal />
-        <EditorConfigPanel onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
+        <EditorConfigPanel initialSetup={true} onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
@@ -333,8 +303,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
 export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowEdges: ReactFlowEdge[] = [];
-  const inputSchemaNodes = useSelector((state: RootState) => state.schema.currentInputNodes);
-  const outputSchemaNode = useSelector((state: RootState) => state.schema.currentOutputNode);
+  const inputSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
+  const outputSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
 
   const reactFlowNodes = useMemo(() => {
     if (outputSchemaNode) {

@@ -19,11 +19,16 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface EditorConfigPanelProps {
+  initialSetup: boolean;
   onSubmitInputSchema: (schema: Schema) => void;
   onSubmitOutputSchema: (schema: Schema) => void;
 }
 
-export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ onSubmitInputSchema, onSubmitOutputSchema }) => {
+export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
+  initialSetup,
+  onSubmitInputSchema,
+  onSubmitOutputSchema,
+}) => {
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
   const isChangeSchemaPanelOpen = useSelector((state: RootState) => state.panel.isChangeSchemaPanelOpen);
@@ -134,17 +139,17 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
             className="panel-button-left"
             onClick={
               schemaType === SchemaTypes.Input
-                ? curDataMapOperation
-                  ? () => dispatch(openChangeInputWarning())
-                  : editInputSchema
-                : curDataMapOperation
-                ? () => dispatch(openChangeOutputWarning())
-                : editOutputSchema
+                ? initialSetup
+                  ? editInputSchema
+                  : () => dispatch(openChangeInputWarning())
+                : initialSetup
+                ? editOutputSchema
+                : () => dispatch(openChangeOutputWarning())
             }
             disabled={
               schemaType === SchemaTypes.Input
-                ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation?.curDataMap.srcSchemaName
-                : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation?.curDataMap.dstSchemaName
+                ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation?.dataMap?.srcSchemaName
+                : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation?.dataMap?.dstSchemaName
             }
           >
             {addMessage}
@@ -155,6 +160,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
       </div>
     ),
     [
+      initialSetup,
       isChangeSchemaPanelOpen,
       schemaType,
       curDataMapOperation,

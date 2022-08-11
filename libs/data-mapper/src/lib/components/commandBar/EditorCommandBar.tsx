@@ -1,14 +1,14 @@
 import { discardDataMap } from '../../core/state/DataMapSlice';
 import { closeAllWarning, openDiscardWarning, removeOkClicked, WarningModalState } from '../../core/state/ModalSlice';
 import { openDefaultConfigPanel } from '../../core/state/PanelSlice';
-import { setInputSchemaExtended, setOutputSchemaExtended } from '../../core/state/SchemaSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { JsonInputStyle } from '../../models';
+import type { DataMap } from '../../models';
 import { publishState, runTest, showConfig, showFeedback, showSearchbar, showTutorial } from './helpers';
+import type { ICommandBarItemProps, IComponentAs } from '@fluentui/react';
 import { CommandBar, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
-import type { IComponentAs, ICommandBarItemProps } from '@fluentui/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useBoolean } from '@fluentui/react-hooks';
 import type { FunctionComponent } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -24,15 +24,13 @@ export const EditorCommandBar: FunctionComponent<EditorCommandBarProps> = ({ onS
 
 interface DataMapState {
   time: string;
-  mapData?: JsonInputStyle;
+  mapData?: DataMap;
 }
 
 interface EditorCommandBarButtonsProps {
   onSaveClick: () => void;
   onUndoClick: () => void;
   onRedoClick: () => void;
-  showUndo: boolean;
-  onUndoRedoChange: (showUndo: boolean) => void;
   stateStack: DataMapState[];
   stateStackInd: number;
   onStateStackChange: (stateStackInd: number) => void;
@@ -48,8 +46,6 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   onSaveClick,
   onUndoClick,
   onRedoClick,
-  showUndo,
-  onUndoRedoChange,
   stateStack,
   stateStackInd,
   onStateStackChange,
@@ -59,6 +55,9 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
   onSearchClick,
   onPublishClick,
 }) => {
+  const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
+
   const isStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
   const undoStack = useSelector((state: RootState) => state.dataMap.undoStack);
   const isUndoStackEmpty = undoStack.length === 0;
@@ -68,11 +67,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
   );
 
-  const lastCleanInputSchemaExtended = useSelector((state: RootState) => state.dataMap.pristineDataMap?.currentInputSchemaExtended);
-  const lastCleanOutputSchemaExtended = useSelector((state: RootState) => state.dataMap.pristineDataMap?.currentOutputSchemaExtended);
-
-  const intl = useIntl();
-  const dispatch = useDispatch<AppDispatch>();
+  const [showUndo, { setTrue: setShowUndo, setFalse: setShowRedo }] = useBoolean(true);
 
   const PublishButtonWrapper: IComponentAs<ICommandBarItemProps> = () => (
     <PrimaryButton style={{ alignSelf: 'center', marginRight: '5%' }} text={Resources.PUBLISH} onClick={onPublishClick} />
@@ -82,13 +77,9 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     if (isDiscardConfirmed) {
       dispatch(removeOkClicked());
       dispatch(discardDataMap());
-
-      dispatch(setInputSchemaExtended(lastCleanInputSchemaExtended));
-      dispatch(setOutputSchemaExtended(lastCleanOutputSchemaExtended));
-
       dispatch(closeAllWarning());
     }
-  }, [dispatch, isDiscardConfirmed, lastCleanInputSchemaExtended, lastCleanOutputSchemaExtended]);
+  }, [dispatch, isDiscardConfirmed]);
 
   const Resources = {
     SAVE: intl.formatMessage({
@@ -157,6 +148,16 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     },
   };
 
+  const undoRedoOnClick = (performUndo: boolean) => {
+    if (performUndo) {
+      setShowUndo();
+      onUndoClick();
+    } else {
+      setShowRedo();
+      onRedoClick();
+    }
+  };
+
   const items: ICommandBarItemProps[] = [
     {
       key: 'save',
@@ -179,10 +180,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
             text: Resources.UNDO,
             iconProps: { iconName: 'Undo' },
             secondaryText: Resources.CTR_Z,
-            onClick: () => {
-              if (!showUndo) onUndoRedoChange(showUndo);
-              onUndoClick();
-            },
+            onClick: () => undoRedoOnClick(true),
             disabled: isUndoStackEmpty,
           },
           {
@@ -190,15 +188,12 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
             text: Resources.REDO,
             iconProps: { iconName: 'Redo' },
             secondaryText: Resources.CTR_Y,
-            onClick: () => {
-              if (showUndo) onUndoRedoChange(showUndo);
-              onRedoClick();
-            },
+            onClick: () => undoRedoOnClick(false),
             disabled: isRedoStackEmpty,
           },
         ],
       },
-      onClick: () => console.log('Undo-redo button clicked'),
+      onClick: () => undoRedoOnClick(showUndo),
       primaryDisabled: showUndo ? isUndoStackEmpty : isRedoStackEmpty,
     },
     {
@@ -294,9 +289,6 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
 const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ onSaveClick, onUndoClick, onRedoClick }) => {
   const intl = useIntl();
 
-  const [showUndo, setShowUndo] = useState(true);
-  const onUndoRedoChange = useCallback((showUndo) => setShowUndo(!showUndo), []);
-
   const [stateStackInd, setStateStackInd] = useState(0);
   const onStateStackChange = useCallback((stateStackInd) => setStateStackInd(stateStackInd), []);
 
@@ -320,8 +312,6 @@ const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ onS
       onSaveClick={onSaveClick}
       onUndoClick={onUndoClick}
       onRedoClick={onRedoClick}
-      showUndo={showUndo}
-      onUndoRedoChange={onUndoRedoChange}
       stateStack={exampleStateStack}
       stateStackInd={stateStackInd}
       onStateStackChange={onStateStackChange}
