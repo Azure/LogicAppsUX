@@ -1416,7 +1416,7 @@
   "Gi72X5": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Ver menos"
     }
   ],
   "Gmya+V": [
@@ -1726,7 +1726,7 @@
   "LJmfmK": [
     {
       "type": 0,
-      "value": "See More"
+      "value": "Ver más"
     }
   ],
   "LMB8am": [
@@ -2999,6 +2999,16 @@
       "value": "(UTC+02:00) Trípoli"
     }
   ],
+  "cVSEzV": [
+    {
+      "type": 0,
+      "value": "description for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
   "ci6ex1": [
     {
       "type": 0,
@@ -3848,7 +3858,7 @@
   "mmF/SW": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "Aceptar"
     }
   ],
   "mx2IMJ": [

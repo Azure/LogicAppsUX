@@ -1424,7 +1424,7 @@
   "Gi72X5": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Weniger anzeigen"
     }
   ],
   "Gmya+V": [
@@ -1734,7 +1734,7 @@
   "LJmfmK": [
     {
       "type": 0,
-      "value": "See More"
+      "value": "Mehr anzeigen"
     }
   ],
   "LMB8am": [
@@ -3017,6 +3017,16 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripolis"
+    }
+  ],
+  "cVSEzV": [
+    {
+      "type": 0,
+      "value": "description for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ci6ex1": [

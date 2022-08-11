@@ -1686,7 +1686,7 @@
   "LJmfmK": [
     {
       "type": 0,
-      "value": "See More"
+      "value": "查看更多"
     }
   ],
   "LMB8am": [
@@ -2952,6 +2952,16 @@
       "value": "(UTC+02:00)的黎波里"
     }
   ],
+  "cVSEzV": [
+    {
+      "type": 0,
+      "value": "description for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
   "ci6ex1": [
     {
       "type": 0,
@@ -3790,7 +3800,7 @@
   "mmF/SW": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "确定"
     }
   ],
   "mx2IMJ": [
