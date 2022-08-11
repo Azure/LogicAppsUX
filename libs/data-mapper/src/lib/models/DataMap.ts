@@ -1,4 +1,4 @@
-export interface JsonInputStyle {
+export interface DataMap {
   srcSchemaName: string;
   dstSchemaName: string;
   mappings: MapNode;

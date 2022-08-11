@@ -1,9 +1,9 @@
-import type { MapNode, ConditionalMapping, JsonInputStyle, LoopMapping } from '../models';
+import type { MapNode, ConditionalMapping, DataMap, LoopMapping } from '../models';
 import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
 import { MapDefinitionProperties, MapNodeParams, YamlFormats } from './utils/constants';
 import yaml from 'js-yaml';
 
-export function mapDefinitionToJson(inputMapDefinition: string): JsonInputStyle {
+export function mapDefinitionToJson(inputMapDefinition: string): DataMap {
   const formattedInputMapDefinition = inputMapDefinition.replaceAll('\t', YamlFormats.indentGap);
   const parsedYaml: any = yaml.load(formattedInputMapDefinition);
   const parsedYamlKeys: string[] = Object.keys(parsedYaml);

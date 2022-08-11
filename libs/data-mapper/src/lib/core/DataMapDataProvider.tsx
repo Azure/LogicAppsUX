@@ -1,13 +1,15 @@
-import type { JsonInputStyle } from '../models/DataMap';
+import type { DataMap } from '../models/DataMap';
 import type { Schema } from '../models/Schema';
+import { convertSchemaToSchemaExtended } from '../models/Schema';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
-import { setAvailableSchemas, setInputSchema, setOutputSchema } from './state/SchemaSlice';
+import { setInitialInputSchema, setInitialOutputSchema } from './state/DataMapSlice';
+import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
 import React, { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 export interface DataMapDataProviderProps {
-  dataMap?: JsonInputStyle;
+  dataMap?: DataMap;
   inputSchema?: Schema;
   outputSchema?: Schema;
   availableSchemas?: Schema[];
@@ -19,13 +21,13 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ inputSchema, ou
 
   useEffect(() => {
     if (inputSchema) {
-      dispatch(setInputSchema(inputSchema));
+      dispatch(setInitialInputSchema(convertSchemaToSchemaExtended(inputSchema)));
     }
   }, [dispatch, inputSchema]);
 
   useEffect(() => {
     if (outputSchema) {
-      dispatch(setOutputSchema(outputSchema));
+      dispatch(setInitialOutputSchema(convertSchemaToSchemaExtended(outputSchema)));
     }
   }, [dispatch, outputSchema]);
 
