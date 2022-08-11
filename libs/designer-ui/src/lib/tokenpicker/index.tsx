@@ -23,7 +23,7 @@ export interface TokenPickerProps {
   expressionGroup?: TokenGroup[];
   initialMode?: TokenPickerMode;
   initialExpression: string;
-  isEditing?: boolean /* TODO: add isEditing*/;
+  updatingExpression?: boolean;
   setInTokenPicker?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
 }
@@ -34,17 +34,23 @@ export default function TokenPicker({
   expressionGroup,
   initialMode,
   initialExpression,
+  updatingExpression,
   setInTokenPicker,
   onSearchTextChanged,
 }: TokenPickerProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
+  const [isEditing, setIsEditing] = useState<boolean>(updatingExpression ?? false);
   const [expression, setExpression] = useState<IntellisenseControlEvent>({ value: initialExpression, selectionStart: 0, selectionEnd: 0 });
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const handleSelectKey = (item?: PivotItem) => {
     if (item?.props?.itemKey) {
       setSelectedKey(item.props.itemKey as TokenPickerMode);
+      if (expression.value) {
+        setIsEditing(true);
+        expressionEditorRef.current?.focus();
+      }
     }
   };
 
@@ -90,6 +96,9 @@ export default function TokenPicker({
             expression={expression}
             setExpression={setExpression}
             setSelectedKey={setSelectedKey}
+            updatingExpression={updatingExpression}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
           />
 
           <TokenPickerSection

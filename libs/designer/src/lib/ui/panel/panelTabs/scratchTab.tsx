@@ -1,5 +1,6 @@
 import constants from '../../../common/constants';
 import type { TokenGroup } from '../../../core/utils/tokens';
+import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import {
@@ -22,11 +23,13 @@ const testTokenGroup: TokenGroup[] = [
 ];
 
 export const ScratchTab = () => {
+  const expressionGroup = getExpressionTokenSections();
   const children = (): React.ReactNode => {
     return (
       <>
         <ArrayEditor
           tokenGroup={testTokenGroup}
+          expressionGroup={expressionGroup}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[
             {
@@ -56,6 +59,7 @@ export const ScratchTab = () => {
           label="Method"
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
           tokenGroup={testTokenGroup}
+          expressionGroup={expressionGroup}
           // readOnly={true}
         />
         <SchemaEditor
@@ -95,7 +99,6 @@ export const ScratchTab = () => {
             },
             { key: [], value: [] },
           ]}
-          tokenGroup={testTokenGroup}
           initialValue={[
             { id: guid(), type: ValueSegmentType.LITERAL, value: '{\n    "' },
             testTokenSegment,
@@ -128,8 +131,10 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
+          tokenGroup={testTokenGroup}
+          expressionGroup={expressionGroup}
         />
-        <DictionaryEditor initialValue={[testTokenSegment]} tokenGroup={testTokenGroup} />
+        <DictionaryEditor initialValue={[testTokenSegment]} tokenGroup={testTokenGroup} expressionGroup={expressionGroup} />
         <StringEditor
           initialValue={[
             testTokenSegment,
@@ -138,6 +143,7 @@ export const ScratchTab = () => {
             testTokenSegment,
           ]}
           tokenGroup={testTokenGroup}
+          expressionGroup={expressionGroup}
         />
       </>
     );

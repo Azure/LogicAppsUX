@@ -38,6 +38,9 @@ interface TokenPickerSearchProps {
   searchQuery: string;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   expression: IntellisenseControlEvent;
+  updatingExpression?: boolean;
+  isEditing: boolean;
+  setIsEditing: Dispatch<SetStateAction<boolean>>;
   setSearchQuery: (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string) => void;
   expressionEditorBlur: (e: IntellisenseControlEvent) => void;
   setExpression: Dispatch<SetStateAction<IntellisenseControlEvent>>;
@@ -49,6 +52,9 @@ export const TokenPickerSearch = ({
   searchQuery,
   expressionEditorRef,
   expression,
+  updatingExpression,
+  isEditing,
+  setIsEditing,
   setSearchQuery,
   expressionEditorBlur,
   setExpression,
@@ -97,6 +103,7 @@ export const TokenPickerSearch = ({
       },
     });
     setSelectedKey(TokenPickerMode.TOKEN);
+    setIsEditing(false);
   };
 
   const tokenPickerPlaceHolderText = intl.formatMessage({
@@ -108,9 +115,13 @@ export const TokenPickerSearch = ({
     defaultMessage: 'OK',
     description: 'Insert Expression',
   });
+  const tokenPickerUpdate = intl.formatMessage({
+    defaultMessage: 'Update',
+    description: 'Update Expression',
+  });
   return (
     <>
-      {selectedKey === TokenPickerMode.TOKEN ? (
+      {selectedKey === TokenPickerMode.TOKEN && !isEditing ? (
         <div className="msla-token-picker-search">
           <Icon className="msla-token-picker-search-icon" iconName="Search" styles={iconStyles} />
           <TextField
@@ -131,7 +142,11 @@ export const TokenPickerSearch = ({
             <IntellisenseControl initialValue="" editorRef={expressionEditorRef} onBlur={expressionEditorBlur} />
           </div>
           <div className="msla-token-picker-action-bar">
-            <PrimaryButton text={tokenPickerOK} onClick={onOKClicked} className={'msla-token-picker-OK'} />
+            <PrimaryButton
+              text={updatingExpression ? tokenPickerUpdate : tokenPickerOK}
+              onClick={onOKClicked}
+              className={'msla-token-picker-OK'}
+            />
           </div>
         </div>
       )}
