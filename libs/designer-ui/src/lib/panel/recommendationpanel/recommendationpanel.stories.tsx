@@ -1,7 +1,7 @@
-import { DesignerSearchBox } from '../../searchbox';
 import { BrowseGrid } from './browseResults';
+import { OperationGroupDetailsPage } from './operationGroupDetails';
 import { mockOperationApi, mockOperationActionsData } from './operationGroupDetails/mocks';
-import { OperationGroupDetailsPage } from './operationGroupDetails/operationGroupDetails';
+import { OperationSearchHeader } from './operationSearchHeader';
 import type { RecommendationPanelProps } from './recommendationpanel';
 import { RecommendationPanel } from './recommendationpanel';
 import { SearchResultsGrid } from './searchResult';
@@ -16,7 +16,12 @@ export default {
 
 export const Search: ComponentStory<typeof RecommendationPanel> = (args: any) => (
   <RecommendationPanel {...args}>
-    <DesignerSearchBox onSearch={() => null} />
+    <OperationSearchHeader
+      onSearch={() => null}
+      onGroupToggleChange={() => null}
+      isGrouped={args.groupByConnector}
+      searchTerm={'Test Search'}
+    />
     <SearchResultsGrid
       operationSearchResults={MockSearchOperations}
       onOperationClick={(id) => alert('Adding operation: ' + id)}
@@ -29,7 +34,7 @@ Search.args = { isCollapsed: false, width: '630px', groupByConnector: false } as
 
 export const Browse: ComponentStory<typeof RecommendationPanel> = (args: PropsWithChildren<RecommendationPanelProps>) => (
   <RecommendationPanel {...args}>
-    <DesignerSearchBox onSearch={() => null} />
+    <OperationSearchHeader onSearch={() => null} onGroupToggleChange={() => null} searchTerm={''} />
     <BrowseGrid connectorBrowse={connectorsSearchResultsMock} onConnectorSelected={(id) => alert('Selected connector: ' + id)} />
   </RecommendationPanel>
 );

@@ -2419,6 +2419,12 @@
       "value": "(UTC-06:00) Central America"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -3333,6 +3339,16 @@
     {
       "type": 0,
       "value": "Trigger Conditions"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
