@@ -188,7 +188,7 @@ export const getParameterDependencies = (manifest: OperationManifest, inputs: No
   if (outputsSchema) {
     const allOutputs = unmap(outputs.outputs);
     for (const outputPath of outputsSchema.outputPaths) {
-      const outputName = outputPath.outputLocation.filter(location => location !== 'properties').join('.');
+      const outputName = outputPath.outputLocation.filter((location) => location !== 'properties').join('.');
       const matchingOutput = allOutputs.find((output) => output.name === outputName);
       const dependentInput = getAllInputParameters(inputs).find((input) => input.parameterName === outputPath.name);
 
