@@ -83,6 +83,12 @@
       "value": "Bağlantıyı değiştir"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -567,12 +573,6 @@
       "value": "Yeni bağlantı ekle"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Göz atılacak görünümü seçin"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -645,12 +645,6 @@
       "value": "Gerekli. Değerlendirilecek XPath ifadesi."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Bağlayıcılar"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -679,6 +673,12 @@
     {
       "type": 0,
       "value": "Parametreyi Sil"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -919,6 +919,12 @@
     {
       "type": 0,
       "value": "Ek özellik-değer çifti içeren bir nesneyi döndürür"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1374,7 +1380,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "{splitOn} öğesinde bölünme biçimi geçersiz."
     }
   ],
   "G0XYrd": [
@@ -1720,7 +1726,7 @@
   "LJmfmK": [
     {
       "type": 0,
-      "value": "See More"
+      "value": "Daha Fazlasını Göster"
     }
   ],
   "LMB8am": [
@@ -1732,13 +1738,19 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Bölünmüş {splitOn} değerinde tür geçersiz, bölünme dizide değil."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Bir URI'den düzeni döndürür"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2277,6 +2289,12 @@
       "value": "Bitti"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2607,6 +2625,12 @@
       "value": "Bağlantı adı"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2773,6 +2797,12 @@
       "value": "Gerekli. Dizenin başlangıcı olabilecek değer."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2887,6 +2917,16 @@
       "value": "(UTC+05:30) Chennai, Kolkata (Calcutta), Mumbai, Yeni Delhi"
     }
   ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
+    }
+  ],
   "bx3qeC": [
     {
       "type": 0,
@@ -2957,6 +2997,16 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "cVSEzV": [
+    {
+      "type": 0,
+      "value": "description for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3087,6 +3137,12 @@
     {
       "type": 0,
       "value": "Ayırıcı kullanarak dizeyi böler"
+    }
+  ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
     }
   ],
   "e00zot": [
@@ -3284,7 +3340,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Bölünmüş {splitOn} değeri geçersiz, çıkışlarda bulunamıyor."
     }
   ],
   "gu9o9z": [
@@ -3731,6 +3787,12 @@
       "value": "Ad"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3776,7 +3838,7 @@
   "mmF/SW": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "Tamam"
     }
   ],
   "mx2IMJ": [

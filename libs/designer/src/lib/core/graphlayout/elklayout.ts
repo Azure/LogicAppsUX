@@ -10,7 +10,7 @@ import type { Edge, Node } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 
 export const layerSpacing = {
-  default: '50',
+  default: '64',
   readOnly: '32',
   onlyEdge: '16',
 };

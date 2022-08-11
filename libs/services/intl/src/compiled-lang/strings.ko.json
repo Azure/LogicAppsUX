@@ -83,6 +83,12 @@
       "value": "연결 변경"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -556,12 +562,6 @@
       "value": "새 연결 추가"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "검색할 보기 선택"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -634,12 +634,6 @@
       "value": "필수 항목으로, 평가할 XPath 식입니다."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "커넥터"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -668,6 +662,12 @@
     {
       "type": 0,
       "value": "매개 변수 삭제"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -908,6 +908,12 @@
     {
       "type": 0,
       "value": "추가적인 속성 값 쌍을 사용하여 개체 반환"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1341,7 +1347,7 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "{splitOn} 분할 형식이 잘못되었습니다."
     }
   ],
   "G0XYrd": [
@@ -1377,7 +1383,7 @@
   "Gi72X5": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "간단히 보기"
     }
   ],
   "Gmya+V": [
@@ -1676,7 +1682,7 @@
   "LJmfmK": [
     {
       "type": 0,
-      "value": "See More"
+      "value": "자세히 보기"
     }
   ],
   "LMB8am": [
@@ -1688,13 +1694,19 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "{splitOn} 분할 유형이 잘못되었습니다. 분할이 배열에 없습니다."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "URI에서 체계 반환"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2222,6 +2234,12 @@
       "value": "완료"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2552,6 +2570,12 @@
       "value": "연결 이름"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2718,6 +2742,12 @@
       "value": "필수 항목으로, 문자열이 시작될 수 있는 값입니다."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2832,6 +2862,16 @@
       "value": "(UTC+05:30) 첸나이, 콜카타, 뭄바이, 뉴델리"
     }
   ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
+    }
+  ],
   "bx3qeC": [
     {
       "type": 0,
@@ -2902,6 +2942,16 @@
     {
       "type": 0,
       "value": "(UTC+02:00) 트리폴리"
+    }
+  ],
+  "cVSEzV": [
+    {
+      "type": 0,
+      "value": "description for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3032,6 +3082,12 @@
     {
       "type": 0,
       "value": "구분 기호를 사용하여 문자열을 분할합니다."
+    }
+  ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
     }
   ],
   "e00zot": [
@@ -3229,7 +3285,7 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "{splitOn} 분할 값이 잘못되었습니다. 출력에서 찾을 수 없습니다."
     }
   ],
   "gu9o9z": [
@@ -3665,6 +3721,12 @@
       "value": "이름"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3710,7 +3772,7 @@
   "mmF/SW": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "확인"
     }
   ],
   "mx2IMJ": [

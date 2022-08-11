@@ -83,6 +83,12 @@
       "value": "Zmień połączenie"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -605,12 +611,6 @@
       "value": "Dodaj nowe połączenie"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "Wybierz widok, z którego chcesz przeglądać"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -683,12 +683,6 @@
       "value": "Parametr wymagany. Wyrażenie XPath do wyznaczenia wartości."
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "Łączniki"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -717,6 +711,12 @@
     {
       "type": 0,
       "value": "Usuń parametr"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -957,6 +957,12 @@
     {
       "type": 0,
       "value": "Zwraca obiekt z parą dodatkowych wartości właściwości"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1456,7 +1462,15 @@
   "G/CC5/": [
     {
       "type": 0,
-      "value": "Invalid split on format in {splitOn}."
+      "value": "Nieprawidłowy podział formatu w „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "G0XYrd": [
@@ -1824,7 +1838,7 @@
   "LJmfmK": [
     {
       "type": 0,
-      "value": "See More"
+      "value": "Zobacz więcej"
     }
   ],
   "LMB8am": [
@@ -1836,13 +1850,27 @@
   "LOwePI": [
     {
       "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
+      "value": "Nieprawidłowy typ dla podzielonej wartości „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "”, dlatego brak podziału w tablicy."
     }
   ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Zwraca schemat z identyfikatora URI"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2403,6 +2431,12 @@
       "value": "Gotowe"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2733,6 +2767,12 @@
       "value": "Nazwa połączenia"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2899,6 +2939,12 @@
       "value": "Parametr wymagany. Wartość, którą ciąg może się zaczynać."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -3013,6 +3059,16 @@
       "value": "(UTC+05:30) Chennai, Kolkata (Kalkuta), Mumbaj (Bombaj), Nowe Delhi"
     }
   ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
+    }
+  ],
   "bx3qeC": [
     {
       "type": 0,
@@ -3083,6 +3139,16 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Trypolis"
+    }
+  ],
+  "cVSEzV": [
+    {
+      "type": 0,
+      "value": "description for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3217,6 +3283,12 @@
     {
       "type": 0,
       "value": "Dzieli ciąg, używając separatora"
+    }
+  ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
     }
   ],
   "e00zot": [
@@ -3414,7 +3486,15 @@
   "gpbgjJ": [
     {
       "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
+      "value": "Nieprawidłowy podział wartości „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "”, dlatego nie można odnaleźć w danych wyjściowych."
     }
   ],
   "gu9o9z": [
@@ -3897,6 +3977,12 @@
     {
       "type": 0,
       "value": "Nazwa"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "mGUdCO": [

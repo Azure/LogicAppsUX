@@ -83,6 +83,12 @@
       "value": "變更連線"
     }
   ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+    }
+  ],
   "/WW7If": [
     {
       "type": 0,
@@ -556,12 +562,6 @@
       "value": "新增連線"
     }
   ],
-  "4RQAXv": [
-    {
-      "type": 0,
-      "value": "選擇要瀏覽的來源檢視"
-    }
-  ],
   "4XdZNj": [
     {
       "type": 0,
@@ -634,12 +634,6 @@
       "value": "必要。要評估的 XPath 運算式。"
     }
   ],
-  "5Yi8Jj": [
-    {
-      "type": 0,
-      "value": "連接器"
-    }
-  ],
   "5aa76N": [
     {
       "type": 0,
@@ -668,6 +662,12 @@
     {
       "type": 0,
       "value": "刪除參數"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -908,6 +908,12 @@
     {
       "type": 0,
       "value": "傳回具有其他成對屬性值的物件"
+    }
+  ],
+  "9RjyJ4": [
+    {
+      "type": 0,
+      "value": "Learn more."
     }
   ],
   "9SuA/E": [
@@ -1377,7 +1383,7 @@
   "Gi72X5": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "查看較少內容"
     }
   ],
   "Gmya+V": [
@@ -1676,7 +1682,7 @@
   "LJmfmK": [
     {
       "type": 0,
-      "value": "See More"
+      "value": "查看更多"
     }
   ],
   "LMB8am": [
@@ -1695,6 +1701,12 @@
     {
       "type": 0,
       "value": "傳回 URI 的配置"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
     }
   ],
   "Lft/is": [
@@ -2222,6 +2234,12 @@
       "value": "完成"
     }
   ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2552,6 +2570,12 @@
       "value": "連線名稱"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -2718,6 +2742,12 @@
       "value": "必要。作為字串開頭的值。"
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2832,6 +2862,16 @@
       "value": "(UTC+05:30) 辰內，加爾各答，孟拜，新德里"
     }
   ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
+    }
+  ],
   "bx3qeC": [
     {
       "type": 0,
@@ -2902,6 +2942,16 @@
     {
       "type": 0,
       "value": "(UTC+02:00) 的黎波里"
+    }
+  ],
+  "cVSEzV": [
+    {
+      "type": 0,
+      "value": "description for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3036,6 +3086,12 @@
     {
       "type": 0,
       "value": "使用分隔符號分割字串"
+    }
+  ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
     }
   ],
   "e00zot": [
@@ -3669,6 +3725,12 @@
       "value": "名稱"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3714,7 +3776,7 @@
   "mmF/SW": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "確定"
     }
   ],
   "mx2IMJ": [
