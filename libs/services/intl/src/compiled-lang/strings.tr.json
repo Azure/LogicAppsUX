@@ -1726,7 +1726,7 @@
   "LJmfmK": [
     {
       "type": 0,
-      "value": "See More"
+      "value": "Daha Fazlasını Göster"
     }
   ],
   "LMB8am": [
@@ -2999,6 +2999,16 @@
       "value": "(UTC+02:00) Tripoli"
     }
   ],
+  "cVSEzV": [
+    {
+      "type": 0,
+      "value": "description for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
   "ci6ex1": [
     {
       "type": 0,
@@ -3828,7 +3838,7 @@
   "mmF/SW": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "Tamam"
     }
   ],
   "mx2IMJ": [
