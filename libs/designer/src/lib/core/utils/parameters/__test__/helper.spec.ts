@@ -78,6 +78,7 @@ describe('parameterValueToJSONString', () => {
             key: 'body.$.ID',
             tokenType: TokenType.OUTPUTS,
             type: 'string',
+            title: 'body',
           },
         },
         {
@@ -105,6 +106,7 @@ describe('parameterValueToJSONString', () => {
           token: {
             key: 'body.$.ID',
             tokenType: TokenType.OUTPUTS,
+            title: 'body',
           },
         },
         {
@@ -133,6 +135,7 @@ describe('parameterValueToJSONString', () => {
             key: 'body.$',
             tokenType: TokenType.OUTPUTS,
             type: 'string',
+            title: 'body',
           },
         },
         {
@@ -161,6 +164,7 @@ describe('parameterValueToJSONString', () => {
             key: 'body.$',
             tokenType: TokenType.OUTPUTS,
             type: 'string',
+            title: 'body',
           },
         },
         {
@@ -171,6 +175,7 @@ describe('parameterValueToJSONString', () => {
             key: 'body.$',
             tokenType: TokenType.OUTPUTS,
             type: 'string',
+            title: 'body',
           },
         },
         {
@@ -199,6 +204,7 @@ describe('parameterValueToJSONString', () => {
             key: 'body.$',
             tokenType: TokenType.OUTPUTS,
             type: 'string',
+            title: 'body',
           },
         },
         {
@@ -214,6 +220,7 @@ describe('parameterValueToJSONString', () => {
             key: 'body.$',
             tokenType: TokenType.OUTPUTS,
             type: 'string',
+            title: 'body',
           },
         },
         {
@@ -243,6 +250,7 @@ describe('parameterValueToJSONString', () => {
             key: 'body.$',
             tokenType: TokenType.OUTPUTS,
             type: 'string',
+            title: 'body',
           },
         },
         {
@@ -258,6 +266,7 @@ describe('parameterValueToJSONString', () => {
             key: 'body.$',
             tokenType: TokenType.OUTPUTS,
             type: 'string',
+            title: 'body',
           },
         },
       ],
@@ -281,6 +290,7 @@ describe('parameterValueToJSONString', () => {
             key: 'body.$',
             tokenType: TokenType.OUTPUTS,
             type: 'string',
+            title: 'body',
           },
         },
         {
@@ -296,6 +306,7 @@ describe('parameterValueToJSONString', () => {
             key: 'body.$',
             tokenType: TokenType.OUTPUTS,
             type: 'string',
+            title: 'body',
           },
         },
         {
@@ -494,6 +505,7 @@ describe('parameterValueToString', () => {
           key: 'body.$',
           tokenType: TokenType.OUTPUTS,
           type: 'string',
+          title: 'body',
         },
       },
     ];
@@ -520,6 +532,7 @@ describe('parameterValueToString', () => {
           key: 'body.$',
           tokenType: TokenType.OUTPUTS,
           type: 'string',
+          title: 'body',
         },
       },
     ];
@@ -540,6 +553,7 @@ describe('parameterValueToString', () => {
           key: 'body.$',
           tokenType: TokenType.OUTPUTS,
           type: 'string',
+          title: 'body',
         },
       },
     ];
@@ -560,6 +574,7 @@ describe('parameterValueToString', () => {
           key: 'body.$',
           tokenType: TokenType.OUTPUTS,
           type: 'string',
+          title: 'body',
         },
       },
     ];
@@ -581,6 +596,7 @@ describe('parameterValueToString', () => {
           key: 'body.$',
           tokenType: TokenType.OUTPUTS,
           type: 'string',
+          title: 'body',
         },
       },
     ];
@@ -606,6 +622,7 @@ describe('parameterValueToString', () => {
           key: 'body.$',
           tokenType: TokenType.OUTPUTS,
           type: 'string',
+          title: 'body',
         },
       },
     ];
@@ -627,6 +644,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           type: 'string',
           format: 'binary',
+          title: 'body',
         },
       },
     ];
@@ -648,6 +666,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           type: 'string',
           format: 'binary',
+          title: 'body',
         },
       },
     ];
@@ -680,6 +699,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           type: 'string',
           format: 'binary',
+          title: 'body',
         },
       },
     ];
@@ -701,6 +721,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           type: 'string',
           format: 'byte',
+          title: 'body',
         },
       },
     ];
@@ -722,6 +743,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           type: 'string',
           format: 'byte',
+          title: 'body',
         },
       },
     ];
@@ -742,6 +764,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           type: 'string',
           format: 'datauri',
+          title: 'body',
         },
       },
     ];
@@ -763,6 +786,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           type: 'string',
           format: 'datauri',
+          title: 'body',
         },
       },
     ];
@@ -783,6 +807,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           type: 'string',
           format: 'binary',
+          title: 'body',
         },
       },
     ];
@@ -803,6 +828,7 @@ describe('parameterValueToString', () => {
           key: 'body.$',
           tokenType: TokenType.OUTPUTS,
           type: 'file',
+          title: 'body',
         },
       },
     ];
@@ -824,6 +850,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           type: 'string',
           format: 'binary',
+          title: 'body',
         },
       },
     ];
@@ -844,6 +871,7 @@ describe('parameterValueToString', () => {
           key: 'body.$',
           tokenType: TokenType.OUTPUTS,
           type: 'file',
+          title: 'body',
         },
       },
     ];
@@ -952,6 +980,7 @@ describe('parameterValueToString', () => {
         token: {
           key: 'userentered',
           tokenType: TokenType.OUTPUTS,
+          title: 'outputs',
         },
         value: "trigger()['outputs']",
       },
@@ -1016,6 +1045,7 @@ describe('parameterValueToString', () => {
           actionName: 'action',
           name: 'path',
           type: 'string',
+          title: 'path',
         },
       },
     ];
@@ -1038,6 +1068,7 @@ describe('parameterValueToString', () => {
             tokenType: TokenType.OUTPUTS,
             actionName: 'action',
             name: 'path',
+            title: 'path',
             type: tokenType,
           },
         },
@@ -1062,6 +1093,7 @@ describe('parameterValueToString', () => {
           name: 'path',
           type: 'string',
           format: 'binary',
+          title: 'path',
         },
       },
     ];
@@ -1089,6 +1121,7 @@ describe('parameterValueToString', () => {
           name: 'name',
           type: 'string',
           format: '',
+          title: 'name',
         },
       },
     ];
@@ -1116,6 +1149,7 @@ describe('parameterValueToString', () => {
           name: 'name',
           type: 'string',
           format: '',
+          title: 'name',
         },
       },
     ];
@@ -1143,6 +1177,7 @@ describe('parameterValueToString', () => {
           name: 'name',
           type: 'string',
           format: 'binary',
+          title: 'name',
         },
       },
       {
@@ -1156,6 +1191,7 @@ describe('parameterValueToString', () => {
           name: 'name',
           type: 'string',
           format: '',
+          title: 'name',
         },
       },
     ];
@@ -1192,6 +1228,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           name: 'name',
           type: 'string',
+          title: 'name',
         },
       },
     ];
@@ -1219,6 +1256,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           name: 'name',
           type: 'string',
+          title: 'name',
         },
       },
       {
@@ -1246,6 +1284,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           type: 'string',
           format: 'byte',
+          title: 'body',
         },
       },
     ];
@@ -1269,6 +1308,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           type: 'string',
           format: 'byte',
+          title: 'body',
         },
       },
       {
@@ -1297,6 +1337,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           name: 'id',
           type: 'string',
+          title: 'id',
         },
       },
     ];
@@ -1396,6 +1437,7 @@ describe('parameterValueToString', () => {
           key: 'body.$.id',
           tokenType: TokenType.OUTPUTS,
           name: 'id',
+          title: 'id',
         },
       },
       {
@@ -1412,6 +1454,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           actionName: 'A0',
           name: 'id',
+          title: 'id',
         },
       },
       {
@@ -1423,6 +1466,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           actionName: 'A1',
           name: 'id',
+          title: 'id',
         },
       },
       {
@@ -1439,6 +1483,7 @@ describe('parameterValueToString', () => {
           tokenType: TokenType.OUTPUTS,
           actionName: 'A1',
           name: 'property',
+          title: 'property',
         },
       },
       {
@@ -1486,6 +1531,7 @@ describe('parameterValueToString', () => {
           key: 'body.$.ID',
           tokenType: TokenType.OUTPUTS,
           name: 'ID',
+          title: 'ID',
         },
       },
     ];
@@ -1514,6 +1560,7 @@ describe('parameterValueToString', () => {
           key: 'body.$.ID',
           tokenType: TokenType.OUTPUTS,
           name: 'ID',
+          title: 'ID',
         },
       },
       {
@@ -1529,6 +1576,7 @@ describe('parameterValueToString', () => {
           key: 'body.$.Value',
           tokenType: TokenType.OUTPUTS,
           name: 'Value',
+          title: 'Value',
         },
       },
       {
@@ -1567,6 +1615,7 @@ describe('parameterValueToString', () => {
           key: 'body.$.Value',
           tokenType: TokenType.OUTPUTS,
           name: 'Value',
+          title: 'Value',
         },
       },
       {

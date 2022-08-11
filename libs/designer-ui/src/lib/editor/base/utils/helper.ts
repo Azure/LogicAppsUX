@@ -29,8 +29,8 @@ export const showCollapsedValidation = (collapsedValue: ValueSegment[]): boolean
   );
 };
 
-export const initializeValidation = (intialValue: ValueSegment[]): boolean => {
-  const editorString = intialValue.map((segment) => segment.value).join('');
+export const initializeValidation = (initialValue?: ValueSegment[]): boolean => {
+  const editorString = initialValue?.map((segment) => segment.value).join('');
   return !editorString || isValidDictionary(editorString);
 };
 

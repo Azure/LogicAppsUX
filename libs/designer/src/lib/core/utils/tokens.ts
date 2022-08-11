@@ -101,8 +101,10 @@ export function convertOutputsToTokens(
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
 
   return Object.keys(outputs).map((outputKey) => {
-    const { key, name, type, isAdvanced, description, required, format, source, isInsideArray, parentArray, itemSchema } =
-      outputs[outputKey];
+    const { key, name, type, isAdvanced, required, format, source, isInsideArray, parentArray, itemSchema } = outputs[outputKey];
+    // TODO: temporary solution because description doesn't seem to be being passed
+    const splitKey = key.split('.$.');
+    const description = `${splitKey[0]}('${nodeId}')['${splitKey[1]}']`;
     return {
       key,
       brandColor,
@@ -132,7 +134,7 @@ export function getExpressionTokenSections(): TokenGroup[] {
     const tokens = functions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
       key: name,
       brandColor: '#AD008C',
-      iconUri: FxIcon,
+      icon: FxIcon,
       title: defaultSignature,
       name,
       type: Constants.SWAGGER.TYPE.ANY,

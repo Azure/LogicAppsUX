@@ -24,6 +24,7 @@ export interface MonacoProps extends MonacoOptions {
   value?: string;
   editorRef?: editor.IStandaloneCodeEditor;
   height?: string;
+  width?: string;
 
   onBlur?(): void;
   onBlurText?(): void;
@@ -55,6 +56,9 @@ export interface MonacoOptions {
   scrollBeyondLastLine?: boolean;
   wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
   contextMenu?: boolean;
+  scrollbar?: editor.IEditorScrollbarOptions;
+  overviewRulerLanes?: number;
+  overviewRulerBorder?: boolean;
 }
 
 export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps>(
@@ -70,6 +74,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       value,
       scrollBeyondLastLine = false,
       height,
+      width,
       onBlur,
       onBlurText,
       onChanged,
@@ -229,6 +234,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
             theme={language === EditorLanguage.templateExpressionLanguage ? language : isHighContrastBlack() ? 'vs-dark' : 'vs'}
             onMount={handleEditorMounted}
             height={height}
+            width={width}
           />
         ) : null}
       </div>

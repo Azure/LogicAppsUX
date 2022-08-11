@@ -4,7 +4,6 @@ import type { ChangeHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Change } from '../editor/base/plugins/Change';
 import { Label } from '../label';
-import type { TokenGroup } from '../tokenpicker/models/token';
 import type {
   IButtonStyles,
   IComboBox,
@@ -64,7 +63,7 @@ export interface ComboboxProps {
   useOption?: boolean;
   readOnly?: boolean; // TODO - Need to have readOnly version
   required?: boolean;
-  tokenGroup?: TokenGroup[];
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onChange?: ChangeHandler;
 }
 
@@ -76,14 +75,14 @@ export const Combobox = ({
   useOption = true,
   required,
   readOnly,
-  tokenGroup,
+  GetTokenPicker,
   onChange,
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
   const optionKey = getSelectedKey(options, initialValue);
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
-  const [mode, setMode] = useState<Mode>(getMode(initialValue, optionKey));
+  const [mode, setMode] = useState<Mode>(getMode(optionKey, initialValue));
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
   const [comboboxOptions, setComboBoxOptions] = useState<IComboBoxOption[]>(getOptions(options));
   const [canAutoFocus, setCanAutoFocus] = useState(false);
@@ -178,7 +177,7 @@ export const Combobox = ({
             BasePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
             initialValue={value}
             onBlur={handleBlur}
-            tokenGroup={tokenGroup}
+            GetTokenPicker={GetTokenPicker}
           >
             <Change setValue={setValue} />
           </BaseEditor>
@@ -231,13 +230,13 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
   ];
 };
 
-const getMode = (initialValue: ValueSegment[], selectedKey: string): Mode => {
+const getMode = (selectedKey: string, initialValue: ValueSegment[]): Mode => {
   const hasValue = initialValue.length > 0 && initialValue[0].value;
   return hasValue ? (selectedKey ? Mode.Default : Mode.Custom) : Mode.Default;
 };
 
-const getSelectedKey = (options: ComboboxItem[], initialValue: ValueSegment[]): string => {
-  if (initialValue.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
+const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[]): string => {
+  if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
       options.find((option) => {
         return option.value === initialValue[0].value;

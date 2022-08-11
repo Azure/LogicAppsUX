@@ -36,7 +36,6 @@ export * from './flyout2';
 export * from './identitydropdown';
 export * from './imagewithfallback';
 // export * from './inputcontrol';
-// export * from './intellisensecontrol';
 // export * from './itemspicker';
 export * from './label';
 // export * from './modaldialog';

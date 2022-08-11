@@ -1,13 +1,12 @@
-import FxTextBoxIconBlack from './images/fx.svg';
-import FxTextBoxIcon from './images/fx.white.svg';
+import type { ExpressionEditorEvent } from '../expressioneditor';
 import type { TokenGroup } from './models/token';
 import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
-import { TokenPickerSection } from './tokenpickersection';
-import type { IIconStyles, ITextField, ITextFieldStyles, PivotItem } from '@fluentui/react';
-import { useTheme, PrimaryButton, TextField, FontSizes, Icon, Callout, DirectionalHint } from '@fluentui/react';
-import type { Dispatch, SetStateAction } from 'react';
+import { TokenPickerSearch } from './tokenpickersearch/tokenpickersearch';
+import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
+import type { ICalloutContentStyles, PivotItem } from '@fluentui/react';
+import { Callout, DirectionalHint } from '@fluentui/react';
+import type { editor } from 'monaco-editor';
 import { useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
 
 export type { Token as OutputToken } from './models/token';
 
@@ -15,16 +14,9 @@ const directionalHint = DirectionalHint.leftTopEdge;
 const gapSpace = 10;
 const beakWidth = 20;
 
-const iconStyles: Partial<IIconStyles> = {
-  root: {
-    fontSize: FontSizes.medium,
-  },
-};
-
-const textFieldStyles: Partial<ITextFieldStyles> = {
-  fieldGroup: {
-    padding: '0 8px 0 24px',
-    height: 30,
+const calloutStyles: Partial<ICalloutContentStyles> = {
+  calloutMain: {
+    overflow: 'visible',
   },
 };
 
@@ -33,52 +25,51 @@ export type SearchTextChangedEventHandler = (e: string) => void;
 export interface TokenPickerProps {
   editorId: string;
   labelId: string;
-  searchText: string;
   tokenGroup?: TokenGroup[];
-  setInTokenPicker?: Dispatch<SetStateAction<boolean>>;
+  expressionGroup?: TokenGroup[];
+  initialMode?: TokenPickerMode;
+  initialExpression: string;
+  setInTokenPicker?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
 }
-export default function TokenPicker({
+export function TokenPicker({
   editorId,
   labelId,
-  searchText,
   tokenGroup,
+  expressionGroup,
+  initialMode,
+  initialExpression,
   setInTokenPicker,
   onSearchTextChanged,
 }: TokenPickerProps): JSX.Element {
-  const { isInverted } = useTheme();
-  const searchBoxRef = useRef<ITextField | null>(null);
-  const [searchQuery, setSearchQuery] = useState(searchText);
-  const intl = useIntl();
-
-  const [selectedKey, setSelectedKey] = useState<string>(TokenPickerMode.TOKEN);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
+  const [isEditing, setIsEditing] = useState<boolean>(initialExpression !== '' ?? false);
+  const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: initialExpression, selectionStart: 0, selectionEnd: 0 });
+  const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const handleSelectKey = (item?: PivotItem) => {
     if (item?.props?.itemKey) {
-      setSelectedKey(item.props.itemKey);
+      setSelectedKey(item.props.itemKey as TokenPickerMode);
+      if (expression.value) {
+        setIsEditing(true);
+        expressionEditorRef.current?.focus();
+      } else {
+        setIsEditing(false);
+      }
     }
   };
 
-  const handleSearchTextChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string): void => {
+  const handleUpdateSearch = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string) => {
     if (text != null) {
       setSearchQuery(text);
       onSearchTextChanged?.(text);
     }
   };
 
-  const onOKClicked = () => {
-    console.log('OK clicked');
+  const onExpressionEditorBlur = (e: ExpressionEditorEvent): void => {
+    setExpression(e);
   };
-
-  const tokenPickerPlaceHolderText = intl.formatMessage({
-    defaultMessage: 'Search dynamic content',
-    description: 'Placeholder text to search token picker',
-  });
-
-  const tokenPickerOK = intl.formatMessage({
-    defaultMessage: 'OK',
-    description: 'Insert Expression',
-  });
 
   return (
     <Callout
@@ -98,34 +89,35 @@ export default function TokenPicker({
       onRestoreFocus={() => {
         return;
       }}
+      styles={calloutStyles}
     >
       <div className="msla-token-picker-container">
         <div className="msla-token-picker">
           <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} />
-          {selectedKey === TokenPickerMode.TOKEN ? (
-            <div className="msla-token-picker-search">
-              <Icon className="msla-token-picker-search-icon" iconName="Search" styles={iconStyles} />
-              <TextField
-                styles={textFieldStyles}
-                componentRef={(c) => (searchBoxRef.current = c)}
-                maxLength={32}
-                placeholder={tokenPickerPlaceHolderText}
-                type="search"
-                value={searchQuery}
-                onChange={handleSearchTextChange}
-                autoComplete="off"
-              />
-            </div>
-          ) : (
-            <div className="msla-token-picker-expression">
-              <img src={isInverted ? FxTextBoxIconBlack : FxTextBoxIcon} role="presentation" alt="" height={32} width={32} />
-              <div className="msla-expression-editor">{/* TODO: Intellisense Editor */}</div>
-              <div className="msla-token-picker-action-bar">
-                <PrimaryButton text={tokenPickerOK} onClick={onOKClicked} className={'msla-token-picker-OK'} />
-              </div>
-            </div>
-          )}
-          <TokenPickerSection tokenGroup={tokenGroup ?? []} />
+          <TokenPickerSearch
+            selectedKey={selectedKey}
+            searchQuery={searchQuery}
+            setSearchQuery={handleUpdateSearch}
+            expressionEditorRef={expressionEditorRef}
+            expressionEditorBlur={onExpressionEditorBlur}
+            expression={expression}
+            setExpression={setExpression}
+            setSelectedKey={setSelectedKey}
+            updatingExpression={initialExpression !== ''}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
+          />
+
+          <TokenPickerSection
+            expressionEditorRef={expressionEditorRef}
+            selectedKey={selectedKey}
+            tokenGroup={tokenGroup ?? []}
+            expressionGroup={expressionGroup ?? []}
+            searchQuery={searchQuery}
+            expression={expression}
+            editMode={initialExpression !== '' || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
+            setExpression={setExpression}
+          />
         </div>
       </div>
     </Callout>

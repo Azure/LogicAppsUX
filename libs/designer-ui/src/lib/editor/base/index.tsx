@@ -1,5 +1,3 @@
-import TokenPicker from '../../tokenpicker';
-import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
@@ -52,7 +50,7 @@ export interface BaseEditorProps {
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   tokenPickerButtonProps?: TokenPickerButtonProps;
-  tokenGroup?: TokenGroup[];
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -87,7 +85,7 @@ export const BaseEditor = ({
   initialValue,
   children,
   tokenPickerButtonProps,
-  tokenGroup,
+  GetTokenPicker,
   onBlur,
   onFocus,
 }: BaseEditorProps) => {
@@ -140,6 +138,10 @@ export const BaseEditor = ({
     setShowTokenPicker(!showTokenPicker);
   };
 
+  const onClickTokenPicker = (b: boolean) => {
+    setInTokenPicker(b);
+  };
+
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className={className ?? 'msla-editor-container'} id={editorId}>
@@ -172,9 +174,7 @@ export const BaseEditor = ({
             setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}
-        {(showTokenPickerButton && showTokenPicker) || inTokenPicker ? (
-          <TokenPicker editorId={editorId} labelId={labelId} searchText="" setInTokenPicker={setInTokenPicker} tokenGroup={tokenGroup} />
-        ) : null}
+        {(showTokenPickerButton && showTokenPicker) || inTokenPicker ? GetTokenPicker(editorId, labelId, onClickTokenPicker) : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
         <InsertTokenNode />
