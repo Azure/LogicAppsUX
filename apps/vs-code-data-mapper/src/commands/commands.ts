@@ -34,6 +34,26 @@ const startCmd = async (context: ExtensionContext) => {
   panel.webview.html = html.replace(matchLinks, toUri);
 
   context.subscriptions.push(panel);
+
+  // Handle messages from the webview (Data Mapper component)
+  panel.webview.onDidReceiveMessage(
+    (message) => {
+      // TODO: handle the message
+      console.log(message);
+    },
+    undefined,
+    context.subscriptions
+  );
+
+  /* TEMP NOTE: Webview/Component message passing ->
+    const vscode = acquireVsCodeApi();
+
+    vscode.postMessage({
+        command: 'alert',
+        text: 'misc',
+        anyOtherPropertyYourHeartDesires: true
+    })
+  */
 };
 
 const openInDataMapperCmd = () => {
