@@ -9,9 +9,22 @@
     "commands": [
       {
         "command": "dataMapperExtension.start",
-        "title": "Open New Data Mapper"
+        "title": "Open new Data Mapper"
+      },
+      {
+        "command": "dataMapperExtension.openSchemaFile",
+        "title": "Open in Data Mapper"
       }
-    ]
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "dataMapperExtension.openInDataMapper",
+          "when": "resourceExtname in dataMapperExtension.supportedFileExts",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "extensionDependencies": [
     "ms-vscode.azure-account"
