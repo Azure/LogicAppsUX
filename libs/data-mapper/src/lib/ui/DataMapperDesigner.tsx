@@ -9,6 +9,7 @@ import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPan
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
+import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import type { DataMapOperationState } from '../core/state/DataMapSlice';
@@ -324,6 +325,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         ) : (
           <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
         )}
+        <PropertiesPane />
       </div>
     </DndProvider>
   );

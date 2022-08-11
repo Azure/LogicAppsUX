@@ -938,13 +938,18 @@ export async function updateParameterAndDependencies(
   }
 }
 
-function updateNodeInputsWithParameter(nodeInputs: NodeInputs, parameterId: string, groupId: string, properties: Partial<ParameterInfo>): NodeInputs {
+function updateNodeInputsWithParameter(
+  nodeInputs: NodeInputs,
+  parameterId: string,
+  groupId: string,
+  properties: Partial<ParameterInfo>
+): NodeInputs {
   const inputs = clone(nodeInputs);
   const parameterGroup = inputs.parameterGroups[groupId];
   const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
   if (index > -1) {
-    parameterGroup.parameters[index] = { ...parameterGroup.parameters[index], ...properties }
-  };
+    parameterGroup.parameters[index] = { ...parameterGroup.parameters[index], ...properties };
+  }
 
   return inputs;
 }

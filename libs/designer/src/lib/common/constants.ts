@@ -908,5 +908,5 @@ export default {
     SETTING_SEPARATOR_COLOR_DARK: '#323130',
     SETTING_SEPARATOR_COLOR_LIGHT: '#eaeaea',
     CHEVRON_ROOT_COLOR_LIGHT: '#514f4e',
-  }
+  },
 };
