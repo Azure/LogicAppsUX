@@ -1,5 +1,4 @@
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { isBuiltInConnector } from '../../../core/actions/bjsworkflow/connections';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import type { RootState } from '../../../core/store';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
@@ -34,7 +33,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
       title: operation.name,
       description: operation.description ?? operation.properties.description,
       summary: operation.properties.summary,
-      category: isBuiltInConnector(operation.properties.api.id) ? 'Built-in' : 'Azure',
+      category: 'Built-in', // TODO - Look at category from operation properties [from backend]
       connectorName: operation.properties.api.displayName,
       brandColor: operation.properties.api.brandColor,
     };

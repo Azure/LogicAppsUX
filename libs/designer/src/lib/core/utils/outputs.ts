@@ -192,7 +192,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
       }
 
       const currentSchemaValue = getObjectPropertyValue(updatedManifest.properties.outputs, outputLocation);
-      safeSetObjectPropertyValue(updatedManifest.properties.outputs, outputLocation, { ...currentSchemaValue, schemaToReplace });
+      safeSetObjectPropertyValue(updatedManifest.properties.outputs, outputLocation, { ...currentSchemaValue, ...schemaToReplace });
     }
   }
 
