@@ -1,84 +1,67 @@
+import type { RootState } from '../../../core';
+import { addOperation } from '../../../core/actions/bjsworkflow/add';
+import { useDiscoveryIds } from '../../../core/state/panel/panelSelectors';
+import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
-import React from 'react';
+import Fuse from 'fuse.js';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-
-const getSearchResult = (term: string) => {
-  const searchService = SearchService();
-  const data = searchService.search(term);
-  return data;
-};
+import { useDispatch, useSelector } from 'react-redux';
 
 type SearchViewProps = {
   searchTerm: string;
 };
 
-// THIS IS CURRENTLY NOT USED ANYWHERE
+type SearchResults = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>[];
 
 export const SearchView: React.FC<SearchViewProps> = (props) => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  // const rootState = useSelector((state: RootState) => state);
-  // const { discoveryIds, selectedNode } = useSelector((state: RootState) => {
-  //   return state.panel;
-  // });
+  const rootState: RootState = useSelector((state: RootState) => state);
+  const discoveryIds = useDiscoveryIds();
 
-  const searchResponse = useQuery(['searchResult', props.searchTerm], () => getSearchResult(props.searchTerm), {
-    enabled: !!props.searchTerm,
-    staleTime: 100000,
-    cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
-  });
+  const [searchResults, setSearchResults] = useState<SearchResults>([]);
 
-  const searchResults = searchResponse.data;
+  const searchTerms = useQuery(
+    ['allOperations'],
+    () => {
+      const searchService = SearchService();
+      return searchService.preloadOperations();
+    },
+    {
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
+    }
+  );
 
-  // const onOperationClick = async (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
-  //   const addPayload: AddNodePayload = {
-  //     operation,
-  //     id: selectedNode,
-  //     parentId: discoveryIds.parentId ?? '',
-  //     childId: discoveryIds.childId ?? '',
-  //     graphId: discoveryIds.graphId,
-  //   };
-  //   const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
-  //   const operationId = operation.id;
-  //   const operationType = operation.properties.operationType ?? '';
-  //   const operationKind = operation.properties.operationKind ?? '';
+  useEffect(() => {
+    const options = {
+      includeScore: true,
+      keys: ['properties.summary', 'properties.description'],
+    };
+    if (searchTerms.data) {
+      const fuse = new Fuse(searchTerms.data, options);
 
-  //   dispatch(addNode(addPayload));
-  //   const operationPayload: AddNodeOperationPayload = {
-  //     id: selectedNode,
-  //     type: operationType,
-  //     connectorId,
-  //     operationId,
-  //   };
-  //   dispatch(initializeOperationInfo(operationPayload));
+      setSearchResults(fuse.search(props.searchTerm));
+    }
+  }, [props.searchTerm, searchTerms]);
 
-  //   initializeOperationDetails(selectedNode, { connectorId, operationId }, operationType, operationKind, rootState, dispatch);
-  //   setDefaultConnectionForNode(selectedNode, connectorId, dispatch);
-
-  //   dispatch(switchToOperationPanel(selectedNode));
-  // };
-
-  // const setDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
-  //   const connections = await getConnectionsForConnector(connectorId);
-  //   if (connections.length !== 0) {
-  //     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id }));
-  //   }
-  // };
-
-  const onOperationClick = (id: string) => {
-    console.log(id);
+  const onConnectorClick = (connectorId: string) => {
+    dispatch(selectOperationGroupId(connectorId));
   };
 
-  const onConnectorSelected = (id: string): void => {
-    console.log(id);
+  const onOperationClick = (id: string) => {
+    const operation = searchResults.map((result) => result.item).find((o) => o.id === id);
+    addOperation(operation, discoveryIds, id, dispatch, rootState);
   };
 
   return (
     <SearchResultsGrid
-      onConnectorClick={onConnectorSelected}
+      onConnectorClick={onConnectorClick}
       onOperationClick={onOperationClick}
-      operationSearchResults={searchResults?.searchOperations || []}
+      operationSearchResults={searchResults.map((result) => result.item)}
     />
   );
 };

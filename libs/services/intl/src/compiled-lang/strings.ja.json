@@ -1383,7 +1383,7 @@
   "Gi72X5": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "表示数を減らす"
     }
   ],
   "Gmya+V": [
@@ -1682,7 +1682,7 @@
   "LJmfmK": [
     {
       "type": 0,
-      "value": "See More"
+      "value": "表示数を増やす"
     }
   ],
   "LMB8am": [
@@ -2942,6 +2942,16 @@
     {
       "type": 0,
       "value": "(UTC+02:00) トリポリ"
+    }
+  ],
+  "cVSEzV": [
+    {
+      "type": 0,
+      "value": "description for "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ci6ex1": [

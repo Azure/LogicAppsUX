@@ -7,13 +7,7 @@ import type { RootState } from '../../store';
 import type { IOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { ConnectionParameter, Connector, OperationManifest } from '@microsoft-logic-apps/utils';
-import {
-  isBuiltInConnector,
-  ConnectionParameterTypes,
-  hasProperty,
-  equals,
-  ConnectionReferenceKeyFormat,
-} from '@microsoft-logic-apps/utils';
+import { ConnectionParameterTypes, hasProperty, equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
@@ -117,7 +111,7 @@ export async function getManifestBasedConnectionMapping(
 }
 
 export function isConnectionRequiredForOperation(manifest: OperationManifest): boolean {
-  return manifest.properties.connection ? manifest.properties.connection.required : needsConnection(manifest.properties.connector);
+  return !!manifest.properties.connection?.required;
 }
 
 export function getConnectionMetadata(manifest?: OperationManifest) {
@@ -204,7 +198,7 @@ export function hasPrerequisiteConnection(connector: Connector): boolean {
 
 export function needsSimpleConnection(connector: Connector): boolean {
   if (!connector) return false;
-  if (isBuiltInConnector(connector.id)) return false;
+
   if (connector.properties) {
     const connectionParameters = connector.properties.connectionParameters;
     if (connectionParameters) {

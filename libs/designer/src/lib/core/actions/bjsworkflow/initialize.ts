@@ -1,11 +1,12 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
-import type { NodeInputs, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
+import type { NodeDependencies, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { updateOutputs } from '../../state/operation/operationMetadataSlice';
 import { updateTokens } from '../../state/tokensSlice';
 import { getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn } from '../../utils/outputs';
 import { getRecurrenceParameters } from '../../utils/parameters/builtins';
 import {
+  getAllInputParameters,
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
   toParameterInfoMap,
@@ -127,7 +128,7 @@ export const getOutputParametersFromManifest = (
   }
 
   if (isTrigger) {
-    manifestToParse = getUpdatedManifestForSpiltOn(manifest, splitOnValue);
+    manifestToParse = getUpdatedManifestForSpiltOn(manifestToParse, splitOnValue);
   }
 
   const operationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
@@ -176,6 +177,34 @@ export const getOutputParametersFromManifest = (
   }
 
   return { outputs: nodeOutputs };
+};
+
+export const getParameterDependencies = (manifest: OperationManifest, inputs: NodeInputs, outputs: NodeOutputs): NodeDependencies => {
+  const dependencies = { inputs: {}, outputs: {} } as NodeDependencies;
+
+  // TODO - Add code for dynamic list and dynamic properties dependencies.
+
+  const { outputsSchema } = manifest.properties;
+  if (outputsSchema) {
+    const allOutputs = unmap(outputs.outputs);
+    for (const outputPath of outputsSchema.outputPaths) {
+      const outputName = outputPath.outputLocation.filter((location) => location !== 'properties').join('.');
+      const matchingOutput = allOutputs.find((output) => output.name === outputName);
+      const dependentInput = getAllInputParameters(inputs).find((input) => input.parameterName === outputPath.name);
+
+      if (matchingOutput && dependentInput) {
+        dependencies.outputs[matchingOutput.key] = {
+          definition: outputPath,
+          dependencyType: 'StaticSchema',
+          dependentParameters: {
+            [dependentInput.id]: { isValid: !dependentInput.validationErrors?.length },
+          },
+        };
+      }
+    }
+  }
+
+  return dependencies;
 };
 
 export const updateOutputsAndTokens = (

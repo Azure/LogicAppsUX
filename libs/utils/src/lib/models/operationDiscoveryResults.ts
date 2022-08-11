@@ -8,6 +8,7 @@ export interface OperationApi {
   description?: string;
   displayName: string;
   iconUri: string;
+  category?: 'Standard'; // could be consumption too
   id: string;
   location?: string;
   name?: string;
