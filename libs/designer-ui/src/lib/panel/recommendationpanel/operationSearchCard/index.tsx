@@ -1,11 +1,10 @@
 import { InfoDot } from '../../../infoDot';
 import type { OperationActionData } from '../interfaces';
 import { Text, Image } from '@fluentui/react';
-import { useCallback } from 'react';
 
 export type OperationSearchCardProps = {
   operationActionData: OperationActionData;
-  onClick: (id: string) => void;
+  onClick: (operationId: string) => void;
   showImage?: boolean;
   style?: any;
 } & CommonCardProps;
@@ -15,13 +14,11 @@ export interface CommonCardProps {
 }
 
 export const OperationSearchCard = (props: OperationSearchCardProps) => {
-  const { onClick, showImage = false, style } = props;
-  const { id, title, description, category, brandColor = '#000', iconUri } = props.operationActionData;
-
-  const handleClick = useCallback(() => onClick(id), [id, onClick]);
+  const { operationActionData, onClick, showImage = false, style } = props;
+  const { title, description, category, brandColor = '#000', iconUri } = operationActionData;
 
   return (
-    <button className="msla-op-search-card-container" onClick={handleClick} style={style}>
+    <button className="msla-op-search-card-container" onClick={() => onClick(operationActionData.id)} style={style}>
       <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
       {showImage && iconUri ? <Image className="msla-op-search-card-image" alt={title} src={iconUri} /> : null}
       <Text className="msla-op-search-card-name">{title}</Text>

@@ -19,7 +19,8 @@ export const Search: ComponentStory<typeof RecommendationPanel> = (args: any) =>
     <DesignerSearchBox onSearch={() => null} />
     <SearchResultsGrid
       operationSearchResults={MockSearchOperations}
-      onOperationClick={() => null}
+      onOperationClick={(id) => alert('Adding operation: ' + id)}
+      onConnectorClick={(id) => alert('Clicked on connector: ' + id)}
       groupByConnector={args.groupByConnector}
     />
   </RecommendationPanel>
@@ -29,7 +30,7 @@ Search.args = { isCollapsed: false, width: '630px', groupByConnector: false } as
 export const Browse: ComponentStory<typeof RecommendationPanel> = (args: PropsWithChildren<RecommendationPanelProps>) => (
   <RecommendationPanel {...args}>
     <DesignerSearchBox onSearch={() => null} />
-    <BrowseGrid connectorBrowse={connectorsSearchResultsMock} onConnectorSelected={() => null} />
+    <BrowseGrid connectorBrowse={connectorsSearchResultsMock} onConnectorSelected={(id) => alert('Selected connector: ' + id)} />
   </RecommendationPanel>
 );
 Browse.args = { isCollapsed: false, width: '630px' };
@@ -39,8 +40,8 @@ export const OperationGroupDetails: ComponentStory<typeof RecommendationPanel> =
     <OperationGroupDetailsPage
       operationApi={mockOperationApi}
       operationActionsData={[...mockOperationActionsData, ...mockOperationActionsData, ...mockOperationActionsData]}
-      onClickOperation={(id: string) => alert('Adding node with ID: ' + id)}
-      onClickBack={() => null}
+      onOperationClick={(id) => alert('Adding node with ID: ' + id)}
+      onBackClick={() => null}
     />
   </RecommendationPanel>
 );

@@ -1,23 +1,33 @@
 import { ConnectorSummaryCard } from '../../../connectorsummarycard';
 import type { OperationActionData } from '../interfaces';
 import { OperationSearchCard } from '../operationSearchCard';
+import { Link } from '@fluentui/react';
 import type { OperationApi } from '@microsoft-logic-apps/utils';
 import { isBuiltInConnector } from '@microsoft-logic-apps/utils';
+import { useIntl } from 'react-intl';
 
 export interface OperationSearchGroupProps {
   operationApi: OperationApi;
   operationActionsData: OperationActionData[];
-  onClickOperation: (id: string) => void;
+  onConnectorClick: (connectorId: string) => void;
+  onOperationClick: (operationId: string) => void;
 }
 
 export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
-  const { operationApi, operationActionsData, onClickOperation } = props;
+  const { operationApi, operationActionsData, onConnectorClick, onOperationClick } = props;
   const { id, displayName, description, iconUri } = operationApi;
+
+  const intl = useIntl();
 
   const category = isBuiltInConnector(id) ? 'Built-in' : 'Azure';
 
+  const seeMoreText = intl.formatMessage({
+    defaultMessage: 'See more',
+    description: 'Text that will be clicked to show more details for the connector',
+  });
+
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <ConnectorSummaryCard
         id={id}
         connectorName={displayName}
@@ -26,9 +36,12 @@ export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
         category={category}
         isCard={false}
       />
+      <Link className="msla-op-search-group-see-more" onClick={() => onConnectorClick(id)}>
+        {seeMoreText}
+      </Link>
       <div className="msla-op-search-group">
         {operationActionsData?.map((op) => (
-          <OperationSearchCard key={op?.id} operationActionData={op} onClick={onClickOperation} />
+          <OperationSearchCard key={op?.id} operationActionData={op} onClick={onOperationClick} />
         ))}
       </div>
     </div>

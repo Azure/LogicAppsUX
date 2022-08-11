@@ -67,7 +67,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
     }
   };
 
-  const onClickBack = () => {
+  const onBackClick = () => {
     dispatch(selectOperationGroupId(''));
   };
 
@@ -87,8 +87,8 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
     <OperationGroupDetailsPage
       operationApi={operationApi}
       operationActionsData={operationGroupActions}
-      onClickOperation={onOperationClick}
-      onClickBack={onClickBack}
+      onOperationClick={onOperationClick}
+      onBackClick={onBackClick}
     />
   );
 };

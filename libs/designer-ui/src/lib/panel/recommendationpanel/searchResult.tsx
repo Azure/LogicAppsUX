@@ -5,20 +5,17 @@ import { List } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { labelCase, isBuiltInConnector } from '@microsoft-logic-apps/utils';
 import type { PropsWithChildren } from 'react';
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 
 export type SearchResultsGridProps = {
   operationSearchResults: DiscoveryOperation<DiscoveryResultTypes>[];
-  onOperationClick: (operation: DiscoveryOperation<DiscoveryResultTypes>) => void;
+  onConnectorClick: (connectorId: string) => void;
+  onOperationClick: (operationId: string) => void;
   groupByConnector?: boolean;
 };
 
 export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProps>> = (props) => {
-  const [operationSearchResults, setOperationSearchResults] = React.useState([...props.operationSearchResults]);
-
-  useEffect(() => {
-    setOperationSearchResults([...props.operationSearchResults]);
-  }, [props.operationSearchResults]);
+  const { operationSearchResults, onConnectorClick, onOperationClick, groupByConnector } = props;
 
   console.log(operationSearchResults.map((res) => res.properties.api.id));
   console.log([...new Set(operationSearchResults.map((res) => res.properties.api.id))]);
@@ -32,18 +29,18 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
         <OperationSearchCard
           key={operation.id}
           operationActionData={OperationActionDataFromOperation(operation)}
-          onClick={() => props.onOperationClick(operation)}
+          onClick={() => onOperationClick(operation.id)}
           showImage={true}
           style={{ marginBottom: '8px' }}
         />
       );
     },
-    [props]
+    [onOperationClick]
   );
 
   return (
     <div className="msla-result-list">
-      {props.groupByConnector ? (
+      {groupByConnector ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {apiIds.map((apiId) => {
             const operations = operationSearchResults.filter((res) => res?.properties.api.id === apiId);
@@ -54,7 +51,8 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
                 key={apiId}
                 operationApi={api}
                 operationActionsData={operations.map((operation) => OperationActionDataFromOperation(operation))}
-                onClickOperation={(id: string) => alert('clicked search group tile: ' + id)}
+                onConnectorClick={onConnectorClick}
+                onOperationClick={onOperationClick}
               />
             );
           })}

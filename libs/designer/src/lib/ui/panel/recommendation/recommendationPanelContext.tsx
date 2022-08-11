@@ -3,7 +3,7 @@ import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { BrowseView } from './browseView';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchService } from '@microsoft-logic-apps/designer-client-services';
-import type { DiscoveryOperation, DiscoveryResultTypes, OperationApi } from '@microsoft-logic-apps/utils';
+import type { OperationApi } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { DesignerSearchBox, SearchResultsGrid, RecommendationPanel } from '@microsoft/designer-ui';
 import React, { useMemo } from 'react';
@@ -38,9 +38,13 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     [searchOperations, selectedOperationGroupId]
   );
 
-  const onOperationClick = (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
-    const apiId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
-    dispatch(selectOperationGroupId(apiId));
+  const onConnectorClick = (connectorId: string) => {
+    dispatch(selectOperationGroupId(connectorId));
+  };
+
+  const onOperationClick = (operationId: string) => {
+    // TODO: dispatch action to add operation
+    alert('Adding operation: ' + operationId);
   };
 
   return (
@@ -51,7 +55,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         <>
           <DesignerSearchBox onSearch={setSearchTerm} />
           {searchTerm ? (
-            <SearchResultsGrid onOperationClick={onOperationClick} operationSearchResults={searchOperations} />
+            <SearchResultsGrid
+              onConnectorClick={onConnectorClick}
+              onOperationClick={onOperationClick}
+              operationSearchResults={searchOperations}
+            />
           ) : (
             <BrowseView />
           )}
