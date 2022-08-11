@@ -969,6 +969,12 @@
       "value": "Returns true if both parameters are true"
     }
   ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
+    }
+  ],
   "AIL7WX": [
     {
       "type": 0,
@@ -4877,6 +4883,12 @@
     {
       "type": 0,
       "value": "Required. The string that is converted to a native type value."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [
