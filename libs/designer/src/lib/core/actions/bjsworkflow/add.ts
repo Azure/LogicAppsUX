@@ -14,7 +14,7 @@ import { addNode } from '../../state/workflow/workflowSlice';
 import type { RootState } from '../../store';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations } from '../../utils/variables';
-import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
+import { getInputParametersFromManifest, getOutputParametersFromManifest, getParameterDependencies } from './initialize';
 import type { NodeDataWithManifest } from './operationdeserializer';
 import { getOperationSettings } from './settings';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
@@ -74,8 +74,9 @@ export const initializeOperationDetails = async (
     const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest);
     const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
     const nodeOutputs = getOutputParametersFromManifest(manifest, false /* isTrigger */, nodeInputs, settings.splitOn?.value?.value);
+    const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs);
 
-    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, settings }]));
+    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
 
     // TODO(Danielle) - Please comment out the below part when state has updated graph and nodesMetadata.
     // We need the graph and nodesMetadata updated with the newly added node for token dependencies to be calculated.

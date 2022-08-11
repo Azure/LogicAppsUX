@@ -14,7 +14,7 @@ import { getAllInputParameters, updateTokenMetadata } from '../../utils/paramete
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
-import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
+import { getInputParametersFromManifest, getOutputParametersFromManifest, getParameterDependencies } from './initialize';
 import { getOperationSettings } from './settings';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
@@ -51,8 +51,8 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
   dispatch(
     initializeNodes(
       allNodeData.map((data) => {
-        const { id, nodeInputs, nodeOutputs, settings } = data;
-        return { id, nodeInputs, nodeOutputs, settings };
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings } = data;
+        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings };
       })
     )
   );
@@ -82,9 +82,10 @@ const initializeOperationDetailsForManifest = async (
       const settings = getOperationSettings(isTrigger, operation.type, operation.kind, manifest, operation);
       const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
       const nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs, settings.splitOn?.value?.value);
+      const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
-      return [{ id: nodeId, nodeInputs, nodeOutputs, settings, manifest }, ...childGraphInputs];
+      return [{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, manifest }, ...childGraphInputs];
     }
 
     return;
@@ -115,19 +116,25 @@ const processChildGraphAndItsInputs = (
         const subManifest = { properties: { inputs, inputsLocation } } as any;
         if (isAdditive) {
           for (const subNodeKey of Object.keys(subOperation)) {
+            const subNodeInputs = getInputParametersFromManifest(subNodeKey, subManifest, subOperation[subNodeKey]);
+            const subNodeOutputs = { outputs: {} };
             nodesData.push({
               id: subNodeKey,
-              nodeInputs: getInputParametersFromManifest(subNodeKey, subManifest, subOperation[subNodeKey]),
-              nodeOutputs: { outputs: {} },
+              nodeInputs: subNodeInputs,
+              nodeOutputs: subNodeOutputs,
+              nodeDependencies: getParameterDependencies(subManifest, subNodeInputs, subNodeOutputs),
               manifest: subManifest,
             });
           }
         }
 
+        const nodeInputs = getInputParametersFromManifest(subGraphKey, subManifest, subOperation);
+        const nodeOutputs = { outputs: {} };
         nodesData.push({
           id: subGraphKey,
-          nodeInputs: getInputParametersFromManifest(subGraphKey, subManifest, subOperation),
-          nodeOutputs: { outputs: {} },
+          nodeInputs,
+          nodeOutputs,
+          nodeDependencies: getParameterDependencies(subManifest, nodeInputs, nodeOutputs),
           manifest: subManifest,
         });
       }

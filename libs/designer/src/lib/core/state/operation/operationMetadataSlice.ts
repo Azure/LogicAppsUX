@@ -38,17 +38,36 @@ export interface NodeOutputs {
   outputs: Record<string, OutputInfo>;
 }
 
+type DependencyType = 'StaticSchema' | 'ApiSchema' | 'ListValues';
+interface DependencyInfo {
+  definition: any; // This is the dependency definition from manifest/swagger.
+  dependencyType: DependencyType;
+  dependentParameters: Record<
+    string,
+    {
+      isValid: boolean;
+    }
+  >;
+}
+
+export interface NodeDependencies {
+  inputs: Record<string, DependencyInfo>;
+  outputs: Record<string, DependencyInfo>;
+}
+
 export interface OperationMetadataState {
   operationInfo: Record<string, NodeOperation>;
   inputParameters: Record<string, NodeInputs>;
   outputParameters: Record<string, NodeOutputs>;
   settings: Record<string, Settings>;
+  dependencies: Record<string, NodeDependencies>;
 }
 
 const initialState: OperationMetadataState = {
   operationInfo: {},
   inputParameters: {},
   outputParameters: {},
+  dependencies: {},
   settings: {},
 };
 
@@ -65,6 +84,7 @@ export interface NodeData {
   id: string;
   nodeInputs: NodeInputs;
   nodeOutputs: NodeOutputs;
+  nodeDependencies: NodeDependencies;
   settings?: Settings;
 }
 interface AddSettingsPayload {
@@ -77,6 +97,7 @@ interface UpdateParameterPayload {
   groupId: string;
   parameterId: string;
   propertiesToUpdate: Partial<ParameterInfo>;
+  dependencies?: NodeDependencies;
 }
 
 export const operationMetadataSlice = createSlice({
@@ -93,9 +114,11 @@ export const operationMetadataSlice = createSlice({
           return;
         }
 
-        const { id, nodeInputs, nodeOutputs, settings } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
+        state.dependencies[id] = nodeDependencies;
+
         if (settings) {
           state.settings[id] = settings;
         }
@@ -110,7 +133,7 @@ export const operationMetadataSlice = createSlice({
       state.settings[id] = { ...state.settings[id], ...settings };
     },
     updateNodeParameter: (state, action: PayloadAction<UpdateParameterPayload>) => {
-      const { nodeId, groupId, parameterId, propertiesToUpdate } = action.payload;
+      const { nodeId, groupId, parameterId, propertiesToUpdate, dependencies } = action.payload;
       const nodeInputs = state.inputParameters[nodeId];
 
       if (nodeInputs) {
@@ -120,6 +143,10 @@ export const operationMetadataSlice = createSlice({
           parameterGroup.parameters[index] = { ...parameterGroup.parameters[index], ...propertiesToUpdate };
           state.inputParameters[nodeId].parameterGroups[groupId] = parameterGroup;
         }
+      }
+
+      if (dependencies) {
+        state.dependencies[nodeId] = dependencies;
       }
     },
     updateOutputs: (state, action: PayloadAction<{ id: string; nodeOutputs: NodeOutputs }>) => {

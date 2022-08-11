@@ -15,7 +15,7 @@ export default {
         content: {
           title: 'Content',
           required: true,
-          description: 'Array to create table from',
+          description: 'Content to create schema from',
         },
         schema: {
           type: 'object',
@@ -39,6 +39,15 @@ export default {
           title: 'Body',
         },
       },
+    },
+    outputsSchema: {
+      outputPaths: [
+        {
+          outputLocation: ['properties', 'body'],
+          name: 'schema',
+          schema: 'Value',
+        },
+      ],
     },
     isOutputsOptional: false,
 

@@ -1,6 +1,10 @@
 import Constants from '../../../common/constants';
+import { updateOutputsAndTokens } from '../../actions/bjsworkflow/initialize';
 import type { NodeDataWithManifest } from '../../actions/bjsworkflow/operationdeserializer';
-import type { NodeInputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
+import type { Settings } from '../../actions/bjsworkflow/settings';
+import { getOperationManifest } from '../../queries/operation';
+import type { NodeDependencies, NodeInputs, NodeOperation, OutputInfo } from '../../state/operation/operationMetadataSlice';
+import { updateNodeParameter } from '../../state/operation/operationMetadataSlice';
 import type { Operations as Actions } from '../../state/workflow/workflowInterfaces';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../card';
 import { initializeArrayViewModel } from '../editors/array';
@@ -69,6 +73,7 @@ import {
 } from '@microsoft-logic-apps/utils';
 import type { DictionaryEditorItemProps, ParameterInfo, Token, ValueSegment } from '@microsoft/designer-ui';
 import { ValueSegmentType, TokenType } from '@microsoft/designer-ui';
+import type { Dispatch } from '@reduxjs/toolkit';
 
 const ParameterIcon =
   'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiA8cGF0aCBkPSJtMCAwaDMydjMyaC0zMnoiIGZpbGw9IiM5MTZmNmYiLz4NCiA8ZyBmaWxsPSIjZmZmIj4NCiAgPHBhdGggZD0ibTE2LjAyMyAxMS41cTAuOTQ1MzEgMCAxLjc3MzQgMC4yODkwNiAwLjgyODEyIDAuMjg5MDYgMS40NDUzIDAuODM1OTQgMC42MTcxOSAwLjU0Njg4IDAuOTY4NzUgMS4zMjgxIDAuMzU5MzggMC43ODEyNSAwLjM1OTM4IDEuNzY1NiAwIDAuNTE1NjItMC4xNDA2MiAxLjA3ODEtMC4xMzI4MSAwLjU1NDY5LTAuNDIxODggMS4wMTU2LTAuMjgxMjUgMC40NTMxMi0wLjcyNjU2IDAuNzUtMC40Mzc1IDAuMjk2ODgtMS4wNDY5IDAuMjk2ODgtMC42NzE4OCAwLTAuOTY4NzUtMC4zNjcxOS0wLjI5Njg4LTAuMzY3MTktMC4zMDQ2OS0xLjAwNzhoLTAuMDMxMjVxLTAuMTc5NjkgMC42MTcxOS0wLjU4NTk0IDEtMC4zOTg0NCAwLjM3NS0xLjA3MDMgMC4zNzUtMC40NjA5NCAwLTAuNzk2ODgtMC4xNzk2OS0wLjMyODEyLTAuMTg3NS0wLjU0Njg4LTAuNDg0MzgtMC4yMTA5NC0wLjMwNDY5LTAuMzEyNS0wLjY4NzUtMC4xMDE1Ni0wLjM5MDYyLTAuMTAxNTYtMC44MDQ2OSAwLTAuNTQ2ODggMC4xNDA2Mi0xLjA5MzggMC4xNDg0NC0wLjU0Njg4IDAuNDQ1MzEtMC45NzY1NiAwLjI5Njg4LTAuNDI5NjkgMC43NS0wLjY5NTMxIDAuNDYwOTQtMC4yNzM0NCAxLjA4NTktMC4yNzM0NCAwLjE3OTY5IDAgMC4zNTkzOCAwLjA0Njg3IDAuMTg3NSAwLjA0Njg3IDAuMzUxNTYgMC4xNDA2MiAwLjE2NDA2IDAuMDkzNzUgMC4yODkwNiAwLjIzNDM4dDAuMTg3NSAwLjMyODEydi0wLjAzOTA1OHEwLjAxNTYzLTAuMTU2MjUgMC4wMjM0NC0wLjMxMjUgMC4wMTU2My0wLjE1NjI1IDAuMDMxMjUtMC4zMTI1aDAuNzI2NTZsLTAuMTg3NSAyLjIzNDRxLTAuMDIzNDQgMC4yNS0wLjA1NDY5IDAuNTA3ODEtMC4wMzEyNTEgMC4yNTc4MS0wLjAzMTI1MSAwLjUwNzgxIDAgMC4xNzE4OCAwLjAxNTYzIDAuMzgyODEgMC4wMjM0NCAwLjIwMzEyIDAuMDkzNzUgMC4zOTA2MiAwLjA3MDMxIDAuMTc5NjkgMC4yMDMxMiAwLjMwNDY5IDAuMTQwNjIgMC4xMTcxOSAwLjM3NSAwLjExNzE5IDAuMjgxMjUgMCAwLjUtMC4xMTcxOSAwLjIxODc1LTAuMTI1IDAuMzc1LTAuMzIwMzEgMC4xNjQwNi0wLjE5NTMxIDAuMjczNDQtMC40NDUzMSAwLjEwOTM4LTAuMjU3ODEgMC4xNzk2OS0wLjUyMzQ0IDAuMDcwMzEtMC4yNzM0NCAwLjA5Mzc1LTAuNTM5MDYgMC4wMzEyNS0wLjI2NTYyIDAuMDMxMjUtMC40ODQzOCAwLTAuODU5MzgtMC4yODEyNS0xLjUzMTJ0LTAuNzg5MDYtMS4xMzI4cS0wLjUtMC40NjA5NC0xLjIwMzEtMC43MDMxMi0wLjY5NTMxLTAuMjQyMTktMS41MjM0LTAuMjQyMTktMC44OTg0NCAwLTEuNjMyOCAwLjMzNTk0LTAuNzI2NTYgMC4zMzU5NC0xLjI1IDAuOTE0MDYtMC41MTU2MiAwLjU3MDMxLTAuNzk2ODggMS4zMzU5dC0wLjI4MTI1IDEuNjMyOHEwIDAuODk4NDQgMC4yNzM0NCAxLjYzMjggMC4yODEyNSAwLjcyNjU2IDAuNzk2ODggMS4yNDIydDEuMjQyMiAwLjc5Njg4cTAuNzM0MzggMC4yODEyNSAxLjYzMjggMC4yODEyNSAwLjYzMjgxIDAgMS4yNS0wLjEwMTU2IDAuNjI1LTAuMTAxNTYgMS4xOTUzLTAuMzc1djAuNzE4NzVxLTAuNTg1OTQgMC4yNS0xLjIyNjYgMC4zNDM3NS0wLjY0MDYzIDAuMDg1OTM4LTEuMjczNCAwLjA4NTkzOC0xLjAzOTEgMC0xLjg5ODQtMC4zMjAzMS0wLjg1OTM4LTAuMzI4MTItMS40ODQ0LTAuOTIxODgtMC42MTcxOS0wLjYwMTU2LTAuOTYwOTQtMS40NTMxLTAuMzQzNzUtMC44NTE1Ni0wLjM0Mzc1LTEuODk4NCAwLTEuMDU0NyAwLjM1MTU2LTEuOTUzMSAwLjM1MTU2LTAuODk4NDQgMC45ODQzOC0xLjU1NDcgMC42MzI4MS0wLjY1NjI1IDEuNTE1Ni0xLjAyMzQgMC44ODI4MS0wLjM3NSAxLjk1MzEtMC4zNzV6bS0wLjYwOTM3IDYuNjc5N3EwLjQ3NjU2IDAgMC43ODEyNS0wLjI2NTYyIDAuMzA0NjktMC4yNzM0NCAwLjQ3NjU2LTAuNjcxODggMC4xNzE4OC0wLjM5ODQ0IDAuMjM0MzgtMC44NTE1NiAwLjA3MDMxLTAuNDUzMTIgMC4wNzAzMS0wLjgyMDMxIDAtMC4yNjU2Mi0wLjA1NDY5LTAuNDkyMTktMC4wNTQ2OS0wLjIyNjU2LTAuMTc5NjktMC4zOTA2Mi0wLjExNzE5LTAuMTY0MDYtMC4zMjAzMS0wLjI1NzgxdC0wLjQ5MjE5LTAuMDkzNzVxLTAuNDUzMTIgMC0wLjc1NzgxIDAuMjM0MzgtMC4zMDQ2OSAwLjIzNDM4LTAuNDkyMTkgMC41ODU5NC0wLjE4NzUgMC4zNTE1Ni0wLjI3MzQ0IDAuNzczNDQtMC4wNzgxMyAwLjQxNDA2LTAuMDc4MTMgMC43ODEyNSAwIDAuMjU3ODEgMC4wNTQ2OSAwLjUyMzQ0IDAuMDU0NjkgMC4yNTc4MSAwLjE3OTY5IDAuNDY4NzUgMC4xMjUgMC4yMTA5NCAwLjMzNTk0IDAuMzQzNzUgMC4yMTA5NCAwLjEzMjgxIDAuNTE1NjIgMC4xMzI4MXptLTcuNDE0MS04LjE3OTdoM3YxaC0ydjEwaDJ2MWgtM3ptMTYgMHYxMmgtM3YtMWgydi0xMGgtMnYtMXoiIHN0cm9rZS13aWR0aD0iLjQiLz4NCiA8L2c+DQo8L3N2Zz4NCg==';
@@ -887,6 +892,62 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
   return isCompatible;
 }
 
+export async function updateParameterAndDependencies(
+  nodeId: string,
+  groupId: string,
+  parameterId: string,
+  properties: Partial<ParameterInfo>,
+  isTrigger: boolean,
+  operationInfo: NodeOperation,
+  nodeInputs: NodeInputs,
+  dependencies: NodeDependencies,
+  settings: Settings,
+  dispatch: Dispatch
+): Promise<void> {
+  // TODO - Add a method to properly validate parameter's value with its type.
+  const isParameterValid = !!properties.value?.length && properties.value[0].value !== '';
+  let dependenciesToUpdate: NodeDependencies | undefined;
+  let hasOutputDependency = false;
+  const payload = {
+    nodeId,
+    groupId,
+    parameterId,
+    propertiesToUpdate: properties,
+    dependencies: dependenciesToUpdate,
+  };
+
+  for (const outputKey of Object.keys(dependencies.outputs)) {
+    if (dependencies.outputs[outputKey].dependentParameters[parameterId]) {
+      if (!dependenciesToUpdate) {
+        dependenciesToUpdate = clone(dependencies);
+      }
+
+      dependenciesToUpdate.outputs[outputKey].dependentParameters[parameterId].isValid = isParameterValid;
+
+      payload.dependencies = dependenciesToUpdate;
+      hasOutputDependency = true;
+    }
+  }
+
+  dispatch(updateNodeParameter(payload));
+
+  if (hasOutputDependency) {
+    const manifest = await getOperationManifest(operationInfo);
+    const updatedInputs = updateNodeInputsWithParameter(nodeInputs, parameterId, groupId, properties);
+    updateOutputsAndTokens(nodeId, operationInfo.type, dispatch, manifest, isTrigger, updatedInputs, settings);
+  }
+}
+
+function updateNodeInputsWithParameter(nodeInputs: NodeInputs, parameterId: string, groupId: string, properties: Partial<ParameterInfo>): NodeInputs {
+  const inputs = clone(nodeInputs);
+  const parameterGroup = inputs.parameterGroups[groupId];
+  const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
+  if (index > -1) {
+    parameterGroup.parameters[index] = { ...parameterGroup.parameters[index], ...properties }
+  };
+
+  return inputs;
+}
 export function escapeSchemaProperties(schemaProperties: Record<string, any>): Record<string, any> {
   const escapedSchemaProperties: Record<string, any> = {};
 
