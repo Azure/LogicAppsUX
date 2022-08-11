@@ -71,7 +71,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
     const schemaState = store.getState().schema;
-    console.log(node);
     if (node.data.schemaType === SchemaTypes.Output) {
       const currentSchemaNode = schemaState.currentOutputNode;
       if (currentSchemaNode) {
@@ -326,7 +325,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         ) : (
           <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
         )}
-        <PropertiesPane panelItem={undefined} />
+        <PropertiesPane />
       </div>
     </DndProvider>
   );

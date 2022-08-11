@@ -59,7 +59,7 @@ const useStyles = makeStyles({
 });
 
 export interface PropertiesPaneProps {
-  panelItem: PANEL_ITEM | undefined;
+  panelItem?: PANEL_ITEM;
 }
 
 export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
