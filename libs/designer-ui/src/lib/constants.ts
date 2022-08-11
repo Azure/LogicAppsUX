@@ -96,6 +96,7 @@ export default {
   SETTING_SEPARATOR_COLOR_DARK: '#323130',
   SETTING_SEPARATOR_COLOR_LIGHT: '#eaeaea',
   PANEL_HIGHLIGHT_COLOR: '#0078D4',
+  FX_COLOR: '#AD008C',
 
   FOLDER: 'folder',
   FILE: 'file',
