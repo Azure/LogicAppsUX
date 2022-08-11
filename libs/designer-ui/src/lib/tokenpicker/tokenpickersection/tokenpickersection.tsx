@@ -14,6 +14,7 @@ interface TokenPickerSectionProps {
   searchQuery: string;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   expression: IntellisenseControlEvent;
+  editMode: boolean;
   setExpression: Dispatch<SetStateAction<IntellisenseControlEvent>>;
 }
 export const TokenPickerSection = ({
@@ -23,6 +24,7 @@ export const TokenPickerSection = ({
   searchQuery,
   expressionEditorRef,
   expression,
+  editMode,
   setExpression,
 }: TokenPickerSectionProps): JSX.Element => {
   const [tokenLength, setTokenLength] = useState(new Array<number>(tokenGroup.length));
@@ -45,7 +47,7 @@ export const TokenPickerSection = ({
                 searchQuery={searchQuery}
                 index={i}
                 setTokenLength={setTokenLength}
-                editMode={selectedKey === TokenPickerMode.EXPRESSION}
+                editMode={editMode}
                 expressionEditorRef={expressionEditorRef}
                 expression={expression}
                 setExpression={setExpression}

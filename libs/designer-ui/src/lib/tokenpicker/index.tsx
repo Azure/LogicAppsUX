@@ -3,7 +3,7 @@ import type { TokenGroup } from './models/token';
 import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
 import { TokenPickerSearch } from './tokenpickersearch/tokenpickersearch';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
-import type { PivotItem } from '@fluentui/react';
+import type { ICalloutContentStyles, PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
 import type { editor } from 'monaco-editor';
 import { useRef, useState } from 'react';
@@ -13,6 +13,12 @@ export type { Token as OutputToken } from './models/token';
 const directionalHint = DirectionalHint.leftTopEdge;
 const gapSpace = 10;
 const beakWidth = 20;
+
+const calloutStyles: Partial<ICalloutContentStyles> = {
+  calloutMain: {
+    overflow: 'visible',
+  },
+};
 
 export type SearchTextChangedEventHandler = (e: string) => void;
 
@@ -50,6 +56,8 @@ export default function TokenPicker({
       if (expression.value) {
         setIsEditing(true);
         expressionEditorRef.current?.focus();
+      } else {
+        setIsEditing(false);
       }
     }
   };
@@ -83,6 +91,7 @@ export default function TokenPicker({
       onRestoreFocus={() => {
         return;
       }}
+      styles={calloutStyles}
     >
       <div className="msla-token-picker-container">
         <div className="msla-token-picker">
@@ -108,6 +117,7 @@ export default function TokenPicker({
             expressionGroup={expressionGroup ?? []}
             searchQuery={searchQuery}
             expression={expression}
+            editMode={updatingExpression || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
             setExpression={setExpression}
           />
         </div>
