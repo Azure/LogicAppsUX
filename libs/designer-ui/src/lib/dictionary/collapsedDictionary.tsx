@@ -1,15 +1,13 @@
 import type { DictionaryEditorItemProps } from '.';
 import type { ValueSegment } from '../editor';
 import { CollapsedEditor, CollapsedEditorType } from '../editor';
-import type { TokenGroup } from '../tokenpicker/models/token';
 import type { Dispatch, SetStateAction } from 'react';
 import { useIntl } from 'react-intl';
 
 export type CollapsedDictionaryProps = {
   isValid?: boolean;
   collapsedValue: ValueSegment[];
-  tokenGroup?: TokenGroup[];
-  expressionGroup?: TokenGroup[];
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   setCollapsedValue: (val: ValueSegment[]) => void;
@@ -19,8 +17,7 @@ export type CollapsedDictionaryProps = {
 export const CollapsedDictionary = ({
   isValid,
   collapsedValue,
-  tokenGroup,
-  expressionGroup,
+  GetTokenPicker,
   setItems,
   setIsValid,
   setCollapsedValue,
@@ -41,8 +38,7 @@ export const CollapsedDictionary = ({
           isValid={isValid}
           errorMessage={errorMessage}
           collapsedValue={collapsedValue}
-          tokenGroup={tokenGroup}
-          expressionGroup={expressionGroup}
+          GetTokenPicker={GetTokenPicker}
           setItems={setItems}
           setIsValid={setIsValid}
           setCollapsedValue={setCollapsedValue}

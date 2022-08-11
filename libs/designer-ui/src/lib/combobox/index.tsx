@@ -4,7 +4,6 @@ import type { ChangeHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Change } from '../editor/base/plugins/Change';
 import { Label } from '../label';
-import type { TokenGroup } from '../tokenpicker/models/token';
 import type {
   IButtonStyles,
   IComboBox,
@@ -64,8 +63,7 @@ export interface ComboboxProps {
   useOption?: boolean;
   readOnly?: boolean; // TODO - Need to have readOnly version
   required?: boolean;
-  tokenGroup?: TokenGroup[];
-  expressionGroup?: TokenGroup[];
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onChange?: ChangeHandler;
 }
 
@@ -77,8 +75,7 @@ export const Combobox = ({
   useOption = true,
   required,
   readOnly,
-  tokenGroup,
-  expressionGroup,
+  GetTokenPicker,
   onChange,
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
@@ -179,9 +176,8 @@ export const Combobox = ({
             placeholder={placeholder}
             BasePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
             initialValue={value}
-            tokenGroup={tokenGroup}
-            expressionGroup={expressionGroup}
             onBlur={handleBlur}
+            GetTokenPicker={GetTokenPicker}
           >
             <Change setValue={setValue} />
           </BaseEditor>

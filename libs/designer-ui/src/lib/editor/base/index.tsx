@@ -1,5 +1,3 @@
-import { GetTokenPicker } from '../../tokenpicker/helper';
-import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
@@ -52,8 +50,7 @@ export interface BaseEditorProps {
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   tokenPickerButtonProps?: TokenPickerButtonProps;
-  tokenGroup?: TokenGroup[];
-  expressionGroup?: TokenGroup[];
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -88,8 +85,7 @@ export const BaseEditor = ({
   initialValue,
   children,
   tokenPickerButtonProps,
-  tokenGroup,
-  expressionGroup,
+  GetTokenPicker,
   onBlur,
   onFocus,
 }: BaseEditorProps) => {
@@ -178,9 +174,7 @@ export const BaseEditor = ({
             setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}
-        {(showTokenPickerButton && showTokenPicker) || inTokenPicker
-          ? GetTokenPicker(editorId, labelId, tokenGroup, expressionGroup, onClickTokenPicker)
-          : null}
+        {(showTokenPickerButton && showTokenPicker) || inTokenPicker ? GetTokenPicker(editorId, labelId, onClickTokenPicker) : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
         <InsertTokenNode />

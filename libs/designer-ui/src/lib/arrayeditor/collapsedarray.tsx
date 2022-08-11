@@ -3,7 +3,6 @@ import type { ValueSegment } from '../editor';
 import { ValueSegmentType, CollapsedEditor, CollapsedEditorType } from '../editor';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
-import type { TokenGroup } from '../tokenpicker/models/token';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { Dispatch, SetStateAction } from 'react';
 import { useIntl } from 'react-intl';
@@ -12,8 +11,7 @@ export interface CollapsedArrayProps {
   labelProps?: LabelProps;
   items: ArrayEditorItemProps[];
   isValid?: boolean;
-  tokenGroup?: TokenGroup[];
-  expressionGroup?: TokenGroup[];
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
 }
@@ -22,8 +20,7 @@ export const CollapsedArray = ({
   labelProps,
   items,
   isValid = true,
-  tokenGroup,
-  expressionGroup,
+  GetTokenPicker,
   setItems,
   setIsValid,
 }: CollapsedArrayProps): JSX.Element => {
@@ -59,8 +56,7 @@ export const CollapsedArray = ({
           errorMessage={errorMessage}
           setItems={updateItems}
           setIsValid={setIsValid}
-          tokenGroup={tokenGroup}
-          expressionGroup={expressionGroup}
+          GetTokenPicker={GetTokenPicker}
         />
       </div>
     </div>

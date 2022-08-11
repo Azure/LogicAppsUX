@@ -11,6 +11,7 @@ import { getExpressionTokenSections, getOutputTokenSections } from '../../../../
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
+import { TokenPicker } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -100,6 +101,20 @@ const ParameterSection = ({
     [nodeId, group.id, isTrigger, operationInfo, nodeInputs, dependencies, nodeSettings, dispatch]
   );
 
+  const GetTokenPicker = (editorId: string, labelId: string, onClick?: (b: boolean) => void): JSX.Element => {
+    // check to see if there's a custom Token Picker
+    return (
+      <TokenPicker
+        editorId={editorId}
+        labelId={labelId}
+        tokenGroup={tokenGroup}
+        expressionGroup={expressionGroup}
+        setInTokenPicker={onClick}
+        initialExpression={''}
+      />
+    );
+  };
+
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI)
     .map((param) => {
@@ -116,8 +131,7 @@ const ParameterSection = ({
           editorViewModel: param.editorViewModel,
           placeholder: param.placeholder,
           tokenEditor: true,
-          tokenGroup: tokenGroup,
-          expressionGroup: expressionGroup,
+          GetTokenPicker: GetTokenPicker,
           onValueChange: (newState: ChangeState) => onValueChange(param.id, newState),
         },
       };

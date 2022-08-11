@@ -24,6 +24,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   required?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onValueChange?: ChangeHandler;
 }
 
@@ -47,8 +48,7 @@ const TokenField = ({
   placeholder,
   readOnly,
   value,
-  tokenGroup,
-  expressionGroup,
+  GetTokenPicker,
   onValueChange,
 }: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
@@ -62,8 +62,7 @@ const TokenField = ({
           initialValue={value}
           options={options}
           useOption={true}
-          tokenGroup={tokenGroup}
-          expressionGroup={expressionGroup}
+          GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
       );
@@ -78,8 +77,7 @@ const TokenField = ({
           readOnly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
-          tokenGroup={tokenGroup}
-          expressionGroup={expressionGroup}
+          GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
       );
@@ -92,8 +90,7 @@ const TokenField = ({
           placeholder={placeholder}
           readOnly={readOnly}
           initialValue={value}
-          tokenGroup={tokenGroup}
-          expressionGroup={expressionGroup}
+          GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
       );
@@ -106,8 +103,7 @@ const TokenField = ({
           BasePlugins={{ tokens: true }}
           readonly={readOnly}
           initialValue={value}
-          tokenGroup={tokenGroup}
-          expressionGroup={expressionGroup}
+          GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
       );

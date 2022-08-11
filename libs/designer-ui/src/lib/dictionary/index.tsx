@@ -25,8 +25,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   disableToggle = false,
   initialItems,
   initialValue,
-  tokenGroup,
-  expressionGroup,
+  GetTokenPicker,
   onChange,
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState(!initialItems ?? false);
@@ -61,21 +60,15 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
       {collapsed ? (
         <CollapsedDictionary
           isValid={isValid}
-          tokenGroup={tokenGroup}
-          expressionGroup={expressionGroup}
           collapsedValue={collapsedValue}
+          GetTokenPicker={GetTokenPicker}
           setItems={updateItems}
           setIsValid={setIsValid}
           setCollapsedValue={updateCollapsedValue}
           onBlur={handleBlur}
         />
       ) : (
-        <ExpandedDictionary
-          items={items ?? [{ key: [], value: [] }]}
-          setItems={updateItems}
-          tokenGroup={tokenGroup}
-          expressionGroup={expressionGroup}
-        />
+        <ExpandedDictionary items={items ?? [{ key: [], value: [] }]} setItems={updateItems} GetTokenPicker={GetTokenPicker} />
       )}
 
       <div className="msla-dictionary-commands">

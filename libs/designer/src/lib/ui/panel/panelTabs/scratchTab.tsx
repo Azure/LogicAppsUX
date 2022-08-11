@@ -4,6 +4,7 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import {
+  TokenPicker,
   TokenType,
   DictionaryEditor,
   testTokenSegment,
@@ -24,12 +25,24 @@ const testTokenGroup: TokenGroup[] = [
 
 export const ScratchTab = () => {
   const expressionGroup = getExpressionTokenSections();
+
+  const GetTokenPicker = (editorId: string, labelId: string, onClick?: (b: boolean) => void): JSX.Element => {
+    // check to see if there's a custom Token Picker
+    return (
+      <TokenPicker
+        editorId={editorId}
+        labelId={labelId}
+        tokenGroup={testTokenGroup}
+        expressionGroup={expressionGroup}
+        setInTokenPicker={onClick}
+        initialExpression={''}
+      />
+    );
+  };
   const children = (): React.ReactNode => {
     return (
       <>
         <ArrayEditor
-          tokenGroup={testTokenGroup}
-          expressionGroup={expressionGroup}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[
             {
@@ -46,6 +59,7 @@ export const ScratchTab = () => {
             },
           ]}
           initialValue={[]}
+          GetTokenPicker={GetTokenPicker}
         />
         <Combobox
           options={[
@@ -58,8 +72,7 @@ export const ScratchTab = () => {
           placeholder="Method is Required"
           label="Method"
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
-          tokenGroup={testTokenGroup}
-          expressionGroup={expressionGroup}
+          GetTokenPicker={GetTokenPicker}
           // readOnly={true}
         />
         <SchemaEditor
@@ -131,10 +144,9 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
-          tokenGroup={testTokenGroup}
-          expressionGroup={expressionGroup}
+          GetTokenPicker={GetTokenPicker}
         />
-        <DictionaryEditor initialValue={[testTokenSegment]} tokenGroup={testTokenGroup} expressionGroup={expressionGroup} />
+        <DictionaryEditor initialValue={[testTokenSegment]} GetTokenPicker={GetTokenPicker} />
         <StringEditor
           initialValue={[
             testTokenSegment,
@@ -142,8 +154,7 @@ export const ScratchTab = () => {
             testTokenSegment,
             testTokenSegment,
           ]}
-          tokenGroup={testTokenGroup}
-          expressionGroup={expressionGroup}
+          GetTokenPicker={GetTokenPicker}
         />
       </>
     );

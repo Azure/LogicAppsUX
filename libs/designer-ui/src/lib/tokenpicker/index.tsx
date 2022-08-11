@@ -32,7 +32,7 @@ export interface TokenPickerProps {
   setInTokenPicker?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
 }
-export default function TokenPicker({
+export function TokenPicker({
   editorId,
   labelId,
   tokenGroup,

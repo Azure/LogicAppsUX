@@ -1,7 +1,6 @@
 import type { ArrayEditorItemProps } from '../../../arrayeditor';
 import { SerializeArray } from '../../../arrayeditor/plugins/SerializeArray';
 import type { DictionaryEditorItemProps } from '../../../dictionary';
-import type { TokenGroup } from '../../../tokenpicker/models/token';
 import { BaseEditor } from '../../base';
 import { Validation } from '../../base/plugins/Validation';
 import type { ValueSegment } from '../../models/parameter';
@@ -17,8 +16,7 @@ interface CollapsedEditorBaseProps {
   initialValue?: ValueSegment[];
   errorMessage: string;
   collapsedValue?: ValueSegment[];
-  tokenGroup?: TokenGroup[];
-  expressionGroup?: TokenGroup[];
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   setCollapsedValue?: (val: ValueSegment[]) => void;
   onBlur?: () => void;
@@ -42,8 +40,7 @@ export const CollapsedEditor = ({
   initialValue,
   type,
   collapsedValue,
-  tokenGroup,
-  expressionGroup,
+  GetTokenPicker,
   setIsValid,
   setItems,
   setCollapsedValue,
@@ -59,8 +56,7 @@ export const CollapsedEditor = ({
       placeholder={type === CollapsedEditorType.DICTIONARY ? 'Enter a Dictionary' : 'Enter an Array'}
       initialValue={collapsedValue && collapsedValue.length > 0 ? collapsedValue : (initialValue as ValueSegment[])}
       onBlur={onBlur}
-      tokenGroup={tokenGroup}
-      expressionGroup={expressionGroup}
+      GetTokenPicker={GetTokenPicker}
     >
       {type === CollapsedEditorType.DICTIONARY ? null : <SerializeArray isValid={isValid} setItems={setItems} />}
 
