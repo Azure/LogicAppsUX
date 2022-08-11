@@ -56,7 +56,6 @@ export default function TokenPicker({
   };
 
   const onExpressionEditorBlur = (e: IntellisenseControlEvent): void => {
-    console.log(e);
     setExpression(e);
   };
 
@@ -88,6 +87,9 @@ export default function TokenPicker({
             setSearchQuery={handleUpdateSearch}
             expressionEditorRef={expressionEditorRef}
             expressionEditorBlur={onExpressionEditorBlur}
+            expression={expression}
+            setExpression={setExpression}
+            setSelectedKey={setSelectedKey}
           />
 
           <TokenPickerSection
