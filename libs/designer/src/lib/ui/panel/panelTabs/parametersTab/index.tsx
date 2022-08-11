@@ -1,10 +1,11 @@
 import constants from '../../../../common/constants';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
-import { updateNodeParameter } from '../../../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeConnectionName } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../../../core/store';
+import { isRootNodeInGraph } from '../../../../core/utils/graph';
+import { updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
 import type { TokenGroup } from '../../../../core/utils/tokens';
 import { getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
 import { SettingsSection } from '../../../settings/settingsection';
@@ -16,7 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
-  const parameters = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
+  const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const tokenstate = useSelector((state: RootState) => state.tokens);
   const readOnly = useReadOnly();
 
@@ -28,11 +29,11 @@ export const ParametersTab = () => {
 
   return (
     <>
-      {Object.keys(parameters?.parameterGroups ?? {}).map((sectionName) => (
+      {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
           <ParameterSection
             nodeId={selectedNodeId}
-            group={parameters.parameterGroups[sectionName]}
+            group={inputs.parameterGroups[sectionName]}
             readOnly={readOnly}
             tokenGroup={tokenGroup}
             expressionGroup={expressionGroup}
@@ -58,6 +59,21 @@ const ParameterSection = ({
   expressionGroup: TokenGroup[];
 }) => {
   const dispatch = useDispatch();
+  const {
+    isTrigger,
+    nodeInputs,
+    operationInfo,
+    dependencies,
+    settings: nodeSettings,
+  } = useSelector((state: RootState) => {
+    return {
+      isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
+      nodeInputs: state.operations.inputParameters[nodeId],
+      operationInfo: state.operations.operationInfo[nodeId],
+      dependencies: state.operations.dependencies[nodeId],
+      settings: state.operations.settings[nodeId],
+    };
+  });
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
@@ -68,16 +84,20 @@ const ParameterSection = ({
         propertiesToUpdate.editorViewModel = viewModel;
       }
 
-      dispatch(
-        updateNodeParameter({
-          nodeId,
-          groupId: group.id,
-          parameterId: id,
-          propertiesToUpdate,
-        })
+      updateParameterAndDependencies(
+        nodeId,
+        group.id,
+        id,
+        propertiesToUpdate,
+        isTrigger,
+        operationInfo,
+        nodeInputs,
+        dependencies,
+        nodeSettings,
+        dispatch
       );
     },
-    [nodeId, group.id, dispatch]
+    [nodeId, group.id, isTrigger, operationInfo, nodeInputs, dependencies, nodeSettings, dispatch]
   );
 
   const settings: Settings[] = group?.parameters
