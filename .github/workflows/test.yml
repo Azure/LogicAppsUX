@@ -34,4 +34,4 @@ jobs:
       - run: npx nx affected --target=test --parallel
       - run: npm run test:e2e:ci
       - run: npm run build-storybook
-      - run: npm run storybook:files-axe
+      # - run: npm run storybook:files-axe
