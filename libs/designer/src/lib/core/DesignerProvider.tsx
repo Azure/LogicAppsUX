@@ -6,6 +6,7 @@ import { store } from './store';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import type { Theme } from '@fluentui/react';
 import { ThemeProvider } from '@fluentui/react';
+import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import { IntlProvider } from '@microsoft-logic-apps/intl';
 import React, { useEffect } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
@@ -31,21 +32,25 @@ export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', optio
     <ReduxProvider store={store}>
       <OptionsStateSet options={options}>
         <ProviderWrappedContext.Provider value={options.services}>
-          <ThemeProvider theme={theme} className="msla-theme-provider">
-            <ReactQueryProvider>
-              <IntlProvider
-                locale={locale}
-                defaultLocale={locale}
-                onError={(err) => {
-                  if (err.code === 'MISSING_TRANSLATION') {
-                    return;
-                  }
-                  throw err;
-                }}
-              >
-                {children}
-              </IntlProvider>
-            </ReactQueryProvider>
+          <ThemeProvider theme={theme}>
+            <FluentProvider theme={webLightTheme}>
+              <div style={{ height: '100vh', overflow: 'hidden' }}>
+                <ReactQueryProvider>
+                  <IntlProvider
+                    locale={locale}
+                    defaultLocale={locale}
+                    onError={(err) => {
+                      if (err.code === 'MISSING_TRANSLATION') {
+                        return;
+                      }
+                      throw err;
+                    }}
+                  >
+                    {children}
+                  </IntlProvider>
+                </ReactQueryProvider>
+              </div>
+            </FluentProvider>
           </ThemeProvider>
         </ProviderWrappedContext.Provider>
       </OptionsStateSet>
