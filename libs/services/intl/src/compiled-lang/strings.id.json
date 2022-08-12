@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Konektor ini memiliki beberapa versi, bawaan dan yang dihosting Azure. Gunakan bawaan untuk mendapatkan performa terbaik, autentikasi koneksi-string, dan fitur lainnya. Gunakan yang dihosting Azure untuk opsi autentikasi lainnya."
     }
   ],
   "/WW7If": [
@@ -667,7 +667,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Konektor Hibrid"
     }
   ],
   "63/zYN": [
@@ -913,7 +913,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "Pelajari selengkapnya."
     }
   ],
   "9SuA/E": [
@@ -956,6 +956,12 @@
     {
       "type": 0,
       "value": "Menampilkan true jika kedua parameter benar"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1673,6 +1679,12 @@
       "value": "Menampilkan komponen jumlah hari dalam seminggu dari tanda waktu string"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1706,7 +1718,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Tambahkan cabang paralel"
     }
   ],
   "Lft/is": [
@@ -2237,7 +2249,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Baca lebih sedikit"
     }
   ],
   "T0BFpC": [
@@ -2558,6 +2570,12 @@
       "value": "Coba lagi"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2573,7 +2591,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Masukkan langkah baru"
     }
   ],
   "XTYYks": [
@@ -2694,6 +2712,12 @@
       "value": "Mengembalikan array tunggal atau objek tunggal dengan semua elemen yang ada dalam array atau objek yang dilewati. Parameter untuk fungsi dapat berupa sekumpulan objek atau sekumpulan susunan (bukan gabungan keduanya). Jika ada dua objek dengan nama yang sama, objek terakhir dengan nama tersebut muncul di objek akhir."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2745,7 +2769,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Baca selengkapnya"
     }
   ],
   "ZbX8xq": [
@@ -2865,7 +2889,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Jalankan setelah "
     },
     {
       "type": 1,
@@ -3014,6 +3038,12 @@
       "value": "Pilih"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3091,7 +3121,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "habis waktu"
     }
   ],
   "e00zot": [
@@ -3728,7 +3758,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Tambahkan tindakan"
     }
   ],
   "mGUdCO": [
@@ -3801,6 +3831,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Nilai yang dikonversi ke angka titik mengambang."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4492,6 +4528,12 @@
       "value": "Hapus"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4796,6 +4838,12 @@
     {
       "type": 0,
       "value": "Harus diisi. String yang dikonversi ke nilai jenis asli."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

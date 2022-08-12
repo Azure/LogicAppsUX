@@ -917,7 +917,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "了解详细信息。"
     }
   ],
   "9SuA/E": [
@@ -960,6 +960,12 @@
     {
       "type": 0,
       "value": "如果两个参数均为 true，则返回 true"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1387,7 +1393,7 @@
   "Gi72X5": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "查看更少"
     }
   ],
   "Gmya+V": [
@@ -1677,6 +1683,12 @@
       "value": "返回字符串时间戳星期组件的某天"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1710,7 +1722,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "添加并行分支"
     }
   ],
   "Lft/is": [
@@ -2241,7 +2253,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "阅读简略信息"
     }
   ],
   "T0BFpC": [
@@ -2566,6 +2578,12 @@
       "value": "重试"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2581,7 +2599,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "插入新步骤"
     }
   ],
   "XTYYks": [
@@ -2702,6 +2720,12 @@
       "value": "返回一个数组或对象，它的所有元素均位于传入此函数的数组或对象中。此函数的参数可以是一组对象或一组数据(不可两者混合)。如果两个对象在最终输出中的名称相同，则最终对象中将显示后一个对象的名称。"
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2753,7 +2777,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "了解更多"
     }
   ],
   "ZbX8xq": [
@@ -3022,6 +3046,12 @@
       "value": "选择"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3099,7 +3129,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "已超时"
     }
   ],
   "e00zot": [
@@ -3752,7 +3782,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "添加操作"
     }
   ],
   "mGUdCO": [
@@ -3825,6 +3855,12 @@
     {
       "type": 0,
       "value": "必需。转换为浮点数的值。"
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4524,6 +4560,12 @@
       "value": "删除"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4828,6 +4870,12 @@
     {
       "type": 0,
       "value": "必需。转换为本机类型值的字符串。"
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

@@ -924,7 +924,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "En savoir plus."
     }
   ],
   "9SuA/E": [
@@ -967,6 +967,12 @@
     {
       "type": 0,
       "value": "Retourne true si les deux paramètres ont la valeur true"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1717,6 +1723,12 @@
       "value": "Retourne le jour du composant Semaine d'un horodateur de chaîne"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1750,7 +1762,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Ajouter une branche parallèle"
     }
   ],
   "Lft/is": [
@@ -2292,7 +2304,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Moins d’infos"
     }
   ],
   "T0BFpC": [
@@ -2613,6 +2625,12 @@
       "value": "Réessayer"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2628,7 +2646,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Insérer une nouvelle étape"
     }
   ],
   "XTYYks": [
@@ -2749,6 +2767,12 @@
       "value": "Retourne un unique tableau ou objet avec tous les éléments qui sont dans l'objet ou tableau transmis à cette fonction. Les paramètres de la fonction peuvent être un ensemble d'objets ou de tableaux (et non un mélange des deux). Si deux objets portent le même nom dans la sortie finale, le dernier objet avec ce nom s'affiche dans l'objet final."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2800,7 +2824,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "En savoir plus"
     }
   ],
   "ZbX8xq": [
@@ -3069,6 +3093,12 @@
       "value": "Sélectionner"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3146,7 +3176,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "délai dépassé"
     }
   ],
   "e00zot": [
@@ -3802,7 +3832,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Ajouter une action"
     }
   ],
   "mGUdCO": [
@@ -3875,6 +3905,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Valeur convertie en nombre à virgule flottante."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4577,6 +4613,12 @@
       "value": "Supprimer"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4881,6 +4923,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne convertie en une valeur de type native."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

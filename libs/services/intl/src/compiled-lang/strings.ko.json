@@ -913,7 +913,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "자세히 알아보세요."
     }
   ],
   "9SuA/E": [
@@ -956,6 +956,12 @@
     {
       "type": 0,
       "value": "두 매개 변수가 모두 true인 경우 true를 반환합니다."
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1673,6 +1679,12 @@
       "value": "문자열 타임스탬프의 주 구성 요소를 반환합니다."
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1706,7 +1718,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "병렬 분기 추가"
     }
   ],
   "Lft/is": [
@@ -2237,7 +2249,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "간단히 표시"
     }
   ],
   "T0BFpC": [
@@ -2558,6 +2570,12 @@
       "value": "다시 시도"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2573,7 +2591,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "새 단계 삽입"
     }
   ],
   "XTYYks": [
@@ -2694,6 +2712,12 @@
       "value": "이 함수에 전달되는 배열 또는 개체에 포함된 모든 요소를 사용해서 단일 배열 또는 개체를 반환합니다. 이 함수에 대한 매개 변수는 개체 집합 또는 배열 집합(둘 중 하나만 포함)일 수 있습니다. 이름이 같은 두 개체가 최종 출력에 있는 경우 해당 이름의 마지막 개체가 최종 개체로 나타납니다."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2745,7 +2769,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "추가 정보"
     }
   ],
   "ZbX8xq": [
@@ -3014,6 +3038,12 @@
       "value": "선택"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3087,7 +3117,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "시간 초과됨"
     }
   ],
   "e00zot": [
@@ -3724,7 +3754,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "작업 추가"
     }
   ],
   "mGUdCO": [
@@ -3797,6 +3827,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 부동 소수점 숫자로 변환되는 값입니다."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4488,6 +4524,12 @@
       "value": "삭제"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4788,6 +4830,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 네이티브 형식 값으로 변환되는 문자열입니다."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [
