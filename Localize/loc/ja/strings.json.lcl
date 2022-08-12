@@ -138,6 +138,9 @@
       <Item ItemId=";/VcZ9g" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[このコネクタには、組み込みと Azure ホステッドの複数のバージョンがあります。最適なパフォーマンス、接続文字列認証、およびその他の機能には、組み込みを使用します。その他の認証オプションには、Azure ホステッドを使用します。]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1020,6 +1023,9 @@
       <Item ItemId=";6+RwRp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Hybrid Connector]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[ハイブリッド コネクタ]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1387,7 +1393,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Learn more.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[詳細情報はこちら。]]></Val>
+            <Val><![CDATA[詳細情報。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3397,7 +3403,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Read less]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[詳細を隠す]]></Val>
+            <Val><![CDATA[表示を減らす]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4099,7 +4105,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Read more]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[詳細情報]]></Val>
+            <Val><![CDATA[表示を増やす]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4278,6 +4284,9 @@
       <Item ItemId=";bwfJdj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Run after {sourceNodeId}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{sourceNodeId} の後に実行]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4386,6 +4395,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+02:00) トリポリ]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";cVSEzV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[description for {connectorName}]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4582,7 +4597,7 @@
         <Str Cat="Text">
           <Val><![CDATA[timed out]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[タイムアウトした]]></Val>
+            <Val><![CDATA[タイムアウトしました]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
