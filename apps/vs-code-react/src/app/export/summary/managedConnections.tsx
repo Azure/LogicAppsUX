@@ -110,7 +110,7 @@ export const ManagedConnections: React.FC = () => {
           isLoading={isResourceGroupsLoading}
           searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
         />
-        <NewResourceGroup onAddNewResourceGroup={onAddNewResourceGroup} />
+        <NewResourceGroup onAddNewResourceGroup={onAddNewResourceGroup} resourceGroups={resourceGroups} />
       </>
     ) : null;
   }, [

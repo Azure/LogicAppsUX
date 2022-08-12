@@ -3,6 +3,7 @@ import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { isNameValid } from './helper';
 import { Callout, Link, PrimaryButton, Text, TextField } from '@fluentui/react';
+import type { IDropdownOption } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
@@ -15,7 +16,12 @@ export const resourceGroupNamingRules: INamingRules = {
   invalidCharsRegExp: new RegExp(/[^a-zA-Z0-9._\-()]/, 'g'),
 };
 
-export const NewResourceGroup: React.FC<any> = ({ onAddNewResourceGroup }) => {
+export interface INewResourceGroupProps {
+  onAddNewResourceGroup: (selectedOption: IDropdownOption) => void;
+  resourceGroups: IDropdownOption[];
+}
+
+export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewResourceGroup, resourceGroups }) => {
   const intl = useIntl();
   const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
   const [name, setName] = useState<string>('');
@@ -51,6 +57,10 @@ export const NewResourceGroup: React.FC<any> = ({ onAddNewResourceGroup }) => {
     INVALID_ENDING_CHAR: intl.formatMessage({
       defaultMessage: 'The name cannot end in a period.',
       description: 'Resource group name ending error',
+    }),
+    INVALID_EXISTING_NAME: intl.formatMessage({
+      defaultMessage: 'A resource group with the same name already exists in the selected subscription.',
+      description: 'Resource group existing name error',
     }),
     NEW: intl.formatMessage({
       defaultMessage: 'New',
@@ -91,14 +101,14 @@ export const NewResourceGroup: React.FC<any> = ({ onAddNewResourceGroup }) => {
             label={intlText.NAME}
             value={name}
             onChange={onChangeName}
-            onGetErrorMessage={(newName) => isNameValid(newName, intlText).validationError}
+            onGetErrorMessage={(newName) => isNameValid(newName, intlText, resourceGroups).validationError}
             autoFocus={true}
           />
           <PrimaryButton
             className="msla-export-summary-connections-button"
             text={intlText.OK}
             ariaLabel={intlText.OK}
-            disabled={!isNameValid(name, intlText).validName}
+            disabled={!isNameValid(name, intlText, resourceGroups).validName}
             onClick={onClickOk}
           />
           <PrimaryButton
