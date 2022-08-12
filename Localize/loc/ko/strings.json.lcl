@@ -138,6 +138,9 @@
       <Item ItemId=";/VcZ9g" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[이 커넥터에는 기본 제공되는 버전, Azure 호스트되는 버전과 같이 여러 버전이 있습니다. 최상의 성능과 연결 문자열 인증 및 기타 기능을 위해서는 기본 제공을 사용하세요. 다른 인증 옵션을 위해서는 Azure 호스트되는 버전을 사용하세요.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1020,6 +1023,9 @@
       <Item ItemId=";6+RwRp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Hybrid Connector]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[하이브리드 커넥터]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4099,7 +4105,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Read more]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[추가 정보]]></Val>
+            <Val><![CDATA[자세히 표시]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4278,6 +4284,9 @@
       <Item ItemId=";bwfJdj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Run after {sourceNodeId}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{sourceNodeId} 다음에 실행]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4385,6 +4394,15 @@
           <Val><![CDATA[(UTC+02:00) Tripoli]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+02:00) 트리폴리]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";cVSEzV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[description for {connectorName}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{connectorName}에 대한 설명]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

@@ -138,6 +138,9 @@
       <Item ItemId=";/VcZ9g" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[此连接器具有多个内置和 Azure 托管版本。将内置版本用于获得最佳性能、连接字符串身份验证和其他功能。将 Azure 托管版本用于其他身份验证选项。]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1020,6 +1023,9 @@
       <Item ItemId=";6+RwRp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Hybrid Connector]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[混合连接器]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4099,7 +4105,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Read more]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[了解更多]]></Val>
+            <Val><![CDATA[阅读更多信息]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4278,6 +4284,9 @@
       <Item ItemId=";bwfJdj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Run after {sourceNodeId}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[在 {sourceNodeId} 之后运行]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4385,6 +4394,15 @@
           <Val><![CDATA[(UTC+02:00) Tripoli]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+02:00)的黎波里]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";cVSEzV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[description for {connectorName}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{connectorName} 的说明]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
