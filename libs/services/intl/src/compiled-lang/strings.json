@@ -963,6 +963,12 @@
       "value": "Returns true if both parameters are true"
     }
   ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
+    }
+  ],
   "AIL7WX": [
     {
       "type": 0,
@@ -1715,6 +1721,12 @@
     {
       "type": 0,
       "value": "Returns the day of week component of a string timestamp"
+    }
+  ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
     }
   ],
   "LCUU5q": [
@@ -2629,6 +2641,12 @@
       "value": "Retry"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2763,6 +2781,12 @@
     {
       "type": 0,
       "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
+    }
+  ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
     }
   ],
   "YoQara": [
@@ -3073,6 +3097,12 @@
     {
       "type": 0,
       "value": "Learn more"
+    }
+  ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
     }
   ],
   "dSTRb/": [
@@ -3885,6 +3915,12 @@
       "value": "Required. The value that is converted to a floating-point number."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -4585,6 +4621,12 @@
       "value": "Delete"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4879,6 +4921,12 @@
     {
       "type": 0,
       "value": "Required. The string that is converted to a native type value."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

@@ -924,7 +924,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "További információ."
     }
   ],
   "9SuA/E": [
@@ -967,6 +967,12 @@
     {
       "type": 0,
       "value": "Igaz értéket ad vissza, ha mindkét paraméter igaz."
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1725,6 +1731,12 @@
       "value": "Egy sztring típusú időbélyegnek a hét napját megadó összetevőjét adja vissza."
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1766,7 +1778,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Párhuzamos ág hozzáadása"
     }
   ],
   "Lft/is": [
@@ -2312,7 +2324,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Kevesebb információ"
     }
   ],
   "T0BFpC": [
@@ -2633,6 +2645,12 @@
       "value": "Újrapróbálkozás"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2648,7 +2666,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Új lépés beszúrása"
     }
   ],
   "XTYYks": [
@@ -2769,6 +2787,12 @@
       "value": "Egyetlen olyan tömböt vagy objektumot ad vissza, amely a függvénynek átadott tömbök vagy objektumok bármelyikében szereplő elemeket tartalmazza. A függvény paramétereit egy objektumhalmazban vagy egy tömbökből álló halmazban (a kettő kombinációjával viszont nem) lehet megadni. Két egyforma nevű objektum szereplése esetén a végső objektumban az utolsó adott nevű objektum fog megjelenni."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2820,7 +2844,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "További információ"
     }
   ],
   "ZbX8xq": [
@@ -3089,6 +3113,12 @@
       "value": "Kijelölés"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3166,7 +3196,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "lejárt az időkorlátja"
     }
   ],
   "e00zot": [
@@ -3834,7 +3864,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Művelet hozzáadása"
     }
   ],
   "mGUdCO": [
@@ -3907,6 +3937,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A lebegőpontos számmá alakítandó érték."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4609,6 +4645,12 @@
       "value": "Törlés"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4913,6 +4955,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A natív típusú értékké alakítandó sztring."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

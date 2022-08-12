@@ -2,7 +2,7 @@ import type { SectionProps } from '../';
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
 import type { WorkflowEdge } from '../../../core/parsers/models/workflowNode';
-import { addEdge, updateRunAfter } from '../../../core/state/workflow/workflowSlice';
+import { addEdgeFromRunAfter, removeEdgeFromRunAfter, updateRunAfter } from '../../../core/state/workflow/workflowSlice';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
@@ -53,6 +53,14 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, 
         onStatusChange: (status, checked) => {
           handleStatusChange(id, status, checked);
         },
+        onDelete: () => {
+          dispatch(
+            removeEdgeFromRunAfter({
+              parentOperationId: id,
+              childOperationId: nodeId,
+            })
+          );
+        },
       });
     });
     return items;
@@ -76,7 +84,7 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, 
           items: GetRunAfterProps(),
           onEdgeAddition: (parentNode: string) => {
             dispatch(
-              addEdge({
+              addEdgeFromRunAfter({
                 parentOperationId: parentNode,
                 childOperationId: nodeId,
               })

@@ -913,7 +913,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "詳細情報はこちら。"
     }
   ],
   "9SuA/E": [
@@ -956,6 +956,12 @@
     {
       "type": 0,
       "value": "両方のパラメーターが true の場合は true を返します"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1673,6 +1679,12 @@
       "value": "文字列のタイムスタンプの曜日部分を返します"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1706,7 +1718,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "並列分岐の追加"
     }
   ],
   "Lft/is": [
@@ -2237,7 +2249,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "詳細を隠す"
     }
   ],
   "T0BFpC": [
@@ -2558,6 +2570,12 @@
       "value": "再試行"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2573,7 +2591,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "新しいステップを挿入します"
     }
   ],
   "XTYYks": [
@@ -2694,6 +2712,12 @@
       "value": "この関数に渡されるアレイまたはオブジェクト内にあるすべての要素を含む単一のアレイまたはオブジェクトを返します。この関数のパラメーターには、一連のオブジェクトまたは一連のアレイを指定できます (混在させることはできません)。最終的な出力に同じ名前のオブジェクトが 2 つある場合は、その名前の付いた最後のオブジェクトが最終的なオブジェクトに表示されます。"
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2745,7 +2769,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "詳細情報"
     }
   ],
   "ZbX8xq": [
@@ -3014,6 +3038,12 @@
       "value": "選択"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3087,7 +3117,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "タイムアウトした"
     }
   ],
   "e00zot": [
@@ -3724,7 +3754,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "アクションの追加"
     }
   ],
   "mGUdCO": [
@@ -3797,6 +3827,12 @@
     {
       "type": 0,
       "value": "必須。浮動小数点数に変換される値。"
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4488,6 +4524,12 @@
       "value": "削除"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4788,6 +4830,12 @@
     {
       "type": 0,
       "value": "必須。ネイティブな型の値に変換される文字列。"
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

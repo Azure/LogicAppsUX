@@ -57,7 +57,7 @@ export const PanelRoot = (): JSX.Element => {
   const operationInfo = useOperationInfo(selectedNode);
   const iconUriResult = useIconUri(operationInfo);
   const nodeMetaData = useNodeMetadata(selectedNode);
-  const showCommentBox = !isNullOrUndefined(comment);
+  let showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
     const tabs = [monitoringTab, parametersTab, aboutTab, codeViewTab, SettingsTab, scratchTab, createConnectionTab, selectConnectionTab];
@@ -180,6 +180,7 @@ export const PanelRoot = (): JSX.Element => {
 
   const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
     dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
+    showCommentBox = !showCommentBox;
   };
 
   // TODO: 12798945? onClick for delete when node store gets built

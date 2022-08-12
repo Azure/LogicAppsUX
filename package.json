@@ -1,6 +1,6 @@
 {
   "name": "microsoft-logic-apps",
-  "version": "0.0.62",
+  "version": "0.0.64",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -38,7 +38,7 @@
   "dependencies": {
     "@fluentui/azure-themes": "8.2.33",
     "@fluentui/react": "8.68.2",
-    "@fluentui/react-components": "^9.1.1",
+    "@fluentui/react-components": "^9.2.0",
     "@fluentui/react-hooks": "8.5.5",
     "@fluentui/theme": "2.6.6",
     "@fluentui/web-components": "^2.5.3",
@@ -143,6 +143,7 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "4.5.0",
+    "fuse.js": "^6.6.2",
     "husky": "^8.0.1",
     "jest": "27.5.1",
     "jest-junit": "^13.2.0",

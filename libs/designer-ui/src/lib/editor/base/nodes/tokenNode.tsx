@@ -100,7 +100,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
 }
 
 export function $createTokenNode({ icon, title, data, description, brandColor }: TokenNodeProps) {
-  return new TokenNode(icon, title, data, description, brandColor);
+  return new TokenNode(`url("${icon}")`, title, data, description, brandColor);
 }
 
 export function $isTokenNode(node: LexicalNode | null): node is TokenNode {

@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Este conector tem várias versões, incorporada e alojada no Azure. Utilize a versão incorporada para obter o melhor desempenho, autenticação de cadeia de ligação e outras funcionalidades. Utilize a versão alojada no Azure para obter outras opções de autenticação."
     }
   ],
   "/WW7If": [
@@ -678,7 +678,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Conector Híbrido"
     }
   ],
   "63/zYN": [
@@ -924,7 +924,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "Saiba mais."
     }
   ],
   "9SuA/E": [
@@ -967,6 +967,12 @@
     {
       "type": 0,
       "value": "Devolve verdadeiro se ambos os parâmetros forem verdadeiros"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1725,6 +1731,12 @@
       "value": "Devolve o dia do componente da semana de um carimbo de data/hora de cadeia"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1766,7 +1778,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Adicionar um ramo paralelo"
     }
   ],
   "Lft/is": [
@@ -2308,7 +2320,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Ler menos"
     }
   ],
   "T0BFpC": [
@@ -2629,6 +2641,12 @@
       "value": "Tentar novamente"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2644,7 +2662,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Inserir um novo passo"
     }
   ],
   "XTYYks": [
@@ -2765,6 +2783,12 @@
       "value": "Devolve uma matriz ou um objeto únicos com todos os elementos que existem na matriz ou no objeto transmitidos a esta função. Os parâmetros da função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura de ambos). Se existirem dois objetos com o mesmo nome no resultado final, o último objeto com esse nome aparece no objeto final."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2816,7 +2840,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Ler mais"
     }
   ],
   "ZbX8xq": [
@@ -2936,7 +2960,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Executar após "
     },
     {
       "type": 1,
@@ -3085,6 +3109,12 @@
       "value": "Selecionar"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3162,7 +3192,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "tempo limite esgotado"
     }
   ],
   "e00zot": [
@@ -3834,7 +3864,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Adicionar uma ação"
     }
   ],
   "mGUdCO": [
@@ -3907,6 +3937,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O valor que é convertido num número de vírgula flutuante."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4609,6 +4645,12 @@
       "value": "Eliminar"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4913,6 +4955,12 @@
     {
       "type": 0,
       "value": "Obrigatório. A cadeia que é convertida num valor de tipo nativo."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

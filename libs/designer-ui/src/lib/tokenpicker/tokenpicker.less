@@ -2,7 +2,6 @@
   max-height: 550px;
   min-height: 400px;
   width: 400px;
-  font-size: 12px;
 }
 
 .msla-token-picker {
@@ -74,7 +73,7 @@
     flex: 1 1 auto;
     font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
     font-size: 13px;
-    padding: 12px 0;
+    padding: 12px 8px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -92,6 +91,7 @@
       display: inline-block;
       font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
       font-size: 13px;
+      padding: 8px;
     }
   }
 }
@@ -112,6 +112,9 @@
     width: 100%;
     &:last-child {
       border-bottom: none;
+    }
+    &:hover {
+      background-color: #f0f8ff;
     }
     img {
       box-sizing: content-box;
@@ -150,4 +153,30 @@
       }
     }
   }
+}
+
+.msla-token-picker-no-matches {
+  font-family: @font-family;
+  padding: 0 12px;
+
+  div {
+    margin: 1em 0;
+
+    &.msla-token-picker-no-results {
+      font-weight: bold;
+    }
+
+    &.msla-token-picker-no-matches-header {
+      color: lightslategray;
+      text-transform: uppercase;
+    }
+  }
+
+  hr {
+    color: #cac8c7;
+  }
+}
+
+.parameter-hints-widget {
+  overflow: visible;
 }

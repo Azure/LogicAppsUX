@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Det här anslutningsprogrammet har flera versioner, inbyggt och Azure-baserat. Använd det inbyggda alternativet för bästa prestanda, autentisering av anslutningssträngar och andra funktioner. Använd det Azure-baserade alternativet för andra autentiseringsalternativ."
     }
   ],
   "/WW7If": [
@@ -678,7 +678,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Hybridanslutning"
     }
   ],
   "63/zYN": [
@@ -924,7 +924,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "Läs mer."
     }
   ],
   "9SuA/E": [
@@ -967,6 +967,12 @@
     {
       "type": 0,
       "value": "Returnerar sant om båda parametrarna är sanna"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1725,6 +1731,12 @@
       "value": "Returnerar en strängtidsstämpels veckokomponent"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1766,7 +1778,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Lägg till en parallell gren"
     }
   ],
   "Lft/is": [
@@ -2312,7 +2324,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Läs mindre"
     }
   ],
   "T0BFpC": [
@@ -2633,6 +2645,12 @@
       "value": "Försök igen"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2648,7 +2666,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Infoga ett nytt steg"
     }
   ],
   "XTYYks": [
@@ -2769,6 +2787,12 @@
       "value": "Returnerar en enskild matris eller ett objekt med alla de element som finns i den matris eller det objekt som har skickats till den här funktionen. Funktionens parametrar kan antingen vara en uppsättning objekt eller en uppsättning matriser (inte en blandning av båda). Om det finns två objekt med samma namn i utdata, så visas det sista objektet med det namnet i det slutliga objektet."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2820,7 +2844,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Läs mer"
     }
   ],
   "ZbX8xq": [
@@ -2940,7 +2964,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Kör efter "
     },
     {
       "type": 1,
@@ -3089,6 +3113,12 @@
       "value": "Välj"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3166,7 +3196,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "tidsgränsen har uppnåtts"
     }
   ],
   "e00zot": [
@@ -3830,7 +3860,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Lägga till en åtgärd"
     }
   ],
   "mGUdCO": [
@@ -3903,6 +3933,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Det värde som konverteras till ett flyttalsnummer."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4605,6 +4641,12 @@
       "value": "Ta bort"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4909,6 +4951,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den sträng som konverteras till ett värde av ursprunglig typ."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

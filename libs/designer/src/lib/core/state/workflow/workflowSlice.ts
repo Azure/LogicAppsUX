@@ -108,7 +108,32 @@ export const workflowSlice = createSlice({
       traverseGraph(state.graph);
       state.edgeIdsBySource = output;
     },
-    addEdge: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
+    removeEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
+      const { childOperationId, parentOperationId } = action.payload;
+      const parentOperation = state.operations[parentOperationId];
+      const childOperation: LogicAppsV2.ActionDefinition = state.operations[childOperationId];
+      if (!parentOperation || !childOperation) {
+        return;
+      }
+      delete childOperation.runAfter?.[parentOperationId];
+
+      const graphPath: string[] = [];
+      let operationGraph = state.nodesMetadata[childOperationId];
+
+      while (!equals(operationGraph.graphId, 'root')) {
+        graphPath.push(operationGraph.graphId);
+        operationGraph = state.nodesMetadata[operationGraph.graphId];
+      }
+      let graph = state.graph;
+      for (const id of graphPath.reverse()) {
+        graph = graph?.children?.find((x) => x.id === id) ?? null;
+      }
+      if (!graph) {
+        return;
+      }
+      graph.edges = graph.edges?.filter((x) => x.source !== parentOperationId || x.target !== childOperationId) ?? [];
+    },
+    addEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
       const parentOperation = state.operations[parentOperationId];
       const childOperation: LogicAppsV2.ActionDefinition = state.operations[childOperationId];
@@ -170,7 +195,8 @@ export const {
   discardAllChanges,
   buildEdgeIdsBySource,
   updateRunAfter,
-  addEdge,
+  addEdgeFromRunAfter,
+  removeEdgeFromRunAfter,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

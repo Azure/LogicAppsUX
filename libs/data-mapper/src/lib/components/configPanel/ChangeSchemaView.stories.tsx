@@ -1,10 +1,10 @@
 import { setAvailableSchemas } from '../../core/state/SchemaSlice';
 import { store } from '../../core/state/Store';
 import type { Schema } from '../../models/Schema';
+import { SchemaTypes } from '../../models/Schema';
 import { noChildrenMockSchema, simpleMockSchema } from '../../models/__mocks__';
 import type { ChangeSchemaViewProps } from './ChangeSchemaView';
 import { ChangeSchemaView } from './ChangeSchemaView';
-import { SchemaTypes } from './EditorConfigPanel';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 import { Provider } from 'react-redux';
