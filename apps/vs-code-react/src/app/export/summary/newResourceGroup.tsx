@@ -51,11 +51,11 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
       description: 'Name button',
     }),
     INVALID_CHARS: intl.formatMessage({
-      defaultMessage: 'The name can only contain alphanumeric characters or the symbols ._-()',
-      description: 'Resource group name invalid chars error',
+      defaultMessage: 'The name can contain only alphanumeric characters or the following symbols: . _ - ( )',
+      description: 'RResource group name - invalid characters error',
     }),
     INVALID_ENDING_CHAR: intl.formatMessage({
-      defaultMessage: 'The name cannot end in a period.',
+      defaultMessage: "The name can't end with a period.",
       description: 'Resource group name ending error',
     }),
     INVALID_EXISTING_NAME: intl.formatMessage({
