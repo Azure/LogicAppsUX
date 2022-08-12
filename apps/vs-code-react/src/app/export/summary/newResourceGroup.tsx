@@ -1,10 +1,13 @@
 import type { INamingRules } from '../../../run-service';
+import type { RootState } from '../../../state/store';
+import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { isNameValid } from './helper';
 import { Callout, Link, PrimaryButton, Text, TextField } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
 export const resourceGroupNamingRules: INamingRules = {
   minLength: 1,
@@ -12,10 +15,13 @@ export const resourceGroupNamingRules: INamingRules = {
   invalidCharsRegExp: new RegExp(/[^a-zA-Z0-9._\-()]/, 'g'),
 };
 
-export const NewResourceGroup: React.FC = () => {
+export const NewResourceGroup: React.FC<any> = ({ onAddNewResourceGroup }) => {
   const intl = useIntl();
   const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
   const [name, setName] = useState<string>('');
+  const vscodeState = useSelector((state: RootState) => state.vscode);
+  const { exportData } = vscodeState as InitializedVscodeState;
+  const { location } = exportData;
 
   const intlText = {
     CREATE_NEW: intl.formatMessage({
@@ -46,12 +52,21 @@ export const NewResourceGroup: React.FC = () => {
       defaultMessage: 'The name cannot end in a period.',
       description: 'Resource group name ending error',
     }),
+    NEW: intl.formatMessage({
+      defaultMessage: 'New',
+      description: 'New text',
+    }),
   };
 
   const linkClassName = 'msla-export-summary-connections-new-resource';
 
   const onChangeName = (_event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newName?: string | undefined) => {
     setName(newName as string);
+  };
+
+  const onClickOk = () => {
+    toggleIsCalloutVisible();
+    onAddNewResourceGroup({ key: name, text: `(${intlText.NEW}) ${name}`, data: location });
   };
 
   return (
@@ -74,6 +89,7 @@ export const NewResourceGroup: React.FC = () => {
           <TextField
             required
             label={intlText.NAME}
+            value={name}
             onChange={onChangeName}
             onGetErrorMessage={(newName) => isNameValid(newName, intlText).validationError}
             autoFocus={true}
@@ -83,6 +99,7 @@ export const NewResourceGroup: React.FC = () => {
             text={intlText.OK}
             ariaLabel={intlText.OK}
             disabled={!isNameValid(name, intlText).validName}
+            onClick={onClickOk}
           />
           <PrimaryButton
             className="msla-export-summary-connections-button"

@@ -78,7 +78,7 @@ export const ManagedConnections: React.FC = () => {
     const resourceGroups: IDropdownOption[] =
       isResourceGroupsLoading || !resourceGroupsData ? [] : parseResourceGroupsData(resourceGroupsData);
 
-    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
+    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement> | undefined, selectedOption?: IDropdownOption) => {
       if (selectedOption && selectedResourceGroup !== selectedOption.key) {
         const resourceGroupId = selectedOption.key as string;
         dispatch(
@@ -89,6 +89,12 @@ export const ManagedConnections: React.FC = () => {
           })
         );
       }
+    };
+
+    const onAddNewResourceGroup = (selectedOption: IDropdownOption) => {
+      resourceGroupsData.resourceGroups.unshift({ name: selectedOption.key, location: selectedOption.data, text: selectedOption.text });
+
+      onChangeResourceGroup(undefined, selectedOption);
     };
 
     return isConnectionsChecked ? (
@@ -104,7 +110,7 @@ export const ManagedConnections: React.FC = () => {
           isLoading={isResourceGroupsLoading}
           searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
         />
-        <NewResourceGroup />
+        <NewResourceGroup onAddNewResourceGroup={onAddNewResourceGroup} />
       </>
     ) : null;
   }, [

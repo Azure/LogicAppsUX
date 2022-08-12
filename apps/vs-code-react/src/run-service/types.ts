@@ -238,6 +238,15 @@ export interface IDropDownOption {
   text: string;
 }
 
+export interface IResourceGroup {
+  name: string;
+  location: string;
+  id?: string;
+  subscriptionId?: string;
+  resourceGroup?: string;
+  text?: string;
+}
+
 export enum RouteName {
   export = 'export',
   instance_selection = 'instance-selection',

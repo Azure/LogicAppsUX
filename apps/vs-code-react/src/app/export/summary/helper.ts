@@ -1,5 +1,12 @@
 import { DetailCategory, StyledDetailCategory } from '../../../run-service';
-import type { INamingValidation, ISummaryData, IExportDetails, IExportDetailsList, IDropDownOption } from '../../../run-service';
+import type {
+  INamingValidation,
+  IResourceGroup,
+  ISummaryData,
+  IExportDetails,
+  IExportDetailsList,
+  IDropDownOption,
+} from '../../../run-service';
 import { resourceGroupNamingRules } from './newResourceGroup';
 
 const getTypeName = (typeName: string): string => {
@@ -40,11 +47,12 @@ export const getSummaryData = (summaryData: ISummaryData) => {
   return { exportDetails };
 };
 
-export const parseResourceGroupsData = (resourceGroupsData: { resourceGroups: Array<any> }): Array<IDropDownOption> => {
+export const parseResourceGroupsData = (resourceGroupsData: { resourceGroups: Array<IResourceGroup> }): Array<IDropDownOption> => {
   const { resourceGroups } = resourceGroupsData;
 
-  return resourceGroups.map((resourceGroup: any) => {
-    return { key: resourceGroup.name, text: resourceGroup.name, data: resourceGroup.location };
+  return resourceGroups.map((resourceGroup: IResourceGroup) => {
+    const { name, location, text } = resourceGroup;
+    return { key: name, text: text ?? name, data: location };
   });
 };
 
