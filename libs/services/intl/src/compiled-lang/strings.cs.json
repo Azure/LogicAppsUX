@@ -958,7 +958,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "Další informace."
     }
   ],
   "9SuA/E": [
@@ -1001,6 +1001,12 @@
     {
       "type": 0,
       "value": "Vrátí true, pokud jsou oba parametry true."
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1825,6 +1831,12 @@
       "value": "Vrátí část řetězcového časového razítka, která představuje den v týdnu."
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1866,7 +1878,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Přidat paralelní větev"
     }
   ],
   "Lft/is": [
@@ -2430,7 +2442,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Méně informací"
     }
   ],
   "T0BFpC": [
@@ -2751,6 +2763,12 @@
       "value": "Zkusit znovu"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2766,7 +2784,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Vloží nový krok."
     }
   ],
   "XTYYks": [
@@ -2887,6 +2905,12 @@
       "value": "Vrátí jedno pole nebo objekt, kde všechny prvky jsou buď v poli, nebo objektu předávaném této funkci. Parametry pro tuto funkci můžou být buď sada objektů, nebo sada polí (ne kombinace obou). Pokud jsou v konečném výstupu dva objekty se stejným názvem, zahrne se do konečného objektu poslední objekt s tímto názvem."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2938,7 +2962,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Další informace"
     }
   ],
   "ZbX8xq": [
@@ -3207,6 +3231,12 @@
       "value": "Vybrat"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3284,7 +3314,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "vypršel časový limit"
     }
   ],
   "e00zot": [
@@ -3970,7 +4000,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Přidat akci"
     }
   ],
   "mGUdCO": [
@@ -4043,6 +4073,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Hodnota, která se má převést na číslo s plovoucí desetinnou čárkou."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4767,6 +4803,12 @@
       "value": "Odstranit"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -5071,6 +5113,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který se převede na hodnotu nativního typu."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

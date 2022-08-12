@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "У этого соединителя есть несколько версий: встроенные и размещенные в Azure. Используйте встроенную версию для оптимальной производительности, проверки подлинности строки подключения и других функций. Используйте размещенную в Azure версию для других параметров проверки подлинности."
     }
   ],
   "/WW7If": [
@@ -700,7 +700,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Гибридный соединитель"
     }
   ],
   "63/zYN": [
@@ -946,7 +946,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "Дополнительные сведения."
     }
   ],
   "9SuA/E": [
@@ -989,6 +989,12 @@
     {
       "type": 0,
       "value": "Возвращает значение true, если оба параметра имеют значение true"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1813,6 +1819,12 @@
       "value": "Возвращает компонент дня недели метки времени строки"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1854,7 +1866,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Добавить параллельную ветвь"
     }
   ],
   "Lft/is": [
@@ -2418,7 +2430,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Скрыть подробности"
     }
   ],
   "T0BFpC": [
@@ -2739,6 +2751,12 @@
       "value": "Повторить"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2754,7 +2772,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Добавить шаг"
     }
   ],
   "XTYYks": [
@@ -2875,6 +2893,12 @@
       "value": "Возвращает один массив или объект, который содержит все элементы массива или объекта, переданные этой функции. В качестве параметров может использоваться набор объектов или набор массивов (и не может использоваться набор, состоящий из объектов и массивов). При наличии двух объектов с одинаковыми именами в результирующий объект включается последний объект с этим именем."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2926,7 +2950,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Подробнее"
     }
   ],
   "ZbX8xq": [
@@ -3046,7 +3070,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Запуск после "
     },
     {
       "type": 1,
@@ -3195,6 +3219,12 @@
       "value": "Выбрать"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3272,7 +3302,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "время ожидания истекло"
     }
   ],
   "e00zot": [
@@ -3966,7 +3996,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Добавить действие"
     }
   ],
   "mGUdCO": [
@@ -4039,6 +4069,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Значение, которое необходимо преобразовать в число с плавающей точкой."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4763,6 +4799,12 @@
       "value": "Удалить"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -5067,6 +5109,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Строка, которая преобразуется в значение собственного типа."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

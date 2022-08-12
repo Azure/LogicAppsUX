@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "此連接器具有多個版本、內建及 Azure 裝載。使用內建以獲得最佳效能、連接字串驗證及其他功能。使用 Azure 裝載進行其他驗證選項。"
     }
   ],
   "/WW7If": [
@@ -667,7 +667,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "混合式連接器"
     }
   ],
   "63/zYN": [
@@ -913,7 +913,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "深入了解。"
     }
   ],
   "9SuA/E": [
@@ -956,6 +956,12 @@
     {
       "type": 0,
       "value": "若兩個參數皆為 True，則傳回 True"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1673,6 +1679,12 @@
       "value": "傳回字串時間戳記當週第幾天的部分"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1706,7 +1718,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "新增平行分支"
     }
   ],
   "Lft/is": [
@@ -2237,7 +2249,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "閱讀較少"
     }
   ],
   "T0BFpC": [
@@ -2558,6 +2570,12 @@
       "value": "重試"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2573,7 +2591,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "插入新的步驟"
     }
   ],
   "XTYYks": [
@@ -2694,6 +2712,12 @@
       "value": "傳回單一陣列或物件，其於陣列或物件中的所有元素均會傳入此函式。函式的參數可以是一組物件，也可以是一組陣列 (但不可兩者混合)。若兩個物件具有相同的名稱，則在最終物件中會出現該名稱的最後一個物件。"
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2745,7 +2769,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "閱讀更多"
     }
   ],
   "ZbX8xq": [
@@ -2865,11 +2889,15 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "在 "
     },
     {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " 之後執行"
     }
   ],
   "bx3qeC": [
@@ -3014,6 +3042,12 @@
       "value": "選取"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3091,7 +3125,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "逾時"
     }
   ],
   "e00zot": [
@@ -3728,7 +3762,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "新增動作"
     }
   ],
   "mGUdCO": [
@@ -3801,6 +3835,12 @@
     {
       "type": 0,
       "value": "必要。轉換為浮點數的值。"
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4492,6 +4532,12 @@
       "value": "刪除"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4796,6 +4842,12 @@
     {
       "type": 0,
       "value": "必要。轉換為原生類型值的字串。"
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

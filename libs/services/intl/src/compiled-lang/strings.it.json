@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Questo connettore ha più versioni, predefinite e ospitate in Azure. Usa le funzionalità predefinite per ottenere prestazioni ottimali, autenticazione con stringa di connessione e altre funzionalità. Usa Azure-hosted per altre opzioni di autenticazione."
     }
   ],
   "/WW7If": [
@@ -678,7 +678,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Connettore ibrido"
     }
   ],
   "63/zYN": [
@@ -924,7 +924,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "Altre informazioni."
     }
   ],
   "9SuA/E": [
@@ -967,6 +967,12 @@
     {
       "type": 0,
       "value": "Restituisce true se entrambi i parametri sono true"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1717,6 +1723,12 @@
       "value": "Restituisce il componente giorno della settimana di un timestamp in formato stringa"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1750,7 +1762,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Aggiungi un ramo parallelo"
     }
   ],
   "Lft/is": [
@@ -2300,7 +2312,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Meno informazioni"
     }
   ],
   "T0BFpC": [
@@ -2621,6 +2633,12 @@
       "value": "Riprova"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2636,7 +2654,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Inserire un nuovo passaggio"
     }
   ],
   "XTYYks": [
@@ -2757,6 +2775,12 @@
       "value": "Restituisce un singolo oggetto o matrice con tutti gli elementi inclusi nella matrice o nell'oggetto passato a questa funzione. I parametri per la funzione possono essere costituiti da un set di oggetti o un set di matrici, ma non da una combinazione di entrambi. Se nell'output finale sono presenti due oggetti con lo stesso nome, nell'oggetto finale sarà visualizzato l'ultimo oggetto con tale nome."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2808,7 +2832,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Altre informazioni"
     }
   ],
   "ZbX8xq": [
@@ -2928,7 +2952,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Esegui dopo "
     },
     {
       "type": 1,
@@ -3077,6 +3101,12 @@
       "value": "Seleziona"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3154,7 +3184,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "scaduto"
     }
   ],
   "e00zot": [
@@ -3802,7 +3832,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Aggiungi un'azione"
     }
   ],
   "mGUdCO": [
@@ -3875,6 +3905,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore convertito in un numero a virgola mobile."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4577,6 +4613,12 @@
       "value": "Eliminare"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4881,6 +4923,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa convertita in un valore di tipo nativo."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

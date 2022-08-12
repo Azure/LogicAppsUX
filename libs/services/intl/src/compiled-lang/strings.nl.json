@@ -924,7 +924,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "Meer informatie."
     }
   ],
   "9SuA/E": [
@@ -967,6 +967,12 @@
     {
       "type": 0,
       "value": "Indien beide parameters waar zijn, wordt Waar geretourneerd"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1424,7 +1430,7 @@
   "Gi72X5": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Minder weergeven"
     }
   ],
   "Gmya+V": [
@@ -1725,6 +1731,12 @@
       "value": "Het onderdeel dag van de week van een tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1766,7 +1778,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Een parallelle vertakking toevoegen"
     }
   ],
   "Lft/is": [
@@ -2312,7 +2324,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Minder lezen"
     }
   ],
   "T0BFpC": [
@@ -2633,6 +2645,12 @@
       "value": "Opnieuw proberen"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2648,7 +2666,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Een nieuwe stap invoegen"
     }
   ],
   "XTYYks": [
@@ -2769,6 +2787,12 @@
       "value": "Hiermee wordt één matrix of één object opgehaald met alle elementen die in beide matrices of beide objecten voorkomen die voor deze functie zijn ingevoerd. De parameters voor de functie kunnen een set objecten zijn of een set matrices (niet een combinatie). Als er twee objecten met dezelfde naam zijn, wordt het laatste object met de betreffende naam weergegeven in het uiteindelijke object."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2820,7 +2844,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Meer informatie"
     }
   ],
   "ZbX8xq": [
@@ -3089,6 +3113,12 @@
       "value": "Selecteren"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3166,7 +3196,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "er heeft een time-out plaatsgevonden"
     }
   ],
   "e00zot": [
@@ -3830,7 +3860,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Een actie toevoegen"
     }
   ],
   "mGUdCO": [
@@ -3903,6 +3933,12 @@
     {
       "type": 0,
       "value": "Vereist. De waarde die wordt geconverteerd naar een drijvend-kommagetal."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4605,6 +4641,12 @@
       "value": "Verwijderen"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4909,6 +4951,12 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks die wordt geconverteerd naar een systeemeigen waarde."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [

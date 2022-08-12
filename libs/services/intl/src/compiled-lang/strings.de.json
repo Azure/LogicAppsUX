@@ -924,7 +924,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Learn more."
+      "value": "Weitere Informationen."
     }
   ],
   "9SuA/E": [
@@ -967,6 +967,12 @@
     {
       "type": 0,
       "value": "Gibt TRUE zurück, wenn beide Parameter TRUE sind."
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1725,6 +1731,12 @@
       "value": "Gibt die Wochentagkomponente eines Zeichenfolgen-Zeitstempels zurück."
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1766,7 +1778,7 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Parallelen Branch hinzufügen"
     }
   ],
   "Lft/is": [
@@ -2312,7 +2324,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Weniger Informationen"
     }
   ],
   "T0BFpC": [
@@ -2633,6 +2645,12 @@
       "value": "Wiederholen"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2648,7 +2666,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Hiermit fügen Sie einen neuen Schritt ein."
     }
   ],
   "XTYYks": [
@@ -2769,6 +2787,12 @@
       "value": "Gibt ein einzelnes Array oder Objekt mit allen Elementen zurück, die sich entweder in einem Array oder in einem Objekt befinden, das an diese Funktion übergeben wurde. Bei den Parametern für die Funktion kann es sich entweder um einen Satz Objekte oder um einen Satz Arrays handeln (keine Mischung aus beidem). Wenn in der finalen Ausgabe zwei Objekte mit dem gleichen Namen vorhanden sind, wird das letzte Objekt mit diesem Namen in das endgültige Objekt aufgenommen."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2820,7 +2844,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Weitere Informationen"
     }
   ],
   "ZbX8xq": [
@@ -3089,6 +3113,12 @@
       "value": "Auswählen"
     }
   ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Update"
+    }
+  ],
   "dSTRb/": [
     {
       "type": 0,
@@ -3166,7 +3196,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "weist eine Zeitüberschreitung auf"
     }
   ],
   "e00zot": [
@@ -3830,7 +3860,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Aktion hinzufügen"
     }
   ],
   "mGUdCO": [
@@ -3903,6 +3933,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Wert, der in eine Gleitkommazahl konvertiert wird."
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
     }
   ],
   "nGds/r": [
@@ -4605,6 +4641,12 @@
       "value": "Löschen"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4909,6 +4951,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Wert, der in einen nativen Typwert konvertiert wird."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
     }
   ],
   "zUgja+": [
