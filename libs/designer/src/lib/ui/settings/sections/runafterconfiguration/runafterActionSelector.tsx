@@ -1,19 +1,16 @@
 import type { RootState } from '../../../../core';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useIconUri, useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
-import { addEdge } from '../../../../core/state/workflow/workflowSlice';
+import { addEdgeFromRunAfter, removeEdgeFromRunAfter } from '../../../../core/state/workflow/workflowSlice';
 import { Menu, MenuTrigger, MenuList, MenuPopover, MenuButton, Label, MenuItemCheckbox, Input, Button } from '@fluentui/react-components';
 import { bundleIcon, Add20Regular, Add20Filled, Search24Regular, Dismiss24Regular } from '@fluentui/react-icons';
+import { labelCase } from '@microsoft-logic-apps/utils';
 import Fuse from 'fuse.js';
 import { useState, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 const AddIcon = bundleIcon(Add20Filled, Add20Regular);
-export interface RunAfterActionSelectorProps {
-  readOnly: boolean;
-}
-
 const getSuccessorNodes = (state: RootState, nodeId: string) => {
   const wfs = state.workflow;
   let successors: string[] = [];
@@ -30,15 +27,17 @@ const getSuccessorNodes = (state: RootState, nodeId: string) => {
   }
   return [...new Set(successors)];
 };
-const ActionMenuItem = ({ k }: { k: string; value: LogicAppsV2.ActionDefinition }) => {
-  const operationInfo = useOperationInfo(k);
+
+const ActionMenuItem = ({ id }: { id: string; value: LogicAppsV2.ActionDefinition }) => {
+  const operationInfo = useOperationInfo(id);
   const iconUri = useIconUri(operationInfo);
   return (
-    <MenuItemCheckbox name="actions" value={k} icon={<img style={{ height: '24px', width: '24px' }} src={iconUri.result} alt="" />}>
-      <Label style={{ overflow: 'hidden' }}>{k}</Label>
+    <MenuItemCheckbox name="actions" value={id} icon={<img style={{ height: '24px', width: '24px' }} src={iconUri.result} alt="" />}>
+      <Label style={{ overflow: 'hidden' }}>{labelCase(id)}</Label>
     </MenuItemCheckbox>
   );
 };
+
 export const RunAfterActionSelector = () => {
   const intl = useIntl();
   const [searchText, setSearchText] = useState<string>('');
@@ -94,9 +93,18 @@ export const RunAfterActionSelector = () => {
       checkedValues={selectedValues}
       onCheckedValueChange={(e, data) => {
         const newItems = data.checkedItems.filter((x) => !selectedValues.actions.includes(x));
+        const removedItems = selectedValues.actions.filter((x) => !data.checkedItems.includes(x));
+        removedItems.forEach((item) => {
+          dispatch(
+            removeEdgeFromRunAfter({
+              parentOperationId: item,
+              childOperationId: currentNodeId,
+            })
+          );
+        });
         newItems.forEach((item) => {
           dispatch(
-            addEdge({
+            addEdgeFromRunAfter({
               parentOperationId: item,
               childOperationId: currentNodeId,
             })
@@ -112,7 +120,7 @@ export const RunAfterActionSelector = () => {
 
       <MenuPopover>
         <Input
-          style={{ width: '100%' }}
+          className="msla-run-after-action-search-input"
           contentBefore={<Search24Regular />}
           contentAfter={
             <Button
@@ -130,14 +138,10 @@ export const RunAfterActionSelector = () => {
           }}
         />
         <MenuList>
-          <div style={{ overflowY: 'scroll', maxHeight: '400px' }}>
-            {searchResults.length > 0
-              ? searchResults.map((obj) => {
-                  return <ActionMenuItem k={obj.id} key={obj.id} value={obj} />;
-                })
-              : actions.map((obj) => {
-                  return <ActionMenuItem k={obj.id} key={obj.id} value={obj} />;
-                })}
+          <div className="msla-run-after-action-menu-list">
+            {(searchResults.length > 0 ? searchResults : actions).map((obj) => {
+              return <ActionMenuItem id={obj.id} key={obj.id} value={obj} />;
+            })}
           </div>
         </MenuList>
       </MenuPopover>
