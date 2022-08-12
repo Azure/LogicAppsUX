@@ -1,4 +1,3 @@
-import WarningIcon from '../../../resources/Caution.svg';
 import { QueryKeys } from '../../../run-service';
 import type { ISummaryData } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
@@ -54,7 +53,7 @@ export const Summary: React.FC = () => {
       description: 'Post export required steps text',
     }),
     PACKAGE_WARNING: intl.formatMessage({
-      defaultMessage: 'Something went wrong with the export package',
+      defaultMessage: 'Something went wrong with the export package URL',
       description: 'Package warning text',
     }),
   };
@@ -142,22 +141,11 @@ export const Summary: React.FC = () => {
 
   const packageWarning = useMemo(() => {
     return !isSummaryLoading && !packageUrl ? (
-      <MessageBar
-        className="msla-export-summary-package-warning"
-        messageBarType={MessageBarType.info}
-        isMultiline={true}
-        messageBarIconProps={{
-          imageProps: {
-            src: WarningIcon,
-            width: 15,
-            height: 15,
-          },
-        }}
-      >
+      <MessageBar className="msla-export-summary-package-warning" messageBarType={MessageBarType.error} isMultiline={true}>
         {intlText.PACKAGE_WARNING}
       </MessageBar>
     ) : null;
-  }, [isSummaryLoading, packageUrl]);
+  }, [isSummaryLoading, packageUrl, intlText.PACKAGE_WARNING]);
 
   return (
     <div className="msla-export-summary">
