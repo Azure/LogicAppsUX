@@ -1,5 +1,14 @@
 import { DetailCategory, StyledDetailCategory } from '../../../run-service';
-import type { ISummaryData, IExportDetails, IExportDetailsList, IDropDownOption } from '../../../run-service';
+import type {
+  INamingValidation,
+  IResourceGroup,
+  ISummaryData,
+  IExportDetails,
+  IExportDetailsList,
+  IDropDownOption,
+} from '../../../run-service';
+import { resourceGroupNamingRules } from './newResourceGroup';
+import type { IDropdownOption } from '@fluentui/react';
 
 const getTypeName = (typeName: string): string => {
   switch (typeName) {
@@ -39,10 +48,30 @@ export const getSummaryData = (summaryData: ISummaryData) => {
   return { exportDetails };
 };
 
-export const parseResourceGroupsData = (resourceGroupsData: { resourceGroups: Array<any> }): Array<IDropDownOption> => {
+export const parseResourceGroupsData = (resourceGroupsData: { resourceGroups: Array<IResourceGroup> }): Array<IDropDownOption> => {
   const { resourceGroups } = resourceGroupsData;
 
-  return resourceGroups.map((resourceGroup: any) => {
-    return { key: resourceGroup.name, text: resourceGroup.name, data: resourceGroup.location };
+  return resourceGroups.map((resourceGroup: IResourceGroup) => {
+    const { name, location, text } = resourceGroup;
+    return { key: name, text: text ?? name, data: location };
   });
+};
+
+export const isNameValid = (name: string, intlText: any, resourceGroups: IDropdownOption[]): INamingValidation => {
+  const trimmedName = name.trim();
+
+  let validName = false;
+
+  if (trimmedName.length < resourceGroupNamingRules.minLength || trimmedName.length > resourceGroupNamingRules.maxLength) {
+    return { validName, validationError: '' };
+  } else if (trimmedName.match(resourceGroupNamingRules.invalidCharsRegExp) !== null) {
+    return { validName, validationError: intlText.INVALID_CHARS };
+  } else if (trimmedName.endsWith('.')) {
+    return { validName, validationError: intlText.INVALID_ENDING_CHAR };
+  } else if (resourceGroups.find((resourceGroup) => resourceGroup.key === trimmedName)) {
+    return { validName, validationError: intlText.INVALID_EXISTING_NAME };
+  } else {
+    validName = true;
+    return { validName, validationError: '' };
+  }
 };
