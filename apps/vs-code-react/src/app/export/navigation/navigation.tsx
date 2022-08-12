@@ -103,7 +103,7 @@ export const Navigation: React.FC = () => {
         return validationState === '' || validationState === ValidationStatus.failed;
       }
       case `/${RouteName.export}/${RouteName.summary}`: {
-        return targetDirectory.path === '' || (targetDirectory.path !== '' && isManaged && resourceGroup === undefined);
+        return !packageUrl || targetDirectory.path === '' || (targetDirectory.path !== '' && isManaged && resourceGroup === undefined);
       }
       default: {
         return true;
