@@ -18,7 +18,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   const { operationSearchResults, onConnectorClick, onOperationClick, groupByConnector } = props;
 
   const apiIds = useMemo(
-    () => Array.from(new Set(operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties.api.id))),
+    () => Array.from(new Set(operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties?.api?.id))),
     [operationSearchResults]
   );
 

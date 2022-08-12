@@ -38,12 +38,12 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     description: 'Text for the Browse Operations page navigation heading',
   });
 
-  const searchNavText = intl.formatMessage({
+  const returnToBrowseText = intl.formatMessage({
     defaultMessage: 'Return to browse',
     description: 'Text for the Search Operations page navigation heading',
   });
 
-  const detailsNavText = intl.formatMessage({
+  const returnToSearchText = intl.formatMessage({
     defaultMessage: 'Return to search',
     description: 'Text for the Details page navigation heading',
   });
@@ -54,7 +54,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
         {searchTerm || selectedGroupId ? (
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Icon iconName="Back" />
-            {selectedGroupId ? detailsNavText : searchNavText}
+            {searchTerm ? returnToSearchText : returnToBrowseText}
           </Link>
         ) : (
           <Text variant="xLarge">{browseNavText}</Text>
@@ -62,7 +62,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
         <IconButton onClick={onDismiss} iconProps={{ iconName: 'Cancel' }} />
       </div>
     );
-  }, [browseNavText, detailsNavText, navigateBack, onDismiss, searchNavText, searchTerm, selectedGroupId]);
+  }, [browseNavText, navigateBack, onDismiss, returnToBrowseText, returnToSearchText, searchTerm, selectedGroupId]);
 
   return (
     <div className="msla-search-heading-container">

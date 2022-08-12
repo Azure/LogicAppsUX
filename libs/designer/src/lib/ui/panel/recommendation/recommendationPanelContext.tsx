@@ -62,14 +62,13 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         onDismiss={onDismiss}
         navigateBack={navigateBack}
       />
-      <div style={{ overflowY: 'auto' }}>
-        {selectedOperationGroupId ? <OperationGroupDetailView groupOperations={allOperationsForGroup} /> : null}
-        {searchTerm ? (
-          <SearchView searchTerm={searchTerm} allOperations={allOperations.data ?? []} groupByConnector={isGrouped} />
-        ) : (
-          <BrowseView />
-        )}
-      </div>
+      {selectedOperationGroupId ? (
+        <OperationGroupDetailView groupOperations={allOperationsForGroup} />
+      ) : searchTerm ? (
+        <SearchView searchTerm={searchTerm} allOperations={allOperations.data ?? []} groupByConnector={isGrouped} />
+      ) : (
+        <BrowseView />
+      )}
     </RecommendationPanel>
   );
 };
