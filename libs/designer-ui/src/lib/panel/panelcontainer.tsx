@@ -117,6 +117,7 @@ export const PanelContainer = ({
 
   return (
     <Panel
+      key={`${title}-panel`}
       aria-label={panelLabel}
       className="msla-panel-container"
       headerClassName="msla-panel-header"
