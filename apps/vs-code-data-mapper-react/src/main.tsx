@@ -8,7 +8,6 @@ ReactDOM.render(
     <FluentProvider theme={teamsLightTheme}>
       <App />
     </FluentProvider>
-    ,
   </StrictMode>,
   document.getElementById('root')
 );
