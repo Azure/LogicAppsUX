@@ -53,7 +53,7 @@ export const Summary: React.FC = () => {
       description: 'Post export required steps text',
     }),
     PACKAGE_WARNING: intl.formatMessage({
-      defaultMessage: 'Something went wrong with the export package URL',
+      defaultMessage: 'The export package URL experienced an unknown problem.',
       description: 'Package warning text',
     }),
   };
