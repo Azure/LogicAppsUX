@@ -91,6 +91,7 @@ export const RunAfterActionSelector = () => {
       hasIcons
       hasCheckmarks
       checkedValues={selectedValues}
+      onOpenChange={() => setSearchText('')}
       onCheckedValueChange={(e, data) => {
         const newItems = data.checkedItems.filter((x) => !selectedValues.actions.includes(x));
         const removedItems = selectedValues.actions.filter((x) => !data.checkedItems.includes(x));

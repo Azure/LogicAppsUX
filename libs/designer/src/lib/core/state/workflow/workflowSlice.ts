@@ -131,7 +131,7 @@ export const workflowSlice = createSlice({
       if (!graph) {
         return;
       }
-      graph.edges = graph.edges?.filter((x) => x.source !== parentOperationId && x.target !== childOperationId) ?? [];
+      graph.edges = graph.edges?.filter((x) => x.source !== parentOperationId || x.target !== childOperationId) ?? [];
     },
     addEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
