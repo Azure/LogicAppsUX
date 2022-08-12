@@ -7,7 +7,7 @@ import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { getListColumns, getSummaryData } from './helper';
 import { ManagedConnections } from './managedConnections';
-import { PrimaryButton, SelectionMode, ShimmeredDetailsList, Text, TextField } from '@fluentui/react';
+import { MessageBar, MessageBarType, PrimaryButton, SelectionMode, ShimmeredDetailsList, Text, TextField } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -20,7 +20,7 @@ export const Summary: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
-  const { selectedWorkflows, location, selectedSubscription, targetDirectory } = exportData;
+  const { selectedWorkflows, location, selectedSubscription, targetDirectory, packageUrl } = exportData;
 
   const intlText = {
     COMPLETE_EXPORT_TITLE: intl.formatMessage({
@@ -51,6 +51,10 @@ export const Summary: React.FC = () => {
       defaultMessage:
         "After export, the following workflows require more steps to reestablish connections. You can find these steps in the following list or by reviewing the README file that's exported with the package.",
       description: 'Post export required steps text',
+    }),
+    PACKAGE_WARNING: intl.formatMessage({
+      defaultMessage: 'The export package URL experienced an unknown problem.',
+      description: 'Package warning text',
     }),
   };
 
@@ -135,6 +139,14 @@ export const Summary: React.FC = () => {
     );
   }, [exportDetails, isSummaryLoading, intlText.NO_DETAILS, intlText.ADDITIONAL_STEPS, intlText.AFTER_EXPORT]);
 
+  const packageWarning = useMemo(() => {
+    return !isSummaryLoading && !packageUrl ? (
+      <MessageBar className="msla-export-summary-package-warning" messageBarType={MessageBarType.error} isMultiline={true}>
+        {intlText.PACKAGE_WARNING}
+      </MessageBar>
+    ) : null;
+  }, [isSummaryLoading, packageUrl, intlText.PACKAGE_WARNING]);
+
   return (
     <div className="msla-export-summary">
       <Text variant="xLarge" block>
@@ -143,6 +155,7 @@ export const Summary: React.FC = () => {
       <Text variant="large" block>
         {intlText.SELECT_LOCATION}
       </Text>
+      {packageWarning}
       <div className="msla-export-summary-file-location">
         {locationText}
         <PrimaryButton
