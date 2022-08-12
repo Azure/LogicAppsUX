@@ -1,4 +1,5 @@
 import { useSelectedOperationGroupId } from '../../../core/state/panel/panelSelectors';
+import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { BrowseView } from './browseView';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
@@ -8,8 +9,11 @@ import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
+  const dispatch = useDispatch();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOperation<DiscoveryResultTypes>[]>([]);
 
@@ -36,28 +40,36 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     }
   }, [selectedOperationGroupId, allOperations.data]);
 
+  const onDismiss = () => {
+    dispatch(selectOperationGroupId(''));
+    setSearchTerm('');
+    props.toggleCollapse();
+  };
+
+  const navigateBack = () => {
+    if (selectedOperationGroupId) dispatch(selectOperationGroupId(''));
+    else if (searchTerm) setSearchTerm('');
+  };
+
   return (
     <RecommendationPanel placeholder={''} {...props}>
-      {selectedOperationGroupId ? (
-        <OperationGroupDetailView groupOperations={allOperationsForGroup} />
-      ) : (
-        <>
-          <OperationSearchHeader
-            onSearch={setSearchTerm}
-            onGroupToggleChange={() => setIsGrouped(!isGrouped)}
-            isGrouped={isGrouped}
-            searchTerm={searchTerm}
-            onDismiss={props.toggleCollapse}
-          />
-          <div style={{ overflowY: 'auto' }}>
-            {searchTerm ? (
-              <SearchView searchTerm={searchTerm} allOperations={allOperations.data ?? []} groupByConnector={isGrouped} />
-            ) : (
-              <BrowseView />
-            )}
-          </div>
-        </>
-      )}
+      <OperationSearchHeader
+        onSearch={setSearchTerm}
+        onGroupToggleChange={() => setIsGrouped(!isGrouped)}
+        isGrouped={isGrouped}
+        searchTerm={searchTerm}
+        selectedGroupId={selectedOperationGroupId}
+        onDismiss={onDismiss}
+        navigateBack={navigateBack}
+      />
+      <div style={{ overflowY: 'auto' }}>
+        {selectedOperationGroupId ? <OperationGroupDetailView groupOperations={allOperationsForGroup} /> : null}
+        {searchTerm ? (
+          <SearchView searchTerm={searchTerm} allOperations={allOperations.data ?? []} groupByConnector={isGrouped} />
+        ) : (
+          <BrowseView />
+        )}
+      </div>
     </RecommendationPanel>
   );
 };

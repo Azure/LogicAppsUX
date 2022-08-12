@@ -24,7 +24,7 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
   const ReadMoreButton = () => (
     <div className="msla-read-more-container">
       {'... '}
-      <Link onClick={() => setDescriptionExpanded(true)} style={{ marginLeft: '4px' }}>
+      <Link onClick={() => setDescriptionExpanded(true)} style={{ margin: '0px 0px -4px 4px' }}>
         {readMoreText}
       </Link>
     </div>

@@ -1,17 +1,20 @@
 import { DesignerSearchBox } from '../../../searchbox';
-import { Checkbox, IconButton, Link } from '@fluentui/react';
+import { Checkbox, Icon, IconButton, Link, Text } from '@fluentui/react';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 interface OperationSearchHeaderProps {
   onSearch: (s: string) => void;
   onGroupToggleChange: (ev?: React.FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void;
   isGrouped?: boolean;
-  searchTerm: string;
+  searchTerm?: string;
+  selectedGroupId?: string;
   onDismiss: () => void;
+  navigateBack: () => void;
 }
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
-  const { onSearch, onGroupToggleChange, isGrouped = false, searchTerm, onDismiss } = props;
+  const { onSearch, onGroupToggleChange, isGrouped = false, searchTerm, selectedGroupId, onDismiss, navigateBack } = props;
 
   const intl = useIntl();
 
@@ -30,20 +33,52 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     description: 'Label for the checkbox to group results by connector',
   });
 
-  return (
-    <div className="msla-search-heading-container">
+  const browseNavText = intl.formatMessage({
+    defaultMessage: 'Browse Operations',
+    description: 'Text for the Browse Operations page navigation heading',
+  });
+
+  const searchNavText = intl.formatMessage({
+    defaultMessage: 'Return to browse',
+    description: 'Text for the Search Operations page navigation heading',
+  });
+
+  const detailsNavText = intl.formatMessage({
+    defaultMessage: 'Return to search',
+    description: 'Text for the Details page navigation heading',
+  });
+
+  const Navigation = useCallback(() => {
+    return (
       <div className="msla-flex-row">
-        {searchTerm ? <Link onClick={() => onSearch('')}>{'< Return to browse'}</Link> : <strong>{'Browse Operations'}</strong>}
+        {searchTerm || selectedGroupId ? (
+          <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Icon iconName="Back" />
+            {selectedGroupId ? detailsNavText : searchNavText}
+          </Link>
+        ) : (
+          <Text variant="xLarge">{browseNavText}</Text>
+        )}
         <IconButton onClick={onDismiss} iconProps={{ iconName: 'Cancel' }} />
       </div>
-      <DesignerSearchBox onSearch={onSearch} />
-      {searchTerm ? (
-        <div className="msla-flex-row">
-          <span className="msla-search-heading-text">{searchResultsText}</span>
-          <Checkbox label={groupByConnectorLabelText} onChange={onGroupToggleChange} checked={isGrouped} />
-        </div>
+    );
+  }, [browseNavText, detailsNavText, navigateBack, onDismiss, searchNavText, searchTerm, selectedGroupId]);
+
+  return (
+    <div className="msla-search-heading-container">
+      <Navigation />
+      {!selectedGroupId ? (
+        <>
+          <DesignerSearchBox onSearch={onSearch} />
+          {searchTerm ? (
+            <div className="msla-flex-row">
+              <span className="msla-search-heading-text">{searchResultsText}</span>
+              <Checkbox label={groupByConnectorLabelText} onChange={onGroupToggleChange} checked={isGrouped} />
+            </div>
+          ) : null}
+          {/* TODO: riley - show the filter and sort options */}
+        </>
       ) : null}
-      {/* TODO: riley - show the filter and sort options */}
     </div>
   );
 };
