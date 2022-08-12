@@ -238,6 +238,15 @@ export interface IDropDownOption {
   text: string;
 }
 
+export interface IResourceGroup {
+  name: string;
+  location: string;
+  id?: string;
+  subscriptionId?: string;
+  resourceGroup?: string;
+  text?: string;
+}
+
 export enum RouteName {
   export = 'export',
   instance_selection = 'instance-selection',
@@ -361,4 +370,15 @@ export enum StyledDetailCategory {
 export interface ITargetDirectory {
   fsPath: string;
   path: string;
+}
+
+export interface INamingRules {
+  minLength: number;
+  maxLength: number;
+  invalidCharsRegExp: RegExp;
+}
+
+export interface INamingValidation {
+  validationError: string;
+  validName: boolean;
 }
