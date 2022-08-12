@@ -17,10 +17,10 @@ export type SearchResultsGridProps = {
 export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProps>> = (props) => {
   const { operationSearchResults, onConnectorClick, onOperationClick, groupByConnector } = props;
 
-  console.log(operationSearchResults.map((res) => res.properties.api.id));
-  console.log([...new Set(operationSearchResults.map((res) => res.properties.api.id))]);
-
-  const apiIds = useMemo(() => Array.from(new Set(operationSearchResults.map((res) => res.properties.api.id))), [operationSearchResults]);
+  const apiIds = useMemo(
+    () => Array.from(new Set(operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties.api.id))),
+    [operationSearchResults]
+  );
 
   const onRenderOperationCell = React.useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes> | undefined, _index: number | undefined) => {
@@ -37,6 +37,10 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     },
     [onOperationClick]
   );
+
+  if (operationSearchResults.length === 0) {
+    return <p>{'No Results'}</p>;
+  }
 
   return (
     <div className="msla-result-list">

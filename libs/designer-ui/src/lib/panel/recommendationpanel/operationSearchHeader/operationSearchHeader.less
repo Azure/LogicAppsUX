@@ -1,17 +1,30 @@
 .msla-search-heading-container {
-  margin-bottom: 24px;
-}
+  margin: 0px -24px 12px;
+  padding: 24px 24px 12px;
+  background: #fff;
+  z-index: 1;
+  position: sticky;
+  top: 0px;
 
-.msla-flex-row {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  flex-wrap: nowrap;
-  align-items: center;
-}
 
-.msla-search-heading-text {
-  flex: 1;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+  .msla-search-box {
+    margin: 0px;
+  }
+
+  .msla-flex-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .msla-search-heading-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
 }

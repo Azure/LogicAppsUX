@@ -8,13 +8,13 @@ import { OperationGroupDetailsPage } from '@microsoft/designer-ui';
 import { useDispatch, useSelector } from 'react-redux';
 
 type OperationGroupDetailViewProps = {
-  selectedSearchedOperations: DiscoveryOperation<DiscoveryResultTypes>[];
+  groupOperations: DiscoveryOperation<DiscoveryResultTypes>[];
 };
 
 export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) => {
   const dispatch = useDispatch();
 
-  const { selectedSearchedOperations } = props;
+  const { groupOperations } = props;
 
   const rootState = useSelector((state: RootState) => state);
 
@@ -22,7 +22,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
   const selectedNode = useSelectedNodeId();
 
   const onOperationClick = (id: string) => {
-    const operation = selectedSearchedOperations.find((o) => o.id === id);
+    const operation = groupOperations.find((o) => o.id === id);
     addOperation(operation, discoveryIds, selectedNode, dispatch, rootState);
   };
 
@@ -30,7 +30,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
     dispatch(selectOperationGroupId(''));
   };
 
-  const operationGroupActions: OperationActionData[] = selectedSearchedOperations.map((operation) => {
+  const operationGroupActions: OperationActionData[] = groupOperations.map((operation) => {
     return {
       id: operation.id,
       title: operation.name,
@@ -45,9 +45,9 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
   return (
     <>
       {
-        selectedSearchedOperations.length > 0 ? (
+        groupOperations.length > 0 ? (
           <OperationGroupDetailsPage
-            operationApi={selectedSearchedOperations[0].properties.api}
+            operationApi={groupOperations[0].properties.api}
             operationActionsData={operationGroupActions}
             onOperationClick={onOperationClick}
             onBackClick={onBackClick}

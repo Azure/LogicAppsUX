@@ -1,4 +1,4 @@
-import { css, Image, ImageFit, Link } from '@fluentui/react';
+import { css, Icon, Image, ImageFit, Link } from '@fluentui/react';
 import { useMeasure } from '@react-hookz/web';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -59,6 +59,7 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
           {docsUrl ? (
             <Link href={docsUrl} target="_blank">
               {viewDocsText}
+              <Icon iconName={'NavigateExternalInline'} style={{ marginLeft: '4px' }} />
             </Link>
           ) : null}
         </div>

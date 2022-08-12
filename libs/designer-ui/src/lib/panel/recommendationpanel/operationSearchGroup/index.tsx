@@ -40,9 +40,13 @@ export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
         {seeMoreText}
       </Link>
       <div className="msla-op-search-group">
-        {operationActionsData?.map((op) => (
-          <OperationSearchCard key={op?.id} operationActionData={op} onClick={onOperationClick} />
-        ))}
+        {operationActionsData?.slice(0, 3).map(
+          (
+            op // Only show 3 operations per group
+          ) => (
+            <OperationSearchCard key={op?.id} operationActionData={op} onClick={onOperationClick} />
+          )
+        )}
       </div>
     </div>
   );

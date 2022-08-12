@@ -345,6 +345,12 @@
       "value": "Show code view"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -921,22 +927,10 @@
       "value": "Returns an object with an additional property value pair"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Learn more."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -4439,12 +4433,6 @@
     {
       "type": 0,
       "value": "Display Name"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operations"
     }
   ],
   "u/KSPz": [

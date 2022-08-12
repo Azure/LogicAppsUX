@@ -1,16 +1,17 @@
 import { DesignerSearchBox } from '../../../searchbox';
-import { Checkbox } from '@fluentui/react';
+import { Checkbox, IconButton, Link } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 interface OperationSearchHeaderProps {
-  onSearch: any;
+  onSearch: (s: string) => void;
   onGroupToggleChange: (ev?: React.FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void;
   isGrouped?: boolean;
   searchTerm: string;
+  onDismiss: () => void;
 }
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
-  const { onSearch, onGroupToggleChange, isGrouped = false, searchTerm } = props;
+  const { onSearch, onGroupToggleChange, isGrouped = false, searchTerm, onDismiss } = props;
 
   const intl = useIntl();
 
@@ -31,6 +32,10 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
 
   return (
     <div className="msla-search-heading-container">
+      <div className="msla-flex-row">
+        {searchTerm ? <Link onClick={() => onSearch('')}>{'< Return to browse'}</Link> : <strong>{'Browse Operations'}</strong>}
+        <IconButton onClick={onDismiss} iconProps={{ iconName: 'Cancel' }} />
+      </div>
       <DesignerSearchBox onSearch={onSearch} />
       {searchTerm ? (
         <div className="msla-flex-row">

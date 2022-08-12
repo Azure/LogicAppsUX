@@ -8,6 +8,7 @@ export * from './lib/helpers/connections';
 export * from './lib/helpers/functions';
 export * from './lib/helpers/guid';
 export * from './lib/helpers/stringFunctions';
+export * from './lib/helpers/hooks';
 export * from './lib/models/armresource';
 export * from './lib/models/connector';
 export * from './lib/models/connection';

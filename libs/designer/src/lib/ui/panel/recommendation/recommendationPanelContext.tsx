@@ -6,7 +6,7 @@ import { SearchService } from '@microsoft-logic-apps/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
@@ -34,12 +34,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       const filteredOps = allOperations.data.filter((operation) => operation.properties.api.id === selectedOperationGroupId);
       setAllOperationsForGroup(filteredOps);
     }
-  }, [selectedOperationGroupId, allOperations]);
+  }, [selectedOperationGroupId, allOperations.data]);
 
   return (
     <RecommendationPanel placeholder={''} {...props}>
       {selectedOperationGroupId ? (
-        <OperationGroupDetailView selectedSearchedOperations={allOperationsForGroup} />
+        <OperationGroupDetailView groupOperations={allOperationsForGroup} />
       ) : (
         <>
           <OperationSearchHeader
@@ -47,8 +47,15 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
             onGroupToggleChange={() => setIsGrouped(!isGrouped)}
             isGrouped={isGrouped}
             searchTerm={searchTerm}
+            onDismiss={props.toggleCollapse}
           />
-          {searchTerm ? <SearchView searchTerm={searchTerm} /> : <BrowseView />}
+          <div style={{ overflowY: 'auto' }}>
+            {searchTerm ? (
+              <SearchView searchTerm={searchTerm} allOperations={allOperations.data ?? []} groupByConnector={isGrouped} />
+            ) : (
+              <BrowseView />
+            )}
+          </div>
         </>
       )}
     </RecommendationPanel>

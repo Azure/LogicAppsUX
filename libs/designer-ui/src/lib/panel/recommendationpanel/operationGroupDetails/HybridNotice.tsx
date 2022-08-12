@@ -16,7 +16,7 @@ const HybridNotice = () => {
   });
 
   const learnMoreText = intl.formatMessage({
-    defaultMessage: 'Learn more.',
+    defaultMessage: 'Learn more',
     description: 'Text for learn more link',
   });
 
@@ -29,6 +29,7 @@ const HybridNotice = () => {
           {hybridBodyText}
           <Link className="msla-hybrid-connectors-link" target="_blank" href="https://aka.ms/built-in-versus-azure-connector" underline>
             {learnMoreText}
+            <Icon iconName={'NavigateExternalInline'} style={{ marginLeft: '4px' }} />
           </Link>
         </span>
       </div>
