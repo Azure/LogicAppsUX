@@ -2974,12 +2974,12 @@
   ],
   "cVSEzV": [
     {
-      "type": 0,
-      "value": "description for "
-    },
-    {
       "type": 1,
       "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 的描述"
     }
   ],
   "ci6ex1": [
