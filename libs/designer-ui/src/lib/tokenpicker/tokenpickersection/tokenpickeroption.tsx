@@ -138,7 +138,7 @@ export const TokenPickerOptions = ({
         <>
           <div className="msla-token-picker-section-header">
             <span> {section.label}</span>
-            {searchQuery ? null : (
+            {searchQuery || !hasAdvanced(section.tokens) ? null : (
               <button className="msla-token-picker-section-header-button" onClick={handleMoreLess}>
                 <span> {moreOptions ? buttonTextMore : buttonTextLess}</span>
               </button>
@@ -146,21 +146,24 @@ export const TokenPickerOptions = ({
           </div>
           <div className="msla-token-picker-section-options">
             {(!searchQuery ? section.tokens : filteredTokens).map((token, j) => {
-              return (
-                <button
-                  className="msla-token-picker-section-option"
-                  key={`token-picker-option-${j}`}
-                  onClick={() => handleTokenClicked(token)}
-                >
-                  <img src={token.icon} alt="" />
-                  <div className="msla-token-picker-section-option-text">
-                    <div className="msla-token-picker-option-inner">
-                      <div className="msla-token-picker-option-title">{token.title}</div>
-                      <div className="msla-token-picker-option-description">{token.description}</div>
+              if (!token.isAdvanced || !moreOptions) {
+                return (
+                  <button
+                    className="msla-token-picker-section-option"
+                    key={`token-picker-option-${j}`}
+                    onClick={() => handleTokenClicked(token)}
+                  >
+                    <img src={token.icon} alt="" />
+                    <div className="msla-token-picker-section-option-text">
+                      <div className="msla-token-picker-option-inner">
+                        <div className="msla-token-picker-option-title">{token.title}</div>
+                        <div className="msla-token-picker-option-description">{token.description}</div>
+                      </div>
                     </div>
-                  </div>
-                </button>
-              );
+                  </button>
+                );
+              }
+              return null;
             })}
           </div>
         </>
@@ -168,3 +171,6 @@ export const TokenPickerOptions = ({
     </>
   );
 };
+function hasAdvanced(tokens: OutputToken[]): boolean {
+  return tokens.some((token) => token.isAdvanced);
+}
