@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "このコネクタには、組み込みと Azure ホステッドの複数のバージョンがあります。最適なパフォーマンス、接続文字列認証、およびその他の機能には、組み込みを使用します。その他の認証オプションには、Azure ホステッドを使用します。"
     }
   ],
   "/WW7If": [
@@ -667,7 +667,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "ハイブリッド コネクタ"
     }
   ],
   "63/zYN": [
@@ -913,7 +913,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "詳細情報はこちら。"
+      "value": "詳細情報。"
     }
   ],
   "9SuA/E": [
@@ -2249,7 +2249,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "詳細を隠す"
+      "value": "表示を減らす"
     }
   ],
   "T0BFpC": [
@@ -2769,7 +2769,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "詳細情報"
+      "value": "表示を増やす"
     }
   ],
   "ZbX8xq": [
@@ -2888,12 +2888,12 @@
   ],
   "bwfJdj": [
     {
-      "type": 0,
-      "value": "Run after "
-    },
-    {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " の後に実行"
     }
   ],
   "bx3qeC": [
@@ -3117,7 +3117,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "タイムアウトした"
+      "value": "タイムアウトしました"
     }
   ],
   "e00zot": [

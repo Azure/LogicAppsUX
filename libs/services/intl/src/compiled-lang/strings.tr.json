@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Bu bağlayıcının yerleşik ve Azure’da barındırılan olmak üzere birden çok sürümü var. En iyi performans, bağlantı dizesi kimlik doğrulaması ve diğer özellikler için yerleşik sürümü kullanın. Diğer kimlik doğrulama seçenekleri için Azure’da barındırılan sürümü kullanın."
     }
   ],
   "/WW7If": [
@@ -678,7 +678,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Karma Bağlayıcı"
     }
   ],
   "63/zYN": [
@@ -2304,7 +2304,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Daha az göster"
+      "value": "Daha azını oku"
     }
   ],
   "T0BFpC": [
@@ -2824,7 +2824,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Daha fazla bilgi"
+      "value": "Daha fazlasını oku"
     }
   ],
   "ZbX8xq": [
@@ -2943,12 +2943,12 @@
   ],
   "bwfJdj": [
     {
-      "type": 0,
-      "value": "Run after "
-    },
-    {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " düğümünden sonra çalıştır"
     }
   ],
   "bx3qeC": [

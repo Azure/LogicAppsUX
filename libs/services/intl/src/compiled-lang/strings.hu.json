@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Ennek az összekötőnek több verziója van: beépített és Azure-ban üzemeltetett. Használja a beépített verziót a legjobb teljesítmény, a kapcsolati sztringes hitelesítés és egyéb funkciók eléréséhez. Használja az Azure-ban üzemeltetett verziót egyéb hitelesítési lehetőségek eléréséhez."
     }
   ],
   "/WW7If": [
@@ -678,7 +678,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Hibrid összekötő"
     }
   ],
   "63/zYN": [
@@ -2964,11 +2964,15 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Futtatás a(z) "
     },
     {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " után"
     }
   ],
   "bx3qeC": [

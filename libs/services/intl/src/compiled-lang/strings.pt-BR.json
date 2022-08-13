@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Esse conector tem várias versões, internas e hospedadas no Azure. Use a versão interna para obter o melhor desempenho, autenticação de cadeia de conexão e outros recursos. Use a versão hospedada pelo Azure para outras opções de autenticação."
     }
   ],
   "/WW7If": [
@@ -678,7 +678,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Conector Híbrido"
     }
   ],
   "63/zYN": [
@@ -2944,7 +2944,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Executar após "
     },
     {
       "type": 1,
@@ -3026,7 +3026,7 @@
   "cVSEzV": [
     {
       "type": 0,
-      "value": "description for "
+      "value": "descrição para "
     },
     {
       "type": 1,
