@@ -33,6 +33,7 @@ export const ParametersTab = () => {
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
           <ParameterSection
+            key={selectedNodeId}
             nodeId={selectedNodeId}
             group={inputs.parameterGroups[sectionName]}
             readOnly={readOnly}
