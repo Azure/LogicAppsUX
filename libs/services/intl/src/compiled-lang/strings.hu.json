@@ -1734,7 +1734,7 @@
   "L4RJF0": [
     {
       "type": 0,
-      "value": "There are no results for your search"
+      "value": "A keresés nem adott eredményeket"
     }
   ],
   "LCUU5q": [
@@ -2648,7 +2648,7 @@
   "XH94im": [
     {
       "type": 0,
-      "value": "Ensure words are spelled correctly."
+      "value": "Ügyeljen arra, hogy helyesen írja be a szavakat."
     }
   ],
   "XN9RvJ": [
@@ -3050,11 +3050,15 @@
   "cVSEzV": [
     {
       "type": 0,
-      "value": "description for "
+      "value": "a(z) "
     },
     {
       "type": 1,
       "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " leírása"
     }
   ],
   "ci6ex1": [
@@ -3120,7 +3124,7 @@
   "dOpdsP": [
     {
       "type": 0,
-      "value": "Update"
+      "value": "Frissítés"
     }
   ],
   "dSTRb/": [
@@ -3946,7 +3950,7 @@
   "n7wxxN": [
     {
       "type": 0,
-      "value": "Try less specific keywords."
+      "value": "Használjon kevésbé specifikus kulcsszavakat."
     }
   ],
   "nGds/r": [
@@ -4652,7 +4656,7 @@
   "vVJuus": [
     {
       "type": 0,
-      "value": "The expression is invalid."
+      "value": "A kifejezés érvénytelen."
     }
   ],
   "vXwYXe": [
